@@ -27,6 +27,7 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `set_my_locale(new_locale)` | saves `ro` or `en` as the caller's own interface language (`profiles.locale`) | any signed-in person, read-only accounts included; never signed-out visitors | S1-E1-04 |
 | `log_staff_action(...)` | writes one audit log row for the signed-in staff member | staff sessions only | S1-E1-02 |
 | `check_invite(code)` | answers `valid`, `ended` or `unknown` for a platform invite code, never the invite itself | anyone, signed out included (the sign-up form) | S1-E2-01 |
+| `sign_up_age_outcome(birth_year, birth_month)` | what sign-up says about a year (and month): `ok`, `year_needed`, `month_needed`, `under_13` or `adults_only`; stores nothing | anyone, signed out included (the sign-up form) | S1-E2-02 |
 | `my_legal_documents_to_accept()` | the caller's own legal documents waiting for acceptance after an important change | any signed-in person | S1-E14-01 |
 | `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
 
@@ -65,7 +66,7 @@ Full IDs are `00000000-0000-4000-8000-0000000000NN`. Tests sign a persona in by 
 
 ## Sign-up (S1-E2-01, ADR 0002)
 
-Supabase Auth inserts a row into `auth.users`; the trigger `handle_new_auth_user()` then, in the same transaction, takes a place on the invite (while `invite_only` is on), checks the year of birth, creates the `profiles` row (its `id` is the user ID) and records the accepted terms and privacy notice in `consents`. Any refusal undoes the whole sign-up, so nothing is kept. Seed personas carry `"seed_persona": true` in their app metadata and make their own profiles.
+Supabase Auth inserts a row into `auth.users`; the trigger `handle_new_auth_user()` then, in the same transaction, takes a place on the invite (while `invite_only` is on), checks the year of birth and, only when the year leaves the age unclear at 13 or 16, the month (S1-E2-02: under 13 refused; under 18 refused while `adults_only` is on), creates the `profiles` row (its `id` is the user ID) and records the accepted terms and privacy notice in `consents`. Any refusal undoes the whole sign-up, so nothing is kept. Seed personas carry `"seed_persona": true` in their app metadata and make their own profiles.
 
 **Test invite codes** (seeded by `seed.sql`, local and staging only, never production):
 

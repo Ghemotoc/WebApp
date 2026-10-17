@@ -93,7 +93,8 @@ export function SignUpPage() {
   const inviteCode = isInviteOnly ? (code ?? null) : null;
   const invite = useInviteCheck(inviteCode);
   const { context, legalFailed } = useSignUpContext(inviteCode);
-  const form = useSignUpForm(context);
+  const isAdultsOnly = flags.isOn('adults_only', true);
+  const form = useSignUpForm(context, isAdultsOnly);
   const gateReason = inviteGateReason(isInviteOnly, inviteCode, invite);
 
   return (
@@ -104,7 +105,7 @@ export function SignUpPage() {
         aria-labelledby="sign-up-heading"
         className="flex w-full max-w-[480px] flex-col gap-5 justify-self-center rounded-card border border-border bg-surface p-8 shadow-card"
       >
-        <SignUpSteps includesAgeCheck={!flags.isOn('adults_only', true)} />
+        <SignUpSteps includesAgeCheck={!isAdultsOnly} />
         <div className="flex flex-col gap-2">
           <Eyebrow>{t('signUp.eyebrow')}</Eyebrow>
           <h2 id="sign-up-heading" className="m-0 font-heading text-[30px] font-bold text-heading">
@@ -120,7 +121,7 @@ export function SignUpPage() {
               <Notice tone="success">{t('invite.accepted')}</Notice>
             )}
             {legalFailed && <Notice tone="error">{t('signUp.errors.legalNotLoaded')}</Notice>}
-            <SignUpCardBody form={form} context={context} />
+            <SignUpCardBody form={form} context={context} includesAgeCheck={!isAdultsOnly} />
           </>
         )}
       </section>

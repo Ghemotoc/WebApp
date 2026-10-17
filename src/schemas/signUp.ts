@@ -10,6 +10,8 @@
  */
 import { z } from 'zod';
 
+import { birthYearNeedsMonth, romanianToday } from '@/lib/age';
+
 /** At least 10 characters (canvas 2.1; also set in supabase/config.toml and on staging). */
 export const minimumPasswordLength = 10;
 
@@ -24,10 +26,21 @@ export const signUpSchema = z
     password: z.string(),
     confirmPassword: z.string(),
     birthYear: z.string().regex(/^\d{4}$/, 'signUp.errors.birthYearMissing'),
+    // '' when not asked; '1' to '12' when the year leaves the age unclear at 13 or 16 (S1-E2-02).
+    birthMonth: z.string(),
     acceptsTerms: z.literal(true, 'signUp.errors.termsNotAccepted'),
   })
-  // A password is checked only when the person chose one; the emailed link needs none.
   .superRefine((answers, context) => {
+    // The month, when the year needs it (decided 16 Oct 2026, Q16).
+    const needsMonth = birthYearNeedsMonth(Number(answers.birthYear), romanianToday());
+    if (needsMonth && answers.birthMonth === '') {
+      context.addIssue({
+        code: 'custom',
+        path: ['birthMonth'],
+        message: 'signUp.errors.birthMonthMissing',
+      });
+    }
+    // A password is checked only when the person chose one; the emailed link needs none.
     if (answers.method === 'link') return;
     if (answers.password.length < minimumPasswordLength) {
       context.addIssue({

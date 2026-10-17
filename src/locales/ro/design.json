@@ -53,7 +53,10 @@
     "inputError": "Alege un pseudonim de 2 până la 40 de caractere.",
     "textareaLabel": "Comentariu",
     "searchLabel": "Caută povești",
-    "searchPlaceholder": "Caută povești, scriitori și etichete"
+    "searchPlaceholder": "Caută povești, scriitori și etichete",
+    "tooltipLabel": "Anul nașterii",
+    "tooltipButton": "De ce te întrebăm anul nașterii",
+    "tooltipText": "Te întrebăm anul și uneori luna ca să alegem setările de siguranță potrivite."
   },
   "pills": {
     "plum": "Ficțiune",

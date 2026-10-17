@@ -411,6 +411,7 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['age_band'];
       };
+      birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       check_invite: { Args: { code: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -465,6 +466,8 @@ export type Database = {
         Returns: undefined;
       };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
+      sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
+      sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
     };

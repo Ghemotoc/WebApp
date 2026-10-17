@@ -53,7 +53,10 @@
     "inputError": "Choose a pen name of 2 to 40 characters.",
     "textareaLabel": "Comment",
     "searchLabel": "Search stories",
-    "searchPlaceholder": "Search stories, writers and tags"
+    "searchPlaceholder": "Search stories, writers and tags",
+    "tooltipLabel": "Year of birth",
+    "tooltipButton": "Why we ask for your year of birth",
+    "tooltipText": "We ask for the year, and sometimes the month, to pick the right safety settings."
   },
   "pills": {
     "plum": "Fiction",

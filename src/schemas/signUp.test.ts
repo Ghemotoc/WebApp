@@ -12,6 +12,7 @@ const goodAnswers = {
   password: 'a long passphrase',
   confirmPassword: 'a long passphrase',
   birthYear: '1990',
+  birthMonth: '',
   acceptsTerms: true,
 };
 
@@ -50,6 +51,13 @@ describe('the sign-up rules', () => {
       email: 'signUp.errors.emailInvalid',
       birthYear: 'signUp.errors.birthYearMissing',
       acceptsTerms: 'signUp.errors.termsNotAccepted',
+    });
+  });
+
+  it('asks for the month when the year leaves the age unclear at 13 or 16', () => {
+    const thirteenThisYear = String(new Date().getFullYear() - 13);
+    expect(findSignUpProblems({ ...goodAnswers, birthYear: thirteenThisYear })).toEqual({
+      birthMonth: 'signUp.errors.birthMonthMissing',
     });
   });
 });
