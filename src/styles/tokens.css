@@ -1,0 +1,209 @@
+/*
+ * Design tokens: every colour, font, radius and shadow the interface uses (story S1-E1-03).
+ *
+ * Where the values come from: the design boards in design/boards/ (Discover, Story, Reader, Search,
+ * Settings, AdFormats, AdminSponsors, AdminUsers), copied, not guessed (CLAUDE.md, Designs).
+ * Night values: no board has a night mode, so they are derived from the board colours, starting
+ * from the Reader's Night theme (#1E0F24 background, #F4F0EC text) (Robert, 17 Oct 2026).
+ *
+ * How it works: the raw values are CSS variables. `data-theme="light"` or `data-theme="night"` on
+ * <html> (set by public/theme-init.js before the page draws, then by src/lib/theme.ts) picks the
+ * set. Any element can also carry data-theme, which is how /design shows both side by side.
+ * The @theme block at the end turns them into Tailwind classes such as bg-paper and text-ink.
+ *
+ * Contrast: src/styles/contrast.test.ts reads this file and checks every text and background pair
+ * listed in src/styles/contrast-pairs.ts against WCAG 2.2 AA, in both themes. Change a value here
+ * and that test tells you if a pair drops below the line.
+ */
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --paper: #faf8f5;
+  --surface: #ffffff;
+  --tint: #f1eaf4;
+  --panel: #f4f0ec;
+  --panel-border: #e5d7ea;
+  --nav-glass: rgba(255, 255, 255, 0.85);
+
+  /* Text */
+  --ink: #26142e;
+  --heading: #481c5f;
+  --body: #5c4965;
+  /* The darkened meta colour: 5.9:1 on paper (story S1-E1-03 asks for at least 4.5:1). */
+  --meta: #6b5a73;
+  /* Gold is never small text; eyebrows and gold-coloured text use this darker gold (S1-E1-03). */
+  --eyebrow: #815e18;
+  --link: #672786;
+  --link-hover: #481c5f;
+  --destructive: #8c2b3a;
+
+  /* Accents and actions */
+  --gold: #e6c24c;
+  --primary: #2a0e33;
+  --on-primary: #fbf7ec;
+  --chip-on: #481c5f;
+  --chip-on-text: #ffffff;
+
+  /* Lines. control-border reaches 3:1 for form fields and chips (WCAG 2.2, 1.4.11). */
+  --border: #ded3e4;
+  --hairline: #efe8f2;
+  --control-border: #8e7b99;
+  --dashed-border: #b9a9c2;
+  /* Focus ring: plum on light backgrounds (Robert, 17 Oct 2026; the boards' gold fails 3:1 here). */
+  --focus-ring: #481c5f;
+
+  /* Notices */
+  --success-bg: #e8f1ec;
+  --success-border: #a9c9b6;
+  --success-text: #245a41;
+  --info-bg: #f1eaf4;
+  --info-border: #c9b3d6;
+  --info-text: #3a2442;
+  --warning-bg: #fbf3da;
+  --warning-border: #d9b54a;
+  --warning-text: #5c3f0e;
+  --error-bg: #f6e9eb;
+  --error-border: #ddb0b8;
+  --error-text: #8c2b3a;
+
+  /* Information pills: pastel tint, soft border, dark text of the same hue (DoD pill system). */
+  --pill-plum-bg: #f1eaf4;
+  --pill-plum-border: #c9b3d6;
+  --pill-plum-text: #481c5f;
+  --pill-sage-bg: #e8f1ec;
+  --pill-sage-border: #a9c9b6;
+  --pill-sage-text: #245a41;
+  --pill-gold-bg: #fbf3da;
+  --pill-gold-border: #d9b54a;
+  --pill-gold-text: #5c3f0e;
+  --pill-sky-bg: #e6eef6;
+  --pill-sky-border: #afc3de;
+  --pill-sky-text: #2e4a8c;
+  --pill-neutral-bg: #f4f0ec;
+  --pill-neutral-border: #d6ccdc;
+  --pill-neutral-text: #4f3d57;
+  --pill-blush-bg: #f6e9eb;
+  --pill-blush-border: #ddb0b8;
+  --pill-blush-text: #8c2b3a;
+
+  /* Shadows (boards: nav island, cards, pop-overs) */
+  --shadow-nav: 0 1px 2px rgba(38, 20, 46, 0.04), 0 8px 24px -12px rgba(38, 20, 46, 0.12);
+  --shadow-card: 0 1px 2px rgba(38, 20, 46, 0.04), 0 18px 40px -28px rgba(38, 20, 46, 0.3);
+  --shadow-popover: 0 1px 2px rgba(38, 20, 46, 0.05), 0 24px 48px -24px rgba(38, 20, 46, 0.35);
+}
+
+[data-theme='night'] {
+  color-scheme: dark;
+
+  --paper: #1e0f24;
+  --surface: #2a1633;
+  --tint: #3a2444;
+  --panel: #2e2433;
+  --panel-border: #4a3d52;
+  --nav-glass: rgba(42, 22, 51, 0.85);
+
+  --ink: #f4f0ec;
+  --heading: #e9ddf0;
+  --body: #d6ccdc;
+  --meta: #bfb0c8;
+  /* On night backgrounds the board gold itself is readable (about 9:1). */
+  --eyebrow: #e6c24c;
+  --link: #d9b8ec;
+  --link-hover: #f1e4f8;
+  --destructive: #f2a7b3;
+
+  --gold: #e6c24c;
+  --primary: #e9ddf0;
+  --on-primary: #2a0e33;
+  --chip-on: #e9ddf0;
+  --chip-on-text: #2a0e33;
+
+  --border: #4a3554;
+  --hairline: #3a2744;
+  --control-border: #9f8da8;
+  --dashed-border: #6e5a78;
+  /* Focus ring: gold on dark backgrounds (Robert, 17 Oct 2026). */
+  --focus-ring: #e6c24c;
+
+  --success-bg: #1f3529;
+  --success-border: #4f7a62;
+  --success-text: #bfe3cd;
+  --info-bg: #3a2444;
+  --info-border: #6b4a7c;
+  --info-text: #ebddf2;
+  --warning-bg: #3a2e12;
+  --warning-border: #8a6e25;
+  --warning-text: #f5e2a8;
+  --error-bg: #3e1e26;
+  --error-border: #8a4a57;
+  --error-text: #f6c3cc;
+
+  --pill-plum-bg: #3a2444;
+  --pill-plum-border: #6b4a7c;
+  --pill-plum-text: #ebddf2;
+  --pill-sage-bg: #1f3529;
+  --pill-sage-border: #4f7a62;
+  --pill-sage-text: #bfe3cd;
+  --pill-gold-bg: #3a2e12;
+  --pill-gold-border: #8a6e25;
+  --pill-gold-text: #f5e2a8;
+  --pill-sky-bg: #1e2a40;
+  --pill-sky-border: #4f6a99;
+  --pill-sky-text: #cfdcf2;
+  --pill-neutral-bg: #2e2533;
+  --pill-neutral-border: #5c4f63;
+  --pill-neutral-text: #e5dee8;
+  --pill-blush-bg: #3e1e26;
+  --pill-blush-border: #8a4a57;
+  --pill-blush-text: #f6c3cc;
+
+  --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 40px -28px rgba(0, 0, 0, 0.7);
+  --shadow-popover: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 48px -24px rgba(0, 0, 0, 0.8);
+}
+
+/* Tailwind classes from the tokens: bg-paper, text-ink, border-control-border and so on. */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-tint: var(--tint);
+  --color-panel: var(--panel);
+  --color-panel-border: var(--panel-border);
+  --color-ink: var(--ink);
+  --color-heading: var(--heading);
+  --color-body: var(--body);
+  --color-meta: var(--meta);
+  --color-eyebrow: var(--eyebrow);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+  --color-destructive: var(--destructive);
+  --color-gold: var(--gold);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-chip-on: var(--chip-on);
+  --color-chip-on-text: var(--chip-on-text);
+  --color-border: var(--border);
+  --color-hairline: var(--hairline);
+  --color-control-border: var(--control-border);
+  --color-dashed-border: var(--dashed-border);
+  --color-focus-ring: var(--focus-ring);
+  --shadow-nav: var(--shadow-nav);
+  --shadow-card: var(--shadow-card);
+  --shadow-popover: var(--shadow-popover);
+}
+
+/* Fonts, type sizes and radii from the boards; the font files are self-hosted (src/styles/fonts.css). */
+@theme {
+  --font-heading: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-eyebrow: 'Cutive', 'Courier New', serif;
+  --font-hand: 'Shadows Into Light Two', cursive;
+
+  --radius-nav: 2.1rem;
+  --radius-card: 24px;
+  --radius-ad: 20px;
+  --radius-cover: 16px;
+}

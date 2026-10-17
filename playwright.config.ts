@@ -3,7 +3,8 @@
  *
  * Who reads it: `npm run test:e2e`, on your computer and in CI (the "e2e" job).
  * What it does: builds the app, serves the built `dist` folder (the same files Cloudflare Pages
- * publishes) and drives Chromium through the tests in e2e/, with axe checking accessibility.
+ * publishes, built the way staging is, with the /design page) and drives Chromium through the
+ * tests in e2e/, with axe checking accessibility.
  * In a Claude Code cloud session Chromium is pre-installed; PLAYWRIGHT_CHROMIUM_PATH points to it.
  */
 import { defineConfig, devices } from '@playwright/test';
@@ -40,5 +41,7 @@ export default defineConfig({
     url: previewUrl,
     reuseExistingServer: process.env.CI === undefined,
     timeout: 180_000,
+    // Build as staging does: with the /design components page included (S1-E1-03).
+    env: { VITE_SHOW_DESIGN_PAGE: 'true' },
   },
 });

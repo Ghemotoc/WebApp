@@ -1,0 +1,122 @@
+{
+  "page": {
+    "documentTitle": "Design system",
+    "eyebrow": "For the team",
+    "title": "Components",
+    "intro": "Every colour, font and component in one place, built from the design boards. Compare it with the board pictures in design/renders/. This page is on local and staging builds only."
+  },
+  "sections": {
+    "colours": "Colours",
+    "type": "Type",
+    "buttons": "Buttons",
+    "forms": "Form fields",
+    "pills": "Pills and chips",
+    "cards": "Cards and label rows",
+    "shelves": "Shelves",
+    "notices": "Notices and empty states",
+    "ads": "Ad and sponsor slots",
+    "shell": "Top bar, staff bar and footer"
+  },
+  "colours": {
+    "light": "Light",
+    "night": "Night",
+    "intro": "Every text and background pair the interface uses, with its contrast ratio. CI fails if any pair drops below WCAG 2.2 AA (4.5:1 for text, 3:1 for borders and the focus ring).",
+    "ratio": "{{ratio}}:1",
+    "on": "{{foreground}} on {{background}}"
+  },
+  "type": {
+    "heading1": "A page title in Bricolage Grotesque",
+    "heading2": "A section heading",
+    "heading3": "A small heading",
+    "lede": "A lede in Inter, 18 px: the first line that tells the reader what the page is for.",
+    "body": "Body text in Inter, 16 px, with a comfortable line height for reading longer passages.",
+    "meta": "Meta text: 3 minutes ago · 1.2k reads",
+    "eyebrow": "An eyebrow label in Cutive",
+    "hand": "A handwritten note"
+  },
+  "buttons": {
+    "primary": "Publish",
+    "secondary": "Save draft",
+    "text": "Cancel",
+    "destructive": "Delete",
+    "large": "Large, 48 px",
+    "extraLarge": "Extra large, 52 px",
+    "disabled": "Not available yet"
+  },
+  "forms": {
+    "selectLabel": "Sort by",
+    "selectNewest": "Newest",
+    "selectPopular": "Most popular",
+    "selectCompleted": "Completed stories first",
+    "inputLabel": "Pen name",
+    "inputHint": "Optional. You can change it later.",
+    "inputError": "Choose a pen name of 2 to 40 characters.",
+    "textareaLabel": "Comment",
+    "searchLabel": "Search stories",
+    "searchPlaceholder": "Search stories, writers and tags"
+  },
+  "pills": {
+    "plum": "Fiction",
+    "sage": "Ongoing",
+    "gold": "New",
+    "sky": "Poetry",
+    "neutral": "Spoiler",
+    "blush": "Suspended",
+    "chipFiction": "Fiction",
+    "chipPoetry": "Poetry",
+    "chipEssays": "Essays"
+  },
+  "cards": {
+    "cardTitle": "About this story",
+    "rowCategory": "Category",
+    "rowStatus": "Status",
+    "rowChapters": "Chapters",
+    "valueCategory": "Fiction",
+    "valueStatus": "Ongoing",
+    "valueChapters": "14"
+  },
+  "shelves": {
+    "eyebrow": "For you",
+    "shortTitle": "Romanian classics",
+    "longTitle": "Trending",
+    "metaLine": "{{author}} · {{reads}} reads",
+    "sampleAuthor": "Sample writer",
+    "sampleTitles": [
+      "The Night Train",
+      "Letters to an Unknown Reader",
+      "Salt",
+      "Everything We Said Before the Rain Came Down",
+      "Moth",
+      "The Last Lighthouse Keeper of the Black Sea",
+      "Small Hours",
+      "Paper Boats"
+    ]
+  },
+  "notices": {
+    "successTitle": "Saved.",
+    "successText": "Your chapter is safe.",
+    "infoTitle": "Good to know.",
+    "infoText": "Private messages are hidden from staff unless they are part of a report.",
+    "warningTitle": "Check this.",
+    "warningText": "This chapter has no content note yet.",
+    "errorTitle": "That didn't work.",
+    "errorText": "Your connection dropped. Your text is kept on this device; try again.",
+    "emptyTitle": "No stories here yet",
+    "emptyDescription": "Follow writers or browse Discover, and new chapters will appear here.",
+    "emptyAction": "Browse Discover"
+  },
+  "ads": {
+    "intro": "Specimens only: real ads and sponsors arrive with S1-E12. The portrait and side boxes show only on screens 1200 px and wider.",
+    "banner": "[Advertiser] banner · 970 × 120",
+    "portrait": "[Advertiser] · 300 × 600",
+    "side": "[Advertiser] · 300 × 250",
+    "card": "[Partner] · story card size"
+  },
+  "shell": {
+    "topBarSpecimen": "Top bar sample",
+    "topBarNote": "The full top bar from the boards. The live top bar shows only the pages that exist so far.",
+    "staffBarNote": "The staff bar from the admin boards. The admin site mounts it from S1-E11-01.",
+    "staffName": "Sample staff member",
+    "staffRole": "Admin"
+  }
+}

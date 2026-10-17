@@ -30,21 +30,29 @@ export interface Brand {
   supportEmail: string;
   /** The handle we use on social networks, with the leading "@". */
   socialHandle: string;
+  /** The company behind the product, for the footer line "An app by …" (S1-E1-03). */
+  companyName: string;
 }
 
-/** The VITE_BRAND_* variables this file understands. Any of them may be missing. */
+/**
+ * The VITE_BRAND_* variables this file understands. Any of them may be missing.
+ * VITE_BRAND_COMPANY_NAME (added by S1-E1-03) is not yet listed in .env.example: that file is
+ * covered by the repository's read-deny rule for .env files, so a session can't edit it.
+ */
 export interface BrandEnvironment {
   VITE_BRAND_NAME?: string;
   VITE_BRAND_SITE_DOMAIN?: string;
   VITE_BRAND_CONTACT_EMAIL?: string;
   VITE_BRAND_SUPPORT_EMAIL?: string;
   VITE_BRAND_SOCIAL_HANDLE?: string;
+  VITE_BRAND_COMPANY_NAME?: string;
 }
 
 /**
  * Today's values, used whenever a variable is not set.
  * Sources: working name "Ghemotoc" (decided 16 Oct 2026); working site and contact and support
- * address (decided 17 Oct 2026, 12:50); handle @ghemotoc everywhere (architecture.md, section 1.2).
+ * address (decided 17 Oct 2026, 12:50); handle @ghemotoc everywhere (architecture.md, section 1.2);
+ * the footer line "An app by The Magic Coffin" (canvas comment, 16 Oct 2026).
  */
 export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
   productName: 'Ghemotoc',
@@ -52,6 +60,7 @@ export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
   contactEmail: 'hello@themagiccoffin.com',
   supportEmail: 'hello@themagiccoffin.com',
   socialHandle: '@ghemotoc',
+  companyName: 'The Magic Coffin',
 };
 
 /**
@@ -85,6 +94,7 @@ export function readBrand(environment: BrandEnvironment | undefined): Brand {
     contactEmail: valueOrDefault(environment?.VITE_BRAND_CONTACT_EMAIL, brandDefaults.contactEmail),
     supportEmail: valueOrDefault(environment?.VITE_BRAND_SUPPORT_EMAIL, brandDefaults.supportEmail),
     socialHandle: valueOrDefault(environment?.VITE_BRAND_SOCIAL_HANDLE, brandDefaults.socialHandle),
+    companyName: valueOrDefault(environment?.VITE_BRAND_COMPANY_NAME, brandDefaults.companyName),
   };
 }
 

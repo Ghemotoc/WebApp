@@ -1,0 +1,18 @@
+/*
+ * The four fonts, served from our own site instead of Google Fonts (story S1-E1-03).
+ *
+ * Why self-hosted: loading fonts from Google sends every visitor's IP address to a third party,
+ * which CLAUDE.md rule 7 (no third-party scripts without an ADR) and GDPR both argue against.
+ * The @fontsource packages ship the same font files; Vite copies them into dist/ at build time.
+ * Every file includes the Latin Extended range, so Romanian ș and ț render in every font.
+ *
+ * Fonts (CLAUDE.md, Designs; decided 17 Oct 2026, 10:43):
+ *   Bricolage Grotesque  headings, page titles, the wordmark
+ *   Inter                body and interface text
+ *   Cutive               eyebrow labels (14 px, sentence case)
+ *   Shadows Into Light Two  handwritten accents
+ */
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/inter';
+@import '@fontsource/cutive';
+@import '@fontsource/shadows-into-light-two';

@@ -54,6 +54,10 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       // One component per file, so fast refresh keeps working (CLAUDE.md conventions).
       'react-refresh/only-export-components': ['error', { allowConstantExport: true }],
+      // A sideways list must be reachable by keyboard so it can be scrolled with the arrow keys
+      // (DoD design rules, shelves; axe "scrollable-region-focusable"). Its element is a labelled
+      // role="region", so focusable regions are allowed as well as tab panels.
+      'jsx-a11y/no-noninteractive-tabindex': ['error', { roles: ['tabpanel', 'region'] }],
     },
   },
   {

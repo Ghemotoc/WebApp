@@ -37,6 +37,10 @@ for (const size of screenSizes) {
     await page.setViewportSize({ width: size.width, height: size.height });
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    // Let the heading finish fading in, so axe measures its final colours.
+    await page.waitForFunction(() =>
+      document.getAnimations().every((animation) => animation.playState === 'finished'),
+    );
 
     // axe checks the page against WCAG 2.0, 2.1 and 2.2, levels A and AA.
     const results = await new AxeBuilder({ page })

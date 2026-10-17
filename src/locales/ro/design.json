@@ -1,0 +1,122 @@
+{
+  "page": {
+    "documentTitle": "Sistem de design",
+    "eyebrow": "Pentru echipă",
+    "title": "Componente",
+    "intro": "Toate culorile, fonturile și componentele într-un singur loc, construite după planșele de design. Compară pagina cu imaginile din design/renders/. Pagina există doar local și pe staging."
+  },
+  "sections": {
+    "colours": "Culori",
+    "type": "Tipografie",
+    "buttons": "Butoane",
+    "forms": "Câmpuri de formular",
+    "pills": "Etichete și filtre",
+    "cards": "Carduri și rânduri cu etichete",
+    "shelves": "Rafturi",
+    "notices": "Mesaje și stări goale",
+    "ads": "Spații pentru reclame și sponsori",
+    "shell": "Bara de sus, bara echipei și subsolul"
+  },
+  "colours": {
+    "light": "Luminoasă",
+    "night": "Noapte",
+    "intro": "Fiecare pereche de text și fundal din interfață, cu raportul de contrast. CI eșuează dacă vreo pereche coboară sub WCAG 2.2 AA (4,5:1 pentru text, 3:1 pentru contururi și inelul de focus).",
+    "ratio": "{{ratio}}:1",
+    "on": "{{foreground}} pe {{background}}"
+  },
+  "type": {
+    "heading1": "Un titlu de pagină în Bricolage Grotesque",
+    "heading2": "Un titlu de secțiune",
+    "heading3": "Un titlu mic",
+    "lede": "O introducere în Inter, 18 px: primul rând care îi spune cititorului la ce folosește pagina.",
+    "body": "Text în Inter, 16 px, cu spațiere confortabilă între rânduri pentru pasaje lungi.",
+    "meta": "Detalii: acum 3 minute · 1,2k citiri",
+    "eyebrow": "O etichetă mică în Cutive",
+    "hand": "O notă scrisă de mână"
+  },
+  "buttons": {
+    "primary": "Publică",
+    "secondary": "Salvează ciorna",
+    "text": "Anulează",
+    "destructive": "Șterge",
+    "large": "Mare, 48 px",
+    "extraLarge": "Foarte mare, 52 px",
+    "disabled": "Încă indisponibil"
+  },
+  "forms": {
+    "selectLabel": "Sortează după",
+    "selectNewest": "Cele mai noi",
+    "selectPopular": "Cele mai populare",
+    "selectCompleted": "Întâi poveștile terminate",
+    "inputLabel": "Pseudonim",
+    "inputHint": "Opțional. Îl poți schimba mai târziu.",
+    "inputError": "Alege un pseudonim de 2 până la 40 de caractere.",
+    "textareaLabel": "Comentariu",
+    "searchLabel": "Caută povești",
+    "searchPlaceholder": "Caută povești, scriitori și etichete"
+  },
+  "pills": {
+    "plum": "Ficțiune",
+    "sage": "În curs",
+    "gold": "Nou",
+    "sky": "Poezie",
+    "neutral": "Spoiler",
+    "blush": "Suspendat",
+    "chipFiction": "Ficțiune",
+    "chipPoetry": "Poezie",
+    "chipEssays": "Eseuri"
+  },
+  "cards": {
+    "cardTitle": "Despre această poveste",
+    "rowCategory": "Categorie",
+    "rowStatus": "Stare",
+    "rowChapters": "Capitole",
+    "valueCategory": "Ficțiune",
+    "valueStatus": "În curs",
+    "valueChapters": "14"
+  },
+  "shelves": {
+    "eyebrow": "Pentru tine",
+    "shortTitle": "Clasici românești",
+    "longTitle": "În tendințe",
+    "metaLine": "{{author}} · {{reads}} citiri",
+    "sampleAuthor": "Scriitor de probă",
+    "sampleTitles": [
+      "Trenul de noapte",
+      "Scrisori către un cititor necunoscut",
+      "Sare",
+      "Tot ce ne-am spus înainte să înceapă ploaia",
+      "Molia",
+      "Ultimul paznic de far de la Marea Neagră",
+      "Ore mici",
+      "Bărci de hârtie"
+    ]
+  },
+  "notices": {
+    "successTitle": "Salvat.",
+    "successText": "Capitolul tău e în siguranță.",
+    "infoTitle": "Bine de știut.",
+    "infoText": "Mesajele private sunt ascunse echipei, cu excepția celor dintr-o raportare.",
+    "warningTitle": "Verifică.",
+    "warningText": "Capitolul nu are încă o notă de conținut.",
+    "errorTitle": "Nu a mers.",
+    "errorText": "Conexiunea s-a întrerupt. Textul tău e păstrat pe acest dispozitiv; încearcă din nou.",
+    "emptyTitle": "Încă nicio poveste aici",
+    "emptyDescription": "Urmărește scriitori sau răsfoiește Descoperă, iar capitolele noi vor apărea aici.",
+    "emptyAction": "Răsfoiește Descoperă"
+  },
+  "ads": {
+    "intro": "Doar exemple: reclamele și sponsorii reali vin cu S1-E12. Formatul portret și caseta laterală apar doar pe ecrane de 1200 px sau mai late.",
+    "banner": "[Advertiser] banner · 970 × 120",
+    "portrait": "[Advertiser] · 300 × 600",
+    "side": "[Advertiser] · 300 × 250",
+    "card": "[Partner] · mărimea unui card de poveste"
+  },
+  "shell": {
+    "topBarSpecimen": "Exemplu de bară de sus",
+    "topBarNote": "Bara de sus completă din planșe. Bara reală arată doar paginile care există deja.",
+    "staffBarNote": "Bara echipei din planșele de administrare. Site-ul de administrare o folosește din S1-E11-01.",
+    "staffName": "Membru de probă al echipei",
+    "staffRole": "Administrator"
+  }
+}

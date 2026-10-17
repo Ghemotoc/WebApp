@@ -1,6 +1,108 @@
 /*
- * Global styles (story S1-E1-01).
- * Loaded once by src/main.tsx. Tailwind generates the utility classes the components use.
- * The design tokens (colours, fonts, light and night mode) come in S1-E1-03.
+ * Global styles (stories S1-E1-01 and S1-E1-03).
+ * Loaded once by src/main.tsx. Order matters: fonts, then Tailwind, then the tokens Tailwind
+ * turns into classes, then the few global rules every screen shares.
+ * Component styles live in the components themselves (Tailwind classes); only rules that must
+ * apply everywhere, or that the boards define as named classes (tmc-*), belong here.
  */
+@import './fonts.css';
 @import 'tailwindcss';
+@import './tokens.css';
+
+@layer base {
+  /* The page: paper background, ink text, Inter (boards: body{background:#FAF8F5}). */
+  html {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+    color: var(--heading);
+  }
+
+  /* Links: violet, plum on hover (boards: a{color:#672786}a:hover{color:#481C5F}). */
+  a {
+    color: var(--link);
+  }
+
+  a:hover {
+    color: var(--link-hover);
+  }
+
+  /* One visible focus ring for everything: plum on light, gold on night (Robert, 17 Oct 2026). */
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Disabled controls (boards: button:disabled{opacity:0.55}). */
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+/* Gentle entrance used by page headers on the boards (tmcRise). */
+@keyframes tmc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.tmc-rise {
+  animation: tmc-rise 0.5s ease-out both;
+}
+
+/*
+ * "Reduce motion": no animations, no fades, no smooth scrolling (story S1-E1-03 acceptance
+ * criterion; WCAG 2.2, 2.3.3). The boards' own rule, extended to transitions.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* A sideways list with scroll arrows hides its scrollbar but stays scrollable (DoD design rules). */
+.tmc-noscroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tmc-noscroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Doodle breakpoints (DoD): tmc-dd-wide hides under 1000 px, tmc-dd-hide under 600 px. */
+@media (max-width: 999px) {
+  .tmc-dd-wide {
+    display: none !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .tmc-dd-hide {
+    display: none !important;
+  }
+}

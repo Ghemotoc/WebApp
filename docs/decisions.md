@@ -45,6 +45,10 @@ Every decision Robert has made, with its date and source. The live list is the m
 | S1-E1-02 creates minimal `profiles` (user ID and age columns) and `staff_roles` tables, so the account gate and the seed personas work now; S1-E2-01 and S1-E2-07a add the rest | Claude Code session, epic S1-E1 plan, 17 Oct 2026 |
 | The seed personas share one documented test password, the same locally and on staging (synthetic accounts only) | Claude Code session, epic S1-E1 plan, 17 Oct 2026 |
 | The /design components page is reachable locally and on staging only, never in production | Claude Code session, epic S1-E1 plan, 17 Oct 2026 |
+| Night mode colours are derived from the board colours and shown on the /design page | Claude Code session (S1-E1-03), 17 Oct 2026 |
+| The focus ring is plum on light backgrounds and gold on dark ones | Claude Code session (S1-E1-03), 17 Oct 2026 |
+| Night mode follows the device setting by default, with a Device / Light / Night drop-down in the footer and no switch in the top bar | Claude Code session (S1-E1-03), 17 Oct 2026 |
+| Audit log entries are kept for 3 years; the purge job comes with the retention jobs story (S1-E13-04), and until then the log stays append-only for every role | Claude Code session (S1-E1-03), 17 Oct 2026, 17:41 |
 
 ## Notes from the CTO pack (decisions applied to the stories)
 

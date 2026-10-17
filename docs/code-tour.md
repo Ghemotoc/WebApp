@@ -2,15 +2,15 @@
 
 The map for a new developer: where the app starts, how one click travels to the database and back, where each kind of thing lives, and what to read first. Created by S1-E1-01. Every story that adds a feature, table, edge function or job adds a few lines here in the same pull request (CLAUDE.md, Readable code).
 
-Today the app is a skeleton: one empty home page, the brand config, translations and CI (S1-E1-01), and the database baseline with its seed personas (S1-E1-02). Sections below say which later story fills in each part, so you can tell what exists from what is planned.
+Today the app is a skeleton: one home page, the brand config, translations and CI (S1-E1-01), the database baseline with its seed personas (S1-E1-02), and the design tokens, light and night mode, the app shell and the /design components page (S1-E1-03). Sections below say which later story fills in each part, so you can tell what exists from what is planned.
 
 ## Where the app starts
 
-1. **`index.html`** is the only HTML page. The browser loads it first. It holds an empty `<div id="root">` and loads `src/main.tsx`. Its `<title>` is filled in from the brand config at build time by `vite.config.ts`.
+1. **`index.html`** is the only HTML page. The browser loads it first. Its `<head>` runs `public/theme-init.js`, which picks light or night mode before anything draws. It holds an empty `<div id="root">` and loads `src/main.tsx`. Its `<title>` is filled in from the brand config at build time by `vite.config.ts`.
 2. **`src/main.tsx`** starts the app in four steps: find the root element, start the translations (`src/lib/i18n.ts`, Romanian first), build the router from `src/app/router.tsx`, and draw everything inside `src/app/AppProviders.tsx`.
 3. **`src/app/AppProviders.tsx`** wraps every screen with the shared services: TanStack Query (the data cache that hooks use to talk to Supabase) and i18next (translations).
-4. **`src/app/router.tsx`** lists every address and the page it shows. Today: `/` shows `HomePage`; any other address goes back to `/` until S1-E1-05 adds a 404 page.
-5. **`src/features/<feature>/components/<Page>.tsx`** is the page itself, for example `src/features/home/components/HomePage.tsx`.
+4. **`src/app/router.tsx`** lists every address and the page it shows. Every public page sits inside **`src/app/shell/AppLayout.tsx`**: a "Skip to content" link, the `TopBar`, the page in `<main>`, then the `Footer` with the Device / Light / Night drop-down. Today: `/` shows `HomePage`; `/design` shows every component (development and staging only); any other address goes back to `/` until S1-E1-05 adds a 404 page.
+5. **`src/features/<feature>/components/<Page>.tsx`** is the page itself, for example `src/features/home/components/HomePage.tsx`. Pages build on the shared components in `src/components/ui/`.
 
 The product name, site, email addresses and social handle come from **`src/config/brand.ts`** only (decided 17 Oct 2026, 12:47). Translations say `{{productName}}` and i18next fills it in from that file. A test (`scripts/find-hard-coded-brand-values.test.ts`) fails if any of those values is typed anywhere else in `src/`, `supabase/`, `public/`, `e2e/` or `index.html`.
 
@@ -47,14 +47,18 @@ Things that need a secret or talk to another company (email, the picture check, 
 | Folder or file | What it holds | Built by |
 | --- | --- | --- |
 | `src/main.tsx`, `src/app/` | Start-up, providers and the route list | S1-E1-01 |
-| `src/config/brand.ts` | Product name, site, email addresses, social handle (front end only) | S1-E1-01 |
+| `src/app/shell/`, `src/app/navigation.ts` | The frame around pages: top bar, footer, staff bar, and the links each one shows (only pages that exist) | S1-E1-03 |
+| `src/components/ui/`, `src/components/icons/` | Shared components (buttons, drop-down, fields, pills, chips, cards, shelves, notices, ad slots) and the few plain icons; see its README | S1-E1-03 |
+| `src/features/theme/` | Light and night mode: the footer drop-down and the hook that applies it | S1-E1-03 |
+| `src/features/design-system/` | The /design page: every token and component on one page, with live contrast ratios | S1-E1-03 |
+| `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
 | `src/lib/` | Shared helpers: `i18n.ts` (translations), `utils.ts` (`cn` for class names), `database.types.ts` (generated, never edited by hand), and later the Supabase client and `platform/` adapters | S1-E1-01, then S1-E1-02 and later |
 | `src/locales/ro/`, `src/locales/en/` | All interface text, one JSON file per namespace; same keys in both | S1-E1-01, S1-E1-04 |
-| `src/styles/index.css` | Tailwind and, from S1-E1-03, the design tokens | S1-E1-01, S1-E1-03 |
+| `src/styles/` | `tokens.css` (every colour, light and night, plus fonts, radii and shadows, all from the boards), `fonts.css` (self-hosted fonts), `index.css` (global rules: focus ring, reduce motion, tmc-* classes), `contrast-pairs.ts` (the pairs CI checks) | S1-E1-01, S1-E1-03 |
 | `src/schemas/` | zod schemas shared with edge functions | first story with a form or function |
 | `src/test/` | Test set-up; later fixtures and MSW mocks | S1-E1-01 |
-| `public/` | Files copied as they are into `dist/`, for example `_redirects` (every address serves `index.html` on Cloudflare Pages) | S1-E1-01 |
+| `public/` | Files copied as they are into `dist/`: `_redirects` (every address serves `index.html` on Cloudflare Pages) and `theme-init.js` (light or night before the first paint) | S1-E1-01, S1-E1-03 |
 | `supabase/config.toml` | Local Supabase settings; also read by Supabase's GitHub integration | S1-E1-01 |
 | `supabase/migrations/` | Every schema change, as SQL files. The only way the database changes (CLAUDE.md rule 3). Staging gets them from Supabase's GitHub integration when main changes | S1-E1-02 onwards |
 | `supabase/functions/` | Edge functions (Deno), the only code that may hold secrets | first story with a function |
@@ -96,6 +100,7 @@ Read in this order; each file's header comment says what it is for and where thi
 3. `src/features/home/components/HomePage.tsx` and its test: the smallest complete feature.
 4. `src/config/brand.ts` and `src/lib/i18n.ts`: where the name and the words come from.
 5. `src/locales/ro/common.json` and `src/locales/en/common.json`: the interface text.
-6. `supabase/README.md`, then `supabase/migrations/` in order, `supabase/seed.sql` and `supabase/tests/database/010-profiles.test.sql`: the database side and how a policy is tested.
-7. `.github/workflows/ci.yml`: what has to pass before anything merges.
-8. `e2e/home.spec.ts` and `scripts/`: how the checks prove each rule.
+6. `src/styles/tokens.css`, `src/components/ui/README.md` and `/design` in the running app (`npm run dev`, then open /design): how screens look and which components to reuse.
+7. `supabase/README.md`, then `supabase/migrations/` in order, `supabase/seed.sql` and `supabase/tests/database/010-profiles.test.sql`: the database side and how a policy is tested.
+8. `.github/workflows/ci.yml`: what has to pass before anything merges.
+9. `e2e/home.spec.ts` and `scripts/`: how the checks prove each rule.

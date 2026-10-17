@@ -1,8 +1,54 @@
 {
   "home": {
     "documentTitle": "{{productName}}",
+    "eyebrow": "Pentru scriitori și cititori",
     "welcome": "Bun venit la {{productName}}",
     "tagline": "Un loc pentru povești, poezii și eseuri.",
     "comingSoon": "Construim platforma chiar acum. Revino curând."
+  },
+  "shell": {
+    "skipToContent": "Sari la conținut",
+    "mainNavigation": "Principal",
+    "footerNavigation": "Subsol",
+    "madeBy": "O aplicație de la {{companyName}}"
+  },
+  "nav": {
+    "home": "Acasă",
+    "discover": "Descoperă",
+    "library": "Biblioteca",
+    "forums": "Forumuri",
+    "messages": "Mesaje"
+  },
+  "theme": {
+    "label": "Temă",
+    "device": "Ca pe dispozitiv",
+    "light": "Luminoasă",
+    "night": "Noapte"
+  },
+  "shelf": {
+    "regionLabel": "{{title}}, se derulează lateral",
+    "scrollBack": "Derulează înapoi",
+    "scrollForward": "Derulează înainte",
+    "viewMore": "Vezi mai multe",
+    "viewMoreHint": "Toate cele {{count}} din {{title}}"
+  },
+  "ads": {
+    "regionLabel": "Reclamă",
+    "labelAd": "Reclamă",
+    "labelSponsored": "Sponsorizat",
+    "whyThisAd": "De ce văd asta?"
+  },
+  "staff": {
+    "pill": "Echipă",
+    "navigation": "Echipă",
+    "signOut": "Ieși din cont",
+    "everyActionLogged": "Fiecare acțiune și fiecare citire sensibilă sunt înregistrate.",
+    "nav": {
+      "queue": "Coadă",
+      "appeals": "Contestații",
+      "users": "Utilizatori",
+      "stories": "Povești",
+      "settings": "Setări"
+    }
   }
 }
