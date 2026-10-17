@@ -12,6 +12,8 @@ import type { i18n as I18nInstance } from 'i18next';
 import { useState, type ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
+import { shouldRetryQuery } from '@/lib/query-retry';
+
 /** What AppProviders needs: the page to wrap and the translation instance to use. */
 interface AppProvidersProps {
   children: ReactNode;
@@ -27,7 +29,11 @@ interface AppProvidersProps {
  */
 export function AppProviders({ children, i18n }: AppProvidersProps) {
   // One data cache for the lifetime of the app. useState keeps the same cache across re-renders.
-  const [queryClient] = useState(() => new QueryClient());
+  // A refused read (401 or 403) fails at once instead of after about 7 seconds of retries
+  // (src/lib/query-retry.ts; Robert's staging check, 17 Oct 2026).
+  const [queryClient] = useState(
+    () => new QueryClient({ defaultOptions: { queries: { retry: shouldRetryQuery } } }),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>

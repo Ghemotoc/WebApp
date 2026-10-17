@@ -10,6 +10,7 @@
  *   (supabase/migrations/…_s1_e14_01_legal_gate.sql). Both only ever touch the caller's own rows.
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
+import { refusalCause } from '@/lib/query-retry';
 import type { Database } from '@/lib/database.types';
 
 /** One published version of a document, in one language (generated type, CLAUDE.md rule 14). */
@@ -35,22 +36,28 @@ export type DocumentToAccept =
  * @param client - the shared Supabase client
  * @param documentSlug - for example 'terms'
  * @returns the versions (an empty list when the document doesn't exist)
- * Errors: throws with Supabase's message when the database can't be reached; the page shows a
- *   plain "couldn't load" message and a way to try again.
+ * Errors: throws with Supabase's message, and the response status as the cause, when the
+ *   database refuses or can't be reached; the page shows a plain "couldn't load" message and a
+ *   way to try again. A refusal is not retried (src/lib/query-retry.ts).
  */
 export async function fetchLegalVersions(
   client: AppSupabaseClient,
   documentSlug: string,
 ): Promise<LegalVersion[]> {
   // The join keeps only versions of the named document; the policy hides versions not live yet.
-  const { data, error } = await client
+  const { data, error, status } = await client
     .from('legal_document_versions')
     .select(
       'id, version_label, language, title, body_markdown, change_summary, is_lawyer_reviewed, published_at, legal_documents!inner(slug)',
     )
     .eq('legal_documents.slug', documentSlug)
     .order('published_at', { ascending: false });
-  if (error !== null) throw new Error(`Could not read the legal document: ${error.message}`);
+  // The status goes with the error, so a refusal (401 or 403) isn't retried (src/lib/query-retry.ts).
+  if (error !== null) {
+    throw new Error(`Could not read the legal document: ${error.message}`, {
+      cause: refusalCause(status, error),
+    });
+  }
   // Keep the version's own columns; the joined document was only needed to filter by slug.
   return data.map((row) => ({
     id: row.id,
@@ -74,8 +81,12 @@ export async function fetchLegalVersions(
 export async function fetchDocumentsToAccept(
   client: AppSupabaseClient,
 ): Promise<DocumentToAccept[]> {
-  const { data, error } = await client.rpc('my_legal_documents_to_accept');
-  if (error !== null) throw new Error(`Could not check the legal documents: ${error.message}`);
+  const { data, error, status } = await client.rpc('my_legal_documents_to_accept');
+  if (error !== null) {
+    throw new Error(`Could not check the legal documents: ${error.message}`, {
+      cause: refusalCause(status, error),
+    });
+  }
   return data;
 }
 

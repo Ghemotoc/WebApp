@@ -66,5 +66,11 @@
       "stories": "Povești",
       "settings": "Setări"
     }
+  },
+  "notFound": {
+    "documentTitle": "Pagina nu a fost găsită",
+    "heading": "Nu găsim pagina asta",
+    "body": "Poate linkul e vechi sau pagina a fost mutată ori ștearsă. Întoarce-te la prima pagină ca să citești mai departe.",
+    "goHome": "Mergi la prima pagină"
   }
 }

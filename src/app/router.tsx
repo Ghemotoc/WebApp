@@ -20,6 +20,7 @@ import { HomePage } from '@/features/home/components/HomePage';
 import { LegalCentrePage } from '@/features/legal/components/LegalCentrePage';
 
 import { AppLayout } from './shell/AppLayout';
+import { NotFoundPage } from './shell/NotFoundPage';
 
 /**
  * Whether this build includes the /design components page: always in development, and on staging
@@ -81,9 +82,9 @@ export const appRoutes: RouteObject[] = [
       { path: '/settings', element: <SettingsPage /> },
       staffRolesRoute,
       ...(isDesignPageIncluded ? [designRoute] : []),
-      // Any other address goes back home for now, so nobody sees React Router's built-in English
-      // error page. S1-E1-05 replaces this with a proper 404 page in both languages.
-      { path: '*', element: <Navigate to="/" replace /> },
+      // Any other address: "We can't find that page" in the reader's language (S1-E2-QA, board
+      // 7.4). S1-E1-05 adds the board's search button and doodles after March.
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ];
