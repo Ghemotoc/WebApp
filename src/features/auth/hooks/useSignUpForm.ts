@@ -1,16 +1,20 @@
 /**
- * useSignUpForm: the sign-up form's answers, its checks and sending it (story S1-E2-01).
+ * useSignUpForm: the sign-up form's answers, its checks and sending it (stories S1-E2-01, S1-E2-02).
  *
  * Who calls it: SignUpForm (src/features/auth/components/).
  * What it calls, in order, when the person presses "Create account":
  * 1. the form rules (src/schemas/signUp.ts): every field at once, so all problems show together;
  * 2. the leaked-password check (lib/passwordLeak.ts), for a password sign-up;
  * 3. api/signUp.ts → Supabase Auth → the sign-up trigger, which checks everything again.
+ * Before any of that, the age rules (src/lib/age.ts): a year that makes the person under 13, or
+ * under 18 while adults_only is on, is refused; every answer is cleared and nothing is sent
+ * ("We don't keep anything you typed", S1-E2-02).
  * What it returns: the answers and a setter per field, the problems to show (translation keys),
- * whether it is sending, a failure reason, and the email the link went to once it has.
+ * the age outcome, whether it is sending, a failure or refusal, and the email the link went to.
  */
 import { useState } from 'react';
 
+import { romanianToday, signUpAgeOutcome, type SignUpAgeOutcome } from '@/lib/age';
 import { getSupabaseClient } from '@/lib/supabase';
 import { findSignUpProblems, type SignUpAnswers, type SignUpProblems } from '@/schemas/signUp';
 
@@ -27,8 +31,25 @@ const emptyDraft: SignUpDraft = {
   password: '',
   confirmPassword: '',
   birthYear: '',
+  birthMonth: '',
   acceptsTerms: false,
 };
+
+/** The two age outcomes that end sign-up. */
+export type AgeRefusalReason = Extract<SignUpAgeOutcome, 'under_13' | 'adults_only'>;
+
+/**
+ * What the age rules say about the year and month chosen so far.
+ *
+ * @param answers - the form's answers
+ * @param isAdultsOnly - the adults_only flag
+ * @returns the outcome (see src/lib/age.ts)
+ */
+function ageOutcomeOf(answers: SignUpDraft, isAdultsOnly: boolean): SignUpAgeOutcome {
+  const year = answers.birthYear === '' ? null : Number(answers.birthYear);
+  const month = answers.birthMonth === '' ? null : Number(answers.birthMonth);
+  return signUpAgeOutcome(year, month, isAdultsOnly, romanianToday());
+}
 
 /**
  * Sends the answers once they pass every check in the browser.
@@ -59,14 +80,17 @@ async function sendSignUp(
  * The form's state and actions.
  *
  * @param context - the invite, the legal versions and the language, or null while they load
- * @returns answers, setField, problems, submit, isSending, failure and sentTo
+ * @param isAdultsOnly - the adults_only flag (on in March)
+ * @returns answers, setField, problems, ageOutcome, submit, isSending, failure, refusedFor, sentTo
  */
-export function useSignUpForm(context: SignUpContext | null) {
+export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boolean) {
   const [answers, setAnswers] = useState<SignUpDraft>(emptyDraft);
   const [problems, setProblems] = useState<SignUpProblems>({});
   const [isSending, setIsSending] = useState(false);
   const [failure, setFailure] = useState<SignUpFailure | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
+  const [refusedFor, setRefusedFor] = useState<AgeRefusalReason | null>(null);
+  const ageOutcome = ageOutcomeOf(answers, isAdultsOnly);
 
   /** Changes one answer and clears that field's problem. */
   function setField<Field extends keyof SignUpDraft>(field: Field, value: SignUpDraft[Field]) {
@@ -77,6 +101,12 @@ export function useSignUpForm(context: SignUpContext | null) {
   /** Checks and sends the form; shows problems or the "check your email" step. */
   async function submit() {
     if (context === null || isSending) return;
+    // The age rules first: a refusal clears every answer and sends nothing.
+    if (ageOutcome === 'under_13' || ageOutcome === 'adults_only') {
+      setAnswers(emptyDraft);
+      setRefusedFor(ageOutcome);
+      return;
+    }
     setIsSending(true);
     setFailure(null);
     try {
@@ -90,5 +120,15 @@ export function useSignUpForm(context: SignUpContext | null) {
     }
   }
 
-  return { answers, setField, problems, submit, isSending, failure, sentTo };
+  return {
+    answers,
+    setField,
+    problems,
+    ageOutcome,
+    submit,
+    isSending,
+    failure,
+    refusedFor,
+    sentTo,
+  };
 }

@@ -49,7 +49,7 @@ async function fillSignUp(page: Page, address: string, password: string) {
   await page.getByLabel('Email', { exact: true }).fill(address);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByLabel('Confirm password').fill(password);
-  await page.getByLabel('Year of birth').selectOption('1990');
+  await page.getByRole('combobox', { name: 'Year of birth' }).selectOption('1990');
   await page.getByRole('checkbox').check();
 }
 

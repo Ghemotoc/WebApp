@@ -7,6 +7,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `Button` | Primary, secondary, text and destructive buttons, 44, 48 or 52 px |
 | `Select` | The one drop-down style (only as wide as its longest option, 44 px, 14 px chevron) |
 | `TextInput`, `Textarea`, `SearchInput` | Labelled fields with hints and errors linked for screen readers |
+| `InfoTooltip` | The one tooltip pattern: a 32 px "i" button that opens on hover, focus or tap, closes with Escape and describes its field (S1-E2-02) |
 | `InfoPill` | Six information pill tones (pills tell) |
 | `Chip` | A switchable filter (chips do): tick plus aria-pressed when selected |
 | `Card`, `LabelRows`, `Eyebrow`, `EmptyState`, `Notice` | Panels, label and value rows with fine lines, eyebrow labels, empty states, coloured messages |

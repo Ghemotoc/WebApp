@@ -4,8 +4,9 @@
  * Who calls it: hooks/useSignUp.ts.
  * What it calls next: Supabase Auth. A password sign-up uses signUp(); "Email me a log-in link
  * instead" uses signInWithOtp(), which makes the account on first use. Both send the same sign-up
- * data, which the trigger in supabase/migrations/…_s1_e2_01_sign_up_trigger.sql checks before the
- * account exists: the invite, the year of birth, the accepted legal versions and the language.
+ * data, which the sign-up trigger (…_s1_e2_01_sign_up_trigger.sql, updated by …_s1_e2_02_birth_checks.sql)
+ * checks before the account exists: the invite, the year (and month) of birth, the accepted legal
+ * versions and the language.
  * Either way Supabase emails a link (supabase/templates/), and the account can read but not write
  * until the email is confirmed.
  * Privacy: nothing here is logged (CLAUDE.md rule 12); errors carry Supabase's error code only.
@@ -66,6 +67,8 @@ export async function signUp(
   // Step 1: the data the sign-up trigger checks.
   const data = {
     birth_year: answers.birthYear,
+    // Only when the year needed it; the database ignores a month for any other year (S1-E2-02).
+    birth_month: answers.birthMonth === '' ? null : answers.birthMonth,
     invite_code: context.inviteCode,
     accepted_terms_version_id: context.termsVersionId,
     accepted_privacy_version_id: context.privacyVersionId,

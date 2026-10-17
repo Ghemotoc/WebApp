@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
@@ -49,6 +50,15 @@ export function FormSection() {
           defaultValue="A"
         />
         <Textarea id="design-comment" label={t('forms.textareaLabel')} />
+        {/* The tooltip pattern (S1-E2-02): hover, focus or tap; Escape closes it. */}
+        <div className="relative flex items-center gap-2">
+          <span className="text-sm font-semibold text-ink">{t('forms.tooltipLabel')}</span>
+          <InfoTooltip
+            tooltipId="design-tooltip"
+            buttonLabel={t('forms.tooltipButton')}
+            text={t('forms.tooltipText')}
+          />
+        </div>
         <SearchInput
           id="design-search"
           label={t('forms.searchLabel')}

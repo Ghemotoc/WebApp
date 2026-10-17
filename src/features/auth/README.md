@@ -12,3 +12,11 @@ Sign-up (S1-E2-01):
 - `components/AccountLinks.tsx`: the top bar's "Join for free" while signed out.
 - `api/signUp.ts` (Supabase Auth), `api/invites.ts` (`check_invite()`), `lib/passwordLeak.ts` (the leaked-password check, ADR 0003), `lib/birthYears.ts`.
 - The database side is one trigger (ADR 0002); see `supabase/README.md`, "Sign-up".
+
+Year of birth (S1-E2-02):
+
+- `components/BirthFields.tsx`: the year, the month only when the year leaves the age unclear at 13 or 16, and the inline "Sorry, you can't create an account right now." alert.
+- `components/YearOfBirthField.tsx`, `components/MonthOfBirthField.tsx`: the drop-downs, each with the shared `InfoTooltip` explaining why.
+- `components/AgeRefusal.tsx`: the full refusal (under 13, or under 18 while `adults_only` is on); the answers are cleared and nothing is sent.
+- The rules are in `src/lib/age.ts`, and the database applies the same ones (`sign_up_age_outcome()`).
+

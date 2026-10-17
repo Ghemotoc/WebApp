@@ -188,3 +188,54 @@ describe('the sign-up form', () => {
     );
   });
 });
+
+describe('the year of birth (S1-E2-02)', () => {
+  beforeEach(() => inviteAnswer('valid'));
+
+  /** A year that makes the person this old by year this year. */
+  const yearsAgo = (years: number) => String(new Date().getFullYear() - years);
+
+  it('asks for the month only when the year leaves the age unclear at 13 or 16', () => {
+    openSignUp('/join/GOOD');
+    fireEvent.change(screen.getByLabelText('Year of birth'), { target: { value: yearsAgo(16) } });
+    expect(screen.getByLabelText('Month of birth')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Year of birth'), { target: { value: yearsAgo(30) } });
+    expect(screen.queryByLabelText('Month of birth')).not.toBeInTheDocument();
+  });
+
+  it('explains why in a tooltip, without promising an age check while the test is adults only', () => {
+    openSignUp('/join/GOOD');
+    expect(screen.getByLabelText('Year of birth')).toHaveAccessibleDescription(
+      'We ask for the year, and sometimes the month, to pick the right safety settings.',
+    );
+    expect(screen.queryByText('A quick age check comes next.')).not.toBeInTheDocument();
+  });
+
+  it('refuses an under-13, keeps nothing and sends nothing', async () => {
+    openSignUp('/join/GOOD');
+    fillForm();
+    fireEvent.change(screen.getByLabelText('Year of birth'), { target: { value: yearsAgo(10) } });
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Sorry, you can’t create an account right now.',
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(
+      await screen.findByText(
+        'We don’t keep anything you typed. You can try again once you turn 13.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText('Email')).not.toBeInTheDocument();
+    expect(signUp).not.toHaveBeenCalled();
+  });
+
+  it('while the test is adults only, refuses a 15-year-old kindly and sends nothing', async () => {
+    openSignUp('/join/GOOD');
+    fillForm();
+    fireEvent.change(screen.getByLabelText('Year of birth'), { target: { value: yearsAgo(17) } });
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(
+      await screen.findByText(/This early test is for invited adults only/),
+    ).toBeInTheDocument();
+    expect(signUp).not.toHaveBeenCalled();
+  });
+});
