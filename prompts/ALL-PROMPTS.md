@@ -24,7 +24,7 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 **When the canvas changes:** ask Claude (in the WattPad Better Be Gone project) to refresh `design/` in the repository, so Claude Code always builds from the latest boards.
 
 
-**March MVP: 59 stories.**
+**March MVP: 63 stories.**
 
 | # | Story | Title | Priority | Size | Wave |
 | --- | --- | --- | --- | --- | --- |
@@ -65,28 +65,32 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 | 35 | S1-E10-08 | "Copied from a published work" report | Must | M | Wave 3: Safety and staff |
 | 36 | S1-E10-13a | Country-specific emergency and safety contacts | Must | M (split, decided 17 Oct 2026, 12:44: 13a in the March MVP, S: the table seeded from the researched defaults and the per-country block; 13b after March, M: the editing screen, the monthly check job with its ticket and the 45-day warning, starting at go-live) | Wave 3: Safety and staff |
 | 37 | S1-E11-02 | User management | Must | M | Wave 3: Safety and staff |
-| 38 | S1-E11-17 | Invite links for the March test | Must | S | Wave 3: Safety and staff |
-| 39 | S1-E11-QA | Epic check: Admin site | Must | S | Wave 3: Safety and staff |
-| 40 | S1-E5-01 | Browse by category and tag | Must | M | Wave 4: Social and discovery |
-| 41 | S1-E6-01 | Comment on a chapter | Must | M | Wave 4: Social and discovery |
-| 42 | S1-E6-02 | Emoji reactions on comments | Must | S | Wave 4: Social and discovery |
-| 43 | S1-E6-03 | Like a chapter | Must | S | Wave 4: Social and discovery |
-| 44 | S1-E6-04 | Private downvote | Must | S | Wave 4: Social and discovery |
-| 45 | S1-E6-05 | Follow a writer or a story | Must | S | Wave 4: Social and discovery |
-| 46 | S1-E6-QA | Epic check: Comments, reactions and follows | Must | S | Wave 4: Social and discovery |
-| 47 | S1-E7-01 | In-app notifications | Must | M | Wave 4: Social and discovery |
-| 48 | S1-E10-04 | Statements of reasons | Must | M | Wave 3: Safety and staff |
-| 49 | S1-E10-QA | Epic check: Reporting, moderation and safety | Must | S | Wave 3: Safety and staff |
-| 50 | S1-E7-QA | Epic check: Notifications | Must | S | Wave 4: Social and discovery |
-| 51 | S1-E14-04 | Contact us with a ready-made EU helpdesk | Must | S | Wave 5: Rights, numbers and shipping |
-| 52 | S1-E14-QA | Epic check: Legal pages and compliance | Must | S | Wave 5: Rights, numbers and shipping |
-| 53 | S1-E15-02 | First-party metrics for the March test | Must | M | Wave 5: Rights, numbers and shipping |
-| 54 | S1-E5-03 | Popularity ranking | Must | M | Wave 4: Social and discovery |
-| 55 | S1-E5-02 | Sort options | Must | S | Wave 4: Social and discovery |
-| 56 | S1-E5-09 | See all page for a shelf | Must | S | Wave 4: Social and discovery |
-| 57 | S1-E5-08 | Public website home page | Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) | M | Wave 4: Social and discovery |
-| 58 | S1-E5-QA | Epic check: Discovery, search and profiles | Must | S | Wave 4: Social and discovery |
-| 59 | S1-E15-QA | Epic check: Analytics and the March test | Must | S | Wave 5: Rights, numbers and shipping |
+| 38 | S1-E11-06 | Website CMS and home page copy | Must | M | Wave 3: Safety and staff |
+| 39 | S1-E11-10 | Website notice banners | Should | S | Wave 3: Safety and staff |
+| 40 | S1-E11-12 | Help pages and questions | Should | M | Wave 3: Safety and staff |
+| 41 | S1-E11-17 | Invite links for the March test | Must | S | Wave 3: Safety and staff |
+| 42 | S1-E11-18 | Edit interface text | Must | M | Wave 3: Safety and staff |
+| 43 | S1-E11-QA | Epic check: Admin site | Must | S | Wave 3: Safety and staff |
+| 44 | S1-E5-01 | Browse by category and tag | Must | M | Wave 4: Social and discovery |
+| 45 | S1-E5-08 | Public website home page | Should (proposal: for the March test a short version is enough: the hero, the safety lines and the questions; the live rows can follow) | M | Wave 4: Social and discovery |
+| 46 | S1-E6-01 | Comment on a chapter | Must | M | Wave 4: Social and discovery |
+| 47 | S1-E6-02 | Emoji reactions on comments | Must | S | Wave 4: Social and discovery |
+| 48 | S1-E6-03 | Like a chapter | Must | S | Wave 4: Social and discovery |
+| 49 | S1-E6-04 | Private downvote | Must | S | Wave 4: Social and discovery |
+| 50 | S1-E6-05 | Follow a writer or a story | Must | S | Wave 4: Social and discovery |
+| 51 | S1-E6-QA | Epic check: Comments, reactions and follows | Must | S | Wave 4: Social and discovery |
+| 52 | S1-E7-01 | In-app notifications | Must | M | Wave 4: Social and discovery |
+| 53 | S1-E10-04 | Statements of reasons | Must | M | Wave 3: Safety and staff |
+| 54 | S1-E10-QA | Epic check: Reporting, moderation and safety | Must | S | Wave 3: Safety and staff |
+| 55 | S1-E7-QA | Epic check: Notifications | Must | S | Wave 4: Social and discovery |
+| 56 | S1-E14-04 | Contact us with a ready-made EU helpdesk | Must | S | Wave 5: Rights, numbers and shipping |
+| 57 | S1-E14-QA | Epic check: Legal pages and compliance | Must | S | Wave 5: Rights, numbers and shipping |
+| 58 | S1-E15-02 | First-party metrics for the March test | Must | M | Wave 5: Rights, numbers and shipping |
+| 59 | S1-E5-03 | Popularity ranking | Must | M | Wave 4: Social and discovery |
+| 60 | S1-E5-02 | Sort options | Must | S | Wave 4: Social and discovery |
+| 61 | S1-E5-09 | See all page for a shelf | Must | S | Wave 4: Social and discovery |
+| 62 | S1-E5-QA | Epic check: Discovery, search and profiles | Must | S | Wave 4: Social and discovery |
+| 63 | S1-E15-QA | Epic check: Analytics and the March test | Must | S | Wave 5: Rights, numbers and shipping |
 
 ## Prompts for every Stage 1 story
 
@@ -2224,28 +2228,30 @@ Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-08 Public website home page
-Should · M · March MVP (wave 4) · Depends on: S1-E1-03, S1-E1-04, S1-E5-03 (for the rows), S1-E5-09 (View more); S1-E16-02 for the download links (after March); S1-E11-06 and S1-E11-12 later move the copy and questions to the website database (after March); back end for March: the locale files and the app's own public views or public-shelves
+Should · M · March MVP (wave 4) · Depends on: S1-E1-03, S1-E1-04, S1-E11-06, S1-E11-12; S1-E5-03 and S1-E5-09 for the live rows (rows can follow), S1-E16-02 for the download links (after March)
 
 ```text
 We are working on story S1-E5-08 (Public website home page) only. Read CLAUDE.md, docs/architecture.md (1.7.4 group A and 1.8.6), docs/definition-of-done.md and the story in docs/stories/s1-e05-discovery-search-and-profiles.md.
 
 CONTEXT
-- Already merged: S1-E1-03, S1-E1-04, S1-E5-03, S1-E5-09. S1-E11-06, S1-E11-12 and S1-E16-02 are after March.
-- Where it lives (decided 17 Oct 2026, 12:34): until the apps exist everything is on the web, so for March this home page is a page inside the web app, in this repository. Its copy (hero, safety lines, questions) comes from the locale files in src/locales/ro and src/locales/en; its live rows come from the app's own public views or public-shelves. There is no separate website database yet: don't create one and don't build the WebsiteContentStore. The CMS stories (S1-E11-06, 10, 11, 12) and the website database come later and will move the copy out of the locale files. Build the short version (proposal in the story): hero, safety lines, questions and download buttons; the live rows can follow. Confirm the scope with me in the plan.
+- Already merged: S1-E1-03, S1-E1-04, S1-E11-06 (the website CMS core and the home page copy, with the WebsiteContentStore contract in the app's database), S1-E11-12 (help pages and questions), S1-E2-10 (the country from the connection). S1-E5-03 and S1-E5-09 may be merged for the live rows; S1-E16-02 is after March.
+- Where it lives (decided 17 Oct 2026, 12:34): until the apps exist everything is on the web, so for March this home page is a page inside the web app, in this repository. There is no separate website database yet: don't create one.
+- Where the text comes from (Robert, chat, 17 Oct 2026, 19:14 and 19:16): the hero, safety lines and questions come only from the CMS (the published views from S1-E11-06 and S1-E11-12), never from the locale files; this replaces the 12:34 rule that put the copy in the locale files. The page shows the published version for the visitor's market (the country from the connection) and language; a visitor from a country with no page of its own sees the Romanian market's English page. If a CMS read fails, it shows the last published version. The top bar, footer and language menu are interface text: they stay in the locale files (admins can override them through S1-E11-18). CMS content is stored in the app's database behind the WebsiteContentStore contract until the website database exists; read it only through that contract.
+- Build the short version for March (proposal in the story): hero, safety lines, questions; the live rows can follow. Confirm the scope with me in the plan.
 - Platform: web only.
-- Decisions that apply: "Write stories. Get read." with "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." (no "articles"); "Yoti does the age check. We only get the result, never a photo."; one messaging line: never between under-16s and adults, off by default for 16 and 17-year-olds (Q6, Q13); "parent or guardian" (Q8); language drop-down in top bar and footer (Q11); Romanian is the default interface language; the separate website with its own database (Q54) comes after March, and for March the page lives inside the app (decided 17 Oct 2026, 12:34); EU hosting (Q38).
-- Designs: design/boards/Website-Home.dc.html with design/renders/desktop/Website-Home.jpg and design/renders/phone/Website-Home.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces: for March, no B31 website database: the copy live on 16 Oct 2026 and the 16 Oct questions go into the ro and en locale files; the rows read the app's public views (or public-shelves), with a fixture of 12 stories including one app-only story until S1-E5-03's ranking runs. Download buttons use fixed links.
-- Watch-outs: public-shelves returns only public All ages or 13+ stories, never chapter text of app-only stories, nothing from class spaces, never a user ID. No cookies, no third-party script (cookieless analytics is S1-E15-01, after March); one h1 and the right lang attribute. The claims must stay true (Law 363/2007). Leave out the board's contest block: no contest is planned for now (decided 17 Oct 2026, 12:34). Hosting is Cloudflare Pages (decided 17 Oct 2026, 12:57). Stop and ask me: what the download buttons point to while March is web only.
+- Decisions that apply: "Write stories. Get read." with "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." (no "articles"), seeded as CMS version 1; one messaging line: never between under-16s and adults, off by default for 16 and 17-year-olds (Q6, Q13); "parent or guardian" (Q8); language drop-down in top bar and footer (Q11); Romanian is the default interface language; the March test is invited adults only (17 Oct 2026, 12:44); EU hosting (Q38) on Cloudflare Pages (17 Oct 2026, 12:57).
+- Designs: design/boards/Website-Home.dc.html with design/renders/desktop/Website-Home.jpg and design/renders/phone/Website-Home.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). Read docs/board-fixes.md first: the board's FAQ and safety lines describe the public launch.
+- Back-end pieces: B31 published CMS views in the app's database (real, from S1-E11-06 and S1-E11-12); the rows read the app's public views (or public-shelves), with a fixture of 12 stories including one app-only story until S1-E5-03's ranking runs.
+- Watch-outs: public-shelves returns only public All ages or 13+ stories, never chapter text of app-only stories, nothing from class spaces, never a user ID. No cookies, no third-party script (cookieless analytics is S1-E15-01, after March); one h1 and the right lang attribute for the CMS language shown. The claims must stay true (Law 363/2007): for the invited-adults March test the safety copy published in the CMS must be true for March, for example no claim that Yoti checks ages while S1-E2-08 is not live; if version 1 in the CMS says so, tell me and don't change the copy in code. Leave out the board's contest block: no contest is planned for now (decided 17 Oct 2026, 12:34). Stop and ask me: what the download buttons point to while March is web only (proposal: hide them until the apps exist).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
-2. The locale keys for the copy, the public view or public-shelves contract (zod) and any migration with RLS and allowed and denied pgTAP tests.
+2. How the page reads the CMS (the WebsiteContentStore read for the market and language, the fallback and the last-published cache), the public view or public-shelves contract (zod) and any migration with RLS and allowed and denied pgTAP tests.
 3. A table mapping each acceptance criterion to the test that proves it (mark which wait for the live rows).
-4. i18n keys (ro and en), analytics events and moderation hooks.
+4. i18n keys (ro and en) for interface text only (top bar, footer, row labels; no page copy), analytics events and moderation hooks.
 5. Every OPEN or unclear point as a question.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-08: Public website home page". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer as a signed-out visitor in Romanian and English; the PR description from .github/pull_request_template.md.
+STEP 2, after I approve: build it, run every check in CLAUDE.md and check that the code follows the Readable code section of CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-08: Public website home page". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer as a signed-out visitor in Romanian and English, as a visitor from a country with no page of its own, and after an admin publishes a change in the CMS; the PR description from .github/pull_request_template.md.
 
 QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
 1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
@@ -4021,27 +4027,28 @@ QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste 
 Then give me the hand-test steps STEP 2 asks for.
 ```
 
-### S1-E11-06 Website home page copy
-Should · M · After March · Depends on: S1-E11-01, S1-E11-03, S1-E2-07, the website's own database and the `website-cms` bridge
+### S1-E11-06 Website CMS and home page copy
+Must · M · March MVP (wave 3) · Depends on: S1-E11-01, S1-E2-07a, S1-E1-04; markets come from the seeded markets list (S1-E11-05, the markets screen, after March)
 
 ```text
-We are working on story S1-E11-06 (Website home page copy) only. Read CLAUDE.md, docs/architecture.md (sections 1.7.4 group A and 1.8.6), docs/definition-of-done.md and the story in docs/stories/s1-e11-admin-site.md.
+We are working on story S1-E11-06 (Website CMS and home page copy) only. Read CLAUDE.md, docs/architecture.md (sections 1.6, 1.7.3 B31, 1.7.4 groups A and H, 1.8.3 and 1.8.6), docs/definition-of-done.md, docs/decisions.md and the story in docs/stories/s1-e11-admin-site.md.
 
 CONTEXT
-- Already merged: S1-E11-01 (admin shell), S1-E11-03 (settings), S1-E2-07 (staff roles), S1-E5-08 (the March home page).
-- Decisions that apply: the public website has its own database, separate from the app (16 Oct 2026); its CMS is built new on that database (Q54). For March the home page lived inside the web app with its copy in the locale files (decided 17 Oct 2026, 12:34); this story moves the hero copy to the website database, so plan how the locale copy becomes version 1 and how the page switches over. The live copy: headline "Write stories. Get read." and the line under it "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." Website copy goes live without a second approver for now (Q31); home page copy is logged only. Content editors and admins can save and publish (1.8.3). Platform: web (staff and the public website).
-- Designs: "Website home page" and "Earlier versions" in design/boards/AdminSettings.dc.html (the board notes these now live under Website, as in the menu of design/boards/AdminPages.dc.html), and the hero on design/boards/Website-Home.dc.html for the preview; renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces: B31 (`hero_versions` on the website's database, written only through the `website-cms` function, which checks the role and is_staff_session() and logs to the app's audit log). Mock: the `WebsiteContentStore` stub with the same contract and a fixture of the copy live on 16 Oct 2026. The website database set-up is OPEN: the story is Done only when it is real or behind an off flag (docs/mocks.md).
-- Watch-outs: fields are the line above the headline, the headline on two lines, the underlined word, the line under it, two button labels and three short points; both languages required; character limits are proposals (50, 40, 170, 20, 30). Publish is refused with the list of fields to fix, and counters are announced to screen readers. "Show from" goes live at 00:00 Romanian time. Restore brings a version back as a draft. The website reads its own database and falls back to the last published version. The headline stays the page's one h1, the underline is decoration and lang matches the copy. Claims must stay true (Law 363/2007).
+- Already merged: S1-E11-01 (admin shell and audit log), S1-E2-07a (staff roles on the normal login; is_staff_session() is true for any staff-role session in March), S1-E1-04 (Romanian and English). The markets list is seeded by a migration for March (architecture 1.7.9); tell me which table you found. S1-E11-05, its admin screen, comes after March. S1-E5-08 (the public home page) comes after this story and will read what you build.
+- Decisions that apply (Robert, chat, 17 Oct 2026): the website CMS is built before March and is in the March MVP; website pages (starting with the home page) get their text only from the CMS, never from the locale files (19:14; replaces the 12:34 rule that the March home page copy sits in the locale files; the page itself still lives inside the web app, 12:34). Staff pick the market (country) and the language of the page they edit; every market can have its own page in each of its languages (19:14). Content has a "show from" date: it goes live at 00:00 Romanian time on that date (within a minute if today) and the current version stays up until then (19:14). A visitor from a country with no page of its own sees the Romanian market's English page (19:16). Until the separate website database exists (its set-up is still OPEN), CMS content is stored in the app's own database behind one interface, the WebsiteContentStore contract, so moving it later swaps only the storage, not the editors (19:16). Website pages, questions and help, notice banners and interface text are edited and published only by staff with the admin role and the owner; content editors hold the admin role (12:44), and wording with legal weight (age, consent, privacy, reporting, messaging rules) is admin-only in any case (19:19). Website copy has no second approver (Q31). Markets come from the markets list seeded by migration; its admin screen is S1-E11-05, after March.
+- This story builds the shared CMS core that S1-E11-10 (notices), S1-E11-12 (help and questions) and S1-E11-18 (interface text) reuse: pages identified by page + market + language; versions with draft, scheduled ("show from") and published; preview; earlier versions with Restore; the audit log entry (who, when, page, market, language, go-live date, before and after). Name things generally, not "hero" everywhere, so the next three stories add content types instead of copying code.
+- Designs: the "Website home page" section and "Earlier versions" table in design/boards/AdminSettings.dc.html (the editor fields, counters, language tabs and preview); the Website menu (Home page, Notice banners, Seasonal doodles, Help and questions, Landing pages) in design/boards/AdminPages.dc.html; the hero on design/boards/Website-Home.dc.html for the preview. Renders in design/renders/desktop/ and design/renders/phone/. Plain staff components, no doodles. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). Known mismatches: the AdminSettings board says "the website reads them from its own database" (for March it is the app's database) and has no market picker: add a market and language picker above the editor and note both in the pull request.
+- Back-end pieces: B31, the WebsiteContentStore contract (zod schemas in the shared contracts folder) with one implementation for March: CMS tables in the app's database (for example cms_pages and cms_page_versions; names are yours to propose), written only through admin_* functions that check the admin role and is_staff_session() and write the audit log in the same transaction (B27, B03). A read-only published view for public pages that never returns drafts or scheduled versions. Nothing to mock: the store is real. Don't build the website database or the website-cms bridge; just keep the contract clean enough that a second implementation can be added later.
+- Watch-outs: home page fields are the line above the headline, the headline on two lines, the underlined word, the line under it, two button labels and three short points; character limits are proposals (50, 40, 170, 20, 30). Publish is refused with the list of fields to fix when a required field is empty or over its limit; counters are announced to screen readers. Seed version 1 for the Romanian market in ro and en with the copy live on 16 Oct 2026 (headline "Write stories. Get read.", line under it "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them."): take the rest of the copy from the Website-Home board and list it in the plan for me to confirm. The public read picks the visitor's market and language, falls back to the Romanian market's English page for a country with no page of its own, and shows the last published version if a read fails. Fallback when a market has no page in the chosen language: the story proposes the market's first language; confirm with me. The headline stays the page's one h1, the underline is decoration and lang matches the copy. Each market's page must pass that market's legal check before the market opens. Claims must stay true (Law 363/2007).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
-2. Migrations and the bridge contract: tables, the write key's scope and RLS or grants (who can select, insert, update or delete, and why), with an allowed and a denied test for each.
-3. A table mapping each acceptance criterion to the test(s) that prove it.
-4. New i18n keys (ro and en), analytics events and moderation hooks.
+2. Migrations and the store contract: tables, the published view, admin_* functions and RLS policies (who can select, insert, update or delete, and why), with an allowed and a denied pgTAP test for each, including a moderator, a support person and a content editor without the admin role refused on every write.
+3. A table mapping each acceptance criterion to the test(s) that prove it, including the "show from" switch-over and the market fallback.
+4. New i18n keys (ro and en) for the admin screens only (the page copy itself never goes into the locale files), analytics events and moderation hooks.
 5. Every OPEN or unclear point. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-06: Website home page copy". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (drafts, previews, publishes with a future "Show from" date, restores), moderator (refused) and a signed-out visitor on the home page; and the pull request description from .github/pull_request_template.md.
+STEP 2, after I approve: build it, run every check in CLAUDE.md and check that the code follows the Readable code section of CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-06: Website CMS and home page copy". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (picks Romania and Română, edits, previews, publishes with a future "show from" date, restores an earlier version), moderator and editor (both refused) and a signed-out visitor; and the pull request description from .github/pull_request_template.md.
 
 QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
 1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
@@ -4217,26 +4224,27 @@ Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-10 Website notice banners
-Should · S · After March · Depends on: S1-E11-01, S1-E2-07; back end: the website's own database and the `website-cms` bridge (B31)
+Should · S · March MVP (wave 3) · Depends on: S1-E11-06 (the shared CMS core)
 
 ```text
 We are working on story S1-E11-10 (Website notice banners) only. Read CLAUDE.md, docs/architecture.md (sections 1.7.4 group A and 1.8.6), docs/definition-of-done.md and the story in docs/stories/s1-e11-admin-site.md.
 
 CONTEXT
-- Already merged: S1-E11-01 (admin shell), S1-E2-07 (staff roles); S1-E11-06 if you want to reuse its CMS pattern.
-- Decisions that apply: the website has its own database and a new CMS built on it (16 Oct 2026, Q54). Website copy goes live without a second approver for now (Q31). Content editors, admins and the owner use the Website CMS (1.8.3). Sponsors never appear in notices; paid content goes through Sponsors (S1-E12). Notices show on the website and in the app, read from one table; until the website database exists it lives in the app's database (decided 17 Oct 2026, 12:44). Platform: web (staff, the public website and the app).
-- Designs: "Notice banners" in the Website menu of design/boards/AdminPages.dc.html; no screen of its own, so use the CMS editing pattern of design/boards/AdminSettings.dc.html ("Website home page"). The public strip is on design/boards/Website-Home.dc.html. Renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). The strip shows on the website and in the app, as the AdminPages board says.
-- Back-end pieces: one notice table in the app's database (written through admin_* functions, logged in the audit log) that the app and the website both read; it moves behind the `website-cms` bridge (B31) once the website database exists. Nothing to mock for the app side.
-- Watch-outs: text in English and Română, each up to 120 characters (proposal), an optional link to one of our own pages, a type (news, contest or important; no contest is planned for now, decided 17 Oct 2026, 12:34) and the pages it shows on (every page or the home page only). "Show from" and optional "Show until" at 00:00 Romanian time; both languages required. Two notices for the same page and time: only the one with the latest "Show from" shows. Colours from design tokens at 4.5:1, no focus move, no animation, a labelled region. Closing it lasts for the visit only (session storage, no consent needed). Versions restore as drafts. No sponsor names or logos. Claims must be true (Law 363/2007).
+- Already merged: S1-E11-06 (the shared CMS core: market and language picker, versions, "show from", Restore, audit log, the WebsiteContentStore contract in the app's database). Reuse it; don't build a second editing pattern.
+- Decisions that apply (Robert, chat, 17 Oct 2026): the website CMS is built before March and is in the March MVP; website pages (starting with the home page) get their text only from the CMS, never from the locale files (19:14; replaces the 12:34 rule that the March home page copy sits in the locale files; the page itself still lives inside the web app, 12:34). Staff pick the market (country) and the language of the page they edit; every market can have its own page in each of its languages (19:14). Content has a "show from" date: it goes live at 00:00 Romanian time on that date (within a minute if today) and the current version stays up until then (19:14). A visitor from a country with no page of its own sees the Romanian market's English page (19:16). Until the separate website database exists (its set-up is still OPEN), CMS content is stored in the app's own database behind one interface, the WebsiteContentStore contract, so moving it later swaps only the storage, not the editors (19:16). Website pages, questions and help, notice banners and interface text are edited and published only by staff with the admin role and the owner; content editors hold the admin role (12:44), and wording with legal weight (age, consent, privacy, reporting, messaging rules) is admin-only in any case (19:19). Website copy has no second approver (Q31). Markets come from the markets list seeded by migration; its admin screen is S1-E11-05, after March.
+- Also decided: notices show on the website and in the app, read from one table (17 Oct 2026, 12:44). Sponsors never appear in notices; paid content goes through Sponsors (S1-E12). Platform: web (staff, the public home page and the app).
+- Designs: "Notice banners" in the Website menu of design/boards/AdminPages.dc.html; no screen of its own, so use the CMS editor built in S1-E11-06 (from design/boards/AdminSettings.dc.html). The public strip is on design/boards/Website-Home.dc.html. Renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Back-end pieces: B31: one notice table per market and language in the app's database, behind the WebsiteContentStore contract, written only through admin_* functions with the B03 audit log, and a published view that the app and the public page both read. Nothing to mock.
+- Watch-outs: the admin picks the market, then writes the text in each of that market's languages (each up to 120 characters, proposal), an optional link to one of our own pages, a type (news, contest or important; no contest is planned for now, decided 17 Oct 2026, 12:34) and the pages it shows on (every page or the home page only). "Show from" and optional "show until" at 00:00 Romanian time; every language of the market required. Two notices for the same page, market and time: only the one with the latest "show from" shows. Visitors get their market and language with the Romanian market's English fallback. Colours from design tokens at 4.5:1, no focus move, no animation, a labelled region. Closing it lasts for the visit only (session storage, no consent needed). No sponsor names or logos. Claims must be true (Law 363/2007).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
-2. Migrations and the bridge contract: tables, grants and RLS (who can select, insert, update or delete, and why), with an allowed and a denied test for each.
+2. Migrations: tables, the published view, admin_* functions and RLS (who can select, insert, update or delete, and why), with an allowed and a denied pgTAP test for each.
 3. A table mapping each acceptance criterion to the test(s) that prove it.
-4. New i18n keys (ro and en), analytics events and moderation hooks.
+4. New i18n keys (ro and en) for the admin screen and the strip's controls (the notice text itself never goes into the locale files), analytics events and moderation hooks.
 5. Every OPEN or unclear point. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-10: Website notice banners". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (creates two overlapping notices, publishes, restores one), moderator (refused) and a signed-out visitor (sees one notice, closes it, reloads in the same visit); and the pull request description from .github/pull_request_template.md.
+STEP 2, after I approve: build it, run every check in CLAUDE.md and check that the code follows the Readable code section of CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-10: Website notice banners". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (creates two overlapping notices for Romania, publishes, restores one), moderator and editor (both refused) and a signed-out visitor (sees one notice, closes it, reloads in the same visit); and the pull request description from .github/pull_request_template.md.
 
 QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
 1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
@@ -4256,7 +4264,7 @@ We are working on story S1-E11-11 (Seasonal doodle schedule) only. Read CLAUDE.m
 
 CONTEXT
 - Already merged: S1-E11-01 (admin shell), S1-E2-07 (staff roles); S1-E5-07 shows the doodles to readers.
-- Decisions that apply: the Discover greeting doodle and the Search tags doodle change with the seasons and occasions (16 Oct 2026). Doodles are always SVG files that take their colours from the design tokens (CLAUDE.md rule 16, Definition of Done). Content editors, admins and the owner use the Website CMS (1.8.3). Platform: web (staff).
+- Decisions that apply: the Discover greeting doodle and the Search tags doodle change with the seasons and occasions (16 Oct 2026). Doodles are always SVG files that take their colours from the design tokens (CLAUDE.md rule 16, Definition of Done). Only the admin role and the owner use the Website CMS (decided 17 Oct 2026, 19:19; 1.8.3). This story stays after March. Platform: web (staff).
 - Designs: "Seasonal doodles" in the Website menu of design/boards/AdminPages.dc.html (no screen of its own: use plain admin components), the doodle set in design/boards/Doodles.dc.html (11.1) and where they show on design/boards/Discover.dc.html and design/boards/Search.dc.html; renders in design/renders/desktop/ and design/renders/phone/. Staff screens show the doodle only as a preview, no decorative doodles. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B30 (`seasonal_occasions`, current_occasion()) in the app's database, B27 admin_* functions with the B03 audit log. Mock: seeded occasions.
 - Watch-outs: an occasion has a name, a date range (with "every year"), the doodle and where it shows (Discover greeting, Search popular tags or both). Editors choose only from approved SVG doodles shipped with the app; new doodles arrive in a release, never as uploads. Overlaps: the shorter occasion wins; a season's default covers days with no occasion. A year view shows every occasion and the gaps, with light and night previews. Changes apply within a minute and are logged. No religious or political occasion is on by default.
@@ -4269,7 +4277,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Every OPEN or unclear point. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-11: Seasonal doodle schedule". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (adds two overlapping occasions, checks the year view in light and night mode), moderator (refused) and adult_writer (sees the doodle change on Discover); and the pull request description from .github/pull_request_template.md.
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-11: Seasonal doodle schedule". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (adds two overlapping occasions, checks the year view in light and night mode), moderator (refused) and adult_writer (sees the doodle change on Discover); and the pull request description from .github/pull_request_template.md.
 
 QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
 1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
@@ -4282,27 +4290,27 @@ Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-12 Help pages and questions
-Should · M · After March · Depends on: S1-E11-01, S1-E2-07, S1-E1-04, S1-E14-01; back end: the website's own database and the `website-cms` bridge (B31)
+Should · M · March MVP (wave 3) · Depends on: S1-E11-06 (the shared CMS core), S1-E1-04, S1-E14-01
 
 ```text
 We are working on story S1-E11-12 (Help pages and questions) only. Read CLAUDE.md, docs/architecture.md (sections 1.7.4 group A and 1.8.6), docs/definition-of-done.md and the story in docs/stories/s1-e11-admin-site.md.
 
 CONTEXT
-- Already merged: S1-E11-01, S1-E2-07, S1-E1-04 (Romanian and English), S1-E14-01 (legal documents).
-- Decisions that apply: the website CMS is new, on the website's own database (Q54). Website copy goes live without a second approver for now (Q31). Content editors, admins and the owner use it (1.8.3). If a help page and the terms or privacy notice disagree, the legal documents win and the help page is fixed the same day. Platform: web (staff, the public website and Help in the app).
-- Designs: "Help and questions" in the Website menu of design/boards/AdminPages.dc.html (no screen of its own: follow the CMS editing pattern of design/boards/AdminSettings.dc.html); the public questions on design/boards/Website-Home.dc.html and help on design/boards/Legal.dc.html. Renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces: B31 (`help_pages`, `faq_items`, written only through `website-cms`). Mock: the `WebsiteContentStore` stub and a fixture of the 16 Oct 2026 questions; Done only when the website database is real or behind an off flag.
-- Watch-outs: a help page has a title, a web address, a section and a body in the safe Markdown subset (rule 8), in both languages. A question has the question, answer, order and where it shows (home page, help centre or both). Version 1 imports the questions live on 16 Oct 2026, including "What is a class space?": tell me where you take them from (the Website-Home board is my guess; check with Robert). Every edit follows the CMS way of working (preview, "Show from", both languages, Restore, audit log). Links to our own pages must work or saving is refused, naming the link. One h1, real headings and the right lang. Plain language a 13-year-old can follow (DSA art. 14(3)).
-- OPEN: answers about age checks, parental consent, messaging rules, privacy or money needing an admin to publish (proposal; Q31 logs no second approver). Stop and ask me.
+- Already merged: S1-E11-06 (the shared CMS core in the app's database), S1-E1-04 (Romanian and English), S1-E14-01 (legal documents). S1-E5-08 (the public home page) comes after this story and reads the questions you publish.
+- Decisions that apply (Robert, chat, 17 Oct 2026): the website CMS is built before March and is in the March MVP; website pages (starting with the home page) get their text only from the CMS, never from the locale files (19:14; replaces the 12:34 rule that the March home page copy sits in the locale files; the page itself still lives inside the web app, 12:34). Staff pick the market (country) and the language of the page they edit; every market can have its own page in each of its languages (19:14). Content has a "show from" date: it goes live at 00:00 Romanian time on that date (within a minute if today) and the current version stays up until then (19:14). A visitor from a country with no page of its own sees the Romanian market's English page (19:16). Until the separate website database exists (its set-up is still OPEN), CMS content is stored in the app's own database behind one interface, the WebsiteContentStore contract, so moving it later swaps only the storage, not the editors (19:16). Website pages, questions and help, notice banners and interface text are edited and published only by staff with the admin role and the owner; content editors hold the admin role (12:44), and wording with legal weight (age, consent, privacy, reporting, messaging rules) is admin-only in any case (19:19). Website copy has no second approver (Q31). Markets come from the markets list seeded by migration; its admin screen is S1-E11-05, after March.
+- Also decided: all of it is admin-only, which replaces the earlier proposal that only answers about age checks, consent, messaging, privacy or money need an admin (19:19). If a help page and the terms or privacy notice disagree, the legal documents win and the help page is fixed the same day. Platform: web (staff, the public home page and Help in the app).
+- Designs: "Help and questions" in the Website menu of design/boards/AdminPages.dc.html (no screen of its own: reuse the CMS editor from S1-E11-06); the public questions on design/boards/Website-Home.dc.html and help on design/boards/Legal.dc.html. Renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Back-end pieces: B31: help pages and questions per market and language in the app's database, behind the WebsiteContentStore contract, written only through admin_* functions with the B03 audit log; published views for the home page and Help. Nothing to mock.
+- Watch-outs: a help page has a market and language, title, web address, section and a body in the safe Markdown subset (rule 8). A question has the market and language, question, answer, order and where it shows (home page, help centre or both). Seed version 1 for the Romanian market in ro and en with the questions live on 16 Oct 2026, including "What is a class space?": tell me where you take them from (the Website-Home board is my guess; check with Robert). Those answers describe the public launch (Yoti, parental consent); for the invited-adults March test they must not go public untrue, so list the answers that need a March version and ask me. Mark answers about age checks, consent, privacy, reporting, messaging rules or money as legal wording. Links to our own pages must work or saving is refused, naming the link. One h1, real headings and the right lang. Plain language a 13-year-old can follow (DSA art. 14(3)).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
-2. Migrations and the bridge contract: tables, grants and RLS (who can select, insert, update or delete, and why), with an allowed and a denied test for each.
+2. Migrations: tables, published views, admin_* functions and RLS (who can select, insert, update or delete, and why), with an allowed and a denied pgTAP test for each.
 3. A table mapping each acceptance criterion to the test(s) that prove it.
-4. New i18n keys (ro and en), analytics events and moderation hooks.
+4. New i18n keys (ro and en) for the admin screen only (help and question text never goes into the locale files), analytics events and moderation hooks.
 5. Every OPEN or unclear point. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-12: Help pages and questions". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (writes a help page with a broken link, fixes it, publishes a question), moderator (refused), and adult_writer opening Help in the app in Romanian and English; and the pull request description from .github/pull_request_template.md.
+STEP 2, after I approve: build it, run every check in CLAUDE.md and check that the code follows the Readable code section of CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-12: Help pages and questions". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (writes a help page with a broken link, fixes it, publishes a home page question for Romania in Română and English), moderator and editor (both refused), and adult_writer opening Help in the app in Romanian and English; and the pull request description from .github/pull_request_template.md.
 
 QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
 1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
@@ -4387,7 +4395,7 @@ We are working on story S1-E11-14 (Landing pages for contests and campaigns) onl
 
 CONTEXT
 - Already merged: S1-E11-01, S1-E11-06, S1-E10-05, S1-E7-01, S1-E12-02 (approved sponsor campaigns for the Sponsor block).
-- Decisions that apply: staff can build landing pages for contests and campaigns; the details are proposals until confirmed (17 Oct 2026, 11:06). No contest is planned for now, so build the feature without a named first contest (decided 17 Oct 2026, 12:34). "Sponsored" marks direct sponsors (Q7). At most 2 ad slots on any page (17 Oct 2026, 11:53). Ratings All ages, 13+, 16+ and 18+ hide stories from anyone younger (rule 18). Website copy has no second approver (Q31). Platform: web (staff and public pages).
+- Decisions that apply: staff can build landing pages for contests and campaigns; the details are proposals until confirmed (17 Oct 2026, 11:06). No contest is planned for now, so build the feature without a named first contest (decided 17 Oct 2026, 12:34). "Sponsored" marks direct sponsors (Q7). At most 2 ad slots on any page (17 Oct 2026, 11:53). Ratings All ages, 13+, 16+ and 18+ hide stories from anyone younger (rule 18). Website copy has no second approver (Q31). Website pages are edited and published by the admin role and the owner only (decided 17 Oct 2026, 19:19). Platform: web (staff and public pages).
 - Designs: design/boards/AdminPages.dc.html (8.14: page settings with type, address and one of four themes, "Blocks", "Before it goes live", "How readers will see it", "Where people find it", "Earlier versions") and the public page design/boards/Contest.dc.html (3.11), with renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces (proposal in the story): tables in the app's database, written only through admin_* functions (B27) with the B03 audit log; B15 picture check, B14 storage, B22 notifications, B19 teaser preview. Real.
 - Watch-outs: types Contest, Campaign or Information; address <site>/c/<slug> (proposal; the site comes from the brand config, today ghemotoc.themagiccoffin.com, decided 17 Oct 2026, 12:50), refusing reserved or used slugs. Only the fixed blocks (Hero, Text, Key dates, Who can enter, Prize, How to enter, Rules, Sponsor, Featured stories, Questions and answers, Remind me): no free HTML, script or custom colour. English and Română side by side with phone and desktop previews; Up and Down buttons, no drag-only control; one heading order. Pictures need alt text and a passed check. Featured stories only at the youngest targeted rating; hidden stories drop off at once. "Remind me" sends one in-app notification when entries open (tell me where that date comes from). Publish checks per the story; an admin publishes a page with a Sponsor block or an under-18 contest (proposal). "Show from" and "Take down" at 00:00 Romanian time, then "This contest has ended" and results unless archived. No countdown timers or "only today" for minors.
@@ -4545,16 +4553,48 @@ QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste 
 Then give me the hand-test steps STEP 2 asks for.
 ```
 
+### S1-E11-18 Edit interface text
+Must · M · March MVP (wave 3) · Depends on: S1-E11-06 (the same editor), S1-E1-04, S1-E11-01
+
+```text
+We are working on story S1-E11-18 (Edit interface text) only. Read CLAUDE.md, docs/architecture.md (sections 1.6, 1.7.3 B34, 1.8.3 and 1.8.6), docs/definition-of-done.md, docs/decisions.md and the story in docs/stories/s1-e11-admin-site.md.
+
+CONTEXT
+- Already merged: S1-E11-06 (the shared CMS core: versions, "show from", Restore, audit log), S1-E1-04 (i18next with src/locales/ro and src/locales/en and the i18n key check), S1-E11-01 (admin shell).
+- Decisions that apply (Robert, chat, 17 Oct 2026): the app's interface text (buttons, errors, labels) stays in the ro and en locale files, but staff can edit it from the admin site so changing copy never needs an engineer; edited text is stored in the database on top of the file text, and the files stay the default and what CI checks (19:16). This story is in the March MVP straight after the CMS and reuses its editor (19:19). Interface text has one version per language, not per country, but stored by BCP 47 locale code (ro, en, later en-GB, en-US) so regional variants can come later (19:19). Only staff with the admin role and the owner edit and publish; legal-weight wording (age, consent, privacy, reporting, messaging rules) is admin-only in any case (19:19). Website page text is not part of this story: it lives only in the CMS (19:14). "Show from" works as in the CMS: 00:00 Romanian time, within a minute if today. CMS-type content is stored in the app's database for March (19:16); interface text overrides stay there for good, because the app reads them. Romanian uses ș and ț (comma below), never ş or ţ (CLAUDE.md rule 4). The product name is a placeholder from the brand config, never typed literally (decided 17 Oct 2026, 12:47).
+- Designs: no board. Use the plain staff components on /design and the editor pattern from S1-E11-06; show me the layout in your plan. Plain staff components, no doodles. Check it at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Back-end pieces: B34: an interface_text_overrides table (names are proposals in the story) in the app's database, admin_* functions to save, publish, restore and reset with the B03 audit log, and a published read for one locale that anyone, signed in or not, can call. The front end loads the published overrides for the current language and adds them to i18next on top of the file text (for example as an extra resource bundle), falling back to the file text if the read fails. Nothing to mock.
+- Watch-outs: search by the words shown on screen or by key; languages side by side with a preview and the file text shown as the default; plural forms each edited separately; "Reset to default" returns to the file text; refuse a save that drops, adds or changes a placeholder such as {{productName}} or {{count}} or leaves a language empty; change ş/ţ to ș/ț and tell the admin; the admin site never adds new keys, and an override for a key no longer in the files is ignored and listed; mark the legal-weight keys and remind the admin they must match the legal documents. The read must never block the first screen (proposal: fetch once and cache for the visit). Overridden text keeps the right lang, and a control's accessible name must still contain its visible label (WCAG 2.5.3). Claims must stay true (Law 363/2007); DSA and GDPR wording must stay accurate.
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change, and how the overrides plug into the i18next set-up from S1-E1-04.
+2. Migrations: the table, the published read, admin_* functions and RLS policies (who can select, insert, update or delete, and why), with an allowed and a denied pgTAP test for each, including a moderator, a support person and a content editor without the admin role refused.
+3. A table mapping each acceptance criterion to the test(s) that prove it, including the placeholder check, the ş/ţ change and the fallback when the read fails.
+4. New i18n keys (ro and en) for the Interface text screen, analytics events and moderation hooks.
+5. Every OPEN or unclear point (for example which keys count as legal wording). Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md and check that the code follows the Readable code section of CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-18: Edit interface text". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (finds a button by its words, changes it in Română, tries to delete a {{count}} placeholder and is refused, publishes, sees it in the app, then resets it), moderator and editor (both refused) and a signed-out visitor seeing the new text; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
 ### S1-E11-QA Epic check: Admin site
-Must · S · March MVP (wave 3, last of its epic) · Depends on: S1-E11-01, S1-E11-02, S1-E11-17
+Must · S · March MVP (wave 3, last of its epic) · Depends on: S1-E11-01, S1-E11-02, S1-E11-06, S1-E11-10, S1-E11-12, S1-E11-17, S1-E11-18
 
 ```text
 We are working on story S1-E11-QA (Epic check: Admin site) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E11-QA and every story it depends on in docs/stories/s1-e11-admin-site.md.
 
 CONTEXT
-- Already merged: S1-E11-01, S1-E11-02, S1-E11-17. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-06, S1-E11-07, S1-E11-08, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) are not part of this check (S1-E11-09a moved after March, 12:44). This story adds no feature: it tests those stories together, end to end.
-- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
-- Main journeys to cover: an admin makes an invite link and an invited adult joins with it; staff sign in to the admin shell, find a user and act on the account, with every step in the audit log.
+- Already merged: S1-E11-01, S1-E11-02, S1-E11-06, S1-E11-10, S1-E11-12, S1-E11-17, S1-E11-18. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-07, S1-E11-08, S1-E11-11, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) are not part of this check (S1-E11-09a moved after March, 12:44; the website CMS and interface text joined March on 17 Oct 2026, 19:14 to 19:19). This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in. Website page text comes only from the CMS, stored in the app's database; interface text comes from the locale files with admin overrides; both are admin-only (17 Oct 2026, 19:14 to 19:19).
+- Main journeys to cover: an admin makes an invite link and an invited adult joins with it; staff sign in to the admin shell, find a user and act on the account, with every step in the audit log; an admin edits the Romanian market's home page in Română with a future "show from" date, adds a notice and a home page question, and a signed-out visitor sees them go live, while a visitor from a country with no page of its own sees the Romanian market's English page; an admin overrides a button label, sees it in the app, then resets it; a moderator and a content editor without the admin role are refused on every CMS and interface text action.
 - Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
 - Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
 - Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E11.md (check with Robert).

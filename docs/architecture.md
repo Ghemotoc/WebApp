@@ -35,7 +35,7 @@
 | Private downvotes, no auto-archive, private messages, user-created spaces | Data model in section 1.6 |
 | Plagiarism scanning only for imprint acquisitions | No scanner in Stage 1; a structured "copied from a published work" report instead |
 | The app is called Ghemotoc, "An app by The Magic Coffin" (16 Oct 2026) | Name in store listings, the bundle ID and the reserved handles list; website ghemotoc.com and handle @ghemotoc everywhere (availability to be checked). Ghemotoc is a working name until the name and domain are bought (decided 17 Oct 2026, 12:47): code reads the name, site, contact addresses and handle from one brand config (S1-E1-01); today the site is ghemotoc.themagiccoffin.com and the contact address hello@themagiccoffin.com (decided 17 Oct 2026, 12:50) |
-| The public website has its own database; Home and Discover are separate screens for now and Discover is the main one; they merge later (16 Oct 2026). The website CMS is built new, from scratch, on that database and linked neatly to the front end (16 Oct 2026, late evening, Q54) | The website's data lives apart from the app's Supabase project; keep Home and Discover as separate routes so merging later is a routing change |
+| The public website has its own database; Home and Discover are separate screens for now and Discover is the main one; they merge later (16 Oct 2026). The website CMS is built new, from scratch, on that database and linked neatly to the front end (16 Oct 2026, late evening, Q54). The CMS is built before March and is in the March MVP; website pages get their text only from the CMS, per market and language, and until the website database exists its content lives in the app's database behind one store interface (decided 17 Oct 2026, 19:14 to 19:16) | The website's data lives apart from the app's Supabase project once the website database exists; until then the CMS tables sit in the app's database behind a `WebsiteContentStore` contract, so the move swaps only the storage (section 1.8.6). Keep Home and Discover as separate routes so merging later is a routing change |
 | Every account gets an automatic, permanent user ID that everything a person makes is linked to; staff can open any story and export a user's stories as Word or PDF (16 Oct 2026, late evening) | `profiles.id` is the Supabase Auth UUID and every user-owned table has a `user_id` column (section 1.6); Stories and Data requests areas in the admin site (section 1.8) |
 | Romania is the first market; English-speaking countries open later, one by one, each after its legal check (decided 17 Oct 2026, 11:48; replaces "all at the same time", 16 Oct). The interface opens in Romanian for everyone, with English available in the language menu (decided 17 Oct 2026, 11:48). Moderation by our own team in both languages | Market and language switches in admin (S1-E11-05); every market still needs its legal check before it opens |
 
@@ -55,9 +55,9 @@ The plan says to decide the mobile approach in iteration 2. These are the realis
 ### 1.4 The March 2027 constraint (read this before committing to scope)
 
 - **Today to March is about 19 weeks.** Business Model Innovation and Startup Essentials take four evenings a week in November and December; Execution runs January to March. The developer and community manager are planned from launch, not before.
-- **Decided 16 Oct 2026 (late evening, Q32): Robert builds without a programmer.** The March slice is re-cut to a real MVP in section 1.13: 59 stories and about 501 hours. The March test is invited adults only (decided 17 Oct 2026, 12:44), so the age check, parental consent and the data rights stories (about 132 hours) move to the minors' launch gate after March. It was 66 and about 630 with the 12 epic checks (17 Oct 2026, 12:36), 54 and about 594 at 11:53, and 50 and about 564 on 16 Oct 2026, down from 53 stories and about 660. At 10 to 12 hours a week that is still two and a half to three times the time available, so section 1.13 sets out the capacity problem plainly.
+- **Decided 16 Oct 2026 (late evening, Q32): Robert builds without a programmer.** The March slice is re-cut to a real MVP in section 1.13: 63 stories and about 540 hours. The March test is invited adults only (decided 17 Oct 2026, 12:44), so the age check, parental consent and the data rights stories (about 132 hours) move to the minors' launch gate after March. It was 59 and about 501 before the website CMS and interface text editing joined (17 Oct 2026, 19:14 to 19:19), 66 and about 630 with the 12 epic checks (17 Oct 2026, 12:36), 54 and about 594 at 11:53, and 50 and about 564 on 16 Oct 2026, down from 53 stories and about 660. At 10 to 12 hours a week that is two and a half to three times the time to 1 March, so the test date is likely to move: March is a target, not a deadline (decided 17 Oct 2026, 19:22; section 1.13).
 - **Store steps add calendar time you can't speed up:** Apple and Google developer accounts in the company's name need the company (Romanian SRL or Swedish AB: **OPEN**, Q55) and a D-U-N-S number. A new Google Play personal account currently needs a closed test with 12 testers for 14 days (check the rule when you open it), and first app reviews can take days and bounce.
-- **What this means:** "all operating systems with real users by March" and "solo founder in the evenings" can't both hold. The developer hire and an SSES co-founder are off the table (Q32, Q57), so the levers left are hours a week, the date and scope. Section 1.13 proposes the scope; hours and date stay **OPEN** for Robert.
+- **What this means:** "all operating systems with real users by March" and "solo founder in the evenings" can't both hold. The developer hire and an SSES co-founder are off the table (Q32, Q57). Section 1.13 sets the scope. March 2027 is a target, not a deadline: the MVP scope stays as planned and the test date moves if the work needs it (decided 17 Oct 2026, 19:22).
 
 ### 1.5 Proposed Stage 1 architecture (Option A)
 
@@ -127,7 +127,7 @@ Names are suggestions for Claude Code. Every table has row-level security.
 | Schools | `schools`, `teacher_checks`, `invites` (shared with platform invites, S1-E11-17), `certificates` |
 | Data rights | `exports`, `data_requests` |
 | Platform | `feature_flags`, `settings`, `rate_limits`, `reserved_names`, `markets`, `languages`, `seasonal_occasions`, `legal_documents`, `consents`, `notifications`, `jobs` |
-| Website (its own database; set-up OPEN; from March: inside the app until the website database exists, decided 17 Oct 2026, 12:34) | `hero_versions`, `site_banners`, `help_pages`, `faq_items`: read by the public website, written only through the `website-cms` bridge (section 1.8.6) |
+| Website content (CMS). For March: in the app's database behind one store interface (decided 17 Oct 2026, 19:16); moved to the website's own database once it exists (set-up OPEN) | `cms_pages` and `cms_page_versions` (one page per page type, market and language, the home page first; draft, scheduled and published versions with a "show from" date), `notice_banners`, `help_pages`, `faq_items` (each per market and language): read by website pages only through published views, written only through `admin_*` functions behind the `WebsiteContentStore` contract (section 1.8.6). `interface_text_overrides` (locale key, BCP 47 locale code, text, version, "show from"; laid on top of the ro and en locale files, S1-E11-18) stays in the app's database, because the app reads it |
 
 **Rules baked into the model**
 
@@ -227,9 +227,10 @@ Each piece has an ID (B01 and so on) so the screen tables below can point to it.
 | B28 | Data rights: `exports`, `export-build`, `data_requests`, `story-export` (Word from the first version, PDF later; the shared Word builder is built in S1-E13-02, which comes first in the build order, decided 17 Oct 2026, 12:34), the deletion job | S1-E13-02, S1-E11-09, S1-E13-03, S1-E13-05 | nothing for Word (real from S1-E13-02); PDF returns a placeholder file until S1-E11-09b |
 | B29 | Banners and sponsors: sponsors, campaigns, daily stats, `pick_banner(context)` | S1-E12 | one seeded test campaign |
 | B30 | Seasonal doodles: `seasonal_occasions`, `current_occasion()`; the doodles themselves are SVG files in the app | S1-E11-11 (S1-E5-07 shows them) | seeded occasions |
-| B31 | **Website database and CMS bridge:** the website's own tables (home page copy, banners, help pages and questions), the `website-cms` function in the app's project that writes to them and `public-shelves`, a read-only list of public stories for the website | S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08 | a `WebsiteContentStore` stub with the same contract; real once the website database exists (a new CMS built from scratch, decided 16 Oct 2026, Q54). From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34): S1-E5-08 uses the locale files and the app's public views, not B31 |
+| B31 | **Website content store (CMS):** pages and page versions by market and language (the home page first), notice banners, help pages and questions, behind one `WebsiteContentStore` contract, plus `public-shelves`, a read-only list of public stories for the website. For March the store lives in the app's database and is written through `admin_*` functions (decided 17 Oct 2026, 19:16); once the website database exists (set-up OPEN), a `website-cms` bridge writes there instead and only the storage changes | S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08 | nothing to mock for March: the store is real in the app's database. The website database adapter comes later (a new CMS built from scratch, decided 16 Oct 2026, Q54) |
 | B32 | Cookieless analytics and error tracking | S1-E15-01, S1-E1-05 | switched off locally |
 | B33 | Desktop shell: Tauri deep link, opener, single instance, updater, content protection | S1-E16-02 | build on the web first; the desktop parts are tested when S1-E16-02 lands |
+| B34 | **Interface text overrides:** `interface_text_overrides` in the app's database, `admin_*` functions to save, publish, restore and reset, and a read of the published overrides for one locale that the app lays over the ro and en locale files (decided 17 Oct 2026, 19:16) | S1-E11-18 | nothing to mock; if the read fails the app uses the file text |
 
 #### 1.7.4 What each screen group needs
 
@@ -237,17 +238,17 @@ Screen numbers are the design canvas numbers. "Real before building" is the smal
 
 **A. Public website (1.1)**
 
-From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34). Until the apps exist everything is on the web, so for March the public home page (S1-E5-08) is a page of the web app: its copy comes from the locale files and its rows from the app's own public views or `public-shelves`. The B31 rows below apply once the website database and the CMS stories (S1-E11-06, 10, 11, 12) arrive, after March.
+For March the public home page (S1-E5-08) is a page of the web app (decided 17 Oct 2026, 12:34), but its text comes only from the CMS (S1-E11-06 for the hero and safety lines, S1-E11-12 for the questions), never from the locale files (decided 17 Oct 2026, 19:14; replaces the 12:34 locale-file rule). The CMS content sits in the app's database behind the `WebsiteContentStore` contract until the website database exists (decided 17 Oct 2026, 19:16). The page picks the visitor's market (the country from the connection, S1-E2-10) and language; a visitor from a country with no page of its own sees the Romanian market's English page (decided 17 Oct 2026, 19:16). The rows come from the app's own public views or `public-shelves`. The top bar, footer and language menu are interface text: they stay in the locale files, with admin overrides from S1-E11-18.
 
 | Screen part | Stories | Back-end pieces | Real before building | Mock while building |
 | --- | --- | --- | --- | --- |
-| Hero, safety lines and the three points | S1-E5-08, S1-E11-06 | B31 home page copy (published view) | the published-copy contract (fields, both languages) | a JSON fixture of the copy live on 16 Oct 2026 |
+| Hero, safety lines and the three points | S1-E5-08, S1-E11-06 | B31 published home page version for the market and language | the published-page contract (fields, market, language, fallback) | nothing: version 1 (the copy live on 16 Oct 2026) is seeded for the Romanian market in ro and en |
 | Trending, Completed, New and rising rows | S1-E5-08, S1-E5-03 | B31 `public-shelves` reading the app's public views; B13; B17 ranking | the `public-shelves` response contract | a fixture of 12 stories including one app-only story; real once S1-E5-03 runs |
-| Questions | S1-E5-08, S1-E11-12 | B31 questions table | the contract | a fixture of the 16 Oct 2026 questions |
-| Notice strip | S1-E11-10 | one notice table read by the website and the app; in the app's database until the website database exists (decided 17 Oct 2026, 12:44) | the contract | a fixture |
+| Questions | S1-E5-08, S1-E11-12 | B31 questions (per market and language) | the contract | nothing: the 16 Oct 2026 questions are seeded as version 1 |
+| Notice strip | S1-E11-10 | one notice table read by the website and the app, per market and language; in the app's database until the website database exists (decided 17 Oct 2026, 12:44) | the contract | nothing: real in the app's database |
 | Download buttons | S1-E16-02 | the release list the Tauri updater already publishes | nothing | fixed links |
 
-The website never reads the app's tables directly. It reads only its own database, `public-shelves` and the release list, so a fault on the website can't expose app data. From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34); this rule applies once the website is split out.
+The website never reads the app's tables directly. It reads only its own database, `public-shelves` and the release list, so a fault on the website can't expose app data. From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34); this rule applies once the website is split out. Until then the page reads only the published CMS views, `public-shelves` and the public story views, never the CMS editing tables.
 
 **B. Join and log in (2.1 to 2.5)**
 
@@ -328,7 +329,7 @@ The website never reads the app's tables directly. It reads only its own databas
 | 8.10 Stories | S1-E11-07 | B27 `admin_search_stories()` (title, current or earlier handle, user ID) | the function | seed |
 | 8.11 Story in admin | S1-E11-08 | B27 `admin_update_story()`, `admin_remove_passage()`, story and chapter revisions, B26 statements | the functions | seed |
 | 8.12 Data requests | S1-E11-09 | B28 | `data_requests` and the job contract | PDF placeholder until S1-E11-09b (Word is real from S1-E13-02) |
-| Website CMS | S1-E11-06, S1-E11-10, S1-E11-11, S1-E11-12 | B31 bridge; B30 lives in the app's database | the bridge contract | `WebsiteContentStore` stub |
+| Website CMS and interface text | S1-E11-06, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-18 | B31 store in the app's database (the website database later), B34 interface text; B30 lives in the app's database | the `WebsiteContentStore` contract | nothing for March: real in the app's database |
 | Audit log | S1-E11-01 | B03 | B03 | nothing |
 
 #### 1.7.5 How to mock each kind of piece
@@ -342,7 +343,7 @@ The website never reads the app's tables directly. It reads only its own databas
 | Email | MSW | the Supabase CLI's local mail catcher (Mailpit in recent versions, Inbucket in older ones) | real provider, test domain |
 | Picture check | MSW | stub (`IMAGE_CHECK=stub`) | Sightengine and Arachnid Shield test keys |
 | oEmbed (music and video) | fixtures | fixtures | real, allow-list only |
-| Website database | `WebsiteContentStore` stub | stub, or a second local Supabase on other ports | real website database |
+| Website content store | the app-database store, or a fake store with the same contract | real, in the app's database for March (decided 17 Oct 2026, 19:16) | real in the app's database; the website database adapter once it exists |
 | Realtime | a fake channel | real | real |
 | `pg_cron` jobs | call the job function directly | call it, or let cron run | cron |
 | Push | stub | stub | stub until S1-E16-03 |
@@ -362,12 +363,14 @@ Waves run top to bottom. Inside a wave, back-end and screen work can be interlea
 | 1 Identity | S1-E14-01 (table), S1-E2-01, S1-E2-02, S1-E2-04, S1-E2-05, S1-E2-07 | 2.1, 2.2, 2.5 (handle only), 8.1 | wave 0 | wave 2 back end, because seed personas stand in for real age checks |
 | 1b Age gate (critical) | S1-E2-08 (08a web, then 08b), S1-E2-03 (on from launch) | 2.3, 2.4 | S1-E2-02; a Yoti sandbox account | waves 2 and 3 |
 | 2 Write and read | S1-E3-01, S1-E3-02, S1-E3-03, S1-E3-05, S1-E3-06; S1-E4-01, S1-E4-03, S1-E4-04; S1-E5-05 | 4.2 to 4.4, 3.4, 3.5, 3.7, 3.8, 6.1 | wave 0 and S1-E2-01 | wave 1b; S1-E16-02 can start the day S1-E4-01 is merged |
-| 3 Safety and staff | S1-E10-01, S1-E11-01, S1-E10-03, S1-E10-04, S1-E10-06, S1-E10-02, S1-E10-09, S1-E10-10, S1-E10-12, S1-E11-02, S1-E11-03 | 6.4, 7.3, 8.2 to 8.6 | S1-E2-07 | wave 2 |
+| 3 Safety and staff | S1-E10-01, S1-E11-01, S1-E10-03, S1-E10-04, S1-E10-06, S1-E10-02, S1-E10-09, S1-E10-10, S1-E10-12, S1-E11-02, S1-E11-03, S1-E11-06, S1-E11-10, S1-E11-12, S1-E11-18 | 6.4, 7.3, 8.2 to 8.6, 8.14 (Website) | S1-E2-07 | wave 2 |
 | 4 Social and discovery | S1-E6-01, S1-E6-03, S1-E6-05, S1-E7-01, S1-E5-01, S1-E5-02, S1-E5-04, S1-E8-01, S1-E8-02, S1-E8-05 | 3.1, 3.2, 5.1, 5.2, 6.2 | S1-E10-01 before any comment or post; wave 2 | wave 5 |
 | 5 Rights, numbers and shipping | S1-E13-01 to 04, S1-E11-09, S1-E15-01 to 03, S1-E16-01, S1-E16-02 | 6.3, 8.7, 8.12, 7.1 | waves 2 to 4 | S1-E16-02 from wave 2 onwards |
 | After March | everything else, in the order of section 1.13 | | | |
 
 Updated 17 Oct 2026, 12:44: the March test is invited adults only, so wave 1b (S1-E2-08, S1-E2-03), S1-E2-07b, S1-E10-13b and the data rights stories in wave 5 (S1-E13-02 to 05, S1-E11-09a) come after March and before minors go live; S1-E2-07a stays in wave 1 and S1-E10-13a in wave 3.
+
+Updated 17 Oct 2026, 19:14 to 19:19: the website CMS joins wave 3 after S1-E11-01: S1-E11-06 first (the shared CMS core and the home page), then S1-E11-10, S1-E11-12 and S1-E11-18 (interface text, which reuses the same editor). S1-E5-08 stays in wave 4 and now needs S1-E11-06 and S1-E11-12 first, because its text comes only from the CMS.
 
 Every epic ends with an epic check story (S1-Ex-QA, 17 Oct 2026, 12:36): it runs once the epic's March stories are merged, in the wave of the last of them, and tests them together end to end.
 
@@ -409,6 +412,7 @@ flowchart TD
     E10_03["S1-E10-03 Moderation queue"]
     E10_04["S1-E10-04 Statements of reasons"]
     E11_08["S1-E11-08 Staff change a story"]
+    CMS["S1-E11-06, 10, 12, 18 Website CMS and interface text"]
   end
   subgraph SG4["Waves 4 and 5: social, rights, CMS"]
     E6_01["S1-E6-01 Comments"]
@@ -417,7 +421,6 @@ flowchart TD
     E13_02["S1-E13-02 Download my data"]
     E11_09["S1-E11-09 Data requests and story export"]
     E13_05["S1-E13-05 Download my stories"]
-    CMS["S1-E11-06, 10, 11, 12 Website CMS"]
     E5_08["S1-E5-08 Public website home page"]
   end
   YOTI[/"Yoti hosted check and webhook"/]
@@ -457,8 +460,8 @@ flowchart TD
   E10_04 --> E11_08
   E3_02 --> E13_02 --> E11_09 --> E13_05
   E11_01 --> E11_09
-  E11_01 --> CMS --> WEBDB
-  WEBDB -.-> E5_08
+  E11_01 --> CMS --> E5_08
+  CMS -.-> WEBDB
 
   classDef crit stroke:#481C5F,stroke-width:4px;
   classDef ext stroke-dasharray:4 3;
@@ -496,6 +499,7 @@ These are places where a story in the March slice depends on one that isn't in i
 | GDPR requests from real users in March | S1-E11-09, S1-E13-02 to 05 (after March since 17 Oct 2026, 12:44) | In March requests arrive by email at the contact address and are answered by hand within a month (decided 17 Oct 2026, 12:44); the self-service and staff tools come before going live |
 | S1-E3-01 story language, S1-E2-10 closed markets | S1-E11-05 markets and languages | Seed the open languages and markets in a migration for March; the admin screen follows |
 | Settings, flags, reserved names and the username word lists | S1-E11-03 (after March) | Seeded by migration for March; changing them means a new migration until S1-E11-03 lands |
+| The CMS market picker (S1-E11-06) | S1-E11-05 markets and languages (after March) | The CMS reads the markets list seeded by migration; the admin screen follows (17 Oct 2026, 19:14) |
 | Moderators approving a username false hit (S1-E2-04) | S1-E11-03 | The approval is one action on the account page in S1-E11-02 (in the slice) |
 | S1-E15-02 March numbers (return rate) | S1-E4-03 library (after March) | The reader records daily `chapter_reads` totals itself (S1-E4-01). Totals can't follow one reader from chapter N to N+1, so the March return rate is an aggregate approximation: reads of chapter N+1 within 7 days of its release divided by reads of chapter N. Only aggregated data, never per-reader records (decided 17 Oct 2026, 12:34) |
 | Comment and sign-up limits | S1-E10-12 (after March) | Supabase Auth's built-in limits and the account gate cover March (proposal); a fixed comment limit in the comment function |
@@ -529,7 +533,7 @@ Added 16 Oct 2026 (late evening) at Robert's request. Screens 8.1 to 8.9 are on 
 | Support tickets | Every support email and Contact us message as a ticket: views, statuses, assignee, internal notes, canned replies, merge, links to reports and data requests | 8.13 | S1-E11-13 |
 | Data requests | Requests to see, move, correct or delete data, with deadlines; story export as Word and PDF plus a machine-readable copy | 8.12 | S1-E11-09 |
 | Schools and teacher checks | Pilot schools, partnership status, teacher checks, class spaces and invite sheets, certificates | 8.9 | S1-E2-11, S1-E8-11, S1-E8-12 |
-| Website (CMS) | Home page copy, notice banners, the seasonal doodle schedule, help pages and questions | today inside 8.6 | S1-E11-06, S1-E11-10, S1-E11-11, S1-E11-12 |
+| Website (CMS) | Pages by market and language (the home page first), notice banners, help pages and questions, the seasonal doodle schedule and Interface text (admin overrides of the app's ro and en text, S1-E11-18) | 8.14 shows the Website menu; the home page editor is drawn inside 8.6 | S1-E11-06, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-18 |
 | Sponsors | Campaigns, the creative review queue, "Sponsored" placements, ad-network settings and reports | 8.8 | S1-E12-02, S1-E12-03, S1-E12-04 |
 | Settings | Feature flags, markets and languages, categories, forums, reserved names, ranking weights and rate limits | 8.6 | S1-E11-03, S1-E11-05, S1-E10-12 |
 | Metrics and logs | March test numbers, sign-ups by age group, age check results, reports by tier, the compliance log and retention | 8.7 | S1-E11-04, S1-E15-02 |
@@ -556,14 +560,15 @@ Stage 1 staff roles are **owner**, **admin**, **moderator**, **support** and **c
 | Stories › Classics (S1-E11-16) | Act | Act | None | None | None |
 | Data requests | Act | Act | None | Act | None |
 | Schools and teacher checks | Act | Act | with the permission | None | None |
-| Website CMS | Act | Act | None | None | Act |
+| Website CMS (pages, notices, help and questions, seasonal doodles) | Act | Act | None | None | None |
+| Interface text (S1-E11-18) | Act | Act | None | None | None |
 | Sponsors | Act | Act | None | None | None |
 | Settings and flags | Act | Act | None | None | None |
 | Markets: open a market | Act | None | None | None | None |
 | Metrics and logs | View | View | View (queue numbers) | None | None |
 | Audit log | View and export | View and export | None | None | None |
 
-Classics are managed only by staff with the admin role (and the owner); content editors will also hold the admin role (decided 17 Oct 2026, 12:44). Opening a market is owner-only in this proposal because it carries the legal check (S1-E11-05). Nobody can change their own role, and nobody, owner included, can edit or delete the audit log.
+Classics are managed only by staff with the admin role (and the owner); content editors will also hold the admin role (decided 17 Oct 2026, 12:44). The same goes for the website CMS and interface text: most content not written by writers (website pages, questions and help, notice banners and interface text) is edited and published only by the admin role and the owner, and wording with legal weight (age, consent, privacy, reporting, messaging rules) is admin-only in any case (decided 17 Oct 2026, 19:19). The content editor role therefore has no area of its own for now; whether to keep it as a separate role is **OPEN** for Robert. Opening a market is owner-only in this proposal because it carries the legal check (S1-E11-05). Nobody can change their own role, and nobody, owner included, can edit or delete the audit log.
 
 **Two-factor and sessions**
 
@@ -593,7 +598,7 @@ Classics are managed only by staff with the admin role (and the owner); content 
 - **8.10 Stories.** Every story in one searchable list: title, owner handle, user ID, category, language, status, where it can be read, rating, chapters, last update and open reports. Filters for category, language, open reports and writers under 18. No bulk actions (S1-E11-07).
 - **8.11 Story in admin.** View and change one story: settings, visibility and metadata, remove an unlawful passage, see the version history and restore. Every change needs a reason and the writer is told. Staff never edit a writer's words (S1-E11-08 and 1.8.5).
 - **8.12 Data requests.** Find the user by user ID, handle or email; log the request, the identity check and the deadline; build the files; send a sign-in link. Word per story (PDF after March) or a zip of all, plus the machine-readable copy (S1-E11-09).
-- **Website.** Four content types share one way of working (1.8.6).
+- **Website.** Pages, notices, help and questions share one way of working, and Interface text reuses the same editor (1.8.6).
 - **Audit log.** Who, what, when, the reason, the target with its owner's user ID and the before and after values. Append-only.
 
 #### 1.8.5 What staff may change in a writer's story (decided 16 Oct 2026, late evening, Q14)
@@ -615,26 +620,35 @@ Removing one passage instead of the whole story is also in line with DSA art. 14
 
 #### 1.8.6 Website CMS
 
-**What it covers:** the home page copy (S1-E11-06), notice banners (S1-E11-10; they show on the website and in the app from one table, which lives in the app's database until the website database exists, decided 17 Oct 2026, 12:44), the seasonal doodle schedule (S1-E11-11) and help pages and questions (S1-E11-12). Sponsor banners are not part of it; they stay in Sponsors (S1-E12), so an ad can never be published as a notice.
+**What it covers:** website pages by market and language, starting with the home page (S1-E11-06, which also builds the shared CMS core), notice banners (S1-E11-10; they show on the website and in the app from one table, decided 17 Oct 2026, 12:44), help pages and questions (S1-E11-12), the seasonal doodle schedule (S1-E11-11, after March) and Interface text (S1-E11-18), which reuses the same editor for the app's own text. Sponsor banners are not part of it; they stay in Sponsors (S1-E12), so an ad can never be published as a notice. S1-E11-06, 10, 12 and 18 are in the March MVP (decided 17 Oct 2026, 19:14 and 19:19).
 
-**Where the content lives.** It was decided on 16 Oct 2026 that the public website has its own database, and later that evening (Q54) that its CMS is built new, from scratch, on that database and linked neatly to the front end. From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34); the March home page reads its copy from the locale files, and the CMS stories and the website database come later. The design:
+**Where the text comes from (decided 17 Oct 2026, 19:14 and 19:16).**
 
-- The editors live in the app's admin site, so staff have one log-in with two-factor and one audit log.
-- They save through one edge function in the app's project, `website-cms`. It checks the role (content editor or admin) and `is_staff_session()`, writes to the website's database with a key that can only write the website's content tables and logs the change in the app's audit log. Staff are stored on the website side by their user ID only.
-- The website reads published rows through read-only views and keeps showing the last published version if a read fails.
-- The seasonal doodle schedule is the exception: the app reads it, so it lives in the app's database (B30). Whether the website also shows seasonal doodles is OPEN.
+- Website pages (the home page, questions, help and notices) get their text only from the CMS, never from the locale files. This replaces the 12:34 rule that the March home page copy sits in the locale files; the page itself still lives inside the web app for March.
+- The app's interface text (buttons, errors, labels) stays in the ro and en locale files. Admins can override it from the admin site (S1-E11-18), so changing copy never needs an engineer. Overrides are stored in the database on top of the file text; the files stay the default and are what CI checks, and new keys still arrive only in the files.
+- Interface text has one version per language, not per country. Languages are stored as BCP 47 locale codes (`ro`, `en`, later `en-GB` or `en-US`), so regional variants can be added later without a new table (decided 17 Oct 2026, 19:19).
 
-**One way of working for all four content types:**
+**Markets and languages.** Staff pick the market (country) and the language of the page they edit; every market can have its own home page in each of its languages (decided 17 Oct 2026, 19:14). The markets list is seeded by migration for March; its admin screen is S1-E11-05, after March. A visitor gets the published page for their market (the country from the connection, S1-E2-10) and language; a visitor from a country with no page of its own sees the Romanian market's English page (decided 17 Oct 2026, 19:16).
 
-1. Draft. Both languages are edited side by side with a live preview, and character counters are announced to screen readers.
-2. "Show from" date. A version goes live at 00:00 Romanian time on that date (within a minute if the date is today), and the current version stays up until then.
-3. Publish. Refused unless both English and Română are complete and valid.
-4. Earlier versions. "Restore" brings a version back as a draft; nothing changes on the website until it is published again.
-5. Audit log. Who, when, the go-live date and the before and after copy.
+**Where the content lives.** It was decided on 16 Oct 2026 that the public website has its own database, and later that evening (Q54) that its CMS is built new, from scratch, on that database and linked neatly to the front end. Its set-up is still OPEN, so until it exists the CMS content is stored in the app's own database (decided 17 Oct 2026, 19:16). The design:
 
-Four eyes: decided 16 Oct 2026, late evening (Q31), website copy goes live without a second approver for now; other people review copy before it goes live, outside the tool. Proposal, not decided: answers about age checks, consent, messaging, privacy or money need an admin to publish (S1-E11-12); **OPEN** for Robert, because the Decisions made tab logs Q31 without this exception.
+- The editors live in the app's admin site, so staff have one log-in and one audit log.
+- Editors and public pages talk only to one interface, the `WebsiteContentStore` contract (shared zod schemas). For March its only implementation writes to CMS tables in the app's database through `admin_*` functions, which check the admin role and `is_staff_session()` and write the audit log in the same transaction. When the website database exists, a second implementation writes there through a `website-cms` edge function with a key that can only write the website's content tables; only the storage changes, not the editors (decided 17 Oct 2026, 19:16).
+- Public pages read published rows through read-only views (never draft or scheduled rows) and keep showing the last published version if a read fails.
+- Interface text overrides and the seasonal doodle schedule stay in the app's database for good, because the app reads them (B34, B30). Whether the website also shows seasonal doodles is OPEN.
 
-**Reuse or build.** The CMS reuse analysis (`cto/cms-reuse-analysis.md`, 16 Oct 2026) found that the engage-grow-hub CMS is about 53,500 lines, single-site, English-only and built around a single "admin" flag; it also found that sharing its database or log-ins with a platform for minors is the risky case. The four content types here are small. Decided 16 Oct 2026 (late evening, Q54): no fork; a new CMS built from scratch on the website's own database, edited from the app's admin as above.
+**One way of working for every content type** (pages, notices, help and questions, and Interface text):
+
+1. Pick. The market and language for website content; the language (locale code) for interface text.
+2. Draft. Languages are edited side by side with a live preview, and character counters are announced to screen readers.
+3. "Show from" date. A version goes live at 00:00 Romanian time on that date (within a minute if the date is today), and the current version stays up until then.
+4. Publish. Refused while a required field is empty or invalid, with the list of fields to fix.
+5. Earlier versions. "Restore" brings a version back as a draft; nothing changes on the website or in the app until it is published again.
+6. Audit log. Who, when, what (page, market and language, or key and locale), the go-live date and the before and after text.
+
+**Who can edit (decided 17 Oct 2026, 19:19).** Only staff with the admin role, and the owner, edit and publish website pages, questions and help, notice banners and interface text; the server refuses everyone else. Wording with legal weight (age, consent, privacy, reporting, messaging rules) is admin-only in any case. Four eyes: decided 16 Oct 2026, late evening (Q31), website copy goes live without a second approver for now; other people review copy before it goes live, outside the tool. The earlier proposal that only answers about age checks, consent, messaging, privacy or money need an admin is replaced by the admin-only rule for everything.
+
+**Reuse or build.** The CMS reuse analysis (`cto/cms-reuse-analysis.md`, 16 Oct 2026) found that the engage-grow-hub CMS is about 53,500 lines, single-site, English-only and built around a single "admin" flag; it also found that sharing its database or log-ins with a platform for minors is the risky case. The four content types here are small. Decided 16 Oct 2026 (late evening, Q54): no fork; a new CMS built from scratch on the website's own database, edited from the app's admin as above. For March it runs on the app's database behind the same contract (decided 17 Oct 2026, 19:16).
 
 ### 1.9 Security by design
 
@@ -737,8 +751,8 @@ Updated 16 Oct 2026 (late evening). Robert builds without a programmer (Q32), so
 | --- | --- | --- |
 | Iteration 1: clickable prototype | The screens in the design direction, tested with 5 to 10 writers and readers (proposal); no backend | Design work, plus S1-E1-03 tokens so the prototype and the real app share the same look |
 | Iteration 2: working prototype for a closed group | Logins, publishing, reading, comments and reporting. Adults only (the whole March test is invited adults only, decided 17 Oct 2026, 12:44) | S1-E1-01 to 04, S1-E2-01, 02, 04, 05, 07a, S1-E3-01 to 03, S1-E4-01, S1-E5-05, S1-E6-01, 05, S1-E7-01, S1-E10-01, 03, 04, S1-E11-01, S1-E14-01, 02 (23 stories) |
-| March MVP (proposal) | 20 writers publishing (decided 16 Oct 2026, from any open market) and 200 readers (proposal), on the web, invited adults only (decided 17 Oct 2026, 12:44), with the picture check, moderation and the legal minimum; the age check, parental consent and data rights come before minors go live | Iteration 2 plus the stories in the table below: 58 stories, about 498 hours (47 feature stories plus 11 epic checks) |
-| After March | Forums, spaces, private messages, the desktop and phone apps, banners, the website CMS and everything else, Must first, then Should | The rest of Stage 1 |
+| March MVP (proposal) | 20 writers publishing (decided 16 Oct 2026, from any open market) and 200 readers (proposal), on the web, invited adults only (decided 17 Oct 2026, 12:44), with the picture check, moderation and the legal minimum; the age check, parental consent and data rights come before minors go live | Iteration 2 plus the stories in the table below: 63 stories, about 540 hours (52 feature stories plus 11 epic checks) |
+| After March | Forums, spaces, private messages, the desktop and phone apps, banners, landing pages, contests, seasonal doodles and everything else, Must first, then Should | The rest of Stage 1 |
 
 **What stays in the March MVP**
 
@@ -751,12 +765,14 @@ Updated 16 Oct 2026 (late evening). Robert builds without a programmer (Q32), so
 | S1-E5 Discovery | 01, 02, 03 (the Discover mix), 05, 08 (a short website: hero, safety lines, questions), 09 (See all), QA (epic check, S) | 57 |
 | S1-E6 and S1-E7 | 01 comments, 02 emoji reactions, 03 likes, 04 private downvote, 05 follows (02 and 04 added 17 Oct 2026), QA (epic check, S); S1-E7-01 notifications, S1-E7-QA (epic check, S) | 42 |
 | S1-E10 Safety | 01, 02 (the one report form and TCO contact point), 03a (one queue with tiers and deadlines, M), 04, 05 (picture check), 06, 09 (removal orders), 10 (safeguarding), 08 ("copied from a published work" report) and 13a (safety contacts by country, seeded from research G4, S), both added 17 Oct 2026, QA (epic check, S) | 114 |
-| S1-E11 Admin | 01, 02, 17 (invite links, S, added 17 Oct 2026, 13:01), QA (epic check, S) | 30 |
+| S1-E11 Admin | 01, 02, 06 (website CMS and home page copy, M), 10 (notice banners, S), 12 (help pages and questions, M), 17 (invite links, S, added 17 Oct 2026, 13:01), 18 (edit interface text, M), QA (epic check, S) | 69 |
 | S1-E14 Legal | 01, 02, 04 (Contact us), QA (epic check, S) | 21 |
 | S1-E15 The March numbers | 02, QA (epic check, S) | 15 |
-| **Total** | **59 stories: 2 L, 30 M, 27 S** | **about 501** |
+| **Total** | **63 stories: 2 L, 33 M, 28 S** | **about 540** |
 
 Updated 17 Oct 2026, 12:44: the March test is invited adults only, so S1-E2-08, S1-E2-03, S1-E2-07b, S1-E10-13b, S1-E11-09a, S1-E13-02 to 05 and S1-E13-QA move after March (next table). S1-E13 has no March story left.
+
+Updated 17 Oct 2026, 19:14 to 19:19: the website CMS (S1-E11-06, 10, 12) and Edit interface text (S1-E11-18) join the March MVP, so the total is 63 stories and about 540 hours (it was 59 and about 501).
 
 **What moves after March and why**
 
@@ -783,18 +799,20 @@ Updated 17 Oct 2026, 12:44: the March test is invited adults only, so S1-E2-08, 
 | S1-E11-09b PDF files | about 12 | Word comes first (Q29) |
 | S1-E1-06 Database move | 12 | Not needed: own Supabase from day one (decided 17 Oct 2026, 11:20) |
 
-**Added to the MVP (decided 17 Oct 2026, 11:53).** Robert wants the MVP as complete as possible before a CTO joins, so the five Must stories that sat outside both lists are in: S1-E3-04 (manage chapters, M), S1-E6-02 (emoji reactions, S), S1-E6-04 (private downvote, S), S1-E10-08 ("copied from a published work" report, M) and S1-E10-13 (safety contacts by country, M). That adds about 42 hours. S1-E11-05 is covered for March by seeding (1.7.9) and S1-E11-13 by the support mailbox (proposal in the story). Three Should stories sit inside the MVP: S1-E2-10, S1-E5-08 and S1-E13-05.
+**Added to the MVP (decided 17 Oct 2026, 11:53).** Robert wants the MVP as complete as possible before a CTO joins, so the five Must stories that sat outside both lists are in: S1-E3-04 (manage chapters, M), S1-E6-02 (emoji reactions, S), S1-E6-04 (private downvote, S), S1-E10-08 ("copied from a published work" report, M) and S1-E10-13 (safety contacts by country, M). That adds about 42 hours. S1-E11-05 is covered for March by seeding (1.7.9) and S1-E11-13 by the support mailbox (proposal in the story). Should stories inside the MVP (updated 17 Oct 2026, 19:19): S1-E2-10, S1-E5-08, S1-E11-10 and S1-E11-12 (S1-E13-05 moved after March at 12:44).
+
+**Added to the MVP (decided 17 Oct 2026, 19:14 to 19:19).** The website CMS is built before March: S1-E11-06 (website CMS and home page copy, now Must, M) builds the shared CMS core and the home page editor, S1-E11-10 (notice banners, Should, S) and S1-E11-12 (help pages and questions, Should, M) reuse it, and the new S1-E11-18 (edit interface text, Must, M) comes straight after, on the same editor. That adds about 39 hours. Website page text comes only from the CMS; interface text stays in the locale files with admin overrides; everything is admin-only and stored in the app's database until the website database exists (section 1.8.6). S1-E11-11 (seasonal doodles) and S1-E11-05 (markets screen) stay after March; the CMS reads the seeded markets list.
 
 Added since the old slice: S1-E1-06 (12, dropped again on 17 Oct 2026), S1-E2-03 (12), S1-E2-04 grows from S to M (9 more), S1-E2-10 (3), S1-E5-03 (12), S1-E5-08 (12), S1-E5-09 (3), S1-E10-05 (12), S1-E4-06a (3), S1-E13-05 (3), S1-E14-04 (3), and Word files from the first version (about 18 inside S1-E11-09).
 
 **Capacity, honestly**
 
 - **Time available.** About 19 weeks to 1 March 2027. At 10 to 12 hours a week that is 190 to 230 hours, and less in November and December while the SSES courses take four evenings a week. A fair estimate is 150 to 200 hours.
-- **The MVP needs about 501 hours** (invited adults only, decided 17 Oct 2026, 12:44; it was about 630 with minors in March). That is still two and a half to three times what the evenings give. At 11 hours a week it is about 45 weeks, which still puts real users around the end of summer 2027. To keep March with this scope you would need about 26 hours a week, every week, from now.
+- **The MVP needs about 540 hours** (invited adults only, decided 17 Oct 2026, 12:44, when it dropped from about 630; the website CMS and interface text added about 39 on 17 Oct 2026, 19:14 to 19:19). That is about two and a half to three and a half times what the evenings give before 1 March. At 11 hours a week it is about 49 weeks, which puts real users around late September 2027; at about 28 hours a week it would fit before 1 March. These figures are for planning: the scope stays and the date moves if the work needs it (decided 17 Oct 2026, 19:22).
 - **The floor is high.** Foundations, the age gate, parental consent, the report form, removal orders, the moderation queue, the picture check, safeguarding and data rights come to about 280 hours before anyone writes or reads a single story. Limiting March to invited adults (decided 17 Oct 2026, 12:44) moves about 132 of those hours to the minors' launch gate; it doesn't remove them. With minors on the platform and consent as the legal basis, none of that can go before the first under-18 joins.
 - **The sizes assume Claude Code does the typing and you review.** A first-time builder is usually slower than this, not faster. Log the real hours for the first four stories and re-forecast in early December.
 - **Small cuts left inside the MVP** (each yours to make): a one-page website instead of S1-E5-08 (about 9), a simple newest-plus-most-liked Discover instead of the ranking job (about 9). Together about 18 hours, which does not change the picture. Word files after March is no longer a cut: Download my data holds every story as a Word file (decided 17 Oct 2026, 12:34).
 
-The real levers are hours a week and the date. Both are **OPEN** and Robert's call. My recommendation as CTO: keep this list as the scope, decide in November between more hours and a later test date, and keep forums as the first story to add back.
+**Decided 17 Oct 2026, 19:22 (Robert):** March 2027 is a target, not a deadline. The MVP scope stays as planned and the test date moves if the work needs it (replaces 34m, "hours a week or the test date are decided in November"). My recommendation as CTO: log the real hours for the first four stories, re-forecast the test date in early December, and keep forums as the first story to add back if hours allow.
 
 ---

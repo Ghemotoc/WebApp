@@ -7,6 +7,7 @@ The boards in design/boards are the source of truth for layout, but where a boar
 | Board | Element | Change |
 | --- | --- | --- |
 | Website-Home | The FAQ answers and the prize line say under-16s need a parent's consent and everyone does a Yoti age check | Right for the public launch. For the March test (invited adults only, decided 17 Oct 2026, 12:44) the public home page (S1-E5-08) says the test is for invited adults; the consent and age check copy goes live with S1-E2-03 and S1-E2-08, before minors join (architecture 1.7.9) |
+| AdminSettings, AdminPages | The "Website home page" editor says the website reads the copy from its own database and has no market picker | For March the CMS content is stored in the app's database behind the `WebsiteContentStore` contract, and staff pick the market and language before editing; the editor sits under Website (decided 17 Oct 2026, 19:14 and 19:16; S1-E11-06) |
 | Teaser | Six widget doodles | Confirm the teaser is not a "sharing" screen under the no-doodle rule; remove them if it is (OPEN for Robert) |
 
 ## Fixed on the boards (17 Oct 2026)
