@@ -20,6 +20,15 @@ The database side of the app: schema changes, database tests, seed data and (lat
 4. **Functions** use `set search_path = ''` and name every schema. Functions that could reveal other people's data are not executable by `anon` or `authenticated`.
 5. After a migration: `npm run types:gen`, and commit `src/lib/database.types.ts`. CI's `types:check` fails if you forget.
 
+## Functions the app calls
+
+| Function | Does | Who may call it | Story |
+| --- | --- | --- | --- |
+| `set_my_locale(new_locale)` | saves `ro` or `en` as the caller's own interface language (`profiles.locale`) | any signed-in person, read-only accounts included; never signed-out visitors | S1-E1-04 |
+| `log_staff_action(...)` | writes one audit log row for the signed-in staff member | staff sessions only | S1-E1-02 |
+
+Why `set_my_locale()` and not an update policy on `profiles`: a policy would let a person change every column of their own row through the API, their year of birth too. The function changes one column. Test: `tests/database/014-profile-locale.test.sql`.
+
 ## The account gate (architecture 1.7.8)
 
 | Function | Answers | Filled in later by |

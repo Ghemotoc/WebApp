@@ -99,6 +99,7 @@ export type Database = {
           created_at: string;
           deleted_at: string | null;
           id: string;
+          locale: string;
           updated_at: string;
         };
         ComputedFields: never;
@@ -111,6 +112,7 @@ export type Database = {
           created_at?: string;
           deleted_at?: string | null;
           id: string;
+          locale?: string;
           updated_at?: string;
         };
         Update: {
@@ -122,6 +124,7 @@ export type Database = {
           created_at?: string;
           deleted_at?: string | null;
           id?: string;
+          locale?: string;
           updated_at?: string;
         };
         Relationships: [];
@@ -241,6 +244,7 @@ export type Database = {
         };
         Returns: string;
       };
+      set_my_locale: { Args: { new_locale: string }; Returns: string };
     };
     Enums: {
       account_status:

@@ -2,8 +2,9 @@
  * Sets up translations: Romanian and English, Romanian first for everyone (story S1-E1-01).
  *
  * Rule: the interface opens in Romanian whatever the device language, and English is one choice away
- * (decided 17 Oct 2026, 11:48). So there is no browser-language detection here. The language menu
- * and saving the choice to the account come in S1-E1-04.
+ * (decided 17 Oct 2026, 11:48). So there is no browser-language detection here, ever. The language
+ * drop-downs and saving the choice to the account live in src/features/language/ (S1-E1-04); main.tsx
+ * starts this instance in the language this browser last chose (src/lib/language-preference.ts).
  *
  * Where things come in from: src/locales/<language>/common.json (the /design page adds its own
  * design.json when it loads, so production builds never carry it), and the product and company names from
@@ -28,6 +29,16 @@ export type SupportedLanguage = (typeof supportedLanguages)[number];
 
 /** Romanian for everyone on the first visit (decided 17 Oct 2026, 11:48). */
 export const defaultLanguage: SupportedLanguage = 'ro';
+
+/**
+ * Says whether a value is one of the interface languages.
+ *
+ * @param value - anything: a stored value, a database column, a drop-down value
+ * @returns true for 'ro' or 'en'
+ */
+export function isSupportedLanguage(value: unknown): value is SupportedLanguage {
+  return supportedLanguages.includes(value as SupportedLanguage);
+}
 
 /** All translations, grouped by language and then by namespace (one JSON file per namespace). */
 const translations = {

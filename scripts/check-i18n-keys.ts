@@ -6,17 +6,18 @@
  * What it checks:
  * 1. Every key exists in both languages (CLAUDE.md rule 4: add keys to both ro and en).
  * 2. Romanian text uses the comma-below letters ș and ț, never the cedilla look-alikes ş and ţ
- *    (CLAUDE.md rule 4). Added here because a wrong letter is easy to paste and hard to see.
+ *    (CLAUDE.md rule 4). Added here because a wrong letter is easy to paste and hard to see. It uses
+ *    the same rule as the app's text fields, src/lib/romanian-text.ts (S1-E1-04): a text is wrong
+ *    when correcting its letters would change it.
  */
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import { normaliseRomanianLetters } from '../src/lib/romanian-text';
+
 /** The languages that must have the same keys. */
 export const localeLanguages = ['ro', 'en'] as const;
-
-/** Cedilla letters that look like Romanian ș and ț but are wrong (ş Ş ţ Ţ). */
-const cedillaLetters = /[şŞţŢ]/;
 
 /** A translation file's contents: text values, possibly grouped in nested objects. */
 export interface TranslationTree {
@@ -89,7 +90,7 @@ export function findCedillaLetters(
   romanian: Map<string, string>,
 ): TranslationProblem[] {
   return [...romanian.entries()]
-    .filter(([, text]) => cedillaLetters.test(text))
+    .filter(([, text]) => normaliseRomanianLetters(text) !== text)
     .map(([key]) => `${namespace}.json: "${key}" uses ş or ţ; use ș or ț (comma below)`);
 }
 

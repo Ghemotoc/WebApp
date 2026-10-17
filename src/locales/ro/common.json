@@ -25,6 +25,13 @@
     "light": "Luminoasă",
     "night": "Noapte"
   },
+  "language": {
+    "label": "Limbă",
+    "en": "English",
+    "ro": "Română",
+    "savedToAccount": "Limba a fost salvată în contul tău.",
+    "keptOnDevice": "Nu am putut salva limba în cont. O păstrăm pe acest dispozitiv."
+  },
   "shelf": {
     "regionLabel": "{{title}}, se derulează lateral",
     "scrollBack": "Derulează înapoi",
