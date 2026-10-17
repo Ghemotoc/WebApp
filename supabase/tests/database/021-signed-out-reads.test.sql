@@ -3,6 +3,8 @@
 -- public-read policy allows").
 -- Walks every table in public as the anon role and compares what comes back with the rows the
 -- public-read policies allow. A new table that leaks rows to signed-out visitors fails here.
+-- A table anon holds no select grant on counts as 0 rows: the Data API refuses it outright
+-- (S1-E1-02 fix, 17 Oct 2026; 003-table-grants-match-policies checks the grants themselves).
 begin;
 
 create extension if not exists pgtap with schema extensions;
@@ -25,6 +27,12 @@ begin
     order by 1
   loop
     table_name := public_table.name;
+    -- Without a select grant, the API refuses the whole table: nothing is visible.
+    if not has_table_privilege('anon', format('public.%I', public_table.name), 'SELECT') then
+      visible_rows := 0;
+      return next;
+      continue;
+    end if;
     -- Run the count as the anon role, exactly as an API request would.
     set local role anon;
     execute format('select count(*) from public.%I', public_table.name) into visible_rows;

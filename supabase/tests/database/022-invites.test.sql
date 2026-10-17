@@ -25,9 +25,11 @@ select is(public.check_invite('USED-UP-TEST-INVITE'), 'ended', 'a used-up code h
 select is(public.check_invite('REVOKED-TEST-INVITE'), 'ended', 'a revoked code has ended');
 select is(public.check_invite('NO-SUCH-CODE'), 'unknown', 'a made-up code is unknown');
 
-select is_empty(
+select throws_ok(
   $$ select id from public.invites $$,
-  'denied: invites_select_admin: a signed-out visitor reads no invites'
+  '42501',
+  null,
+  'denied: invites_select_admin: a signed-out visitor cannot read invites at all'
 );
 
 -- Signed in as adult_writer: a member.

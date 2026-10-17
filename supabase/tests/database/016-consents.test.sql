@@ -82,9 +82,11 @@ select throws_ok(
   'a signed-out visitor cannot accept anything on anyone''s behalf'
 );
 
-select is_empty(
+select throws_ok(
   $$ select id from public.consents $$,
-  'a signed-out visitor reads nobody''s acceptances'
+  '42501',
+  null,
+  'a signed-out visitor cannot read anybody''s acceptances'
 );
 
 select * from finish();

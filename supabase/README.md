@@ -17,8 +17,13 @@ The database side of the app: schema changes, database tests, seed data and (lat
    - `user_content` tables add their value to the `reportable_type` enum in the same migration (rule 6).
    - Test `002` checks all of this.
 3. **Every policy has a comment** saying who it allows and why, and **an allowed and a denied test**. A test's description contains `allowed: <policy_name>` or `denied: <policy_name>`; `scripts/check-policy-tests.ts` (run by `npm test`) fails when either is missing. Policy names start with the table name, so they are unique.
-4. **Functions** use `set search_path = ''` and name every schema. Functions that could reveal other people's data are not executable by `anon` or `authenticated`.
-5. After a migration: `npm run types:gen`, and commit `src/lib/database.types.ts`. CI's `types:check` fails if you forget.
+4. **Table grants are explicit.** The hosted projects grant nothing on a new table to `anon` or `authenticated`, and `config.toml` sets `auto_expose_new_tables = false` so local matches. Grant exactly the role and command each policy names, for example:
+   ```sql
+   grant select on public.stories to anon, authenticated;  -- stories_select_public
+   ```
+   Never grant `truncate`, `references`, `trigger` or `maintain` (RLS doesn't cover them). Test `003` fails when a policy lacks its grant, a grant lacks a policy, or a new table starts with any privileges. Without the grant the API answers 401 "permission denied for table".
+5. **Functions** use `set search_path = ''` and name every schema. Functions that could reveal other people's data are not executable by `anon` or `authenticated`. A function the app calls is granted by name (`grant execute on function … to authenticated`), never left to a default.
+6. After a migration: `npm run types:gen`, and commit `src/lib/database.types.ts`. CI's `types:check` fails if you forget.
 
 ## Functions the app calls
 

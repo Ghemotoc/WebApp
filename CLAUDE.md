@@ -58,6 +58,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 
 ## Conventions
 - Database: snake_case, plural table names, uuid primary keys, created_at/updated_at timestamptz, soft delete with deleted_at; the owner column is user_id, other people get role names (reporter_user_id).
+- Table grants: every migration that adds a table grants its table privileges explicitly, exactly what its RLS policies need (`grant select on public.<table> to anon, authenticated` and so on), never TRUNCATE, REFERENCES or TRIGGER. The hosted projects grant nothing by default and `auto_expose_new_tables = false` makes local match; `supabase/tests/database/003-table-grants-match-policies.test.sql` checks it (Robert, 17 Oct 2026).
 - TypeScript: camelCase; components in PascalCase files; one component per file; zod schemas in src/schemas/ shared with Edge Functions.
 - Folders: src/features/<feature>/ (components, hooks, api), src/lib/, src/locales/, supabase/migrations/, supabase/functions/, supabase/tests/, e2e/, docs/.
 - Analytics: events named object_action, listed in docs/analytics-events.md, no personal data.

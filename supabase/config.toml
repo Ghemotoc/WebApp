@@ -25,7 +25,11 @@ max_rows = 1000
 # `postgres` are reachable through the Data API roles (`anon`, `authenticated`, `service_role`)
 # without explicit GRANTs, matching the cloud default. Set to `false` to require explicit GRANTs
 # instead. Left unset, a fresh project falls back to `true`.
-# auto_expose_new_tables = true
+# Set to false here because the hosted staging and production projects don't auto-grant either, so
+# local must match them; every migration grants table and function privileges explicitly (story
+# S1-E1-02 fix, Robert, 17 Oct 2026: /legal/terms returned 401 on staging while every local test
+# passed).
+auto_expose_new_tables = false
 
 [api.tls]
 # Enable HTTPS endpoints locally using a self-signed certificate.

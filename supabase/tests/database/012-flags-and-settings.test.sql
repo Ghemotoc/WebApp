@@ -68,9 +68,11 @@ select ok(
 );
 
 -- Nobody changes a flag through the API: changes come by migration until S1-E11-03.
-select is_empty(
+select throws_ok(
   $$ update public.feature_flags set is_enabled = false where key = 'adults_only' returning key $$,
-  'not even the owner can switch a flag through the API'
+  '42501',
+  null,
+  'not even the owner can switch a flag through the API (no update grant)'
 );
 
 select * from finish();
