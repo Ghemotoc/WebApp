@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: users</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}.tmc-rows>div{padding:12px 0;border-top:1px solid #DED3E4}.tmc-rows>div:first-of-type{border-top:0;padding-top:0}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the app, with the staff links and a Staff pill -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <header style="padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · users</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Find an account</h1>
+      <p style="margin: 0; max-width: 720px; font-size: 18px; line-height: 1.65; color: #5C4965">Search by handle, email or user ID. You see what you need to act on an account and nothing more. Every action here goes to the audit log.</p>
+
+    </header>
+
+    <!-- Search and status filters -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <form role="search" style="flex: 1 1 420px; min-width: 0; position: relative; margin: 0; display: flex; gap: 10px">
+        <label for="user-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Handle, email or user ID</label>
+        <span style="position: absolute; left: 20px; top: 15px; color: #6B5A73; display: flex"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+        <input id="user-q" type="search" placeholder="Handle, email or user ID" style="flex: 1; min-width: 0; box-sizing: border-box; height: 52px; padding: 0 20px 0 52px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+        <button type="submit" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; height: 52px">Search</button>
+      </form>
+    </div>
+    <div role="group" aria-label="Filter by status" style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{chips}}" as="c" hint-placeholder-count="6">
+        <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+      </sc-for>
+    </div>
+    <p style="margin: 16px 0 0; font-size: 13px; color: #6B5A73">Example accounts. {{shownLine}}</p>
+
+    <div style="margin-top: 20px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+
+      <!-- Left: results and the account’s audit trail -->
+      <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+        <section aria-labelledby="results-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 8px 0 4px; overflow: hidden">
+          <h2 id="results-title" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Results</h2>
+          <div style="overflow-x: auto">
+            <table style="width: 100%; border-collapse: collapse; min-width: 640px">
+              <thead>
+                <tr>
+                  <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">ACCOUNT</th>
+                  <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">STATUS</th>
+                  <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">AGE CHECK</th>
+                  <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">SANCTIONS</th>
+                  <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap; text-align: right">OPEN CASES</th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr style="{{row.raul}}">
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.raul}}" onClick="{{pick.raul}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">@raul.d</span><span style="font-size: 13px; color: #6B5A73">User</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Suspended</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Passed<br><span style="font-size: 13px; color: #6B5A73">5 Oct 2026</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Warning, suspension</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">1</td>
+              </tr>
+              <tr style="{{row.lia}}">
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.lia}}" onClick="{{pick.lia}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">@lia.writes</span><span style="font-size: 13px; color: #6B5A73">User</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Active</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Passed<br><span style="font-size: 13px; color: #6B5A73">14 Oct 2026</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">None</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">0</td>
+              </tr>
+              <tr style="{{row.ink}}">
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.ink}}" onClick="{{pick.ink}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">@inkwolf</span><span style="font-size: 13px; color: #6B5A73">User</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Active</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Passed<br><span style="font-size: 13px; color: #6B5A73">2 Oct 2026</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Warning</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">0</td>
+              </tr>
+              <tr style="{{row.owl}}">
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.owl}}" onClick="{{pick.owl}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">@night.owl</span><span style="font-size: 13px; color: #6B5A73">User</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Not active yet</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Passed<br><span style="font-size: 13px; color: #6B5A73">15 Oct 2026</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">None</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">0</td>
+              </tr>
+              <tr style="{{row.promo}}">
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.promo}}" onClick="{{pick.promo}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">@promo.books.ro</span><span style="font-size: 13px; color: #6B5A73">User</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Banned</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Failed<br><span style="font-size: 13px; color: #6B5A73">11 Oct 2026</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Ban</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">0</td>
+              </tr>
+              <tr style="{{row.andrei}}">
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.andrei}}" onClick="{{pick.andrei}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">@andrei.m</span><span style="font-size: 13px; color: #6B5A73">Moderator</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Staff</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Passed<br><span style="font-size: 13px; color: #6B5A73">1 Oct 2026</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">None</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">0</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin: 0; padding: 14px 16px 12px; font-size: 13px; color: #6B5A73">Pick an account to see its details. The age check column shows the result and date only. We never keep or show photos or documents.</p>
+        </section>
+
+        <section aria-labelledby="audit-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 24px">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Audit log</span>
+              <h2 id="audit-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; line-height: 1.2; color: #26142E">Staff actions on {{acc.handle}}</h2>
+            </div>
+            <span style="font-size: 13px; color: #6B5A73">Who, what, when, before and after</span>
+          </div>
+          <div style="margin-top: 16px; display: flex; flex-direction: column">
+            <sc-for list="{{acc.audit}}" as="a" hint-placeholder-count="2">
+              <div style="display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr); gap: 4px 16px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+                <span style="font-size: 13px; color: #6B5A73">{{a.when}}</span>
+                <span style="font-size: 14px; line-height: 1.5; color: #26142E"><b>{{a.who}}</b> · {{a.what}}<br><span style="color: #5C4965">{{a.change}}</span></span>
+              </div>
+            </sc-for>
+            <sc-if value="{{acc.noAudit}}" hint-placeholder-val="{{false}}">
+              <p style="margin: 0; padding: 14px 0; border-top: 1px solid #EFE8F2; font-size: 14px; color: #5C4965">No staff actions on this account yet.</p>
+            </sc-if>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right: the selected account -->
+      <aside aria-labelledby="acc-title" style="flex: 1 1 400px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 22px">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <span aria-hidden="true" style="{{acc.avatar}}">{{acc.initials}}</span>
+          <div style="min-width: 0; display: flex; flex-direction: column; gap: 4px">
+            <h2 id="acc-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; line-height: 1.2; color: #26142E; font-size: 24px">{{acc.handle}}</h2>
+            <span style="font-size: 13px; color: #6B5A73">Pen name: {{acc.pen}} · Joined {{acc.joined}}</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px"><span style="{{acc.statusStyle}}">{{acc.status}}</span></div>
+
+        <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(0, 140px) minmax(0, 1fr); gap: 12px 16px; font-size: 14px; line-height: 1.5">
+          <dt style="color: #6B5A73">User ID</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E"><span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 2px"><code style="font-size: 14px; color: #26142E">{{acc.uid}}</code><button type="button" aria-label="{{acc.copyAria}}" onClick="{{copyId}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copyLabel}}</button></span><br><span style="font-size: 13px; color: #6B5A73">Created automatically at sign-up · never shown publicly</span></dd>
+          <dt style="color: #6B5A73">Stories</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E">{{acc.storiesLine}}<sc-if value="{{acc.hasStories}}" hint-placeholder-val="{{true}}"> · <a href="AdminStories.dc.html" aria-label="{{acc.storiesAria}}" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">See in Stories</a></sc-if></dd>
+          <dt style="color: #6B5A73">Email</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E">{{acc.email}} <button type="button" style="height: 32px; margin-left: 6px; padding: 0 10px; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Show (logged)</button></dd>
+          <dt style="color: #6B5A73">Age group</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E">{{acc.age}}<br><span style="font-size: 13px; color: #6B5A73">From year of birth</span></dd>
+          <dt style="color: #6B5A73">Age check</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E"><b style="{{acc.ageStyle}}">{{acc.ageResult}}</b> · {{acc.ageDate}}<br><span style="font-size: 13px; color: #6B5A73">{{acc.ageNote}}</span></dd>
+          <dt style="color: #6B5A73">Parental consent</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E">{{acc.consent}}</dd>
+          <dt style="color: #6B5A73">Log-in</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E">{{acc.twofa}}</dd>
+          <dt style="color: #6B5A73">Support tickets</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E">{{acc.ticketsLine}} · <a href="AdminTickets.dc.html" style="font-weight: 600">See in Support</a></dd>
+        </dl>
+
+        <!-- Role -->
+        <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Role</span>
+          <span style="font-size: 15px; color: #26142E">Current role: <b>{{acc.role}}</b></span>
+          <label for="role" style="font-size: 14px; font-weight: 600; color: #26142E">New role</label>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="role" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <option>No staff role</option>
+              <option>Moderator</option>
+              <option>Support</option>
+              <option>Content editor</option>
+              <option>Admin</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            <button type="button" onClick="{{act.role}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Change role</button>
+          </div>
+          <p style="margin: 0; font-size: 13px; color: #6B5A73; line-height: 1.5">Only an admin or the owner can give a staff role, and only to a staff account that signs in with Google Workspace. A personal member account never gets a staff role. Teacher is a badge, set in Schools, not a role. Space moderator is set inside one space.</p>
+        </div>
+
+        <!-- Sanctions -->
+        <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Sanctions history</span>
+          <sc-for list="{{acc.sanctions}}" as="s" hint-placeholder-count="2">
+            <div style="padding: 14px 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-size: 15px; font-weight: 700; color: #26142E">{{s.what}}</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #5C4965">{{s.why}}</span>
+              <span style="font-size: 13px; color: #6B5A73">{{s.meta}}</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{acc.noSanctions}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; font-size: 14px; color: #5C4965">No sanctions.</p>
+          </sc-if>
+        </div>
+
+        <!-- Open cases -->
+        <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Open cases</span>
+          <sc-for list="{{acc.cases}}" as="c" hint-placeholder-count="1">
+            <a href="{{c.href}}" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; min-height: 44px; padding: 10px 16px; border-radius: 16px; border: 1px solid #DED3E4; text-decoration: none; color: #26142E"><span style="font-size: 14px"><b>{{c.id}}</b> · {{c.what}}</span><span style="margin-left: auto; text-align: right; font-size: 13px; font-weight: 600; color: #672786">Open</span></a>
+          </sc-for>
+          <sc-if value="{{acc.noCases}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; font-size: 14px; color: #5C4965">No open cases.</p>
+          </sc-if>
+        </div>
+
+        <!-- Private messages rule -->
+        <div style="display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: #F1EAF4; color: #481C5F">
+          <span style="flex: none; display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
+          <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #3A2442"><b>Private messages are hidden.</b> You see a message only when it is part of a report. {{acc.pm}}</p>
+        </div>
+
+        <!-- Actions -->
+        <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Actions</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <button type="button" onClick="{{act.suspend}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Suspend</button>
+              <button type="button" onClick="{{act.ban}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Ban</button>
+              <button type="button" onClick="{{act.pen}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Reset pen name</button>
+              <button type="button" onClick="{{act.signout}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Sign out everywhere</button>
+              <button type="button" onClick="{{act.export}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Start data export</button>
+              <button type="button" onClick="{{act.delete}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Start deletion</button>
+          </div>
+          <p style="margin: 0; font-size: 13px; color: #6B5A73; line-height: 1.5">Start a data export or deletion only when the user has asked for it.</p>
+
+          <!-- Confirm step for the chosen action -->
+          <sc-if value="{{confirm.show}}" hint-placeholder-val="{{true}}">
+            <form style="margin-top: 6px; padding: 20px; border-radius: 16px; border: 1px solid #672786; background: #FFFFFF; display: flex; flex-direction: column; gap: 14px">
+              <span style="font-size: 16px; font-weight: 700; color: #26142E">{{confirm.title}}</span>
+              <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">{{confirm.text}}</p>
+              <sc-if value="{{confirm.length}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-direction: column; gap: 6px">
+                  <label for="sus-len" style="font-size: 14px; font-weight: 600; color: #26142E">How long</label>
+                  <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="sus-len" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option>24 hours</option><option selected>7 days</option><option>30 days</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+                </div>
+              </sc-if>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="act-why" style="font-size: 14px; font-weight: 600; color: #26142E">{{confirm.field}}</label>
+                <textarea id="act-why" placeholder="{{confirm.placeholder}}" style="width: 100%; box-sizing: border-box; min-height: 96px; padding: 14px 18px; border: 1px solid #DED3E4; border-radius: 20px; background: #FFFFFF; font-family: inherit; font-size: 16px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <button type="button" onClick="{{doConfirm}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px">{{confirm.cta}}</button>
+                <button type="button" onClick="{{cancel}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Cancel</button>
+              </div>
+            </form>
+          </sc-if>
+          <sc-if value="{{done.show}}" hint-placeholder-val="{{false}}">
+            <p role="status" style="margin: 6px 0 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span><b>Done.</b> {{done.text}}</span></p>
+          </sc-if>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Starts on a suspended account so the panel shows sanctions and a case.
+    this.state = { sel: 'raul', filter: 'All', action: null, done: null, copied: null };
+  }
+
+  // Toggle switch: a 44px-tall button holding a small track, so the touch target stays big.
+  switchStyle() {
+    return 'flex: none; width: 64px; height: 44px; padding: 0; border: 0; background: transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;';
+  }
+  trackStyle(on) {
+    return 'position: relative; display: block; width: 56px; height: 32px; border-radius: 999px; box-sizing: border-box; transition: background 0.15s; '
+      + (on ? 'background: #481C5F; border: 1px solid #481C5F;' : 'background: #F4F0EC; border: 1px solid #9F8DA8;');
+  }
+  knobStyle(on) {
+    return 'position: absolute; top: 3px; width: 24px; height: 24px; border-radius: 50%; box-shadow: 0 1px 3px rgba(38,20,46,0.3); transition: left 0.15s; '
+      + (on ? 'left: 27px; background: #E6C24C;' : 'left: 3px; background: #FFFFFF;');
+  }
+  // Interactive chip (pill system, 17 Oct): 36 px tall inside a 44 px tap area (.tmc-chip::before), equal 14 px sides.
+  // Unselected: white with a #8E7B99 edge. Selected: solid plum plus a check icon, so the state is not colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Example accounts. Staff see the age group, never the year of birth itself.
+    var A = {
+      raul: {
+        uid: 'usr_a41e…7c09', full: 'usr_a41e8d20c35f7c09', stories: 0,
+        handle: '@raul.d', pen: 'Raul D.', initials: 'RD', colour: '#8C2B3A', joined: '3 Oct 2026', email: 'r•••••@yahoo.com',
+        status: 'Suspended until 23 Oct 2026', kind: 'warn', group: 'Suspended', age: '16 to 17',
+        ageResult: 'Passed', ageDate: '5 Oct 2026', ageOk: true, consent: 'Not needed (16 or over)', twofa: 'Member account: email or social log-in', role: 'User',
+        sanctions: [
+          { what: 'Warning', why: 'Insulting comments under a chapter by @lia.writes.', meta: '8 Oct 2026 · Andrei Mureșan · statement of reasons sent' },
+          { what: 'Suspension, 7 days', why: 'Insults again, this time in a forum thread. Second breach of the same rule.', meta: '16 Oct 2026 · Andrei Mureșan · statement of reasons sent' }
+        ],
+        cases: [ { id: 'A-0415', what: 'Appeal against the suspension', href: 'Appeals.dc.html' } ], tickets: '1 open: #1044, asking when the suspension ends',
+        pm: 'Two reported messages are attached to case R-2301.',
+        audit: [
+          { when: '16 Oct 2026, 11:20', who: 'Andrei Mureșan', what: 'Suspended the account', change: 'Status: Active → Suspended until 23 Oct 2026' },
+          { when: '8 Oct 2026, 17:05', who: 'Andrei Mureșan', what: 'Gave a warning', change: 'Warnings: 0 → 1' }
+        ]
+      },
+      lia: {
+        uid: 'usr_2b81…c04f', full: 'usr_2b81d5e7f390c04f', stories: 2,
+        handle: '@lia.writes', pen: 'Lia Popescu', initials: 'LP', colour: '#B08A1E', joined: '14 Oct 2026', email: 'l•••@gmail.com',
+        status: 'Active', kind: 'ok', group: 'Active', age: '16 to 17',
+        ageResult: 'Passed', ageDate: '14 Oct 2026', ageOk: true, consent: 'Not needed (16 or over)', twofa: 'Member account: email or social log-in', role: 'User',
+        sanctions: [], cases: [], pm: 'None reported.', audit: []
+      },
+      ink: {
+        uid: 'usr_7f3c…a91e', full: 'usr_7f3c2b9e04d1a91e', stories: 1,
+        handle: '@inkwolf', pen: 'inkwolf', initials: 'IW', colour: '#4D1B5E', joined: '2 Oct 2026', email: 'i••••••@proton.me',
+        status: 'Active', kind: 'ok', group: 'Active', age: '16 to 17',
+        ageResult: 'Passed', ageDate: '2 Oct 2026', ageOk: true, consent: 'Not needed (16 or over)', twofa: 'Member account: email or social log-in', role: 'User',
+        sanctions: [ { what: 'Warning', why: 'Posted a link to The Salt Mine Choir in 12 forum threads in one day. Self-promotion goes in the Share your story forum.', meta: '9 Oct 2026 · Andrei Mureșan · statement of reasons sent' } ],
+        cases: [], pm: 'None reported.',
+        audit: [ { when: '9 Oct 2026, 10:40', who: 'Andrei Mureșan', what: 'Gave a warning', change: 'Warnings: 0 → 1' } ]
+      },
+      owl: {
+        uid: 'usr_5c90…2e17', full: 'usr_5c904ad1b7e32e17', stories: 0,
+        handle: '@night.owl', pen: 'Night Owl', initials: 'NO', colour: '#2E4A8C', joined: '15 Oct 2026', email: 'n••••••@gmail.com',
+        status: 'Not active yet: waiting for a parent', kind: 'neutral', group: 'Not active yet', age: '13 to 15',
+        ageResult: 'Passed', ageDate: '15 Oct 2026', ageOk: true, consent: 'Asked by email on 15 Oct 2026. No answer yet.', twofa: 'Member account: email or social log-in', role: 'User',
+        sanctions: [], cases: [], pm: 'None reported.', audit: []
+      },
+      promo: {
+        uid: 'usr_0e7d…b852', full: 'usr_0e7d2a6c94f1b852', stories: 1,
+        handle: '@promo.books.ro', pen: 'Promo Books', initials: 'PB', colour: '#5C4965', joined: '11 Oct 2026', email: 'o•••••@mail.ro',
+        status: 'Banned', kind: 'bad', group: 'Banned', age: '18 or over',
+        ageResult: 'Failed', ageDate: '11 Oct 2026', ageOk: false, consent: 'Not needed (16 or over)', twofa: 'Member account: email or social log-in', role: 'User',
+        sanctions: [ { what: 'Ban', why: 'Posted the same shop link in 40 threads within one hour. The email address can’t sign up again.', meta: '12 Oct 2026 · Robert · statement of reasons sent' } ],
+        cases: [], pm: 'None reported.',
+        audit: [ { when: '12 Oct 2026, 09:12', who: 'Robert', what: 'Banned the account', change: 'Status: Active → Banned' } ]
+      },
+      andrei: {
+        uid: 'usr_3d6a…f4b1', full: 'usr_3d6a91c0e2b8f4b1', stories: 0,
+        handle: '@andrei.m', pen: 'Andrei Mureșan', initials: 'AM', colour: '#2F6B4F', joined: '1 Oct 2026', email: 'a•••••••••••••@ghemotoc.com',
+        status: 'Staff account: moderator', kind: 'staff', group: 'Staff', age: '18 or over',
+        ageResult: 'Passed', ageDate: '1 Oct 2026', ageOk: true, consent: 'Not needed (16 or over)', twofa: 'Google Workspace sign-in with Google’s two-step check', role: 'Moderator',
+        sanctions: [], cases: [], pm: 'None reported.',
+        audit: [ { when: '1 Oct 2026, 09:00', who: 'Robert', what: 'Gave the moderator role', change: 'Role: No staff role → Moderator. Reason: hired as moderator. Staff account only; his personal account stays a member account.' } ]
+      }
+    };
+    var order = ['raul', 'lia', 'ink', 'owl', 'promo', 'andrei'];
+    var tone = {
+      // Pill tokens (background, text, border): suspended and banned share blush, like the table.
+      ok: ['#E8F1EC', '#245A41', '#A9C9B6'], warn: ['#F6E9EB', '#8C2B3A', '#DDB0B8'], bad: ['#F6E9EB', '#8C2B3A', '#DDB0B8'],
+      neutral: ['#F4F0EC', '#4F3D57', '#D6CCDC'], staff: ['#F1EAF4', '#481C5F', '#C9B3D6']
+    };
+
+    // Status filter chips.
+    var filters = ['All', 'Active', 'Not active yet', 'Suspended', 'Banned', 'Staff'];
+    var chips = filters.map(function (f) {
+      var on = st.filter === f;
+      return { label: f, pressed: on, style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ filter: f }); } };
+    });
+
+    // Row styles: hidden when filtered out, tinted when selected.
+    var row = {}, pressed = {}, pick = {}, shown = 0;
+    order.forEach(function (k) {
+      var visible = st.filter === 'All' || A[k].group === st.filter;
+      if (visible) shown++;
+      row[k] = (visible ? '' : 'display: none; ') + (st.sel === k ? 'background: #F1EAF4;' : 'background: #FFFFFF;');
+      pressed[k] = st.sel === k ? 'true' : 'false';
+      pick[k] = function () { self.setState({ sel: k, action: null, done: null, copied: null }); };
+    });
+
+    var a = A[st.sel];
+    var t = tone[a.kind];
+    var acc = Object.assign({}, a, {
+      ticketsLine: a.tickets || 'None',
+      avatar: 'flex: none; width: 56px; height: 56px; border-radius: 50%; background: ' + a.colour + '; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 700; font-size: 19px;',
+      statusStyle: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 13px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';',
+      ageStyle: 'color: ' + (a.ageOk ? '#2F6B4F' : '#8C2B3A') + ';',
+      ageNote: a.ageOk ? 'Yoti result only. No photos or documents are kept.' : 'Yoti result only. The one retry was used. No photos or documents are kept.',
+      noSanctions: a.sanctions.length === 0, noCases: a.cases.length === 0, noAudit: a.audit.length === 0,
+      copyAria: 'Copy the user ID of ' + a.handle,
+      hasStories: a.stories > 0,
+      storiesLine: a.stories === 0 ? 'None' : (a.stories === 1 ? '1 story' : a.stories + ' stories'),
+      storiesAria: 'See the stories of ' + a.handle + ' in Stories'
+    });
+
+    // What each action asks before it runs.
+    var C = {
+      suspend: { title: 'Suspend ' + a.handle, text: 'They can still sign in, read and download their data, but can’t post, comment or message until it ends. They get a statement of reasons in their language.', field: 'Reason (goes into the statement)', placeholder: 'Which rule, and what happened', cta: 'Suspend', length: true, done: 'Account suspended. Statement of reasons sent. Logged in the audit log.' },
+      ban: { title: 'Ban ' + a.handle, text: 'The account is closed and this email address can’t sign up again. They get a statement of reasons and can appeal.', field: 'Reason (goes into the statement)', placeholder: 'Which rule, and what happened', cta: 'Ban', length: false, done: 'Account banned. Statement of reasons sent. Logged in the audit log.' },
+      pen: { title: 'Reset the pen name of ' + a.handle, text: 'The pen name goes back to the handle. The user is told why and can choose a new one.', field: 'Reason', placeholder: 'For example: the pen name copies a real person', cta: 'Reset pen name', length: false, done: 'Pen name reset. User told. Logged in the audit log.' },
+      signout: { title: 'Sign ' + a.handle + ' out everywhere', text: 'Ends every session on every device. Use it when an account may have been taken over.', field: 'Reason', placeholder: 'For example: the user asked after a lost phone', cta: 'Sign out everywhere', length: false, done: 'All sessions ended. Logged in the audit log.' },
+      export: { title: 'Start a data export for ' + a.handle, text: 'Only when the user asked. The file goes to their account, not to you, and the link expires after 7 days. Track it in Data requests.', field: 'Where did the user ask?', placeholder: 'For example: email to support on 16 Oct 2026', cta: 'Start export', length: false, done: 'Export started and added to Data requests. The user gets it in their account. Logged in the audit log.' },
+      delete: { title: 'Start deletion of ' + a.handle, text: 'Only when the user asked. Their content is hidden at once and deleted after 30 days.', field: 'Where did the user ask?', placeholder: 'For example: email to support on 16 Oct 2026', cta: 'Start deletion', length: false, done: 'Deletion started. Logged in the audit log.' },
+      role: { title: 'Change the role of ' + a.handle, text: 'Role changes are written to the audit log with who changed it and why.', field: 'Why', placeholder: 'For example: approved teacher for Class 9B', cta: 'Change role', length: false, done: 'Role changed. Logged in the audit log.' }
+    };
+    var act = {};
+    Object.keys(C).forEach(function (k) { act[k] = function () { self.setState({ action: k, done: null }); }; });
+    var c = st.action ? C[st.action] : null;
+
+    return {
+      chips: chips, row: row, pressed: pressed, pick: pick, acc: acc, act: act,
+      copyLabel: st.copied === st.sel ? 'Copied' : 'Copy',
+      copyId: function () {
+        try { if (navigator.clipboard) navigator.clipboard.writeText(a.full); } catch (e) { /* clipboard blocked: the label still confirms */ }
+        self.setState({ copied: st.sel });
+      },
+      shownLine: shown + (shown === 1 ? ' account shown.' : ' accounts shown.'),
+      confirm: c ? { show: true, title: c.title, text: c.text, field: c.field, placeholder: c.placeholder, cta: c.cta, length: c.length }
+                 : { show: false, title: '', text: '', field: '', placeholder: '', cta: '', length: false },
+      done: st.done ? { show: true, text: st.done } : { show: false, text: '' },
+      doConfirm: function () { self.setState({ action: null, done: c ? c.done : null }); },
+      cancel: function () { self.setState({ action: null }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

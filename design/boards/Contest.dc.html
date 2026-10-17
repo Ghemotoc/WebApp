@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Contest landing page</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
+@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+/* The approved cover backgrounds (S1-E3-13): 5:8 drawings with no text that fill any box */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat;outline:1px solid rgba(38,20,46,0.14);outline-offset:-1px}
+.tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-gold{background-color:#E6C24C;background-image:url(/_blob/91b025a34ffa73c4f7886c143b2229d4)}
+.tmc-cv-lilac{background-color:#E9DDF0;background-image:url(/_blob/f1d0436689691672be6a521d49b6d32c)}
+.tmc-cv-blush{background-color:#F6D3DC;background-image:url(/_blob/e6edfdb3a9348376f609edc9860c7003)}
+.tmc-cv-sky{background-color:#D7E6F2;background-image:url(/_blob/7f5800c35ba2931d2b6f7a813d85b93c)}
+.tmc-cv-sage{background-color:#C9D8BF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#FAF8F5;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-cv-stripes{background-color:#481C5F;background-image:url(/_blob/5bf720d39651e2b57f384d33e3e04028)}
+.tmc-cv-dots{background-color:#E9DDF0;background-image:url(/_blob/49525cd87927782c2ac3d4a53ebc2973)}
+.tmc-cv-grid{background-color:#FAF8F5;background-image:url(/_blob/18fddef6727cc64415d6f75fd94c388b)}
+.tmc-cv-waves{background-color:#D7E6F2;background-image:url(/_blob/b3b6a05178861fc4e9210eaaa4134c6d)}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-cv-doodles{background-color:#FAF8F5;background-image:url(/_blob/f295eb5a1f415fe44f9e39a32e58ba7e)}
+.tmc-cv-twotone{background-color:#F6D3DC;background-image:url(/_blob/0d7f4386c9eaec72ab74d7b8349bc99f)}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones) */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+/* Scrollers with Scroll back / Scroll forward buttons hide their scrollbar (Robert, 17 Oct); they still scroll by swipe, wheel and keyboard */
+.tmc-noscroll{scrollbar-width:none;-ms-overflow-style:none}.tmc-noscroll::-webkit-scrollbar{display:none}
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; overflow-x: clip; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 40px; box-sizing: border-box">
+
+  <!-- Floating island nav: the same top bar as every app screen. A contest page sits under Discover. -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="flex: none; display: block; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <nav aria-label="Breadcrumb" style="margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: #6B5A73">
+      <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">Discover</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      <span aria-current="page">The First Chapter contest</span>
+    </nav>
+
+    <!-- Hero block (Gold theme): title, one line, picture with alt text, Remind me button. Sponsor credit is labelled. -->
+    <section aria-labelledby="contest-title" style="position: relative; margin-top: 12px; border-radius: 28px; overflow: hidden; padding: clamp(28px, 4vw, 56px); background: radial-gradient(circle at 88% 80%, rgba(255,255,255,0.35) 0, rgba(255,255,255,0) 26%), linear-gradient(120deg,#E6C24C 0%,#F0D47A 100%); box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 28px 56px -32px rgba(38,20,46,0.45); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 32px; animation: tmcRise 0.5s ease-out both">
+      <div style="flex: 999 1 460px; min-width: 0; max-width: 680px; display: flex; flex-direction: column; gap: 16px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; line-height: 1.3; color: #5C3F0E">Contest · opens in February 2027</span>
+        <h1 id="contest-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(40px, 5.2vw, 76px); line-height: 0.96; letter-spacing: -0.025em; color: #2A0E33">The First Chapter contest</h1>
+        <p style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.15; color: #3A2442">Write chapter one. Get read.</p>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+          <span style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; border: 1px solid #5C3F0E; color: #3A2442; background: rgba(255,255,255,0.55); font-size: 11px; font-weight: 700; line-height: 1; letter-spacing: 0.12em; white-space: nowrap">SPONSORED</span>
+          <span style="font-size: 15px; font-weight: 600; color: #2A0E33">Presented by [Partner]</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 8px">
+          <button type="button" aria-pressed="{{remindPressed}}" aria-describedby="remind-note" onClick="{{toggleRemind}}" style="{{remindStyle}}"><sc-if value="{{reminded}}" hint-placeholder-val="{{false}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{remindLabel}}</button>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: 16px; color: #2A0E33; text-decoration: underline; text-underline-offset: 4px">Read the full rules</a>
+        </div>
+        <p id="remind-note" role="status" style="margin: 0; font-size: 14px; line-height: 1.5; color: #3A2442">{{remindNote}}</p>
+      </div>
+      <!-- Hero picture (passed the picture check, alt text from the builder) -->
+      <div style="position: relative; flex: 1 1 280px; display: flex; justify-content: center; align-items: center; min-height: 300px">
+        <img data-doodle="widget" data-doodle-on="Hero picture" src="/_blob/8b35eff002c7149d8059704ce00b23d2" alt="" aria-hidden="true" class="tmc-dd-lg" width="84" height="84" style="position: absolute; top: 0; right: 0; width: 84px; height: 84px; transform: rotate(10deg); pointer-events: none; user-select: none; z-index: 0">
+        <div aria-hidden="true" style="position: absolute; width: 190px; height: 258px; border-radius: 16px; transform: translate(-52px, 10px) rotate(-9deg); background: rgba(42,14,51,0.14)"></div>
+        <div role="img" aria-label="A drawn book cover that reads: Chapter one, Your title here, by you." class="{{hc.cls}}" style="position: relative; width: 200px; height: 272px; box-sizing: border-box; padding: 22px; border-radius: 16px; transform: rotate(4deg); display: flex; flex-direction: column; justify-content: flex-end; box-shadow: 0 28px 56px -22px rgba(42,14,51,0.6)">
+          <span aria-hidden="true" style="{{hc.box}}"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #E6C24C">CHAPTER ONE</span><span style="{{hc.title}}">Your title here</span><span style="{{hc.bar}}"></span><span style="{{hc.pen}}">by you</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Text block, then Key dates, Who can enter and Prize -->
+    <section aria-labelledby="about-h" style="margin-top: 56px; display: flex; flex-direction: column; gap: 24px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <div style="display: flex; flex-direction: column; gap: 10px; max-width: 760px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">About the contest</span>
+        <h2 id="about-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Post chapter one, enter in one tap</h2>
+        <p style="margin: 0; font-size: 18px; line-height: 1.65; color: #5C4965">Write the first chapter of a new story and post it on Ghemotoc. Entering is free, and you keep every right in your story.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 20px; align-items: stretch">
+        <div style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 14px">
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">Key dates</h3>
+          <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); font-size: 15px; line-height: 1.5">
+            <dt style="color: #5C4965">Entries open</dt><dd style="margin: 0; font-weight: 600; color: #26142E">[date]</dd>
+            <dt style="color: #5C4965">Entries close</dt><dd style="margin: 0; font-weight: 600; color: #26142E">[date]</dd>
+            <dt style="color: #5C4965">Results</dt><dd style="margin: 0; font-weight: 600; color: #26142E">[date]<span style="display: block; font-size: 13px; font-weight: 400; color: #6B5A73">Winners are named here by pen name only.</span></dd>
+          </dl>
+        </div>
+        <div style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 14px">
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">Who can enter</h3>
+          <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); font-size: 15px; line-height: 1.5">
+            <dt style="color: #5C4965">Writers</dt><dd style="margin: 0; font-weight: 600; color: #26142E">Aged 13 to 19</dd>
+            <dt style="color: #5C4965">Languages</dt><dd style="margin: 0; font-weight: 600; color: #26142E">English or Română</dd>
+            <dt style="color: #5C4965">Where</dt><dd style="margin: 0; font-weight: 600; color: #26142E">Romania</dd>
+          </dl>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Under 16? Your account needs a parent’s or guardian’s consent before you can enter.</p>
+        </div>
+        <div style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 14px">
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">Prize</h3>
+          <p style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; line-height: 1.2; color: #26142E">[prize to be set]</p>
+          <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">The full rules say how winners are chosen and what each prize is.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to enter: numbered steps, then the rules link -->
+    <section aria-labelledby="steps-h" style="margin-top: 56px; display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Four steps</span>
+        <h2 id="steps-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">How to enter</h2>
+      </div>
+      <ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px">
+        <li style="padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px; display: flex; flex-direction: column; gap: 12px">
+          <span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #2A0E33; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px">1</span>
+          <span style="font-size: 16px; line-height: 1.55; color: #26142E">Post chapter one of a new story.</span>
+        </li>
+        <li style="padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px; display: flex; flex-direction: column; gap: 12px">
+          <span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #2A0E33; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px">2</span>
+          <span style="font-size: 16px; line-height: 1.55; color: #26142E">Rate it, so readers know who it suits.</span>
+        </li>
+        <li style="padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px; display: flex; flex-direction: column; gap: 12px">
+          <span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #2A0E33; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px">3</span>
+          <span style="font-size: 16px; line-height: 1.55; color: #26142E">In story settings, tick “Enter The First Chapter contest”.</span>
+          <!-- What the box looks like in story settings (picture only) -->
+          <span aria-hidden="true" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #F4F0EC; font-size: 14px; font-weight: 600; color: #26142E"><span style="flex: none; width: 20px; height: 20px; border-radius: 4px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>Enter The First Chapter contest</span>
+        </li>
+        <li style="padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px; display: flex; flex-direction: column; gap: 12px">
+          <span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: #2A0E33; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px">4</span>
+          <span style="font-size: 16px; line-height: 1.55; color: #26142E">Do it before entries close on [date].</span>
+        </li>
+      </ol>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 24px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none">Read the full rules</a>
+        <a href="NewStory.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600; color: #672786">Start a new story</a>
+      </div>
+    </section>
+
+    <!-- One wide slot: the contest sponsor's banner, labelled Sponsored. Never the first thing on the page; the only ad slot here (proposal: no ad-network ads on landing pages, OPEN). -->
+    <aside aria-label="Sponsored" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 56px auto 0; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+      <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">SPONSORED</span></span>
+      <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Partner] contest banner · 970 × 120</span>
+      <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+    </aside>
+
+    <!-- Featured stories: picked by staff, all rated 13+ (the youngest group allowed to enter). Pen names only. -->
+    <section aria-labelledby="feat-h" style="position: relative; margin-top: 56px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Featured entries</span>
+          <h2 id="feat-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Chapter ones we love</h2>
+          <span style="font-size: 14px; color: #6B5A73">Picked by our team. Shown by pen name only.</span>
+        </div>
+        <sc-if value="{{ar.show}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button type="button" aria-label="Scroll back" onClick="{{prev}}" disabled="{{ar.backOff}}" aria-disabled="{{ar.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.backCur}}; opacity: {{ar.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <button type="button" aria-label="Scroll forward" onClick="{{next}}" disabled="{{ar.fwdOff}}" aria-disabled="{{ar.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.fwdCur}}; opacity: {{ar.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+        </sc-if>
+      </div>
+      <div style="position: relative; margin: 0 -4px">
+        <div ref="{{refShelf}}" onScroll="{{scrollShelf}}" tabindex="0" class="tmc-noscroll" role="region" aria-label="Chapter ones we love, scrolls sideways" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{mask}}; mask-image: {{mask}}">
+          <sc-for list="{{picks}}" as="s" hint-placeholder-count="7">
+            <a href="Story.dc.html" style="flex: none; width: 196px; scroll-snap-align: start; text-decoration: none; color: inherit">
+              <div class="{{s.cls}}" style="{{s.cover}}"><span style="{{s.boxStyle}}"><span style="{{s.tStyle}}">{{s.title}}</span><span style="{{s.barStyle}}"></span></span></div>
+              <span style="display: block; margin-top: 12px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 16px; color: #26142E">{{s.title}}</span>
+              <span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">Chapter one · {{s.author}}</span>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- Questions and answers -->
+    <section aria-labelledby="qa-h" style="margin-top: 56px; display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 64px); align-items: flex-start">
+      <div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Questions</span>
+        <h2 id="qa-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Questions and answers</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Something else? <a href="Settings.dc.html#contact-us" style="font-weight: 600">Contact us</a> or <a href="Legal.dc.html" style="font-weight: 600">read the full rules</a>.</p>
+      </div>
+      <div style="flex: 1.8 1 520px; min-width: 0; display: flex; flex-direction: column">
+        <sc-for list="{{faq}}" as="q" hint-placeholder-count="3">
+          <div style="border-bottom: 1px solid #DED3E4">
+            <h3 style="margin: 0"><button type="button" id="{{q.qid}}" aria-expanded="{{q.expanded}}" aria-controls="{{q.aid}}" onClick="{{q.toggle}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">{{q.q}}<span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid #8E7B99; display: inline-flex; align-items: center; justify-content: center; color: #481C5F"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="{{q.vbar}}"></path></svg></span></button></h3>
+            <sc-if value="{{q.open}}" hint-placeholder-val="{{false}}"><div id="{{q.aid}}" role="region" aria-labelledby="{{q.qid}}" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">{{q.a}}</p></div></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- Remind me block -->
+    <section aria-labelledby="remind-h" style="margin-top: 56px; padding: clamp(24px, 3vw, 36px); border-radius: 24px; background: #F1EAF4; border: 1px solid #E5D7EA; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px">
+      <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+        <h2 id="remind-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Don’t miss the opening</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #3A2442">We’ll send you one notification when entries open, and nothing else.</p>
+      </div>
+      <button type="button" aria-pressed="{{remindPressed}}" onClick="{{toggleRemind}}" style="{{remindStyle}}"><sc-if value="{{reminded}}" hint-placeholder-val="{{false}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{remindLabel}}</button>
+    </section>
+
+    <!-- Small page footer: legal links, the no-account report form, group line and language switch -->
+    <footer style="position: relative; margin-top: 72px; padding-top: 24px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+<img data-doodle="widget" data-doodle-on="Footer" src="/_blob/24a7ac8f2dd38b86c302b928d2358327" alt="" aria-hidden="true" class="tmc-dd-lg" width="96" height="96" style="position: absolute; top: -72px; right: 28px; width: 96px; height: 96px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px">
+        <span style="display: inline-flex; align-items: center; min-height: 44px">An app by The Magic Coffin</span>
+        <span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2989}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // The page as the landing-page builder (8.14) produces it, before entries open. The reader is signed in.
+    this.state = { reminded: false, faq: { 0: true }, edges: {} };
+    this.shelves = {};
+  }
+
+  componentDidMount() {
+    var self = this;
+    // The row is re-measured when the window changes size, so arrows appear or go as it starts or stops overflowing.
+    this._onResize = function () { self.measureAll(); };
+    try { window.addEventListener('resize', this._onResize); } catch (e) { /* no window: arrows keep their last state */ }
+    setTimeout(function () { self.measureAll(); }, 0);
+  }
+  componentDidUpdate() { this.measureAll(); }
+  componentWillUnmount() { try { window.removeEventListener('resize', this._onResize); } catch (e) { /* ignore */ } }
+
+  // Fade (Robert, 16 Oct): the row fades on one side only, the side where cards are cut off.
+  mask(key) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    if (e.r) return 'linear-gradient(to right, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    if (e.l) return 'linear-gradient(to left, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    return 'none';
+  }
+  measureShelf(key) {
+    var e = this.readShelf(key);
+    if (!e) return;
+    var all = this.state.edges || {};
+    if (this.sameEdges(all[key], e)) return;   // only setState when something changed, so no render loops
+    var n = Object.assign({}, all); n[key] = e;
+    this.setState({ edges: n });
+  }
+  // l/r: the side that fades (never both). o: the row overflows, so its arrows show. sl/sr: true edges, which disable the arrows.
+  readShelf(key) {
+    var el = (this.shelves || {})[key];
+    if (!el) return null;
+    var pl = 0, pr = 0;
+    try { var cs = window.getComputedStyle(el); pl = parseFloat(cs.paddingLeft) || 0; pr = parseFloat(cs.paddingRight) || 0; } catch (err) { /* keep 0 */ }
+    var o = el.scrollWidth > el.clientWidth + 2;
+    var sl = o && el.scrollLeft > pl + 2, sr = o && el.scrollLeft + el.clientWidth < el.scrollWidth - pr - 2;
+    this.lastLeft = this.lastLeft || {};
+    var prev = this.lastLeft[key] || 0, dir = el.scrollLeft - prev;
+    this.lastLeft[key] = el.scrollLeft;
+    var l = sl, r = sr, old = (this.state.edges || {})[key];
+    if (l && r) {
+      if (dir < 0) r = false;
+      else if (dir > 0) l = false;
+      else if (old && old.l && !old.r) r = false;
+      else l = false;
+    }
+    return { l: l, r: r, o: o, sl: sl, sr: sr };
+  }
+  sameEdges(a, b) { return !!a && !!b && a.l === b.l && a.r === b.r && a.o === b.o && a.sl === b.sl && a.sr === b.sr; }
+  measureAll() {
+    var all = this.state.edges || {}, n = null;
+    for (var key in (this.shelves || {})) {
+      var e = this.readShelf(key);
+      if (!e || this.sameEdges(all[key], e)) continue;
+      n = n || Object.assign({}, all);
+      n[key] = e;
+    }
+    if (n) this.setState({ edges: n });
+  }
+  // Arrows show only when the row overflows; the arrow pointing at an end already reached is disabled (Robert, 17 Oct).
+  arrows(key) {
+    var e = (this.state.edges || {})[key] || {};
+    var show = e.o !== false, back = e.sl === true, fwd = e.sr !== false;
+    return {
+      show: show,
+      backOff: !back, backAria: back ? 'false' : 'true', backOp: back ? '1' : '0.4', backCur: back ? 'pointer' : 'default',
+      fwdOff: !fwd, fwdAria: fwd ? 'false' : 'true', fwdOp: fwd ? '1' : '0.4', fwdCur: fwd ? 'pointer' : 'default'
+    };
+  }
+  scrollShelf(key, dir) {
+    var el = this.shelves[key];
+    if (!el || typeof el.scrollBy !== 'function') return;
+    try { el.scrollBy({ left: dir * Math.max(240, el.clientWidth * 0.8), behavior: 'smooth' }); }
+    catch (e) { el.scrollLeft += dir * 600; }
+  }
+
+  // Cover helpers, the same as Discover: canonical stories keep their design everywhere; titles step down in size with length.
+  slug(title) {
+    var t = String(title || '').toLowerCase();
+    try { t = t.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { /* older browsers: keep as typed */ }
+    return t.replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+  autoCovers(ids) {
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var hash = function (s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    var prev = '';
+    return ids.map(function (id) { var k = K[hash(id) % K.length]; if (k === prev) k = K[(K.indexOf(k) + 7) % K.length]; prev = k; return k; });
+  }
+  rowCovers(titles) {
+    var self = this;
+    var F = {
+      'the-salt-mine-choir': 'starry', 'small-rooms': 'dots', 'night-bus-to-ploiesti': 'ink', 'the-last-tram-home': 'sage',
+      'notes-from-room-12': 'lilac', 'the-clocktower-club': 'stripes', 'snow-on-the-valley-road': 'plum', 'lanterns-on-lipscani': 'violet'
+    };
+    var ids = titles.map(function (t) { return self.slug(t); });
+    var auto = this.autoCovers(ids);
+    return ids.map(function (id, i) { return F[id] || auto[i]; });
+  }
+  titleSize(title, base, floor, inner) {
+    var t = String(title || ''), n = t.length;
+    var f = n <= 18 ? 1 : n <= 28 ? 0.85 : n <= 40 ? 0.72 : 0.62;
+    floor = floor || 11;
+    var px = Math.max(floor, Math.round(parseFloat(base) * f * 10) / 10);
+    var word = this.wordEm(t);
+    if (inner && word * px > inner) px = Math.max(floor, Math.floor(inner / word * 10) / 10);
+    return px + 'px';
+  }
+  wordEm(t) {
+    var em = function (w) {
+      var e = 0;
+      for (var i = 0; i < w.length; i++) { var c = w.charAt(i); e += /[A-ZĂÂÎȘȚmw]/.test(c) ? 0.75 : /[iljtfr'’.,:;!|]/.test(c) ? 0.3 : 0.55; }
+      return e * 1.05;
+    };
+    return String(t || '').split(/\s+/).reduce(function (m, w) { return Math.max(m, em(w)); }, 0);
+  }
+  coverLook(k, z) {
+    var L = {
+      plum: ['#FAF8F5', '', '#E6C24C'], ink: ['#FAF8F5', '', '#E6C24C'], violet: ['#FAF8F5', '', '#E6C24C'],
+      gold: ['#26142E', '', '#481C5F'], lilac: ['#26142E', '', '#672786'], blush: ['#26142E', '', '#481C5F'],
+      sky: ['#26142E', '', '#672786'], sage: ['#26142E', '', '#481C5F'], paper: ['#26142E', '', '#672786'],
+      stripes: ['#FAF8F5', '#481C5F', ''], dots: ['#26142E', '#FAF8F5', ''], grid: ['#26142E', '', ''],
+      waves: ['#26142E', '#FAF8F5', ''], starry: ['#FAF8F5', '', ''], doodles: ['#26142E', '', ''], twotone: ['#FAF8F5', '', '']
+    };
+    var t = L[k] ? L[k] : L.plum, ink = t[0];
+    z = z || {};
+    var inner = z.inner ? z.inner - (t[1] ? 16 : 0) : 0;
+    var size = z.title == null ? (z.t || '21px') : this.titleSize(z.title, z.t || '21px', z.min, inner);
+    return {
+      cls: 'tmc-cv tmc-cv-' + (L[k] ? k : 'plum'),
+      box: 'display: flex; flex-direction: column; gap: ' + (z.gap == null ? 6 : z.gap) + 'px; min-width: 0;'
+        + (t[1] ? ' display: inline-flex; align-self: flex-start; max-width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 6px; background: ' + t[1] + ';' : ''),
+      title: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: " + (z.w || 700) + '; font-size: ' + size + '; line-height: ' + (z.lh || 1.04) + '; color: ' + ink + '; overflow-wrap: break-word;',
+      bar: t[2] ? 'display: block; width: ' + (z.bw || 40) + 'px; height: 3px; border-radius: 2px; background: ' + t[2] + ';' : 'display: none;',
+      pen: 'font-size: ' + (z.p || 12) + 'px; font-weight: 500; color: ' + ink + ';'
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Featured: staff picks from Discover's stories, all rated 13+. Pen names only, no numbers.
+    var list = [
+      { title: 'The Salt Mine Choir', author: 'inkwolf' }, { title: 'The Last Tram Home', author: 'ilinca.r' },
+      { title: 'Notes from Room 12', author: 'teo_ink' }, { title: 'Lanterns on Lipscani', author: 'corbu' },
+      { title: 'Night Bus to Ploiești', author: 'corbu' }, { title: 'The Clocktower Club', author: 'vlad.writes' },
+      { title: 'Snow on the Valley Road', author: 'mara.p' }
+    ];
+    var keys = this.rowCovers(list.map(function (s) { return s.title; }));
+    var coverStyle = 'height: 264px; box-sizing: border-box; padding: 18px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end;';
+    var picks = list.map(function (s, i) {
+      var look = self.coverLook(keys[i], { t: '21px', lh: 1.04, gap: 6, title: s.title, inner: 160 });
+      return { title: s.title, author: s.author, cover: coverStyle, cls: look.cls, boxStyle: look.box, tStyle: look.title, barStyle: look.bar };
+    });
+
+    // Hero picture: a drawn chapter-one cover on the plum design.
+    var hcLook = this.coverLook('plum', { t: '26px', lh: 1.04, gap: 6, p: 13, title: 'Your title here', inner: 156 });
+
+    var QA = [
+      ['Who judges the contest?', 'Our team and named judges from our partners. There’s no public vote.'],
+      ['Can I enter more than one story?', 'No. Each writer can enter one story.'],
+      ['Do I keep my rights?', 'Yes. You keep every right in your story.']
+    ];
+    var faq = QA.map(function (q, i) {
+      var open = !!st.faq[i];
+      return {
+        q: q[0], a: q[1], open: open, expanded: open ? 'true' : 'false', qid: 'faq-q' + i, aid: 'faq-a' + i,
+        vbar: open ? 'M12 12v0' : 'M12 5v14',
+        toggle: function () { var n = {}; n[i] = !open; self.setState({ faq: n }); }
+      };
+    });
+
+    var on = st.reminded;
+    return {
+      hc: hcLook,
+      picks: picks,
+      faq: faq,
+      reminded: on, remindPressed: on ? 'true' : 'false',
+      remindLabel: on ? 'Reminder on' : 'Remind me',
+      remindNote: on ? 'Done. We’ll send you one notification when entries open. Press again to cancel it.' : 'Signed-in readers get one notification when entries open.',
+      remindStyle: 'display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; padding: 0 28px; border-radius: 999px; font-family: inherit; font-weight: 600; font-size: 16px; cursor: pointer; '
+        + (on ? 'background: #FFFFFF; color: #2A0E33; border: 1px solid #2A0E33;' : 'background: #2A0E33; color: #FBF7EC; border: 1px solid #2A0E33;'),
+      toggleRemind: function () { self.setState({ reminded: !st.reminded }); },
+      refShelf: function (el) { self.shelves.f = el; if (el) setTimeout(function () { self.measureShelf('f'); }, 0); },
+      scrollShelf: function () { self.measureShelf('f'); },
+      mask: self.mask('f'), ar: self.arrows('f'),
+      prev: function () { self.scrollShelf('f', -1); }, next: function () { self.scrollShelf('f', 1); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Library</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+.tmc-noscroll{scrollbar-width:none;-ms-overflow-style:none}.tmc-noscroll::-webkit-scrollbar{display:none}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
+@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+/* The 16 approved cover backgrounds (S1-E3-13): 5:8 drawings with no text that fill any box */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat;outline:1px solid rgba(38,20,46,0.14);outline-offset:-1px}
+.tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-gold{background-color:#E6C24C;background-image:url(/_blob/91b025a34ffa73c4f7886c143b2229d4)}
+.tmc-cv-lilac{background-color:#E9DDF0;background-image:url(/_blob/f1d0436689691672be6a521d49b6d32c)}
+.tmc-cv-blush{background-color:#F6D3DC;background-image:url(/_blob/e6edfdb3a9348376f609edc9860c7003)}
+.tmc-cv-sky{background-color:#D7E6F2;background-image:url(/_blob/7f5800c35ba2931d2b6f7a813d85b93c)}
+.tmc-cv-sage{background-color:#C9D8BF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#FAF8F5;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-cv-stripes{background-color:#481C5F;background-image:url(/_blob/5bf720d39651e2b57f384d33e3e04028)}
+.tmc-cv-dots{background-color:#E9DDF0;background-image:url(/_blob/49525cd87927782c2ac3d4a53ebc2973)}
+.tmc-cv-grid{background-color:#FAF8F5;background-image:url(/_blob/18fddef6727cc64415d6f75fd94c388b)}
+.tmc-cv-waves{background-color:#D7E6F2;background-image:url(/_blob/b3b6a05178861fc4e9210eaaa4134c6d)}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-cv-doodles{background-color:#FAF8F5;background-image:url(/_blob/f295eb5a1f415fe44f9e39a32e58ba7e)}
+.tmc-cv-twotone{background-color:#F6D3DC;background-image:url(/_blob/0d7f4386c9eaec72ab74d7b8349bc99f)}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; overflow-x: clip; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="flex: none; display: block; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Page header -->
+    <header style="position: relative; padding: 56px 0 32px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; animation: tmcRise 0.5s ease-out both">
+<img data-doodle="background" data-doodle-on="Your library" src="/_blob/bae81d9375db90401c3a77dd643c81f8" alt="" aria-hidden="true" class="tmc-dd-wide" width="112" height="112" style="position: absolute; top: 18px; right: 40px; width: 112px; height: 112px; transform: rotate(6deg); pointer-events: none; user-select: none; z-index: 0">
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 720px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Library</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Your library</h1>
+        <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #5C4965">Carry on from where you stopped. Your place in every chapter is saved on every device you log in on.</p>
+      </div>
+      <div style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 14px">
+        <img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="22" height="22" style="flex: none; display: block; width: 22px; height: 22px">
+        <span><b>Private.</b> Only you can see your library.</span>
+        <a href="Settings.dc.html" aria-label="Change who can see your library" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">Change</a>
+      </div>
+    </header>
+
+    <!-- Continue reading: the saved place, on any device -->
+    <section aria-labelledby="continue-h" style="position: relative; animation: tmcRise 0.5s 0.05s ease-out both">
+<img data-doodle="background" data-doodle-on="Continue reading" src="/_blob/71c7c9a86495544c84425a6eef87e048" alt="" aria-hidden="true" class="tmc-dd-wide" width="72" height="72" style="position: absolute; top: -20px; left: 256px; width: 72px; height: 72px; transform: rotate(-8deg); pointer-events: none; user-select: none; z-index: 0">
+      <h2 id="continue-h" style="margin: 0 0 18px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Continue reading</h2>
+      <!-- One sideways line, like every list of stories (design rule, 16 Oct) -->
+      <div style="position: relative; margin: 0 -4px">
+      <div ref="{{refResume}}" onScroll="{{scrollResume}}" tabindex="0" aria-label="Continue reading, scrolls sideways" style="display: grid; grid-auto-flow: column; grid-auto-columns: minmax(min(520px, 100%), 1fr); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{maskResume}}; mask-image: {{maskResume}}">
+        <sc-for list="{{resume}}" as="r" hint-placeholder-count="2">
+          <article style="scroll-snap-align: start; display: flex; gap: 22px; padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+            <a href="Story.dc.html" aria-label="{{r.title}}, story page" class="{{r.cls}}" style="{{r.cover}}"></a>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+              <a href="Story.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; line-height: 1.1; color: #26142E; text-decoration: none">{{r.title}}</a>
+              <span style="font-size: 14px; color: #5C4965">by <a href="Profile.dc.html" style="font-weight: 600">{{r.author}}</a> · {{r.where}}</span>
+              <div role="progressbar" aria-label="{{r.progressLabel}}" aria-valuenow="{{r.pct}}" aria-valuemin="0" aria-valuemax="100" style="margin-top: 6px; height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="{{r.bar}}"></div></div>
+              <span style="font-size: 13px; color: #6B5A73">{{r.device}}</span>
+              <div style="margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+                <span style="{{r.newStyle}}">{{r.news}}</span>
+                <a href="Reader.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none">Continue</a>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+      </div>
+    </section>
+
+    <!-- Wide banner: an ad-network ad, labelled AD. Ads are never personalised: the same for everyone, including under-18s. Placement rule (17 Oct): at most 2 ad slots a page, never two in view at once, never in class spaces. -->
+    <aside aria-label="Advertisement" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 56px auto 0; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+      <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+      <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] banner · 970 × 120</span>
+      <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+    </aside>
+
+    <!-- Shelves: Reading, Saved for later, Finished -->
+    <section aria-labelledby="shelves-h" style="position: relative; margin-top: 56px; animation: tmcRise 0.5s 0.1s ease-out both">
+<img data-doodle="background" data-doodle-on="Stories in your library" src="/_blob/d83027d3dd193abcc63034afc624a538" alt="" aria-hidden="true" class="tmc-dd-wide" width="96" height="96" style="position: absolute; top: -26px; left: 42%; width: 96px; height: 96px; transform: rotate(4deg); pointer-events: none; user-select: none; z-index: 0">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Your shelves</span>
+          <h2 id="shelves-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Stories in your library</h2>
+        </div>
+        <div role="tablist" aria-label="Library shelves" style="display: inline-flex; flex-wrap: wrap; gap: 6px; padding: 6px; border-radius: 999px; background: #FFFFFF; border: 1px solid #8E7B99">
+          <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+            <button type="button" role="tab" class="tmc-chip" aria-selected="{{t.selected}}" aria-controls="shelf-panel" onClick="{{t.pick}}" style="{{t.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{t.label}}<span style="{{t.countStyle}}">{{t.count}}</span></button>
+          </sc-for>
+        </div>
+      </div>
+      <sc-if value="{{ar.s1.show}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin: -8px 0 12px">
+        <button type="button" aria-label="Scroll back" onClick="{{prev1}}" disabled="{{ar.s1.backOff}}" aria-disabled="{{ar.s1.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s1.backCur}}; opacity: {{ar.s1.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+        <button type="button" aria-label="Scroll forward" onClick="{{next1}}" disabled="{{ar.s1.fwdOff}}" aria-disabled="{{ar.s1.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s1.fwdCur}}; opacity: {{ar.s1.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+      </div>
+      </sc-if>
+      <!-- One sideways line of at most 20 stories (design rule, 16 Oct). Past 20, the line ends with View more, which opens the See all page. -->
+      <div style="position: relative; margin: 0 -4px">
+      <div class="tmc-noscroll" id="shelf-panel" role="tabpanel" aria-label="{{shelfName}}" ref="{{refShelf1}}" onScroll="{{scrollShelf1}}" tabindex="0" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{mask1}}; mask-image: {{mask1}}">
+        <sc-for list="{{shelf}}" as="s" hint-placeholder-count="5">
+          <article style="flex: none; width: 220px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; min-width: 0">
+            <!-- On the website an app-only story shows "In the app only" on its cover (b2d71f32, Q4) -->
+            <a href="{{s.storyHref}}" aria-label="{{s.title}}, story page" class="{{s.cls}}" style="{{s.cover}}"><sc-if value="{{s.appOnly}}" hint-placeholder-val="{{false}}"><span style="{{s.appPill}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>In the app only</span></sc-if><span style="{{s.boxStyle}}"><span style="{{s.tStyle}}">{{s.title}}</span><span style="{{s.barStyle}}"></span></span></a>
+            <span style="{{s.kindStyle}}">{{s.kind}}</span>
+            <a href="Story.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 17px; line-height: 1.2; color: #26142E; text-decoration: none">{{s.title}}</a>
+            <span style="font-size: 13px; color: #6B5A73">by <a href="{{s.authorHref}}" style="font-weight: 600">{{s.author}}</a></span>
+            <sc-if value="{{s.showBar}}" hint-placeholder-val="{{true}}">
+              <div role="progressbar" aria-label="{{s.progressLabel}}" aria-valuenow="{{s.pct}}" aria-valuemin="0" aria-valuemax="100" style="height: 6px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="{{s.bar}}"></div></div>
+            </sc-if>
+            <span style="font-size: 13px; color: #5C4965">{{s.meta}}</span>
+            <a href="{{s.ctaHref}}" style="align-self: flex-start; display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">{{s.cta}}</a>
+          </article>
+        </sc-for>
+        <sc-if value="{{moreThan20}}" hint-placeholder-val="{{false}}">
+          <a href="SeeAll.dc.html" aria-label="View more stories on this shelf" style="flex: none; width: 220px; scroll-snap-align: start; text-decoration: none; color: inherit"><span style="height: 300px; box-sizing: border-box; padding: 22px; border-radius: 16px; border: 2px dashed #B9A9C2; background: #FFFFFF; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">View more</span><span style="font-size: 14px; line-height: 1.5; color: #5C4965">See the whole shelf, with filters.</span></span></a>
+        </sc-if>
+      </div>
+      </div>
+    </section>
+
+    <!-- Following: writers and stories -->
+    <section aria-labelledby="following-h" style="position: relative; margin-top: 64px; animation: tmcRise 0.5s 0.15s ease-out both">
+<img data-doodle="background" data-doodle-on="What you follow" src="/_blob/36b54e06640486c6a06dbc26c16ecb5d" alt="" aria-hidden="true" class="tmc-dd-wide" width="80" height="80" style="position: absolute; top: -12px; right: 40px; width: 80px; height: 80px; transform: rotate(10deg); pointer-events: none; user-select: none; z-index: 0">
+      <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Following</span>
+        <h2 id="following-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">What you follow</h2>
+        <span style="font-size: 14px; color: #5C4965">You get a notification when they publish something new. <a href="Settings.dc.html" style="font-weight: 600">Notification settings</a></span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px">
+
+        <div style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <h3 style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Writers <span style="font-weight: 500; color: #6B5A73">({{writerCount}})</span></h3>
+          <ul style="list-style: none; margin: 0; padding: 0">
+            <sc-for list="{{writers}}" as="w" hint-placeholder-count="4">
+              <li style="display: flex; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+                <span aria-hidden="true" style="{{w.avatar}}">{{w.initial}}</span>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                  <a href="Profile.dc.html" style="font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">{{w.name}}</a>
+                  <span style="font-size: 13px; color: #6B5A73">{{w.note}}</span>
+                </span>
+                <button type="button" aria-pressed="{{w.on}}" onClick="{{w.toggle}}" style="{{w.btnStyle}}">{{w.btnLabel}}</button>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+
+        <div style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <h3 style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Stories <span style="font-weight: 500; color: #6B5A73">({{storyCount}})</span></h3>
+          <ul style="list-style: none; margin: 0; padding: 0">
+            <sc-for list="{{followed}}" as="f" hint-placeholder-count="4">
+              <li style="display: flex; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+                <span aria-hidden="true" class="{{f.cls}}" style="{{f.thumb}}"></span>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                  <a href="Story.dc.html" style="font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">{{f.title}}</a>
+                  <span style="font-size: 13px; color: #6B5A73">{{f.author}} · {{f.update}}</span>
+                </span>
+                <sc-if value="{{f.isNew}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap">New</span></sc-if>
+                <button type="button" aria-pressed="{{f.on}}" onClick="{{f.toggle}}" style="{{f.btnStyle}}">{{f.btnLabel}}</button>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reading lists and offline downloads -->
+    <div style="margin-top: 64px; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; animation: tmcRise 0.5s 0.2s ease-out both">
+
+      <section aria-labelledby="lists-h" style="position: relative; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 16px">
+<img data-doodle="widget" data-doodle-on="Your lists" src="/_blob/8de6c5da34262acc233de02260ec84a2" alt="" aria-hidden="true" class="tmc-dd-lg" width="66" height="66" style="position: absolute; top: -36px; right: 180px; width: 66px; height: 66px; transform: rotate(-10deg); pointer-events: none; user-select: none; z-index: 0">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Reading lists</span>
+            <h2 id="lists-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Your lists</h2>
+          </div>
+          <button type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New list</button>
+        </div>
+        <sc-for list="{{lists}}" as="l" hint-placeholder-count="2">
+          <a href="#" style="display: flex; align-items: center; gap: 18px; padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; text-decoration: none; color: inherit">
+            <span aria-hidden="true" style="position: relative; flex: none; width: 76px; height: 64px">
+              <span class="{{l.k1}}" style="{{l.c1}}"></span><span class="{{l.k2}}" style="{{l.c2}}"></span><span class="{{l.k3}}" style="{{l.c3}}"></span>
+            </span>
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #26142E">{{l.name}}</span>
+              <span style="font-size: 13px; color: #6B5A73">{{l.count}} · {{l.seen}}</span>
+            </span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#672786" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+          </a>
+        </sc-for>
+      </section>
+
+      <section aria-labelledby="offline-h" style="position: relative; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 16px">
+<img data-doodle="widget" data-doodle-on="Downloaded to read offline" src="/_blob/04cfd05372dc9f8cb585691175c93244" alt="" aria-hidden="true" class="tmc-dd-lg" width="68" height="68" style="position: absolute; top: -36px; right: 26px; width: 68px; height: 68px; transform: rotate(8deg); pointer-events: none; user-select: none; z-index: 0">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Offline <span style="font-family: 'Inter', system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap; letter-spacing: 0.08em">COMES WITH THE APPS</span></span>
+          <h2 id="offline-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Downloaded to read offline</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Offline reading comes with the Ghemotoc apps for computers and phones, after the March 2027 test. Downloads will stay locked inside the app, so they can’t be opened as files anywhere else, and they’re removed after 30 days or straight away when you log out.</p>
+        </div>
+        <sc-for list="{{downloads}}" as="d" hint-placeholder-count="2">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+            <span aria-hidden="true" class="{{d.cls}}" style="{{d.thumb}}"></span>
+            <span style="flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-weight: 700; font-size: 15px; color: #26142E">{{d.title}}</span>
+              <span style="font-size: 13px; color: #6B5A73">{{d.what}} · {{d.size}}</span>
+              <span style="font-size: 13px; font-weight: 600; color: #5C4965">{{d.expires}}</span>
+            </span>
+            <button type="button" onClick="{{d.remove}}" aria-label="{{d.removeLabel}}" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Remove</button>
+          </div>
+        </sc-for>
+        <sc-if value="{{noDownloads}}" hint-placeholder-val="{{false}}">
+          <p style="margin: 0; padding: 18px; border-radius: 16px; border: 1px dashed #B9A9C2; font-size: 15px; line-height: 1.6; color: #5C4965">Nothing to download on the website. Until the apps arrive, you read online here, on any device you log in on.</p>
+        </sc-if>
+        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6B5A73">Downloads aren’t available on the website. <a href="GetApp.dc.html" style="font-weight: 600">About the apps</a></p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Page footer -->
+  <footer style="max-width: 1280px; margin: 80px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="position: relative; border-top: 1px solid #DED3E4; padding-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/24c5157558871ed49e3bab4fc802e2cd" alt="" aria-hidden="true" class="tmc-dd-lg" width="72" height="72" style="position: absolute; top: -82px; right: 34%; width: 72px; height: 72px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 14px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; font-size: 13px; color: #6B5A73">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2668}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Reading shelf open; Lia follows everything listed; two downloads present.
+    this.state = { tab: 'reading', unfollowW: {}, unfollowS: {}, removed: {}, lang: 'en' };
+    this.shelves = {};
+  }
+
+  componentDidMount() {
+    var self = this;
+    // Rows are re-measured when the window changes size, so arrows appear or go as the row starts or stops overflowing.
+    this._onResize = function () { self.measureAll(); };
+    try { window.addEventListener('resize', this._onResize); } catch (e) { /* no window: arrows keep their last state */ }
+    setTimeout(function () { self.measureAll(); }, 0);
+  }
+
+  // New content (filter, sort, tab) can change whether a row overflows. measureAll only sets state when a value changes.
+  componentDidUpdate() { this.measureAll(); }
+
+  componentWillUnmount() {
+    try { window.removeEventListener('resize', this._onResize); } catch (e) { /* ignore */ }
+  }
+
+  // Cover layout only: the drawing comes from one of the 16 approved designs (classes in the helmet), so nothing needs an image licence.
+  // Sideways shelf (design rule, 16 Oct): the row fades out on the side where cards are cut off, one side only.
+  mask(key) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    if (e.r) return 'linear-gradient(to right, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    if (e.l) return 'linear-gradient(to left, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    return 'none';
+  }
+
+  // Re-measure a row after it scrolls (or first appears) and store which side is cut off.
+  measureShelf(key) {
+    var e = this.readShelf(key);
+    if (!e) return;
+    var all = this.state.edges || {};
+    if (this.sameEdges(all[key], e)) return;   // only setState when something changed, so no render loops
+    var n = Object.assign({}, all); n[key] = e;
+    this.setState({ edges: n });
+  }
+
+  // Measure one row. l/r: the side that fades (never both). o: the row is wider than its box, so its arrows show.
+  // sl/sr: the TRUE edges, cards hidden off the left/right, which disable the arrows (Robert, 17 Oct): unlike l/r they ignore the fade tweak.
+  readShelf(key) {
+    this.shelves = this.shelves || {};
+    var el = this.shelves[key];
+    if (!el) return null;
+    // The rows snap their first card to the edge, which leaves scrollLeft at the row's left padding (4px) at the start,
+    // so the padding counts as being at the start (and likewise at the end).
+    var pl = 0, pr = 0;
+    try { var cs = window.getComputedStyle(el); pl = parseFloat(cs.paddingLeft) || 0; pr = parseFloat(cs.paddingRight) || 0; } catch (err) { /* keep 0 */ }
+    var o = el.scrollWidth > el.clientWidth + 2;
+    var sl = o && el.scrollLeft > pl + 2, sr = o && el.scrollLeft + el.clientWidth < el.scrollWidth - pr - 2;
+    // In the middle of a row only the side the reader is scrolling towards fades; at rest that's the right-hand side.
+    // A re-measure with no movement (resize, new content) keeps the side that was already fading.
+    this.lastLeft = this.lastLeft || {};
+    var prev = this.lastLeft[key] || 0, dir = el.scrollLeft - prev;
+    this.lastLeft[key] = el.scrollLeft;
+    var l = sl, r = sr, old = (this.state.edges || {})[key];
+    if (l && r) {
+      if (dir < 0) r = false;
+      else if (dir > 0) l = false;
+      else if (old && old.l && !old.r) r = false;
+      else l = false;
+    }
+    return { l: l, r: r, o: o, sl: sl, sr: sr };
+  }
+
+  sameEdges(a, b) {
+    return !!a && !!b && a.l === b.l && a.r === b.r && a.o === b.o && a.sl === b.sl && a.sr === b.sr;
+  }
+
+  // Re-measure every row at once (mount, window resize, new content after a filter, sort or tab change). One setState at most.
+  measureAll() {
+    var all = this.state.edges || {}, n = null;
+    for (var key in (this.shelves || {})) {
+      var e = this.readShelf(key);
+      if (!e || this.sameEdges(all[key], e)) continue;
+      n = n || Object.assign({}, all);
+      n[key] = e;
+    }
+    if (n) this.setState({ edges: n });
+  }
+
+  // Scroll arrows for one row (Robert, 17 Oct): not shown at all when the row fits; the arrow pointing at an end
+  // the row has already reached is disabled. Before the first measure: shown, back disabled.
+  arrows(key) {
+    var e = (this.state.edges || {})[key] || {};
+    var show = e.o !== false, back = e.sl === true, fwd = e.sr !== false;
+    return {
+      show: show,
+      backOff: !back, backAria: back ? 'false' : 'true', backOp: back ? '1' : '0.4', backCur: back ? 'pointer' : 'default',
+      fwdOff: !fwd, fwdAria: fwd ? 'false' : 'true', fwdOp: fwd ? '1' : '0.4', fwdCur: fwd ? 'pointer' : 'default'
+    };
+  }
+
+  // Scroll a shelf sideways by most of its visible width.
+  scrollShelf(key, dir) {
+    var el = (this.shelves || {})[key];
+    if (!el || typeof el.scrollBy !== 'function') return;
+    try { el.scrollBy({ left: dir * Math.max(240, el.clientWidth * 0.8), behavior: 'smooth' }); }
+    catch (e) { el.scrollLeft += dir * 600; }
+  }
+
+  cover(h) {
+    return 'display: flex; flex-direction: column; justify-content: flex-end; box-sizing: border-box; padding: 16px; height: ' + h + 'px; border-radius: 16px; text-decoration: none;';
+  }
+
+  // Shared pill style for the shelf tabs (pill system, 17 Oct): 36 px, centred; selected is plum with a check.
+  // The tabs sit in one segmented control whose wrapper carries the visible #8E7B99 edge.
+  pill(on) {
+    return 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1px solid ' + (on ? '#481C5F; background: #481C5F; color: #FFFFFF;' : 'transparent; background: transparent; color: #481C5F;');
+  }
+
+  followBtn(on) {
+    return 'flex: none; height: 44px; padding: 0 18px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #672786; background: #FFFFFF; color: #672786;');
+  }
+
+  // Automatic cover (S1-E3-13): a story with no cover of its own gets one of the 16 approved designs,
+  // picked from its id so it never changes, and never the same design as the card just before it in a row.
+  autoCovers(ids) {
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var hash = function (s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    var prev = '';
+    return ids.map(function (id) {
+      var k = K[hash(id) % K.length];
+      if (k === prev) k = K[(K.indexOf(k) + 7) % K.length];   // neighbours never match
+      prev = k;
+      return k;
+    });
+  }
+
+  // Stable story id from its title, e.g. 'The Salt Mine Choir' -> 'the-salt-mine-choir' (diacritics dropped).
+  slug(title) {
+    var t = String(title || '').toLowerCase();
+    try { t = t.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { /* older browsers: keep as typed */ }
+    return t.replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  // Cover keys for one row of stories: the fixed table keeps each canonical story on the same design on every
+  // screen; every other story gets the automatic helper. Two neighbours never share a design.
+  rowCovers(titles) {
+    var self = this;
+    var F = {
+      'the-salt-mine-choir': 'starry', 'the-girl-who-fixed-radios': 'waves', 'the-weather-station': 'sky',
+      'small-rooms': 'dots', 'night-bus-to-ploiesti': 'ink', 'the-last-tram-home': 'sage',
+      'inside-the-student-housing-waitlist': 'grid', 'what-our-grandparents-didnt-post': 'paper',
+      'rivers-that-moved-towns': 'sky', 'the-map-keepers-apprentice': 'gold', 'pride-prejudice-and-year-12': 'blush',
+      'notes-from-room-12': 'lilac', 'twelve-minutes-ahead': 'violet', 'the-clocktower-club': 'stripes',
+      'bus-stop-poems': 'doodles', 'why-i-read-in-two-languages': 'twotone', 'snow-on-the-valley-road': 'plum',
+      'the-last-cinema-in-town': 'gold', 'lanterns-on-lipscani': 'violet'
+    };
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var ids = titles.map(function (t) { return self.slug(t); });
+    var auto = this.autoCovers(ids);
+    var keys = ids.map(function (id, i) { return F[id] || auto[i]; });
+    // A story without a fixed design also avoids the two designs before it, so a row never looks repetitive.
+    var clash = function (j, wide) {
+      return keys[j] === keys[j - 1] || keys[j] === keys[j + 1] || (wide && keys[j] === keys[j - 2]);
+    };
+    var move = function (j) {
+      for (var n = 0; n < K.length && clash(j, true); n++) keys[j] = K[(K.indexOf(keys[j]) + 7) % K.length];
+    };
+    for (var i = 1; i < keys.length; i++) {
+      if (!F[ids[i]] && clash(i, true)) move(i);
+      // Two neighbours must never match: move the one without a fixed design, so a canonical story keeps its design everywhere.
+      else if (keys[i] === keys[i - 1] && !F[ids[i - 1]]) move(i - 1);
+    }
+    return keys;
+  }
+
+  // Title size from its length (16 Oct), so the whole title always fits on a cover: up to 18 characters keeps
+  // the base size, 19-28 is x0.85, 29-40 is x0.72, longer is x0.62, never below the floor (11px by default).
+  // base: px number, '21px' or any CSS length such as a clamp(). inner: the px width the title can use, when known;
+  // the size then also drops until the longest word fits on one line (wordEm estimates its width).
+  titleSize(title, base, floor, inner) {
+    var t = String(title || ''), n = t.length;
+    var f = n <= 18 ? 1 : n <= 28 ? 0.85 : n <= 40 ? 0.72 : 0.62;
+    floor = floor || 11;
+    if (typeof base === 'number' || /^\d+(\.\d+)?px$/.test(String(base))) {
+      var px = Math.max(floor, Math.round(parseFloat(base) * f * 10) / 10);
+      var word = this.wordEm(t);
+      if (inner && word * px > inner) px = Math.max(floor, Math.floor(inner / word * 10) / 10);
+      return px + 'px';
+    }
+    return 'max(' + floor + 'px, calc(' + base + ' * ' + f + '))';
+  }
+
+  // Width of the title's longest word in em for Bricolage Grotesque bold (capitals and m/w wide, i/l/t/r narrow), plus 5% to spare.
+  wordEm(t) {
+    var em = function (w) {
+      var e = 0;
+      for (var i = 0; i < w.length; i++) { var c = w.charAt(i); e += /[A-ZĂÂÎȘȚmw]/.test(c) ? 0.75 : /[iljtfr'’.,:;!|]/.test(c) ? 0.3 : 0.55; }
+      return e * 1.05;
+    };
+    return String(t || '').split(/\s+/).reduce(function (m, w) { return Math.max(m, em(w)); }, 0);
+  }
+
+  // How the title sits on each design (from the approved table): title colour, optional box behind
+  // title and pen name, and the thin line under the title. z sets sizes: t (title font-size), w (title weight), lh, p (pen size), gap, bw (line width).
+  coverLook(k, z) {
+    var L = {
+      plum: ['#FAF8F5', '', '#E6C24C'], ink: ['#FAF8F5', '', '#E6C24C'], violet: ['#FAF8F5', '', '#E6C24C'],
+      gold: ['#26142E', '', '#481C5F'], lilac: ['#26142E', '', '#672786'], blush: ['#26142E', '', '#481C5F'],
+      sky: ['#26142E', '', '#672786'], sage: ['#26142E', '', '#481C5F'], paper: ['#26142E', '', '#672786'],
+      stripes: ['#FAF8F5', '#481C5F', ''], dots: ['#26142E', '#FAF8F5', ''], grid: ['#26142E', '', ''],
+      waves: ['#26142E', '#FAF8F5', ''], starry: ['#FAF8F5', '', ''], doodles: ['#26142E', '', ''], twotone: ['#FAF8F5', '', '']
+    };
+    var t = L[k] ? L[k] : L.plum, ink = t[0], light = ink === '#26142E';
+    z = z || {};
+    // Width left for the title: the box designs (stripes, dots, waves) take 8px padding each side (z.bx: both sides together, when a screen changes it).
+    var inner = z.inner ? z.inner - (t[1] ? (z.bx == null ? 16 : z.bx) : 0) : 0;
+    var size = z.title == null ? (z.t || '21px') : this.titleSize(z.title, z.t || '21px', z.min, inner);
+    return {
+      cls: 'tmc-cv tmc-cv-' + (L[k] ? k : 'plum'),
+      box: 'display: flex; flex-direction: column; gap: ' + (z.gap == null ? 6 : z.gap) + 'px; min-width: 0;'
+        + (t[1] ? ' display: inline-flex; align-self: flex-start; max-width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 6px; background: ' + t[1] + ';' : ''),
+      // Titles wrap on spaces and never clip; with z.title the size follows the title's length (titleSize).
+      title: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: " + (z.w || 700) + '; font-size: ' + size + '; line-height: ' + (z.lh || 1.04) + '; color: ' + ink + '; overflow-wrap: break-word;',
+      // False when even the floor size cannot fit the longest word (only on very small thumbnails).
+      fits: !z.inner || this.wordEm(z.title) * parseFloat(size) <= inner,
+      bar: t[2] ? 'display: block; width: ' + (z.bw || 40) + 'px; height: 3px; border-radius: 2px; background: ' + t[2] + ';' : 'display: none;',
+      pen: 'font-size: ' + (z.p || 12) + 'px; font-weight: 500; color: ' + ink + ';',
+      // Genre pill: cream on dark designs, plum with white text on light ones so it never disappears.
+      pill: light ? 'background: #481C5F; color: #FFFFFF;' : 'background: rgba(250,248,245,0.94); color: #2A0E33;',
+      // Gold "Completed" pill: swaps to plum on the gold design.
+      goldPill: k === 'gold' ? 'background: #481C5F; color: #FFFFFF;' : 'background: #E6C24C; color: #26142E;',
+      ink: ink
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+    // Cover design class for each title in a row: fixed for canonical stories, automatic for the rest.
+    var classes = function (titles) { return self.rowCovers(titles).map(function (k) { return self.coverLook(k).cls; }); };
+    var bar = function (pct) { return 'width: ' + pct + '%; height: 100%; border-radius: 999px; background: #672786;'; };
+    var thumb = 'flex: none; width: 44px; height: 58px; border-radius: 10px;';
+
+    // Continue reading: the place saved on another device.
+    var resume = [
+      { title: 'The Salt Mine Choir', author: 'inkwolf', where: 'Chapter 14 of 15', pct: 72, device: 'You stopped halfway through chapter 14 on your laptop, yesterday at 21:40.', news: 'Chapter 15 is out', isNew: true },
+      { title: 'Night Bus to Ploiești', author: 'corbu', where: 'Chapter 8 of 22', pct: 36, device: 'You stopped near the end of chapter 8 on your phone, on Monday.', news: 'Completed story', isNew: false }
+    ];
+    var resumeCls = classes(resume.map(function (r) { return r.title; }));
+    resume = resume.map(function (r, i) {
+      return Object.assign({}, r, {
+        cover: 'flex: none; width: 104px; height: 140px; border-radius: 12px;', cls: resumeCls[i],
+        bar: bar(r.pct), progressLabel: 'Reading progress, ' + r.pct + ' per cent',
+        newStyle: 'font-size: 13px; font-weight: 600; color: ' + (r.isNew ? '#2F6B4F' : '#6B5A73') + ';'
+      });
+    });
+
+    // The three shelves from the story: Reading, Saved for later, Finished.
+    var shelves = {
+      reading: [
+        ['The Salt Mine Choir', 'inkwolf', 'Fiction', 72, 'Chapter 14 of 15', 'Continue'],
+        ['Night Bus to Ploiești', 'corbu', 'Fiction', 36, 'Chapter 8 of 22', 'Continue'],
+        ['Small Rooms', 'poppyverse', 'Poetry', 40, 'Poem 12 of 30', 'Open in the app', true],
+        ['Inside the Student Housing Waitlist', 'matei.writes', 'Essays', 75, 'Essay 3 of 4', 'Continue'],
+        ['The Last Tram Home', 'ilinca.r', 'Fiction', 66, 'Chapter 2 of 3', 'Continue']
+      ],
+      saved: [
+        ['What Our Grandparents Didn’t Post', 'Ana Radu', 'Essays', 0, 'Saved on 3 October', 'Start reading'],
+        ['Rivers That Moved Towns', 'geo.andrei', 'Essays', 0, 'Saved on 29 September', 'Start reading'],
+        ['The Clocktower Club', 'vlad.writes', 'Fiction', 0, 'Saved on 21 September', 'Start reading']
+      ],
+      finished: [
+        ['Snow on the Valley Road', 'mara.p', 'Fiction', 100, 'Finished on 2 October', 'Read again'],
+        ['Moara cu noroc', 'Ioan Slavici', 'Classic', 100, 'Finished on 14 September', 'Read again']
+      ]
+    };
+    var names = { reading: 'Reading', saved: 'Saved for later', finished: 'Finished' };
+    var tabs = ['reading', 'saved', 'finished'].map(function (k) {
+      var on = st.tab === k;
+      return {
+        label: names[k], count: shelves[k].length, selected: on ? 'true' : 'false', style: self.pill(on),
+        countStyle: on ? 'display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700' : 'display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700',
+        pick: function () { self.setState({ tab: k }); }
+      };
+    });
+    var shelfLooks = self.rowCovers(shelves[st.tab].map(function (s) { return s[0]; })).map(function (k, i) { return self.coverLook(k, { t: '20px', lh: 1.05, gap: 6, title: shelves[st.tab][i][0], inner: 188 }); });
+    var shelf = shelves[st.tab].map(function (s, i) {
+      return {
+        title: s[0], author: s[1], kind: s[2], pct: s[3], meta: s[4], cta: s[5],
+        // Pill system (17 Oct): category pills keep one hue per meaning (Fiction plum, Poetry sky, Essays sage, classics gold).
+        kindStyle: ({ Fiction: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap; margin-top: 6px; align-self: flex-start', Poetry: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE; font-size: 12px; font-weight: 700; white-space: nowrap; margin-top: 6px; align-self: flex-start', Essays: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap; margin-top: 6px; align-self: flex-start', Classic: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; margin-top: 6px; align-self: flex-start' })[s[2]] || 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap; margin-top: 6px; align-self: flex-start',
+        cover: self.cover(300), cls: shelfLooks[i].cls, boxStyle: shelfLooks[i].box, tStyle: shelfLooks[i].title, barStyle: shelfLooks[i].bar,
+        // App-only stories (seventh field): the label on the cover, and both links open the app-only page on the website.
+        appOnly: !!s[6], storyHref: s[6] ? 'AppOnly.dc.html' : 'Story.dc.html', ctaHref: s[6] ? 'AppOnly.dc.html' : 'Reader.dc.html',
+        appPill: 'align-self: flex-start; margin-bottom: auto; display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; box-shadow: inset 0 0 0 1.5px currentColor; ' + shelfLooks[i].pill,
+        // A classic links to the classics shelf, not to a writer profile.
+        authorHref: s[2] === 'Classic' ? 'Classics.dc.html' : 'Profile.dc.html',
+        showBar: st.tab === 'reading', bar: bar(s[3]), progressLabel: 'Reading progress, ' + s[3] + ' per cent'
+      };
+    });
+
+    var avatar = function (a, b) { return 'flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,' + a + ',' + b + '); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 700; font-size: 17px;'; };
+    var writers = [
+      ['inkwolf', 'i', 'Fiction · new chapter 2 hours ago', '#4D1B5E', '#9A5BB8'],
+      ['poppyverse', 'p', 'Poetry · new poem yesterday', '#2E4A8C', '#7C95CF'],
+      ['matei.writes', 'm', 'Essays · new essay yesterday', '#8C2B3A', '#D07583'],
+      ['corbu', 'c', 'Fiction · last update 2 weeks ago', '#16233A', '#5C7AA6']
+    ].map(function (w) {
+      var on = !st.unfollowW[w[0]];
+      return {
+        name: w[0], initial: w[1], note: w[2], avatar: avatar(w[3], w[4]), on: on ? 'true' : 'false',
+        btnLabel: on ? 'Following' : 'Follow', btnStyle: self.followBtn(on),
+        toggle: function () { var n = Object.assign({}, st.unfollowW); n[w[0]] = on; self.setState({ unfollowW: n }); }
+      };
+    });
+    var followed = [
+      ['The Salt Mine Choir', 'inkwolf', 'Chapter 15, 2 hours ago', true],
+      ['Small Rooms', 'poppyverse', 'New poem, yesterday', true],
+      ['The Last Tram Home', 'ilinca.r', 'Chapter 3, 3 days ago', false],
+      ['Night Bus to Ploiești', 'corbu', 'Completed', false]
+    ];
+    var followedCls = classes(followed.map(function (f) { return f[0]; }));
+    followed = followed.map(function (f, i) {
+      var on = !st.unfollowS[f[0]];
+      return {
+        title: f[0], author: f[1], update: f[2], thumb: thumb, cls: followedCls[i], isNew: f[3], on: on ? 'true' : 'false',
+        btnLabel: on ? 'Following' : 'Follow', btnStyle: self.followBtn(on),
+        toggle: function () { var n = Object.assign({}, st.unfollowS); n[f[0]] = on; self.setState({ unfollowS: n }); }
+      };
+    });
+
+    // Reading lists: three stacked mini covers per list.
+    var stack = function (i) { return 'position: absolute; top: ' + (i * 3) + 'px; left: ' + (i * 16) + 'px; width: 44px; height: 58px; border-radius: 8px; border: 2px solid #FFFFFF;'; };
+    var setCls = classes(['Night Bus to Ploiești', 'Rivers That Moved Towns', 'The Salt Mine Choir']);
+    var essayCls = classes(['What Our Grandparents Didn’t Post', 'Rivers That Moved Towns', 'Inside the Student Housing Waitlist']);
+    var lists = [
+      { name: 'Set in Romania', count: '5 stories', seen: 'Only you', c1: stack(0), c2: stack(1), c3: stack(2), k1: setCls[0], k2: setCls[1], k3: setCls[2] },
+      { name: 'For my school essay', count: '3 stories', seen: 'Only you', c1: stack(0), c2: stack(1), c3: stack(2), k1: essayCls[0], k2: essayCls[1], k3: essayCls[2] }
+    ];
+
+    // Offline downloads come with the apps after March (March 2027 is web only, decided 17 Oct), so the website list is empty.
+    // Each download, once the apps exist: { id, title, what, size, expires }, removable one by one.
+    var downloads = [].filter(function (d) { return !st.removed[d.id]; });
+    var downloadCls = classes(downloads.map(function (d) { return d.title; }));
+    downloads = downloads.map(function (d, i) {
+      return Object.assign({}, d, {
+        thumb: thumb, cls: downloadCls[i], removeLabel: 'Remove the download of ' + d.title,
+        remove: function () { var n = Object.assign({}, st.removed); n[d.id] = true; self.setState({ removed: n }); }
+      });
+    });
+
+    var langPill = function (on) {
+      return 'min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+        + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 700;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+
+    return {
+      resume: resume, tabs: tabs, shelf: shelf, shelfName: names[st.tab], moreThan20: shelves[st.tab].length > 20,
+      refResume: function (el) { self.shelves.cr = el; if (el) setTimeout(function () { self.measureShelf('cr'); }, 0); },
+      scrollResume: function () { self.measureShelf('cr'); }, maskResume: self.mask('cr'),
+      refShelf1: function (el) { self.shelves.s1 = el; if (el) setTimeout(function () { self.measureShelf('s1'); }, 0); },
+      scrollShelf1: function () { self.measureShelf('s1'); }, mask1: self.mask('s1'),
+      // Scroll arrows per row: shown only when the row overflows; disabled at the end they point to (Robert, 17 Oct).
+      ar: { s1: self.arrows('s1') },
+      prev1: function () { self.scrollShelf('s1', -1); }, next1: function () { self.scrollShelf('s1', 1); },
+      writers: writers, writerCount: writers.length, followed: followed, storyCount: followed.length,
+      lists: lists, downloads: downloads, noDownloads: downloads.length === 0,
+      ro: st.lang === 'ro' ? 'true' : 'false', en: st.lang === 'en' ? 'true' : 'false',
+      roStyle: langPill(st.lang === 'ro'), enStyle: langPill(st.lang === 'en'),
+      setRo: function () { self.setState({ lang: 'ro' }); }, setEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

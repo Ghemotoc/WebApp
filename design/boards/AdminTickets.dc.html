@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Support tickets</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}.tmc-rows>div{padding:12px 0;border-top:1px solid #DED3E4}.tmc-rows>div:first-of-type{border-top:0;padding-top:0}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same look as the main island, with the staff area's own links -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 520px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Queue<span aria-label="24 open cases" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700; line-height: 1">24</span></a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Appeals<span aria-label="3 open appeals and 1 removal order" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 1">4</span></a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" aria-current="page" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; align-items: center; gap: 10px">
+          <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+          <span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #6B5A73">Owner · Support · 2FA on</span></span>
+        </span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Page header -->
+    <header style="padding: 40px 0 24px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; animation: tmcRise 0.5s ease-out both">
+      <div style="display: flex; flex-direction: column; gap: 14px; max-width: 760px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · support</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Support tickets</h1>
+        <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #5C4965">Every email to support@ghemotoc.com, every Contact us message and every in-app message lands here as a ticket, next to the person’s account, reports and data requests. Example tickets.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Support settings</a>
+        <a href="#" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Canned replies</a>
+      </div>
+    </header>
+
+    <!-- Views and the ticket table -->
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+      <!-- Views with counts -->
+      <nav aria-label="Ticket views" style="flex: 1 1 188px; max-width: 260px; min-width: 0; box-sizing: border-box; padding: 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 4px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; padding: 4px 8px 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Views</span>
+        <sc-for list="{{views}}" as="v" hint-placeholder-count="6">
+          <button type="button" aria-pressed="{{v.pressed}}" onClick="{{v.pick}}" style="{{v.style}}"><span>{{v.label}}</span><span aria-label="{{v.aria}}" style="{{v.countStyle}}">{{v.count}}</span></button>
+        </sc-for>
+        <form role="search" aria-label="Search tickets" style="margin-top: 12px; display: flex; flex-direction: column; gap: 6px">
+          <label for="t-search" style="font-family: 'Cutive', 'Courier New', serif; padding: 0 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Search</label>
+          <input id="t-search" type="search" placeholder="Number, subject, username, user ID or email" style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+        </form>
+      </nav>
+
+      <!-- Ticket table -->
+      <section aria-labelledby="list-title" style="flex: 999 1 760px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; padding: 20px 20px 12px">
+          <h2 id="list-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">{{viewTitle}}</h2>
+          <span style="font-size: 13px; color: #6B5A73">{{viewNote}}</span>
+        </div>
+        <div style="overflow-x: auto">
+          <div role="table" aria-label="Tickets" style="min-width: 1080px; font-size: 14px; width: 100%">
+            <div role="rowgroup">
+              <div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) 120px 76px 96px 72px 120px 100px 96px 84px; background: #F4F0EC; text-align: left">
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965; padding-left: 20px">TICKET AND SUBJECT</div>
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965">REQUESTER</div>
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965">CHANNEL</div>
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965">CATEGORY</div>
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965">PRIORITY</div>
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965">STATUS</div>
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965">ASSIGNEE</div>
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965">FIRST REPLY</div>
+                <div role="columnheader" style="min-width: 0; padding: 12px 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: #5C4965; padding-right: 20px">UPDATED</div>
+              </div>
+            </div>
+            <div role="rowgroup">
+              <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+                <div role="row" aria-selected="{{r.selected}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 120px 76px 96px 72px 120px 100px 96px 84px; {{r.rowStyle}}">
+                  <div role="cell" style="{{r.firstCell}}"><button type="button" aria-pressed="{{r.selected}}" aria-label="{{r.openAria}}" onClick="{{r.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 14px; font-weight: 700; color: #672786; text-decoration: underline; text-underline-offset: 3px">{{r.num}}</span><span style="display: block; max-width: 100%; font-size: 14px; font-weight: 600; line-height: 1.35; color: #26142E">{{r.subject}}</span></button><span style="display: block; margin-top: 2px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.preview}}</span></div>
+                  <div role="cell" style="min-width: 0; padding: 12px 8px; overflow: hidden"><span style="display: block; color: #26142E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.who}}</span><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.whoSub}}</span></div>
+                  <div role="cell" style="min-width: 0; padding: 12px 8px; color: #26142E">{{r.channel}}</div>
+                  <div role="cell" style="min-width: 0; padding: 12px 8px; color: #26142E">{{r.category}}</div>
+                  <div role="cell" style="min-width: 0; padding: 12px 8px"><span style="{{r.prioStyle}}">{{r.priority}}</span></div>
+                  <div role="cell" style="min-width: 0; padding: 12px 8px"><span style="{{r.statusStyle}}">{{r.status}}</span></div>
+                  <div role="cell" style="min-width: 0; padding: 12px 8px; color: #26142E">{{r.assignee}}</div>
+                  <div role="cell" style="min-width: 0; padding: 12px 8px"><span style="{{r.timerStyle}}">{{r.timer}}</span></div>
+                  <div role="cell" style="min-width: 0; padding: 12px 8px; padding-right: 20px; color: #5C4965">{{r.updated}}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <sc-if value="{{noRows}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 16px 20px; font-size: 14px; color: #5C4965">No tickets in this view.</p></sc-if>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; padding: 14px 20px; border-top: 1px solid #EFE8F2; font-size: 13px; color: #6B5A73">
+          <span>First-reply target: 1 working day (Monday to Friday, 09:00 to 17:00, Romanian time)</span>
+          <span>Today is 16 Oct 2026, 10:12</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- The open ticket: thread on the left, ticket details and the linked user on the right -->
+    <div style="margin-top: 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+      <section aria-labelledby="t-title" style="flex: 999 1 640px; min-width: 0; box-sizing: border-box; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Open ticket</span>
+          <h2 id="t-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.15; letter-spacing: -0.01em; color: #481C5F">{{t.num}} · {{t.subject}}</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">{{t.channel}}</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">{{t.category}}</span>
+            <span style="{{t.statusPill}}">{{t.status}}</span>
+            <span style="{{t.prioPill}}">Priority: {{t.priority}}</span>
+          </div>
+          <span style="font-size: 14px; line-height: 1.5; color: #6B5A73">{{t.opened}}</span>
+        </div>
+
+        <!-- Safeguarding banner: shown whenever the requester is under 16 -->
+        <sc-if value="{{t.under16}}" hint-placeholder-val="{{true}}">
+          <div role="note" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 16px; padding: 16px 20px; border-radius: 20px; background: #F1EAF4; border: 2px solid #481C5F">
+            <span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path></svg></span>
+            <div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 6px">
+              <span style="font-size: 16px; font-weight: 700; color: #26142E">The person asking is under 16. Safeguarding rules apply.</span>
+              <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #26142E">
+                <li>Answer only in this ticket. Never by private message, and never ask for a phone number, address or photos.</li>
+                <li>If they might be in danger, press Convert to report so a safeguarding-trained moderator takes it the same day.</li>
+                <li>Offer Telefonul Copilului, Romania’s free child helpline: 116 111. In an emergency: 112.</li>
+              </ul>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- The thread, like an email conversation -->
+        <ol aria-label="Messages in this ticket" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+          <sc-for list="{{t.thread}}" as="m" hint-placeholder-count="4">
+            <li style="{{m.style}}">
+              <span style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 13px"><span style="{{m.whoStyle}}">{{m.who}}</span><span style="color: #6B5A73">{{m.when}}</span></span>
+              <span style="display: block; font-size: 12px; color: #6B5A73">{{m.meta}}</span>
+              <span style="display: block; margin-top: 4px; font-size: 15px; line-height: 1.6; color: #26142E; white-space: pre-line">{{m.text}}</span>
+            </li>
+          </sc-for>
+        </ol>
+
+        <!-- Reply box: Reply or Internal note -->
+        <div style="{{box.style}}">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px">
+            <div role="group" aria-label="Reply or internal note" style="display: inline-flex; gap: 2px; padding: 3px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF">
+              <button type="button" class="tmc-chip" aria-pressed="{{box.replyOn}}" onClick="{{box.toReply}}" style="{{box.replyBtn}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{box.replyCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Reply</button>
+              <button type="button" class="tmc-chip" aria-pressed="{{box.noteOn}}" onClick="{{box.toNote}}" style="{{box.noteBtn}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{box.noteCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Internal note</button>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+              <label for="t-canned" style="font-size: 13px; font-weight: 600; color: #5C4965">Canned reply</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="t-canned" value="{{box.cannedVal}}" onChange="{{box.onCanned}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                <option value="">Choose one</option>
+                <option value="thanks">Thanks, we’ve got your message</option>
+                <option value="block">How to block someone</option>
+                <option value="age">Why we ask for an age check</option>
+                <option value="consent">Parent or guardian consent</option>
+                <option value="data">Your data request has started</option>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 12-8.5 8.5a5 5 0 0 1-7-7L14 5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4L15.5 8"></path></svg>Attach file</button>
+            </div>
+          </div>
+          <label for="t-reply" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">{{box.label}}</label>
+          <textarea id="t-reply" rows="6" onChange="{{box.onInput}}" value="{{box.text}}" style="display: block; width: 100%; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.55; color: #26142E; resize: vertical"></textarea>
+          <span style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 1.5; color: #5C4965"><span style="flex: none; display: flex; padding-top: 1px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span><span>{{box.help}}</span></span>
+          <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px">
+            <sc-if value="{{box.isReply}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{box.sendPending}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; height: 48px">Send and set to Pending on user</button></sc-if>
+            <button type="button" disabled="{{box.disabled}}" onClick="{{box.send}}" style="{{box.sendStyle}}">{{box.sendLabel}}</button>
+          </div>
+          <sc-if value="{{box.sentMsg}}" hint-placeholder-val="{{false}}"><p role="status" style="margin: 0; padding: 12px 14px; border-radius: 14px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5">{{box.sentLine}}</p></sc-if>
+        </div>
+      </section>
+
+      <!-- Right column: ticket details, the linked user and actions -->
+      <div style="flex: 1 1 360px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+
+        <section aria-labelledby="d-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px">
+          <h2 id="d-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.01em; color: #481C5F">Ticket details</h2>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="d-status" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Status</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="d-status" value="{{d.statusVal}}" onChange="{{d.onStatus}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                <sc-for list="{{d.statuses}}" as="o" hint-placeholder-count="6"><option value="{{o.value}}">{{o.value}}</option></sc-for>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="d-prio" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Priority</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="d-prio" value="{{d.prioVal}}" onChange="{{d.onPrio}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                <sc-for list="{{d.prios}}" as="o" hint-placeholder-count="4"><option value="{{o.value}}">{{o.value}}</option></sc-for>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="d-cat" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Category</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="d-cat" value="{{d.catVal}}" onChange="{{d.onCat}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                <sc-for list="{{d.cats}}" as="o" hint-placeholder-count="7"><option value="{{o.value}}">{{o.value}}</option></sc-for>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="d-assign" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Assignee</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="d-assign" value="{{d.whoVal}}" onChange="{{d.onWho}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                <sc-for list="{{d.people}}" as="o" hint-placeholder-count="4"><option value="{{o.value}}">{{o.value}}</option></sc-for>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span id="d-tags-label" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Tags</span>
+            <ul aria-labelledby="d-tags-label" style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px">
+              <sc-for list="{{t.tags}}" as="g" hint-placeholder-count="3"><li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">{{g}}</li></sc-for>
+            </ul>
+            <label for="d-tag" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Add a tag</label>
+            <input id="d-tag" type="text" placeholder="Add a tag" style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+          </div>
+          <div style="padding: 12px 14px; border-radius: 14px; background: #F4F0EC; display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 13px; font-weight: 600; color: #26142E">First reply</span>
+            <span style="font-size: 14px; color: #5C4965">{{t.timerLong}}</span>
+          </div>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Every change is kept in the ticket’s history and the audit log.</span>
+        </section>
+
+        <!-- Linked user: age group only, never a birth date -->
+        <section aria-labelledby="u-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 12px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Requester</span>
+          <h2 id="u-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.01em; color: #481C5F">{{u.name}}</h2>
+          <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: 8px 14px; font-size: 14px; line-height: 1.45">
+            <dt style="color: #6B5A73">User ID</dt><dd style="margin: 0; text-align: right; color: #26142E"><code style="font-size: 13px">{{u.uid}}</code></dd>
+            <dt style="color: #6B5A73">Email</dt><dd style="margin: 0; text-align: right; color: #26142E">{{u.email}} <button type="button" style="min-height: 44px; padding: 0 6px; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Show (logged)</button></dd>
+            <dt style="color: #6B5A73">Age group</dt><dd style="margin: 0; text-align: right; color: #26142E">{{u.age}}</dd>
+            <dt style="color: #6B5A73">Language</dt><dd style="margin: 0; text-align: right; color: #26142E">{{u.lang}}</dd>
+            <dt style="color: #6B5A73">Account</dt><dd style="margin: 0; text-align: right; color: #26142E">{{u.status}}</dd>
+          </dl>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Staff see the age group only: never a birth date or the age check result.</span>
+          <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+            <li style="display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-top: 1px solid #EFE8F2"><span style="display: flex; align-items: center; font-size: 14px; color: #26142E">{{u.reports}}</span><a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Reports</a></li>
+            <li style="display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-top: 1px solid #EFE8F2"><span style="display: flex; align-items: center; font-size: 14px; color: #26142E">{{u.requests}}</span><a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Data requests</a></li>
+            <li style="display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-top: 1px solid #EFE8F2"><span style="display: flex; align-items: center; font-size: 14px; color: #26142E">{{u.tickets}}</span><a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Open in Users</a></li>
+          </ul>
+        </section>
+
+        <!-- Actions -->
+        <section aria-labelledby="a-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 12px">
+          <h2 id="a-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.01em; color: #481C5F">Actions</h2>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+            <button type="button" onClick="{{act.merge}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Merge</button>
+            <button type="button" onClick="{{act.report}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; border-color: #8C2B3A; color: #8C2B3A">Convert to report</button>
+            <button type="button" onClick="{{act.request}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Open data request</button>
+            <button type="button" onClick="{{act.spam}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Mark as spam</button>
+          </div>
+          <sc-if value="{{act.show}}" hint-placeholder-val="{{false}}"><p role="status" style="margin: 0; padding: 12px 14px; border-radius: 14px; background: #F4F0EC; font-size: 14px; line-height: 1.5; color: #26142E">{{act.line}}</p></sc-if>
+          <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #5C4965">
+            <li><b style="color: #26142E">Merge</b> joins two tickets from the same person about the same problem. They’re told the new number.</li>
+            <li><b style="color: #26142E">Convert to report</b> opens a case in the moderation queue with this ticket linked. Use it for unlawful or harmful content or a child’s safety.</li>
+            <li><b style="color: #26142E">Open data request</b> starts a request with its legal deadline, for a copy, a correction or a deletion.</li>
+            <li><b style="color: #26142E">Mark as spam</b> moves it to Spam. No reply is sent, and the sender’s later emails go there too.</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <!-- How Support works (footer note) -->
+    <section aria-labelledby="how-title" style="margin-top: 24px; padding: 24px; border-radius: 24px; background: #F4F0EC; display: flex; flex-direction: column; gap: 12px">
+      <h2 id="how-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">How Support works</h2>
+      <ul style="margin: 0; padding-left: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 8px 32px; font-size: 14px; line-height: 1.6; color: #3A2442">
+        <li>Replies go out from support@ghemotoc.com with the ticket number in the subject. Email replies thread back into the same ticket.</li>
+        <li>A ticket waiting on the user is solved after 7 days, with a polite email. A reply reopens it; a reply to a closed ticket starts a new one linked to it.</li>
+        <li>Tickets are kept for 2 years after they close and are included in the person’s data export.</li>
+        <li>Tickets run on a ready-made helpdesk connected through its API (product to be chosen). Staff work only in these screens, and every view and action is in the audit log.</li>
+        <li>People see their tickets under “Your support requests” in Settings.</li>
+        <li>Tickets never replace reports. Unlawful content and authority removal orders go through the report form.</li>
+      </ul>
+    </section>
+
+    <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="margin-top: 64px">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3078}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Opens on "All open" with #1046 selected: a 15-year-old's ticket, so the safeguarding banner shows.
+    // The reply box starts in Reply mode with a canned reply already picked and edited.
+    this.state = { view: 'open', sel: 't1046', mode: 'reply', text: null, canned: 'block', sent: null, act: null, status: {}, prio: {}, cat: {}, who: {} };
+  }
+
+  // Pills for status and priority, from one small palette so they match the other staff screens.
+  pill(tone) {
+    // Pill tokens (background, text, border): new and pending gold, open and solved sage, closed and normal neutral.
+    // Urgent stays solid red with white text (staff safety urgency).
+    var t = { new: ['#FBF3DA', '#5C3F0E', '#D9B54A'], open: ['#E8F1EC', '#245A41', '#A9C9B6'], pending: ['#FBF3DA', '#5C3F0E', '#D9B54A'], hold: ['#F4F0EC', '#4F3D57', '#D6CCDC'],
+      solved: ['#E8F1EC', '#245A41', '#A9C9B6'], closed: ['#F4F0EC', '#4F3D57', '#D6CCDC'], spam: ['#F6E9EB', '#8C2B3A', '#DDB0B8'],
+      urgent: ['#8C2B3A', '#FFFFFF', '#8C2B3A'], high: ['#F6E9EB', '#8C2B3A', '#DDB0B8'], normal: ['#F4F0EC', '#4F3D57', '#D6CCDC'], low: ['#F4F0EC', '#4F3D57', '#D6CCDC'] }[tone] || ['#F4F0EC', '#4F3D57', '#D6CCDC'];
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';';
+  }
+  toneOf(status) {
+    return { 'New': 'new', 'Open': 'open', 'Pending on user': 'pending', 'On hold': 'hold', 'Solved': 'solved', 'Closed': 'closed', 'Spam': 'spam' }[status] || 'hold';
+  }
+
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Canned replies: each fills in the person's name; the Română version is used when that is their language.
+    var canned = {
+      thanks: 'Hi {name},\n\nThanks for writing to us. We’ve got your message and we’ll answer within one working day.\n\nThe Ghemotoc team',
+      block: 'Hi {name},\n\nYes. Open their profile, choose the three dots and then Block. They won’t be able to reply to you, comment on your stories or see your profile, and they aren’t told you blocked them.\n\nThe Ghemotoc team',
+      age: 'Hi {name},\n\nWe ask everyone for an age check so we can keep younger members safe. Yoti does the check. We only get the result, never a photo.\n\nThe Ghemotoc team',
+      consent: 'Hi {name},\n\nIf you’re under 16, a parent or guardian agrees by email before you can post. You can send the email again from Settings.\n\nThe Ghemotoc team',
+      data: 'Hi {name},\n\nWe’ve started your data request. We’ll answer by {deadline} at the latest, and we’ll write if we need anything else.\n\nThe Ghemotoc team'
+    };
+
+    // Example tickets. who: username, or "email only" when the sender has no account.
+    var T = {
+      t1047: { num: '#1047', subject: 'Can I change my pen name?', preview: 'I want to use my real name now that I’m publishing…', who: '@lia.writes', whoSub: 'usr_2b81…c04f',
+        channel: 'In-app', category: 'Account', priority: 'Normal', status: 'New', assignee: 'Unassigned', timer: '6 h 48 min left', timerTone: 'ok', updated: '10:02', tags: ['pen name'],
+        opened: 'Opened today at 10:02 from the app.', under16: false, timerLong: 'Due by 17 Oct, 10:02. 6 h 48 min left.',
+        u: { name: '@lia.writes', uid: 'usr_2b81…c04f', email: 'l•••@gmail.com', age: '16 to 17', lang: 'English', status: 'Active', reports: 'No reports', requests: '1 data request: DR-1007', tickets: '1 ticket' },
+        thread: [ { kind: 'user', who: '@lia.writes', when: 'Today, 10:02', meta: 'In-app message', text: 'Hi! I want to use my real name now that I’m publishing my second story. Can I change my pen name, and will my old chapters show the new one?' } ] },
+      t1046: { num: '#1046', subject: 'Will he know it was me?', preview: 'I reported someone in the Poetry forum…', who: '@mira.poems', whoSub: 'usr_91c4…3a07',
+        channel: 'In-app', category: 'Safety question', priority: 'High', status: 'Open', assignee: 'Andrei M.', timer: 'Replied in 21 min', timerTone: 'done', updated: '10:05', tags: ['safeguarding', 'R-2318'],
+        opened: 'Opened today at 09:31 from the app · linked to moderation case R-2318.', under16: true, timerLong: 'Sent in 21 min, at 09:52. Target: 1 working day.',
+        u: { name: '@mira.poems', uid: 'usr_91c4…3a07', email: 'm••••@yahoo.com', age: '13 to 15', lang: 'Română', status: 'Active, a parent agreed', reports: '2 reports made, 1 open: R-2318', requests: 'No data requests', tickets: '1 ticket' },
+        thread: [
+          { kind: 'user', who: '@mira.poems', when: 'Today, 09:31', meta: 'In-app message · written in Română, shown in English', text: 'Hi, I reported someone in the Poetry forum. Will he know it was me who reported him? I don’t want him to find my other accounts.' },
+          { kind: 'note', who: 'Internal note · Robert', when: 'Today, 09:40', meta: 'Staff only. Never emailed.', text: 'Linked to R-2318. Reply today and include the helpline. Don’t mention what happened to the account until the decision is sent.' },
+          { kind: 'event', who: 'Andrei Mureșan set the status to Open and the priority to High', when: 'Today, 09:41', meta: '', text: '' },
+          { kind: 'staff', who: 'Andrei Mureșan', when: 'Today, 09:52', meta: 'Sent in Română from support@ghemotoc.com as “The Ghemotoc team” · subject [#1046]', text: 'Hi Mira,\n\nThank you for writing to us. We never tell anyone who reported them, and you did the right thing. If anyone makes you feel unsafe, you can call Telefonul Copilului on 116 111 for free.\n\nThe Ghemotoc team' },
+          { kind: 'user', who: '@mira.poems', when: 'Today, 10:05', meta: 'In-app reply · written in Română, shown in English', text: 'Thank you. Can I block him too?' }
+        ] },
+      t1045: { num: '#1045', subject: 'Our school wants to try class spaces', preview: 'I teach Romanian at a high school in Ploiești…', who: 'email only', whoSub: 'd.popa@[school domain]',
+        channel: 'Email', category: 'School or university', priority: 'Normal', status: 'New', assignee: 'Unassigned', timer: 'Overdue 1 h', timerTone: 'late', updated: 'Yesterday', tags: ['school'],
+        opened: 'Opened 15 Oct at 09:12 from an email to support@ghemotoc.com. No account matches this address.', under16: false, timerLong: 'Was due 16 Oct, 09:12. Overdue by 1 hour.',
+        u: { name: 'No account (email only)', uid: 'None', email: 'd.popa@[school domain]', age: 'Not known', lang: 'Română', status: 'No account', reports: 'No reports', requests: 'No data requests', tickets: '1 ticket from this address' },
+        thread: [ { kind: 'user', who: 'd.popa@[school domain]', when: '15 Oct, 09:12', meta: 'Email to support@ghemotoc.com · written in Română, shown in English', text: 'Hello, I teach Romanian at a high school in Ploiești. We would like to try class spaces with two classes this spring. What do we need to do?' } ] },
+      t1044: { num: '#1044', subject: 'When does my suspension end?', preview: 'I can read but I can’t comment…', who: '@raul.d', whoSub: 'usr_a41e…7c09',
+        channel: 'Contact us form', category: 'Account', priority: 'Normal', status: 'Pending on user', assignee: 'Robert', timer: 'Replied in 2 h', timerTone: 'done', updated: '15 Oct', tags: ['suspension'],
+        opened: 'Opened 15 Oct at 08:20 from the Contact us form in Settings.', under16: false, timerLong: 'Sent in 2 h. Solved on its own on 22 Oct if there’s no answer.',
+        u: { name: '@raul.d', uid: 'usr_a41e…7c09', email: 'r•••••@yahoo.com', age: '16 to 17', lang: 'Română', status: 'Suspended until 23 Oct 2026', reports: 'Reported twice, 1 appeal open: A-0415', requests: '1 data request: DR-1003', tickets: '1 ticket' },
+        thread: [
+          { kind: 'user', who: '@raul.d', when: '15 Oct, 08:20', meta: 'Contact us form · written in Română, shown in English', text: 'I can read but I can’t comment. When does my suspension end?' },
+          { kind: 'staff', who: 'Robert', when: '15 Oct, 10:31', meta: 'Sent in Română from support@ghemotoc.com as “The Ghemotoc team” · subject [#1044]', text: 'Hi Raul,\n\nYour suspension ends on 23 Oct 2026. The message we sent you explains why and how to appeal. Is there anything else we can help with?\n\nThe Ghemotoc team' }
+        ] },
+      t1043: { num: '#1043', subject: 'Chapter editor loses my italics', preview: 'When I paste from Word the italics disappear…', who: '@corbu', whoSub: 'usr_4a6f…e8d0',
+        channel: 'Contact us form', category: 'Bug', priority: 'Normal', status: 'On hold', assignee: 'Robert', timer: 'Replied in 3 h', timerTone: 'done', updated: '14 Oct', tags: ['editor', 'bug'],
+        opened: 'Opened 14 Oct at 11:05 from the Contact us form in Settings.', under16: false, timerLong: 'Sent in 3 h. On hold until the fix ships.',
+        u: { name: '@corbu', uid: 'usr_4a6f…e8d0', email: 'c••••@gmail.com', age: '18 or over', lang: 'Română', status: 'Active', reports: 'No reports', requests: 'No data requests', tickets: '1 ticket' },
+        thread: [ { kind: 'user', who: '@corbu', when: '14 Oct, 11:05', meta: 'Contact us form', text: 'When I paste a chapter from Word, the italics disappear.' } ] },
+      t1039: { num: '#1039', subject: 'Delete everything you have about me', preview: 'Please delete all my data…', who: 'email only', whoSub: 'no account matched',
+        channel: 'Email', category: 'Other', priority: 'Normal', status: 'Pending on user', assignee: 'Robert', timer: 'Replied in 16 min', timerTone: 'done', updated: '7 Oct', tags: ['data request', 'DR-1004'],
+        opened: 'Opened 6 Oct at 19:44 from an email to support@ghemotoc.com · data request DR-1004 opened from it.', under16: false, timerLong: 'Sent in 16 min.',
+        u: { name: 'No account (email only)', uid: 'Not matched', email: 'k•••••@outlook.com', age: 'Not known', lang: 'English', status: 'No account with this email', reports: 'No reports', requests: '1 data request: DR-1004', tickets: '1 ticket from this address' },
+        thread: [ { kind: 'user', who: 'k•••••@outlook.com', when: '6 Oct, 19:44', meta: 'Email to support@ghemotoc.com', text: 'Delete everything you have about me.' } ] },
+      t1042: { num: '#1042', subject: 'Can I download my story as Word?', preview: 'I want to send it to an agent…', who: '@inkwolf', whoSub: 'usr_7f3c…a91e',
+        channel: 'In-app', category: 'Writing', priority: 'Low', status: 'Solved', assignee: 'Robert', timer: 'Replied in 1 h', timerTone: 'done', updated: '15 Oct', tags: ['export'],
+        opened: 'Opened 15 Oct at 18:02 from the app.', under16: false, timerLong: 'Sent in 1 h.',
+        u: { name: '@inkwolf', uid: 'usr_7f3c…a91e', email: 'i••••••@proton.me', age: '16 to 17', lang: 'English', status: 'Active', reports: '1 warning, no open reports', requests: '1 data request: DR-1008', tickets: '1 ticket' },
+        thread: [ { kind: 'user', who: '@inkwolf', when: '15 Oct, 18:02', meta: 'In-app message', text: 'Can I download my story as a Word file? I want to send it to an agent.' } ] },
+      t1040: { num: '#1040', subject: 'Is there a Romanian version?', preview: 'My grandmother wants to read…', who: 'email only', whoSub: 'no account',
+        channel: 'Email', category: 'Reading', priority: 'Low', status: 'Solved', assignee: 'Andrei M.', timer: 'Replied in 40 min', timerTone: 'done', updated: '9 Oct', tags: ['language'],
+        opened: 'Opened 9 Oct from an email to support@ghemotoc.com.', under16: false, timerLong: 'Sent in 40 min.',
+        u: { name: 'No account (email only)', uid: 'None', email: 'e••••@yahoo.ro', age: 'Not known', lang: 'Română', status: 'No account', reports: 'No reports', requests: 'No data requests', tickets: '1 ticket from this address' },
+        thread: [ { kind: 'user', who: 'e••••@yahoo.ro', when: '9 Oct, 08:30', meta: 'Email to support@ghemotoc.com', text: 'Is the site in Romanian too?' } ] },
+      t1041: { num: '#1041', subject: 'WIN A FREE PHONE TODAY', preview: 'Click here to claim…', who: 'email only', whoSub: 'no account',
+        channel: 'Email', category: 'Other', priority: 'Low', status: 'Spam', assignee: 'Unassigned', timer: 'No reply sent', timerTone: 'none', updated: '12 Oct', tags: [],
+        opened: 'Opened 12 Oct from an email to support@ghemotoc.com. Marked as spam.', under16: false, timerLong: 'Spam: no reply is ever sent.',
+        u: { name: 'No account (email only)', uid: 'None', email: 'p•••@[spam domain]', age: 'Not known', lang: 'English', status: 'No account', reports: 'No reports', requests: 'No data requests', tickets: '3 earlier emails, all spam' },
+        thread: [ { kind: 'user', who: 'p•••@[spam domain]', when: '12 Oct, 03:14', meta: 'Email to support@ghemotoc.com', text: 'Click here to claim your free phone.' } ] }
+    };
+    var order = ['t1047', 't1046', 't1045', 't1044', 't1043', 't1039', 't1042', 't1040', 't1041'];
+    var statusOf = function (k) { return st.status[k] || T[k].status; };
+    var prioOf = function (k) { return st.prio[k] || T[k].priority; };
+    var catOf = function (k) { return st.cat[k] || T[k].category; };
+    var whoOf = function (k) { return st.who[k] || T[k].assignee; };
+    var isOpen = function (k) { var s = statusOf(k); return s === 'New' || s === 'Open' || s === 'Pending on user' || s === 'On hold'; };
+
+    // Views with counts. "My tickets" is Robert's, the person signed in.
+    var V = [
+      { key: 'mine', label: 'My tickets', title: 'My tickets', note: 'Open tickets assigned to you', test: function (k) { return isOpen(k) && whoOf(k) === 'Robert'; } },
+      { key: 'unassigned', label: 'Unassigned', title: 'Unassigned', note: 'Open tickets nobody has picked up', test: function (k) { return isOpen(k) && whoOf(k) === 'Unassigned'; } },
+      { key: 'open', label: 'All open', title: 'All open tickets', note: 'New, open, pending and on hold, newest first', test: isOpen },
+      { key: 'pending', label: 'Pending on user', title: 'Pending on user', note: 'Solved on their own after 7 days without an answer', test: function (k) { return statusOf(k) === 'Pending on user'; } },
+      { key: 'solved', label: 'Solved', title: 'Solved', note: 'A reply from the person reopens a solved ticket', test: function (k) { var s = statusOf(k); return s === 'Solved' || s === 'Closed'; } },
+      { key: 'spam', label: 'Spam', title: 'Spam', note: 'No reply is sent. Later emails from the same sender land here too.', test: function (k) { return statusOf(k) === 'Spam'; } }
+    ];
+    var cur = V.filter(function (v) { return v.key === st.view; })[0] || V[2];
+    var views = V.map(function (v) {
+      var on = v.key === cur.key;
+      var n = order.filter(v.test).length;
+      return {
+        label: v.label, count: n, aria: n + ' tickets', pressed: on ? 'true' : 'false',
+        pick: function () { self.setState({ view: v.key }); },
+        style: 'display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 14px; border: 0; font-family: inherit; font-size: 15px; text-align: left; cursor: pointer; '
+          + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 700;' : 'background: transparent; color: #26142E; font-weight: 500;'),
+        countStyle: 'min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; line-height: 1; '
+          + (on ? 'background: #E6C24C; color: #26142E;' : 'background: #F1EAF4; color: #481C5F;')
+      };
+    });
+
+    var timerStyle = function (tone) {
+      var c = { ok: '#5C4965', late: '#8C2B3A', done: '#2F6B4F', none: '#6B5A73' }[tone] || '#5C4965';
+      return 'font-size: 13px; font-weight: ' + (tone === 'late' ? '700' : '600') + '; color: ' + c + ';';
+    };
+    var keys = order.filter(cur.test);
+    var rows = keys.map(function (k) {
+      var x = T[k], on = st.sel === k;
+      return {
+        num: x.num, subject: x.subject, preview: x.preview, who: x.who, whoSub: x.whoSub, channel: x.channel, category: catOf(k),
+        priority: prioOf(k), prioStyle: self.pill(prioOf(k).toLowerCase()), status: statusOf(k), statusStyle: self.pill(self.toneOf(statusOf(k))),
+        assignee: whoOf(k), timer: x.timer, timerStyle: timerStyle(x.timerTone), updated: x.updated,
+        selected: on ? 'true' : 'false', openAria: 'Open ticket ' + x.num + ', ' + x.subject,
+        pick: function () { self.setState({ sel: k, text: null, canned: '', sent: null, act: null }); },
+        rowStyle: 'border-top: 1px solid #EFE8F2; ' + (on ? 'background: #F1EAF4;' : 'background: #FFFFFF;'),
+        firstCell: 'padding: 8px 8px 10px ' + (on ? '17px; border-left: 3px solid #672786;' : '20px;') + ' vertical-align: top; overflow: hidden;'
+      };
+    });
+
+    // The open ticket.
+    var x = T[st.sel] || T.t1046;
+    var first = (x.u.name.indexOf('@') === 0) ? x.u.name.slice(1).split(/[._]/)[0] : 'there';
+    var firstName = first.charAt(0).toUpperCase() + first.slice(1);
+    var msgStyle = function (kind) {
+      if (kind === 'staff') return 'align-self: flex-end; width: min(100%, 620px); box-sizing: border-box; padding: 14px 16px; border-radius: 16px; background: #F1EAF4; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 2px';
+      if (kind === 'note') return 'align-self: flex-end; width: min(100%, 620px); box-sizing: border-box; padding: 12px 16px; border-radius: 16px; background: #FDF6DC; border: 1px dashed #C9A43A; display: flex; flex-direction: column; gap: 2px';
+      if (kind === 'event') return 'align-self: center; padding: 4px 12px; border-radius: 999px; background: #F4F0EC; border: 1px solid #D6CCDC; display: flex; flex-direction: column; align-items: center';
+      return 'align-self: flex-start; width: min(100%, 620px); box-sizing: border-box; padding: 14px 16px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 2px';
+    };
+    var thread = x.thread.map(function (m) {
+      return {
+        who: m.who, when: m.when, meta: m.meta, text: m.text, style: msgStyle(m.kind),
+        whoStyle: 'font-weight: 700; color: ' + (m.kind === 'note' ? '#815E18' : (m.kind === 'staff' ? '#481C5F' : '#26142E')) + ';' + (m.kind === 'event' ? ' font-weight: 500; color: #5C4965;' : '')
+      };
+    });
+
+    // Reply box: Reply or Internal note. The default text is the "How to block someone" canned reply, edited.
+    var isNote = st.mode === 'note';
+    var defaultText = (isNote || st.canned !== 'block' || st.sel !== 't1046') ? '' : canned.block.replace('{name}', firstName);
+    var text = st.text === null ? defaultText : st.text;
+    var hasText = String(text || '').trim().length > 0;
+    var seg = function (on) {
+      // Segment drawn as a chip: 36 px inside the 44 px bordered group, check icon on the chosen one.
+      return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+        + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid transparent; background: transparent; color: #481C5F;');
+    };
+    var box = {
+      replyOn: isNote ? 'false' : 'true', noteOn: isNote ? 'true' : 'false', isReply: !isNote,
+      replyBtn: seg(!isNote), noteBtn: seg(isNote), replyCheck: self.chipCheck(!isNote), noteCheck: self.chipCheck(isNote),
+      toReply: function () { self.setState({ mode: 'reply', text: null, sent: null }); },
+      cannedVal: st.canned || '',
+      toNote: function () { self.setState({ mode: 'note', text: '', canned: '', sent: null }); },
+      label: isNote ? 'Internal note · staff only' : 'Reply to ' + x.u.name,
+      text: text,
+      onInput: function (e) { var v = (e && e.target && typeof e.target.value === 'string') ? e.target.value : ''; self.setState({ text: v }); },
+      onCanned: function (e) {
+        var k = (e && e.target && typeof e.target.value === 'string') ? e.target.value : '';
+        if (canned[k]) self.setState({ mode: 'reply', canned: k, text: canned[k].replace('{name}', firstName).replace('{deadline}', '15 Nov 2026'), sent: null });
+      },
+      help: isNote
+        ? 'Only staff see internal notes. They are never emailed and never shown to the person.'
+        : 'Goes out by email from support@ghemotoc.com as “The Ghemotoc team”, with [' + x.num + '] in the subject, in ' + x.u.lang + '. Their reply comes back into this ticket.',
+      style: 'display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 20px; '
+        + (isNote ? 'background: #FDF6DC; border: 1px dashed #C9A43A;' : 'background: #FAF8F5; border: 1px solid #DED3E4;'),
+      disabled: !hasText,
+      sendLabel: isNote ? 'Add internal note' : 'Send reply',
+      sendStyle: 'height: 48px; padding: 0 24px; border: 0; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; '
+        + (hasText ? 'background: #2A0E33; color: #FBF7EC; cursor: pointer;' : 'background: #DED3E4; color: #5C4965; cursor: not-allowed;'),
+      send: function () { if (hasText) self.setState({ sent: isNote ? 'note' : 'reply' }); },
+      sendPending: function () { if (hasText) { var s = Object.assign({}, st.status); s[st.sel] = 'Pending on user'; self.setState({ sent: 'pending', status: s }); } },
+      sentMsg: !!st.sent,
+      sentLine: st.sent === 'note' ? 'Internal note added. Only staff can see it.'
+        : (st.sent === 'pending' ? 'Reply sent and the ticket is Pending on user. If there is no answer in 7 days it is solved with a polite email.' : 'Reply sent from support@ghemotoc.com. Logged in the ticket history.')
+    };
+
+    // Ticket details: the selects reflect the open ticket; status and priority can be changed here.
+    var opt = function (list, val) { return list.map(function (v) { return { value: v, on: v === val }; }); };
+    var d = {
+      statuses: opt(['New', 'Open', 'Pending on user', 'On hold', 'Solved', 'Closed'], statusOf(st.sel)),
+      prios: opt(['Low', 'Normal', 'High', 'Urgent'], prioOf(st.sel)),
+      cats: opt(['Account', 'Writing', 'Reading', 'Safety question', 'School or university', 'Bug', 'Other'], catOf(st.sel)),
+      people: opt(['Unassigned', 'Robert', 'Andrei M.', '[Support agent]'], whoOf(st.sel)),
+      statusVal: statusOf(st.sel), prioVal: prioOf(st.sel), catVal: catOf(st.sel), whoVal: whoOf(st.sel),
+      onCat: function (e) { var v = e && e.target ? e.target.value : ''; if (v) { var c = Object.assign({}, st.cat); c[st.sel] = v; self.setState({ cat: c }); } },
+      onWho: function (e) { var v = e && e.target ? e.target.value : ''; if (v) { var w = Object.assign({}, st.who); w[st.sel] = v; self.setState({ who: w }); } },
+      onStatus: function (e) { var v = e && e.target ? e.target.value : ''; if (v) { var s = Object.assign({}, st.status); s[st.sel] = v; self.setState({ status: s }); } },
+      onPrio: function (e) { var v = e && e.target ? e.target.value : ''; if (v) { var p = Object.assign({}, st.prio); p[st.sel] = v; self.setState({ prio: p }); } }
+    };
+
+    var actLines = {
+      merge: 'Pick the other ticket from the same person. Its messages join this one and they’re told the new number.',
+      report: x.num === '#1046' ? 'Already linked to case R-2318 in the moderation queue. A new report would open a separate case with this ticket linked.' : 'A case opens in the moderation queue with this ticket linked. Safeguarding rules apply if a child may be at risk.',
+      request: 'A data request opens with its legal deadline (one month) and links back to this ticket.',
+      spam: 'Moved to Spam. No reply is sent.'
+    };
+    var act = {
+      show: !!st.act, line: st.act ? actLines[st.act] : '',
+      merge: function () { self.setState({ act: 'merge' }); },
+      report: function () { self.setState({ act: 'report' }); },
+      request: function () { self.setState({ act: 'request' }); },
+      spam: function () { self.setState({ act: 'spam' }); }
+    };
+
+    return {
+      views: views, viewTitle: cur.title, viewNote: cur.note, rows: rows, noRows: rows.length === 0,
+      t: {
+        num: x.num, subject: x.subject, channel: x.channel, category: catOf(st.sel), status: statusOf(st.sel), priority: prioOf(st.sel),
+        statusPill: self.pill(self.toneOf(statusOf(st.sel))).replace('height: 24px', 'height: 26px'),
+        prioPill: self.pill(prioOf(st.sel).toLowerCase()).replace('height: 24px', 'height: 26px'),
+        opened: x.opened, under16: x.under16, thread: thread, tags: x.tags, timerLong: x.timerLong
+      },
+      u: x.u, box: box, d: d, act: act
+    };
+  }
+}
+</script>
+</body>
+</html>

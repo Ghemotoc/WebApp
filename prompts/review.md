@@ -1,0 +1,1 @@
+Review the diff of pull request #[NUMBER] against CLAUDE.md, docs/definition-of-done.md and the story's acceptance criteria in docs/stories/. Compare every screen it touches with its board in design/boards/. List anything missing or wrong, most serious first. Don't change any code.

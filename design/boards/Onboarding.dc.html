@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Set up your profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{pointer-events:none;user-select:none}
+.tmc-dd-sticker{filter:drop-shadow(2px 0 0 #FBF7EC) drop-shadow(-2px 0 0 #FBF7EC) drop-shadow(0 2px 0 #FBF7EC) drop-shadow(0 -2px 0 #FBF7EC)}
+@media (max-width: 1199px){.tmc-dd-xxl{display:none !important}}
+@media (max-width: 1119px){.tmc-dd-xl{display:none !important}}
+@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 600px){.tmc-dd-hide{display:none !important}}
+/* Pill system (17 Oct): chips are 36 px tall with a 44 px tap area, plum focus ring, tinted hover */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}
+.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="overflow-x: clip; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Signed-out island: wordmark, Log in, Join for free -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Main.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct) --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/d015e4df9fe6c8aad2c786d53340afd6" alt="" aria-hidden="true" width="22" height="22" style="position: absolute; left: 12px; top: 11px; width: 22px; height: 22px; pointer-events: none"><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <a href="SignIn.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; color: #481C5F; text-decoration: none; font-weight: 600; font-size: 15px">Log in</a>
+        <a href="Main.dc.html#join" style="display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Join for free</a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <header style="position: relative; padding: 48px 0 32px; display: flex; flex-direction: column; gap: 14px; animation: tmcRise 0.5s ease-out both">
+      <!-- Doodle (sunny-face): decorative --><img data-doodle="background" data-doodle-on="Set up your profile" src="/_blob/1de6769cdca825a91e29192b6f813576" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="position: absolute; right: 24px; top: 30px; width: 160px; height: 160px; transform: rotate(-6deg); pointer-events: none">
+      <ol aria-label="Sign-up steps" style="list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+        <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 32px; padding: 0 12px; border-radius: 999px; line-height: 1; white-space: nowrap; border: 1px solid #A9C9B6; background: #E8F1EC; color: #245A41; font-size: 13px; font-weight: 600"><span style="flex: none; width: 14px; height: 14px; color: #245A41; display: inline-flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Your account<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">(done)</span></li>
+        <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 32px; padding: 0 12px; border-radius: 999px; line-height: 1; white-space: nowrap; border: 1px solid #A9C9B6; background: #E8F1EC; color: #245A41; font-size: 13px; font-weight: 600"><span style="flex: none; width: 14px; height: 14px; color: #245A41; display: inline-flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Age check<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">(done)</span></li>
+        <li aria-current="step" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 32px; padding: 0 12px; border-radius: 999px; line-height: 1; white-space: nowrap; border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF; font-size: 13px; font-weight: 600"><span style="flex: none; width: 20px; height: 20px; border-radius: 999px; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; line-height: 1; font-size: 11px; font-weight: 700">3</span>Your profile</li>
+      </ol>
+      <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Welcome to Ghemotoc</span>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Set up your profile</h1>
+      <p style="margin: 0; max-width: 660px; font-size: 18px; line-height: 1.6; color: #5C4965">Three short steps. Only your username is required. You can skip the rest and change it later in Settings.</p>
+    </header>
+
+    <main style="display: flex; flex-direction: column; gap: 28px; animation: tmcRise 0.5s 0.05s ease-out both">
+
+      <!-- Step 1: username, pen name, interface language, optional area. Country is not asked: it comes from the connection (Q20). -->
+      <section id="step-1" aria-labelledby="s1-title" style="position: relative; padding: 32px; display: flex; flex-direction: column; gap: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+        <!-- Doodle (ideas-notepad): decorative --><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/f71342920dbb5c9f302486ccc693c98d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="position: absolute; right: 44px; top: -48px; width: 92px; height: 92px; transform: rotate(7deg); pointer-events: none">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <span style="flex: none; width: 40px; height: 40px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px">1</span>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Step 1 of 3</span>
+            <h2 id="s1-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Your name and language</h2>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 24px 40px">
+          <div>
+            <label for="handle" style="display: block; font-size: 14px; font-weight: 600; color: #26142E">Username</label>
+            <div style="position: relative; margin-top: 8px">
+              <span aria-hidden="true" style="position: absolute; left: 20px; top: 13px; font-size: 16px; color: #6B5A73">@</span>
+              <input id="handle" type="text" autocomplete="username" value="{{handle}}" onChange="{{setHandle}}" aria-describedby="handle-status handle-hint" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 20px 0 38px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+            </div>
+            <p id="handle-status" aria-live="polite" style="{{handleStatusStyle}}">{{handleStatus}}</p>
+            <p id="handle-hint" style="margin: 4px 0 0 20px; font-size: 13px; line-height: 1.5; color: #6B5A73">3 to 30 characters. Any characters work, but we block swearwords, names that look like our staff’s and look-alike letters that copy another name. People use it to find and mention you.</p>
+          </div>
+
+          <div>
+            <label for="pen" style="display: block; font-size: 14px; font-weight: 600; color: #26142E">Pen name <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+            <input id="pen" type="text" placeholder="Leave empty to show your username" style="margin-top: 8px; width: 100%; box-sizing: border-box; height: 48px; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+            <p style="margin: 6px 0 0 20px; font-size: 13px; line-height: 1.5; color: #6B5A73">Shown on your stories instead of your username. You can change it once every 30 days. We never ask for your real name.</p>
+          </div>
+
+          <div>
+            <label for="ui-lang" style="display: block; font-size: 14px; font-weight: 600; color: #26142E">Interface language</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; margin-top: 8px">
+              <select id="ui-lang" value="{{lang}}" onChange="{{setLang}}" aria-describedby="ui-lang-hint" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E; cursor: pointer">
+                <option value="en" lang="en">English</option>
+                <option value="ro" lang="ro">Română</option>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg>
+            </span>
+            <p id="ui-lang-hint" style="margin: 6px 0 0 20px; font-size: 13px; line-height: 1.5; color: #6B5A73">The language of menus and buttons. We picked English because your device is set to English. It applies on every device you use.</p>
+          </div>
+
+          <!-- Country: never asked (Q20). It is set from the connection at sign-up; Settings shows it. -->
+          <div>
+            <span style="display: block; font-size: 14px; font-weight: 600; color: #26142E">Country</span>
+            <p style="margin: 8px 0 0; display: flex; align-items: center; gap: 10px; min-height: 48px; font-size: 15px; line-height: 1.5; color: #5C4965"><img src="/_blob/d015e4df9fe6c8aad2c786d53340afd6" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px">We work out your country from your connection, so we don’t ask. You can see it in Settings.</p>
+          </div>
+
+          <div>
+            <label for="county" style="display: block; font-size: 14px; font-weight: 600; color: #26142E">{{regionLabel}} <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+            <sc-if value="{{inRomania}}" hint-placeholder-val="{{true}}">
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-top: 8px"><select id="county" value="{{county}}" onChange="{{setCounty}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; max-width: 320px; height: 48px; padding: 0 36px 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+                <sc-for list="{{counties}}" as="c" hint-placeholder-count="6">
+                  <option value="{{c.v}}">{{c.label}}</option>
+                </sc-for>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </sc-if>
+            <sc-if value="{{notInRomania}}" hint-placeholder-val="{{false}}">
+              <input id="county" type="text" autocomplete="address-level1" value="{{region}}" onChange="{{setRegion}}" placeholder="For example, Ontario or Dublin" style="margin-top: 8px; width: 100%; max-width: 320px; box-sizing: border-box; height: 48px; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+            </sc-if>
+            <p style="margin: 6px 0 0 20px; font-size: 13px; line-height: 1.5; color: #6B5A73">Only if you choose it. We use it only for the “Popular in your area” shelf. We never track where you are.</p>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+          <a href="#step-2" style="display: inline-flex; align-items: center; height: 48px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Next</a>
+        </div>
+      </section>
+
+      <!-- Step 2: what you like to read and write -->
+      <section id="step-2" aria-labelledby="s2-title" style="position: relative; padding: 32px; display: flex; flex-direction: column; gap: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+        <!-- Doodle (books-plant): decorative --><img data-doodle="background" data-doodle-on="What do you like?" src="/_blob/d83027d3dd193abcc63034afc624a538" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="position: absolute; right: 48px; top: -54px; width: 100px; height: 100px; transform: rotate(-4deg); pointer-events: none">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <span style="flex: none; width: 40px; height: 40px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px">2</span>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Step 2 of 3</span>
+            <h2 id="s2-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">What do you like?</h2>
+          </div>
+        </div>
+        <p style="margin: -8px 0 0; max-width: 680px; font-size: 16px; line-height: 1.6; color: #5C4965">Pick as many as you want. We use your picks only to fill your home screen, and you can change them in Settings.</p>
+
+        <div role="group" aria-labelledby="read-label" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+          <span id="read-label" style="font-family: 'Cutive', 'Courier New', serif; width: 150px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">I like to read</span>
+          <sc-for list="{{readChips}}" as="c" hint-placeholder-count="5">
+            <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><sc-if value="{{c.on}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if><span aria-hidden="true" style="{{c.dot}}"></span>{{c.label}}</button>
+          </sc-for>
+        </div>
+        <div role="group" aria-labelledby="write-label" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+          <span id="write-label" style="font-family: 'Cutive', 'Courier New', serif; width: 150px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">I want to write</span>
+          <sc-for list="{{writeChips}}" as="c" hint-placeholder-count="6">
+            <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><sc-if value="{{c.on}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{c.label}}</button>
+          </sc-for>
+        </div>
+        <div role="group" aria-labelledby="tags-label" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+          <span id="tags-label" style="font-family: 'Cutive', 'Courier New', serif; width: 150px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Topics</span>
+          <sc-for list="{{tagChips}}" as="c" hint-placeholder-count="8">
+            <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><sc-if value="{{c.on}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{c.label}}</button>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+          <span style="font-size: 14px; color: #5C4965">{{pickCount}}</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <a href="#step-3" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Skip</a>
+            <a href="#step-3" style="display: inline-flex; align-items: center; height: 48px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Next</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3 (under-18s): block, report, who can message you, and the rules -->
+      <section id="step-3" aria-labelledby="s3-title" style="position: relative; padding: 32px; display: flex; flex-direction: column; gap: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+        <!-- Doodle (jar-lantern): decorative --><img data-doodle="background" data-doodle-on="Staying safe here" src="/_blob/dd5f7c42f258ececa180dd9f14853ad2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="position: absolute; right: 52px; top: -52px; width: 90px; height: 90px; transform: rotate(5deg); pointer-events: none">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <span style="flex: none; width: 40px; height: 40px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px">3</span>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Step 3 of 3 · for under-18s</span>
+            <h2 id="s3-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Staying safe here</h2>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px">
+          <div style="padding: 20px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 10px">
+            <span style="width: 44px; height: 44px; border-radius: 16px; background: #FFFFFF; color: #672786; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="32" height="32" style="display: block; flex: none; width: 32px; height: 32px"></span>
+            <strong style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #26142E">Block someone</strong>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Open their profile or your chat, then press Block. They can’t message, mention or follow you, and they aren’t told.</p>
+          </div>
+          <div style="padding: 20px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 10px">
+            <span style="width: 44px; height: 44px; border-radius: 16px; background: #FFFFFF; color: #672786; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="32" height="32" style="display: block; flex: none; width: 32px; height: 32px"></span>
+            <strong style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #26142E">Report anything</strong>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Every story, comment, post and message has a Report button. A person reads every report.</p>
+          </div>
+          <fieldset style="margin: 0; padding: 20px; border: 1px solid #DED3E4; border-radius: 16px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+            <legend style="padding: 0 6px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #26142E">Who can message you</legend>
+            <sc-for list="{{dmOptions}}" as="o" hint-placeholder-count="3">
+              <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 15px; color: #26142E; cursor: pointer"><input type="radio" name="dm" checked="{{o.on}}" onChange="{{o.pick}}" style="margin: 0; width: 20px; height: 20px; accent-color: #672786; flex: none"><span>{{o.label}}</span></label>
+            </sc-for>
+            <p style="margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Change this any time in Settings.</p>
+          </fieldset>
+        </div>
+
+        <div style="position: relative; padding: 24px; border-radius: 16px; background: #F1EAF4; display: flex; flex-direction: column; gap: 12px">
+          <!-- Doodle (smiling-heart): decorative --><img data-doodle="widget" data-doodle-on="Staying safe here" src="/_blob/c7264d2c28197ec223c423400809ee92" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="position: absolute; right: 18px; top: -28px; width: 58px; height: 58px; transform: rotate(8deg); pointer-events: none">
+          <strong style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #481C5F">The community guidelines, in short</strong>
+          <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 10px 28px">
+            <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.55; color: #26142E"><span style="flex: none; margin-top: -2px; color: #672786; display: flex"><img src="/_blob/5b8ff50f6850841f7eeca2c5c2d0001f" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px"></span>Be kind. No bullying, threats or hate.</li>
+            <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.55; color: #26142E"><span style="flex: none; margin-top: -2px; color: #672786; display: flex"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px"></span>Post your own work. You’re responsible for what you publish.</li>
+            <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.55; color: #26142E"><span style="flex: none; margin-top: -2px; color: #672786; display: flex"><img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px"></span>Keep your address, school and phone number private.</li>
+            <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.55; color: #26142E"><span style="flex: none; margin-top: -2px; color: #672786; display: flex"><img src="/_blob/5f8d75d939b1aa7b54167ac2b5ecaa06" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px"></span>Rate your stories: All ages, 13+, 16+ or 18+.</li>
+          </ul>
+          <a href="Legal.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600">Read the full guidelines</a>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+          <a href="Discover.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Skip</a>
+          <a href="Discover.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Go to Discover</a>
+        </div>
+      </section>
+
+      <!-- Step 3 (adults only): optional Teacher badge. Shown only when the age check says 18 or over.
+           Two ways in: confirm a school email (we send a link) or upload proof that staff check. -->
+      <section id="step-3-teacher" aria-labelledby="s3t-title" style="position: relative; padding: 32px; display: flex; flex-direction: column; gap: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <span style="flex: none; width: 40px; height: 40px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px">3</span>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Step 3 of 3 · for adults (18+) · optional</span>
+            <h2 id="s3t-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Are you a teacher?</h2>
+          </div>
+        </div>
+        <p style="margin: -8px 0 0; max-width: 680px; font-size: 16px; line-height: 1.6; color: #5C4965">Get a Teacher badge and you can create private class spaces for your students. Only you and students with your invite code can see a class space. You can skip this and do it later.</p>
+
+        <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+          <legend style="padding: 0; margin-bottom: 12px; font-size: 14px; font-weight: 600; color: #26142E">How do you want to show you teach?</legend>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 12px">
+            <label style="{{teachEmailCard}}">
+              <input type="radio" name="teach-method" checked="{{teachByEmail}}" onChange="{{pickTeachEmail}}" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #672786">
+              <span><span style="display: block; font-size: 16px; font-weight: 700; color: #26142E">Confirm your school email</span><span style="display: block; margin-top: 4px; font-size: 14px; line-height: 1.55; color: #5C4965">The quickest way. We send a link to your school address. Open it to get your badge.</span></span>
+            </label>
+            <label style="{{teachProofCard}}">
+              <input type="radio" name="teach-method" checked="{{teachByProof}}" onChange="{{pickTeachProof}}" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #672786">
+              <span><span style="display: block; font-size: 16px; font-weight: 700; color: #26142E">Upload proof that you teach</span><span style="display: block; margin-top: 4px; font-size: 14px; line-height: 1.55; color: #5C4965">A letter from your school or your staff card. Our team checks it, usually within two working days.</span></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Way (a): school email -->
+        <sc-if value="{{teachByEmail}}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 560px">
+            <label for="teach-email" style="display: block; font-size: 14px; font-weight: 600; color: #26142E">School email address</label>
+            <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 10px">
+              <input id="teach-email" type="email" autocomplete="email" value="{{teachEmail}}" onChange="{{setTeachEmail}}" placeholder="name@yourschool.edu.ro" aria-describedby="teach-email-status teach-email-hint" style="flex: 1 1 260px; min-width: 0; box-sizing: border-box; height: 48px; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+              <button type="button" onClick="{{sendTeachLink}}" style="height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Send link</button>
+            </div>
+            <p id="teach-email-status" aria-live="polite" style="{{teachEmailStatusStyle}}">{{teachEmailStatus}}</p>
+            <p id="teach-email-hint" style="margin: 4px 0 0 20px; font-size: 13px; line-height: 1.5; color: #6B5A73">Use the address your school gave you, for example one ending in .edu.ro or your school’s own website name. Personal addresses like Gmail don’t count.</p>
+          </div>
+        </sc-if>
+
+        <!-- Way (b): upload proof, checked by staff -->
+        <sc-if value="{{teachByProof}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; gap: 16px; max-width: 680px">
+            <div>
+              <label for="teach-proof" style="display: block; font-size: 14px; font-weight: 600; color: #26142E">Proof that you teach</label>
+              <input id="teach-proof" type="file" accept="image/jpeg,image/png,application/pdf" aria-describedby="teach-proof-hint" style="margin-top: 8px; width: 100%; box-sizing: border-box; min-height: 48px; padding: 10px 16px; border: 1px dashed #B9A9C2; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <p id="teach-proof-hint" style="margin: 6px 0 0 20px; font-size: 13px; line-height: 1.5; color: #6B5A73">A letter from your school or a photo of your staff card. JPG, PNG or PDF.</p>
+            </div>
+            <div style="padding: 16px 18px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 6px">
+              <strong style="font-size: 15px; font-weight: 700; color: #26142E">What we do with it</strong>
+              <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">We only use it to check that you teach. Once the check is done, we delete it.</p>
+              <p style="margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 14px; line-height: 1.55; color: #5C4965">Until then your account works as normal and your badge shows as <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #D9B54A; background: #FBF3DA; color: #5C3F0E;">Teacher badge · pending</span></p>
+            </div>
+            <div>
+              <button type="button" onClick="{{sendTeachProof}}" style="height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Send proof</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- What happens next, after either way is sent -->
+        <div aria-live="polite">
+          <sc-if value="{{teachLinkSent}}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 16px 18px; border-radius: 16px; background: #F1EAF4; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #D9B54A; background: #FBF3DA; color: #5C3F0E;">Teacher badge · pending</span>
+              <p style="flex: 1 1 320px; margin: 0; font-size: 15px; line-height: 1.55; color: #26142E">Link sent to <strong style="font-weight: 600">{{teachEmail}}</strong>. Open it on any device to get your badge. Can’t find it? Check your spam folder.</p>
+            </div>
+          </sc-if>
+          <sc-if value="{{teachProofSent}}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 16px 18px; border-radius: 16px; background: #F1EAF4; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #D9B54A; background: #FBF3DA; color: #5C3F0E;">Teacher badge · pending</span>
+              <p style="flex: 1 1 320px; margin: 0; font-size: 15px; line-height: 1.55; color: #26142E">Thanks, we’ve got it. Our team usually checks it within two working days. Your account works as normal while you wait, and we’ll notify you when it’s done.</p>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+          <a href="Discover.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Not a teacher? Skip this</a>
+          <a href="Discover.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Go to Discover</a>
+        </div>
+      </section>
+    </main>
+
+    <!-- Page footer -->
+    <footer style="position: relative; margin-top: 72px; padding-top: 24px; border-top: 1px solid #DED3E4; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+      <!-- Doodle (hot-air-balloon): decorative --><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/c23111eab51687499254aff73a9f8fa8" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="position: absolute; right: 14%; top: -90px; width: 88px; height: 88px; transform: rotate(6deg); pointer-events: none">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px; font-size: 14px">
+        <a href="Website-Home.dc.html#faq" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Legal</a>
+        <a href="mailto:support@ghemotoc.com" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <span style="font-size: 13px; color: #6B5A73">An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3235}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Lia’s choices: English, Prahova (country Romania comes from her connection, never asked),
+    // likes fiction and poetry, writes fiction.
+    this.state = {
+      handle: 'lia.writes',
+      lang: 'en',
+      country: 'RO',
+      countryOpen: false,
+      county: 'Prahova',
+      region: '',
+      read: { Fiction: true, Poetry: true },
+      write: { Fiction: true },
+      tags: { 'set in Romania': true, mystery: true },
+      dm: 'follow',
+      // Teacher badge step (adults only): which way, and whether it has been sent.
+      teachMethod: 'proof',
+      teachStatus: 'none',
+      teachEmail: ''
+    };
+  }
+
+  // Check a school email: must look like an email and not be a personal address.
+  // .edu.ro passes straight away; any other school domain is checked by us after the link.
+  checkTeachEmail(e) {
+    var v = String(e || '').trim().toLowerCase();
+    if (!v) return { ok: false, text: '' };
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/.test(v)) return { ok: false, text: 'This doesn’t look like an email address yet.' };
+    var domain = v.split('@')[1];
+    var personal = ['gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.ro', 'outlook.com', 'hotmail.com', 'live.com', 'icloud.com', 'proton.me', 'protonmail.com'];
+    if (personal.indexOf(domain) !== -1) return { ok: false, text: 'This looks like a personal address. Use your school one, or upload proof instead.' };
+    if (/\.edu\.ro$/.test(domain)) return { ok: true, text: 'Looks like a school address.' };
+    return { ok: true, text: 'We’ll check this address belongs to a school.' };
+  }
+
+  // Radio card look for the two Teacher badge ways. Padding makes up for the thinner border.
+  teachCard(on) {
+    return 'min-width: 0; display: flex; gap: 14px; align-items: flex-start; border-radius: 20px; cursor: pointer; '
+      + (on ? 'padding: 18px 20px; border: 2px solid #672786; background: #F1EAF4;' : 'padding: 19px 21px; border: 1px solid #DED3E4; background: #FFFFFF;');
+  }
+
+  // Check a username (decision 6, 16 Oct): 3 to 30 characters, any characters allowed.
+  // Blocked: swearwords (English and Romanian lists), names that look like staff or Ghemotoc, and confusable look-alikes.
+  // Look-alikes are folded first (0 to o, 1 and l to i, rn to m, Cyrillic а to a and so on), then compared. Case does not matter.
+  fold(v) {
+    var t = String(v || '').toLowerCase();
+    try { t = t.normalize('NFKD').replace(/[̀-ͯ]/g, ''); } catch (e) { /* older browsers: compare as typed */ }
+    var map = { '0': 'o', '1': 'i', 'l': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '@': 'a', '$': 's', 'а': 'a', 'е': 'e', 'о': 'o', 'р': 'p', 'с': 'c', 'х': 'x', 'і': 'i' };
+    return t.replace(/rn/g, 'm').replace(/./g, function (c) { return map[c] || c; }).replace(/[^a-z0-9]/g, '');
+  }
+
+  checkHandle(h) {
+    var v = String(h || '');
+    var low = v.toLowerCase(), folded = this.fold(v);
+    // Staff and brand names, folded the same way. The real lists live in staff settings.
+    var staffLike = ['admin', 'staff', 'moderator', 'mod', 'support', 'ghemotoc', 'themagiccoffin', 'magiccoffin', 'official'].map(this.fold);
+    // Swearword lists (English and Romanian) are loaded from staff settings; left empty in this mock-up.
+    var swear = [];
+    var taken = ['inkwolf', 'poppyverse', 'corbu', 'ilinca.r', 'geo.andrei'];
+    if (v.length < 3 || v.length > 30) return { ok: false, text: 'Use 3 to 30 characters.' };
+    if (swear.some(function (w) { return folded.indexOf(w) !== -1; })) return { ok: false, text: 'This username isn’t allowed. Try another one.' };
+    // Short names must match exactly (so “lia.modern” is fine); longer ones are blocked anywhere in the name.
+    if (staffLike.some(function (w) { return folded === w || (w.length >= 6 && folded.indexOf(w) !== -1); })) return { ok: false, text: 'This username looks like a staff name. Try another one.' };
+    if (taken.indexOf(low) !== -1) return { ok: false, text: 'Someone already has this username.' };
+    return { ok: true, text: '@' + v + ' is free.' };
+  }
+
+  // Pill chip look, shared by all three chip groups.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;'
+            : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+
+  // Segmented language buttons (large in step 1, small in the footer).
+  segStyle(on, small) {
+    return (small ? 'min-height: 38px; padding: 0 14px; font-size: 13px; ' : 'min-height: 44px; padding: 0 20px; font-size: 15px; ')
+      + 'border: 0; border-radius: 999px; font-family: inherit; cursor: pointer; '
+      + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 600;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+  }
+
+  // Build a toggle chip list for one of the state maps.
+  chips(key, labels, dots) {
+    var self = this, st = this.state;
+    return labels.map(function (label, i) {
+      var on = !!st[key][label];
+      return {
+        label: label, on: on, pressed: on, style: self.chipStyle(on),
+        dot: (dots && !on) ? 'flex: none; width: 8px; height: 8px; border-radius: 50%; background: ' + dots[i] + ';' : 'display: none;',
+        pick: function () { var n = Object.assign({}, self.state[key]); n[label] = !on; var u = {}; u[key] = n; self.setState(u); }
+      };
+    });
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    var check = this.checkHandle(st.handle);
+    var handleStatusStyle = 'margin: 8px 0 0 20px; font-size: 14px; font-weight: 600; color: ' + (check.ok ? '#2F6B4F' : '#8C2B3A') + ';';
+
+    // All 41 counties plus Bucharest, with comma-below ș and ț.
+    var names = ['Alba', 'Arad', 'Argeș', 'Bacău', 'Bihor', 'Bistrița-Năsăud', 'Botoșani', 'Brăila', 'Brașov', 'București', 'Buzău', 'Călărași', 'Caraș-Severin', 'Cluj', 'Constanța', 'Covasna', 'Dâmbovița', 'Dolj', 'Galați', 'Giurgiu', 'Gorj', 'Harghita', 'Hunedoara', 'Ialomița', 'Iași', 'Ilfov', 'Maramureș', 'Mehedinți', 'Mureș', 'Neamț', 'Olt', 'Prahova', 'Sălaj', 'Satu Mare', 'Sibiu', 'Suceava', 'Teleorman', 'Timiș', 'Tulcea', 'Vâlcea', 'Vaslui', 'Vrancea'];
+    var counties = [{ v: '', label: 'Not set' }].concat(names.map(function (n) { return { v: n, label: n }; }));
+
+    // Launch markets first (Romania and English-speaking countries), then "Another country".
+    // Only the two-letter country code is stored.
+    var countryList = [['RO', 'Romania'], ['GB', 'United Kingdom'], ['IE', 'Ireland'], ['US', 'United States'], ['CA', 'Canada'], ['AU', 'Australia'], ['NZ', 'New Zealand'], ['SG', 'Singapore'], ['XX', 'Another country']];
+    var countries = countryList.map(function (c) { return { v: c[0], label: c[1] }; });
+    var countryName = 'Not known';
+    countryList.forEach(function (c) { if (c[0] === st.country) countryName = c[1]; });
+    var inRomania = st.country === 'RO';
+
+    // Launch categories (Q52): fiction, poetry and essays. No journalism at launch.
+    var cats = ['Fiction', 'Poetry', 'Essays'];
+    var catDots = ['#4D1B5E', '#2E4A8C', '#2F6B4F'];
+    var readChips = this.chips('read', cats, catDots);
+    var writeChips = this.chips('write', cats.concat(['Only reading for now']));
+    var tagChips = this.chips('tags', ['set in Romania', 'fantasy', 'mystery', 'found family', 'folklore', 'school life', 'first novel', 'city life']);
+
+    var count = ['read', 'write', 'tags'].reduce(function (sum, k) {
+      return sum + Object.keys(st[k]).filter(function (x) { return st[k][x]; }).length;
+    }, 0);
+
+    // Default for under-18s is "People I follow".
+    var dmList = [['everyone', 'Everyone'], ['follow', 'People I follow'], ['nobody', 'Nobody']];
+    var dmOptions = dmList.map(function (o) {
+      return { label: o[1], on: st.dm === o[0], pick: function () { self.setState({ dm: o[0] }); } };
+    });
+
+    var teachCheck = this.checkTeachEmail(st.teachEmail);
+
+    return {
+      handle: st.handle,
+      setHandle: function (e) { self.setState({ handle: e && e.target ? e.target.value : st.handle }); },
+      handleStatus: check.text, handleStatusStyle: handleStatusStyle,
+      county: st.county, counties: counties,
+      countries: countries, country: st.country, countryName: countryName,
+      countryOpen: st.countryOpen,
+      countryBtn: st.countryOpen ? 'Done' : 'Change',
+      toggleCountry: function () { self.setState({ countryOpen: !st.countryOpen }); },
+      setCountry: function (e) { self.setState({ country: e && e.target ? e.target.value : st.country }); },
+      inRomania: inRomania, notInRomania: !inRomania,
+      regionLabel: inRomania ? 'Your county' : 'Your region',
+      region: st.region,
+      setRegion: function (e) { self.setState({ region: e && e.target ? e.target.value : st.region }); },
+      setCounty: function (e) { self.setState({ county: e && e.target ? e.target.value : st.county }); },
+      lang: st.lang,
+      setLang: function (e) { self.setState({ lang: e && e.target ? e.target.value : st.lang }); },
+      uiRoOn: st.lang === 'ro', uiEnOn: st.lang === 'en',
+      uiRoStyle: self.segStyle(st.lang === 'ro', false), uiEnStyle: self.segStyle(st.lang === 'en', false),
+      roStyle: self.segStyle(st.lang === 'ro', true), enStyle: self.segStyle(st.lang === 'en', true),
+      setUiRo: function () { self.setState({ lang: 'ro' }); },
+      setUiEn: function () { self.setState({ lang: 'en' }); },
+      readChips: readChips, writeChips: writeChips, tagChips: tagChips,
+      pickCount: count === 1 ? '1 picked' : count + ' picked',
+      dmOptions: dmOptions,
+      // Teacher badge step
+      teachByEmail: st.teachMethod === 'email',
+      teachByProof: st.teachMethod === 'proof',
+      teachEmailCard: self.teachCard(st.teachMethod === 'email'),
+      teachProofCard: self.teachCard(st.teachMethod === 'proof'),
+      pickTeachEmail: function () { self.setState({ teachMethod: 'email', teachStatus: 'none' }); },
+      pickTeachProof: function () { self.setState({ teachMethod: 'proof', teachStatus: 'none' }); },
+      teachEmail: st.teachEmail,
+      setTeachEmail: function (e) { self.setState({ teachEmail: e && e.target ? e.target.value : st.teachEmail, teachStatus: 'none' }); },
+      teachEmailStatus: teachCheck.text,
+      teachEmailStatusStyle: 'margin: 8px 0 0 20px; font-size: 14px; font-weight: 600; color: ' + (teachCheck.ok ? '#2F6B4F' : '#8C2B3A') + ';',
+      sendTeachLink: function () { if (self.checkTeachEmail(self.state.teachEmail).ok) self.setState({ teachStatus: 'link' }); },
+      sendTeachProof: function () { self.setState({ teachStatus: 'proof' }); },
+      teachLinkSent: st.teachMethod === 'email' && st.teachStatus === 'link',
+      teachProofSent: st.teachMethod === 'proof' && st.teachStatus === 'proof'
+    };
+  }
+}
+</script>
+</body>
+</html>

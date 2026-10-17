@@ -1,0 +1,703 @@
+{
+ "v": 3,
+ "attachments": {},
+ "createdOnFiles": {
+  "at": "2026-10-16T09:33:01Z",
+  "v": 1
+ },
+ "designSystems": [],
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "title": "Ghemotoc: every Stage 1 screen, website and marketing",
+ "boards": {
+  "Website-Home.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 7184,
+   "title": "1.1 Website home page",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Main.dc.html": {
+   "x": 0,
+   "y": 7704,
+   "w": 1440,
+   "h": 2222,
+   "title": "2.1 Sign up",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "SignIn.dc.html": {
+   "x": 1520,
+   "y": 7704,
+   "w": 1440,
+   "h": 1799,
+   "title": "2.2 Log in and reset password",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AgeCheck.dc.html": {
+   "x": 3040,
+   "y": 7704,
+   "w": 1440,
+   "h": 1759,
+   "title": "2.3 Age check with Yoti",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "ParentConsent.dc.html": {
+   "x": 4560,
+   "y": 7704,
+   "w": 1440,
+   "h": 1945,
+   "title": "2.4 Parent’s consent (under 16)",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Onboarding.dc.html": {
+   "x": 6080,
+   "y": 7704,
+   "w": 1440,
+   "h": 3240,
+   "title": "2.5 Onboarding: name and language",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Discover.dc.html": {
+   "x": 0,
+   "y": 11464,
+   "w": 1440,
+   "h": 2882,
+   "title": "3.1 Discover (home)",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Search.dc.html": {
+   "x": 1520,
+   "y": 11464,
+   "w": 1440,
+   "h": 2012,
+   "title": "3.2 Search",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Classics.dc.html": {
+   "x": 3040,
+   "y": 11464,
+   "w": 1440,
+   "h": 2494,
+   "title": "3.3 Classics shelf",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Story.dc.html": {
+   "x": 4560,
+   "y": 11464,
+   "w": 1440,
+   "h": 1643,
+   "title": "3.4 Story page",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Reader.dc.html": {
+   "x": 6080,
+   "y": 11464,
+   "w": 1440,
+   "h": 3930,
+   "title": "3.5 Chapter reader",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Share.dc.html": {
+   "x": 7600,
+   "y": 11464,
+   "w": 1440,
+   "h": 2179,
+   "title": "3.6 Share and quote card",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Library.dc.html": {
+   "x": 9120,
+   "y": 11464,
+   "w": 1440,
+   "h": 2674,
+   "title": "3.7 Library",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Teaser.dc.html": {
+   "x": 10640,
+   "y": 11464,
+   "w": 1440,
+   "h": 2661,
+   "title": "3.8 Shared link on the web (teaser)",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AppOnly.dc.html": {
+   "x": 12160,
+   "y": 11464,
+   "w": 1440,
+   "h": 1411,
+   "title": "3.9 App-only story on the web",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "WriterDashboard.dc.html": {
+   "x": 0,
+   "y": 15914,
+   "w": 1440,
+   "h": 2781,
+   "title": "4.1 Writer dashboard",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "NewStory.dc.html": {
+   "x": 1520,
+   "y": 15914,
+   "w": 1440,
+   "h": 3761,
+   "title": "4.2 New story and settings",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Editor.dc.html": {
+   "x": 3040,
+   "y": 15914,
+   "w": 1440,
+   "h": 2424,
+   "title": "4.3 Chapter editor",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Chapters.dc.html": {
+   "x": 4560,
+   "y": 15914,
+   "w": 1440,
+   "h": 1854,
+   "title": "4.4 Manage chapters",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Forums.dc.html": {
+   "x": 0,
+   "y": 20195,
+   "w": 1440,
+   "h": 2409,
+   "title": "5.1 Forums",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Thread.dc.html": {
+   "x": 1520,
+   "y": 20195,
+   "w": 1440,
+   "h": 3445,
+   "title": "5.2 Forum thread",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Space.dc.html": {
+   "x": 3040,
+   "y": 20195,
+   "w": 1440,
+   "h": 3555,
+   "title": "5.3 A user space",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "ClassSpace.dc.html": {
+   "x": 4560,
+   "y": 20195,
+   "w": 1440,
+   "h": 3274,
+   "title": "5.4 Private class space",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Messages.dc.html": {
+   "x": 6080,
+   "y": 20195,
+   "w": 1440,
+   "h": 2229,
+   "title": "5.5 Messages",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Profile.dc.html": {
+   "x": 0,
+   "y": 24270,
+   "w": 1440,
+   "h": 2372,
+   "title": "6.1 Writer profile",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Notifications.dc.html": {
+   "x": 1520,
+   "y": 24270,
+   "w": 1440,
+   "h": 1697,
+   "title": "6.2 Notifications",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Settings.dc.html": {
+   "x": 3040,
+   "y": 24270,
+   "w": 1440,
+   "h": 4031,
+   "title": "6.3 Settings",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "ReportDialog.dc.html": {
+   "x": 4560,
+   "y": 24270,
+   "w": 1440,
+   "h": 1580,
+   "title": "6.4 Report something",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "MyReports.dc.html": {
+   "x": 6080,
+   "y": 24270,
+   "w": 1440,
+   "h": 1836,
+   "title": "6.5 My reports and appeals",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "GetApp.dc.html": {
+   "x": 0,
+   "y": 28821,
+   "w": 1440,
+   "h": 1956,
+   "title": "7.1 About the apps",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Legal.dc.html": {
+   "x": 1520,
+   "y": 28821,
+   "w": 1440,
+   "h": 3747,
+   "title": "7.2 Legal centre",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "NoticeForm.dc.html": {
+   "x": 3040,
+   "y": 28821,
+   "w": 1440,
+   "h": 2206,
+   "title": "7.3 Report without an account",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "States.dc.html": {
+   "x": 4560,
+   "y": 28821,
+   "w": 1440,
+   "h": 1608,
+   "title": "7.4 Error, offline and maintenance",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdFormats.dc.html": {
+   "x": 6080,
+   "y": 28821,
+   "w": 1440,
+   "h": 3725,
+   "title": "7.5 Ad and sponsor formats",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "StaffSignIn.dc.html": {
+   "x": 0,
+   "y": 33088,
+   "w": 1440,
+   "h": 1562,
+   "title": "8.1 Staff sign-in (Google Workspace)",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Moderation.dc.html": {
+   "x": 1520,
+   "y": 33088,
+   "w": 1440,
+   "h": 2546,
+   "title": "8.2 Moderation queue",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "ModCase.dc.html": {
+   "x": 3040,
+   "y": 33088,
+   "w": 1440,
+   "h": 3417,
+   "title": "8.3 Moderation case",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Appeals.dc.html": {
+   "x": 4560,
+   "y": 33088,
+   "w": 1440,
+   "h": 2983,
+   "title": "8.4 Appeals and removal orders",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminUsers.dc.html": {
+   "x": 6080,
+   "y": 33088,
+   "w": 1440,
+   "h": 2500,
+   "title": "8.5 Users",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminSettings.dc.html": {
+   "x": 7600,
+   "y": 33088,
+   "w": 1440,
+   "h": 8648,
+   "title": "8.6 Settings, flags, markets",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminMetrics.dc.html": {
+   "x": 9120,
+   "y": 33088,
+   "w": 1440,
+   "h": 4061,
+   "title": "8.7 Metrics and logs",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminSponsors.dc.html": {
+   "x": 10640,
+   "y": 33088,
+   "w": 1440,
+   "h": 8110,
+   "title": "8.8 Sponsors and banners",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminSchools.dc.html": {
+   "x": 12160,
+   "y": 33088,
+   "w": 1440,
+   "h": 4808,
+   "title": "8.9 Schools and class spaces",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Social-TikTok-FirstLine.dc.html": {
+   "x": 0,
+   "y": 42211,
+   "w": 390,
+   "h": 844,
+   "title": "9.1 TikTok: first-line challenge"
+  },
+  "Social-TikTok-POV.dc.html": {
+   "x": 470,
+   "y": 42211,
+   "w": 390,
+   "h": 844,
+   "title": "9.2 TikTok: writer POV (#ad)"
+  },
+  "Social-Reels-Contest.dc.html": {
+   "x": 940,
+   "y": 42211,
+   "w": 390,
+   "h": 844,
+   "title": "9.3 Reels: First Chapter contest"
+  },
+  "Social-Shorts-Behind.dc.html": {
+   "x": 1410,
+   "y": 42211,
+   "w": 390,
+   "h": 844,
+   "title": "9.4 Shorts: behind the chapter"
+  },
+  "Social-Instagram-Carousel.dc.html": {
+   "x": 1880,
+   "y": 42211,
+   "w": 1080,
+   "h": 1350,
+   "title": "9.5 Instagram carousel, slide 1"
+  },
+  "Social-Reddit.dc.html": {
+   "x": 3040,
+   "y": 42211,
+   "w": 1200,
+   "h": 900,
+   "title": "9.6 Reddit: founder AMA and promoted post"
+  },
+  "Social-Discord.dc.html": {
+   "x": 4320,
+   "y": 42211,
+   "w": 1280,
+   "h": 800,
+   "title": "9.7 Discord: writers’ room"
+  },
+  "Social-Facebook-Group.dc.html": {
+   "x": 5680,
+   "y": 42211,
+   "w": 1200,
+   "h": 900,
+   "title": "9.8 Facebook: teachers’ group"
+  },
+  "Social-School-Poster.dc.html": {
+   "x": 6960,
+   "y": 42211,
+   "w": 794,
+   "h": 1123,
+   "title": "9.9 School poster (A4)"
+  },
+  "Certificate-Winner.dc.html": {
+   "x": 0,
+   "y": 44081,
+   "w": 1123,
+   "h": 794,
+   "title": "10.1 Certificate: winner, co-issued with a school"
+  },
+  "Certificate-Participation.dc.html": {
+   "x": 1203,
+   "y": 44081,
+   "w": 1123,
+   "h": 794,
+   "title": "10.2 Certificate: participation"
+  },
+  "Doodles.dc.html": {
+   "x": 0,
+   "y": 45395,
+   "w": 1440,
+   "h": 4800,
+   "title": "11.1 Doodle set (fine ink and colour)"
+  },
+  "AdminStories.dc.html": {
+   "x": 13680,
+   "y": 33088,
+   "w": 1440,
+   "h": 2068,
+   "title": "8.10 Stories (staff view)",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminStory.dc.html": {
+   "x": 15200,
+   "y": 33088,
+   "w": 1440,
+   "h": 5933,
+   "title": "8.11 One story: settings, history, export",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminDataRequests.dc.html": {
+   "x": 16720,
+   "y": 33088,
+   "w": 1440,
+   "h": 2905,
+   "title": "8.12 Data requests and exports",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "SeeAll.dc.html": {
+   "x": 13680,
+   "y": 11464,
+   "w": 1440,
+   "h": 2970,
+   "title": "3.10 See all: Romanian classics",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminTickets.dc.html": {
+   "x": 18240,
+   "y": 33088,
+   "w": 1440,
+   "h": 3078,
+   "title": "8.13 Support tickets",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "Contest.dc.html": {
+   "x": 15200,
+   "y": 11464,
+   "w": 1440,
+   "h": 2989,
+   "title": "3.11 Contest landing page",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminPages.dc.html": {
+   "x": 19760,
+   "y": 33088,
+   "w": 1440,
+   "h": 9302,
+   "title": "8.14 Website: landing pages",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "AdminContests.dc.html": {
+   "x": 21280,
+   "y": 33088,
+   "w": 1440,
+   "h": 6535,
+   "title": "8.15 Contests",
+   "expand": "fill",
+   "is_interactive": true
+  }
+ },
+ "order": [
+  "Website-Home.dc.html",
+  "Main.dc.html",
+  "SignIn.dc.html",
+  "AgeCheck.dc.html",
+  "ParentConsent.dc.html",
+  "Onboarding.dc.html",
+  "Discover.dc.html",
+  "Search.dc.html",
+  "Classics.dc.html",
+  "Story.dc.html",
+  "Reader.dc.html",
+  "Share.dc.html",
+  "Library.dc.html",
+  "Teaser.dc.html",
+  "AppOnly.dc.html",
+  "SeeAll.dc.html",
+  "WriterDashboard.dc.html",
+  "NewStory.dc.html",
+  "Editor.dc.html",
+  "Chapters.dc.html",
+  "Forums.dc.html",
+  "Thread.dc.html",
+  "Space.dc.html",
+  "ClassSpace.dc.html",
+  "Messages.dc.html",
+  "Profile.dc.html",
+  "Notifications.dc.html",
+  "Settings.dc.html",
+  "ReportDialog.dc.html",
+  "MyReports.dc.html",
+  "GetApp.dc.html",
+  "Legal.dc.html",
+  "NoticeForm.dc.html",
+  "States.dc.html",
+  "AdFormats.dc.html",
+  "StaffSignIn.dc.html",
+  "Moderation.dc.html",
+  "ModCase.dc.html",
+  "Appeals.dc.html",
+  "AdminUsers.dc.html",
+  "AdminSettings.dc.html",
+  "AdminMetrics.dc.html",
+  "AdminSponsors.dc.html",
+  "AdminSchools.dc.html",
+  "AdminStories.dc.html",
+  "AdminStory.dc.html",
+  "AdminDataRequests.dc.html",
+  "AdminTickets.dc.html",
+  "Social-TikTok-FirstLine.dc.html",
+  "Social-TikTok-POV.dc.html",
+  "Social-Reels-Contest.dc.html",
+  "Social-Shorts-Behind.dc.html",
+  "Social-Instagram-Carousel.dc.html",
+  "Social-Reddit.dc.html",
+  "Social-Discord.dc.html",
+  "Social-Facebook-Group.dc.html",
+  "Social-School-Poster.dc.html",
+  "Certificate-Winner.dc.html",
+  "Certificate-Participation.dc.html",
+  "Doodles.dc.html",
+  "AdminPages.dc.html",
+  "Contest.dc.html",
+  "AdminContests.dc.html"
+ ],
+ "notes": {
+  "rowWeb": {
+   "x": 0,
+   "y": -300,
+   "text": "1 · The public website",
+   "kind": "title1",
+   "maxW": 2400
+  },
+  "rowJoin": {
+   "x": 0,
+   "y": 7404,
+   "text": "2 · Join and log in",
+   "kind": "title1",
+   "maxW": 7520
+  },
+  "rowRead": {
+   "x": 0,
+   "y": 11164,
+   "text": "3 · Discover and read",
+   "kind": "title1",
+   "maxW": 16640
+  },
+  "rowWrite": {
+   "x": 0,
+   "y": 15614,
+   "text": "4 · Write",
+   "kind": "title1",
+   "maxW": 6000
+  },
+  "rowCommunity": {
+   "x": 0,
+   "y": 19895,
+   "text": "5 · Forums, spaces and messages",
+   "kind": "title1",
+   "maxW": 7520
+  },
+  "rowYou": {
+   "x": 0,
+   "y": 23970,
+   "text": "6 · Profile, notifications, settings and reports",
+   "kind": "title1",
+   "maxW": 7520
+  },
+  "rowHelp": {
+   "x": 0,
+   "y": 28521,
+   "text": "7 · Help, legal, app download and ads",
+   "kind": "title1",
+   "maxW": 7520
+  },
+  "rowStaff": {
+   "x": 0,
+   "y": 32788,
+   "text": "8 · Staff and admin",
+   "kind": "title1",
+   "maxW": 22720
+  },
+  "rowSocial": {
+   "x": 0,
+   "y": 41911,
+   "text": "9 · Marketing: social, communities and schools",
+   "kind": "title1",
+   "maxW": 7754
+  },
+  "rowCert": {
+   "x": 0,
+   "y": 43781,
+   "text": "10 · Contest certificates",
+   "kind": "title1",
+   "maxW": 2400
+  },
+  "rowDoodles": {
+   "x": 0,
+   "y": 45095,
+   "text": "11 · Doodles",
+   "kind": "title1",
+   "maxW": 2400
+  }
+ }
+}

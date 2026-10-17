@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: metrics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the app, with the staff links and a Staff pill -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <header style="padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · metrics</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">March test numbers</h1>
+      <p style="margin: 0; max-width: 720px; font-size: 18px; line-height: 1.65; color: #5C4965">Counted from our own database once a day, as totals only. Nobody can export a list of people from this page.</p>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">EXAMPLE NUMBERS FOR THE DESIGN</span>
+        <span style="font-size: 13px; color: #6B5A73">Day 18 of the March test · updated today at 04:00</span>
+      </div>
+    </header>
+
+    <!-- Targets: the three March test numbers -->
+    <section aria-label="March test targets" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 20px; animation: tmcRise 0.5s 0.05s ease-out both">
+        <div style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 24px; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Writers who published</span>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; line-height: 1; letter-spacing: -0.02em; color: #481C5F">14<span style="font-size: 22px; font-weight: 700; color: #6B5A73"></span></span>
+          <div role="progressbar" aria-label="WRITERS WHO PUBLISHED, progress towards target" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="width: 70%; height: 100%; border-radius: 999px; background: #E6C24C"></div></div>
+          <span style="font-size: 14px; color: #5C4965">Target 20 · 70% of the way</span>
+          <span style="font-size: 13px; color: #6B5A73; line-height: 1.5">Writers with at least one published chapter.</span>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 24px; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Signed-up readers</span>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; line-height: 1; letter-spacing: -0.02em; color: #481C5F">146<span style="font-size: 22px; font-weight: 700; color: #6B5A73"></span></span>
+          <div role="progressbar" aria-label="SIGNED-UP READERS, progress towards target" aria-valuenow="73" aria-valuemin="0" aria-valuemax="100" style="height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="width: 73%; height: 100%; border-radius: 999px; background: #E6C24C"></div></div>
+          <span style="font-size: 14px; color: #5C4965">Target 200 · 73% of the way</span>
+          <span style="font-size: 13px; color: #6B5A73; line-height: 1.5">Accounts that opened at least one chapter.</span>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 24px; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Return rate</span>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 52px; line-height: 1; letter-spacing: -0.02em; color: #481C5F">27<span style="font-size: 22px; font-weight: 700; color: #6B5A73">%</span></span>
+          <div role="progressbar" aria-label="RETURN RATE, progress towards target" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="width: 90%; height: 100%; border-radius: 999px; background: #E6C24C"></div></div>
+          <span style="font-size: 14px; color: #5C4965">Target 30% · 3 points to go</span>
+          <span style="font-size: 13px; color: #6B5A73; line-height: 1.5">Readers of chapter N who open chapter N+1 within 14 days of its release.</span>
+        </div>
+    </section>
+    <p style="margin: 14px 0 0; font-size: 13px; color: #6B5A73">The targets and the return rate definition are proposals in the plan, not final.</p>
+
+    <!-- Readers per day -->
+    <section aria-labelledby="readers-title" style="margin-top: 32px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 24px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Readers</span>
+          <h2 id="readers-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Readers per day</h2>
+        </div>
+        <span style="font-size: 13px; color: #6B5A73">Hover a day for its number</span>
+      </div>
+          <figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+            <div role="img" aria-label="Readers per day, 1 to 18 March, rising from 22 to 97. Example numbers." style="position: relative; height: 220px; margin-left: 44px">
+              <div style="position: absolute; left: 0; right: 0; top: 100.00%; border-top: 1px solid #EFE8F2"></div><span style="position: absolute; left: -44px; top: calc(100.00% - 9px); width: 36px; text-align: right; font-size: 12px; color: #6B5A73">0</span><div style="position: absolute; left: 0; right: 0; top: 66.67%; border-top: 1px solid #EFE8F2"></div><span style="position: absolute; left: -44px; top: calc(66.67% - 9px); width: 36px; text-align: right; font-size: 12px; color: #6B5A73">40</span><div style="position: absolute; left: 0; right: 0; top: 33.33%; border-top: 1px solid #EFE8F2"></div><span style="position: absolute; left: -44px; top: calc(33.33% - 9px); width: 36px; text-align: right; font-size: 12px; color: #6B5A73">80</span><div style="position: absolute; left: 0; right: 0; top: 0.00%; border-top: 1px solid #EFE8F2"></div><span style="position: absolute; left: -44px; top: calc(0.00% - 9px); width: 36px; text-align: right; font-size: 12px; color: #6B5A73">120</span>
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible">
+                <polygon points="0,100 0.00,81.67 5.88,74.17 11.76,68.33 17.65,70.83 23.53,63.33 29.41,56.67 35.29,59.17 41.18,51.67 47.06,47.50 52.94,49.17 58.82,41.67 64.71,38.33 70.59,42.50 76.47,32.50 82.35,26.67 88.24,30.00 94.12,22.50 100.00,19.17 100,100" fill="#672786" fill-opacity="0.08"></polygon>
+                <polyline points="0.00,81.67 5.88,74.17 11.76,68.33 17.65,70.83 23.53,63.33 29.41,56.67 35.29,59.17 41.18,51.67 47.06,47.50 52.94,49.17 58.82,41.67 64.71,38.33 70.59,42.50 76.47,32.50 82.35,26.67 88.24,30.00 94.12,22.50 100.00,19.17" fill="none" stroke="#672786" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline>
+              </svg>
+              <span aria-hidden="true" style="position: absolute; left: calc(100% - 5px); top: calc(19.17% - 5px); width: 10px; height: 10px; border-radius: 50%; background: #672786; border: 2px solid #FFFFFF; box-sizing: content-box"></span>
+              <span style="position: absolute; right: 0; top: calc(19.17% - 34px); font-size: 13px; font-weight: 700; color: #26142E">97 today</span>
+              <div aria-hidden="true" style="position: absolute; inset: 0; display: flex"><span title="1 Mar: 22 readers" style="flex: 1; height: 100%"></span><span title="2 Mar: 31 readers" style="flex: 1; height: 100%"></span><span title="3 Mar: 38 readers" style="flex: 1; height: 100%"></span><span title="4 Mar: 35 readers" style="flex: 1; height: 100%"></span><span title="5 Mar: 44 readers" style="flex: 1; height: 100%"></span><span title="6 Mar: 52 readers" style="flex: 1; height: 100%"></span><span title="7 Mar: 49 readers" style="flex: 1; height: 100%"></span><span title="8 Mar: 58 readers" style="flex: 1; height: 100%"></span><span title="9 Mar: 63 readers" style="flex: 1; height: 100%"></span><span title="10 Mar: 61 readers" style="flex: 1; height: 100%"></span><span title="11 Mar: 70 readers" style="flex: 1; height: 100%"></span><span title="12 Mar: 74 readers" style="flex: 1; height: 100%"></span><span title="13 Mar: 69 readers" style="flex: 1; height: 100%"></span><span title="14 Mar: 81 readers" style="flex: 1; height: 100%"></span><span title="15 Mar: 88 readers" style="flex: 1; height: 100%"></span><span title="16 Mar: 84 readers" style="flex: 1; height: 100%"></span><span title="17 Mar: 93 readers" style="flex: 1; height: 100%"></span><span title="18 Mar: 97 readers" style="flex: 1; height: 100%"></span></div>
+            </div>
+            <div aria-hidden="true" style="position: relative; height: 18px; margin-left: 44px"><span style="position: absolute; left: 0.00%; transform: translateX(-50%); font-size: 12px; color: #6B5A73; white-space: nowrap">1 Mar</span><span style="position: absolute; left: 29.41%; transform: translateX(-50%); font-size: 12px; color: #6B5A73; white-space: nowrap">6 Mar</span><span style="position: absolute; left: 64.71%; transform: translateX(-50%); font-size: 12px; color: #6B5A73; white-space: nowrap">12 Mar</span><span style="position: absolute; left: 100.00%; transform: translateX(-50%); font-size: 12px; color: #6B5A73; white-space: nowrap">18 Mar</span></div>
+          </figure>
+    </section>
+
+    <!-- Sign-ups and age checks -->
+    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px">
+      <section aria-labelledby="ages-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Sign-ups</span>
+          <h2 id="ages-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Sign-ups by age group</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Counted from year of birth. 176 sign-ups so far.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="13 to 15: 58">
+              <span style="font-size: 14px; color: #26142E">13 to 15</span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 81.7%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">58</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="16 to 17: 71">
+              <span style="font-size: 14px; color: #26142E">16 to 17</span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 100.0%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">71</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="18 or over: 47">
+              <span style="font-size: 14px; color: #26142E">18 or over</span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 66.2%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">47</span>
+            </div>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #6B5A73; line-height: 1.5">We show the age group only, never the year of birth.</p>
+      </section>
+
+      <section aria-labelledby="checks-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Age checks</span>
+          <h2 id="checks-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Age checks with Yoti</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Results only. No photos or documents are kept.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="Passed: 162">
+              <span style="font-size: 14px; color: #26142E">Passed</span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 100.0%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">162</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="Failed: 9">
+              <span style="font-size: 14px; color: #26142E">Failed</span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 5.6%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">9</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="Appealed: 3">
+              <span style="font-size: 14px; color: #26142E">Appealed</span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 1.9%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">3</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="Not finished: 5">
+              <span style="font-size: 14px; color: #26142E">Not finished</span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 3.1%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">5</span>
+            </div>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #6B5A73; line-height: 1.5">Appealed checks are part of the failed ones.</p>
+      </section>
+    </div>
+
+    <!-- Moderation: reports by tier -->
+    <section aria-labelledby="mod-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Moderation</span>
+          <h2 id="mod-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Reports by tier</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Cases come from reports, removal orders and pictures held by the picture check. Our own moderators read every one. The bar shows the share handled within the tier’s time limit.</p>
+        </div>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 40px; line-height: 1; color: #481C5F">94%</span><span style="font-size: 13px; color: #6B5A73">45 of 48 handled in time</span></span>
+      </div>
+      <div style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+        <table style="width: 100%; border-collapse: collapse; min-width: 720px">
+          <thead>
+            <tr>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">TIER</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">TIME LIMIT</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap; text-align: right">REPORTS</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">HANDLED IN TIME</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap; text-align: right">SHARE</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr title="Removal order from an authority: no orders yet">
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Removal order from an authority</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">1 hour</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">0</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; width: 34%"><span style="font-size: 13px; color: #6B5A73">Nothing to measure yet</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 700; text-align: right; white-space: nowrap">None<br><span style="font-size: 13px; color: #6B5A73; font-weight: 400">No orders</span></td>
+              </tr>
+              <tr title="Child safety or self-harm risk: 2 of 2 handled the same day">
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Child safety or self-harm risk</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Same day</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">2</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; width: 34%"><div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 100%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 700; text-align: right; white-space: nowrap"><span style="color: #2F6B4F">100%</span><br><span style="font-size: 13px; color: #6B5A73; font-weight: 400">2 of 2</span></td>
+              </tr>
+              <tr title="Other illegal content: 4 of 5 handled within 48 hours">
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Other illegal content</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">48 hours</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">5</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; width: 34%"><div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 80%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 700; text-align: right; white-space: nowrap"><span style="color: #815E18">80%</span><br><span style="font-size: 13px; color: #6B5A73; font-weight: 400">4 of 5</span></td>
+              </tr>
+              <tr title="Everything else: 39 of 41 handled within 7 days">
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Everything else</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">7 days</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">41</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; width: 34%"><div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 95%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 700; text-align: right; white-space: nowrap"><span style="color: #2F6B4F">95%</span><br><span style="font-size: 13px; color: #6B5A73; font-weight: 400">39 of 41</span></td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; font-size: 14px; font-weight: 600">Open the queue</a>
+    </section>
+
+    <!-- Product analytics and the event catalogue -->
+    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px">
+      <section aria-labelledby="analytics-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Product analytics</span>
+          <h2 id="analytics-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Cookieless analytics</h2>
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+          <li style="display: flex; gap: 10px; align-items: center; font-size: 15px; color: #26142E"><span style="display: flex; color: #2F6B4F"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>No cookies</li>
+          <li style="display: flex; gap: 10px; align-items: center; font-size: 15px; color: #26142E"><span style="display: flex; color: #2F6B4F"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>No user IDs stored</li>
+          <li style="display: flex; gap: 10px; align-items: center; font-size: 15px; color: #26142E"><span style="display: flex; color: #2F6B4F"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>Hosted in the EU</li>
+        </ul>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: #5C4965">Tool: Umami or Plausible <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">OPEN: choice</span></div>
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; margin-top: 8px; line-height: 1.3">Top events, last 7 days</span>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="chapter_open: 3,904">
+              <span style="font-size: 14px; color: #26142E"><code style="font-size: 13px">chapter_open</code></span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 100.0%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">3,904</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="chapter_like: 1,120">
+              <span style="font-size: 14px; color: #26142E"><code style="font-size: 13px">chapter_like</code></span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 28.7%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">1,120</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="story_follow: 412">
+              <span style="font-size: 14px; color: #26142E"><code style="font-size: 13px">story_follow</code></span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 10.6%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">412</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="comment_create: 288">
+              <span style="font-size: 14px; color: #26142E"><code style="font-size: 13px">comment_create</code></span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 7.4%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">288</span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 120px) minmax(0, 1fr) minmax(0, 64px); align-items: center; gap: 12px; min-height: 36px" title="chapter_share: 96">
+              <span style="font-size: 14px; color: #26142E"><code style="font-size: 13px">chapter_share</code></span>
+              <div aria-hidden="true" style="height: 14px; border-radius: 0 4px 4px 0; background: #F4F0EC"><div style="width: 2.5%; height: 100%; border-radius: 0 4px 4px 0; background: #672786"></div></div>
+              <span style="font-size: 14px; font-weight: 700; color: #26142E; text-align: right">96</span>
+            </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="catalogue-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Event catalogue</span>
+          <h2 id="catalogue-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">One list of events</h2>
+        </div>
+        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Every event lives in <code style="font-size: 15px">docs/analytics-events.md</code> with an <code style="font-size: 15px">object_action</code> name, its properties and where it fires. No event carries personal data.</p>
+        <div style="display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F">
+          <span style="flex: none; display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+          <span style="font-size: 14px; line-height: 1.55; color: #1F4A36"><b>Last build passed.</b> All 24 event names in the code are in the catalogue. A name that isn’t listed fails the build.</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- Compliance: authority orders and legal requests -->
+    <section aria-labelledby="legal-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Compliance log</span>
+          <h2 id="legal-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Authority orders and legal requests</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Each entry keeps the authority, the date, the content, the action taken and the times. Example entries.</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>Export DSA log (CSV)</button>
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Log a request</button>
+        </div>
+      </div>
+      <div style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+        <table style="width: 100%; border-collapse: collapse; min-width: 900px">
+          <thead>
+            <tr>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">REF</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">AUTHORITY</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">RECEIVED</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">CONTENT</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">ACTION TAKEN</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">DONE</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 700; text-align: left; white-space: nowrap">LR-002</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">ANCOM</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; white-space: nowrap">2 Mar 2027, 09:14</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Asked for our DSA contact point details</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Sent the contact point details</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; white-space: nowrap">2 Mar 2027, 11:40</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 700; text-align: left; white-space: nowrap">LR-001</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Police, Prahova county</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; white-space: nowrap">27 Feb 2027, 16:02</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Asked for sign-up data of one named account</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Checked with our lawyer, then sent the data for that account only</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; white-space: nowrap">1 Mar 2027, 10:15</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px">
+        <div style="padding: 20px; border-radius: 16px; border: 1px solid #E8D9A8; background: #FBF3DA; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Launch task</span>
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Notify ANCOM within 45 days of launch</span>
+          <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Law 50/2024. Due 15 Apr 2027 if we launch on 1 Mar 2027.</span>
+          <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; font-weight: 600; color: #26142E; cursor: pointer"><input type="checkbox" checked="{{ancomDone}}" onChange="{{toggleAncom}}" style="width: 20px; height: 20px; accent-color: #481C5F">{{ancomLine}}</label>
+        </div>
+        <div style="padding: 20px; border-radius: 16px; border: 1px solid #DED3E4; background: #FAF8F5; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Transparency reports</span>
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Not required for us yet</span>
+          <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Micro and small companies are exempt (DSA Art 15(2)). We keep this data so we are ready when we grow.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Retention schedule -->
+    <section aria-labelledby="ret-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Retention</span>
+          <h2 id="ret-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">What we delete and when</h2>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #2F6B4F"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Nightly job ran today at 03:00 · 37 items deleted</span>
+      </div>
+      <div style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+        <table style="width: 100%; border-collapse: collapse; min-width: 600px">
+          <thead>
+            <tr>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">DATA</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">KEPT FOR</th>
+              <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">THEN</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">IP addresses in logs</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">30 days, scrambled</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Deleted</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Soft-deleted content</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">30 days </td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Deleted for good</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Accounts never verified</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">7 days </td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Deleted</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Expired data exports</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">7 days </td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Deleted</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Reported messages after the case closes</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Per this schedule </td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Deleted</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Class space posts</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Locked at the end of the academic year. Members can read them for as long as they have an account</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Go with the writer’s account when it is deleted <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">OPEN: confirm</span></td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Support tickets</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">2 years after the ticket closes <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Proposal</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Deleted. Until then, part of the person’s data export</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Forum posts of deleted accounts</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Kept, shown as “Deleted user”</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Personal data inside a post removed on request</td>
+              </tr>
+              <tr>
+                <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Stories of deleted accounts</th>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">14 days after the deletion request</td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Deleted with the account</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin: 16px 0 0; font-size: 13px; color: #6B5A73; line-height: 1.5">To change this schedule, update <code style="font-size: 13px">docs/retention.md</code> and the record of processing in the same pull request.</p>
+    </section>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4061}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // The ANCOM tick is the only control here; everything else is read-only totals.
+    this.state = { ancom: false };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+    return {
+      ancomDone: st.ancom,
+      ancomLine: st.ancom ? 'Sent. Logged today.' : 'Mark as sent',
+      toggleAncom: function () { self.setState({ ancom: !st.ancom }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

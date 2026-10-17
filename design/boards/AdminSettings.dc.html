@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the app, with the staff links and a Staff pill -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <header style="padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · settings</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Content settings</h1>
+      <p style="margin: 0; max-width: 720px; font-size: 18px; line-height: 1.65; color: #5C4965">Change how Ghemotoc works without a new release. Changes apply within a minute, and each one is logged with who, what, when and the before and after values.</p>
+
+    </header>
+
+    <!-- Feature flags, with a working Saved / Not saved state -->
+    <section aria-labelledby="flags-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px) 8px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Feature flags</span>
+          <h2 id="flags-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Feature flags</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Flags let us switch on an OPEN decision later, without new code.</p>
+        </div>
+        <div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+          <sc-if value="{{dirty}}" hint-placeholder-val="{{false}}">
+            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #815E18"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>{{dirtyLine}}</span>
+            <button type="button" onClick="{{discard}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Discard</button>
+            <button type="button" onClick="{{save}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px">Save changes</button>
+          </sc-if>
+          <sc-if value="{{clean}}" hint-placeholder-val="{{true}}">
+            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #2F6B4F"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>{{savedLine}}</span>
+          </sc-if>
+        </div>
+      </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px 32px; padding: 22px 0; border-top: 1px solid #EFE8F2">
+            <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+                <span id="pc-label" style="font-size: 17px; font-weight: 700; color: #26142E">Parental consent for under-16s</span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">On from launch</span>
+              </div>
+              <p style="margin: 0; max-width: 640px; font-size: 15px; line-height: 1.55; color: #5C4965">Accounts aged 13 to 15 stay inactive until a parent or guardian agrees by email. They can’t post, comment or message before that. Consent is our legal basis, so this stays on. Use the switch only in an emergency, and a lawyer reviews it before March.</p>
+              <span style="font-size: 13px; color: #6B5A73">Flag <code style="font-size: 13px">parental_consent</code> · last changed by Robert, 15 Oct 2026</span>
+            </div>
+            <div style="flex: 0 1 auto; margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px">
+              <span style="font-size: 14px; font-weight: 600; color: #26142E">{{flags.pc.word}}</span>
+              <button type="button" role="switch" aria-labelledby="pc-label" aria-checked="{{flags.pc.on}}" onClick="{{flags.pc.toggle}}" style="{{switchBtn}}"><span style="{{flags.pc.track}}"><span style="{{flags.pc.knob}}"></span></span></button>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px 32px; padding: 22px 0; border-top: 1px solid #EFE8F2">
+            <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+                <span id="dm-label" style="font-size: 17px; font-weight: 700; color: #26142E">Messages between adults and teens</span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Fixed rule, not a flag</span>
+              </div>
+              <p style="margin: 0; max-width: 640px; font-size: 15px; line-height: 1.55; color: #5C4965">Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Only the teen can switch it, in their own Settings. Staff, parents and adults can’t, and no setting here changes it.</p>
+              <span style="font-size: 13px; color: #6B5A73">Rule S1-E9-03 · decided by Robert, 16 Oct 2026</span>
+            </div>
+            <div style="flex: 0 1 auto; margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px">
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Always on</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px 32px; padding: 22px 0; border-top: 1px solid #EFE8F2">
+            <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+                <span id="img-label" style="font-size: 17px; font-weight: 700; color: #26142E">Pictures in forum posts and comments</span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Picture check runs on every upload</span>
+              </div>
+              <p style="margin: 0; max-width: 640px; font-size: 15px; line-height: 1.55; color: #5C4965">Picture uploads are on from launch for covers, chapter pictures, avatars and space banners. This switch adds pictures to forum posts and comments. Every picture goes through the picture check before anyone else can see it.</p>
+              <span style="font-size: 13px; color: #6B5A73">Flag <code style="font-size: 13px">images_in_posts</code> · last changed by Robert, 16 Oct 2026</span>
+            </div>
+            <div style="flex: 0 1 auto; margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px">
+              <span style="font-size: 14px; font-weight: 600; color: #26142E">{{flags.img.word}}</span>
+              <button type="button" role="switch" aria-labelledby="img-label" aria-checked="{{flags.img.on}}" onClick="{{flags.img.toggle}}" style="{{switchBtn}}"><span style="{{flags.img.track}}"><span style="{{flags.img.knob}}"></span></span></button>
+            </div>
+          </div>
+          <!-- Picture check on upload (S1-E10-05): the two services and what is waiting for a moderator -->
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px 32px; padding: 22px 0; border-top: 1px solid #EFE8F2">
+            <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+                <span id="pcheck-label" style="font-size: 17px; font-weight: 700; color: #26142E">Picture check on upload</span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Always on</span>
+              </div>
+              <p style="margin: 0; max-width: 640px; font-size: 15px; line-height: 1.55; color: #5C4965">Every uploaded picture goes to Sightengine (nudity, gore) and Arachnid Shield (known child abuse images) before anyone else sees it. A clean picture shows straight away. A flagged one stays private and waits for one of our moderators. The tools only hold a picture. They never approve or remove anything.</p>
+              <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+                <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; min-height: 24px; padding: 4px 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1.2"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; border-radius: 50%; background: #245A41"></span>Sightengine: connected · data processing agreement needed</li>
+                <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; min-height: 24px; padding: 4px 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1.2"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; border-radius: 50%; background: #245A41"></span>Arachnid Shield: connected · data processing agreement needed</li>
+                <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; min-height: 24px; padding: 4px 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1.2"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; border-radius: 50%; background: #5C3F0E"></span>If a service is down, new pictures stay private until it’s back</li>
+              </ul>
+              <div style="border: 1px solid #DED3E4; border-radius: 16px; overflow: hidden">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 16px; background: #FAF8F5; border-bottom: 1px solid #DED3E4">
+                  <span style="font-size: 14px; font-weight: 700; color: #26142E">Flagged by the check, waiting for a moderator: 3</span>
+                  <a href="Moderation.dc.html#pictures" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Review in the queue</a>
+                </div>
+                <ul style="list-style: none; margin: 0; padding: 0">
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 16px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E"><span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 8px; background: #DED3E4"></span><span style="flex: 1 1 200px; min-width: 0"><b>Story cover</b> · @nightowl.17 · 12 min ago</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Sightengine: nudity</span></li>
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 16px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E"><span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 8px; background: #DED3E4"></span><span style="flex: 1 1 200px; min-width: 0"><b>Chapter picture</b> · @redpen · 40 min ago</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Sightengine: gore</span></li>
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 16px; font-size: 14px; color: #26142E"><span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 8px; background: #DED3E4"></span><span style="flex: 1 1 200px; min-width: 0"><b>Space banner</b> · @bookclub.cj · 2 h ago</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Service was down, checking again</span></li>
+                </ul>
+              </div>
+              <span style="font-size: 13px; color: #6B5A73">Pictures are never shown on this page. Moderators open them in the case. An Arachnid Shield match goes straight to a same-day safeguarding case.</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px 32px; padding: 22px 0; border-top: 1px solid #EFE8F2">
+            <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+                <span id="hold-label" style="font-size: 17px; font-weight: 700; color: #26142E">Confirmed AI reports before a label</span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Proposal: 3</span>
+              </div>
+              <p style="margin: 0; max-width: 640px; font-size: 15px; line-height: 1.55; color: #5C4965">When moderators confirm this many reports, from different accounts, that a story is AI-written without saying so, it gets the “AI-written, not disclosed” label and the writer gets a warning. Nothing happens on reports alone and no AI detector is used. Text is never checked before it’s published.</p>
+              <span style="font-size: 13px; color: #6B5A73">Setting <code style="font-size: 13px">ai_label_reports</code> · S1-E3-06</span>
+            </div>
+            <div style="flex: 0 1 auto; margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px">
+              <label for="hold-range" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Confirmed AI reports before a label</label>
+              <button type="button" aria-label="One report fewer" onClick="{{holdDown}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 20px; font-weight: 600; cursor: pointer">−</button>
+              <output id="hold-range" aria-live="polite" style="min-width: 64px; text-align: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">{{hold}}</output>
+              <button type="button" aria-label="One report more" onClick="{{holdUp}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 20px; font-weight: 600; cursor: pointer">+</button>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px 32px; padding: 22px 0; border-top: 1px solid #EFE8F2">
+            <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+                <span id="teaser-label" style="font-size: 17px; font-weight: 700; color: #26142E">Teaser length</span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">OPEN: one or two pages</span>
+              </div>
+              <p style="margin: 0; max-width: 640px; font-size: 15px; line-height: 1.55; color: #5C4965">How much of a shared chapter a signed-out visitor can read before “Join for free to read on”. 16+ and 18+ stories never show a teaser.</p>
+              <span style="font-size: 13px; color: #6B5A73">Flag <code style="font-size: 13px">teaser_length</code> · last changed by Robert, 15 Oct 2026</span>
+            </div>
+            <div style="flex: 0 1 auto; margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px">
+              <label for="teaser-len" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Teaser length</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="teaser-len" onChange="{{teaserChange}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+                <option>About 1 page (300 words)</option>
+                <option>About 2 pages (600 words)</option>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px 32px; padding: 22px 0; border-top: 1px solid #EFE8F2">
+            <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+                <span id="mm-label" style="font-size: 17px; font-weight: 700; color: #26142E">Maintenance mode</span>
+                
+              </div>
+              <p style="margin: 0; max-width: 640px; font-size: 15px; line-height: 1.55; color: #5C4965">When on, everyone except staff sees the maintenance page with your message.</p>
+              <span style="font-size: 13px; color: #6B5A73">Flag <code style="font-size: 13px">maintenance_mode</code> · last used 2 Oct 2026</span>
+            </div>
+            <div style="flex: 0 1 auto; margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px">
+              <span style="font-size: 14px; font-weight: 600; color: #26142E">{{flags.mm.word}}</span>
+              <button type="button" role="switch" aria-labelledby="mm-label" aria-checked="{{flags.mm.on}}" onClick="{{flags.mm.toggle}}" style="{{switchBtn}}"><span style="{{flags.mm.track}}"><span style="{{flags.mm.knob}}"></span></span></button>
+              <label for="mm-msg" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Maintenance message</label>
+              <input id="mm-msg" type="text" placeholder="We’re updating Ghemotoc. Back by 18:00." style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E; width: 320px">
+            </div>
+          </div>
+    </section>
+
+    <!-- Markets and languages: a language opens only with moderators who read it; a market also needs a legal check -->
+    <section aria-labelledby="markets-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 20px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Markets and languages</span>
+        <h2 id="markets-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Markets and languages</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">We launch in English and Romanian, with Romania and every English-speaking country opening together. Australia stays closed to under-16s until a lawyer says otherwise. Statuses below are a pre-launch example. <b style="color: #26142E">Open</b>: people can use it. <b style="color: #26142E">Ready to open</b>: every check is done and it waits for an admin. <b style="color: #26142E">Closed</b>: not available yet.</p>
+      </div>
+
+      <div style="display: flex; gap: 12px; padding: 16px 18px; border-radius: 16px; background: #F1EAF4; color: #481C5F">
+        <span style="flex: none; display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
+        <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #3A2442"><b>A language opens only when moderators who read it are on the rota.</b> Writers pick a story’s language from the open ones. Closed languages show as “Coming when we have moderators for it”. The interface stays in English and Română.</p>
+      </div>
+
+      <!-- Languages -->
+      <h3 style="margin: 24px 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Languages</h3>
+      <div style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+        <div role="table" aria-label="Languages" style="min-width: 760px">
+          <div role="row" style="display: grid; grid-template-columns: 1.3fr 1.6fr 1fr 2.4fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">LANGUAGE</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">MODERATORS ON THE ROTA</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">INTERFACE</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">STATUS</span>
+          </div>
+          <sc-for list="{{mk.langs}}" as="l" hint-placeholder-count="5">
+            <div role="row" style="display: grid; grid-template-columns: 1.3fr 1.6fr 1fr 2.4fr; gap: 16px; align-items: center; padding: 10px 16px; border-bottom: 1px solid #EFE8F2">
+              <span role="cell" style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700; color: #26142E">{{l.name}}</span><span style="font-size: 12px; color: #6B5A73">{{l.stories}}</span></span>
+              <span role="cell" style="{{l.modStyle}}">{{l.mods}}</span>
+              <span role="cell" style="font-size: 14px; color: #26142E">{{l.ui}}</span>
+              <span role="cell" style="display: flex; flex-wrap: wrap; gap: 6px">
+                <sc-for list="{{l.opts}}" as="o" hint-placeholder-count="3">
+                  <button type="button" class="tmc-chip" aria-pressed="{{o.pressed}}" aria-label="{{o.aria}}" onClick="{{o.pick}}" style="{{o.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{o.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{o.label}}</button>
+                </sc-for>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <p style="margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Moderator numbers are examples. Staff add the languages they read in <a href="AdminUsers.dc.html">Users</a>.</p>
+
+      <!-- Markets -->
+      <h3 style="margin: 28px 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Markets</h3>
+      <div style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+        <div role="table" aria-label="Markets" style="min-width: 760px">
+          <div role="row" style="display: grid; grid-template-columns: 1.3fr 1.3fr 1.3fr 2.4fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">MARKET</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">LANGUAGES</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">LEGAL CHECK</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">STATUS</span>
+          </div>
+          <sc-for list="{{mk.markets}}" as="m" hint-placeholder-count="9">
+            <div role="row" style="display: grid; grid-template-columns: 1.3fr 1.3fr 1.3fr 2.4fr; gap: 16px; align-items: center; padding: 10px 16px; border-bottom: 1px solid #EFE8F2">
+              <span role="cell" style="font-size: 15px; font-weight: 700; color: #26142E">{{m.name}}</span>
+              <span role="cell" style="font-size: 14px; color: #26142E">{{m.langs}}</span>
+              <span role="cell"><span style="{{m.legalStyle}}">{{m.legal}}</span></span>
+              <span role="cell" style="display: flex; flex-wrap: wrap; gap: 6px">
+                <sc-for list="{{m.opts}}" as="o" hint-placeholder-count="3">
+                  <button type="button" class="tmc-chip" aria-pressed="{{o.pressed}}" aria-label="{{o.aria}}" onClick="{{o.pick}}" style="{{o.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{o.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{o.label}}</button>
+                </sc-for>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <p role="status" style="{{mk.msgStyle}}">{{mk.msg}}</p>
+      <ul style="margin: 12px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #6B5A73">
+        <li><b style="color: #26142E">Each market also needs a legal check before it opens</b>, for example its rules on minors online, privacy and consumer law. A market opens only when its legal check is done and at least one of its languages is open.</li>
+        <li>The market comes from the country of the connection, kept as a country code only, never the IP address. <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">OPEN: decision 6 is a proposal</span></li>
+        <li>Statuses and legal checks on this page are examples.</li>
+      </ul>
+    </section>
+
+    <!-- Website home page: the hero copy staff can change monthly, in both languages, with a date and earlier versions -->
+    <section aria-labelledby="hero-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Website home page</span>
+          <h2 id="hero-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Website home page</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">The words at the top of the public home page. Change them about once a month. The website reads them from its own database, so no new release is needed.</p>
+          <p style="margin: 0; max-width: 760px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 14px; line-height: 1.5; color: #3A2442"><span>Landing pages, home page copy, notice banners, doodles and help pages now live under Website.</span><a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">Open Website</a></p>
+        </div>
+        <div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+          <span style="{{hero.stateStyle}}">{{hero.stateLine}}</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px">
+        <!-- The form: one language at a time -->
+        <div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 22px">
+          <div role="tablist" aria-label="Language of the copy" style="align-self: flex-start; display: inline-flex; gap: 2px; padding: 3px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF">
+            <button type="button" role="tab" id="hero-tab-en" lang="en" aria-controls="hero-panel" class="tmc-chip" aria-selected="{{hero.tabs.en.sel}}" onClick="{{hero.tabs.en.pick}}" style="{{hero.tabs.en.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{hero.tabs.en.check}}"><path d="M20 6 9 17l-5-5"></path></svg>English</button>
+            <button type="button" role="tab" id="hero-tab-ro" lang="ro" aria-controls="hero-panel" class="tmc-chip" aria-selected="{{hero.tabs.ro.sel}}" onClick="{{hero.tabs.ro.pick}}" style="{{hero.tabs.ro.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{hero.tabs.ro.check}}"><path d="M20 6 9 17l-5-5"></path></svg>Română</button>
+          </div>
+
+          <div role="tabpanel" id="hero-panel" aria-labelledby="{{hero.tabId}}" style="display: flex; flex-direction: column; gap: 22px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <label for="hero-eyebrow" style="font-size: 15px; font-weight: 700; color: #26142E">Line above the headline</label>
+              <input id="hero-eyebrow" type="text" lang="{{hero.code}}" value="{{hero.c.eyebrow}}" onChange="{{hero.f.eyebrow.change}}" aria-describedby="hero-eyebrow-c" aria-invalid="{{hero.f.eyebrow.invalid}}" style="{{hero.f.eyebrow.inputStyle}}">
+              <span id="hero-eyebrow-c" style="{{hero.f.eyebrow.countStyle}}">{{hero.f.eyebrow.count}} Shown as typed.</span>
+            </div>
+
+            <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0">
+              <legend style="padding: 0 0 8px; font-size: 15px; font-weight: 700; color: #26142E">Headline, on two lines</legend>
+              <label for="hero-l1" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Headline, first line</label>
+              <input id="hero-l1" type="text" lang="{{hero.code}}" value="{{hero.c.line1}}" onChange="{{hero.f.head.change1}}" aria-describedby="hero-head-c" aria-invalid="{{hero.f.head.invalid}}" style="{{hero.f.head.inputStyle}}">
+              <label for="hero-l2" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Headline, second line</label>
+              <input id="hero-l2" type="text" lang="{{hero.code}}" value="{{hero.c.line2}}" onChange="{{hero.f.head.change2}}" aria-describedby="hero-head-c" aria-invalid="{{hero.f.head.invalid}}" style="{{hero.f.head.inputStyle}}">
+              <span id="hero-head-c" style="{{hero.f.head.countStyle}}">{{hero.f.head.count}} Both lines together.</span>
+            </fieldset>
+
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span id="hero-mark-label" style="font-size: 15px; font-weight: 700; color: #26142E">Gold underline on</span>
+              <div role="group" aria-labelledby="hero-mark-label" style="display: flex; flex-wrap: wrap; gap: 8px">
+                <sc-for list="{{hero.chips}}" as="w" hint-placeholder-count="5">
+                  <button type="button" class="tmc-chip" lang="{{hero.code}}" aria-pressed="{{w.pressed}}" onClick="{{w.pick}}" style="{{w.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{w.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{w.label}}</button>
+                </sc-for>
+              </div>
+              <span style="font-size: 13px; color: #6B5A73">One word. Pick the one that carries the promise.</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <label for="hero-sub" style="font-size: 15px; font-weight: 700; color: #26142E">Line under the headline</label>
+              <textarea id="hero-sub" rows="4" lang="{{hero.code}}" value="{{hero.c.sub}}" onChange="{{hero.f.sub.change}}" aria-describedby="hero-sub-c" aria-invalid="{{hero.f.sub.invalid}}" style="{{hero.f.sub.inputStyle}}"></textarea>
+              <span id="hero-sub-c" style="{{hero.f.sub.countStyle}}">{{hero.f.sub.count}}</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 16px">
+              <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+                <label for="hero-b1" style="font-size: 15px; font-weight: 700; color: #26142E">Dark button</label>
+                <input id="hero-b1" type="text" lang="{{hero.code}}" value="{{hero.c.btn1}}" onChange="{{hero.f.b1.change}}" aria-describedby="hero-b1-c" aria-invalid="{{hero.f.b1.invalid}}" style="{{hero.f.b1.inputStyle}}">
+                <span id="hero-b1-c" style="{{hero.f.b1.countStyle}}">{{hero.f.b1.count}} Opens sign-up.</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+                <label for="hero-b2" style="font-size: 15px; font-weight: 700; color: #26142E">Light button</label>
+                <input id="hero-b2" type="text" lang="{{hero.code}}" value="{{hero.c.btn2}}" onChange="{{hero.f.b2.change}}" aria-describedby="hero-b2-c" aria-invalid="{{hero.f.b2.invalid}}" style="{{hero.f.b2.inputStyle}}">
+                <span id="hero-b2-c" style="{{hero.f.b2.countStyle}}">{{hero.f.b2.count}} Opens a story to read.</span>
+              </div>
+            </div>
+
+            <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0">
+              <legend style="padding: 0 0 8px; font-size: 15px; font-weight: 700; color: #26142E">Three short points under the buttons</legend>
+              <sc-for list="{{hero.points}}" as="p" hint-placeholder-count="3">
+                <div style="display: flex; flex-direction: column; gap: 6px">
+                  <label for="{{p.id}}" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{p.label}}</label>
+                  <input id="{{p.id}}" type="text" lang="{{hero.code}}" value="{{p.value}}" onChange="{{p.change}}" aria-describedby="{{p.cid}}" aria-invalid="{{p.invalid}}" style="{{p.inputStyle}}">
+                  <span id="{{p.cid}}" style="{{p.countStyle}}">{{p.count}}</span>
+                </div>
+              </sc-for>
+            </fieldset>
+          </div>
+        </div>
+
+        <!-- Live preview: text only, in the website's fonts and colours -->
+        <div style="flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Live preview · {{hero.langUpper}}</span>
+          <div lang="{{hero.code}}" style="padding: 36px clamp(20px, 3vw, 36px); border-radius: 16px; background: #FAF8F5; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 20px">
+            <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; line-height: 1.3; color: #815E18">{{hero.c.eyebrowUpper}}</div>
+            <div style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 46px; line-height: 1; letter-spacing: -0.025em; color: #481C5F">
+              <div><sc-for list="{{hero.line1}}" as="w" hint-placeholder-count="2"><span style="{{w.style}}">{{w.text}}</span>{{w.gap}}</sc-for></div>
+              <div><sc-for list="{{hero.line2}}" as="w" hint-placeholder-count="3"><span style="{{w.style}}">{{w.text}}</span>{{w.gap}}</sc-for></div>
+            </div>
+            <p style="margin: 0; max-width: 560px; font-size: 17px; line-height: 1.65; color: #5C4965">{{hero.c.sub}}</p>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+              <span style="display: inline-flex; align-items: center; height: 48px; padding: 0 26px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px">{{hero.c.btn1}}</span>
+              <span style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #FFFFFF; border: 1px solid #8E7B99; box-sizing: border-box; color: #481C5F; font-weight: 600; font-size: 15px">{{hero.c.btn2}}</span>
+            </div>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: #26142E">
+              <sc-for list="{{hero.pvPoints}}" as="p" hint-placeholder-count="3">
+                <li style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C"></span>{{p.text}}</li>
+              </sc-for>
+            </ul>
+          </div>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Text only. On the website the headline is bigger and the drawings and covers sit beside it.</p>
+        </div>
+      </div>
+
+      <!-- Date, save and publish -->
+      <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid #EFE8F2; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="hero-from" style="font-size: 15px; font-weight: 700; color: #26142E">Show from</label>
+          <input id="hero-from" type="date" value="{{hero.from}}" min="{{hero.today}}" onChange="{{hero.fromChange}}" aria-describedby="hero-from-c" style="height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E; width: 220px; box-sizing: border-box">
+          <span id="hero-from-c" style="font-size: 13px; color: #6B5A73">Goes live at 00:00 Romanian time. The current copy stays up until then.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+            <button type="button" onClick="{{hero.save}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer">Save draft</button>
+            <button type="button" onClick="{{hero.publish}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer">Publish</button>
+          </div>
+          <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #6B5A73"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Publishing is logged in the audit log. One version holds both languages.</span>
+        </div>
+      </div>
+      <p role="status" style="{{hero.msgStyle}}">{{hero.msg}}</p>
+
+      <!-- Earlier versions, so old copy can come back -->
+      <h3 style="margin: 28px 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Earlier versions</h3>
+      <div style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+        <div role="table" aria-label="Earlier versions of the home page copy" style="min-width: 640px">
+          <div role="row" style="display: grid; grid-template-columns: 1fr 2.6fr 1fr 1fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">LIVE FROM</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">HEADLINE (ENGLISH)</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">PUBLISHED BY</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Action</span></span>
+          </div>
+          <sc-for list="{{hero.versions}}" as="v" hint-placeholder-count="3">
+            <div role="row" style="display: grid; grid-template-columns: 1fr 2.6fr 1fr 1fr; gap: 16px; align-items: center; padding: 10px 16px; border-bottom: 1px solid #EFE8F2">
+              <span role="cell" style="font-size: 14px; color: #26142E">{{v.date}}</span>
+              <span role="cell" style="font-size: 15px; font-weight: 600; color: #26142E">{{v.headline}}</span>
+              <span role="cell" style="font-size: 14px; color: #26142E">{{v.by}}</span>
+              <span role="cell" style="display: flex; justify-content: flex-end"><button type="button" aria-label="{{v.aria}}" onClick="{{v.restore}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>Restore</button></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <p style="margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Restore puts that copy back in the editor as a draft, in both languages. Nothing changes on the website until you publish. Earlier versions here are examples.</p>
+    </section>
+
+    <!-- Categories and forums -->
+    <div style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px">
+      <section aria-labelledby="cats-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Categories</span>
+          <h2 id="cats-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Categories</h2>
+        </div>
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add category</button>
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0">
+            <li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #EFE8F2">
+              <button type="button" aria-label="Move Fiction" style="width: 44px; height: 44px; border: 0; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: grab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1"></circle><circle cx="15" cy="6" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="9" cy="18" r="1"></circle><circle cx="15" cy="18" r="1"></circle></svg></button>
+              <span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 50%; background: #4D1B5E"></span>
+              <span style="flex: 1; font-size: 16px; font-weight: 600; color: #26142E">Fiction</span>
+              <span style="font-size: 13px; color: #6B5A73">128 stories</span>
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px; padding: 0 16px">Edit</button>
+            </li>
+            <li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #EFE8F2">
+              <button type="button" aria-label="Move Poetry" style="width: 44px; height: 44px; border: 0; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: grab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1"></circle><circle cx="15" cy="6" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="9" cy="18" r="1"></circle><circle cx="15" cy="18" r="1"></circle></svg></button>
+              <span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 50%; background: #2E4A8C"></span>
+              <span style="flex: 1; font-size: 16px; font-weight: 600; color: #26142E">Poetry</span>
+              <span style="font-size: 13px; color: #6B5A73">41 stories</span>
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px; padding: 0 16px">Edit</button>
+            </li>
+            <li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #EFE8F2">
+              <button type="button" aria-label="Move Nonfiction essays" style="width: 44px; height: 44px; border: 0; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: grab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="1"></circle><circle cx="15" cy="6" r="1"></circle><circle cx="9" cy="12" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="9" cy="18" r="1"></circle><circle cx="15" cy="18" r="1"></circle></svg></button>
+              <span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 50%; background: #2F6B4F"></span>
+              <span style="flex: 1; font-size: 16px; font-weight: 600; color: #26142E">Nonfiction essays</span>
+              <span style="font-size: 13px; color: #6B5A73">22 stories</span>
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px; padding: 0 16px">Edit</button>
+            </li>
+        </ul>
+        <p style="margin: 12px 0 0; font-size: 13px; color: #6B5A73">Drag to change the order people see. At launch there are three categories: fiction, poetry and nonfiction essays. Journalism waits for the newsroom stage.</p>
+      </section>
+
+      <section aria-labelledby="forums-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Forums</span>
+          <h2 id="forums-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Forums</h2>
+        </div>
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add forum</button>
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0">
+            <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600; color: #26142E">Writers’ room</span><span style="font-size: 13px; color: #6B5A73">Prompts, Feedback swaps, Contest talk</span></span>
+              
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px; padding: 0 16px">Edit</button>
+            </li>
+            <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600; color: #26142E">Reading corner</span><span style="font-size: 13px; color: #6B5A73">Recommendations, Book club</span></span>
+              
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px; padding: 0 16px">Edit</button>
+            </li>
+            <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600; color: #26142E">Help and safety</span><span style="font-size: 13px; color: #6B5A73">Announcements, Questions</span></span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Staff post announcements</span>
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px; padding: 0 16px">Edit</button>
+            </li>
+            <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600; color: #26142E">Spaces</span><span style="font-size: 13px; color: #6B5A73">Made by members: 23 spaces</span></span>
+              
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; height: 44px; padding: 0 16px">Edit</button>
+            </li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Reserved names and ranking weights -->
+    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px">
+      <section aria-labelledby="names-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Reserved names</span>
+          <h2 id="names-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Reserved names</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Nobody can take these as a username or pen name. Look-alikes such as “adm1n”, confusable characters and words on the English and Romanian swearword lists are blocked too.</p>
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">admin<button type="button" aria-label="Remove admin" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">staff<button type="button" aria-label="Remove staff" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">moderator<button type="button" aria-label="Remove moderator" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">support<button type="button" aria-label="Remove support" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">official<button type="button" aria-label="Remove official" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">magiccoffin<button type="button" aria-label="Remove magiccoffin" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">ghemotoc<button type="button" aria-label="Remove ghemotoc" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">yoti<button type="button" aria-label="Remove yoti" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">ancom<button type="button" aria-label="Remove ancom" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+            <li style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; padding-left: 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">help<button type="button" aria-label="Remove help" style="width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+        </ul>
+        <form style="display: flex; flex-wrap: wrap; gap: 10px; margin: 0">
+          <label for="new-name" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Add a reserved name</label>
+          <input id="new-name" type="text" placeholder="Add a name" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E; flex: 1 1 200px; width: auto">
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; height: 48px">Add</button>
+        </form>
+      </section>
+
+      <section aria-labelledby="rank-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Ranking</span>
+          <h2 id="rank-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Ranking weights</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">How much each signal counts in Popular. Sponsors can’t change this.</p>
+        </div>
+        <div style="display: flex; flex-direction: column">
+          <sc-for list="{{weights}}" as="w" hint-placeholder-count="5">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid #EFE8F2">
+              <span id="{{w.id}}" style="flex: 0 0 96px; font-size: 15px; font-weight: 600; color: #26142E">{{w.label}}</span>
+              <div aria-hidden="true" style="flex: 1; height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="{{w.bar}}"></div></div>
+              <button type="button" aria-label="{{w.downLabel}}" onClick="{{w.down}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 18px; cursor: pointer">−</button>
+              <span aria-labelledby="{{w.id}}" style="min-width: 48px; text-align: center; font-size: 16px; font-weight: 700; color: #26142E">{{w.value}}%</span>
+              <button type="button" aria-label="{{w.upLabel}}" onClick="{{w.up}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 18px; cursor: pointer">+</button>
+            </div>
+          </sc-for>
+        </div>
+        <p role="status" style="{{totalStyle}}">{{totalLine}}</p>
+      </section>
+    </div>
+
+    <!-- Spam and abuse rate limits -->
+    <section aria-labelledby="limits-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Spam and abuse</span>
+          <h2 id="limits-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Rate limits</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">New accounts get tighter limits for their first 24 hours. These numbers are a starting proposal.</p>
+        </div>
+        <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer">Edit limits</button>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+        <div style="flex: 999 1 520px; min-width: 0; overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+          <table style="width: 100%; border-collapse: collapse; min-width: 480px">
+            <thead>
+              <tr>
+                <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">ACTION</th>
+                <th scope="col" style="padding: 12px 16px; text-align: right; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">FIRST 24 HOURS</th>
+                <th scope="col" style="padding: 12px 16px; text-align: right; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">AFTER THAT</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Forum posts and comments</th>
+                  <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">5 an hour</td>
+                  <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">60 an hour</td>
+                </tr>
+                <tr>
+                  <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Links in one post</th>
+                  <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">1</td>
+                  <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">5</td>
+                </tr>
+                <tr>
+                  <th scope="row" style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-weight: 600; text-align: left">Sign-up attempts from one network</th>
+                  <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">5 an hour</td>
+                  <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top; text-align: right">5 an hour</td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">What the user sees</span>
+          <div style="padding: 18px 20px; border-radius: 16px; background: #FAF8F5; border: 1px solid #DED3E4; display: flex; gap: 12px; align-items: flex-start">
+            <span style="flex: none; display: flex; color: #481C5F; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>
+            <span style="font-size: 15px; line-height: 1.55; color: #26142E"><b>You’re posting quickly.</b> You can post again in 12 minutes. New accounts have lower limits for their first day.</span>
+          </div>
+          <p style="margin: 0; font-size: 13px; color: #6B5A73; line-height: 1.5">Every limit tells the user how long to wait. Rate limits and how we use IP addresses are listed in the <a href="Legal.dc.html">privacy notice</a>.</p>
+        </div>
+      </div>
+
+      <fieldset style="margin: 28px 0 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">When a sign-up looks automated, ask for</legend>
+        <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; font-size: 15px; line-height: 1.5; color: #26142E; cursor: pointer"><input type="radio" name="bot" checked="{{bot.email}}" onChange="{{bot.pickEmail}}" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #481C5F"><span><b>A code sent by email</b> (recommended). No puzzle at all.</span></label>
+        <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; font-size: 15px; line-height: 1.5; color: #26142E; cursor: pointer"><input type="radio" name="bot" checked="{{bot.click}}" onChange="{{bot.pickClick}}" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #481C5F"><span><b>A one-click check</b> with an audio option and the email code as a fallback.</span></label>
+        <p style="margin: 0; font-size: 13px; color: #6B5A73; line-height: 1.5">Never a puzzle on its own (WCAG 2.2, criterion 3.3.8).</p>
+      </fieldset>
+    </section>
+
+    <!-- Support: tickets inside the admin site, with a ready-made helpdesk behind them through its API (S1-E11-13, 17 Oct 2026) -->
+    <section aria-labelledby="support-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Support tickets</span>
+          <h2 id="support-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Support</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Every email to the support address, every Contact us message and every in-app message becomes a ticket in <a href="AdminTickets.dc.html">Support</a>. A ready-made helpdesk runs behind our screens through its API, so staff never leave the admin site.</p>
+        </div>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open Support</a>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px 24px; padding: 20px 0 24px; border-top: 1px solid #EFE8F2">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="sup-address" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Support address</label>
+          <input id="sup-address" type="email" value="support@ghemotoc.com" readonly style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; background: #FAF8F5">
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Replies go out from this address with the ticket number in the subject. A user’s email reply threads back into the same ticket.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="sup-hours" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Business hours</label>
+          <input id="sup-hours" type="text" value="Mon to Fri, 09:00 to 17:00" style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Romanian time. Shown on the Contact us form and used for the first-reply timer. Bank holidays in Romania don’t count.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="sup-first" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">First-reply target</label>
+          <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="sup-first" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; box-sizing: border-box; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; padding-right: 36px"><option>4 working hours</option><option selected>1 working day (proposal)</option><option>2 working days</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">The timer in Support turns gold at 75% of the target and red when it’s missed.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="sup-close" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Auto-solve after (days)</label>
+          <input id="sup-close" type="number" min="1" max="30" value="7" style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; max-width: 140px">
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">A ticket waiting on the user is solved after this many days, with a polite email. If they reply later, it reopens.</p>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; padding-top: 20px; border-top: 1px solid #EFE8F2">
+        <div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding-bottom: 8px">
+            <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #26142E">Canned replies</h3>
+            <button type="button" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">New canned reply</button>
+          </div>
+          <ul style="margin: 0; padding: 0; list-style: none">
+            <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600; color: #26142E">Thanks, we’ve got your message</span><span style="font-size: 13px; line-height: 1.45; color: #5C4965">First reply when we need a little more time. Fills in the person’s name.</span></span>
+              <span style="margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">English</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap" lang="ro">Română</span><button type="button" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Edit</button></span>
+            </li>
+            <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600; color: #26142E">Resetting your password</span><span style="font-size: 13px; line-height: 1.45; color: #5C4965">Steps to reset a password from the log-in page.</span></span>
+              <span style="margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">English</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap" lang="ro">Română</span><button type="button" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Edit</button></span>
+            </li>
+            <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600; color: #26142E">Why we ask for an age check</span><span style="font-size: 13px; line-height: 1.45; color: #5C4965">Explains Yoti: we only get the result, never a photo.</span></span>
+              <span style="margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">English</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap" lang="ro">Română</span><button type="button" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Edit</button></span>
+            </li>
+            <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600; color: #26142E">Parent or guardian consent</span><span style="font-size: 13px; line-height: 1.45; color: #5C4965">How consent works for under-16s and how to resend the email.</span></span>
+              <span style="margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">English</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap" lang="ro">Română</span><button type="button" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Edit</button></span>
+            </li>
+            <li style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 600; color: #26142E">Your data request has started</span><span style="font-size: 13px; line-height: 1.45; color: #5C4965">Sent after Open data request, with the legal deadline.</span></span>
+              <span style="margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">English</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap" lang="ro">Română</span><button type="button" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Edit</button></span>
+            </li>
+          </ul>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Each reply is written in English and Română. Staff pick one in a ticket, it fills in the person’s name and language, and they can edit it before sending.</p>
+        </div>
+        <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+          <div style="padding: 18px 20px; border-radius: 16px; background: #FAF8F5; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Helpdesk behind the screens</span>
+            <span style="font-size: 15px; line-height: 1.55; color: #26142E"><b>[Helpdesk product]</b>, connected through its API. Email in and out, threading and spam filtering come from it.</span>
+            <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">OPEN: product to be chosen</span>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Must keep data in the EU and sign a data processing agreement.</span>
+          </div>
+          <div style="padding: 18px 20px; border-radius: 16px; background: #FAF8F5; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">How long we keep tickets</span>
+            <span style="font-size: 15px; line-height: 1.55; color: #26142E">2 years after a ticket closes, then deleted (proposal). Until then, tickets are part of that person’s data export.</span>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 20px">
+        <button type="button" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Save support settings</button>
+      </div>
+    </section>
+
+    <!-- Change log -->
+    <section aria-labelledby="log-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Audit log</span>
+          <h2 id="log-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Recent changes</h2>
+        </div>
+        <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>Export log</button>
+      </div>
+      <div style="display: flex; flex-direction: column">
+            <div style="display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); gap: 4px 16px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+              <span style="font-size: 13px; color: #6B5A73">15 Oct 2026, 14:02</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #26142E"><b>Robert</b> · Teaser length<br><span style="color: #5C4965">About 2 pages → About 1 page</span></span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); gap: 4px 16px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+              <span style="font-size: 13px; color: #6B5A73">15 Oct 2026, 13:40</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #26142E"><b>Robert</b> · Parental consent for under-16s<br><span style="color: #5C4965">Off → On</span></span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); gap: 4px 16px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+              <span style="font-size: 13px; color: #6B5A73">12 Oct 2026, 09:30</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #26142E"><b>Robert</b> · Reserved names<br><span style="color: #5C4965">Added “yoti” and “ancom”</span></span>
+            </div>
+            <div style="display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); gap: 4px 16px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+              <span style="font-size: 13px; color: #6B5A73">2 Oct 2026, 18:05</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #26142E"><b>Robert</b> · Maintenance mode<br><span style="color: #5C4965">On → Off</span></span>
+            </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":8648}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // The saved state is what the server has; edits make the page "not saved".
+    this.saved = { pc: true, dm: false, img: true, mm: false, hold: 3, teaser: 0 };
+    this.state = Object.assign({}, this.saved, {
+      weights: { Likes: 30, Reads: 25, Follows: 20, Comments: 15, Freshness: 10 },
+      savedAt: '15 Oct 2026, 14:02', botEmail: true,
+      // Markets and languages (decision 5). Example statuses.
+      langStatus: { en: 'Open', ro: 'Open', es: 'Ready to open', fr: 'Closed', hu: 'Closed' },
+      marketStatus: { ro: 'Open', ie: 'Ready to open', uk: 'Closed', us: 'Closed', ca: 'Closed', au: 'Closed', nz: 'Closed', sg: 'Closed', other: 'Closed' },
+      mkMsg: null
+    });
+
+    // Website home page hero. The live copy, as on Website-Home.dc.html. mark = which headline word gets the gold underline (counted across both lines).
+    var live = {
+      en: { eyebrow: 'Your stories. Your rights. Your readers.', line1: 'Write stories.', line2: 'Get read.', mark: 3,
+        sub: 'Post your stories, poems and essays, one chapter at a time, and find the people who want to read them.',
+        btn1: 'Start writing', btn2: 'Start reading', points: ['You keep your rights', 'No tracking ads', 'Free to read and write'] },
+      ro: { eyebrow: 'Poveștile tale. Drepturile tale. Cititorii tăi.', line1: 'Scrie povești.', line2: 'Găsește-ți cititorii.', mark: 3,
+        sub: 'Publică povești, poezii și eseuri, câte un capitol pe rând, și găsește oamenii care vor să le citească.',
+        btn1: 'Începe să scrii', btn2: 'Începe să citești', points: ['Drepturile rămân ale tale', 'Fără reclame care te urmăresc', 'Gratuit la citit și la scris'] }
+    };
+    // Earlier versions (examples). Each holds both languages.
+    var vary = function (base, en, ro) {
+      var v = JSON.parse(JSON.stringify(base));
+      Object.assign(v.en, en); Object.assign(v.ro, ro);
+      return v;
+    };
+    this.heroVersions = [
+      { date: '16 Oct 2026', by: 'Robert', copy: vary(live,
+        { line2: 'Keep your rights.', mark: 4, sub: 'Post your stories, poems and essays, one chapter at a time, and find the people who want to read them.' },
+        { line2: 'Păstrează-ți drepturile.', mark: 3, sub: 'Publică povești, poezii și eseuri, câte un capitol pe rând, și găsește oamenii care vor să le citească.' }) },
+      { date: '1 Sep 2026', by: 'Robert', copy: vary(live,
+        { eyebrow: 'Stories, poems and essays', line1: 'Write it here.', line2: 'It stays yours.', mark: 5 },
+        { eyebrow: 'Povești, poezii și eseuri', line1: 'Scrie aici.', line2: 'Rămâne al tău.', mark: 4 }) },
+      { date: '1 Aug 2026', by: 'Robert', copy: vary(live,
+        { line1: 'Your stories.', line2: 'Your readers.', mark: 3 },
+        { line1: 'Poveștile tale.', line2: 'Cititorii tăi.', mark: 3 }) },
+      { date: '1 Jul 2026', by: 'Robert', copy: vary(live,
+        { line1: 'Write stories.', line2: 'Find readers.', mark: 3 },
+        { line1: 'Scrie povești.', line2: 'Găsește cititori.', mark: 3 }) }
+    ];
+    this.heroSaved = JSON.stringify({ copy: live, from: '2026-11-01' });
+    Object.assign(this.state, {
+      heroLang: 'en', heroCopy: JSON.parse(JSON.stringify(live)), heroFrom: '2026-11-01',
+      heroLive: { date: '1 Oct 2026', by: 'Robert' }, heroNext: null, heroMsg: null
+    });
+  }
+
+  // Character limits that keep the hero inside the website layout at every screen size.
+  heroLimits() { return { eyebrow: 50, headline: 40, sub: 170, btn: 20, point: 30 }; }
+
+  // '2026-11-01' -> '1 Nov 2026'
+  heroDate(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    if (!m) return 'no date';
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return parseInt(m[3], 10) + ' ' + months[parseInt(m[2], 10) - 1] + ' ' + m[1];
+  }
+
+  // Builds the Website home page section: form, preview, checks, save and publish, earlier versions.
+  hero() {
+    var self = this, st = this.state, lim = this.heroLimits();
+    var code = st.heroLang, c = st.heroCopy[code];
+    var langNames = { en: 'English', ro: 'Română' };
+    var clone = function (x) { return JSON.parse(JSON.stringify(x)); };
+    var val = function (e) { return e && e.target ? String(e.target.value) : ''; };
+    // Change one field in the open language.
+    var put = function (key, v) {
+      var all = clone(st.heroCopy);
+      all[code][key] = v;
+      self.setState({ heroCopy: all, heroMsg: null });
+    };
+    var inputBase = 'width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E; ';
+    var areaBase = 'width: 100%; box-sizing: border-box; min-height: 120px; padding: 12px 18px; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 16px; line-height: 1.5; color: #26142E; resize: vertical; ';
+    // Counter text and styles for one field.
+    var field = function (len, max, base) {
+      var over = len > max, empty = len === 0, bad = over || empty;
+      return {
+        count: empty ? 'Can’t be empty.' : over ? (len - max) + (len - max === 1 ? ' character' : ' characters') + ' too many. Max ' + max + '.' : len + ' of ' + max + ' characters.',
+        countStyle: 'font-size: 13px; line-height: 1.5; ' + (bad ? 'color: #8C2B3A; font-weight: 600;' : 'color: #6B5A73;'),
+        inputStyle: (base || inputBase) + (bad ? 'border: 2px solid #8C2B3A;' : 'border: 1px solid #DED3E4;'),
+        invalid: bad ? 'true' : 'false', bad: bad
+      };
+    };
+
+    // Problems in either language block publishing.
+    var problems = [];
+    ['en', 'ro'].forEach(function (k) {
+      var x = st.heroCopy[k];
+      var checks = [['line above the headline', x.eyebrow.length, lim.eyebrow], ['headline', x.line1.length + x.line2.length, lim.headline],
+        ['line under the headline', x.sub.length, lim.sub], ['dark button', x.btn1.length, lim.btn], ['light button', x.btn2.length, lim.btn]];
+      x.points.forEach(function (p, i) { checks.push(['point ' + (i + 1), p.length, lim.point]); });
+      checks.forEach(function (ch) { if (ch[1] === 0 || ch[1] > ch[2]) problems.push(langNames[k] + ': ' + ch[0]); });
+      if (!x.line1.trim() || !x.line2.trim()) problems.push(langNames[k] + ': headline needs two lines');
+      // Launch categories are fiction, poetry and nonfiction essays (Q52): an old version that mentions articles or journalism can be restored only after that wording is changed.
+      var allText = [x.eyebrow, x.line1, x.line2, x.sub, x.btn1, x.btn2].concat(x.points).join(' ');
+      if (/articles|journalism|articole|jurnalism/i.test(allText)) problems.push(langNames[k] + ': mentions articles or journalism, which are not on Ghemotoc at launch');
+    });
+
+    // Headline words, for the underline chips and the preview.
+    var w1 = c.line1.split(/\s+/).filter(Boolean), w2 = c.line2.split(/\s+/).filter(Boolean);
+    var words = w1.concat(w2);
+    var mark = Math.max(0, Math.min(c.mark, words.length - 1));
+    var gold = 'text-decoration: underline; text-decoration-color: #E6C24C; text-decoration-thickness: 0.12em; text-underline-offset: 0.14em; text-decoration-skip-ink: none;';
+    var lineWords = function (list, offset) {
+      return list.map(function (t, i) { return { text: t, gap: i < list.length - 1 ? ' ' : '', style: offset + i === mark ? gold : '' }; });
+    };
+
+    var tab = function (k) {
+      var on = code === k;
+      return {
+        sel: on ? 'true' : 'false',
+        pick: function () { self.setState({ heroLang: k }); },
+        // Tab drawn as a chip: 36 px inside the 44 px bordered tablist, check icon on the selected one.
+        check: self.chipCheck(on),
+        style: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+          + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid transparent; background: transparent; color: #481C5F;')
+      };
+    };
+
+    var head = field(c.line1.length + c.line2.length, lim.headline);
+    head.change1 = function (e) { put('line1', val(e)); };
+    head.change2 = function (e) { put('line2', val(e)); };
+    var mk = function (key, max, base) { var f = field(c[key].length, max, base); f.change = function (e) { put(key, val(e)); }; return f; };
+
+    var today = new Date().toISOString().slice(0, 10);
+    var dirty = JSON.stringify({ copy: st.heroCopy, from: st.heroFrom }) !== self.heroSaved;
+    var stamp = function () {
+      try { return new Date().toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (e) { return 'just now'; }
+    };
+    var msg = st.heroMsg;
+    var stateLine = dirty ? 'Changes not saved'
+      : st.heroNext ? 'Scheduled for ' + st.heroNext.date + '. Live now: copy from ' + st.heroLive.date + '.'
+      : 'Live now: copy from ' + st.heroLive.date + ', published by ' + st.heroLive.by + '.';
+
+    return {
+      code: code, langUpper: langNames[code], tabId: 'hero-tab-' + code,
+      tabs: { en: tab('en'), ro: tab('ro') },
+      c: { eyebrow: c.eyebrow, eyebrowUpper: c.eyebrow, line1: c.line1, line2: c.line2, sub: c.sub, btn1: c.btn1, btn2: c.btn2 },
+      f: { eyebrow: mk('eyebrow', lim.eyebrow), head: head, sub: mk('sub', lim.sub, areaBase), b1: mk('btn1', lim.btn), b2: mk('btn2', lim.btn) },
+      points: c.points.map(function (p, i) {
+        var f = field(p.length, lim.point);
+        f.id = 'hero-pt-' + i; f.cid = 'hero-pt-c-' + i; f.label = 'Point ' + (i + 1); f.value = p;
+        f.change = function (e) { var all = clone(st.heroCopy); all[code].points[i] = val(e); self.setState({ heroCopy: all, heroMsg: null }); };
+        return f;
+      }),
+      chips: words.map(function (t, i) {
+        return { label: t, pressed: i === mark ? 'true' : 'false', style: self.chipStyle(i === mark), check: self.chipCheck(i === mark), pick: function () { put('mark', i); } };
+      }),
+      line1: lineWords(w1, 0), line2: lineWords(w2, w1.length),
+      pvPoints: c.points.map(function (p) { return { text: p }; }),
+      from: st.heroFrom, today: today,
+      fromChange: function (e) { self.setState({ heroFrom: val(e), heroMsg: null }); },
+      stateLine: stateLine,
+      stateStyle: 'display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; ' + (dirty ? 'color: #815E18;' : 'color: #2F6B4F;'),
+      save: function () {
+        self.heroSaved = JSON.stringify({ copy: st.heroCopy, from: st.heroFrom });
+        self.setState({ heroMsg: { text: 'Draft saved ' + stamp() + '. Nothing changes on the website until you publish.', ok: true } });
+      },
+      publish: function () {
+        if (problems.length) {
+          self.setState({ heroMsg: { text: 'Can’t publish yet. Fix: ' + problems.join(', ') + '.', ok: false } });
+          return;
+        }
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(st.heroFrom)) {
+          self.setState({ heroMsg: { text: 'Can’t publish yet. Pick a “Show from” date.', ok: false } });
+          return;
+        }
+        self.heroSaved = JSON.stringify({ copy: st.heroCopy, from: st.heroFrom });
+        var when = self.heroDate(st.heroFrom);
+        if (st.heroFrom <= today) {
+          self.setState({ heroLive: { date: when, by: 'Robert' }, heroNext: null,
+            heroMsg: { text: 'Published. Live on the website within a minute. Logged in the audit log.', ok: true } });
+        } else {
+          self.setState({ heroNext: { date: when, by: 'Robert' },
+            heroMsg: { text: 'Scheduled. Goes live on ' + when + ' at 00:00 Romanian time. Logged in the audit log.', ok: true } });
+        }
+      },
+      msg: msg ? msg.text : (problems.length ? problems.length + (problems.length === 1 ? ' field needs' : ' fields need') + ' fixing before you can publish: ' + problems.join(', ') + '.' : 'Both languages fit the layout. Ready to publish.'),
+      msgStyle: 'margin: 16px 0 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; '
+        + (msg ? (msg.ok ? 'background: #E8F1EC; color: #2F6B4F;' : 'background: #F6E9EB; color: #8C2B3A;')
+               : (problems.length ? 'background: #F6E9EB; color: #8C2B3A;' : 'background: #FAF8F5; color: #5C4965;')),
+      versions: self.heroVersions.map(function (v) {
+        return {
+          date: v.date, by: v.by, headline: v.copy.en.line1 + ' ' + v.copy.en.line2,
+          aria: 'Restore the copy from ' + v.date,
+          restore: function () {
+            self.setState({ heroCopy: clone(v.copy), heroMsg: { text: 'The copy from ' + v.date + ' is back in the editor as a draft, in both languages. Pick a date and publish it.', ok: true } });
+          }
+        };
+      })
+    };
+  }
+
+  // Small status chip for markets and languages (pill system): the chosen one is plum with a check icon,
+  // the label says the state, so the meaning never rests on colour.
+  statusBtn(on, label) {
+    return this.chipStyle(on).replace('font-size: 14px', 'font-size: 13px');
+  }
+
+  // Builds the Markets and languages rows, with the opening rules enforced.
+  markets() {
+    var self = this, st = this.state;
+    var L = [
+      { id: 'en', name: 'English', mods: 3, ui: 'Yes', stories: '214 stories' },
+      { id: 'ro', name: 'Română', mods: 2, ui: 'Yes', stories: '187 stories' },
+      { id: 'es', name: 'Español', mods: 1, ui: 'No', stories: 'Not open yet' },
+      { id: 'fr', name: 'Français', mods: 0, ui: 'No', stories: 'Not open yet' },
+      { id: 'hu', name: 'Magyar', mods: 0, ui: 'No', stories: 'Not open yet' }
+    ];
+    var M = [
+      { id: 'ro', name: 'Romania', langs: ['ro', 'en'], legal: 'Done' },
+      { id: 'ie', name: 'Ireland', langs: ['en'], legal: 'Done' },
+      { id: 'uk', name: 'United Kingdom', langs: ['en'], legal: 'In progress' },
+      { id: 'us', name: 'United States', langs: ['en'], legal: 'Not started' },
+      { id: 'ca', name: 'Canada', langs: ['en'], legal: 'Not started' },
+      { id: 'au', name: 'Australia (16 and over)', langs: ['en'], legal: 'In progress' },
+      { id: 'nz', name: 'New Zealand', langs: ['en'], legal: 'Not started' },
+      { id: 'sg', name: 'Singapore', langs: ['en'], legal: 'Not started' },
+      { id: 'other', name: 'Other countries', langs: ['en'], legal: 'Per country' }
+    ];
+    var names = {};
+    L.forEach(function (l) { names[l.id] = l.name; });
+    var statuses = ['Open', 'Ready to open', 'Closed'];
+    var say = function (text, ok) { self.setState({ mkMsg: { text: text, ok: ok } }); };
+
+    var langs = L.map(function (l) {
+      return {
+        name: l.name, stories: l.stories, ui: l.ui,
+        mods: l.mods === 0 ? 'None yet' : l.mods + (l.mods === 1 ? ' moderator' : ' moderators'),
+        modStyle: 'font-size: 14px; ' + (l.mods === 0 ? 'color: #8C2B3A; font-weight: 600;' : 'color: #26142E;'),
+        opts: statuses.map(function (s) {
+          var on = st.langStatus[l.id] === s;
+          return {
+            label: s, pressed: on ? 'true' : 'false', aria: l.name + ': ' + s, style: self.statusBtn(on, s), check: self.chipCheck(on),
+            pick: function () {
+              if (s !== 'Closed' && l.mods === 0) { say('Can’t set ' + l.name + ' to “' + s + '”: no moderators who read it are on the rota.', false); return; }
+              var n = Object.assign({}, st.langStatus); n[l.id] = s;
+              self.setState({ langStatus: n, mkMsg: { text: l.name + ' is now “' + s + '”. Logged in the audit log.', ok: true } });
+            }
+          };
+        })
+      };
+    });
+
+    var legalTone = { 'Done': ['#E8F1EC', '#245A41', '#A9C9B6'], 'In progress': ['#E6EEF6', '#2E4A8C', '#AFC3DE'], 'Not started': ['#F4F0EC', '#4F3D57', '#D6CCDC'], 'Per country': ['#F4F0EC', '#4F3D57', '#D6CCDC'] };
+    var markets = M.map(function (m) {
+      var t = legalTone[m.legal];
+      var openLang = m.langs.some(function (k) { return st.langStatus[k] === 'Open'; });
+      return {
+        name: m.name, legal: m.legal,
+        langs: m.langs.map(function (k) { return names[k]; }).join(', '),
+        legalStyle: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';',
+        opts: statuses.map(function (s) {
+          var on = st.marketStatus[m.id] === s;
+          return {
+            label: s, pressed: on ? 'true' : 'false', aria: m.name + ': ' + s, style: self.statusBtn(on, s), check: self.chipCheck(on),
+            pick: function () {
+              if (s !== 'Closed' && m.legal !== 'Done') { say('Can’t set ' + m.name + ' to “' + s + '”: its legal check isn’t done.', false); return; }
+              if (s === 'Open' && !openLang) { say('Can’t open ' + m.name + ': none of its languages is open.', false); return; }
+              var n = Object.assign({}, st.marketStatus); n[m.id] = s;
+              self.setState({ marketStatus: n, mkMsg: { text: m.name + ' is now “' + s + '”. Logged in the audit log.', ok: true } });
+            }
+          };
+        })
+      };
+    });
+
+    var msg = st.mkMsg;
+    return {
+      langs: langs, markets: markets,
+      msg: msg ? msg.text : 'Changes here apply within a minute and are logged.',
+      msgStyle: 'margin: 12px 0 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; '
+        + (msg ? (msg.ok ? 'background: #E8F1EC; color: #2F6B4F;' : 'background: #F6E9EB; color: #8C2B3A;') : 'background: #FAF8F5; color: #5C4965;')
+    };
+  }
+
+  // Toggle switch: a 44px-tall button holding a small track, so the touch target stays big.
+  switchStyle() {
+    return 'flex: none; width: 64px; height: 44px; padding: 0; border: 0; background: transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;';
+  }
+  trackStyle(on) {
+    return 'position: relative; display: block; width: 56px; height: 32px; border-radius: 999px; box-sizing: border-box; transition: background 0.15s; '
+      + (on ? 'background: #481C5F; border: 1px solid #481C5F;' : 'background: #F4F0EC; border: 1px solid #9F8DA8;');
+  }
+  knobStyle(on) {
+    return 'position: absolute; top: 3px; width: 24px; height: 24px; border-radius: 50%; box-shadow: 0 1px 3px rgba(38,20,46,0.3); transition: left 0.15s; '
+      + (on ? 'left: 27px; background: #E6C24C;' : 'left: 3px; background: #FFFFFF;');
+  }
+  // Interactive chip (pill system, 17 Oct): 36 px tall inside a 44 px tap area (.tmc-chip::before), equal 14 px sides.
+  // Unselected: white with a #8E7B99 edge. Selected: solid plum plus a check icon, so the state is not colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+
+  renderVals() {
+    var self = this, st = this.state, sv = this.saved;
+
+    // Count unsaved flag changes.
+    var keys = ['pc', 'dm', 'img', 'mm', 'hold', 'teaser'];
+    var changed = keys.filter(function (k) { return st[k] !== sv[k]; }).length;
+
+    var flags = {};
+    ['pc', 'dm', 'img', 'mm'].forEach(function (k) {
+      var on = !!st[k];
+      flags[k] = {
+        on: on ? 'true' : 'false', word: on ? 'On' : 'Off',
+        track: self.trackStyle(on), knob: self.knobStyle(on),
+        toggle: function () { var n = {}; n[k] = !st[k]; self.setState(n); }
+      };
+    });
+
+    // Ranking weights: steps of 5, shown as plain bars.
+    var names = ['Likes', 'Reads', 'Follows', 'Comments', 'Freshness'];
+    var total = 0;
+    names.forEach(function (n) { total += st.weights[n]; });
+    var weights = names.map(function (n, i) {
+      var v = st.weights[n];
+      var set = function (d) {
+        var w = Object.assign({}, st.weights);
+        w[n] = Math.max(0, Math.min(100, v + d));
+        self.setState({ weights: w });
+      };
+      return {
+        id: 'w-' + i, label: n, value: v,
+        downLabel: 'Lower ' + n.toLowerCase(), upLabel: 'Raise ' + n.toLowerCase(),
+        bar: 'width: ' + v + '%; height: 100%; border-radius: 999px; background: #672786;',
+        down: function () { set(-5); }, up: function () { set(5); }
+      };
+    });
+
+    return {
+      mk: this.markets(),
+      hero: this.hero(),
+      flags: flags, switchBtn: this.switchStyle(),
+      hold: String(st.hold),
+      holdDown: function () { self.setState({ hold: Math.max(2, st.hold - 1) }); },
+      holdUp: function () { self.setState({ hold: Math.min(10, st.hold + 1) }); },
+      teaserChange: function (e) { self.setState({ teaser: e && e.target ? e.target.selectedIndex : 0 }); },
+      dirty: changed > 0, clean: changed === 0,
+      dirtyLine: changed + (changed === 1 ? ' change not saved' : ' changes not saved'),
+      savedLine: 'Saved ' + st.savedAt + '. Live within a minute.',
+      save: function () {
+        keys.forEach(function (k) { self.saved[k] = st[k]; });
+        var now = new Date(), t = '';
+        try { t = now.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (e) { t = 'just now'; }
+        self.setState({ savedAt: t });
+      },
+      discard: function () { self.setState(Object.assign({}, sv)); },
+      weights: weights,
+      bot: { email: !!st.botEmail, click: !st.botEmail, pickEmail: function () { self.setState({ botEmail: true }); }, pickClick: function () { self.setState({ botEmail: false }); } },
+      totalLine: total === 100 ? 'Total 100%. Ready to save.' : 'Total ' + total + '%. The weights must add up to 100%.',
+      totalStyle: 'margin: 4px 0 0; font-size: 14px; font-weight: 600; color: ' + (total === 100 ? '#2F6B4F' : '#8C2B3A') + ';'
+    };
+  }
+}
+</script>
+</body>
+</html>

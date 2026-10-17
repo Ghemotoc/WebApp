@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>App-only story on the web</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{pointer-events:none;user-select:none}
+.tmc-dd-sticker{filter:drop-shadow(2px 0 0 #FBF7EC) drop-shadow(-2px 0 0 #FBF7EC) drop-shadow(0 2px 0 #FBF7EC) drop-shadow(0 -2px 0 #FBF7EC)}
+@media (max-width: 1199px){.tmc-dd-xxl{display:none !important}}
+@media (max-width: 1119px){.tmc-dd-xl{display:none !important}}
+@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 600px){.tmc-dd-hide{display:none !important}}
+/* Approved cover backgrounds (16 Oct): one class per design, url() only allowed here */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+</style>
+</helmet>
+<!-- A signed-out web visitor on the story page of an app-only story, after clicking chapter 1 (decision 2, 16 Oct). March 2027 is web only (17 Oct), so this state applies once the apps exist -->
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav, signed out: wordmark, Log in and Join for free only -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Main.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct) --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/d015e4df9fe6c8aad2c786d53340afd6" alt="" aria-hidden="true" width="22" height="22" style="position: absolute; left: 12px; top: 11px; width: 22px; height: 22px; pointer-events: none"><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <a href="SignIn.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Log in</a>
+        <a href="Main.dc.html#join" style="display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Join for free</a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="margin-top: 40px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 40px">
+
+      <main style="flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 40px; animation: tmcRise 0.5s ease-out both">
+
+        <!-- Story header: on the web an app-only story still shows its cover, title, blurb, writer and chapter list -->
+        <section aria-labelledby="story-title" style="display: flex; flex-wrap: wrap; gap: 36px; align-items: flex-start">
+          <div aria-hidden="true" class="tmc-cv tmc-cv-ink" style="position: relative; flex: 0 0 220px; height: 308px; box-sizing: border-box; padding: 22px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; color: #FAF8F5; box-shadow: 0 24px 48px -24px rgba(20,8,26,0.55)">
+            <span style="{{coverTitleStyle}}">Night Bus to Ploiești</span>
+            <span style="display: block; width: 44px; height: 3px; border-radius: 2px; background: #E6C24C"></span>
+            <span style="font-size: 13px; opacity: 0.9">corbu</span>
+          </div>
+
+          <div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">Fiction</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #D9B54A; background: #FBF3DA; color: #5C3F0E;">Completed</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">No AI</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>App only</span>
+            </div>
+            <h1 id="story-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Night Bus to Ploiești</h1>
+            <p style="margin: 0; font-size: 16px; color: #5C4965">by <a href="Profile.dc.html" style="font-weight: 700">corbu</a></p>
+            <ul aria-label="Story numbers" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: #6B5A73">
+              <li>3.4k reads</li>
+              <li>22 chapters</li>
+              <li>Finished 2 Oct 2026</li>
+            </ul>
+            <div style="max-width: 640px; display: flex; flex-direction: column; gap: 10px; font-size: 17px; line-height: 1.6; color: #26142E">
+              <p style="margin: 0">The last bus from Bucharest leaves at 23:40. Four strangers miss their stops on purpose, and by Ploiești they know why.</p>
+            </div>
+            <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 10px">
+              <button type="button" onClick="{{openDialog}}" style="display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-weight: 600; font-size: 15px; cursor: pointer"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; margin-left: -10px"><img src="/_blob/a7c7799609e54821cf904f7c954834d0" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Start reading</button>
+              <a href="Share.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 16px; border-radius: 999px; color: #481C5F; text-decoration: none; font-weight: 600; font-size: 15px">Share</a>
+            </div>
+            <p style="margin: 0; font-size: 14px; color: #6B5A73">corbu publishes this story in the app only. You can see the chapter list here and read the chapters in the app.</p>
+          </div>
+        </section>
+
+        <!-- Chapter list: each chapter opens the app-only dialog -->
+        <section aria-labelledby="chapters-h" style="padding: 24px 28px 12px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #EFE8F2">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapters</span>
+              <h2 id="chapters-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">22 chapters</h2>
+            </div>
+            <span style="margin-left: auto; text-align: right; font-size: 14px; color: #6B5A73">Chapters open in the app</span>
+          </div>
+          <ol style="list-style: none; margin: 0; padding: 0; columns: 2 300px; column-gap: 36px">
+            <sc-for list="{{chapters}}" as="c" hint-placeholder-count="22">
+              <li style="break-inside: avoid; border-bottom: 1px solid #EFE8F2">
+                <button type="button" onClick="{{c.open}}" style="{{c.rowStyle}}">
+                  <span style="width: 24px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; color: #481C5F">{{c.n}}</span>
+                  <span style="flex: 1; min-width: 0">{{c.title}}</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B5A73" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="In the app only"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>
+                </button>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+      </main>
+
+      <!-- Side column: the writer -->
+      <aside aria-label="About the writer" style="flex: 1 1 300px; max-width: 340px; display: flex; flex-direction: column; gap: 20px">
+        <section aria-labelledby="writer-h" style="position: relative; padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">The writer</span>
+          <div style="display: flex; align-items: center; gap: 14px">
+            <span aria-hidden="true" style="flex: none; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(140deg,#16233A,#33507A); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px">c</span>
+            <div style="min-width: 0">
+              <h2 id="writer-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px"><a href="Profile.dc.html" style="color: #26142E; text-decoration: none">corbu</a></h2>
+              <span style="font-size: 14px; color: #6B5A73">Writes fiction</span>
+            </div>
+          </div>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Short novels about night shifts, buses and trains around Prahova.</p>
+          <a href="Main.dc.html#join" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; box-sizing: border-box; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; text-decoration: none; font-weight: 600; font-size: 14px">Join for free to follow corbu</a>
+        </section>
+        <a href="NoticeForm.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; color: #5C4965; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none; width: 22px; height: 22px">Report this story</a>
+        <!-- Side ad (Robert, 17 Oct): one portrait, desktop only, same for everyone -->
+        <aside aria-label="Advertisement" data-ad="portrait" class="tmc-ad-portrait" style="position: relative; width: 300px; max-width: 100%; height: 600px; margin-top: 12px; box-sizing: border-box; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+          <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+          <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] · 300 × 600</span>
+          <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+        </aside>
+      </aside>
+    </div>
+
+    <!-- Small footer -->
+    <footer style="position: relative; margin-top: 72px; padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 24px">
+        <a href="Website-Home.dc.html#faq" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Legal</a>
+        <a href="mailto:support@ghemotoc.com" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- The dialog after clicking a chapter: the page behind is dimmed -->
+  <sc-if value="{{dialogOpen}}" hint-placeholder-val="{{true}}">
+    <div style="position: absolute; inset: 0; z-index: 10; background: rgba(38,20,46,0.45); display: flex; justify-content: center; align-items: flex-start; padding: 180px 16px 48px; box-sizing: border-box">
+      <section role="dialog" aria-modal="true" aria-labelledby="app-only-h" aria-describedby="app-only-why" style="position: relative; width: 100%; max-width: 560px; box-sizing: border-box; padding: 32px; display: flex; flex-direction: column; gap: 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.06), 0 32px 64px -24px rgba(38,20,46,0.45); animation: tmcRise 0.3s ease-out both">
+        <!-- Doodle (padlock): decorative --><img data-doodle="widget" data-doodle-on="This story is only in the app" src="/_blob/04cfd05372dc9f8cb585691175c93244" alt="" aria-hidden="true" class="tmc-dd-wide tmc-dd tmc-dd-hide" style="position: absolute; right: 26px; top: -62px; width: 76px; height: 76px; transform: rotate(-8deg); pointer-events: none">
+        <button type="button" aria-label="Close" onClick="{{closeDialog}}" style="position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #5C4965; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+        <span aria-hidden="true" style="width: 56px; height: 56px; border-radius: 16px; background: #F1EAF4; color: #672786; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/efa7267d3b9865c596fab4fb3a28f90e" alt="" aria-hidden="true" width="38" height="38" style="display: block; flex: none; width: 38px; height: 38px"></span>
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">{{chapterLabel}}</span>
+        <h2 id="app-only-h" style="margin: 0; padding-right: 40px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 32px; line-height: 1.05; letter-spacing: -0.02em; color: #481C5F">This story is only in the app</h2>
+        <p id="app-only-why" style="margin: 0; font-size: 17px; line-height: 1.6; color: #5C4965">corbu chose to publish this story in the Ghemotoc app only. The app gives writers more privacy and more control over their work. Chapters are also harder to copy there.</p>
+        <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 10px">
+          <a href="GetApp.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 24px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; text-decoration: none; font-weight: 600; font-size: 15px"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; margin-left: -10px"><img src="/_blob/7939e98f5cad75f6297ff489d09f93e0" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Get the app</a>
+          <button type="button" aria-describedby="open-note" style="display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-weight: 600; font-size: 15px; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>Open in the app</button>
+          <button type="button" onClick="{{closeDialog}}" style="display: inline-flex; align-items: center; height: 52px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-weight: 600; font-size: 15px; cursor: pointer">Back to the story</button>
+        </div>
+        <span id="open-note" style="font-size: 13px; color: #6B5A73">“Open in the app” works only if the app is already on this computer.</span>
+        <p style="margin: 0; padding-top: 14px; border-top: 1px solid #EFE8F2; font-size: 14px; line-height: 1.5; color: #5C4965">The free desktop and phone apps come after the web launch.</p>
+      </section>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1408}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // The visitor has just clicked chapter 1, so the dialog starts open.
+    this.state = { dialogOpen: true, chapter: 1 };
+  }
+
+  // Cover titles always show in full (Robert, 16 Oct): they wrap and the size steps down as the title gets longer, never cut.
+  // Up to 18 characters: base size; 19 to 28: 85%; 29 to 40: 72%; longer: 62%; never below the floor (11px unless given).
+  titleSize(title, base, floor) {
+    var n = String(title == null ? '' : title).length;
+    var k = n <= 18 ? 1 : (n <= 28 ? 0.85 : (n <= 40 ? 0.72 : 0.62));
+    return Math.max(floor || 11, Math.round(base * k * 10) / 10);
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    var titles = ['23:40 from Bucharest', 'Four people at the back', 'Buftea, missed', 'The girl with the cello case', 'The man with no luggage', 'Ticket check', 'Why Dana stayed on', 'Snow on the DN1', 'The driver’s radio', 'A thermos of tea', 'Why Paul stayed on', 'A phone that keeps ringing', 'Halfway', 'Why Mrs Sima stayed on', 'The petrol station stop', 'Engine trouble', 'Why Radu stayed on', 'What they have in common', 'The lights of Ploiești', 'Last stop', 'Off the bus', 'The 05:10 back'];
+    var chapters = titles.map(function (t, i) {
+      var n = i + 1;
+      return {
+        n: String(n), title: t,
+        open: function () { self.setState({ dialogOpen: true, chapter: n }); },
+        rowStyle: 'display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 0; border: 0; background: transparent; text-align: left; font-family: inherit; font-size: 15px; color: #26142E; cursor: pointer;'
+      };
+    });
+
+    return {
+      // Cover title: same words as on the cover above; the size follows the title's length so it always fits.
+      coverTitleStyle: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: " + this.titleSize('Night Bus to Ploiești', 28) + "px; line-height: 1.05; letter-spacing: -0.015em",
+      chapters: chapters,
+      dialogOpen: !!st.dialogOpen,
+      chapterLabel: 'Chapter ' + st.chapter + ' · ' + titles[st.chapter - 1],
+      openDialog: function () { self.setState({ dialogOpen: true, chapter: 1 }); },
+      closeDialog: function () { self.setState({ dialogOpen: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

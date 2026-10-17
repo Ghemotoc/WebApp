@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Chapter reader</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: the reader belongs to Library -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Chapter bar: back to the story, reading settings, contents, previous and next, progress -->
+    <div style="position: relative; z-index: 2; margin-top: 28px; padding: 12px 12px 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+        <a href="Story.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 18px 0 12px; border-radius: 999px; color: #481C5F; text-decoration: none; font-size: 15px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>The Salt Mine Choir</a>
+
+        <!-- Reading settings: the button opens and closes the panel below it -->
+        <div style="position: relative">
+          <button type="button" class="tmc-chip" aria-expanded="{{settingsOpen}}" aria-controls="reading-settings" onClick="{{toggleSettings}}" style="{{settingsBtnStyle}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" x2="15" y1="20" y2="20"></line><line x1="12" x2="12" y1="4" y2="20"></line></svg>Reading settings</button>
+          <sc-if value="{{settingsOpen}}" hint-placeholder-val="{{true}}">
+            <section id="reading-settings" aria-label="Reading settings" style="position: absolute; top: 56px; left: 0; z-index: 5; width: min(360px, calc(100vw - 32px)); box-sizing: border-box; padding: 22px; display: flex; flex-direction: column; gap: 18px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 24px 48px -24px rgba(38,20,46,0.35); animation: tmcRise 0.25s ease-out both">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+                <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #481C5F">Reading settings</h2>
+                <button type="button" aria-label="Close reading settings" onClick="{{closeSettings}}" style="width: 44px; height: 44px; margin-right: -10px; border: 0; border-radius: 999px; background: transparent; color: #5C4965; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+              </div>
+              <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                <legend style="font-family: 'Cutive', 'Courier New', serif; padding: 0 0 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Font</legend>
+                <!-- Two font modes (decision 3, 16 Oct): our fonts in the browser now; any installed font in the apps, which come after the March 2027 test (web only for March, 17 Oct) -->
+                <span style="font-size: 14px; font-weight: 700; color: #26142E">In the browser: our fonts</span>
+                <sc-for list="{{fonts}}" as="f" hint-placeholder-count="3">
+                  <label class="tmc-chip" style="{{f.labelStyle}}"><input type="radio" name="font" checked="{{f.checked}}" onChange="{{f.pick}}" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">{{f.label}}</label>
+                </sc-for>
+                <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">A small set that works in every browser, including one that many readers with dyslexia find easier.</span>
+                <div role="radiogroup" aria-labelledby="app-fonts-h" style="margin-top: 6px; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: #FAF8F5; border: 1px solid #EFE8F2; border-radius: 16px">
+                  <span id="app-fonts-h" style="font-size: 14px; font-weight: 700; color: #26142E">Later, in the apps: any font on your device</span>
+                  <span style="font-size: 13px; line-height: 1.5; color: #5C4965">The desktop and phone apps come after the March 2027 test. They’ll list every font installed on your device, for example:</span>
+                  <label for="font-search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Search fonts on this device</label>
+                  <input id="font-search" type="search" placeholder="Search fonts on this device" style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                  <sc-for list="{{appFonts}}" as="f" hint-placeholder-count="5">
+                    <label class="tmc-chip" style="{{f.labelStyle}}"><input type="radio" name="font" checked="{{f.checked}}" onChange="{{f.pick}}" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">{{f.label}}</label>
+                  </sc-for>
+                  <a href="GetApp.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">About the apps</a>
+                </div>
+              </fieldset>
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <div style="display: flex; justify-content: space-between; align-items: baseline">
+                  <label for="size" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Text size</label>
+                  <span style="text-align: right; font-size: 13px; font-weight: 600; color: #6B5A73">{{sizeLabel}}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; min-height: 44px">
+                  <span aria-hidden="true" style="font-size: 13px; color: #5C4965">A</span>
+                  <input id="size" type="range" min="14" max="28" value="{{size}}" onChange="{{setSize}}" style="flex: 1; min-width: 0; margin: 0; accent-color: #672786">
+                  <span aria-hidden="true" style="font-size: 22px; color: #5C4965">A</span>
+                </div>
+              </div>
+              <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+                <legend style="font-family: 'Cutive', 'Courier New', serif; padding: 0 0 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Line spacing</legend>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                  <sc-for list="{{spacings}}" as="o" hint-placeholder-count="3">
+                    <label class="tmc-chip" style="{{o.labelStyle}}"><input type="radio" name="spacing" checked="{{o.checked}}" onChange="{{o.pick}}" style="margin: 0; width: 16px; height: 16px; accent-color: #672786">{{o.label}}</label>
+                  </sc-for>
+                </div>
+              </fieldset>
+              <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+                <legend style="font-family: 'Cutive', 'Courier New', serif; padding: 0 0 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Line width</legend>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                  <sc-for list="{{widths}}" as="o" hint-placeholder-count="3">
+                    <label class="tmc-chip" style="{{o.labelStyle}}"><input type="radio" name="width" checked="{{o.checked}}" onChange="{{o.pick}}" style="margin: 0; width: 16px; height: 16px; accent-color: #672786">{{o.label}}</label>
+                  </sc-for>
+                </div>
+              </fieldset>
+              <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+                <legend style="font-family: 'Cutive', 'Courier New', serif; padding: 0 0 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Theme</legend>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                  <sc-for list="{{themes}}" as="o" hint-placeholder-count="3">
+                    <label class="tmc-chip" style="{{o.labelStyle}}"><input type="radio" name="theme" checked="{{o.checked}}" onChange="{{o.pick}}" style="margin: 0; width: 16px; height: 16px; accent-color: #672786"><span aria-hidden="true" style="{{o.swatch}}"></span>{{o.label}}</label>
+                  </sc-for>
+                </div>
+              </fieldset>
+              <p style="margin: 0; padding-top: 14px; border-top: 1px solid #EFE8F2; display: flex; gap: 8px; font-size: 13px; line-height: 1.5; color: #5C4965"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M20 6 9 17l-5-5"></path></svg>Saved to your account, so they apply on all your devices. Text size starts from your device’s own setting.</p>
+            </section>
+          </sc-if>
+        </div>
+
+        <nav aria-label="Chapters" style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px">
+          <a href="Story.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 18px 0 14px; box-sizing: border-box; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; text-decoration: none; font-size: 15px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"></line><line x1="8" x2="21" y1="12" y2="12"></line><line x1="8" x2="21" y1="18" y2="18"></line><line x1="3" x2="3.01" y1="6" y2="6"></line><line x1="3" x2="3.01" y1="12" y2="12"></line><line x1="3" x2="3.01" y1="18" y2="18"></line></svg>Contents</a>
+          <a href="Reader.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 18px 0 12px; box-sizing: border-box; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; text-decoration: none; font-size: 15px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Previous</a>
+          <a href="Reader.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px 0 20px; box-sizing: border-box; border-radius: 999px; background: #2A0E33; color: #FBF7EC; text-decoration: none; font-size: 15px; font-weight: 600">Next chapter<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
+        </nav>
+      </div>
+      <div role="progressbar" aria-label="Chapter progress" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="margin: 12px 8px 0; height: 4px; border-radius: 999px 999px 0 0; background: #F1EAF4; overflow: hidden"><div style="width: 72%; height: 100%; border-radius: 999px; background: #E6C24C"></div></div>
+    </div>
+
+    <!-- The chapter: one calm column of real text. Comment markers sit in their own narrow column beside each paragraph -->
+    <article aria-labelledby="chapter-title" style="{{articleStyle}}">
+      <header style="padding: 56px 80px 36px 0; display: flex; flex-direction: column; gap: 14px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapter 14 of 15</span>
+        <h1 id="chapter-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">The register</h1>
+        <span style="font-size: 14px; color: #6B5A73">by <a href="Profile.dc.html" style="font-weight: 600">inkwolf</a> · 9 Oct 2026 · 3 min read</span>
+      </header>
+
+      <div style="{{proseStyle}}">
+        <sc-for list="{{paras}}" as="p" hint-placeholder-count="8">
+          <div style="{{p.rowStyle}}">
+            <p style="margin: 0">{{p.text}}</p>
+            <sc-if value="{{p.hasCount}}" hint-placeholder-val="{{true}}">
+              <button type="button" aria-label="{{p.label}}" aria-expanded="{{p.isOpen}}" onClick="{{p.toggle}}" style="{{p.markerStyle}}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>{{p.count}}</button>
+            </sc-if>
+            <sc-if value="{{p.noCount}}" hint-placeholder-val="{{false}}">
+              <button type="button" aria-label="Comment on this paragraph" onClick="{{p.toggle}}" style="{{p.markerStyle}}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M12 8v6"></path><path d="M9 11h6"></path></svg></button>
+            </sc-if>
+
+            <!-- Picture in the chapter: shows only after our image check passed; alt text from the writer (decision 4) -->
+            <sc-if value="{{p.hasPicture}}" hint-placeholder-val="{{false}}">
+              <figure style="grid-column: 1 / 2; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.5; letter-spacing: 0; color: #26142E">
+                <svg viewBox="0 0 680 360" width="100%" role="img" aria-label="A drawing of the choir in coats and scarves, standing in three rows in front of the mine lift" style="display: block; border-radius: 16px; background: #D9C7A8">
+                  <rect x="250" y="20" width="180" height="250" fill="#B59F7E"></rect>
+                  <rect x="266" y="36" width="148" height="234" fill="#8C7658"></rect>
+                  <line x1="340" y1="36" x2="340" y2="270" stroke="#6E5B42" stroke-width="4"></line>
+                  <rect x="0" y="270" width="680" height="90" fill="#BFA988"></rect>
+                  <g fill="#4A3B2A">
+                    <circle cx="150" cy="150" r="16"></circle><circle cx="210" cy="146" r="16"></circle><circle cx="270" cy="150" r="16"></circle><circle cx="330" cy="146" r="14"></circle><circle cx="390" cy="150" r="16"></circle><circle cx="450" cy="146" r="16"></circle><circle cx="510" cy="150" r="16"></circle>
+                    <rect x="130" y="168" width="400" height="50" rx="20"></rect>
+                  </g>
+                  <g fill="#5B4A36">
+                    <circle cx="120" cy="196" r="17"></circle><circle cx="185" cy="192" r="17"></circle><circle cx="250" cy="196" r="17"></circle><circle cx="315" cy="192" r="17"></circle><circle cx="380" cy="196" r="17"></circle><circle cx="445" cy="192" r="17"></circle><circle cx="510" cy="196" r="17"></circle><circle cx="565" cy="194" r="17"></circle>
+                    <rect x="98" y="214" width="490" height="56" rx="22"></rect>
+                  </g>
+                  <g fill="#6B5842">
+                    <circle cx="150" cy="246" r="18"></circle><circle cx="230" cy="242" r="18"></circle><circle cx="310" cy="246" r="18"></circle><circle cx="390" cy="242" r="18"></circle><circle cx="470" cy="246" r="18"></circle>
+                    <rect x="124" y="264" width="372" height="64" rx="24"></rect>
+                  </g>
+                </svg>
+                <figcaption style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 14px; color: #5C4965">
+                  <span style="flex: 1 1 260px">The choir waiting for the lift at the bottom of the mine. Drawing added by inkwolf.</span>
+                  <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 8px; color: #5C4965; text-decoration: none; font-size: 14px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" x2="4" y1="22" y2="15"></line></svg>Report picture</a>
+                </figcaption>
+              </figure>
+            </sc-if>
+
+            <!-- Video as a click-to-load card: nothing loads from YouTube until the reader presses play (decision 4) -->
+            <sc-if value="{{p.hasVideo}}" hint-placeholder-val="{{false}}">
+              <div role="group" aria-label="Video from YouTube" style="grid-column: 1 / 2; margin: 8px 0 0; display: flex; flex-wrap: wrap; border: 1px solid #DED3E4; border-radius: 16px; overflow: hidden; background: #FFFFFF; font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.5; letter-spacing: 0; color: #26142E">
+                <div style="flex: 1 1 220px; min-height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 16px; box-sizing: border-box; background: linear-gradient(160deg,#3A1F45 0%,#26142E 100%); color: #FBF7EC">
+                  <sc-if value="{{videoIdle}}" hint-placeholder-val="{{true}}">
+                    <button type="button" onClick="{{playVideo}}" aria-label="Play video: Foaie verde, sung by a school choir. Plays from YouTube" style="width: 68px; height: 68px; border: 0; border-radius: 50%; background: #FBF7EC; color: #26142E; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg></button>
+                  </sc-if>
+                  <sc-if value="{{videoPlaying}}" hint-placeholder-val="{{false}}">
+                    <span style="font-size: 14px; font-weight: 600">Playing from YouTube</span>
+                    <span aria-hidden="true" style="width: 80%; height: 4px; border-radius: 999px; background: rgba(251,247,236,0.3)"><span style="display: block; width: 18%; height: 100%; border-radius: 999px; background: #E6C24C"></span></span>
+                    <button type="button" onClick="{{stopVideo}}" style="height: 44px; padding: 0 18px; border: 1px solid #FBF7EC; border-radius: 999px; background: transparent; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Stop</button>
+                  </sc-if>
+                </div>
+                <div style="flex: 1 1 260px; padding: 16px 20px; display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-family: 'Cutive', 'Courier New', serif; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3"><span aria-hidden="true" title="Official logo goes here" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border: 1.5px dashed #8E7B99; border-radius: 4px; background: #F4F0EC"></span>Video · YouTube</span>
+                  <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; line-height: 1.2; color: #26142E">“Foaie verde”, sung by a school choir</span>
+                  <span style="font-size: 14px; color: #5C4965">Plays from YouTube. YouTube may use cookies.</span>
+                  <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #6B5A73">Design note: the dashed square is a logo slot. The built app uses YouTube’s official, full-colour logo from its brand kit, unchanged.</p>
+                  <div style="margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                    <span style="font-size: 13px; color: #6B5A73">Added by inkwolf</span>
+                    <a href="ReportDialog.dc.html" style="margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 8px; color: #5C4965; text-decoration: none; font-size: 14px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" x2="4" y1="22" y2="15"></line></svg>Report video</a>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- Comments on this paragraph only -->
+            <sc-if value="{{p.isOpen}}" hint-placeholder-val="{{false}}">
+              <section aria-label="{{p.threadLabel}}" style="grid-column: 1 / -1; margin-top: 4px; padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px; display: flex; flex-direction: column; gap: 14px; font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.55; letter-spacing: 0; color: #26142E">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+                  <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">{{p.threadTitle}}</span>
+                  <button type="button" onClick="{{p.toggle}}" style="height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Close</button>
+                </div>
+                <sc-for list="{{p.thread}}" as="t" hint-placeholder-count="2">
+                  <div style="display: flex; gap: 12px">
+                    <span aria-hidden="true" style="{{t.avatar}}">{{t.initial}}</span>
+                    <div style="min-width: 0">
+                      <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px"><a href="Profile.dc.html" style="font-weight: 700; color: #26142E; text-decoration: none">{{t.name}}</a><span style="font-size: 13px; color: #6B5A73">{{t.when}}</span></div>
+                      <p style="margin: 2px 0 0">{{t.text}}</p>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="display: flex; gap: 8px; align-items: center">
+                  <label for="{{p.inputId}}" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Comment on this paragraph</label>
+                  <input id="{{p.inputId}}" type="text" placeholder="Comment on this paragraph" style="flex: 1; min-width: 0; height: 44px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+                  <button type="button" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Post</button>
+                </div>
+              </section>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="font-family: 'Cutive', 'Courier New', serif; margin: 40px 80px 0 0; display: flex; align-items: center; gap: 16px; font-size: 14px; font-weight: 400; color: #6B5A73; line-height: 1.3">
+        <span aria-hidden="true" style="flex: 1; height: 1px; background: #DED3E4"></span>
+        <span>End of chapter 14</span>
+        <span aria-hidden="true" style="flex: 1; height: 1px; background: #DED3E4"></span>
+      </div>
+
+      <!-- After the chapter: like, next, share, report -->
+      <div style="margin: 24px 80px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+        <button type="button" aria-pressed="{{liked}}" onClick="{{toggleLike}}" style="{{likeStyle}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="{{likeFill}}" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>{{likeLabel}}<span style="font-weight: 500">{{likeCount}}</span></button>
+        <a href="Reader.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 48px; padding: 0 14px 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; text-decoration: none; font-size: 15px; font-weight: 600">Read chapter 15<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
+        <a href="Share.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 16px; border-radius: 999px; color: #481C5F; text-decoration: none; font-size: 15px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line></svg>Share</a>
+        <a href="ReportDialog.dc.html" style="margin-left: auto; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 12px; color: #5C4965; text-decoration: none; font-size: 14px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" x2="4" y1="22" y2="15"></line></svg>Report chapter</a>
+      </div>
+    </article>
+
+    <div style="max-width: 760px; margin: 0 auto">
+      <!-- Copy notice: honest wording, never "can't be copied" -->
+      <p style="margin: 28px 0 0; display: flex; align-items: flex-start; gap: 10px; padding: 14px 18px; background: #F1EAF4; border-radius: 16px; font-size: 14px; line-height: 1.55; color: #3A2442">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#481C5F" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+        <span>On the web, right-click and copying are turned off for chapters. That makes copying harder, but it can’t stop screenshots. inkwolf keeps all the rights to this story.</span>
+      </p>
+
+      <!-- Contextual banner: after the chapter, never inside it. Picked from this page's category and tags, the same for everyone -->
+      <aside aria-label="Ad" style="margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 18px; padding: 20px 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 20px">
+        <span aria-hidden="true" style="flex: none; display: flex; align-items: flex-end; gap: 3px; height: 60px">
+          <span style="width: 12px; height: 52px; border-radius: 3px; background: #4D1B5E"></span>
+          <span style="width: 14px; height: 60px; border-radius: 3px; background: #E6C24C"></span>
+          <span style="width: 11px; height: 46px; border-radius: 3px; background: #2E4A8C"></span>
+          <span style="width: 13px; height: 56px; border-radius: 3px; background: #9A5BB8"></span>
+        </span>
+        <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">SPONSORED · [PARTNER BOOKSHOP]</span>
+            <button type="button" aria-expanded="{{whyOpen}}" onClick="{{toggleWhy}}" style="display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding: 0 4px; border: 0; background: transparent; font-family: inherit; font-size: 13px; color: #5C4965; text-decoration: underline; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>Why this ad?</button>
+          </div>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; line-height: 1.15; color: #26142E">Mystery month at [Partner bookshop]</span>
+          <span style="font-size: 15px; line-height: 1.5; color: #5C4965">New mystery books for young readers.</span>
+          <sc-if value="{{whyOpen}}" hint-placeholder-val="{{true}}">
+            <span style="font-size: 14px; line-height: 1.5; color: #26142E">This is from one of our sponsors and matches the page: Fiction, the “mystery” tag and English. It uses nothing about you, and everyone reading this chapter sees the same one.</span>
+          </sc-if>
+        </div>
+        <a href="#" style="flex: none; display: inline-flex; align-items: center; height: 44px; padding: 0 20px; box-sizing: border-box; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; text-decoration: none; font-size: 15px; font-weight: 600">See the books</a>
+      </aside>
+
+      <!-- Comments on the chapter -->
+      <section aria-labelledby="comments-h" style="margin-top: 56px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Comments</span>
+            <h2 id="comments-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">86 comments</h2>
+          </div>
+          <span style="font-size: 14px; color: #6B5A73">Newest first</span>
+        </div>
+
+        <!-- New comment -->
+        <div style="padding: 20px 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 12px">
+          <label for="new-comment" style="font-size: 15px; font-weight: 600; color: #26142E">Add a comment</label>
+          <textarea id="new-comment" rows="3" maxlength="2000" value="{{draft}}" onChange="{{setDraft}}" placeholder="What did you think of this chapter?" style="width: 100%; box-sizing: border-box; padding: 14px 18px; border: 1px solid #DED3E4; border-radius: 16px; background: #FAF8F5; font-family: inherit; font-size: 16px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+            <label style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; color: #26142E; cursor: pointer"><input type="checkbox" checked="{{spoilerTick}}" onChange="{{toggleSpoilerTick}}" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">Hide as a spoiler</label>
+            <span style="margin-left: auto; font-size: 13px; color: #6B5A73">{{draftCount}} / 2,000</span>
+            <button type="button" style="height: 44px; padding: 0 22px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Post comment</button>
+          </div>
+          <span style="font-size: 13px; color: #6B5A73">Be kind. Every report is read by a person.</span>
+        </div>
+
+        <div style="margin-top: 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 4px 24px">
+
+          <!-- Comment 1, with a reply one level deep -->
+          <article style="display: flex; gap: 14px; padding: 20px 0">
+            <span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(140deg,#2E4A8C,#7C95CF); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px">p</span>
+            <div style="flex: 1; min-width: 0">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px">
+                <a href="Profile.dc.html" style="font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">poppyverse</a>
+                <span style="font-size: 13px; color: #6B5A73">2 days ago</span>
+                <span style="font-size: 13px; font-weight: 600; color: #672786">On paragraph 4</span>
+              </div>
+              <p style="margin: 6px 0 0; font-size: 16px; line-height: 1.6; color: #26142E">“There was no fifteenth name at all.” I had to put my phone down for a minute.</p>
+              <div style="margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+                <sc-for list="{{c1.chips}}" as="r" hint-placeholder-count="3">
+                  <button type="button" class="tmc-chip" aria-pressed="{{r.pressed}}" aria-label="{{r.label}}" onClick="{{r.pick}}" style="{{r.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.d}}"></path></svg>{{r.count}}</button>
+                </sc-for>
+                <button type="button" aria-label="Add a reaction" aria-expanded="{{c1.pickerOpen}}" onClick="{{c1.togglePicker}}" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px dashed #8E7B99; border-radius: 999px; background: transparent; color: #5C4965; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button>
+                <button type="button" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; margin-left: 4px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>Reply</button>
+                <button type="button" class="tmc-chip" aria-pressed="{{c1.down}}" onClick="{{c1.toggleDown}}" style="{{c1.downStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>Downvote</button>
+                <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; margin-left: auto; border-radius: 999px; color: #6B5A73; text-decoration: none; font-size: 14px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" x2="4" y1="22" y2="15"></line></svg>Report</a>
+              </div>
+              <sc-if value="{{c1.pickerOpen}}" hint-placeholder-val="{{false}}">
+                <div role="group" aria-label="Pick a reaction" style="margin-top: 8px; display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; box-shadow: 0 12px 24px -16px rgba(38,20,46,0.35)">
+                  <sc-for list="{{c1.picker}}" as="k" hint-placeholder-count="6">
+                    <button type="button" aria-label="{{k.label}}" aria-pressed="{{k.pressed}}" onClick="{{k.pick}}" style="{{k.style}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{k.d}}"></path></svg></button>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{c1.down}}" hint-placeholder-val="{{false}}">
+                <p style="margin: 8px 0 0; font-size: 13px; color: #5C4965">Downvote sent. It’s private: nobody sees a count, not even the writer. Only moderators look at it.</p>
+              </sc-if>
+
+              <!-- Reply from the writer -->
+              <div style="margin-top: 16px; padding: 16px 0 0 18px; border-top: 1px solid #EFE8F2; display: flex; gap: 12px">
+                <span aria-hidden="true" style="flex: none; width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px">i</span>
+                <div style="flex: 1; min-width: 0">
+                  <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px">
+                    <a href="Profile.dc.html" style="font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">inkwolf</a>
+                    <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap">Writer</span>
+                    <span style="font-size: 13px; color: #6B5A73">2 days ago</span>
+                  </div>
+                  <p style="margin: 6px 0 0; font-size: 16px; line-height: 1.6; color: #26142E">That line took me four drafts. I’m glad it worked.</p>
+                  <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px">
+                    <sc-for list="{{c2.chips}}" as="r" hint-placeholder-count="1">
+                      <button type="button" class="tmc-chip" aria-pressed="{{r.pressed}}" aria-label="{{r.label}}" onClick="{{r.pick}}" style="{{r.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.d}}"></path></svg>{{r.count}}</button>
+                    </sc-for>
+                    <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; margin-left: auto; color: #6B5A73; text-decoration: none; font-size: 14px">Report</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Comment 2: marked as a spoiler -->
+          <article style="display: flex; gap: 14px; padding: 20px 0; border-top: 1px solid #EFE8F2">
+            <span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(140deg,#1F5357,#6FA7AB); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px">i</span>
+            <div style="flex: 1; min-width: 0">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px">
+                <a href="Profile.dc.html" style="font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">ilinca.r</a>
+                <span style="font-size: 13px; color: #6B5A73">2 days ago</span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap">Spoiler</span>
+              </div>
+              <sc-if value="{{spoilerHidden}}" hint-placeholder-val="{{true}}">
+                <div style="margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 16px; background: #F4F0EC">
+                  <span style="font-size: 15px; color: #5C4965">This comment talks about chapter 15.</span>
+                  <button type="button" onClick="{{showSpoiler}}" style="height: 44px; padding: 0 18px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Show spoiler</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{spoilerShown}}" hint-placeholder-val="{{false}}">
+                <p style="margin: 6px 0 0; font-size: 16px; line-height: 1.6; color: #26142E">Chapter 15 tells you who was in the lift and I did not see it coming. Read it before someone spoils it for you.</p>
+              </sc-if>
+              <div style="margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+                <sc-for list="{{c3.chips}}" as="r" hint-placeholder-count="1">
+                  <button type="button" class="tmc-chip" aria-pressed="{{r.pressed}}" aria-label="{{r.label}}" onClick="{{r.pick}}" style="{{r.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.d}}"></path></svg>{{r.count}}</button>
+                </sc-for>
+                <button type="button" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Reply</button>
+                <button type="button" class="tmc-chip" aria-pressed="{{c3.down}}" onClick="{{c3.toggleDown}}" style="{{c3.downStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>Downvote</button>
+                <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; margin-left: auto; color: #6B5A73; text-decoration: none; font-size: 14px">Report</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Comment 3 -->
+          <article style="display: flex; gap: 14px; padding: 20px 0; border-top: 1px solid #EFE8F2">
+            <span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(140deg,#8C2B3A,#D07583); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px">m</span>
+            <div style="flex: 1; min-width: 0">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px">
+                <a href="Profile.dc.html" style="font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">matei.writes</a>
+                <span style="font-size: 13px; color: #6B5A73">3 days ago</span>
+              </div>
+              <p style="margin: 6px 0 0; font-size: 16px; line-height: 1.6; color: #26142E">Mrs Dobre counts them every single week. She must have seen him. Is she in on it?</p>
+              <div style="margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+                <sc-for list="{{c4.chips}}" as="r" hint-placeholder-count="2">
+                  <button type="button" class="tmc-chip" aria-pressed="{{r.pressed}}" aria-label="{{r.label}}" onClick="{{r.pick}}" style="{{r.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{r.d}}"></path></svg>{{r.count}}</button>
+                </sc-for>
+                <button type="button" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Reply</button>
+                <button type="button" class="tmc-chip" aria-pressed="{{c4.down}}" onClick="{{c4.toggleDown}}" style="{{c4.downStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>Downvote</button>
+                <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; margin-left: auto; color: #6B5A73; text-decoration: none; font-size: 14px">Report</a>
+              </div>
+            </div>
+          </article>
+        </div>
+        <button type="button" style="margin-top: 16px; height: 44px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Show more comments</button>
+      </section>
+    </div>
+
+    <!-- Small footer -->
+    <footer style="margin-top: 72px; padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 24px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3930}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // The settings panel and the paragraph 3 comments start open so the board shows both.
+    this.state = {
+      settingsOpen: true, font: 'Inter', size: 19, spacing: 'Normal', width: 'Medium', theme: 'Light',
+      openPara: 2, liked: false, whyOpen: false, spoilerShown: false, draft: '', spoilerTick: false,
+      mine: { c1: 'heart' }, picker: null, down: {}, video: false
+    };
+  }
+
+  // A row of radio "pills" for the settings panel.
+  options(list, current, key) {
+    var self = this;
+    return list.map(function (o) {
+      var label = typeof o === 'string' ? o : o.label;
+      var on = label === current;
+      return {
+        label: label, checked: on, swatch: o.swatch || '',
+        pick: function () { var n = {}; n[key] = label; self.setState(n); },
+        // Pill system (17 Oct): a radio chip, 36 px inside a 44 px tap area; the radio dot shows the choice, so no extra check.
+        labelStyle: 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 14px; box-sizing: border-box; line-height: 1; white-space: nowrap; border-radius: 999px; cursor: pointer; font-size: 14px; color: #481C5F; '
+          + (on ? 'border: 1px solid #481C5F; background: #F1EAF4; font-weight: 700;' : 'border: 1px solid #8E7B99; background: #FFFFFF; font-weight: 600;')
+      };
+    });
+  }
+
+  // Reactions: a fixed set of six, drawn as icons. Each has a text name for screen readers.
+  // One reaction per person per comment; picking it again removes it.
+  reactions(id, base) {
+    var self = this, st = this.state;
+    var circle = 'M22 12a10 10 0 1 1-20 0 10 10 0 1 1 20 0';
+    var eyes = 'M9 9h.01M15 9h.01';
+    var kinds = [
+      { key: 'heart', name: 'Heart', d: 'M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z' },
+      { key: 'fire', name: 'Fire', d: 'M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5Z' },
+      { key: 'laugh', name: 'Laugh', d: circle + 'M18 13a6 6 0 0 1-6 5 6 6 0 0 1-6-5h12Z' + eyes },
+      { key: 'wow', name: 'Wow', d: circle + 'M14 15.5a2 2 0 1 1-4 0 2 2 0 1 1 4 0' + eyes },
+      { key: 'sad', name: 'Sad', d: circle + 'M16 16s-1.5-2-4-2-4 2-4 2' + eyes },
+      { key: 'star', name: 'Star', d: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z' }
+    ];
+    var mine = st.mine[id];
+    var pick = function (key) {
+      var n = Object.assign({}, st.mine);
+      if (n[id] === key) delete n[id]; else n[id] = key;
+      self.setState({ mine: n, picker: null });
+    };
+    var chips = [];
+    kinds.forEach(function (k) {
+      var count = (base[k.key] || 0) + (mine === k.key ? 1 : 0);
+      if (count < 1) return;
+      var on = mine === k.key;
+      chips.push({
+        d: k.d, count: String(count), pressed: on,
+        label: k.name + ', ' + count + (on ? ', your reaction' : ''),
+        pick: function () { pick(k.key); },
+        style: 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+      + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: #FFFFFF; color: #481C5F; border: 1px solid #8E7B99;')
+      });
+    });
+    var picker = kinds.map(function (k) {
+      var on = mine === k.key;
+      return {
+        d: k.d, label: k.name, pressed: on, pick: function () { pick(k.key); },
+        style: 'width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; cursor: pointer; '
+          + (on ? 'background: #481C5F; color: #FFFFFF;' : 'background: transparent; color: #481C5F;')
+      };
+    });
+    var down = !!st.down[id];
+    return {
+      chips: chips, picker: picker,
+      pickerOpen: st.picker === id,
+      togglePicker: function () { self.setState({ picker: st.picker === id ? null : id }); },
+      down: down,
+      toggleDown: function () { var n = Object.assign({}, st.down); n[id] = !down; self.setState({ down: n }); },
+      downStyle: 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+      + (down ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: #FFFFFF; color: #481C5F; border: 1px solid #8E7B99;')
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Font choices.
+    var fontList = [
+      { label: 'Inter', family: "'Inter', system-ui, sans-serif", spacing: '0', size: '15px' },
+      { label: 'Serif', family: "Georgia, 'Times New Roman', serif", spacing: '0', size: '16px' },
+      { label: 'Dyslexia-friendly', family: "Verdana, 'Inter', system-ui, sans-serif", spacing: '0.04em', size: '15px' }
+    ];
+    // In the downloaded apps: any font installed on the device. A short example list.
+    var appFontList = [
+      { label: 'Georgia', family: "Georgia, serif", spacing: '0', size: '15px' },
+      { label: 'Segoe UI', family: "'Segoe UI', system-ui, sans-serif", spacing: '0', size: '15px' },
+      { label: 'Verdana', family: "Verdana, sans-serif", spacing: '0', size: '14px' },
+      { label: 'Atkinson Hyperlegible', family: "'Atkinson Hyperlegible', system-ui, sans-serif", spacing: '0', size: '15px' },
+      { label: 'OpenDyslexic', family: "'OpenDyslexic', Verdana, sans-serif", spacing: '0.02em', size: '14px' }
+    ];
+    var current = fontList[0];
+    fontList.concat(appFontList).forEach(function (f) { if (f.label === st.font) current = f; });
+    var appFonts = appFontList.map(function (f) {
+      var on = f.label === st.font;
+      return {
+        label: f.label, checked: on,
+        pick: function () { self.setState({ font: f.label }); },
+        labelStyle: 'display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; cursor: pointer; color: #26142E; font-family: ' + f.family + '; font-size: ' + f.size + '; letter-spacing: ' + f.spacing + '; '
+          + (on ? 'border: 1px solid #481C5F; background: #F1EAF4; font-weight: 600;' : 'border: 1px solid #8E7B99; background: #FFFFFF;')
+      };
+    });
+    var fonts = fontList.map(function (f) {
+      var on = f.label === st.font;
+      return {
+        label: f.label, checked: on,
+        pick: function () { self.setState({ font: f.label }); },
+        labelStyle: 'display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; cursor: pointer; color: #26142E; font-family: ' + f.family + '; font-size: ' + f.size + '; letter-spacing: ' + f.spacing + '; '
+          + (on ? 'border: 1px solid #481C5F; background: #F1EAF4; font-weight: 600;' : 'border: 1px solid #8E7B99; background: #FFFFFF;')
+      };
+    });
+
+    var size = Math.min(28, Math.max(14, Number(st.size) || 19));
+    var lineHeights = { Compact: 1.5, Normal: 1.7, Wide: 2 };
+    var widths = { Narrow: 560, Medium: 680, Wide: 780 };
+    var themes = {
+      Light: { ink: '#26142E', bg: 'transparent', pad: '0' },
+      Sepia: { ink: '#3B2A1A', bg: '#F3E7D3', pad: '32px 24px 32px 32px' },
+      Night: { ink: '#F4F0EC', bg: '#1E0F24', pad: '32px 24px 32px 32px' }
+    };
+    var lh = lineHeights[st.spacing] || 1.7;
+    var w = widths[st.width] || 680;
+    var th = themes[st.theme] || themes.Light;
+
+    var proseStyle = 'font-family: ' + current.family + '; font-size: ' + size + 'px; line-height: ' + lh + '; letter-spacing: ' + current.spacing + '; color: ' + th.ink + '; background: ' + th.bg + '; padding: ' + th.pad + '; border-radius: 24px;';
+    var articleStyle = 'max-width: ' + (w + 80) + 'px; margin: 0 auto; animation: tmcRise 0.5s 0.05s ease-out both';
+
+    // The chapter text, one paragraph per entry, with the comments on each paragraph.
+    var av = function (a, b) { return 'flex: none; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(140deg,' + a + ',' + b + '); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 700; font-size: 13px;'; };
+    var paraData = [
+      { n: 8, text: 'Mrs Dobre kept the register in a green folder in the cupboard by the lift, next to the spare tuning fork and a tin of throat sweets. At 18:10 she went up to the ticket office to make a phone call, and Mara opened the cupboard.',
+        thread: [{ name: 'corbu', initial: 'c', when: '3 days ago', text: 'the tin of throat sweets lol, our choir teacher has the exact same one', avatar: av('#16233A', '#33507A') }] },
+      { n: 0, text: '“Two minutes,” Teo said. He stood in the doorway, where he could see the lift. In the big hall behind them, the others were singing the first eight bars of ‘Foaie verde’ for the fourth time.', thread: [] },
+      { n: 31, text: 'Mara ran her finger down the page for each Thursday. Corina, Teo, Bianca, the two Stan brothers, herself. Fourteen names every week, all in Mrs Dobre’s square handwriting, all ticked. She checked September again, then October, then the week of the power cut when only nine of them came.',
+        thread: [
+          { name: 'ilinca.r', initial: 'i', when: '2 days ago', text: 'the week of the power cut when only nine came. this is why it feels so real', avatar: av('#1F5357', '#6FA7AB') },
+          { name: 'geo.andrei', initial: 'g', when: 'yesterday', text: 'so the register has never had a 15th name. not even once??', avatar: av('#7A5C12', '#C9A24A') }
+        ] },
+      { n: 46, text: 'There was no Ilie. There was no fifteenth name at all.',
+        thread: [{ name: 'poppyverse', initial: 'p', when: '2 days ago', text: 'WAIT he’s not in the register?', avatar: av('#2E4A8C', '#7C95CF') }] },
+      { n: 12, text: '“Maybe she forgot to write him down,” Teo said. He was whispering, and Teo never whispers.',
+        thread: [{ name: 'Ana Radu', initial: 'A', when: '2 days ago', text: '“Teo never whispers” shows how scared he is without saying scared. Stealing this.', avatar: av('#2F6B4F', '#7DB596') }] },
+      { n: 25, text: '“She doesn’t forget,” Mara said. “She counts us the whole way down. Fifteen, every Thursday since October. I’ve watched her do it.”',
+        thread: [
+          { name: 'matei.writes', initial: 'm', when: '3 days ago', text: 'she counts them in the lift, that’s from chapter 1!!', avatar: av('#8C2B3A', '#D07583') },
+          { name: 'corbu', initial: 'c', when: '2 days ago', text: 'so she counts 15 and writes down 14? Mrs Dobre knows something', avatar: av('#16233A', '#33507A') }
+        ] },
+      { n: 9, text: 'Mara took a photo of the September page and the October page with her phone. Her hands were shaking, so she took each one twice.',
+        thread: [{ name: 'ilinca.r', initial: 'i', when: '2 days ago', text: 'taking every photo twice is exactly what I’d do', avatar: av('#1F5357', '#6FA7AB') }] },
+      { n: 18, text: 'Above them the lift groaned on its cable. Somebody was coming down, and the register said nobody else was expected.',
+        thread: [{ name: 'geo.andrei', initial: 'g', when: 'yesterday', text: 'a cliffhanger with one chapter left. here we go', avatar: av('#7A5C12', '#C9A24A') }] }
+    ];
+    var paras = paraData.map(function (p, i) {
+      var open = st.openPara === i;
+      return {
+        text: p.text, count: String(p.n), hasCount: p.n > 0, noCount: p.n === 0, isOpen: open,
+        hasVideo: i === 1, hasPicture: i === 5,
+        label: p.n + ' comments on this paragraph',
+        threadLabel: 'Comments on paragraph ' + (i + 1),
+        threadTitle: p.n > 0 ? p.n + ' comments on this paragraph' : 'No comments on this paragraph yet',
+        thread: p.thread, inputId: 'para-comment-' + (i + 1),
+        toggle: function () { self.setState({ openPara: open ? -1 : i }); },
+        rowStyle: 'display: grid; grid-template-columns: minmax(0, 1fr) 64px; gap: 16px; align-items: start;' + (i > 0 ? ' margin-top: 24px;' : ''),
+        markerStyle: 'display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 44px; min-width: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 999px; font-family: \'Inter\', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0; line-height: 1; cursor: pointer; '
+          + (open ? 'border: 1px solid #2A0E33; background: #2A0E33; color: #FBF7EC;' : (p.n > 0 ? 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;' : 'border: 1px dashed #8E7B99; background: transparent; color: #5C4965;'))
+      };
+    });
+
+    var settingsBtnStyle = 'display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+      + (st.settingsOpen ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+
+    var liked = !!st.liked;
+    var draftLen = String(st.draft || '').length;
+
+    return {
+      settingsOpen: !!st.settingsOpen, settingsBtnStyle: settingsBtnStyle,
+      toggleSettings: function () { self.setState({ settingsOpen: !st.settingsOpen }); },
+      closeSettings: function () { self.setState({ settingsOpen: false }); },
+      fonts: fonts, appFonts: appFonts,
+      videoIdle: !st.video, videoPlaying: !!st.video,
+      playVideo: function () { self.setState({ video: true }); },
+      stopVideo: function () { self.setState({ video: false }); },
+      size: size, sizeLabel: size + ' px',
+      setSize: function (e) { var v = parseInt(e && e.target ? e.target.value : '', 10); if (!isNaN(v)) self.setState({ size: v }); },
+      spacings: this.options(['Compact', 'Normal', 'Wide'], st.spacing, 'spacing'),
+      widths: this.options(['Narrow', 'Medium', 'Wide'], st.width, 'width'),
+      themes: this.options([
+        { label: 'Light', swatch: 'width: 14px; height: 14px; border-radius: 50%; background: #FAF8F5; border: 1px solid #B9A9C2;' },
+        { label: 'Sepia', swatch: 'width: 14px; height: 14px; border-radius: 50%; background: #F3E7D3; border: 1px solid #B9A9C2;' },
+        { label: 'Night', swatch: 'width: 14px; height: 14px; border-radius: 50%; background: #1E0F24; border: 1px solid #1E0F24;' }
+      ], st.theme, 'theme'),
+      articleStyle: articleStyle, proseStyle: proseStyle, paras: paras,
+      liked: liked, likeFill: liked ? 'currentColor' : 'none',
+      likeLabel: liked ? 'Liked' : 'Like this chapter', likeCount: String(212 + (liked ? 1 : 0)),
+      toggleLike: function () { self.setState({ liked: !liked }); },
+      likeStyle: 'display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+        + (liked ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #672786; background: #FFFFFF; color: #672786;'),
+      whyOpen: !!st.whyOpen, toggleWhy: function () { self.setState({ whyOpen: !st.whyOpen }); },
+      spoilerHidden: !st.spoilerShown, spoilerShown: !!st.spoilerShown,
+      showSpoiler: function () { self.setState({ spoilerShown: true }); },
+      draft: st.draft, draftCount: draftLen.toLocaleString('en-GB'),
+      setDraft: function (e) { self.setState({ draft: e && e.target ? e.target.value.slice(0, 2000) : '' }); },
+      spoilerTick: !!st.spoilerTick, toggleSpoilerTick: function () { self.setState({ spoilerTick: !st.spoilerTick }); },
+      c1: this.reactions('c1', { heart: 23, fire: 9, sad: 6 }),
+      c2: this.reactions('c2', { heart: 14 }),
+      c3: this.reactions('c3', { wow: 7 }),
+      c4: this.reactions('c4', { laugh: 3, wow: 11 })
+    };
+  }
+}
+</script>
+</body>
+</html>

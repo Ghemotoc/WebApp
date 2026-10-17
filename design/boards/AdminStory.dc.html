@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: story</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+@media (max-width: 960px){.tmc-sticky{position: static !important}}
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-starry{background-color:#2A0E33;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}.tmc-tap{position:relative}.tmc-tap::before{content:"";position:absolute;left:0;right:0;top:-6px;bottom:-6px}.tmc-tap:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the other staff screens -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Header: the story and its owner -->
+    <header style="padding: 32px 0 24px; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s ease-out both">
+      <a href="AdminStories.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 14px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>Back to all stories</a>
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px 28px">
+        <span aria-hidden="true" class="tmc-cv tmc-cv-starry" style="flex: none; width: 96px; height: 154px; border-radius: 10px; box-shadow: 0 1px 2px rgba(38,20,46,0.2), 0 12px 24px -16px rgba(38,20,46,0.5)"></span>
+        <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+          <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · stories · story</div>
+          <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">The Salt Mine Choir</h1>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 13px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Fiction · English</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">On the web and in the app</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">15 chapters · ongoing</span>
+            <a href="#moderation" class="tmc-tap" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 32px; padding: 0 12px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #A07C14; font-size: 13px; font-weight: 700; line-height: 1; white-space: nowrap; text-decoration: none">1 open report</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Owner card: handle, user ID, age group, account created -->
+      <section aria-labelledby="owner-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 20px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px">
+        <div style="display: flex; align-items: center; gap: 14px; min-width: 0">
+          <span aria-hidden="true" style="flex: none; width: 48px; height: 48px; border-radius: 50%; background: #4D1B5E; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">IW</span>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Owner</span>
+            <h2 id="owner-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.2; color: #26142E">@inkwolf</h2>
+          </div>
+        </div>
+        <dl style="flex: 1 1 520px; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 24px; font-size: 14px; line-height: 1.45">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <dt style="font-size: 13px; color: #6B5A73">User ID</dt>
+            <dd style="margin: 0; display: flex; align-items: center; gap: 2px; flex-wrap: wrap"><code style="font-size: 14px; color: #26142E">usr_7f3c…a91e</code><button type="button" aria-label="Copy the user ID of @inkwolf" onClick="{{copyId}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copyLabel}}</button></dd>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <dt style="font-size: 13px; color: #6B5A73">Age group</dt>
+            <dd style="margin: 0; color: #26142E; font-weight: 600">16 to 17</dd>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <dt style="font-size: 13px; color: #6B5A73">Account created</dt>
+            <dd style="margin: 0; color: #26142E">2 Oct 2026</dd>
+          </div>
+        </dl>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 18px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open @inkwolf in Users</a>
+      </section>
+
+      <!-- Staff edit policy: decided 16 Oct 2026 (Q14) -->
+      <div role="note" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 16px; padding: 16px 20px; border-radius: 20px; background: #F1EAF4; border: 1px solid #672786">
+        <span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg></span>
+        <div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 4px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #481C5F; line-height: 1.3">What staff can change · decided</span>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #26142E">Staff can hide or restrict a story, change its settings and details (rating, category, tags, status, where it can be read) and remove unlawful parts or someone’s personal data. <b>Staff never edit a writer’s words</b>, not even when the writer asks: only the writer edits their own text.</p>
+        </div>
+      </div>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+
+      <!-- On this page: jump links to each section -->
+      <nav aria-label="Sections of this story" class="tmc-sticky" style="flex: 1 1 220px; max-width: 100%; position: sticky; top: 16px; padding: 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px; display: flex; flex-direction: column; gap: 2px; box-sizing: border-box">
+        <span style="font-family: 'Cutive', 'Courier New', serif; padding: 0 10px 6px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">On this page</span>
+        <a href="#overview" style="display: flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 12px; background: #F1EAF4; color: #481C5F; font-size: 15px; font-weight: 700; text-decoration: none">Overview and settings</a>
+        <a href="#chapters" style="display: flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 12px; color: #26142E; font-size: 15px; text-decoration: none">Chapters</a>
+        <a href="#edit" style="display: flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 12px; color: #26142E; font-size: 15px; text-decoration: none">Remove a part</a>
+        <a href="#history" style="display: flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 12px; color: #26142E; font-size: 15px; text-decoration: none">Version history</a>
+        <a href="#moderation" style="display: flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 12px; color: #26142E; font-size: 15px; text-decoration: none">Moderation history</a>
+        <a href="#export" style="display: flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: 12px; color: #26142E; font-size: 15px; text-decoration: none">Export</a>
+        <p style="margin: 8px 10px 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Every change needs a reason. The writer is told what changed and why.</p>
+      </nav>
+
+      <div style="flex: 999 1 720px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+
+        <!-- 1. Overview and settings -->
+        <section id="overview" aria-labelledby="ov-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Overview and settings</span>
+            <h2 id="ov-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Story settings</h2>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">The same settings the writer sees. Change only what you need to, and say why below.</p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px 24px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="s-title" style="font-size: 14px; font-weight: 600; color: #26142E">Title</label>
+              <input id="s-title" type="text" value="The Salt Mine Choir" readonly aria-describedby="s-title-help" style="height: 48px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 16px; color: #26142E">
+              <span id="s-title-help" style="font-size: 13px; line-height: 1.45; color: #6B5A73">Only the writer can change the title.</span>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" onChange="{{mark.title}}" style="width: 20px; height: 20px; margin: 0; accent-color: #481C5F">Hide the title on public screens until the writer changes it</label>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="s-cat" style="font-size: 14px; font-weight: 600; color: #26142E">Category</label>
+                <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="s-cat" onChange="{{mark.category}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option selected>Fiction</option><option>Poetry</option><option>Essays</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="s-lang" style="font-size: 14px; font-weight: 600; color: #26142E">Language</label>
+                <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="s-lang" onChange="{{mark.language}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option selected>English</option><option>Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+              </div>
+            </div>
+            <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px">
+              <label for="s-blurb" style="font-size: 14px; font-weight: 600; color: #26142E">Blurb</label>
+              <textarea id="s-blurb" rows="3" readonly aria-describedby="s-blurb-help" style="display: block; width: 100%; box-sizing: border-box; padding: 12px 18px; border: 1px solid #DED3E4; border-radius: 20px; background: #FAF8F5; font-family: inherit; font-size: 16px; line-height: 1.55; color: #26142E; resize: vertical">Every Thursday, 14 teenagers take the lift 200 metres down into an old salt mine to rehearse. Their choir director counts them on the way down. One night she counts 15, and nobody can say where the new boy came from, least of all the register.</textarea>
+              <span id="s-blurb-help" style="font-size: 13px; line-height: 1.45; color: #6B5A73">The writer’s words, read-only. If the blurb holds an unlawful part or someone’s personal data, remove it with the tool in Remove a part.</span>
+            </div>
+
+            <!-- Tags -->
+            <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px">
+              <span id="tags-label" style="font-size: 14px; font-weight: 600; color: #26142E">Tags</span>
+              <div role="group" aria-labelledby="tags-label" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                <sc-for list="{{tags}}" as="t" hint-placeholder-count="5">
+                  <span style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; height: 44px; padding: 0 4px 0 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; font-size: 14px; font-weight: 600; line-height: 1; color: #481C5F">{{t.name}}<button type="button" aria-label="{{t.aria}}" onClick="{{t.remove}}" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 999px; background: transparent; color: #5C4965; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+                </sc-for>
+                <label for="s-tag" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Add a tag</label>
+                <input id="s-tag" type="text" placeholder="Add a tag" style="width: 160px; height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px dashed #B9A9C2; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+              </div>
+            </div>
+
+            <!-- Visibility -->
+            <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+              <legend style="padding: 0 0 8px; font-size: 14px; font-weight: 600; color: #26142E">Visibility</legend>
+              <sc-for list="{{visOptions}}" as="o" hint-placeholder-count="3">
+                <label style="{{o.style}}"><input type="radio" name="vis" checked="{{o.on}}" onChange="{{o.pick}}" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #481C5F"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; color: #26142E">{{o.label}}</span><span style="font-size: 13px; line-height: 1.45; color: #6B5A73">{{o.sub}}</span></span></label>
+              </sc-for>
+            </fieldset>
+
+            <!-- Where it can be read -->
+            <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+              <legend style="padding: 0 0 8px; font-size: 14px; font-weight: 600; color: #26142E">Where it can be read</legend>
+              <sc-for list="{{readOptions}}" as="o" hint-placeholder-count="2">
+                <label style="{{o.style}}"><input type="radio" name="readon" checked="{{o.on}}" onChange="{{o.pick}}" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #481C5F"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; color: #26142E">{{o.label}}</span><span style="font-size: 13px; line-height: 1.45; color: #6B5A73">{{o.sub}}</span></span></label>
+              </sc-for>
+            </fieldset>
+
+            <!-- Rating and comments (ratings replace the Mature label, 16 Oct 2026) -->
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 8px 0; border-bottom: 1px solid #EFE8F2">
+                <span style="display: flex; flex-direction: column; gap: 2px"><label for="s-rating" style="font-size: 15px; font-weight: 600; color: #26142E">Rating</label><span style="font-size: 13px; line-height: 1.45; color: #6B5A73">Hidden from anyone younger. 16+ and 18+ show no teaser on shared links.</span></span>
+                <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="s-rating" onChange="{{mark.rating}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option>All ages</option><option selected>13+</option><option>16+</option><option>18+</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 0">
+                <span style="display: flex; flex-direction: column; gap: 2px"><span id="comments-label" style="font-size: 15px; font-weight: 600; color: #26142E">Comments</span><span style="font-size: 13px; line-height: 1.45; color: #6B5A73">{{sw.comments.sub}}</span></span>
+                <button type="button" role="switch" aria-checked="{{sw.comments.on}}" aria-labelledby="comments-label" onClick="{{sw.comments.toggle}}" style="flex: none; width: 64px; height: 44px; padding: 0; border: 0; background: transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="{{sw.comments.track}}"><span style="{{sw.comments.knob}}"></span></span></button>
+              </div>
+            </div>
+
+            <!-- Cover -->
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-size: 14px; font-weight: 600; color: #26142E">Cover</span>
+              <div style="display: flex; align-items: center; gap: 16px">
+                <span aria-hidden="true" class="tmc-cv tmc-cv-starry" style="flex: none; width: 56px; height: 90px; border-radius: 8px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                <div style="display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-size: 14px; color: #5C4965">Drawn cover: Starry night. If a cover breaks the rules, hide it and the automatic cover shows instead.</span>
+                  <button type="button" onClick="{{mark.cover}}" style="align-self: flex-start; display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Hide this cover</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p style="margin: 0; padding: 12px 16px; border-radius: 12px; background: #F4F0EC; font-size: 14px; line-height: 1.5; color: #26142E">To remove the whole story for breaking our rules, open a moderation case instead. That way the writer gets a statement of reasons and can appeal.</p>
+
+          <!-- Reason and save: required for every change -->
+          <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+            <span style="font-size: 14px; color: #26142E">Changed: <b>{{ov.changed}}</b></span>
+            <label for="ov-reason" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Reason for the change (required)</label>
+            <textarea id="ov-reason" rows="3" onInput="{{ov.onReason}}" placeholder="What you changed and why. The writer reads this." aria-describedby="ov-help" style="display: block; width: 100%; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+            <span id="ov-help" style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v12H5.2L4 17.2z"></path></svg>The writer will be told what changed and why.</span>
+            <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px">
+              <button type="button" onClick="{{ov.reset}}" style="height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Discard changes</button>
+              <button type="button" disabled="{{ov.disabled}}" onClick="{{ov.save}}" style="{{ov.style}}">Save and tell the writer</button>
+            </div>
+            <sc-if value="{{ov.done}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span><b>Saved.</b> @inkwolf has been told what changed and why. Logged in the audit log and the version history.</span></p>
+            </sc-if>
+          </div>
+        </section>
+
+        <!-- 2. Chapters -->
+        <section id="chapters" aria-labelledby="ch-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 24px 0 8px; overflow: hidden; scroll-margin-top: 16px">
+          <div style="padding: 0 24px 12px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapters</span>
+              <h2 id="ch-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">15 chapters</h2>
+            </div>
+            <span style="font-size: 13px; color: #6B5A73">Opening a draft chapter is logged.</span>
+          </div>
+          <div style="overflow-x: auto; position: relative">
+            <table style="width: 100%; border-collapse: collapse; min-width: 640px">
+              <thead>
+                <tr>
+                  <th scope="col" style="padding: 12px 12px 12px 24px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">NO.</th>
+                  <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4">TITLE</th>
+                  <th scope="col" style="padding: 12px; text-align: right; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4">WORDS</th>
+                  <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4">STATUS</th>
+                  <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4">UPDATED</th>
+                  <th scope="col" style="padding: 12px 24px 12px 12px; border-bottom: 1px solid #DED3E4"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 10px 12px 10px 24px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #6B5A73">1</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 15px; font-weight: 600; color: #26142E">Fifteen</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; text-align: right">1,180</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; white-space: nowrap">2 Oct 2026</td>
+                  <td style="padding: 6px 24px 6px 12px; border-bottom: 1px solid #EFE8F2; text-align: right; white-space: nowrap"><a href="Reader.dc.html" aria-label="Open chapter 1, Fifteen" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open</a> <a href="#edit" aria-label="Remove a part of chapter 1, Fifteen" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Remove a part</a></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 12px 10px 24px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #6B5A73">2</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 15px; font-weight: 600; color: #26142E">The grey jumper</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; text-align: right">1,420</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; white-space: nowrap">3 Oct 2026</td>
+                  <td style="padding: 6px 24px 6px 12px; border-bottom: 1px solid #EFE8F2; text-align: right; white-space: nowrap"><a href="Reader.dc.html" aria-label="Open chapter 2, The grey jumper" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open</a> <a href="#edit" aria-label="Remove a part of chapter 2, The grey jumper" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Remove a part</a></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 12px 10px 24px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #6B5A73">3</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 15px; font-weight: 600; color: #26142E">Six seconds of echo</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; text-align: right">1,305</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; white-space: nowrap">4 Oct 2026</td>
+                  <td style="padding: 6px 24px 6px 12px; border-bottom: 1px solid #EFE8F2; text-align: right; white-space: nowrap"><a href="Reader.dc.html" aria-label="Open chapter 3, Six seconds of echo" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open</a> <a href="#edit" aria-label="Remove a part of chapter 3, Six seconds of echo" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Remove a part</a></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 12px 10px 24px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #6B5A73">13</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 15px; font-weight: 600; color: #26142E">The power cut</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; text-align: right">1,610</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; white-space: nowrap">13 Oct 2026</td>
+                  <td style="padding: 6px 24px 6px 12px; border-bottom: 1px solid #EFE8F2; text-align: right; white-space: nowrap"><a href="Reader.dc.html" aria-label="Open chapter 13, The power cut" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open</a> <a href="#edit" aria-label="Remove a part of chapter 13, The power cut" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Remove a part</a></td>
+                </tr>
+                <tr style="background: #F1EAF4">
+                  <td style="padding: 10px 12px 10px 24px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #6B5A73">14</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 15px; font-weight: 600; color: #26142E">The register</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; text-align: right">1,275</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; white-space: nowrap">14 Oct 2026</td>
+                  <td style="padding: 6px 24px 6px 12px; border-bottom: 1px solid #EFE8F2; text-align: right; white-space: nowrap"><a href="Reader.dc.html" aria-label="Open chapter 14, The register" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open</a> <a href="#edit" aria-label="Remove a part of chapter 14, The register" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Remove a part</a></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 12px 10px 24px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #6B5A73">15</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 15px; font-weight: 600; color: #26142E">Somebody coming down</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; text-align: right">1,490</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #EFE8F2; font-size: 14px; color: #26142E; white-space: nowrap">16 Oct 2026</td>
+                  <td style="padding: 6px 24px 6px 12px; border-bottom: 1px solid #EFE8F2; text-align: right; white-space: nowrap"><a href="Reader.dc.html" aria-label="Open chapter 15, Somebody coming down" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 999px; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open</a> <a href="#edit" aria-label="Remove a part of chapter 15, Somebody coming down" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Remove a part</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="padding: 12px 24px 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px">
+            <span style="font-size: 13px; color: #6B5A73">Showing 6 of 15 chapters.</span>
+            <button type="button" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Show all 15 chapters</button>
+          </div>
+        </section>
+
+        <!-- 3. Remove a part: staff never type in the text (Q14) -->
+        <section id="edit" aria-labelledby="ed-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 16px">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Remove a part · staff mode</span>
+              <h2 id="ed-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Chapter 14: The register</h2>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="ed-chapter" style="font-size: 13px; font-weight: 600; color: #26142E">Chapter</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="ed-chapter" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E"><option>1. Fifteen</option><option>2. The grey jumper</option><option>13. The power cut</option><option selected>14. The register</option><option>15. Somebody coming down</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #FBF3DA; color: #815E18">
+            <span style="flex: none; display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg></span>
+            <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #26142E"><b>Staff never edit a writer’s words.</b> You can only cut out an unlawful part or someone’s personal data. It is replaced by “[Removed by the moderation team]” and the rest stays exactly as the writer wrote it. Writing and formatting tools are off.</p>
+          </div>
+
+          <!-- Staff toolbar -->
+          <div role="toolbar" aria-label="Staff removal tools" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5">
+            <button type="button" onClick="{{ed.redact}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid #481C5F; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="6" rx="1"></rect></svg>Remove personal data</button>
+            <button type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path></svg>Remove unlawful part</button>
+            <button type="button" onClick="{{ed.undo}}" style="display: inline-flex; justify-content: center; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h11a5 5 0 0 1 0 10h-3"></path></svg>Undo</button>
+          </div>
+
+          <!-- The chapter text; staff select a passage and use a tool above -->
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ed-text" style="font-size: 14px; font-weight: 600; color: #26142E">Chapter text</label>
+            <textarea id="ed-text" rows="14" readonly style="display: block; width: 100%; box-sizing: border-box; padding: 18px 20px; border: 1px solid #DED3E4; border-radius: 20px; background: #FFFFFF; font-family: Georgia, 'Times New Roman', serif; font-size: 17px; line-height: 1.7; color: #26142E; resize: vertical">Mara ran her finger down the page for each Thursday. Corina, Teo, Bianca, the two Stan brothers, herself. Fourteen names every week, all in Mrs Dobre’s square handwriting, all ticked. She checked September again, then October, then the week of the power cut when only nine of them came.
+
+There was no Ilie. There was no fifteenth name at all.
+
+“Maybe she forgot to write him down,” Teo said. He was whispering, and Teo never whispers.
+
+Above them the lift groaned on its cable. Somebody was coming down, and the register said nobody else was expected.
+
+Author’s note: this is based on my real choir! [Removed by the moderation team]</textarea>
+            <span style="font-size: 13px; color: #6B5A73">Select a passage, then pick a tool. You can’t type in the text.</span>
+          </div>
+
+          <!-- Pending changes: what will differ from the writer’s version -->
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Changes waiting to be saved</span>
+            <sc-if value="{{ed.pending}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; border: 1px solid #DED3E4; background: #FAF8F5; font-size: 14px; line-height: 1.55">
+                <span style="color: #8C2B3A"><b aria-hidden="true">−</b><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Removed:</span> We rehearse at [school name and street] every Thursday at 18:00, come and listen!</span>
+                <span style="color: #2F6B4F"><b aria-hidden="true">+</b><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Shown instead:</span> [Removed by the moderation team]</span>
+                <span style="font-size: 13px; color: #6B5A73">In the author’s note after the chapter. The story text is not changed.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ed.none}}" hint-placeholder-val="{{false}}">
+              <p style="margin: 0; font-size: 14px; color: #5C4965">No changes yet. Select a passage and pick a tool.</p>
+            </sc-if>
+          </div>
+
+          <div style="padding-top: 18px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+            <label for="ed-reason" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Reason for the change (required)</label>
+            <textarea id="ed-reason" rows="3" onInput="{{ed.onReason}}" aria-describedby="ed-help" style="display: block; width: 100%; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.5; color: #26142E; resize: vertical">The author’s note gives your school’s address and when you are there every week. You are under 18, so we took it out to keep you safe. The story itself is unchanged.</textarea>
+            <span id="ed-help" style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v12H5.2L4 17.2z"></path></svg>The writer will be told what changed and why.</span>
+            <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px">
+              <button type="button" style="height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Ask the writer to change it</button>
+              <button type="button" disabled="{{ed.disabled}}" onClick="{{ed.save}}" style="{{ed.style}}">Save and tell the writer</button>
+            </div>
+            <sc-if value="{{ed.done}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span><b>Saved.</b> Chapter 14 updated. @inkwolf has been told what changed and why. The old version stays in the version history.</span></p>
+            </sc-if>
+          </div>
+        </section>
+
+        <!-- 4. Version history -->
+        <section id="history" aria-labelledby="vh-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 16px">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Version history</span>
+              <h2 id="vh-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Who changed what, and why</h2>
+            </div>
+            <span style="font-size: 13px; color: #6B5A73">Newest first. Restoring makes a new version; nothing is deleted.</span>
+          </div>
+          <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+            <sc-for list="{{versions}}" as="v" hint-placeholder-count="4">
+              <li style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px 16px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+                <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+                  <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-size: 13px; color: #6B5A73">{{v.when}}</span><span style="{{v.whoStyle}}">{{v.who}}</span></span>
+                  <span style="font-size: 15px; font-weight: 600; color: #26142E">{{v.what}}</span>
+                  <span style="font-size: 14px; line-height: 1.5; color: #5C4965">{{v.why}}</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <button type="button" aria-pressed="{{v.comparing}}" aria-label="{{v.compareAria}}" onClick="{{v.compare}}" class="tmc-chip" style="{{v.compareStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{v.compareCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Compare</button>
+                  <button type="button" disabled="{{v.current}}" aria-label="{{v.restoreAria}}" onClick="{{v.restore}}" style="height: 44px; padding: 0 16px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{v.restoreLabel}}</button>
+                </div>
+              </li>
+            </sc-for>
+          </ol>
+
+          <!-- Compare: the chosen version next to the current one -->
+          <sc-if value="{{cmp.show}}" hint-placeholder-val="{{true}}">
+            <div style="padding: 18px; border-radius: 20px; background: #FAF8F5; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 12px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">{{cmp.title}}</span>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px">
+                <div style="padding: 14px 16px; border-radius: 16px; background: #F6E9EB; display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-size: 13px; font-weight: 700; color: #8C2B3A">Before</span>
+                  <span style="font-size: 15px; line-height: 1.55; color: #26142E">{{cmp.before}}</span>
+                </div>
+                <div style="padding: 14px 16px; border-radius: 16px; background: #E8F1EC; display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-size: 13px; font-weight: 700; color: #2F6B4F">After</span>
+                  <span style="font-size: 15px; line-height: 1.55; color: #26142E">{{cmp.after}}</span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Restore: confirm with a reason -->
+          <sc-if value="{{rs.show}}" hint-placeholder-val="{{false}}">
+            <form style="margin: 0; padding: 20px; border-radius: 16px; border: 1px solid #672786; background: #FFFFFF; display: flex; flex-direction: column; gap: 12px">
+              <span style="font-size: 16px; font-weight: 700; color: #26142E">{{rs.title}}</span>
+              <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">The current version stays in the history, so you can switch back.</p>
+              <label for="rs-reason" style="font-size: 14px; font-weight: 600; color: #26142E">Reason (required)</label>
+              <textarea id="rs-reason" rows="2" onInput="{{rs.onReason}}" style="display: block; width: 100%; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+              <span style="font-size: 13px; color: #5C4965">The writer will be told what changed and why.</span>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <button type="button" disabled="{{rs.disabled}}" onClick="{{rs.confirm}}" style="{{rs.style}}">Restore this version</button>
+                <button type="button" onClick="{{rs.cancel}}" style="height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Keep the current version</button>
+              </div>
+            </form>
+          </sc-if>
+          <sc-if value="{{rs.done}}" hint-placeholder-val="{{false}}">
+            <p role="status" style="margin: 0; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><b>Restored.</b> {{rs.doneText}}</p>
+          </sc-if>
+        </section>
+
+        <!-- 5. Moderation history -->
+        <section id="moderation" aria-labelledby="mh-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Moderation history</span>
+            <h2 id="mh-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Reports and decisions</h2>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Cases about this story. Sanctions on the account are in Users.</p>
+          </div>
+          <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">
+            <li style="padding: 16px; border-radius: 16px; border: 1px solid #E6C24C; background: #FDF6DC; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px">
+              <span style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 700; color: #26142E">R-2330 · Open · reported 16 Oct 2026</span><span style="font-size: 14px; line-height: 1.5; color: #5C4965">A reader says chapter 14 is too scary for under-16s. 7-day tier, not claimed yet.</span></span>
+              <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Open in the queue</a>
+            </li>
+            <li style="padding: 16px; border-radius: 16px; border: 1px solid #EFE8F2; background: #FAF8F5; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-size: 15px; font-weight: 700; color: #26142E">R-2301 · Closed · 14 Oct 2026</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Two comments under chapter 14 removed for insults. Comments on the chapter paused for 48 hours. Decided by Andrei Mureșan. The commenters got a statement of reasons.</span>
+            </li>
+            <li style="padding: 16px; border-radius: 16px; border: 1px solid #EFE8F2; background: #FAF8F5; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-size: 15px; font-weight: 700; color: #26142E">R-2252 · Closed · 9 Oct 2026</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #5C4965">A link to this story was posted in 12 forum threads in one day. Warning on @inkwolf’s account. The story was not changed.</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- 6. Export -->
+        <section id="export" aria-labelledby="ex-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Export</span>
+            <h2 id="ex-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Download</h2>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">For a data request or a legal order. Every download goes in the audit log: who, when, which file and why.</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px; max-width: 520px">
+            <label for="ex-why" style="font-size: 14px; font-weight: 600; color: #26142E">Why are you downloading? (required)</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="ex-why" onChange="{{ex.onWhy}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <option value="">Choose a reason</option>
+              <option value="dr" selected>Data request DR-1008 from @inkwolf</option>
+              <option value="order">Order from an authority</option>
+              <option value="writer">The writer asked us for help</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px">
+            <div style="padding: 20px; border-radius: 20px; border: 1px solid #DED3E4; background: #FAF8F5; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Download this story</span>
+                <span style="font-size: 14px; line-height: 1.5; color: #5C4965">All 15 chapters with the title, blurb and chapter titles. Drafts are marked.</span>
+              </div>
+              <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 8px">
+                <legend style="padding: 0 0 8px; font-size: 14px; font-weight: 600; color: #26142E">Format</legend>
+                <sc-for list="{{ex.formats}}" as="f" hint-placeholder-count="2">
+                  <label style="{{f.style}}"><input type="radio" name="fmt" checked="{{f.on}}" onChange="{{f.pick}}" style="width: 20px; height: 20px; margin: 0; accent-color: #481C5F">{{f.label}}</label>
+                </sc-for>
+              </fieldset>
+              <button type="button" disabled="{{ex.disabled}}" onClick="{{ex.one}}" style="{{ex.style}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>{{ex.oneLabel}}</button>
+            </div>
+            <div style="padding: 20px; border-radius: 20px; border: 1px solid #DED3E4; background: #FAF8F5; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Download all of this writer’s stories</span>
+                <span style="font-size: 14px; line-height: 1.5; color: #5C4965">One .zip with one file per story, in the format you picked. Found by user ID <code>usr_7f3c…a91e</code>, so stories under an old handle are included.</span>
+              </div>
+              <span style="font-size: 14px; color: #26142E">1 story · 15 chapters</span>
+              <button type="button" disabled="{{ex.disabled}}" onClick="{{ex.all}}" style="{{ex.style2}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>Download .zip</button>
+            </div>
+          </div>
+          <sc-if value="{{ex.msg}}" hint-placeholder-val="{{false}}">
+            <p role="status" style="margin: 0; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><b>Downloading.</b> {{ex.msg}}</p>
+          </sc-if>
+
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Downloads of this story · audit log</span>
+            <sc-for list="{{ex.log}}" as="l" hint-placeholder-count="2">
+              <div style="display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr); gap: 4px 16px; padding: 12px 0; border-top: 1px solid #EFE8F2">
+                <span style="font-size: 13px; color: #6B5A73">{{l.when}}</span>
+                <span style="font-size: 14px; line-height: 1.5; color: #26142E"><b>{{l.who}}</b> · {{l.what}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":5933}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Opens with one setting changed (Comments) and no reason yet, so the board shows the reason rule.
+    // The editor opens with a personal-data removal waiting and its reason written.
+    this.state = {
+      vis: 'published', readOn: 'both', mature: false, comments: false,
+      tags: ['choir', 'mystery', 'salt mine', 'friendship', 'Romania'],
+      changed: ['Comments'], ovReason: '', ovDone: false,
+      pending: true, edReason: 'filled', edDone: false,
+      compare: 'v3', restore: null, rsReason: '', rsDone: null,
+      why: 'dr', fmt: 'docx', exMsg: null, copied: false
+    };
+  }
+
+  // Switch track and knob: the button around them is 64 by 44, so the touch target stays big.
+  trackStyle(on) {
+    return 'position: relative; display: block; width: 56px; height: 32px; border-radius: 999px; box-sizing: border-box; transition: background 0.15s; '
+      + (on ? 'background: #481C5F; border: 1px solid #481C5F;' : 'background: #F4F0EC; border: 1px solid #9F8DA8;');
+  }
+  knobStyle(on) {
+    return 'position: absolute; top: 3px; width: 24px; height: 24px; border-radius: 50%; box-shadow: 0 1px 3px rgba(38,20,46,0.3); transition: left 0.15s; '
+      + (on ? 'left: 27px; background: #E6C24C;' : 'left: 3px; background: #FFFFFF;');
+  }
+  // Radio row as a big pill; the picked one turns lilac.
+  optionStyle(on) {
+    return 'display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 10px 14px; border-radius: 16px; box-sizing: border-box; cursor: pointer; '
+      + (on ? 'background: #F1EAF4; border: 1px solid #481C5F;' : 'background: #FFFFFF; border: 1px solid #DED3E4;');
+  }
+  formatStyle(on) {
+    return 'display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px; border-radius: 999px; font-size: 15px; color: #26142E; cursor: pointer; '
+      + (on ? 'background: #F1EAF4; border: 1px solid #481C5F; font-weight: 600;' : 'background: #FFFFFF; border: 1px solid #8E7B99;');
+  }
+  // Main button: dark when it can be used, grey when a reason is missing.
+  mainStyle(ok) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; '
+      + (ok ? 'background: #2A0E33; color: #FBF7EC; cursor: pointer;' : 'background: #DED3E4; color: #5C4965; cursor: not-allowed;');
+  }
+  outlineStyle(ok) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; background: #FFFFFF; '
+      + (ok ? 'border: 1px solid #481C5F; color: #481C5F; cursor: pointer;' : 'border: 1px solid #DED3E4; color: #6B5A73; cursor: not-allowed;');
+  }
+
+  // Interactive chip (pill system, 17 Oct): 36 px tall inside a 44 px tap area (.tmc-chip::before), equal 14 px sides.
+  // Unselected: white with a #8E7B99 edge. Selected: solid plum plus a check icon, so the state is not colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+
+  renderVals() {
+    var self = this, st = this.state;
+    var val = function (e) { return e && e.target && typeof e.target.value === 'string' ? e.target.value : ''; };
+    var has = function (s) { return String(s || '').trim().length > 0; };
+
+    // Remember which settings were touched, for the "Changed:" line and the message to the writer.
+    var touch = function (name, extra) {
+      var list = st.changed.indexOf(name) > -1 ? st.changed : st.changed.concat([name]);
+      self.setState(Object.assign({ changed: list, ovDone: false }, extra || {}));
+    };
+    var mark = {
+      title: function () { touch('Title hidden'); }, category: function () { touch('Category'); }, rating: function () { touch('Rating'); },
+      language: function () { touch('Language'); }, blurb: function () { touch('Blurb'); },
+      cover: function () { touch('Cover hidden'); }
+    };
+
+    // Tags with a remove button each.
+    var tags = st.tags.map(function (t) {
+      return { name: t, aria: 'Remove tag ' + t, remove: function () { touch('Tags', { tags: st.tags.filter(function (x) { return x !== t; }) }); } };
+    });
+
+    // Visibility and where it can be read.
+    var visOptions = [
+      { key: 'published', label: 'Published', sub: 'Anyone old enough for its rating can read it.' },
+      { key: 'hidden', label: 'Hidden by staff', sub: 'Only the writer and staff can see it. Use while a case is open.' },
+      { key: 'restricted', label: 'Restricted to 18 and over', sub: 'Readers under 18 can’t find or open it, whatever its rating. The writer gets a statement of reasons.' }
+    ].map(function (o) {
+      var on = st.vis === o.key;
+      return { label: o.label, sub: o.sub, on: on, style: self.optionStyle(on), pick: function () { touch('Visibility', { vis: o.key }); } };
+    });
+    var readOptions = [
+      { key: 'both', label: 'On the web and in the app', sub: 'Shared links show a teaser to signed-out visitors.' },
+      { key: 'app', label: 'App only', sub: 'On the web, readers see a page that sends them to the app.' }
+    ].map(function (o) {
+      var on = st.readOn === o.key;
+      return { label: o.label, sub: o.sub, on: on, style: self.optionStyle(on), pick: function () { touch('Where it can be read', { readOn: o.key }); } };
+    });
+
+    var sw = {
+      mature: { on: st.mature ? 'true' : 'false', track: self.trackStyle(st.mature), knob: self.knobStyle(st.mature), toggle: function () { touch('Mature', { mature: !st.mature }); } },
+      comments: {
+        on: st.comments ? 'true' : 'false', track: self.trackStyle(st.comments), knob: self.knobStyle(st.comments),
+        sub: st.comments ? 'Readers can comment on paragraphs.' : 'Off. Readers can’t comment. Existing comments stay hidden.',
+        toggle: function () { touch('Comments', { comments: !st.comments }); }
+      }
+    };
+
+    // Overview save: needs at least one change and a reason.
+    var ovOk = st.changed.length > 0 && has(st.ovReason);
+    var ov = {
+      changed: st.changed.length ? st.changed.join(', ') : 'nothing yet',
+      onReason: function (e) { self.setState({ ovReason: val(e) }); },
+      disabled: !ovOk, style: self.mainStyle(ovOk), done: st.ovDone,
+      save: function () { if (ovOk) self.setState({ ovDone: true, changed: [] }); },
+      reset: function () { self.setState({ changed: [], ovReason: '', ovDone: false, vis: 'published', readOn: 'both', mature: false, comments: true, tags: ['choir', 'mystery', 'salt mine', 'friendship', 'Romania'] }); }
+    };
+
+    // Chapter 14 is written into the textarea; staff can’t type in it, only use the tools.
+    var edReason = st.edReason === 'filled' ? 'x' : st.edReason;
+    var edOk = st.pending && has(edReason);
+    var ed = {
+      pending: st.pending, none: !st.pending,
+      redact: function () { self.setState({ pending: true, edDone: false }); },
+      undo: function () { self.setState({ pending: false, edDone: false }); },
+      onReason: function (e) { self.setState({ edReason: val(e) }); },
+      disabled: !edOk, style: self.mainStyle(edOk), done: st.edDone,
+      save: function () { if (edOk) self.setState({ edDone: true }); }
+    };
+
+    // Version history, newest first.
+    var V = [
+      { id: 'v4', when: '16 Oct 2026, 10:02', who: '@inkwolf', staff: false, what: 'Published chapter 15, “Somebody coming down”', why: 'Change by the writer.',
+        before: 'Chapter 15 did not exist.', after: 'Chapter 15, “Somebody coming down”, published with 1,490 words.' },
+      { id: 'v3s', when: '14 Oct 2026, 18:30', who: 'Andrei Mureșan · staff', staff: true, what: 'Paused comments on chapter 14 for 48 hours', why: 'Reason sent to the writer: “Two comments insulted other readers and several gave away the ending. We paused comments while we checked them.” Writer told 14 Oct, 18:31.',
+        before: 'Comments on chapter 14: on.', after: 'Comments on chapter 14: paused until 16 Oct 2026, 18:30.' },
+      { id: 'v3', when: '12 Oct 2026, 09:15', who: '@inkwolf', staff: false, what: 'Changed the blurb', why: 'Change by the writer.',
+        before: 'Every Thursday, 14 teenagers rehearse in an old salt mine. One night there are 15.',
+        after: 'Every Thursday, 14 teenagers take the lift 200 metres down into an old salt mine to rehearse. Their choir director counts them on the way down. One night she counts 15, and nobody can say where the new boy came from, least of all the register.' },
+      { id: 'v1', when: '2 Oct 2026, 20:44', who: '@inkwolf', staff: false, what: 'Created the story and published chapter 1', why: 'Change by the writer.',
+        before: 'No story.', after: 'The Salt Mine Choir, chapter 1, “Fifteen”.' }
+    ];
+    var who = function (s) {
+      // Information pill: staff in plum, the writer in neutral.
+      var t = s ? ['#F1EAF4', '#481C5F', '#C9B3D6'] : ['#F4F0EC', '#4F3D57', '#D6CCDC'];
+      return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';';
+    };
+    var versions = V.map(function (v) {
+      return {
+        when: v.when, who: v.who, whoStyle: who(v.staff), what: v.what, why: v.why,
+        comparing: st.compare === v.id ? 'true' : 'false', compareStyle: self.chipStyle(st.compare === v.id), compareCheck: self.chipCheck(st.compare === v.id),
+        compareAria: 'Compare the version from ' + v.when + ' with the one before it',
+        current: v.id === 'v4', restoreLabel: v.id === 'v4' ? 'Current' : 'Restore',
+        restoreAria: v.id === 'v4' ? 'This is the current version' : 'Restore the version from ' + v.when,
+        compare: function () { self.setState({ compare: st.compare === v.id ? null : v.id }); },
+        restore: function () { self.setState({ restore: v.id, rsReason: '', rsDone: null }); }
+      };
+    });
+    var cv = V.filter(function (v) { return v.id === st.compare; })[0];
+    var cmp = cv ? { show: true, title: 'Compare · ' + cv.when, before: cv.before, after: cv.after } : { show: false, title: '', before: '', after: '' };
+    var rv = V.filter(function (v) { return v.id === st.restore; })[0];
+    var rsOk = has(st.rsReason);
+    var rs = {
+      show: !!rv, title: rv ? 'Restore the version from ' + rv.when + '?' : '',
+      onReason: function (e) { self.setState({ rsReason: val(e) }); },
+      disabled: !rsOk, style: self.mainStyle(rsOk).replace('height: 48px', 'height: 44px'),
+      confirm: function () { if (rsOk && rv) self.setState({ restore: null, rsDone: rv.when }); },
+      cancel: function () { self.setState({ restore: null }); },
+      done: !!st.rsDone,
+      doneText: st.rsDone ? 'The version from ' + st.rsDone + ' is live again as a new version. @inkwolf has been told what changed and why.' : ''
+    };
+
+    // Export: a reason is required; each download adds a line to the audit log.
+    var exOk = has(st.why);
+    var fmtName = st.fmt === 'docx' ? 'Word (.docx)' : 'PDF';
+    var formats = [{ key: 'docx', label: 'Word (.docx)' }, { key: 'pdf', label: 'PDF (after March)' }].map(function (f) {
+      var on = st.fmt === f.key;
+      return { label: f.label, on: on, style: self.formatStyle(on), pick: function () { self.setState({ fmt: f.key }); } };
+    });
+    var whyText = { dr: 'data request DR-1008', order: 'order from an authority', writer: 'the writer asked for help' }[st.why] || '';
+    var ex = {
+      onWhy: function (e) { self.setState({ why: val(e) }); },
+      formats: formats, disabled: !exOk, style: self.mainStyle(exOk), style2: self.outlineStyle(exOk),
+      oneLabel: 'Download as ' + fmtName,
+      one: function () { if (exOk) self.setState({ exMsg: 'the-salt-mine-choir.' + st.fmt + ', all 15 chapters. Logged in the audit log (' + whyText + ').' }); },
+      all: function () { if (exOk) self.setState({ exMsg: 'inkwolf-stories.zip, 1 story as ' + fmtName + '. Logged in the audit log (' + whyText + ').' }); },
+      msg: st.exMsg,
+      log: [
+        { when: '16 Oct 2026, 11:05', who: 'Robert', what: 'Downloaded the story as Word (.docx), all 15 chapters. Reason: data request DR-1008.' },
+        { when: '16 Oct 2026, 11:06', who: 'Robert', what: 'Downloaded all of @inkwolf’s stories as a .zip (Word). Reason: data request DR-1008.' }
+      ]
+    };
+
+    return {
+      copyLabel: st.copied ? 'Copied' : 'Copy',
+      copyId: function () {
+        try { if (navigator.clipboard) navigator.clipboard.writeText('usr_7f3c2b9e04d1a91e'); } catch (e) { /* clipboard blocked: the label still confirms */ }
+        self.setState({ copied: true });
+      },
+      mark: mark, tags: tags, visOptions: visOptions, readOptions: readOptions, sw: sw, ov: ov,
+      ed: ed, versions: versions, cmp: cmp, rs: rs, ex: ex
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: sponsors</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+.tmc-noscroll{scrollbar-width:none;-ms-overflow-style:none}.tmc-noscroll::-webkit-scrollbar{display:none}
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:8px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the app, with the staff links and a Staff pill -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <header style="padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · sponsors</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Sponsors and banners</h1>
+      <p style="margin: 0; max-width: 760px; font-size: 18px; line-height: 1.65; color: #5C4965">Set up sponsor campaigns, check every creative before it goes live and send each sponsor a simple report. A banner matches the page, not the person reading it, so everyone on the same page sees the same banner.</p>
+    </header>
+
+    <!-- The four rules every campaign follows -->
+    <section aria-label="Rules for every campaign" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <div style="padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+        <span style="display: flex; color: #481C5F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18"></path><path d="M8 14h8"></path></svg></span>
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">Page context only</span>
+        <span style="font-size: 14px; line-height: 1.55; color: #5C4965">A banner is picked by the page’s category, tag, language and market. Nothing about the reader is used.</span>
+      </div>
+      <div style="padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+        <span style="display: flex; color: #481C5F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></span>
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">A person approves every creative</span>
+        <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Nothing goes live until a member of staff checks it is suitable for under-18s.</span>
+      </div>
+      <div style="padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+        <span style="display: flex; color: #481C5F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 10h16"></path><path d="M4 14h10"></path><rect x="4" y="17" width="16" height="4" rx="1"></rect></svg></span>
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">Never inside the text</span>
+        <span style="font-size: 14px; line-height: 1.55; color: #5C4965">At most one banner below a chapter. No pop-ups, nothing full screen.</span>
+      </div>
+      <div style="padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+        <span style="display: flex; color: #481C5F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg></span>
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">Sponsors don’t change rankings</span>
+        <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Sponsors have no say over what we publish, rank or remove. Every sponsor contract says so.</span>
+      </div>
+    </section>
+
+    <!-- Campaign list with status filters -->
+    <section aria-labelledby="camp-title" style="margin-top: 32px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px); animation: tmcRise 0.5s 0.1s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Campaigns</span>
+          <h2 id="camp-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Campaigns</h2>
+        </div>
+        <a href="#new-campaign" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New campaign</a>
+      </div>
+      <div role="group" aria-label="Filter by status" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="6">
+          <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+        </sc-for>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 13px; color: #6B5A73">Example campaigns. Sponsor names stay as [Partner]. {{shownLine}}</p>
+
+      <div style="margin-top: 16px; overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+        <div role="table" aria-label="Campaigns" style="min-width: 960px">
+          <div role="row" style="display: grid; grid-template-columns: 2.1fr 1.5fr 2fr 1.3fr 1.2fr 1fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">CAMPAIGN</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">PLACEMENT</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">MATCHES PAGES WITH</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">DATES</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">STATUS</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; text-align: right">SHOWN</span>
+          </div>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+            <div role="row" style="{{r.rowStyle}}">
+              <span role="cell" style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700; color: #26142E">{{r.name}}</span><span style="font-size: 13px; color: #6B5A73">{{r.sponsor}}</span></span>
+              <span role="cell" style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 1.45; color: #26142E"><b style="font-weight: 600">{{r.type}}</b><span style="font-size: 13px; color: #6B5A73">{{r.slots}}</span></span>
+              <span role="cell" style="font-size: 14px; line-height: 1.45; color: #26142E">{{r.target}}</span>
+              <span role="cell" style="font-size: 14px; line-height: 1.45; color: #26142E">{{r.dates}}</span>
+              <span role="cell" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="{{r.statusStyle}}">{{r.status}}</span><span style="font-size: 12px; color: #6B5A73">{{r.statusNote}}</span></span>
+              <span role="cell" style="font-size: 14px; line-height: 1.45; color: #26142E; text-align: right">{{r.shown}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- New campaign form and the review queue -->
+    <div style="margin-top: 24px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+
+      <section id="new-campaign" aria-labelledby="new-title" style="flex: 1 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">New campaign</span>
+          <h2 id="new-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Set up a campaign</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">It goes to the review queue when you submit it. It can’t go live until someone approves the creative.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="sp-name" style="font-size: 14px; font-weight: 600; color: #26142E">Sponsor</label>
+            <input id="sp-name" type="text" value="[Partner]" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="sp-camp" style="font-size: 14px; font-weight: 600; color: #26142E">Campaign name</label>
+            <input id="sp-camp" type="text" value="Library card week" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+          </div>
+        </div>
+
+        <!-- Creative: image with required alt text -->
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: stretch">
+          <div aria-hidden="true" style="flex: 0 0 200px; min-height: 120px; border-radius: 16px; border: 1px dashed #B9A9C2; background: #FAF8F5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #6B5A73; font-size: 13px">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg>
+            <span>library-week.png · 1200 × 300</span>
+          </div>
+          <div style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+            <button type="button" style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"></path><path d="m7 8 5-5 5 5"></path><path d="M5 21h14"></path></svg>Upload image</button>
+            <label for="sp-alt" style="font-size: 14px; font-weight: 600; color: #26142E">Alt text (required)</label>
+            <input id="sp-alt" type="text" value="A girl reading in a library, with the words: Get a free library card this week" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="sp-link" style="font-size: 14px; font-weight: 600; color: #26142E">Link</label>
+            <input id="sp-link" type="url" value="https://[partner-site]/library-week" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="sp-place" style="font-size: 14px; font-weight: 600; color: #26142E">Placement</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="sp-place" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <option selected>Banner: below the chapter</option>
+              <option>Banner: in story lists</option>
+              <option>Banner: between shelves on Discover</option>
+              <option>Sponsored by: a category</option>
+              <option>Sponsored by: a contest</option>
+              <option>Featured slot on Discover</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="sp-start" style="font-size: 14px; font-weight: 600; color: #26142E">Starts</label>
+            <input id="sp-start" type="date" value="2026-11-02" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="sp-end" style="font-size: 14px; font-weight: 600; color: #26142E">Ends</label>
+            <input id="sp-end" type="date" value="2026-11-08" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+        </div>
+
+        <!-- Contextual targeting: page context only -->
+        <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px">
+          <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Show it on pages with</legend>
+          <div role="group" aria-label="Category" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; width: 96px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Category</span>
+            <sc-for list="{{tgt.cat}}" as="c" hint-placeholder-count="5">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div role="group" aria-label="Tag" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; width: 96px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Tag</span>
+            <sc-for list="{{tgt.tag}}" as="c" hint-placeholder-count="5">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div role="group" aria-label="Language" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; width: 96px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Language</span>
+            <sc-for list="{{tgt.lang}}" as="c" hint-placeholder-count="2">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div role="group" aria-label="Market" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; width: 96px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Market</span>
+            <sc-for list="{{tgt.market}}" as="c" hint-placeholder-count="4">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+            </sc-for>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">OPEN: market targeting</span>
+          </div>
+          <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #6B5A73">Market comes from the country of the connection, kept as a country code only, never the IP address (decided 16 Oct 2026). Story S1-E12-01 names category, tag and language only, so market targeting needs Robert’s OK and a story update.</p>
+
+          <div style="padding: 16px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 10px">
+            <span style="font-size: 14px; font-weight: 700; color: #26142E">Not available, ever</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{never}}" as="n" hint-placeholder-count="6">
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>{{n}}</span>
+              </sc-for>
+            </div>
+            <span style="font-size: 13px; line-height: 1.5; color: #5C4965">No personal targeting. Many readers are under 18, and we don’t show profiling ads to anyone.</span>
+          </div>
+        </fieldset>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 4px">
+          <button type="button" onClick="{{submit}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Send for review</button>
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Save draft</button>
+        </div>
+        <sc-if value="{{submitted}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span><b>Sent for review.</b> “Library card week” is in the review queue. Logged in the audit log.</span></p>
+        </sc-if>
+      </section>
+
+      <!-- Review queue: a person approves every creative -->
+      <section aria-labelledby="review-title" style="flex: 1 1 420px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Review queue</span>
+          <h2 id="review-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Check the creative</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Tick every check before you approve. Your name and the time go on the campaign.</p>
+        </div>
+
+        <sc-for list="{{reviews}}" as="v" hint-placeholder-count="2">
+          <article style="padding: 20px; border-radius: 20px; border: 1px solid #DED3E4; background: #FAF8F5; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 8px">
+              <div style="display: flex; flex-direction: column; gap: 2px">
+                <span style="font-size: 16px; font-weight: 700; color: #26142E">{{v.name}}</span>
+                <span style="font-size: 13px; color: #6B5A73">[Partner] · {{v.place}} · {{v.dates}}</span>
+              </div>
+              <span style="{{v.badgeStyle}}">{{v.badge}}</span>
+            </div>
+            <!-- What readers will see -->
+            <div style="padding: 14px 16px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E5D7EA; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+              <span style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; line-height: 1; letter-spacing: 0.12em; white-space: nowrap">SPONSORED</span>
+              <span style="flex: 1 1 200px; font-size: 14px; line-height: 1.5; color: #26142E"><b>[Partner]</b> · {{v.copy}}</span>
+            </div>
+            <span style="font-size: 13px; line-height: 1.5; color: #5C4965"><b style="color: #26142E">Alt text:</b> {{v.alt}}</span>
+            <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 4px">
+              <legend style="padding: 0 0 6px; font-size: 14px; font-weight: 700; color: #26142E">Checks</legend>
+              <sc-for list="{{v.checks}}" as="k" hint-placeholder-count="4">
+                <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; font-size: 14px; line-height: 1.5; color: #26142E; cursor: pointer"><input type="checkbox" checked="{{k.on}}" onChange="{{k.toggle}}" style="width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: #481C5F"><span>{{k.label}}</span></label>
+              </sc-for>
+            </fieldset>
+            <sc-if value="{{v.open}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <button type="button" onClick="{{v.approve}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 22px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Approve</button>
+                <button type="button" onClick="{{v.sendBack}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Send back</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{v.hasMsg}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="{{v.msgStyle}}">{{v.msg}}</p>
+            </sc-if>
+          </article>
+        </sc-for>
+        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Some advertising to minors is restricted by Romanian law. When you’re unsure, send it back and ask.</p>
+      </section>
+    </div>
+
+    <!-- Placements (S1-E12-05, 17 Oct 2026): which ad fills each slot, a week-by-week inventory, booking a slot for an approved campaign and our own house ads -->
+    <section id="placements" aria-labelledby="pl-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px); display: flex; flex-direction: column; gap: 24px">
+      <div style="display: flex; flex-direction: column; gap: 6px; max-width: 820px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Placements</span>
+        <h2 id="pl-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Placements</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Book a sponsor into a slot here. Ad-network ads need no booking: they fill whatever is left, automatically. Every public page has at most 2 ad slots, and class spaces have none.</p>
+      </div>
+
+      <!-- How a slot is filled, every time a page loads -->
+      <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">How each slot is filled, every time a page loads</span>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">
+          <li style="display: flex; align-items: flex-start; gap: 12px"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">1</span><span style="font-size: 14px; line-height: 1.55; color: #26142E; padding-top: 4px"><b>A direct sponsor</b> booked for that slot and those dates, when the page matches the booking’s category, tag and language. Labelled “Sponsored” with the sponsor’s name.</span></li>
+          <li style="display: flex; align-items: flex-start; gap: 12px"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">2</span><span style="font-size: 14px; line-height: 1.55; color: #26142E; padding-top: 4px"><b>A house ad</b> for our own contests or landing pages, when one is scheduled for that slot.</span></li>
+          <li style="display: flex; align-items: flex-start; gap: 12px"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">3</span><span style="font-size: 14px; line-height: 1.55; color: #26142E; padding-top: 4px"><b>The ad network</b>, automatically, only if it’s switched on below and the vendor never personalises. Labelled “Ad”.</span></li>
+          <li style="display: flex; align-items: flex-start; gap: 12px"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700">4</span><span style="font-size: 14px; line-height: 1.55; color: #26142E; padding-top: 4px"><b>Otherwise a house ad</b>, so the slot is never empty and the page never jumps.</span></li>
+        </ol>
+        <span style="font-size: 13px; line-height: 1.5; color: #5C4965">Class spaces have no slots at all: no ads, no sponsored items and no sponsor credits.</span>
+      </div>
+
+      <!-- Slot inventory: rows are slots, columns are the next 6 weeks -->
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span style="font-size: 17px; font-weight: 700; color: #26142E">Slot inventory, next 6 weeks</span>
+            <span style="font-size: 13px; color: #6B5A73">Example bookings. {{pl.slotCount}} slots on public pages.</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <button type="button" class="tmc-chip" aria-pressed="{{pl.netPressed}}" onClick="{{pl.toggleNet}}" style="{{pl.netStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{pl.netCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Preview with the ad network on</button>
+            <sc-if value="{{pl.ar.show}}" hint-placeholder-val="{{false}}">
+              <span style="display: inline-flex; gap: 8px"><button type="button" aria-label="Scroll the weeks back" onClick="{{pl.prev}}" disabled="{{pl.ar.backOff}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; opacity: {{pl.ar.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button><button type="button" aria-label="Scroll the weeks forward" onClick="{{pl.next}}" disabled="{{pl.ar.fwdOff}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; opacity: {{pl.ar.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button></span>
+            </sc-if>
+          </div>
+        </div>
+        <div ref="{{pl.refGrid}}" onScroll="{{pl.onGridScroll}}" tabindex="0" class="tmc-noscroll" role="region" aria-label="Slot inventory, scrolls sideways" style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
+          <div role="table" aria-label="Slot inventory by week" style="min-width: 1100px">
+            <div role="row" style="display: grid; grid-template-columns: 220px repeat(6, minmax(140px, 1fr)); border-bottom: 1px solid #DED3E4">
+              <span role="columnheader" style="position: sticky; left: 0; z-index: 1; background: #FFFFFF; padding: 12px 16px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">SLOT</span><span role="columnheader" style="padding: 12px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-left: 1px solid #EFE8F2">WEEK OF 19 OCT</span><span role="columnheader" style="padding: 12px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-left: 1px solid #EFE8F2">WEEK OF 26 OCT</span><span role="columnheader" style="padding: 12px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-left: 1px solid #EFE8F2">WEEK OF 2 NOV</span><span role="columnheader" style="padding: 12px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-left: 1px solid #EFE8F2">WEEK OF 9 NOV</span><span role="columnheader" style="padding: 12px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-left: 1px solid #EFE8F2">WEEK OF 16 NOV</span><span role="columnheader" style="padding: 12px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-left: 1px solid #EFE8F2">WEEK OF 23 NOV</span>
+            </div>
+            <sc-for list="{{pl.grid}}" as="g" hint-placeholder-count="17">
+              <div role="row" style="display: grid; grid-template-columns: 220px repeat(6, minmax(140px, 1fr)); border-bottom: 1px solid #EFE8F2">
+                <span role="rowheader" style="position: sticky; left: 0; z-index: 1; background: #FFFFFF; padding: 10px 16px; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid #EFE8F2"><span style="font-size: 14px; font-weight: 700; color: #26142E">{{g.name}}</span><span style="font-size: 12px; line-height: 1.4; color: #6B5A73">{{g.where}}</span></span>
+                <sc-for list="{{g.cells}}" as="x" hint-placeholder-count="6">
+                  <span role="cell" style="padding: 10px 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; border-left: 1px solid #EFE8F2; min-width: 0"><span style="{{x.pillStyle}}">{{x.kind}}</span><span style="font-size: 12px; line-height: 1.4; color: #5C4965">{{x.what}}</span></span>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #5C4965">
+          <li>“Free” means nobody has booked it: the ad network fills it if it’s on, otherwise a house ad does.</li>
+          <li>Discover’s featured slider is not an ad slot. Its contest slide carries a “Sponsored by” credit only, so Discover keeps 2 slots.</li>
+          <li><span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px"><span>Contest landing page banner: should a sponsored contest’s page show another sponsor or an ad-network ad?</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">OPEN</span></span></li>
+        </ul>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+        <!-- Book a slot for an approved campaign, with a clash check -->
+        <form onSubmit="{{pl.book}}" aria-labelledby="bk-title" style="flex: 1 1 520px; min-width: 0; margin: 0; padding: 24px; border-radius: 20px; border: 1px solid #DED3E4; background: #FFFFFF; display: flex; flex-direction: column; gap: 18px">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Book a slot</span>
+            <h3 id="bk-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">Book a slot for a campaign</h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="bk-camp" style="font-size: 14px; font-weight: 600; color: #26142E">Campaign (approved only)</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="bk-camp" onChange="{{pl.onCamp}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option value="c1" selected>New young adult books · [Partner]</option><option value="c2">Poetry, sponsored by [Partner]</option><option value="c4">The First Chapter contest · [Partner]</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Campaigns waiting for review or sent back can’t be booked.</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="bk-slot" style="font-size: 14px; font-weight: 600; color: #26142E">Slot</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="bk-slot" onChange="{{pl.onSlot}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option value="discover-wide">Discover wide banner</option><option value="discover-card">Discover sponsored card</option><option value="search-portrait">Search portrait</option><option value="classics-wide">Classics wide banner</option><option value="seeall-wide">See all wide banner</option><option value="story-wide">Story page wide banner</option><option value="apponly-wide">App-only story banner</option><option value="chapter-end" selected>Chapter end banner</option><option value="teaser-wide">Shared-link page banner</option><option value="library-wide">Library wide banner</option><option value="forums-wide">Forums wide banner</option><option value="forums-side">Forums side box</option><option value="thread-below">Thread below reply box</option><option value="thread-side">Thread side box</option><option value="space-wide">Space wide banner</option><option value="profile-wide">Profile wide banner</option><option value="contest-wide">Contest landing page banner</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="bk-from" style="font-size: 14px; font-weight: 600; color: #26142E">From (week of)</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="bk-from" onChange="{{pl.onFrom}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option value="0" selected>19 Oct</option><option value="1">26 Oct</option><option value="2">2 Nov</option><option value="3">9 Nov</option><option value="4">16 Nov</option><option value="5">23 Nov</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="bk-to" style="font-size: 14px; font-weight: 600; color: #26142E">To (week of)</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="bk-to" onChange="{{pl.onTo}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option value="0">19 Oct</option><option value="1" selected>26 Oct</option><option value="2">2 Nov</option><option value="3">9 Nov</option><option value="4">16 Nov</option><option value="5">23 Nov</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+          </div>
+          <fieldset style="margin: 0; padding: 16px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+            <legend style="padding: 0 0 10px; font-size: 15px; font-weight: 700; color: #26142E">Show it on pages with</legend>
+            <div role="group" aria-label="Category" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3; width: 96px">Category</span><sc-for list="{{pl.ctx.cat}}" as="c" hint-placeholder-count="4"><button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button></sc-for></div>
+            <div role="group" aria-label="Tag" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3; width: 96px">Tag</span><sc-for list="{{pl.ctx.tag}}" as="c" hint-placeholder-count="5"><button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button></sc-for></div>
+            <div role="group" aria-label="Language" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3; width: 96px">Language</span><sc-for list="{{pl.ctx.lang}}" as="c" hint-placeholder-count="2"><button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button></sc-for></div>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Nothing ticked in a row means any. On pages that don’t match, the slot moves on to step 2.</span>
+          </fieldset>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+            <button type="submit" style="display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Check and book</button>
+            <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13px; color: #5C4965">One sponsor per slot per date.<span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">Proposal</span></span>
+          </div>
+          <sc-if value="{{pl.hasMsg}}" hint-placeholder-val="{{false}}">
+            <p role="status" style="{{pl.msgStyle}}">{{pl.msg}}</p>
+          </sc-if>
+        </form>
+
+        <!-- House ads: our own promos, which fill a slot when no sponsor has it -->
+        <div style="flex: 1 1 420px; min-width: 0; padding: 24px; border-radius: 20px; border: 1px solid #DED3E4; background: #FFFFFF; display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">House ads</span>
+              <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">Our own promos</h3>
+            </div>
+            <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New house ad</button>
+          </div>
+          <sc-for list="{{pl.house}}" as="h" hint-placeholder-count="2">
+            <article style="padding: 18px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px"><span style="font-size: 16px; font-weight: 700; color: #26142E">{{h.name}}</span><span style="{{h.pillStyle}}">{{h.state}}</span></div>
+              <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: 8px 14px; font-size: 14px; line-height: 1.5">
+                <dt style="font-weight: 600; color: #26142E">English</dt><dd lang="en" style="margin: 0; color: #26142E">{{h.en}}</dd>
+                <dt style="font-weight: 600; color: #26142E">Română</dt><dd lang="ro" style="margin: 0; color: #26142E">{{h.ro}}</dd>
+                <dt style="font-weight: 600; color: #26142E">Landing page</dt><dd style="margin: 0"><a href="{{h.href}}" style="font-weight: 600; overflow-wrap: anywhere">{{h.page}}</a></dd>
+                <dt style="font-weight: 600; color: #26142E">Runs in</dt><dd style="margin: 0; color: #26142E">{{h.runs}}</dd>
+              </dl>
+            </article>
+          </sc-for>
+          <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13px; line-height: 1.5; color: #5C4965"><span>A house ad shows our own name, with no “Ad” or “Sponsored” label.</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">Proposal</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Banner slots -->
+    <section aria-labelledby="slots-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 20px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Banner slots</span>
+        <h2 id="slots-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Where sponsors can appear</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Each slot shows one campaign at a time. When no campaign matches the page, the slot follows the fill order under Placements: a house ad, then the ad network if it is switched on, then a house ad, so it is never left empty.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px">
+        <sc-for list="{{slots}}" as="s" hint-placeholder-count="5">
+          <div style="padding: 20px; border-radius: 20px; border: 1px solid #DED3E4; background: #FAF8F5; display: flex; flex-direction: column; gap: 10px">
+            <span style="font-size: 16px; font-weight: 700; color: #26142E">{{s.name}}</span>
+            <span style="font-size: 14px; line-height: 1.5; color: #5C4965">{{s.rule}}</span>
+            <span style="margin-top: auto; padding-top: 10px; border-top: 1px solid #EFE8F2; font-size: 13px; line-height: 1.5; color: #6B5A73">Now: <b style="color: #26142E">{{s.now}}</b></span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top: 20px; padding: 18px 20px; border-radius: 16px; background: #F6E9EB; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 15px; font-weight: 700; color: #8C2B3A">Never</span>
+        <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.7; color: #3A2442">
+          <li>Inside chapter text, between paragraphs or over the text.</li>
+          <li>As a pop-up or full screen.</li>
+          <li>In class spaces, ever. No ads, no sponsored items and no sponsor credits of any kind, not even for a contest. The slot isn’t there at all.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- What readers see: a "Sponsored by" line and a sponsor banner below a chapter -->
+    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px">
+      <section aria-labelledby="pb-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Preview · sponsored by</span>
+          <h2 id="pb-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">A sponsored category</h2>
+        </div>
+        <div role="group" aria-label="Preview with or without the sponsor" style="display: flex; flex-wrap: wrap; gap: 8px">
+          <button type="button" class="tmc-chip" aria-pressed="{{pb.onPressed}}" onClick="{{pb.showOn}}" style="{{pb.onStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{pb.onCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>With sponsor</button>
+          <button type="button" class="tmc-chip" aria-pressed="{{pb.offPressed}}" onClick="{{pb.showOff}}" style="{{pb.offStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{pb.offCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Without sponsor</button>
+        </div>
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px">
+            <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; color: #2E4A8C">Poetry</span>
+            <sc-if value="{{pb.on}}" hint-placeholder-val="{{true}}">
+              <span style="font-size: 13px; font-weight: 600; color: #5C4965">Sponsored by [Partner]</span>
+            </sc-if>
+          </div>
+          <ol style="margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; color: #26142E">
+            <li><a href="Story.dc.html" style="font-weight: 600; text-decoration: none; color: #26142E">Small Rooms</a> <span style="font-size: 13px; color: #6B5A73">· poppyverse · 4.2k reads</span></li>
+            <li><a href="Story.dc.html" style="font-weight: 600; text-decoration: none; color: #26142E">Letters to the Block Next Door</a> <span style="font-size: 13px; color: #6B5A73">· mara.p · 1.1k reads</span></li>
+            <li><a href="Story.dc.html" style="font-weight: 600; text-decoration: none; color: #26142E">Bus Stop Haiku</a> <span style="font-size: 13px; color: #6B5A73">· teo_ink · 860 reads</span></li>
+          </ol>
+        </div>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #2F6B4F; font-weight: 600">Same stories, same order, with or without the sponsor. Only the sponsor line changes.</p>
+      </section>
+
+      <section aria-labelledby="bn-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Preview · below the chapter</span>
+          <h2 id="bn-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">A banner after the text</h2>
+        </div>
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px">
+          <p style="margin: 0; font-family: Georgia, serif; font-size: 16px; line-height: 1.7; color: #3A2442">Above them the lift groaned on its cable. Somebody was coming down, and the register said nobody else was expected.</p>
+          <span style="font-size: 13px; color: #6B5A73">End of chapter 14</span>
+          <aside aria-label="Sponsored" style="padding: 16px 18px; border-radius: 16px; background: #F4F0EC; border: 1px solid #E5D7EA; display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+              <span style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; line-height: 1; letter-spacing: 0.12em; white-space: nowrap">SPONSORED</span>
+              <span style="flex: 1 1 200px; font-size: 14px; color: #26142E"><b>[Partner]</b> · New young adult books this month.</span>
+            </div>
+            <button type="button" aria-expanded="{{why.open}}" onClick="{{why.toggle}}" style="align-self: flex-start; height: 44px; padding: 0; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer">Why this ad?</button>
+            <sc-if value="{{why.shown}}" hint-placeholder-val="{{true}}">
+              <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #3A2442">You see this ad because this page is in Fiction and written in English. Everyone who opens this page sees the same ad. We don’t use anything about you.</p>
+            </sc-if>
+          </aside>
+        </div>
+        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">A direct sponsor’s banner says “Sponsored” (“Sponsorizat” in Romanian) with the sponsor’s name. Ad-network ads say “Ad” (“Reclamă”). The app adds the label and the name, so a creative can’t leave them out.</p>
+      </section>
+    </div>
+
+    <!-- Ad-network ads: never personalised, for everyone (S1-E12-04, decided 16 Oct 2026) -->
+    <section aria-labelledby="net-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px); display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px; max-width: 760px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Ad-network ads · after March</span>
+          <h2 id="net-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">“Ad” and “Sponsored” are two different things</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Unsold banner slots can be filled from an ad network, but only one that never personalises ads, for every reader of every age. That keeps “No tracking ads” true.</p>
+        </div>
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">OPEN: which ad network</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; line-height: 1; letter-spacing: 0.12em; white-space: nowrap">AD</span>
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Ad-network ads</span>
+          <span style="font-size: 14px; line-height: 1.55; color: #5C4965">From [Ad network], non-personalised only. Labelled “Ad” (“Reclamă”). They fill a slot no sponsor has and load only when the slot comes into view.</span>
+        </div>
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; line-height: 1; letter-spacing: 0.12em; white-space: nowrap">SPONSORED</span>
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Direct sponsors</span>
+          <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Our own sponsors, such as a bookshop or a ministry, set up on this page. Labelled “Sponsored” (“Sponsorizat”) with the sponsor’s name.</span>
+        </div>
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Rules for ad-network code</span>
+          <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #3A2442">
+            <li>Only in the banner slot. Never in chapter text, full screen or a class space.</li>
+            <li>No cookie and nothing read from the device unless the reader agreed. If the network can’t promise that, the slot shows our own banner.</li>
+            <li>Added only through a written tech decision and the list of processors.</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px 32px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+        <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-size: 15px; font-weight: 700; color: #26142E">Blocked categories</span>
+          <ul aria-label="Blocked ad categories" style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px">
+            <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Alcohol</li><li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Gambling</li><li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Tobacco and vaping</li><li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Dating</li><li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Weight loss</li><li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Anything unsuitable for under-18s</li>
+          </ul>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Everyone sees the same kind of ads, so every block applies to every reader.</span>
+        </div>
+        <div style="flex: 0 1 auto; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 15px; font-weight: 700; color: #26142E">Fill empty slots with ad-network ads</span>
+          <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; min-height: 24px; padding: 4px 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1.2; text-align: center">Off until the network is chosen and a lawyer has checked it</span>
+        </div>
+      </div>
+      <p style="margin: 0; padding-top: 16px; border-top: 1px solid #EFE8F2; font-size: 14px; line-height: 1.55; color: #26142E">The ad network fills only slots that aren’t booked or covered by a house ad. We never send it anything about the reader. See <a href="#placements">Placements</a>.</p>
+    </section>
+
+    <!-- Sponsor report -->
+    <section aria-labelledby="rep-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Sponsor report</span>
+          <h2 id="rep-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">{{rep.name}}</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Daily totals only. We count on our server, with no cookies and no user IDs, so we can’t tell who saw or clicked.</p>
+        </div>
+        <button type="button" onClick="{{exportCsv}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>Export CSV</button>
+      </div>
+      <div role="group" aria-label="Campaign" style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{repChips}}" as="c" hint-placeholder-count="3">
+          <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+        </sc-for>
+      </div>
+
+      <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+        <div style="padding: 18px 20px; border-radius: 20px; background: #F1EAF4; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 600; color: #5C4965">Impressions, 7 days shown</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; color: #481C5F">{{rep.imp}}</span></div>
+        <div style="padding: 18px 20px; border-radius: 20px; background: #F1EAF4; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 600; color: #5C4965">Clicks, 7 days shown</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; color: #481C5F">{{rep.clicks}}</span></div>
+        <div style="padding: 18px 20px; border-radius: 20px; background: #F1EAF4; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 600; color: #5C4965">Click rate</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; color: #481C5F">{{rep.rate}}</span></div>
+        <div style="padding: 18px 20px; border-radius: 20px; background: #F4F0EC; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 13px; font-weight: 600; color: #5C4965">Whole campaign</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">{{rep.total}}</span></div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+        <div style="flex: 999 1 520px; min-width: 0; border: 1px solid #DED3E4; border-radius: 16px; overflow: hidden">
+          <div role="table" aria-label="Daily totals">
+            <div role="row" style="display: grid; grid-template-columns: 1.2fr 1fr 2fr 0.8fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+              <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">DAY</span>
+              <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; text-align: right">IMPRESSIONS</span>
+              <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Bar</span></span>
+              <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; text-align: right">CLICKS</span>
+            </div>
+            <sc-for list="{{rep.days}}" as="d" hint-placeholder-count="7">
+              <div role="row" style="display: grid; grid-template-columns: 1.2fr 1fr 2fr 0.8fr; gap: 16px; align-items: center; padding: 10px 16px; border-bottom: 1px solid #EFE8F2">
+                <span role="cell" style="font-size: 14px; color: #26142E">{{d.day}}</span>
+                <span role="cell" style="font-size: 14px; color: #26142E; text-align: right">{{d.imp}}</span>
+                <span role="cell" aria-hidden="true" style="height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><span style="{{d.bar}}"></span></span>
+                <span role="cell" style="font-size: 14px; color: #26142E; text-align: right">{{d.clicks}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">The CSV file</span>
+          <pre style="margin: 0; padding: 16px; border-radius: 16px; background: #F4F0EC; font-family: ui-monospace, Menlo, monospace; font-size: 13px; line-height: 1.6; color: #26142E; white-space: pre-wrap">{{rep.csv}}</pre>
+          <sc-if value="{{exported}}" hint-placeholder-val="{{false}}">
+            <p role="status" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span><b>Ready.</b> {{rep.file}} has one row per day. Send it to the sponsor by email.</span></p>
+          </sc-if>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Numbers on this page are examples. No ages, places or reading history are in any report.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":8110}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Review items start with some checks ticked so the "tick every check" rule shows.
+    this.state = {
+      filter: 'All', rep: 'c1', exported: false, submitted: false, pbOn: true, whyOpen: true,
+      tgt: { cat: { Fiction: true }, tag: { 'school life': true }, lang: { 'English': true, 'Română': true }, market: { 'Romania': true } },
+      checks: { r1: [true, true, false, true], r2: [false, false, false, false] },
+      verdict: { r1: null, r2: null }, warn: { r1: false, r2: false },
+      // Placements (S1-E12-05). Example bookings: week indexes 0 to 5 = the next 6 weeks.
+      pl: { camp: 'c1', slot: 'chapter-end', from: 0, to: 1, ctx: { cat: { Fiction: true }, tag: {}, lang: { 'English': true, 'Română': true } } },
+      bookings: [
+        { slot: 'chapter-end', camp: 'c1', from: 0, to: 5 },
+        { slot: 'discover-card', camp: 'c1', from: 0, to: 5 }
+      ],
+      plMsg: null, netOn: false, gridEdges: {}
+    };
+  }
+
+  // Inventory arrows (Robert, 17 Oct): shown only when the grid is wider than its box, disabled at the end they point to.
+  componentDidMount() {
+    var self = this;
+    this._onResize = function () { self.measureGrid(); };
+    try { window.addEventListener('resize', this._onResize); } catch (e) { /* no window: arrows stay hidden */ }
+    setTimeout(function () { self.measureGrid(); }, 0);
+  }
+  componentDidUpdate() { this.measureGrid(); }
+  componentWillUnmount() { try { window.removeEventListener('resize', this._onResize); } catch (e) { /* ignore */ } }
+  measureGrid() {
+    var el = this._grid;
+    if (!el) return;
+    var o = el.scrollWidth > el.clientWidth + 2;
+    var l = o && el.scrollLeft > 2, r = o && el.scrollLeft + el.clientWidth < el.scrollWidth - 2;
+    var g = this.state.gridEdges || {};
+    if (g.o === o && g.l === l && g.r === r) return;   // only setState on a change, so no render loop
+    this.setState({ gridEdges: { o: o, l: l, r: r } });
+  }
+  scrollGrid(dir) {
+    var el = this._grid;
+    if (!el) return;
+    try { el.scrollBy({ left: dir * Math.max(200, Math.round(el.clientWidth * 0.6)), behavior: 'smooth' }); } catch (e) { el.scrollLeft += dir * 200; }
+  }
+
+  // Placements: the inventory grid, the booking form with its clash check and the house ads.
+  placements() {
+    var self = this, st = this.state, p = st.pl;
+    var SLOTS = [["discover-wide", "Discover wide banner", "Discover · 970 × 120"], ["discover-card", "Discover sponsored card", "Discover, Popular shelf · card"], ["search-portrait", "Search portrait", "Search · 300 × 600, desktop"], ["classics-wide", "Classics wide banner", "Classics · 970 × 120"], ["seeall-wide", "See all wide banner", "See all · 970 × 120"], ["story-wide", "Story page wide banner", "Story page · 970 × 120"], ["apponly-wide", "App-only story banner", "App-only story · 970 × 120"], ["chapter-end", "Chapter end banner", "Chapter reader · below the text"], ["teaser-wide", "Shared-link page banner", "Shared link · 970 × 120"], ["library-wide", "Library wide banner", "Library · 970 × 120"], ["forums-wide", "Forums wide banner", "Forums · 970 × 120"], ["forums-side", "Forums side box", "Forums · 300 × 250, desktop"], ["thread-below", "Thread below reply box", "Forum thread · wide"], ["thread-side", "Thread side box", "Forum thread · 300 × 600, desktop"], ["space-wide", "Space wide banner", "Public space · 970 × 120"], ["profile-wide", "Profile wide banner", "Writer profile · 970 × 120"], ["contest-wide", "Contest landing page banner", "Contest page · 970 × 120, new"]];
+    var WEEKS = ["19 Oct", "26 Oct", "2 Nov", "9 Nov", "16 Nov", "23 Nov"];
+    var WEEK_ENDS = ["25 Oct", "1 Nov", "8 Nov", "15 Nov", "22 Nov", "29 Nov"];
+    var CAMPS = { c1: 'New young adult books', c2: 'Poetry, sponsored by [Partner]', c4: 'The First Chapter contest' };
+    // House ads scheduled into slots (example): slot -> weeks.
+    var HOUSE = { 'discover-wide': [2, 3], 'story-wide': [0, 1], 'forums-wide': [4, 5], 'contest-wide': [0, 1, 2, 3, 4, 5] };
+    var tone = {
+      Booked: ['#F1EAF4', '#481C5F', '#C9B3D6'], 'House ad': ['#E6EEF6', '#2E4A8C', '#AFC3DE'],
+      'Ad network': ['#F4F0EC', '#4F3D57', '#D6CCDC'], Free: ['#E8F1EC', '#245A41', '#A9C9B6']
+    };
+    var pillOf = function (k) { var t = tone[k]; return 'display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';'; };
+    var bookedAt = function (slot, w) {
+      var hit = null;
+      st.bookings.forEach(function (b) { if (b.slot === slot && w >= b.from && w <= b.to) hit = b; });
+      return hit;
+    };
+    var grid = SLOTS.map(function (sl) {
+      return {
+        name: sl[1], where: sl[2],
+        cells: WEEKS.map(function (wk, w) {
+          var b = bookedAt(sl[0], w), kind, what;
+          if (b) { kind = 'Booked'; what = '[Partner] · ' + CAMPS[b.camp]; }
+          else if ((HOUSE[sl[0]] || []).indexOf(w) >= 0) { kind = 'House ad'; what = 'The First Chapter contest'; }
+          else if (st.netOn) { kind = 'Ad network'; what = 'Free to book'; }
+          else { kind = 'Free'; what = 'A house ad fills it'; }
+          return { kind: kind, what: what, pillStyle: pillOf(kind) };
+        })
+      };
+    });
+    var lists = { cat: ['Fiction', 'Poetry', 'Essays', 'Academic'], tag: ['school life', 'fantasy', 'mystery', 'folklore', 'set in Romania'], lang: ['English', 'Română'] };
+    var ctx = {};
+    Object.keys(lists).forEach(function (g) {
+      ctx[g] = lists[g].map(function (v) {
+        var on = !!p.ctx[g][v];
+        return { label: v, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on),
+          pick: function () { var n = JSON.parse(JSON.stringify(st.pl)); n.ctx[g][v] = !on; self.setState({ pl: n, plMsg: null }); } };
+      });
+    });
+    var upd = function (k, v) { var n = JSON.parse(JSON.stringify(st.pl)); n[k] = v; self.setState({ pl: n, plMsg: null }); };
+    var val = function (e) { return e && e.target ? String(e.target.value) : ''; };
+    var slotName = function (k) { var n = k; SLOTS.forEach(function (x) { if (x[0] === k) n = x[1]; }); return n; };
+    var g = st.gridEdges || {};
+    var mt = st.plMsg ? st.plMsg.tone : '';
+    var bg = { ok: ['#E8F1EC', '#245A41'], bad: ['#F6E9EB', '#8C2B3A'], warn: ['#FBF3DA', '#5C3F0E'] }[mt] || ['#F4F0EC', '#4F3D57'];
+    return {
+      slotCount: SLOTS.length, grid: grid, ctx: ctx,
+      netPressed: st.netOn ? 'true' : 'false', netStyle: self.chipStyle(st.netOn), netCheck: self.chipCheck(st.netOn),
+      toggleNet: function () { self.setState({ netOn: !st.netOn }); },
+      refGrid: function (el) { self._grid = el; if (el) setTimeout(function () { self.measureGrid(); }, 0); },
+      onGridScroll: function () { self.measureGrid(); },
+      ar: { show: g.o === true, backOff: !g.l, fwdOff: !g.r, backOp: g.l ? '1' : '0.45', fwdOp: g.r ? '1' : '0.45' },
+      prev: function () { self.scrollGrid(-1); }, next: function () { self.scrollGrid(1); },
+      onCamp: function (e) { upd('camp', val(e)); }, onSlot: function (e) { upd('slot', val(e)); },
+      onFrom: function (e) { upd('from', parseInt(val(e), 10) || 0); }, onTo: function (e) { upd('to', parseInt(val(e), 10) || 0); },
+      book: function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (p.to < p.from) { self.setState({ plMsg: { tone: 'warn', text: 'The end week is before the start week.' } }); return; }
+        // One sponsor per slot per date (proposal): any overlap with another booking is a clash.
+        var clash = null;
+        st.bookings.forEach(function (b) { if (!clash && b.slot === p.slot && b.from <= p.to && p.from <= b.to) clash = b; });
+        if (clash) {
+          self.setState({ plMsg: { tone: 'bad', text: 'This slot is already booked by [Partner] from ' + WEEKS[clash.from] + ' to ' + WEEK_ENDS[clash.to] + ' 2026 (' + CAMPS[clash.camp] + '). Pick other dates or another slot.' } });
+          return;
+        }
+        var b = st.bookings.slice(); b.push({ slot: p.slot, camp: p.camp, from: p.from, to: p.to });
+        self.setState({ bookings: b, plMsg: { tone: 'ok', text: 'Booked: ' + slotName(p.slot) + ', ' + WEEKS[p.from] + ' to ' + WEEK_ENDS[p.to] + ' 2026, for ' + CAMPS[p.camp] + '. Logged in the audit log.' } });
+      },
+      hasMsg: !!st.plMsg, msg: st.plMsg ? st.plMsg.text : '',
+      msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; background: ' + bg[0] + '; color: ' + bg[1] + ';',
+      house: [
+        { name: 'The First Chapter contest', state: 'Running', pillStyle: pillOf('Free'),
+          en: 'Write a first chapter. The First Chapter contest opens in February 2027.',
+          ro: 'Scrie un prim capitol. Concursul Primul capitol se deschide în februarie 2027.',
+          page: '/contests/the-first-chapter', href: 'Contest.dc.html', runs: 'Any free slot, and the weeks marked “House ad” above' },
+        { name: 'Get the app', state: 'When the apps exist', pillStyle: pillOf('Ad network'),
+          en: 'Get the Ghemotoc app for your computer.',
+          ro: 'Descarcă aplicația Ghemotoc pentru calculator.',
+          page: '/get-the-app', href: 'GetApp.dc.html', runs: 'Starts when the first app is out' }
+      ]
+    };
+  }
+
+  // Interactive chip (pill system, 17 Oct): 36 px tall inside a 44 px tap area (.tmc-chip::before), equal 14 px sides.
+  // Unselected: white with a #8E7B99 edge. Selected: solid plum plus a check icon, so the state is not colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+  // Status pill colours by tone.
+  pill(tone) {
+    // Information pill tokens (background, text, border). Scheduled reads as sky (info).
+    var t = {
+      ok: ['#E8F1EC', '#245A41', '#A9C9B6'], warn: ['#FBF3DA', '#5C3F0E', '#D9B54A'], bad: ['#F6E9EB', '#8C2B3A', '#DDB0B8'],
+      neutral: ['#F4F0EC', '#4F3D57', '#D6CCDC'], plan: ['#E6EEF6', '#2E4A8C', '#AFC3DE']
+    }[tone] || ['#F4F0EC', '#4F3D57', '#D6CCDC'];
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';';
+  }
+  fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Example campaigns. Numbers are illustrative only.
+    var camps = [
+      { id: 'c1', name: 'New young adult books', sponsor: '[Partner] · bookshop', type: 'Banner', slots: 'Below the chapter, in story lists', target: 'Fiction · fantasy, school life · English, Română · Romania', dates: '5 Oct to 30 Nov 2026', status: 'Live', tone: 'ok', note: 'Approved by Robert, 3 Oct', shown: '15,120' },
+      { id: 'c2', name: 'Poetry, sponsored by [Partner]', sponsor: '[Partner] · publisher', type: 'Sponsored by', slots: 'Poetry category', target: 'Poetry · any tag · English, Română · Romania', dates: '1 Oct to 31 Dec 2026', status: 'Live', tone: 'ok', note: 'Approved by Robert, 29 Sep', shown: '7,140' },
+      { id: 'c3', name: 'Free writing workshops for teenagers', sponsor: '[Partner] · cultural centre', type: 'Banner', slots: 'Between shelves on Discover', target: 'Any category · school life · Română · Romania', dates: '20 Oct to 20 Nov 2026', status: 'Waiting for review', tone: 'warn', note: 'In the review queue', shown: '0' },
+      { id: 'c4', name: 'The First Chapter contest', sponsor: '[Partner]', type: 'Sponsored by', slots: 'Contest page and Discover tile', target: 'Contest pages only', dates: '1 Feb to 31 Mar 2027', status: 'Scheduled', tone: 'plan', note: 'Approved by Robert, 14 Oct', shown: '0' },
+      { id: 'c5', name: 'Meet people near you', sponsor: '[Partner] · dating app', type: 'Banner', slots: 'In story lists', target: 'Fiction · romance · English · Romania', dates: 'Not set', status: 'Sent back', tone: 'bad', note: 'Dating isn’t allowed. Andrei Mureșan, 9 Oct', shown: '0' },
+      { id: 'c6', name: 'Back to school books', sponsor: '[Partner] · bookshop', type: 'Banner', slots: 'In story lists', target: 'Essays · any tag · Română · Romania', dates: '1 to 30 Sep 2026', status: 'Ended', tone: 'neutral', note: 'Report sent 1 Oct', shown: '23,310' }
+    ];
+    var filters = ['All', 'Live', 'Waiting for review', 'Scheduled', 'Sent back', 'Ended'];
+    var chips = filters.map(function (f) {
+      var on = st.filter === f;
+      return { label: f, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ filter: f }); } };
+    });
+    var shown = 0;
+    var rows = camps.map(function (c) {
+      var vis = st.filter === 'All' || c.status === st.filter;
+      if (vis) shown++;
+      return {
+        name: c.name, sponsor: c.sponsor, type: c.type, slots: c.slots, target: c.target, dates: c.dates,
+        status: c.status, statusNote: c.note, shown: c.shown, statusStyle: self.pill(c.tone),
+        rowStyle: (vis ? 'display: grid;' : 'display: none;') + ' grid-template-columns: 2.1fr 1.5fr 2fr 1.3fr 1.2fr 1fr; gap: 16px; align-items: start; padding: 14px 16px; border-bottom: 1px solid #EFE8F2;'
+      };
+    });
+
+    // Contextual targeting chips: page context only.
+    var lists = {
+      cat: ['Fiction', 'Poetry', 'Journalism', 'Essays', 'Academic'],
+      tag: ['school life', 'fantasy', 'mystery', 'folklore', 'set in Romania'],
+      lang: ['English', 'Română'],
+      market: ['Romania', 'UK', 'Ireland', 'US', 'Canada', 'Australia', 'New Zealand', 'Singapore']
+    };
+    var tgt = {};
+    Object.keys(lists).forEach(function (g) {
+      tgt[g] = lists[g].map(function (v) {
+        var on = !!st.tgt[g][v];
+        return {
+          label: v, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on),
+          pick: function () { var t = JSON.parse(JSON.stringify(st.tgt)); t[g][v] = !on; self.setState({ tgt: t }); }
+        };
+      });
+    });
+    var never = ['Age', 'Gender', 'Reading history', 'Interests', 'Exact location', 'Device or cookies'];
+
+    // Review queue: every creative needs a person to tick each check.
+    var checkLabels = [
+      'Suitable for under-18s: no alcohol, gambling, tobacco, dating or similar',
+      'Alt text describes what the image shows',
+      'The link works and goes to the sponsor’s own page',
+      'The text is in the campaign’s language and makes sense'
+    ];
+    var R = [
+      { id: 'r1', name: 'Free writing workshops for teenagers', place: 'Between shelves on Discover', dates: '20 Oct to 20 Nov 2026', copy: 'Free writing workshops for teenagers. Book a place online.', alt: 'Teenagers writing at a long table in a library.' },
+      { id: 'r2', name: 'Library card week', place: 'Below the chapter', dates: '2 to 8 Nov 2026', copy: 'Get a free library card this week.', alt: 'A girl reading in a library, with the words: Get a free library card this week.' }
+    ];
+    var reviews = R.map(function (r) {
+      var ch = st.checks[r.id], all = ch.every(function (x) { return x; }), v = st.verdict[r.id];
+      var msg = '', msgTone = '';
+      if (v === 'approved') { msg = 'Approved by Robert, 16 Oct 2026. It goes live on its start date. Logged in the audit log.'; msgTone = 'ok'; }
+      else if (v === 'back') { msg = 'Sent back to [Partner] with your note. It stays off until a new version is approved.'; msgTone = 'bad'; }
+      else if (st.warn[r.id]) { msg = 'Tick every check before you approve.'; msgTone = 'warn'; }
+      var bg = { ok: ['#E8F1EC', '#2F6B4F'], bad: ['#F6E9EB', '#8C2B3A'], warn: ['#FBF3DA', '#815E18'] }[msgTone] || ['#F4F0EC', '#5C4965'];
+      return {
+        name: r.name, place: r.place, dates: r.dates, copy: r.copy, alt: r.alt,
+        badge: v === 'approved' ? 'Approved' : (v === 'back' ? 'Sent back' : 'Waiting for review'),
+        badgeStyle: self.pill(v === 'approved' ? 'ok' : (v === 'back' ? 'bad' : 'warn')),
+        open: !v, hasMsg: !!msg, msg: msg,
+        msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; background: ' + bg[0] + '; color: ' + bg[1] + ';',
+        checks: checkLabels.map(function (l, i) {
+          return {
+            label: l, on: !!ch[i],
+            toggle: function () { var c = JSON.parse(JSON.stringify(st.checks)); c[r.id][i] = !c[r.id][i]; var w = Object.assign({}, st.warn); w[r.id] = false; self.setState({ checks: c, warn: w }); }
+          };
+        }),
+        approve: function () {
+          if (!all) { var w = Object.assign({}, st.warn); w[r.id] = true; self.setState({ warn: w }); return; }
+          var d = Object.assign({}, st.verdict); d[r.id] = 'approved'; self.setState({ verdict: d });
+        },
+        sendBack: function () { var d = Object.assign({}, st.verdict); d[r.id] = 'back'; self.setState({ verdict: d }); }
+      };
+    });
+
+    // Banner slots and what fills them now.
+    var slots = [
+      { name: 'Below the chapter', rule: 'One banner after the last line of a chapter. Never between paragraphs.', now: 'New young adult books (Fiction)' },
+      { name: 'In story lists', rule: 'One card per shelf, labelled “Sponsored”, the same size as a story card.', now: 'New young adult books' },
+      { name: 'Between shelves on Discover', rule: 'One plain strip between two shelves.', now: 'Empty until a campaign is approved' },
+      { name: 'Sponsored by: a category', rule: 'A “Sponsored by” line under the category name. The list and its order don’t change.', now: 'Poetry, sponsored by [Partner]' },
+      { name: 'Sponsored by: a contest', rule: 'A “Sponsored by” credit on the contest page and its Discover tile. Never inside a class space.', now: 'The First Chapter contest, from 1 Feb 2027' }
+    ];
+
+    // Sponsor report: daily totals for one campaign.
+    var D = {
+      c1: { name: 'New young adult books', start: '5 Oct 2026', imp: [1180, 1265, 1342, 1210, 1398, 1270, 1275], clk: [17, 19, 21, 16, 22, 18, 18] },
+      c2: { name: 'Poetry, sponsored by [Partner]', start: '1 Oct 2026', imp: [430, 455, 470, 438, 492, 460, 465], clk: [3, 4, 3, 2, 4, 3, 3] },
+      c6: { name: 'Back to school books', start: '1 Sep 2026', imp: [802, 776, 790, 741, 768, 760, 765], clk: [9, 8, 10, 8, 9, 8, 9] }
+    };
+    var dayNames = { c1: ['10 Oct', '11 Oct', '12 Oct', '13 Oct', '14 Oct', '15 Oct', '16 Oct'], c2: ['10 Oct', '11 Oct', '12 Oct', '13 Oct', '14 Oct', '15 Oct', '16 Oct'], c6: ['24 Sep', '25 Sep', '26 Sep', '27 Sep', '28 Sep', '29 Sep', '30 Sep'] };
+    var isoDays = { c1: ['2026-10-10', '2026-10-11', '2026-10-12', '2026-10-13', '2026-10-14', '2026-10-15', '2026-10-16'], c2: ['2026-10-10', '2026-10-11', '2026-10-12', '2026-10-13', '2026-10-14', '2026-10-15', '2026-10-16'], c6: ['2026-09-24', '2026-09-25', '2026-09-26', '2026-09-27', '2026-09-28', '2026-09-29', '2026-09-30'] };
+    var cur = D[st.rep] || D.c1;
+    var key = D[st.rep] ? st.rep : 'c1';
+    var max = Math.max.apply(null, cur.imp);
+    var sumI = cur.imp.reduce(function (a, b) { return a + b; }, 0);
+    var sumC = cur.clk.reduce(function (a, b) { return a + b; }, 0);
+    var totals = { c1: '15,120 impressions and 221 clicks since 5 Oct 2026', c2: '7,140 impressions and 49 clicks since 1 Oct 2026', c6: '23,310 impressions and 268 clicks, 1 to 30 Sep 2026' };
+    var days = cur.imp.map(function (n, i) {
+      return { day: dayNames[key][i], imp: self.fmt(n), clicks: cur.clk[i], bar: 'display: block; height: 100%; border-radius: 999px; background: #672786; width: ' + Math.round(n / max * 100) + '%;' };
+    });
+    var csv = 'date,impressions,clicks\n' + cur.imp.slice(0, 3).map(function (n, i) { return isoDays[key][i] + ',' + n + ',' + cur.clk[i]; }).join('\n') + '\n…';
+    var repChips = [['c1', 'New young adult books'], ['c2', 'Poetry, sponsored by [Partner]'], ['c6', 'Back to school books (ended)']].map(function (p) {
+      var on = key === p[0];
+      return { label: p[1], pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ rep: p[0], exported: false }); } };
+    });
+
+    return {
+      chips: chips, rows: rows, shownLine: shown + (shown === 1 ? ' campaign shown.' : ' campaigns shown.'),
+      tgt: tgt, never: never, reviews: reviews, slots: slots,
+      submitted: st.submitted, submit: function () { self.setState({ submitted: true }); },
+      pb: {
+        on: st.pbOn, onPressed: st.pbOn ? 'true' : 'false', offPressed: st.pbOn ? 'false' : 'true',
+        onStyle: this.chipStyle(st.pbOn), offStyle: this.chipStyle(!st.pbOn), onCheck: this.chipCheck(st.pbOn), offCheck: this.chipCheck(!st.pbOn),
+        showOn: function () { self.setState({ pbOn: true }); }, showOff: function () { self.setState({ pbOn: false }); }
+      },
+      why: { open: st.whyOpen ? 'true' : 'false', shown: st.whyOpen, toggle: function () { self.setState({ whyOpen: !st.whyOpen }); } },
+      repChips: repChips,
+      rep: {
+        name: 'Report: ' + cur.name, imp: this.fmt(sumI), clicks: sumC, rate: (sumC / sumI * 100).toFixed(1) + '%',
+        total: totals[key], days: days, csv: csv, file: 'report-' + key + '-daily.csv'
+      },
+      exported: st.exported, exportCsv: function () { self.setState({ exported: true }); },
+      pl: this.placements()
+    };
+  }
+}
+</script>
+</body>
+</html>

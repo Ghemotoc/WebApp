@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Manage chapters</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: Write is the current section on writing screens -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" aria-current="page" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; margin: 0 4px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #E6C24C"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; margin-left: -10px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <header style="position: relative; padding: 40px 0 28px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; animation: tmcRise 0.5s ease-out both">
+      <img data-doodle="background" data-doodle-on="Manage chapters" src="/_blob/d83027d3dd193abcc63034afc624a538" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 6px; right: 360px; width: 150px; transform: rotate(-4deg)">
+      <div style="display: flex; flex-direction: column; gap: 14px; max-width: 760px">
+        <a href="WriterDashboard.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Writer dashboard</a>
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">The Girl Who Fixed Radios</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Manage chapters</h1>
+        <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #5C4965">Change the order, rename, unpublish or delete chapters. Readers see changes straight away.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px">
+        <a href="Story.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; box-sizing: border-box; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">See story page</a>
+        <a href="Editor.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 26px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New chapter</a>
+      </div>
+    </header>
+
+    <!-- Chapter list (S1-E3-04) -->
+    <section aria-labelledby="list-h" style="position: relative; padding: 24px 26px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.05s ease-out both">
+      <img data-doodle="background" data-doodle-on="6 published, 1 draft, 1 scheduled" src="/_blob/f5c69995547466e6d428c768ff799288" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -22px; right: 40px; width: 72px; transform: rotate(8deg)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 8px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapters</span>
+          <h2 id="list-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; color: #481C5F">{{summary}}</h2>
+        </div>
+        <p style="margin: 0; max-width: 460px; font-size: 14px; line-height: 1.5; color: #6B5A73">Drag the handle to reorder, or use the up and down arrows.</p>
+      </div>
+
+      <ol aria-label="Chapters in reading order" style="list-style: none; margin: 0; padding: 0">
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+          <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+            <button type="button" aria-label="{{r.dragLabel}}" style="flex: none; width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #6B5A73; display: inline-flex; align-items: center; justify-content: center; cursor: grab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h.01"></path><path d="M9 12h.01"></path><path d="M9 19h.01"></path><path d="M15 5h.01"></path><path d="M15 12h.01"></path><path d="M15 19h.01"></path></svg></button>
+            <span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 12px; background: #F4F0EC; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px">{{r.num}}</span>
+
+            <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+              <sc-if value="{{r.notRenaming}}" hint-placeholder-val="{{true}}">
+                <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px"><a href="Editor.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; color: #26142E; text-decoration: none">{{r.title}}</a><span style="{{r.pill}}">{{r.status}}</span></span>
+              </sc-if>
+              <sc-if value="{{r.renaming}}" hint-placeholder-val="{{false}}">
+                <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                  <label for="{{r.inputId}}" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">New title for chapter {{r.num}}</label>
+                  <input id="{{r.inputId}}" type="text" value="{{r.title}}" style="flex: 1 1 220px; height: 44px; padding: 0 16px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px; color: #26142E">
+                  <button type="button" onClick="{{r.stopRename}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Save</button>
+                  <button type="button" onClick="{{r.stopRename}}" style="height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Cancel</button>
+                </span>
+              </sc-if>
+              <span style="font-size: 14px; color: #6B5A73">{{r.meta}}</span>
+            </div>
+
+            <div style="flex: 0 1 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 4px">
+              <button type="button" aria-label="{{r.upLabel}}" disabled="{{r.isFirst}}" onClick="{{r.up}}" style="{{r.upStyle}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"></path></svg></button>
+              <button type="button" aria-label="{{r.downLabel}}" disabled="{{r.isLast}}" onClick="{{r.down}}" style="{{r.downStyle}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+              <span aria-hidden="true" style="width: 1px; height: 24px; background: #EFE8F2; margin: 0 4px"></span>
+              <a href="Editor.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; font-size: 14px; font-weight: 600; text-decoration: none">Edit</a>
+              <button type="button" onClick="{{r.startRename}}" style="height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Rename</button>
+              <sc-if value="{{r.canUnpublish}}" hint-placeholder-val="{{true}}">
+                <button type="button" onClick="{{r.unpublish}}" style="height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Unpublish</button>
+              </sc-if>
+              <sc-if value="{{r.canRepublish}}" hint-placeholder-val="{{false}}">
+                <button type="button" onClick="{{r.republish}}" style="height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Publish again</button>
+              </sc-if>
+              <button type="button" onClick="{{r.askDelete}}" style="height: 44px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Delete</button>
+            </div>
+          </li>
+        </sc-for>
+      </ol>
+    </section>
+
+    <!-- Recently deleted, with undo for 30 days -->
+    <section aria-labelledby="del-h" style="position: relative; margin-top: 20px; padding: 22px 26px; display: flex; flex-direction: column; gap: 10px; background: #F4F0EC; border-radius: 24px; animation: tmcRise 0.5s 0.1s ease-out both">
+      <img data-doodle="background" data-doodle-on="Recently deleted" src="/_blob/f649bab025ce88672936a60fbc596247" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -20px; right: 150px; width: 52px; transform: rotate(-12deg)">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h2 id="del-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">Recently deleted</h2>
+        <span style="font-size: 14px; color: #5C4965">Deleted chapters are hidden straight away and deleted for good after 30 days. Until then you can undo.</span>
+      </div>
+      <sc-for list="{{deleted}}" as="d" hint-placeholder-count="1">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 16px">
+          <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; font-size: 16px; color: #26142E">{{d.title}}</span><span style="font-size: 14px; color: #6B5A73">{{d.meta}}</span></span>
+          <button type="button" onClick="{{d.undo}}" style="height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Undo</button>
+        </div>
+      </sc-for>
+      <sc-if value="{{noDeleted}}" hint-placeholder-val="{{false}}">
+        <span style="font-size: 14px; color: #6B5A73">Nothing deleted in the last 30 days.</span>
+      </sc-if>
+    </section>
+
+    <!-- Story settings (S1-E3-05) -->
+    <section aria-labelledby="set-h" style="position: relative; margin-top: 32px; padding: 24px 26px; display: flex; flex-direction: column; gap: 18px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.15s ease-out both">
+      <img data-doodle="background" data-doodle-on="The whole story" src="/_blob/1dc9eb802c05328c62a8eb50afa88846" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -46px; right: 40px; width: 86px; transform: rotate(10deg)">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Story settings</span>
+        <h2 id="set-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; color: #481C5F">The whole story</h2>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <span id="st-label" style="width: 120px; font-size: 15px; font-weight: 600; color: #26142E">Status</span>
+        <div role="radiogroup" aria-labelledby="st-label" style="display: inline-flex; gap: 4px; padding: 4px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5">
+          <sc-for list="{{statuses}}" as="s" hint-placeholder-count="2">
+            <button type="button" role="radio" class="tmc-chip" aria-checked="{{s.on}}" onClick="{{s.pick}}" style="{{s.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{s.label}}</button>
+          </sc-for>
+        </div>
+        <span style="flex: 1 1 240px; font-size: 14px; color: #6B5A73">Shown on your story card. Readers can filter by it.</span>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-top: 18px; border-top: 1px solid #EFE8F2">
+        <span id="cm-label" style="width: 120px; font-size: 15px; font-weight: 600; color: #26142E">Comments</span>
+        <button type="button" role="switch" aria-checked="{{commentsOn}}" aria-labelledby="cm-label" onClick="{{toggleComments}}" style="{{switchStyle}}"><span aria-hidden="true" style="{{knobStyle}}"></span></button>
+        <span style="flex: 1 1 240px; font-size: 14px; line-height: 1.5; color: #6B5A73">{{commentsNote}}</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 18px; border-top: 1px solid #EFE8F2">
+        <span style="font-size: 15px; font-weight: 600; color: #26142E">Delete this story</span>
+        <sc-if value="{{delStep0}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+            <button type="button" onClick="{{delNext}}" style="height: 44px; padding: 0 20px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Delete story</button>
+            <span style="flex: 1 1 300px; font-size: 14px; line-height: 1.5; color: #6B5A73">We ask you twice. The story and all its chapters are hidden straight away and deleted for good after 30 days.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{delStep1}}" hint-placeholder-val="{{false}}">
+          <div role="alert" style="display: flex; flex-direction: column; gap: 12px; padding: 16px 18px; border-radius: 16px; background: #F8E9EC">
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #26142E"><strong style="font-weight: 700">Delete “The Girl Who Fixed Radios” and all 8 chapters?</strong> Readers lose access straight away.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <button type="button" onClick="{{delCancel}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Keep story</button>
+              <button type="button" onClick="{{delNext}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Yes, delete story</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{delStep2}}" hint-placeholder-val="{{false}}">
+          <div role="alert" style="display: flex; flex-direction: column; gap: 12px; padding: 16px 18px; border-radius: 16px; background: #F8E9EC">
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #26142E"><strong style="font-weight: 700">Last check.</strong> We hide the story now and delete it for good on 15 November 2026. You can undo until then.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <button type="button" onClick="{{delCancel}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Keep story</button>
+              <button type="button" onClick="{{delNext}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Delete story</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{delStep3}}" hint-placeholder-val="{{false}}">
+          <div role="status" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-radius: 16px; background: #F4F0EC">
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #26142E">Story deleted. It’s hidden from readers and will be gone for good on 15 November 2026.</p>
+            <button type="button" onClick="{{delCancel}}" style="height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Undo</button>
+          </div>
+        </sc-if>
+      </div>
+    </section>
+  </main>
+
+  <!-- Small page footer -->
+  <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/3b1eb2ea4b63edde44be9fd1a9bf7a68" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -88px; left: clamp(16px, 4vw, 64px); width: 84px">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/3eb29ce44881d2b0ae1e93232991f874" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -60px; right: clamp(16px, 4vw, 64px); width: 58px; transform: scaleX(-1)">
+    <div style="padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Delete-chapter confirmation: page dimmed behind, dialog on top -->
+  <sc-if value="{{confirmOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 20; background: rgba(38,20,46,0.45); display: flex; align-items: center; justify-content: center; padding: 16px">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="cd-h" aria-describedby="cd-p" style="width: min(480px, 100%); box-sizing: border-box; padding: 28px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 24px 64px -24px rgba(38,20,46,0.5)">
+        <h2 id="cd-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; line-height: 1.15; color: #481C5F">Delete “{{confirmTitle}}”?</h2>
+        <p id="cd-p" style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">We hide it from readers straight away and delete it for good after 30 days. Until then you can undo it under Recently deleted.</p>
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 6px">
+          <button type="button" onClick="{{cancelDelete}}" style="height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Keep chapter</button>
+          <button type="button" onClick="{{confirmDelete}}" style="height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Delete chapter</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1854}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      rows: [
+        { id: 'c1', title: 'Grandad’s Repair Shop', status: 'published', meta: 'Published 5 Sep' },
+        { id: 'c2', title: 'The Radio on the Top Shelf', status: 'published', meta: 'Published 12 Sep' },
+        { id: 'c3', title: 'Static After Midnight', status: 'published', meta: 'Published 19 Sep' },
+        { id: 'c4', title: 'The Soldering Iron', status: 'published', meta: 'Published 26 Sep · readers see “Edited on 12 Oct”' },
+        { id: 'c5', title: 'The Station from 1989', status: 'published', meta: 'Published 3 Oct' },
+        { id: 'c6', title: 'Ana, Are You There?', status: 'published', meta: 'Published 10 Oct' },
+        { id: 'c7', title: 'Saturday at the Shop', status: 'draft', meta: 'Draft · 228 words · saved yesterday' },
+        { id: 'c8', title: 'The Radio from Câmpina', status: 'scheduled', meta: 'Goes live Saturday 24 October, 18:00 Romania time' }
+      ],
+      deleted: [
+        { id: 'x1', title: 'Author’s note', status: 'published', meta: 'Deleted 14 Oct · gone for good on 13 Nov', back: 'Published 2 Oct' }
+      ],
+      renaming: null, confirm: null, storyStatus: 'Ongoing', comments: true, delStep: 0
+    };
+  }
+
+  move(i, dir) {
+    var rows = this.state.rows.slice(), j = i + dir;
+    if (j < 0 || j >= rows.length) return;
+    var t = rows[i]; rows[i] = rows[j]; rows[j] = t;
+    this.setState({ rows: rows });
+  }
+
+  setStatus(id, status, meta) {
+    var rows = this.state.rows.map(function (r) { return r.id === id ? Object.assign({}, r, { status: status, meta: meta }) : r; });
+    this.setState({ rows: rows });
+  }
+
+  renderVals() {
+    var self = this, st = this.state, n = st.rows.length;
+
+    var pills = {
+      // Pill system (17 Oct): Published sage, Draft gold, Scheduled sky, Unpublished neutral.
+      published: ['Published', 'sage'],
+      draft: ['Draft', 'gold'],
+      scheduled: ['Scheduled', 'sky'],
+      unpublished: ['Unpublished', 'neutral']
+    };
+    var arrow = function (off) {
+      return 'width: 44px; height: 44px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; '
+        + (off ? 'border: 1px solid #EFE8F2; background: #FAF8F5; color: #B9A9C2; cursor: not-allowed;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; cursor: pointer;');
+    };
+
+    var rows = st.rows.map(function (r, i) {
+      var num = i + 1, first = i === 0, last = i === n - 1;
+      return {
+        num: num, title: r.title, meta: r.meta, status: pills[r.status][0],
+        pill: ({ sage: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap', gold: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap', sky: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE; font-size: 12px; font-weight: 700; white-space: nowrap', neutral: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap' })[pills[r.status][1]],
+        inputId: 'rn-' + r.id,
+        renaming: st.renaming === r.id, notRenaming: st.renaming !== r.id,
+        dragLabel: 'Drag chapter ' + num + ' to reorder. You can also use the arrows.',
+        upLabel: 'Move chapter ' + num + ' up', downLabel: 'Move chapter ' + num + ' down',
+        isFirst: first, isLast: last, upStyle: arrow(first), downStyle: arrow(last),
+        up: function () { self.move(i, -1); }, down: function () { self.move(i, 1); },
+        startRename: function () { self.setState({ renaming: r.id }); },
+        stopRename: function () { self.setState({ renaming: null }); },
+        canUnpublish: r.status === 'published', canRepublish: r.status === 'unpublished',
+        unpublish: function () { self.setStatus(r.id, 'unpublished', 'Unpublished today · readers can’t open it · comments hidden but kept'); },
+        republish: function () { self.setStatus(r.id, 'published', 'Published again today'); },
+        askDelete: function () { self.setState({ confirm: r.id }); }
+      };
+    });
+
+    var counts = { published: 0, draft: 0, scheduled: 0, unpublished: 0 };
+    st.rows.forEach(function (r) { counts[r.status] += 1; });
+    var bits = [counts.published + ' published'];
+    if (counts.draft) bits.push(counts.draft + ' draft');
+    if (counts.scheduled) bits.push(counts.scheduled + ' scheduled');
+    if (counts.unpublished) bits.push(counts.unpublished + ' unpublished');
+
+    var deleted = st.deleted.map(function (d) {
+      return {
+        title: d.title, meta: d.meta,
+        undo: function () {
+          var back = Object.assign({}, d, { meta: d.back });
+          self.setState({ deleted: st.deleted.filter(function (x) { return x.id !== d.id; }), rows: st.rows.concat([back]) });
+        }
+      };
+    });
+
+    var target = null;
+    st.rows.forEach(function (r) { if (r.id === st.confirm) target = r; });
+
+    var statuses = ['Ongoing', 'Completed'].map(function (s) {
+      var on = st.storyStatus === s;
+      return {
+        label: s, on: on,
+        style: 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+          + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: transparent; color: #481C5F; border: 1px solid transparent;'),
+        pick: function () { self.setState({ storyStatus: s }); }
+      };
+    });
+    var on = st.comments;
+
+    return {
+      rows: rows, summary: bits.join(', '),
+      deleted: deleted, noDeleted: st.deleted.length === 0,
+      confirmOpen: !!target, confirmTitle: target ? target.title : '',
+      cancelDelete: function () { self.setState({ confirm: null }); },
+      confirmDelete: function () {
+        if (!target) return;
+        var gone = Object.assign({}, target, { meta: 'Deleted today · gone for good on 15 Nov', back: target.meta });
+        self.setState({ confirm: null, rows: st.rows.filter(function (r) { return r.id !== target.id; }), deleted: [gone].concat(st.deleted) });
+      },
+      statuses: statuses,
+      commentsOn: on,
+      commentsNote: on ? 'On. Readers can comment on every chapter.' : 'Off. Existing comments are hidden and nobody can add new ones.',
+      switchStyle: 'position: relative; flex: none; width: 60px; height: 34px; padding: 0; border-radius: 999px; cursor: pointer; border: 1px solid ' + (on ? '#481C5F' : '#B9A9C2') + '; background: ' + (on ? '#481C5F' : '#F4F0EC') + ';',
+      knobStyle: 'position: absolute; top: 3px; left: ' + (on ? '29px' : '3px') + '; width: 26px; height: 26px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(38,20,46,0.3); transition: left 0.15s ease;',
+      toggleComments: function () { self.setState({ comments: !st.comments }); },
+      delStep0: st.delStep === 0, delStep1: st.delStep === 1, delStep2: st.delStep === 2, delStep3: st.delStep === 3,
+      delNext: function () { self.setState({ delStep: Math.min(3, st.delStep + 1) }); },
+      delCancel: function () { self.setState({ delStep: 0 }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

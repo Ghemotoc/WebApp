@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Chapter editor</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: Write is the current section on writing screens -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" aria-current="page" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; margin: 0 4px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #E6C24C"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; margin-left: -10px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Where you are -->
+    <nav aria-label="Breadcrumb" style="padding-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 14px; color: #6B5A73">
+      <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; text-decoration: none">Writer dashboard</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      <a href="Chapters.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; text-decoration: none">The Weather Station</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      <span aria-current="page" style="color: #26142E">Chapter 1</span>
+      <span style="{{statePill}}">{{stateLabel}}</span>
+    </nav>
+
+    <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; animation: tmcRise 0.5s ease-out both">
+
+      <!-- Writing column -->
+      <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+        <label for="ch-title" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapter title</label>
+        <input id="ch-title" type="text" value="" placeholder="Untitled" style="width: 100%; box-sizing: border-box; height: 72px; padding: 0 2px; border: 0; border-bottom: 2px solid #DED3E4; background: transparent; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(32px, 3.6vw, 48px); letter-spacing: -0.02em; color: #481C5F">
+
+        <!-- Toolbar: every button has a label, a focus ring and a shortcut -->
+        <div role="toolbar" aria-label="Formatting" style="margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: 4px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 999px">
+          <button type="button" aria-label="Bold" title="Bold (Ctrl+B)" aria-keyshortcuts="Control+B" aria-pressed="false" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"></path></svg></button>
+          <button type="button" aria-label="Italic" title="Italic (Ctrl+I)" aria-keyshortcuts="Control+I" aria-pressed="true" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: #F1EAF4; color: #672786; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" x2="10" y1="4" y2="4"></line><line x1="14" x2="5" y1="20" y2="20"></line><line x1="15" x2="9" y1="4" y2="20"></line></svg></button>
+          <span aria-hidden="true" style="width: 1px; height: 24px; background: #DED3E4; margin: 0 6px"></span>
+          <button type="button" aria-label="Heading" title="Heading (Ctrl+Alt+2)" aria-keyshortcuts="Control+Alt+2" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12h12"></path><path d="M6 20V4"></path><path d="M18 20V4"></path></svg></button>
+          <button type="button" aria-label="Quote" title="Quote (Ctrl+Shift+9)" aria-keyshortcuts="Control+Shift+9" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2H4c-1.25 0-2 .75-2 1.97V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 0-1 1.03V20c0 1 0 1 1 1z"></path><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2h-4c-1.25 0-2 .75-2 1.97V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"></path></svg></button>
+          <button type="button" aria-label="List" title="List (Ctrl+Shift+8)" aria-keyshortcuts="Control+Shift+8" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg></button>
+          <button type="button" aria-label="Link" title="Link (Ctrl+K)" aria-keyshortcuts="Control+K" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></button>
+          <button type="button" title="Scene break (Ctrl+Enter)" aria-keyshortcuts="Control+Enter" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h.01"></path><path d="M12 12h.01"></path><path d="M19 12h.01"></path></svg>Scene break</button>
+          <span aria-hidden="true" style="width: 1px; height: 24px; background: #DED3E4; margin: 0 6px"></span>
+
+          <!-- Insert menu: picture, drawing, music, video (decision 4, 16 Oct). Open on the board so it can be reviewed -->
+          <div style="position: relative; z-index: 4">
+            <button type="button" aria-haspopup="menu" aria-expanded="{{insertOpen}}" aria-controls="insert-menu" onClick="{{toggleInsert}}" style="{{insertBtnStyle}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Insert<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+            <sc-if value="{{insertOpen}}" hint-placeholder-val="{{true}}">
+              <div id="insert-menu" role="menu" aria-label="Insert" style="position: absolute; top: 54px; left: 0; width: min(340px, calc(100vw - 32px)); box-sizing: border-box; padding: 8px; display: flex; flex-direction: column; gap: 2px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 24px 48px -24px rgba(38,20,46,0.35)">
+                <sc-for list="{{insertItems}}" as="m" hint-placeholder-count="4">
+                  <button type="button" role="menuitem" onClick="{{m.pick}}" style="display: flex; align-items: flex-start; gap: 12px; width: 100%; min-height: 56px; padding: 10px 14px; box-sizing: border-box; border: 0; border-radius: 16px; background: transparent; text-align: left; font-family: inherit; cursor: pointer">
+                    <span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 12px; background: #F1EAF4; color: #672786; display: inline-flex; align-items: center; justify-content: center"><img src="{{m.icon}}" alt="" aria-hidden="true" width="26" height="26" style="display: block"></span>
+                    <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; color: #26142E">{{m.label}}</span><span style="font-size: 13px; line-height: 1.45; color: #5C4965">{{m.note}}</span></span>
+                  </button>
+                </sc-for>
+                <p style="margin: 4px 0 0; padding: 10px 14px 6px; border-top: 1px solid #EFE8F2; font-size: 13px; line-height: 1.5; color: #6B5A73">Links from approved services only. Nothing loads from them until a reader presses play.</p>
+              </div>
+            </sc-if>
+          </div>
+          <span style="margin-left: auto; padding: 0 16px; font-size: 14px; color: #6B5A73">1,240 words</span>
+        </div>
+
+        <!-- The draft -->
+        <div role="textbox" aria-multiline="true" aria-label="Chapter text" tabindex="0" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; padding: clamp(24px, 4vw, 56px); box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <div style="max-width: 680px; margin: 0 auto; font-size: 18px; line-height: 1.75; color: #26142E">
+            <p style="margin: 0">My grandmother has written down the weather every morning since 1971. Temperature, wind, cloud, and one word for how she slept. The notebooks fill a whole shelf in the hall, and nobody is allowed to dust them.</p>
+            <p style="margin: 18px 0 0">The morning she went into hospital, I opened that day’s page and found she had already filled it in. Tomorrow’s too. And the day after that, in pencil, with a little drawing of a storm.</p>
+            <p style="margin: 18px 0 0">Mum said it was nothing. “She’s 81. She gets her days mixed up.” Then she went back to packing Bunica’s nightie and reading glasses into a plastic bag.</p>
+            <p style="margin: 18px 0 0">But Bunica <em>never</em> gets her days mixed up. She knows the price of bread in three different shops. She knows my timetable better than I do.</p>
+            <p aria-label="Scene break" style="margin: 18px 0 0; text-align: center; letter-spacing: 0.6em; color: #6B5A73">* * *</p>
+            <p style="margin: 18px 0 0">On Tuesday it was 14 degrees, light wind from the north, no clouds. Exactly what she had written. Under it, in the space for how she slept, it said “badly”.</p>
+            <!-- Inserted picture: alt text required, checked before it shows, location data removed (decision 4) -->
+            <figure aria-label="Picture in this chapter" style="margin: 28px 0 0; padding: 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FAF8F5; display: flex; flex-direction: column; gap: 14px; font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.5; color: #26142E">
+              <div style="position: relative; border-radius: 16px; overflow: hidden; background: #EADFD3">
+                <svg viewBox="0 0 640 300" width="100%" role="img" aria-label="Your picture: my grandmother’s weather notebook, open on the hall table, with three days filled in" style="display: block">
+                  <rect x="0" y="230" width="640" height="70" fill="#C9B49B"></rect>
+                  <rect x="120" y="48" width="400" height="204" rx="10" fill="#2E4A8C"></rect>
+                  <rect x="132" y="58" width="186" height="184" rx="4" fill="#FBF7EC"></rect>
+                  <rect x="322" y="58" width="186" height="184" rx="4" fill="#FBF7EC"></rect>
+                  <line x1="320" y1="58" x2="320" y2="242" stroke="#B9AE9A" stroke-width="3"></line>
+                  <path d="M148 90H302M148 112H302M148 134H302M148 156H302M148 178H302M148 200H302M148 222H302M338 90H492M338 112H492M338 134H492M338 156H492" stroke="#B7C4E0" stroke-width="2"></path>
+                  <path d="M150 86h96M150 108h120M150 130h84M150 152h110M150 174h92M150 196h118M150 218h70M340 86h104M340 108h88" stroke="#3E2414" stroke-width="3" stroke-linecap="round"></path>
+                  <path d="M340 130h96M340 152h60" stroke="#8C8478" stroke-width="2.5" stroke-linecap="round"></path>
+                  <path d="M392 212a16 16 0 0 1 6-30a22 22 0 0 1 40-6a15 15 0 0 1 12 36z" fill="none" stroke="#8C8478" stroke-width="3" stroke-linejoin="round"></path>
+                  <path d="M420 212l-8 14h12l-8 14" fill="none" stroke="#8C8478" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; position: absolute; top: 12px; left: 12px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Being checked</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="alt-1" style="font-size: 14px; font-weight: 600; color: #26142E">Alt text <span style="font-weight: 400; color: #6B5A73">(required)</span></label>
+                <input id="alt-1" type="text" maxlength="300" required="required" aria-describedby="alt-1-hint" value="My grandmother’s weather notebook open on the hall table. Three days are filled in, the last one in pencil with a small storm cloud." style="height: 44px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+                <span id="alt-1-hint" style="font-size: 13px; color: #6B5A73">Describe the picture for readers who use a screen reader.</span>
+              </div>
+              <p style="margin: 0; display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #481C5F"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none"><span><strong style="font-weight: 700">Checked before it shows.</strong> Readers see this picture once our image check passes. We removed the location data from the file.</span></p>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                <button type="button" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Replace picture</button>
+                <button type="button" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: transparent; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Remove picture</button>
+              </div>
+            </figure>
+            <p style="margin: 18px 0 0">I took a photo of the page and sent it to my cousin Radu. He wrote back straight away: “ok that’s creepy. what does thursday say”</p>
+            <p style="margin: 18px 0 0">Thursday was the one in pencil. Thursday was the storm.</p>
+            <!-- Video embed as a click-to-load card: nothing loads from YouTube until a reader presses play (decision 4) -->
+            <div role="group" aria-label="Video from YouTube" style="margin: 28px 0 0; display: flex; flex-wrap: wrap; border: 1px solid #DED3E4; border-radius: 16px; overflow: hidden; background: #FFFFFF; font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.5; color: #26142E">
+              <div aria-hidden="true" style="flex: 1 1 220px; min-height: 160px; display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg,#3A1F45 0%,#26142E 100%)">
+                <span style="width: 64px; height: 64px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="#26142E" stroke="none" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg></span>
+              </div>
+              <div style="flex: 1 1 280px; padding: 16px 20px; display: flex; flex-direction: column; gap: 6px">
+                <span style="font-family: 'Cutive', 'Courier New', serif; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3"><span aria-hidden="true" title="Official logo goes here" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border: 1.5px dashed #8E7B99; border-radius: 4px; background: #F4F0EC"></span>Video · YouTube</span>
+                <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; line-height: 1.2; color: #26142E">How a weather forecast is made</span>
+                <span style="font-size: 14px; color: #5C4965">Readers see this card. The video plays from YouTube, which may use cookies.</span>
+                <span style="font-size: 13px; color: #6B5A73">Nothing loads from YouTube until the reader presses play.</span>
+                <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #6B5A73">Design note: the dashed square is a logo slot. The built app uses YouTube’s official, full-colour logo from its brand kit, unchanged.</p>
+                <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 8px">
+                  <button type="button" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Change link</button>
+                  <button type="button" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: transparent; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Remove video</button>
+                </div>
+              </div>
+            </div>
+            <p style="margin: 18px 0 0">I checked the forecast on my phone. Sunny all week.<span aria-hidden="true" style="display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -0.15em; background: #672786"></span></p>
+            <!-- Sketch pad: opens from Insert, Drawing. Saved into the chapter as a picture -->
+            <sc-if value="{{sketchOn}}" hint-placeholder-val="{{false}}">
+              <section aria-label="Sketch pad" style="margin: 28px 0 0; padding: 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FAF8F5; display: flex; flex-direction: column; gap: 12px; font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.5; color: #26142E">
+                <div role="toolbar" aria-label="Drawing tools" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+                  <button type="button" class="tmc-chip" aria-pressed="true" style="position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Pen</button>
+                  <button type="button" class="tmc-chip" aria-pressed="false" style="position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; background: #FFFFFF; color: #481C5F; border: 1px solid #8E7B99;"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Eraser</button>
+                  <button type="button" aria-label="Colour: black" aria-pressed="true" style="width: 44px; height: 44px; border: 3px solid #FFFFFF; border-radius: 50%; background: #26142E; box-shadow: 0 0 0 2px #481C5F; cursor: pointer"></button>
+                  <button type="button" aria-label="Colour: red" aria-pressed="false" style="width: 44px; height: 44px; border: 3px solid #FFFFFF; border-radius: 50%; background: #8C2B3A; box-shadow: 0 0 0 1px #8E7B99; cursor: pointer"></button>
+                  <button type="button" aria-label="Colour: blue" aria-pressed="false" style="width: 44px; height: 44px; border: 3px solid #FFFFFF; border-radius: 50%; background: #2E4A8C; box-shadow: 0 0 0 1px #8E7B99; cursor: pointer"></button>
+                  <button type="button" style="margin-left: auto; height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Undo</button>
+                  <button type="button" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Clear</button>
+                </div>
+                <svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Your drawing so far: a storm cloud with a lightning bolt and rain" style="display: block; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 16px">
+                  <path d="M250 140a30 30 0 0 1 12-58a44 44 0 0 1 84-10a34 34 0 0 1 46 68z" fill="none" stroke="#26142E" stroke-width="4" stroke-linejoin="round"></path>
+                  <path d="M322 140L302 178H328L308 216" fill="none" stroke="#8C2B3A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M266 156l-8 20M286 160l-8 20M362 156l-8 20M382 160l-8 20" fill="none" stroke="#2E4A8C" stroke-width="3" stroke-linecap="round"></path>
+                </svg>
+                <span style="font-size: 13px; color: #6B5A73">Saved into the chapter as a picture. It needs alt text, like any picture.</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <button type="button" onClick="{{closeSketch}}" style="height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Insert drawing</button>
+                  <button type="button" onClick="{{closeSketch}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Cancel</button>
+                </div>
+              </section>
+            </sc-if>
+          </div>
+        </div>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #6B5A73">Pasting from Word or Google Docs keeps headings, bold, italic, quotes, lists, scene breaks and links. Other formatting is removed.</p>
+
+        <aside style="display: flex; gap: 12px; align-items: flex-start; padding: 16px 20px; background: #F1EAF4; border-radius: 20px">
+          <span style="flex: none; color: #672786; display: flex; margin-top: 2px"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none"></span>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #26142E"><strong style="font-weight: 700">Your work stays yours.</strong> You can publish it anywhere, any time. <a href="Legal.dc.html" style="font-weight: 600">How rights work here</a></p>
+        </aside>
+      </main>
+
+      <!-- Side panel -->
+      <aside aria-label="Chapter settings" style="position: relative; flex: 1 1 320px; max-width: 380px; display: flex; flex-direction: column; gap: 18px">
+        <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/c96e4c6d379974d9168df6dc534ab327" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: calc(100% + 50px); right: 40px; width: 104px; transform: rotate(-5deg)">
+        <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/dd5f7c42f258ececa180dd9f14853ad2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: calc(100% + 170px); left: 40px; width: 116px; transform: rotate(4deg)">
+
+        <!-- Save status (S1-E3-02) -->
+        <section aria-labelledby="save-h" style="position: relative; padding: 22px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <img data-doodle="widget" data-doodle-on="SAVING" src="/_blob/b6af94add128d6d8dc93670e26614f43" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -54px; right: 18px; width: 84px; transform: rotate(6deg)">
+          <h2 id="save-h" style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Saving</h2>
+          <p role="status" style="{{saveBox}}"><span style="display: flex; flex: none; margin-top: 2px">
+            <sc-if value="{{isSaved}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+            <sc-if value="{{isSaving}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.22-8.56"></path></svg></sc-if>
+            <sc-if value="{{isOffline}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h.01"></path><path d="M8.5 16.43a5 5 0 0 1 7 0"></path><path d="M2 8.82a15 15 0 0 1 4.17-2.65"></path><path d="M10.66 5c4.01-.36 8.14.9 11.34 3.76"></path><path d="m2 2 20 20"></path></svg></sc-if>
+            <sc-if value="{{isConflict}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></sc-if>
+          </span><span>{{saveText}}</span></p>
+          <sc-if value="{{isConflict}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <button type="button" onClick="{{setSaved}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Keep this version</button>
+              <button type="button" onClick="{{setSaved}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Compare versions</button>
+            </div>
+          </sc-if>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">We save every 10 seconds and when you click away from the text.</p>
+          <div role="group" aria-label="Show a save status" style="display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1px solid #EFE8F2">
+            <span style="font-size: 13px; font-weight: 600; color: #5C4965">What the status can say</span>
+            <sc-for list="{{saveStates}}" as="s" hint-placeholder-count="4">
+              <button type="button" class="tmc-chip" aria-pressed="{{s.on}}" onClick="{{s.pick}}" style="{{s.style}}"><span aria-hidden="true" style="{{s.dot}}"></span>{{s.label}}<svg class="tmc-chk" style="margin-left: auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- Publish, schedule, unpublish (S1-E3-03) -->
+        <section aria-labelledby="pub-h" style="position: relative; padding: 22px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <img data-doodle="widget" data-doodle-on="PUBLISH" src="/_blob/4526965d388ed8bbd98b3f239e74ce87" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -30px; right: 26px; width: 62px; transform: rotate(14deg)">
+          <h2 id="pub-h" style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Publish</h2>
+
+          <sc-if value="{{isDraft}}" hint-placeholder-val="{{true}}">
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <div role="radiogroup" aria-label="When to publish" style="display: flex; flex-direction: column; gap: 2px">
+                <label style="display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 15px; color: #26142E; cursor: pointer"><input type="radio" name="when" checked="{{modeNow}}" onChange="{{pickNow}}" style="margin: 0; width: 20px; height: 20px; accent-color: #672786">Publish now</label>
+                <label style="display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 15px; color: #26142E; cursor: pointer"><input type="radio" name="when" checked="{{modeLater}}" onChange="{{pickLater}}" style="margin: 0; width: 20px; height: 20px; accent-color: #672786">Schedule for later</label>
+              </div>
+              <sc-if value="{{modeLater}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                  <div style="flex: 1 1 140px; display: flex; flex-direction: column; gap: 6px">
+                    <label for="pub-date" style="font-size: 13px; font-weight: 600; color: #26142E">Date</label>
+                    <input id="pub-date" type="date" value="2026-10-17" style="height: 44px; padding: 0 14px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                  </div>
+                  <div style="flex: 1 1 100px; display: flex; flex-direction: column; gap: 6px">
+                    <label for="pub-time" style="font-size: 13px; font-weight: 600; color: #26142E">Time</label>
+                    <input id="pub-time" type="time" value="18:00" style="height: 44px; padding: 0 14px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                  </div>
+                  <span style="flex: 1 1 100%; font-size: 13px; color: #6B5A73">Romania time (Europe/Bucharest). It goes live within 5 minutes of this time.</span>
+                </div>
+              </sc-if>
+              <div style="display: flex; gap: 8px">
+                <button type="button" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 48px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer"><img src="/_blob/98631b9435453dabc49fb5955934c76d" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; margin-left: -2px">Preview</button>
+                <button type="button" onClick="{{doPublish}}" style="flex: 1.4; height: 48px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer">{{publishLabel}}</button>
+              </div>
+              <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">When this chapter goes live, your story becomes public and your followers get a notification.</p>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{isScheduled}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <p style="margin: 0; padding: 12px 14px; border-radius: 16px; background: #F1EAF4; color: #481C5F; font-size: 15px; font-weight: 600">Scheduled for Saturday 17 October, 18:00 Romania time.</p>
+              <button type="button" onClick="{{backToDraft}}" style="height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer">Cancel schedule</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{isPublished}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 12px 14px; border-radius: 16px; background: #E6F0EA; color: #2F6B4F; font-size: 15px; font-weight: 600">Published. We let your 147 followers know.</p>
+          </sc-if>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid #EFE8F2">
+            <button type="button" disabled="{{unpubDisabled}}" onClick="{{backToDraft}}" style="{{unpubStyle}}">Unpublish chapter</button>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">{{unpubNote}}</span>
+          </div>
+        </section>
+
+        <!-- Story details (kept from the old editor) -->
+        <section aria-labelledby="story-h" style="padding: 22px; display: flex; flex-direction: column; gap: 18px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <h2 id="story-h" style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Story details</h2>
+            <span style="font-size: 13px; color: #6B5A73">These apply to every chapter.</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="cat" style="font-size: 14px; font-weight: 600; color: #26142E">Category</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="cat" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+              <option selected>Fiction</option>
+              <option>Poetry</option>
+              <option>Essays</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="rating" style="font-size: 14px; font-weight: 600; color: #26142E">Rating</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="rating" aria-describedby="rating-note" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+              <option selected>All ages</option>
+              <option>13+</option>
+              <option>16+</option>
+              <option>18+</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            <span id="rating-note" style="font-size: 13px; line-height: 1.5; color: #6B5A73">13+, 16+ and 18+ stories are hidden from anyone younger.</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="tag-in" style="font-size: 14px; font-weight: 600; color: #26142E">Tags</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 1px solid #DED3E4; border-radius: 24px">
+              <span style="display: inline-flex; align-items: center; box-sizing: border-box; height: 36px; padding: 0 2px 0 12px; line-height: 1; white-space: nowrap; border-radius: 999px; background: #F1EAF4; border: 1px solid #C9B3D6; font-size: 13px; font-weight: 600; color: #481C5F">set in Romania<button type="button" aria-label="Remove tag set in Romania" style="width: 32px; height: 32px; border: 0; background: transparent; color: #5C4965; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+              <span style="display: inline-flex; align-items: center; box-sizing: border-box; height: 36px; padding: 0 2px 0 12px; line-height: 1; white-space: nowrap; border-radius: 999px; background: #F1EAF4; border: 1px solid #C9B3D6; font-size: 13px; font-weight: 600; color: #481C5F">family<button type="button" aria-label="Remove tag family" style="width: 32px; height: 32px; border: 0; background: transparent; color: #5C4965; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+              <span style="display: inline-flex; align-items: center; box-sizing: border-box; height: 36px; padding: 0 2px 0 12px; line-height: 1; white-space: nowrap; border-radius: 999px; background: #F1EAF4; border: 1px solid #C9B3D6; font-size: 13px; font-weight: 600; color: #481C5F">grandparents<button type="button" aria-label="Remove tag grandparents" style="width: 32px; height: 32px; border: 0; background: transparent; color: #5C4965; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+              <input id="tag-in" type="text" placeholder="Add a tag" style="flex: 1 1 90px; min-width: 90px; height: 36px; border: 0; padding: 0 8px; font-family: inherit; font-size: 14px; color: #26142E; background: transparent">
+            </div>
+          </div>
+          <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+            <legend style="padding: 0; font-size: 14px; font-weight: 600; color: #26142E">Content notes</legend>
+            <p style="margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Readers see these before they start. Tick any that apply.</p>
+            <div style="margin-top: 6px; display: flex; flex-direction: column">
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">Violence or peril</label>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">Grief or loss</label>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">Strong language</label>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">Alcohol or drugs</label>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">Sexual content</label>
+              <label style="display: flex; align-items: center; gap: 10px; min-height: 40px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" style="margin: 0; width: 18px; height: 18px; accent-color: #672786">Self-harm</label>
+            </div>
+          </fieldset>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="vis" style="font-size: 14px; font-weight: 600; color: #26142E">Visibility</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="vis" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+              <option selected>Public</option>
+              <option>Only me</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            <span style="font-size: 13px; color: #6B5A73">Anyone can read it once you publish.</span>
+          </div>
+        </section>
+
+        <!-- Your stories (moved here from the old side menu) -->
+        <nav aria-label="Your stories" style="position: relative; padding: 22px; display: flex; flex-direction: column; gap: 4px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px">
+          <img data-doodle="widget" data-doodle-on="Your stories" src="/_blob/bae81d9375db90401c3a77dd643c81f8" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -42px; right: 22px; width: 80px; transform: rotate(-6deg)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Your stories</span>
+          <a href="Chapters.dc.html" style="display: flex; align-items: center; min-height: 44px; font-size: 15px; color: #5C4965; text-decoration: none">The Girl Who Fixed Radios</a>
+          <a href="Editor.dc.html" aria-current="true" style="display: flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: none">The Weather Station</a>
+          <a href="NewStory.dc.html" style="display: flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600; color: #672786; text-decoration: none">New story</a>
+        </nav>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Small page footer -->
+  <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/2591413100406762a766c7908ad7c5e8" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -80px; right: clamp(16px, 4vw, 64px); width: 92px">
+    <div style="padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2424}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // save: saved | saving | offline | conflict. chapter: draft | scheduled | published.
+    this.state = { save: 'saved', mode: 'now', chapter: 'draft', insertOpen: true, sketch: false };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    var saveInfo = {
+      saved: ['Saved 2 min ago', '#2F6B4F', '#E6F0EA', 'Saved'],
+      saving: ['Saving…', '#481C5F', '#F1EAF4', 'Saving'],
+      offline: ['You’re offline. Your changes are kept on this device and will save when you’re back online.', '#815E18', '#FBF3D9', 'Offline'],
+      conflict: ['This chapter was changed on another device while you were offline. Choose which version to keep.', '#8C2B3A', '#F8E9EC', 'Changed elsewhere']
+    };
+    var cur = saveInfo[st.save];
+    var saveStates = ['saved', 'saving', 'offline', 'conflict'].map(function (k) {
+      var on = st.save === k;
+      return {
+        label: saveInfo[k][3], on: on,
+        dot: 'flex: none; width: 10px; height: 10px; border-radius: 50%; background: ' + saveInfo[k][1] + ';',
+        style: 'display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-radius: 999px; font-family: inherit; font-size: 14px; text-align: left; cursor: pointer; '
+          // Pill system (17 Oct): the chosen row has a strong edge and a check, not only a tint.
+          + (on ? 'border: 1px solid #481C5F; background: #F1EAF4; color: #481C5F; font-weight: 600;' : 'border: 1px solid transparent; background: transparent; color: #5C4965; font-weight: 500;'),
+        pick: function () { self.setState({ save: k }); }
+      };
+    });
+
+    var pills = {
+      // Pill system (17 Oct): Draft gold, Scheduled sky, Published sage.
+      draft: ['Draft', 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap'],
+      scheduled: ['Scheduled', 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE; font-size: 12px; font-weight: 700; white-space: nowrap'],
+      published: ['Published', 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap']
+    };
+    var published = st.chapter === 'published';
+
+    // Insert menu items (decision 4). Drawing opens the sketch pad; the others would open their own small dialogs.
+    var insertList = [
+      { label: 'Picture', note: 'Upload a picture. Alt text is required.', d: 'M21 15l-5-5L5 21M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 9.01V9', key: 'picture' },
+      { label: 'Drawing', note: 'Draw on a sketch pad. Saved as a picture.', d: 'M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5zM2 2l7.59 7.59M11 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z', key: 'drawing' },
+      { label: 'Music', note: 'A link from Spotify or Apple Music.', d: 'M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z', key: 'music' },
+      { label: 'Video', note: 'A link from YouTube, Vimeo or Loom.', d: 'M23 7l-7 5 7 5V7zM1 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2z', key: 'video' }
+    ];
+    // Doodle icons for the Insert menu (drawing uses the doodle pen).
+    var insertIcons = { picture: '/_blob/75b285508a299ed13b6c91845896d52e', drawing: '/_blob/43adcaa63658a9f9f04c831dedc54baf', music: '/_blob/9e299d46a57b4e6739c361e1936b1fee', video: '/_blob/87fbe5704a7e5e85ed2c7922b938499b' };
+    var insertItems = insertList.map(function (m) {
+      return {
+        label: m.label, note: m.note, d: m.d, icon: insertIcons[m.key],
+        pick: function () { self.setState({ insertOpen: false, sketch: m.key === 'drawing' ? true : st.sketch }); }
+      };
+    });
+
+    return {
+      insertOpen: !!st.insertOpen, insertItems: insertItems,
+      toggleInsert: function () { self.setState({ insertOpen: !st.insertOpen }); },
+      insertBtnStyle: 'display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; '
+        + (st.insertOpen ? 'border: 0; background: #481C5F; color: #FFFFFF;' : 'border: 0; background: transparent; color: #481C5F;'),
+      sketchOn: !!st.sketch,
+      closeSketch: function () { self.setState({ sketch: false }); },
+      saveText: cur[0],
+      saveBox: 'margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 16px; font-size: 15px; line-height: 1.5; font-weight: 600; color: ' + cur[1] + '; background: ' + cur[2] + ';',
+      isSaved: st.save === 'saved', isSaving: st.save === 'saving', isOffline: st.save === 'offline', isConflict: st.save === 'conflict',
+      setSaved: function () { self.setState({ save: 'saved' }); },
+      saveStates: saveStates,
+      stateLabel: pills[st.chapter][0],
+      statePill: pills[st.chapter][1],
+      isDraft: st.chapter === 'draft', isScheduled: st.chapter === 'scheduled', isPublished: published,
+      modeNow: st.mode === 'now', modeLater: st.mode === 'later',
+      pickNow: function () { self.setState({ mode: 'now' }); },
+      pickLater: function () { self.setState({ mode: 'later' }); },
+      publishLabel: st.mode === 'now' ? 'Publish chapter' : 'Schedule chapter',
+      doPublish: function () { self.setState({ chapter: st.mode === 'now' ? 'published' : 'scheduled' }); },
+      backToDraft: function () { self.setState({ chapter: 'draft' }); },
+      unpubDisabled: !published,
+      unpubStyle: 'height: 44px; border-radius: 999px; font-family: inherit; font-weight: 600; font-size: 14px; '
+        + (published ? 'border: 1px solid #8C2B3A; background: #FFFFFF; color: #8C2B3A; cursor: pointer;' : 'border: 1px solid #DED3E4; background: #F4F0EC; color: #6B5A73; cursor: not-allowed;'),
+      unpubNote: published
+        ? 'Readers can’t open this chapter any more. Its comments are hidden but kept.'
+        : 'Available once the chapter is published. Readers then can’t open it. Its comments are hidden but kept.'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Report illegal content</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Pill system (17 Oct): chips are 36 px tall with a 44 px tap area, plum focus ring, tinted hover */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}
+.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav, signed out: wordmark, Log in and Join for free only -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Main.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct) --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/d015e4df9fe6c8aad2c786d53340afd6" alt="" aria-hidden="true" width="22" height="22" style="position: absolute; left: 12px; top: 11px; width: 22px; height: 22px; pointer-events: none"><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <a href="SignIn.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Log in</a>
+        <a href="Main.dc.html#join" style="display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Join for free</a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Page heading -->
+    <header style="padding: 56px 0 32px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Report without an account</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Report illegal content</h1>
+      <p style="margin: 0; max-width: 680px; font-size: 18px; line-height: 1.6; color: #5C4965">Anyone can use this form, with or without an account. Tell us where the content is and why you think it breaks the law. A person on our team reads every report.</p>
+      <p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.6; color: #5C4965">We accept reports in English and Romanian. Authorities can send removal orders here too, and we act on them within one hour.</p>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px">
+
+      <!-- The notice form (DSA Art 16): link, explanation, name and email, good-faith statement -->
+      <form aria-labelledby="form-title" style="flex: 1 1 640px; min-width: 0; box-sizing: border-box; padding: clamp(24px, 3.5vw, 40px); display: flex; flex-direction: column; gap: 28px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.05s ease-out both">
+        <h2 id="form-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Your report</h2>
+
+        <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 12px">
+          <legend style="padding: 0; margin-bottom: 12px; font-size: 16px; font-weight: 700; color: #26142E">What kind of illegal content is it? <span style="margin-left: 6px; font-size: 13px; font-weight: 600; color: #8C2B3A">Required</span></legend>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{cats}}" as="c" hint-placeholder-count="8">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><sc-if value="{{c.on}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{isCsam}}" hint-placeholder-val="{{false}}">
+            <div role="note" style="display: flex; gap: 12px; padding: 16px 18px; border-radius: 16px; background: #F1EAF4; color: #3A2442; font-size: 15px; line-height: 1.55">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#481C5F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg>
+              <span>You can send this report without your name or email. Please don’t download, copy or attach the material. The link is enough.</span>
+            </div>
+          </sc-if>
+        </fieldset>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="nf-url" style="font-size: 16px; font-weight: 700; color: #26142E">Exact link to the content <span style="margin-left: 6px; font-size: 13px; font-weight: 600; color: #8C2B3A">Required</span></label>
+          <input id="nf-url" type="url" inputmode="url" required aria-describedby="nf-url-hint" value="https://ghemotoc.com/story/[story-name]/3" style="height: 52px; box-sizing: border-box; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+          <p id="nf-url-hint" style="margin: 0; font-size: 14px; line-height: 1.5; color: #6B5A73">Copy it from your browser’s address bar. For a comment or a forum post, use the link from its Share button.</p>
+          <button type="button" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add another link</button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="nf-where" style="font-size: 16px; font-weight: 700; color: #26142E">Where in it? <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+          <input id="nf-where" type="text" placeholder="For example: chapter 3, the second paragraph" style="height: 52px; box-sizing: border-box; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="nf-why" style="font-size: 16px; font-weight: 700; color: #26142E">Why do you think it’s illegal? <span style="margin-left: 6px; font-size: 13px; font-weight: 600; color: #8C2B3A">Required</span></label>
+          <textarea id="nf-why" rows="6" required aria-describedby="nf-why-hint" style="box-sizing: border-box; padding: 16px 20px; border: 1px solid #DED3E4; border-radius: 20px; background: #FFFFFF; font-family: inherit; font-size: 16px; line-height: 1.6; color: #26142E; resize: vertical">This chapter copies pages 12 to 19 of my novel [Book title], published in 2023, word for word. I wrote the novel and I hold the rights. I did not give permission to post it.</textarea>
+          <p id="nf-why-hint" style="margin: 0; font-size: 14px; line-height: 1.5; color: #6B5A73">Explain in your own words. If it copies your work, say which work and where it was first published.</p>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 20px">
+          <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 8px">
+            <label for="nf-name" style="font-size: 16px; font-weight: 700; color: #26142E">Your name <span style="{{reqStyle}}">{{reqText}}</span></label>
+            <input id="nf-name" type="text" autocomplete="name" value="Elena Pavel" style="height: 52px; box-sizing: border-box; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+          </div>
+          <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 8px">
+            <label for="nf-email" style="font-size: 16px; font-weight: 700; color: #26142E">Your email <span style="{{reqStyle}}">{{reqText}}</span></label>
+            <input id="nf-email" type="email" autocomplete="email" aria-describedby="nf-email-hint" value="elena.pavel@example.com" style="height: 52px; box-sizing: border-box; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+          </div>
+          <p id="nf-email-hint" style="flex: 1 1 100%; margin: -8px 0 0; font-size: 14px; line-height: 1.5; color: #6B5A73">We send a receipt to this address, and later our decision.</p>
+        </div>
+
+        <label style="display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: 16px; background: #F4F0EC; cursor: pointer">
+          <input type="checkbox" required checked style="flex: none; margin: 3px 0 0; width: 20px; height: 20px; accent-color: #672786">
+          <span style="font-size: 16px; line-height: 1.55; color: #26142E">I believe, in good faith, that the information in this report is accurate and complete. <span style="margin-left: 4px; font-size: 13px; font-weight: 600; color: #8C2B3A">Required</span></span>
+        </label>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+          <button type="submit" style="height: 52px; padding: 0 30px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer">Send report</button>
+          <span style="font-size: 15px; color: #5C4965">A person reads every report.</span>
+        </div>
+      </form>
+
+      <!-- What happens next, safety and data -->
+      <aside aria-label="About this form" style="flex: 1 1 320px; max-width: 420px; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s 0.1s ease-out both">
+        <section aria-labelledby="next-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <h2 id="next-title" style="margin: 0 0 16px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">What happens next</h2>
+          <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px">
+            <li style="display: flex; gap: 14px; align-items: flex-start"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #E6C24C; color: #26142E; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center">1</span><span style="font-size: 15px; line-height: 1.55; color: #3A2442">We email you a receipt with a reference number.</span></li>
+            <li style="display: flex; gap: 14px; align-items: flex-start"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #E6C24C; color: #26142E; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center">2</span><span style="font-size: 15px; line-height: 1.55; color: #3A2442">A person on our team checks the content against the law and our rules.</span></li>
+            <li style="display: flex; gap: 14px; align-items: flex-start"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #E6C24C; color: #26142E; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center">3</span><span style="font-size: 15px; line-height: 1.55; color: #3A2442">We email you our decision and how to ask us to look again.</span></li>
+          </ol>
+        </section>
+
+        <section aria-labelledby="danger-title" style="padding: 22px 24px; border-radius: 24px; background: #2A0E33; color: #FBF7EC">
+          <h2 id="danger-title" style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #FBF7EC">Is someone in danger right now?</h2>
+          <!-- Contacts for the visitor's country (from the connection; signed-in users: the account's country). Source: G4 research, checked 17 Oct 2026; staff confirm them every month (S1-E10-13). -->
+          <p style="margin: 0 0 14px; font-size: 14px; line-height: 1.5; color: #E5D7EA">Shown for <b style="color: #FBF7EC">Romania</b>, worked out from your connection.</p>
+          <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px">
+            <li style="display: flex; flex-direction: column; gap: 2px; font-size: 15px; line-height: 1.5; color: #E5D7EA"><span>Emergency: police, ambulance or fire</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">112</span><span style="font-size: 13px">Deaf or speech-impaired and registered with 112? Call 112, then text <b style="color: #FBF7EC">113</b>.</span></li>
+            <li style="display: flex; flex-direction: column; gap: 2px; font-size: 15px; line-height: 1.5; color: #E5D7EA"><span>For children and teens: Telefonul Copilului, free</span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">116 111</span><span style="font-size: 13px">Monday to Friday, 10:00 to 20:00. <a href="https://www.telefonulcopilului.ro" style="color: #FBF7EC; font-weight: 600; text-decoration: underline; text-underline-offset: 3px">telefonulcopilului.ro</a></span></li>
+            <li style="display: flex; flex-direction: column; gap: 2px; font-size: 15px; line-height: 1.5; color: #E5D7EA"><span>Pictures or videos of a child being abused online</span><span style="font-size: 13px">Report them to Ora de Net, run by Salvați Copiii. You can stay anonymous. <a href="https://oradenet.ro/esc-abuz" style="color: #FBF7EC; font-weight: 600; text-decoration: underline; text-underline-offset: 3px">oradenet.ro/esc-abuz</a></span></li>
+          </ul>
+          <div style="margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+            <label for="safety-country" style="font-size: 14px; color: #E5D7EA">Not in Romania?</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="safety-country" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; color: #26142E; cursor: pointer"><option>Romania</option><option>United Kingdom</option><option>Ireland</option><option>United States</option><option>Canada</option><option>Australia</option><option>New Zealand</option><option>Singapore</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+        </section>
+
+        <section aria-labelledby="acct-title" style="padding: 22px 24px; border-radius: 24px; background: #F1EAF4">
+          <h2 id="acct-title" style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #481C5F">Have an account?</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #3A2442">Log in and use the Report button on the story, comment or message. It fills in the link for you.</p>
+          <a href="SignIn.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; font-weight: 600; font-size: 15px">Log in</a>
+        </section>
+
+        <section aria-labelledby="data-title" style="padding: 22px 24px; border-radius: 24px; border: 1px solid #DED3E4; background: #FFFFFF">
+          <h2 id="data-title" style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #481C5F">Your details</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #3A2442">We use your name and email only to handle this report. We keep them for 3 years after your report is closed, then delete them.</p>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; font-weight: 600; font-size: 15px">Read the Privacy notice</a>
+        </section>
+      </aside>
+    </div>
+
+    <!-- The state after sending -->
+    <section aria-labelledby="sent-title" style="margin-top: 40px; animation: tmcRise 0.5s 0.15s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; margin-bottom: 14px; line-height: 1.3">After sending</div>
+      <div role="status" style="max-width: 760px; box-sizing: border-box; padding: clamp(24px, 3.5vw, 36px); display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+        <span aria-hidden="true" style="flex: none; width: 56px; height: 56px; border-radius: 50%; background: #2F6B4F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+        <div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 10px">
+          <h2 id="sent-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; color: #481C5F">Report received</h2>
+          <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #5C4965">Your reference is <b style="color: #26142E">N-2026-0482</b>. We’ve sent a receipt to elena.pavel@example.com. A person will read your report, and we’ll email you our decision.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px">
+            <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; box-sizing: border-box; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Send another report</a>
+            <a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Back to Ghemotoc</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page footer: legal links, public report form, group line and language switch -->
+    <footer style="margin-top: 80px; padding-top: 24px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 26px">
+        <a href="Website-Home.dc.html#faq" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Legal</a>
+        <a href="mailto:support@ghemotoc.com" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2206}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Copyright is picked so the board shows a typical rights-holder notice.
+    this.state = { lang: 'en', cat: 'Copyright or other rights' };
+  }
+
+  // Footer language switch: Română or English (interface language only).
+  langVals() {
+    var self = this, en = this.state.lang !== 'ro';
+    var base = 'height: 44px; padding: 0 18px; border: 0; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; ';
+    var on = 'background: #481C5F; color: #FFFFFF;', off = 'background: #FFFFFF; color: #5C4965;';
+    return {
+      langRo: !en, langEn: en,
+      roStyle: base + (en ? off : on), enStyle: base + (en ? on : off),
+      pickRo: function () { self.setState({ lang: 'ro' }); },
+      pickEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+    var CSAM = 'Child sexual abuse material';
+    var labels = ['Copyright or other rights', CSAM, 'Terrorist content', 'Hate speech or threats', 'Someone’s private information or photos', 'Scam or fraud', 'Other illegal content', 'Removal order from an authority'];
+    var cats = labels.map(function (l) {
+      var on = st.cat === l;
+      return {
+        label: l, on: on, pressed: on,
+        style: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; '
+          + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;'),
+        pick: function () { self.setState({ cat: l }); }
+      };
+    });
+    // Name and email are optional only for child sexual abuse reports (DSA Art 16(2)(c)).
+    var isCsam = st.cat === CSAM;
+    return Object.assign({
+      cats: cats,
+      isCsam: isCsam,
+      reqText: isCsam ? '(optional)' : 'Required',
+      reqStyle: isCsam ? 'margin-left: 6px; font-size: 15px; font-weight: 400; color: #6B5A73;' : 'margin-left: 6px; font-size: 13px; font-weight: 600; color: #8C2B3A;'
+    }, this.langVals());
+  }
+}
+</script>
+</body>
+</html>

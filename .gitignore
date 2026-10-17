@@ -1,0 +1,23 @@
+# Dependencies and builds
+node_modules/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+# Secrets: never commit these
+.env
+.env.*
+!.env.example
+*.pem
+# Supabase local state
+supabase/.temp/
+supabase/.branches/
+# Editors and systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+# Claude Code worktrees
+.claude/worktrees/

@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Website home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+.tmc-noscroll{scrollbar-width:none;-ms-overflow-style:none}.tmc-noscroll::-webkit-scrollbar{display:none}
+body{margin:0;background:#FAF8F5}
+html{scroll-behavior:smooth}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{pointer-events:none;user-select:none}
+.tmc-dd-sticker{filter:drop-shadow(2px 0 0 #FBF7EC) drop-shadow(-2px 0 0 #FBF7EC) drop-shadow(0 2px 0 #FBF7EC) drop-shadow(0 -2px 0 #FBF7EC)}
+@media (max-width: 1199px){.tmc-dd-xxl{display:none !important}}
+@media (max-width: 1119px){.tmc-dd-xl{display:none !important}}
+@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 600px){.tmc-dd-hide{display:none !important}}
+/* The 16 approved cover backgrounds (S1-E3-13): 5:8 drawings with no text that fill any box */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat;outline:1px solid rgba(38,20,46,0.14);outline-offset:-1px}
+.tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-gold{background-color:#E6C24C;background-image:url(/_blob/91b025a34ffa73c4f7886c143b2229d4)}
+.tmc-cv-lilac{background-color:#E9DDF0;background-image:url(/_blob/f1d0436689691672be6a521d49b6d32c)}
+.tmc-cv-blush{background-color:#F6D3DC;background-image:url(/_blob/e6edfdb3a9348376f609edc9860c7003)}
+.tmc-cv-sky{background-color:#D7E6F2;background-image:url(/_blob/7f5800c35ba2931d2b6f7a813d85b93c)}
+.tmc-cv-sage{background-color:#C9D8BF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#FAF8F5;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-cv-stripes{background-color:#481C5F;background-image:url(/_blob/5bf720d39651e2b57f384d33e3e04028)}
+.tmc-cv-dots{background-color:#E9DDF0;background-image:url(/_blob/49525cd87927782c2ac3d4a53ebc2973)}
+.tmc-cv-grid{background-color:#FAF8F5;background-image:url(/_blob/18fddef6727cc64415d6f75fd94c388b)}
+.tmc-cv-waves{background-color:#D7E6F2;background-image:url(/_blob/b3b6a05178861fc4e9210eaaa4134c6d)}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-cv-doodles{background-color:#FAF8F5;background-image:url(/_blob/f295eb5a1f415fe44f9e39a32e58ba7e)}
+.tmc-cv-twotone{background-color:#F6D3DC;background-image:url(/_blob/0d7f4386c9eaec72ab74d7b8349bc99f)}
+/* Pill system (17 Oct): chips are 36 px tall with a 44 px tap area, plum focus ring, tinted hover */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}
+.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden">
+
+  <!-- Floating island nav, signed-out version: wordmark, Discover, Write, Community, Log in, dark Join for free pill -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Website-Home.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 360px; display: flex; flex-wrap: wrap; justify-content: center; gap: 0 32px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="#trending" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="#write" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Write</a>
+        <a href="#community" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community</a>
+        <a href="#rights" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Your rights</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px; margin-left: auto">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct) --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/d015e4df9fe6c8aad2c786d53340afd6" alt="" aria-hidden="true" width="22" height="22" style="position: absolute; left: 12px; top: 11px; width: 22px; height: 22px; pointer-events: none"><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <a href="SignIn.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 999px; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Log in</a>
+        <a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 24px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Join for free</a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Hero: plain headline, two buttons, and a wall of drawn story covers -->
+  <header style="padding: clamp(40px, 5vw, 72px) clamp(16px, 4vw, 64px) clamp(32px, 4vw, 56px)">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: clamp(40px, 5vw, 72px)">
+      <div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 24px; animation: tmcRise 0.5s ease-out both">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; line-height: 1.3; color: #815E18">Your stories. Your rights. Your readers.</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(46px, 6vw, 92px); line-height: 0.94; letter-spacing: -0.025em; color: #481C5F">Write stories.<br>Get <span style="position: relative; display: inline-block; isolation: isolate">read.<svg aria-hidden="true" viewBox="0 0 100 20" preserveAspectRatio="none" style="position: absolute; left: -2%; bottom: -0.14em; width: 104%; height: 0.26em; overflow: visible; z-index: -1"><path d="M1 13 C 22 5 48 9 70 12 C 81 13 90 14 99 8" fill="none" stroke="#E6C24C" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg></span></h1>
+        <p style="margin: 0; max-width: 560px; font-size: 19px; line-height: 1.65; color: #5C4965">Post your stories, poems and essays, one chapter at a time, and find the people who want to read them.</p>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 4px">
+          <a href="Main.dc.html" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 30px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 16px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; margin-left: -12px"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Start writing</a>
+          <a href="Teaser.dc.html" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 28px; border-radius: 999px; background: #FFFFFF; border: 1px solid #8E7B99; box-sizing: border-box; color: #481C5F; font-weight: 600; font-size: 16px; text-decoration: none"><img src="/_blob/a7c7799609e54821cf904f7c954834d0" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px; margin-left: -6px">Start reading</a>
+        </div>
+        <ul style="list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 24px; font-size: 15px; color: #26142E">
+          <li style="display: inline-flex; align-items: center; gap: 8px"><img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px">You keep your rights</li>
+          <li style="display: inline-flex; align-items: center; gap: 8px"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px">No tracking ads</li>
+          <li style="display: inline-flex; align-items: center; gap: 8px"><img src="/_blob/34909fd02d01dca4db7586398487c06a" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px">Free to read and write</li>
+        </ul>
+      </div>
+
+      <!-- Wall of drawn covers (CSS only, no photos), with a reader comment and the contest sticker on top -->
+      <figure style="flex: 1 1 520px; min-width: 0; margin: 0; position: relative; padding: 8px 0 24px; animation: tmcRise 0.5s 0.08s ease-out both">
+        <div role="img" aria-label="Covers of stories on Ghemotoc: The Salt Mine Choir, The Last Tram Home, Small Rooms, The Girl Who Fixed Radios, Night Bus to Ploiești and The Map Keeper’s Apprentice" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; transform: rotate(-3deg)">
+          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 56px">
+            <sc-for list="{{heroCol1}}" as="c" hint-placeholder-count="2">
+              <div class="{{c.cls}}" style="{{c.style}}"><sc-if value="{{c.appOnly}}" hint-placeholder-val="{{false}}"><span style="{{c.appPill}}">In the app only</span></sc-if><span style="{{c.boxStyle}}"><span style="{{c.tStyle}}">{{c.title}}</span><span style="{{c.barStyle}}"></span><span style="{{c.pStyle}}">{{c.author}}</span></span></div>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px">
+            <sc-for list="{{heroCol2}}" as="c" hint-placeholder-count="2">
+              <div class="{{c.cls}}" style="{{c.style}}"><sc-if value="{{c.appOnly}}" hint-placeholder-val="{{false}}"><span style="{{c.appPill}}">In the app only</span></sc-if><span style="{{c.boxStyle}}"><span style="{{c.tStyle}}">{{c.title}}</span><span style="{{c.barStyle}}"></span><span style="{{c.pStyle}}">{{c.author}}</span></span></div>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 104px">
+            <sc-for list="{{heroCol3}}" as="c" hint-placeholder-count="2">
+              <div class="{{c.cls}}" style="{{c.style}}"><sc-if value="{{c.appOnly}}" hint-placeholder-val="{{false}}"><span style="{{c.appPill}}">In the app only</span></sc-if><span style="{{c.boxStyle}}"><span style="{{c.tStyle}}">{{c.title}}</span><span style="{{c.barStyle}}"></span><span style="{{c.pStyle}}">{{c.author}}</span></span></div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- A paragraph comment, the way readers talk to writers here -->
+        <div aria-hidden="true" style="position: absolute; left: 0; bottom: 8px; width: 290px; max-width: 70%; box-sizing: border-box; padding: 16px 18px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; box-shadow: 0 24px 44px -20px rgba(38,20,46,0.45); transform: rotate(2deg); display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <span style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(140deg,#1F5357,#6FA7AB); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px">d</span>
+            <span style="font-size: 13px; color: #6B5A73"><b style="color: #26142E">dan.ilie</b> on paragraph 4</span>
+          </div>
+          <span style="font-size: 15px; line-height: 1.45; color: #26142E">I read this on the tram and nearly missed my stop.</span>
+          <span style="font-size: 12px; color: #6B5A73">The Last Tram Home · Chapter 6</span>
+        </div>
+
+        <!-- Rights sticker: the lead promise -->
+        <div aria-hidden="true" style="position: absolute; right: 0; top: 0; width: 210px; max-width: 46%; box-sizing: border-box; padding: 14px 16px; border-radius: 18px; background: #E6C24C; color: #26142E; transform: rotate(5deg); box-shadow: 0 20px 36px -18px rgba(38,20,46,0.55); display: flex; flex-direction: column; gap: 4px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; line-height: 1.3">Your rights</span>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 18px; line-height: 1.05; color: #2A0E33">You keep all the rights to your work</span>
+          <span style="font-size: 13px; color: #3A2442">Publish it anywhere else too</span>
+        </div>
+
+        <!-- Doodle 09 (open book): decorative, in the empty top-left corner of the cover wall -->
+        <img data-doodle="widget" data-doodle-on="Write stories.Get read." src="/_blob/2b77dad1a2170495e93cea3190c0f1b7" alt="" aria-hidden="true" style="position: absolute; left: 4px; top: -18px; width: 84px; height: 84px; transform: rotate(-6deg); pointer-events: none">
+        <!-- Doodle (jar-lantern): decorative --><img data-doodle="widget" data-doodle-on="Write stories.Get read." src="/_blob/dd5f7c42f258ececa180dd9f14853ad2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="position: absolute; right: 31%; bottom: -30px; width: 104px; height: 104px; transform: rotate(-6deg); pointer-events: none">
+      </figure>
+    </div>
+  </header>
+
+  <!-- Why write here: ownership, privacy and community support, right after the hero -->
+  <section id="rights" aria-labelledby="rights-h" style="padding: clamp(16px, 2vw, 32px) clamp(16px, 4vw, 64px) 0; scroll-margin-top: 24px">
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+      <div style="display: flex; flex-direction: column; gap: 6px; max-width: 760px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Why write here</span>
+        <h2 id="rights-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: clamp(28px, 3vw, 40px); line-height: 1.08; letter-spacing: -0.015em; color: #481C5F">You own your work. You decide where it goes.</h2>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
+        <li style="padding: 28px; display: flex; flex-direction: column; gap: 10px; border-right: 1px solid #EFE8F2; border-bottom: 1px solid #EFE8F2; margin: 0 -1px -1px 0">
+          <img src="/_blob/04cfd05372dc9f8cb585691175c93244" alt="" aria-hidden="true" style="display: block; width: 56px; height: 56px; margin-left: -4px; transform: rotate(-4deg)">
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 21px; color: #26142E">You keep your rights</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Everything you write belongs to you. Ghemotoc only gets permission to show it, and you can publish it anywhere else.</p>
+        </li>
+        <li style="padding: 28px; display: flex; flex-direction: column; gap: 10px; border-right: 1px solid #EFE8F2; border-bottom: 1px solid #EFE8F2; margin: 0 -1px -1px 0">
+          <img src="/_blob/86cce0664059fb540ee7ee3da590e514" alt="" aria-hidden="true" style="display: block; width: 56px; height: 56px; margin-left: -4px; transform: rotate(3deg)">
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 21px; color: #26142E">You choose where it’s read</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Share a story on the web and in the app, or in the app only for more privacy. Use a pen name if you don’t want to show your real name.</p>
+        </li>
+        <li style="padding: 28px; display: flex; flex-direction: column; gap: 10px; border-right: 1px solid #EFE8F2; border-bottom: 1px solid #EFE8F2; margin: 0 -1px -1px 0">
+          <img src="/_blob/0ba01f0de219e755c8fa13cee158f7c5" alt="" aria-hidden="true" style="display: block; width: 56px; height: 56px; margin-left: -4px; transform: rotate(-3deg)">
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 21px; color: #26142E">No tracking ads</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">We don’t track what you read to choose ads. The few banners we show match the page and are the same for everyone.</p>
+        </li>
+        <li style="padding: 28px; display: flex; flex-direction: column; gap: 10px; border-right: 1px solid #EFE8F2; border-bottom: 1px solid #EFE8F2; margin: 0 -1px -1px 0">
+          <img src="/_blob/59feb281d9ed9664c1ef19c97f11612f" alt="" aria-hidden="true" style="display: block; width: 56px; height: 56px; margin-left: -4px; transform: rotate(5deg)">
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 21px; color: #26142E">Community-led writing</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Readers comment on paragraphs and writers help each other in forums and spaces. After launch, we plan to add an optional supporter plan so readers can choose to fund the writers they love.</p>
+        </li>
+      </ul>
+      <!-- Small trust line: reassurance, not the headline -->
+      <ul aria-label="Safety" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 28px; font-size: 14px; color: #5C4965">
+        <li style="display: inline-flex; align-items: center; gap: 8px; min-height: 32px"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none; width: 22px; height: 22px">Yoti does the age check. We only get the result, never a photo.</li>
+        <li style="display: inline-flex; align-items: center; gap: 8px; min-height: 32px"><img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none; width: 22px; height: 22px">Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on.</li>
+        <li style="display: inline-flex; align-items: center"><a href="#faq" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; color: #672786">How we keep people safe</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Trending this week, with genre chips that filter the row -->
+    <section id="trending" aria-labelledby="shelf-trending" style="position: relative; padding-top: 64px; scroll-margin-top: 24px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Trending</span>
+          <h2 id="shelf-trending" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Trending this week</h2>
+        </div>
+        <sc-if value="{{ar.s1.show}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button type="button" aria-label="Previous trending stories" onClick="{{prev1}}" disabled="{{ar.s1.backOff}}" aria-disabled="{{ar.s1.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s1.backCur}}; opacity: {{ar.s1.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <button type="button" aria-label="More trending stories" onClick="{{next1}}" disabled="{{ar.s1.fwdOff}}" aria-disabled="{{ar.s1.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s1.fwdCur}}; opacity: {{ar.s1.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+        </sc-if>
+      </div>
+
+      <div role="group" aria-label="Show trending stories by genre" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px">
+        <sc-for list="{{genreChips}}" as="g" hint-placeholder-count="9">
+          <button type="button" class="tmc-chip" aria-pressed="{{g.pressed}}" onClick="{{g.pick}}" style="{{g.style}}"><sc-if value="{{g.on}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{g.label}}</button>
+        </sc-for>
+      </div>
+
+      <div style="position: relative; margin: 0 -4px">
+        <div class="tmc-noscroll" ref="{{refShelf1}}" onScroll="{{scrollShelf1}}" tabindex="0" aria-label="Trending this week, scrolls sideways" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{mask1}}; mask-image: {{mask1}}">
+          <sc-for list="{{trending}}" as="s" hint-placeholder-count="6">
+            <a href="{{s.href}}" style="flex: none; width: 212px; scroll-snap-align: start; text-decoration: none; color: inherit; display: flex; flex-direction: column">
+              <div aria-hidden="true" class="{{s.cls}}" style="{{s.cover}}">
+                <!-- Top of the cover: genre pill, plus "In the app only" for app-only stories (b2d71f32, Q4: website only). The title box stays at the bottom, never covered. -->
+                <span style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px"><span style="{{s.genrePill}}">{{s.genre}}</span><sc-if value="{{s.appOnly}}" hint-placeholder-val="{{false}}"><span style="{{s.appPill}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>In the app only</span></sc-if></span>
+                <span style="{{s.boxStyle}}"><span style="{{s.tStyle}}">{{s.title}}</span><span style="{{s.barStyle}}"></span><span style="{{s.pStyle}}">{{s.author}}</span></span>
+              </div>
+              <span style="display: block; margin-top: 12px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 17px; line-height: 1.2; color: #26142E">{{s.title}}</span>
+              <span style="display: block; margin-top: 3px; font-size: 13px; color: #6B5A73">by {{s.author}}</span>
+              <span style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; font-size: 14px; line-height: 1.5; color: #5C4965">{{s.premise}}</span>
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; color: #6B5A73">{{s.reads}}<sc-if value="{{s.appOnly}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">In the app only</span></sc-if></span>
+            </a>
+          </sc-for>
+          <sc-if value="{{noneInGenre}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 40px 0; font-size: 16px; color: #5C4965">No trending stories in this genre this week. Try another genre.</p>
+          </sc-if>
+          <!-- One line of at most 20 stories; the row ends with View more, which opens the See all page (design rule, 16 Oct) -->
+          <sc-if value="{{hasTrending}}" hint-placeholder-val="{{true}}">
+            <a href="SeeAll.dc.html" aria-label="View more trending stories" style="{{moreCard}}"><span style="{{moreBox}}"><span aria-hidden="true" style="{{moreDot}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><span style="{{moreTitle}}">View more</span><span style="{{moreText}}">See every trending story, with filters.</span></span></a>
+          </sc-if>
+        </div>
+      </div>
+    </section>
+
+    <!-- Completed stories -->
+    <section id="completed" aria-labelledby="shelf-completed" style="position: relative; margin-top: 56px; scroll-margin-top: 24px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Finished</span>
+          <h2 id="shelf-completed" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Completed stories</h2>
+          <span style="font-size: 15px; color: #5C4965">Every chapter is out, so you can read from start to finish.</span>
+        </div>
+        <sc-if value="{{ar.s2.show}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button type="button" aria-label="Previous completed stories" onClick="{{prev2}}" disabled="{{ar.s2.backOff}}" aria-disabled="{{ar.s2.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s2.backCur}}; opacity: {{ar.s2.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <button type="button" aria-label="More completed stories" onClick="{{next2}}" disabled="{{ar.s2.fwdOff}}" aria-disabled="{{ar.s2.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s2.fwdCur}}; opacity: {{ar.s2.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+        </sc-if>
+      </div>
+      <div style="position: relative; margin: 0 -4px">
+        <div class="tmc-noscroll" ref="{{refShelf2}}" onScroll="{{scrollShelf2}}" tabindex="0" aria-label="Completed stories, scrolls sideways" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{mask2}}; mask-image: {{mask2}}">
+          <sc-for list="{{completed}}" as="s" hint-placeholder-count="6">
+            <a href="{{s.href}}" style="flex: none; width: 212px; scroll-snap-align: start; text-decoration: none; color: inherit; display: flex; flex-direction: column">
+              <div aria-hidden="true" class="{{s.cls}}" style="{{s.cover}}">
+                <span style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px"><span style="{{s.donePill}}">Completed</span><sc-if value="{{s.appOnly}}" hint-placeholder-val="{{false}}"><span style="{{s.appPill}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>In the app only</span></sc-if></span>
+                <span style="{{s.boxStyle}}"><span style="{{s.tStyle}}">{{s.title}}</span><span style="{{s.barStyle}}"></span><span style="{{s.pStyle}}">{{s.author}}</span></span>
+              </div>
+              <span style="display: block; margin-top: 12px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 17px; line-height: 1.2; color: #26142E">{{s.title}}</span>
+              <span style="display: block; margin-top: 3px; font-size: 13px; color: #6B5A73">by {{s.author}} · {{s.genre}}</span>
+              <span style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; font-size: 14px; line-height: 1.5; color: #5C4965">{{s.premise}}</span>
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; color: #6B5A73">{{s.parts}} · {{s.reads}}<sc-if value="{{s.appOnly}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">In the app only</span></sc-if></span>
+            </a>
+          </sc-for>
+          <a href="SeeAll.dc.html" aria-label="View more completed stories" style="{{moreCard}}"><span style="{{moreBox}}"><span aria-hidden="true" style="{{moreDot}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><span style="{{moreTitle}}">View more</span><span style="{{moreText}}">See every completed story, with filters.</span></span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- New and rising writers -->
+    <section id="writers" aria-labelledby="shelf-writers" style="position: relative; margin-top: 56px; scroll-margin-top: 24px">
+      <!-- Doodle (little-bird): decorative --><img data-doodle="background" data-doodle-on="New and rising writers" src="/_blob/3eb29ce44881d2b0ae1e93232991f874" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="position: absolute; right: 98px; top: -24px; width: 132px; height: 132px; transform: rotate(-8deg); pointer-events: none">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Rising</span>
+          <h2 id="shelf-writers" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">New and rising writers</h2>
+          <span style="font-size: 15px; color: #5C4965">Writers who started posting recently and are finding readers fast.</span>
+        </div>
+        <sc-if value="{{ar.s3.show}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button type="button" aria-label="Previous rising writers" onClick="{{prev3}}" disabled="{{ar.s3.backOff}}" aria-disabled="{{ar.s3.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s3.backCur}}; opacity: {{ar.s3.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <button type="button" aria-label="More rising writers" onClick="{{next3}}" disabled="{{ar.s3.fwdOff}}" aria-disabled="{{ar.s3.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s3.fwdCur}}; opacity: {{ar.s3.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+        </sc-if>
+      </div>
+      <!-- One sideways line, like every shelf (design rule, 16 Oct): never a grid of several rows -->
+      <div style="position: relative; margin: 0 -4px">
+      <ul class="tmc-noscroll" ref="{{refShelf3}}" onScroll="{{scrollShelf3}}" tabindex="0" aria-label="New and rising writers, scrolls sideways" style="list-style: none; margin: 0; display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{mask3}}; mask-image: {{mask3}}">
+        <sc-for list="{{writers}}" as="w" hint-placeholder-count="4">
+          <li style="flex: none; width: 290px; scroll-snap-align: start; box-sizing: border-box; padding: 22px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span aria-hidden="true" style="{{w.avatar}}">{{w.initial}}</span>
+              <span style="min-width: 0; display: flex; flex-direction: column"><a href="Profile.dc.html" style="display: inline-flex; align-items: center; min-height: 28px; font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">{{w.name}}</a><span style="font-size: 13px; color: #6B5A73">{{w.kind}}</span></span>
+            </div>
+            <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Latest: <a href="Story.dc.html" style="font-weight: 600">{{w.latest}}</a></span>
+            <span style="font-size: 13px; color: #6B5A73">{{w.growth}}</span>
+            <a href="Main.dc.html" aria-label="{{w.followLabel}}" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Follow</a>
+          </li>
+        </sc-for>
+      </ul>
+      </div>
+    </section>
+  </div>
+
+  <!-- Write here: the band for writers -->
+  <section id="write" aria-labelledby="write-h" style="position: relative; margin: clamp(72px, 8vw, 112px) clamp(16px, 3vw, 48px) 0; border-radius: 32px; padding: clamp(40px, 6vw, 80px) clamp(24px, 5vw, 80px); background: #2A0E33; color: #FBF7EC; scroll-margin-top: 24px">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: clamp(40px, 5vw, 72px)">
+      <div style="flex: 1.1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 22px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #E6C24C; line-height: 1.3">Write here</div>
+        <h2 id="write-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #FBF7EC">Post your story one chapter at a <span style="position: relative; display: inline-block; isolation: isolate">time.<svg aria-hidden="true" viewBox="0 0 100 20" preserveAspectRatio="none" style="position: absolute; left: -2%; bottom: -0.14em; width: 104%; height: 0.26em; overflow: visible; z-index: -1"><path d="M1 13 C 22 5 48 9 70 12 C 81 13 90 14 99 8" fill="none" stroke="#E6C24C" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg></span></h2>
+        <p style="margin: 0; max-width: 580px; font-size: 18px; line-height: 1.65; color: #E8DDEC">Write stories, poems or essays in your browser. Your draft saves as you type, and you choose when each chapter goes live. Use your own name or a pen name.</p>
+        <dl style="margin: 8px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 24px 32px">
+          <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">Readers comment on paragraphs</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">They comment on the exact paragraph they liked or didn’t understand, so you see what worked.</dd></div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">App only, if you want</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">When the apps arrive, you can share a story in the apps only. That gives you more privacy and makes copying harder.</dd></div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">Spaces for your group</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">Start a space for your writing group or book club. Teachers can start a private class space that only their class sees.</dd></div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">Contests</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">Enter contests like the First Chapter contest, on your own or with your class.</dd></div>
+        </dl>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 8px">
+          <a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 52px; padding: 0 28px; border-radius: 999px; background: #E6C24C; color: #26142E; font-weight: 700; font-size: 16px; text-decoration: none">Start writing</a>
+          <a href="#faq-q7" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 600; font-size: 16px; color: #FBF7EC; text-decoration: underline; text-underline-offset: 4px">How class spaces work</a>
+        </div>
+      </div>
+
+      <!-- Drawn chapter page with a paragraph comment -->
+      <div role="img" aria-label="A chapter of Night Bus to Ploiești by corbu, with a reader’s comment on the second paragraph and the writer’s reply" style="flex: 1 1 420px; min-width: 0; position: relative; padding-bottom: 40px">
+        <div style="background: #FAF8F5; border-radius: 24px; padding: clamp(24px, 3vw, 36px); box-shadow: 0 32px 64px -32px rgba(0,0,0,0.6); transform: rotate(-1.5deg); display: flex; flex-direction: column; gap: 16px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapter 1 · Night Bus to Ploiești</span>
+          <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 17px; line-height: 1.7; color: #26142E">The last bus from Bucharest leaves at 23:40. That night there were four of us on it: a girl with a cello case, a man in a suit, an old woman with a bag of quinces and me.</p>
+          <p style="margin: 0 -10px; padding: 8px 10px; border-radius: 12px; background: #FBF1CF; font-family: Georgia, 'Times New Roman', serif; font-size: 17px; line-height: 1.7; color: #26142E">The driver had a thermos on the dashboard and the football on the radio. “Tell me your stops now,” he said. “After midnight I don’t stop for people who mumble.”<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; margin-left: 8px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; background: #481C5F; color: #FFFFFF; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; vertical-align: middle">4</span></p>
+          <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 17px; line-height: 1.7; color: #26142E">Nobody said a stop. We all looked out of the window and pretended we hadn’t heard.</p>
+        </div>
+        <div style="position: absolute; right: 0; bottom: 0; width: 300px; max-width: 82%; box-sizing: border-box; padding: 16px 18px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; box-shadow: 0 24px 44px -20px rgba(0,0,0,0.5); transform: rotate(1.5deg); display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; gap: 10px; align-items: flex-start">
+            <span style="flex: none; width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(140deg,#2E4A8C,#7C95CF); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 13px">a</span>
+            <span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 13px; color: #26142E">aurora.v</b><span style="font-size: 14px; line-height: 1.45; color: #26142E">I take this bus every Friday. You got the driver exactly right.</span></span>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: flex-start; padding-left: 20px">
+            <span style="flex: none; width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(140deg,#16233A,#4D1B5E); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 13px">c</span>
+            <span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 13px; color: #26142E">corbu <span style="font-weight: 600; color: #815E18">· writer</span></b><span style="font-size: 14px; line-height: 1.45; color: #26142E">Thank you! He’s based on a real driver.</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community: forums and spaces -->
+  <section id="community" aria-labelledby="community-h" style="padding: clamp(72px, 8vw, 112px) clamp(16px, 4vw, 64px) 0; scroll-margin-top: 24px">
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: clamp(32px, 5vw, 72px); align-items: flex-start">
+      <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Community</div>
+        <h2 id="community-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.04; letter-spacing: -0.015em; color: #481C5F">Talk about stories in the forums.</h2>
+        <p style="margin: 0; max-width: 520px; font-size: 18px; line-height: 1.65; color: #5C4965">The forums have categories and subforums for every kind of writing. Ask for feedback, swap chapters and talk about the books you’re reading. You can also start a space for your writing group or book club.</p>
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Spaces people started</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <a href="Space.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">Fantasy writers</a>
+            <a href="Space.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">Poetry circle</a>
+            <a href="Space.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">Night owls book club</a>
+            <a href="Space.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">Short story swap</a>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 4px">
+          <a href="Forums.dc.html" style="display: inline-flex; align-items: center; height: 52px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 16px; text-decoration: none">Browse the forums</a>
+        </div>
+      </div>
+
+      <div style="flex: 1.3 1 520px; min-width: 0; position: relative; isolation: isolate">
+      <!-- Doodle (puppy): decorative; sits BEHIND the card, its drawn ground line (74% down) on the card's top edge, so it peeks out from behind -->
+      <img data-doodle="widget" data-doodle-on="Talk about stories in the forums." src="/_blob/2591413100406762a766c7908ad7c5e8" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="position: absolute; right: 56px; top: -86px; width: 116px; height: 116px; z-index: 0; pointer-events: none">
+      <ul aria-label="Busy threads this week" style="position: relative; z-index: 1; width: 100%; box-sizing: border-box; min-width: 0; list-style: none; margin: 0; padding: 8px 28px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+        <sc-for list="{{threads}}" as="t" hint-placeholder-count="4">
+          <li style="{{t.rowStyle}}">
+            <span aria-hidden="true" style="{{t.avatar}}">{{t.initial}}</span>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">{{t.forum}}</span>
+              <a href="Thread.dc.html" lang="{{t.lang}}" style="display: inline-flex; align-items: center; min-height: 32px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 19px; line-height: 1.3; color: #26142E; text-decoration: none">{{t.title}}</a>
+              <span style="font-size: 13px; color: #6B5A73">Started by {{t.by}} · {{t.replies}}</span>
+            </div>
+          </li>
+        </sc-for>
+      </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- The First Chapter contest: gold band -->
+  <section id="contest" aria-labelledby="contest-h" style="position: relative; margin: clamp(72px, 8vw, 112px) clamp(16px, 3vw, 48px) 0; border-radius: 32px; padding: clamp(40px, 5vw, 72px) clamp(24px, 5vw, 80px); background: #E6C24C; color: #26142E; scroll-margin-top: 24px">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: clamp(32px, 5vw, 72px)">
+      <div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; line-height: 1.3; color: #3A2442">Contest · opens in February 2027</div>
+        <h2 id="contest-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #2A0E33">The First Chapter contest</h2>
+        <p style="margin: 0; max-width: 620px; font-size: 18px; line-height: 1.65; color: #26142E">Write the first chapter of a new story. If you’re 13 to 19, enter on your own or with your class. Entries open in February 2027. We’ll announce the winners on Ghemotoc.</p>
+        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #26142E"><b>Prize:</b> [Prize], from [Partner]. Under-16s need consent from a parent or guardian to enter.</p>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 4px">
+          <a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 52px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 16px; text-decoration: none">Join for free to enter</a>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: 16px; color: #2A0E33; text-decoration: underline; text-underline-offset: 4px">Read the contest rules</a>
+        </div>
+      </div>
+      <!-- Drawn chapter-one cover -->
+      <div aria-hidden="true" style="flex: 1 1 240px; display: flex; justify-content: center; align-items: center; min-height: 300px; position: relative">
+        <div style="position: absolute; width: 190px; height: 258px; border-radius: 16px; transform: translate(-52px, 10px) rotate(-9deg); background: rgba(42,14,51,0.14)"></div>
+        <div class="{{cc.cls}}" style="position: relative; width: 200px; height: 272px; box-sizing: border-box; padding: 22px; border-radius: 16px; transform: rotate(4deg); display: flex; flex-direction: column; justify-content: flex-end; box-shadow: 0 28px 56px -22px rgba(42,14,51,0.6)">
+          <span style="{{cc.boxStyle}}"><span style="{{cc.eyebrow}}">CHAPTER ONE</span><span style="{{cc.tStyle}}">Your title here</span><span style="{{cc.barStyle}}"></span><span style="{{cc.pStyle}}">by you</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The apps: web only for March 2027 (Robert, 17 Oct); desktop and phone apps come after the web launch -->
+  <section id="app" aria-labelledby="app-h" style="padding: clamp(72px, 8vw, 112px) clamp(16px, 4vw, 64px) 0; scroll-margin-top: 24px">
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; box-sizing: border-box; padding: clamp(28px, 4vw, 48px); border-radius: 24px; background: #F4F0EC; border: 1px solid #E9E1EC; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 32px">
+      <!-- Doodle 29 (typewriter): decorative, sits on the box's top edge, clear of the text and buttons -->
+      <img class="tmc-dd-hide" data-doodle="background" data-doodle-on="Desktop and phone apps come later" src="/_blob/093d3efb301eb483969096d78322d770" alt="" aria-hidden="true" style="position: absolute; top: -58px; right: clamp(24px, 4vw, 56px); width: 140px; height: 140px; transform: rotate(5deg); pointer-events: none">
+      <div style="flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">The apps</span>
+        <h2 id="app-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: clamp(28px, 3vw, 40px); line-height: 1.08; letter-spacing: -0.015em; color: #481C5F">Desktop and phone apps come later</h2>
+        <p style="margin: 0; max-width: 620px; font-size: 17px; line-height: 1.65; color: #5C4965">Ghemotoc starts on the web, so you can read and write in your browser from day one. Free desktop and phone apps come after the web launch. They’ll let you read offline, use any font on your device and open the stories writers share in the apps only.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px"><a href="GetApp.dc.html" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 16px; text-decoration: none">About the apps</a><a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 52px; padding: 0 26px; border-radius: 999px; background: #FFFFFF; border: 1px solid #8E7B99; box-sizing: border-box; color: #481C5F; font-weight: 600; font-size: 16px; text-decoration: none">Start on the web</a></div>
+    </div>
+  </section>
+
+  <!-- FAQ: seven questions, one open at a time. The safety facts live here. -->
+  <section id="faq" aria-labelledby="faq-h" style="padding: clamp(72px, 8vw, 112px) clamp(16px, 4vw, 64px) 0; scroll-margin-top: 24px">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: clamp(32px, 5vw, 72px); align-items: flex-start">
+      <div style="position: relative; flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <!-- Doodle (hot-air-balloon): decorative --><img data-doodle="widget" data-doodle-on="Before you join" src="/_blob/c23111eab51687499254aff73a9f8fa8" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="position: absolute; left: 10px; top: 250px; width: 380px; height: 380px; transform: rotate(-6deg); pointer-events: none">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Questions</div>
+        <h2 id="faq-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.04; letter-spacing: -0.015em; color: #481C5F">Before you join</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Something else? <a href="mailto:support@ghemotoc.com" style="font-weight: 600">Contact us</a>.</p>
+        <div style="display: flex; flex-direction: column; gap: 0">
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: 15px; color: #672786">Read the community guidelines</a>
+          <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: 15px; color: #672786">Report something without an account</a>
+        </div>
+      </div>
+      <div style="flex: 1.6 1 520px; min-width: 0; display: flex; flex-direction: column">
+
+        <div style="border-bottom: 1px solid #DED3E4">
+          <h3 style="margin: 0"><button type="button" id="faq-q0" aria-expanded="{{faq0}}" aria-controls="faq-a0" onClick="{{toggle0}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">Who owns my story?<span aria-hidden="true" style="{{icon0}}">+</span></button></h3>
+          <sc-if value="{{open0}}" hint-placeholder-val="{{true}}"><div id="faq-a0" role="region" aria-labelledby="faq-q0" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">You do. You keep all the rights to your work. You give Ghemotoc permission to show it here, nothing more. You can publish it anywhere else too.</p></div></sc-if>
+        </div>
+
+        <div style="border-bottom: 1px solid #DED3E4">
+          <h3 style="margin: 0"><button type="button" id="faq-q1" aria-expanded="{{faq1}}" aria-controls="faq-a1" onClick="{{toggle1}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">Is Ghemotoc free?<span aria-hidden="true" style="{{icon1}}">+</span></button></h3>
+          <sc-if value="{{open1}}" hint-placeholder-val="{{false}}"><div id="faq-a1" role="region" aria-labelledby="faq-q1" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">Yes. Reading and writing are free for everyone, and you never have to pay for either. Sponsors and a few small banners pay for Ghemotoc.</p></div></sc-if>
+        </div>
+
+        <div style="border-bottom: 1px solid #DED3E4">
+          <h3 style="margin: 0"><button type="button" id="faq-q2" aria-expanded="{{faq2}}" aria-controls="faq-a2" onClick="{{toggle2}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">Who can join?<span aria-hidden="true" style="{{icon2}}">+</span></button></h3>
+          <sc-if value="{{open2}}" hint-placeholder-val="{{false}}"><div id="faq-a2" role="region" aria-labelledby="faq-q2" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">Everyone aged 13 or older is welcome. We’re starting with students, but you don’t need to be one. If you’re 13, 14 or 15, a parent or guardian gives consent before your account opens. From 16, you can sign up on your own.</p></div></sc-if>
+        </div>
+
+        <div style="border-bottom: 1px solid #DED3E4">
+          <h3 style="margin: 0"><button type="button" id="faq-q3" aria-expanded="{{faq3}}" aria-controls="faq-a3" onClick="{{toggle3}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">How do ads work?<span aria-hidden="true" style="{{icon3}}">+</span></button></h3>
+          <sc-if value="{{open3}}" hint-placeholder-val="{{false}}"><div id="faq-a3" role="region" aria-labelledby="faq-q3" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">Ads match the page you’re on, not you. Everyone sees the same ones, and we don’t track you to choose them. Ads never appear inside the text and never fill the screen. In a chapter, one banner shows after the last line.</p></div></sc-if>
+        </div>
+
+        <div style="border-bottom: 1px solid #DED3E4">
+          <h3 style="margin: 0"><button type="button" id="faq-q4" aria-expanded="{{faq4}}" aria-controls="faq-a4" onClick="{{toggle4}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">Can readers support writers?<span aria-hidden="true" style="{{icon4}}">+</span></button></h3>
+          <sc-if value="{{open4}}" hint-placeholder-val="{{false}}"><div id="faq-a4" role="region" aria-labelledby="faq-q4" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">Not yet. After launch, we plan to try an optional supporter plan. Reading and writing stay free. Any money paid to writers will come only from readers who choose to become supporters.</p></div></sc-if>
+        </div>
+
+        <div style="border-bottom: 1px solid #DED3E4">
+          <h3 style="margin: 0"><button type="button" id="faq-q5" aria-expanded="{{faq5}}" aria-controls="faq-a5" onClick="{{toggle5}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">How do you check my age?<span aria-hidden="true" style="{{icon5}}">+</span></button></h3>
+          <sc-if value="{{open5}}" hint-placeholder-val="{{false}}"><div id="faq-a5" role="region" aria-labelledby="faq-q5" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">When you sign up, you give your year of birth, and the month if we need it to work out your age. Then you do a short age check with Yoti, an age check service. We only get the result (old enough or not), never a photo. You’ll still confirm your age if you sign up with Google, Apple or Microsoft. Google, Apple and Microsoft don’t tell us how old you are.</p></div></sc-if>
+        </div>
+
+        <div style="border-bottom: 1px solid #DED3E4">
+          <h3 style="margin: 0"><button type="button" id="faq-q6" aria-expanded="{{faq6}}" aria-controls="faq-a6" onClick="{{toggle6}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">How do you keep people safe?<span aria-hidden="true" style="{{icon6}}">+</span></button></h3>
+          <sc-if value="{{open6}}" hint-placeholder-val="{{false}}"><div id="faq-a6" role="region" aria-labelledby="faq-q6" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">The minimum age is 13. Everyone gives their year of birth and does a Yoti age check. Under-16s need consent from a parent or guardian. Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Stories are rated All ages, 13+, 16+ or 18+, and nobody sees a story rated above their age. A person reads every report, decides what happens and tells you why. You can report something even without an account.</p></div></sc-if>
+        </div>
+        <div style="border-bottom: 1px solid #DED3E4">
+          <h3 style="margin: 0"><button type="button" id="faq-q7" aria-expanded="{{faq7}}" aria-controls="faq-a7" onClick="{{toggle7}}" style="width: 100%; min-height: 64px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 0; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.3; color: #481C5F">What is a class space?<span aria-hidden="true" style="{{icon7}}">+</span></button></h3>
+          <sc-if value="{{open7}}" hint-placeholder-val="{{false}}"><div id="faq-a7" role="region" aria-labelledby="faq-q7" style="padding: 0 0 22px"><p style="margin: 0; max-width: 680px; font-size: 16px; line-height: 1.7; color: #5C4965">A private space for one school class. A teacher with a Teacher badge creates it and gets an invite code. Only students with that code can join and see it. The class can share stories, run a writing contest and get certificates. Teachers get the badge when they set up their account, with a school email address or proof that they teach. Nothing in a class space shows on the public site, and there are never any ads or sponsors in it.</p></div></sc-if>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer: link columns, the plain-words note, the group line and the language switch -->
+  <footer style="position: relative; margin-top: clamp(72px, 8vw, 112px); padding: 56px clamp(16px, 4vw, 64px) 48px; border-top: 1px solid #DED3E4">
+    <!-- Doodle 01 (peeking cat): decorative; its drawn ledge (about 74% down the image) sits on the footer's top line -->
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/046fb8a00941dcf5a7051dd98d11bbef" alt="" aria-hidden="true" style="position: absolute; top: -92px; right: clamp(24px, 12vw, 200px); width: 124px; height: 124px; clip-path: inset(0 0 25.5% 0); pointer-events: none">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+      <div style="display: flex; flex-wrap: wrap; gap: 40px 56px; justify-content: space-between">
+        <div style="flex: 1 1 340px; max-width: 460px; display: flex; flex-direction: column; gap: 14px">
+          <a href="Website-Home.dc.html" style="align-self: flex-start; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+          <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #5C4965">A free website for writing and reading stories, poems and essays. Apps come after the web launch. Writers keep the rights to their work, and there are no tracking ads. Everyone aged 13 or older is welcome. In English and Romanian, for readers in English-speaking countries and Romania.</p>
+        </div>
+        <nav aria-label="Read" style="display: flex; flex-direction: column; gap: 4px; font-size: 15px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; padding-bottom: 6px; line-height: 1.3">Read</span>
+          <a href="#trending" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Trending this week</a>
+          <a href="#completed" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Completed stories</a>
+          <a href="#writers" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">New writers</a>
+          <a href="GetApp.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">About the apps</a>
+        </nav>
+        <nav aria-label="Write and talk" style="display: flex; flex-direction: column; gap: 4px; font-size: 15px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; padding-bottom: 6px; line-height: 1.3">Write and talk</span>
+          <a href="Main.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Start writing</a>
+          <a href="#contest" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">First Chapter contest</a>
+          <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+          <a href="mailto:robert.stanescu@themagiccoffin.com?subject=Bring%20my%20class" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">For teachers</a>
+          <a href="mailto:robert.stanescu@themagiccoffin.com?subject=Partnering%20with%20Ghemotoc" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">For partners</a>
+        </nav>
+        <nav aria-label="Help and legal" style="display: flex; flex-direction: column; gap: 4px; font-size: 15px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; padding-bottom: 6px; line-height: 1.3">Help and legal</span>
+          <a href="#faq" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Legal</a>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+                    <a href="mailto:support@ghemotoc.com" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+          <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+        </nav>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding-top: 24px; border-top: 1px solid #DED3E4">
+        <span style="font-size: 13px; letter-spacing: 0.04em; color: #5C4965">An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":7181}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // First FAQ answer starts open so the static board shows how an answer reads.
+    this.state = { faqOpen: 0, lang: 'en', genre: 'All' };
+    this.shelves = {};
+  }
+
+  componentDidMount() {
+    var self = this;
+    // Rows are re-measured when the window changes size, so arrows appear or go as the row starts or stops overflowing.
+    this._onResize = function () { self.measureAll(); };
+    try { window.addEventListener('resize', this._onResize); } catch (e) { /* no window: arrows keep their last state */ }
+    setTimeout(function () { self.measureAll(); }, 0);
+  }
+
+  // New content (filter, sort, tab) can change whether a row overflows. measureAll only sets state when a value changes.
+  componentDidUpdate() { this.measureAll(); }
+
+  componentWillUnmount() {
+    try { window.removeEventListener('resize', this._onResize); } catch (e) { /* ignore */ }
+  }
+
+  // Blurred edges (S1 polish, 16 Oct): each side of a sideways row shows its soft edge only while cards are cut off on that side,
+  // so the first card is never faded at rest. Returns the overlay opacity for one side.
+  edge(key, side) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    return (side === 'l' ? e.l : e.r) ? '1' : '0';
+  }
+
+  // Fade (Robert, 16 Oct): the row itself fades out on the side where cards are cut off, using a mask,
+  // so cards, outlines and shadows all fade together. Only ever one side: see measureShelf.
+  mask(key) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    if (e.r) return 'linear-gradient(to right, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    if (e.l) return 'linear-gradient(to left, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    return 'none';
+  }
+
+  // Re-measure a row after it scrolls (or first appears) and store which sides are cut off.
+  measureShelf(key) {
+    var e = this.readShelf(key);
+    if (!e) return;
+    var all = this.state.edges || {};
+    if (this.sameEdges(all[key], e)) return;   // only setState when something changed, so no render loops
+    var n = Object.assign({}, all); n[key] = e;
+    this.setState({ edges: n });
+  }
+
+  // Measure one row. l/r: the side that fades (never both). o: the row is wider than its box, so its arrows show.
+  // sl/sr: the TRUE edges, cards hidden off the left/right, which disable the arrows (Robert, 17 Oct): unlike l/r they ignore the fade tweak.
+  readShelf(key) {
+    this.shelves = this.shelves || {};
+    var el = this.shelves[key];
+    if (!el) return null;
+    // The rows snap their first card to the edge, which leaves scrollLeft at the row's left padding (4px) at the start,
+    // so the padding counts as being at the start (and likewise at the end).
+    var pl = 0, pr = 0;
+    try { var cs = window.getComputedStyle(el); pl = parseFloat(cs.paddingLeft) || 0; pr = parseFloat(cs.paddingRight) || 0; } catch (err) { /* keep 0 */ }
+    var o = el.scrollWidth > el.clientWidth + 2;
+    var sl = o && el.scrollLeft > pl + 2, sr = o && el.scrollLeft + el.clientWidth < el.scrollWidth - pr - 2;
+    // In the middle of a row only the side the reader is scrolling towards fades; at rest that's the right-hand side.
+    // A re-measure with no movement (resize, new content) keeps the side that was already fading.
+    this.lastLeft = this.lastLeft || {};
+    var prev = this.lastLeft[key] || 0, dir = el.scrollLeft - prev;
+    this.lastLeft[key] = el.scrollLeft;
+    var l = sl, r = sr, old = (this.state.edges || {})[key];
+    if (l && r) {
+      if (dir < 0) r = false;
+      else if (dir > 0) l = false;
+      else if (old && old.l && !old.r) r = false;
+      else l = false;
+    }
+    return { l: l, r: r, o: o, sl: sl, sr: sr };
+  }
+
+  sameEdges(a, b) {
+    return !!a && !!b && a.l === b.l && a.r === b.r && a.o === b.o && a.sl === b.sl && a.sr === b.sr;
+  }
+
+  // Re-measure every row at once (mount, window resize, new content after a filter, sort or tab change). One setState at most.
+  measureAll() {
+    var all = this.state.edges || {}, n = null;
+    for (var key in (this.shelves || {})) {
+      var e = this.readShelf(key);
+      if (!e || this.sameEdges(all[key], e)) continue;
+      n = n || Object.assign({}, all);
+      n[key] = e;
+    }
+    if (n) this.setState({ edges: n });
+  }
+
+  // Scroll arrows for one row (Robert, 17 Oct): not shown at all when the row fits; the arrow pointing at an end
+  // the row has already reached is disabled. Before the first measure: shown, back disabled.
+  arrows(key) {
+    var e = (this.state.edges || {})[key] || {};
+    var show = e.o !== false, back = e.sl === true, fwd = e.sr !== false;
+    return {
+      show: show,
+      backOff: !back, backAria: back ? 'false' : 'true', backOp: back ? '1' : '0.4', backCur: back ? 'pointer' : 'default',
+      fwdOff: !fwd, fwdAria: fwd ? 'false' : 'true', fwdOp: fwd ? '1' : '0.4', fwdCur: fwd ? 'pointer' : 'default'
+    };
+  }
+
+  // Scroll a shelf sideways by most of its visible width.
+  scrollShelf(key, dir) {
+    var el = this.shelves[key];
+    if (!el || typeof el.scrollBy !== 'function') return;
+    try { el.scrollBy({ left: dir * Math.max(240, el.clientWidth * 0.8), behavior: 'smooth' }); }
+    catch (e) { el.scrollLeft += dir * 600; }
+  }
+
+  // Automatic cover (S1-E3-13): a story with no cover of its own gets one of the 16 approved designs,
+  // picked from its id so it never changes, and never the same design as the card just before it in a row.
+  autoCovers(ids) {
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var hash = function (s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    var prev = '';
+    return ids.map(function (id) {
+      var k = K[hash(id) % K.length];
+      if (k === prev) k = K[(K.indexOf(k) + 7) % K.length];   // neighbours never match
+      prev = k;
+      return k;
+    });
+  }
+
+  // Stable story id from its title, e.g. 'The Salt Mine Choir' -> 'the-salt-mine-choir' (diacritics dropped).
+  slug(title) {
+    var t = String(title || '').toLowerCase();
+    try { t = t.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { /* older browsers: keep as typed */ }
+    return t.replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  // Cover keys for one row of stories: the fixed table keeps each canonical story on the same design on every
+  // screen; every other story gets the automatic helper. Two neighbours never share a design.
+  rowCovers(titles) {
+    var self = this;
+    var F = {
+      'the-salt-mine-choir': 'starry', 'the-girl-who-fixed-radios': 'waves', 'the-weather-station': 'sky',
+      'small-rooms': 'dots', 'night-bus-to-ploiesti': 'ink', 'the-last-tram-home': 'sage',
+      'inside-the-student-housing-waitlist': 'grid', 'what-our-grandparents-didnt-post': 'paper',
+      'rivers-that-moved-towns': 'sky', 'the-map-keepers-apprentice': 'gold', 'pride-prejudice-and-year-12': 'blush',
+      'notes-from-room-12': 'lilac', 'twelve-minutes-ahead': 'violet', 'the-clocktower-club': 'stripes',
+      'bus-stop-poems': 'doodles', 'why-i-read-in-two-languages': 'twotone', 'snow-on-the-valley-road': 'plum',
+      'the-last-cinema-in-town': 'gold', 'lanterns-on-lipscani': 'violet'
+    };
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var ids = titles.map(function (t) { return self.slug(t); });
+    var auto = this.autoCovers(ids);
+    var keys = ids.map(function (id, i) { return F[id] || auto[i]; });
+    // A story without a fixed design also avoids the two designs before it, so a row never looks repetitive.
+    var clash = function (j, wide) {
+      return keys[j] === keys[j - 1] || keys[j] === keys[j + 1] || (wide && keys[j] === keys[j - 2]);
+    };
+    var move = function (j) {
+      for (var n = 0; n < K.length && clash(j, true); n++) keys[j] = K[(K.indexOf(keys[j]) + 7) % K.length];
+    };
+    for (var i = 1; i < keys.length; i++) {
+      if (!F[ids[i]] && clash(i, true)) move(i);
+      // Two neighbours must never match: move the one without a fixed design, so a canonical story keeps its design everywhere.
+      else if (keys[i] === keys[i - 1] && !F[ids[i - 1]]) move(i - 1);
+    }
+    return keys;
+  }
+
+  // Title size from its length (16 Oct), so the whole title always fits on a cover: up to 18 characters keeps
+  // the base size, 19-28 is x0.85, 29-40 is x0.72, longer is x0.62, never below the floor (11px by default).
+  // base: px number, '21px' or any CSS length such as a clamp(). inner: the px width the title can use, when known;
+  // the size then also drops until the longest word fits on one line (wordEm estimates its width).
+  titleSize(title, base, floor, inner) {
+    var t = String(title || ''), n = t.length;
+    var f = n <= 18 ? 1 : n <= 28 ? 0.85 : n <= 40 ? 0.72 : 0.62;
+    floor = floor || 11;
+    if (typeof base === 'number' || /^\d+(\.\d+)?px$/.test(String(base))) {
+      var px = Math.max(floor, Math.round(parseFloat(base) * f * 10) / 10);
+      var word = this.wordEm(t);
+      if (inner && word * px > inner) px = Math.max(floor, Math.floor(inner / word * 10) / 10);
+      return px + 'px';
+    }
+    return 'max(' + floor + 'px, calc(' + base + ' * ' + f + '))';
+  }
+
+  // Width of the title's longest word in em for Bricolage Grotesque bold (capitals and m/w wide, i/l/t/r narrow), plus 5% to spare.
+  wordEm(t) {
+    var em = function (w) {
+      var e = 0;
+      for (var i = 0; i < w.length; i++) { var c = w.charAt(i); e += /[A-ZĂÂÎȘȚmw]/.test(c) ? 0.75 : /[iljtfr'’.,:;!|]/.test(c) ? 0.3 : 0.55; }
+      return e * 1.05;
+    };
+    return String(t || '').split(/\s+/).reduce(function (m, w) { return Math.max(m, em(w)); }, 0);
+  }
+
+  // How the title sits on each design (from the approved table): title colour, optional box behind
+  // title and pen name, and the thin line under the title. z sets sizes: t (title font-size), w (title weight), lh, p (pen size), gap, bw (line width).
+  coverLook(k, z) {
+    var L = {
+      plum: ['#FAF8F5', '', '#E6C24C'], ink: ['#FAF8F5', '', '#E6C24C'], violet: ['#FAF8F5', '', '#E6C24C'],
+      gold: ['#26142E', '', '#481C5F'], lilac: ['#26142E', '', '#672786'], blush: ['#26142E', '', '#481C5F'],
+      sky: ['#26142E', '', '#672786'], sage: ['#26142E', '', '#481C5F'], paper: ['#26142E', '', '#672786'],
+      stripes: ['#FAF8F5', '#481C5F', ''], dots: ['#26142E', '#FAF8F5', ''], grid: ['#26142E', '', ''],
+      waves: ['#26142E', '#FAF8F5', ''], starry: ['#FAF8F5', '', ''], doodles: ['#26142E', '', ''], twotone: ['#FAF8F5', '', '']
+    };
+    var t = L[k] ? L[k] : L.plum, ink = t[0], light = ink === '#26142E';
+    z = z || {};
+    // Width left for the title: the box designs (stripes, dots, waves) take 8px padding each side (z.bx: both sides together, when a screen changes it).
+    var inner = z.inner ? z.inner - (t[1] ? (z.bx == null ? 16 : z.bx) : 0) : 0;
+    var size = z.title == null ? (z.t || '21px') : this.titleSize(z.title, z.t || '21px', z.min, inner);
+    return {
+      cls: 'tmc-cv tmc-cv-' + (L[k] ? k : 'plum'),
+      box: 'display: flex; flex-direction: column; gap: ' + (z.gap == null ? 6 : z.gap) + 'px; min-width: 0;'
+        + (t[1] ? ' display: inline-flex; align-self: flex-start; max-width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 6px; background: ' + t[1] + ';' : ''),
+      // Titles wrap on spaces and never clip; with z.title the size follows the title's length (titleSize).
+      title: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: " + (z.w || 700) + '; font-size: ' + size + '; line-height: ' + (z.lh || 1.04) + '; color: ' + ink + '; overflow-wrap: break-word;',
+      // False when even the floor size cannot fit the longest word (only on very small thumbnails).
+      fits: !z.inner || this.wordEm(z.title) * parseFloat(size) <= inner,
+      bar: t[2] ? 'display: block; width: ' + (z.bw || 40) + 'px; height: 3px; border-radius: 2px; background: ' + t[2] + ';' : 'display: none;',
+      pen: 'font-size: ' + (z.p || 12) + 'px; font-weight: 500; color: ' + ink + ';',
+      // Genre pill: cream on dark designs, plum with white text on light ones so it never disappears.
+      pill: light ? 'background: #481C5F; color: #FFFFFF;' : 'background: rgba(250,248,245,0.94); color: #2A0E33;',
+      // Gold "Completed" pill: swaps to plum on the gold design.
+      goldPill: k === 'gold' ? 'background: #481C5F; color: #FFFFFF;' : 'background: #E6C24C; color: #26142E;',
+      ink: ink
+    };
+  }
+
+  // "In the app only" pill for a cover: cream with plum text on dark designs, plum with white text on light ones, ringed in its text colour.
+  appPill(look, size) {
+    return 'align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; font-size: ' + (size || 12) + 'px; font-weight: 700; box-shadow: inset 0 0 0 1.5px currentColor; ' + look.pill;
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Covers use the 16 approved drawn backgrounds (classes in the helmet), so nothing here needs an image licence.
+    // Shelf cover: fixed height, genre pill on top, title and pen name at the bottom.
+    var coverStyle = 'height: 284px; box-sizing: border-box; padding: 16px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 16px 30px -22px rgba(38,20,46,0.6);';
+    // Hero cover: fluid 3:4 so the wall shrinks on small screens.
+    var heroStyle = 'aspect-ratio: 3 / 4; box-sizing: border-box; padding: 14px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end; box-shadow: 0 22px 40px -24px rgba(38,20,46,0.65);';
+
+    // Illustrative stories and counts only. Story pages open Story.dc.html; app-only ones open AppOnly.dc.html.
+    var S = {
+      choir: { title: 'The Salt Mine Choir', author: 'inkwolf', genre: 'Mystery', reads: '18k reads',
+        premise: 'A choir rehearses in an old salt mine, and one night there is a singer whose name is on no list.' },
+      tram: { title: 'The Last Tram Home', author: 'ilinca.r', genre: 'Romance', reads: '9.8k reads',
+        premise: 'Irina rides the last tram to the end of the line, and the driver starts saving her a seat.' },
+      radios: { title: 'The Girl Who Fixed Radios', author: 'lia.writes', genre: 'Sci-fi', reads: '7.5k reads', parts: '6 chapters',
+        premise: 'A girl repairs an old radio that picks up a station that went off air before she was born.' },
+      rooms: { title: 'Small Rooms', author: 'poppyverse', genre: 'Poetry', reads: '6.2k reads', appOnly: true, parts: '30 poems',
+        premise: 'Short poems about sharing a flat with five people and one bathroom.' },
+      map: { title: 'The Map Keeper’s Apprentice', author: 'teo_ink', genre: 'Fantasy', reads: '5.6k reads',
+        premise: 'Dana, 15, helps the town’s last mapmaker and finds a street that no longer exists.' },
+      housing: { title: 'Inside the Student Housing Waitlist', author: 'matei.writes', genre: 'Essays', reads: '4.1k reads',
+        premise: 'My term on the waiting list for a student room in Bucharest, and what I learned about who gets moved up.' },
+      pride: { title: 'Pride, Prejudice and Year 12', author: 'bea.writes', genre: 'Fan fiction', reads: '3.3k reads',
+        premise: 'Pride and Prejudice retold in Year 12, where everyone has an opinion about Darcy.' },
+      room12: { title: 'Notes from Room 12', author: 'kat.lungu', genre: 'Mystery', reads: '2.7k reads',
+        premise: 'Every Monday an unsigned note appears in Room 12. Class 10C wants to know who.' },
+      grand: { title: 'What Our Grandparents Didn’t Post', author: 'Ana Radu', genre: 'Essays', reads: '2.1k reads',
+        premise: 'My grandfather kept a diary for 40 years and never wrote down how he felt.' },
+      ahead: { title: 'Twelve Minutes Ahead', author: 'rares.d', genre: 'Sci-fi', reads: '1.9k reads',
+        premise: 'Luca’s phone shows his friends’ messages 12 minutes before they send them.' },
+      clock: { title: 'The Clocktower Club', author: 'vlad.writes', genre: 'Fantasy', reads: '1.8k reads', parts: '12 chapters',
+        premise: 'Four friends find out that the town clock stops every time one of them tells a lie.' },
+      bus: { title: 'Bus Stop Poems', author: 'aurora.v', genre: 'Poetry', reads: '1.2k reads',
+        premise: '20 short poems written while waiting for the 7:40 bus to school.' },
+      twolang: { title: 'Why I Read in Two Languages', author: 'dan.ilie', genre: 'Essays', reads: '980 reads',
+        premise: 'I read the same book in Romanian and in English, and the jokes were different.' },
+      nightbus: { title: 'Night Bus to Ploiești', author: 'corbu', genre: 'Fiction', reads: '3.4k reads', parts: '22 chapters',
+        premise: 'Four strangers on the 23:40 bus from Bucharest miss their stops on purpose.' },
+      snow: { title: 'Snow on the Valley Road', author: 'mara.p', genre: 'Romance', reads: '4.4k reads', parts: '14 chapters',
+        premise: 'Two rival bakers get snowed in at a petrol station on a mountain road for three days.' },
+      cinema: { title: 'The Last Cinema in Town', author: 'sofia.k', genre: 'Essays', reads: '2.2k reads', parts: '6 essays',
+        premise: 'Six essays about the only cinema in my town, which has one screen and may close this winter.' },
+      lanterns: { title: 'Lanterns on Lipscani', author: 'corbu', genre: 'Fantasy', reads: '2.9k reads', parts: '16 chapters',
+        premise: 'A boy in Bucharest’s old town finds a lantern that shows the street 100 years ago.' }
+    };
+
+    var card = function (s, k) {
+      var look = self.coverLook(k, { t: '21px', lh: 1.04, p: 12, gap: 6, title: s.title, inner: 180 });
+      return {
+        title: s.title, author: s.author, genre: s.genre, premise: s.premise, reads: s.reads,
+        parts: s.parts || '', appOnly: !!s.appOnly,
+        href: s.appOnly ? 'AppOnly.dc.html' : 'Story.dc.html',
+        cover: coverStyle, cls: look.cls, boxStyle: look.box, tStyle: look.title, barStyle: look.bar, pStyle: look.pen,
+        genrePill: 'align-self: flex-start; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; ' + look.pill,
+        // "In the app only" on the cover (b2d71f32): same colours as the genre pill (4.5:1 or better on every design), with a ring so it reads as a status.
+        appPill: self.appPill(look, 12),
+        donePill: 'align-self: flex-start; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; ' + look.goldPill
+      };
+    };
+    // A row of cards: each story gets its fixed or automatic design, never the same as its neighbour.
+    var cards = function (list) {
+      var keys = self.rowCovers(list.map(function (s) { return s.title; }));
+      return list.map(function (s, i) { return card(s, keys[i]); });
+    };
+
+    // Hero wall: three columns of two covers each.
+    var heroList = [S.tram, S.radios, S.choir, S.rooms, S.nightbus, S.map];
+    var heroKeys = self.rowCovers(heroList.map(function (s) { return s.title; }));
+    var heroes = heroList.map(function (s, i) {
+      var look = self.coverLook(heroKeys[i], { t: 'clamp(15px, 1.5vw, 20px)', lh: 1.04, p: 12, gap: 4, bw: 28, title: s.title });
+      return { title: s.title, author: s.author, style: heroStyle, cls: look.cls, boxStyle: look.box, tStyle: look.title, barStyle: look.bar, pStyle: look.pen,
+        appOnly: !!s.appOnly, appPill: 'margin-bottom: auto; ' + self.appPill(look, 11) };
+    });
+    var heroCol1 = heroes.slice(0, 2);
+    var heroCol2 = heroes.slice(2, 4);
+    var heroCol3 = heroes.slice(4, 6);
+
+    // Drawn chapter-one cover in the contest band: an automatic design, like any story without its own cover.
+    var ccLook = self.coverLook(self.rowCovers(['Your title here'])[0], { t: '26px', w: 800, lh: 1.02, p: 13, gap: 6, bw: 44, title: 'Your title here', inner: 156 });
+    var cc = { cls: ccLook.cls, boxStyle: ccLook.box, tStyle: ccLook.title, barStyle: ccLook.bar, pStyle: ccLook.pen,
+      eyebrow: 'font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: ' + ccLook.ink + ';' };
+
+    // Trending this week, filtered by the genre chips.
+    var trendingAll = [S.choir, S.tram, S.radios, S.rooms, S.map, S.housing, S.pride, S.room12, S.grand, S.ahead, S.clock, S.bus, S.twolang];
+    // Launch categories (Q52): fiction genres, poetry and essays. No journalism at launch.
+    var genres = ['All', 'Fantasy', 'Romance', 'Mystery', 'Sci-fi', 'Poetry', 'Essays', 'Fan fiction'];
+    // One line of at most 20 stories; the View more card opens the See all page with every story.
+    var trending = cards(trendingAll
+      .filter(function (s) { return st.genre === 'All' || s.genre === st.genre; }).slice(0, 20));
+    var genreChips = genres.map(function (g) {
+      var on = st.genre === g;
+      return {
+        label: g, on: on, pressed: on ? 'true' : 'false',
+        style: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; '
+          + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;'
+                : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;'),
+        pick: function () {
+          self.setState({ genre: g });
+          var el = self.shelves.s1;
+          if (el) { try { el.scrollLeft = 0; } catch (e) { /* ignore */ } }
+        }
+      };
+    });
+
+    var completed = cards([S.nightbus, S.clock, S.snow, S.rooms, S.cinema, S.lanterns].slice(0, 20));
+
+    // New and rising writers. Follow needs an account, so it opens sign-up.
+    var avatar = function (a, b) { return 'flex: none; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(140deg,' + a + ',' + b + '); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 700; font-size: 20px;'; };
+    var writers = [
+      ['lia.writes', 'l', 'Writes sci-fi and short stories', 'The Girl Who Fixed Radios', '+92 followers this week', '#1F3F6E', '#7C95CF'],
+      ['ilinca.r', 'i', 'Writes romance', 'The Last Tram Home', '+71 followers this week', '#2F6B4F', '#7DB596'],
+      ['teo_ink', 't', 'Writes fantasy', 'The Map Keeper’s Apprentice', '+58 followers this week', '#7A5C12', '#C9A24A'],
+      ['aurora.v', 'a', 'Writes poetry', 'Bus Stop Poems', '+33 followers this week', '#4D1B5E', '#9A5BB8']
+    ].map(function (w) {
+      return { name: w[0], initial: w[1], kind: w[2], latest: w[3], growth: w[4], avatar: avatar(w[5], w[6]), followLabel: 'Follow ' + w[0] };
+    });
+
+    // Busy forum threads. One is in Romanian to show both languages.
+    var tAvatar = function (a, b) { return 'flex: none; width: 40px; height: 40px; margin-top: 4px; border-radius: 50%; background: linear-gradient(140deg,' + a + ',' + b + '); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 700; font-size: 16px;'; };
+    var threadData = [
+      ['Writers’ room', 'This week’s prompt: a letter you never sent', 'en', 'poppyverse', '312 replies', 'p', '#2E4A8C', '#7C95CF'],
+      ['Feedback', 'Swap first pages: post yours and read two others', 'en', 'teo_ink', '86 replies', 't', '#7A5C12', '#C9A24A'],
+      ['Book club', 'What are you reading this month?', 'en', 'kat.lungu', '204 replies', 'k', '#1F5357', '#6FA7AB'],
+      ['În română', 'Cum scrieți dialogul? Sfaturi pentru începători', 'ro', 'ilinca.r', '57 replies', 'i', '#2F6B4F', '#7DB596']
+    ];
+    var threads = threadData.map(function (t, i) {
+      return {
+        forum: t[0], title: t[1], lang: t[2], by: t[3], replies: t[4], initial: t[5], avatar: tAvatar(t[6], t[7]),
+        rowStyle: 'display: flex; gap: 16px; padding: 20px 0;' + (i < threadData.length - 1 ? ' border-bottom: 1px solid #EFE8F2;' : '')
+      };
+    });
+
+    // FAQ accordion: one answer open at a time; pressing the open one closes it.
+    var vals = {};
+    for (var i = 0; i < 8; i++) {
+      (function (n) {
+        var open = st.faqOpen === n;
+        vals['open' + n] = open;
+        vals['faq' + n] = open ? 'true' : 'false';
+        vals['icon' + n] = 'flex: none; width: 36px; height: 36px; border-radius: 999px; border: 1px solid #DED3E4; background: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: Inter, sans-serif; font-size: 20px; font-weight: 500; color: #481C5F; transition: transform 0.2s ease; transform: rotate(' + (open ? '45deg' : '0deg') + ');';
+        vals['toggle' + n] = function () { self.setState({ faqOpen: open ? -1 : n }); };
+      })(i);
+    }
+
+    // Language switch: shows the selected state only (the page copy is English in this design).
+    var pill = function (on) {
+      return 'min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: 999px; border: 0; font-family: inherit; font-size: 14px; cursor: pointer; '
+        + (on ? 'background: #2A0E33; color: #FBF7EC; font-weight: 600;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+
+    return Object.assign(vals, {
+      heroCol1: heroCol1, heroCol2: heroCol2, heroCol3: heroCol3, cc: cc,
+      genreChips: genreChips, trending: trending, noneInGenre: trending.length === 0, hasTrending: trending.length > 0,
+      // View more card at the end of a shelf: same size as a story card, opens the See all page.
+      moreCard: 'flex: none; width: 212px; scroll-snap-align: start; text-decoration: none; color: inherit; display: flex; flex-direction: column',
+      moreBox: 'height: 284px; box-sizing: border-box; padding: 22px; border-radius: 16px; border: 2px dashed #B9A9C2; background: #FFFFFF; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px',
+      moreDot: 'width: 52px; height: 52px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center',
+      moreTitle: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F",
+      moreText: 'font-size: 14px; line-height: 1.5; color: #5C4965',
+      completed: completed, writers: writers, threads: threads,
+      refShelf1: function (el) { self.shelves.s1 = el; if (el) setTimeout(function () { self.measureShelf('s1'); }, 0); },
+      scrollShelf1: function () { self.measureShelf('s1'); },
+      edge1L: self.edge('s1', 'l'), edge1R: self.edge('s1', 'r'), mask1: self.mask('s1'),
+      refShelf2: function (el) { self.shelves.s2 = el; if (el) setTimeout(function () { self.measureShelf('s2'); }, 0); },
+      scrollShelf2: function () { self.measureShelf('s2'); },
+      edge2L: self.edge('s2', 'l'), edge2R: self.edge('s2', 'r'), mask2: self.mask('s2'),
+      // Scroll arrows per row: shown only when the row overflows; disabled at the end they point to (Robert, 17 Oct).
+      ar: { s1: self.arrows('s1'), s2: self.arrows('s2'), s3: self.arrows('s3') },
+      prev1: function () { self.scrollShelf('s1', -1); }, next1: function () { self.scrollShelf('s1', 1); },
+      prev2: function () { self.scrollShelf('s2', -1); }, next2: function () { self.scrollShelf('s2', 1); },
+      refShelf3: function (el) { self.shelves.s3 = el; if (el) setTimeout(function () { self.measureShelf('s3'); }, 0); },
+      scrollShelf3: function () { self.measureShelf('s3'); }, mask3: self.mask('s3'),
+      prev3: function () { self.scrollShelf('s3', -1); }, next3: function () { self.scrollShelf('s3', 1); },
+      roPressed: st.lang === 'ro' ? 'true' : 'false',
+      enPressed: st.lang === 'en' ? 'true' : 'false',
+      roStyle: pill(st.lang === 'ro'),
+      enStyle: pill(st.lang === 'en'),
+      pickRo: function () { self.setState({ lang: 'ro' }); },
+      pickEn: function () { self.setState({ lang: 'en' }); }
+    });
+  }
+}
+</script>
+</body>
+</html>

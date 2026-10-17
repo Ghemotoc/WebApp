@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Share a chapter</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Approved cover backgrounds (16 Oct): one class per design, url() only allowed here */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<!-- Two layers stacked in one grid cell: the reader page behind, the dimmed dialog layer on top. The taller layer sets the height. -->
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; display: grid; grid-template-columns: minmax(0, 1fr); box-sizing: border-box">
+
+  <!-- LAYER 1: the reader page, as it looks behind the share sheet -->
+  <div style="grid-area: 1 / 1; display: flex; flex-direction: column; min-width: 0; padding-bottom: 48px; box-sizing: border-box">
+
+    <!-- Floating island nav: the reader belongs to Library -->
+    <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+      <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+        <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+        <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+          <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+          <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+          <a href="Library.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Library</a>
+          <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+          <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px">
+          <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+          <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Write</a>
+          <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- The chapter behind the sheet: static, not interactive while the sheet is open -->
+    <div aria-hidden="true" style="max-width: 1280px; width: 100%; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: border-box">
+      <div style="margin-top: 28px; padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px">
+        <span style="font-size: 15px; font-weight: 600; color: #481C5F">The Salt Mine Choir</span>
+        <span style="display: inline-flex; gap: 10px">
+          <span style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #8E7B99; font-size: 15px; font-weight: 600; color: #481C5F">Reading settings</span>
+          <span style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600">Next chapter</span>
+        </span>
+      </div>
+      <article style="max-width: 680px; margin: 0 auto; padding: 56px 0 0; font-family: Georgia, 'Times New Roman', serif; font-size: 19px; line-height: 1.75; color: #26142E">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapter 14 of 15</div>
+        <div style="margin-top: 14px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 60px; line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">The register</div>
+        <div style="margin-top: 14px; font-family: 'Inter', sans-serif; font-size: 14px; color: #6B5A73">by inkwolf · 9 Oct 2026 · 3 min read</div>
+        <p style="margin: 36px 0 0">Mrs Dobre kept the register in a green folder in the cupboard by the lift, next to the spare tuning fork and a tin of throat sweets. At 18:10 she went up to the ticket office to make a phone call, and Mara opened the cupboard.</p>
+        <p style="margin: 24px 0 0">“Two minutes,” Teo said. He stood in the doorway, where he could see the lift. In the big hall behind them, the others were singing the first eight bars of ‘Foaie verde’ for the fourth time.</p>
+        <p style="margin: 24px 0 0">Mara ran her finger down the page for each Thursday. Corina, Teo, Bianca, the two Stan brothers, herself. Fourteen names every week, all in Mrs Dobre’s square handwriting, all ticked. She checked September again, then October, then the week of the power cut when only nine of them came.</p>
+        <p style="margin: 24px 0 0"><span style="background: #D9C6E4; border-radius: 3px; box-shadow: 0 0 0 2px #D9C6E4">There was no Ilie. There was no fifteenth name at all.</span></p>
+        <p style="margin: 24px 0 0">“Maybe she forgot to write him down,” Teo said. He was whispering, and Teo never whispers.</p>
+        <p style="margin: 24px 0 0">“She doesn’t forget,” Mara said. “She counts us the whole way down. Fifteen, every Thursday since October. I’ve watched her do it.”</p>
+        <p style="margin: 24px 0 0">Mara took a photo of the September page and the October page with her phone. Her hands were shaking, so she took each one twice.</p>
+        <p style="margin: 24px 0 0">Above them the lift groaned on its cable. Somebody was coming down, and the register said nobody else was expected.</p>
+      </article>
+    </div>
+
+    <!-- Page footer -->
+    <footer style="max-width: 1280px; width: 100%; margin: auto auto 0; padding: 80px clamp(16px, 4vw, 64px) 0; box-sizing: border-box">
+      <div style="border-top: 1px solid #DED3E4; padding-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+        <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 14px">
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+          <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+          <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+        </nav>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; font-size: 13px; color: #6B5A73">
+          <span>An app by The Magic Coffin</span>
+          <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- LAYER 2: dimmed backdrop with the share sheet and the quote card on top -->
+  <div style="grid-area: 1 / 1; position: relative; z-index: 10; background: rgba(38,20,46,0.45); padding: 128px clamp(16px, 4vw, 64px) 120px; box-sizing: border-box; min-width: 0">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+
+      <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+        <!-- SHARE SHEET (S1-E4-05) -->
+        <section role="dialog" aria-modal="true" aria-labelledby="share-h" style="flex: 1 1 480px; min-width: 0; max-width: 600px; margin-left: auto; padding: 28px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 32px 64px -28px rgba(20,8,26,0.55); display: flex; flex-direction: column; gap: 22px; animation: tmcRise 0.4s ease-out both">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Share</span>
+              <h2 id="share-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.1; letter-spacing: -0.01em; color: #481C5F">Share this chapter</h2>
+              <span style="font-size: 15px; color: #5C4965">The Salt Mine Choir · Chapter 14: The register</span>
+            </div>
+            <a href="Reader.dc.html" aria-label="Close and go back to the chapter" style="flex: none; width: 44px; height: 44px; margin: -6px -8px 0 0; border-radius: 999px; color: #5C4965; display: inline-flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a>
+          </div>
+
+          <!-- The link: clean, no name of the sharer, no tracking code -->
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="share-link" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Link</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <input id="share-link" type="text" readonly="readonly" value="https://ghemotoc.com/story/salt-mine-choir/14" style="flex: 1 1 260px; min-width: 0; height: 48px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+              <button type="button" onClick="{{copyLink}}" style="{{copyStyle}}">
+                <sc-if value="{{copied}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                <sc-if value="{{notCopied}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></sc-if>{{copyLabel}}</button>
+            </div>
+            <p role="status" style="margin: 0; font-size: 14px; line-height: 1.5; color: #2F6B4F; min-height: 21px">{{copyStatus}}</p>
+            <p style="margin: 0; display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.55; color: #5C4965"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>The link doesn’t include your name or any tracking code. We only count the total number of shares for each chapter, to help popular stories get found.</p>
+          </div>
+
+          <!-- Other ways -->
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Other ways</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Send in Messages</a>
+              <button type="button" onClick="{{openQuote}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6"></path><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6"></path></svg>Share a quote</button>
+            </div>
+            <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #6B5A73">On a computer, Share copies the link. On a phone, it opens your phone’s own share menu, so you can pick WhatsApp, Instagram, TikTok or any other app.</p>
+          </div>
+
+          <!-- What a friend sees in a chat app (Open Graph preview) -->
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">How the link looks in a chat</span>
+            <div style="display: flex; gap: 14px; padding: 14px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+              <div aria-hidden="true" class="tmc-cv tmc-cv-starry" style="flex: none; width: 72px; height: 96px; border-radius: 10px"></div>
+              <div style="min-width: 0; display: flex; flex-direction: column; gap: 4px">
+                <span style="font-size: 12px; color: #6B5A73">ghemotoc.com</span>
+                <span style="font-weight: 700; font-size: 15px; color: #26142E">The Salt Mine Choir · by inkwolf</span>
+                <span style="font-size: 14px; line-height: 1.5; color: #5C4965">A choir rehearses in an old salt mine, and one night there is a singer whose name is on no list.</span>
+              </div>
+            </div>
+            <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">Your friend sees the start of this chapter in their browser and can join for free to read the rest. If a writer keeps a story in the app only, the link opens the story page instead and explains why.</p>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #EFE8F2">
+            <a href="Reader.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 26px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none">Done</a>
+          </div>
+        </section>
+
+        <!-- QUOTE-SHARE CARD (S1-E4-07) -->
+        <section role="dialog" aria-modal="true" aria-labelledby="quote-h" style="{{quoteStyle}}">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Share a quote</span>
+              <h2 id="quote-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.1; letter-spacing: -0.01em; color: #481C5F">Your quote card</h2>
+              <span style="font-size: 15px; color: #5C4965">Made from the text you selected. {{charCount}} of 280 characters.</span>
+            </div>
+            <a href="Reader.dc.html" aria-label="Close and go back to the chapter" style="flex: none; width: 44px; height: 44px; margin: -6px -8px 0 0; border-radius: 999px; color: #5C4965; display: inline-flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a>
+          </div>
+
+          <!-- The image that gets made: passage, title, pen name, link -->
+          <figure style="margin: 0; display: flex; justify-content: center">
+            <div role="img" aria-label="{{altText}}" style="width: 100%; max-width: 420px; aspect-ratio: 1 / 1; box-sizing: border-box; padding: 36px; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(160deg,#2A0F36 0%,#4D1B5E 55%,#7A3D96 100%); color: #FFFFFF; box-shadow: 0 24px 48px -24px rgba(20,8,26,0.6)">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="#E6C24C" aria-hidden="true"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6z"></path><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6z"></path></svg>
+              <p style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 22px; line-height: 1.45">{{passage}}</p>
+              <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+                <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">The Salt Mine Choir</span><span style="font-size: 13px; color: #E5D7EA">by inkwolf · ghemotoc.com/story/salt-mine-choir/14</span></span>
+                <span role="img" aria-label="Ghemotoc logo" style="display: inline-flex; align-items: center; justify-content: center; height: 30px; padding: 0 10px; border: 1.5px dashed #E6C24C; border-radius: 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 13px; color: #E6C24C">[Logo]</span>
+              </div>
+            </div>
+          </figure>
+
+          <!-- Background picker: brand colour, story cover or the writer's own picture, always blurred -->
+          <div role="group" aria-labelledby="bg-label" style="display: flex; flex-direction: column; gap: 10px">
+            <span id="bg-label" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Background</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <button type="button" class="tmc-chip" aria-pressed="true" style="display: inline-flex; align-items: center; gap: 10px; box-sizing: border-box; min-height: 52px; padding: 6px 16px 6px 6px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF"><span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 999px; background: linear-gradient(160deg,#2A0F36 0%,#4D1B5E 55%,#7A3D96 100%)"></span>Purple<svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+              <button type="button" class="tmc-chip" aria-pressed="false" style="display: inline-flex; align-items: center; gap: 10px; box-sizing: border-box; min-height: 52px; padding: 6px 16px 6px 6px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F"><span aria-hidden="true" class="tmc-cv tmc-cv-starry" style="flex: none; width: 40px; height: 40px; border-radius: 999px; filter: blur(2px)"></span>Story cover<svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+              <button type="button" class="tmc-chip" aria-pressed="false" style="display: inline-flex; align-items: center; gap: 10px; box-sizing: border-box; min-height: 52px; padding: 6px 16px 6px 6px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F"><span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 999px; background: #FAF8F5; border: 1px dashed #B9A9C2; display: inline-flex; align-items: center; justify-content: center; color: #672786; font-size: 22px; font-weight: 400">+</span>Your own picture<svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button>
+            </div>
+            <div role="group" aria-label="Our colours" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span style="font-size: 13px; font-weight: 600; color: #26142E; margin-right: 4px">Or one of our colours:</span><button type="button" aria-label="Plum" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #481C5F; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button><button type="button" aria-label="Violet" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #672786; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button><button type="button" aria-label="Gold" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #E6C24C; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button><button type="button" aria-label="Ink" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #26142E; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button><button type="button" aria-label="Lilac" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #E9DDF0; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button><button type="button" aria-label="Blush" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #F6D3DC; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button><button type="button" aria-label="Sky" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #D7E6F2; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button><button type="button" aria-label="Sage" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #C9D8BF; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button><button type="button" aria-label="Paper" aria-pressed="false" style="width: 44px; height: 44px; border-radius: 999px; background: #FAF8F5; border: 1px solid #8E7B99; box-shadow: inset 0 0 0 3px #FFFFFF; cursor: pointer; padding: 0"></button></div>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Pictures are blurred automatically so the words stay easy to read. Your own picture goes through our image check first, and you must have the right to use it.</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="alt-text" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Alt text for the image</label>
+            <textarea id="alt-text" rows="3" style="width: 100%; box-sizing: border-box; padding: 14px 18px; border: 1px solid #DED3E4; border-radius: 20px; background: #FAF8F5; font-family: inherit; font-size: 15px; line-height: 1.5; color: #26142E; resize: vertical">{{altText}}</textarea>
+            <span style="font-size: 13px; color: #6B5A73">We wrote this for you. Screen readers read it out, so everyone knows what the image says.</span>
+          </div>
+
+          <!-- Second try from the same chapter: the limit pop-up -->
+          <sc-if value="{{showLimit}}" hint-placeholder-val="{{false}}">
+            <div role="alertdialog" aria-labelledby="limit-h" aria-describedby="limit-p" style="padding: 18px 20px; border-radius: 20px; background: #F1EAF4; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 10px">
+              <h3 id="limit-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">One quote card per chapter</h3>
+              <p id="limit-p" style="margin: 0; font-size: 15px; line-height: 1.6; color: #3A2442">You’ve already made a quote card from this chapter. The limit is one per chapter, so a chapter can’t be shared bit by bit. You can still share the link.</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <button type="button" onClick="{{closeLimit}}" style="height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Close</button>
+                <button type="button" onClick="{{copyLink}}" style="height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Copy the link instead</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid #EFE8F2">
+            <span style="font-size: 14px; color: #6B5A73">{{quoteNote}}</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <button type="button" onClick="{{copyImage}}" style="height: 48px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Copy image</button>
+              <button type="button" onClick="{{saveImage}}" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>{{saveLabel}}</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- DESIGN NOTE: the other states named by the stories and by decision 2 (16 Oct) -->
+      <section aria-labelledby="states-h" style="padding: 28px; background: #FFFFFF; border: 1px dashed #B9A9C2; border-radius: 24px; display: flex; flex-direction: column; gap: 22px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Design note · other states</span>
+          <h2 id="states-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Where a shared link opens, and the quote card limits</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 20px">
+
+          <!-- 1. Web and app story: the teaser -->
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <span style="font-weight: 700; font-size: 15px; color: #26142E">1. Story on the web and in the app</span>
+            <div style="flex: 1; padding: 18px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapter 14 · preview</span>
+              <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #481C5F">The register</span>
+              <span style="font-family: Georgia, serif; font-size: 15px; line-height: 1.6; color: #5C4965">Mrs Dobre kept the register in a green folder in the cupboard by the lift, next to the spare tuning fork and a tin of throat sweets…</span>
+              <span style="margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600">Join for free to read on</span>
+            </div>
+            <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Friends who aren’t logged in see the first part of the chapter. Stories rated 18+ show no preview text. <a href="Teaser.dc.html" style="font-weight: 600">See the teaser screen</a></span>
+          </div>
+
+          <!-- 2. App-only story: story page plus the notice -->
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <span style="font-weight: 700; font-size: 15px; color: #26142E">2. Story in the app only</span>
+            <div style="flex: 1; position: relative; padding: 18px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 8px; overflow: hidden">
+              <div aria-hidden="true" style="display: flex; gap: 12px; opacity: 0.55">
+                <span class="tmc-cv tmc-cv-starry" style="flex: none; width: 52px; height: 70px; border-radius: 8px"></span>
+                <span style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #5C4965"><b style="color: #26142E">The Salt Mine Choir</b>by inkwolf<span>Chapter 1 · Chapter 2 · Chapter 3 …</span></span>
+              </div>
+              <div role="dialog" aria-labelledby="apponly-h" style="margin-top: 4px; padding: 16px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DED3E4; box-shadow: 0 18px 36px -24px rgba(20,8,26,0.5); display: flex; flex-direction: column; gap: 8px">
+                <span id="apponly-h" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #26142E">This story is only in the app</span>
+                <span style="font-size: 14px; line-height: 1.5; color: #5C4965">The writer chose the app because it gives them more privacy and more control over their work. The app also makes copying harder.</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <a href="GetApp.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600; text-decoration: none">Get the app</a>
+                  <a href="#" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open in the app</a>
+                  <a href="Story.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; color: #672786; font-size: 14px; font-weight: 600">Back to the story</a>
+                </div>
+              </div>
+            </div>
+            <span style="font-size: 14px; line-height: 1.5; color: #5C4965">The link opens the story page: cover, title, blurb, writer and chapter list. Opening a chapter shows this notice. App-only stories start when the Ghemotoc apps arrive, after the March 2027 test. Until then, everyone who’s logged in reads every chapter on the web. <a href="AppOnly.dc.html" style="font-weight: 600">See the app-only screen</a></span>
+          </div>
+
+          <!-- 3. Second quote card -->
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <span style="font-weight: 700; font-size: 15px; color: #26142E">3. A second quote from the same chapter</span>
+            <div style="flex: 1; padding: 18px; border-radius: 16px; background: #F1EAF4; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #26142E">One quote card per chapter</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #3A2442">You’ve already made a quote card from this chapter. The limit is one per chapter, so a chapter can’t be shared bit by bit. You can still share the link.</span>
+              <span style="margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600">Close</span>
+            </div>
+            <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Shown as a pop-up when the reader presses “Share a quote” again in a chapter they already quoted.</span>
+          </div>
+
+          <!-- 4. Writer switched quote cards off -->
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <span style="font-weight: 700; font-size: 15px; color: #26142E">4. The writer switched quote cards off</span>
+            <div style="flex: 1; padding: 18px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+              <span style="font-family: Georgia, serif; font-size: 15px; line-height: 1.6; color: #5C4965"><span style="background: #D9C6E4">There was no Ilie. There was no fifteenth name at all.</span></span>
+              <span aria-label="Menu for selected text" style="align-self: flex-start; display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: #2A0E33">
+                <span style="display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; color: #FBF7EC; font-size: 14px; font-weight: 600">Comment</span>
+                <span style="display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; color: #FBF7EC; font-size: 14px; font-weight: 600">Report</span>
+              </span>
+            </div>
+            <span style="font-size: 14px; line-height: 1.5; color: #5C4965">“Share a quote” doesn’t appear in the menu for selected text. Sharing the link still works.</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2170}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // copied: the link button feedback. cardsMade: quote cards made from this chapter (limit is one).
+    this.state = { copied: false, cardsMade: 0, showLimit: false, quoteFocus: false, imageCopied: false, lang: 'en' };
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // The passage the reader selected; the card allows up to 280 characters.
+    var passage = 'There was no Ilie. There was no fifteenth name at all.';
+    var altText = 'Quote card from The Salt Mine Choir by inkwolf, chapter 14. The quote reads: ' + passage;
+
+    // Copy the clean link to the clipboard where the browser allows it; show feedback either way.
+    var copyLink = function () {
+      try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText('https://ghemotoc.com/story/salt-mine-choir/14').catch(function () {}); } catch (e) { /* clipboard blocked: the feedback still shows */ }
+      clearTimeout(self._t);
+      self.setState({ copied: true, showLimit: false });
+      self._t = setTimeout(function () { self.setState({ copied: false }); }, 3000);
+    };
+
+    // Making the card: the first one works; any later try shows the one-per-chapter pop-up.
+    var saveImage = function () {
+      if (st.cardsMade >= 1) { self.setState({ showLimit: true }); return; }
+      self.setState({ cardsMade: 1 });
+    };
+
+    var langPill = function (on) {
+      return 'min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+        + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 700;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+
+    return {
+      passage: passage, altText: altText, charCount: passage.length,
+      copied: st.copied, notCopied: !st.copied,
+      copyLabel: st.copied ? 'Copied' : 'Copy link',
+      copyStatus: st.copied ? 'Link copied. Paste it anywhere.' : '',
+      copyStyle: 'display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 22px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+        + (st.copied ? 'border: 1px solid #2F6B4F; background: #FFFFFF; color: #2F6B4F;' : 'border: 0; background: #2A0E33; color: #FBF7EC;'),
+      copyLink: copyLink,
+      openQuote: function () { self.setState({ quoteFocus: true }); },
+      quoteStyle: 'flex: 1 1 480px; min-width: 0; max-width: 600px; margin-right: auto; padding: 28px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.4s 0.08s ease-out both; '
+        + (st.quoteFocus ? 'border: 2px solid #E6C24C; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 32px 64px -28px rgba(20,8,26,0.55);' : 'border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 32px 64px -28px rgba(20,8,26,0.55);'),
+      showLimit: st.showLimit,
+      closeLimit: function () { self.setState({ showLimit: false }); },
+      saveImage: saveImage,
+      saveLabel: st.cardsMade >= 1 ? 'Make another card' : 'Download image',
+      copyImage: function () { self.setState({ imageCopied: true }); },
+      quoteNote: st.cardsMade >= 1 ? 'Saved. You’ve used this chapter’s quote card.' : (st.imageCopied ? 'Image copied.' : 'One quote card per chapter.'),
+      ro: st.lang === 'ro' ? 'true' : 'false', en: st.lang === 'en' ? 'true' : 'false',
+      roStyle: langPill(st.lang === 'ro'), enStyle: langPill(st.lang === 'en'),
+      setRo: function () { self.setState({ lang: 'ro' }); }, setEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

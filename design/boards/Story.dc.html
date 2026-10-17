@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Story page</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}.tmc-rows>div{padding:12px 0;border-top:1px solid #DED3E4}.tmc-rows>div:first-of-type{border-top:0;padding-top:0}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
+@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+/* Approved cover backgrounds (16 Oct): one class per design, url() only allowed here */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+/* Pill system (17 Oct): chips are 36 px tall with a 44 px tap area, plum focus ring, tinted hover */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}
+.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; overflow-x: clip; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: a story page belongs to Library -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="flex: none; display: block; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <nav aria-label="Breadcrumb" style="margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: #6B5A73">
+      <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">Discover</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">Fiction</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      <span aria-current="page">The Salt Mine Choir</span>
+    </nav>
+
+    <div style="margin-top: 12px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 40px">
+
+      <!-- Main column -->
+      <main style="flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 48px">
+
+        <!-- Story header: cover, title, labels, blurb, actions -->
+        <section aria-labelledby="story-title" style="position: relative; display: flex; flex-wrap: wrap; gap: 36px; align-items: flex-start; animation: tmcRise 0.5s ease-out both">
+<img data-doodle="background" data-doodle-on="The Salt Mine Choir" src="/_blob/40cdbaaf6198533e2f6d7bc49637ce3b" alt="" aria-hidden="true" class="tmc-dd-wide" width="112" height="112" style="position: absolute; top: 352px; left: 54px; width: 112px; height: 112px; transform: rotate(-6deg); pointer-events: none; user-select: none; z-index: 0">
+          <div aria-hidden="true" class="tmc-cv tmc-cv-starry" style="position: relative; flex: 0 0 220px; height: 308px; box-sizing: border-box; padding: 22px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; color: #FAF8F5; box-shadow: 0 24px 48px -24px rgba(20,8,26,0.55)">
+            <span style="{{coverTitleStyle}}">The Salt Mine Choir</span>
+            <span style="font-size: 13px; opacity: 0.9">inkwolf</span>
+          </div>
+
+          <div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">Fiction</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #A9C9B6; background: #E8F1EC; color: #245A41;">Ongoing</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">No AI</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">13+</span>
+              <!-- Where the story can be read (decision 2, 16 Oct): web and app, or app only -->
+              <span title="Readers can open this story on the web, and in the apps once they launch after the March 2027 test" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;"><img src="/_blob/efa7267d3b9865c596fab4fb3a28f90e" alt="" aria-hidden="true" width="14" height="14" style="flex: none; display: block; width: 14px; height: 14px">Web and app</span>
+            </div>
+            <h1 id="story-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">The Salt Mine Choir</h1>
+            <p style="margin: 0; font-size: 16px; color: #5C4965">by <a href="Profile.dc.html" style="font-weight: 700">inkwolf</a></p>
+            <ul aria-label="Story numbers" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: #6B5A73">
+              <li style="display: inline-flex; align-items: center; gap: 6px"><img src="/_blob/98631b9435453dabc49fb5955934c76d" alt="" aria-hidden="true" width="20" height="20" style="flex: none; display: block; width: 20px; height: 20px">1.2k reads</li>
+              <li style="display: inline-flex; align-items: center; gap: 6px"><img src="/_blob/5b8ff50f6850841f7eeca2c5c2d0001f" alt="" aria-hidden="true" width="20" height="20" style="flex: none; display: block; width: 20px; height: 20px">{{likeCount}} likes</li>
+              <li style="display: inline-flex; align-items: center; gap: 6px"><img src="/_blob/e14867216e97778f2dc03dbb8a120de2" alt="" aria-hidden="true" width="20" height="20" style="flex: none; display: block; width: 20px; height: 20px">640 comments</li>
+              <li style="display: inline-flex; align-items: center; gap: 6px"><img src="/_blob/a7c7799609e54821cf904f7c954834d0" alt="" aria-hidden="true" width="20" height="20" style="flex: none; display: block; width: 20px; height: 20px">15 chapters</li>
+              <li style="display: inline-flex; align-items: center; gap: 6px"><img src="/_blob/ebeb72eda012a960ba1bf4d5da485639" alt="" aria-hidden="true" width="20" height="20" style="flex: none; display: block; width: 20px; height: 20px">Updated 16 Oct 2026</li>
+            </ul>
+            <div style="max-width: 640px; display: flex; flex-direction: column; gap: 10px; font-size: 17px; line-height: 1.6; color: #26142E">
+              <p style="margin: 0">Every Thursday, 14 teenagers take the lift 200 metres down into an old salt mine to rehearse. Their choir director counts them on the way down.</p>
+              <p style="margin: 0">One night she counts 15, and nobody can say where the new boy came from, least of all the register.</p>
+            </div>
+            <ul aria-label="Tags" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+              <li><a href="Search.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">mystery</a></li>
+              <li><a href="Search.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">set in Romania</a></li>
+              <li><a href="Search.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">music</a></li>
+              <li><a href="Search.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">school life</a></li>
+              <li><a href="Search.dc.html" class="tmc-chip" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">friendship</a></li>
+            </ul>
+
+            <!-- Actions: follow story, library and like work -->
+            <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 10px">
+              <a href="Reader.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 24px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; text-decoration: none; font-weight: 600; font-size: 15px"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/a7c7799609e54821cf904f7c954834d0" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Continue chapter 14</a>
+              <button type="button" aria-pressed="{{followStory}}" onClick="{{toggleFollowStory}}" style="{{followStoryStyle}}"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>{{followStoryLabel}}</button>
+              <button type="button" aria-pressed="{{inLibrary}}" onClick="{{toggleLibrary}}" style="{{libraryStyle}}"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/5f8d75d939b1aa7b54167ac2b5ecaa06" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>{{libraryLabel}}</button>
+              <button type="button" aria-pressed="{{liked}}" onClick="{{toggleLike}}" style="{{likeStyle}}"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/5b8ff50f6850841f7eeca2c5c2d0001f" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>{{likeLabel}}</button>
+              <a href="Share.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 16px; border-radius: 999px; color: #481C5F; text-decoration: none; font-weight: 600; font-size: 15px"><img src="/_blob/4dfbea41a7d32d930e7dcd15a1c1381b" alt="" aria-hidden="true" width="22" height="22" style="flex: none; display: block; width: 22px; height: 22px">Share</a>
+            </div>
+            <p style="margin: 0; font-size: 14px; color: #6B5A73">{{followNote}}</p>
+          </div>
+        </section>
+
+        <!-- Chapter list -->
+        <section aria-labelledby="chapters-h" style="position: relative; padding: 24px 28px 12px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.05s ease-out both">
+<img data-doodle="widget" data-doodle-on="15 chapters" src="/_blob/2591413100406762a766c7908ad7c5e8" alt="" aria-hidden="true" class="tmc-dd-lg" width="84" height="84" style="position: absolute; top: -64px; right: 230px; width: 84px; height: 84px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+<img data-doodle="widget" data-doodle-on="15 chapters" src="/_blob/2b77dad1a2170495e93cea3190c0f1b7" alt="" aria-hidden="true" class="tmc-dd-wide" width="64" height="64" style="position: absolute; top: 18px; left: 228px; width: 64px; height: 64px; transform: rotate(-8deg); pointer-events: none; user-select: none; z-index: 0">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #EFE8F2">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapters</span>
+              <h2 id="chapters-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">15 chapters</h2>
+            </div>
+            <span style="margin-left: auto; text-align: right; font-size: 14px; color: #6B5A73">You’ve read 13 of 15</span>
+          </div>
+          <ol style="list-style: none; margin: 0; padding: 0; columns: 2 300px; column-gap: 36px">
+            <sc-for list="{{chapters}}" as="c" hint-placeholder-count="15">
+              <li style="break-inside: avoid; border-bottom: 1px solid #EFE8F2">
+                <a href="Reader.dc.html" style="{{c.rowStyle}}">
+                  <span style="{{c.numStyle}}">{{c.n}}</span>
+                  <span style="flex: 1; min-width: 0">{{c.title}}</span>
+                  <sc-if value="{{c.reading}}" hint-placeholder-val="{{false}}"><span style="flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #A9C9B6; background: #E8F1EC; color: #245A41;">Reading</span></sc-if>
+                  <sc-if value="{{c.isNew}}" hint-placeholder-val="{{false}}"><span style="flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #D9B54A; background: #FBF3DA; color: #5C3F0E;">New</span></sc-if>
+                  <span style="font-size: 13px; font-weight: 400; color: #6B5A73">{{c.date}}</span>
+                  <sc-if value="{{c.read}}" hint-placeholder-val="{{true}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Already read"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                </a>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+
+        <!-- Wide banner: an ad-network ad, labelled AD. Ads are never personalised: the same for everyone, including under-18s. Placement rule (17 Oct): at most 2 ad slots a page, never two in view at once, never in class spaces. -->
+        <aside aria-label="Advertisement" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 0 auto; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+          <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+          <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] banner · 970 × 120</span>
+          <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+        </aside>
+      </main>
+
+      <!-- Side column: writer card, labels, content notes, report -->
+      <aside aria-label="About the story and the writer" style="position: relative; flex: 1 1 300px; max-width: 340px; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s 0.1s ease-out both">
+<img data-doodle="widget" data-doodle-on="About the story and the writer" src="/_blob/40bc1fbeb38f66f58e1d30bc529d4d2f" alt="" aria-hidden="true" class="tmc-dd-lg" width="60" height="60" style="position: absolute; bottom: -4px; right: 12px; width: 60px; height: 60px; transform: rotate(6deg); pointer-events: none; user-select: none; z-index: 0">
+        <section aria-labelledby="writer-h" style="position: relative; padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+<img data-doodle="widget" data-doodle-on="inkwolf" src="/_blob/c96e4c6d379974d9168df6dc534ab327" alt="" aria-hidden="true" class="tmc-dd-lg" width="62" height="62" style="position: absolute; top: -30px; right: -8px; width: 62px; height: 62px; transform: rotate(10deg); pointer-events: none; user-select: none; z-index: 0">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">The writer</span>
+          <div style="display: flex; align-items: center; gap: 14px">
+            <span aria-hidden="true" style="flex: none; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px">i</span>
+            <div style="min-width: 0">
+              <h2 id="writer-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px"><a href="Profile.dc.html" style="color: #26142E; text-decoration: none">inkwolf</a></h2>
+              <span style="font-size: 14px; color: #6B5A73">Writes mystery and fantasy</span>
+            </div>
+          </div>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Stories set in small Romanian towns. A new chapter most weeks.</p>
+          <dl style="margin: 0; display: flex; gap: 24px">
+            <div><dt style="font-size: 12px; color: #6B5A73">Stories</dt><dd style="margin: 2px 0 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">3</dd></div>
+            <div><dt style="font-size: 12px; color: #6B5A73">Followers</dt><dd style="margin: 2px 0 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">{{writerFollowers}}</dd></div>
+            <div><dt style="font-size: 12px; color: #6B5A73">Reads</dt><dd style="margin: 2px 0 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">2.6k</dd></div>
+          </dl>
+          <div style="display: flex; gap: 8px">
+            <button type="button" aria-pressed="{{followWriter}}" onClick="{{toggleFollowWriter}}" style="{{followWriterStyle}}">{{followWriterLabel}}</button>
+            <a href="Profile.dc.html" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; height: 44px; box-sizing: border-box; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; text-decoration: none; font-weight: 600; font-size: 14px">See profile</a>
+          </div>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">The number of followers is public. Only inkwolf can see who they are.</span>
+        </section>
+
+        <section aria-labelledby="labels-h" style="padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 12px">
+          <h2 id="labels-h" style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Labels from the writer</h2>
+          <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; font-size: 14px">
+            <dt style="color: #6B5A73">Fan fiction</dt><dd style="margin: 0; text-align: right; color: #26142E; font-weight: 600">No, original story</dd>
+            <dt style="color: #6B5A73">Parody</dt><dd style="margin: 0; text-align: right; color: #26142E; font-weight: 600">No</dd>
+            <dt style="color: #6B5A73">Rating</dt><dd style="margin: 0; text-align: right; color: #26142E; font-weight: 600">13+ (hidden from readers under 13)</dd>
+            <dt style="color: #6B5A73">AI use</dt><dd style="margin: 0; text-align: right; color: #26142E; font-weight: 600">No AI</dd>
+            <dt style="color: #6B5A73">Language</dt><dd style="margin: 0; text-align: right; color: #26142E; font-weight: 600">English</dd>
+            <dt style="color: #6B5A73">Where to read</dt><dd style="margin: 0; text-align: right; color: #26142E; font-weight: 600">On the web, and in the apps once they launch</dd>
+            <dt style="color: #6B5A73">Quote cards</dt><dd style="margin: 0; text-align: right; color: #26142E; font-weight: 600">Allowed</dd>
+          </dl>
+        </section>
+
+        <section aria-labelledby="notes-h" style="padding: 18px 22px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 20px">
+          <h2 id="notes-h" style="margin: 0; font-size: 15px; font-weight: 700; color: #26142E">Content notes from the writer</h2>
+          <p style="margin: 6px 0 0; font-size: 15px; line-height: 1.55; color: #5C4965">Some tense scenes underground and one in a stuck lift. Suitable for readers 13 and up.</p>
+        </section>
+
+        <a href="ReportDialog.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; color: #5C4965; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="20" height="20" style="flex: none; display: block; width: 20px; height: 20px">Report this story</a>
+      </aside>
+    </div>
+
+    <!-- Small footer -->
+    <footer style="position: relative; margin-top: 72px; padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 24px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1638}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Lia already follows the story and has it in her library; she has not liked it or followed the writer yet.
+    this.state = { followStory: true, inLibrary: true, liked: false, followWriter: false };
+  }
+
+  // Outlined pill when off, filled plum when on.
+  pill(on, tall) {
+    return 'display: inline-flex; align-items: center; gap: 8px; height: ' + (tall ? '52px' : '44px') + '; padding: 0 20px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+
+  // Cover titles always show in full (Robert, 16 Oct): they wrap and the size steps down as the title gets longer, never cut.
+  // Up to 18 characters: base size; 19 to 28: 85%; 29 to 40: 72%; longer: 62%; never below the floor (11px unless given).
+  titleSize(title, base, floor) {
+    var n = String(title == null ? '' : title).length;
+    var k = n <= 18 ? 1 : (n <= 28 ? 0.85 : (n <= 40 ? 0.72 : 0.62));
+    return Math.max(floor || 11, Math.round(base * k * 10) / 10);
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Chapter list: 1 to 13 read, 14 in progress, 15 new today.
+    var titles = ['Fifteen', 'The boy in the grey jumper', 'Mara asks around', 'Twelve degrees', 'Teo has a theory', 'The tourists’ photos', 'Foaie verde', 'The lift stops halfway', 'Corina counts too', 'Mrs Dobre’s clipboard', 'Ilie misses a week', 'The school website', 'What Teo saw', 'The register', 'Somebody coming down'];
+    var dates = ['10 Jul', '17 Jul', '24 Jul', '31 Jul', '7 Aug', '14 Aug', '21 Aug', '28 Aug', '4 Sep', '11 Sep', '18 Sep', '25 Sep', '2 Oct', '9 Oct', '16 Oct'];
+    var chapters = titles.map(function (t, i) {
+      var n = i + 1, read = n <= 13, reading = n === 14, isNew = n === 15;
+      return {
+        n: String(n), title: t, date: dates[i], read: read, reading: reading, isNew: isNew,
+        rowStyle: 'display: flex; align-items: center; gap: 12px; min-height: 48px; text-decoration: none; font-size: 15px; '
+          + (read ? 'color: #5C4965; font-weight: 400;' : 'color: #26142E; font-weight: 600;'),
+        numStyle: 'width: 24px; font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 700; color: ' + (reading ? '#672786' : (read ? '#6B5A73' : '#481C5F')) + ';'
+      };
+    });
+
+    var likes = 418 + (st.liked ? 1 : 0);
+    var followers = 412 + (st.followWriter ? 1 : 0);
+
+    return {
+      // Cover title: same words as on the cover above; the size follows the title's length so it always fits.
+      coverTitleStyle: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: " + this.titleSize('The Salt Mine Choir', 28) + "px; line-height: 1.05; letter-spacing: -0.015em",
+      chapters: chapters,
+      likeCount: String(likes),
+      followStory: st.followStory, inLibrary: st.inLibrary, liked: st.liked, followWriter: st.followWriter,
+      followStoryLabel: st.followStory ? 'Following story' : 'Follow story',
+      followStoryStyle: this.pill(st.followStory, true),
+      toggleFollowStory: function () { self.setState({ followStory: !st.followStory }); },
+      followNote: st.followStory ? 'You’ll get a notification when a new chapter comes out. Unfollow any time.' : 'Follow this story to get a notification for each new chapter.',
+      libraryLabel: st.inLibrary ? 'In your library' : 'Add to library',
+      libraryStyle: this.pill(st.inLibrary, true),
+      toggleLibrary: function () { self.setState({ inLibrary: !st.inLibrary }); },
+      likeLabel: st.liked ? 'Liked' : 'Like',
+      likeFill: st.liked ? 'currentColor' : 'none',
+      likeStyle: this.pill(st.liked, true),
+      toggleLike: function () { self.setState({ liked: !st.liked }); },
+      writerFollowers: String(followers),
+      followWriterLabel: st.followWriter ? 'Following' : 'Follow',
+      followWriterStyle: 'flex: 1; ' + this.pill(st.followWriter, false).replace('display: inline-flex;', 'display: inline-flex; justify-content: center;'),
+      toggleFollowWriter: function () { self.setState({ followWriter: !st.followWriter }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

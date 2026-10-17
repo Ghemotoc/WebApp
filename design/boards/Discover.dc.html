@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Discover</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
+@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+/* The 16 approved cover backgrounds (S1-E3-13): 5:8 drawings with no text that fill any box */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat;outline:1px solid rgba(38,20,46,0.14);outline-offset:-1px}
+.tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-gold{background-color:#E6C24C;background-image:url(/_blob/91b025a34ffa73c4f7886c143b2229d4)}
+.tmc-cv-lilac{background-color:#E9DDF0;background-image:url(/_blob/f1d0436689691672be6a521d49b6d32c)}
+.tmc-cv-blush{background-color:#F6D3DC;background-image:url(/_blob/e6edfdb3a9348376f609edc9860c7003)}
+.tmc-cv-sky{background-color:#D7E6F2;background-image:url(/_blob/7f5800c35ba2931d2b6f7a813d85b93c)}
+.tmc-cv-sage{background-color:#C9D8BF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#FAF8F5;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-cv-stripes{background-color:#481C5F;background-image:url(/_blob/5bf720d39651e2b57f384d33e3e04028)}
+.tmc-cv-dots{background-color:#E9DDF0;background-image:url(/_blob/49525cd87927782c2ac3d4a53ebc2973)}
+.tmc-cv-grid{background-color:#FAF8F5;background-image:url(/_blob/18fddef6727cc64415d6f75fd94c388b)}
+.tmc-cv-waves{background-color:#D7E6F2;background-image:url(/_blob/b3b6a05178861fc4e9210eaaa4134c6d)}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-cv-doodles{background-color:#FAF8F5;background-image:url(/_blob/f295eb5a1f415fe44f9e39a32e58ba7e)}
+.tmc-cv-twotone{background-color:#F6D3DC;background-image:url(/_blob/0d7f4386c9eaec72ab74d7b8349bc99f)}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+/* Scrollers with Scroll back / Scroll forward buttons hide their scrollbar (Robert, 17 Oct); they still scroll by swipe, wheel and keyboard */
+.tmc-noscroll{scrollbar-width:none;-ms-overflow-style:none}.tmc-noscroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; overflow-x: clip; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 40px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="flex: none; display: block; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Big featured slider: slides itself every 7 seconds, pausable, arrows and dots work -->
+    <section aria-roledescription="carousel" aria-label="Featured" style="position: relative; margin-top: 28px; border-radius: 28px; overflow: hidden; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 28px 56px -32px rgba(38,20,46,0.45); animation: tmcRise 0.5s ease-out both">
+      <div aria-live="{{liveMode}}" style="{{trackStyle}}">
+        <sc-for list="{{slides}}" as="sl" hint-placeholder-count="3">
+          <div role="group" aria-roledescription="slide" aria-label="{{sl.label}}" aria-hidden="{{sl.hidden}}" style="{{sl.style}}">
+            <div style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 16px; max-width: 640px">
+              <span style="{{sl.eyebrowStyle}}">{{sl.eyebrow}}</span>
+              <h2 style="{{sl.titleStyle}}">{{sl.title}}</h2>
+              <p style="{{sl.textStyle}}">{{sl.text}}</p>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 8px">
+                <a href="{{sl.href}}" tabindex="{{sl.tab}}" style="{{sl.ctaStyle}}">{{sl.cta}}</a>
+                <span style="{{sl.metaStyle}}">{{sl.meta}}</span>
+              </div>
+            </div>
+            <div aria-hidden="true" style="flex: 0 1 360px; display: flex; justify-content: center; align-items: center; min-height: 280px; position: relative">
+              <div style="{{sl.artBack}}"></div>
+              <div class="{{sl.artClass}}" style="{{sl.artFront}}"><span style="{{sl.artBox}}"><span style="{{sl.artTitleStyle}}">{{sl.artTitle}}</span><span style="{{sl.artBar}}"></span><span style="{{sl.artByStyle}}">{{sl.artBy}}</span></span></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- Controls -->
+      <div style="position: absolute; left: clamp(28px, 4vw, 56px); bottom: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 6px; border-radius: 999px; background: rgba(250,248,245,0.92); border: 1px solid #DED3E4">
+        <sc-for list="{{dots}}" as="d" hint-placeholder-count="3">
+          <button type="button" aria-label="{{d.label}}" aria-current="{{d.current}}" onClick="{{d.go}}" style="{{d.style}}"></button>
+        </sc-for>
+        <sc-if value="{{multiSlides}}" hint-placeholder-val="{{true}}">
+        <button type="button" aria-label="Previous slide" onClick="{{prevSlide}}" style="width: 36px; height: 36px; border-radius: 999px; border: 0; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+        <button type="button" aria-label="Next slide" onClick="{{nextSlide}}" style="width: 36px; height: 36px; border-radius: 999px; border: 0; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </sc-if>
+        <button type="button" aria-label="{{pauseLabel}}" aria-pressed="{{paused}}" onClick="{{togglePause}}" style="width: 36px; height: 36px; border-radius: 999px; border: 0; background: #2A0E33; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; cursor: pointer">
+          <sc-if value="{{paused}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"></path></svg></sc-if>
+          <sc-if value="{{playing}}" hint-placeholder-val="{{true}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg></sc-if>
+        </button>
+      </div>
+    </section>
+
+    <!-- Personal greeting -->
+    <header style="position: relative; padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Discover · {{dateLine}}</div>
+      <div style="display: flex; align-items: center; gap: clamp(10px, 1.4vw, 20px)">
+      <h1 style="margin: 0; min-width: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(40px, 5.6vw, 80px); line-height: 0.96; letter-spacing: -0.025em; color: #481C5F">{{greeting}}, <span style="position: relative; display: inline-block; isolation: isolate">Lia.<svg aria-hidden="true" viewBox="0 0 100 20" preserveAspectRatio="none" style="position: absolute; left: -2%; bottom: -0.12em; width: 104%; height: 0.24em; overflow: visible; z-index: -1"><path d="M1 13 C 22 5 48 9 70 12 C 81 13 90 14 99 8" fill="none" stroke="#E6C24C" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg></span></h1>
+      <!-- Seasonal doodle, decorative. It rotates by season and switches by date: October shows 47 jack-o’-lantern; winter shows 36 snowman or 41 Christmas tree; other seasons use their own doodle from the set. -->
+      <img src="/_blob/5e7f1aff6c31b5c3c503d70dec09b93b" alt="" aria-hidden="true" style="flex: none; width: clamp(56px, 5.4vw, 76px); height: clamp(56px, 5.4vw, 76px); transform: rotate(6deg)">
+      </div>
+      <p style="margin: 0; max-width: 640px; font-size: 18px; line-height: 1.65; color: #5C4965">Writers you follow posted 6 updates this week. Your draft is saved, so you can carry on from where you stopped.</p>
+    </header>
+
+    <!-- Search and the one Filters button -->
+    <div style="position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <form role="search" style="flex: 1 1 420px; position: relative; margin: 0">
+        <label for="q-disc" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Search stories, writers and forums</label>
+        <span style="position: absolute; left: 20px; top: 15px; color: #6B5A73; display: flex"><img src="/_blob/55f422a6526ded4541da26a992747953" alt="" aria-hidden="true" width="22" height="22" style="flex: none; display: block; width: 22px; height: 22px"></span>
+        <input id="q-disc" type="search" placeholder="Search stories, writers and forums" style="width: 100%; box-sizing: border-box; height: 52px; padding: 0 20px 0 52px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+      </form>
+      <button type="button" class="tmc-chip" aria-expanded="{{filtersOpen}}" aria-controls="filters-panel" onClick="{{toggleFilters}}" style="{{filterBtnStyle}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"></path><path d="M7 12h10"></path><path d="M10 18h4"></path></svg>Filters<sc-if value="{{hasActive}}" hint-placeholder-val="{{true}}"><span style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">{{activeCount}}</span></sc-if></button>
+
+      <!-- Filters panel: shows only after the button is pressed -->
+      <sc-if value="{{filtersOpen}}" hint-placeholder-val="{{false}}">
+        <section id="filters-panel" aria-label="Filters" style="position: absolute; top: 64px; right: 0; z-index: 5; width: min(560px, 100%); box-sizing: border-box; padding: 24px; display: flex; flex-direction: column; gap: 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 24px 48px -24px rgba(38,20,46,0.35); animation: tmcRise 0.25s ease-out both">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+            <label for="sort" style="font-family: 'Cutive', 'Courier New', serif; width: 92px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Sort by</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="sort" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 14px; font-weight: 600; color: #26142E">
+              <option selected>Popular</option>
+              <option>Newest</option>
+              <option>Recently updated</option>
+              <option>A to Z</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+          <div role="group" aria-label="Story status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; width: 92px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Status</span>
+            <sc-for list="{{statusChips}}" as="c" hint-placeholder-count="3">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div role="group" aria-label="Categories" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; width: 92px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Category</span>
+            <sc-for list="{{catChips}}" as="c" hint-placeholder-count="5">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span aria-hidden="true" style="{{c.dot}}"></span>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div role="group" aria-label="Tags" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; width: 92px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Tags</span>
+            <sc-for list="{{tagChips}}" as="c" hint-placeholder-count="6">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid #EFE8F2">
+            <button type="button" onClick="{{clearAll}}" style="height: 44px; padding: 0 8px; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer">Clear all</button>
+            <button type="button" onClick="{{toggleFilters}}" style="height: 44px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Show 214 stories</button>
+          </div>
+        </section>
+      </sc-if>
+    </div>
+
+    <!-- Dashboard tiles -->
+    <section aria-label="Your dashboard" style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; animation: tmcRise 0.5s 0.1s ease-out both">
+
+      <!-- Continue reading -->
+      <a href="Reader.dc.html" style="grid-column: span 2; display: flex; gap: 22px; padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; text-decoration: none; color: inherit; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+        <div aria-hidden="true" class="tmc-cv tmc-cv-starry" style="flex: none; width: 104px; height: 140px; border-radius: 12px"></div>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Continue reading</span>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; line-height: 1.1; color: #26142E">The Salt Mine Choir</span>
+          <span style="font-size: 14px; color: #5C4965">by inkwolf · Chapter 14 of 15</span>
+          <div role="progressbar" aria-label="Reading progress" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="margin-top: 6px; height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="width: 72%; height: 100%; border-radius: 999px; background: #672786"></div></div>
+          <div style="margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+            <span style="font-size: 13px; font-weight: 600; color: #2F6B4F">Chapter 15 is out</span>
+            <span style="display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600">Continue</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Your draft -->
+      <a href="Editor.dc.html" style="position: relative; display: flex; flex-direction: column; gap: 8px; padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; text-decoration: none; color: inherit; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/cb01c13602029560ca242fb10bc704d2" alt="" aria-hidden="true" class="tmc-dd-lg" width="60" height="60" style="position: absolute; top: -26px; right: 22px; width: 60px; height: 60px; transform: rotate(18deg); pointer-events: none; user-select: none; z-index: 0">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Your draft</span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.15; color: #26142E">Chapter one, untitled</span>
+        <span style="font-size: 14px; color: #5C4965">The Weather Station · 1,240 words · saved yesterday</span>
+        <span style="margin-top: auto; font-size: 14px; font-weight: 600; color: #672786">Open draft</span>
+      </a>
+
+      <!-- Contest -->
+      <a href="#" style="position: relative; display: flex; flex-direction: column; gap: 8px; padding: 22px; background: #E6C24C; border-radius: 24px; text-decoration: none; color: #26142E">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/8b35eff002c7149d8059704ce00b23d2" alt="" aria-hidden="true" class="tmc-dd-lg" width="74" height="74" style="position: absolute; top: -36px; right: -14px; width: 74px; height: 74px; transform: rotate(10deg); pointer-events: none; user-select: none; z-index: 0">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #26142E; line-height: 1.3">Contest</span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.05; color: #2A0E33">The First Chapter contest</span>
+        <span style="font-size: 14px; line-height: 1.5; color: #3A2442">Opens in February 2027. Start your first chapter now so it’s ready.</span>
+        <span style="margin-top: auto; font-size: 12px; font-weight: 600; color: #3A2442">Sponsored by [Partner]</span>
+      </a>
+    </section>
+
+    <!-- Shelf 1: from people you follow -->
+    <section aria-labelledby="shelf-following" style="position: relative; margin-top: 56px; animation: tmcRise 0.5s 0.15s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Following</span>
+          <h2 id="shelf-following" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">New from writers you follow</h2>
+        </div>
+        <sc-if value="{{ar.s1.show}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button type="button" aria-label="Scroll back" onClick="{{prev1}}" disabled="{{ar.s1.backOff}}" aria-disabled="{{ar.s1.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s1.backCur}}; opacity: {{ar.s1.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <button type="button" aria-label="Scroll forward" onClick="{{next1}}" disabled="{{ar.s1.fwdOff}}" aria-disabled="{{ar.s1.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s1.fwdCur}}; opacity: {{ar.s1.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+        </sc-if>
+      </div>
+      <div style="position: relative; margin: 0 -4px">
+        <div ref="{{refShelf1}}" onScroll="{{scrollShelf1}}" tabindex="0" class="tmc-noscroll" role="region" aria-label="New from writers you follow, scrolls sideways" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{mask1}}; mask-image: {{mask1}}">
+          <sc-for list="{{following}}" as="s" hint-placeholder-count="6">
+            <a href="Story.dc.html" style="flex: none; width: 196px; scroll-snap-align: start; text-decoration: none; color: inherit">
+              <!-- On the website an app-only story carries "In the app only" on its cover (b2d71f32, Q4); inside the apps it doesn't. -->
+              <div class="{{s.cls}}" style="{{s.cover}}"><sc-if value="{{s.appOnly}}" hint-placeholder-val="{{false}}"><span style="{{s.appPill}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>In the app only</span></sc-if><span style="{{s.boxStyle}}"><span style="{{s.tStyle}}">{{s.title}}</span><span style="{{s.barStyle}}"></span></span></div>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap; margin-top: 12px">{{s.update}}</span>
+              <span style="display: block; margin-top: 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 16px; color: #26142E">{{s.title}}</span>
+              <span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">{{s.author}} · {{s.when}}{{s.appNote}}</span>
+            </a>
+          </sc-for>
+          <!-- One line of at most 20 stories, then View more opens the See all page (design rule, 16 Oct) -->
+          <a href="SeeAll.dc.html" aria-label="View more from writers you follow" style="{{moreCard}}"><span style="{{moreBox}}"><span aria-hidden="true" style="{{moreDot}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><span style="{{moreTitle}}">View more</span><span style="{{moreText}}">See everything new from writers you follow.</span></span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wide banner: an ad-network ad, labelled AD. Ads are never personalised: the same for everyone, including under-18s. Placement rule (17 Oct): at most 2 ad slots a page, never two in view at once, never in class spaces. -->
+    <aside aria-label="Advertisement" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 48px auto 0; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+      <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+      <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] banner · 970 × 120</span>
+      <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+    </aside>
+
+    <!-- Shelf 2: popular in your area (from the county the user chose, never tracked) -->
+    <section aria-labelledby="shelf-area" style="position: relative; margin-top: 48px; animation: tmcRise 0.5s 0.2s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Popular in your area</span>
+          <h2 id="shelf-area" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Popular in Prahova this week</h2>
+          <span style="font-size: 13px; color: #6B5A73">From the county you picked in your profile. We never track where you are. <a href="Settings.dc.html" style="font-weight: 600">Change area</a></span>
+        </div>
+        <sc-if value="{{ar.s2.show}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button type="button" aria-label="Scroll back" onClick="{{prev2}}" disabled="{{ar.s2.backOff}}" aria-disabled="{{ar.s2.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s2.backCur}}; opacity: {{ar.s2.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <button type="button" aria-label="Scroll forward" onClick="{{next2}}" disabled="{{ar.s2.fwdOff}}" aria-disabled="{{ar.s2.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s2.fwdCur}}; opacity: {{ar.s2.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+        </sc-if>
+      </div>
+      <div style="position: relative; margin: 0 -4px">
+        <div ref="{{refShelf2}}" onScroll="{{scrollShelf2}}" tabindex="0" class="tmc-noscroll" role="region" aria-label="Popular in Prahova, scrolls sideways" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{mask2}}; mask-image: {{mask2}}">
+          <sc-for list="{{areaA}}" as="s" hint-placeholder-count="2">
+            <a href="Story.dc.html" style="flex: none; width: 196px; scroll-snap-align: start; text-decoration: none; color: inherit">
+              <div class="{{s.cls}}" style="{{s.cover}}"><span style="{{s.boxStyle}}"><span style="{{s.tStyle}}">{{s.title}}</span><span style="{{s.barStyle}}"></span></span></div>
+              <span style="display: block; margin-top: 12px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 16px; color: #26142E">{{s.title}}</span>
+              <span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">{{s.author}} · {{s.reads}}</span>
+            </a>
+          </sc-for>
+  
+          <!-- Sponsored card from a direct sponsor (decision 16 Oct: "Sponsored" for sponsors, "Ad" for ad-network ads): the same for everyone, labelled -->
+          <a href="#" style="flex: none; width: 196px; scroll-snap-align: start; text-decoration: none; color: inherit">
+            <div style="height: 264px; box-sizing: border-box; padding: 18px; border-radius: 16px; background: #FFFFFF; border: 1px dashed #B9A9C2; display: flex; flex-direction: column; gap: 10px">
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; white-space: nowrap; align-self: flex-start; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">SPONSORED</span>
+              <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; line-height: 1.12; color: #26142E">New young adult books this month</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Ten new books picked by the booksellers at [Partner].</span>
+              <span style="margin-top: auto; font-size: 14px; font-weight: 600; color: #672786">Visit [Partner]</span>
+            </div>
+            <span style="display: block; margin-top: 12px; font-size: 13px; color: #6B5A73">Paid for by [Partner]. The same for everyone.</span>
+          </a>
+  
+          <sc-for list="{{areaB}}" as="s" hint-placeholder-count="3">
+            <a href="Story.dc.html" style="flex: none; width: 196px; scroll-snap-align: start; text-decoration: none; color: inherit">
+              <div class="{{s.cls}}" style="{{s.cover}}"><span style="{{s.boxStyle}}"><span style="{{s.tStyle}}">{{s.title}}</span><span style="{{s.barStyle}}"></span></span></div>
+              <span style="display: block; margin-top: 12px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 16px; color: #26142E">{{s.title}}</span>
+              <span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">{{s.author}} · {{s.reads}}</span>
+            </a>
+          </sc-for>
+          <a href="SeeAll.dc.html" aria-label="View more popular stories in Prahova" style="{{moreCard}}"><span style="{{moreBox}}"><span aria-hidden="true" style="{{moreDot}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><span style="{{moreTitle}}">View more</span><span style="{{moreText}}">See every popular story in Prahova.</span></span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shelf 3: rising writers -->
+    <section aria-labelledby="shelf-rising" style="position: relative; margin-top: 48px; animation: tmcRise 0.5s 0.25s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Rising</span>
+          <h2 id="shelf-rising" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Writers to follow this week</h2>
+        </div>
+        <sc-if value="{{ar.s3.show}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button type="button" aria-label="Scroll back" onClick="{{prev3}}" disabled="{{ar.s3.backOff}}" aria-disabled="{{ar.s3.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s3.backCur}}; opacity: {{ar.s3.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+          <button type="button" aria-label="Scroll forward" onClick="{{next3}}" disabled="{{ar.s3.fwdOff}}" aria-disabled="{{ar.s3.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.s3.fwdCur}}; opacity: {{ar.s3.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+        </div>
+        </sc-if>
+      </div>
+      <div style="position: relative; margin: 0 -4px">
+        <div ref="{{refShelf3}}" onScroll="{{scrollShelf3}}" tabindex="0" class="tmc-noscroll" role="region" aria-label="Writers to follow, scrolls sideways" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{mask3}}; mask-image: {{mask3}}">
+          <sc-for list="{{writers}}" as="w" hint-placeholder-count="6">
+            <div style="flex: none; width: 248px; scroll-snap-align: start; box-sizing: border-box; padding: 20px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -30px rgba(38,20,46,0.3)">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <span aria-hidden="true" style="{{w.avatar}}">{{w.initial}}</span>
+                <span style="min-width: 0"><a href="Profile.dc.html" style="display: block; font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">{{w.name}}</a><span style="display: block; font-size: 13px; color: #6B5A73">{{w.kind}}</span></span>
+              </div>
+              <span style="font-size: 13px; color: #5C4965">{{w.growth}}</span>
+              <button type="button" aria-pressed="{{w.followed}}" onClick="{{w.toggle}}" style="{{w.btnStyle}}">{{w.btnLabel}}</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- Small page footer: legal links, the no-account report form, group line and language switch -->
+    <footer style="position: relative; margin-top: 72px; padding-top: 24px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/24a7ac8f2dd38b86c302b928d2358327" alt="" aria-hidden="true" class="tmc-dd-lg" width="96" height="96" style="position: absolute; top: -82px; right: 28px; width: 96px; height: 96px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px">
+        <span style="display: inline-flex; align-items: center; min-height: 44px">An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2882}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Filters start closed; one tag is on so the badge shows how a count looks.
+    this.state = { filtersOpen: false, status: 'All', cats: {}, tags: { 'set in Romania': true }, followed: {}, slide: 0, paused: false };
+    this.shelves = {};
+    this.slideCount = 3;
+  }
+
+  // Auto-advance the featured slider, unless the reader prefers reduced motion.
+  componentDidMount() {
+    var self = this;
+    // Rows are re-measured when the window changes size, so arrows appear or go as the row starts or stops overflowing.
+    this._onResize = function () { self.measureAll(); };
+    try { window.addEventListener('resize', this._onResize); } catch (e) { /* no window: arrows keep their last state */ }
+    setTimeout(function () { self.measureAll(); }, 0);
+    var reduced = false;
+    try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { reduced = false; }
+    if (reduced) { this.setState({ paused: true }); return; }
+    this._timer = setInterval(function () {
+      if (!self.state.paused) self.setState({ slide: (self.state.slide + 1) % self.slideCount });
+    }, 7000);
+  }
+
+  // New content (filter changes) can change whether a row overflows. measureAll only sets state when a value changes.
+  componentDidUpdate() { this.measureAll(); }
+
+  componentWillUnmount() {
+    clearInterval(this._timer);
+    try { window.removeEventListener('resize', this._onResize); } catch (e) { /* ignore */ }
+  }
+
+  goTo(i) {
+    var n = this.slideCount;
+    this.setState({ slide: ((i % n) + n) % n });
+  }
+
+  // Blurred edges (S1 polish, 16 Oct): each side of a sideways row shows its soft edge only while cards are cut off on that side,
+  // so the first card is never faded at rest. Returns the overlay opacity for one side.
+  edge(key, side) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    return (side === 'l' ? e.l : e.r) ? '1' : '0';
+  }
+
+  // Fade (Robert, 16 Oct): the row itself fades out on the side where cards are cut off, using a mask,
+  // so cards, outlines and shadows all fade together. Only ever one side: see measureShelf.
+  mask(key) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    if (e.r) return 'linear-gradient(to right, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    if (e.l) return 'linear-gradient(to left, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    return 'none';
+  }
+
+  // Re-measure a row after it scrolls (or first appears) and store which sides are cut off.
+  measureShelf(key) {
+    var e = this.readShelf(key);
+    if (!e) return;
+    var all = this.state.edges || {};
+    if (this.sameEdges(all[key], e)) return;   // only setState when something changed, so no render loops
+    var n = Object.assign({}, all); n[key] = e;
+    this.setState({ edges: n });
+  }
+
+  // Measure one row. l/r: the side that fades (never both). o: the row is wider than its box, so its arrows show.
+  // sl/sr: the TRUE edges, cards hidden off the left/right, which disable the arrows (Robert, 17 Oct): unlike l/r they ignore the fade tweak.
+  readShelf(key) {
+    this.shelves = this.shelves || {};
+    var el = this.shelves[key];
+    if (!el) return null;
+    // The rows snap their first card to the edge, which leaves scrollLeft at the row's left padding (4px) at the start,
+    // so the padding counts as being at the start (and likewise at the end).
+    var pl = 0, pr = 0;
+    try { var cs = window.getComputedStyle(el); pl = parseFloat(cs.paddingLeft) || 0; pr = parseFloat(cs.paddingRight) || 0; } catch (err) { /* keep 0 */ }
+    var o = el.scrollWidth > el.clientWidth + 2;
+    var sl = o && el.scrollLeft > pl + 2, sr = o && el.scrollLeft + el.clientWidth < el.scrollWidth - pr - 2;
+    // In the middle of a row only the side the reader is scrolling towards fades; at rest that's the right-hand side.
+    // A re-measure with no movement (resize, new content) keeps the side that was already fading.
+    this.lastLeft = this.lastLeft || {};
+    var prev = this.lastLeft[key] || 0, dir = el.scrollLeft - prev;
+    this.lastLeft[key] = el.scrollLeft;
+    var l = sl, r = sr, old = (this.state.edges || {})[key];
+    if (l && r) {
+      if (dir < 0) r = false;
+      else if (dir > 0) l = false;
+      else if (old && old.l && !old.r) r = false;
+      else l = false;
+    }
+    return { l: l, r: r, o: o, sl: sl, sr: sr };
+  }
+
+  sameEdges(a, b) {
+    return !!a && !!b && a.l === b.l && a.r === b.r && a.o === b.o && a.sl === b.sl && a.sr === b.sr;
+  }
+
+  // Re-measure every row at once (mount, window resize, new content after a filter, sort or tab change). One setState at most.
+  measureAll() {
+    var all = this.state.edges || {}, n = null;
+    for (var key in (this.shelves || {})) {
+      var e = this.readShelf(key);
+      if (!e || this.sameEdges(all[key], e)) continue;
+      n = n || Object.assign({}, all);
+      n[key] = e;
+    }
+    if (n) this.setState({ edges: n });
+  }
+
+  // Scroll arrows for one row (Robert, 17 Oct): not shown at all when the row fits; the arrow pointing at an end
+  // the row has already reached is disabled. Before the first measure: shown, back disabled.
+  arrows(key) {
+    var e = (this.state.edges || {})[key] || {};
+    var show = e.o !== false, back = e.sl === true, fwd = e.sr !== false;
+    return {
+      show: show,
+      backOff: !back, backAria: back ? 'false' : 'true', backOp: back ? '1' : '0.4', backCur: back ? 'pointer' : 'default',
+      fwdOff: !fwd, fwdAria: fwd ? 'false' : 'true', fwdOp: fwd ? '1' : '0.4', fwdCur: fwd ? 'pointer' : 'default'
+    };
+  }
+
+  // Scroll a shelf sideways by most of its visible width.
+  scrollShelf(key, dir) {
+    var el = this.shelves[key];
+    if (!el || typeof el.scrollBy !== 'function') return;
+    try { el.scrollBy({ left: dir * Math.max(240, el.clientWidth * 0.8), behavior: 'smooth' }); }
+    catch (e) { el.scrollLeft += dir * 600; }
+  }
+
+  // Shared chip look for the filters panel.
+  chipStyle(on) {
+    // Pill system (17 Oct): white chip with a visible #8E7B99 edge; selected is plum with a check (see .tmc-chip in the helmet).
+    return 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+      + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: #FFFFFF; color: #481C5F; border: 1px solid #8E7B99;');
+  }
+
+  // Automatic cover (S1-E3-13): a story with no cover of its own gets one of the 16 approved designs,
+  // picked from its id so it never changes, and never the same design as the card just before it in a row.
+  autoCovers(ids) {
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var hash = function (s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    var prev = '';
+    return ids.map(function (id) {
+      var k = K[hash(id) % K.length];
+      if (k === prev) k = K[(K.indexOf(k) + 7) % K.length];   // neighbours never match
+      prev = k;
+      return k;
+    });
+  }
+
+  // Stable story id from its title, e.g. 'The Salt Mine Choir' -> 'the-salt-mine-choir' (diacritics dropped).
+  slug(title) {
+    var t = String(title || '').toLowerCase();
+    try { t = t.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { /* older browsers: keep as typed */ }
+    return t.replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  // Cover keys for one row of stories: the fixed table keeps each canonical story on the same design on every
+  // screen; every other story gets the automatic helper. Two neighbours never share a design.
+  rowCovers(titles) {
+    var self = this;
+    var F = {
+      'the-salt-mine-choir': 'starry', 'the-girl-who-fixed-radios': 'waves', 'the-weather-station': 'sky',
+      'small-rooms': 'dots', 'night-bus-to-ploiesti': 'ink', 'the-last-tram-home': 'sage',
+      'inside-the-student-housing-waitlist': 'grid', 'what-our-grandparents-didnt-post': 'paper',
+      'rivers-that-moved-towns': 'sky', 'the-map-keepers-apprentice': 'gold', 'pride-prejudice-and-year-12': 'blush',
+      'notes-from-room-12': 'lilac', 'twelve-minutes-ahead': 'violet', 'the-clocktower-club': 'stripes',
+      'bus-stop-poems': 'doodles', 'why-i-read-in-two-languages': 'twotone', 'snow-on-the-valley-road': 'plum',
+      'the-last-cinema-in-town': 'gold', 'lanterns-on-lipscani': 'violet'
+    };
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var ids = titles.map(function (t) { return self.slug(t); });
+    var auto = this.autoCovers(ids);
+    var keys = ids.map(function (id, i) { return F[id] || auto[i]; });
+    // A story without a fixed design also avoids the two designs before it, so a row never looks repetitive.
+    var clash = function (j, wide) {
+      return keys[j] === keys[j - 1] || keys[j] === keys[j + 1] || (wide && keys[j] === keys[j - 2]);
+    };
+    var move = function (j) {
+      for (var n = 0; n < K.length && clash(j, true); n++) keys[j] = K[(K.indexOf(keys[j]) + 7) % K.length];
+    };
+    for (var i = 1; i < keys.length; i++) {
+      if (!F[ids[i]] && clash(i, true)) move(i);
+      // Two neighbours must never match: move the one without a fixed design, so a canonical story keeps its design everywhere.
+      else if (keys[i] === keys[i - 1] && !F[ids[i - 1]]) move(i - 1);
+    }
+    return keys;
+  }
+
+  // Title size from its length (16 Oct), so the whole title always fits on a cover: up to 18 characters keeps
+  // the base size, 19-28 is x0.85, 29-40 is x0.72, longer is x0.62, never below the floor (11px by default).
+  // base: px number, '21px' or any CSS length such as a clamp(). inner: the px width the title can use, when known;
+  // the size then also drops until the longest word fits on one line (wordEm estimates its width).
+  titleSize(title, base, floor, inner) {
+    var t = String(title || ''), n = t.length;
+    var f = n <= 18 ? 1 : n <= 28 ? 0.85 : n <= 40 ? 0.72 : 0.62;
+    floor = floor || 11;
+    if (typeof base === 'number' || /^\d+(\.\d+)?px$/.test(String(base))) {
+      var px = Math.max(floor, Math.round(parseFloat(base) * f * 10) / 10);
+      var word = this.wordEm(t);
+      if (inner && word * px > inner) px = Math.max(floor, Math.floor(inner / word * 10) / 10);
+      return px + 'px';
+    }
+    return 'max(' + floor + 'px, calc(' + base + ' * ' + f + '))';
+  }
+
+  // Width of the title's longest word in em for Bricolage Grotesque bold (capitals and m/w wide, i/l/t/r narrow), plus 5% to spare.
+  wordEm(t) {
+    var em = function (w) {
+      var e = 0;
+      for (var i = 0; i < w.length; i++) { var c = w.charAt(i); e += /[A-ZĂÂÎȘȚmw]/.test(c) ? 0.75 : /[iljtfr'’.,:;!|]/.test(c) ? 0.3 : 0.55; }
+      return e * 1.05;
+    };
+    return String(t || '').split(/\s+/).reduce(function (m, w) { return Math.max(m, em(w)); }, 0);
+  }
+
+  // How the title sits on each design (from the approved table): title colour, optional box behind
+  // title and pen name, and the thin line under the title. z sets sizes: t (title font-size), w (title weight), lh, p (pen size), gap, bw (line width).
+  coverLook(k, z) {
+    var L = {
+      plum: ['#FAF8F5', '', '#E6C24C'], ink: ['#FAF8F5', '', '#E6C24C'], violet: ['#FAF8F5', '', '#E6C24C'],
+      gold: ['#26142E', '', '#481C5F'], lilac: ['#26142E', '', '#672786'], blush: ['#26142E', '', '#481C5F'],
+      sky: ['#26142E', '', '#672786'], sage: ['#26142E', '', '#481C5F'], paper: ['#26142E', '', '#672786'],
+      stripes: ['#FAF8F5', '#481C5F', ''], dots: ['#26142E', '#FAF8F5', ''], grid: ['#26142E', '', ''],
+      waves: ['#26142E', '#FAF8F5', ''], starry: ['#FAF8F5', '', ''], doodles: ['#26142E', '', ''], twotone: ['#FAF8F5', '', '']
+    };
+    var t = L[k] ? L[k] : L.plum, ink = t[0], light = ink === '#26142E';
+    z = z || {};
+    // Width left for the title: the box designs (stripes, dots, waves) take 8px padding each side (z.bx: both sides together, when a screen changes it).
+    var inner = z.inner ? z.inner - (t[1] ? (z.bx == null ? 16 : z.bx) : 0) : 0;
+    var size = z.title == null ? (z.t || '21px') : this.titleSize(z.title, z.t || '21px', z.min, inner);
+    return {
+      cls: 'tmc-cv tmc-cv-' + (L[k] ? k : 'plum'),
+      box: 'display: flex; flex-direction: column; gap: ' + (z.gap == null ? 6 : z.gap) + 'px; min-width: 0;'
+        + (t[1] ? ' display: inline-flex; align-self: flex-start; max-width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 6px; background: ' + t[1] + ';' : ''),
+      // Titles wrap on spaces and never clip; with z.title the size follows the title's length (titleSize).
+      title: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: " + (z.w || 700) + '; font-size: ' + size + '; line-height: ' + (z.lh || 1.04) + '; color: ' + ink + '; overflow-wrap: break-word;',
+      // False when even the floor size cannot fit the longest word (only on very small thumbnails).
+      fits: !z.inner || this.wordEm(z.title) * parseFloat(size) <= inner,
+      bar: t[2] ? 'display: block; width: ' + (z.bw || 40) + 'px; height: 3px; border-radius: 2px; background: ' + t[2] + ';' : 'display: none;',
+      pen: 'font-size: ' + (z.p || 12) + 'px; font-weight: 500; color: ' + ink + ';',
+      // Genre pill: cream on dark designs, plum with white text on light ones so it never disappears.
+      pill: light ? 'background: #481C5F; color: #FFFFFF;' : 'background: rgba(250,248,245,0.94); color: #2A0E33;',
+      // Gold "Completed" pill: swaps to plum on the gold design.
+      goldPill: k === 'gold' ? 'background: #481C5F; color: #FFFFFF;' : 'background: #E6C24C; color: #26142E;',
+      ink: ink
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Greeting follows the reader's own clock; nothing about place is used.
+    var now = new Date(), h = now.getHours();
+    var greeting = h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening');
+    var dateLine = '';
+    try { dateLine = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }); } catch (e) { dateLine = ''; }
+
+    var statuses = ['All', 'Ongoing', 'Completed'];
+    var statusChips = statuses.map(function (s) {
+      return { label: s, pressed: st.status === s, style: self.chipStyle(st.status === s), pick: function () { self.setState({ status: s }); } };
+    });
+
+    // Launch categories (Q52): fiction, poetry and essays. No journalism at launch.
+    var cats = [['Fiction', '#4D1B5E'], ['Poetry', '#2E4A8C'], ['Essays', '#2F6B4F']];
+    var catChips = cats.map(function (c) {
+      var on = !!st.cats[c[0]];
+      return {
+        label: c[0], pressed: on, style: self.chipStyle(on),
+        dot: 'width: 8px; height: 8px; border-radius: 50%; background: ' + (on ? '#FFFFFF' : c[1]) + ';',
+        pick: function () { var n = Object.assign({}, st.cats); n[c[0]] = !on; self.setState({ cats: n }); }
+      };
+    });
+
+    var tags = ['set in Romania', 'fantasy', 'mystery', 'found family', 'folklore', 'school life', 'first novel', 'city life'];
+    var tagChips = tags.map(function (t) {
+      var on = !!st.tags[t];
+      return { label: t, pressed: on, style: self.chipStyle(on), pick: function () { var n = Object.assign({}, st.tags); n[t] = !on; self.setState({ tags: n }); } };
+    });
+
+    var count = (st.status !== 'All' ? 1 : 0)
+      + Object.keys(st.cats).filter(function (k) { return st.cats[k]; }).length
+      + Object.keys(st.tags).filter(function (k) { return st.tags[k]; }).length;
+
+    var filterBtnStyle = 'display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 22px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+      + (st.filtersOpen ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+
+    // Covers use the 16 approved drawn backgrounds (classes in the helmet), so nothing here needs an image licence.
+    var coverStyle = 'height: 264px; box-sizing: border-box; padding: 18px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end;';
+    // A row of covers: fixed design for the canonical stories, the automatic one for the rest, neighbours never match.
+    var shelfCards = function (list, keys) {
+      return list.map(function (s, i) {
+        var look = self.coverLook(keys[i], { t: '21px', lh: 1.04, gap: 6, title: s.title, inner: 160 });
+        return Object.assign({}, s, { cover: coverStyle, cls: look.cls, boxStyle: look.box, tStyle: look.title, barStyle: look.bar,
+          // "In the app only" on the cover, website only (b2d71f32): genre-pill colours (4.5:1 or better), ringed, pinned to the top so the title box stays clear.
+          appOnly: !!s.appOnly, appNote: s.appOnly ? ' · In the app only' : '',
+          appPill: 'align-self: flex-start; margin-bottom: auto; display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; box-shadow: inset 0 0 0 1.5px currentColor; ' + look.pill });
+      });
+    };
+    var titlesOf = function (list) { return list.map(function (s) { return s.title; }); };
+
+    var following = [
+      { title: 'The Salt Mine Choir', author: 'inkwolf', update: 'Chapter 15', when: '2 hours ago' },
+      { title: 'Small Rooms', author: 'poppyverse', update: 'New poem', when: 'yesterday', appOnly: true },
+      { title: 'Inside the Student Housing Waitlist', author: 'matei.writes', update: 'Part 4', when: 'yesterday' },
+      { title: 'The Last Tram Home', author: 'ilinca.r', update: 'Chapter 3', when: '3 days ago' },
+      { title: 'Notes from Room 12', author: 'teo_ink', update: 'Chapter 7', when: '4 days ago' },
+      { title: 'Lanterns on Lipscani', author: 'corbu', update: 'Chapter 9', when: 'last week' }
+    ];
+    following = shelfCards(following, self.rowCovers(titlesOf(following)));
+    var areaA = [
+      { title: 'Night Bus to Ploiești', author: 'corbu', reads: '3.4k reads' },
+      { title: 'Rivers That Moved Towns', author: 'geo.andrei', reads: '410 reads' }
+    ];
+    var areaB = [
+      { title: 'What Our Grandparents Didn’t Post', author: 'Ana Radu', reads: '2.1k reads' },
+      { title: 'The Clocktower Club', author: 'vlad.writes', reads: '1.8k reads' },
+      { title: 'Snow on the Valley Road', author: 'mara.p', reads: '960 reads' }
+    ];
+    // One row with the sponsored card in the middle, so the designs are picked across both halves.
+    var areaKeys = self.rowCovers(titlesOf(areaA.concat(areaB)));
+    areaA = shelfCards(areaA, areaKeys.slice(0, areaA.length));
+    areaB = shelfCards(areaB, areaKeys.slice(areaA.length));
+
+    var avatar = function (a, b) { return 'flex: none; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(140deg,' + a + ',' + b + '); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 700; font-size: 18px;'; };
+    var writerList = [
+      ['inkwolf', 'i', 'Fiction', '+84 followers this week', '#4D1B5E', '#9A5BB8'],
+      ['poppyverse', 'p', 'Poetry', '+61 followers this week', '#2E4A8C', '#7C95CF'],
+      ['matei.writes', 'm', 'Essays', '+47 followers this week', '#8C2B3A', '#D07583'],
+      ['Ana Radu', 'A', 'Essays', '+39 followers this week', '#2F6B4F', '#7DB596'],
+      ['geo.andrei', 'g', 'Essays', '+22 followers this week', '#7A5C12', '#C9A24A'],
+      ['ilinca.r', 'i', 'Fiction', '+19 followers this week', '#1F5357', '#6FA7AB']
+    ];
+    var writers = writerList.map(function (w) {
+      var on = !!st.followed[w[0]];
+      return {
+        name: w[0], initial: w[1], kind: w[2], growth: w[3], avatar: avatar(w[4], w[5]), followed: on,
+        btnLabel: on ? 'Following' : 'Follow',
+        btnStyle: 'height: 44px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; '
+          + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #672786; background: #FFFFFF; color: #672786;'),
+        toggle: function () { var n = Object.assign({}, st.followed); n[w[0]] = !on; self.setState({ followed: n }); }
+      };
+    });
+
+    // Featured slides. Colours: dark plum, brand gold, deep blue.
+    var slideData = [
+      {
+        label: '1 of 3: featured story', eyebrow: 'Featured this week', title: 'The Salt Mine Choir',
+        text: 'A choir rehearses in an old salt mine, and one night there is a singer whose name is on no list. Chapter 15 is out today.',
+        cta: 'Read the story', href: 'Story.dc.html', meta: 'by inkwolf · 1.2k reads · Fiction',
+        bg: 'linear-gradient(120deg,#2A0E33 0%,#481C5F 55%,#672786 100%)',
+        dark: true, artTitle: 'The Salt Mine Choir', artBy: 'inkwolf'
+      },
+      {
+        label: '2 of 3: the First Chapter contest', eyebrow: 'Contest · opens in February 2027', title: 'Enter the First Chapter contest',
+        text: 'Post the first chapter of a new story. Open to writers aged 13 to 19. Schools can enter as a class through a private class space.',
+        cta: 'Remind me in February', href: '#', meta: 'Sponsored by [Partner]',
+        bg: 'radial-gradient(circle at 88% 80%, rgba(255,255,255,0.35) 0, rgba(255,255,255,0) 26%), linear-gradient(120deg,#E6C24C 0%,#F0D47A 100%)',
+        dark: false, artTitle: 'Chapter one', artBy: 'your name here'
+      },
+      {
+        label: '3 of 3: this week in the forums', eyebrow: 'In the forums', title: 'This week’s prompt: a letter you never sent.',
+        text: '312 writers have posted so far. Post yours, read the others and vote for your favourite.',
+        cta: 'Join the thread', href: 'Thread.dc.html', meta: 'Writers’ room · open to everyone',
+        bg: 'radial-gradient(circle at 82% 25%, rgba(124,149,207,0.45) 0, rgba(124,149,207,0) 24%), linear-gradient(120deg,#16233A 0%,#2E4A8C 60%,#3B5BA6 100%)',
+        dark: true, artTitle: 'Dear you,', artBy: 'writers’ room'
+      }
+    ];
+    this.slideCount = slideData.length;
+    var cur = st.slide % slideData.length;
+    var artKeys = self.rowCovers(slideData.map(function (s) { return s.artTitle; }));
+    var slides = slideData.map(function (s, i) {
+      var art = self.coverLook(artKeys[i], { t: '22px', lh: 1.04, p: 12, gap: 6, title: s.artTitle, inner: 160 });
+      var ink = s.dark ? '#FAF8F5' : '#2A0E33', soft = s.dark ? '#E5D7EA' : '#3A2442';
+      return {
+        label: s.label, eyebrow: s.eyebrow, title: s.title, text: s.text, cta: s.cta, href: s.href, meta: s.meta,
+        artTitle: s.artTitle, artBy: s.artBy, hidden: i !== cur, tab: i === cur ? '0' : '-1',
+        style: 'flex: 0 0 100%; min-height: 460px; box-sizing: border-box; padding: clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px) 96px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 32px; background: ' + s.bg + ';',
+        eyebrowStyle: 'font-family: \'Cutive\', \'Courier New\', serif; font-size: 14px; font-weight: 400; line-height: 1.3; color: ' + (s.dark ? '#E6C24C' : '#5C3F0E') + ';',
+        titleStyle: 'margin: 0; font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: ' + ink + ';',
+        textStyle: 'margin: 0; max-width: 540px; font-size: 18px; line-height: 1.6; color: ' + soft + ';',
+        ctaStyle: 'display: inline-flex; align-items: center; height: 48px; padding: 0 26px; border-radius: 999px; font-weight: 600; font-size: 15px; text-decoration: none; '
+          + (s.dark ? 'background: #FAF8F5; color: #2A0E33;' : 'background: #2A0E33; color: #FBF7EC;'),
+        metaStyle: 'font-size: 14px; color: ' + soft + ';',
+        artBack: 'position: absolute; width: 190px; height: 260px; border-radius: 16px; transform: translate(-58px, 10px) rotate(-9deg); background: ' + (s.dark ? 'rgba(250,248,245,0.16)' : 'rgba(42,14,51,0.12)') + ';',
+        artFront: 'position: relative; width: 200px; height: 272px; box-sizing: border-box; padding: 20px; border-radius: 16px; transform: rotate(4deg); display: flex; flex-direction: column; justify-content: flex-end; box-shadow: 0 24px 48px -20px rgba(20,8,26,0.55);',
+        artClass: art.cls, artBox: art.box, artTitleStyle: art.title, artBar: art.bar, artByStyle: art.pen
+      };
+    });
+    var dots = slideData.map(function (s, i) {
+      return {
+        label: 'Show slide ' + (i + 1), current: i === cur ? 'true' : 'false',
+        style: 'height: 12px; border: 0; border-radius: 999px; padding: 0; cursor: pointer; margin: 0 2px; ' + (i === cur ? 'width: 32px; background: #481C5F;' : 'width: 12px; background: #CBBBD3;'),
+        go: function () { self.goTo(i); }
+      };
+    });
+
+    return {
+      slides: slides, dots: dots,
+      trackStyle: 'display: flex; width: 100%; transform: translateX(-' + (cur * 100) + '%); transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);',
+      liveMode: st.paused ? 'polite' : 'off',
+      paused: st.paused, playing: !st.paused, pauseLabel: st.paused ? 'Play slides' : 'Pause slides',
+      togglePause: function () { self.setState({ paused: !st.paused }); },
+      multiSlides: slides.length > 1,
+      prevSlide: function () { self.goTo(cur - 1); }, nextSlide: function () { self.goTo(cur + 1); },
+      greeting: greeting, dateLine: dateLine,
+      filtersOpen: st.filtersOpen, filterBtnStyle: filterBtnStyle,
+      hasActive: count > 0, activeCount: count,
+      toggleFilters: function () { self.setState({ filtersOpen: !st.filtersOpen }); },
+      clearAll: function () { self.setState({ status: 'All', cats: {}, tags: {} }); },
+      statusChips: statusChips, catChips: catChips, tagChips: tagChips,
+      following: following, areaA: areaA, areaB: areaB, writers: writers,
+      // View more card at the end of a shelf: same size as a story card, opens the See all page.
+      moreCard: 'flex: none; width: 196px; scroll-snap-align: start; text-decoration: none; color: inherit; display: flex; flex-direction: column',
+      moreBox: 'height: 264px; box-sizing: border-box; padding: 20px; border-radius: 16px; border: 2px dashed #B9A9C2; background: #FFFFFF; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px',
+      moreDot: 'width: 52px; height: 52px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center',
+      moreTitle: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F",
+      moreText: 'font-size: 14px; line-height: 1.5; color: #5C4965',
+      refShelf1: function (el) { self.shelves.s1 = el; if (el) setTimeout(function () { self.measureShelf('s1'); }, 0); },
+      scrollShelf1: function () { self.measureShelf('s1'); },
+      edge1L: self.edge('s1', 'l'), edge1R: self.edge('s1', 'r'), mask1: self.mask('s1'),
+      refShelf2: function (el) { self.shelves.s2 = el; if (el) setTimeout(function () { self.measureShelf('s2'); }, 0); },
+      scrollShelf2: function () { self.measureShelf('s2'); },
+      edge2L: self.edge('s2', 'l'), edge2R: self.edge('s2', 'r'), mask2: self.mask('s2'),
+      refShelf3: function (el) { self.shelves.s3 = el; if (el) setTimeout(function () { self.measureShelf('s3'); }, 0); },
+      scrollShelf3: function () { self.measureShelf('s3'); },
+      edge3L: self.edge('s3', 'l'), edge3R: self.edge('s3', 'r'), mask3: self.mask('s3'),
+      // Scroll arrows per row: shown only when the row overflows; disabled at the end they point to (Robert, 17 Oct).
+      ar: { s1: self.arrows('s1'), s2: self.arrows('s2'), s3: self.arrows('s3') },
+      prev1: function () { self.scrollShelf('s1', -1); }, next1: function () { self.scrollShelf('s1', 1); },
+      prev2: function () { self.scrollShelf('s2', -1); }, next2: function () { self.scrollShelf('s2', 1); },
+      prev3: function () { self.scrollShelf('s3', -1); }, next3: function () { self.scrollShelf('s3', 1); }
+    };
+  }
+}
+</script>
+</body>
+</html>

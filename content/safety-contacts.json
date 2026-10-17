@@ -1,0 +1,759 @@
+{
+  "RO": {
+    "emergency": [
+      {
+        "label": "Număr unic de urgență 112",
+        "number": "112",
+        "url": "https://www.ancom.ro/reglementare-ro-10001/comunicatii-electronice/112-4/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "SMS 113 for registered deaf or speech-impaired users (call 112 first, then text 113)",
+        "number": "113",
+        "url": "https://www.ancom.ro/reglementare-ro-10001/comunicatii-electronice/112-4/",
+        "hours": "24/7",
+        "confidence": "High",
+        "note": "Procedure detail from a 2015 text hosted at orasuldarmanesti.ro (Medium)"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Telefonul Copilului",
+        "number": "116 111",
+        "url": "https://www.telefonulcopilului.ro",
+        "hours": "Mon to Fri 10:00 to 20:00 (as shown 17 Oct 2026)",
+        "confidence": "High",
+        "note": "Email telefonulcopilului@telefonulcopilului.ro; app available; also https://116111.ro"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "Ora de Net esc_Abuz reporting line (Salvați Copiii, INHOPE member)",
+        "number": null,
+        "url": "https://oradenet.ro/esc-abuz",
+        "hours": "Online",
+        "confidence": "High",
+        "note": "Form: https://oradenet.ro/linia-de-raportare/ ; anonymous allowed"
+      }
+    ],
+    "police_online_child": [
+      {
+        "label": "Emergency: 112",
+        "number": "112",
+        "url": "https://www.ancom.ro/reglementare-ro-10001/comunicatii-electronice/112-4/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Ora de Net forwards reports to Police, ANCOM or DGASPC",
+        "number": null,
+        "url": "https://oradenet.ro/esc-abuz",
+        "hours": "Online",
+        "confidence": "High",
+        "note": "Direct police online route unconfirmed (politiaromana.ro blocked)"
+      }
+    ],
+    "crisis_youth": [
+      {
+        "label": "Alianța Română de Prevenție a Suicidului (adult-focused)",
+        "number": "0800 801 200",
+        "url": "https://www.antisuicid.ro/",
+        "hours": "Fri, Sat, Sun 19:00 to 07:00 only",
+        "confidence": "High"
+      },
+      {
+        "label": "Telefonul Copilului (children and teens)",
+        "number": "116 111",
+        "url": "https://www.telefonulcopilului.ro",
+        "hours": "Mon to Fri 10:00 to 20:00",
+        "confidence": "High"
+      }
+    ],
+    "regulator": [
+      {
+        "label": "ANCOM, Digital Services Coordinator (DSA complaints about providers, not illegal content)",
+        "number": null,
+        "url": "https://infocentru.ancom.ro/formular-dsa/",
+        "confidence": "High",
+        "note": "Guide: https://www.ancom.ro/dsa58-cum-poti-reclama-incalcari-ale-obligatiilor-furnizorilor-de-servicii-digitale_7582 ; general email ancom@ancom.ro"
+      }
+    ],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "Direct police or DIICOT online route for grooming reports (sites blocked)",
+      "116 123 emotional support line: current status and operator (last source 2014)",
+      "116 000 missing children line: current status (last source 2014)",
+      "Whether Telefonul Copilului weekday-only hours are permanent",
+      "Any youth-specific suicide or crisis line",
+      "Apel 112 app store links"
+    ]
+  },
+  "GB": {
+    "emergency": [
+      {
+        "label": "Emergency services",
+        "number": "999",
+        "url": "https://www.police.uk/pu/contact-us/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "emergencySMS: text 999 after registering (deaf, hard of hearing, speech-impaired)",
+        "number": "999",
+        "url": "https://www.neas.nhs.uk/your-service/accessibility/emergencysms-service",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Relay UK emergency relay",
+        "number": "18000",
+        "url": "https://www.relayuk.bt.com/how-to-use-relay-uk/contact-999-using-relay-uk.html",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Police non-emergency",
+        "number": "101",
+        "url": "https://www.police.uk/pu/contact-us/",
+        "confidence": "High"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Childline (NSPCC)",
+        "number": "0800 1111",
+        "url": "https://www.childline.org.uk/get-support/",
+        "hours": "24/7 phone and 1-2-1 chat",
+        "confidence": "High",
+        "note": "Chat: https://www.childline.org.uk/get-support/1-2-1-counsellor-chat/ ; BSL via SignVideo Mon to Fri 8am to 8pm, Sat 8am to 1pm"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "Internet Watch Foundation (INHOPE member)",
+        "number": null,
+        "url": "https://www.iwf.org.uk/en/uk-report",
+        "hours": "Online",
+        "confidence": "High",
+        "note": "Anonymous; covers real, AI and drawn CSAM"
+      },
+      {
+        "label": "Report Remove (Childline and IWF) for under-18s' own images",
+        "number": null,
+        "url": "https://www.childline.org.uk/info-advice/bullying-abuse-safety/online-mobile-safety/report-remove/",
+        "hours": "Online",
+        "confidence": "High"
+      }
+    ],
+    "police_online_child": [
+      {
+        "label": "CEOP (National Crime Agency) online report",
+        "number": null,
+        "url": "https://www.ceop.police.uk/ceop-reporting/",
+        "hours": "Online",
+        "confidence": "High",
+        "note": "Sexual harm and grooming only; 999 if in danger"
+      }
+    ],
+    "crisis_youth": [
+      {
+        "label": "Samaritans",
+        "number": "116 123",
+        "url": "https://www.samaritans.org/how-we-can-help/contact-samaritan/",
+        "hours": "24/7",
+        "confidence": "High",
+        "note": "Welsh line 0808 164 0123"
+      },
+      {
+        "label": "Shout (text SHOUT)",
+        "number": "85258",
+        "url": "https://giveusashout.org",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "regulator": [
+      {
+        "label": "Ofcom online safety complaints",
+        "number": null,
+        "url": "https://www.ofcom.org.uk/make-a-complaint/complain-about-a-video-sharing-platform-vsp",
+        "confidence": "High",
+        "note": "Whether Ofcom resolves individual complaints unconfirmed"
+      },
+      {
+        "label": "Report Harmful Content (SWGfL, UK Safer Internet Centre)",
+        "number": null,
+        "url": "https://reportharmfulcontent.com",
+        "confidence": "High",
+        "note": "Does not take sexual images of under-18s (use IWF)"
+      }
+    ],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "112 (not on official pages opened)",
+      "Whether Ofcom resolves individual Online Safety Act complaints",
+      "Whether any service has taken over Papyrus HOPELINE247 (closed September 2026; do not list)"
+    ]
+  },
+  "IE": {
+    "emergency": [
+      {
+        "label": "Emergency services",
+        "number": "112 or 999",
+        "url": "https://www.garda.ie/en/crime/online-child-exploitation/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Emergency SMS: text 112 from any Irish mobile",
+        "number": "112",
+        "url": "https://112.ie/emergency-sms-service/",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Childline (ISPCC), up to age 18",
+        "number": "1800 66 66 66",
+        "url": "https://www.childline.ie",
+        "hours": "24/7 phone and live chat",
+        "confidence": "High"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "Hotline.ie (Irish Internet Hotline, INHOPE member)",
+        "number": null,
+        "url": "https://hotline.ie/report",
+        "hours": "Online",
+        "confidence": "High",
+        "note": "Anonymous except intimate image abuse reports"
+      }
+    ],
+    "police_online_child": [
+      {
+        "label": "An Garda Síochána: Garda Confidential",
+        "number": "1800 666 111",
+        "url": "https://www.garda.ie/en/crime/online-child-exploitation/",
+        "confidence": "High",
+        "note": "Or local Garda station; 999 or 112 if urgent"
+      }
+    ],
+    "crisis_youth": [
+      {
+        "label": "Text About It (text HELLO)",
+        "number": "50808",
+        "url": "https://www2.hse.ie/mental-health/services-support/supports-services/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Pieta (or text HELP to 51444)",
+        "number": "1800 247 247",
+        "url": "https://www.pieta.ie",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Samaritans",
+        "number": "116 123",
+        "url": "https://www2.hse.ie/mental-health/services-support/supports-services/",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "regulator": [
+      {
+        "label": "Coimisiún na Meán contact centre",
+        "number": "+353 1 963 7755",
+        "url": "https://www.cnam.ie/contact/",
+        "hours": "Mon to Fri 8am to 6pm",
+        "confidence": "High",
+        "note": "Email usersupport@cnam.ie"
+      }
+    ],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "Childline Ireland text number (50101)",
+      "Coimisiún na Meán online safety reporting form URL (page failed to load)"
+    ]
+  },
+  "US": {
+    "emergency": [
+      {
+        "label": "Emergency services",
+        "number": "911",
+        "url": "https://report.cybertip.org/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Text-to-911 (only where supported locally)",
+        "number": "911",
+        "url": "https://www.fcc.gov/consumers/guides/what-you-need-know-about-text-911",
+        "hours": "Varies by area",
+        "confidence": "High"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Childhelp National Child Abuse Hotline (text GO to same number; chat on site)",
+        "number": "1-800-422-4453",
+        "url": "https://www.childhelphotline.org",
+        "confidence": "High",
+        "note": "Not a reporting line; hours not shown on page"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "NCMEC CyberTipline (INHOPE member)",
+        "number": "1-800-843-5678",
+        "url": "https://report.cybertip.org/",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "police_online_child": [
+      {
+        "label": "NCMEC CyberTipline (routes to law enforcement)",
+        "number": "1-800-843-5678",
+        "url": "https://report.cybertip.org/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "FBI tips (anonymous allowed)",
+        "number": null,
+        "url": "https://tips.fbi.gov/",
+        "hours": "Online",
+        "confidence": "High"
+      }
+    ],
+    "crisis_youth": [
+      {
+        "label": "988 Suicide and Crisis Lifeline (call, text or chat)",
+        "number": "988",
+        "url": "https://988lifeline.org",
+        "hours": "24/7",
+        "confidence": "High",
+        "note": "Chat: https://chat.988lifeline.org ; deaf access: https://988lifeline.org/help-yourself/for-deaf-hard-of-hearing/"
+      }
+    ],
+    "regulator": [],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "No national online safety regulator; FTC report site offline on 17 Oct 2026 (government shutdown)",
+      "Childhelp opening hours"
+    ]
+  },
+  "CA": {
+    "emergency": [
+      {
+        "label": "Emergency services",
+        "number": "911",
+        "url": "https://rcmp.ca/en/child-sexual-exploitation/online-child-sexual-exploitation",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Text with 9-1-1 (registered DHHSI users, where available)",
+        "number": "911",
+        "url": "https://www.textwith911.ca",
+        "hours": "Varies by area",
+        "confidence": "High"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Kids Help Phone (text CONNECT to 686868)",
+        "number": "1-800-668-6868",
+        "url": "https://kidshelpphone.ca/",
+        "hours": "24/7 phone and text",
+        "confidence": "High"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "Cybertip.ca (Canadian Centre for Child Protection)",
+        "number": null,
+        "url": "https://www.cybertip.ca/en/report/",
+        "hours": "Online",
+        "confidence": "High"
+      }
+    ],
+    "police_online_child": [
+      {
+        "label": "Local police; Cybertip.ca anonymous form (RCMP guidance)",
+        "number": null,
+        "url": "https://rcmp.ca/en/child-sexual-exploitation/online-child-sexual-exploitation",
+        "confidence": "High",
+        "note": "911 if immediate risk"
+      }
+    ],
+    "crisis_youth": [
+      {
+        "label": "9-8-8 Suicide Crisis Helpline (call or text)",
+        "number": "988",
+        "url": "https://988.ca",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Kids Help Phone",
+        "number": "1-800-668-6868",
+        "url": "https://kidshelpphone.ca/",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "regulator": [],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "No regulator in force; Bill C-34 (Digital Safety Commission) introduced 10 June 2026, not law",
+      "Kids Help Phone live chat hours (conflicting on page)",
+      "Cybertip.ca absent from INHOPE members page on 17 Oct 2026"
+    ]
+  },
+  "AU": {
+    "emergency": [
+      {
+        "label": "Triple Zero",
+        "number": "000",
+        "url": "https://www.acma.gov.au/emergency-calls",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "112 from mobiles",
+        "number": "112",
+        "url": "https://www.acma.gov.au/emergency-calls",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "106 TTY (National Relay Service); no SMS to 000 or 106",
+        "number": "106",
+        "url": "https://www.acma.gov.au/emergency-calls",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Kids Helpline (ages 5 to 25)",
+        "number": "1800 55 1800",
+        "url": "https://kidshelpline.com.au/",
+        "hours": "24/7",
+        "confidence": "High",
+        "note": "Webchat: https://kidshelpline.com.au/get-help/webchat-counselling/"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "eSafety Commissioner Cyber Report (INHOPE member)",
+        "number": null,
+        "url": "https://www.esafety.gov.au/report",
+        "hours": "Online",
+        "confidence": "High"
+      }
+    ],
+    "police_online_child": [
+      {
+        "label": "ACCCE online report",
+        "number": null,
+        "url": "https://www.accce.gov.au/report",
+        "hours": "Online",
+        "confidence": "High",
+        "note": "Form: https://www.accce.gov.au/reportonlinechildsexualexploitation"
+      },
+      {
+        "label": "Crime Stoppers (anonymous)",
+        "number": "1800 333 000",
+        "url": "https://www.accce.gov.au/report",
+        "confidence": "High"
+      }
+    ],
+    "crisis_youth": [
+      {
+        "label": "Kids Helpline",
+        "number": "1800 55 1800",
+        "url": "https://kidshelpline.com.au/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Lifeline (text 0477 13 11 14)",
+        "number": "13 11 14",
+        "url": "https://www.lifeline.org.au/",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "regulator": [
+      {
+        "label": "eSafety Commissioner",
+        "number": null,
+        "url": "https://www.esafety.gov.au/report",
+        "confidence": "High"
+      }
+    ],
+    "checked": "2026-10-17",
+    "unconfirmed": []
+  },
+  "NZ": {
+    "emergency": [
+      {
+        "label": "Emergency services",
+        "number": "111",
+        "url": "https://www.police.govt.nz/advice-services/cybercrime-and-internet/online-child-safety",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "111 TXT (registered deaf, hard-of-hearing, speech-impaired users)",
+        "number": "111",
+        "url": "https://www.police.govt.nz/deaf-txt/how-to-register",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Police non-emergency",
+        "number": "105",
+        "url": "https://www.police.govt.nz/105support",
+        "confidence": "High"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Youthline (free text 234)",
+        "number": "0800 376 633",
+        "url": "https://www.youthline.co.nz/get-help/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "0800 What's Up (ages 5 to 19)",
+        "number": "0800 942 8787",
+        "url": "https://www.whatsup.co.nz/",
+        "hours": "Phone 11am to 11pm daily; webchat 11am to 10:30pm",
+        "confidence": "High"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "DIA Digital Child Exploitation team report form",
+        "number": null,
+        "url": "https://www.dia.govt.nz/Digital-Safety-Report-Online-Child-Exploitation-material",
+        "hours": "Online",
+        "confidence": "High"
+      },
+      {
+        "label": "Netsafe (INHOPE member listing)",
+        "number": null,
+        "url": "https://report.netsafe.org.nz/hc/en-au/requests/new",
+        "hours": "Online",
+        "confidence": "High"
+      }
+    ],
+    "police_online_child": [
+      {
+        "label": "NZ Police OCEANZ via 105 online",
+        "number": "105",
+        "url": "https://www.police.govt.nz/advice-services/cybercrime-and-internet/online-child-safety",
+        "confidence": "High",
+        "note": "111 if in danger"
+      }
+    ],
+    "crisis_youth": [
+      {
+        "label": "1737 Need to talk? (call or text)",
+        "number": "1737",
+        "url": "https://1737.org.nz/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Youthline",
+        "number": "0800 376 633",
+        "url": "https://www.youthline.co.nz/get-help/",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "regulator": [
+      {
+        "label": "Netsafe, Approved Agency under the Harmful Digital Communications Act 2015 (text 'Netsafe' to 4282)",
+        "number": "0508 638 723",
+        "url": "https://netsafe.org.nz/netsafe/contact-us",
+        "hours": "Mon to Fri 9am to 5pm",
+        "confidence": "High",
+        "note": "Current appointment term unconfirmed"
+      }
+    ],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "Netsafe Approved Agency appointment renewal beyond the 2016 order's five-year term",
+      "NZ Customs report page and 0800 WE PROTECT (seen only on keepitrealonline.govt.nz)"
+    ]
+  },
+  "SG": {
+    "emergency": [
+      {
+        "label": "Police emergency",
+        "number": "999",
+        "url": "https://www.police.gov.sg/Contact-Us",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "Police emergency SMS (not safe to talk, or deaf/speech-impaired)",
+        "number": "70999",
+        "url": "https://www.police.gov.sg/Contact-Us",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "SCDF fire and ambulance",
+        "number": "995",
+        "url": "https://scdf.gov.sg/home/about-us/information-on-ems/sms-70995-emergency-service",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "SCDF emergency SMS (deaf, hard-of-hearing, speech-impaired)",
+        "number": "70995",
+        "url": "https://scdf.gov.sg/home/about-us/information-on-ems/sms-70995-emergency-service",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Tinkle Friend (primary pupils, 13 and under)",
+        "number": "1800 274 4788",
+        "url": "https://www.tinklefriend.sg/",
+        "hours": "Phone Mon to Fri 2:30pm to 5pm; chat Mon to Thu 2:30pm to 7pm, Fri 2:30pm to 5pm",
+        "confidence": "High"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "Online Safety Commission: image-based child abuse report",
+        "number": null,
+        "url": "https://report.osc.gov.sg",
+        "hours": "Online",
+        "confidence": "High",
+        "note": "No INHOPE member in Singapore"
+      }
+    ],
+    "police_online_child": [
+      {
+        "label": "Police Hotline (crime information)",
+        "number": "1800 255 0000",
+        "url": "https://www.police.gov.sg/Contact-Us",
+        "confidence": "High",
+        "note": "999 or SMS 70999 if in danger; I-Witness e-service online"
+      }
+    ],
+    "crisis_youth": [
+      {
+        "label": "Samaritans of Singapore (CareText WhatsApp 9151 1767)",
+        "number": "1767",
+        "url": "https://www.sos.org.sg/",
+        "hours": "24/7",
+        "confidence": "High"
+      },
+      {
+        "label": "National Mindline (WhatsApp +65 6669 1771)",
+        "number": "1771",
+        "url": "https://www.osc.gov.sg",
+        "hours": "24/7",
+        "confidence": "High"
+      }
+    ],
+    "regulator": [
+      {
+        "label": "Online Safety Commission (OSRAA 2025)",
+        "number": null,
+        "url": "https://www.osc.gov.sg",
+        "confidence": "High"
+      }
+    ],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "Whether SMS 70995 needs pre-registration",
+      "TOUCHline 1800 377 2252 current hours (2022 source)",
+      "CHAT (IMH) contact and age range",
+      "mindline.sg webchat link"
+    ]
+  },
+  "ZA": {
+    "status": "possible later",
+    "emergency": [
+      {
+        "label": "SAPS emergency (news source only)",
+        "number": "10111",
+        "url": "https://www.citizen.co.za/news/emergency-numbers-sa-single-hotline-112-proposal/",
+        "confidence": "Medium"
+      },
+      {
+        "label": "Public emergency number (news source only)",
+        "number": "112",
+        "url": "https://www.citizen.co.za/news/emergency-numbers-sa-single-hotline-112-proposal/",
+        "confidence": "Medium"
+      }
+    ],
+    "child_helpline": [
+      {
+        "label": "Childline South Africa",
+        "number": "0800 55 555",
+        "url": "https://www.childlinesa.org.za/",
+        "hours": "24/7; chat Mon to Fri 11am to 1pm and 2pm to 6pm",
+        "confidence": "High"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "Film and Publication Board hotline (INHOPE member)",
+        "number": null,
+        "url": "https://apps.fpb.org.za/hotline/",
+        "hours": "Online",
+        "confidence": "High"
+      }
+    ],
+    "police_online_child": [],
+    "crisis_youth": [],
+    "regulator": [],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "Emergency numbers on a government page",
+      "Whether 116 is Childline SA's main number",
+      "Police route, crisis line, regulator"
+    ]
+  },
+  "IN": {
+    "status": "possible later",
+    "emergency": [],
+    "child_helpline": [],
+    "csam_hotline": [
+      {
+        "label": "IWF Reporting Portal for India (INHOPE listing)",
+        "number": null,
+        "url": "https://report.iwf.org.uk/in",
+        "hours": "Online",
+        "confidence": "High",
+        "note": "Portal itself not opened"
+      }
+    ],
+    "police_online_child": [],
+    "crisis_youth": [],
+    "regulator": [],
+    "checked": "2026-10-17",
+    "unconfirmed": [
+      "112 (ERSS), Child Helpline 1098, cyber helpline 1930 and cybercrime.gov.in (blocked) on official pages",
+      "Crisis line and regulator"
+    ]
+  }
+}

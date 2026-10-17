@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Get the app</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{pointer-events:none;user-select:none}
+.tmc-dd-sticker{filter:drop-shadow(2px 0 0 #FBF7EC) drop-shadow(-2px 0 0 #FBF7EC) drop-shadow(0 2px 0 #FBF7EC) drop-shadow(0 -2px 0 #FBF7EC)}
+@media (max-width: 1199px){.tmc-dd-xxl{display:none !important}}
+@media (max-width: 1119px){.tmc-dd-xl{display:none !important}}
+@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 600px){.tmc-dd-hide{display:none !important}}
+/* Pill system (17 Oct): chips are 36 px tall with a 44 px tap area, plum focus ring, tinted hover */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}
+.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="overflow-x: clip; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen (no section is current on this page) -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 26px; height: 26px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; margin-left: -10px"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="20" height="20" style="display: block; width: 20px; height: 20px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <header style="position: relative; padding: 56px 0 32px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <!-- Doodle (laptop-heart): decorative --><img data-doodle="background" data-doodle-on="The apps come after the web launch" src="/_blob/b35d215e80666d8ba0d495fa92147b8d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="position: absolute; right: 16px; top: 36px; width: 180px; height: 180px; transform: rotate(6deg); pointer-events: none">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">The apps</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">The apps come after the web launch</h1>
+      <p style="margin: 0; max-width: 700px; font-size: 18px; line-height: 1.6; color: #5C4965">Ghemotoc starts on the web, so you can read and write in your browser on any phone, tablet or computer. The desktop app for Windows, macOS and Linux and the iPhone and Android apps follow.</p>
+    </header>
+
+    <!-- Desktop apps (Tauri): Windows, macOS, Linux. Web only for March 2027 (Robert, 17 Oct): no downloads yet -->
+    <section aria-labelledby="desk-title" style="animation: tmcRise 0.5s 0.05s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">After the web launch</span>
+          <h2 id="desk-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Desktop app</h2>
+        </div>
+        <span style="font-size: 15px; color: #5C4965">Free · Not out yet</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 20px">
+        <!-- Windows: highlighted because it matches this computer -->
+        <article style="display: flex; flex-direction: column; gap: 14px; padding: 26px; background: #FFFFFF; border: 2px solid #481C5F; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+            <span aria-hidden="true" style="width: 52px; height: 52px; border-radius: 16px; background: #F1EAF4; color: #481C5F; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/efa7267d3b9865c596fab4fb3a28f90e" alt="" aria-hidden="true" width="36" height="36" style="display: block; flex: none; width: 36px; height: 36px"></span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #D9B54A; background: #FBF3DA; color: #5C3F0E;">Your computer</span>
+          </div>
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #26142E">Windows</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Installer (.msi) · [file size]</p>
+          <button type="button" disabled="disabled" aria-disabled="true" style="margin-top: auto; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border: 1px solid #CBBBD3; border-radius: 999px; background: #FFFFFF; color: #5C4965; font-family: inherit; font-size: 15px; font-weight: 600; cursor: not-allowed">Windows · Not yet</button>
+        </article>
+
+        <article style="position: relative; display: flex; flex-direction: column; gap: 14px; padding: 26px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <span aria-hidden="true" style="width: 52px; height: 52px; border-radius: 16px; background: #F1EAF4; color: #481C5F; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/efa7267d3b9865c596fab4fb3a28f90e" alt="" aria-hidden="true" width="36" height="36" style="display: block; flex: none; width: 36px; height: 36px"></span>
+          <!-- Doodle (desk-lamp): decorative --><img data-doodle="widget" data-doodle-on="macOS" src="/_blob/b6af94add128d6d8dc93670e26614f43" alt="" aria-hidden="true" class="tmc-dd-wide tmc-dd tmc-dd-hide" style="position: absolute; right: 22px; top: -60px; width: 84px; height: 84px; transform: rotate(-5deg); pointer-events: none">
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #26142E">macOS</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Disk image (.dmg) · [file size]</p>
+          <button type="button" disabled="disabled" aria-disabled="true" style="margin-top: auto; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border: 1px solid #CBBBD3; border-radius: 999px; background: #FFFFFF; color: #5C4965; font-family: inherit; font-size: 15px; font-weight: 600; cursor: not-allowed">macOS · Not yet</button>
+        </article>
+
+        <article style="display: flex; flex-direction: column; gap: 14px; padding: 26px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <span aria-hidden="true" style="width: 52px; height: 52px; border-radius: 16px; background: #F1EAF4; color: #481C5F; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/efa7267d3b9865c596fab4fb3a28f90e" alt="" aria-hidden="true" width="36" height="36" style="display: block; flex: none; width: 36px; height: 36px"></span>
+          <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #26142E">Linux</h3>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">AppImage for most systems, .deb for Ubuntu and Debian</p>
+          <div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px">
+            <button type="button" disabled="disabled" aria-disabled="true" style="flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border: 1px solid #CBBBD3; border-radius: 999px; background: #FFFFFF; color: #5C4965; font-family: inherit; font-size: 15px; font-weight: 600; cursor: not-allowed">AppImage · Not yet</button>
+            <button type="button" disabled="disabled" aria-disabled="true" style="flex: 1 1 140px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; box-sizing: border-box; border: 1px solid #CBBBD3; border-radius: 999px; background: #FFFFFF; color: #5C4965; font-family: inherit; font-size: 15px; font-weight: 600; cursor: not-allowed">.deb · Not yet</button>
+          </div>
+        </article>
+      </div>
+
+      <!-- What the desktop app will do (future tense: it is not out in March) -->
+      <ul aria-label="What the desktop app will do" style="list-style: none; margin: 20px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 12px">
+        <!-- Decision 2 (16 Oct): writers can choose "In the app only" -->
+        <li style="display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: #F4F0EC; font-size: 15px; line-height: 1.5; color: #3A2442"><img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px; margin-top: -3px"><span>Some writers will share their stories in the apps only. You’ll be able to read those there.</span></li>
+        <!-- Decision 3 (16 Oct): any font installed on the device; the browser offers our fonts only -->
+        <li style="display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: #F4F0EC; font-size: 15px; line-height: 1.5; color: #3A2442"><img src="/_blob/a7c7799609e54821cf904f7c954834d0" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px; margin-top: -3px"><span>You’ll be able to read in any font installed on your computer. In the browser you choose from our fonts.</span></li>
+        <!-- S1-E4-08: downloads stay inside the app and are removed after 30 days -->
+        <li style="display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: #F4F0EC; font-size: 15px; line-height: 1.5; color: #3A2442"><img src="/_blob/7939e98f5cad75f6297ff489d09f93e0" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px; margin-top: -3px"><span>You’ll be able to download chapters to read offline. They’ll stay inside the app and be removed after 30 days.</span></li>
+        <!-- S1-E4-06: say "harder to copy", never "can't be copied". Traceability (watermark) is still OPEN and not app-specific, so it is not claimed here -->
+        <li style="display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: #F4F0EC; font-size: 15px; line-height: 1.5; color: #3A2442"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px; margin-top: -3px"><span>The desktop app will make chapters harder to copy than the browser does.</span></li>
+        <li style="display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: #F4F0EC; font-size: 15px; line-height: 1.5; color: #3A2442"><img src="/_blob/cc63067f5d0a8be856e88047249284b0" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px; margin-top: -3px"><span>It will be signed by [Company name], so Windows and macOS can confirm it comes from us and install it without a security warning.</span></li>
+        <li style="display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: #F4F0EC; font-size: 15px; line-height: 1.5; color: #3A2442"><img src="/_blob/b723972f835d5076dcde790872b012da" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px; margin-top: -3px"><span>Updates will install by themselves.</span></li>
+      </ul>
+    </section>
+
+    <!-- In the browser from day one. The installable web app (S1-E16-01) is cut from March, so this only offers a home-screen shortcut or a bookmark -->
+    <section aria-labelledby="web-title" style="position: relative; margin-top: 56px; display: flex; flex-wrap: wrap; gap: 32px; padding: clamp(24px, 3.5vw, 40px); background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.1s ease-out both">
+      <!-- Doodle (phone-heart): decorative --><img data-doodle="background" data-doodle-on="Use Ghemotoc in your browser" src="/_blob/db266190ddac4dbcbaaa474e441625da" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="position: absolute; right: 44px; top: -62px; width: 96px; height: 96px; transform: rotate(8deg); pointer-events: none">
+      <div style="flex: 1 1 380px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">In your browser, from day one</span>
+        <h2 id="web-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Use Ghemotoc in your browser</h2>
+        <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #5C4965">Go to ghemotoc.com on any phone, tablet or computer and log in. Until the apps are out, you can read whole chapters and write everything in the browser. For a quick way back, put Ghemotoc on your home screen or bookmark it.</p>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 16px; font-weight: 600; text-decoration: none">Open Ghemotoc</a>
+        <span style="font-size: 14px; color: #6B5A73">The steps show how to add a shortcut on your device.</span>
+      </div>
+      <div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 16px">
+        <div role="tablist" aria-label="Your device" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border-radius: 999px; background: #F4F0EC; align-self: flex-start">
+          <sc-for list="{{devTabs}}" as="t" hint-placeholder-count="3">
+            <button type="button" role="tab" class="tmc-chip" id="{{t.id}}" aria-selected="{{t.selected}}" aria-controls="steps-panel" tabindex="{{t.tab}}" onClick="{{t.pick}}" style="{{t.style}}"><sc-if value="{{t.selected}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{t.label}}</button>
+          </sc-for>
+        </div>
+        <ol id="steps-panel" role="tabpanel" aria-labelledby="{{stepsLabel}}" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+          <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+            <li style="display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; border: 1px solid #EFE8F2"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #E6C24C; color: #26142E; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center">{{s.n}}</span><span style="font-size: 16px; line-height: 1.55; color: #26142E; padding-top: 4px">{{s.t}}</span></li>
+          </sc-for>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Phone apps: after the web launch -->
+    <section aria-labelledby="phone-title" style="position: relative; margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding: clamp(24px, 3.5vw, 40px); border-radius: 24px; background: #F1EAF4; animation: tmcRise 0.5s 0.15s ease-out both">
+      <!-- Doodle (rocket): decorative --><img data-doodle="background" data-doodle-on="iPhone and Android apps" src="/_blob/4526965d388ed8bbd98b3f239e74ce87" alt="" aria-hidden="true" class="tmc-dd tmc-dd-xl" style="position: absolute; left: 50%; top: -40px; width: 100px; height: 100px; transform: rotate(18deg); pointer-events: none">
+      <div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 10px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Coming later</span>
+        <h2 id="phone-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">iPhone and Android apps</h2>
+        <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #3A2442">They come after the web launch, like the desktop app. Once you have one, shared chapter links will open straight in the app. Until then, links open in your browser.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px">
+          <button type="button" disabled="disabled" aria-disabled="true" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border: 1px solid #CBBBD3; border-radius: 999px; background: #FFFFFF; color: #5C4965; font-family: inherit; font-size: 15px; font-weight: 600; cursor: not-allowed">App Store · Not yet</button>
+          <button type="button" disabled="disabled" aria-disabled="true" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border: 1px solid #CBBBD3; border-radius: 999px; background: #FFFFFF; color: #5C4965; font-family: inherit; font-size: 15px; font-weight: 600; cursor: not-allowed">Google Play · Not yet</button>
+        </div>
+      </div>
+      <div style="flex: 0 1 340px; display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4">
+        <span style="font-weight: 700; font-size: 16px; color: #26142E">Want to know when the apps are out?</span>
+        <button type="button" aria-pressed="{{notify}}" onClick="{{toggleNotify}}" style="{{notifyStyle}}"><sc-if value="{{notify}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{notifyLabel}}</button>
+        <span role="status" style="font-size: 14px; line-height: 1.5; color: #5C4965">{{notifyNote}}</span>
+      </div>
+    </section>
+
+    <!-- Page footer: legal links, public report form, group line and language switch -->
+    <footer style="position: relative; margin-top: 80px; padding-top: 24px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+      <!-- Doodle (bee): decorative --><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/6febd794abf68310f4d8fcb7da994e51" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="position: absolute; right: 18%; top: -54px; width: 60px; height: 60px; transform: rotate(-12deg); pointer-events: none">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 26px">
+        <a href="Website-Home.dc.html#faq" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Legal</a>
+        <a href="mailto:support@ghemotoc.com" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1956}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { lang: 'en', device: 'android', notify: false };
+  }
+
+  // Footer language switch: Română or English (interface language only).
+  langVals() {
+    var self = this, en = this.state.lang !== 'ro';
+    var base = 'height: 44px; padding: 0 18px; border: 0; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; ';
+    var on = 'background: #481C5F; color: #FFFFFF;', off = 'background: #FFFFFF; color: #5C4965;';
+    return {
+      langRo: !en, langEn: en,
+      roStyle: base + (en ? off : on), enStyle: base + (en ? on : off),
+      pickRo: function () { self.setState({ lang: 'ro' }); },
+      pickEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+    // Install steps per device. Menu names follow each browser's own wording.
+    var guides = {
+      android: { label: 'Android', steps: ['Open Ghemotoc in Chrome.', 'Tap the menu with three dots, at the top right.', 'Tap “Add to home screen”.'] },
+      iphone: { label: 'iPhone', steps: ['Open Ghemotoc in Safari.', 'Tap the Share button.', 'Tap “Add to Home Screen”, then “Add”.'] },
+      computer: { label: 'Computer', steps: ['Open Ghemotoc in your browser.', 'Press Ctrl+D, or Cmd+D on a Mac, to bookmark it.', 'Choose the bookmarks bar, so Ghemotoc is one click away.'] }
+    };
+    var order = ['android', 'iphone', 'computer'];
+    var devTabs = order.map(function (k) {
+      var on = st.device === k;
+      return {
+        id: 'dev-' + k, label: guides[k].label, selected: on, tab: on ? '0' : '-1',
+        style: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; line-height: 1; white-space: nowrap; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; '
+          + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;'),
+        pick: function () { self.setState({ device: k }); }
+      };
+    });
+    var steps = guides[st.device].steps.map(function (t, i) { return { n: String(i + 1), t: t }; });
+    var n = st.notify;
+    return Object.assign({
+      devTabs: devTabs, steps: steps, stepsLabel: 'dev-' + st.device,
+      notify: n,
+      notifyLabel: n ? 'You’re on the list' : 'Email me when they’re out',
+      notifyNote: n ? 'We’ll send one email to the address on your account. Tap again to cancel.' : 'One email to the address on your account, nothing else.',
+      notifyStyle: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 48px; padding: 0 20px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+        + (n ? 'border: 1px solid #A9C9B6; background: #E8F1EC; color: #245A41;' : 'border: 0; background: #2A0E33; color: #FBF7EC;'),
+      toggleNotify: function () { self.setState({ notify: !n }); }
+    }, this.langVals());
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Forum thread</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}.tmc-rows>div{padding:12px 0;border-top:1px solid #DED3E4}.tmc-rows>div:first-of-type{border-top:0;padding-top:0}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+</style>
+</helmet>
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 40px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; margin-left: -10px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Breadcrumb and title -->
+    <header style="position: relative; padding: 36px 0 24px; display: flex; flex-direction: column; gap: 14px; animation: tmcRise 0.5s ease-out both">
+      <img data-doodle="background" data-doodle-on="How do you start a chapter without a prologue?" src="/_blob/2b77dad1a2170495e93cea3190c0f1b7" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 10px; right: 40px; width: 176px; transform: rotate(4deg)">
+      <img data-doodle="background" data-doodle-on="How do you start a chapter without a prologue?" src="/_blob/5359ff3627957d5912319aa28b910eb0" alt="" aria-hidden="true" class="tmc-dd tmc-dd-l" style="top: 120px; right: 270px; width: 74px; transform: rotate(-6deg)">
+      <nav aria-label="Breadcrumb" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 14px; color: #6B5A73">
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 32px; font-weight: 600; text-decoration: none">Forums</a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 32px; font-weight: 600; text-decoration: none">Writing craft</a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 32px; font-weight: 600; text-decoration: none">First chapters</a>
+      </nav>
+      <h1 style="margin: 0; max-width: 960px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">How do you start a chapter without a prologue?</h1>
+      <p style="margin: 0; font-size: 16px; color: #5C4965">Started by <a href="Profile.dc.html" style="font-weight: 600">inkwolf</a> on 14 October · 23 replies · 412 views</p>
+    </header>
+
+    <!-- Pinned rules thread for this forum: sticky and locked -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 16px 20px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 20px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"></path><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"></path></svg>Pinned</span>
+      <span style="flex: 1 1 360px; min-width: 0; font-size: 15px; line-height: 1.5; color: #5C4965"><a href="Thread.dc.html" style="font-weight: 700; color: #26142E">First chapters: read this before you post.</a> Post up to 2,000 words at a time and say what kind of feedback you want.</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #5C4965"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Locked: read only</span>
+    </div>
+
+    <div style="margin-top: 28px; display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+      <!-- Posts -->
+      <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 18px; animation: tmcRise 0.5s 0.1s ease-out both">
+
+        <!-- #1 -->
+        <article id="post-1" aria-labelledby="p1-name" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">i</span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px">
+                <a id="p1-name" href="Profile.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">inkwolf</a>
+                <span aria-label="Writer rank: 15 published chapters" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #E6C24C"></span>15 chapters</span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap">Thread starter</span>
+              </span>
+              <span style="font-size: 13px; color: #6B5A73">14 Oct, 19:02 · Edited 14 Oct, 19:20</span>
+            </span>
+            <a href="#post-1" aria-label="Link to post 1" style="margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 6px; font-size: 14px; font-weight: 700; text-decoration: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>#1</a>
+          </header>
+          <div style="margin-top: 14px; max-width: 720px; font-size: 16px; line-height: 1.6; color: #26142E">
+            <p style="margin: 0 0 12px">Every version of my chapter one starts with two pages about the salt mine: when it closed, when it became a museum and why the choir rehearses there. My beta reader said she got bored before anything happened.</p>
+            <p style="margin: 0">If I cut all that and open with the new singer walking into rehearsal, will people be confused? How do you start in the middle of things <em>without</em> losing the reader?</p>
+          </div>
+          <p style="margin: 16px 0 0; padding-top: 12px; border-top: 1px dashed #DED3E4; font-size: 13px; color: #6B5A73">Writing <a href="Story.dc.html">The Salt Mine Choir</a>. New chapter most Fridays.</p>
+          <div style="margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <button type="button" class="tmc-chip" aria-label="Upvote, 14 upvotes" aria-pressed="false" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 44px; padding: 0 16px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg>14</button>
+            <button type="button" aria-label="Downvote privately" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #6B5A73; cursor: pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></button>
+            <span style="font-size: 13px; color: #6B5A73; margin-right: auto">Only moderators see downvotes.</span>
+            <button type="button" onClick="{{q.p1}}" style="height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Quote</button>
+            <button type="button" class="tmc-chip" aria-pressed="{{mq.p1.pressed}}" onClick="{{mq.p1.toggle}}" style="{{mq.p1.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{mq.p1.label}}</button>
+            <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border-radius: 999px; color: #5C4965; font-size: 14px; font-weight: 600; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Report</a>
+          </div>
+        </article>
+
+        <!-- #2 -->
+        <article id="post-2" aria-labelledby="p2-name" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#8C2B3A,#D07583); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">m</span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px">
+                <a id="p2-name" href="Profile.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">matei.writes</a>
+                <span aria-label="Writer rank: 4 published essays" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #E6C24C"></span>4 essays</span>
+              </span>
+              <span style="font-size: 13px; color: #6B5A73">14 Oct, 19:40</span>
+            </span>
+            <a href="#post-2" aria-label="Link to post 2" style="margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 6px; font-size: 14px; font-weight: 700; text-decoration: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>#2</a>
+          </header>
+          <div style="margin-top: 14px; max-width: 720px; font-size: 16px; line-height: 1.6; color: #26142E">
+            <p style="margin: 0 0 12px">In news writing we start with the scene and explain the background in the third or fourth paragraph. Readers will wait for the explanation if something is already happening.</p>
+            <p style="margin: 0">Our school paper has a one-page guide on this that helped me a lot: <a href="#" rel="nofollow ugc noopener" style="font-weight: 600">start with the scene (PDF)</a></p>
+          </div>
+          <div style="margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <button type="button" class="tmc-chip" aria-label="Upvote, 9 upvotes" aria-pressed="false" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 44px; padding: 0 16px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg>9</button>
+            <button type="button" aria-label="Downvote privately" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #6B5A73; cursor: pointer; margin-right: auto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></button>
+            <button type="button" onClick="{{q.p2}}" style="height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Quote</button>
+            <button type="button" class="tmc-chip" aria-pressed="{{mq.p2.pressed}}" onClick="{{mq.p2.toggle}}" style="{{mq.p2.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{mq.p2.label}}</button>
+            <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border-radius: 999px; color: #5C4965; font-size: 14px; font-weight: 600; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Report</a>
+          </div>
+        </article>
+
+        <!-- #3 -->
+        <article id="post-3" aria-labelledby="p3-name" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#2E4A8C,#7C95CF); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">p</span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px">
+                <a id="p3-name" href="Profile.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">poppyverse</a>
+                <span aria-label="Writer rank: 12 published poems" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #E6C24C"></span>12 poems</span>
+              </span>
+              <span style="font-size: 13px; color: #6B5A73">14 Oct, 20:15</span>
+            </span>
+            <a href="#post-3" aria-label="Link to post 3" style="margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 6px; font-size: 14px; font-weight: 700; text-decoration: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>#3</a>
+          </header>
+          <blockquote style="margin: 14px 0 0; max-width: 720px; padding: 12px 16px; background: #F4F0EC; border-radius: 16px; font-size: 15px; line-height: 1.55; color: #5C4965">
+            <span style="display: block; margin-bottom: 4px; font-size: 13px; font-weight: 700; color: #481C5F">inkwolf wrote in <a href="#post-1">#1</a>:</span>
+            If I cut all that and open with the new singer walking into rehearsal, will people be confused?
+          </blockquote>
+          <div style="margin-top: 12px; max-width: 720px; font-size: 16px; line-height: 1.6; color: #26142E">
+            <p style="margin: 0">A bit confused is fine, as long as they’re curious. What if the choir leader counts the singers at the start and gets one more than on her list? That tells us something is wrong right away, and the museum history can wait for chapter two.</p>
+          </div>
+          <div style="margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <button type="button" class="tmc-chip" aria-label="Upvote, 21 upvotes" aria-pressed="true" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 44px; padding: 0 16px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg>21</button>
+            <button type="button" aria-label="Downvote privately" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #6B5A73; cursor: pointer; margin-right: auto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></button>
+            <button type="button" onClick="{{q.p3}}" style="height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Quote</button>
+            <button type="button" class="tmc-chip" aria-pressed="{{mq.p3.pressed}}" onClick="{{mq.p3.toggle}}" style="{{mq.p3.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{mq.p3.label}}</button>
+            <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border-radius: 999px; color: #5C4965; font-size: 14px; font-weight: 600; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Report</a>
+          </div>
+        </article>
+
+        <!-- Where Lia lands when she opens the thread: the first post she hasn't read -->
+        <div id="first-unread" role="separator" aria-label="New since your last visit" style="display: flex; align-items: center; gap: 14px; margin: 6px 0">
+          <span aria-hidden="true" style="flex: 1; height: 2px; background: #E6C24C"></span>
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">New since your last visit</span>
+          <span aria-hidden="true" style="flex: 1; height: 2px; background: #E6C24C"></span>
+        </div>
+
+        <!-- #4 -->
+        <article id="post-4" aria-labelledby="p4-name" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#1F5357,#6FA7AB); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">i</span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px">
+                <a id="p4-name" href="Profile.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">ilinca.r</a>
+                <span aria-label="Writer rank: 3 published chapters" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #E6C24C"></span>3 chapters</span>
+              </span>
+              <span style="font-size: 13px; color: #6B5A73">Today, 08:12</span>
+            </span>
+            <a href="#post-4" aria-label="Link to post 4" style="margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 6px; font-size: 14px; font-weight: 700; text-decoration: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>#4</a>
+          </header>
+          <div style="margin-top: 14px; max-width: 720px; font-size: 16px; line-height: 1.6; color: #26142E">
+            <p style="margin: 0">I had the same problem with The Last Tram Home. What helped: I wrote all the background in a separate document, just for me. In the chapter I only kept what a character would actually notice or say out loud. Out of two pages I kept about five sentences, and nobody missed the rest.</p>
+          </div>
+          <div style="margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <button type="button" class="tmc-chip" aria-label="Upvote, 6 upvotes" aria-pressed="false" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 44px; padding: 0 16px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg>6</button>
+            <button type="button" aria-label="Downvote privately" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #6B5A73; cursor: pointer; margin-right: auto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></button>
+            <button type="button" onClick="{{q.p4}}" style="height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Quote</button>
+            <button type="button" aria-pressed="{{mq.p4.pressed}}" onClick="{{mq.p4.toggle}}" style="{{mq.p4.style}}">{{mq.p4.label}}</button>
+            <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border-radius: 999px; color: #5C4965; font-size: 14px; font-weight: 600; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Report</a>
+          </div>
+        </article>
+
+        <!-- #5: shows the safe formatting (bold and a list) -->
+        <article id="post-5" aria-labelledby="p5-name" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#16233A,#33507A); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">c</span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px">
+                <a id="p5-name" href="Profile.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">corbu</a>
+                <span aria-label="Writer rank: 21 published chapters" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #E6C24C"></span>21 chapters</span>
+              </span>
+              <span style="font-size: 13px; color: #6B5A73">Today, 09:47</span>
+            </span>
+            <a href="#post-5" aria-label="Link to post 5" style="margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 6px; font-size: 14px; font-weight: 700; text-decoration: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>#5</a>
+          </header>
+          <div style="margin-top: 14px; max-width: 720px; font-size: 16px; line-height: 1.6; color: #26142E">
+            <p style="margin: 0 0 8px">I check three things on my first page:</p>
+            <ol style="margin: 0 0 8px; padding-left: 22px">
+              <li><strong>Someone wants something.</strong></li>
+              <li><strong>Something is in the way.</strong></li>
+              <li>There’s one detail that only fits this story.</li>
+            </ol>
+            <p style="margin: 0">If a paragraph of history doesn’t help with one of those, I move it to later. Worked for Night Bus to Ploiești.</p>
+          </div>
+          <div style="margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+            <button type="button" class="tmc-chip" aria-label="Upvote, 11 upvotes" aria-pressed="false" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 44px; padding: 0 16px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg>11</button>
+            <button type="button" aria-label="Downvote privately" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #6B5A73; cursor: pointer; margin-right: auto"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg></button>
+            <button type="button" onClick="{{q.p5}}" style="height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Quote</button>
+            <button type="button" aria-pressed="{{mq.p5.pressed}}" onClick="{{mq.p5.toggle}}" style="{{mq.p5.style}}">{{mq.p5.label}}</button>
+            <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border-radius: 999px; color: #5C4965; font-size: 14px; font-weight: 600; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Report</a>
+          </div>
+        </article>
+
+        <button type="button" style="align-self: center; height: 48px; padding: 0 24px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Show 19 more replies</button>
+
+        <!-- Quick reply at the bottom of the thread: post without leaving the page -->
+        <form id="reply" aria-labelledby="reply-title" style="margin: 8px 0 0; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Quick reply</span>
+              <h2 id="reply-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Your reply</h2>
+            </div>
+            <sc-if value="{{hasQuotes}}" hint-placeholder-val="{{true}}">
+              <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: #5C4965">{{quoteCount}}<button type="button" onClick="{{clearQuotes}}" style="height: 44px; padding: 0 6px; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer">Remove quotes</button></span>
+            </sc-if>
+          </div>
+
+          <!-- Quoted posts, in thread order, each linking back to the original -->
+          <sc-for list="{{quoted}}" as="qt" hint-placeholder-count="2">
+            <blockquote style="margin: 0; padding: 12px 16px; background: #F4F0EC; border-radius: 16px; font-size: 15px; line-height: 1.55; color: #5C4965">
+              <span style="display: block; margin-bottom: 4px; font-size: 13px; font-weight: 700; color: #481C5F">{{qt.author}} wrote in <a href="{{qt.href}}">{{qt.num}}</a>:</span>
+              {{qt.text}}
+            </blockquote>
+          </sc-for>
+
+          <div style="border: 1px solid #DED3E4; border-radius: 20px; overflow: hidden; background: #FAF8F5">
+            <div role="toolbar" aria-label="Formatting" style="display: flex; flex-wrap: wrap; gap: 2px; padding: 4px 8px; border-bottom: 1px solid #DED3E4; background: #FFFFFF">
+              <button type="button" aria-label="Bold" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer">B</button>
+              <button type="button" aria-label="Italic" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; font-family: Georgia, serif; font-size: 17px; font-style: italic; cursor: pointer">I</button>
+              <button type="button" aria-label="Add a link" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></button>
+              <button type="button" aria-label="Quote" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6"></path><path d="M14 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6"></path></svg></button>
+              <button type="button" aria-label="List" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg></button>
+            </div>
+            <label for="quick-reply" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Your reply</label>
+            <textarea id="quick-reply" rows="5" placeholder="Write your reply" style="display: block; width: 100%; box-sizing: border-box; min-height: 140px; padding: 16px 18px; border: 0; background: transparent; font-family: inherit; font-size: 16px; line-height: 1.6; color: #26142E; resize: vertical"></textarea>
+          </div>
+          <p style="margin: -4px 0 0; font-size: 13px; color: #6B5A73">Simple formatting only: bold, italic, links, quotes and lists.</p>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px">
+            <label for="no-bump" style="flex: 1 1 320px; display: flex; align-items: flex-start; gap: 12px; min-height: 44px; cursor: pointer">
+              <input id="no-bump" type="checkbox" checked="{{noBump}}" onChange="{{toggleBump}}" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #672786">
+              <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; color: #26142E">Don’t bump</span><span style="font-size: 13px; color: #6B5A73">Your reply won’t move this thread to the top of the list.</span></span>
+            </label>
+            <button type="button" style="height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Preview</button>
+            <button type="submit" style="height: 48px; padding: 0 26px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Post reply</button>
+          </div>
+        </form>
+
+        <!-- Thread ad: below the reply box (Robert, 17 Oct), not between posts. An ad-network ad, labelled AD and never personalised. -->
+        <aside aria-label="Advertisement" data-ad="thread" style="margin-top: 20px; position: relative; height: 110px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+          <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+          <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] · below the reply box</span>
+          <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+        </aside>
+
+        <!-- Another state: what a locked thread shows instead of the reply box -->
+        <section aria-labelledby="locked-title" style="position: relative; margin-top: 44px; padding: 24px; border: 1px dashed #B9A9C2; border-radius: 24px; background: #FFFFFF">
+          <img data-doodle="widget" data-doodle-on="This thread is locked" src="/_blob/04cfd05372dc9f8cb585691175c93244" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -40px; right: 30px; width: 76px; transform: rotate(10deg)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Another state · locked thread</span>
+          <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; padding: 20px; background: #F4F0EC; border-radius: 16px">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: #FFFFFF; border: 1px solid #DED3E4; box-sizing: border-box; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="30" height="30" style="display: block; flex: none"></span>
+            <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+              <h3 id="locked-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">This thread is locked</h3>
+              <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Locked by Andrei Mureșan, moderator, on 1 October. Reason: “The September prompt has ended. Please post new entries in the October prompt thread.”</p>
+              <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">You can still read every post, but nobody can reply.</p>
+              <a href="Thread.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600">Go to the October prompt</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Side column -->
+      <aside aria-label="About this thread" style="position: relative; flex: 1 1 280px; max-width: 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s 0.15s ease-out both">
+        <img data-doodle="widget" data-doodle-on="About this thread" src="/_blob/8de6c5da34262acc233de02260ec84a2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: calc(100% + 50px); left: 50%; width: 160px; transform: translateX(-50%) rotate(-6deg)">
+        <img data-doodle="widget" data-doodle-on="About this thread" src="/_blob/1de6769cdca825a91e29192b6f813576" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: calc(100% + 330px); right: 30px; width: 96px; transform: rotate(8deg)">
+        <section aria-labelledby="stats-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <h2 id="stats-title" style="margin: 0 0 14px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">This thread</h2>
+          <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: 1fr auto; row-gap: 10px; font-size: 15px">
+            <dt style="color: #6B5A73">Replies</dt><dd style="margin: 0; text-align: right; font-weight: 700; color: #26142E">23</dd>
+            <dt style="color: #6B5A73">Views</dt><dd style="margin: 0; text-align: right; font-weight: 700; color: #26142E">412</dd>
+            <dt style="color: #6B5A73">Writers taking part</dt><dd style="margin: 0; text-align: right; font-weight: 700; color: #26142E">11</dd>
+            <dt style="color: #6B5A73">Last reply</dt><dd style="margin: 0; text-align: right; font-weight: 700; color: #26142E">12 min ago</dd>
+          </dl>
+          <button type="button" aria-pressed="{{following}}" onClick="{{toggleFollow}}" style="{{followStyle}}"><span aria-hidden="true" style="flex: none; width: 26px; height: 26px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>{{followLabel}}</button>
+          <a href="#first-unread" style="display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 6px; font-size: 14px; font-weight: 600">Jump to first new post</a>
+        </section>
+        <section aria-labelledby="votes-title" style="padding: 20px 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 20px">
+          <h2 id="votes-title" style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #481C5F">How votes work</h2>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #5C4965">Everyone can see upvotes. Downvotes are private. They never show as a score. They only help moderators find posts to check.</p>
+        </section>
+        <section aria-labelledby="wrong-title" style="padding: 20px 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 20px">
+          <h2 id="wrong-title" style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #481C5F">Something wrong?</h2>
+          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #5C4965">Press Report on any post. A person on our team reads every report and tells you what we decided.</p>
+        </section>
+        <!-- Side ad (Robert, 17 Oct): one portrait, desktop only; with the ad between replies this page has 2 ad slots -->
+        <aside aria-label="Advertisement" data-ad="portrait" class="tmc-ad-portrait" style="position: relative; width: 300px; max-width: 100%; height: 600px; margin-top: 0; box-sizing: border-box; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+          <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+          <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] · 300 × 600</span>
+          <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+        </aside>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Page footer -->
+  <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/6f96cbe7beb1f3250250f5494a549e03" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -86px; right: clamp(16px, 4vw, 64px); width: 90px">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3437}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Posts 2 and 3 start marked with Add to quotes, so the reply box shows both quotes in order.
+    this.state = { picked: { p2: true, p3: true }, noBump: false, following: true };
+    // The text each Quote copies into the reply box.
+    this.posts = [
+      { id: 'p1', num: '#1', href: '#post-1', author: 'inkwolf', text: 'If I cut all that and open with the new singer walking into rehearsal, will people be confused?' },
+      { id: 'p2', num: '#2', href: '#post-2', author: 'matei.writes', text: 'Readers will wait for the explanation if something is already happening.' },
+      { id: 'p3', num: '#3', href: '#post-3', author: 'poppyverse', text: 'What if the choir leader counts the singers at the start and gets one more than on her list?' },
+      { id: 'p4', num: '#4', href: '#post-4', author: 'ilinca.r', text: 'In the chapter I only kept what a character would actually notice or say out loud.' },
+      { id: 'p5', num: '#5', href: '#post-5', author: 'corbu', text: 'If a paragraph of history doesn’t help with one of those, I move it to later.' }
+    ];
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Multi-quote buttons: outlined when off, filled when on.
+    var mq = {}, q = {};
+    this.posts.forEach(function (p) {
+      var on = !!st.picked[p.id];
+      mq[p.id] = {
+        pressed: on,
+        label: on ? 'Added to quotes' : 'Add to quotes',
+        style: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 44px; padding: 0 16px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; '
+          + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;'),
+        toggle: function () { var n = Object.assign({}, st.picked); if (on) { delete n[p.id]; } else { n[p.id] = true; } self.setState({ picked: n }); }
+      };
+      // Quote replaces the selection with this one post.
+      q[p.id] = function () { var n = {}; n[p.id] = true; self.setState({ picked: n }); };
+    });
+
+    // Quoted posts always appear in thread order.
+    var quoted = this.posts.filter(function (p) { return !!st.picked[p.id]; });
+    var n = quoted.length;
+
+    return {
+      mq: mq, q: q, quoted: quoted,
+      hasQuotes: n > 0,
+      quoteCount: n === 1 ? '1 post quoted' : n + ' posts quoted',
+      clearQuotes: function () { self.setState({ picked: {} }); },
+      noBump: st.noBump,
+      toggleBump: function () { self.setState({ noBump: !st.noBump }); },
+      following: st.following,
+      followLabel: st.following ? 'Following thread' : 'Follow thread',
+      followStyle: 'margin-top: 18px; width: 100%; height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+        + (st.following ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #672786; background: #FFFFFF; color: #672786;'),
+      toggleFollow: function () { self.setState({ following: !st.following }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

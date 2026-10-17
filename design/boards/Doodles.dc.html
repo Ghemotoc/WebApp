@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Doodle set</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+</style>
+</helmet>
+<!-- Fixed board, 1440 x 4800. Header about 430px, contact sheet 1300 x 4160, bottom padding 64px. -->
+<div style="width: 1440px; height: 4800px; box-sizing: border-box; padding: 64px 70px; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; display: flex; flex-direction: column; gap: 48px">
+
+  <!-- Header: label, title, what the set is for, and the usage rules -->
+  <header style="display: flex; gap: 72px; align-items: flex-start">
+    <div style="flex: 1 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+      <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.32em; line-height: 1.6; color: #815E18">DOODLE SET · FINE INK AND COLOUR</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 64px; line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">100 hand-drawn doodles</h1>
+      <p style="margin: 8px 0 0; max-width: 640px; font-size: 18px; line-height: 1.6; color: #5C4965">These doodles decorate the website, empty states, certificates and social posts. Seasonal ones rotate through the year. Their colours follow the palette review. The source files are on Robert’s Desktop in “Doodles v4”, in four styles.</p>
+    </div>
+    <section aria-labelledby="rules-h" style="flex: 1 1 520px; min-width: 0; box-sizing: border-box; padding: 28px 32px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px">
+      <h2 id="rules-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">How to use them</h2>
+      <ol style="margin: 0; padding: 0 0 0 22px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.5; color: #26142E">
+        <li>Decorative only and hidden from screen readers.</li>
+        <li>Never behind or over text.</li>
+        <li>A few per screen, in mixed sizes. Doodle icons replace ordinary icons, except arrows and controls.</li>
+        <li>None on the chapter reader, sharing, reporting or staff screens.</li>
+        <li>Seasonal ones switch by date and occasion, like the Discover greeting and the Search tags.</li>
+      </ol>
+    </section>
+  </header>
+
+  <!-- The full contact sheet (1848 x 5914 source), scaled to 1300 px wide -->
+  <img src="/_blob/6d3e2cd0aa738fe466dcef47eba9fe0e" alt="Contact sheet of all 100 doodles in the fine ink and colour style" style="display: block; flex: none; width: 1300px; height: 4160px; border-radius: 16px; border: 1px solid #DED3E4; background: #FFFFFF">
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4800}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

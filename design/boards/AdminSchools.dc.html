@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: schools</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the app, with the staff links and a Staff pill -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <header style="padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · schools</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Schools and class spaces</h1>
+      <p style="margin: 0; max-width: 760px; font-size: 18px; line-height: 1.65; color: #5C4965">State high schools use class spaces for free. Universities and private schools pay a yearly licence. For the March test, staff set up each class by hand: verify the teacher, create the class space, print the invite code and, at the end of the contest, issue the certificates. Teachers will set up their own classes after March.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 13px; font-weight: 700; line-height: 1; white-space: nowrap">Manual pilot mode</span>
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Every action here goes to the audit log</span>
+      </div>
+    </header>
+
+    <!-- Schools and the selected school's partnership -->
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <section aria-labelledby="schools-title" style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px 0 8px; overflow: hidden">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 0 28px 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Schools</span>
+            <h2 id="schools-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Schools in the pilot</h2>
+          </div>
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add school</button>
+        </div>
+        <div style="overflow-x: auto">
+          <table style="width: 100%; border-collapse: collapse; min-width: 820px">
+            <thead>
+              <tr>
+                <th scope="col" style="padding: 12px 16px 12px 28px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">SCHOOL</th>
+                <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">TEACHERS</th>
+                <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">CLASS SPACES</th>
+                <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">PARTNERSHIP AGREEMENT</th>
+                <th scope="col" style="padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">LICENCE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="{{row.s1}}">
+                <td style="padding: 14px 16px 14px 28px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.s1}}" onClick="{{pick.s1}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">Liceul Teoretic [School name]</span><span style="font-size: 13px; color: #6B5A73">Ploiești, Prahova</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Ms Ionescu<br><span style="font-size: 13px; color: #2F6B4F; font-weight: 600">Verified</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">1 · Class 9B</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Signed by both</span></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Free</span><span style="display: block; margin-top: 4px; font-size: 13px; color: #6B5A73">State high school</span></td>
+              </tr>
+              <tr style="{{row.s2}}">
+                <td style="padding: 14px 16px 14px 28px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.s2}}" onClick="{{pick.s2}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">Colegiul Național [School name]</span><span style="font-size: 13px; color: #6B5A73">Câmpina, Prahova</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Mr Dumitru<br><span style="font-size: 13px; color: #815E18; font-weight: 600">Waiting for checks</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">None yet</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Sent to the school</span></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Free</span><span style="display: block; margin-top: 4px; font-size: 13px; color: #6B5A73">State high school</span></td>
+              </tr>
+              <tr style="{{row.s3}}">
+                <td style="padding: 14px 16px 14px 28px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{pressed.s3}}" onClick="{{pick.s3}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">Liceul Privat [School name]</span><span style="font-size: 13px; color: #6B5A73">Brașov, Brașov</span></button></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">Ms Stan<br><span style="font-size: 13px; color: #815E18; font-weight: 600">Waiting for checks</span></td>
+                <td style="padding: 14px 16px; font-size: 14px; line-height: 1.45; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: top">None yet</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Draft</span></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Yearly licence: quote sent</span><span style="display: block; margin-top: 4px; font-size: 13px; color: #6B5A73">Private school · [price to be set]</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin: 0; padding: 14px 28px 12px; font-size: 13px; line-height: 1.5; color: #6B5A73">Example schools. Pick one to see its partnership. Proposal: students can join a school’s class space only once the partnership agreement is signed by both sides.</p>
+      </section>
+
+      <aside aria-labelledby="school-title" style="flex: 1 1 400px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Partnership</span>
+          <h2 id="school-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; line-height: 1.2; color: #26142E">{{sch.name}}</h2>
+          <span style="font-size: 13px; color: #6B5A73">{{sch.place}} · Contact: {{sch.contact}}</span>
+        </div>
+
+        <!-- Agreement steps -->
+        <ol aria-label="Partnership agreement steps" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px">
+          <sc-for list="{{sch.steps}}" as="p" hint-placeholder-count="4">
+            <li style="display: flex; align-items: center; gap: 12px; min-height: 40px">
+              <span aria-hidden="true" style="{{p.dot}}">{{p.mark}}</span>
+              <span style="display: flex; flex-direction: column; gap: 1px"><span style="{{p.labelStyle}}">{{p.label}}</span><span style="font-size: 12px; color: #6B5A73">{{p.when}}</span></span>
+            </li>
+          </sc-for>
+        </ol>
+
+        <div style="padding-top: 16px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Documents</span>
+          <sc-for list="{{sch.docs}}" as="d" hint-placeholder-count="4">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 6px 12px; padding: 12px 14px; border-radius: 14px; background: #FAF8F5; border: 1px solid #EFE8F2">
+              <span style="flex: 1 1 200px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600; color: #26142E">{{d.name}}</span><span style="font-size: 12px; line-height: 1.45; color: #6B5A73">{{d.note}}</span></span>
+              <span style="{{d.style}}">{{d.status}}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="padding-top: 16px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Class spaces</span>
+          <sc-if value="{{sch.hasClasses}}" hint-placeholder-val="{{true}}">
+            <a href="ClassSpace.dc.html" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; min-height: 44px; padding: 10px 16px; border-radius: 16px; border: 1px solid #DED3E4; text-decoration: none; color: #26142E"><span style="font-size: 14px"><b>Class 9B</b> · Ms Ionescu · 24 members</span><span style="font-size: 13px; font-weight: 600; color: #672786">Open</span></a>
+          </sc-if>
+          <sc-if value="{{sch.noClasses}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #5C4965">No class spaces yet. {{sch.why}}</p>
+          </sc-if>
+        </div>
+
+        <div style="display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: #FBF3DA">
+          <span style="flex: none; display: flex; padding-top: 2px; color: #815E18"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg></span>
+          <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #3A2442"><b>Ask a Romanian lawyer before the pilot.</b> In a school partnership a company may not advertise its products (ROFUIP art. 178(2)). How that applies to Ghemotoc itself is OPEN. Decided: never any advertising of any kind in class spaces, so no ads, sponsored items or sponsor credits.</p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- What schools pay: state high schools free, universities and private schools a yearly licence, paid extras for every school (17 Oct 2026) -->
+    <section aria-labelledby="plans-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px); display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; flex-direction: column; gap: 6px; max-width: 760px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Licences and paid extras</span>
+        <h2 id="plans-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">What each school pays</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Schools see these prices on one clear page before they sign anything. Prices stay as placeholders until the pricing research is done.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">State high schools</span>
+          <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Class spaces for every class, free, with printed invite sheets and certificates for Ghemotoc’s own contests.</span>
+          <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Free</span>
+        </div>
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Universities and private schools</span>
+          <span style="font-size: 14px; line-height: 1.55; color: #5C4965">The same class spaces under a yearly licence for the whole institution.</span>
+          <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Yearly licence: [price to be set]</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #26142E">Paid extras, for any school</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">A contest run for your school</span>
+          <span style="font-size: 14px; line-height: 1.55; color: #5C4965">We run a writing contest just for the school, with guest judges.</span>
+          <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">[price to be set]</span>
+        </div>
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Printed class anthology</span>
+          <span style="font-size: 14px; line-height: 1.55; color: #5C4965">The class’s best work printed as a book, with each pupil’s agreement.</span>
+          <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">[price to be set]</span>
+        </div>
+        <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Teacher workshops</span>
+          <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Workshops for teachers, with training credits through a partner.</span>
+          <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">[price to be set]</span>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teacher verification -->
+    <section aria-labelledby="teach-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 20px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Teachers</span>
+          <h2 id="teach-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Verify teachers</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">A teacher moderates a class of mostly under-18s, so the school must vouch for them. Once approved, their profile shows a “Teacher” badge and they can own class spaces.</p>
+        </div>
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Decided: school email or proof of teaching</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px">
+        <sc-for list="{{teachers}}" as="t" hint-placeholder-count="3">
+          <article style="padding: 20px; border-radius: 20px; border: 1px solid #DED3E4; background: #FAF8F5; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: #2F6B4F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px">{{t.initials}}</span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 700; color: #26142E">{{t.name}}</span><span style="font-size: 13px; color: #6B5A73">{{t.handle}} · {{t.school}}</span></span>
+              <span style="{{t.badgeStyle}}">{{t.badge}}</span>
+            </div>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+              <sc-for list="{{t.checks}}" as="k" hint-placeholder-count="3">
+                <li style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.5; color: #26142E"><span aria-hidden="true" style="{{k.iconStyle}}">{{k.mark}}</span><span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{k.sr}}</span>{{k.label}}</span></li>
+              </sc-for>
+            </ul>
+            <span style="font-size: 13px; line-height: 1.5; color: #5C4965"><b style="color: #26142E">How the school confirmed:</b> {{t.how}}</span>
+            <sc-if value="{{t.open}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <button type="button" onClick="{{t.approve}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 22px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Approve teacher</button>
+                <button type="button" onClick="{{t.decline}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Not yet</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{t.hasMsg}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="{{t.msgStyle}}">{{t.msg}}</p>
+            </sc-if>
+          </article>
+        </sc-for>
+      </div>
+      <p style="margin: 16px 0 0; font-size: 13px; line-height: 1.55; color: #6B5A73">Teachers follow the same messaging rule as every adult: never with under-16s, and with 16 and 17-year-olds only if the teen turns it on. Class work happens in the class space, not in private messages.</p>
+    </section>
+
+    <!-- Class spaces: list, create, print the invite -->
+    <section aria-labelledby="classes-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px)">
+      <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 20px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Class spaces</span>
+        <h2 id="classes-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Class spaces</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">A class space is private and works by invitation: it doesn’t appear in search, Discover or public lists, and only members can open its posts and stories. It follows the people in the room, so any age mix is fine (15, 16, 17 and older classmates) and it is never split at 16. The teacher is a member. It locks at the end of the academic year: no new posts, and members can still read it for as long as they have an account. No ads, sponsored items or sponsor credits, ever.</p>
+      </div>
+
+      <!-- Existing class space -->
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 20px; border-radius: 20px; border: 1px solid #DED3E4">
+        <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <a href="ClassSpace.dc.html" style="font-size: 17px; font-weight: 700; color: #481C5F">Class 9B, Liceul Teoretic [School name], Ploiești</a>
+          <span style="font-size: 13px; color: #6B5A73">Owner: Ms Ionescu · 24 members · 3 waiting for a parent’s consent · Created 15 Oct 2026</span>
+        </div>
+        <div style="flex: 0 1 auto; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #6B5A73; line-height: 1.3">Invite code</span>
+          <span style="font-family: ui-monospace, Menlo, monospace; font-size: 20px; font-weight: 700; letter-spacing: 0.08em; color: #26142E">{{code}}</span>
+          <span style="font-size: 12px; color: #6B5A73">Works until 30 Jun 2027 · locks at the end of the academic year</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <button type="button" onClick="{{print}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"></path><rect x="3" y="9" width="18" height="8" rx="2"></rect><path d="M6 14h12v7H6z"></path></svg>Print invite sheet</button>
+          <button type="button" onClick="{{resetCode}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Reset code</button>
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Lock now</button>
+        </div>
+        <sc-if value="{{codeMsg}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="flex: 1 1 100%; margin: 0; padding: 12px 14px; border-radius: 14px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5">{{codeLine}}</p>
+        </sc-if>
+      </div>
+
+      <div style="margin-top: 24px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+        <!-- Create a class space -->
+        <form style="flex: 1 1 440px; min-width: 0; margin: 0; display: flex; flex-direction: column; gap: 16px">
+          <span style="font-size: 17px; font-weight: 700; color: #26142E">Create a class space</span>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="cs-school" style="font-size: 14px; font-weight: 600; color: #26142E">School</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="cs-school" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <option selected>Liceul Teoretic [School name], Ploiești</option>
+              <option>Colegiul Național [School name], Câmpina (agreement not signed)</option>
+              <option>Liceul Privat [School name], Brașov (agreement and licence not signed)</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="cs-name" style="font-size: 14px; font-weight: 600; color: #26142E">Class name</label>
+              <input id="cs-name" type="text" value="Class 10A" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="cs-owner" style="font-size: 14px; font-weight: 600; color: #26142E">Teacher who owns it</label>
+              <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="cs-owner" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+                <option selected>Ms Ionescu (verified)</option>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="cs-until" style="font-size: 14px; font-weight: 600; color: #26142E">Invite code works until</label>
+              <input id="cs-until" type="date" value="2027-06-30" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+            </div>
+          </div>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Only verified teachers can own a class space. Any age mix is allowed and the teacher is a member. The teacher can reset the code or change the end date at any time. The teacher grades assignments; the school owns only what the teacher provides, and each pupil’s final work belongs to the pupil.</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <button type="button" onClick="{{create}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Create class space</button>
+          </div>
+          <sc-if value="{{created}}" hint-placeholder-val="{{false}}">
+            <p role="status" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span><b>Class 10A created.</b> Invite code R4T-8WD-N6K. Ms Ionescu is the owner. Logged in the audit log.</span></p>
+          </sc-if>
+        </form>
+
+        <!-- Invite sheet preview -->
+        <div style="flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Printed invite sheet (A4)</span>
+          <div style="padding: 28px; border-radius: 8px; background: #FFFFFF; border: 1px solid #DED3E4; box-shadow: 0 12px 28px -18px rgba(38,20,46,0.35); display: flex; flex-direction: column; gap: 14px">
+            <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 18px; color: #481C5F">Ghemotoc</span>
+            <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 28px; line-height: 1.05; color: #26142E">Join Class 9B</span>
+            <ol style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #3A2442">
+              <li>Go to ghemotoc.com/join or open the app.</li>
+              <li>Sign up. You’ll give your year of birth and do a quick age check.</li>
+              <li>Under 16? A parent agrees by email first.</li>
+              <li>Enter the code below. You can post once your account is active.</li>
+            </ol>
+            <div style="padding: 16px; border-radius: 12px; border: 2px dashed #481C5F; text-align: center; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Class code</span>
+              <span style="font-family: ui-monospace, Menlo, monospace; font-size: 30px; font-weight: 700; letter-spacing: 0.1em; color: #26142E">{{code}}</span>
+              <span style="font-size: 13px; color: #5C4965">Works until 30 June 2027</span>
+            </div>
+            <span style="font-size: 13px; line-height: 1.5; color: #5C4965">Only your class can see what you post here. Code not working? Ask Ms Ionescu.</span>
+          </div>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">The sheet has no student names. One sheet for the whole class.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Certificates in bulk and the verify-code list -->
+    <div style="margin-top: 24px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+      <section aria-labelledby="cert-title" style="flex: 1 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Certificates</span>
+          <h2 id="cert-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Issue certificates</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Mark each student’s result, then issue them all at once. Each student finds theirs under “My certificates”.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ce-what" style="font-size: 14px; font-weight: 600; color: #26142E">Contest or programme</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="ce-what" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <option selected>First Chapter contest 2027 · Class 9B</option>
+              <option>Autumn writing club 2026 · Class 9B</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span id="ce-lang-l" style="font-size: 14px; font-weight: 600; color: #26142E">Certificate language</span>
+            <div role="group" aria-labelledby="ce-lang-l" style="display: flex; flex-wrap: wrap; gap: 8px">
+              <button type="button" class="tmc-chip" aria-pressed="{{lang.roPressed}}" onClick="{{lang.ro}}" style="{{lang.roStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{lang.roCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Română</button>
+              <button type="button" class="tmc-chip" aria-pressed="{{lang.enPressed}}" onClick="{{lang.en}}" style="{{lang.enStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{lang.enCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>English</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Issuer and the co-issued school logo -->
+        <div style="padding: 16px 18px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-size: 14px; color: #26142E"><b>Signed by</b> Ghemotoc and Ms Ionescu, the teacher leading the contest{{coLine}}</span>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px">
+            <span id="co-label" style="flex: 1 1 260px; font-size: 14px; line-height: 1.5; color: #26142E">Add Liceul Teoretic [School name]’s name and logo</span>
+            <button type="button" role="switch" aria-labelledby="co-label" aria-checked="{{co.on}}" onClick="{{co.toggle}}" style="flex: none; width: 64px; height: 44px; padding: 0; border: 0; background: transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="{{co.track}}"><span style="{{co.knob}}"></span></span></button>
+          </div>
+          <span style="font-size: 12px; line-height: 1.5; color: #2F6B4F; font-weight: 600">Written permission for the logo on file: letter of 14 Oct 2026.</span>
+          <span style="font-size: 12px; line-height: 1.5; color: #6B5A73">Every school contest certificate has two signatures: one from Ghemotoc and one from the teacher leading the contest. The school’s name and logo are optional and need written permission.</span>
+        </div>
+
+        <!-- Students and results -->
+        <div style="border: 1px solid #DED3E4; border-radius: 16px; overflow: hidden">
+          <div style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+            <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">STUDENT</span>
+            <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">RESULT</span>
+          </div>
+          <sc-for list="{{students}}" as="s" hint-placeholder-count="6">
+            <div role="group" aria-label="{{s.aria}}" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 8px 16px; border-bottom: 1px solid #EFE8F2">
+              <span style="font-size: 15px; font-weight: 600; color: #26142E">{{s.handle}}</span>
+              <span style="margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px">
+                <sc-for list="{{s.opts}}" as="o" hint-placeholder-count="3">
+                  <button type="button" class="tmc-chip" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="{{o.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{o.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{o.label}}</button>
+                </sc-for>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #5C4965">Handles only. Staff never type real names here. A student types the name to print the first time they open their certificate, and that name is never shown on their profile.</p>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+          <button type="button" onClick="{{issue}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{issueLabel}}</button>
+          <span style="font-size: 14px; color: #5C4965">{{countLine}}</span>
+        </div>
+        <sc-if value="{{issued}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><span><b>Issued.</b> {{issuedLine}} Their codes are now in the list. Logged in the audit log.</span></p>
+        </sc-if>
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; font-weight: 600">
+          <a href="Certificate-Winner.dc.html">See a winner certificate</a>
+          <a href="Certificate-Participation.dc.html">See a participant certificate</a>
+        </div>
+        <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #6B5A73">Proposal for the March test: staff make the certificates by hand from the template and send them as PDFs. This screen is the automated version for later (story priority: Could).</p>
+      </section>
+
+      <section aria-labelledby="codes-title" style="flex: 1 1 440px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Verify codes</span>
+          <h2 id="codes-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Certificate codes</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">The public check page shows only: valid or not, the contest or programme, the result and the date. Never the student’s name.</p>
+        </div>
+        <form role="search" style="position: relative; margin: 0">
+          <label for="code-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Find a code</label>
+          <span style="position: absolute; left: 18px; top: 14px; color: #6B5A73; display: flex"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+          <input id="code-q" type="search" placeholder="Find a code" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px 0 48px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+        </form>
+        <div style="display: flex; flex-direction: column">
+          <sc-for list="{{codes}}" as="c" hint-placeholder-count="4">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 14px 0; border-top: 1px solid #EFE8F2">
+              <span style="flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+                <span style="font-family: ui-monospace, Menlo, monospace; font-size: 15px; font-weight: 700; letter-spacing: 0.06em; color: #26142E">{{c.code}}</span>
+                <span style="font-size: 13px; line-height: 1.45; color: #5C4965">{{c.what}} · {{c.result}} · {{c.date}}</span>
+              </span>
+              <span style="{{c.style}}">{{c.status}}</span>
+              <sc-if value="{{c.canRevoke}}" hint-placeholder-val="{{true}}">
+                <button type="button" aria-label="{{c.revokeLabel}}" onClick="{{c.revoke}}" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 16px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Revoke</button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #6B5A73">
+          <li><b style="color: #26142E">Revoked:</b> issued in error or the student broke the contest rules.</li>
+          <li><b style="color: #26142E">No longer available:</b> the student deleted their account, so the record is gone.</li>
+        </ul>
+        <p style="margin: 0; font-size: 13px; color: #6B5A73">Example codes and dates.</p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4808}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Starts on the school with a signed agreement, so the full flow shows.
+    this.state = {
+      sel: 's1', teach: { t2: null, t3: null }, codeN: 0, codeMsg: false, printed: false, created: false,
+      lang: 'ro', co: true, issued: false, revoked: {},
+      results: { lia: 'Winner', mara: 'Finalist', teo: 'Finalist', vlad: 'Participant', ana: 'Participant', radu: 'Participant' }
+    };
+  }
+
+  // Interactive chip (pill system, 17 Oct): 36 px tall inside a 44 px tap area (.tmc-chip::before), equal 14 px sides.
+  // Unselected: white with a #8E7B99 edge. Selected: solid plum plus a check icon, so the state is not colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+  pill(tone) {
+    // Information pill tokens (background, text, border). OPEN items are gold with a dashed edge.
+    var t = {
+      ok: ['#E8F1EC', '#245A41', '#A9C9B6'], warn: ['#FBF3DA', '#5C3F0E', '#D9B54A'], bad: ['#F6E9EB', '#8C2B3A', '#DDB0B8'],
+      neutral: ['#F4F0EC', '#4F3D57', '#D6CCDC'], plan: ['#F1EAF4', '#481C5F', '#C9B3D6'], open: ['#FBF3DA', '#5C3F0E', '#D9B54A']
+    }[tone] || ['#F4F0EC', '#4F3D57', '#D6CCDC'];
+    return 'flex: none; ' + 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';' + (tone === 'open' ? ' border-style: dashed;' : '');
+  }
+  trackStyle(on) {
+    return 'position: relative; display: block; width: 56px; height: 32px; border-radius: 999px; box-sizing: border-box; transition: background 0.15s; '
+      + (on ? 'background: #481C5F; border: 1px solid #481C5F;' : 'background: #F4F0EC; border: 1px solid #9F8DA8;');
+  }
+  knobStyle(on) {
+    return 'position: absolute; top: 3px; width: 24px; height: 24px; border-radius: 50%; box-shadow: 0 1px 3px rgba(38,20,46,0.3); transition: left 0.15s; '
+      + (on ? 'left: 27px; background: #E6C24C;' : 'left: 3px; background: #FFFFFF;');
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Schools: rows, selection and the partnership panel.
+    var S = {
+      s1: {
+        name: 'Liceul Teoretic [School name]', place: 'Ploiești, Prahova', contact: '[School director’s name]', stage: 4,
+        dates: ['2 Oct 2026', '6 Oct 2026', '13 Oct 2026', '14 Oct 2026'],
+        docs: [
+          { name: 'Partnership agreement', note: 'Students need it to take part in an outside organisation’s activity (ROFUIP art. 97(3)).', status: 'Signed by both', tone: 'ok' },
+          { name: 'Data processing agreement', note: 'The school owns only what the teacher provides (materials, grades, feedback). The pupils’ final work belongs to them. Ask a Romanian lawyer before the pilot.', status: 'OPEN', tone: 'open' },
+          { name: 'Permission to use the school logo', note: 'Letter from the school director, 14 Oct 2026.', status: 'Written, on file', tone: 'ok' },
+          { name: 'Contest rules', note: 'Say who issues certificates and on what terms.', status: 'Agreed', tone: 'ok' }
+        ],
+        classes: true, why: ''
+      },
+      s2: {
+        name: 'Colegiul Național [School name]', place: 'Câmpina, Prahova', contact: '[School director’s name]', stage: 2,
+        dates: ['8 Oct 2026', '12 Oct 2026', 'Waiting', ''],
+        docs: [
+          { name: 'Partnership agreement', note: 'Sent on 12 Oct 2026. Reminder due on 19 Oct.', status: 'Sent to the school', tone: 'warn' },
+          { name: 'Data processing agreement', note: 'Ask a Romanian lawyer before the pilot.', status: 'OPEN', tone: 'open' },
+          { name: 'Permission to use the school logo', note: 'Not asked yet. Certificates carry our name only until it arrives.', status: 'None', tone: 'neutral' },
+          { name: 'Contest rules', note: 'Same template as the other schools.', status: 'Draft', tone: 'neutral' }
+        ],
+        classes: false, why: 'The agreement isn’t signed and the teacher isn’t verified yet.'
+      },
+      s3: {
+        name: 'Liceul Privat [School name]', place: 'Brașov, Brașov', contact: '[Deputy head’s name]', stage: 1,
+        dates: ['15 Oct 2026', '', '', ''],
+        docs: [
+          { name: 'Partnership agreement', note: 'Draft based on the school’s own template.', status: 'Draft', tone: 'neutral' },
+          { name: 'Data processing agreement', note: 'Ask a Romanian lawyer before the pilot.', status: 'OPEN', tone: 'open' },
+          { name: 'Permission to use the school logo', note: 'Not asked yet.', status: 'None', tone: 'neutral' },
+          { name: 'Contest rules', note: 'Not sent yet.', status: 'Not started', tone: 'neutral' }
+        ],
+        classes: false, why: 'The agreement is still a draft.'
+      }
+    };
+    var row = {}, pressed = {}, pick = {};
+    ['s1', 's2', 's3'].forEach(function (k) {
+      row[k] = st.sel === k ? 'background: #F1EAF4;' : 'background: #FFFFFF;';
+      pressed[k] = st.sel === k ? 'true' : 'false';
+      pick[k] = function () { self.setState({ sel: k }); };
+    });
+    var s = S[st.sel];
+    var stepNames = ['Draft written', 'Sent to the school', 'Signed by the school', 'Signed by us'];
+    var steps = stepNames.map(function (n, i) {
+      var done = i < s.stage, now = i === s.stage;
+      return {
+        label: n, when: done ? s.dates[i] : (now ? 'Next step' : ''), mark: done ? '✓' : String(i + 1),
+        dot: 'flex: none; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; '
+          + (done ? 'background: #2F6B4F; color: #FFFFFF;' : (now ? 'background: #FFFFFF; color: #481C5F; border: 2px solid #481C5F; box-sizing: border-box;' : 'background: #F4F0EC; color: #6B5A73;')),
+        labelStyle: 'font-size: 14px; ' + (done || now ? 'font-weight: 600; color: #26142E;' : 'color: #6B5A73;')
+      };
+    });
+    var sch = {
+      name: s.name, place: s.place, contact: s.contact, steps: steps,
+      docs: s.docs.map(function (d) { return { name: d.name, note: d.note, status: d.status, style: 'margin-left: auto; ' + self.pill(d.tone) }; }),
+      hasClasses: s.classes, noClasses: !s.classes, why: s.why
+    };
+
+    // Teacher checks. Ticks are text marks, read out by the hidden label.
+    var check = function (ok, label) {
+      return {
+        label: label, mark: ok ? '✓' : '!', sr: ok ? 'Done: ' : 'Missing: ',
+        iconStyle: 'flex: none; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; '
+          + (ok ? 'background: #E8F1EC; color: #2F6B4F;' : 'background: #FBF3DA; color: #815E18;')
+      };
+    };
+    var T = [
+      { id: 't1', name: 'Ms Ionescu', initials: 'MI', handle: '@ms.ionescu', school: 'Ploiești', fixed: 'ok',
+        checks: [check(true, 'Age check passed: 18 or over'), check(true, 'School confirmed she teaches Class 9B'), check(true, 'Read the class space rules and the safeguarding guide')],
+        how: 'Letter from the school director, 14 Oct 2026.' },
+      { id: 't2', name: 'Mr Dumitru', initials: 'MD', handle: '@prof.dumitru', school: 'Câmpina',
+        checks: [check(true, 'Age check passed: 18 or over'), check(true, 'School confirmed he teaches there'), check(true, 'Read the class space rules and the safeguarding guide')],
+        how: 'Email from the school office’s official address, 15 Oct 2026.' },
+      { id: 't3', name: 'Ms Stan', initials: 'MS', handle: '@stan.ro', school: 'Brașov',
+        checks: [check(true, 'Age check passed: 18 or over'), check(false, 'School hasn’t confirmed yet'), check(false, 'Hasn’t read the class space rules yet')],
+        how: 'Waiting for the school.' }
+    ];
+    var teachers = T.map(function (t) {
+      var v = t.fixed === 'ok' ? 'ok' : st.teach[t.id];
+      var allOk = t.checks.every(function (c) { return c.mark === '✓'; });
+      var msg = '', tone = '';
+      if (v === 'ok' && !t.fixed) { msg = t.name + ' is now a verified teacher. The badge shows on their profile.'; tone = 'ok'; }
+      else if (v === 'missing') { msg = 'Can’t approve yet: some checks are missing.'; tone = 'warn'; }
+      else if (v === 'later') { msg = 'Left as waiting. ' + t.name + ' was told what’s missing.'; tone = 'neutral'; }
+      var bg = { ok: ['#E8F1EC', '#2F6B4F'], warn: ['#FBF3DA', '#815E18'], neutral: ['#F4F0EC', '#5C4965'] }[tone] || ['#F4F0EC', '#5C4965'];
+      return {
+        name: t.name, initials: t.initials, handle: t.handle, school: t.school, checks: t.checks, how: t.how,
+        badge: v === 'ok' ? 'Teacher' : 'Waiting', badgeStyle: self.pill(v === 'ok' ? 'plan' : 'warn'),
+        open: v !== 'ok', hasMsg: !!msg, msg: msg,
+        msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; background: ' + bg[0] + '; color: ' + bg[1] + ';',
+        approve: function () { var n = Object.assign({}, st.teach); n[t.id] = allOk ? 'ok' : 'missing'; self.setState({ teach: n }); },
+        decline: function () { var n = Object.assign({}, st.teach); n[t.id] = 'later'; self.setState({ teach: n }); }
+      };
+    });
+
+    // Invite code: resetting makes a new one and the old one stops working.
+    var codesList = ['9B7-KQ4-M2X', 'H3P-6ZT-W9C', 'L8V-2NR-F5J'];
+    var code = codesList[st.codeN % codesList.length];
+
+    // Certificates: one result per student, handles only.
+    var stud = [['lia', '@lia.writes'], ['mara', '@mara.p'], ['teo', '@teo_ink'], ['vlad', '@vlad.writes'], ['ana', '@ana.c'], ['radu', '@radu.m']];
+    var opts = ['Participant', 'Finalist', 'Winner'];
+    var students = stud.map(function (p) {
+      return {
+        handle: p[1], aria: 'Result for ' + p[1],
+        opts: opts.map(function (o) {
+          var on = st.results[p[0]] === o;
+          return { label: o, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { var r = Object.assign({}, st.results); r[p[0]] = o; self.setState({ results: r, issued: false }); } };
+        })
+      };
+    });
+    var count = { Winner: 0, Finalist: 0, Participant: 0 };
+    Object.keys(st.results).forEach(function (k) { count[st.results[k]]++; });
+    var plural = function (n, one, many) { return n + ' ' + (n === 1 ? one : many); };
+    var countLine = plural(count.Winner, 'winner', 'winners') + ', ' + plural(count.Finalist, 'finalist', 'finalists') + ', ' + plural(count.Participant, 'participant', 'participants');
+    var lang = st.lang === 'ro' ? 'Romanian' : 'English';
+
+    // Verify-code list. Issuing adds the new batch at the top.
+    var base = [
+      { id: 'a1', code: 'AW26-4FQX-H7', what: 'Autumn writing club 2026', result: 'Participant', date: '18 Dec 2026', status: 'Valid' },
+      { id: 'a2', code: 'AW26-9KDM-R2', what: 'Autumn writing club 2026', result: 'Participant', date: '18 Dec 2026', status: 'Valid' },
+      { id: 'a3', code: 'AW26-5JQE-T3', what: 'Autumn writing club 2026', result: 'Participant', date: '18 Dec 2026', status: 'Revoked' },
+      { id: 'a4', code: 'AW26-2MZA-K8', what: 'Autumn writing club 2026', result: 'Participant', date: '18 Dec 2026', status: 'No longer available' }
+    ];
+    var fresh = [];
+    if (st.issued) {
+      var fc = ['FC27-7K4M-Q9', 'FC27-3RTD-L2', 'FC27-8HXN-C5', 'FC27-2PVB-W7', 'FC27-6GLS-D4', 'FC27-9WCY-B1'];
+      var order = stud.slice().sort(function (a, b) { return opts.indexOf(st.results[b[0]]) - opts.indexOf(st.results[a[0]]); });
+      fresh = order.map(function (p, i) { return { id: 'f' + i, code: fc[i], what: 'First Chapter contest 2027', result: st.results[p[0]], date: '20 Mar 2027', status: 'Valid' }; });
+    }
+    var codes = fresh.concat(base).map(function (c) {
+      var status = st.revoked[c.id] ? 'Revoked' : c.status;
+      return {
+        code: c.code, what: c.what, result: c.result, date: c.date, status: status,
+        style: self.pill(status === 'Valid' ? 'ok' : (status === 'Revoked' ? 'bad' : 'neutral')),
+        canRevoke: status === 'Valid', revokeLabel: 'Revoke ' + c.code,
+        revoke: function () { var r = Object.assign({}, st.revoked); r[c.id] = true; self.setState({ revoked: r }); }
+      };
+    });
+
+    return {
+      row: row, pressed: pressed, pick: pick, sch: sch, teachers: teachers,
+      code: code, codeMsg: st.codeMsg, codeLine: st.printed ? 'Invite sheet sent to the printer. One sheet for the whole class.' : 'New code made. The old code stopped working. Ms Ionescu was told.',
+      print: function () { self.setState({ codeMsg: true, printed: true }); },
+      resetCode: function () { self.setState({ codeN: st.codeN + 1, codeMsg: true, printed: false }); },
+      created: st.created, create: function () { self.setState({ created: true }); },
+      lang: {
+        roPressed: st.lang === 'ro' ? 'true' : 'false', enPressed: st.lang === 'en' ? 'true' : 'false',
+        roStyle: this.chipStyle(st.lang === 'ro'), enStyle: this.chipStyle(st.lang === 'en'), roCheck: this.chipCheck(st.lang === 'ro'), enCheck: this.chipCheck(st.lang === 'en'),
+        ro: function () { self.setState({ lang: 'ro' }); }, en: function () { self.setState({ lang: 'en' }); }
+      },
+      co: { on: st.co ? 'true' : 'false', track: this.trackStyle(st.co), knob: this.knobStyle(st.co), toggle: function () { self.setState({ co: !st.co }); } },
+      coLine: st.co ? ', with Liceul Teoretic [School name]’s name and logo' : ', without the school’s logo',
+      students: students, countLine: countLine,
+      issueLabel: 'Issue ' + stud.length + ' certificates',
+      issued: st.issued, issuedLine: stud.length + ' certificates in ' + lang + ': ' + countLine + '.',
+      issue: function () { self.setState({ issued: true }); },
+      codes: codes
+    };
+  }
+}
+</script>
+</body>
+</html>

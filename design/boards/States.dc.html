@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Error and offline states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{pointer-events:none;user-select:none}
+.tmc-dd-sticker{filter:drop-shadow(2px 0 0 #FBF7EC) drop-shadow(-2px 0 0 #FBF7EC) drop-shadow(0 2px 0 #FBF7EC) drop-shadow(0 -2px 0 #FBF7EC)}
+@media (max-width: 1199px){.tmc-dd-xxl{display:none !important}}
+@media (max-width: 1119px){.tmc-dd-xl{display:none !important}}
+@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 600px){.tmc-dd-hide{display:none !important}}
+/* Pill system (17 Oct): chips are 36 px tall with a 44 px tap area, plum focus ring, tinted hover */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}
+.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+.tmc-seg::after{display:none}
+.tmc-seg:focus-visible{outline-offset:-4px}
+</style>
+</helmet>
+<div style="overflow-x: clip; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen (no section is current on this page) -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 26px; height: 26px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; margin-left: -10px"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="20" height="20" style="display: block; width: 20px; height: 20px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <header style="position: relative; padding: 56px 0 32px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <!-- Doodle (ghost): decorative --><img data-doodle="background" data-doodle-on="When something goes wrong" src="/_blob/3f552d14fca9f8e869d5a5cff7d36901" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="position: absolute; right: 24px; top: 26px; width: 180px; height: 180px; transform: rotate(6deg); pointer-events: none">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Four states on one board</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">When something goes wrong</h1>
+      <p style="margin: 0; max-width: 680px; font-size: 18px; line-height: 1.6; color: #5C4965">Each message says what happened and what to do next. Nothing here blames the reader.</p>
+    </header>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 24px">
+
+      <!-- 1. Page not found -->
+      <section aria-labelledby="nf-title" style="position: relative; display: flex; flex-direction: column; gap: 16px; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.05s ease-out both">
+        <!-- Doodle (magnifier): decorative --><img data-doodle="widget" data-doodle-on="We can’t find that page" src="/_blob/e0f2b1f7fbf2a3b0b83ef3044986ccc4" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="position: absolute; right: 120px; top: -50px; width: 92px; height: 92px; transform: rotate(-12deg); pointer-events: none">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">1 · page not found</span>
+        <div style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 32px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+          <!-- Doodle 15 (peeking puppy): decorative, empty top-right corner -->
+          <img data-doodle="widget" data-doodle-on="We can’t find that page" src="/_blob/2591413100406762a766c7908ad7c5e8" alt="" aria-hidden="true" style="position: absolute; top: 18px; right: 22px; width: 100px; height: 100px; transform: rotate(4deg); pointer-events: none">
+          <span aria-hidden="true" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 72px; line-height: 0.9; letter-spacing: -0.03em; color: #481C5F">404</span>
+          <h2 id="nf-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; color: #26142E">We can’t find that page</h2>
+          <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">The link may be old, or the story was moved or deleted. Try a search, or go back to Home.</p>
+          <form role="search" style="width: 100%; position: relative; margin: 4px 0 0">
+            <label for="q-404" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Search stories, writers and forums</label>
+            <span style="position: absolute; left: 18px; top: 14px; color: #6B5A73; display: flex"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+            <input id="q-404" type="search" placeholder="Search stories, writers and forums" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px 0 48px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+          </form>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <a href="Discover.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Go to Home</a>
+            <a href="Search.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; box-sizing: border-box; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Open search</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Offline: banner plus editor text kept on the device -->
+      <section aria-labelledby="off-title" style="display: flex; flex-direction: column; gap: 16px; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.1s ease-out both">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px">
+          <span style="display: inline-flex; align-items: center; gap: 10px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">2 · offline</span>
+            <!-- Doodle 31 (rain cloud): decorative; negative margins keep the row at its 44px height -->
+            <img src="/_blob/98cf6729b377176a6e850cfe42cbb1ab" alt="" aria-hidden="true" style="width: 56px; height: 56px; margin: -6px 0; transform: rotate(-4deg)">
+          </span>
+          <div role="group" aria-label="Preview the connection" style="display: inline-flex; border: 1px solid #8E7B99; border-radius: 999px; overflow: hidden">
+            <button type="button" class="tmc-chip tmc-seg" aria-pressed="{{offline}}" onClick="{{goOffline}}" style="{{offBtn}}"><sc-if value="{{offline}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>Offline</button>
+            <button type="button" class="tmc-chip tmc-seg" aria-pressed="{{online}}" onClick="{{goOnline}}" style="{{onBtn}}"><sc-if value="{{online}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>Back online</button>
+          </div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; overflow: hidden">
+          <div role="status" style="{{bannerStyle}}">
+            <sc-if value="{{offline}}" hint-placeholder-val="{{true}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M2 2l20 20"></path><path d="M8.5 16.5a5 5 0 0 1 7 0"></path><path d="M5 12.86a10 10 0 0 1 5.17-2.69"></path><path d="M19 12.86a10 10 0 0 0-2.4-1.7"></path><path d="M2 8.82a15 15 0 0 1 4.17-2.65"></path><path d="M10.66 5c4.01-.36 8.14.9 11.34 3.76"></path><path d="M12 20h.01"></path></svg></sc-if>
+            <sc-if value="{{online}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+            <span>{{bannerText}}</span>
+          </div>
+          <div style="position: relative; padding: 24px 28px; display: flex; flex-direction: column; gap: 12px">
+            <!-- Doodle (hot-chocolate): decorative --><img data-doodle="widget" data-doodle-on="Chapter one, untitled" src="/_blob/24c5157558871ed49e3bab4fc802e2cd" alt="" aria-hidden="true" class="tmc-dd-wide tmc-dd tmc-dd-hide" style="position: absolute; right: 22px; bottom: 10px; width: 58px; height: 58px; transform: rotate(6deg); pointer-events: none">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px">
+              <h2 id="off-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #26142E">Chapter one, untitled</h2>
+              <span style="{{savedStyle}}">{{savedText}}</span>
+            </div>
+            <p style="margin: 0; font-size: 17px; line-height: 1.7; color: #3A2442">Bunica’s radio had not worked since before I was born. On Sunday I took the back off with a butter knife and found a folded bus ticket inside, dated 1998.</p>
+            <p style="margin: 0; font-size: 17px; line-height: 1.7; color: #3A2442">I kept the ticket in my pocket all week. On Friday I took the bus it was for.</p>
+            <span style="font-size: 14px; color: #6B5A73">1,240 words · You can keep writing</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Maintenance: the app is closed, staff can still sign in -->
+      <section aria-labelledby="mt-title" style="display: flex; flex-direction: column; gap: 16px; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.15s ease-out both">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">3 · maintenance</span>
+        <div style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 32px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+          <!-- Doodle 28 (desk lamp): decorative, empty top-right corner -->
+          <img class="tmc-dd-hide" data-doodle="widget" data-doodle-on="We’re updating Ghemotoc" src="/_blob/b6af94add128d6d8dc93670e26614f43" alt="" aria-hidden="true" style="position: absolute; top: 16px; right: 20px; width: 112px; height: 112px; transform: rotate(-4deg); pointer-events: none">
+          <span aria-hidden="true" style="width: 64px; height: 64px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/86d5d1ab40063c9c460579d5ad428d06" alt="" aria-hidden="true" width="38" height="38" style="display: block; flex: none; width: 38px; height: 38px"></span>
+          <h2 id="mt-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; color: #26142E">We’re updating Ghemotoc</h2>
+          <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">You can’t read or post for a short while. We expect to be back by 14:00, Romanian time. Everything you saved before is safe.</p>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+            <button type="button" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Check again</button>
+          </div>
+          <p style="margin: 8px 0 0; padding-top: 14px; border-top: 1px solid #EFE8F2; width: 100%; font-size: 15px; color: #5C4965">Staff can still sign in. <a href="StaffSignIn.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">Staff sign-in</a></p>
+        </div>
+      </section>
+
+      <!-- 4. Unexpected error: nothing personal goes to error tracking -->
+      <section aria-labelledby="er-title" style="display: flex; flex-direction: column; gap: 16px; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.2s ease-out both">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">4 · unexpected error</span>
+        <div style="position: relative; flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 32px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+          <!-- Doodle 33 (storm cloud): decorative, empty top-right corner -->
+          <img data-doodle="widget" data-doodle-on="Something went wrong on our side" src="/_blob/620fcd7c3f2a0de7969b83ebedf084bc" alt="" aria-hidden="true" style="position: absolute; top: 22px; right: 26px; width: 68px; height: 68px; transform: rotate(5deg); pointer-events: none">
+          <span aria-hidden="true" style="width: 64px; height: 64px; border-radius: 50%; background: #F1EAF4; color: #8C2B3A; display: inline-flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg></span>
+          <h2 id="er-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; color: #26142E">Something went wrong on our side</h2>
+          <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">It isn’t your fault. Try again. If it keeps happening, contact us and quote this code.</p>
+          <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; border: 1px solid #D6CCDC; background: #F4F0EC; color: #4F3D57; font-family: ui-monospace, Menlo, monospace; font-size: 13px; font-weight: 600">Error code E-4F7A</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <button type="button" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Try again</button>
+            <a href="Discover.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; box-sizing: border-box; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Go to Home</a>
+            <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 8px; font-weight: 600; font-size: 15px">Contact us</a>
+          </div>
+          <div style="width: 100%; box-sizing: border-box; margin-top: 4px; padding: 14px 16px; border-radius: 16px; border: 1px dashed #B9A9C2; font-size: 14px; line-height: 1.55; color: #5C4965"><b style="color: #26142E">What we send to error tracking:</b> the error code, the page and the app version. Never your email, your IP address or anything you wrote.</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Page footer: legal links, public report form, group line and language switch -->
+    <footer style="position: relative; margin-top: 80px; padding-top: 24px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+      <!-- Doodle (mushroom): decorative --><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/40bc1fbeb38f66f58e1d30bc529d4d2f" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="position: absolute; left: 40%; top: -62px; width: 64px; height: 64px; pointer-events: none">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 26px">
+        <a href="Website-Home.dc.html#faq" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Legal</a>
+        <a href="mailto:support@ghemotoc.com" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1608}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // The offline panel starts offline; the switch previews the "back online" state.
+    this.state = { lang: 'en', online: false };
+  }
+
+  // Footer language switch: Română or English (interface language only).
+  langVals() {
+    var self = this, en = this.state.lang !== 'ro';
+    var base = 'height: 44px; padding: 0 18px; border: 0; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; ';
+    var on = 'background: #481C5F; color: #FFFFFF;', off = 'background: #FFFFFF; color: #5C4965;';
+    return {
+      langRo: !en, langEn: en,
+      roStyle: base + (en ? off : on), enStyle: base + (en ? on : off),
+      pickRo: function () { self.setState({ lang: 'ro' }); },
+      pickEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+
+  renderVals() {
+    var self = this, on = this.state.online;
+    var seg = 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 44px; padding: 0 16px; border: 0; line-height: 1; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; ';
+    var segOn = 'background: #481C5F; color: #FFFFFF;', segOff = 'background: #FFFFFF; color: #481C5F;';
+    return Object.assign({
+      offline: !on, online: on,
+      offBtn: seg + (on ? segOff : segOn), onBtn: seg + (on ? segOn : segOff),
+      goOffline: function () { self.setState({ online: false }); },
+      goOnline: function () { self.setState({ online: true }); },
+      bannerStyle: 'display: flex; gap: 12px; align-items: flex-start; padding: 16px 20px; font-size: 15px; line-height: 1.5; font-weight: 500; '
+        + (on ? 'background: #2F6B4F; color: #FFFFFF;' : 'background: #2A0E33; color: #FBF7EC;'),
+      bannerText: on ? 'You’re back online. Your changes are saved.' : 'You’re offline. Your writing is saved on this device and uploads when you’re back online.',
+      savedText: on ? 'Saved' : 'Saved on this device',
+      savedStyle: 'margin-left: auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; '
+        + (on ? 'border: 1px solid #A9C9B6; background: #E8F1EC; color: #245A41;' : 'border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;')
+    }, this.langVals());
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: contests</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}
+.tmc-rows>li+li{border-top:1px solid #DED3E4}
+@media (max-width: 960px){.tmc-sticky{position: static !important}}
+fieldset{min-width:0}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+.tmc-noscroll{scrollbar-width:none;-ms-overflow-style:none}.tmc-noscroll::-webkit-scrollbar{display:none}
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:8px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the app, with the staff links and a Staff pill -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <header style="padding: 48px 0 28px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; animation: tmcRise 0.5s ease-out both">
+      <div style="flex: 1 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · contests</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Contests</h1>
+        <p style="margin: 0; max-width: 760px; font-size: 18px; line-height: 1.65; color: #5C4965">Set up a writing contest, check the entries, pick the winners and publish the results. Each contest has its own landing page under Website. Writers enter from their own story settings, so staff never touch an entry.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <a href="#setup" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New contest</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none">Landing pages</a>
+      </div>
+    </header>
+
+    <!-- The four rules every contest follows (S1-E11-15) -->
+    <section aria-label="Rules for every contest" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <div style="padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+        <span style="display: flex; color: #481C5F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.5a6 6 0 0 1 3.5 5.5"></path></svg></span>
+        <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-size: 16px; font-weight: 700; color: #26142E">People judge, not votes</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">Proposal</span></span>
+        <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Our staff and named partner judges pick the winners. There is no public vote.</span>
+      </div>
+      <div style="padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+        <span style="display: flex; color: #481C5F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">Sponsors don’t judge</span>
+        <span style="font-size: 14px; line-height: 1.55; color: #5C4965">A sponsor can pay for a prize and get a credit. It has no say in who wins. Every sponsor contract says so.</span>
+      </div>
+      <div style="padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+        <span style="display: flex; color: #481C5F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="m13.5 6.5 4 4"></path></svg></span>
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">Pen names only</span>
+        <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Staff see an age group, never a year of birth. Results show pen names, never age, and a school only when the writer agreed.</span>
+      </div>
+      <div style="padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px">
+        <span style="display: flex; color: #481C5F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path><path d="M10 13h6"></path><path d="M10 17h4"></path></svg></span>
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">Rules first</span>
+        <span style="font-size: 14px; line-height: 1.55; color: #5C4965">A contest can’t open until its rules are written and a lawyer has reviewed them.</span>
+      </div>
+    </section>
+
+    <!-- Contest list with status filters -->
+    <section aria-labelledby="list-title" style="margin-top: 32px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px); box-sizing: border-box; animation: tmcRise 0.5s 0.1s ease-out both">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">All contests</span>
+        <h2 id="list-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Contests</h2>
+      </div>
+      <div role="group" aria-label="Filter by status" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="6">
+          <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+        </sc-for>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Example contests, one for each status. Entry counts are examples. {{shownLine}}</p>
+
+      <div style="margin-top: 16px; overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px" tabindex="0" role="region" aria-label="Contests table, scrolls sideways on small screens">
+        <div role="table" aria-label="Contests" style="min-width: 1040px">
+          <div role="row" style="display: grid; grid-template-columns: 2.2fr 1.2fr 1.9fr 0.9fr 1fr 1.6fr 1fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">CONTEST</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">STATUS</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">DATES</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">ENTRIES</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">SPONSOR</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">LANDING PAGE</span>
+            <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; position: relative"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Action</span></span>
+          </div>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+            <div role="row" style="{{r.rowStyle}}">
+              <span role="cell" style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700; color: #26142E">{{r.en}}</span><span lang="ro" style="font-size: 13px; color: #6B5A73">{{r.ro}}</span></span>
+              <span role="cell" style="display: flex; align-items: flex-start"><span style="{{r.statusStyle}}">{{r.status}}</span></span>
+              <span role="cell" style="display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 1.45; color: #26142E"><span>{{r.entriesWhen}}</span><span style="font-size: 13px; color: #6B5A73">{{r.resultsWhen}}</span></span>
+              <span role="cell" style="font-size: 14px; line-height: 1.45; color: #26142E">{{r.count}}</span>
+              <span role="cell" style="font-size: 14px; line-height: 1.45; color: #26142E">{{r.sponsor}}</span>
+              <span role="cell" style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><a href="{{r.pageHref}}" style="font-size: 14px; font-weight: 600; overflow-wrap: anywhere">{{r.page}}</a><span style="font-size: 12px; color: #6B5A73">{{r.pageNote}}</span></span>
+              <span role="cell" style="display: flex; justify-content: flex-end; align-items: flex-start">
+                <sc-if value="{{r.isDraft}}" hint-placeholder-val="{{false}}">
+                  <a href="#setup" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap">Edit draft</a>
+                </sc-if>
+                <sc-if value="{{r.isRun}}" hint-placeholder-val="{{true}}">
+                  <a href="#run" onClick="{{r.pick}}" aria-label="{{r.manageLabel}}" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap">Manage</a>
+                </sc-if>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- Set up a contest: the draft form and what must be true before it opens -->
+    <section id="setup" aria-labelledby="setup-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px); box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px; max-width: 760px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Set up a contest · draft</span>
+          <h2 id="setup-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">{{su.title}}</h2>
+          <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Fill this in while the contest is a draft. Nothing is public until you open it for entries, and the checks at the bottom must all pass first.</p>
+        </div>
+        <span style="{{su.stateStyle}}">{{su.state}}</span>
+      </div>
+
+      <!-- Names in both languages -->
+      <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Name</legend>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ct-en" style="font-size: 14px; font-weight: 600; color: #26142E">In English</label>
+            <input id="ct-en" type="text" lang="en" value="{{su.en}}" onChange="{{su.onEn}}" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ct-ro" style="font-size: 14px; font-weight: 600; color: #26142E">În română</label>
+            <input id="ct-ro" type="text" lang="ro" value="{{su.ro}}" onChange="{{su.onRo}}" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Dates -->
+      <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Dates</legend>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ct-open" style="font-size: 14px; font-weight: 600; color: #26142E">Entries open</label>
+            <input id="ct-open" type="text" value="{{su.dOpen}}" onChange="{{su.onOpen}}" aria-describedby="ct-dates-help" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ct-close" style="font-size: 14px; font-weight: 600; color: #26142E">Entries close</label>
+            <input id="ct-close" type="text" value="{{su.dClose}}" onChange="{{su.onClose}}" aria-describedby="ct-dates-help" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ct-res" style="font-size: 14px; font-weight: 600; color: #26142E">Results published</label>
+            <input id="ct-res" type="text" value="{{su.dRes}}" onChange="{{su.onRes}}" aria-describedby="ct-dates-help" style="width: 100%; box-sizing: border-box; height: 48px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+          </div>
+        </div>
+        <p id="ct-dates-help" style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">“[date]” means not set yet. The landing page shows these dates in the reader’s language.</p>
+      </fieldset>
+
+      <!-- Who can enter -->
+      <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Who can enter</legend>
+        <div role="group" aria-label="Age groups" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3; width: 104px">Age groups</span>
+          <sc-for list="{{su.ages}}" as="c" hint-placeholder-count="3">
+            <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+          </sc-for>
+        </div>
+        <div role="group" aria-label="Markets" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3; width: 104px">Markets</span>
+          <sc-for list="{{su.markets}}" as="c" hint-placeholder-count="4">
+            <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+          </sc-for>
+        </div>
+        <div role="group" aria-label="Languages" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3; width: 104px">Languages</span>
+          <sc-for list="{{su.langs}}" as="c" hint-placeholder-count="2">
+            <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{su.under16}}" hint-placeholder-val="{{true}}">
+          <p style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 12px 16px; border-radius: 16px; background: #E6EEF6; color: #2E4A8C; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg></span><span>Under-16s can enter, so entries must be rated All ages or 13+, and a parent’s or guardian’s consent must be on file before a prize goes to an under-16 winner.</span></p>
+        </sc-if>
+      </fieldset>
+
+      <!-- What counts as an entry -->
+      <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">What counts as an entry</legend>
+        <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(120px, 200px) 1fr; gap: 8px 14px; font-size: 14px; line-height: 1.5">
+          <dt style="font-weight: 600; color: #26142E">What</dt>
+          <dd style="margin: 0; color: #26142E">The first chapter of a story, posted on Ghemotoc.</dd>
+          <dt style="font-weight: 600; color: #26142E">Rating</dt>
+          <dd style="margin: 0; color: #26142E; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span>{{su.ratingRule}}</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">Proposal</span></dd>
+          <dt style="font-weight: 600; color: #26142E">How to enter</dt>
+          <dd style="margin: 0; color: #26142E">The writer ticks “Enter {{su.en}}” in the story’s settings before the closing date. Unticking it withdraws the entry.</dd>
+          <dt style="font-weight: 600; color: #26142E">How many</dt>
+          <dd style="margin: 0; color: #26142E; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span>One entry per writer.</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">Proposal</span></dd>
+          <dt style="font-weight: 600; color: #26142E"><label for="ct-words">Word limit (optional)</label></dt>
+          <dd style="margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px"><input id="ct-words" type="text" inputmode="numeric" placeholder="No limit" value="" aria-describedby="ct-words-help" style="width: 160px; box-sizing: border-box; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><span id="ct-words-help" style="font-size: 13px; color: #6B5A73">Leave it empty for no limit.</span></dd>
+        </dl>
+      </fieldset>
+
+      <!-- Rules text and the lawyer's review -->
+      <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Rules</legend>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="ct-rules" style="font-size: 14px; font-weight: 600; color: #26142E">Rules text (required before opening)</label>
+          <textarea id="ct-rules" rows="6" value="{{su.rules}}" onChange="{{su.onRules}}" aria-describedby="ct-rules-help" style="display: block; width: 100%; box-sizing: border-box; padding: 14px 18px; border: 1px solid #8E7B99; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.55; color: #26142E; resize: vertical"></textarea>
+          <span id="ct-rules-help" style="font-size: 13px; line-height: 1.5; color: #6B5A73">Say who can enter, what counts as an entry, how judging works, the prize and who delivers it, who issues certificates and on what terms, and how we use entrants’ data. The landing page links to these rules.</span>
+        </div>
+        <div style="padding: 16px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 8px">
+          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; font-size: 14px; line-height: 1.5; color: #26142E; cursor: pointer"><input type="checkbox" checked="{{su.lawyer}}" onChange="{{su.onLawyer}}" style="width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: #481C5F"><span><b>A lawyer has reviewed these rules.</b> Tick this only after the lawyer’s review of this exact text. Changing the text afterwards clears the tick.</span></label>
+          <span style="{{su.lawyerStyle}}">{{su.lawyerLine}}</span>
+        </div>
+      </fieldset>
+
+      <!-- Prize -->
+      <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Prize</legend>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px; align-items: start">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ct-prize" style="font-size: 14px; font-weight: 600; color: #26142E">What the winner gets</label>
+            <textarea id="ct-prize" rows="3" style="display: block; width: 100%; box-sizing: border-box; padding: 14px 18px; border: 1px solid #8E7B99; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.55; color: #26142E; resize: vertical">[Prize], for example books from the sponsor and a featured slot on Discover.</textarea>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ct-deliver" style="font-size: 14px; font-weight: 600; color: #26142E">Who delivers it</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="ct-deliver" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <option>We do (The Magic Coffin)</option>
+              <option selected>The sponsor, [Partner]</option>
+              <option>A partner school</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">If the prize needs tax paid or withheld, the company handles it, not the winner. Check with the accountant before the rules are final.</span>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Judges -->
+      <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Judges</legend>
+        <ul class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; font-size: 14px; line-height: 1.5">
+          <li style="padding: 10px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px"><span><b style="color: #26142E">Robert</b> <span style="color: #6B5A73">· our staff, admin</span></span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6">Staff</span></li>
+          <li style="padding: 10px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; border-top: 1px solid #DED3E4"><span><b style="color: #26142E">[Staff member]</b> <span style="color: #6B5A73">· our staff, moderator</span></span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6">Staff</span></li>
+          <li style="padding: 10px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; border-top: 1px solid #DED3E4"><span><b style="color: #26142E">[Partner judge]</b> <span style="color: #6B5A73">· named partner judge, signs the judge’s agreement</span></span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE">Partner judge</span></li>
+        </ul>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
+          <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add a partner judge</button>
+          <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 14px; color: #26142E">No public vote.<span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">Proposal</span></span>
+        </div>
+        <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Judges see each entry’s text, pen name and age group. Partner judges get read-only access to this contest’s entries and nothing else.</span>
+      </fieldset>
+
+      <!-- Sponsor -->
+      <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+        <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Sponsor</legend>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="ct-sponsor" style="font-size: 14px; font-weight: 600; color: #26142E">Approved sponsor campaign</label>
+          <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="ct-sponsor" onChange="{{su.onSponsor}}" aria-describedby="ct-sponsor-help" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+            <option value="none">No sponsor</option>
+            <option value="c4" selected>The First Chapter contest · [Partner] · approved 14 Oct</option>
+          </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          <span id="ct-sponsor-help" style="font-size: 13px; line-height: 1.5; color: #6B5A73">Only campaigns approved on <a href="AdminSponsors.dc.html">Sponsors</a> are listed. The sponsor gets a “Sponsored by” credit on the landing page and has no say in judging. Never shown inside a class space.</span>
+        </div>
+        <sc-if value="{{su.hasSponsor}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 14px; color: #26142E"><span>Sponsor contract:</span><span style="{{su.contractStyle}}">{{su.contract}}</span></div>
+        </sc-if>
+      </fieldset>
+
+      <!-- Landing page and certificates -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px">
+        <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+          <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Landing page</legend>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="ct-page" style="font-size: 14px; font-weight: 600; color: #26142E">Page for this contest</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="ct-page" onChange="{{su.onPage}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <option value="">Not linked yet</option>
+              <option value="lp1" selected>/contests/the-first-chapter · draft page</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px 18px">
+            <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Edit in Website › Landing pages</a>
+            <a href="Contest.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Preview the public page</a>
+          </div>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">The page goes live when the contest opens. The results block on it fills in when you publish the results.</span>
+        </fieldset>
+
+        <fieldset style="margin: 0; padding: 20px 0 0; border: 0; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+          <legend style="padding: 0 0 12px; font-size: 17px; font-weight: 700; color: #26142E">Certificates</legend>
+          <sc-for list="{{su.certs}}" as="k" hint-placeholder-count="3">
+            <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" checked="{{k.on}}" onChange="{{k.toggle}}" style="width: 20px; height: 20px; margin: 0; flex: none; accent-color: #481C5F"><span>{{k.label}}</span></label>
+          </sc-for>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Uses the certificate flow (S1-E8-12): each writer finds theirs under My certificates and types the name to print. <a href="Certificate-Winner.dc.html">See the winner certificate</a>.</span>
+        </fieldset>
+      </div>
+
+      <!-- Before it can open -->
+      <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">Before it can open</span>
+        <ul class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; font-size: 14px; line-height: 1.5">
+          <sc-for list="{{su.checks}}" as="k" hint-placeholder-count="7">
+            <li style="{{k.rowStyle}}"><span style="display: flex; align-items: flex-start; gap: 10px; min-width: 0"><span style="{{k.iconBox}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{k.okIcon}}"><path d="M20 6 9 17l-5-5"></path></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{k.noIcon}}"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></span><span style="color: #26142E">{{k.label}}</span></span><span style="{{k.pillStyle}}">{{k.state}}</span></li>
+          </sc-for>
+        </ul>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 4px">
+          <button type="button" onClick="{{su.open}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Open for entries</button>
+          <button type="button" onClick="{{su.save}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Save draft</button>
+        </div>
+        <sc-if value="{{su.hasMsg}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="{{su.msgStyle}}">{{su.msg}}</p>
+        </sc-if>
+      </div>
+    </section>
+
+    <!-- Run a contest: entries, results and the compliance panel for one contest -->
+    <section id="run" aria-labelledby="run-title" style="margin-top: 24px; display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Run a contest</span>
+        <h2 id="run-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">{{run.name}}</h2>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px"><span style="{{run.statusStyle}}">{{run.status}}</span><span style="font-size: 14px; color: #5C4965">{{run.meta}}</span></div>
+      </div>
+      <div role="group" aria-label="Choose a contest" style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{runChips}}" as="c" hint-placeholder-count="4">
+          <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+        </sc-for>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+        <div style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+
+          <!-- Entries: read-only for staff -->
+          <section aria-labelledby="ent-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px); box-sizing: border-box; display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Entries</span>
+              <h3 id="ent-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.01em; color: #481C5F">Entries</h3>
+              <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Staff never edit an entry. If one breaks the rules, disqualify it with a reason: the writer gets a statement of reasons and can appeal.</p>
+            </div>
+            <div role="group" aria-label="Filter entries by status" style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{run.entChips}}" as="c" hint-placeholder-count="4">
+                <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+              </sc-for>
+            </div>
+            <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">{{run.entLine}}</p>
+            <div style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px" tabindex="0" role="region" aria-label="Entries table, scrolls sideways on small screens">
+              <div role="table" aria-label="Entries" style="min-width: 820px">
+                <div role="row" style="display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1.2fr) 112px; gap: 14px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+                  <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; letter-spacing: 0.06em; white-space: nowrap">ENTRY</span>
+                  <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; letter-spacing: 0.06em; white-space: nowrap">PEN NAME</span>
+                  <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; letter-spacing: 0.06em; white-space: nowrap">AGE GROUP</span>
+                  <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; letter-spacing: 0.06em; white-space: nowrap">RATING</span>
+                  <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; letter-spacing: 0.06em; white-space: nowrap">SUBMITTED</span>
+                  <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; letter-spacing: 0.06em; white-space: nowrap">STATUS</span>
+                  <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; letter-spacing: 0.06em; white-space: nowrap; position: relative"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Actions</span></span>
+                </div>
+                <sc-for list="{{run.entries}}" as="e" hint-placeholder-count="7">
+                  <div role="row" style="{{e.rowStyle}}">
+                    <span role="cell" style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><a href="Reader.dc.html" aria-label="{{e.readLabel}}" style="font-size: 15px; font-weight: 700; color: #26142E; text-underline-offset: 3px">{{e.title}}</a><span style="font-size: 13px; color: #6B5A73">Chapter 1 · {{e.words}} · read only</span></span>
+                    <span role="cell" style="font-size: 14px; color: #26142E; overflow-wrap: anywhere">{{e.pen}}</span>
+                    <span role="cell" style="font-size: 14px; color: #26142E">{{e.age}}</span>
+                    <span role="cell" style="display: flex; align-items: flex-start"><span style="{{e.ratingStyle}}">{{e.rating}}</span></span>
+                    <span role="cell" style="font-size: 14px; color: #26142E">[date]</span>
+                    <span role="cell" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px"><span style="{{e.statusStyle}}">{{e.status}}</span><span style="font-size: 12px; line-height: 1.4; color: #6B5A73">{{e.note}}</span></span>
+                    <span role="cell" style="display: flex; justify-content: flex-end; align-items: flex-start; min-width: 112px">
+                      <sc-if value="{{e.canDq}}" hint-placeholder-val="{{true}}">
+                        <button type="button" onClick="{{e.dq}}" aria-label="{{e.dqLabel}}" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 16px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Disqualify</button>
+                      </sc-if>
+                    </span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Disqualify: a reason is required, and it becomes the statement of reasons -->
+            <sc-if value="{{dq.open}}" hint-placeholder-val="{{false}}">
+              <div role="region" aria-labelledby="dq-title" style="padding: 20px; border-radius: 20px; border: 1px solid #DDB0B8; background: #F6E9EB; display: flex; flex-direction: column; gap: 14px">
+                <span id="dq-title" style="font-size: 16px; font-weight: 700; color: #8C2B3A">{{dq.title}}</span>
+                <div style="display: flex; flex-direction: column; gap: 6px">
+                  <label for="dq-reason" style="font-size: 14px; font-weight: 600; color: #26142E">Reason (required)</label>
+                  <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="dq-reason" onChange="{{dq.onReason}}" aria-invalid="{{dq.invalid}}" aria-describedby="dq-err" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+                    <option value="">Choose a reason</option>
+                    <option>It isn’t the first chapter of a story</option>
+                    <option>Its rating isn’t allowed in this contest</option>
+                    <option>It isn’t the writer’s own work</option>
+                    <option>It breaks the community guidelines</option>
+                    <option>More than one entry from this writer</option>
+                    <option>Over the word limit</option>
+                  </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  <sc-if value="{{dq.invalidOn}}" hint-placeholder-val="{{false}}">
+                    <span id="dq-err" style="font-size: 13px; font-weight: 600; color: #8C2B3A">Choose a reason. The writer gets it in the statement of reasons.</span>
+                  </sc-if>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px">
+                  <label for="dq-note" style="font-size: 14px; font-weight: 600; color: #26142E">What to tell the writer</label>
+                  <textarea id="dq-note" rows="3" style="display: block; width: 100%; box-sizing: border-box; padding: 12px 16px; border: 1px solid #8E7B99; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.55; color: #26142E; resize: vertical"></textarea>
+                  <span style="font-size: 13px; line-height: 1.5; color: #5C4965">The statement of reasons gives the rule, the facts, that a person decided and how to appeal. The story itself stays up unless it breaks the community guidelines.</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                  <button type="button" onClick="{{dq.confirm}}" style="display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Disqualify and send the statement of reasons</button>
+                  <button type="button" onClick="{{dq.cancel}}" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Cancel</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{dq.hasMsg}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="margin: 0; padding: 12px 14px; border-radius: 14px; background: #E8F1EC; color: #245A41; font-size: 14px; line-height: 1.5">{{dq.msg}} <a href="Appeals.dc.html" style="font-weight: 600">Appeals</a></p>
+            </sc-if>
+          </section>
+
+          <!-- Results: pick, preview, publish (admin only), then certificates -->
+          <section aria-labelledby="res-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px clamp(20px, 3vw, 36px); box-sizing: border-box; display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Results</span>
+              <h3 id="res-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.01em; color: #481C5F">Winners and finalists</h3>
+              <p style="margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 15px; line-height: 1.55; color: #5C4965"><span>One winner and up to 5 finalists, picked from valid entries.</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">Proposal</span></p>
+            </div>
+
+            <sc-if value="{{res.notYet}}" hint-placeholder-val="{{false}}">
+              <p style="margin: 0; padding: 14px 16px; border-radius: 16px; background: #F4F0EC; color: #4F3D57; font-size: 14px; line-height: 1.5">{{res.notYetLine}}</p>
+            </sc-if>
+
+            <sc-if value="{{res.canPick}}" hint-placeholder-val="{{true}}">
+              <ul aria-label="Pick winners and finalists" class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+                <sc-for list="{{res.pickRows}}" as="p" hint-placeholder-count="5">
+                  <li style="padding: 12px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px">
+                    <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 15px; font-weight: 700; color: #26142E">{{p.title}}</span><span style="font-size: 13px; color: #6B5A73">{{p.pen}} · {{p.age}} · {{p.school}}</span></span>
+                    <span role="group" aria-label="{{p.groupLabel}}" style="display: flex; flex-wrap: wrap; gap: 8px">
+                      <sc-for list="{{p.opts}}" as="o" hint-placeholder-count="3">
+                        <button type="button" class="tmc-chip" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="{{o.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{o.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{o.label}}</button>
+                      </sc-for>
+                    </span>
+                  </li>
+                </sc-for>
+              </ul>
+              <sc-if value="{{res.hasWarn}}" hint-placeholder-val="{{false}}">
+                <p role="status" style="margin: 0; padding: 12px 14px; border-radius: 14px; background: #FBF3DA; color: #5C3F0E; font-size: 14px; line-height: 1.5">{{res.warn}}</p>
+              </sc-if>
+            </sc-if>
+
+            <sc-if value="{{res.showPreview}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Preview · results block on the landing page</span>
+                <div style="padding: 24px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 14px">
+                  <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #481C5F">{{res.pvTitle}}</span>
+                  <sc-if value="{{res.hasWinner}}" hint-placeholder-val="{{true}}">
+                    <div style="padding: 16px 18px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E5D7EA; display: flex; flex-direction: column; gap: 6px">
+                      <span style="align-self: flex-start; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">{{res.pvWinLabel}}</span>
+                      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 20px; color: #26142E">{{res.winTitle}}</span>
+                      <span style="font-size: 14px; color: #5C4965">{{res.winBy}}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{res.hasFinalists}}" hint-placeholder-val="{{true}}">
+                    <div style="display: flex; flex-direction: column; gap: 8px">
+                      <span style="font-size: 14px; font-weight: 700; color: #26142E">{{res.pvFinLabel}}</span>
+                      <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.5; color: #26142E">
+                        <sc-for list="{{res.finalists}}" as="f" hint-placeholder-count="2">
+                          <li><b style="font-weight: 600">{{f.title}}</b> <span style="color: #5C4965">{{f.by}}</span></li>
+                        </sc-for>
+                      </ul>
+                    </div>
+                  </sc-if>
+                  <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">{{res.pvNote}}</span>
+                </div>
+                <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Pen names only. Never an age or an age group. A school shows only when the writer agreed to show it on this contest’s results.</span>
+              </div>
+            </sc-if>
+
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 4px; border-top: 1px solid #EFE8F2">
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 16px">
+                <button type="button" onClick="{{res.publish}}" disabled="{{res.pubOff}}" style="{{res.pubStyle}}">{{res.pubLabel}}</button>
+                <button type="button" onClick="{{res.issue}}" disabled="{{res.issueOff}}" style="{{res.issueStyle}}">{{res.issueLabel}}</button>
+              </span>
+              <span style="flex: 1 1 240px; padding-top: 16px; font-size: 13px; line-height: 1.5; color: #6B5A73">Only an admin can publish results. You’re signed in as Robert, admin. Certificates go out after the results are public.</span>
+            </div>
+            <sc-if value="{{res.hasMsg}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="{{res.msgStyle}}">{{res.msg}}</p>
+            </sc-if>
+          </section>
+        </div>
+
+        <!-- Compliance side panel for the chosen contest -->
+        <aside aria-labelledby="cmp-title" class="tmc-sticky" style="flex: 1 1 320px; min-width: 0; position: sticky; top: 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Compliance</span>
+            <h3 id="cmp-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.01em; color: #481C5F">Checks for this contest</h3>
+          </div>
+          <ul class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+            <sc-for list="{{cmp}}" as="k" hint-placeholder-count="5">
+              <li style="padding: 12px 0; display: flex; flex-direction: column; gap: 6px">
+                <span style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px"><span style="font-size: 14px; font-weight: 700; color: #26142E">{{k.label}}</span><span style="{{k.pillStyle}}">{{k.state}}</span></span>
+                <span style="font-size: 13px; line-height: 1.5; color: #5C4965">{{k.note}}</span>
+              </li>
+            </sc-for>
+          </ul>
+          <div style="padding: 14px 16px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 6px">
+            <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-size: 14px; font-weight: 700; color: #26142E">Contests with a partner school</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">OPEN: lawyer</span></span>
+            <span style="font-size: 13px; line-height: 1.5; color: #5C4965">A school partnership needs an agreement with the school, and a company in it may not advertise its products (ROFUIP art. 178(2)). How that applies to us is on the lawyer’s list.</span>
+          </div>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Statuses here are examples. This panel is a checklist for staff, not legal advice: ask the lawyer or the accountant when unsure.</span>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":6535}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Example state. "k1" is the real First Chapter contest (a draft); k2 to k5 are examples, one for each later status.
+    this.state = {
+      filter: 'All', run: 'k2', entFilter: 'All',
+      su: {
+        en: 'The First Chapter 2027', ro: 'Primul capitol 2027', dOpen: '[date]', dClose: '[date]', dRes: '[date]',
+        ages: { '13 to 15': true, '16 to 17': true, '18 and over': true },
+        markets: { 'Romania': true },
+        langs: { 'English': true, 'Română': true },
+        rules: '', lawyer: false, sponsor: 'c4', page: 'lp1',
+        certs: { 'Participant': true, 'Finalist': true, 'Winner': true }
+      },
+      suMsg: null,
+      // Disqualifications made on this screen: entry id -> reason.
+      dqDone: {}, dq: null, dqReason: '', dqErr: false, dqMsg: '',
+      // Picks per contest: entry id -> 'Winner' | 'Finalist'.
+      picks: { k2: { e21: 'Finalist', e23: 'Winner', e24: 'Finalist' }, k3: { e31: 'Winner', e33: 'Finalist' }, k5: { e51: 'Winner', e52: 'Finalist' } },
+      published: { k3: true, k5: true }, issued: { k3: true, k5: true },
+      resMsg: null
+    };
+  }
+
+  // Interactive chip (pill system, 17 Oct): 36 px tall in a 44 px tap area, white with a #8E7B99 edge,
+  // selected = solid plum plus a check icon, so the state is never colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+  // Information pill tokens: background, text, border.
+  pill(tone) {
+    var t = {
+      ok: ['#E8F1EC', '#245A41', '#A9C9B6'], warn: ['#FBF3DA', '#5C3F0E', '#D9B54A'], bad: ['#F6E9EB', '#8C2B3A', '#DDB0B8'],
+      neutral: ['#F4F0EC', '#4F3D57', '#D6CCDC'], info: ['#E6EEF6', '#2E4A8C', '#AFC3DE'], plum: ['#F1EAF4', '#481C5F', '#C9B3D6']
+    }[tone] || ['#F4F0EC', '#4F3D57', '#D6CCDC'];
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';';
+  }
+  statusTone(s) {
+    return { 'Draft': 'warn', 'Open for entries': 'ok', 'Judging': 'info', 'Results published': 'plum', 'Ended': 'neutral' }[s] || 'neutral';
+  }
+  ratingTone(r) { return (r === '16+' || r === '18+') ? 'bad' : 'plum'; }
+  set(part) { this.setState(part); }
+  // Copy of the setup state with one change, so React sees a new object.
+  su(change) { var s = JSON.parse(JSON.stringify(this.state.su)); change(s); this.setState({ su: s, suMsg: null }); }
+  isSet(d) { d = String(d || '').trim(); return d !== '' && d !== '[date]'; }
+  val(e) { return e && e.target ? String(e.target.value) : ''; }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // ---------- Contest list ----------
+    var C = [
+      { id: 'k1', en: 'The First Chapter 2027', ro: 'Primul capitol 2027', status: 'Draft', entriesWhen: 'Entries 1 Feb to 31 Mar 2027', resultsWhen: 'Results [date]', count: 'None yet', sponsor: '[Partner]', page: '/contests/the-first-chapter', pageHref: 'Contest.dc.html', pageNote: 'Draft page' },
+      { id: 'k4', en: 'Winter poems (example)', ro: 'Poeme de iarnă', status: 'Open for entries', entriesWhen: 'Entries [date] to [date]', resultsWhen: 'Results [date]', count: '9 so far', sponsor: 'None', page: '/contests/winter-poems', pageHref: 'AdminPages.dc.html', pageNote: 'Live' },
+      { id: 'k2', en: 'Night stories (example)', ro: 'Povești de noapte', status: 'Judging', entriesWhen: 'Entries [date] to [date]', resultsWhen: 'Results [date]', count: '26', sponsor: '[Partner]', page: '/contests/night-stories', pageHref: 'AdminPages.dc.html', pageNote: 'Live, entries closed' },
+      { id: 'k3', en: 'Home, in 1,000 words (example)', ro: 'Acasă, în 1.000 de cuvinte', status: 'Results published', entriesWhen: 'Entries [date] to [date]', resultsWhen: 'Results [date]', count: '15', sponsor: 'None', page: '/contests/home', pageHref: 'AdminPages.dc.html', pageNote: 'Live, with results' },
+      { id: 'k5', en: 'Summer flash fiction (example)', ro: 'Proză scurtă de vară', status: 'Ended', entriesWhen: 'Entries [date] to [date]', resultsWhen: 'Results [date]', count: '41', sponsor: '[Partner]', page: '/contests/summer-flash', pageHref: 'AdminPages.dc.html', pageNote: 'Archived, results stay up' }
+    ];
+    // A contest picked on this screen and published moves to "Results published".
+    C.forEach(function (c) { if (c.status === 'Judging' && st.published[c.id]) c.status = 'Results published'; });
+    var byId = {}; C.forEach(function (c) { byId[c.id] = c; });
+
+    var filters = ['All', 'Draft', 'Open for entries', 'Judging', 'Results published', 'Ended'];
+    var chips = filters.map(function (f) {
+      var on = st.filter === f;
+      return { label: f, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ filter: f }); } };
+    });
+    var shown = 0;
+    var rows = C.map(function (c) {
+      var vis = st.filter === 'All' || c.status === st.filter;
+      if (vis) shown++;
+      return {
+        en: c.en, ro: c.ro, status: c.status, statusStyle: self.pill(self.statusTone(c.status)),
+        entriesWhen: c.entriesWhen, resultsWhen: c.resultsWhen, count: c.count, sponsor: c.sponsor,
+        page: c.page, pageHref: c.pageHref, pageNote: c.pageNote,
+        isDraft: c.status === 'Draft', isRun: c.status !== 'Draft', manageLabel: 'Manage ' + c.en,
+        pick: function () { self.setState({ run: c.id, entFilter: 'All', dq: null, dqMsg: '', resMsg: null }); },
+        rowStyle: (vis ? 'display: grid;' : 'display: none;') + ' grid-template-columns: 2.2fr 1.2fr 1.9fr 0.9fr 1fr 1.6fr 1fr; gap: 16px; align-items: start; padding: 14px 16px; border-bottom: 1px solid #EFE8F2;'
+      };
+    });
+
+    // ---------- Set up (the First Chapter draft) ----------
+    var s = st.su;
+    var multi = function (key, labels) {
+      return labels.map(function (l) {
+        var on = !!s[key][l];
+        return { label: l, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.su(function (x) { x[key][l] = !on; }); } };
+      });
+    };
+    var anyOn = function (o) { return Object.keys(o).some(function (k) { return o[k]; }); };
+    var under16 = !!s.ages['13 to 15'];
+    var contractSigned = false; // Example: the [Partner] contract for the First Chapter isn't signed yet.
+    var checks = [
+      { label: 'Name in English and Romanian', ok: !!s.en.trim() && !!s.ro.trim() },
+      { label: 'Entries open, entries close and results dates set', ok: self.isSet(s.dOpen) && self.isSet(s.dClose) && self.isSet(s.dRes) },
+      { label: 'At least one age group, market and language', ok: anyOn(s.ages) && anyOn(s.markets) && anyOn(s.langs) },
+      { label: 'Rules text written', ok: !!s.rules.trim() },
+      { label: 'A lawyer has reviewed the rules', ok: !!s.lawyer && !!s.rules.trim() },
+      { label: 'Landing page linked', ok: !!s.page },
+      { label: s.sponsor === 'none' ? 'Sponsor contract signed (no sponsor)' : 'Sponsor contract signed', ok: s.sponsor === 'none' || contractSigned }
+    ];
+    var missing = checks.filter(function (k) { return !k.ok; }).length;
+    var suChecks = checks.map(function (k, i) {
+      return {
+        label: k.label, state: k.ok ? 'Done' : 'Not yet', pillStyle: self.pill(k.ok ? 'ok' : 'warn'),
+        okIcon: k.ok ? 'display: block;' : 'display: none;', noIcon: k.ok ? 'display: none;' : 'display: block;',
+        iconBox: 'flex: none; width: 22px; height: 22px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; ' + (k.ok ? 'background: #E8F1EC; color: #245A41;' : 'background: #FBF3DA; color: #5C3F0E;'),
+        rowStyle: 'padding: 10px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px;' + (i ? ' border-top: 1px solid #DED3E4;' : '')
+      };
+    });
+    var suMsgTone = st.suMsg ? st.suMsg.tone : '';
+    var msgBg = { ok: ['#E8F1EC', '#245A41'], warn: ['#FBF3DA', '#5C3F0E'], bad: ['#F6E9EB', '#8C2B3A'] }[suMsgTone] || ['#F4F0EC', '#4F3D57'];
+    var su = {
+      title: s.en.trim() || 'New contest', en: s.en, ro: s.ro, dOpen: s.dOpen, dClose: s.dClose, dRes: s.dRes, rules: s.rules, lawyer: s.lawyer,
+      state: 'Draft', stateStyle: self.pill('warn'),
+      onEn: function (e) { var v = self.val(e); self.su(function (x) { x.en = v; }); },
+      onRo: function (e) { var v = self.val(e); self.su(function (x) { x.ro = v; }); },
+      onOpen: function (e) { var v = self.val(e); self.su(function (x) { x.dOpen = v; }); },
+      onClose: function (e) { var v = self.val(e); self.su(function (x) { x.dClose = v; }); },
+      onRes: function (e) { var v = self.val(e); self.su(function (x) { x.dRes = v; }); },
+      // Changing the rules after the lawyer's review clears the tick: the review covers one exact text.
+      onRules: function (e) { var v = self.val(e); self.su(function (x) { if (x.rules !== v) x.lawyer = false; x.rules = v; }); },
+      onLawyer: function () { self.su(function (x) { x.lawyer = !x.lawyer; }); },
+      onSponsor: function (e) { var v = self.val(e); self.su(function (x) { x.sponsor = v; }); },
+      onPage: function (e) { var v = self.val(e); self.su(function (x) { x.page = v; }); },
+      lawyerLine: !s.rules.trim() ? 'Write the rules first' : (s.lawyer ? 'Reviewed. Ticked by Robert, logged in the audit log' : 'Waiting for the lawyer'),
+      lawyerStyle: 'align-self: flex-start; ' + self.pill(!s.rules.trim() ? 'neutral' : (s.lawyer ? 'ok' : 'warn')),
+      under16: under16,
+      ratingRule: under16 ? 'Rated All ages or 13+, because under-16s can enter.' : 'Any rating the youngest age group can read.',
+      ages: multi('ages', ['13 to 15', '16 to 17', '18 and over']),
+      markets: multi('markets', ['Romania', 'UK', 'Ireland', 'US', 'Canada', 'Australia', 'New Zealand', 'Singapore']),
+      langs: multi('langs', ['English', 'Română']),
+      hasSponsor: s.sponsor !== 'none', contract: contractSigned ? 'Signed' : 'Not signed yet', contractStyle: self.pill(contractSigned ? 'ok' : 'warn'),
+      certs: ['Participant', 'Finalist', 'Winner'].map(function (l) {
+        return { label: l, on: !!s.certs[l], toggle: function () { self.su(function (x) { x.certs[l] = !x.certs[l]; }); } };
+      }),
+      checks: suChecks,
+      open: function () {
+        if (missing) self.setState({ suMsg: { tone: 'warn', text: missing + (missing === 1 ? ' check isn’t done yet' : ' checks aren’t done yet') + ', so the contest stays a draft. See the list above.' } });
+        else self.setState({ suMsg: { tone: 'ok', text: 'Open for entries. The landing page is live and writers can tick “Enter ' + s.en.trim() + '” in their story settings. Logged in the audit log.' } });
+      },
+      save: function () { self.setState({ suMsg: { tone: 'ok', text: 'Draft saved. Nothing is public yet.' } }); },
+      hasMsg: !!st.suMsg, msg: st.suMsg ? st.suMsg.text : '',
+      msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; background: ' + msgBg[0] + '; color: ' + msgBg[1] + ';'
+    };
+
+    // ---------- Run a contest ----------
+    // Example entries for each contest. Age is shown to staff as a group only, never a year of birth.
+    // school: shown on results only when the writer agreed; '' means not agreed.
+    var E = {
+      k4: [
+        { id: 'e41', title: 'Small Rooms', pen: 'poppyverse', age: '16 to 17', rating: 'All ages', words: 'about 900 words', status: 'Valid', school: '' },
+        { id: 'e42', title: 'Frost on the Block', pen: 'mira.poems', age: '13 to 15', rating: 'All ages', words: 'about 600 words', status: 'Valid', school: '' },
+        { id: 'e43', title: 'Bus Stop Haiku', pen: 'teo_ink', age: '13 to 15', rating: 'All ages', words: 'about 300 words', status: 'Withdrawn', school: '', note: 'The writer unticked “Enter”' },
+        { id: 'e44', title: 'Snow Lines', pen: 'Ana Radu', age: '18 and over', rating: '13+', words: 'about 1,100 words', status: 'Valid', school: '' }
+      ],
+      k2: [
+        { id: 'e21', title: 'The Salt Mine Choir', pen: 'inkwolf', age: '16 to 17', rating: '13+', words: 'about 2,400 words', status: 'Valid', school: '[School], Cluj' },
+        { id: 'e22', title: 'Night Bus to Ploiești', pen: 'matei.writes', age: '18 and over', rating: '13+', words: 'about 3,100 words', status: 'Valid', school: '' },
+        { id: 'e23', title: 'The Lamp on Strada Lungă', pen: 'mira.poems', age: '13 to 15', rating: 'All ages', words: 'about 1,800 words', status: 'Valid', school: '' },
+        { id: 'e24', title: 'Letters to the Block Next Door', pen: 'mara.p', age: '13 to 15', rating: 'All ages', words: 'about 1,500 words', status: 'Valid', school: '[School], Iași' },
+        { id: 'e25', title: 'Bus Stop Ghosts', pen: 'teo_ink', age: '13 to 15', rating: 'All ages', words: 'about 900 words', status: 'Withdrawn', school: '', note: 'The writer unticked “Enter”' },
+        { id: 'e26', title: 'The Last Tram', pen: 'corbu', age: '18 and over', rating: '16+', words: 'about 2,700 words', status: 'Disqualified', school: '', note: 'Rating not allowed. Statement of reasons sent' },
+        { id: 'e27', title: 'Under the Linden', pen: 'Ana Radu', age: '18 and over', rating: '13+', words: 'about 2,000 words', status: 'Valid', school: '' }
+      ],
+      k3: [
+        { id: 'e31', title: 'What Our Grandparents Didn’t Post', pen: 'Ana Radu', age: '18 and over', rating: 'All ages', words: 'about 1,000 words', status: 'Valid', school: '' },
+        { id: 'e32', title: 'Two Kitchens', pen: 'matei.writes', age: '18 and over', rating: 'All ages', words: 'about 950 words', status: 'Valid', school: '' },
+        { id: 'e33', title: 'The Spare Key', pen: 'poppyverse', age: '16 to 17', rating: 'All ages', words: 'about 1,000 words', status: 'Valid', school: '[School], Iași' },
+        { id: 'e34', title: 'Balcony', pen: 'mara.p', age: '13 to 15', rating: 'All ages', words: 'about 800 words', status: 'Valid', school: '' }
+      ],
+      k5: [
+        { id: 'e51', title: 'Heatwave', pen: 'inkwolf', age: '16 to 17', rating: '13+', words: 'about 1,400 words', status: 'Valid', school: '' },
+        { id: 'e52', title: 'Last Train to Constanța', pen: 'matei.writes', age: '18 and over', rating: '13+', words: 'about 1,500 words', status: 'Valid', school: '' },
+        { id: 'e53', title: 'Lido', pen: 'mara.p', age: '13 to 15', rating: 'All ages', words: 'about 700 words', status: 'Valid', school: '' }
+      ]
+    };
+    var runIds = ['k4', 'k2', 'k3', 'k5'];
+    var rid = runIds.indexOf(st.run) >= 0 ? st.run : 'k2';
+    var rc = byId[rid];
+    var runChips = runIds.map(function (id) {
+      var on = rid === id;
+      return { label: byId[id].en, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ run: id, entFilter: 'All', dq: null, dqMsg: '', dqErr: false, resMsg: null }); } };
+    });
+    var list = (E[rid] || []).map(function (e) {
+      var x = Object.assign({}, e);
+      if (st.dqDone[e.id]) { x.status = 'Disqualified'; x.note = st.dqDone[e.id] + '. Statement of reasons sent'; }
+      return x;
+    });
+    var entFilters = ['All', 'Valid', 'Withdrawn', 'Disqualified'];
+    var entChips = entFilters.map(function (f) {
+      var on = st.entFilter === f;
+      var n = f === 'All' ? list.length : list.filter(function (e) { return e.status === f; }).length;
+      return { label: f + ' (' + n + ')', pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ entFilter: f }); } };
+    });
+    var entShown = 0;
+    var locked = rc.status === 'Results published' || rc.status === 'Ended';
+    var entries = list.map(function (e) {
+      var vis = st.entFilter === 'All' || e.status === st.entFilter;
+      if (vis) entShown++;
+      var tone = e.status === 'Valid' ? 'ok' : (e.status === 'Withdrawn' ? 'neutral' : 'bad');
+      return {
+        title: e.title, pen: e.pen, age: e.age, rating: e.rating, ratingStyle: self.pill(self.ratingTone(e.rating)), words: e.words,
+        status: e.status, statusStyle: self.pill(tone), note: e.note || '',
+        readLabel: e.title + ', chapter 1: read it (read only)', dqLabel: 'Disqualify ' + e.title,
+        canDq: e.status === 'Valid' && !locked,
+        dq: function () { self.setState({ dq: e.id, dqReason: '', dqErr: false, dqMsg: '' }); },
+        rowStyle: (vis ? 'display: grid;' : 'display: none;') + ' grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1.2fr) 112px; gap: 14px; align-items: start; padding: 12px 16px; border-bottom: 1px solid #EFE8F2;'
+      };
+    });
+    var cur = null; list.forEach(function (e) { if (e.id === st.dq) cur = e; });
+    var dq = {
+      open: !!cur, title: cur ? 'Disqualify “' + cur.title + '” by ' + cur.pen : '',
+      invalid: st.dqErr ? 'true' : 'false', invalidOn: !!st.dqErr,
+      onReason: function (e) { self.setState({ dqReason: self.val(e), dqErr: false }); },
+      cancel: function () { self.setState({ dq: null, dqErr: false }); },
+      confirm: function () {
+        if (!st.dqReason) { self.setState({ dqErr: true }); return; }
+        var d = Object.assign({}, st.dqDone); d[cur.id] = st.dqReason;
+        // A disqualified entry can't stay picked.
+        var p = JSON.parse(JSON.stringify(st.picks)); if (p[rid]) delete p[rid][cur.id];
+        self.setState({ dqDone: d, picks: p, dq: null, dqErr: false, dqMsg: '“' + cur.title + '” is disqualified. ' + cur.pen + ' got a statement of reasons with the rule, the facts and how to appeal. Logged in the audit log.' });
+      },
+      hasMsg: !!st.dqMsg, msg: st.dqMsg
+    };
+
+    // Results
+    var picks = st.picks[rid] || {};
+    var valid = list.filter(function (e) { return e.status === 'Valid'; });
+    var winner = null, fins = [];
+    valid.forEach(function (e) { if (picks[e.id] === 'Winner') winner = e; else if (picks[e.id] === 'Finalist') fins.push(e); });
+    var published = !!st.published[rid] || rc.status === 'Results published' || rc.status === 'Ended';
+    var issued = !!st.issued[rid];
+    var canPick = rc.status === 'Judging' && !published;
+    var pickRows = valid.map(function (e) {
+      return {
+        title: e.title, pen: e.pen, age: e.age, school: e.school ? 'Agreed to show ' + e.school : 'School not shown',
+        groupLabel: 'Result for ' + e.title,
+        opts: ['Winner', 'Finalist', 'Not placed'].map(function (o) {
+          var on = (picks[e.id] || 'Not placed') === o;
+          return {
+            label: o, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on),
+            pick: function () {
+              var p = JSON.parse(JSON.stringify(st.picks)); p[rid] = p[rid] || {};
+              var nf = Object.keys(p[rid]).filter(function (k) { return p[rid][k] === 'Finalist' && k !== e.id; }).length;
+              if (o === 'Finalist' && nf >= 5) { self.setState({ resMsg: { tone: 'warn', text: 'Up to 5 finalists. Move one back to “Not placed” first.' } }); return; }
+              // One winner: picking a new one moves the old winner to finalist.
+              if (o === 'Winner') Object.keys(p[rid]).forEach(function (k) { if (p[rid][k] === 'Winner') p[rid][k] = 'Finalist'; });
+              if (o === 'Not placed') delete p[rid][e.id]; else p[rid][e.id] = o;
+              self.setState({ picks: p, resMsg: null });
+            }
+          };
+        })
+      };
+    });
+    var by = function (e) { return 'by ' + e.pen + (e.school ? ' · ' + e.school : ''); };
+    var under16Winner = !!winner && winner.age === '13 to 15';
+    var resTone = st.resMsg ? st.resMsg.tone : '';
+    var rBg = { ok: ['#E8F1EC', '#245A41'], warn: ['#FBF3DA', '#5C3F0E'] }[resTone] || ['#F4F0EC', '#4F3D57'];
+    var btnPrimary = 'display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;';
+    var btnSecondary = 'display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;';
+    var res = {
+      notYet: rc.status === 'Open for entries',
+      notYetLine: 'Entries are still open. You can pick winners once entries close on [date].',
+      canPick: canPick, pickRows: pickRows,
+      hasWarn: canPick && !winner, warn: 'Pick a winner to see the full preview.',
+      showPreview: rc.status !== 'Open for entries',
+      pvTitle: 'Results', pvWinLabel: 'Winner', pvFinLabel: fins.length === 1 ? 'Finalist' : 'Finalists',
+      hasWinner: !!winner, winTitle: winner ? winner.title : '', winBy: winner ? by(winner) : '',
+      hasFinalists: fins.length > 0, finalists: fins.map(function (e) { return { title: e.title, by: by(e) }; }),
+      pvNote: published ? 'Live on the landing page since [date].' : 'Not public yet. This is how it will look on the landing page.',
+      pubOff: published || !canPick, pubLabel: published ? 'Results published' : 'Publish results',
+      pubStyle: btnPrimary + ((published || !canPick) ? ' opacity: 0.55; cursor: not-allowed;' : ''),
+      publish: function () {
+        if (!winner) { self.setState({ resMsg: { tone: 'warn', text: 'Pick a winner before you publish.' } }); return; }
+        var p = Object.assign({}, st.published); p[rid] = true;
+        self.setState({ published: p, resMsg: { tone: 'ok', text: 'Results published on the landing page. Every entrant gets a notification. Logged in the audit log.' } });
+      },
+      issueOff: !published || issued, issueLabel: issued ? 'Certificates issued' : 'Issue certificates',
+      issueStyle: btnSecondary + ((!published || issued) ? ' opacity: 0.55; cursor: not-allowed;' : ''),
+      issue: function () {
+        var i = Object.assign({}, st.issued); i[rid] = true;
+        var n = valid.length - (winner ? 1 : 0) - fins.length;
+        self.setState({ issued: i, resMsg: { tone: 'ok', text: 'Certificates issued: ' + (winner ? '1 winner, ' : '') + fins.length + (fins.length === 1 ? ' finalist' : ' finalists') + ' and ' + n + (n === 1 ? ' participant' : ' participants') + ' in this example. Each writer finds theirs under My certificates (S1-E8-12).' } });
+      },
+      hasMsg: !!st.resMsg, msg: st.resMsg ? st.resMsg.text : '',
+      msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; background: ' + rBg[0] + '; color: ' + rBg[1] + ';'
+    };
+
+    // Compliance side panel for the chosen contest. Example statuses.
+    var sponsored = rc.sponsor !== 'None';
+    var consent;
+    if (!winner) consent = { state: 'Not needed yet', tone: 'neutral', note: 'No winner picked yet. If the winner is under 16, a parent’s or guardian’s consent must be on file before the prize goes out.' };
+    else if (!under16Winner) consent = { state: 'Not needed', tone: 'ok', note: 'The winner is 18 or over, or 16 to 17. Nothing extra to collect for the prize.' };
+    else if (published) consent = { state: 'On file', tone: 'ok', note: 'The winner is under 16. A parent’s consent for the prize is on file, so the prize can go out.' };
+    else consent = { state: 'Needed', tone: 'bad', note: 'The winner you picked is under 16. Ask the parent or guardian through the consent flow. The prize waits until consent is on file.' };
+    var cmpData = [
+      { label: 'Rules published', state: 'Done', tone: 'ok', note: 'Reviewed by a lawyer on [date] and linked from the landing page.' },
+      { label: 'Prize tax', state: rc.status === 'Ended' || rc.status === 'Results published' ? 'Handled' : 'Check', tone: rc.status === 'Ended' || rc.status === 'Results published' ? 'ok' : 'warn', note: 'If the prize needs tax paid or withheld, the company handles it. Check with the accountant.' },
+      { label: 'Parent’s or guardian’s consent', state: consent.state, tone: consent.tone, note: consent.note },
+      { label: 'Sponsor contract signed', state: sponsored ? 'Signed' : 'No sponsor', tone: sponsored ? 'ok' : 'neutral', note: sponsored ? 'Signed on [date]. It says the sponsor has no say in judging.' : 'This contest has no sponsor.' }
+    ];
+    var cmp = cmpData.map(function (k) { return { label: k.label, state: k.state, pillStyle: self.pill(k.tone), note: k.note }; });
+
+    var run = {
+      name: rc.en, status: rc.status, statusStyle: self.pill(self.statusTone(rc.status)),
+      meta: rc.entriesWhen + ' · ' + rc.resultsWhen + ' · Sponsor: ' + rc.sponsor,
+      entChips: entChips, entries: entries,
+      entLine: 'Example entries: ' + entShown + ' shown here, ' + rc.count + ' in this example contest.' + (locked ? ' Results are public, so entries can no longer be disqualified here.' : '')
+    };
+
+    return {
+      chips: chips, rows: rows, shownLine: shown + (shown === 1 ? ' contest shown.' : ' contests shown.'),
+      su: su, runChips: runChips, run: run, dq: dq, res: res, cmp: cmp
+    };
+  }
+}
+</script>
+</body>
+</html>

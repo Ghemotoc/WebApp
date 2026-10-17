@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Chapter teaser</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
+@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+/* Approved cover backgrounds (16 Oct): one class per design, url() only allowed here */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; overflow-x: clip; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav, signed out: wordmark, Log in and Join for free only -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Main.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct) --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/d015e4df9fe6c8aad2c786d53340afd6" alt="" aria-hidden="true" width="22" height="22" style="position: absolute; left: 12px; top: 11px; width: 22px; height: 22px; pointer-events: none"><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <a href="SignIn.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none">Log in</a>
+        <a href="Main.dc.html#join" style="display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none">Join for free</a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="margin-top: 40px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 48px">
+
+      <!-- What a visitor sees after tapping a shared chapter link -->
+      <main style="flex: 1 1 640px; min-width: 0; max-width: 780px; display: flex; flex-direction: column; gap: 44px; animation: tmcRise 0.5s ease-out both">
+
+        <!-- Story header: cover, title, pen name, blurb -->
+        <section aria-labelledby="story-title" style="position: relative; display: flex; flex-wrap: wrap; gap: 28px; padding: 28px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+<img data-doodle="widget" data-doodle-on="The Salt Mine Choir" src="/_blob/2b77dad1a2170495e93cea3190c0f1b7" alt="" aria-hidden="true" class="tmc-dd-lg" width="76" height="76" style="position: absolute; top: -46px; right: 22px; width: 76px; height: 76px; transform: rotate(8deg); pointer-events: none; user-select: none; z-index: 0">
+          <div aria-hidden="true" class="tmc-cv tmc-cv-starry" style="flex: none; width: 150px; height: 204px; box-sizing: border-box; padding: 16px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end"><span style="{{coverTitleStyle}}">The Salt Mine Choir</span></div>
+          <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Shared with you · chapter 1 of 15</span>
+            <h1 id="story-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 56px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">The Salt Mine Choir</h1>
+            <span style="font-size: 16px; color: #5C4965">by <a href="Profile.dc.html" style="font-weight: 700; color: #672786">inkwolf</a></span>
+            <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #5C4965">Every Thursday, 14 teenagers take the lift 200 metres down into an old salt mine to rehearse. Their choir director counts them on the way down. One night she counts 15, and nobody can say where the new boy came from, least of all the register.</p>
+            <ul aria-label="About this story" style="list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px">
+              <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">Fiction</li>
+              <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #A9C9B6; background: #E8F1EC; color: #245A41;">Ongoing</li>
+              <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #C9B3D6; background: #F1EAF4; color: #481C5F;">15 chapters</li>
+              <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; line-height: 1; white-space: nowrap; font-size: 12px; font-weight: 700; border: 1px solid #D6CCDC; background: #F4F0EC; color: #4F3D57;">1.2k reads</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- The first part of chapter 1, fading out before the sign-up prompt -->
+        <article aria-labelledby="ch-title" style="position: relative; width: 100%; max-width: 680px; margin: 0 auto">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Chapter 1</span>
+          <h2 id="ch-title" style="margin: 8px 0 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Fifteen</h2>
+          <p style="margin: 8px 0 0; font-size: 14px; color: #6B5A73">About 9 minutes to read · You’re reading the first part</p>
+          <div style="position: relative; margin-top: 28px; display: flex; flex-direction: column; gap: 22px; font-size: 19px; line-height: 1.7; color: #26142E">
+            <p style="margin: 0">The lift down to the salt mine takes four minutes, and Mrs Dobre spends all four of them counting us. Fourteen singers, fourteen coats, one tuning fork that she checks twice. At the bottom it is 12 degrees all year, so we rehearse in our scarves and the tourists think we are part of the exhibit.</p>
+            <p style="margin: 0">We sing in the big hall, where the salt walls go up like a cathedral somebody forgot to finish. The echo lasts six seconds. Mrs Dobre says that is the only reason we sound good, and that the day we sing above ground everyone will find out.</p>
+            <p style="margin: 0">On the first Thursday in October there were fifteen of us.</p>
+            <p style="margin: 0">I noticed because I stand at the end of the altos, and the end of the altos is me. That night it was a boy in a grey jumper, holding the music the right way up and singing my part a little better than I do.</p>
+            <p style="margin: 0">In the break he said his name was Ilie and asked if I had a spare pencil. Mrs Dobre walked past us twice and said nothing, so I thought she must have invited him.</p>
+            <p style="margin: 0">On the way up, Mrs Dobre counted us again. She got to fifteen, frowned at her clipboard and started from one.</p>
+            <div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 200px; background: linear-gradient(180deg, rgba(250,248,245,0) 0%, #FAF8F5 88%)"></div>
+          </div>
+        </article>
+
+        <!-- Sign-up prompt after the teaser -->
+        <section aria-labelledby="join-title" style="position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: clamp(28px, 4vw, 44px); background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+<img data-doodle="widget" data-doodle-on="Join for free to read on" src="/_blob/23be67a233f4be95609f0a2f1d6d0523" alt="" aria-hidden="true" class="tmc-dd-wide" width="104" height="104" style="position: absolute; top: 34px; right: 34px; width: 104px; height: 104px; transform: rotate(8deg); pointer-events: none; user-select: none; z-index: 0">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">14 more chapters</span>
+          <h2 id="join-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Join for free to read on</h2>
+          <p style="margin: 0; max-width: 560px; font-size: 17px; line-height: 1.6; color: #5C4965">Reading and writing on Ghemotoc are free, with no tracking ads. Sign up with email, Google, Apple or Microsoft, add your year of birth, then do the age check with Yoti. You need to be 13 or older. Under-16s also need a parent or guardian to say yes.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px">
+            <a href="Main.dc.html#join" style="display: inline-flex; align-items: center; height: 52px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 16px; text-decoration: none">Join for free</a>
+            <a href="SignIn.dc.html" style="display: inline-flex; align-items: center; height: 52px; padding: 0 26px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #8E7B99; color: #481C5F; font-weight: 600; font-size: 16px; text-decoration: none">Log in</a>
+          </div>
+          <div style="width: 100%; margin-top: 8px; padding-top: 18px; border-top: 1px solid #EFE8F2; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+            <span style="font-size: 15px; color: #5C4965">Ghemotoc is on the web for now. The desktop and phone apps come after the web launch.</span>
+            <a href="GetApp.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-weight: 600; font-size: 15px">About the apps</a>
+          </div>
+        </section>
+
+        <!-- Wide banner: an ad-network ad, labelled AD. Ads are never personalised: the same for everyone, including under-18s. Placement rule (17 Oct): at most 2 ad slots a page, never two in view at once, never in class spaces. -->
+        <aside aria-label="Advertisement" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 0 auto; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+          <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+          <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] banner · 970 × 120</span>
+          <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+        </aside>
+      </main>
+
+      <!-- Design notes: the link preview, the Mature state and open points -->
+      <aside aria-label="Design notes" style="flex: 1 1 320px; max-width: 420px; display: flex; flex-direction: column; gap: 24px; animation: tmcRise 0.5s 0.1s ease-out both">
+
+        <section aria-labelledby="og-title" style="position: relative; display: flex; flex-direction: column; gap: 14px; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+<img data-doodle="widget" data-doodle-on="How the link looks in WhatsApp, Instagram or Tik" src="/_blob/db266190ddac4dbcbaaa474e441625da" alt="" aria-hidden="true" class="tmc-dd-lg" width="70" height="70" style="position: absolute; top: -34px; right: 20px; width: 70px; height: 70px; transform: rotate(10deg); pointer-events: none; user-select: none; z-index: 0">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Design note · link preview</span>
+          <h2 id="og-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.2; color: #481C5F">How the link looks in WhatsApp, Instagram or TikTok</h2>
+          <div style="padding: 16px; border-radius: 16px; background: #F4F0EC">
+            <div style="max-width: 300px; margin-left: auto; border-radius: 16px; background: #FFFFFF; border: 1px solid #DED3E4; overflow: hidden">
+              <div aria-hidden="true" class="tmc-cv tmc-cv-starry" style="height: 120px; box-sizing: border-box; padding: 14px; display: flex; align-items: flex-end"><span style="{{previewTitleStyle}}">The Salt Mine Choir</span></div>
+              <div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px">
+                <span style="font-weight: 700; font-size: 15px; color: #26142E">The Salt Mine Choir · Chapter 1</span>
+                <span style="font-size: 13px; color: #6B5A73">by inkwolf</span>
+                <span style="font-size: 14px; line-height: 1.45; color: #5C4965">Every Thursday, 14 teenagers take the lift 200 metres down into an old salt mine to rehearse…</span>
+                <span style="font-size: 13px; color: #6B5A73">ghemotoc.com</span>
+              </div>
+            </div>
+          </div>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Our server builds the preview from the title, pen name, blurb and cover, so every app shows the same card.</p>
+          <div style="padding: 12px 16px; border-radius: 16px; border: 1px dashed #B9A9C2; font-size: 14px; line-height: 1.5; color: #5C4965; word-break: break-all"><b style="color: #26142E">Shared link</b><br>ghemotoc.com/story/the-salt-mine-choir/1</div>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">The link has no tracking code and nothing that shows who shared it.</p>
+        </section>
+
+        <section aria-labelledby="part-title" style="display: flex; flex-direction: column; gap: 14px; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Design note · share a part</span>
+          <h2 id="part-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.2; color: #481C5F">Share a passage or a picture, like on Substack</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Select any lines, or tap a picture in a chapter, and press Share. You can share it three ways:</p>
+          <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.55; color: #5C4965">
+            <li><b style="color: #26142E">As a link to that exact spot.</b> It opens the chapter at the passage, highlighted, and the link preview shows the passage instead of the blurb.</li>
+            <li><b style="color: #26142E">As a quote card image</b> with the title, pen name and link.</li>
+            <li><b style="color: #26142E">As a picture card</b>, for maps, drawings and illustrations, with the writer’s name on it.</li>
+          </ul>
+          <div style="padding: 12px 16px; border-radius: 16px; border: 1px dashed #B9A9C2; font-size: 14px; line-height: 1.5; color: #5C4965; word-break: break-all"><b style="color: #26142E">Link to a passage</b><br>ghemotoc.com/story/the-salt-mine-choir/1#p14</div>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Writers can turn sharing off for their story or their pictures. App-only stories and stories rated 16+ or 18+ show no text or pictures to visitors who aren’t logged in.</p>
+        </section>
+
+        <section aria-labelledby="mature-title" style="display: flex; flex-direction: column; gap: 14px; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Other state · rated 16+ or 18+</span>
+          <h2 id="mature-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.2; color: #481C5F">When a story is rated 16+ or 18+</h2>
+          <div style="display: flex; gap: 14px; padding: 18px; border-radius: 16px; background: #F4F0EC">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: #FFFFFF; border: 1px solid #DED3E4; color: #481C5F; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="28" height="28" style="flex: none; display: block; width: 28px; height: 28px"></span>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-weight: 700; font-size: 16px; color: #26142E">No preview for this story</span>
+              <span style="font-size: 15px; line-height: 1.55; color: #5C4965">The writer rated it 18+. We don’t know the age of visitors who aren’t logged in, so they see the title and blurb but none of the text.</span>
+              <a href="SignIn.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: 15px">Log in to check if you can read it</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- App-only state: links to the screen visitors see when the writer chose app only (decision 2, 16 Oct) -->
+        <section aria-labelledby="apponly-title" style="display: flex; flex-direction: column; gap: 14px; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Other state · app only</span>
+          <h2 id="apponly-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; line-height: 1.2; color: #481C5F">When the writer chose app only</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">If the writer chose app only, visitors see this instead: the cover, title, blurb, writer and chapter list, and a note that the chapters open in the app.</p>
+          <a href="AppOnly.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: 15px">See the app-only screen</a>
+        </section>
+
+        <section aria-labelledby="open-title" style="position: relative; display: flex; flex-direction: column; gap: 10px; padding: 22px 24px; border-radius: 24px; background: #F1EAF4">
+<img data-doodle="widget" data-doodle-on="OPEN POINTS" src="/_blob/f71342920dbb5c9f302486ccc693c98d" alt="" aria-hidden="true" class="tmc-dd-lg" width="70" height="70" style="position: absolute; top: -32px; right: 18px; width: 70px; height: 70px; transform: rotate(-8deg); pointer-events: none; user-select: none; z-index: 0">
+          <span id="open-title" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Open points</span>
+          <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.5; color: #3A2442">
+            <li>How long the teaser is. About 600 words is the current proposal.</li>
+          </ul>
+          <span style="font-family: 'Cutive', 'Courier New', serif; margin-top: 6px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Decided 16 Oct</span>
+          <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.5; color: #3A2442">
+            <li>Until the apps exist, logged-in readers can read whole chapters in the browser if the writer allows it. The writer chooses: on the web and in the app (the default), or in the app only.</li>
+            <li>On the web, right-click and copy are off. This makes copying harder, but screenshots still work.</li>
+            <li>Search engines list only the title, blurb and pen name, never chapter text.</li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+
+    <!-- Page footer: legal links, public report form, group line and language switch -->
+    <footer style="position: relative; margin-top: 80px; padding-top: 24px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/b82a2ffa9fe0cf7876402ee97900856a" alt="" aria-hidden="true" class="tmc-dd-lg" width="76" height="76" style="position: absolute; top: -84px; right: 40px; width: 76px; height: 76px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 26px">
+        <a href="Website-Home.dc.html#faq" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Legal</a>
+        <a href="mailto:support@ghemotoc.com" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2661}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { lang: 'en' };
+  }
+
+  // Footer language switch: Română or English (interface language only).
+  langVals() {
+    var self = this, en = this.state.lang !== 'ro';
+    var base = 'height: 44px; padding: 0 18px; border: 0; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; ';
+    var on = 'background: #481C5F; color: #FFFFFF;', off = 'background: #FFFFFF; color: #5C4965;';
+    return {
+      langRo: !en, langEn: en,
+      roStyle: base + (en ? off : on), enStyle: base + (en ? on : off),
+      pickRo: function () { self.setState({ lang: 'ro' }); },
+      pickEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+
+  // Cover titles always show in full (Robert, 16 Oct): they wrap and the size steps down as the title gets longer, never cut.
+  // Up to 18 characters: base size; 19 to 28: 85%; 29 to 40: 72%; longer: 62%; never below the floor (11px unless given).
+  titleSize(title, base, floor) {
+    var n = String(title == null ? '' : title).length;
+    var k = n <= 18 ? 1 : (n <= 28 ? 0.85 : (n <= 40 ? 0.72 : 0.62));
+    return Math.max(floor || 11, Math.round(base * k * 10) / 10);
+  }
+
+  renderVals() {
+    // Cover titles: same words as on the covers above; the size follows the title's length so it always fits.
+    var t = 'The Salt Mine Choir';
+    return Object.assign({
+      coverTitleStyle: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: " + this.titleSize(t, 19) + "px; line-height: 1.05; color: #FAF8F5",
+      previewTitleStyle: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: " + this.titleSize(t, 18) + "px; line-height: 1.05; color: #FAF8F5"
+    }, this.langVals());
+  }
+}
+</script>
+</body>
+</html>

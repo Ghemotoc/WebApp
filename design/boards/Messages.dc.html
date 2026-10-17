@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Messages</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 40px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" aria-current="page" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; margin-left: -10px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Page header -->
+    <header style="position: relative; padding: 48px 0 28px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; animation: tmcRise 0.5s ease-out both">
+      <img data-doodle="background" data-doodle-on="Your messages" src="/_blob/046fb8a00941dcf5a7051dd98d11bbef" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="bottom: -10px; left: 560px; width: 84px">
+      <div style="display: flex; flex-direction: column; gap: 14px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Messages</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Your messages</h1>
+        <p style="margin: 0; max-width: 640px; font-size: 18px; line-height: 1.6; color: #5C4965">Private chats with other writers and readers. Text only.</p>
+      </div>
+      <a href="Settings.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none"><img src="/_blob/86d5d1ab40063c9c460579d5ad428d06" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Message settings</a>
+    </header>
+
+    <!-- Messages: chat list, conversation, chat details -->
+    <section aria-label="Messages" style="display: flex; flex-wrap: wrap; align-items: stretch; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; overflow: hidden; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); animation: tmcRise 0.5s 0.05s ease-out both">
+
+      <!-- Chat list with a Requests tab -->
+      <div style="flex: 1 1 300px; max-width: 340px; min-width: 0; box-sizing: border-box; border-right: 1px solid #EFE8F2; display: flex; flex-direction: column">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 20px 14px">
+          <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Chats</h2>
+          <button type="button" aria-label="New message" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #672786; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
+        </div>
+
+        <div role="tablist" aria-label="Chats and requests" style="display: flex; gap: 6px; margin: 0 16px 14px; padding: 4px; border-radius: 999px; background: #FFFFFF; border: 1px solid #8E7B99">
+          <button type="button" role="tab" class="tmc-chip" aria-selected="{{chatsOn}}" onClick="{{pickChats}}" style="{{tabChatsStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>All chats</button>
+          <button type="button" role="tab" class="tmc-chip" aria-selected="{{requestsOn}}" onClick="{{pickRequests}}" style="{{tabReqStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Requests<span style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">{{requestCount}}</span></button>
+        </div>
+
+        <!-- The adult-to-minor rule, in plain words -->
+        <div style="margin: 0 16px 14px; padding: 14px 16px; display: flex; gap: 12px; background: #F1EAF4; border-radius: 16px">
+          <img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none">
+          <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #26142E"><strong style="font-weight: 700">Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on.</strong> Right now, only people you follow can message you. <a href="Settings.dc.html" style="font-weight: 600">Change</a></p>
+        </div>
+
+        <sc-if value="{{chatsOn}}" hint-placeholder-val="{{true}}">
+          <ul role="tabpanel" aria-label="All chats" style="list-style: none; margin: 0; padding: 0; border-top: 1px solid #EFE8F2">
+            <li>
+              <a href="#conversation" aria-current="true" style="display: flex; gap: 12px; padding: 14px 16px 14px 13px; border-left: 3px solid #E6C24C; background: #FAF8F5; text-decoration: none; color: inherit; border-bottom: 1px solid #EFE8F2">
+                <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">i</span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: flex; align-items: baseline; gap: 8px"><span style="font-weight: 700; font-size: 15px; color: #26142E">inkwolf</span><span style="margin-left: auto; font-size: 12px; color: #6B5A73">10:42</span></span>
+                  <span style="display: block; margin-top: 2px; font-size: 14px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Deal. Send me chapter 7 by Sunday?</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="#conversation" style="display: flex; gap: 12px; padding: 14px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #EFE8F2">
+                <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#2F6B4F,#7DB596); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">l</span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: flex; align-items: center; gap: 8px"><span style="font-weight: 700; font-size: 15px; color: #26142E">luca.drafts</span><span role="img" aria-label="Unread" style="width: 8px; height: 8px; border-radius: 50%; background: #672786"></span><span style="margin-left: auto; font-size: 12px; color: #6B5A73">09:15</span></span>
+                  <span style="display: block; margin-top: 2px; font-size: 14px; font-weight: 600; color: #26142E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Did you post your entry for this week’s prompt?</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="#conversation" style="display: flex; gap: 12px; padding: 14px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #EFE8F2">
+                <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#7A5C12,#C9A24A); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">m</span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: flex; align-items: baseline; gap: 8px"><span style="font-weight: 600; font-size: 15px; color: #26142E">mira_reads</span><span style="margin-left: auto; font-size: 12px; color: #6B5A73">Yesterday</span></span>
+                  <span style="display: block; margin-top: 2px; font-size: 14px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Have you read Small Rooms? The lift poem is so good</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="#conversation" style="display: flex; gap: 12px; padding: 14px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #EFE8F2">
+                <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#2E4A8C,#7C95CF); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">s</span>
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: flex; align-items: baseline; gap: 8px"><span style="font-weight: 600; font-size: 15px; color: #26142E">sasha.ink</span><span style="margin-left: auto; font-size: 12px; color: #6B5A73">Mon</span></span>
+                  <span style="display: block; margin-top: 2px; font-size: 14px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">You: thanks for the notes on chapter 1</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </sc-if>
+
+        <!-- Message requests: first messages from people who don't follow you -->
+        <sc-if value="{{requestsOn}}" hint-placeholder-val="{{false}}">
+          <div role="tabpanel" aria-label="Message requests" style="border-top: 1px solid #EFE8F2; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+            <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #5C4965">First messages from people who don’t follow you show up here. They can’t send more until you accept.</p>
+            <sc-if value="{{reqPending}}" hint-placeholder-val="{{true}}">
+              <div style="padding: 16px; border: 1px solid #DED3E4; border-radius: 16px; display: flex; flex-direction: column; gap: 10px">
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#2E4A8C,#7C95CF); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">p</span>
+                  <span style="min-width: 0"><a href="Profile.dc.html" style="display: block; font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">poppyverse</a><span style="display: block; font-size: 13px; color: #6B5A73">Poetry · Small Rooms</span></span>
+                </div>
+                <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #26142E">Hi! I read The Girl Who Fixed Radios in one go. Want to swap feedback? Your chapter 7 for my next three poems?</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <button type="button" onClick="{{acceptReq}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Accept request</button>
+                  <button type="button" onClick="{{deleteReq}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Delete request</button>
+                  <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 12px; color: #672786; font-size: 14px; font-weight: 600">Report</a>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{reqDone}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="margin: 0; padding: 14px 16px; border-radius: 16px; background: #F4F0EC; font-size: 14px; line-height: 1.5; color: #26142E">{{reqDoneText}}</p>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- Open conversation -->
+      <div id="conversation" style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; background: #FAF8F5">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 16px 24px; background: #FFFFFF; border-bottom: 1px solid #EFE8F2">
+          <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 17px">i</span>
+          <div style="min-width: 0">
+            <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E"><a href="Profile.dc.html" style="color: inherit; text-decoration: none">inkwolf</a></h2>
+            <p style="margin: 2px 0 0; font-size: 13px; color: #6B5A73">Fiction writer · The Salt Mine Choir, 15 chapters</p>
+          </div>
+          <div style="margin-left: auto; display: flex; gap: 8px">
+            <button type="button" aria-expanded="{{blockOpen}}" onClick="{{toggleBlock}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><img src="/_blob/12de72f2d9385db253735f45ee5482f3" alt="" aria-hidden="true" width="22" height="22" style="flex: none; display: block; width: 22px; height: 22px">Block</button>
+            <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Report</a>
+          </div>
+        </div>
+
+        <!-- Block confirmation, opened by the Block button -->
+        <sc-if value="{{blockOpen}}" hint-placeholder-val="{{false}}">
+          <div role="alertdialog" aria-labelledby="block-inline-title" style="margin: 16px 24px 0; padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+            <div style="flex: 1 1 280px">
+              <p id="block-inline-title" style="margin: 0; font-weight: 700; font-size: 15px; color: #26142E">Block inkwolf?</p>
+              <p style="margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: #5C4965">You won’t be able to message, mention or follow each other. inkwolf won’t be told.</p>
+            </div>
+            <div style="display: flex; gap: 8px">
+              <button type="button" onClick="{{toggleBlock}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Don’t block</button>
+              <button type="button" onClick="{{toggleBlock}}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Block inkwolf</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <ol aria-label="Messages with inkwolf" style="list-style: none; margin: 0; flex: 1; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
+          <li style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap; align-self: center">Today</li>
+
+          <li style="align-self: flex-start; max-width: 70%; display: flex; align-items: flex-start; gap: 4px">
+            <div>
+              <p style="margin: 0; padding: 12px 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 18px 18px 18px 6px; font-size: 15px; line-height: 1.5; color: #26142E">So the swap: you read my chapter 14, I read your chapter 6?</p>
+              <span style="display: block; margin-top: 4px; font-size: 12px; color: #6B5A73">inkwolf · 10:31</span>
+            </div>
+            <a href="#report-message" aria-label="Report this message" style="flex: none; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; color: #6B5A73"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none"></a>
+          </li>
+          <li style="align-self: flex-end; max-width: 70%; text-align: right">
+            <p style="margin: 0; padding: 12px 16px; background: #481C5F; border-radius: 18px 18px 6px 18px; font-size: 15px; line-height: 1.5; color: #FFFFFF; text-align: left">Yes. Be honest about my ending. I think it’s too neat.</p>
+            <span style="display: block; margin-top: 4px; font-size: 12px; color: #6B5A73">You · 10:33</span>
+          </li>
+          <li style="align-self: flex-start; max-width: 70%; display: flex; align-items: flex-start; gap: 4px">
+            <div>
+              <p style="margin: 0; padding: 12px 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 18px 18px 18px 6px; font-size: 15px; line-height: 1.5; color: #26142E">Will do. The radio saying “Ana, are you there?” already gave me chills though.</p>
+              <span style="display: block; margin-top: 4px; font-size: 12px; color: #6B5A73">inkwolf · 10:36</span>
+            </div>
+            <a href="#report-message" aria-label="Report this message" style="flex: none; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; color: #6B5A73"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none"></a>
+          </li>
+          <li style="align-self: flex-end; max-width: 70%; text-align: right">
+            <p style="margin: 0; padding: 12px 16px; background: #481C5F; border-radius: 18px 18px 6px 18px; font-size: 15px; line-height: 1.5; color: #FFFFFF; text-align: left">Thank you!! I’ll read your chapter 14 by Friday, I have a maths test Thursday.</p>
+            <span style="display: block; margin-top: 4px; font-size: 12px; color: #6B5A73">You · 10:40</span>
+          </li>
+          <li style="align-self: flex-start; max-width: 70%; display: flex; align-items: flex-start; gap: 4px">
+            <div>
+              <p style="margin: 0; padding: 12px 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 18px 18px 18px 6px; font-size: 15px; line-height: 1.5; color: #26142E">Deal. Send me chapter 7 by Sunday?</p>
+              <span style="display: block; margin-top: 4px; font-size: 12px; color: #6B5A73">inkwolf · 10:42</span>
+            </div>
+            <a href="#report-message" aria-label="Report this message" style="flex: none; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; color: #6B5A73"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none"></a>
+          </li>
+        </ol>
+
+        <form style="margin: 0; padding: 16px 24px 18px; background: #FFFFFF; border-top: 1px solid #EFE8F2">
+          <div style="display: flex; gap: 10px; align-items: center">
+            <label for="composer" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Message to inkwolf</label>
+            <input id="composer" type="text" placeholder="Write a message to inkwolf" aria-describedby="composer-hint" style="flex: 1; min-width: 0; height: 48px; box-sizing: border-box; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+            <button type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>Send</button>
+          </div>
+          <p id="composer-hint" style="margin: 8px 0 0 20px; font-size: 13px; color: #6B5A73">Text only. You can’t send pictures or files.</p>
+        </form>
+      </div>
+
+      <!-- Chat details -->
+      <aside aria-label="About this chat" style="position: relative; flex: 1 1 260px; max-width: 300px; min-width: 0; box-sizing: border-box; padding: 22px 20px; border-left: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 22px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">About this chat</span>
+          <a href="Profile.dc.html" style="font-size: 15px; font-weight: 600">View inkwolf’s profile</a>
+          <span style="font-size: 14px; line-height: 1.5; color: #5C4965">You follow each other.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Who can message you</span>
+          <span style="font-size: 15px; font-weight: 600; color: #26142E">People you follow</span>
+          <span style="font-size: 14px; line-height: 1.5; color: #5C4965">This is the setting for everyone under 18. You can also pick “Nobody”. <a href="Settings.dc.html" style="font-weight: 600">Change</a></span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Messages from adults</span>
+          <span style="font-size: 15px; font-weight: 600; color: #26142E">Off</span>
+          <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Only you can turn this on, in Settings. <a href="Settings.dc.html" style="font-weight: 600" aria-label="Change messages from adults in Settings">Change</a></span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Delete</span>
+          <button type="button" style="align-self: flex-start; height: 44px; padding: 0 18px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Delete chat</button>
+          <span style="font-size: 14px; line-height: 1.5; color: #5C4965">This removes the chat for you. When both of you delete it, the messages are deleted for good.</span>
+        </div>
+        <div style="padding: 16px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-weight: 700; font-size: 14px; color: #26142E">Who can read your messages</span>
+          <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Messages aren’t end-to-end encrypted. Our team reads them only if someone reports them or the law requires it.</span>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Other states, shown side by side so the board reads as a static picture -->
+    <section aria-labelledby="states-title" style="position: relative; margin-top: 64px">
+      <img data-doodle="background" data-doodle-on="Reporting, blocking and limits" src="/_blob/24c5157558871ed49e3bab4fc802e2cd" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -24px; right: 40px; width: 84px; transform: rotate(6deg)">
+      <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Other states</span>
+        <h2 id="states-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Reporting, blocking and limits</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; align-items: start">
+
+        <!-- Report a message -->
+        <div id="report-message" role="dialog" aria-labelledby="report-msg-title" style="grid-row: span 2; box-sizing: border-box; padding: 26px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 16px">
+          <div>
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Report a message</span>
+            <h3 id="report-msg-title" style="margin: 6px 0 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #481C5F">Report this message</h3>
+            <p style="margin: 4px 0 0; font-size: 14px; color: #5C4965">inkwolf won’t see who reported it.</p>
+          </div>
+          <blockquote style="margin: 0; padding: 12px 16px; background: #F4F0EC; border-radius: 16px">
+            <span style="display: block; font-size: 12px; color: #6B5A73">inkwolf, today at 10:42</span>
+            <span style="display: block; margin-top: 2px; font-size: 15px; color: #26142E">Deal. Send me chapter 7 by Sunday?</span>
+          </blockquote>
+          <fieldset style="margin: 0; padding: 0; border: 0">
+            <legend style="padding: 0; margin-bottom: 10px; font-weight: 700; font-size: 15px; color: #26142E">What’s wrong?</legend>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{msgReasons}}" as="r" hint-placeholder-count="8">
+                <label class="tmc-chip" style="{{r.style}}"><input type="radio" name="msg-reason" value="{{r.label}}" checked="{{r.on}}" onChange="{{r.pick}}" style="width: 18px; height: 18px; margin: 0; accent-color: #672786">{{r.label}}</label>
+              </sc-for>
+            </div>
+          </fieldset>
+          <div>
+            <label for="report-note" style="display: block; font-weight: 700; font-size: 15px; color: #26142E">Add a note <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+            <textarea id="report-note" rows="3" placeholder="Tell us what happened" style="display: block; width: 100%; margin-top: 8px; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FAF8F5; font-family: inherit; font-size: 15px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+          </div>
+          <p style="margin: 0; padding: 12px 16px; border-radius: 16px; background: #F1EAF4; font-size: 14px; line-height: 1.5; color: #26142E">We’ll send this message and up to 20 messages before it, so the person who checks can see what happened. A person on our team reads every report.</p>
+          <div style="display: flex; justify-content: flex-end; gap: 8px">
+            <button type="button" style="height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Cancel</button>
+            <button type="button" style="height: 44px; padding: 0 22px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Send report</button>
+          </div>
+        </div>
+
+        <!-- After sending a report -->
+        <div role="status" style="box-sizing: border-box; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">After sending</span>
+          <span style="display: inline-flex; align-items: center; gap: 10px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #2F6B4F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m8 12 3 3 5-6"></path></svg>Report sent</span>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">A person on our team will read it. We’ll tell you what we decide in your notifications.</p>
+          <a href="MyReports.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; height: 44px; font-size: 15px; font-weight: 600">See my reports</a>
+        </div>
+
+        <!-- Block confirmation -->
+        <div role="alertdialog" aria-labelledby="block-title" style="box-sizing: border-box; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Block</span>
+          <h3 id="block-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">Block inkwolf?</h3>
+          <ul style="margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6; color: #5C4965">
+            <li>You won’t be able to message, mention or follow each other.</li>
+            <li>inkwolf won’t be told.</li>
+            <li>You can unblock them in Settings.</li>
+          </ul>
+          <div style="display: flex; gap: 8px; margin-top: 4px">
+            <button type="button" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Don’t block</button>
+            <button type="button" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Block inkwolf</button>
+          </div>
+        </div>
+
+        <!-- What an adult sees on Lia's profile -->
+        <div style="box-sizing: border-box; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 12px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">What an adult sees on your profile</span>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid #EFE8F2; border-radius: 16px">
+            <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px">LP</span>
+            <span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 700; font-size: 15px; color: #26142E">Lia Popescu</span><span style="display: block; font-size: 13px; color: #6B5A73">@lia.writes</span></span>
+            <span style="display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border: 1px solid #672786; border-radius: 999px; color: #672786; font-size: 14px; font-weight: 600">Follow</span>
+          </div>
+          <!-- The adult sees the same neutral note as on any account with messages off: it never hints at age (Robert, 17 Oct) -->
+          <p style="margin: 0; padding: 10px 14px; border-radius: 12px; background: #F4F0EC; font-size: 14px; line-height: 1.5; color: #4F3D57">Lia isn’t taking messages right now.</p>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">They see no Message button, only this note. It’s the same note anyone sees when someone has turned messages off, so nothing tells them your age.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Small page footer: legal links, report without an account, language switch -->
+  <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/1634f9ef3c76431d8c96ef7c753c480b" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -70px; left: clamp(16px, 4vw, 64px); width: 62px; transform: rotate(-6deg)">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 20px; border-top: 1px solid #DED3E4; font-size: 13px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2229}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // tab: which list shows; req: the message request's state; blockOpen: the inline block confirmation.
+    this.state = { tab: 'chats', req: 'pending', blockOpen: false, msgReason: 'Harassment', lang: 'en' };
+  }
+
+  // Pill-tab look for the chat list switcher (pill system, 17 Oct): a segmented control whose wrapper carries
+  // the visible edge; the selected tab is plum with a check, so the state is not shown by a shadow alone.
+  tabStyle(on) {
+    return 'flex: 1; ' + 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+          + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: transparent; color: #481C5F; border: 1px solid transparent;');
+  }
+
+  // Language switch in the footer (Română / English).
+  langVals() {
+    var self = this, l = this.state.lang;
+    var st = function (on) {
+      return 'height: 40px; padding: 0 16px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+        + (on ? 'background: #2A0E33; color: #FBF7EC; font-weight: 600;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+    return {
+      roOn: l === 'ro', enOn: l === 'en', roStyle: st(l === 'ro'), enStyle: st(l === 'en'),
+      pickRo: function () { self.setState({ lang: 'ro' }); },
+      pickEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+    var chatsOn = st.tab === 'chats';
+    var doneText = st.req === 'accepted'
+      ? 'Accepted. The chat with poppyverse is now in All chats.'
+      : 'Deleted. poppyverse won’t be told.';
+    // Reasons for reporting a message: the same list as every other report, shortest first.
+    var reasons = ['Harassment', 'Spam', 'Hate', 'Self-harm', 'Sexual content involving a minor', 'Illegal content', 'Terrorism', 'Other'];
+    var msgReasons = reasons.map(function (r) {
+      var on = st.msgReason === r;
+      return {
+        label: r, on: on,
+        // Pill system (17 Oct): radio chip, 36 px in a 44 px tap area; the radio dot shows the choice.
+        style: 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; white-space: nowrap; border-radius: 999px; font-size: 14px; color: #481C5F; cursor: pointer; '
+          + (on ? 'border: 1px solid #481C5F; background: #F1EAF4; font-weight: 700;' : 'border: 1px solid #8E7B99; background: #FFFFFF; font-weight: 600;'),
+        pick: function () { self.setState({ msgReason: r }); }
+      };
+    });
+    return Object.assign(this.langVals(), {
+      msgReasons: msgReasons,
+      chatsOn: chatsOn, requestsOn: !chatsOn,
+      tabChatsStyle: this.tabStyle(chatsOn), tabReqStyle: this.tabStyle(!chatsOn),
+      pickChats: function () { self.setState({ tab: 'chats' }); },
+      pickRequests: function () { self.setState({ tab: 'requests' }); },
+      requestCount: st.req === 'pending' ? '1' : '0',
+      reqPending: st.req === 'pending', reqDone: st.req !== 'pending', reqDoneText: doneText,
+      acceptReq: function () { self.setState({ req: 'accepted' }); },
+      deleteReq: function () { self.setState({ req: 'deleted' }); },
+      blockOpen: st.blockOpen,
+      toggleBlock: function () { self.setState({ blockOpen: !st.blockOpen }); }
+    });
+  }
+}
+</script>
+</body>
+</html>

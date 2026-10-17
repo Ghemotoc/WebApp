@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+
+.tmc-doodle{position:absolute;pointer-events:none;user-select:none;z-index:0}
+@media (max-width: 900px){.tmc-doodle-wide{display:none}}
+@media (max-width: 1300px){.tmc-doodle-xl{display:none}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: Settings belongs to the account picture, so it carries aria-current -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px; padding: 2px; box-sizing: border-box; border-radius: 999px; background: #FBF7EC">Write</a>
+        <a href="Settings.dc.html" aria-current="page" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #481C5F">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <header style="padding: 48px 0 32px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; position: relative; animation: tmcRise 0.5s ease-out both">
+      <img class="tmc-doodle tmc-doodle-wide" src="/_blob/1dc9eb802c05328c62a8eb50afa88846" alt="" aria-hidden="true" style="right: 0; top: 4px; width: 104px; height: 104px; transform: rotate(8deg)">
+      <img class="tmc-doodle tmc-doodle-wide" src="/_blob/1de6769cdca825a91e29192b6f813576" alt="" aria-hidden="true" style="right: 150px; top: 30px; width: 52px; height: 52px; transform: rotate(-6deg)">
+      <div style="display: flex; flex-direction: column; gap: 14px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Your account</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Settings</h1>
+        <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #5C4965">Signed in as Lia Popescu · @lia.writes</p>
+      </div>
+      <p role="status" style="margin: 0; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 600; color: #2F6B4F"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>{{savedText}}</p>
+    </header>
+
+    <!-- Side tabs + panel. The tabs stack above the panel on a phone. -->
+    <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; animation: tmcRise 0.5s 0.05s ease-out both">
+
+      <nav aria-label="Settings sections" style="flex: 1 1 260px; max-width: 320px; min-width: 0; padding: 10px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 2px">
+        <sc-for list="{{tabsA}}" as="t" hint-placeholder-count="7">
+          <button type="button" aria-current="{{t.current}}" aria-controls="settings-panel" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+        </sc-for>
+        <a href="MyReports.dc.html" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 14px; color: #26142E; font-size: 15px; font-weight: 500; text-decoration: none">My reports<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B5A73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M8 7h9v9"></path></svg></a>
+        <sc-for list="{{tabsB}}" as="t" hint-placeholder-count="2">
+          <button type="button" aria-current="{{t.current}}" aria-controls="settings-panel" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+        </sc-for>
+        <a href="#contact-us" style="display: flex; align-items: center; min-height: 48px; padding: 0 16px; border-radius: 14px; color: #26142E; font-size: 15px; font-weight: 500; text-decoration: none">Contact us</a>
+      </nav>
+
+      <div id="settings-panel" style="flex: 999 1 560px; min-width: 0; padding: clamp(24px, 3vw, 36px); box-sizing: border-box; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+
+        <!-- ============ PRIVACY (S1-E13-01, S1-E9-04, decision 6) ============ -->
+        <sc-if value="{{isPrivacy}}" hint-placeholder-val="{{true}}">
+          <section aria-labelledby="privacy-h" style="display: flex; flex-direction: column; gap: 28px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Privacy</span>
+              <h2 id="privacy-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Privacy</h2>
+              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Choose what other people can see about you. Changes save straight away.</p>
+            </div>
+
+            <p style="margin: 0; display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: #F1EAF4; font-size: 15px; line-height: 1.6; color: #3A2442"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none; width: 24px; height: 24px; margin-top: 1px"><span>You’re under 18, so every setting here started at its most private choice. You can change them any time.</span></p>
+
+            <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+              <legend style="padding: 0 0 10px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Who can see your profile</legend>
+              <sc-for list="{{profileOpts}}" as="o" hint-placeholder-count="3">
+                <label style="{{o.style}}"><input type="radio" name="profile-vis" checked="{{o.checked}}" onChange="{{o.pick}}" style="margin: 0; width: 18px; height: 18px; flex: none; accent-color: #672786"><span style="flex: 1">{{o.label}}</span><sc-if value="{{o.hasTag}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE; font-size: 12px; font-weight: 700; white-space: nowrap">{{o.tag}}</span></sc-if></label>
+              </sc-for>
+              <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">Your pen name always shows on stories you publish. Your bio, followers and forum activity follow this choice.</span>
+            </fieldset>
+
+            <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+              <legend style="padding: 0 0 10px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Who can message you</legend>
+              <sc-for list="{{msgOpts}}" as="o" hint-placeholder-count="3">
+                <label style="{{o.style}}"><input type="radio" name="msg-who-p" checked="{{o.checked}}" onChange="{{o.pick}}" style="margin: 0; width: 18px; height: 18px; flex: none; accent-color: #672786"><span style="flex: 1">{{o.label}}</span><sc-if value="{{o.hasTag}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE; font-size: 12px; font-weight: 700; white-space: nowrap">{{o.tag}}</span></sc-if></label>
+              </sc-for>
+              <span style="display: flex; gap: 8px; align-items: flex-start; font-size: 14px; line-height: 1.55; color: #3A2442"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Your choice here covers people under 18. For adults, the switch below decides. This is the same setting as in Messages.</span>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 16px 18px; border: 1px solid #DED3E4; border-radius: 16px">
+                <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 4px">
+                  <span id="adult-msg-p" style="font-weight: 700; font-size: 16px; color: #26142E">Let adults message me</span>
+                  <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Only you can change this, never a parent, our team or the adult.</span>
+                </div>
+                <button type="button" role="switch" aria-checked="{{adultMsgStr}}" aria-labelledby="adult-msg-p" onClick="{{toggleAdultMsg}}" style="{{adultMsgTrack}}"><span style="{{adultMsgKnob}}"></span></button>
+              </div>
+            </fieldset>
+
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 18px 0; border-top: 1px solid #EFE8F2; border-bottom: 1px solid #EFE8F2">
+              <div style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 4px">
+                <span id="online-label" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Show when I’m online</span>
+                <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">Off unless you turn it on. When it’s on, people you follow see a small dot by your name while you’re using Ghemotoc.</span>
+              </div>
+              <button type="button" role="switch" aria-checked="{{onlineStr}}" aria-labelledby="online-label" onClick="{{toggleOnline}}" style="{{onlineTrack}}"><span style="{{onlineKnob}}"></span></button>
+            </div>
+
+            <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+              <legend style="padding: 0 0 10px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Who can see your library</legend>
+              <sc-for list="{{libOpts}}" as="o" hint-placeholder-count="3">
+                <label style="{{o.style}}"><input type="radio" name="lib-vis" checked="{{o.checked}}" onChange="{{o.pick}}" style="margin: 0; width: 18px; height: 18px; flex: none; accent-color: #672786"><span style="flex: 1">{{o.label}}</span><sc-if value="{{o.hasTag}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE; font-size: 12px; font-weight: 700; white-space: nowrap">{{o.tag}}</span></sc-if></label>
+              </sc-for>
+              <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">Your library is what you’re reading, the stories you follow and your reading lists.</span>
+            </fieldset>
+
+            <!-- Decision 6 (proposal): country from the connection, editable; county is separate and optional -->
+            <div style="display: flex; flex-direction: column; gap: 16px; padding-top: 22px; border-top: 1px solid #EFE8F2">
+              <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Where you are</h3>
+              <div style="display: flex; flex-wrap: wrap; gap: 20px">
+                <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                  <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Country</span>
+                  <span style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; box-sizing: border-box; border: 1px solid #EFE8F2; border-radius: 999px; background: #F4F0EC; font-size: 15px; color: #26142E"><b>{{country}}</b><span style="color: #6B5A73">From your connection</span></span>
+                  <span style="font-size: 14px; line-height: 1.55; color: #5C4965">{{countryNote}}</span>
+                </div>
+                <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                  <label for="county" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">County or region (optional)</label>
+                  <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="county" value="{{county}}" onChange="{{setCounty}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+                    <option value="">Don’t use an area</option>
+                    <option value="Bucharest">Bucharest</option>
+                    <option value="Brașov">Brașov</option>
+                    <option value="Cluj">Cluj</option>
+                    <option value="Constanța">Constanța</option>
+                    <option value="Iași">Iași</option>
+                    <option value="Prahova">Prahova</option>
+                    <option value="Timiș">Timiș</option>
+                  </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  <span style="font-size: 14px; line-height: 1.55; color: #5C4965">{{countyNote}}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ============ ACCOUNT ============ -->
+        <sc-if value="{{isAccount}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="account-h" style="display: flex; flex-direction: column; gap: 24px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Account</span>
+              <h2 id="account-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Account</h2>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px">
+              <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                <label for="handle" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Username</label>
+                <input id="handle" type="text" value="{{handle}}" onChange="{{setHandle}}" style="height: 48px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+                <span style="font-size: 14px; color: #6B5A73">People find you by this. You can change it once a month.</span>
+              </div>
+              <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                <label for="pen" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Pen name (optional)</label>
+                <input id="pen" type="text" value="{{penName}}" onChange="{{setPen}}" placeholder="For example, L. Popescu" style="height: 48px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+                <span style="font-size: 14px; color: #6B5A73">Shown on your stories instead of your username.</span>
+              </div>
+            </div>
+            <dl style="margin: 0; display: flex; flex-direction: column; border-top: 1px solid #EFE8F2">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 16px 0; border-bottom: 1px solid #EFE8F2"><dt style="flex: 0 0 200px; font-weight: 600; font-size: 15px; color: #26142E">Name</dt><dd style="margin: 0; flex: 1 1 240px; text-align: right; font-size: 15px; color: #5C4965">Lia Popescu · only you and our team see this</dd></div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 16px 0; border-bottom: 1px solid #EFE8F2"><dt style="flex: 0 0 200px; font-weight: 600; font-size: 15px; color: #26142E">Email</dt><dd style="margin: 0; flex: 1 1 240px; text-align: right; font-size: 15px; color: #5C4965">l••••@example.com</dd><button type="button" onClick="{{goLogins}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Change</button></div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 16px 0; border-bottom: 1px solid #EFE8F2"><dt style="flex: 0 0 200px; font-weight: 600; font-size: 15px; color: #26142E">Year of birth</dt><dd style="margin: 0; flex: 1 1 240px; text-align: right; font-size: 15px; color: #5C4965">March 2010 · We asked for the month because 2010 alone doesn’t show whether you’re 15 or 16. You can’t change this yourself. If it’s wrong, <a href="#contact-us" style="font-weight: 600">contact us</a>.</dd></div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 16px 0; border-bottom: 1px solid #EFE8F2"><dt style="flex: 0 0 200px; font-weight: 600; font-size: 15px; color: #26142E">Age check</dt><dd style="margin: 0; flex: 1 1 240px; text-align: right; font-size: 15px; color: #5C4965"><span style="color: #2F6B4F; font-weight: 600">Passed</span> with Yoti. We keep only the result, never your photo.</dd></div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 16px 0; border-bottom: 1px solid #EFE8F2"><dt style="flex: 0 0 200px; font-weight: 600; font-size: 15px; color: #26142E">Parent or guardian consent</dt><dd style="margin: 0; flex: 1 1 240px; text-align: right; font-size: 15px; color: #5C4965">Not needed. It’s only for people under 16.</dd></div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 16px 0; border-bottom: 1px solid #EFE8F2"><dt style="flex: 0 0 200px; font-weight: 600; font-size: 15px; color: #26142E">Country and area</dt><dd style="margin: 0; flex: 1 1 240px; text-align: right; font-size: 15px; color: #5C4965">{{country}} · {{countyShort}}</dd><button type="button" onClick="{{goPrivacy}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Change in Privacy</button></div>
+            </dl>
+          </section>
+        </sc-if>
+
+        <!-- ============ WAYS TO LOG IN (decision 1) ============ -->
+        <sc-if value="{{isLogins}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="logins-h" style="display: flex; flex-direction: column; gap: 22px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Ways to log in</span>
+              <h2 id="logins-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Ways to log in</h2>
+              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Log in with any of these. Google, Apple and Microsoft only replace your password. You need at least one.</p>
+            </div>
+            <p style="margin: 0; display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: #F1EAF4; font-size: 15px; line-height: 1.6; color: #3A2442"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#481C5F" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01"></path><path d="M11 12h1v4h1"></path></svg><span>You still need the age check. Google, Apple and Microsoft don’t tell us how old you are.</span></p>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid #DED3E4; border-radius: 20px; overflow: hidden">
+              <sc-for list="{{methods}}" as="m" hint-placeholder-count="5">
+                <li style="{{m.rowStyle}}">
+                  <span aria-hidden="true" style="{{m.badge}}"><sc-if value="{{m.isBrand}}" hint-placeholder-val="{{false}}"><span title="Official logo goes here" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border: 1.5px dashed #8E7B99; border-radius: 4px; background: #F4F0EC"></span></sc-if><sc-if value="{{m.notBrand}}" hint-placeholder-val="{{true}}">{{m.letter}}</sc-if></span>
+                  <span style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+                    <span style="font-weight: 700; font-size: 15px; color: #26142E">{{m.name}}</span>
+                    <span style="font-size: 14px; color: #6B5A73">{{m.detail}}</span>
+                  </span>
+                  <span style="{{m.statusStyle}}">{{m.status}}</span>
+                  <button type="button" disabled="{{m.disabled}}" aria-describedby="{{m.descId}}" onClick="{{m.act}}" style="{{m.btnStyle}}">{{m.btnLabel}}</button>
+                </li>
+              </sc-for>
+            </ul>
+            <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #6B5A73">Design note: the dashed squares are logo slots. The built app uses Google’s, Apple’s and Microsoft’s official, full-colour logos from their brand kits, unchanged.</p>
+            <p id="last-method" role="status" style="{{lastNoteStyle}}">{{lastNote}}</p>
+          </section>
+        </sc-if>
+
+        <!-- ============ NOTIFICATIONS (S1-E7-02, S1-E7-03) ============ -->
+        <sc-if value="{{isNotif}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="notif-h" style="display: flex; flex-direction: column; gap: 22px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Notifications</span>
+              <h2 id="notif-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Notifications</h2>
+              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Choose what we email you and what shows up in the app.</p>
+            </div>
+            <div style="overflow-x: auto; border: 1px solid #DED3E4; border-radius: 20px">
+              <div role="table" aria-label="Notification choices" style="min-width: 560px; font-size: 15px; width: 100%">
+                <div role="rowgroup">
+                  <div role="row" style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); background: #FAF8F5; text-align: left">
+                    <div role="columnheader" style="min-width: 0; padding: 14px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">TYPE</div>
+                    <div role="columnheader" style="min-width: 0; padding: 14px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">EMAIL</div>
+                    <div role="columnheader" style="min-width: 0; padding: 14px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">PUSH IN YOUR BROWSER</div>
+                  </div>
+                </div>
+                <div role="rowgroup">
+                  <sc-for list="{{notifRows}}" as="r" hint-placeholder-count="5">
+                    <div role="row" style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); border-top: 1px solid #EFE8F2">
+                      <div role="rowheader" style="min-width: 0; padding: 12px 18px; text-align: left; font-weight: 600; color: #26142E">{{r.label}}</div>
+                      <div role="cell" style="min-width: 0; padding: 12px 18px">
+                        <label for="{{r.selId}}" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Email for {{r.label}}</label>
+                        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="{{r.selId}}" value="{{r.email}}" onChange="{{r.setEmail}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                          <option value="instant">Instant</option>
+                          <option value="digest">Daily digest</option>
+                          <option value="off">Off</option>
+                        </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+                      </div>
+                      <div role="cell" style="min-width: 0; padding: 12px 18px"><button type="button" role="switch" aria-checked="{{r.pushStr}}" aria-label="Push for {{r.label}}" onClick="{{r.togglePush}}" style="{{r.track}}"><span style="{{r.knob}}"></span></button></div>
+                    </div>
+                  </sc-for>
+                  <div role="row" style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); border-top: 1px solid #EFE8F2; background: #FAF8F5">
+                    <div role="rowheader" style="min-width: 0; padding: 14px 18px; text-align: left; font-weight: 600; color: #26142E">Account, safety and legal</div>
+                    <div role="cell" style="min-width: 0; padding: 14px 18px; color: #5C4965">Always sent</div>
+                    <div role="cell" style="min-width: 0; padding: 14px 18px; color: #5C4965">Always on</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.55; color: #3A2442">
+              <li style="display: flex; gap: 10px; align-items: flex-start"><img src="/_blob/fafc1aac15b269b0cf587202701ddb8c" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none; width: 22px; height: 22px; margin-top: 1px"><span><b>Quiet hours: 22:00 to 07:00.</b> Because you’re under 18, push notifications wait until 07:00 your time (Bucharest).</span></li>
+              <li style="display: flex; gap: 10px; align-items: flex-start"><img src="/_blob/c485c45c1cc2ccf85edace3a1bbaca8b" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none; width: 22px; height: 22px; margin-top: 1px"><span><b>No marketing emails.</b> We don’t send promotional emails to anyone under 18.</span></li>
+              <li style="display: flex; gap: 10px; align-items: flex-start"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#481C5F" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg><span>Every email except account, safety and legal ones has a one-click unsubscribe link.</span></li>
+              <li style="display: flex; gap: 10px; align-items: flex-start"><img src="/_blob/efa7267d3b9865c596fab4fb3a28f90e" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none; width: 22px; height: 22px; margin-top: 1px"><span>Push notifications come through your browser for now, and only if you allow them. We ask only after you follow someone or comment. The desktop and phone apps come after the March 2027 test.</span></li>
+            </ul>
+          </section>
+        </sc-if>
+
+        <!-- ============ MESSAGES (S1-E9-04) ============ -->
+        <sc-if value="{{isMessages}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="msg-h" style="display: flex; flex-direction: column; gap: 24px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Messages</span>
+              <h2 id="msg-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Messages</h2>
+            </div>
+            <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+              <legend style="padding: 0 0 10px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Who can message you</legend>
+              <sc-for list="{{msgOpts}}" as="o" hint-placeholder-count="3">
+                <label style="{{o.style}}"><input type="radio" name="msg-who-m" checked="{{o.checked}}" onChange="{{o.pick}}" style="margin: 0; width: 18px; height: 18px; flex: none; accent-color: #672786"><span style="flex: 1">{{o.label}}</span><sc-if value="{{o.hasTag}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE; font-size: 12px; font-weight: 700; white-space: nowrap">{{o.tag}}</span></sc-if></label>
+              </sc-for>
+              <span style="font-size: 14px; line-height: 1.55; color: #3A2442">Your choice here covers people under 18. For adults, the switch below decides.</span>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 16px 18px; border: 1px solid #DED3E4; border-radius: 16px">
+                <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 4px">
+                  <span id="adult-msg-m" style="font-weight: 700; font-size: 16px; color: #26142E">Let adults message me</span>
+                  <span style="font-size: 14px; line-height: 1.55; color: #5C4965">Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Only you can change this, never a parent, our team or the adult.</span>
+                </div>
+                <button type="button" role="switch" aria-checked="{{adultMsgStr}}" aria-labelledby="adult-msg-m" onClick="{{toggleAdultMsg}}" style="{{adultMsgTrack}}"><span style="{{adultMsgKnob}}"></span></button>
+              </div>
+            </fieldset>
+            <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+              <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">How long messages stay</h3>
+              <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.6; color: #5C4965">
+                <li>When you delete a chat, it disappears for you.</li>
+                <li>When both of you delete it, we delete the messages for good at the next clean-up.</li>
+                <li>Messages that someone reported are kept until the report is closed, then for the time set in our <a href="Legal.dc.html" style="font-weight: 600">retention schedule</a>, then deleted.</li>
+              </ul>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+              <span style="font-size: 15px; color: #5C4965"><b style="color: #26142E">Blocked people:</b> you haven’t blocked anyone.</span>
+              <a href="Messages.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open Messages</a>
+            </div>
+          </section>
+        </sc-if>
+
+        <!-- ============ LANGUAGE (S1-E1-04) ============ -->
+        <sc-if value="{{isLanguage}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="lang-h" style="display: flex; flex-direction: column; gap: 22px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Language</span>
+              <h2 id="lang-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Language</h2>
+              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">The language of buttons, menus and emails. Saved to your account, so it applies on all your devices.</p>
+            </div>
+            <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+              <legend style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Interface language</legend>
+              <label style="{{enRowStyle}}"><input type="radio" name="ui-lang" checked="{{enOn}}" onChange="{{setEn}}" style="margin: 0; width: 18px; height: 18px; flex: none; accent-color: #672786"><span style="flex: 1">English</span></label>
+              <label lang="ro" style="{{roRowStyle}}"><input type="radio" name="ui-lang" checked="{{roOn}}" onChange="{{setRo}}" style="margin: 0; width: 18px; height: 18px; flex: none; accent-color: #672786"><span style="flex: 1">Română</span></label>
+            </fieldset>
+            <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">When you’re logged out, we use your device’s language: Romanian if your device is set to Romanian, English for any other language. Stories have their own language, which the writer picks.</span>
+          </section>
+        </sc-if>
+
+        <!-- ============ MY CERTIFICATES (S1-E8-12) ============ -->
+        <sc-if value="{{isCerts}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="certs-h" style="display: flex; flex-direction: column; gap: 22px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">My certificates</span>
+              <h2 id="certs-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">My certificates</h2>
+              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">When a teacher or our team marks you as a participant, finalist or winner, your certificate appears here. You can add it to your school portfolio.</p>
+            </div>
+
+            <!-- New certificate: first open asks for the name to print -->
+            <article style="padding: 22px; border-radius: 20px; border: 2px solid #E6C24C; background: #FFFFFF; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+                <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/4afc37a2cca377c4e5f2851d5bda78b4" alt="" aria-hidden="true" width="30" height="30" style="display: block; flex: none; width: 30px; height: 30px"></span>
+                <span style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 3px"><span style="font-weight: 700; font-size: 16px; color: #26142E">Finalist · Autumn short story contest</span><span style="font-size: 14px; color: #6B5A73">October 2026 · issued by Ghemotoc, [Partner] and Liceul Teoretic [School name], Ploiești</span></span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap">New</span>
+              </div>
+              <sc-if value="{{certPending}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 14px; border-top: 1px solid #EFE8F2">
+                  <div style="display: flex; flex-wrap: wrap; gap: 14px">
+                    <div style="flex: 2 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                      <label for="print-name" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Name to print</label>
+                      <input id="print-name" type="text" value="{{certName}}" onChange="{{setCertName}}" placeholder="Your name as it should appear" style="height: 48px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+                    </div>
+                    <div style="flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                      <label for="cert-lang" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Language</label>
+                      <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="cert-lang" value="{{certLang}}" onChange="{{setCertLang}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E"><option value="ro">Română</option><option value="en">English</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+                    </div>
+                  </div>
+                  <span style="font-size: 14px; line-height: 1.55; color: #5C4965">This can be different from your pen name. We print it only on the certificate and never show it on your profile.</span>
+                  <button type="button" disabled="{{certNameEmpty}}" onClick="{{makeCert}}" style="{{makeCertStyle}}">Create my certificate</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{certMade}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid #EFE8F2">
+                  <span style="font-size: 14px; color: #5C4965">Printed name: <b style="color: #26142E">{{certName}}</b> · Code 9D4R-6K1V · <a href="#" style="font-weight: 600">Check this code</a></span>
+                  <a href="#" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg>Download PDF (A4)</a>
+                </div>
+              </sc-if>
+            </article>
+
+            <!-- Earlier certificate -->
+            <article style="padding: 22px; border-radius: 20px; border: 1px solid #DED3E4; background: #FAF8F5; display: flex; flex-direction: column; gap: 14px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px">
+                <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: #F1EAF4; color: #481C5F; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/4afc37a2cca377c4e5f2851d5bda78b4" alt="" aria-hidden="true" width="30" height="30" style="display: block; flex: none; width: 30px; height: 30px"></span>
+                <span style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 3px"><span style="font-weight: 700; font-size: 16px; color: #26142E">Participant · Summer writing workshop</span><span style="font-size: 14px; color: #6B5A73">July 2026 · issued by Ghemotoc · Code 7T3K-9P2M · <a href="#" style="font-weight: 600">Check this code</a></span></span>
+                <a href="#" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Download PDF</a>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid #EFE8F2">
+                <span id="show-cert-label" style="font-size: 15px; color: #26142E">Show on my profile</span>
+                <button type="button" role="switch" aria-checked="{{showCertStr}}" aria-labelledby="show-cert-label" onClick="{{toggleShowCert}}" style="{{showCertTrack}}"><span style="{{showCertKnob}}"></span></button>
+              </div>
+            </article>
+            <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">Anyone with a code can check it on our website. They see only the contest, the result and the date, never your name. If you delete your account, your certificates are deleted and their codes show “no longer available”.</span>
+          </section>
+        </sc-if>
+
+        <!-- ============ DOWNLOAD MY DATA (S1-E13-02) ============ -->
+        <sc-if value="{{isData}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="data-h" style="display: flex; flex-direction: column; gap: 22px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Download my data</span>
+              <h2 id="data-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Download my data</h2>
+              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Get a copy of everything you’ve put on Ghemotoc, as Word (.docx) files in one ZIP file.</p>
+            </div>
+            <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px">
+              <li style="padding: 14px 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; font-size: 15px; color: #26142E">Stories and chapters</li>
+              <li style="padding: 14px 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; font-size: 15px; color: #26142E">Comments</li>
+              <li style="padding: 14px 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; font-size: 15px; color: #26142E">Forum posts</li>
+              <li style="padding: 14px 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; font-size: 15px; color: #26142E">Messages you sent</li>
+              <li style="padding: 14px 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; font-size: 15px; color: #26142E">Your settings</li>
+            </ul>
+            <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">Each part is a Word (.docx) file, so you can open it, edit it or send it on.</span>
+
+            <sc-if value="{{exportIdle}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
+                <button type="button" onClick="{{requestExport}}" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Request my data</button>
+                <span style="font-size: 14px; color: #6B5A73">We’ll tell you when it’s ready. By law we have up to one month.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{exportPreparing}}" hint-placeholder-val="{{false}}">
+              <div role="status" style="display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-radius: 16px; background: #F1EAF4; font-size: 15px; color: #3A2442"><img src="/_blob/ebeb72eda012a960ba1bf4d5da485639" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none; width: 22px; height: 22px">We’re preparing your file. You can leave this page. We’ll send you a notification when it’s ready.</div>
+            </sc-if>
+            <sc-if value="{{exportReady}}" hint-placeholder-val="{{false}}">
+              <div role="status" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-radius: 16px; background: #E3EFE8; font-size: 15px; color: #1F4A36">
+                <span><b>Your file is ready.</b> The link works only while you’re logged in and stops working on 23 October 2026.</span>
+                <a href="#" style="display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600; text-decoration: none">Download ZIP</a>
+              </div>
+            </sc-if>
+
+            <!-- Download my stories (S1-E13-05): Word from the first version, PDF later -->
+            <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 22px; border-top: 1px solid #EFE8F2">
+              <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Download my stories</h3>
+              <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Get your stories as Word (.docx) files you can edit, print or send to an agent. Every chapter is in, drafts too, with the dates.</p>
+              <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px">
+                <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+                  <label for="dl-story" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Story</label>
+                  <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="dl-story" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+                    <option value="all">All my stories (2)</option>
+                    <option value="radios">The Girl Who Fixed Radios</option>
+                    <option value="weather">The Weather Station (draft)</option>
+                  </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+                </div>
+                <button type="button" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Get Word files</button>
+              </div>
+              <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">We’ll tell you when they’re ready. The link works only while you’re logged in and stops working after seven days. PDF comes later.</span>
+            </div>
+            <p style="margin: 0; padding: 16px 18px; border-radius: 16px; background: #F1EAF4; font-size: 15px; line-height: 1.6; color: #3A2442">You can download your own data and stories from 13. If a parent or guardian asks us for a child’s data, we check them against the consent record first.</p>
+          </section>
+        </sc-if>
+
+        <!-- ============ DELETE ACCOUNT (S1-E13-03) ============ -->
+        <sc-if value="{{isDelete}}" hint-placeholder-val="{{false}}">
+          <section aria-labelledby="del-h" style="display: flex; flex-direction: column; gap: 20px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #8C2B3A; line-height: 1.3">Delete account</span>
+              <h2 id="del-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Delete your account</h2>
+              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Your account closes straight away. We delete it for good 14 days later. You can cancel by logging in before then.</p>
+            </div>
+            <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.55; color: #3A2442">
+              <li>Your stories and chapters are deleted with your account.</li>
+              <li>Your forum posts stay, shown as “Deleted user”.</li>
+            </ul>
+            <span style="font-size: 15px; line-height: 1.6; color: #5C4965">You might want to <button type="button" onClick="{{goData}}" style="min-height: 44px; padding: 0; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: underline; cursor: pointer">download your data</button> first.</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px">
+              <a href="#delete-confirm" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none">Delete my account</a>
+            </div>
+            <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">No app? You can also delete your account on our website, at ghemotoc.com/delete-account.</span>
+          </section>
+        </sc-if>
+      </div>
+    </div>
+
+    <!-- SECOND PANEL: the delete-account confirmation, drawn over a dimmed copy of Settings -->
+    <section id="delete-confirm" aria-labelledby="second-h" style="margin-top: 64px; display: flex; flex-direction: column; gap: 18px; animation: tmcRise 0.5s 0.1s ease-out both">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Second panel · after “Delete my account”</span>
+        <h2 id="second-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Delete account confirmation</h2>
+      </div>
+
+      <div style="position: relative; display: grid; grid-template-columns: minmax(0, 1fr); border-radius: 28px; overflow: hidden; border: 1px solid #DED3E4; background: #FAF8F5">
+        <!-- Behind: Settings with Delete account selected -->
+        <div aria-hidden="true" style="grid-area: 1 / 1; padding: 32px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+          <div style="flex: 1 1 220px; max-width: 280px; padding: 10px; border-radius: 24px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 2px; font-size: 15px; color: #26142E">
+            <span style="padding: 13px 16px">Account</span><span style="padding: 13px 16px">Ways to log in</span><span style="padding: 13px 16px">Privacy</span><span style="padding: 13px 16px">Notifications</span><span style="padding: 13px 16px">Messages</span><span style="padding: 13px 16px">Language</span><span style="padding: 13px 16px">My certificates</span><span style="padding: 13px 16px">My reports</span><span style="padding: 13px 16px">Download my data</span><span style="padding: 13px 16px; border-radius: 14px; background: #F1EAF4; color: #481C5F; font-weight: 700">Delete account</span>
+          </div>
+          <div style="flex: 999 1 480px; min-height: 520px; padding: 32px; border-radius: 24px; background: #FFFFFF; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 14px">
+            <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; color: #481C5F">Delete your account</span>
+            <span style="font-size: 16px; color: #5C4965">Your account closes straight away. We delete it for good 14 days later.</span>
+            <span style="align-self: flex-start; display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-size: 15px; font-weight: 600">Delete my account</span>
+          </div>
+        </div>
+
+        <!-- Dim + dialog -->
+        <div style="grid-area: 1 / 1; position: relative; z-index: 2; background: rgba(38,20,46,0.45); padding: 48px 24px; display: flex; justify-content: center; align-items: flex-start">
+          <div role="dialog" aria-modal="true" aria-labelledby="confirm-h" style="width: 100%; max-width: 600px; padding: 30px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 32px 64px -28px rgba(20,8,26,0.55); display: flex; flex-direction: column; gap: 18px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <h3 id="confirm-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.1; color: #26142E">Delete your account?</h3>
+              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Your account closes now and nobody can see your profile. We delete it for good on <b style="color: #26142E">30 October 2026</b>. If you change your mind, log in before then and cancel.</p>
+            </div>
+            <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.55; color: #3A2442">
+              <li>Your stories, chapters, drafts, comments and messages are deleted.</li>
+              <li>Your forum posts show as “Deleted user”.</li>
+              <li>Your certificates are deleted, and their codes show “no longer available”.</li>
+              <li>If something you posted is part of an open legal case, we keep only that until the case ends.</li>
+            </ul>
+            <button type="button" onClick="{{goData}}" style="align-self: flex-start; min-height: 44px; padding: 0; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 15px; font-weight: 600; text-decoration: underline; cursor: pointer">Download my data first</button>
+
+            <fieldset style="margin: 0; padding: 18px; border: 1px solid #DED3E4; border-radius: 20px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+              <legend style="padding: 0 6px; font-weight: 700; font-size: 15px; color: #26142E">Log in again to confirm</legend>
+              <button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 48px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><span aria-hidden="true" title="Official logo goes here" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border: 1.5px dashed #8E7B99; border-radius: 4px; background: #F4F0EC"></span>Continue with Google</button>
+              <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #6B5A73">Design note: the dashed square is a logo slot. The built app uses Google’s official, full-colour logo from its brand kit, unchanged.</p>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="confirm-pw" style="font-size: 14px; font-weight: 600; color: #26142E">Or your password</label>
+                <input id="confirm-pw" type="password" autocomplete="current-password" style="height: 48px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+              </div>
+              <button type="button" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none; width: 22px; height: 22px">Use a passkey</button>
+            </fieldset>
+
+            <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 6px">
+              <button type="button" onClick="{{goPrivacy}}" style="height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Keep my account</button>
+              <button type="button" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Delete my account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT US (S1-E14-04): a short form that goes to our ready-made EU helpdesk; replies come by email. Legal points here. -->
+    <section id="contact-us" aria-labelledby="contact-h" style="margin-top: 64px; display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; animation: tmcRise 0.5s 0.15s ease-out both">
+      <div style="flex: 1 1 280px; max-width: 360px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Contact us</span>
+        <h2 id="contact-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Ask us something</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Questions about your account, a problem with the app or a request about your data. A person on our team reads every message.</p>
+        <p style="margin: 0; padding: 16px 18px; border-radius: 16px; background: #F1EAF4; font-size: 15px; line-height: 1.6; color: #3A2442">To report a story, a comment or something illegal, use the <a href="ReportDialog.dc.html" style="font-weight: 600">report form</a> instead. It’s faster, because it goes straight to our moderators.</p>
+      </div>
+      <form style="flex: 999 1 520px; min-width: 0; margin: 0; padding: clamp(24px, 3vw, 36px); box-sizing: border-box; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="contact-topic" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Topic</label>
+          <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="contact-topic" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+            <option value="account">My account or logging in</option>
+            <option value="app">Something isn’t working</option>
+            <option value="data">My data (a copy, a correction or deleting it)</option>
+            <option value="school">Schools and class spaces</option>
+            <option value="other">Something else</option>
+          </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="contact-msg" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Message</label>
+          <textarea id="contact-msg" rows="5" placeholder="Tell us what happened or what you need" style="box-sizing: border-box; width: 100%; padding: 14px 18px; border: 1px solid #DED3E4; border-radius: 20px; background: #FAF8F5; font-family: inherit; font-size: 15px; line-height: 1.55; color: #26142E; resize: vertical"></textarea>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="contact-email" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Email for our reply</label>
+          <input id="contact-email" type="email" autocomplete="email" value="l••••@example.com" aria-describedby="contact-email-note" style="height: 48px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 15px; color: #26142E">
+          <span id="contact-email-note" style="font-size: 14px; line-height: 1.55; color: #6B5A73">We filled in your account email. You can use another one.</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding-top: 16px; border-top: 1px solid #EFE8F2">
+          <span style="flex: 1 1 300px; font-size: 14px; line-height: 1.55; color: #5C4965">We reply by email from support@ghemotoc.com, and you’ll also see the reply here. We send your username with your message, never your age or your age check.</span>
+          <button type="button" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Send message</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- YOUR SUPPORT REQUESTS (S1-E11-13): every support email, Contact us message and in-app message becomes a ticket; the user sees them here -->
+    <section id="support-requests" aria-labelledby="requests-h" style="margin-top: 40px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s 0.2s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 24px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Your support requests</span>
+          <h2 id="requests-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Your support requests</h2>
+        </div>
+        <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">Messages you send here or to support@ghemotoc.com show up in this list.</span>
+      </div>
+      <div style="overflow-x: auto; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+        <table style="width: 100%; min-width: 560px; border-collapse: collapse; font-size: 15px; color: #26142E">
+          <caption style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Your support requests, newest first</caption>
+          <thead>
+            <tr style="text-align: left">
+              <th scope="col" style="padding: 16px 20px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">SUBJECT</th>
+              <th scope="col" style="padding: 16px 12px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">STATUS</th>
+              <th scope="col" style="padding: 16px 20px 12px 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">LAST UPDATE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Status is Open, Waiting for you or Solved; newest update first -->
+            <tr style="border-top: 1px solid #EFE8F2">
+              <td style="padding: 14px 12px 14px 20px; vertical-align: top"><a href="#support-requests" style="font-weight: 600">Can’t change my pen name</a><span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">Request 2041</span></td>
+              <td style="padding: 14px 12px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 13px; font-weight: 700; white-space: nowrap">Waiting for you</span></td>
+              <td style="padding: 14px 20px 14px 12px; vertical-align: top; color: #5C4965">Today, 09:12</td>
+            </tr>
+            <tr style="border-top: 1px solid #EFE8F2">
+              <td style="padding: 14px 12px 14px 20px; vertical-align: top"><a href="#support-requests" style="font-weight: 600">The country on my account is wrong</a><span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">Request 1987</span></td>
+              <td style="padding: 14px 12px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 13px; font-weight: 700; white-space: nowrap">Open</span></td>
+              <td style="padding: 14px 20px 14px 12px; vertical-align: top; color: #5C4965">14 October 2026</td>
+            </tr>
+            <tr style="border-top: 1px solid #EFE8F2">
+              <td style="padding: 14px 12px 14px 20px; vertical-align: top"><a href="#support-requests" style="font-weight: 600">A copy of my data</a><span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">Request 1876</span></td>
+              <td style="padding: 14px 12px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 700; white-space: nowrap">Solved</span></td>
+              <td style="padding: 14px 20px 14px 12px; vertical-align: top; color: #5C4965">2 October 2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Page footer -->
+  <footer style="max-width: 1280px; margin: 80px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box; position: relative">
+    <img class="tmc-doodle" src="/_blob/1fa8eb24121f031c32cd0447c9096cc4" alt="" aria-hidden="true" style="right: clamp(16px, 4vw, 64px); top: -68px; width: 60px; height: 60px; transform: rotate(-5deg)">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 14px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; font-size: 13px; color: #6B5A73">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4031}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Lia is 16: every privacy value starts at its most private choice (S1-E13-01).
+    // Messaging defaults to "people I follow" for under-18s (S1-E9-04).
+    this.state = {
+      tab: 'privacy', saved: false,
+      profileVis: 'follow', msgWho: 'follow', online: false, libVis: 'me',
+      // 16 and 17-year-olds choose for themselves whether adults can message them; off by default (S1-E9-03, Q13).
+      adultMsg: false,
+      country: 'Romania', county: 'Prahova',
+      handle: 'lia.writes', penName: '',
+      methods: { email: true, google: true, apple: false, microsoft: false, passkey: false },
+      notif: {
+        replies: { email: 'digest', push: true },
+        chapters: { email: 'digest', push: true },
+        follows: { email: 'off', push: false },
+        messages: { email: 'digest', push: true },
+        forums: { email: 'off', push: true }
+      },
+      lang: 'en', certName: '', certLang: 'ro', certMade: false, showCert: true,
+      exportState: 'idle'
+    };
+  }
+
+  componentWillUnmount() { clearTimeout(this._exportTimer); }
+
+  // Any change marks the page as saved (changes save straight away).
+  save(patch) { this.setState(Object.assign({ saved: true }, patch)); }
+
+  // Switch look: 52 x 32 track with a sliding knob; the button itself is 44px+ tall via padding.
+  switchStyles(on) {
+    return {
+      track: 'flex: none; position: relative; width: 60px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: inline-flex; align-items: center;',
+      knob: 'display: block; position: relative; width: 56px; height: 32px; border-radius: 999px; box-sizing: border-box; transition: background 0.2s; '
+        + (on ? 'background: #481C5F;' : 'background: #FFFFFF; border: 2px solid #8E7C98;')
+        + ' background-image: radial-gradient(circle at ' + (on ? '40px' : '14px') + ' 50%, ' + (on ? '#FFFFFF' : '#6B5A73') + ' 0, ' + (on ? '#FFFFFF' : '#6B5A73') + ' 10px, transparent 11px);'
+    };
+  }
+
+  // One radio row, highlighted when chosen.
+  optStyle(on) {
+    return 'display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; box-sizing: border-box; border-radius: 16px; font-size: 15px; cursor: pointer; '
+      + (on ? 'border: 1px solid #672786; background: #F1EAF4; color: #26142E; font-weight: 600;' : 'border: 1px solid #DED3E4; background: #FFFFFF; color: #26142E; font-weight: 500;');
+  }
+
+  radio(key, options) {
+    var self = this, cur = this.state[key];
+    return options.map(function (o) {
+      var on = cur === o[0];
+      var patch = {}; patch[key] = o[0];
+      return { label: o[1], tag: o[2] || '', hasTag: !!o[2], checked: on, style: self.optStyle(on), pick: function () { self.save(patch); } };
+    });
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Side tabs. "My reports" is a link to its own screen and sits between these two lists.
+    var tabStyle = function (on) {
+      return 'display: flex; align-items: center; min-height: 48px; width: 100%; padding: 0 16px; border: 0; border-radius: 14px; text-align: left; font-family: inherit; font-size: 15px; cursor: pointer; '
+        + (on ? 'background: #F1EAF4; color: #481C5F; font-weight: 700; box-shadow: inset 3px 0 0 #E6C24C;' : 'background: transparent; color: #26142E; font-weight: 500;');
+    };
+    var mkTabs = function (list) {
+      return list.map(function (t) {
+        var on = st.tab === t[0];
+        return { label: t[1], current: on ? 'true' : 'false', style: tabStyle(on) + (t[0] === 'delete' ? ' color: #8C2B3A;' : ''), pick: function () { self.setState({ tab: t[0] }); } };
+      });
+    };
+    var tabsA = mkTabs([['account', 'Account'], ['logins', 'Ways to log in'], ['privacy', 'Privacy'], ['notif', 'Notifications'], ['messages', 'Messages'], ['language', 'Language'], ['certs', 'My certificates']]);
+    var tabsB = mkTabs([['data', 'Download my data'], ['delete', 'Delete account']]);
+
+    var under18 = 'Default for under 18';
+    var profileOpts = this.radio('profileVis', [['everyone', 'Everyone, including people without an account'], ['members', 'Only people with an account'], ['follow', 'Only people I follow', under18]]);
+    var msgOpts = this.radio('msgWho', [['everyone', 'Everyone'], ['follow', 'People I follow', under18], ['nobody', 'Nobody']]);
+    var libOpts = this.radio('libVis', [['me', 'Only me', under18], ['follow', 'People I follow'], ['everyone', 'Everyone']]);
+
+    var online = this.switchStyles(st.online);
+    var adultMsg = this.switchStyles(st.adultMsg);
+    var showCert = this.switchStyles(st.showCert);
+
+    // Ways to log in (decision 1): disconnecting the last method is blocked.
+    var connectedCount = Object.keys(st.methods).filter(function (k) { return st.methods[k]; }).length;
+    var methodList = [
+      ['email', 'Email and password', 'l••••@example.com', '@', 'Connect'],
+      ['google', 'Google', 'lia.p••••@gmail.com', 'G', 'Connect'],
+      ['apple', 'Apple', 'Use your Apple account', 'A', 'Connect'],
+      ['microsoft', 'Microsoft (Outlook)', 'Use your Outlook or Microsoft account', 'M', 'Connect'],
+      ['passkey', 'Passkey', 'Log in with your fingerprint, face or device PIN', 'P', 'Add a passkey']
+    ];
+    var methods = methodList.map(function (m, i) {
+      var on = !!st.methods[m[0]];
+      var isLast = on && connectedCount === 1;
+      return {
+        name: m[1], detail: on && m[0] === 'passkey' ? 'Saved on this computer' : m[2], letter: m[3],
+        // Google, Apple and Microsoft show a logo slot: the built app uses their official logos, never a drawn letter.
+        isBrand: ['google', 'apple', 'microsoft'].indexOf(m[0]) >= 0, notBrand: ['google', 'apple', 'microsoft'].indexOf(m[0]) < 0,
+        status: on ? 'Connected' : 'Not connected',
+        // Pill system (17 Oct): Connected sage, Not connected neutral.
+        statusStyle: on ? 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap' : 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap',
+        disabled: isLast, descId: isLast ? 'last-method' : '',
+        btnLabel: on ? 'Disconnect' : m[4],
+        btnStyle: 'min-width: 132px; height: 44px; padding: 0 18px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; '
+          + (isLast ? 'border: 1px solid #DED3E4; background: #F4F0EC; color: #6B5A73; cursor: not-allowed;'
+            : (on ? 'border: 1px solid #8E7B99; background: #FFFFFF; color: #8C2B3A; cursor: pointer;' : 'border: 1px solid #672786; background: #FFFFFF; color: #672786; cursor: pointer;')),
+        rowStyle: 'display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 16px 18px; ' + (i ? 'border-top: 1px solid #EFE8F2;' : ''),
+        badge: 'flex: none; width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; ' + (on ? 'background: #481C5F; color: #FFFFFF;' : 'background: #F1EAF4; color: #481C5F;'),
+        act: function () {
+          if (isLast) return;
+          var n = Object.assign({}, st.methods); n[m[0]] = !on; self.save({ methods: n });
+        }
+      };
+    });
+    var blocked = connectedCount === 1;
+
+    // Notification rows (S1-E7-02 email per type, S1-E7-03 push per type).
+    var rowsDef = [['replies', 'Replies to my comments'], ['chapters', 'New chapters in stories I follow'], ['follows', 'New followers'], ['messages', 'New messages'], ['forums', 'Replies and mentions in forums']];
+    var notifRows = rowsDef.map(function (r) {
+      var cur = st.notif[r[0]];
+      var sw = self.switchStyles(cur.push);
+      var upd = function (patch) { var n = Object.assign({}, st.notif); n[r[0]] = Object.assign({}, cur, patch); self.save({ notif: n }); };
+      return {
+        label: r[1], selId: 'email-' + r[0], email: cur.email, pushStr: cur.push ? 'true' : 'false', track: sw.track, knob: sw.knob,
+        setEmail: function (e) { upd({ email: e && e.target ? e.target.value : cur.email }); },
+        togglePush: function () { upd({ push: !cur.push }); }
+      };
+    });
+
+    var langPill = function (on) {
+      return 'min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+        + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 700;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+
+    var certNameEmpty = !(st.certName && st.certName.trim());
+
+    return {
+      tabsA: tabsA, tabsB: tabsB,
+      isPrivacy: st.tab === 'privacy', isAccount: st.tab === 'account', isLogins: st.tab === 'logins', isNotif: st.tab === 'notif',
+      isMessages: st.tab === 'messages', isLanguage: st.tab === 'language', isCerts: st.tab === 'certs', isData: st.tab === 'data', isDelete: st.tab === 'delete',
+      goPrivacy: function () { self.setState({ tab: 'privacy' }); },
+      goLogins: function () { self.setState({ tab: 'logins' }); },
+      goData: function () { self.setState({ tab: 'data' }); },
+      savedText: st.saved ? 'Saved' : 'All changes saved',
+
+      profileOpts: profileOpts, msgOpts: msgOpts, libOpts: libOpts,
+      onlineStr: st.online ? 'true' : 'false', onlineTrack: online.track, onlineKnob: online.knob,
+      toggleOnline: function () { self.save({ online: !st.online }); },
+      adultMsgStr: st.adultMsg ? 'true' : 'false', adultMsgTrack: adultMsg.track, adultMsgKnob: adultMsg.knob,
+      toggleAdultMsg: function () { self.save({ adultMsg: !st.adultMsg }); },
+
+      country: st.country,
+      setCountry: function (e) { self.save({ country: e && e.target ? e.target.value : st.country }); },
+      countryNote: 'We read the country from your connection when you signed up and keep only the country, never your IP address. If it’s wrong, use Contact us at the bottom of this page and we’ll fix it.',
+      county: st.county,
+      setCounty: function (e) { self.save({ county: e && e.target ? e.target.value : st.county }); },
+      countyNote: st.county ? 'You chose ' + st.county + '. It’s used only for “Popular in your area”. We never track where you are.' : 'No area chosen, so “Popular in your area” is hidden. We never track where you are.',
+      countyShort: st.county ? st.county + ' (you chose it)' : 'no area chosen',
+
+      handle: st.handle, setHandle: function (e) { self.save({ handle: e.target.value }); },
+      penName: st.penName, setPen: function (e) { self.save({ penName: e.target.value }); },
+
+      methods: methods,
+      lastNote: blocked ? 'You can’t disconnect your last way to log in. Connect another one first.' : 'You have ' + connectedCount + ' ways to log in.',
+      lastNoteStyle: 'margin: 0; font-size: 14px; line-height: 1.55; ' + (blocked ? 'color: #8C2B3A; font-weight: 600;' : 'color: #6B5A73;'),
+
+      notifRows: notifRows,
+
+      enOn: st.lang === 'en', roOn: st.lang === 'ro',
+      enRowStyle: this.optStyle(st.lang === 'en'), roRowStyle: this.optStyle(st.lang === 'ro'),
+      enStr: st.lang === 'en' ? 'true' : 'false', roStr: st.lang === 'ro' ? 'true' : 'false',
+      enStyle: langPill(st.lang === 'en'), roStyle: langPill(st.lang === 'ro'),
+      setEn: function () { self.save({ lang: 'en' }); }, setRo: function () { self.save({ lang: 'ro' }); },
+
+      certName: st.certName, setCertName: function (e) { self.setState({ certName: e.target.value }); },
+      certLang: st.certLang, setCertLang: function (e) { self.setState({ certLang: e.target.value }); },
+      certPending: !st.certMade, certMade: st.certMade, certNameEmpty: certNameEmpty,
+      makeCert: function () { if (!certNameEmpty) self.setState({ certMade: true }); },
+      makeCertStyle: 'align-self: flex-start; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; '
+        + (certNameEmpty ? 'background: #DED3E4; color: #5C4965; cursor: not-allowed;' : 'background: #2A0E33; color: #FBF7EC; cursor: pointer;'),
+      showCertStr: st.showCert ? 'true' : 'false', showCertTrack: showCert.track, showCertKnob: showCert.knob,
+      toggleShowCert: function () { self.save({ showCert: !st.showCert }); },
+
+      exportIdle: st.exportState === 'idle', exportPreparing: st.exportState === 'preparing', exportReady: st.exportState === 'ready',
+      requestExport: function () {
+        self.setState({ exportState: 'preparing' });
+        clearTimeout(self._exportTimer);
+        self._exportTimer = setTimeout(function () { self.setState({ exportState: 'ready' }); }, 2500);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

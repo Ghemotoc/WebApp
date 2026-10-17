@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Writer profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
+@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+/* Approved cover backgrounds (16 Oct): one class per design, url() only allowed here */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-gold{background-color:#E6C24C;background-image:url(/_blob/91b025a34ffa73c4f7886c143b2229d4)}
+.tmc-cv-lilac{background-color:#E9DDF0;background-image:url(/_blob/f1d0436689691672be6a521d49b6d32c)}
+.tmc-cv-blush{background-color:#F6D3DC;background-image:url(/_blob/e6edfdb3a9348376f609edc9860c7003)}
+.tmc-cv-sky{background-color:#D7E6F2;background-image:url(/_blob/7f5800c35ba2931d2b6f7a813d85b93c)}
+.tmc-cv-sage{background-color:#C9D8BF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#FAF8F5;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-cv-stripes{background-color:#481C5F;background-image:url(/_blob/5bf720d39651e2b57f384d33e3e04028)}
+.tmc-cv-dots{background-color:#FAF8F5;background-image:url(/_blob/49525cd87927782c2ac3d4a53ebc2973)}
+.tmc-cv-grid{background-color:#FAF8F5;background-image:url(/_blob/18fddef6727cc64415d6f75fd94c388b)}
+.tmc-cv-waves{background-color:#D7E6F2;background-image:url(/_blob/b3b6a05178861fc4e9210eaaa4134c6d)}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-cv-doodles{background-color:#FAF8F5;background-image:url(/_blob/f295eb5a1f415fe44f9e39a32e58ba7e)}
+.tmc-cv-twotone{background-color:#481C5F;background-image:url(/_blob/0d7f4386c9eaec72ab74d7b8349bc99f)}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+/* Scrollers with Scroll back / Scroll forward buttons hide their scrollbar (Robert, 17 Oct); they still scroll by swipe, wheel and keyboard */
+.tmc-noscroll{scrollbar-width:none;-ms-overflow-style:none}.tmc-noscroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; overflow-x: clip; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="flex: none; display: block; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <a href="Story.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 24px; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Back to The Salt Mine Choir</a>
+
+    <!-- Profile header: pen name, avatar, rank, bio, follow, message, share, more. No age, email or online status. -->
+    <section aria-labelledby="writer-name" style="margin-top: 12px; padding: clamp(24px, 3vw, 40px); background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-wrap: wrap; gap: 32px; animation: tmcRise 0.5s ease-out both">
+      <span aria-hidden="true" style="position: relative; flex: none; width: 136px; height: 136px; border-radius: 50%; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 56px">
+<img data-doodle="widget" data-doodle-on="inkwolf" src="/_blob/2b77dad1a2170495e93cea3190c0f1b7" alt="" aria-hidden="true" class="tmc-dd-lg" width="62" height="62" style="position: absolute; top: -36px; left: 37px; width: 62px; height: 62px; transform: rotate(-12deg); pointer-events: none; user-select: none; z-index: 0">i</span>
+
+      <div style="flex: 999 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Writer · fiction</div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px">
+          <h1 id="writer-name" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">inkwolf</h1>
+          <span title="Rank from published chapters and words" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 13px; font-weight: 700; white-space: nowrap"><img src="/_blob/34909fd02d01dca4db7586398487c06a" alt="" aria-hidden="true" width="14" height="14" style="flex: none; display: block; width: 14px; height: 14px">Rank: Storyteller</span>
+        </div>
+        <span style="font-size: 15px; color: #6B5A73">@inkwolf · Joined May 2026</span>
+        <p style="margin: 0; max-width: 640px; font-size: 18px; line-height: 1.6; color: #5C4965">I write mysteries set in real places in Romania: salt mines, mountain villages, my school’s basement. New chapter of The Salt Mine Choir most Fridays. Comments make my week, so tell me what you think.</p>
+        <dl style="margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 12px 36px">
+          <div style="display: flex; flex-direction: column-reverse; gap: 2px"><dt style="font-size: 13px; color: #6B5A73">Stories</dt><dd style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #26142E">2</dd></div>
+          <div style="display: flex; flex-direction: column-reverse; gap: 2px"><dt style="font-size: 13px; color: #6B5A73">Chapters published</dt><dd style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #26142E">23</dd></div>
+          <div style="display: flex; flex-direction: column-reverse; gap: 2px"><dt style="font-size: 13px; color: #6B5A73">Reads</dt><dd style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #26142E">1.9k</dd></div>
+          <div style="display: flex; flex-direction: column-reverse; gap: 2px"><dt style="font-size: 13px; color: #6B5A73">Followers · only inkwolf sees who</dt><dd style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #26142E">{{followerCount}}</dd></div>
+        </dl>
+      </div>
+
+      <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 10px; align-items: stretch; position: relative">
+        <sc-if value="{{notBlocked}}" hint-placeholder-val="{{true}}">
+          <button type="button" aria-pressed="{{followingStr}}" onClick="{{toggleFollow}}" style="{{followStyle}}">
+            <sc-if value="{{following}}" hint-placeholder-val="{{true}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>{{followLabel}}</button>
+          <a href="Messages.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none"><img src="/_blob/e14867216e97778f2dc03dbb8a120de2" alt="" aria-hidden="true" width="22" height="22" style="flex: none; display: block; width: 22px; height: 22px">Message</a>
+        </sc-if>
+        <div style="display: flex; gap: 10px">
+          <a href="Share.dc.html" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none"><img src="/_blob/4dfbea41a7d32d930e7dcd15a1c1381b" alt="" aria-hidden="true" width="22" height="22" style="flex: none; display: block; width: 22px; height: 22px">Share</a>
+          <button type="button" aria-label="More options" aria-expanded="{{menuOpenStr}}" aria-controls="profile-menu" onClick="{{toggleMenu}}" style="width: 48px; height: 48px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></svg></button>
+        </div>
+        <sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+          <div id="profile-menu" style="position: absolute; top: 100%; right: 0; z-index: 4; margin-top: 8px; width: 240px; padding: 8px; display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 24px 48px -24px rgba(38,20,46,0.35)">
+            <a href="ReportDialog.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 12px; color: #26142E; font-size: 15px; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="20" height="20" style="flex: none; display: block; width: 20px; height: 20px">Report profile</a>
+            <button type="button" onClick="{{askBlock}}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: transparent; color: #8C2B3A; font-family: inherit; font-size: 15px; text-align: left; cursor: pointer"><img src="/_blob/12de72f2d9385db253735f45ee5482f3" alt="" aria-hidden="true" width="22" height="22" style="flex: none; display: block; width: 22px; height: 22px">Block inkwolf</button>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- Block confirmation, inline -->
+      <sc-if value="{{confirmBlock}}" hint-placeholder-val="{{false}}">
+        <div role="alertdialog" aria-labelledby="block-h" aria-describedby="block-p" style="flex: 1 1 100%; padding: 20px 24px; border-radius: 20px; background: #FAF8F5; border: 1px solid #DED3E4; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px">
+          <div style="flex: 999 1 420px; display: flex; flex-direction: column; gap: 6px">
+            <h2 id="block-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #26142E">Block inkwolf?</h2>
+            <p id="block-p" style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">You won’t be able to message, mention or follow each other, and their stories will be hidden from you. They won’t be told.</p>
+          </div>
+          <div style="display: flex; gap: 10px">
+            <button type="button" onClick="{{cancelBlock}}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Don’t block</button>
+            <button type="button" onClick="{{doBlock}}" style="height: 44px; padding: 0 22px; border-radius: 999px; border: 0; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Block inkwolf</button>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{blocked}}" hint-placeholder-val="{{false}}">
+        <div role="status" style="flex: 1 1 100%; padding: 16px 24px; border-radius: 20px; background: #F4F0EC; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <span style="font-size: 15px; color: #26142E"><b>You blocked inkwolf.</b> They haven’t been told.</span>
+          <button type="button" onClick="{{unblock}}" style="height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Unblock</button>
+        </div>
+      </sc-if>
+    </section>
+
+    <!-- Two columns: work on the left, about on the right -->
+    <div style="margin-top: 40px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+      <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 48px">
+
+        <!-- Published stories -->
+        <section aria-labelledby="stories-h" style="position: relative; animation: tmcRise 0.5s 0.05s ease-out both">
+<img data-doodle="background" data-doodle-on="Stories by inkwolf" src="/_blob/f5c69995547466e6d428c768ff799288" alt="" aria-hidden="true" class="tmc-dd-wide" width="90" height="90" style="position: absolute; top: -74px; right: 16px; width: 90px; height: 90px; transform: rotate(6deg); pointer-events: none; user-select: none; z-index: 0">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Published</span>
+              <h2 id="stories-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Stories by inkwolf</h2>
+            </div>
+            <sc-if value="{{ar.st.show}}" hint-placeholder-val="{{true}}">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <button type="button" aria-label="Scroll back" onClick="{{prevStories}}" disabled="{{ar.st.backOff}}" aria-disabled="{{ar.st.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.st.backCur}}; opacity: {{ar.st.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+              <button type="button" aria-label="Scroll forward" onClick="{{nextStories}}" disabled="{{ar.st.fwdOff}}" aria-disabled="{{ar.st.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.st.fwdCur}}; opacity: {{ar.st.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+            </div>
+            </sc-if>
+          </div>
+          <!-- One sideways line of at most 20 stories (design rule, 16 Oct); more than 20 ends with View more -->
+          <div style="position: relative; margin: 0 -4px">
+          <div ref="{{refStories}}" onScroll="{{scrollStories}}" tabindex="0" class="tmc-noscroll" role="region" aria-label="Stories by inkwolf, scrolls sideways" style="display: flex; align-items: stretch; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{maskStories}}; mask-image: {{maskStories}}">
+            <sc-for list="{{stories}}" as="s" hint-placeholder-count="2">
+              <article style="flex: none; width: min(560px, 88%); box-sizing: border-box; scroll-snap-align: start; display: flex; flex-wrap: wrap; gap: 24px; padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+                <a href="Story.dc.html" aria-label="{{s.title}}, story page" class="{{s.cvClass}}" style="{{s.cover}}"><span style="{{s.titleStyle}}">{{s.title}}</span><span aria-hidden="true" style="{{s.lineStyle}}"></span></a>
+                <div style="flex: 999 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                    <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap">Fiction</span>
+                    <span style="{{s.statusStyle}}">{{s.status}}</span>
+                    <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap">{{s.tags}}</span>
+                  </div>
+                  <a href="Story.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; line-height: 1.1; color: #26142E; text-decoration: none">{{s.title}}</a>
+                  <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">{{s.blurb}}</p>
+                  <span style="font-size: 14px; color: #6B5A73">{{s.meta}}</span>
+                  <div style="margin-top: auto; padding-top: 6px; display: flex; flex-wrap: wrap; gap: 10px">
+                    <a href="Reader.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none">{{s.cta}}</a>
+                    <button type="button" aria-pressed="{{s.onStr}}" onClick="{{s.toggle}}" style="{{s.btnStyle}}">{{s.btnLabel}}</button>
+                  </div>
+                </div>
+              </article>
+            </sc-for>
+            <sc-if value="{{storiesMore}}" hint-placeholder-val="{{false}}">
+              <a href="SeeAll.dc.html" aria-label="View all stories by inkwolf" style="flex: none; width: 220px; scroll-snap-align: start; box-sizing: border-box; padding: 20px; border-radius: 24px; border: 2px dashed #B9A9C2; background: #FFFFFF; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px; text-decoration: none"><span aria-hidden="true" style="width: 52px; height: 52px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">View more</span><span style="font-size: 14px; line-height: 1.5; color: #5C4965">See every story by inkwolf.</span></a>
+            </sc-if>
+          </div>
+          </div>
+        </section>
+
+        <!-- Wide banner: an ad-network ad, labelled AD. Ads are never personalised: the same for everyone, including under-18s. Placement rule (17 Oct): at most 2 ad slots a page, never two in view at once, never in class spaces. -->
+        <aside aria-label="Advertisement" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 0 auto; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+          <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+          <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] banner · 970 × 120</span>
+          <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+        </aside>
+
+        <!-- Recent forum posts -->
+        <section aria-labelledby="posts-h" style="position: relative; animation: tmcRise 0.5s 0.1s ease-out both">
+<img data-doodle="background" data-doodle-on="Recent posts" src="/_blob/59feb281d9ed9664c1ef19c97f11612f" alt="" aria-hidden="true" class="tmc-dd-wide" width="82" height="82" style="position: absolute; top: -18px; right: 20px; width: 82px; height: 82px; transform: rotate(-6deg); pointer-events: none; user-select: none; z-index: 0">
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">In the forums</span>
+            <h2 id="posts-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Recent posts</h2>
+          </div>
+          <ul style="list-style: none; margin: 0; padding: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; overflow: hidden">
+            <sc-for list="{{posts}}" as="p" hint-placeholder-count="3">
+              <li style="{{p.rowStyle}}">
+                <a href="Thread.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; color: #26142E; text-decoration: none">{{p.thread}}</a>
+                <span style="font-size: 14px; color: #6B5A73">{{p.where}} · {{p.when}}</span>
+                <span style="font-size: 15px; line-height: 1.6; color: #5C4965">“{{p.quote}}”</span>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+      </div>
+
+      <!-- Right column: rank, signature, certificates, safety -->
+      <aside aria-label="About inkwolf" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s 0.1s ease-out both">
+
+        <section aria-labelledby="rank-h" style="position: relative; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px">
+<img data-doodle="widget" data-doodle-on="Storyteller" src="/_blob/8b35eff002c7149d8059704ce00b23d2" alt="" aria-hidden="true" class="tmc-dd-lg" width="70" height="70" style="position: absolute; top: -34px; right: 18px; width: 70px; height: 70px; transform: rotate(8deg); pointer-events: none; user-select: none; z-index: 0">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Rank</span>
+          <h2 id="rank-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Storyteller</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Ranks come from published chapters and words. Forum posts don’t count. Each rank has its own sticker on your profile picture.</p>
+          <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+            <sc-for list="{{ranks}}" as="r" hint-placeholder-count="4">
+              <li style="{{r.rowStyle}}"><span style="{{r.dot}}"></span><img src="{{r.icon}}" alt="" aria-hidden="true" width="28" height="28" style="{{r.iconStyle}}"><span style="flex: 1">{{r.name}}</span><span style="margin-left: auto; max-width: 55%; text-align: right; font-size: 13px; color: #6B5A73">{{r.rule}}</span></li>
+            </sc-for>
+          </ol>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <div role="progressbar" aria-label="Progress to Novelist, 41 per cent" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100" style="height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="width: 41%; height: 100%; border-radius: 999px; background: #672786"></div></div>
+            <span style="font-size: 13px; color: #6B5A73">41,200 of 100,000 words to Novelist</span>
+          </div>
+        </section>
+
+        <section aria-labelledby="sig-h" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Forum signature</span>
+          <h2 id="sig-h" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Forum signature</h2>
+          <div style="display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+            <svg role="img" aria-label="Signature picture: a crescent moon over a hill" width="56" height="56" viewBox="0 0 56 56" style="flex: none; border-radius: 12px; background: #2A0F36"><path d="M34 14a12 12 0 1 0 8 20 10 10 0 1 1-8-20z" fill="#E6C24C"></path><path d="M0 46c10-8 22-10 34-6s16 4 22 2v14H0z" fill="#4D1B5E"></path></svg>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #26142E; white-space: pre-line">Writing The Salt Mine Choir.
+New chapter most Fridays.
+Ask me about maps.</p>
+          </div>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Shows under inkwolf’s forum posts on bigger screens. Up to 300 characters, three lines and one still picture.</span>
+        </section>
+
+        <section aria-labelledby="certs-h" style="position: relative; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px">
+<img data-doodle="widget" data-doodle-on="Certificates" src="/_blob/864dbfce6ade2bfbf4cff7a68aeca985" alt="" aria-hidden="true" class="tmc-dd-lg" width="64" height="64" style="position: absolute; top: -32px; right: 20px; width: 64px; height: 64px; transform: rotate(-8deg); pointer-events: none; user-select: none; z-index: 0">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Certificates</span>
+          <h2 id="certs-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Certificates</h2>
+          <span style="font-size: 14px; color: #5C4965">inkwolf chose to show these on their profile.</span>
+          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+            <sc-for list="{{certs}}" as="c" hint-placeholder-count="2">
+              <li style="display: flex; gap: 14px; padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+                <span aria-hidden="true" style="{{c.seal}}"><img src="/_blob/4afc37a2cca377c4e5f2851d5bda78b4" alt="" aria-hidden="true" width="30" height="30" style="flex: none; display: block; width: 30px; height: 30px"></span>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+                  <span style="font-weight: 700; font-size: 15px; color: #26142E">{{c.result}} · {{c.event}}</span>
+                  <span style="font-size: 13px; color: #6B5A73">{{c.date}} · issued by {{c.issuer}}</span>
+                  <span style="font-size: 13px; color: #5C4965">Code {{c.code}} · <a href="#" style="font-weight: 600">Check this code</a></span>
+                </span>
+              </li>
+            </sc-for>
+          </ul>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Checking a code shows the contest, the result and the date. It never shows anyone’s name.</span>
+        </section>
+
+        <section aria-labelledby="safety-h" style="position: relative; padding: 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 24px; display: flex; flex-direction: column; gap: 12px">
+<img data-doodle="widget" data-doodle-on="Something wrong here?" src="/_blob/0ba01f0de219e755c8fa13cee158f7c5" alt="" aria-hidden="true" class="tmc-dd-lg" width="60" height="60" style="position: absolute; top: -30px; right: 16px; width: 60px; height: 60px; transform: rotate(6deg); pointer-events: none; user-select: none; z-index: 0">
+          <h2 id="safety-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Something wrong here?</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Report this profile and a moderator will read it. Blocking is instant and the other person isn’t told.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Report profile</a>
+            <button type="button" onClick="{{askBlock}}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Block inkwolf</button>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Page footer -->
+  <footer style="max-width: 1280px; margin: 80px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="position: relative; border-top: 1px solid #DED3E4; padding-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/1fa8eb24121f031c32cd0447c9096cc4" alt="" aria-hidden="true" class="tmc-dd-lg" width="80" height="80" style="position: absolute; top: -90px; right: 34%; width: 80px; height: 80px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 14px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; font-size: 13px; color: #6B5A73">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2372}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Lia already follows inkwolf and The Salt Mine Choir.
+    this.state = { following: true, menuOpen: false, confirmBlock: false, blocked: false, storyFollow: { salt: true }, lang: 'en' };
+    this.shelves = {};
+  }
+
+  componentDidMount() {
+    var self = this;
+    // Rows are re-measured when the window changes size, so arrows appear or go as the row starts or stops overflowing.
+    this._onResize = function () { self.measureAll(); };
+    try { window.addEventListener('resize', this._onResize); } catch (e) { /* no window: arrows keep their last state */ }
+    setTimeout(function () { self.measureAll(); }, 0);
+  }
+
+  // New content (filter, sort, tab) can change whether a row overflows. measureAll only sets state when a value changes.
+  componentDidUpdate() { this.measureAll(); }
+
+  componentWillUnmount() {
+    try { window.removeEventListener('resize', this._onResize); } catch (e) { /* ignore */ }
+  }
+
+  pillBtn(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #672786; background: #FFFFFF; color: #672786;');
+  }
+
+  // Automatic cover (S1-E3-13): a story with no cover of its own gets one of the 16 approved designs,
+  // picked from its id so it never changes, and never the same design as the card just before it in a row.
+  autoCovers(ids) {
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var hash = function (s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    var prev = '';
+    return ids.map(function (id) {
+      var k = K[hash(id) % K.length];
+      if (k === prev) k = K[(K.indexOf(k) + 7) % K.length];   // neighbours never match
+      prev = k;
+      return k;
+    });
+  }
+
+  // Cover titles always show in full (Robert, 16 Oct): they wrap and the size steps down as the title gets longer, never cut.
+  // Up to 18 characters: base size; 19 to 28: 85%; 29 to 40: 72%; longer: 62%; never below the floor (11px unless given).
+  titleSize(title, base, floor) {
+    var n = String(title == null ? '' : title).length;
+    var k = n <= 18 ? 1 : (n <= 28 ? 0.85 : (n <= 40 ? 0.72 : 0.62));
+    return Math.max(floor || 11, Math.round(base * k * 10) / 10);
+  }
+
+  // Rows fade out on the cut-off side only (Robert, 16 Oct): a CSS mask on the row itself, never both sides at once.
+  mask(key) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    if (e.r) return 'linear-gradient(to right, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    if (e.l) return 'linear-gradient(to left, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    return 'none';
+  }
+
+  // Re-measure a row after it scrolls (or first appears) and store which sides are cut off.
+  measureShelf(key) {
+    var e = this.readShelf(key);
+    if (!e) return;
+    var all = this.state.edges || {};
+    if (this.sameEdges(all[key], e)) return;   // only setState when something changed, so no render loops
+    var n = Object.assign({}, all); n[key] = e;
+    this.setState({ edges: n });
+  }
+
+  // Measure one row. l/r: the side that fades (never both). o: the row is wider than its box, so its arrows show.
+  // sl/sr: the TRUE edges, cards hidden off the left/right, which disable the arrows (Robert, 17 Oct): unlike l/r they ignore the fade tweak.
+  readShelf(key) {
+    this.shelves = this.shelves || {};
+    var el = this.shelves[key];
+    if (!el) return null;
+    // The rows snap their first card to the edge, which leaves scrollLeft at the row's left padding (4px) at the start,
+    // so the padding counts as being at the start (and likewise at the end).
+    var pl = 0, pr = 0;
+    try { var cs = window.getComputedStyle(el); pl = parseFloat(cs.paddingLeft) || 0; pr = parseFloat(cs.paddingRight) || 0; } catch (err) { /* keep 0 */ }
+    var o = el.scrollWidth > el.clientWidth + 2;
+    var sl = o && el.scrollLeft > pl + 2, sr = o && el.scrollLeft + el.clientWidth < el.scrollWidth - pr - 2;
+    // In the middle of a row only the side the reader is scrolling towards fades; at rest that's the right-hand side.
+    // A re-measure with no movement (resize, new content) keeps the side that was already fading.
+    this.lastLeft = this.lastLeft || {};
+    var prev = this.lastLeft[key] || 0, dir = el.scrollLeft - prev;
+    this.lastLeft[key] = el.scrollLeft;
+    var l = sl, r = sr, old = (this.state.edges || {})[key];
+    if (l && r) {
+      if (dir < 0) r = false;
+      else if (dir > 0) l = false;
+      else if (old && old.l && !old.r) r = false;
+      else l = false;
+    }
+    return { l: l, r: r, o: o, sl: sl, sr: sr };
+  }
+
+  sameEdges(a, b) {
+    return !!a && !!b && a.l === b.l && a.r === b.r && a.o === b.o && a.sl === b.sl && a.sr === b.sr;
+  }
+
+  // Re-measure every row at once (mount, window resize, new content after a filter, sort or tab change). One setState at most.
+  measureAll() {
+    var all = this.state.edges || {}, n = null;
+    for (var key in (this.shelves || {})) {
+      var e = this.readShelf(key);
+      if (!e || this.sameEdges(all[key], e)) continue;
+      n = n || Object.assign({}, all);
+      n[key] = e;
+    }
+    if (n) this.setState({ edges: n });
+  }
+
+  // Scroll arrows for one row (Robert, 17 Oct): not shown at all when the row fits; the arrow pointing at an end
+  // the row has already reached is disabled. Before the first measure: shown, back disabled.
+  arrows(key) {
+    var e = (this.state.edges || {})[key] || {};
+    var show = e.o !== false, back = e.sl === true, fwd = e.sr !== false;
+    return {
+      show: show,
+      backOff: !back, backAria: back ? 'false' : 'true', backOp: back ? '1' : '0.4', backCur: back ? 'pointer' : 'default',
+      fwdOff: !fwd, fwdAria: fwd ? 'false' : 'true', fwdOp: fwd ? '1' : '0.4', fwdCur: fwd ? 'pointer' : 'default'
+    };
+  }
+
+  // Scroll a row sideways by most of its visible width.
+  scrollShelf(key, dir) {
+    var el = this.shelves[key];
+    if (!el || typeof el.scrollBy !== 'function') return;
+    try { el.scrollBy({ left: dir * Math.max(240, el.clientWidth * 0.8), behavior: 'smooth' }); }
+    catch (e) { el.scrollLeft += dir * 600; }
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Follower number is public; the list itself is only for the writer.
+    var followers = 1283 + (st.following ? 1 : 0);
+
+    var cover = 'flex: none; width: 150px; height: 200px; box-sizing: border-box; padding: 16px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; text-decoration: none;';
+    // Title colour and thin line for each approved cover design (from the approved cover table).
+    var CV = {
+      plum: { ink: '#FAF8F5', box: '', line: '#E6C24C' },
+      ink: { ink: '#FAF8F5', box: '', line: '#E6C24C' },
+      violet: { ink: '#FAF8F5', box: '', line: '#E6C24C' },
+      gold: { ink: '#26142E', box: '', line: '#481C5F' },
+      lilac: { ink: '#26142E', box: '', line: '#672786' },
+      blush: { ink: '#26142E', box: '', line: '#481C5F' },
+      sky: { ink: '#26142E', box: '', line: '#672786' },
+      sage: { ink: '#26142E', box: '', line: '#481C5F' },
+      paper: { ink: '#26142E', box: '', line: '#672786' },
+      stripes: { ink: '#FAF8F5', box: '#481C5F', line: '' },
+      dots: { ink: '#26142E', box: '#FAF8F5', line: '' },
+      grid: { ink: '#26142E', box: '', line: '' },
+      waves: { ink: '#26142E', box: '#FAF8F5', line: '' },
+      starry: { ink: '#FAF8F5', box: '', line: '' },
+      doodles: { ink: '#26142E', box: '', line: '' },
+      twotone: { ink: '#FAF8F5', box: '', line: '' }
+    };
+    // Fixed designs for the canonical stories; anything else gets an automatic one.
+    var FIXED = { 'salt-mine-choir': 'starry' };
+    var stories = [
+      {
+        id: 'salt', slug: 'salt-mine-choir', title: 'The Salt Mine Choir', status: 'Ongoing', tags: 'mystery · set in Romania',
+        blurb: 'Every Thursday, 14 teenagers take the lift 200 metres down into an old salt mine to rehearse. One night their choir director counts 15, and the new boy’s name is in no register.',
+        meta: '15 chapters · 1.2k reads · 86 comments · Chapter 15 out 2 hours ago', cta: 'Continue reading'
+      },
+      {
+        id: 'map', slug: 'map-in-the-attic', title: 'The Map in the Attic', status: 'Completed', tags: 'family · village life',
+        blurb: 'Two cousins clearing out their grandmother’s attic find a hand-drawn map of their village. It shows three houses that were never built.',
+        meta: '8 chapters · 640 reads · 31 comments · Finished in August', cta: 'Start reading'
+      }
+    ];
+    var auto = this.autoCovers(stories.map(function (s) { return s.slug; }));
+    stories = stories.map(function (s, i) {
+      var on = !!st.storyFollow[s.id];
+      var key = FIXED[s.slug] || auto[i];
+      var spec = CV[key] || { ink: '#FAF8F5', line: '' };   // safe fallback: light title
+      return Object.assign({}, s, {
+        cvClass: 'tmc-cv tmc-cv-' + key,
+        titleStyle: 'font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 700; font-size: ' + self.titleSize(s.title, 20) + 'px; line-height: 1.05; color: ' + spec.ink + ';'
+          + (spec.box ? ' align-self: flex-start; padding: 6px 8px; border-radius: 6px; background: ' + spec.box + ';' : ''),
+        lineStyle: spec.line ? 'display: block; width: 36px; height: 3px; border-radius: 2px; background: ' + spec.line + ';' : 'display: none;',
+        cover: cover, onStr: on ? 'true' : 'false',
+        // Pill system (17 Oct): Ongoing sage (active), Completed gold.
+        statusStyle: s.status === 'Ongoing' ? 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap' : 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap',
+        btnLabel: on ? 'Following story' : 'Follow story', btnStyle: self.pillBtn(on),
+        toggle: function () { var n = Object.assign({}, st.storyFollow); n[s.id] = !on; self.setState({ storyFollow: n }); }
+      });
+    });
+
+    var posts = [
+      { thread: 'How do you start a chapter without a prologue?', where: 'Writing craft › First chapters', when: '2 days ago', quote: 'If I cut all that and open with the new singer walking into rehearsal, will people be confused?' },
+      { thread: 'This week’s prompt: a letter you never sent', where: 'Writers’ room', when: '4 days ago', quote: 'Mine is to my old piano teacher. Posting it tonight.' },
+      { thread: 'Maps in fantasy books: helpful or a spoiler?', where: 'Fantasy writers’ circle', when: 'last week', quote: 'Helpful, as long as the map doesn’t show where the story ends.' }
+    ].map(function (p, i) {
+      return Object.assign({}, p, { rowStyle: 'display: flex; flex-direction: column; gap: 6px; padding: 20px 24px; ' + (i ? 'border-top: 1px solid #EFE8F2;' : '') });
+    });
+
+    // Illustrative rank ladder: built from published chapters and words only.
+    var ranks = [
+      // Each rank has its own doodle sticker, shown on the avatar (SVG doodles, never emoji).
+      ['New writer', 'first chapter', false, true, '/_blob/cb01c13602029560ca242fb10bc704d2'],
+      ['Writer', '5 chapters', false, true, '/_blob/96200adfcd22a04d24179eb458d6f66d'],
+      ['Storyteller', '15 chapters or 30,000 words', true, true, '/_blob/2b77dad1a2170495e93cea3190c0f1b7'],
+      ['Novelist', '100,000 words', false, false, '/_blob/6d08de11995e148d0b8ffc0654498644']
+    ].map(function (r) {
+      return {
+        name: r[0], rule: r[1], icon: r[4],
+        iconStyle: 'flex: none; width: 28px; height: 28px;' + (r[3] ? '' : ' opacity: 0.45;'),
+        rowStyle: 'display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; font-size: 14px; ' + (r[2] ? 'background: #F1EAF4; color: #481C5F; font-weight: 700;' : 'color: #26142E;'),
+        dot: 'flex: none; width: 10px; height: 10px; border-radius: 50%; ' + (r[3] ? 'background: #672786;' : 'background: #FFFFFF; border: 2px solid #B9A9C2; box-sizing: border-box;')
+      };
+    });
+
+    // Only the event, result, date, issuer and code are public. Never the printed name.
+    var seal = function (bg, fg) { return 'flex: none; width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: ' + bg + '; color: ' + fg + ';'; };
+    var certs = [
+      { result: 'Winner', event: 'Autumn short story contest', date: 'October 2026', issuer: 'Ghemotoc and [Partner]', code: '8F2K-4Q7D', seal: seal('#E6C24C', '#26142E') },
+      { result: 'Participant', event: 'Summer writing workshop', date: 'July 2026', issuer: 'Ghemotoc', code: '3M7P-9X2C', seal: seal('#F1EAF4', '#481C5F') }
+    ];
+
+    var langPill = function (on) {
+      return 'min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+        + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 700;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+
+    return {
+      followerCount: followers.toLocaleString('en-GB'),
+      following: st.following, followingStr: st.following ? 'true' : 'false',
+      followLabel: st.following ? 'Following' : 'Follow',
+      followStyle: 'display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+        + (st.following ? 'border: 1px solid #481C5F; background: #FFFFFF; color: #481C5F;' : 'border: 0; background: #2A0E33; color: #FBF7EC;'),
+      toggleFollow: function () { self.setState({ following: !st.following }); },
+      menuOpen: st.menuOpen, menuOpenStr: st.menuOpen ? 'true' : 'false',
+      toggleMenu: function () { self.setState({ menuOpen: !st.menuOpen }); },
+      askBlock: function () { self.setState({ menuOpen: false, confirmBlock: true }); },
+      cancelBlock: function () { self.setState({ confirmBlock: false }); },
+      doBlock: function () { self.setState({ confirmBlock: false, blocked: true, following: false }); },
+      unblock: function () { self.setState({ blocked: false }); },
+      confirmBlock: st.confirmBlock, blocked: st.blocked, notBlocked: !st.blocked,
+      stories: stories.slice(0, 20), posts: posts, ranks: ranks, certs: certs,
+      storiesMore: stories.length > 20,
+      refStories: function (el) { self.shelves.st = el; if (el) setTimeout(function () { self.measureShelf('st'); }, 0); },
+      scrollStories: function () { self.measureShelf('st'); }, maskStories: self.mask('st'),
+      // Scroll arrows per row: shown only when the row overflows; disabled at the end they point to (Robert, 17 Oct).
+      ar: { st: self.arrows('st') },
+      prevStories: function () { self.scrollShelf('st', -1); }, nextStories: function () { self.scrollShelf('st', 1); },
+      ro: st.lang === 'ro' ? 'true' : 'false', en: st.lang === 'en' ? 'true' : 'false',
+      roStyle: langPill(st.lang === 'ro'), enStyle: langPill(st.lang === 'en'),
+      setRo: function () { self.setState({ lang: 'ro' }); }, setEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

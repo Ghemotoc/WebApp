@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Moderation queue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same look as the main island, with the staff area's own links -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 520px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" aria-current="page" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Queue<span aria-label="24 open cases" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700; line-height: 1">24</span></a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Appeals<span aria-label="3 open appeals and 1 removal order" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 1">4</span></a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; align-items: center; gap: 10px">
+          <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #672786; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">AM</span>
+          <span style="display: flex; flex-direction: column; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Andrei Mureșan</span><span style="font-size: 12px; color: #6B5A73">Moderator · 2FA on</span></span>
+        </span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- One-hour removal order alert: the most urgent thing on the page -->
+    <div role="alert" style="margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 16px 20px; border-radius: 20px; background: #F6E9EB; border: 1px solid #E3C3C8">
+      <span style="flex: none; width: 40px; height: 40px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2 2"></path><path d="M9 2h6"></path></svg></span>
+      <span style="flex: 1 1 420px; font-size: 16px; line-height: 1.5; color: #26142E"><strong style="color: #8C2B3A">1 removal order is open.</strong> EU law gives us one hour to remove terrorist content once an authority orders it. 38 minutes left.</span>
+      <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-size: 15px; font-weight: 600; text-decoration: none">Open the order</a>
+    </div>
+
+    <!-- Page header -->
+    <header style="padding: 40px 0 24px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; animation: tmcRise 0.5s ease-out both">
+      <div style="display: flex; flex-direction: column; gap: 14px; max-width: 720px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · moderation</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Report queue</h1>
+        <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #5C4965">Most urgent first. Our own moderators act on reports. The only automatic check is on pictures: it holds a flagged picture for a moderator and never decides on its own.</p>
+      </div>
+      <a href="#" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>Moderation handbook</a>
+    </header>
+
+    <!-- Priority tiers: each tier has its own deadline -->
+    <section aria-label="Open cases by priority tier" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px">
+      <div style="padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-left: 6px solid #8C2B3A; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #8C2B3A; line-height: 1.3">1 hour</span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; line-height: 1; color: #26142E">1 open</span>
+        <span style="font-size: 14px; line-height: 1.45; color: #5C4965">Removal orders from an authority, sent through the report form</span>
+      </div>
+      <div style="padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-left: 6px solid #C76B7A; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #8C2B3A; line-height: 1.3">Same day</span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; line-height: 1; color: #26142E">3 open</span>
+        <span style="font-size: 14px; line-height: 1.45; color: #5C4965">Child abuse material (including a known-abuse-image match), a threat to a minor or a self-harm risk</span>
+      </div>
+      <div style="padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-left: 6px solid #E6C24C; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">48 hours</span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; line-height: 1; color: #26142E">3 open</span>
+        <span style="font-size: 14px; line-height: 1.45; color: #5C4965">Other illegal content, such as copied work</span>
+      </div>
+      <div style="padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-left: 6px solid #B9A9C2; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #5C4965; line-height: 1.3">7 days</span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; line-height: 1; color: #26142E">17 open</span>
+        <span style="font-size: 14px; line-height: 1.45; color: #5C4965">Everything else: insults, spam, off-topic posts</span>
+      </div>
+    </section>
+
+    <!-- Queue sections -->
+    <nav aria-label="Moderation sections" style="margin-top: 32px; display: flex; flex-wrap: wrap; gap: 8px">
+      <a class="tmc-chip" href="Moderation.dc.html" aria-current="page" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; display: block"><path d="M20 6 9 17l-5-5"></path></svg>Report queue<span style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700; line-height: 1">24</span></a>
+      <a class="tmc-chip" href="Appeals.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">Appeals<span style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">3</span></a>
+      <a class="tmc-chip" href="Appeals.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">Removal orders<span style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-size: 12px; font-weight: 700; line-height: 1">1</span></a>
+      <a class="tmc-chip" href="#" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;">Decisions log</a>
+    </nav>
+
+    <!-- Filters -->
+    <form role="search" aria-label="Filter the queue" style="margin: 20px 0 0; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 14px">
+      <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 6px">
+        <label for="f-search" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Search</label>
+        <input id="f-search" type="search" placeholder="Case number or handle" style="height: 44px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="f-tier" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Tier</label>
+        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="f-tier" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E"><option>All tiers</option><option>1 hour</option><option>Same day</option><option>48 hours</option><option>7 days</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="f-reason" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Reason</label>
+        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="f-reason" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E"><option>All reasons</option><option>Removal order</option><option>Picture check: nudity or gore</option><option>Picture check: known-abuse-image match</option><option>Threat to a minor</option><option>Self-harm risk</option><option>Copied from a published work</option><option>Harassment</option><option>Insults</option><option>Spam</option><option>Undisclosed AI</option><option>Other</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="f-age" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Reporter under 18</label>
+        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="f-age" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E"><option>All</option><option>Yes</option><option>No</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="f-source" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Found by</label>
+        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="f-source" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E"><option>Reports, orders and picture checks</option><option>Reports only</option><option>Removal orders only</option><option>Picture checks only</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="f-status" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Status</label>
+        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="f-status" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E"><option>Open</option><option>Claimed by me</option><option>Unclaimed</option><option>Decided</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+      </div>
+    </form>
+
+    <!-- Queue table and the case preview, side by side -->
+    <div style="margin-top: 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+      <div style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+        <section aria-labelledby="queue-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; padding: 20px 20px 12px">
+            <h2 id="queue-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Open cases</h2>
+            <span style="font-size: 13px; color: #6B5A73">Reports about the same post are grouped into one case.</span>
+          </div>
+          <div style="overflow-x: auto">
+            <table style="width: 100%; min-width: 760px; border-collapse: collapse; table-layout: fixed; font-size: 14px">
+              <thead>
+                <tr style="background: #F4F0EC; text-align: left">
+                  <th scope="col" style="width: 96px; padding: 12px 10px 12px 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #5C4965">CASE</th>
+                  <th scope="col" style="padding: 12px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #5C4965">WHAT WAS REPORTED</th>
+                  <th scope="col" style="width: 128px; padding: 12px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #5C4965">SIGNALS</th>
+                  <th scope="col" style="width: 112px; padding: 12px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #5C4965">USER</th>
+                  <th scope="col" style="width: 120px; padding: 12px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #5C4965">DEADLINE</th>
+                  <th scope="col" style="width: 104px; padding: 12px 20px 12px 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: #5C4965">CLAIMED</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-top: 1px solid #EFE8F2; background: #FBF1F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="Appeals.dc.html" style="font-weight: 700">TCO-0001</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Removal order</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #26142E">Terrorist content<span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; border: 1px solid #8C2B3A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Removal order</span></span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">From a competent authority through the report form at 14:02. Clock started on receipt</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">Authority order<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">one-hour clock running</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@north.ember<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Uploader, adult</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; border: 1px solid #8C2B3A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">1 hour</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">38 min left</span></td>
+                  <td style="padding: 14px 20px 14px 10px; vertical-align: top; color: #26142E">Robert, on call</td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2318</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Comment</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #26142E">Threat to a minor<span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Safeguarding</span></span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">An adult asks a 15-year-old for her phone number</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">1 report</td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@nightrider_x<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Reporter under 18</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Same day</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">5 h 50 min left</span></td>
+                  <td style="padding: 14px 20px 14px 10px; vertical-align: top; font-weight: 700; color: #672786">You</td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2317</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Comment</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #26142E">Self-harm risk<span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Safeguarding</span></span><span style="display: block; margin-top: 3px; font-size: 13px; font-style: italic; color: #6B5A73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Text hidden here. Open the case to read it.</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">1 report</td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@rainjournal<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Reporter under 18</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Same day</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">7 h 12 min left</span></td>
+                  <td style="padding: 10px 20px 10px 10px; vertical-align: top"><button type="button" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Claim</button></td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2316</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Chapter picture</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #26142E">Picture check: known-abuse-image match<span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Safeguarding</span></span><span style="display: block; margin-top: 3px; font-size: 13px; font-style: italic; color: #6B5A73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Picture held. Only safeguarding staff can open it.</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">Picture check<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">no reports</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@p.lens<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Uploader, adult</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Same day</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">9 h 30 min left</span></td>
+                  <td style="padding: 10px 20px 10px 10px; vertical-align: top"><button type="button" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Claim</button></td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2314</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Chapter</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: block; font-weight: 600; color: #26142E">Copied from a published work</span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Chapter 3 matches a published novel word for word</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">2 reports</td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@quill.copy<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Adult reporters</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">48 hours</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">47 h left</span></td>
+                  <td style="padding: 14px 20px 14px 10px; vertical-align: top; color: #26142E">Robert</td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2313</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Cover picture</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: block; font-weight: 600; color: #26142E">Picture check: nudity</span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Cover of a new story, held before anyone else saw it</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">Picture check<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">no reports</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@inkmoth<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Uploader under 18</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">48 hours</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">45 h left</span></td>
+                  <td style="padding: 10px 20px 10px 10px; vertical-align: top"><button type="button" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Claim</button></td>
+                </tr>
+                <tr aria-selected="true" style="border-top: 1px solid #EFE8F2; background: #F1EAF4">
+                  <td style="padding: 14px 10px 14px 17px; vertical-align: top; border-left: 3px solid #672786"><a href="ModCase.dc.html" style="font-weight: 700">R-2315</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Forum post</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: block; font-weight: 600; color: #26142E">Harassment</span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">“Nobody asked for your opinion. Your chapters are cringe”</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">3 reports<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">from 2 people</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@storyfan22<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Reporter under 18</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">7 days</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">6 d 23 h left</span></td>
+                  <td style="padding: 14px 20px 14px 10px; vertical-align: top; font-weight: 700; color: #672786">You</td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2312</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Profile</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: block; font-weight: 600; color: #26142E">Insults</span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Bio calls another member “a talentless copycat”</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">1 report</td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@grey.static<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Adult reporter</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">7 days</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">6 d 23 h left</span></td>
+                  <td style="padding: 10px 20px 10px 10px; vertical-align: top"><button type="button" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Claim</button></td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2311</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Message</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: block; font-weight: 600; color: #26142E">Spam</span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">“Get 1,000 readers free, click my link”</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">4 reports<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">from 4 people</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@promo_reads<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Reporters under 18</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">7 days</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">6 d 22 h left</span></td>
+                  <td style="padding: 10px 20px 10px 10px; vertical-align: top"><button type="button" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Claim</button></td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2310</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Story</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: block; font-weight: 600; color: #26142E">Undisclosed AI</span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Readers say chapters 1 to 4 are AI-written. The story is labelled “No AI”</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">3 reports<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">from 3 people, 2 confirmed true</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@velvet.quill<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Adult reporters</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">7 days</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">6 d 20 h left</span></td>
+                  <td style="padding: 10px 20px 10px 10px; vertical-align: top"><button type="button" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Claim</button></td>
+                </tr>
+                <tr style="border-top: 1px solid #EFE8F2">
+                  <td style="padding: 14px 10px 14px 20px; vertical-align: top"><a href="ModCase.dc.html" style="font-weight: 700">R-2306</a><span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Forum post</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: block; font-weight: 600; color: #26142E">Other</span><span style="display: block; margin-top: 3px; font-size: 13px; color: #5C4965; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Offers to write other students’ school essays for money, in Book talk</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E">1 report</td>
+                  <td style="padding: 14px 10px; vertical-align: top; color: #26142E; overflow: hidden; text-overflow: ellipsis">@drift.wood<span style="display: block; margin-top: 2px; font-size: 12px; color: #6B5A73">Adult reporter</span></td>
+                  <td style="padding: 14px 10px; vertical-align: top"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">7 days</span><span style="display: block; margin-top: 4px; font-size: 12px; color: #5C4965">6 d 19 h left</span></td>
+                  <td style="padding: 10px 20px 10px 10px; vertical-align: top"><button type="button" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Claim</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; padding: 14px 20px; border-top: 1px solid #EFE8F2; font-size: 13px; color: #6B5A73">
+            <span>Showing 11 of 24 open cases, most urgent first. The label “AI-written, not disclosed” goes on only after 3 reports are confirmed true (a setting).</span>
+            <span style="margin-left: auto; text-align: right">Oldest open case: 5 h · Within deadline this week: 96%</span>
+          </div>
+        </section>
+
+        <!-- Picture check on upload: the only automatic check (S1-E10-05) -->
+        <section aria-labelledby="prescreen-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Picture check on upload</span>
+              <h2 id="prescreen-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">What the picture check held today</h2>
+            </div>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 13px; font-weight: 700; line-height: 1; white-space: nowrap"><span aria-hidden="true" style="flex: none; width: 8px; height: 8px; border-radius: 50%; background: #245A41"></span>Both picture checks running</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+            <div style="padding: 16px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-size: 14px; font-weight: 600; color: #26142E">Pictures</span>
+              <span style="font-size: 15px; line-height: 1.5; color: #5C4965">412 uploads checked by Sightengine (nudity, gore) and Arachnid Shield (known child abuse images) before anyone else could see them. 2 held for a moderator: R-2313 and R-2316.</span>
+            </div>
+            <div style="padding: 16px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-size: 14px; font-weight: 600; color: #26142E">Text</span>
+              <span style="font-size: 15px; line-height: 1.5; color: #5C4965">Never checked automatically. Stories, comments and posts reach this queue only when someone reports them.</span>
+            </div>
+            <div style="padding: 16px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-size: 14px; font-weight: 600; color: #26142E">If a check stops working</span>
+              <span style="font-size: 15px; line-height: 1.5; color: #5C4965">The picture stays private until the check runs, and the writer can still publish the text around it. A known-abuse-image match goes to the same-day tier and to safeguarding.</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Case preview: the selected row -->
+      <section aria-labelledby="case-title" style="flex: 1 1 400px; max-width: 460px; min-width: 0; box-sizing: border-box; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+            <h2 id="case-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Case R-2315</h2>
+            <a href="ModCase.dc.html" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 14px; font-weight: 600">Open full case<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">7 days · 6 d 23 h left</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Harassment</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Claimed by you</span>
+          </div>
+          <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #6B5A73">Forum post #14 in Writing craft, First chapters. 3 reports from 2 people, the first 18 minutes ago.</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <h3 style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Reported post</h3>
+          <div style="padding: 14px 16px; background: #FAF8F5; border: 1px solid #EFE8F2; border-radius: 16px">
+            <span style="display: block; font-size: 13px; color: #6B5A73">@storyfan22 · age check: 13 or over · joined May 2026</span>
+            <span style="display: block; margin-top: 6px; font-size: 16px; line-height: 1.55; color: #26142E">Nobody asked for your opinion. Your chapters are cringe and so are you. Just quit.</span>
+            <a href="Thread.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Open in thread</a>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <h3 style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Reporter’s note</h3>
+          <span style="font-size: 13px; color: #6B5A73">Reporter is under 18. Their name is never shown to @storyfan22.</span>
+          <p style="margin: 0; padding: 12px 16px; border-left: 4px solid #E6C24C; background: #F4F0EC; border-radius: 12px; font-size: 16px; line-height: 1.55; color: #26142E">This is the third time he’s replied to me like this. I just want it to stop.</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <h3 style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">storyfan22’s history</h3>
+          <ul style="margin: 0; padding: 0; list-style: none; font-size: 14px; color: #26142E">
+            <li style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #EFE8F2"><span>Warning, harassment</span><span style="margin-left: auto; text-align: right; color: #6B5A73">14 Sep</span></li>
+            <li style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #EFE8F2"><span>Post removed, harassment</span><span style="margin-left: auto; text-align: right; color: #6B5A73">2 Oct</span></li>
+            <li style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0"><span>Reported 3 times in 30 days, by 2 people</span><span style="margin-left: auto; text-align: right; color: #6B5A73">Today</span></li>
+          </ul>
+          <span style="font-size: 13px; color: #5C4965">Next step on the sanction ladder: a 7-day suspension.</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <h3 id="decision-label" style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Decision</h3>
+          <div role="group" aria-labelledby="decision-label" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+            <sc-for list="{{actions}}" as="a" hint-placeholder-count="6">
+              <button type="button" class="tmc-chip" aria-pressed="{{a.pressed}}" onClick="{{a.pick}}" style="{{a.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{a.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{a.label}}</button>
+            </sc-for>
+          </div>
+          <button type="button" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer">Escalate to safeguarding</button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="note" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Note for the case log (required)</label>
+          <textarea id="note" rows="3" onInput="{{onNote}}" placeholder="What you checked and why you chose this action" aria-describedby="note-help" style="display: block; width: 100%; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+          <sc-if value="{{noteMissing}}" hint-placeholder-val="{{true}}"><span id="note-help" style="font-size: 13px; color: #8C2B3A">Write a note to send the decision. Only staff can read it.</span></sc-if>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="sor" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Statement of reasons, sent to storyfan22</label>
+          <textarea id="sor" rows="5" style="display: block; width: 100%; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FAF8F5; font-family: inherit; font-size: 15px; line-height: 1.55; color: #26142E; resize: vertical">We removed your post in First chapters because it attacks another member, not their writing. That breaks our rule on harassment. A person made this decision. No automated tool was used. You can appeal within six months.</textarea>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Sent in Română, @storyfan22’s language. A copy is saved with the case.</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px">
+          <input id="notify" type="checkbox" checked style="width: 20px; height: 20px; margin: 0; accent-color: #672786">
+          <label for="notify" style="font-size: 15px; color: #26142E">Tell the reporters what we decided</label>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px">
+          <button type="button" style="height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Save draft</button>
+          <button type="button" disabled="{{sendDisabled}}" style="{{sendStyle}}">Send decision</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="margin-top: 64px">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2546}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // "Remove" starts picked so the board shows a chosen action; the note starts empty
+    // so the board shows the rule that a decision cannot be sent without one.
+    this.state = { action: 'Remove', note: '', lang: 'en' };
+  }
+
+  // Shared look for the two language buttons in the footer.
+  langStyle(on) {
+    return 'min-height: 38px; padding: 0 14px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+      + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 600;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+  }
+
+  // Interactive chip (pill system, 17 Oct): 36 px tall inside a 44 px tap area (.tmc-chip::before), equal 14 px sides.
+  // Unselected: white with a #8E7B99 edge. Selected: solid plum plus a check icon, so the state is not colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // The six actions the queue story names. One is picked at a time.
+    var actions = ['No action', 'Remove', 'Restrict', 'Warn', 'Suspend', 'Ban'].map(function (a) {
+      var on = st.action === a;
+      return {
+        label: a, pressed: on,
+        pick: function () { self.setState({ action: a }); },
+        style: self.chipStyle(on), check: self.chipCheck(on)
+      };
+    });
+
+    // A decision needs a note before it can be sent.
+    var hasNote = String(st.note || '').trim().length > 0;
+    var sendStyle = 'height: 48px; padding: 0 24px; border: 0; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; '
+      + (hasNote ? 'background: #2A0E33; color: #FBF7EC; cursor: pointer;' : 'background: #DED3E4; color: #5C4965; cursor: not-allowed;');
+
+    return {
+      actions: actions,
+      noteMissing: !hasNote,
+      sendDisabled: !hasNote,
+      sendStyle: sendStyle,
+      onNote: function (e) { var v = (e && e.target && typeof e.target.value === 'string') ? e.target.value : ''; self.setState({ note: v }); },
+      roOn: st.lang === 'ro', enOn: st.lang === 'en',
+      roStyle: self.langStyle(st.lang === 'ro'), enStyle: self.langStyle(st.lang === 'en'),
+      setRo: function () { self.setState({ lang: 'ro' }); },
+      setEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

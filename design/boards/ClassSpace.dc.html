@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Class space</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+/* Automatic covers (S1-E3-13): the 16 approved backgrounds */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-gold{background-color:#E6C24C;background-image:url(/_blob/91b025a34ffa73c4f7886c143b2229d4)}
+.tmc-cv-lilac{background-color:#E9DDF0;background-image:url(/_blob/f1d0436689691672be6a521d49b6d32c)}
+.tmc-cv-blush{background-color:#F6D3DC;background-image:url(/_blob/e6edfdb3a9348376f609edc9860c7003)}
+.tmc-cv-sky{background-color:#D7E6F2;background-image:url(/_blob/7f5800c35ba2931d2b6f7a813d85b93c)}
+.tmc-cv-sage{background-color:#C9D8BF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#FAF8F5;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-cv-stripes{background-color:#481C5F;background-image:url(/_blob/5bf720d39651e2b57f384d33e3e04028)}
+.tmc-cv-dots{background-color:#E9DDF0;background-image:url(/_blob/49525cd87927782c2ac3d4a53ebc2973)}
+.tmc-cv-grid{background-color:#FAF8F5;background-image:url(/_blob/18fddef6727cc64415d6f75fd94c388b)}
+.tmc-cv-waves{background-color:#D7E6F2;background-image:url(/_blob/b3b6a05178861fc4e9210eaaa4134c6d)}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-cv-doodles{background-color:#FAF8F5;background-image:url(/_blob/f295eb5a1f415fe44f9e39a32e58ba7e)}
+.tmc-cv-twotone{background-color:#F6D3DC;background-image:url(/_blob/0d7f4386c9eaec72ab74d7b8349bc99f)}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: class spaces belong to Forums -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; margin-left: -10px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <a href="Forums.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 24px; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Back to Forums</a>
+
+    <!-- Locked state: shown once the academic year ends (decided 16 Oct, Q69): no new posts, members can still read it for as long as they have an account -->
+    <sc-if value="{{archived}}" hint-placeholder-val="{{false}}">
+      <div role="status" style="margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 16px 22px; border-radius: 20px; background: #F4F0EC; border: 1px solid #DED3E4">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#481C5F" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1"></rect><path d="M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg>
+        <span style="flex: 1 1 400px; font-size: 15px; line-height: 1.55; color: #26142E"><b>This space is locked.</b> Class spaces lock at the end of the school year, and nobody can post here any more. You can still read everything in it for as long as you have an account, and you keep your own stories and drafts.</span>
+      </div>
+    </sc-if>
+
+    <!-- Space header -->
+    <section aria-labelledby="space-h" style="margin-top: 12px; padding: clamp(24px, 3vw, 36px); background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 22px; animation: tmcRise 0.5s ease-out both">
+      <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+        <span aria-hidden="true" style="flex: none; width: 104px; height: 104px; border-radius: 24px; background: linear-gradient(150deg,#2E4A8C 0%,#481C5F 100%); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 40px">9B</span>
+        <div style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Private class space</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Members only</span>
+          </div>
+          <h1 id="space-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Class 9B</h1>
+          <span style="font-size: 16px; color: #5C4965">Liceul Teoretic [School name], Ploiești · 27 members · 2026–2027 school year</span>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+            <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(140deg,#2F6B4F,#7DB596); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">MI</span>
+            <span style="font-size: 15px; color: #26142E">Run by <b>Ms Ionescu</b></span>
+            <span title="Teacher account approved by Ghemotoc staff" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 13px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c3 2 9 2 12 0v-5"></path></svg>Teacher</span>
+          </div>
+        </div>
+        <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 10px">
+          <sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+            <a href="Thread.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New post</a>
+            <a href="NewStory.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none">Share a story with the class</a>
+          </sc-if>
+          <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Report</a>
+        </div>
+      </div>
+      <p style="margin: 0; display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px; border-radius: 16px; background: #F1EAF4; font-size: 15px; line-height: 1.55; color: #3A2442"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span>It’s invitation only: Ms Ionescu invites the whole class, whatever their ages, so 15, 16 and 17-year-olds learn together. Only members can see this space. It doesn’t show up in search, Discover or any public list. Nobody outside the class can open its posts or stories. The community guidelines apply here, as everywhere on Ghemotoc.</span></p>
+    </section>
+
+    <!-- How a class space starts (answers: "how do they open the spaces?") -->
+    <section aria-labelledby="how-h" style="position: relative; margin-top: 28px; display: flex; flex-direction: column; gap: 14px">
+      <img data-doodle="background" data-doodle-on="How a class space starts" src="/_blob/b82a2ffa9fe0cf7876402ee97900856a" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -50px; right: 40px; width: 92px; transform: rotate(10deg)">
+      <h2 id="how-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">How a class space starts</h2>
+      <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 12px">
+        <li style="flex: 1 1 280px; min-width: 0; display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px"><span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 17px">1</span><span><span style="display: block; font-weight: 700; font-size: 16px; color: #26142E">The teacher gets a Teacher badge</span><span style="display: block; margin-top: 4px; font-size: 14px; line-height: 1.55; color: #5C4965">They ask for it in Settings with a school email or a letter from the school. Our staff check it.</span></span></li>
+        <li style="flex: 1 1 280px; min-width: 0; display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px"><span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 17px">2</span><span><span style="display: block; font-weight: 700; font-size: 16px; color: #26142E">They create a space and pick “Class space”</span><span style="display: block; margin-top: 4px; font-size: 14px; line-height: 1.55; color: #5C4965">Same form as any space. The class space is private and comes with an invite code.</span></span></li>
+        <li style="flex: 1 1 280px; min-width: 0; display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px"><span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 17px">3</span><span><span style="display: block; font-weight: 700; font-size: 16px; color: #26142E">Students join with the code</span><span style="display: block; margin-top: 4px; font-size: 14px; line-height: 1.55; color: #5C4965">The teacher writes the code on the board or shares the link. Students type it in Forums › Join a class.</span></span></li>
+      </ol>
+      <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #6B5A73">For the March test, our staff set up class spaces for the pilot schools by hand. Teachers do it themselves after March.</p>
+    </section>
+
+    <div style="margin-top: 40px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+      <!-- LEFT: threads, contest board, class-only stories, archive note -->
+      <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 44px">
+
+        <!-- Class threads -->
+        <section aria-labelledby="threads-h" style="position: relative; animation: tmcRise 0.5s 0.05s ease-out both">
+          <img data-doodle="background" data-doodle-on="Talk with your class" src="/_blob/cb01c13602029560ca242fb10bc704d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -4px; right: 24px; width: 62px; transform: rotate(-12deg)">
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Class threads</span>
+            <h2 id="threads-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Talk with your class</h2>
+          </div>
+          <ul style="list-style: none; margin: 0; padding: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; overflow: hidden; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+            <sc-for list="{{threads}}" as="t" hint-placeholder-count="5">
+              <li style="{{t.rowStyle}}">
+                <span aria-hidden="true" style="{{t.dot}}"></span>
+                <span style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+                  <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                    <sc-if value="{{t.pinned}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap">Pinned</span></sc-if>
+                    <sc-if value="{{t.locked}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap">Locked</span></sc-if>
+                    <a href="Thread.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; color: #26142E; text-decoration: none">{{t.title}}</a>
+                  </span>
+                  <span style="font-size: 14px; color: #6B5A73">{{t.by}} · {{t.meta}}</span>
+                  <sc-if value="{{t.hasNote}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; color: #5C4965">{{t.note}}</span></sc-if>
+                </span>
+                <span style="font-size: 14px; font-weight: 600; color: #481C5F">{{t.replies}}</span>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+
+        <!-- First Chapter contest board (class round) -->
+        <section aria-labelledby="contest-h" style="position: relative; padding: clamp(22px, 3vw, 32px); background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 22px; animation: tmcRise 0.5s 0.1s ease-out both">
+          <img data-doodle="widget" data-doodle-on="The First Chapter contest" src="/_blob/8b35eff002c7149d8059704ce00b23d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -50px; right: 30px; width: 92px; transform: rotate(6deg)">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Contest board · class round</span>
+              <h2 id="contest-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">The First Chapter contest</h2>
+              <span style="font-size: 15px; color: #5C4965">Opens in February 2027 · open to writers aged 13 to 19</span>
+            </div>
+          </div>
+
+          <ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px">
+            <li style="padding: 16px; border-radius: 16px; background: #FFF8E1; border: 1px solid #E6C24C; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Now</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">Write the first chapter of a new story.</span></li>
+            <li style="padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">February 2027</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">The contest opens. Enter your chapter here.</span></li>
+            <li style="padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">After the deadline</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">The class reads the entries and Ms Ionescu picks the finalists.</span></li>
+            <li style="padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Certificates</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">Everyone who enters gets one, issued with your school.</span></li>
+          </ol>
+
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+              <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Entries so far</h3>
+              <span style="font-size: 14px; color: #6B5A73">11 of 26 students have a draft ready</span>
+            </div>
+            <div role="progressbar" aria-label="Students with a draft ready" aria-valuenow="11" aria-valuemin="0" aria-valuemax="26" style="height: 8px; border-radius: 999px; background: #F1EAF4; overflow: hidden"><div style="width: 42%; height: 100%; border-radius: 999px; background: #672786"></div></div>
+            <div style="overflow-x: auto; margin-top: 6px; border: 1px solid #DED3E4; border-radius: 20px">
+              <table style="width: 100%; min-width: 520px; border-collapse: collapse; font-size: 15px">
+                <thead>
+                  <tr style="background: #FAF8F5; text-align: left">
+                    <th scope="col" style="padding: 12px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">WRITER</th>
+                    <th scope="col" style="padding: 12px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">FIRST CHAPTER</th>
+                    <th scope="col" style="padding: 12px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">STATUS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-top: 1px solid #EFE8F2; background: #FFFDF5">
+                    <th scope="row" style="padding: 14px 18px; text-align: left; font-weight: 600; color: #26142E">lia.writes (you)</th>
+                    <td style="padding: 14px 18px; color: #5C4965"><a href="Editor.dc.html" style="font-weight: 600">Chapter one, untitled</a> · 1,240 words</td>
+                    <td style="padding: 14px 18px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap">Draft ready</span></td>
+                  </tr>
+                  <tr style="border-top: 1px solid #EFE8F2">
+                    <th scope="row" style="padding: 14px 18px; text-align: left; font-weight: 600; color: #26142E">andra.m</th>
+                    <td style="padding: 14px 18px; color: #5C4965">The Bell at Number 9</td>
+                    <td style="padding: 14px 18px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap">Draft ready</span></td>
+                  </tr>
+                  <tr style="border-top: 1px solid #EFE8F2">
+                    <th scope="row" style="padding: 14px 18px; text-align: left; font-weight: 600; color: #26142E">vlad.writes</th>
+                    <td style="padding: 14px 18px; color: #5C4965">Two Summers in Sinaia</td>
+                    <td style="padding: 14px 18px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap">Writing</span></td>
+                  </tr>
+                  <tr style="border-top: 1px solid #EFE8F2">
+                    <th scope="row" style="padding: 14px 18px; text-align: left; font-weight: 600; color: #26142E">teo_ink</th>
+                    <td style="padding: 14px 18px; color: #6B5A73">Not started yet</td>
+                    <td style="padding: 14px 18px"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap">Not started</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <span style="font-size: 14px; line-height: 1.55; color: #6B5A73">Only Class 9B sees this board. Class spaces never show advertising of any kind: no ads, no sponsored items and no sponsor credits.</span>
+          </div>
+        </section>
+
+        <!-- Class-only stories -->
+        <section aria-labelledby="stories-h" style="position: relative; animation: tmcRise 0.5s 0.15s ease-out both">
+          <img data-doodle="background" data-doodle-on="Stories shared with the class" src="/_blob/f5c69995547466e6d428c768ff799288" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -30px; right: 10px; width: 74px; transform: rotate(8deg)">
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Class only</span>
+            <h2 id="stories-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Stories shared with the class</h2>
+            <span style="font-size: 15px; line-height: 1.55; color: #5C4965">Only Class 9B can read these until the writer makes them public. A teacher can never make a story public for a student.</span>
+          </div>
+          <!-- One sideways line, like every list of stories (design rule, 16 Oct) -->
+          <div style="position: relative; margin: 0 -4px">
+          <div ref="{{refClass}}" onScroll="{{scrollClass}}" tabindex="0" aria-label="Stories shared with the class, scrolls sideways" style="display: flex; align-items: stretch; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{maskClass}}; mask-image: {{maskClass}}">
+            <sc-for list="{{stories}}" as="s" hint-placeholder-count="3">
+              <article style="flex: none; width: 240px; box-sizing: border-box; scroll-snap-align: start; display: flex; flex-direction: column; gap: 10px; padding: 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+                <a href="Story.dc.html" aria-label="{{s.title}}, story page" class="{{s.cvClass}}" style="{{s.cover}}"><span style="{{s.box}}"><span style="{{s.titleStyle}}">{{s.title}}</span><span style="{{s.bar}}"></span></span></a>
+                <span style="{{s.chipStyle}}">{{s.chip}}</span>
+                <a href="Story.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 17px; color: #26142E; text-decoration: none">{{s.title}}</a>
+                <span style="font-size: 13px; color: #6B5A73">{{s.by}} · {{s.meta}}</span>
+                <sc-if value="{{s.mine}}" hint-placeholder-val="{{false}}">
+                  <button type="button" aria-pressed="{{s.publicStr}}" onClick="{{s.toggle}}" style="{{s.btnStyle}}">{{s.btnLabel}}</button>
+                </sc-if>
+              </article>
+            </sc-for>
+          </div>
+          </div>
+        </section>
+
+        <!-- What happens when the school year ends -->
+        <section aria-labelledby="archive-h" style="position: relative; padding: 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 24px; display: flex; gap: 16px; align-items: flex-start">
+          <img data-doodle="widget" data-doodle-on="When the school year ends" src="/_blob/86cce0664059fb540ee7ee3da590e514" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -44px; right: 30px; width: 88px; transform: rotate(-6deg)">
+          <img src="/_blob/aa624b96e88057896d273ba76dc51e54" alt="" aria-hidden="true" width="32" height="32" style="display: block; flex: none; margin-top: 0">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <h2 id="archive-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">When the school year ends</h2>
+            <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">At the end of the school year the space locks, so nobody can post any more. Every member can still read it for as long as they have an account, and you keep your own stories and drafts.</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT: members, teacher tools, safety -->
+      <aside aria-label="About Class 9B" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s 0.1s ease-out both">
+
+        <!-- Members -->
+        <section aria-labelledby="members-h" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Members</span>
+          <h2 id="members-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">27 members</h2>
+          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{members}}" as="m" hint-placeholder-count="6">
+              <li style="display: flex; align-items: center; gap: 12px; min-height: 48px">
+                <span aria-hidden="true" style="{{m.avatar}}">{{m.initial}}</span>
+                <a href="Profile.dc.html" style="flex: 1; min-width: 0; font-size: 15px; font-weight: 600; color: #26142E; text-decoration: none">{{m.name}}</a>
+                <sc-if value="{{m.hasTag}}" hint-placeholder-val="{{false}}"><span style="{{m.tagStyle}}">{{m.tag}}</span></sc-if>
+              </li>
+            </sc-for>
+          </ul>
+          <button type="button" style="height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">See all 27 members</button>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Members can’t see each other’s age or email.</span>
+        </section>
+
+        <!-- Teacher tools: only the teacher and platform moderators see this -->
+        <section aria-labelledby="tools-h" style="padding: 24px; background: #FFFFFF; border: 2px dashed #B9A9C2; border-radius: 24px; display: flex; flex-direction: column; gap: 18px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Teacher view · Lia doesn’t see this</span>
+            <h2 id="tools-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Teacher tools</h2>
+            <span style="font-size: 14px; line-height: 1.5; color: #5C4965">Only Ms Ionescu and Ghemotoc moderators see this panel.</span>
+          </div>
+
+          <!-- Invite code -->
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Invite code</span>
+            <span style="font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-weight: 700; font-size: 26px; letter-spacing: 0.08em; color: #26142E">{{code}}</span>
+            <span style="font-size: 14px; color: #5C4965; word-break: break-all">ghemotoc.com/join/{{code}}</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <button type="button" onClick="{{copyInvite}}" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{copyLabel}}</button>
+              <button type="button" onClick="{{resetCode}}" style="height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Reset code</button>
+            </div>
+            <label for="expiry" style="margin-top: 4px; font-size: 14px; font-weight: 600; color: #26142E">Code stops working</label>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="expiry" value="{{expiry}}" onChange="{{setExpiry}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+              <option value="7">In 7 days</option>
+              <option value="30">In 30 days</option>
+              <option value="term">At the end of term (19 December 2026)</option>
+              <option value="year">At the end of the school year</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            <span role="status" style="font-size: 13px; line-height: 1.5; color: #5C4965">{{codeNote}}</span>
+          </div>
+
+          <!-- Waiting to join -->
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Waiting to join</span>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #26142E">
+              <li style="display: flex; justify-content: space-between; gap: 8px; padding: 10px 14px; border-radius: 12px; background: #FAF8F5"><b>radu.c</b><span style="margin-left: auto; text-align: right; color: #5C4965">Age check not finished</span></li>
+              <li style="display: flex; justify-content: space-between; gap: 8px; padding: 10px 14px; border-radius: 12px; background: #FAF8F5"><b>ioana.v</b><span style="margin-left: auto; text-align: right; color: #5C4965">Waiting for parent or guardian consent</span></li>
+            </ul>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Students can see and post once their account is fully active. That means the age check is done and, for under-16s, a parent or guardian has given consent.</span>
+          </div>
+
+          <!-- Moderation -->
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">To check</span>
+            <sc-if value="{{postPending}}" hint-placeholder-val="{{true}}">
+              <div style="padding: 14px; border-radius: 16px; border: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 10px">
+                <span style="font-size: 14px; line-height: 1.5; color: #26142E">A reply by <b>teo_ink</b> in “Share your favourite opening line” was reported as off topic.</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <button type="button" onClick="{{removePost}}" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #8C2B3A; color: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Remove post</button>
+                  <button type="button" onClick="{{keepPost}}" style="height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Keep post</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{postDone}}" hint-placeholder-val="{{false}}">
+              <span role="status" style="font-size: 14px; color: #2F6B4F; font-weight: 600">{{postDoneText}}</span>
+            </sc-if>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end">
+              <div style="flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+                <label for="remove-member" style="font-size: 14px; font-weight: 600; color: #26142E">Remove a member</label>
+                <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="remove-member" value="{{memberPick}}" onChange="{{setMemberPick}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+                  <option value="">Choose a member</option>
+                  <option value="andra.m">andra.m</option>
+                  <option value="mara.p">mara.p</option>
+                  <option value="teo_ink">teo_ink</option>
+                  <option value="vlad.writes">vlad.writes</option>
+                </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+              </div>
+              <button type="button" disabled="{{noMemberPick}}" onClick="{{removeMember}}" style="{{removeBtnStyle}}">Remove member</button>
+            </div>
+          </div>
+
+          <!-- Log -->
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Moderation log</span>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.5; color: #26142E">
+              <sc-for list="{{log}}" as="l" hint-placeholder-count="3">
+                <li style="padding: 10px 14px; border-radius: 12px; background: #FAF8F5">{{l.text}} <span style="color: #6B5A73">· {{l.when}}</span></li>
+              </sc-for>
+            </ul>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Every action is logged. Ghemotoc moderators can see this log and act in any class space. Reports from inside the space go to our normal moderation queue, where a person reads each one.</span>
+          </div>
+
+          <sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+            <button type="button" onClick="{{archive}}" style="height: 44px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Lock the space now</button>
+          </sc-if>
+          <sc-if value="{{archived}}" hint-placeholder-val="{{false}}">
+            <button type="button" onClick="{{reopen}}" style="height: 44px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Unlock the space</button>
+          </sc-if>
+        </section>
+
+        <!-- Safety -->
+        <section aria-labelledby="safety-h" style="position: relative; padding: 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 24px; display: flex; flex-direction: column; gap: 12px">
+          <img data-doodle="widget" data-doodle-on="Something wrong here?" src="/_blob/864dbfce6ade2bfbf4cff7a68aeca985" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -48px; right: 24px; width: 72px; transform: rotate(8deg)">
+          <h2 id="safety-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Something wrong here?</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Report a post, a story or a person. Someone on our team reads every report, as anywhere else on Ghemotoc.</p>
+          <a href="ReportDialog.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Report</a>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Page footer -->
+  <footer style="position: relative; max-width: 1280px; margin: 80px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/54accc0ef3e17953e306b84980f3448a" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -78px; left: clamp(16px, 4vw, 64px); width: 66px; transform: rotate(-8deg)">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 14px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; font-size: 13px; color: #6B5A73">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3274}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      archived: false, code: '9B-K4TQ-72', copied: false, codeReset: false, expiry: 'term',
+      liaPublic: false, post: 'pending', memberPick: '', removed: [], lang: 'en'
+    };
+    this.shelves = {};
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  // A new random invite code in the same shape, e.g. 9B-X7PD-41.
+  newCode() {
+    var letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ', out = '';
+    for (var i = 0; i < 4; i++) out += letters.charAt(Math.floor(Math.random() * letters.length));
+    return '9B-' + out + '-' + (10 + Math.floor(Math.random() * 90));
+  }
+
+  // Automatic cover (S1-E3-13): a story with no cover of its own gets one of the 16 approved designs,
+  // picked from its id so it never changes, and never the same design as the card just before it in a row.
+  autoCovers(ids) {
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var hash = function (s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    var prev = '';
+    return ids.map(function (id) {
+      var k = K[hash(id) % K.length];
+      if (k === prev) k = K[(K.indexOf(k) + 7) % K.length];   // neighbours never match
+      prev = k;
+      return k;
+    });
+  }
+
+  // Title colour, title box and underline for each design (from the approved cover table).
+  coverLook(key, title) {
+    var L = {
+      plum: ['#FAF8F5', '', '#E6C24C'], ink: ['#FAF8F5', '', '#E6C24C'], violet: ['#FAF8F5', '', '#E6C24C'],
+      gold: ['#26142E', '', '#481C5F'], lilac: ['#26142E', '', '#672786'], blush: ['#26142E', '', '#481C5F'],
+      sky: ['#26142E', '', '#672786'], sage: ['#26142E', '', '#481C5F'], paper: ['#26142E', '', '#672786'],
+      stripes: ['#FAF8F5', '#481C5F', ''], dots: ['#26142E', '#FAF8F5', ''], grid: ['#26142E', '', ''],
+      waves: ['#26142E', '#FAF8F5', ''], starry: ['#FAF8F5', '', ''], doodles: ['#26142E', '', ''], twotone: ['#FAF8F5', '', '']
+    }[key] || ['#FAF8F5', '', ''];
+    return {
+      box: 'display: flex; flex-direction: column; gap: 6px; ' + (L[1] ? 'display: inline-flex; align-self: flex-start; padding: 6px 8px; border-radius: 6px; background: ' + L[1] + ';' : ''),
+      title: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: " + this.titleSize(title, 19) + "px; line-height: 1.05; color: " + L[0] + ';',
+      bar: L[2] ? 'display: block; width: 28px; height: 2px; border-radius: 2px; background: ' + L[2] + ';' : 'display: none;'
+    };
+  }
+
+  // Cover titles always show in full (Robert, 16 Oct): they wrap and the size steps down as the title gets longer, never cut.
+  // Up to 18 characters: base size; 19 to 28: 85%; 29 to 40: 72%; longer: 62%; never below the floor (11px unless given).
+  titleSize(title, base, floor) {
+    var n = String(title == null ? '' : title).length;
+    var k = n <= 18 ? 1 : (n <= 28 ? 0.85 : (n <= 40 ? 0.72 : 0.62));
+    return Math.max(floor || 11, Math.round(base * k * 10) / 10);
+  }
+
+  // Rows fade out on the cut-off side only (Robert, 16 Oct): a CSS mask on the row itself, never both sides at once.
+  mask(key) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    if (e.r) return 'linear-gradient(to right, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    if (e.l) return 'linear-gradient(to left, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    return 'none';
+  }
+
+  // Re-measure a row after it scrolls (or first appears) and store which sides are cut off.
+  measureShelf(key) {
+    var el = this.shelves[key];
+    if (!el) return;
+    var l = el.scrollLeft > 2, r = el.scrollLeft + el.clientWidth < el.scrollWidth - 2;
+    this.lastLeft = this.lastLeft || {};
+    var prev = this.lastLeft[key] || 0, dir = el.scrollLeft - prev;
+    this.lastLeft[key] = el.scrollLeft;
+    if (l && r) { if (dir < 0) { r = false; } else { l = false; } }
+    var all = this.state.edges || {}, e = all[key];
+    if (e && e.l === l && e.r === r) return;
+    var n = Object.assign({}, all); n[key] = { l: l, r: r };
+    this.setState({ edges: n });
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    var threadData = [
+      { title: 'Welcome to Class 9B: read this first', by: 'Ms Ionescu', meta: 'started 1 October', replies: '26 replies', pinned: true, unread: false },
+      { title: 'Homework: a 300-word scene set in your street', by: 'Ms Ionescu', meta: 'due Friday 23 October', replies: '14 replies', unread: true },
+      { title: 'Questions about the First Chapter contest', by: 'andra.m', meta: 'last reply 2 hours ago', replies: '9 replies', unread: true },
+      { title: 'Share your favourite opening line', by: 'teo_ink', meta: 'last reply yesterday', replies: '31 replies', unread: false,
+        note: st.post === 'removed' ? 'Ms Ionescu removed 2 posts in this thread.' : 'Ms Ionescu removed 1 post in this thread.' },
+      { title: 'Book club: what are you reading this month?', by: 'mara.p', meta: 'last reply 5 days ago', replies: '12 replies', locked: true, unread: false,
+        note: 'Locked by Ms Ionescu. You can still read it.' }
+    ];
+    var threads = threadData.map(function (t, i) {
+      return {
+        title: t.title, by: t.by, meta: t.meta, replies: t.replies,
+        pinned: !!t.pinned, locked: !!t.locked, hasNote: !!t.note, note: t.note || '',
+        rowStyle: 'display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 18px 22px; ' + (i ? 'border-top: 1px solid #EFE8F2;' : ''),
+        dot: 'flex: none; width: 10px; height: 10px; border-radius: 50%; ' + (t.unread ? 'background: #672786;' : 'background: transparent; border: 2px solid #DED3E4; box-sizing: border-box;')
+      };
+    });
+
+    // Covers use the 16 approved backgrounds (classes in the helmet), so no inline background here.
+    var cover = 'height: 150px; box-sizing: border-box; padding: 14px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end; text-decoration: none;';
+    // Pill system (17 Oct): class only is plum, public is sage; tint, same-hue text and border.
+    var classChip = 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap; align-self: flex-start;';
+    var publicChip = 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap; align-self: flex-start;';
+    var stories = [
+      { id: 'my-street-at-7-am', title: 'My Street at 7 a.m.', by: 'lia.writes (you)', meta: 'homework · 1 chapter', mine: true },
+      { id: 'the-bell-at-number-9', title: 'The Bell at Number 9', by: 'andra.m', meta: 'homework · 1 chapter' },
+      { id: 'our-lift-is-broken-again', title: 'Our Lift Is Broken Again', by: 'teo_ink', meta: 'homework · 2 chapters' }
+    ];
+    // None of these has its own picture, so each gets an automatic cover from its id.
+    var keys = this.autoCovers(stories.map(function (s) { return s.id; }));
+    stories = stories.map(function (s, i) {
+      var look = self.coverLook(keys[i], s.title);
+      var pub = s.mine && st.liaPublic;
+      return {
+        title: s.title, by: s.by, meta: s.meta, mine: !!s.mine, cover: cover,
+        cvClass: 'tmc-cv tmc-cv-' + keys[i], box: look.box, titleStyle: look.title, bar: look.bar,
+        chip: pub ? 'Public' : 'Class only', chipStyle: pub ? publicChip : classChip,
+        publicStr: pub ? 'true' : 'false',
+        btnLabel: pub ? 'Make class only' : 'Make public',
+        btnStyle: 'height: 44px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; '
+          + (pub ? 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;' : 'border: 1px solid #672786; background: #FFFFFF; color: #672786;'),
+        toggle: function () { self.setState({ liaPublic: !st.liaPublic }); }
+      };
+    });
+
+    var av = function (a, b) { return 'flex: none; width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(140deg,' + a + ',' + b + '); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;'; };
+    var tagTeacher = 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap;';
+    var tagYou = 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap;';
+    var members = [
+      { name: 'Ms Ionescu', initial: 'MI', tag: 'Teacher', tagStyle: tagTeacher, avatar: av('#2F6B4F', '#7DB596') },
+      { name: 'lia.writes', initial: 'LP', tag: 'You', tagStyle: tagYou, avatar: 'flex: none; width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;' },
+      { name: 'andra.m', initial: 'a', avatar: av('#8C2B3A', '#D07583') },
+      { name: 'mara.p', initial: 'm', avatar: av('#2E4A8C', '#7C95CF') },
+      { name: 'teo_ink', initial: 't', avatar: av('#1F5357', '#6FA7AB') },
+      { name: 'vlad.writes', initial: 'v', avatar: av('#7A5C12', '#C9A24A') }
+    ].filter(function (m) { return st.removed.indexOf(m.name) < 0; }).map(function (m) {
+      return Object.assign({ tag: '', tagStyle: '' }, m, { hasTag: !!m.tag });
+    });
+
+    var log = [];
+    st.removed.forEach(function (n) { log.push({ text: 'Removed ' + n + ' from the space', when: 'just now' }); });
+    if (st.post === 'removed') log.push({ text: 'Removed a reply by teo_ink in “Share your favourite opening line” (off topic)', when: 'just now' });
+    if (st.post === 'kept') log.push({ text: 'Kept a reported reply by teo_ink after checking it', when: 'just now' });
+    if (st.archived) log.unshift({ text: 'Locked the space', when: 'just now' });
+    log.push({ text: 'Removed a post in “Share your favourite opening line” (shared a phone number)', when: '12 Oct' });
+    log.push({ text: 'Locked “Book club: what are you reading this month?”', when: '9 Oct' });
+    log.push({ text: 'Pinned “Welcome to Class 9B: read this first”', when: '1 Oct' });
+
+    var expiryText = { '7': 'in 7 days', '30': 'in 30 days', term: 'on 19 December 2026, at the end of term', year: 'at the end of the school year' }[st.expiry];
+
+    var langPill = function (on) {
+      return 'min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+        + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 700;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+
+    return {
+      archived: st.archived, open: !st.archived,
+      archive: function () { self.setState({ archived: true }); },
+      reopen: function () { self.setState({ archived: false }); },
+      threads: threads, stories: stories, members: members, log: log,
+      refClass: function (el) { self.shelves.cl = el; if (el) setTimeout(function () { self.measureShelf('cl'); }, 0); },
+      scrollClass: function () { self.measureShelf('cl'); }, maskClass: self.mask('cl'),
+
+      code: st.code,
+      copyLabel: st.copied ? 'Copied' : 'Copy link',
+      copyInvite: function () {
+        try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText('https://ghemotoc.com/join/' + st.code).catch(function () {}); } catch (e) { /* clipboard blocked: feedback still shows */ }
+        clearTimeout(self._t);
+        self.setState({ copied: true });
+        self._t = setTimeout(function () { self.setState({ copied: false }); }, 3000);
+      },
+      resetCode: function () { self.setState({ code: self.newCode(), codeReset: true, copied: false }); },
+      expiry: st.expiry,
+      setExpiry: function (e) { self.setState({ expiry: e && e.target ? e.target.value : st.expiry }); },
+      codeNote: (st.codeReset ? 'New code made. The old one stopped working straight away. ' : 'You can reset the code at any time. ') + 'This code stops working ' + expiryText + '.',
+
+      postPending: st.post === 'pending', postDone: st.post !== 'pending',
+      postDoneText: st.post === 'removed' ? 'Post removed. We told teo_ink why and logged the action.' : 'Post kept. The report was closed and logged.',
+      removePost: function () { self.setState({ post: 'removed' }); },
+      keepPost: function () { self.setState({ post: 'kept' }); },
+
+      memberPick: st.memberPick, noMemberPick: !st.memberPick,
+      setMemberPick: function (e) { self.setState({ memberPick: e && e.target ? e.target.value : '' }); },
+      removeMember: function () {
+        if (!st.memberPick || st.removed.indexOf(st.memberPick) >= 0) return;
+        self.setState({ removed: st.removed.concat([st.memberPick]), memberPick: '' });
+      },
+      removeBtnStyle: 'height: 44px; padding: 0 18px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; '
+        + (st.memberPick ? 'border: 1px solid #8C2B3A; background: #FFFFFF; color: #8C2B3A; cursor: pointer;' : 'border: 1px solid #DED3E4; background: #F4F0EC; color: #6B5A73; cursor: not-allowed;'),
+
+      ro: st.lang === 'ro' ? 'true' : 'false', en: st.lang === 'en' ? 'true' : 'false',
+      roStyle: langPill(st.lang === 'ro'), enStyle: langPill(st.lang === 'en'),
+      setRo: function () { self.setState({ lang: 'ro' }); }, setEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

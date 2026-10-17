@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Create a story</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: Write is the current section on writing screens -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" aria-current="page" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; margin: 0 4px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #E6C24C"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; margin-left: -10px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <header style="position: relative; padding: 40px 0 32px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <img data-doodle="background" data-doodle-on="Start a new story" src="/_blob/5e4690feabb31976ed166122e11179ab" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 6px; right: 40px; width: 200px; transform: rotate(5deg)">
+      <img data-doodle="background" data-doodle-on="Start a new story" src="/_blob/0c7ba638924252ccadbff50665a3ecd1" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 96px; right: 300px; width: 92px; transform: rotate(-10deg)">
+      <a href="WriterDashboard.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 14px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Writer dashboard</a>
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Write · new story</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Start a new story</h1>
+      <p style="margin: 0; max-width: 640px; font-size: 18px; line-height: 1.6; color: #5C4965">Fill in the basics, then write chapter one. You can change all of this later in story settings.</p>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; animation: tmcRise 0.5s 0.05s ease-out both">
+
+      <!-- The form -->
+      <form aria-label="New story" style="flex: 999 1 560px; min-width: 0; margin: 0; display: flex; flex-direction: column; gap: 20px">
+
+        <!-- 1. Basics -->
+        <fieldset style="position: relative; margin: 0; padding: 26px 28px; display: flex; flex-direction: column; gap: 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); min-width: 0">
+          <legend style="float: left; width: 100%; padding: 0; margin: 0 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">The basics</legend>
+          <img data-doodle="widget" data-doodle-on="The basics" src="/_blob/f71342920dbb5c9f302486ccc693c98d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -44px; right: 30px; width: 84px; transform: rotate(8deg)">
+          <div style="clear: both; display: flex; flex-direction: column; gap: 8px">
+            <label for="ns-title" style="font-size: 15px; font-weight: 600; color: #26142E">Title</label>
+            <input id="ns-title" type="text" value="{{title}}" onChange="{{setTitle}}" maxlength="120" style="height: 52px; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="ns-blurb" style="font-size: 15px; font-weight: 600; color: #26142E">Blurb</label>
+            <textarea id="ns-blurb" rows="3" maxlength="500" aria-describedby="ns-blurb-hint" style="padding: 14px 20px; border: 1px solid #DED3E4; border-radius: 24px; background: #FFFFFF; font-family: inherit; font-size: 16px; line-height: 1.6; color: #26142E; resize: vertical">My grandmother has written down the weather every morning since 1971. The day she went into hospital, I found she had already filled in the rest of the week.</textarea>
+            <span id="ns-blurb-hint" style="font-size: 13px; color: #6B5A73">One or two sentences: who the story is about and what happens. 157 of 500 characters.</span>
+          </div>
+          <!-- Story language: a required choice (decision 5, 16 Oct). A language opens only when we have moderators who read it -->
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span id="lang-label" style="font-size: 15px; font-weight: 600; color: #26142E">Language of the story <span style="font-weight: 400; color: #6B5A73">(required)</span></span>
+            <div role="radiogroup" aria-labelledby="lang-label" aria-required="true" aria-describedby="lang-hint" style="display: flex; flex-direction: column; gap: 10px">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                <sc-for list="{{langs}}" as="l" hint-placeholder-count="2">
+                  <button type="button" role="radio" class="tmc-chip" aria-checked="{{l.on}}" onClick="{{l.pick}}" style="{{l.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{l.label}}</button>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                <sc-for list="{{soonLangs}}" as="l" hint-placeholder-count="4">
+                  <button type="button" role="radio" aria-checked="false" aria-disabled="true" disabled="true" aria-describedby="lang-soon" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; white-space: nowrap; border: 1px dashed #CFC2D6; border-radius: 999px; background: #F4F0EC; color: #6B5A73; font-family: inherit; font-size: 14px; font-weight: 500; cursor: not-allowed">{{l.label}}</button>
+                </sc-for>
+                <span id="lang-soon" style="font-size: 13px; color: #6B5A73">Coming once we have moderators who read it</span>
+              </div>
+            </div>
+            <span id="lang-hint" style="font-size: 13px; line-height: 1.5; color: #6B5A73">Choose the language your story is written in.</span>
+          </div>
+        </fieldset>
+
+        <!-- 2. Category and tags -->
+        <fieldset style="margin: 0; padding: 26px 28px; display: flex; flex-direction: column; gap: 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); min-width: 0">
+          <legend style="float: left; width: 100%; padding: 0; margin: 0 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Category and tags</legend>
+          <div role="radiogroup" aria-label="Category" style="clear: both; display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{cats}}" as="c" hint-placeholder-count="5">
+              <button type="button" role="radio" class="tmc-chip" aria-checked="{{c.on}}" onClick="{{c.pick}}" style="{{c.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span aria-hidden="true" style="{{c.dot}}"></span>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="ns-tag" style="font-size: 15px; font-weight: 600; color: #26142E">Tags</label>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px; border: 1px solid #DED3E4; border-radius: 28px; background: #FFFFFF">
+              <span style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; height: 40px; padding: 0 2px 0 14px; line-height: 1; white-space: nowrap; border-radius: 999px; background: #F1EAF4; border: 1px solid #C9B3D6; font-size: 14px; font-weight: 600; color: #481C5F">grandparents<button type="button" aria-label="Remove tag grandparents" style="width: 36px; height: 36px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+              <span style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; height: 40px; padding: 0 2px 0 14px; line-height: 1; white-space: nowrap; border-radius: 999px; background: #F1EAF4; border: 1px solid #C9B3D6; font-size: 14px; font-weight: 600; color: #481C5F">family<button type="button" aria-label="Remove tag family" style="width: 36px; height: 36px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+              <span style="display: inline-flex; align-items: center; gap: 2px; box-sizing: border-box; height: 40px; padding: 0 2px 0 14px; line-height: 1; white-space: nowrap; border-radius: 999px; background: #F1EAF4; border: 1px solid #C9B3D6; font-size: 14px; font-weight: 600; color: #481C5F">set in Romania<button type="button" aria-label="Remove tag set in Romania" style="width: 36px; height: 36px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></span>
+              <input id="ns-tag" type="text" placeholder="Add a tag" aria-describedby="ns-tag-hint" style="flex: 1 1 140px; min-width: 120px; height: 40px; border: 0; padding: 0 10px; background: transparent; font-family: inherit; font-size: 15px; color: #26142E">
+            </div>
+            <span id="ns-tag-hint" style="font-size: 13px; line-height: 1.5; color: #6B5A73">3 of 10 tags. Capital letters and diacritics don’t matter, so “Fantezie” and “fantezie” are the same tag.</span>
+          </div>
+        </fieldset>
+
+        <!-- 3. Cover -->
+        <fieldset style="position: relative; margin: 0; padding: 26px 28px; display: flex; flex-direction: column; gap: 18px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); min-width: 0">
+          <legend style="float: left; width: 100%; padding: 0; margin: 0 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Cover</legend>
+          <img data-doodle="widget" data-doodle-on="Cover" src="/_blob/8dcc7e60c7419e7bb73090ce5141c8c1" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -46px; right: 34px; width: 96px; transform: rotate(-6deg)">
+          <div role="group" aria-label="Cover type" style="clear: both; align-self: flex-start; display: inline-flex; gap: 4px; padding: 4px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5">
+            <button type="button" class="tmc-chip" aria-pressed="{{drawOn}}" onClick="{{pickDraw}}" style="{{drawTabStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Draw a cover</button>
+            <button type="button" class="tmc-chip" aria-pressed="{{uploadOn}}" onClick="{{pickUpload}}" style="{{uploadTabStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Upload a picture</button>
+          </div>
+
+          <sc-if value="{{drawOn}}" hint-placeholder-val="{{true}}">
+            <div style="display: flex; flex-direction: column; gap: 20px">
+
+              <!-- Live preview beside the 16 approved backgrounds (client sign-off, 16 Oct) -->
+              <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px 28px">
+                <div style="flex: none; display: flex; flex-direction: column; gap: 8px">
+                  <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Preview</span>
+                  <div role="img" aria-label="{{pv.alt}}" style="{{pv.wrap}}">
+                    <svg viewBox="0 0 100 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false" style="{{pv.svg}}"><path d="{{pv.fillD}}" fill="currentColor"></path><path d="{{pv.strokeD}}" fill="none" stroke="currentColor" stroke-width="{{pv.sw}}" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    <span aria-hidden="true" style="{{pv.box}}"><span style="{{pv.title}}">{{storyTitle}}</span><span style="{{pv.bar}}"></span><span style="{{pv.pen}}">lia.writes</span></span>
+                  </div>
+                </div>
+
+                <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+                  <span id="cv-label" style="font-size: 15px; font-weight: 600; color: #26142E">Pick a background. We add your title and pen name.</span>
+                  <!-- Automatic cover rule (S1-E3-13), in plain words next to the picker -->
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 12px 14px; border-radius: 14px; background: #F4F0EC">
+                    <span id="cv-auto" style="flex: 1 1 260px; font-size: 14px; line-height: 1.5; color: #26142E">Skip this and we’ll give your story one of these covers automatically. You can change it any time.<span style="display: block; margin-top: 2px; font-size: 13px; color: #5C4965">{{autoLine}}</span></span>
+                    <sc-if value="{{autoOff}}" hint-placeholder-val="{{false}}">
+                      <button type="button" onClick="{{useAuto}}" style="flex: none; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Use the automatic cover</button>
+                    </sc-if>
+                  </div>
+                  <div role="group" aria-labelledby="cv-label" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 6px">
+                    <sc-for list="{{tiles}}" as="t" hint-placeholder-count="16">
+                      <button type="button" aria-pressed="{{t.on}}" aria-label="{{t.label}}" onClick="{{t.pick}}" style="{{t.style}}">
+                        <span aria-hidden="true" style="{{t.wrap}}"><svg viewBox="0 0 100 160" preserveAspectRatio="xMidYMax slice" focusable="false" style="{{t.svg}}"><path d="{{t.fillD}}" fill="currentColor"></path><path d="{{t.strokeD}}" fill="none" stroke="currentColor" stroke-width="{{t.sw}}" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="{{t.box}}"><span style="{{t.title}}">Title</span><span style="{{t.bar}}"></span></span></span>
+                        <span style="{{t.name}}">{{t.label}}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Colour changes inside the chosen background -->
+              <div role="group" aria-labelledby="cc-title" style="display: flex; flex-direction: column; gap: 14px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+                <span id="cc-title" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; color: #481C5F">Change the colours</span>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
+                  <span id="cc-bg" style="flex: 0 0 150px; font-size: 15px; font-weight: 600; color: #26142E">Background</span>
+                  <div role="group" aria-labelledby="cc-bg" style="display: flex; flex-wrap: wrap; gap: 8px">
+                    <sc-for list="{{bgSw}}" as="s" hint-placeholder-count="9">
+                      <button type="button" aria-pressed="{{s.on}}" aria-label="{{s.label}}" title="{{s.name}}" onClick="{{s.pick}}" style="{{s.style}}"><sc-if value="{{s.on}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="{{s.check}}"><path d="M20 6 9 17l-5-5"></path></svg></sc-if></button>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
+                  <span id="cc-ac" style="flex: 0 0 150px; font-size: 15px; font-weight: 600; color: #26142E">Pattern or accent</span>
+                  <div role="group" aria-labelledby="cc-ac" aria-describedby="cc-ac-note" style="display: flex; flex-wrap: wrap; gap: 8px">
+                    <sc-for list="{{acSw}}" as="s" hint-placeholder-count="9">
+                      <button type="button" aria-pressed="{{s.on}}" aria-label="{{s.label}}" title="{{s.name}}" onClick="{{s.pick}}" style="{{s.style}}"><sc-if value="{{s.on}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="{{s.check}}"><path d="M20 6 9 17l-5-5"></path></svg></sc-if></button>
+                    </sc-for>
+                  </div>
+                  <span id="cc-ac-note" style="flex: 1 1 100%; font-size: 13px; line-height: 1.5; color: #6B5A73">{{acNote}}</span>
+                </div>
+                <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">We choose dark or light text for you, so your title is always easy to read.</span>
+              </div>
+
+              <span style="font-size: 13px; color: #6B5A73">A drawn cover needs no picture rights and shows straight away.</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{uploadOn}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; padding: 22px; border: 1px dashed #B9A9C2; border-radius: 16px; background: #FAF8F5">
+              <p style="flex: 1 1 100%; margin: 0; font-size: 15px; line-height: 1.5; color: #26142E"><strong style="font-weight: 700">Upload your tall cover first.</strong> We then help you make a square version for link previews, search results and notifications: crop it from your tall cover, or upload a separate square picture if you prefer.</p>
+              <div style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 16px">
+                <div style="flex: 1 1 240px; display: flex; gap: 16px; align-items: center; padding: 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFFFF; min-width: 0">
+                  <span aria-hidden="true" style="flex: none; width: 60px; aspect-ratio: 5 / 8; border-radius: 8px; border: 1px dashed #B9A9C2; background: repeating-linear-gradient(135deg,#F4F0EC 0,#F4F0EC 8px,#EDE6EF 8px,#EDE6EF 16px)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+                    <span style="font-size: 15px; font-weight: 700; color: #26142E">Tall cover <span style="font-weight: 500; color: #6B5A73">(needed)</span></span>
+                    <span style="font-size: 13px; color: #5C4965">1600 × 2560 pixels, 5 wide by 8 high</span>
+                    <label for="ns-cover" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #672786; background: #FFFFFF; color: #672786; font-size: 15px; font-weight: 600; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg>Choose a picture</label>
+                    <input id="ns-cover" type="file" accept="image/jpeg,image/png,image/webp" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">
+                  </span>
+                </div>
+                <div style="flex: 1 1 240px; display: flex; gap: 16px; align-items: center; padding: 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFFFF; min-width: 0">
+                  <span aria-hidden="true" style="flex: none; width: 60px; aspect-ratio: 1 / 1; border-radius: 8px; border: 1px dashed #B9A9C2; background: repeating-linear-gradient(135deg,#F4F0EC 0,#F4F0EC 8px,#EDE6EF 8px,#EDE6EF 16px)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+                    <span style="font-size: 15px; font-weight: 700; color: #26142E">Square cover</span>
+                    <span style="font-size: 13px; line-height: 1.5; color: #5C4965">This step opens by itself once your tall cover is added.</span>
+                    <button type="button" style="align-self: flex-start; display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Crop from your tall cover</button>
+                    <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">The square starts in the middle. Drag it to choose which part to keep, and zoom in if you like. Words outside the square are cut, so check it before you save.</span>
+                    <label for="ns-cover-sq" style="align-self: flex-start; color: #672786; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer">Or upload a different square picture (optional, 1600 × 1600)</label>
+                    <input id="ns-cover-sq" type="file" accept="image/jpeg,image/png,image/webp" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">
+                  </span>
+                </div>
+              </div>
+              <a href="https://www.canva.com" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none"><span aria-hidden="true" title="Official logo goes here" style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border: 1.5px dashed #8E7B99; border-radius: 4px; background: #F4F0EC"></span>Design it in Canva<span style="font-size: 13px; font-weight: 400; color: #6B5A73">(opens a new tab)</span></a>
+              <p style="flex: 1 1 100%; margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Canva opens a blank cover at the right size. When you press Return in Canva, your cover comes back here. You need your own Canva account, and Canva’s rules apply there. (Idea for later, not in the March test.)</p>
+              <p style="flex: 1 1 100%; margin: 0; font-size: 12px; line-height: 1.5; color: #6B5A73">Design note: the dashed square is a logo slot. The built app uses Canva’s official, full-colour logo from its brand kit, unchanged.</p>
+              <ul style="flex: 1 1 260px; margin: 0; padding: 0 0 0 18px; font-size: 14px; line-height: 1.6; color: #5C4965">
+                <li><strong style="font-weight: 700; color: #26142E">Sizes:</strong> tall 1600 × 2560 pixels (smallest 800 × 1280), square 1600 × 1600 (smallest 800 × 800).</li>
+                <li>No square cover? We use the middle of your tall one until you add one.</li>
+                <li>We show your picture exactly as it is, with no title or name added on top, so put them on the picture yourself if you want them on the cover. Your title and pen name still appear under the cover everywhere.</li>
+                <li>Keep any words on your picture away from the edges. Small screens crop a little.</li>
+                <li>JPEG, PNG or WebP, up to 5 MB.</li>
+                <li>We remove location data from the file.</li>
+                <li>Every picture is checked before it shows. Until then, only you can see it.</li>
+              </ul>
+            </div>
+          </sc-if>
+        </fieldset>
+
+        <!-- 4. Status and comments (S1-E3-05) -->
+        <fieldset style="margin: 0; padding: 26px 28px; display: flex; flex-direction: column; gap: 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); min-width: 0">
+          <legend style="float: left; width: 100%; padding: 0; margin: 0 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Status and comments</legend>
+          <div style="clear: both; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+            <span id="st-label" style="width: 120px; font-size: 15px; font-weight: 600; color: #26142E">Status</span>
+            <div role="radiogroup" aria-labelledby="st-label" style="display: inline-flex; gap: 4px; padding: 4px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5">
+              <sc-for list="{{statuses}}" as="s" hint-placeholder-count="2">
+                <button type="button" role="radio" class="tmc-chip" aria-checked="{{s.on}}" onClick="{{s.pick}}" style="{{s.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{s.label}}</button>
+              </sc-for>
+            </div>
+            <span style="flex: 1 1 240px; font-size: 14px; color: #6B5A73">Shown on your story card. Readers can filter by it.</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-top: 18px; border-top: 1px solid #EFE8F2">
+            <span id="cm-label" style="width: 120px; font-size: 15px; font-weight: 600; color: #26142E">Comments</span>
+            <button type="button" role="switch" aria-checked="{{commentsOn}}" aria-labelledby="cm-label" onClick="{{toggleComments}}" style="{{switchStyle}}"><span aria-hidden="true" style="{{knobStyle}}"></span></button>
+            <span style="flex: 1 1 240px; font-size: 14px; line-height: 1.5; color: #6B5A73">{{commentsNote}}</span>
+          </div>
+        </fieldset>
+
+        <!-- 5. Where people can read it (decision 2, 16 Oct) -->
+        <fieldset style="position: relative; margin: 0; padding: 26px 28px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); min-width: 0">
+          <legend style="float: left; width: 100%; padding: 0; margin: 0 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Where can people read this story?</legend>
+          <img data-doodle="widget" data-doodle-on="Where can people read this story?" src="/_blob/b35d215e80666d8ba0d495fa92147b8d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -40px; right: 32px; width: 80px; transform: rotate(6deg)">
+          <sc-for list="{{places}}" as="w" hint-placeholder-count="2">
+            <label style="{{w.style}}">
+              <input type="radio" name="where-read" checked="{{w.on}}" onChange="{{w.pick}}" style="flex: none; margin: 3px 0 0; width: 20px; height: 20px; accent-color: #672786">
+              <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600; color: #26142E">{{w.label}}</span><span style="font-size: 14px; line-height: 1.5; color: #5C4965">{{w.note}}</span></span>
+            </label>
+          </sc-for>
+          <p style="clear: both; margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">The Ghemotoc apps come after the March 2027 test. Until then, everyone who’s logged in reads every chapter on the web, and we’ll tell you before “App only” starts to apply. You can change this any time in story settings.</p>
+        </fieldset>
+
+        <!-- 6. Labels (S1-E3-06) -->
+        <fieldset style="margin: 0; padding: 26px 28px; display: flex; flex-direction: column; gap: 18px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); min-width: 0">
+          <legend style="float: left; width: 100%; padding: 0; margin: 0 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Labels</legend>
+          <p style="clear: both; margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Labels show on your story card and story page. If your story is fan fiction or a parody, you must tick it.</p>
+
+          <label style="display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid #EFE8F2; border-radius: 16px; cursor: pointer">
+            <input type="checkbox" checked="{{fan}}" onChange="{{toggleFan}}" style="flex: none; margin: 3px 0 0; width: 20px; height: 20px; accent-color: #672786">
+            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600; color: #26142E">Fan fiction</span><span style="font-size: 14px; line-height: 1.5; color: #5C4965">It uses characters or a world from someone else’s book, film, game or show.</span></span>
+          </label>
+          <label style="display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid #EFE8F2; border-radius: 16px; cursor: pointer">
+            <input type="checkbox" checked="{{parody}}" onChange="{{toggleParody}}" style="flex: none; margin: 3px 0 0; width: 20px; height: 20px; accent-color: #672786">
+            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600; color: #26142E">Parody</span><span style="font-size: 14px; line-height: 1.5; color: #5C4965">It copies another work on purpose to make fun of it or comment on it.</span></span>
+          </label>
+          <!-- Rating (decided 16 Oct): like film ratings, All ages, 13+, 16+ or 18+; each is hidden from anyone younger -->
+          <div role="radiogroup" aria-labelledby="rating-label" style="display: flex; flex-direction: column; gap: 10px; padding-top: 16px; border-top: 1px solid #EFE8F2">
+            <span id="rating-label" style="font-size: 15px; font-weight: 600; color: #26142E">Rating <span style="font-weight: 400; color: #6B5A73">(required)</span></span>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{ratings}}" as="r" hint-placeholder-count="4">
+                <button type="button" role="radio" class="tmc-chip" aria-checked="{{r.on}}" onClick="{{r.pick}}" style="{{r.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{r.label}}</button>
+              </sc-for>
+            </div>
+            <span style="font-size: 14px; line-height: 1.5; color: #5C4965">{{ratingNote}}</span>
+          </div>
+
+          <div role="radiogroup" aria-labelledby="ai-label" style="display: flex; flex-direction: column; gap: 10px; padding-top: 16px; border-top: 1px solid #EFE8F2">
+            <span id="ai-label" style="font-size: 15px; font-weight: 600; color: #26142E">Did you use AI? <span style="font-weight: 400; color: #6B5A73">(required)</span></span>
+            <sc-for list="{{aiOptions}}" as="a" hint-placeholder-count="3">
+              <label style="display: flex; gap: 12px; align-items: center; min-height: 44px; font-size: 16px; color: #26142E; cursor: pointer">
+                <input type="radio" name="ai-use" checked="{{a.on}}" onChange="{{a.pick}}" style="flex: none; margin: 0; width: 20px; height: 20px; accent-color: #672786">{{a.label}}
+              </label>
+            </sc-for>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Shown as a label on your story. If someone reports a missing label, a person on our team decides. We never use AI detectors to judge your writing.</span>
+          </div>
+        </fieldset>
+
+        <!-- Actions -->
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; background: #F1EAF4; border-radius: 24px">
+          <p style="margin: 0; flex: 1 1 320px; display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.55; color: #26142E"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none; margin-top: -1px"><span><strong style="font-weight: 700">Your work stays yours.</strong> You keep the rights and can publish it anywhere. Only you can see this story until you publish its first chapter.</span></p>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; box-sizing: border-box; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none">Cancel</a>
+            <a href="Editor.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 26px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none">Create and write chapter one</a>
+          </div>
+        </div>
+      </form>
+
+      <!-- Live preview of the story card -->
+      <aside aria-labelledby="pv-title" style="position: relative; flex: 1 1 320px; max-width: 400px; display: flex; flex-direction: column; gap: 16px">
+        <img data-doodle="widget" data-doodle-on="HOW READERS WILL SEE IT" src="/_blob/a9befe4541d43bb2eb0d8a7a222b3f51" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: calc(100% + 40px); left: 50%; width: 200px; transform: translateX(-50%) rotate(-4deg)">
+        <img data-doodle="widget" data-doodle-on="HOW READERS WILL SEE IT" src="/_blob/ed66e3e377878f68ee7af68fc1a709c4" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: calc(100% + 360px); left: 24px; width: 110px; transform: rotate(6deg)">
+        <img data-doodle="widget" data-doodle-on="HOW READERS WILL SEE IT" src="/_blob/c23111eab51687499254aff73a9f8fa8" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: calc(100% + 640px); right: 20px; width: 170px; transform: rotate(4deg)">
+        <img data-doodle="widget" data-doodle-on="HOW READERS WILL SEE IT" src="/_blob/ff639f727c03e7a669b0eb223c15e3c3" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: calc(100% + 1080px); left: 40px; width: 96px">
+        <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+            <span id="pv-title" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">How readers will see it</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Only you</span>
+          </div>
+          <div aria-hidden="true" style="{{card.wrap}}">
+            <svg viewBox="0 0 100 160" preserveAspectRatio="xMidYMax slice" focusable="false" style="{{card.svg}}"><path d="{{card.fillD}}" fill="currentColor"></path><path d="{{card.strokeD}}" fill="none" stroke="currentColor" stroke-width="{{card.sw}}" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <sc-if value="{{drawOn}}" hint-placeholder-val="{{true}}">
+              <span style="{{card.box}}"><span style="{{card.title}}">{{storyTitle}}</span><span style="{{card.bar}}"></span><span style="{{card.pen}}">lia.writes</span></span>
+            </sc-if>
+            <sc-if value="{{uploadOn}}" hint-placeholder-val="{{false}}">
+              <span style="position: relative; align-self: center; margin: auto 0; padding: 8px 12px; border-radius: 10px; background: rgba(250,248,245,0.94); color: #5C4965; font-size: 13px; font-weight: 600; text-align: center">Your picture shows here as it is</span>
+            </sc-if>
+          </div>
+          <sc-if value="{{uploadOn}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">With your own picture we add no title or name on top of the cover. Readers see your title and pen name under it.</p>
+          </sc-if>
+          <sc-if value="{{rated}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 10px 14px; border-radius: 16px; background: #F8E9EC; color: #8C2B3A; font-size: 14px; font-weight: 600">{{ratingBanner}}</p>
+          </sc-if>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{chips}}" as="ch" hint-placeholder-count="3">
+              <span style="{{ch.style}}">{{ch.label}}</span>
+            </sc-for>
+          </div>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">My grandmother has written down the weather every morning since 1971. The day she went into hospital, I found she had already filled in the rest of the week.</p>
+          <span style="font-size: 13px; color: #6B5A73">grandparents · family · set in Romania</span>
+        </div>
+        <p style="margin: 0; padding: 0 8px; font-size: 14px; line-height: 1.55; color: #6B5A73">You can also delete the story later in story settings. We ask twice, hide it straight away and delete it for good after 30 days. Until then you can undo it.</p>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Small page footer -->
+  <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/b40a3e9cdd2089671ef98abc64a43b0a" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -66px; left: clamp(16px, 4vw, 64px); width: 60px; transform: rotate(-8deg)">
+    <div style="padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3761}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { title: 'The Weather Station', cat: 'Fiction', status: 'Ongoing', comments: true, cover: 'sky', coverBg: '#D7E6F2', coverAc: '#672786', autoCover: true, coverMode: 'draw', fan: false, parody: false, rating: 'All ages', ai: 'No AI', lang: 'English', where: 'web' };
+
+    // Automatic cover (S1-E3-13): until the writer picks one, the story keeps the design it gets automatically.
+    // The Weather Station is fixed to Sky, the same design it shows on the Writer dashboard.
+    this.autoKey = 'sky';
+
+    // Drawn-cover palette approved by the client (16 Oct). Swatch rows follow this order.
+    this.pal = [
+      { name: 'Plum', hex: '#481C5F' }, { name: 'Ink', hex: '#26142E' }, { name: 'Violet', hex: '#672786' },
+      { name: 'Gold', hex: '#E6C24C' }, { name: 'Lilac', hex: '#E9DDF0' }, { name: 'Blush', hex: '#F6D3DC' },
+      { name: 'Sky', hex: '#D7E6F2' }, { name: 'Sage', hex: '#C9D8BF' }, { name: 'Paper', hex: '#FAF8F5' }
+    ];
+
+    // The 16 approved backgrounds: 9 plain, 7 patterns. bg = background, ac = pattern or accent.
+    // Waves' default line colour (#6E93BF) is not in the 9-colour palette; writers can swap it for one that is.
+    this.designs = [
+      { key: 'plum', label: 'Plum', kind: 'plain', bg: '#481C5F', ac: '#E6C24C' },
+      { key: 'ink', label: 'Ink', kind: 'plain', bg: '#26142E', ac: '#E6C24C' },
+      { key: 'violet', label: 'Violet', kind: 'plain', bg: '#672786', ac: '#E6C24C' },
+      { key: 'gold', label: 'Gold', kind: 'plain', bg: '#E6C24C', ac: '#481C5F' },
+      { key: 'lilac', label: 'Lilac', kind: 'plain', bg: '#E9DDF0', ac: '#672786' },
+      { key: 'blush', label: 'Blush', kind: 'plain', bg: '#F6D3DC', ac: '#481C5F' },
+      { key: 'sky', label: 'Sky', kind: 'plain', bg: '#D7E6F2', ac: '#672786' },
+      { key: 'sage', label: 'Sage', kind: 'plain', bg: '#C9D8BF', ac: '#481C5F' },
+      { key: 'paper', label: 'Paper', kind: 'plain', bg: '#FAF8F5', ac: '#672786' },
+      { key: 'stripes', label: 'Gold stripes', kind: 'stripes', bg: '#481C5F', ac: '#E6C24C' },
+      { key: 'dots', label: 'Polka dots', kind: 'dots', bg: '#E9DDF0', ac: '#672786' },
+      { key: 'grid', label: 'Grid paper', kind: 'grid', bg: '#FAF8F5', ac: '#E9DDF0' },
+      { key: 'waves', label: 'Waves', kind: 'waves', bg: '#D7E6F2', ac: '#6E93BF' },
+      { key: 'starry', label: 'Starry night', kind: 'starry', bg: '#26142E', ac: '#E6C24C' },
+      { key: 'doodles', label: 'Doodles', kind: 'doodles', bg: '#FAF8F5', ac: '#672786' },
+      { key: 'twotone', label: 'Two-tone', kind: 'twotone', bg: '#F6D3DC', ac: '#481C5F' }
+    ];
+
+    // Pattern artwork as SVG paths on a 100 x 160 (5:8) canvas, so tiles and preview match exactly.
+    var r2 = function (n) { return Math.round(n * 100) / 100; };
+    var dot = function (x, y, r) { return 'M' + r2(x - r) + ' ' + y + 'a' + r + ' ' + r + ' 0 1 0 ' + r2(2 * r) + ' 0a' + r + ' ' + r + ' 0 1 0 ' + r2(-2 * r) + ' 0Z'; };
+    var spark = function (x, y, r) { return 'M' + x + ' ' + r2(y - r) + 'Q' + x + ' ' + y + ' ' + r2(x + r) + ' ' + y + 'Q' + x + ' ' + y + ' ' + x + ' ' + r2(y + r) + 'Q' + x + ' ' + y + ' ' + r2(x - r) + ' ' + y + 'Q' + x + ' ' + y + ' ' + x + ' ' + r2(y - r) + 'Z'; };
+    var heart = function (x, y, s) { return 'M' + x + ' ' + r2(y + 0.9 * s) + 'C' + r2(x - 1.5 * s) + ' ' + r2(y - 0.1 * s) + ' ' + r2(x - 0.8 * s) + ' ' + r2(y - 1.1 * s) + ' ' + x + ' ' + r2(y - 0.3 * s) + 'C' + r2(x + 0.8 * s) + ' ' + r2(y - 1.1 * s) + ' ' + r2(x + 1.5 * s) + ' ' + r2(y - 0.1 * s) + ' ' + x + ' ' + r2(y + 0.9 * s) + 'Z'; };
+    var k, x, y, row, d;
+
+    d = ''; for (k = -160; k <= 100; k += 18) d += 'M' + k + ' 0L' + (k + 160) + ' 160';
+    var stripes = { stroke: d, sw: 6 };
+
+    d = ''; for (y = 8, row = 0; y < 164; y += 16, row++) { for (x = (row % 2 ? 16 : 6); x < 104; x += 20) d += dot(x, y, 3.4); }
+    var dots = { fill: d };
+
+    d = ''; for (x = 10; x < 100; x += 10) d += 'M' + x + ' 0V160'; for (y = 10; y < 160; y += 10) d += 'M0 ' + y + 'H100';
+    var grid = { stroke: d, sw: 1.2 };
+
+    d = ''; for (y = 10; y < 166; y += 16) { d += 'M-10 ' + y + 'Q-5 ' + (y - 8) + ' 0 ' + y; for (x = 10; x <= 110; x += 10) d += 'T' + x + ' ' + y; }
+    var waves = { stroke: d, sw: 2.4 };
+
+    // Sparkles stay in the top two thirds so the title area is calm.
+    d = '';
+    [[22, 22, 8], [72, 14, 5], [86, 44, 9], [46, 40, 4], [14, 62, 4], [64, 72, 6], [90, 92, 3.5], [36, 96, 3]].forEach(function (p) { d += spark(p[0], p[1], p[2]); });
+    [[10, 10, 1], [54, 8, 1.2], [34, 64, 1], [80, 64, 1.1], [8, 100, 0.9], [94, 120, 1], [58, 108, 1]].forEach(function (p) { d += dot(p[0], p[1], p[2]); });
+    var starry = { fill: d };
+
+    d = '';
+    [[20, 24, 7], [76, 44, 6], [32, 78, 5], [88, 92, 4]].forEach(function (p) { d += heart(p[0], p[1], p[2]); });
+    [[60, 18, 7], [14, 54, 5], [62, 70, 6], [90, 16, 4], [50, 100, 3.5]].forEach(function (p) { d += spark(p[0], p[1], p[2]); });
+    var doodles = { stroke: d, sw: 1.6 };
+
+    this.art = { stripes: stripes, dots: dots, grid: grid, waves: waves, starry: starry, doodles: doodles, twotone: { fill: 'M0 98H100V160H0Z' } };
+  }
+
+  // WCAG relative luminance of a #RRGGBB colour.
+  lum(hex) {
+    var n = parseInt(String(hex).slice(1), 16);
+    if (isNaN(n)) return 1;
+    var c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(function (v) { v = v / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  }
+
+  // Ink or paper text, whichever contrasts more with the surface (every palette colour clears 4.5:1 with one of them).
+  textOn(hex) {
+    var L = this.lum(hex), ink = this.lum('#26142E'), paper = this.lum('#FAF8F5');
+    var cInk = (Math.max(L, ink) + 0.05) / (Math.min(L, ink) + 0.05);
+    var cPaper = (Math.max(L, paper) + 0.05) / (Math.min(L, paper) + 0.05);
+    return cInk >= cPaper ? '#26142E' : '#FAF8F5';
+  }
+
+  colourName(hex) {
+    for (var i = 0; i < this.pal.length; i++) { if (this.pal[i].hex === hex) return this.pal[i].name; }
+    return 'Blue';
+  }
+
+  // Title size from its length (16 Oct), so the whole title always fits on a cover: up to 18 characters keeps
+  // the base size, 19-28 is x0.85, 29-40 is x0.72, longer is x0.62, never below the floor (11px by default).
+  // base: px number, '21px' or any CSS length such as a clamp(). inner: the px width the title can use, when known;
+  // the size then also drops until the longest word fits on one line (wordEm estimates its width).
+  titleSize(title, base, floor, inner) {
+    var t = String(title || ''), n = t.length;
+    var f = n <= 18 ? 1 : n <= 28 ? 0.85 : n <= 40 ? 0.72 : 0.62;
+    floor = floor || 11;
+    if (typeof base === 'number' || /^\d+(\.\d+)?px$/.test(String(base))) {
+      var px = Math.max(floor, Math.round(parseFloat(base) * f * 10) / 10);
+      var word = this.wordEm(t);
+      if (inner && word * px > inner) px = Math.max(floor, Math.floor(inner / word * 10) / 10);
+      return px + 'px';
+    }
+    return 'max(' + floor + 'px, calc(' + base + ' * ' + f + '))';
+  }
+
+  // Width of the title's longest word in em for Bricolage Grotesque bold (capitals and m/w wide, i/l/t/r narrow), plus 5% to spare.
+  wordEm(t) {
+    var em = function (w) {
+      var e = 0;
+      for (var i = 0; i < w.length; i++) { var c = w.charAt(i); e += /[A-ZĂÂÎȘȚmw]/.test(c) ? 0.75 : /[iljtfr'’.,:;!|]/.test(c) ? 0.3 : 0.55; }
+      return e * 1.05;
+    };
+    return String(t || '').split(/\s+/).reduce(function (m, w) { return Math.max(m, em(w)); }, 0);
+  }
+
+  // Style strings for one drawn cover at a given size: 'tile', 'big' (preview) or 'card' (story card).
+  // title: the story title, so its size follows its length and the whole title always fits (16 Oct).
+  cover(d, bg, ac, size, title) {
+    var Z = {
+      // inner: px the title can use inside the padding at the narrowest layout; bx: the title box's side padding, both sides.
+      tile: { dim: 'width: 100%; aspect-ratio: 5 / 8;', pad: 6, radius: 8, title: 12, lh: 1.1, pen: 12, boxPad: '2px 5px', boxR: 4, bar: 'width: 14px; height: 2px;', gap: 3, inner: 60, bx: 10 },
+      big: { dim: 'width: 180px; height: 288px;', pad: 14, radius: 16, title: 21, lh: 1.05, pen: 13, boxPad: '8px 10px', boxR: 8, bar: 'width: 40px; height: 3px;', gap: 6, inner: 150, bx: 20 },
+      card: { dim: 'height: 300px;', pad: 22, radius: 16, title: 28, lh: 1.02, pen: 13, boxPad: '10px 12px', boxR: 10, bar: 'width: 52px; height: 3px;', gap: 6, inner: 220, bx: 24 }
+    }[size];
+    var art = this.art[d.kind] || {};
+    var boxFill = d.kind === 'stripes' ? bg : (d.kind === 'dots' || d.kind === 'waves') ? '#FAF8F5' : '';
+    var surface = boxFill || (d.kind === 'twotone' ? ac : bg);
+    var text = d.kind === 'upload' ? '#26142E' : this.textOn(surface);
+    var tSize = this.titleSize(title || 'Title', Z.title, 11, Z.inner - (boxFill ? Z.bx : 0));
+    return {
+      wrap: 'position: relative; overflow: hidden; box-sizing: border-box; ' + Z.dim + ' display: flex; flex-direction: column; justify-content: flex-end; padding: ' + Z.pad + 'px; border-radius: ' + Z.radius + 'px; border: 1px solid rgba(38,20,46,0.14); background: ' + bg + ';',
+      svg: 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: ' + ac + ';',
+      fillD: art.fill || '', strokeD: art.stroke || '', sw: art.sw || 0,
+      box: 'position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: ' + Z.gap + 'px; min-width: 0; text-align: left; '
+        + (boxFill ? 'align-self: flex-start; max-width: 100%; box-sizing: border-box; padding: ' + Z.boxPad + '; border-radius: ' + Z.boxR + 'px; background: ' + boxFill + ';' : ''),
+      title: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: " + tSize + '; line-height: ' + Z.lh + '; color: ' + text + '; max-width: 100%; overflow-wrap: break-word;',
+      bar: d.kind === 'plain' ? 'display: block; ' + Z.bar + ' border-radius: 2px; background: ' + ac + ';' : 'display: none;',
+      pen: 'font-size: ' + Z.pen + 'px; font-weight: 500; color: ' + text + ';'
+    };
+  }
+
+  // Pill system (17 Oct): choice chips are white with a visible #8E7B99 edge; the chosen one is plum with a check.
+  pill(on) {
+    return 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+      + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: #FFFFFF; color: #481C5F; border: 1px solid #8E7B99;');
+  }
+
+  // A segment inside a segmented control (the wrapper carries the edge).
+  segment(on) {
+    return 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+          + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: transparent; color: #481C5F; border: 1px solid transparent;');
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Launch categories (Q52, 16 Oct): fiction, poetry and nonfiction essays. No journalism at launch.
+    var catList = [['Fiction', '#4D1B5E'], ['Poetry', '#2E4A8C'], ['Essays', '#2F6B4F']];
+    var cats = catList.map(function (c) {
+      var on = st.cat === c[0];
+      return {
+        label: c[0], on: on, style: self.pill(on),
+        dot: 'width: 8px; height: 8px; border-radius: 50%; background: ' + (on ? '#FFFFFF' : c[1]) + ';',
+        pick: function () { self.setState({ cat: c[0] }); }
+      };
+    });
+
+    var statuses = ['Ongoing', 'Completed'].map(function (s) {
+      var on = st.status === s;
+      return { label: s, on: on, style: self.segment(on), pick: function () { self.setState({ status: s }); } };
+    });
+
+    // Drawn covers: 16 approved backgrounds, recoloured within the 9-colour palette. No picture rights needed.
+    var cur = this.designs[0];
+    this.designs.forEach(function (d) { if (d.key === st.cover) cur = d; });
+
+    // Tiles: the selected one shows the writer's own colours, the rest their defaults.
+    var tiles = this.designs.map(function (d) {
+      var on = d.key === st.cover;
+      var t = self.cover(d, on ? st.coverBg : d.bg, on ? st.coverAc : d.ac, 'tile', 'Title');
+      t.label = d.label;
+      t.on = on;
+      t.style = 'display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-width: 0; padding: 2px 2px 4px; border-radius: 12px; background: #FFFFFF; cursor: pointer; font-family: inherit; '
+        + (on ? 'border: 2px solid #672786; box-shadow: 0 0 0 1px #672786;' : 'border: 2px solid transparent;');
+      t.name = 'font-size: 12px; line-height: 1.25; text-align: center; ' + (on ? 'font-weight: 700; color: #481C5F;' : 'font-weight: 500; color: #5C4965;');
+      t.pick = function () { self.setState({ cover: d.key, coverBg: d.bg, coverAc: d.ac, autoCover: false }); };
+      return t;
+    });
+
+    // Swatch rows: round 44px buttons, a check mark on the chosen one (not colour alone).
+    var swatch = function (hex, on) {
+      return 'flex: none; width: 44px; height: 44px; padding: 0; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; background: ' + hex + '; border: 1px solid rgba(38,20,46,0.32); '
+        + (on ? 'box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #672786;' : '');
+    };
+    var bgSw = this.pal.map(function (p) {
+      var on = st.coverBg === p.hex;
+      return { label: 'Background: ' + p.name, name: p.name, on: on, style: swatch(p.hex, on), check: 'color: ' + self.textOn(p.hex) + ';', pick: function () { self.setState({ coverBg: p.hex, autoCover: false }); } };
+    });
+    var acSw = this.pal.map(function (p) {
+      var on = st.coverAc === p.hex;
+      return { label: 'Pattern or accent: ' + p.name, name: p.name, on: on, style: swatch(p.hex, on), check: 'color: ' + self.textOn(p.hex) + ';', pick: function () { self.setState({ coverAc: p.hex, autoCover: false }); } };
+    });
+    var acPart = cur.kind === 'plain' ? 'underline' : cur.kind === 'twotone' ? 'band' : 'pattern';
+    var acNote = cur.kind === 'plain' ? 'On a plain background this colours the line under the title.'
+      : cur.kind === 'twotone' ? 'On Two-tone this colours the bottom band with the title.' : 'This colours the pattern.';
+
+    // The automatic design, for the status line and the 'go back' button.
+    var auto = this.designs[0];
+    this.designs.forEach(function (d) { if (d.key === self.autoKey) auto = d; });
+    var autoLine = st.autoCover ? 'Right now: ' + auto.label + ', picked for you automatically.' : 'You chose your own cover.';
+
+    // The title as typed; an empty field previews as 'Untitled story'.
+    var storyTitle = String(st.title || '').trim() || 'Untitled story';
+    var pv = this.cover(cur, st.coverBg, st.coverAc, 'big', storyTitle);
+    pv.alt = 'Cover preview: ' + cur.label + ', ' + this.colourName(st.coverBg) + ' background with ' + this.colourName(st.coverAc).toLowerCase() + ' ' + acPart + '. Title ' + storyTitle + ', by lia.writes.';
+
+    // Story card cover: the drawn cover, or a neutral placeholder while a picture is chosen.
+    var card = st.coverMode === 'draw'
+      ? this.cover(cur, st.coverBg, st.coverAc, 'card', storyTitle)
+      : this.cover({ kind: 'upload' }, 'repeating-linear-gradient(135deg,#F4F0EC 0,#F4F0EC 12px,#EDE6EF 12px,#EDE6EF 24px)', '#26142E', 'card', storyTitle);
+
+    // Story language: open languages, then ones waiting for moderators.
+    var langs = ['English', 'Română'].map(function (l) {
+      var on = st.lang === l;
+      return { label: l, on: on, style: self.pill(on), pick: function () { self.setState({ lang: l }); } };
+    });
+    var soonLangs = ['Magyar', 'Deutsch', 'Français', 'Español'].map(function (l) { return { label: l }; });
+
+    // Where people can read the story.
+    var placeList = [
+      { key: 'web', label: 'On the web and in the app', note: 'Anyone can read it in a browser or in the Ghemotoc app. This is the default.' },
+      { key: 'app', label: 'App only', note: 'On the web people see the cover, blurb and chapter list, but read the chapters in the app. More privacy for you, and your work is harder to copy.' }
+    ];
+    var places = placeList.map(function (w) {
+      var on = st.where === w.key;
+      return {
+        label: w.label, note: w.note, on: on,
+        pick: function () { self.setState({ where: w.key }); },
+        style: 'clear: both; display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; cursor: pointer; '
+          + (on ? 'border: 1px solid #481C5F; background: #F1EAF4;' : 'border: 1px solid #EFE8F2; background: #FFFFFF;')
+      };
+    });
+
+    var aiOptions = ['No AI', 'AI for brainstorming or outlining', 'Partly AI-written'].map(function (a) {
+      return { label: a, on: st.ai === a, pick: function () { self.setState({ ai: a }); } };
+    });
+
+    // Chips shown on the card and the story page.
+    // Pill system (17 Oct): pastel tint, same-hue text and border; one hue per meaning.
+    var P = { plum: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap', gold: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap', sage: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; white-space: nowrap', blush: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; white-space: nowrap', sky: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #E6EEF6; color: #2E4A8C; border: 1px solid #AFC3DE; font-size: 12px; font-weight: 700; white-space: nowrap', neutral: 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap' };
+    var tint = P.plum;
+    var line = P.neutral;
+    var catTone = { Fiction: P.plum, Poetry: P.sky, Essays: P.sage };
+    var chips = [{ label: st.cat, style: catTone[st.cat] || P.plum }, { label: st.status, style: st.status === 'Completed' ? P.gold : P.sage }, { label: st.lang, style: line }, { label: st.where === 'web' ? 'Web and app' : 'App only', style: tint }];
+    if (st.fan) chips.push({ label: 'Fan fiction', style: line });
+    if (st.parody) chips.push({ label: 'Parody', style: line });
+    chips.push(st.rating === 'All ages' ? { label: 'All ages', style: tint } : { label: st.rating, style: (st.rating === '16+' || st.rating === '18+') ? P.blush : P.plum });
+    chips.push({ label: st.ai, style: line });
+    if (!st.comments) chips.push({ label: 'Comments off', style: line });
+
+    var on = st.comments;
+    return {
+      langs: langs, soonLangs: soonLangs, places: places,
+      cats: cats, statuses: statuses, aiOptions: aiOptions, chips: chips,
+      storyTitle: storyTitle, title: st.title,
+      setTitle: function (e) { self.setState({ title: e && e.target ? e.target.value : '' }); },
+      tiles: tiles, bgSw: bgSw, acSw: acSw, acNote: acNote, pv: pv, card: card,
+      drawOn: st.coverMode === 'draw', uploadOn: st.coverMode === 'upload',
+      autoOff: !st.autoCover, autoLine: autoLine,
+      useAuto: function () { self.setState({ cover: auto.key, coverBg: auto.bg, coverAc: auto.ac, autoCover: true }); },
+      drawTabStyle: self.segment(st.coverMode === 'draw'), uploadTabStyle: self.segment(st.coverMode === 'upload'),
+      pickDraw: function () { self.setState({ coverMode: 'draw' }); },
+      pickUpload: function () { self.setState({ coverMode: 'upload' }); },
+      commentsOn: on,
+      commentsNote: on ? 'On. Readers can comment on every chapter.' : 'Off. Existing comments are hidden and nobody can add new ones.',
+      switchStyle: 'position: relative; flex: none; width: 60px; height: 34px; padding: 0; border-radius: 999px; cursor: pointer; border: 1px solid ' + (on ? '#481C5F' : '#B9A9C2') + '; background: ' + (on ? '#481C5F' : '#F4F0EC') + ';',
+      knobStyle: 'position: absolute; top: 3px; left: ' + (on ? '29px' : '3px') + '; width: 26px; height: 26px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(38,20,46,0.3); transition: left 0.15s ease;',
+      toggleComments: function () { self.setState({ comments: !st.comments }); },
+      fan: st.fan, parody: st.parody,
+      toggleFan: function () { self.setState({ fan: !st.fan }); },
+      toggleParody: function () { self.setState({ parody: !st.parody }); },
+      ratings: ['All ages', '13+', '16+', '18+'].map(function (r) {
+        var on = st.rating === r;
+        return { label: r, on: on, style: self.pill(on), pick: function () { self.setState({ rating: r }); } };
+      }),
+      rated: st.rating !== 'All ages',
+      ratingBanner: st.rating + ': hidden from readers under ' + parseInt(st.rating, 10),
+      ratingNote: st.rating === 'All ages'
+        ? 'Anyone can find and read it. Pick 13+, 16+ or 18+ if your story isn’t right for younger readers; it’s then hidden from anyone younger.'
+        : 'Hidden from anyone under ' + parseInt(st.rating, 10) + ', in search, on Discover and on your profile. Readers see the rating before they open the story.'
+    };
+  }
+}
+</script>
+</body>
+</html>

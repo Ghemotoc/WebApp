@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Report a chapter</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 40px; box-sizing: border-box">
+
+  <!-- The page behind: the chapter reader, dimmed while the dialog is open -->
+  <div aria-hidden="true" style="min-height: 1540px">
+  <!-- Floating island nav: the main links live here on every screen -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+      <header style="max-width: 680px; margin: 0 auto; padding: 56px 0 32px; display: flex; flex-direction: column; gap: 12px">
+        <a href="Story.dc.html" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; text-decoration: none; line-height: 1.3">The Salt Mine Choir · chapter 14</a>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">The register</h1>
+        <p style="margin: 0; font-size: 15px; color: #6B5A73">by <a href="Profile.dc.html" style="font-weight: 600">inkwolf</a> · 9 min read · Fiction</p>
+      </header>
+
+      <article style="max-width: 680px; margin: 0 auto; font-size: 19px; line-height: 1.7; color: #26142E">
+        <p style="margin: 0 0 1.2em">Mara ran her finger down the page for each Thursday. Corina, Teo, Bianca, the two Stan brothers, herself. Fourteen names every week, all in Mrs Dobre’s square handwriting, all ticked. She checked September again, then October, then the week of the power cut when only nine of them came.</p>
+        <p style="margin: 0 0 1.2em; background: #F6E7AE; border-radius: 6px; padding: 2px 4px">There was no Ilie. There was no fifteenth name at all.</p>
+        <p style="margin: 0 0 1.2em">“Maybe she forgot to write him down,” Teo said. He was whispering, and Teo never whispers.</p>
+        <p style="margin: 0 0 1.2em">Above them the lift groaned on its cable. Somebody was coming down, and the register said nobody else was expected.</p>
+      </article>
+
+      <div style="max-width: 680px; margin: 24px auto 0; display: flex; flex-wrap: wrap; gap: 10px">
+        <span style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600">Like</span>
+        <span style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600">Comments</span>
+        <span style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600">Share</span>
+        <span style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #481C5F; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 14px; font-weight: 700">Report</span>
+      </div>
+    </div>
+
+  <!-- Small page footer: legal links, report without an account, language switch -->
+  <footer style="max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 20px; border-top: 1px solid #DED3E4; font-size: 13px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <!-- Dimmed layer with the dialog on top -->
+  <div style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 10; background: rgba(38,20,46,0.45); box-sizing: border-box; padding: 112px clamp(16px, 4vw, 64px) 40px; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 24px">
+
+    <!-- The report form; after Send it turns into the confirmation -->
+    <div role="dialog" aria-modal="true" aria-labelledby="report-title" style="flex: 1 1 520px; max-width: 640px; box-sizing: border-box; padding: 28px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 28px 56px -32px rgba(38,20,46,0.45); animation: tmcRise 0.3s ease-out both">
+
+      <sc-if value="{{formOn}}" hint-placeholder-val="{{true}}">
+        <form style="margin: 0; display: flex; flex-direction: column; gap: 20px">
+          <div style="display: flex; align-items: flex-start; gap: 12px">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+              <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Report</span>
+              <h2 id="report-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Report this chapter</h2>
+              <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5C4965">The Salt Mine Choir, chapter 14, by inkwolf. They won’t see who reported it.</p>
+            </div>
+            <a href="Reader.dc.html" aria-label="Close" style="flex: none; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; color: #5C4965"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></a>
+          </div>
+
+          <fieldset style="margin: 0; padding: 0; border: 0">
+            <legend style="padding: 0; margin-bottom: 10px; font-weight: 700; font-size: 15px; color: #26142E">What’s wrong?</legend>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{reasons}}" as="r" hint-placeholder-count="11">
+                <label class="tmc-chip" style="{{r.style}}"><input type="radio" name="reason" value="{{r.label}}" checked="{{r.on}}" onChange="{{r.pick}}" style="width: 18px; height: 18px; margin: 0; accent-color: #672786">{{r.label}}</label>
+              </sc-for>
+            </div>
+            <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #5C4965">{{reasonHint}}</p>
+          </fieldset>
+
+          <!-- Extra fields for "Copied from a published work" -->
+          <sc-if value="{{copiedOn}}" hint-placeholder-val="{{true}}">
+            <div style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2">
+              <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #26142E"><strong style="font-weight: 700">Where was it copied from?</strong> Tell us what you know. Every field is optional. Even a title helps us check faster.</p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+                <div>
+                  <label for="src-title" style="display: block; font-weight: 600; font-size: 14px; color: #26142E">Title <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+                  <input id="src-title" type="text" placeholder="Book or article title" style="display: block; width: 100%; height: 48px; margin-top: 6px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+                </div>
+                <div>
+                  <label for="src-author" style="display: block; font-weight: 600; font-size: 14px; color: #26142E">Author <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+                  <input id="src-author" type="text" placeholder="Author’s name" style="display: block; width: 100%; height: 48px; margin-top: 6px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+                </div>
+              </div>
+              <div>
+                <label for="src-ref" style="display: block; font-weight: 600; font-size: 14px; color: #26142E">ISBN or web link <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+                <input id="src-ref" type="text" placeholder="For example 978… or https://…" style="display: block; width: 100%; height: 48px; margin-top: 6px; box-sizing: border-box; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              </div>
+              <div>
+                <span style="display: block; font-weight: 600; font-size: 14px; color: #26142E">The passage you selected in this chapter</span>
+                <blockquote style="margin: 6px 0 0; padding: 12px 16px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DED3E4; font-size: 15px; line-height: 1.6; color: #26142E">“There was no Ilie. There was no fifteenth name at all.”</blockquote>
+                <a href="Reader.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Select a different passage</a>
+              </div>
+              <div>
+                <label for="src-passage" style="display: block; font-weight: 600; font-size: 14px; color: #26142E">Paste the matching passage from the source <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+                <textarea id="src-passage" rows="4" placeholder="Copy the same lines from the original and paste them here" style="display: block; width: 100%; margin-top: 6px; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFFFF; font-family: inherit; font-size: 15px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+              </div>
+            </div>
+          </sc-if>
+
+          <div>
+            <label for="report-details" style="display: block; font-weight: 700; font-size: 15px; color: #26142E">Anything else? <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+            <textarea id="report-details" rows="3" placeholder="Tell us anything that helps us check" style="display: block; width: 100%; margin-top: 8px; box-sizing: border-box; padding: 12px 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FAF8F5; font-family: inherit; font-size: 15px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+          </div>
+
+          <p style="margin: 0; display: flex; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #F1EAF4; font-size: 14px; line-height: 1.5; color: #26142E"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#481C5F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg><span>A person on our team reads every report. Nothing changes on the story until we’ve checked it.</span></p>
+
+          <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px">
+            <a href="Reader.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none">Cancel</a>
+            <button type="button" onClick="{{send}}" style="height: 48px; padding: 0 26px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Send report</button>
+          </div>
+        </form>
+      </sc-if>
+
+      <sc-if value="{{sentOn}}" hint-placeholder-val="{{false}}">
+        <div role="status" style="display: flex; flex-direction: column; gap: 12px">
+          <span style="display: inline-flex; align-items: center; gap: 10px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; color: #2F6B4F"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m8 12 3 3 5-6"></path></svg>Report sent</span>
+          <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Thanks, Lia. A person on our team will read it and tell you what we decide.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px">
+            <a href="MyReports.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none">See my reports</a>
+            <a href="Reader.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none">Back to the chapter</a>
+          </div>
+          <button type="button" onClick="{{reset}}" style="align-self: flex-start; height: 44px; padding: 0; border: 0; background: transparent; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer">Show the form again</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- The confirmation, drawn beside the form so the board shows both states -->
+    <div role="status" aria-label="After you send a report" style="flex: 0 1 380px; box-sizing: border-box; padding: 26px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 28px 56px -32px rgba(38,20,46,0.45); display: flex; flex-direction: column; gap: 14px; animation: tmcRise 0.3s 0.05s ease-out both">
+      <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">After you send</span>
+      <span style="display: inline-flex; align-items: center; gap: 10px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #2F6B4F"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m8 12 3 3 5-6"></path></svg>Report sent</span>
+      <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #5C4965">Thanks, Lia. A person on our team will read your report. We’ve also put this confirmation in your notifications.</p>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <span style="font-weight: 700; font-size: 15px; color: #26142E">What happens next</span>
+        <ol style="margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6; color: #5C4965">
+          <li>We compare the chapter with the source you gave us.</li>
+          <li>If it was copied, we add a public note to the story or remove it.</li>
+          <li>We tell you what we decided, and why.</li>
+        </ol>
+      </div>
+      <a href="MyReports.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 15px; font-weight: 600; text-decoration: none">See my reports</a>
+      <a href="Reader.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600">Back to the chapter</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1580}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // The board opens with "Copied from a published work" picked, so its extra fields show.
+    this.state = { reason: 'Copied from a published work', sent: false, lang: 'en' };
+  }
+
+  // Language switch in the footer (Română / English).
+  langVals() {
+    var self = this, l = this.state.lang;
+    var st = function (on) {
+      return 'height: 40px; padding: 0 16px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+        + (on ? 'background: #2A0E33; color: #FBF7EC; font-weight: 600;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+    return {
+      roOn: l === 'ro', enOn: l === 'en', roStyle: st(l === 'ro'), enStyle: st(l === 'en'),
+      pickRo: function () { self.setState({ lang: 'ro' }); },
+      pickEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Every reason from story S1-E10-01, each with one plain line that says what it covers.
+    var list = [
+      ['Copied from a published work', 'Text taken from a book or article that is already published.'],
+      ['Copyright', 'Uses your own work, or someone else’s, without permission.'],
+      ['Missing AI label', 'Written with AI but not labelled as AI-assisted.'],
+      ['Harassment', 'Bullying, threats or targeting a person.'],
+      ['Hate', 'Attacks people for who they are.'],
+      ['Self-harm', 'Encourages or shows self-harm or suicide.'],
+      ['Sexual content involving a minor', 'Any sexual content involving someone under 18. We act on this first.'],
+      ['Terrorism', 'Supports or promotes terrorism.'],
+      ['Illegal content', 'Breaks the law in another way.'],
+      ['Spam', 'Ads, scams or the same post over and over.'],
+      ['Other', 'Something else. Tell us below.']
+    ];
+    var hint = '';
+    var reasons = list.map(function (r) {
+      var on = st.reason === r[0];
+      if (on) hint = r[1];
+      return {
+        label: r[0], on: on,
+        // Pill system (17 Oct): radio chip, 36 px in a 44 px tap area; the radio dot shows the choice.
+        style: 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; white-space: nowrap; border-radius: 999px; font-size: 14px; color: #481C5F; cursor: pointer; '
+          + (on ? 'border: 1px solid #481C5F; background: #F1EAF4; font-weight: 700;' : 'border: 1px solid #8E7B99; background: #FFFFFF; font-weight: 600;'),
+        pick: function () { self.setState({ reason: r[0] }); }
+      };
+    });
+
+    return Object.assign(this.langVals(), {
+      reasons: reasons, reasonHint: hint,
+      copiedOn: st.reason === 'Copied from a published work',
+      formOn: !st.sent, sentOn: st.sent,
+      send: function () { self.setState({ sent: true }); },
+      reset: function () { self.setState({ sent: false }); }
+    });
+  }
+}
+</script>
+</body>
+</html>

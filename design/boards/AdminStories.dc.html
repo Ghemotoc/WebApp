@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: stories</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-lilac{background-color:#E9DDF0;background-image:url(/_blob/f1d0436689691672be6a521d49b6d32c)}
+.tmc-cv-sky{background-color:#D7E6F2;background-image:url(/_blob/7f5800c35ba2931d2b6f7a813d85b93c)}
+.tmc-cv-sage{background-color:#DCE8DF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#F4EFE6;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-cv-dots{background-color:#F1EAF4;background-image:url(/_blob/49525cd87927782c2ac3d4a53ebc2973)}
+.tmc-cv-grid{background-color:#F4F0EC;background-image:url(/_blob/18fddef6727cc64415d6f75fd94c388b)}
+.tmc-cv-waves{background-color:#E3ECF4;background-image:url(/_blob/b3b6a05178861fc4e9210eaaa4134c6d)}
+.tmc-cv-starry{background-color:#2A0E33;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the other staff screens -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <header style="padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · stories</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Every story</h1>
+      <p style="margin: 0; max-width: 760px; font-size: 18px; line-height: 1.65; color: #5C4965">Find any story, open it to hide or restrict it or change its settings and details, or download it for a data request. Staff never edit a writer’s words. Every change needs a reason, and the writer is told what changed and why.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 13px; font-weight: 700; line-height: 1; white-space: nowrap">Each story belongs to one user ID</span>
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Every action here goes to the audit log</span>
+      </div>
+    </header>
+
+    <!-- Search by title, handle or user ID -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <form role="search" style="flex: 1 1 420px; min-width: 0; position: relative; margin: 0; display: flex; gap: 10px">
+        <label for="story-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Title, handle or user ID</label>
+        <span style="position: absolute; left: 20px; top: 15px; color: #6B5A73; display: flex"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+        <input id="story-q" type="search" placeholder="Title, handle or user ID (usr_…)" value="{{q}}" onChange="{{onQ}}" style="flex: 1; min-width: 0; box-sizing: border-box; height: 52px; padding: 0 20px 0 52px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+        <button type="submit" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Search</button>
+      </form>
+    </div>
+
+    <!-- Filters: status chips, category and language, two toggles -->
+    <div style="margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+      <div role="group" aria-label="Filter by status" style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+          <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+        </sc-for>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <label for="f-cat" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Category</label>
+        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="f-cat" onChange="{{onCat}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+          <option value="All">All categories</option>
+          <option>Fiction</option>
+          <option>Poetry</option>
+          <option>Essays</option>
+        </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <label for="f-lang" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Language</label>
+        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="f-lang" onChange="{{onLang}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; color: #26142E">
+          <option value="All">All languages</option>
+          <option>English</option>
+          <option>Română</option>
+        </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+      </div>
+      <div role="group" aria-label="More filters" style="display: flex; flex-wrap: wrap; gap: 8px">
+        <button type="button" class="tmc-chip" aria-pressed="{{rep.pressed}}" onClick="{{rep.toggle}}" style="{{rep.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{rep.check}}"><path d="M20 6 9 17l-5-5"></path></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{rep.icon}}"><path d="M4 21V4"></path><path d="M4 4h12l-2 4 2 4H4"></path></svg>Open reports</button>
+        <button type="button" class="tmc-chip" aria-pressed="{{min.pressed}}" onClick="{{min.toggle}}" style="{{min.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{min.check}}"><path d="M20 6 9 17l-5-5"></path></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{min.icon}}"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path></svg>Writers under 18</button>
+      </div>
+    </div>
+    <p role="status" style="margin: 16px 0 0; font-size: 13px; color: #6B5A73">Example stories. {{shownLine}}</p>
+
+    <!-- The table of every story -->
+    <section aria-labelledby="stories-title" style="margin-top: 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 8px 0 4px; overflow: hidden">
+      <h2 id="stories-title" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Stories</h2>
+      <div style="overflow-x: auto; position: relative">
+        <table style="width: 100%; border-collapse: collapse; min-width: 1180px">
+          <thead>
+            <tr>
+              <th scope="col" style="padding: 12px 12px 12px 20px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">STORY</th>
+              <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">OWNER USER ID</th>
+              <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">CATEGORY</th>
+              <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">LANGUAGE</th>
+              <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">STATUS</th>
+              <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">READ ON</th>
+              <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">RATING</th>
+              <th scope="col" style="padding: 12px; text-align: right; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">CHAPTERS</th>
+              <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">UPDATED</th>
+              <th scope="col" style="padding: 12px; text-align: right; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">REPORTS</th>
+              <th scope="col" style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #DED3E4"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Open</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- The Salt Mine Choir -->
+            <tr style="{{row.salt}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-starry" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">The Salt Mine Choir</a><span style="font-size: 13px; color: #6B5A73">@inkwolf · <span style="color: #815E18; font-weight: 600">under 18</span></span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_7f3c…a91e</code><button type="button" aria-label="Copy the user ID of @inkwolf" onClick="{{copy.salt.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.salt.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Fiction</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">English</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">13+</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">15</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">16 Oct 2026</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">1 open</span></td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open The Salt Mine Choir" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- The Weather Station -->
+            <tr style="{{row.weather}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-sky" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">The Weather Station</a><span style="font-size: 13px; color: #6B5A73">@lia.writes · <span style="color: #815E18; font-weight: 600">under 18</span></span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_2b81…c04f</code><button type="button" aria-label="Copy the user ID of @lia.writes" onClick="{{copy.weather.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.weather.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Fiction</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">English</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Draft</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">All ages</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">1</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">16 Oct 2026</td>
+              <td style="padding: 12px; font-size: 14px; color: #5C4965; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">0</td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open The Weather Station" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- The Girl Who Fixed Radios -->
+            <tr style="{{row.radios}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-waves" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">The Girl Who Fixed Radios</a><span style="font-size: 13px; color: #6B5A73">@lia.writes · <span style="color: #815E18; font-weight: 600">under 18</span></span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_2b81…c04f</code><button type="button" aria-label="Copy the user ID of @lia.writes" onClick="{{copy.radios.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.radios.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Fiction</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">English</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">All ages</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">6</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">14 Oct 2026</td>
+              <td style="padding: 12px; font-size: 14px; color: #5C4965; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">0</td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open The Girl Who Fixed Radios" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- The Last Tram Home -->
+            <tr style="{{row.tram}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-sage" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">The Last Tram Home</a><span style="font-size: 13px; color: #6B5A73">@ilinca.r</span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_c13a…5f72</code><button type="button" aria-label="Copy the user ID of @ilinca.r" onClick="{{copy.tram.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.tram.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Fiction</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Română</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Hidden</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">13+</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">8</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">13 Oct 2026</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">2 open</span></td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open The Last Tram Home" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- Notes from the Housing Waitlist (a nonfiction essay) -->
+            <tr style="{{row.waitlist}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-grid" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">Notes from the Housing Waitlist</a><span style="font-size: 13px; color: #6B5A73">@matei.writes</span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_e05b…91ac</code><button type="button" aria-label="Copy the user ID of @matei.writes" onClick="{{copy.waitlist.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.waitlist.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Essays</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Română</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">All ages</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">4</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">12 Oct 2026</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">1 open</span></td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open Notes from the Housing Waitlist" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- Small Rooms -->
+            <tr style="{{row.rooms}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-dots" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">Small Rooms</a><span style="font-size: 13px; color: #6B5A73">@poppyverse</span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_9d0e…37b2</code><button type="button" aria-label="Copy the user ID of @poppyverse" onClick="{{copy.rooms.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.rooms.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Poetry</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">English</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">App only</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">13+</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">9</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">12 Oct 2026</td>
+              <td style="padding: 12px; font-size: 14px; color: #5C4965; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">0</td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open Small Rooms" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- What Our Grandparents Didn’t Post -->
+            <tr style="{{row.grand}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-paper" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">What Our Grandparents Didn’t Post</a><span style="font-size: 13px; color: #6B5A73">@ana.radu</span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_61d7…0b3e</code><button type="button" aria-label="Copy the user ID of @ana.radu" onClick="{{copy.grand.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.grand.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Essays</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">English</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">All ages</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">5</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">10 Oct 2026</td>
+              <td style="padding: 12px; font-size: 14px; color: #5C4965; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">0</td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open What Our Grandparents Didn’t Post" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- Rivers That Moved Towns -->
+            <tr style="{{row.rivers}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-sky" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">Rivers That Moved Towns</a><span style="font-size: 13px; color: #6B5A73">@geo.andrei</span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_8be2…d416</code><button type="button" aria-label="Copy the user ID of @geo.andrei" onClick="{{copy.rivers.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.rivers.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Essays</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Română</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">All ages</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">3</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">9 Oct 2026</td>
+              <td style="padding: 12px; font-size: 14px; color: #5C4965; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">0</td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open Rivers That Moved Towns" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- Lanterns on Lipscani -->
+            <tr style="{{row.lanterns}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-violet" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">Lanterns on Lipscani</a><span style="font-size: 13px; color: #6B5A73">@corbu</span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_4a6f…e8d0</code><button type="button" aria-label="Copy the user ID of @corbu" onClick="{{copy.lanterns.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.lanterns.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Fiction</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Română</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">18+</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">11</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">7 Oct 2026</td>
+              <td style="padding: 12px; font-size: 14px; color: #5C4965; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">0</td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open Lanterns on Lipscani" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- Night Bus to Ploiești -->
+            <tr style="{{row.bus}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-ink" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2)"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">Night Bus to Ploiești</a><span style="font-size: 13px; color: #6B5A73">@corbu</span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_4a6f…e8d0</code><button type="button" aria-label="Copy the user ID of @corbu" onClick="{{copy.bus.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.bus.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Fiction</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Română</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #E8F1EC; color: #245A41; border: 1px solid #A9C9B6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Published</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">16+</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">22</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">3 Oct 2026</td>
+              <td style="padding: 12px; font-size: 14px; color: #5C4965; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">0</td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open Night Bus to Ploiești" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+            <!-- A removed spam story -->
+            <tr style="{{row.promo}}">
+              <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: middle">
+                <div style="display: flex; align-items: center; gap: 14px">
+                  <span aria-hidden="true" class="tmc-cv tmc-cv-lilac" style="flex: none; width: 40px; height: 64px; border-radius: 6px; box-shadow: 0 1px 2px rgba(38,20,46,0.2); opacity: 0.6"></span>
+                  <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0"><a href="AdminStory.dc.html" style="font-size: 15px; font-weight: 700; color: #481C5F; text-underline-offset: 3px">Best Book Deals 2026</a><span style="font-size: 13px; color: #6B5A73">@promo.books.ro · banned</span></span>
+                </div>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; gap: 4px"><code style="font-size: 13px; color: #26142E">usr_0e7d…b852</code><button type="button" aria-label="Copy the user ID of @promo.books.ro" onClick="{{copy.promo.fn}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copy.promo.label}}</button></span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Fiction</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle">Română</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F6E9EB; color: #8C2B3A; border: 1px solid #DDB0B8; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Removed</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">Web and app</td>
+              <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">All ages</span></td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">1</td>
+              <td style="padding: 12px; font-size: 14px; color: #26142E; border-bottom: 1px solid #EFE8F2; vertical-align: middle; white-space: nowrap">12 Oct 2026</td>
+              <td style="padding: 12px; font-size: 14px; color: #5C4965; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right">0<br><span style="font-size: 12px; color: #6B5A73">7 closed</span></td>
+              <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: middle; text-align: right"><a href="AdminStory.dc.html" aria-label="Open Best Book Deals 2026" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <sc-if value="{{none}}" hint-placeholder-val="{{false}}">
+        <p style="margin: 0; padding: 20px; font-size: 15px; color: #5C4965">No stories match. Clear a filter or search for a user ID.</p>
+      </sc-if>
+      <p style="margin: 0; padding: 14px 20px 12px; font-size: 13px; line-height: 1.5; color: #6B5A73">Open a story to hide or restrict it, change its settings and details (rating, category, tags, status, where it can be read), remove an unlawful part, see its history or download it. Staff never edit a writer’s words. There is no bulk action: each change is made on one story, with a reason the writer sees.</p>
+    </section>
+
+    <!-- How stories and user IDs connect -->
+    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px">
+      <div style="display: flex; gap: 12px; padding: 18px 20px; border-radius: 16px; background: #F1EAF4; color: #481C5F">
+        <span style="flex: none; display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></span>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #3A2442"><b>One owner per story.</b> Every story is linked to its writer’s user ID. The ID is made automatically when someone signs up, it never changes and it is never shown publicly. A handle can change. The ID can’t.</p>
+      </div>
+      <div style="display: flex; gap: 12px; padding: 18px 20px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DED3E4; color: #481C5F">
+        <span style="flex: none; display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg></span>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #3A2442"><b>Data requests.</b> To send someone all their stories, use <a href="AdminDataRequests.dc.html" style="font-weight: 600">Data requests</a>. It finds every story by user ID, so stories under an old handle are included.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2064}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { q: '', status: 'All', cat: 'All', lang: 'All', reports: false, minors: false, copied: null };
+  }
+
+  // Interactive chip (pill system, 17 Oct): 36 px tall inside a 44 px tap area (.tmc-chip::before), equal 14 px sides.
+  // Unselected: white with a #8E7B99 edge. Selected: solid plum plus a check icon, so the state is not colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Example stories. uid is the full user ID; the table shows it short.
+    var S = {
+      salt:     { title: 'The Salt Mine Choir', handle: 'inkwolf', uid: 'usr_7f3c2b9e04d1a91e', cat: 'Fiction', lang: 'English', status: 'Published', reports: 1, minor: true },
+      weather:  { title: 'The Weather Station', handle: 'lia.writes', uid: 'usr_2b81d5e7f390c04f', cat: 'Fiction', lang: 'English', status: 'Draft', reports: 0, minor: true },
+      radios:   { title: 'The Girl Who Fixed Radios', handle: 'lia.writes', uid: 'usr_2b81d5e7f390c04f', cat: 'Fiction', lang: 'English', status: 'Published', reports: 0, minor: true },
+      tram:     { title: 'The Last Tram Home', handle: 'ilinca.r', uid: 'usr_c13a8e2d6b015f72', cat: 'Fiction', lang: 'Română', status: 'Hidden', reports: 2, minor: false },
+      waitlist: { title: 'Notes from the Housing Waitlist', handle: 'matei.writes', uid: 'usr_e05b47c2d8a391ac', cat: 'Essays', lang: 'Română', status: 'Published', reports: 1, minor: false },
+      rooms:    { title: 'Small Rooms', handle: 'poppyverse', uid: 'usr_9d0e61fa2c4837b2', cat: 'Poetry', lang: 'English', status: 'Published', reports: 0, minor: false },
+      grand:    { title: 'What Our Grandparents Didn’t Post', handle: 'ana.radu', uid: 'usr_61d7f0a9e2c40b3e', cat: 'Essays', lang: 'English', status: 'Published', reports: 0, minor: false },
+      rivers:   { title: 'Rivers That Moved Towns', handle: 'geo.andrei', uid: 'usr_8be2c97a1f05d416', cat: 'Essays', lang: 'Română', status: 'Published', reports: 0, minor: false },
+      lanterns: { title: 'Lanterns on Lipscani', handle: 'corbu', uid: 'usr_4a6fb3d18c27e8d0', cat: 'Fiction', lang: 'Română', status: 'Published', reports: 0, minor: false },
+      bus:      { title: 'Night Bus to Ploiești', handle: 'corbu', uid: 'usr_4a6fb3d18c27e8d0', cat: 'Fiction', lang: 'Română', status: 'Published', reports: 0, minor: false },
+      promo:    { title: 'Best Book Deals 2026', handle: 'promo.books.ro', uid: 'usr_0e7d2a6c94f1b852', cat: 'Fiction', lang: 'Română', status: 'Removed', reports: 0, minor: false }
+    };
+    var order = ['salt', 'weather', 'radios', 'tram', 'waitlist', 'rooms', 'grand', 'rivers', 'lanterns', 'bus', 'promo'];
+
+    // Search matches title, handle or user ID (full or short form), ignoring case and the @.
+    var q = String(st.q || '').trim().toLowerCase().replace(/^@/, '').replace('…', '');
+    var matches = function (s) {
+      if (!q) return true;
+      var short = (s.uid.slice(0, 8) + s.uid.slice(-4)).toLowerCase();
+      return s.title.toLowerCase().indexOf(q) > -1 || s.handle.toLowerCase().indexOf(q) > -1
+        || s.uid.toLowerCase().indexOf(q) > -1 || short.indexOf(q) > -1;
+    };
+
+    var row = {}, copy = {}, shown = 0;
+    order.forEach(function (k) {
+      var s = S[k];
+      var visible = matches(s)
+        && (st.status === 'All' || s.status === st.status)
+        && (st.cat === 'All' || s.cat === st.cat)
+        && (st.lang === 'All' || s.lang === st.lang)
+        && (!st.reports || s.reports > 0)
+        && (!st.minors || s.minor);
+      if (visible) shown++;
+      row[k] = visible ? '' : 'display: none;';
+      // Copy the full user ID; the label confirms it for a moment.
+      copy[k] = {
+        label: st.copied === k ? 'Copied' : 'Copy',
+        fn: function () {
+          try { if (navigator.clipboard) navigator.clipboard.writeText(s.uid); } catch (e) { /* clipboard blocked: the label still confirms */ }
+          self.setState({ copied: k });
+        }
+      };
+    });
+
+    var statuses = ['All', 'Draft', 'Published', 'Hidden', 'Removed'];
+    var chips = statuses.map(function (f) {
+      var on = st.status === f;
+      return { label: f, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ status: f }); } };
+    });
+    var val = function (e) { return e && e.target ? String(e.target.value) : ''; };
+
+    return {
+      q: st.q, row: row, copy: copy, chips: chips,
+      none: shown === 0,
+      shownLine: shown + ' of ' + order.length + (order.length === 1 ? ' story' : ' stories') + ' shown.',
+      onQ: function (e) { self.setState({ q: val(e) }); },
+      onCat: function (e) { self.setState({ cat: val(e) || 'All' }); },
+      onLang: function (e) { self.setState({ lang: val(e) || 'All' }); },
+      rep: { pressed: st.reports ? 'true' : 'false', style: self.chipStyle(st.reports), check: self.chipCheck(st.reports), icon: st.reports ? 'display: none;' : 'flex: none; display: block;', toggle: function () { self.setState({ reports: !st.reports }); } },
+      min: { pressed: st.minors ? 'true' : 'false', style: self.chipStyle(st.minors), check: self.chipCheck(st.minors), icon: st.minors ? 'display: none;' : 'flex: none; display: block;', toggle: function () { self.setState({ minors: !st.minors }); } }
+    };
+  }
+}
+</script>
+</body>
+</html>

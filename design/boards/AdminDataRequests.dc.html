@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: data requests</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}.tmc-rows>div{padding:12px 0;border-top:1px solid #DED3E4}.tmc-rows>div:first-of-type{border-top:0;padding-top:0}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the other staff screens -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; top: 13px; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <header style="padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
+      <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · data requests</div>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Data requests</h1>
+      <p style="margin: 0; max-width: 760px; font-size: 18px; line-height: 1.65; color: #5C4965">People asking for a copy of their data, a correction or deletion. Check who is asking, find everything by user ID and answer within one month.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 13px; font-weight: 700; line-height: 1; white-space: nowrap">1 due in the next 14 days</span>
+        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap">Every action here goes to the audit log</span>
+      </div>
+    </header>
+
+    <!-- Search and status filters -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <form role="search" style="flex: 1 1 420px; min-width: 0; position: relative; margin: 0; display: flex; gap: 10px">
+        <label for="dr-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Request number, handle, email or user ID</label>
+        <span style="position: absolute; left: 20px; top: 15px; color: #6B5A73; display: flex"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+        <input id="dr-q" type="search" placeholder="Request number, handle, email or user ID" style="flex: 1; min-width: 0; box-sizing: border-box; height: 52px; padding: 0 20px 0 52px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+        <button type="submit" style="display: inline-flex; align-items: center; justify-content: center; height: 52px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Search</button>
+      </form>
+    </div>
+    <div role="group" aria-label="Filter by status" style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+        <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+      </sc-for>
+    </div>
+    <p role="status" style="margin: 16px 0 0; font-size: 13px; color: #6B5A73">Example requests. Today is 16 Oct 2026. {{shownLine}}</p>
+
+    <div style="margin-top: 20px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+
+      <!-- Left: the queue and the legal basis -->
+      <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+        <section aria-labelledby="queue-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 8px 0 4px; overflow: hidden">
+          <h2 id="queue-title" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Requests</h2>
+          <div style="overflow-x: auto">
+            <table style="width: 100%; border-collapse: collapse; min-width: 720px">
+              <thead>
+                <tr>
+                  <th scope="col" style="padding: 12px 12px 12px 20px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">REQUEST</th>
+                  <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">USER ID</th>
+                  <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">RECEIVED</th>
+                  <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">DUE</th>
+                  <th scope="col" style="padding: 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">VERIFIED</th>
+                  <th scope="col" style="padding: 12px 20px 12px 12px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73; border-bottom: 1px solid #DED3E4; white-space: nowrap">STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                  <tr style="{{rw.r1009.rowStyle}}">
+                    <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{rw.r1009.pressed}}" onClick="{{rw.r1009.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">{{rw.r1009.id}}</span><span style="font-size: 13px; color: #26142E">{{rw.r1009.type}}</span><span style="font-size: 13px; color: #6B5A73">{{rw.r1009.who}}</span></button></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><code style="font-size: 13px; color: #26142E; white-space: nowrap">{{rw.r1009.uid}}</code></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1009.received}}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1009.due}}<br><span style="{{rw.r1009.leftStyle}}">{{rw.r1009.left}}</span></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1009.verStyle}}">{{rw.r1009.verified}}</span></td>
+                    <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1009.statusStyle}}">{{rw.r1009.status}}</span></td>
+                  </tr>
+                  <tr style="{{rw.r1008.rowStyle}}">
+                    <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{rw.r1008.pressed}}" onClick="{{rw.r1008.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">{{rw.r1008.id}}</span><span style="font-size: 13px; color: #26142E">{{rw.r1008.type}}</span><span style="font-size: 13px; color: #6B5A73">{{rw.r1008.who}}</span></button></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><code style="font-size: 13px; color: #26142E; white-space: nowrap">{{rw.r1008.uid}}</code></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1008.received}}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1008.due}}<br><span style="{{rw.r1008.leftStyle}}">{{rw.r1008.left}}</span></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1008.verStyle}}">{{rw.r1008.verified}}</span></td>
+                    <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1008.statusStyle}}">{{rw.r1008.status}}</span></td>
+                  </tr>
+                  <tr style="{{rw.r1007.rowStyle}}">
+                    <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{rw.r1007.pressed}}" onClick="{{rw.r1007.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">{{rw.r1007.id}}</span><span style="font-size: 13px; color: #26142E">{{rw.r1007.type}}</span><span style="font-size: 13px; color: #6B5A73">{{rw.r1007.who}}</span></button></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><code style="font-size: 13px; color: #26142E; white-space: nowrap">{{rw.r1007.uid}}</code></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1007.received}}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1007.due}}<br><span style="{{rw.r1007.leftStyle}}">{{rw.r1007.left}}</span></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1007.verStyle}}">{{rw.r1007.verified}}</span></td>
+                    <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1007.statusStyle}}">{{rw.r1007.status}}</span></td>
+                  </tr>
+                  <tr style="{{rw.r1005.rowStyle}}">
+                    <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{rw.r1005.pressed}}" onClick="{{rw.r1005.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">{{rw.r1005.id}}</span><span style="font-size: 13px; color: #26142E">{{rw.r1005.type}}</span><span style="font-size: 13px; color: #6B5A73">{{rw.r1005.who}}</span></button></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><code style="font-size: 13px; color: #26142E; white-space: nowrap">{{rw.r1005.uid}}</code></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1005.received}}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1005.due}}<br><span style="{{rw.r1005.leftStyle}}">{{rw.r1005.left}}</span></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1005.verStyle}}">{{rw.r1005.verified}}</span></td>
+                    <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1005.statusStyle}}">{{rw.r1005.status}}</span></td>
+                  </tr>
+                  <tr style="{{rw.r1004.rowStyle}}">
+                    <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{rw.r1004.pressed}}" onClick="{{rw.r1004.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">{{rw.r1004.id}}</span><span style="font-size: 13px; color: #26142E">{{rw.r1004.type}}</span><span style="font-size: 13px; color: #6B5A73">{{rw.r1004.who}}</span></button></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><code style="font-size: 13px; color: #26142E; white-space: nowrap">{{rw.r1004.uid}}</code></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1004.received}}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1004.due}}<br><span style="{{rw.r1004.leftStyle}}">{{rw.r1004.left}}</span></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1004.verStyle}}">{{rw.r1004.verified}}</span></td>
+                    <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1004.statusStyle}}">{{rw.r1004.status}}</span></td>
+                  </tr>
+                  <tr style="{{rw.r1003.rowStyle}}">
+                    <td style="padding: 12px 12px 12px 20px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><button type="button" aria-pressed="{{rw.r1003.pressed}}" onClick="{{rw.r1003.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer"><span style="font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px">{{rw.r1003.id}}</span><span style="font-size: 13px; color: #26142E">{{rw.r1003.type}}</span><span style="font-size: 13px; color: #6B5A73">{{rw.r1003.who}}</span></button></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><code style="font-size: 13px; color: #26142E; white-space: nowrap">{{rw.r1003.uid}}</code></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1003.received}}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top; font-size: 14px; color: #26142E; white-space: nowrap">{{rw.r1003.due}}<br><span style="{{rw.r1003.leftStyle}}">{{rw.r1003.left}}</span></td>
+                    <td style="padding: 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1003.verStyle}}">{{rw.r1003.verified}}</span></td>
+                    <td style="padding: 12px 20px 12px 12px; border-bottom: 1px solid #EFE8F2; vertical-align: top"><span style="{{rw.r1003.statusStyle}}">{{rw.r1003.status}}</span></td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+          <sc-if value="{{none}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 20px; font-size: 15px; color: #5C4965">No requests with this status. Pick All to see every request.</p>
+          </sc-if>
+          <p style="margin: 0; padding: 14px 20px 12px; font-size: 13px; line-height: 1.5; color: #6B5A73">Requests come from Settings › Your data, from a support ticket (Open data request), the privacy email address or by post. Pick one to work on it.</p>
+        </section>
+
+        <!-- Legal basis -->
+        <section aria-labelledby="law-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 12px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Legal basis</span>
+          <h2 id="law-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">What the GDPR asks of us</h2>
+          <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(0, 96px) minmax(0, 1fr); gap: 10px 16px; font-size: 14px; line-height: 1.55">
+            <dt style="font-weight: 700; color: #26142E">Art 12</dt>
+            <dd style="margin: 0; color: #5C4965">Answer without undue delay and within one month of receiving the request. For complex or many requests we can take two more months, but we must tell the person within the first month and say why. If we have reasonable doubts about who is asking, we can ask for more information first.</dd>
+            <dt style="font-weight: 700; color: #26142E">Art 15</dt>
+            <dd style="margin: 0; color: #5C4965">Access: a copy of their personal data. The copy must not harm other people’s rights, so we leave out others’ personal data where needed.</dd>
+            <dt style="font-weight: 700; color: #26142E">Art 17</dt>
+            <dd style="margin: 0; color: #5C4965">Deletion: we delete their data unless we must keep it, for example as evidence under a legal order.</dd>
+            <dt style="font-weight: 700; color: #26142E">Art 20</dt>
+            <dd style="margin: 0; color: #5C4965">Portability: the data they gave us, in a common machine-readable format (JSON).</dd>
+            <dt style="font-weight: 700; color: #26142E">Art 16</dt>
+            <dd style="margin: 0; color: #5C4965">Correction: we fix personal data that is wrong.</dd>
+          </dl>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">The first copy is free. Decided: a 13 to 15-year-old can download their own data from their own signed-in account. A request made for a child by anyone else goes through the parent or guardian on the consent record. A lawyer checks the minors’ points before March.</p>
+        </section>
+      </div>
+
+      <!-- Right: the selected request -->
+      <aside aria-labelledby="req-title" style="flex: 1 1 420px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 28px; display: flex; flex-direction: column; gap: 22px">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+            <h2 id="req-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; line-height: 1.2; color: #26142E">{{q.id}} · {{q.type}}</h2>
+            <span style="{{q.statusStyle}}">{{q.status}}</span>
+          </div>
+          <blockquote style="margin: 0; padding: 12px 16px; border-radius: 12px; background: #F4F0EC; font-size: 15px; line-height: 1.55; color: #26142E">{{q.text}}</blockquote>
+          <span style="font-size: 13px; color: #6B5A73">{{q.source}}</span>
+        </div>
+
+        <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(0, 130px) minmax(0, 1fr); gap: 10px 16px; font-size: 14px; line-height: 1.5">
+          <dt style="color: #6B5A73">Account</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E; font-weight: 600">{{q.handle}}</dd>
+          <dt style="color: #6B5A73">User ID</dt>
+          <dd style="margin: 0; text-align: right; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 2px"><code style="font-size: 14px; color: #26142E">{{q.uid}}</code><sc-if value="{{q.hasUid}}" hint-placeholder-val="{{true}}"><button type="button" aria-label="Copy the user ID" onClick="{{copyId}}" style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #672786; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>{{copyLabel}}</button></sc-if></dd>
+          <dt style="color: #6B5A73">Age group</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E">{{q.age}}</dd>
+          <dt style="color: #6B5A73">Received</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E">{{q.received}}</dd>
+          <dt style="color: #6B5A73">Due</dt>
+          <dd style="margin: 0; text-align: right; color: #26142E"><b>{{q.due}}</b> · {{q.left}}</dd>
+        </dl>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <a href="AdminUsers.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Open in Users</a>
+          <a href="AdminStories.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">See their stories</a>
+          <button type="button" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Extend by two months</button>
+        </div>
+
+        <!-- Identity check -->
+        <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Identity check</span>
+            <span style="{{q.verStyle}}">{{q.verified}}</span>
+          </div>
+          <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px">
+            <sc-for list="{{q.checks}}" as="k" hint-placeholder-count="3">
+              <li style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.5; color: #26142E"><span style="{{k.markStyle}}" aria-hidden="true">{{k.mark}}</span><span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">{{k.sr}}</span>{{k.label}}</span></li>
+            </sc-for>
+          </ul>
+          <div style="display: flex; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #F1EAF4; color: #481C5F">
+            <span style="flex: none; display: flex; padding-top: 2px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><circle cx="17.5" cy="10" r="2.5"></circle><path d="M16 20a5 5 0 0 1 6-4.9"></path></svg></span>
+            <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #3A2442"><b>Under 16: two routes.</b> From their own signed-in account, a 13 to 15-year-old can ask for their own data like anyone else. A request made for them by someone else goes through the parent or guardian on the consent record: we email the address on that record and wait for their answer. Never send a child’s data to an address we haven’t checked.</p>
+          </div>
+          <button type="button" disabled="{{q.verifiedOk}}" onClick="{{verify}}" style="align-self: flex-start; height: 44px; padding: 0 18px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{q.verifyLabel}}</button>
+        </div>
+
+        <!-- Export everything: access and portability requests -->
+        <sc-if value="{{q.isExport}}" hint-placeholder-val="{{true}}">
+          <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Export everything</span>
+            <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 4px">
+              <legend style="padding: 0 0 6px; font-size: 14px; font-weight: 600; color: #26142E">What goes in the file</legend>
+              <sc-for list="{{parts}}" as="p" hint-placeholder-count="5">
+                <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 8px 0; border-bottom: 1px solid #EFE8F2; cursor: pointer"><input type="checkbox" checked="{{p.on}}" onChange="{{p.toggle}}" style="flex: none; width: 20px; height: 20px; margin: 1px 0 0; accent-color: #481C5F"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600; color: #26142E">{{p.label}}</span><span style="font-size: 13px; line-height: 1.45; color: #6B5A73">{{p.sub}}</span></span></label>
+              </sc-for>
+            </fieldset>
+            <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 8px">
+              <legend style="padding: 0 0 8px; font-size: 14px; font-weight: 600; color: #26142E">Stories as</legend>
+              <sc-for list="{{formats}}" as="f" hint-placeholder-count="2">
+                <label style="{{f.style}}"><input type="radio" name="dr-fmt" checked="{{f.on}}" onChange="{{f.pick}}" style="width: 20px; height: 20px; margin: 0; accent-color: #481C5F">{{f.label}}</label>
+              </sc-for>
+            </fieldset>
+            <button type="button" onClick="{{build}}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; border: 1px solid #481C5F; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v13H3V8"></path><path d="M1 3h22v5H1z"></path><path d="M10 12h4"></path></svg>Export everything</button>
+            <sc-if value="{{built.show}}" hint-placeholder-val="{{true}}">
+              <p role="status" style="margin: 0; padding: 12px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><b>Ready.</b> {{built.text}}</p>
+            </sc-if>
+            <button type="button" disabled="{{send.disabled}}" onClick="{{send.go}}" style="{{send.style}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Send secure download link (expires in 7 days)</button>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">{{send.help}}</span>
+            <sc-if value="{{send.done}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="margin: 0; padding: 12px 16px; border-radius: 16px; background: #E8F1EC; color: #2F6B4F; font-size: 14px; line-height: 1.5"><b>Link sent.</b> It works until {{send.until}}. The request is marked as answered. Logged in the audit log.</p>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- Deletion requests -->
+        <sc-if value="{{q.isDelete}}" hint-placeholder-val="{{false}}">
+          <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Delete the account</span>
+            <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">The account is closed at once and deleted for good after 14 days. Stories and comments are deleted with it; forum posts stay, shown as “Deleted user”. Anything locked as evidence under a legal order is kept until the order ends.</p>
+            <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer; font-size: 15px; color: #26142E"><input type="checkbox" checked style="width: 20px; height: 20px; margin: 0; accent-color: #481C5F">Offer a copy of their data first</label>
+            <button type="button" disabled="{{q.cantAct}}" style="align-self: flex-start; height: 48px; padding: 0 22px; border: 1px solid #8C2B3A; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Start deletion</button>
+            <span style="font-size: 13px; color: #6B5A73">You can start deletion only once the identity check is done.</span>
+          </div>
+        </sc-if>
+
+        <!-- Correction requests -->
+        <sc-if value="{{q.isCorrect}}" hint-placeholder-val="{{false}}">
+          <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 10px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Correction</span>
+            <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #26142E">Year of birth on the account: 2010 → 2007. Checked with a new age check on 9 Oct 2026. Age group: 16 to 17 → 18 or over.</p>
+          </div>
+        </sc-if>
+
+        <!-- Request log -->
+        <div style="padding-top: 20px; border-top: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 4px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Request log</span>
+          <sc-for list="{{q.log}}" as="l" hint-placeholder-count="3">
+            <div style="display: grid; grid-template-columns: minmax(0, 130px) minmax(0, 1fr); gap: 4px 14px; padding: 10px 0; border-bottom: 1px solid #EFE8F2">
+              <span style="font-size: 13px; color: #6B5A73">{{l.when}}</span>
+              <span style="font-size: 14px; line-height: 1.5; color: #26142E"><b>{{l.who}}</b> · {{l.what}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-foot" style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0">Language</label><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 36px 0 14px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2905}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Opens on @inkwolf's request: verified, export built, link not sent yet.
+    this.state = {
+      sel: 'r1008', filter: 'All', verified: {}, built: { r1008: true }, sent: {}, fmt: 'docx',
+      parts: { stories: true, json: true, account: true, comments: true, messages: true, tickets: true }, copied: false
+    };
+  }
+
+  // Interactive chip (pill system, 17 Oct): 36 px tall inside a 44 px tap area (.tmc-chip::before), equal 14 px sides.
+  // Unselected: white with a #8E7B99 edge. Selected: solid plum plus a check icon, so the state is not colour alone.
+  chipStyle(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+  pill(tone) {
+    // Information pill tokens (background, text, border). In progress reads as sky (info), waiting as gold.
+    var t = { ok: ['#E8F1EC', '#245A41', '#A9C9B6'], warn: ['#FBF3DA', '#5C3F0E', '#D9B54A'], bad: ['#F6E9EB', '#8C2B3A', '#DDB0B8'], neutral: ['#F4F0EC', '#4F3D57', '#D6CCDC'], plan: ['#E6EEF6', '#2E4A8C', '#AFC3DE'] }[tone] || ['#F4F0EC', '#4F3D57', '#D6CCDC'];
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';';
+  }
+  formatStyle(on) {
+    return 'display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px; border-radius: 999px; font-size: 15px; color: #26142E; cursor: pointer; '
+      + (on ? 'background: #F1EAF4; border: 1px solid #481C5F; font-weight: 600;' : 'background: #FFFFFF; border: 1px solid #8E7B99;');
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Example requests. Due = one month after the day we received it (GDPR art 12(3)).
+    var R = {
+      r1008: {
+        id: 'DR-1008', type: 'Copy of my data', kind: 'export', handle: '@inkwolf', uid: 'usr_7f3c…a91e', full: 'usr_7f3c2b9e04d1a91e',
+        age: '16 to 17', received: '15 Oct 2026', due: '15 Nov 2026', left: '30 days left', soon: false, ver: true, status: 'In progress', tone: 'plan', group: 'In progress',
+        text: '“Can I get everything I’ve posted? I want a copy of my story and my comments.”', source: 'From Settings › Your data, signed in · 15 Oct 2026, 21:12',
+        checks: [
+          ['ok', 'Sent from inside the signed-in account'],
+          ['ok', 'Email on the request matches the account'],
+          ['ok', 'Age group 16 to 17, so they can ask for themselves']
+        ],
+        comments: 48, chats: 6, stories: '1 story, 15 chapters',
+        log: [
+          { when: '15 Oct, 21:12', who: '@inkwolf', what: 'Sent the request from Settings' },
+          { when: '16 Oct, 09:40', who: 'Robert', what: 'Claimed the request. Identity confirmed: signed in.' },
+          { when: '16 Oct, 11:05', who: 'Robert', what: 'Downloaded The Salt Mine Choir as Word (.docx) (from 8.11)' },
+          { when: '16 Oct, 11:20', who: 'Robert', what: 'Built the export' }
+        ]
+      },
+      r1007: {
+        id: 'DR-1007', type: 'Portable copy', kind: 'export', handle: '@lia.writes', uid: 'usr_2b81…c04f', full: 'usr_2b81d5e7f390c04f',
+        age: '16 to 17', received: '14 Oct 2026', due: '14 Nov 2026', left: '29 days left', soon: false, ver: true, status: 'New', tone: 'warn', group: 'New',
+        text: '“I want to move my stories to my own website. Can I have them in a file?”', source: 'From Settings › Your data, signed in · 14 Oct 2026, 17:03',
+        checks: [
+          ['ok', 'Sent from inside the signed-in account'],
+          ['ok', 'Email on the request matches the account'],
+          ['ok', 'Age group 16 to 17, so they can ask for themselves']
+        ],
+        comments: 112, chats: 9, stories: '2 stories, 7 chapters (1 draft)',
+        log: [ { when: '14 Oct, 17:03', who: '@lia.writes', what: 'Sent the request from Settings' } ]
+      },
+      r1009: {
+        id: 'DR-1009', type: 'Deletion', kind: 'delete', handle: '@night.owl (account not active yet)', uid: 'usr_5c90…2e17', full: 'usr_5c904ad1b7e32e17',
+        age: '13 to 15', received: '16 Oct 2026', due: '16 Nov 2026', left: '31 days left', soon: false, ver: false, status: 'Waiting for the parent', tone: 'warn', group: 'Waiting for ID check',
+        text: '“I didn’t agree to this account. Please delete my son’s data.”', source: 'Email to the privacy address from the parent · 16 Oct 2026, 08:15',
+        checks: [
+          ['ok', 'Sent from the parent’s email on the consent request'],
+          ['wait', 'Confirmation link sent to that address. No answer yet.'],
+          ['ok', 'Age group 13 to 15, so the parent’s route applies']
+        ],
+        log: [
+          { when: '16 Oct, 08:15', who: 'Parent', what: 'Emailed the privacy address' },
+          { when: '16 Oct, 09:02', who: 'Robert', what: 'Matched the email to the consent request. Sent a confirmation link.' }
+        ]
+      },
+      r1005: {
+        id: 'DR-1005', type: 'Correction', kind: 'correct', handle: '@matei.writes', uid: 'usr_e05b…91ac', full: 'usr_e05b47c2d8a391ac',
+        age: '18 or over', received: '8 Oct 2026', due: '8 Nov 2026', left: 'Answered 9 Oct', soon: false, ver: true, status: 'Done', tone: 'ok', group: 'Done',
+        text: '“My year of birth is wrong, I typed 2010 by mistake.”', source: 'From Settings › Your data, signed in · 8 Oct 2026, 12:30',
+        checks: [ ['ok', 'Sent from inside the signed-in account'], ['ok', 'New age check passed on 9 Oct 2026'] ],
+        log: [
+          { when: '8 Oct, 12:30', who: '@matei.writes', what: 'Sent the request from Settings' },
+          { when: '9 Oct, 10:10', who: 'Robert', what: 'Asked for a new age check. Passed.' },
+          { when: '9 Oct, 10:15', who: 'Robert', what: 'Corrected the year of birth. Told the user.' }
+        ]
+      },
+      r1004: {
+        id: 'DR-1004', type: 'Deletion', kind: 'delete', handle: 'No account found yet', uid: 'Not matched', full: '',
+        age: 'Not known', received: '6 Oct 2026', due: '6 Nov 2026', left: '21 days left', soon: false, ver: false, status: 'Waiting for ID check', tone: 'warn', group: 'Waiting for ID check',
+        text: '“Delete everything you have about me.”', source: 'Support ticket #1039, from an email to support@ghemotoc.com · 6 Oct 2026, 19:44',
+        checks: [ ['no', 'The email doesn’t match any account'], ['wait', 'We asked which handle they used. No answer yet.'] ],
+        log: [
+          { when: '6 Oct, 19:44', who: 'Unknown sender', what: 'Emailed support@ghemotoc.com (ticket #1039)' },
+          { when: '6 Oct, 20:02', who: 'Robert', what: 'Pressed Open data request on ticket #1039' },
+          { when: '7 Oct, 09:20', who: 'Robert', what: 'No account with that email. Asked which handle they used.' }
+        ]
+      },
+      r1003: {
+        id: 'DR-1003', type: 'Copy of my data', kind: 'export', handle: '@raul.d (suspended)', uid: 'usr_a41e…7c09', full: 'usr_a41e8d20c35f7c09',
+        age: '16 to 17', received: '29 Sep 2026', due: '29 Oct 2026', left: '13 days left', soon: true, ver: true, status: 'In progress', tone: 'plan', group: 'In progress',
+        text: '“Send me all my data.”', source: 'From Settings › Your data, signed in · 29 Sep 2026, 22:05',
+        checks: [ ['ok', 'Sent from inside the signed-in account'], ['ok', 'Email on the request matches the account'], ['ok', 'Age group 16 to 17, so they can ask for themselves'] ],
+        comments: 31, chats: 4, stories: 'No stories',
+        log: [ { when: '29 Sep, 22:05', who: '@raul.d', what: 'Sent the request. A suspended account can still ask.' } ]
+      }
+    };
+    var order = ['r1009', 'r1008', 'r1007', 'r1005', 'r1004', 'r1003'];
+    var tone = function (t) { return self.pill(t); };
+
+    // Status filter chips.
+    var filters = ['All', 'New', 'Waiting for ID check', 'In progress', 'Done'];
+    var chips = filters.map(function (f) {
+      var on = st.filter === f;
+      return { label: f, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ filter: f }); } };
+    });
+
+    var isVer = function (k) { return R[k].ver || !!st.verified[k]; };
+    var shown = 0;
+    var rw = {};
+    order.forEach(function (k) {
+      var ok = st.filter === 'All' || R[k].group === st.filter;
+      if (ok) shown++;
+      var r = R[k], on = st.sel === k, v = isVer(k);
+      rw[k] = {
+        id: r.id, type: r.type, who: r.handle, uid: r.uid, received: r.received, due: r.due, left: r.left,
+        leftStyle: 'font-size: 12px; font-weight: 600; color: ' + (r.soon ? '#8C2B3A' : '#6B5A73') + ';',
+        verified: v ? 'Verified' : 'Not yet', verStyle: tone(v ? 'ok' : 'warn'),
+        status: st.sent[k] ? 'Answered' : r.status, statusStyle: tone(st.sent[k] ? 'ok' : r.tone),
+        pressed: on ? 'true' : 'false',
+        rowStyle: (ok ? '' : 'display: none; ') + (on ? 'background: #F1EAF4;' : 'background: #FFFFFF;'),
+        pick: function () { self.setState({ sel: k, copied: false }); }
+      };
+    });
+
+    var r = R[st.sel], v = isVer(st.sel);
+    var markStyle = function (m) {
+      var c = { ok: ['#E8F1EC', '#2F6B4F'], wait: ['#FBF3DA', '#815E18'], no: ['#F6E9EB', '#8C2B3A'] }[m];
+      return 'flex: none; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; background: ' + c[0] + '; color: ' + c[1] + ';';
+    };
+    var checks = r.checks.map(function (c) {
+      var m = (c[0] !== 'ok' && st.verified[st.sel]) ? 'ok' : c[0];
+      return { mark: { ok: '✓', wait: '…', no: '✕' }[m], sr: { ok: 'Done: ', wait: 'Waiting: ', no: 'Failed: ' }[m], markStyle: markStyle(m), label: c[1] };
+    });
+
+    var q = {
+      id: r.id, type: r.type, handle: r.handle, uid: r.uid, hasUid: !!r.full, age: r.age, received: r.received, due: r.due, left: r.left,
+      text: r.text, source: r.source, log: r.log, checks: checks,
+      status: st.sent[st.sel] ? 'Answered' : r.status, statusStyle: tone(st.sent[st.sel] ? 'ok' : r.tone),
+      verified: v ? 'Verified' : 'Not verified yet', verStyle: tone(v ? 'ok' : 'warn'),
+      verifiedOk: v, verifyLabel: v ? 'Identity confirmed' : 'Mark identity as confirmed',
+      isExport: r.kind === 'export', isDelete: r.kind === 'delete', isCorrect: r.kind === 'correct', cantAct: !v
+    };
+
+    // What goes in the export. Each part can be left out, for example when it is empty.
+    var P = [
+      { key: 'stories', label: 'Stories', sub: (r.stories || '') + '. One file per story, zipped. Drafts included.' },
+      { key: 'json', label: 'Machine-readable copy (JSON)', sub: 'Everything below in one data.json file, for moving to another service.' },
+      { key: 'account', label: 'Account data', sub: 'Profile, settings, sign-up date, age check result and date, consent record.' },
+      { key: 'comments', label: 'Comments', sub: (r.comments || 0) + ' comments, with the story and paragraph each one is on.' },
+      { key: 'messages', label: 'Messages', sub: (r.chats || 0) + ' conversations. Other people’s personal data is left out where needed (art 15(4)).' },
+      { key: 'tickets', label: 'Support tickets', sub: 'Their tickets and our replies, kept for 2 years after closing. Internal staff notes are left out.' }
+    ];
+    var parts = P.map(function (p) {
+      var on = !!st.parts[p.key];
+      return { label: p.label, sub: p.sub, on: on, toggle: function () { var n = Object.assign({}, st.parts); n[p.key] = !on; self.setState({ parts: n }); } };
+    });
+    var formats = [{ key: 'docx', label: 'Word (.docx)' }, { key: 'pdf', label: 'PDF (after March)' }].map(function (f) {
+      var on = st.fmt === f.key;
+      return { label: f.label, on: on, style: self.formatStyle(on), pick: function () { self.setState({ fmt: f.key }); } };
+    });
+    var isBuilt = !!st.built[st.sel];
+    var slug = String(r.handle).replace(/^@/, '').split(' ')[0];
+    var built = { show: isBuilt, text: slug + '-data-2026-10-16.zip: stories as ' + (st.fmt === 'docx' ? 'Word' : 'PDF') + ', data.json, account, comments, messages and support tickets. The file stays on our server.' };
+    var canSend = v && isBuilt && !st.sent[st.sel];
+    var send = {
+      disabled: !canSend, done: !!st.sent[st.sel], until: '23 Oct 2026',
+      help: !v ? 'Confirm who is asking before you send anything.' : (!isBuilt ? 'Export everything first.' : 'The link goes to the email on the account. They sign in to download. Never attach the file to an email.'),
+      style: 'align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 10px 22px; border: 0; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; text-align: left; '
+        + (canSend ? 'background: #2A0E33; color: #FBF7EC; cursor: pointer;' : 'background: #DED3E4; color: #5C4965; cursor: not-allowed;'),
+      go: function () { if (canSend) { var n = Object.assign({}, st.sent); n[st.sel] = true; self.setState({ sent: n }); } }
+    };
+
+    return {
+      chips: chips, rw: rw, none: shown === 0,
+      shownLine: shown + (shown === 1 ? ' request shown.' : ' requests shown.'),
+      q: q, parts: parts, formats: formats, built: built, send: send,
+      build: function () { var n = Object.assign({}, st.built); n[st.sel] = true; self.setState({ built: n }); },
+      verify: function () { var n = Object.assign({}, st.verified); n[st.sel] = true; self.setState({ verified: n }); },
+      copyLabel: st.copied ? 'Copied' : 'Copy',
+      copyId: function () {
+        try { if (navigator.clipboard && r.full) navigator.clipboard.writeText(r.full); } catch (e) { /* clipboard blocked: the label still confirms */ }
+        self.setState({ copied: true });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

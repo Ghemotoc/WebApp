@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Forums</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+</style>
+</helmet>
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 40px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; margin-left: -10px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Page header -->
+    <header style="position: relative; padding: 48px 0 28px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; animation: tmcRise 0.5s ease-out both">
+      <img data-doodle="background" data-doodle-on="Forums" src="/_blob/59feb281d9ed9664c1ef19c97f11612f" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 0; right: 300px; width: 150px; transform: rotate(-5deg)">
+      <img data-doodle="background" data-doodle-on="Forums" src="/_blob/3eb29ce44881d2b0ae1e93232991f874" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 74px; right: 500px; width: 66px; transform: rotate(6deg)">
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 680px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Forums · 1,762 threads</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Forums</h1>
+        <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #5C4965">Ask questions about writing, swap feedback and meet other young writers. Anyone can read the forums. You need an account to post.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <button type="button" onClick="{{markAll}}" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 7 17l-5-5"></path><path d="m22 10-7.5 7.5L13 16"></path></svg>Mark all as read</button>
+        <button type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>New thread</button>
+      </div>
+    </header>
+
+    <!-- Forum search: finds threads and posts, filters live on the results page -->
+    <form role="search" action="Search.dc.html" style="display: flex; flex-wrap: wrap; gap: 12px; margin: 0; animation: tmcRise 0.5s 0.05s ease-out both">
+      <div style="flex: 1 1 420px; position: relative">
+        <label for="q-forums" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Search forum threads and posts</label>
+        <span style="position: absolute; left: 18px; top: 13px; color: #6B5A73; display: flex"><img src="/_blob/55f422a6526ded4541da26a992747953" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none"></span>
+        <input id="q-forums" name="q" type="search" placeholder="Search forum threads and posts" style="width: 100%; box-sizing: border-box; height: 52px; padding: 0 20px 0 52px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+      </div>
+      <button type="submit" style="height: 52px; padding: 0 26px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Search</button>
+    </form>
+
+    <div style="margin-top: 32px; display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+      <!-- Categories and forums -->
+      <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 24px; animation: tmcRise 0.5s 0.1s ease-out both">
+
+        <!-- Category: Writing craft -->
+        <section aria-labelledby="cat-craft" style="position: relative; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
+          <img data-doodle="widget" data-doodle-on="Writing craft" src="/_blob/cb01c13602029560ca242fb10bc704d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 12px; right: 176px; width: 58px; transform: rotate(-14deg)">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span aria-hidden="true" style="width: 8px; height: 28px; border-radius: 999px; background: #4D1B5E"></span>
+              <h2 id="cat-craft" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Writing craft</h2>
+              <span style="font-size: 13px; color: #6B5A73">4 forums</span>
+            </div>
+            <button type="button" onClick="{{markCraft}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Mark as read</button>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.fc.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.fc.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">First chapters</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Openings and the first 1,000 words of a story</div>
+              <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: #6B5A73"><span>Subforums:</span><a href="Thread.dc.html" style="font-weight: 600">Fantasy and sci-fi openings</a><a href="Thread.dc.html" style="font-weight: 600">School and everyday life</a></div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">312</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">4.1k</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">How do you start a chapter without a prologue?</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">poppyverse</a> · 12 min ago</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.wb.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.wb.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Worldbuilding</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Maps, magic systems and invented places</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">198</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">2.6k</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">Maps: do you draw first or write first?</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">inkwolf</a> · 1 hour ago</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.lh.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.lh.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Language help</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Grammar, diacritics and writing in Romanian or English</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">87</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">940</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">Can I start a sentence with “Iar”?</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">ilinca.r</a> · 40 min ago</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.fs.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.fs.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Feedback swap</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Swap chapters and give each other honest feedback</div>
+              <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: #6B5A73"><span>Subforums:</span><a href="Thread.dc.html" style="font-weight: 600">Poetry swaps</a><a href="Thread.dc.html" style="font-weight: 600">Long reads (over 3,000 words)</a></div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">421</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">5.8k</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">Swap: 2,000 words of fantasy for 2,000 words of anything</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">Ana Radu</a> · 3 hours ago</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Wide banner: an ad-network ad, labelled AD. Ads are never personalised: the same for everyone, including under-18s. Placement rule (17 Oct): at most 2 ad slots a page, never two in view at once, never in class spaces. -->
+        <aside aria-label="Advertisement" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 0 auto; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+          <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+          <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] banner · 970 × 120</span>
+          <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+        </aside>
+
+        <!-- Category: Reading -->
+        <section aria-labelledby="cat-reading" style="position: relative; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
+          <img data-doodle="widget" data-doodle-on="Reading" src="/_blob/71c7c9a86495544c84425a6eef87e048" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 12px; right: 176px; width: 58px; transform: rotate(6deg)">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span aria-hidden="true" style="width: 8px; height: 28px; border-radius: 999px; background: #2E4A8C"></span>
+              <h2 id="cat-reading" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Reading</h2>
+              <span style="font-size: 13px; color: #6B5A73">2 forums</span>
+            </div>
+            <button type="button" onClick="{{markReading}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Mark as read</button>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.bt.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.bt.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Book talk</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">What you’re reading and what you think of it</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">156</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">1.9k</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">What are you reading this month?</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">matei.writes</a> · yesterday</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.rl.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.rl.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">School reading list</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Talk about the books you have to read for school</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">92</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">1.1k</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">Is Enigma Otiliei actually good or just long?</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">mara.p</a> · 4 hours ago</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Category: Essays and true stories (no journalism at launch, Q52) -->
+        <section aria-labelledby="cat-essays" style="position: relative; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
+          <img data-doodle="widget" data-doodle-on="Essays and true stories" src="/_blob/f71342920dbb5c9f302486ccc693c98d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 12px; right: 176px; width: 58px; transform: rotate(-6deg)">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span aria-hidden="true" style="width: 8px; height: 28px; border-radius: 999px; background: #8C2B3A"></span>
+              <h2 id="cat-essays" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Essays and true stories</h2>
+              <span style="font-size: 13px; color: #6B5A73">2 forums</span>
+            </div>
+            <button type="button" onClick="{{markEssays}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Mark as read</button>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.sp.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.sp.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">True stories and memoir</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Writing about your own life, your family and the places you know</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">64</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">710</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">How much of your family can you put in a memoir?</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">matei.writes</a> · 2 hours ago</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.eo.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.eo.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Essays and opinion</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Personal essays, opinion pieces and how to make an argument</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">48</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">520</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">How personal is too personal in an essay?</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">Ana Radu</a> · yesterday</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Category: Community -->
+        <section aria-labelledby="cat-community" style="position: relative; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
+          <img data-doodle="widget" data-doodle-on="Community" src="/_blob/23be67a233f4be95609f0a2f1d6d0523" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 12px; right: 176px; width: 58px; transform: rotate(8deg)">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span aria-hidden="true" style="width: 8px; height: 28px; border-radius: 999px; background: #2F6B4F"></span>
+              <h2 id="cat-community" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Community</h2>
+              <span style="font-size: 13px; color: #6B5A73">3 forums</span>
+            </div>
+            <button type="button" onClick="{{markCommunity}}" style="height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Mark as read</button>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.in.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.in.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Introductions</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Say hello and tell us what you write</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">289</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">1.4k</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">Hi from Iași, I mostly write poetry</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">poppyverse</a> · 5 hours ago</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.hf.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.hf.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Help and ideas</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Questions about Ghemotoc, bug reports and ideas for new features</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">73</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">610</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">Can I schedule a chapter for a set time?</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">lia.writes</a> · 2 days ago</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 18px 24px; border-top: 1px solid #EFE8F2">
+            <span style="{{u.ct.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.ct.sr}}</span></span>
+            <div style="flex: 1 1 300px; min-width: 0">
+              <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Contests</a>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">The First Chapter contest and other writing challenges</div>
+            </div>
+            <dl style="margin: 0; flex: none; display: flex; gap: 22px">
+              <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">22</dd></div>
+              <div><dt style="font-size: 12px; color: #6B5A73">Posts</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">300</dd></div>
+            </dl>
+            <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
+              <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">First Chapter contest: rules and dates</a>
+              <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">Andrei Mureșan</a> <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap">Staff</span> · yesterday</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Legend for the unread markers, and the ordering note -->
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; font-size: 14px; color: #5C4965">
+          <span style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 50%; background: #672786"></span>New posts since your last visit</span>
+          <span style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid #CBBBD3; box-sizing: border-box"></span>No new posts</span>
+        </div>
+        <p style="margin: -8px 0 0; font-size: 14px; line-height: 1.6; color: #6B5A73">Threads with the latest activity come first. They never close on their own, so you can reply to an old thread any time.</p>
+      </div>
+
+      <!-- Side column -->
+      <aside aria-label="New posts and spaces" style="flex: 1 1 320px; max-width: 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s 0.15s ease-out both">
+
+        <!-- Unread threads: each opens at the first new post -->
+        <section aria-labelledby="new-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Since your last visit</span>
+          <h2 id="new-title" style="margin: 6px 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">New for you</h2>
+          <sc-if value="{{hasNew}}" hint-placeholder-val="{{true}}">
+            <p style="margin: 0 0 8px; font-size: 14px; line-height: 1.5; color: #6B5A73">Each link opens at the first post you haven’t read.</p>
+            <ul style="list-style: none; margin: 0; padding: 0">
+              <li style="border-top: 1px solid #EFE8F2"><a href="Thread.dc.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; text-decoration: none; color: inherit"><span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 600; font-size: 15px; line-height: 1.35; color: #26142E">How do you start a chapter without a prologue?</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">First chapters</span></span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; flex: none">3 new</span></a></li>
+              <li style="border-top: 1px solid #EFE8F2"><a href="Thread.dc.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; text-decoration: none; color: inherit"><span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 600; font-size: 15px; line-height: 1.35; color: #26142E">Can I start a sentence with “Iar”?</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">Language help</span></span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; flex: none">5 new</span></a></li>
+              <li style="border-top: 1px solid #EFE8F2"><a href="Thread.dc.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; text-decoration: none; color: inherit"><span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 600; font-size: 15px; line-height: 1.35; color: #26142E">Is Enigma Otiliei actually good or just long?</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">School reading list</span></span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; flex: none">8 new</span></a></li>
+              <li style="border-top: 1px solid #EFE8F2"><a href="Thread.dc.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; text-decoration: none; color: inherit"><span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 600; font-size: 15px; line-height: 1.35; color: #26142E">Maps: do you draw first or write first?</span><span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">Worldbuilding</span></span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; flex: none">1 new</span></a></li>
+            </ul>
+          </sc-if>
+          <sc-if value="{{noNew}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: #5C4965">You’re up to date. New replies in threads you follow show up here.</p>
+          </sc-if>
+        </section>
+
+        <!-- Spaces run by members -->
+        <section id="spaces" aria-labelledby="spaces-title" style="padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Run by members</span>
+          <h2 id="spaces-title" style="margin: 6px 0 4px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.01em; color: #481C5F">Spaces</h2>
+          <p style="margin: 0 0 16px; font-size: 14px; line-height: 1.55; color: #5C4965">Members create and run spaces. Anyone can read them. The owner decides who can post.</p>
+
+          <a href="Space.dc.html" style="display: block; padding: 16px; border: 1px solid #DED3E4; border-radius: 16px; background: #FAF8F5; text-decoration: none; color: inherit">
+            <span style="display: flex; align-items: center; gap: 12px">
+              <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 15px">FW</span>
+              <span style="min-width: 0">
+                <span style="display: block; font-weight: 700; font-size: 16px; color: #26142E">Fantasy writers’ circle</span>
+                <span style="display: block; margin-top: 2px; font-size: 13px; color: #6B5A73">214 members · run by inkwolf</span>
+              </span>
+            </span>
+            <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px">
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Members-only posting</span>
+              <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #5C4965"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>Anyone can read</span>
+            </span>
+          </a>
+
+          <ul style="list-style: none; margin: 8px 0 0; padding: 0">
+            <li style="border-bottom: 1px solid #EFE8F2"><a href="Space.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 12px 0; text-decoration: none; color: inherit"><span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 50%; background: #2E4A8C; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 13px">PM</span><span style="min-width: 0"><span style="display: block; font-weight: 600; font-size: 15px; color: #26142E">Poetry at Midnight</span><span style="display: block; font-size: 13px; color: #6B5A73">88 members · anyone can post</span></span></a></li>
+            <li style="border-bottom: 1px solid #EFE8F2"><a href="Space.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 12px 0; text-decoration: none; color: inherit"><span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 50%; background: #8C2B3A; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 13px">CS</span><span style="min-width: 0"><span style="display: block; font-weight: 600; font-size: 15px; color: #26142E">Cluj Student Writers</span><span style="display: block; font-size: 13px; color: #6B5A73">132 members · anyone can post</span></span></a></li>
+            <li style="border-bottom: 1px solid #EFE8F2"><a href="Space.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 12px 0; text-decoration: none; color: inherit"><span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 50%; background: #2F6B4F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 13px">EC</span><span style="min-width: 0"><span style="display: block; font-weight: 600; font-size: 15px; color: #26142E">Essay Club</span><span style="display: block; font-size: 13px; color: #6B5A73">41 members · members-only posting</span></span></a></li>
+          </ul>
+
+          <!-- Lia's private class space: only members ever see it in lists -->
+          <span style="font-family: 'Cutive', 'Courier New', serif; display: block; margin-top: 16px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Your class</span>
+          <a href="ClassSpace.dc.html" style="display: flex; align-items: center; gap: 12px; margin-top: 8px; padding: 12px; border: 1px solid #DED3E4; border-radius: 16px; text-decoration: none; color: inherit">
+            <span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 50%; background: #7A5C12; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 13px">9B</span>
+            <span style="min-width: 0; flex: 1"><span style="display: block; font-weight: 600; font-size: 15px; color: #26142E">Class 9B</span><span style="display: block; font-size: 13px; color: #6B5A73">Private · only class members see it</span></span>
+            <img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="26" height="26" style="display: block; flex: none">
+          </a>
+
+          <a href="Space.dc.html#create" style="margin-top: 16px; height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-size: 15px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Create a space</a>
+          <a href="Space.dc.html" style="display: block; margin-top: 12px; text-align: center; font-size: 14px; font-weight: 600">See all 37 spaces</a>
+        </section>
+
+        <!-- Forum rules in short -->
+        <section aria-labelledby="rules-title" style="position: relative; padding: 20px 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 20px">
+          <img data-doodle="widget" data-doodle-on="Forum rules in short" src="/_blob/0ba01f0de219e755c8fa13cee158f7c5" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -38px; right: 18px; width: 72px; transform: rotate(8deg)">
+          <h2 id="rules-title" style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #481C5F">Forum rules in short</h2>
+          <ul style="margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6; color: #5C4965">
+            <li>Comment on the writing, not the writer.</li>
+            <li>Don’t message people who asked you not to.</li>
+            <li>Every post has a Report button. A person reads every report.</li>
+          </ul>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Read the community guidelines</a>
+        </section>
+        <!-- Side ad at the bottom of the column (Robert, 17 Oct): 300 x 250, desktop only; with the banner between groups this page has 2 ad slots -->
+        <aside aria-label="Advertisement" data-ad="side" class="tmc-ad-portrait" style="position: relative; width: 300px; max-width: 100%; height: 250px; margin-top: 0; align-self: center; box-sizing: border-box; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+          <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+          <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] · 300 × 250</span>
+          <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+        </aside>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Page footer -->
+  <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/6febd794abf68310f4d8fcb7da994e51" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -70px; left: clamp(16px, 4vw, 64px); width: 64px; transform: rotate(-10deg)">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/c9a4e5b50989a61aafd82e0acc9ab805" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -64px; right: clamp(16px, 4vw, 64px); width: 56px; transform: rotate(10deg)">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2402}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Which forums have posts newer than Lia's last visit. Mark as read clears them.
+    this.state = { unread: { fc: true, wb: true, lh: true, rl: true, sp: true } };
+    this.groups = {
+      craft: ['fc', 'wb', 'lh', 'fs'],
+      reading: ['bt', 'rl'],
+      essays: ['sp', 'eo'],
+      community: ['in', 'hf', 'ct']
+    };
+  }
+
+  // Clear the unread flag for a list of forum keys.
+  clear(keys) {
+    var next = Object.assign({}, this.state.unread);
+    keys.forEach(function (k) { delete next[k]; });
+    this.setState({ unread: next });
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+    var all = [].concat(this.groups.craft, this.groups.reading, this.groups.essays, this.groups.community);
+
+    // Filled dot for unread, hollow ring for read, plus words for screen readers.
+    var u = {};
+    all.forEach(function (k) {
+      var on = !!st.unread[k];
+      u[k] = {
+        dot: 'position: relative; flex: none; width: 12px; height: 12px; border-radius: 50%; box-sizing: border-box; '
+          + (on ? 'background: #672786;' : 'background: transparent; border: 2px solid #CBBBD3;'),
+        sr: on ? 'New posts' : 'No new posts'
+      };
+    });
+    var count = Object.keys(st.unread).filter(function (k) { return st.unread[k]; }).length;
+
+    return {
+      u: u,
+      hasNew: count > 0,
+      noNew: count === 0,
+      markAll: function () { self.setState({ unread: {} }); },
+      markCraft: function () { self.clear(self.groups.craft); },
+      markReading: function () { self.clear(self.groups.reading); },
+      markEssays: function () { self.clear(self.groups.essays); },
+      markCommunity: function () { self.clear(self.groups.community); }
+    };
+  }
+}
+</script>
+</body>
+</html>

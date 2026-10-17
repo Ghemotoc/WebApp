@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Space</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+</style>
+</helmet>
+<div style="overflow-x: clip; position: relative; width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 40px; box-sizing: border-box">
+
+  <!-- Floating island nav: the main links live here on every screen -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 28px; height: 28px; margin-left: -10px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" aria-hidden="true" width="20" height="20" style="display: block; flex: none"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <nav aria-label="Breadcrumb" style="padding-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 14px; color: #6B5A73">
+      <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 32px; font-weight: 600; text-decoration: none">Forums</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      <a href="Forums.dc.html#spaces" style="display: inline-flex; align-items: center; min-height: 32px; font-weight: 600; text-decoration: none">Spaces</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      <span style="font-weight: 600; color: #26142E">Fantasy writers’ circle</span>
+    </nav>
+
+    <!-- Space header with its optional banner -->
+    <section aria-labelledby="space-title" style="position: relative; margin-top: 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 28px; overflow: hidden; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 28px 56px -32px rgba(38,20,46,0.45); animation: tmcRise 0.5s ease-out both">
+      <img data-doodle="background" data-doodle-on="Fantasy writers’ circle" src="/_blob/cfcf02d69f30c519081ecbfada8d7c9d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 196px; right: 70px; width: 124px; transform: rotate(5deg)">
+      <img data-doodle="background" data-doodle-on="Fantasy writers’ circle" src="/_blob/1dc9eb802c05328c62a8eb50afa88846" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 236px; right: 236px; width: 84px; transform: rotate(-12deg)">
+      <div aria-hidden="true" style="height: 168px; background: radial-gradient(ellipse at 12% 120%, rgba(154,91,184,0.6) 0, rgba(154,91,184,0) 46%), linear-gradient(120deg,#2A0E33 0%,#481C5F 55%,#672786 100%)"></div>
+      <div style="padding: 0 clamp(20px, 3vw, 40px) 32px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 32px">
+        <div style="flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+          <span aria-hidden="true" style="margin-top: -44px; width: 88px; height: 88px; border-radius: 50%; border: 4px solid #FFFFFF; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 28px">FW</span>
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Space · run by members</span>
+          <h1 id="space-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Fantasy writers’ circle</h1>
+          <p style="margin: 0; max-width: 680px; font-size: 18px; line-height: 1.6; color: #5C4965">For teenagers who write fantasy: magic systems, invented worlds and stories based on Romanian folklore. Share chapters, ask for feedback and take part in the monthly prompt.</p>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 14px; color: #5C4965">
+            <span style="display: inline-flex; align-items: center; gap: 6px"><img src="/_blob/98631b9435453dabc49fb5955934c76d" alt="" aria-hidden="true" width="22" height="22" style="display: block; flex: none">Anyone can read</span>
+            <span>Members: 16 and over</span>
+            <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 13px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Members-only posting</span>
+            <span>214 members</span>
+            <span>Owner: <a href="Profile.dc.html" style="font-weight: 600">inkwolf</a></span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px">
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <button type="button" aria-pressed="{{requested}}" onClick="{{toggleJoin}}" style="{{joinStyle}}">{{joinLabel}}</button>
+            <a href="Share.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none"><img src="/_blob/4dfbea41a7d32d930e7dcd15a1c1381b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Share</a>
+            <a href="ReportDialog.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 16px; border-radius: 999px; color: #5C4965; font-size: 15px; font-weight: 600; text-decoration: none"><img src="/_blob/ae8f02790d37696714544a9eee93345b" alt="" aria-hidden="true" width="24" height="24" style="display: block; flex: none">Report</a>
+          </div>
+          <span aria-live="polite" style="font-size: 14px; color: #5C4965; text-align: right">{{joinNote}}</span>
+        </div>
+      </div>
+    </section>
+
+    <div style="margin-top: 28px; display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+      <!-- Threads in this space -->
+      <section aria-labelledby="threads-title" style="position: relative; flex: 999 1 600px; min-width: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden; animation: tmcRise 0.5s 0.1s ease-out both">
+        <img data-doodle="widget" data-doodle-on="Threads" src="/_blob/22476541414b1ec5bc70834bfc91ed12" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 18px; right: 196px; width: 64px; transform: rotate(-8deg)">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 24px 24px 18px">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Latest activity first</span>
+            <h2 id="threads-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Threads</h2>
+          </div>
+          <button type="button" aria-describedby="members-only-note" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>New thread</button>
+        </div>
+
+        <!-- Members-only posting: what a non-member sees where the reply box would be -->
+        <div style="margin: 0 24px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 16px 18px; background: #F1EAF4; border-radius: 16px">
+          <img src="/_blob/63a0b034f6e684107133f4d8a6a7f33b" alt="" aria-hidden="true" width="28" height="28" style="display: block; flex: none">
+          <p id="members-only-note" style="flex: 1 1 360px; margin: 0; font-size: 15px; line-height: 1.5; color: #26142E">Only members can post here. Join to start a thread or reply. The owner checks each request.</p>
+        </div>
+
+        <ul style="list-style: none; margin: 0; padding: 0">
+          <li style="border-top: 1px solid #EFE8F2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 16px 24px; background: #FCFAF5">
+              <span aria-hidden="true" style="flex: none; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #CBBBD3; box-sizing: border-box"></span>
+              <div style="flex: 1 1 320px; min-width: 0">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px">
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap">Pinned</span>
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 12px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Locked</span>
+                  <a href="Thread.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">Read first: how this space works</a>
+                </div>
+                <div style="margin-top: 4px; font-size: 13px; color: #6B5A73">by <a href="Profile.dc.html" style="color: #5C4965">inkwolf</a> · read only</div>
+              </div>
+              <span style="flex: none; font-size: 14px; color: #5C4965">0 replies</span>
+            </div>
+          </li>
+          <li style="border-top: 1px solid #EFE8F2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 16px 24px; background: #FCFAF5">
+              <span aria-hidden="true" style="flex: none; width: 12px; height: 12px; border-radius: 50%; background: #672786"></span>
+              <div style="flex: 1 1 320px; min-width: 0">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px">
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap">Pinned</span>
+                  <a href="Thread.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">October prompt: write a scene with a map that’s wrong</a>
+                </div>
+                <div style="margin-top: 4px; font-size: 13px; color: #6B5A73">by <a href="Profile.dc.html" style="color: #5C4965">ilinca.r</a> · last reply 20 min ago</div>
+              </div>
+              <span style="flex: none; font-size: 14px; color: #5C4965">46 replies</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; flex: none">5 new</span>
+            </div>
+          </li>
+        </ul>
+        <div style="border-top: 1px solid #EFE8F2; padding: 16px 24px">
+          <!-- Wide banner: an ad-network ad, labelled AD. Ads are never personalised: the same for everyone, including under-18s. Placement rule (17 Oct): at most 2 ad slots a page, never two in view at once, never in class spaces. -->
+          <aside aria-label="Advertisement" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 0 auto; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+            <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+            <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] banner · 970 × 120</span>
+            <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+          </aside>
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0">
+          <li style="border-top: 1px solid #EFE8F2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 16px 24px">
+              <span aria-hidden="true" style="flex: none; width: 12px; height: 12px; border-radius: 50%; background: #672786"></span>
+              <div style="flex: 1 1 320px; min-width: 0">
+                <a href="Thread.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">Folklore creatures that aren’t strigoi: what are your favourites?</a>
+                <div style="margin-top: 4px; font-size: 13px; color: #6B5A73">by <a href="Profile.dc.html" style="color: #5C4965">teo_ink</a> · last reply 1 hour ago</div>
+              </div>
+              <span style="flex: none; font-size: 14px; color: #5C4965">52 replies</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; flex: none">12 new</span>
+            </div>
+          </li>
+          <li style="border-top: 1px solid #EFE8F2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 16px 24px">
+              <span aria-hidden="true" style="flex: none; width: 12px; height: 12px; border-radius: 50%; background: #672786"></span>
+              <div style="flex: 1 1 320px; min-width: 0">
+                <a href="Thread.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">My magic system has too many rules. Help me cut it down</a>
+                <div style="margin-top: 4px; font-size: 13px; color: #6B5A73">by <a href="Profile.dc.html" style="color: #5C4965">mara.p</a> · last reply 3 hours ago</div>
+              </div>
+              <span style="flex: none; font-size: 14px; color: #5C4965">31 replies</span>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; flex: none">2 new</span>
+            </div>
+          </li>
+          <li style="border-top: 1px solid #EFE8F2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 16px 24px">
+              <span aria-hidden="true" style="flex: none; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #CBBBD3; box-sizing: border-box"></span>
+              <div style="flex: 1 1 320px; min-width: 0">
+                <a href="Thread.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">Looking for beta readers: YA fantasy set in Maramureș, 40,000 words</a>
+                <div style="margin-top: 4px; font-size: 13px; color: #6B5A73">by <a href="Profile.dc.html" style="color: #5C4965">corbu</a> · last reply yesterday</div>
+              </div>
+              <span style="flex: none; font-size: 14px; color: #5C4965">12 replies</span>
+            </div>
+          </li>
+          <li style="border-top: 1px solid #EFE8F2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 16px 24px">
+              <span aria-hidden="true" style="flex: none; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #CBBBD3; box-sizing: border-box"></span>
+              <div style="flex: 1 1 320px; min-width: 0">
+                <a href="Thread.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">Is it OK if my dragon can’t talk?</a>
+                <div style="margin-top: 4px; font-size: 13px; color: #6B5A73">by <a href="Profile.dc.html" style="color: #5C4965">vlad.writes</a> · last reply 2 days ago</div>
+              </div>
+              <span style="flex: none; font-size: 14px; color: #5C4965">18 replies</span>
+            </div>
+          </li>
+          <li style="border-top: 1px solid #EFE8F2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 16px 24px">
+              <span aria-hidden="true" style="flex: none; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #CBBBD3; box-sizing: border-box"></span>
+              <div style="flex: 1 1 320px; min-width: 0">
+                <a href="Thread.dc.html" style="font-weight: 700; font-size: 16px; color: #26142E; text-decoration: none">How long should a fantasy chapter be?</a>
+                <div style="margin-top: 4px; font-size: 13px; color: #6B5A73">by <a href="Profile.dc.html" style="color: #5C4965">lia.writes</a> · last reply 4 days ago</div>
+              </div>
+              <span style="flex: none; font-size: 14px; color: #5C4965">27 replies</span>
+            </div>
+          </li>
+        </ul>
+        <div style="padding: 16px 24px 22px; border-top: 1px solid #EFE8F2; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+          <span style="font-size: 14px; color: #6B5A73">Showing 7 of 138 threads</span>
+          <button type="button" style="height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Show more threads</button>
+        </div>
+      </section>
+
+      <!-- Rules and the team -->
+      <aside aria-label="About this space" style="flex: 1 1 300px; max-width: 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s 0.15s ease-out both">
+        <section aria-labelledby="rules-title" style="position: relative; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <img data-doodle="widget" data-doodle-on="Space rules" src="/_blob/40bc1fbeb38f66f58e1d30bc529d4d2f" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -36px; right: 20px; width: 70px; transform: rotate(8deg)">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Set by the owner</span>
+          <h2 id="rules-title" style="margin: 6px 0 12px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #481C5F">Space rules</h2>
+          <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.55; color: #26142E">
+            <li>Fantasy only. Science fiction goes in the main forums.</li>
+            <li>When you ask for feedback, say what kind you want.</li>
+            <li>Give feedback on two chapters before you post your third.</li>
+            <li>Mark spoilers for published books.</li>
+          </ol>
+          <p style="margin: 14px 0 0; font-size: 13px; line-height: 1.55; color: #6B5A73">The Ghemotoc <a href="Legal.dc.html">community guidelines</a> apply here too.</p>
+        </section>
+
+        <section aria-labelledby="team-title" style="position: relative; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+          <img data-doodle="widget" data-doodle-on="Who runs it" src="/_blob/a9befe4541d43bb2eb0d8a7a222b3f51" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -30px; right: 22px; width: 74px; transform: rotate(-6deg)">
+          <h2 id="team-title" style="margin: 0 0 12px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #481C5F">Who runs it</h2>
+          <ul style="list-style: none; margin: 0; padding: 0">
+            <li style="display: flex; align-items: center; gap: 12px; padding: 10px 0">
+              <span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(140deg,#4D1B5E,#9A5BB8); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px">i</span>
+              <span style="flex: 1; min-width: 0"><a href="Profile.dc.html" style="display: block; font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">inkwolf</a><span style="display: block; font-size: 13px; color: #6B5A73">Owner</span></span>
+            </li>
+            <li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #EFE8F2">
+              <span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(140deg,#1F5357,#6FA7AB); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px">i</span>
+              <span style="flex: 1; min-width: 0"><a href="Profile.dc.html" style="display: block; font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">ilinca.r</a><span style="display: block; font-size: 13px; color: #6B5A73">Moderator · posts and members</span></span>
+            </li>
+            <li style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #EFE8F2">
+              <span aria-hidden="true" style="flex: none; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(140deg,#16233A,#33507A); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px">c</span>
+              <span style="flex: 1; min-width: 0"><a href="Profile.dc.html" style="display: block; font-weight: 700; font-size: 15px; color: #26142E; text-decoration: none">corbu</a><span style="display: block; font-size: 13px; color: #6B5A73">Moderator · posts</span></span>
+            </li>
+          </ul>
+          <p style="margin: 12px 0 0; padding: 14px 16px; background: #F4F0EC; border-radius: 16px; font-size: 14px; line-height: 1.55; color: #5C4965">Every moderator action is logged. The owner and Ghemotoc’s own moderators can see the log. Ghemotoc’s moderators can take action in any space.</p>
+        </section>
+      </aside>
+    </div>
+
+    <!-- Create a space: the form any eligible member fills in -->
+    <section id="create" aria-labelledby="create-title" style="position: relative; margin-top: 56px; padding: clamp(24px, 3vw, 40px); background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 28px; box-shadow: 0 1px 2px rgba(38,20,46,0.05), 0 28px 56px -32px rgba(38,20,46,0.45)">
+      <img data-doodle="background" data-doodle-on="Create a space" src="/_blob/4526965d388ed8bbd98b3f239e74ce87" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 30px; right: 56px; width: 132px; transform: rotate(10deg)">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 680px">
+        <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">New space</span>
+        <h2 id="create-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(32px, 3.4vw, 48px); line-height: 1; letter-spacing: -0.02em; color: #481C5F">Create a space</h2>
+        <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #5C4965">Anyone can create a space, and you become its owner. Because you’re 16 or over, your space is for members 16 and over, and anyone, with or without an account, can read it. You can change everything below later.</p>
+      </div>
+
+      <!-- DESIGN NOTE, not part of the product: switches the form below between a Teacher badge account and everyone else -->
+      <div role="group" aria-labelledby="pv-label pv-ask" style="position: relative; z-index: 1; margin-top: 24px; max-width: 760px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 16px; border: 2px dashed #B9A9C2; border-radius: 18px; background: #FCFAF5">
+        <span id="pv-label" style="font-family: 'Cutive', 'Courier New', serif; flex: 1 1 100%; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Design note · not part of the product</span>
+        <span id="pv-ask" style="font-size: 14px; font-weight: 600; color: #26142E">Preview as:</span>
+        <div style="display: inline-flex; gap: 4px; padding: 3px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF">
+          <button type="button" class="tmc-chip" aria-pressed="{{pvTeacherOn}}" onClick="{{setPvTeacher}}" style="{{pvTeacherStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Teacher</button>
+          <button type="button" class="tmc-chip" aria-pressed="{{pvEveryoneOn}}" onClick="{{setPvEveryone}}" style="{{pvEveryoneStyle}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Everyone else</button>
+        </div>
+        <p aria-live="polite" style="flex: 1 1 100%; margin: 0; font-size: 13px; line-height: 1.5; color: #5C4965">{{pvNote}}</p>
+      </div>
+
+      <form style="margin: 28px 0 0; display: flex; flex-wrap: wrap; gap: 28px 40px">
+
+        <!-- What kind of space: open, or a private class space for a school class (S1-E8-11).
+             Only accounts with a Teacher badge see this choice. Everyone else gets an open space and never sees the question. -->
+        <sc-if value="{{isTeacher}}" hint-placeholder-val="{{ true }}">
+        <fieldset style="flex: 1 1 100%; margin: 0; padding: 0; border: 0; min-width: 0">
+          <legend style="padding: 0; margin-bottom: 12px; font-size: 15px; font-weight: 700; color: #26142E">What kind of space?</legend>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px">
+            <label style="{{kindOpenStyle}}">
+              <input type="radio" name="sp-kind" checked="{{kindOpen}}" onChange="{{pickKindOpen}}" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #672786">
+              <span><span style="display: block; font-size: 16px; font-weight: 700; color: #26142E">Open space</span><span style="display: block; margin-top: 4px; font-size: 14px; line-height: 1.55; color: #5C4965">For a genre, a book or a writing group. Anyone can read it.</span></span>
+            </label>
+            <label style="{{kindClassStyle}}">
+              <input type="radio" name="sp-kind" checked="{{kindClass}}" onChange="{{pickKindClass}}" aria-describedby="sp-kind-class" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #672786">
+              <span><span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #26142E">Class space<span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Teacher badge</span></span><span id="sp-kind-class" style="display: block; margin-top: 4px; font-size: 14px; line-height: 1.55; color: #5C4965">A private space for one school class. Only you and the students you invite can see it, whatever their ages. You can make one because you have a Teacher badge. <a href="ClassSpace.dc.html" style="font-weight: 600">See a class space</a></span></span>
+            </label>
+          </div>
+        </fieldset>
+        </sc-if>
+
+        <!-- Left: what the space is -->
+        <div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="sp-name" style="font-size: 15px; font-weight: 700; color: #26142E">Name</label>
+            <input id="sp-name" type="text" value="Sci-fi short stories" aria-describedby="sp-name-ok sp-name-hint" style="height: 52px; padding: 0 20px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 16px; color: #26142E">
+            <span id="sp-name-ok" style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: #2F6B4F"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>This name is available.</span>
+            <span id="sp-name-hint" style="font-size: 13px; line-height: 1.5; color: #6B5A73">Each name can only be used once. You can name a space after a book or an author.</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="sp-desc" style="font-size: 15px; font-weight: 700; color: #26142E">Description</label>
+            <textarea id="sp-desc" rows="3" style="padding: 14px 20px; border: 1px solid #DED3E4; border-radius: 20px; background: #FFFFFF; font-family: inherit; font-size: 16px; line-height: 1.55; color: #26142E; resize: vertical">Short science fiction stories under 5,000 words. Post yours, read others and swap feedback.</textarea>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="sp-rules" style="font-size: 15px; font-weight: 700; color: #26142E">Rules</label>
+            <textarea id="sp-rules" rows="4" aria-describedby="sp-rules-hint" style="padding: 14px 20px; border: 1px solid #DED3E4; border-radius: 20px; background: #FFFFFF; font-family: inherit; font-size: 16px; line-height: 1.55; color: #26142E; resize: vertical">1. Stories under 5,000 words only.
+2. Say what feedback you want.
+3. Be kind and specific.</textarea>
+            <span id="sp-rules-hint" style="font-size: 13px; color: #6B5A73">Shown at the top of your space. The community guidelines always apply as well.</span>
+          </div>
+          <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 10px">
+            <legend style="padding: 0; margin-bottom: 10px; font-size: 15px; font-weight: 700; color: #26142E">Banner <span style="font-weight: 400; color: #6B5A73">(optional)</span></legend>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+              <sc-for list="{{banners}}" as="b" hint-placeholder-count="4">
+                <button type="button" aria-label="{{b.label}}" aria-pressed="{{b.pressed}}" onClick="{{b.pick}}" style="{{b.style}}"></button>
+              </sc-for>
+              <button type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 18px; border: 1px dashed #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg>Upload a picture</button>
+            </div>
+            <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Every picture is checked before it shows. JPEG, PNG or WebP, up to 5 MB.</span>
+          </fieldset>
+        </div>
+
+        <!-- Right: who can join, who can post and who helps -->
+        <div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+          <!-- Age rules for spaces (Q26, 16 Oct; under-16 reading and turning 16, 17 Oct) -->
+          <section aria-labelledby="sp-age-h" style="padding: 18px 20px; background: #F1EAF4; border-radius: 20px; display: flex; flex-direction: column; gap: 8px">
+            <h3 id="sp-age-h" style="margin: 0; font-size: 15px; font-weight: 700; color: #26142E">Who can join</h3>
+            <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 1.55; color: #3A2442">
+              <li>Spaces keep age groups apart. A space started by someone under 16 takes only under-16s. A space started by someone 16 or over takes only people 16 and over.</li>
+              <li>Under-16s choose who can read their space: only members, or everybody. Adults can read it only if the owner made it public to everybody.</li>
+              <li>When a member turns 16, they stay in the spaces they joined before, but they can’t start or join under-16 spaces.</li>
+              <li>Class spaces are the one exception: the teacher invites the class, whatever their ages.</li>
+            </ul>
+          </section>
+          <fieldset style="margin: 0; padding: 20px; border: 1px solid #DED3E4; border-radius: 20px; display: flex; flex-direction: column; gap: 6px">
+            <legend style="padding: 0 6px; font-size: 15px; font-weight: 700; color: #26142E">Who can post</legend>
+            <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 6px 0; cursor: pointer">
+              <input type="radio" name="sp-post" checked="{{postAnyone}}" onChange="{{pickAnyone}}" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #672786">
+              <span><span style="display: block; font-size: 15px; font-weight: 600; color: #26142E">Anyone with an account</span><span style="display: block; font-size: 13px; color: #6B5A73">Anyone in your space’s age group. Good for open discussion.</span></span>
+            </label>
+            <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 6px 0; cursor: pointer">
+              <input type="radio" name="sp-post" checked="{{postMembers}}" onChange="{{pickMembers}}" style="flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: #672786">
+              <span><span style="display: block; font-size: 15px; font-weight: 600; color: #26142E">Members only</span><span style="display: block; font-size: 13px; color: #6B5A73">Everyone can still read. Only members can start threads and reply.</span></span>
+            </label>
+            <sc-if value="{{postMembers}}" hint-placeholder-val="{{true}}">
+              <div style="margin-top: 8px; padding: 14px 16px; background: #F4F0EC; border-radius: 16px; display: flex; flex-direction: column; gap: 4px">
+                <span style="font-size: 14px; font-weight: 700; color: #26142E">How people join</span>
+                <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer">
+                  <input type="radio" name="sp-join" checked="{{joinApprove}}" onChange="{{pickApprove}}" style="flex: none; width: 20px; height: 20px; margin: 0; accent-color: #672786">
+                  <span style="font-size: 15px; color: #26142E">I approve each request</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer">
+                  <input type="radio" name="sp-join" checked="{{joinOpen}}" onChange="{{pickOpen}}" style="flex: none; width: 20px; height: 20px; margin: 0; accent-color: #672786">
+                  <span style="font-size: 15px; color: #26142E">Anyone can join straight away</span>
+                </label>
+              </div>
+            </sc-if>
+          </fieldset>
+
+          <fieldset style="margin: 0; padding: 20px; border: 1px solid #DED3E4; border-radius: 20px; display: flex; flex-direction: column; gap: 12px">
+            <legend style="padding: 0 6px; font-size: 15px; font-weight: 700; color: #26142E">Moderators <span style="font-weight: 400; color: #6B5A73">(optional)</span></legend>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <label for="sp-mod" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Add a moderator by username</label>
+              <input id="sp-mod" type="text" placeholder="Add by username" style="flex: 1 1 200px; min-width: 0; height: 48px; padding: 0 18px; border: 1px solid #DED3E4; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+              <button type="button" style="height: 48px; padding: 0 20px; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Add</button>
+            </div>
+            <div style="padding: 14px 16px; border: 1px solid #EFE8F2; border-radius: 16px">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(140deg,#2E4A8C,#7C95CF); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 13px">p</span>
+                <span style="flex: 1; font-weight: 700; font-size: 15px; color: #26142E">poppyverse</span>
+                <button type="button" style="height: 44px; padding: 0 10px; border: 0; background: transparent; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Remove</button>
+              </div>
+              <div role="group" aria-label="What poppyverse can do" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 18px">
+                <sc-for list="{{perms}}" as="p" hint-placeholder-count="4">
+                  <label style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; color: #26142E; cursor: pointer"><input type="checkbox" checked="{{p.on}}" onChange="{{p.toggle}}" style="width: 18px; height: 18px; margin: 0; accent-color: #672786">{{p.label}}</label>
+                </sc-for>
+              </div>
+            </div>
+            <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #6B5A73">Posts: hide or move posts. Members: approve or remove members. Settings: edit the name, rules and banner. Mail: send messages to all members. Every action is logged. You and Ghemotoc’s moderators can see the log.</p>
+          </fieldset>
+        </div>
+
+        <div style="flex: 1 1 100%; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+          <button type="button" style="height: 52px; padding: 0 24px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Cancel</button>
+          <button type="submit" style="height: 52px; padding: 0 28px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Create space</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Page footer -->
+  <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/36b54e06640486c6a06dbc26c16ecb5d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -70px; left: clamp(16px, 4vw, 64px); width: 62px; transform: rotate(-10deg)">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6B5A73">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3555}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Lia is not a member yet. The create form starts on members-only posting with approval.
+    // viewer is the design-preview switch: 'teacher' (has a Teacher badge) or 'everyone'.
+    this.state = { requested: false, post: 'members', join: 'approve', banner: 'plum', perms: { Posts: true, Members: true, Settings: false, Mail: false }, viewer: 'teacher', kind: 'open' };
+  }
+
+  // Small segmented button look for the design-preview switch.
+  pvStyle(on) {
+    // Pill system (17 Oct): segment inside a segmented control; plum with a check when selected.
+    return 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+          + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: transparent; color: #481C5F; border: 1px solid transparent;');
+  }
+
+  // Radio card look for "What kind of space?". Padding makes up for the thinner border so nothing jumps.
+  kindStyle(on) {
+    return 'flex: 1 1 320px; min-width: 0; display: flex; gap: 14px; align-items: flex-start; border-radius: 20px; cursor: pointer; '
+      + (on ? 'padding: 18px 20px; border: 2px solid #672786; background: #F1EAF4;' : 'padding: 19px 21px; border: 1px solid #DED3E4; background: #FFFFFF;');
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Drawn banner choices, so nothing needs an image licence.
+    var bannerList = [
+      ['plum', 'Plum banner', 'linear-gradient(120deg,#2A0E33,#672786)'],
+      ['night', 'Night blue banner', 'linear-gradient(120deg,#16233A,#3B5BA6)'],
+      ['forest', 'Forest green banner', 'linear-gradient(120deg,#173826,#3E8763)'],
+      ['gold', 'Gold banner', 'linear-gradient(120deg,#7A5C12,#E6C24C)']
+    ];
+    var banners = bannerList.map(function (b) {
+      var on = st.banner === b[0];
+      return {
+        label: b[1], pressed: on,
+        style: 'width: 72px; height: 48px; border-radius: 14px; cursor: pointer; padding: 0; background: ' + b[2] + '; '
+          + (on ? 'border: 3px solid #E6C24C; box-shadow: 0 0 0 1px #481C5F;' : 'border: 3px solid #FFFFFF; box-shadow: 0 0 0 1px #DED3E4;'),
+        pick: function () { self.setState({ banner: b[0] }); }
+      };
+    });
+
+    // The four moderator powers from the story: posts, members, settings and mail.
+    var perms = ['Posts', 'Members', 'Settings', 'Mail'].map(function (k) {
+      return {
+        label: k, on: !!st.perms[k],
+        toggle: function () { var n = Object.assign({}, st.perms); n[k] = !n[k]; self.setState({ perms: n }); }
+      };
+    });
+
+    return {
+      requested: st.requested,
+      joinLabel: st.requested ? 'Request sent' : 'Join space',
+      joinNote: st.requested ? 'inkwolf will see your request. You’ll get a notification when you’re in.' : 'Members-only posting: the owner approves new members.',
+      joinStyle: 'display: inline-flex; align-items: center; height: 48px; padding: 0 26px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; '
+        + (st.requested ? 'border: 1px solid #481C5F; background: #F1EAF4; color: #481C5F;' : 'border: 0; background: #2A0E33; color: #FBF7EC;'),
+      toggleJoin: function () { self.setState({ requested: !st.requested }); },
+      postAnyone: st.post === 'anyone',
+      postMembers: st.post === 'members',
+      pickAnyone: function () { self.setState({ post: 'anyone' }); },
+      pickMembers: function () { self.setState({ post: 'members' }); },
+      joinApprove: st.join === 'approve',
+      joinOpen: st.join === 'open',
+      pickApprove: function () { self.setState({ join: 'approve' }); },
+      pickOpen: function () { self.setState({ join: 'open' }); },
+      banners: banners,
+      perms: perms,
+      // Teacher badge preview: the Class space option exists only for Teacher badge accounts.
+      isTeacher: st.viewer === 'teacher',
+      pvTeacherOn: st.viewer === 'teacher',
+      pvEveryoneOn: st.viewer === 'everyone',
+      pvTeacherStyle: self.pvStyle(st.viewer === 'teacher'),
+      pvEveryoneStyle: self.pvStyle(st.viewer === 'everyone'),
+      setPvTeacher: function () { self.setState({ viewer: 'teacher' }); },
+      setPvEveryone: function () { self.setState({ viewer: 'everyone', kind: 'open' }); },
+      pvNote: st.viewer === 'teacher'
+        ? 'Teacher: this account has a Teacher badge, so it can choose Class space. Adults get the badge in setup (2.5 Onboarding).'
+        : 'Everyone else: no Class space option and no “What kind of space?” question. Every space they make is an open space.',
+      kindOpen: st.kind === 'open',
+      kindClass: st.kind === 'class',
+      kindOpenStyle: self.kindStyle(st.kind === 'open'),
+      kindClassStyle: self.kindStyle(st.kind === 'class'),
+      pickKindOpen: function () { self.setState({ kind: 'open' }); },
+      pickKindClass: function () { self.setState({ kind: 'class' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

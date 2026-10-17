@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Classics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
+@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+/* The 16 approved cover backgrounds (S1-E3-13): 5:8 drawings with no text that fill any box */
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat;outline:1px solid rgba(38,20,46,0.14);outline-offset:-1px}
+.tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-gold{background-color:#E6C24C;background-image:url(/_blob/91b025a34ffa73c4f7886c143b2229d4)}
+.tmc-cv-lilac{background-color:#E9DDF0;background-image:url(/_blob/f1d0436689691672be6a521d49b6d32c)}
+.tmc-cv-blush{background-color:#F6D3DC;background-image:url(/_blob/e6edfdb3a9348376f609edc9860c7003)}
+.tmc-cv-sky{background-color:#D7E6F2;background-image:url(/_blob/7f5800c35ba2931d2b6f7a813d85b93c)}
+.tmc-cv-sage{background-color:#C9D8BF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#FAF8F5;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-cv-stripes{background-color:#481C5F;background-image:url(/_blob/5bf720d39651e2b57f384d33e3e04028)}
+.tmc-cv-dots{background-color:#E9DDF0;background-image:url(/_blob/49525cd87927782c2ac3d4a53ebc2973)}
+.tmc-cv-grid{background-color:#FAF8F5;background-image:url(/_blob/18fddef6727cc64415d6f75fd94c388b)}
+.tmc-cv-waves{background-color:#D7E6F2;background-image:url(/_blob/b3b6a05178861fc4e9210eaaa4134c6d)}
+.tmc-cv-starry{background-color:#26142E;background-image:url(/_blob/619cfced034d4c0e597c0ed7da05dc98)}
+.tmc-cv-doodles{background-color:#FAF8F5;background-image:url(/_blob/f295eb5a1f415fe44f9e39a32e58ba7e)}
+.tmc-cv-twotone{background-color:#F6D3DC;background-image:url(/_blob/0d7f4386c9eaec72ab74d7b8349bc99f)}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+/* Ad placeholders (17 Oct 2026): the wide banner is 120 px tall (100 px on phones); the portrait shows only on screens 1200 px and wider */
+.tmc-ad-banner{height:120px}
+@media (max-width: 700px){.tmc-ad-banner{height:100px}}
+.tmc-ad-portrait{display:flex}
+@media (max-width: 1199px){.tmc-ad-portrait{display:none !important}}
+/* Scrollers with Scroll back / Scroll forward buttons hide their scrollbar (Robert, 17 Oct); they still scroll by swipe, wheel and keyboard */
+.tmc-noscroll{scrollbar-width:none;-ms-overflow-style:none}.tmc-noscroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; overflow-x: clip; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: classics are part of Discover -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-label="Notifications, 3 new" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="flex: none; display: block; width: 26px; height: 26px"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Heading and how the shelf is checked -->
+    <header style="position: relative; padding: 48px 0 28px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; animation: tmcRise 0.5s ease-out both">
+      <div style="flex: 1 1 560px; display: flex; flex-direction: column; gap: 14px">
+        <nav aria-label="Breadcrumb" style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #6B5A73">
+          <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">Discover</a>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+          <span aria-current="page">Classics</span>
+        </nav>
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Classics · public domain</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Classics, free to read</h1>
+        <p style="margin: 0; max-width: 640px; font-size: 18px; line-height: 1.6; color: #5C4965">Romanian and world classics in the public domain. Read, follow and comment on them like any other story.</p>
+      </div>
+      <div style="position: relative; flex: 0 1 380px; padding: 20px 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+<img data-doodle="widget" data-doodle-on="Classics, free to read" src="/_blob/8de6c5da34262acc233de02260ec84a2" alt="" aria-hidden="true" class="tmc-dd-lg" width="74" height="74" style="position: absolute; top: -44px; right: -16px; width: 74px; height: 74px; transform: rotate(10deg); pointer-events: none; user-select: none; z-index: 0">
+        <span style="font-family: 'Cutive', 'Courier New', serif; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="20" height="20" style="flex: none; display: block; width: 20px; height: 20px">How we check</span>
+        <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #26142E">Our staff check every classic before it goes up. The writer died more than 70 years ago, and so did any translator, so the text is in the public domain in Romania and the EU. We use editions without modern notes or introductions, because those can still be protected.</p>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">Translations and modern editions can still be under copyright, so world classics stay in their original language.</p>
+      </div>
+    </header>
+
+    <!-- Filters: the shelf works like any other story list -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 16px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 999px">
+      <div role="group" aria-label="Language" style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{langChips}}" as="c" hint-placeholder-count="3">
+          <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{c.label}}</button>
+        </sc-for>
+      </div>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 10px">
+        <label for="sort-classics" style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Sort by</label>
+        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="sort-classics" value="{{sort}}" onChange="{{setSort}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FAF8F5; font-family: inherit; font-size: 14px; font-weight: 600; color: #26142E">
+          <option value="popular">Popular</option>
+          <option value="az">A to Z</option>
+          <option value="oldest">Oldest first</option>
+          <option value="author">By writer</option>
+        </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+      </div>
+    </div>
+
+    <!-- Romanian classics -->
+    <sc-if value="{{showRo}}" hint-placeholder-val="{{true}}">
+      <section aria-labelledby="shelf-ro" style="position: relative; margin-top: 48px; animation: tmcRise 0.5s 0.05s ease-out both">
+<img data-doodle="background" data-doodle-on="Romanian classics" src="/_blob/093d3efb301eb483969096d78322d770" alt="" aria-hidden="true" class="tmc-dd-wide" width="104" height="104" style="position: absolute; top: -40px; right: 132px; width: 104px; height: 104px; transform: rotate(-4deg); pointer-events: none; user-select: none; z-index: 0">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">În română</span>
+            <h2 id="shelf-ro" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Romanian classics</h2>
+            </div>
+          <sc-if value="{{ar.ro.show}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <button type="button" aria-label="Scroll back" onClick="{{prevRo}}" disabled="{{ar.ro.backOff}}" aria-disabled="{{ar.ro.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.ro.backCur}}; opacity: {{ar.ro.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+            <button type="button" aria-label="Scroll forward" onClick="{{nextRo}}" disabled="{{ar.ro.fwdOff}}" aria-disabled="{{ar.ro.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.ro.fwdCur}}; opacity: {{ar.ro.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+          </div>
+          </sc-if>
+        </div>
+        <!-- One line of at most 20 books (design rule, 16 Oct); more than 20 ends with View more, which opens the See all page -->
+        <div style="position: relative; margin: 0 -4px">
+        <div ref="{{refRo}}" onScroll="{{scrollRo}}" tabindex="0" class="tmc-noscroll" role="region" aria-label="Romanian classics, scrolls sideways" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{maskRo}}; mask-image: {{maskRo}}">
+          <sc-for list="{{ro}}" as="b" hint-placeholder-count="6">
+            <article style="flex: none; width: 210px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px">
+              <a href="Story.dc.html" class="{{b.cls}}" style="{{b.cover}}"><span style="{{b.boxStyle}}"><span style="{{b.tStyle}}">{{b.title}}</span><span style="{{b.barStyle}}"></span><span style="{{b.pStyle}}">{{b.author}}</span></span></a>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; align-self: flex-start; margin-top: 4px">Public domain</span>
+              <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 17px; line-height: 1.2"><a href="Story.dc.html" style="color: #26142E; text-decoration: none">{{b.title}}</a></h3>
+              <span style="font-size: 13px; color: #6B5A73">{{b.author}} ({{b.life}}) · {{b.kind}}</span>
+              <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">{{b.blurb}}</p>
+              <a href="Reader.dc.html" style="align-self: flex-start; margin-top: auto; display: inline-flex; align-items: center; height: 44px; padding: 0 18px; box-sizing: border-box; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Read</a>
+            </article>
+          </sc-for>
+          <sc-if value="{{roMore}}" hint-placeholder-val="{{true}}">
+            <a href="SeeAll.dc.html" aria-label="{{roMoreLabel}}" style="{{moreCard}}"><span style="{{moreBox}}"><span aria-hidden="true" style="{{moreDot}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><span style="{{moreTitle}}">View more</span><span style="{{moreText}}">{{roMoreText}}</span></span></a>
+          </sc-if>
+        </div>
+        </div>
+      </section>
+      <!-- Wide banner: an ad-network ad, labelled AD. Ads are never personalised: the same for everyone, including under-18s. Placement rule (17 Oct): at most 2 ad slots a page, never two in view at once, never in class spaces. -->
+      <aside aria-label="Advertisement" data-ad="banner" class="tmc-ad-banner" style="position: relative; width: 100%; max-width: 970px; margin: 56px auto 0; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0 16px; background: #F4F0EC; border: 1px dashed #B9A9C2; border-radius: 20px">
+        <span style="position: absolute; top: 12px; left: 14px; display: flex"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; line-height: 1; white-space: nowrap; border-radius: 999px; border: 1px solid #6B5A73; color: #5C4965; font-size: 11px; font-weight: 700; letter-spacing: 0.12em">AD</span></span>
+        <span style="font-size: 14px; font-weight: 500; line-height: 1.4; color: #6B5A73; text-align: center">[Advertiser] banner · 970 × 120</span>
+        <a href="AdFormats.dc.html" style="position: absolute; right: 8px; bottom: 0; display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; font-size: 13px; font-weight: 500; color: #672786; text-decoration: underline">Why this ad?</a>
+      </aside>
+    </sc-if>
+
+    <!-- World classics -->
+    <sc-if value="{{showEn}}" hint-placeholder-val="{{true}}">
+      <section aria-labelledby="shelf-en" style="position: relative; margin-top: 56px; animation: tmcRise 0.5s 0.1s ease-out both">
+<img data-doodle="background" data-doodle-on="World classics" src="/_blob/22476541414b1ec5bc70834bfc91ed12" alt="" aria-hidden="true" class="tmc-dd-wide" width="100" height="100" style="position: absolute; top: -40px; right: 132px; width: 100px; height: 100px; transform: rotate(6deg); pointer-events: none; user-select: none; z-index: 0">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">In English</span>
+            <h2 id="shelf-en" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">World classics</h2>
+            <span style="font-size: 14px; color: #6B5A73">In the original English. We add a Romanian translation only if that translation is also in the public domain.</span>
+            </div>
+          <sc-if value="{{ar.en.show}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <button type="button" aria-label="Scroll back" onClick="{{prevEn}}" disabled="{{ar.en.backOff}}" aria-disabled="{{ar.en.backAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.en.backCur}}; opacity: {{ar.en.backOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+            <button type="button" aria-label="Scroll forward" onClick="{{nextEn}}" disabled="{{ar.en.fwdOff}}" aria-disabled="{{ar.en.fwdAria}}" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; display: inline-flex; align-items: center; justify-content: center; cursor: {{ar.en.fwdCur}}; opacity: {{ar.en.fwdOp}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+          </div>
+          </sc-if>
+        </div>
+        <!-- One line of at most 20 books (design rule, 16 Oct); more than 20 ends with View more, which opens the See all page -->
+        <div style="position: relative; margin: 0 -4px">
+        <div ref="{{refEn}}" onScroll="{{scrollEn}}" tabindex="0" class="tmc-noscroll" role="region" aria-label="World classics, scrolls sideways" style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 4px 16px; -webkit-mask-image: {{maskEn}}; mask-image: {{maskEn}}">
+          <sc-for list="{{en}}" as="b" hint-placeholder-count="6">
+            <article style="flex: none; width: 210px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px">
+              <a href="Story.dc.html" class="{{b.cls}}" style="{{b.cover}}"><span style="{{b.boxStyle}}"><span style="{{b.tStyle}}">{{b.title}}</span><span style="{{b.barStyle}}"></span><span style="{{b.pStyle}}">{{b.author}}</span></span></a>
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A; font-size: 12px; font-weight: 700; white-space: nowrap; align-self: flex-start; margin-top: 4px">Public domain</span>
+              <h3 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 17px; line-height: 1.2"><a href="Story.dc.html" style="color: #26142E; text-decoration: none">{{b.title}}</a></h3>
+              <span style="font-size: 13px; color: #6B5A73">{{b.author}} ({{b.life}}) · {{b.kind}}</span>
+              <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5C4965">{{b.blurb}}</p>
+              <a href="Reader.dc.html" style="align-self: flex-start; margin-top: auto; display: inline-flex; align-items: center; height: 44px; padding: 0 18px; box-sizing: border-box; border: 1px solid #672786; border-radius: 999px; background: #FFFFFF; color: #672786; font-size: 14px; font-weight: 600; text-decoration: none">Read</a>
+            </article>
+          </sc-for>
+          <sc-if value="{{enMore}}" hint-placeholder-val="{{false}}">
+            <a href="SeeAll.dc.html" aria-label="{{enMoreLabel}}" style="{{moreCard}}"><span style="{{moreBox}}"><span aria-hidden="true" style="{{moreDot}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><span style="{{moreTitle}}">View more</span><span style="{{moreText}}">{{enMoreText}}</span></span></a>
+          </sc-if>
+        </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <!-- Who posts these -->
+    <aside aria-label="About this shelf" style="position: relative; margin-top: 56px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 20px">
+<img data-doodle="background" data-doodle-on="About this shelf" src="/_blob/1634f9ef3c76431d8c96ef7c753c480b" alt="" aria-hidden="true" class="tmc-dd-lg" width="66" height="66" style="position: absolute; top: -52px; right: 250px; width: 66px; height: 66px; transform: rotate(-6deg); pointer-events: none; user-select: none; z-index: 0">
+      <div style="display: flex; align-items: center; gap: 14px">
+        <span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 16px">C</span>
+        <span style="font-size: 15px; line-height: 1.5; color: #26142E">Posted by <b>Ghemotoc Classics</b>, our official account. Comments follow the same community guidelines as every story.</span>
+      </div>
+      <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600">Suggest a classic in the forums</a>
+    </aside>
+
+    <!-- Small footer -->
+    <footer style="position: relative; margin-top: 72px; padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/6febd794abf68310f4d8fcb7da994e51" alt="" aria-hidden="true" class="tmc-dd-lg" width="64" height="64" style="position: absolute; top: -76px; right: 40px; width: 64px; height: 64px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 24px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px">
+        <span>An app by The Magic Coffin</span>
+        <!-- Language picker: a drop-down, as in the top bar (Q11, 16 Oct) --><span style="display: inline-flex; align-items: center; gap: 8px"><label for="lang-foot" style="font-size: 13px; font-weight: 600; color: #5C4965">Language</label><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="lang-foot" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 0 36px 0 16px; color: #26142E"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+      </div>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2485}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { lang: 'all', sort: 'popular' };
+    this.shelves = {};
+  }
+
+  componentDidMount() {
+    var self = this;
+    // Rows are re-measured when the window changes size, so arrows appear or go as the row starts or stops overflowing.
+    this._onResize = function () { self.measureAll(); };
+    try { window.addEventListener('resize', this._onResize); } catch (e) { /* no window: arrows keep their last state */ }
+    setTimeout(function () { self.measureAll(); }, 0);
+  }
+
+  // New content (filter, sort, tab) can change whether a row overflows. measureAll only sets state when a value changes.
+  componentDidUpdate() { this.measureAll(); }
+
+  componentWillUnmount() {
+    try { window.removeEventListener('resize', this._onResize); } catch (e) { /* ignore */ }
+  }
+
+  // Rows fade out on the cut-off side only (Robert, 16 Oct): a CSS mask on the row itself, never both sides at once.
+  mask(key) {
+    var e = (this.state.edges || {})[key] || { l: false, r: true };
+    if (e.r) return 'linear-gradient(to right, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    if (e.l) return 'linear-gradient(to left, #000 0, #000 calc(100% - 140px), rgba(0,0,0,0) 100%)';
+    return 'none';
+  }
+
+  // Re-measure a row after it scrolls (or first appears) and store which sides are cut off.
+  measureShelf(key) {
+    var e = this.readShelf(key);
+    if (!e) return;
+    var all = this.state.edges || {};
+    if (this.sameEdges(all[key], e)) return;   // only setState when something changed, so no render loops
+    var n = Object.assign({}, all); n[key] = e;
+    this.setState({ edges: n });
+  }
+
+  // Measure one row. l/r: the side that fades (never both). o: the row is wider than its box, so its arrows show.
+  // sl/sr: the TRUE edges, cards hidden off the left/right, which disable the arrows (Robert, 17 Oct): unlike l/r they ignore the fade tweak.
+  readShelf(key) {
+    this.shelves = this.shelves || {};
+    var el = this.shelves[key];
+    if (!el) return null;
+    // The rows snap their first card to the edge, which leaves scrollLeft at the row's left padding (4px) at the start,
+    // so the padding counts as being at the start (and likewise at the end).
+    var pl = 0, pr = 0;
+    try { var cs = window.getComputedStyle(el); pl = parseFloat(cs.paddingLeft) || 0; pr = parseFloat(cs.paddingRight) || 0; } catch (err) { /* keep 0 */ }
+    var o = el.scrollWidth > el.clientWidth + 2;
+    var sl = o && el.scrollLeft > pl + 2, sr = o && el.scrollLeft + el.clientWidth < el.scrollWidth - pr - 2;
+    // In the middle of a row only the side the reader is scrolling towards fades; at rest that's the right-hand side.
+    // A re-measure with no movement (resize, new content) keeps the side that was already fading.
+    this.lastLeft = this.lastLeft || {};
+    var prev = this.lastLeft[key] || 0, dir = el.scrollLeft - prev;
+    this.lastLeft[key] = el.scrollLeft;
+    var l = sl, r = sr, old = (this.state.edges || {})[key];
+    if (l && r) {
+      if (dir < 0) r = false;
+      else if (dir > 0) l = false;
+      else if (old && old.l && !old.r) r = false;
+      else l = false;
+    }
+    return { l: l, r: r, o: o, sl: sl, sr: sr };
+  }
+
+  sameEdges(a, b) {
+    return !!a && !!b && a.l === b.l && a.r === b.r && a.o === b.o && a.sl === b.sl && a.sr === b.sr;
+  }
+
+  // Re-measure every row at once (mount, window resize, new content after a filter, sort or tab change). One setState at most.
+  measureAll() {
+    var all = this.state.edges || {}, n = null;
+    for (var key in (this.shelves || {})) {
+      var e = this.readShelf(key);
+      if (!e || this.sameEdges(all[key], e)) continue;
+      n = n || Object.assign({}, all);
+      n[key] = e;
+    }
+    if (n) this.setState({ edges: n });
+  }
+
+  // Scroll arrows for one row (Robert, 17 Oct): not shown at all when the row fits; the arrow pointing at an end
+  // the row has already reached is disabled. Before the first measure: shown, back disabled.
+  arrows(key) {
+    var e = (this.state.edges || {})[key] || {};
+    var show = e.o !== false, back = e.sl === true, fwd = e.sr !== false;
+    return {
+      show: show,
+      backOff: !back, backAria: back ? 'false' : 'true', backOp: back ? '1' : '0.4', backCur: back ? 'pointer' : 'default',
+      fwdOff: !fwd, fwdAria: fwd ? 'false' : 'true', fwdOp: fwd ? '1' : '0.4', fwdCur: fwd ? 'pointer' : 'default'
+    };
+  }
+
+  // Scroll a row sideways by most of its visible width.
+  scrollShelf(key, dir) {
+    var el = this.shelves[key];
+    if (!el || typeof el.scrollBy !== 'function') return;
+    try { el.scrollBy({ left: dir * Math.max(240, el.clientWidth * 0.8), behavior: 'smooth' }); }
+    catch (e) { el.scrollLeft += dir * 600; }
+  }
+
+  // Sort a shelf. "Popular" keeps the order below, which stands in for the ranking job.
+  sorted(list, how) {
+    var copy = list.slice();
+    if (how === 'az') copy.sort(function (a, b) { return a.title.localeCompare(b.title, 'ro'); });
+    else if (how === 'oldest') copy.sort(function (a, b) { return a.year - b.year; });
+    else if (how === 'author') copy.sort(function (a, b) { return a.surname.localeCompare(b.surname, 'ro'); });
+    return copy;
+  }
+
+  // Automatic cover (S1-E3-13): a story with no cover of its own gets one of the 16 approved designs,
+  // picked from its id so it never changes, and never the same design as the card just before it in a row.
+  autoCovers(ids) {
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var hash = function (s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+    var prev = '';
+    return ids.map(function (id) {
+      var k = K[hash(id) % K.length];
+      if (k === prev) k = K[(K.indexOf(k) + 7) % K.length];   // neighbours never match
+      prev = k;
+      return k;
+    });
+  }
+
+  // Stable story id from its title, e.g. 'The Salt Mine Choir' -> 'the-salt-mine-choir' (diacritics dropped).
+  slug(title) {
+    var t = String(title || '').toLowerCase();
+    try { t = t.normalize('NFD').replace(/[̀-ͯ]/g, ''); } catch (e) { /* older browsers: keep as typed */ }
+    return t.replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  // Cover keys for one row of stories: the fixed table keeps each canonical story on the same design on every
+  // screen; every other story gets the automatic helper. Two neighbours never share a design.
+  rowCovers(titles) {
+    var self = this;
+    var F = {
+      'the-salt-mine-choir': 'starry', 'the-girl-who-fixed-radios': 'waves', 'the-weather-station': 'sky',
+      'small-rooms': 'dots', 'night-bus-to-ploiesti': 'ink', 'the-last-tram-home': 'sage',
+      'inside-the-student-housing-waitlist': 'grid', 'what-our-grandparents-didnt-post': 'paper',
+      'rivers-that-moved-towns': 'sky', 'the-map-keepers-apprentice': 'gold', 'pride-prejudice-and-year-12': 'blush',
+      'notes-from-room-12': 'lilac', 'twelve-minutes-ahead': 'violet', 'the-clocktower-club': 'stripes',
+      'bus-stop-poems': 'doodles', 'why-i-read-in-two-languages': 'twotone', 'snow-on-the-valley-road': 'plum',
+      'the-last-cinema-in-town': 'gold', 'lanterns-on-lipscani': 'violet'
+    };
+    var K = ['plum','ink','violet','gold','lilac','blush','sky','sage','paper','stripes','dots','grid','waves','starry','doodles','twotone'];
+    var ids = titles.map(function (t) { return self.slug(t); });
+    var auto = this.autoCovers(ids);
+    var keys = ids.map(function (id, i) { return F[id] || auto[i]; });
+    // A story without a fixed design also avoids the two designs before it, so a row never looks repetitive.
+    var clash = function (j, wide) {
+      return keys[j] === keys[j - 1] || keys[j] === keys[j + 1] || (wide && keys[j] === keys[j - 2]);
+    };
+    var move = function (j) {
+      for (var n = 0; n < K.length && clash(j, true); n++) keys[j] = K[(K.indexOf(keys[j]) + 7) % K.length];
+    };
+    for (var i = 1; i < keys.length; i++) {
+      if (!F[ids[i]] && clash(i, true)) move(i);
+      // Two neighbours must never match: move the one without a fixed design, so a canonical story keeps its design everywhere.
+      else if (keys[i] === keys[i - 1] && !F[ids[i - 1]]) move(i - 1);
+    }
+    return keys;
+  }
+
+  // Title size from its length (16 Oct), so the whole title always fits on a cover: up to 18 characters keeps
+  // the base size, 19-28 is x0.85, 29-40 is x0.72, longer is x0.62, never below the floor (11px by default).
+  // base: px number, '21px' or any CSS length such as a clamp(). inner: the px width the title can use, when known;
+  // the size then also drops until the longest word fits on one line (wordEm estimates its width).
+  titleSize(title, base, floor, inner) {
+    var t = String(title || ''), n = t.length;
+    var f = n <= 18 ? 1 : n <= 28 ? 0.85 : n <= 40 ? 0.72 : 0.62;
+    floor = floor || 11;
+    if (typeof base === 'number' || /^\d+(\.\d+)?px$/.test(String(base))) {
+      var px = Math.max(floor, Math.round(parseFloat(base) * f * 10) / 10);
+      var word = this.wordEm(t);
+      if (inner && word * px > inner) px = Math.max(floor, Math.floor(inner / word * 10) / 10);
+      return px + 'px';
+    }
+    return 'max(' + floor + 'px, calc(' + base + ' * ' + f + '))';
+  }
+
+  // Width of the title's longest word in em for Bricolage Grotesque bold (capitals and m/w wide, i/l/t/r narrow), plus 5% to spare.
+  wordEm(t) {
+    var em = function (w) {
+      var e = 0;
+      for (var i = 0; i < w.length; i++) { var c = w.charAt(i); e += /[A-ZĂÂÎȘȚmw]/.test(c) ? 0.75 : /[iljtfr'’.,:;!|]/.test(c) ? 0.3 : 0.55; }
+      return e * 1.05;
+    };
+    return String(t || '').split(/\s+/).reduce(function (m, w) { return Math.max(m, em(w)); }, 0);
+  }
+
+  // How the title sits on each design (from the approved table): title colour, optional box behind
+  // title and pen name, and the thin line under the title. z sets sizes: t (title font-size), w (title weight), lh, p (pen size), gap, bw (line width).
+  coverLook(k, z) {
+    var L = {
+      plum: ['#FAF8F5', '', '#E6C24C'], ink: ['#FAF8F5', '', '#E6C24C'], violet: ['#FAF8F5', '', '#E6C24C'],
+      gold: ['#26142E', '', '#481C5F'], lilac: ['#26142E', '', '#672786'], blush: ['#26142E', '', '#481C5F'],
+      sky: ['#26142E', '', '#672786'], sage: ['#26142E', '', '#481C5F'], paper: ['#26142E', '', '#672786'],
+      stripes: ['#FAF8F5', '#481C5F', ''], dots: ['#26142E', '#FAF8F5', ''], grid: ['#26142E', '', ''],
+      waves: ['#26142E', '#FAF8F5', ''], starry: ['#FAF8F5', '', ''], doodles: ['#26142E', '', ''], twotone: ['#FAF8F5', '', '']
+    };
+    var t = L[k] ? L[k] : L.plum, ink = t[0], light = ink === '#26142E';
+    z = z || {};
+    // Width left for the title: the box designs (stripes, dots, waves) take 8px padding each side (z.bx: both sides together, when a screen changes it).
+    var inner = z.inner ? z.inner - (t[1] ? (z.bx == null ? 16 : z.bx) : 0) : 0;
+    var size = z.title == null ? (z.t || '21px') : this.titleSize(z.title, z.t || '21px', z.min, inner);
+    return {
+      cls: 'tmc-cv tmc-cv-' + (L[k] ? k : 'plum'),
+      box: 'display: flex; flex-direction: column; gap: ' + (z.gap == null ? 6 : z.gap) + 'px; min-width: 0;'
+        + (t[1] ? ' display: inline-flex; align-self: flex-start; max-width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 6px; background: ' + t[1] + ';' : ''),
+      // Titles wrap on spaces and never clip; with z.title the size follows the title's length (titleSize).
+      title: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: " + (z.w || 700) + '; font-size: ' + size + '; line-height: ' + (z.lh || 1.04) + '; color: ' + ink + '; overflow-wrap: break-word;',
+      // False when even the floor size cannot fit the longest word (only on very small thumbnails).
+      fits: !z.inner || this.wordEm(z.title) * parseFloat(size) <= inner,
+      bar: t[2] ? 'display: block; width: ' + (z.bw || 40) + 'px; height: 3px; border-radius: 2px; background: ' + t[2] + ';' : 'display: none;',
+      pen: 'font-size: ' + (z.p || 12) + 'px; font-weight: 500; color: ' + ink + ';',
+      // Genre pill: cream on dark designs, plum with white text on light ones so it never disappears.
+      pill: light ? 'background: #481C5F; color: #FFFFFF;' : 'background: rgba(250,248,245,0.94); color: #2A0E33;',
+      // Gold "Completed" pill: swaps to plum on the gold design.
+      goldPill: k === 'gold' ? 'background: #481C5F; color: #FFFFFF;' : 'background: #E6C24C; color: #26142E;',
+      ink: ink
+    };
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // Public-domain classics use the same 16 drawn designs as every story (classes in the helmet), no images.
+    var coverStyle = 'height: 280px; box-sizing: border-box; padding: 18px; border-radius: 16px; display: flex; flex-direction: column; justify-content: flex-end; text-decoration: none;';
+
+    // Romanian classics. Every author died more than 70 years ago.
+    var roData = [
+      { title: 'Amintiri din copilărie', author: 'Ion Creangă', surname: 'Creangă', life: '1837–1889', year: 1881, kind: 'Memoir', blurb: 'Creangă remembers growing up in the village of Humulești: school, mischief and his mother’s warnings.' },
+      { title: 'Povești', author: 'Ion Creangă', surname: 'Creangă', life: '1837–1889', year: 1890, kind: 'Fairy tales', blurb: 'Fairy tales including “Povestea lui Harap-Alb”, where a young prince is tricked into becoming a servant and must win back his place.' },
+      { title: 'Luceafărul', author: 'Mihai Eminescu', surname: 'Eminescu', life: '1850–1889', year: 1883, kind: 'Poem', blurb: 'A long poem about the Evening Star, who falls in love with a young princess named Cătălina.' },
+      { title: 'Poezii', author: 'Mihai Eminescu', surname: 'Eminescu', life: '1850–1889', year: 1884, kind: 'Poetry', blurb: 'Eminescu’s best-known poems, from “Floare albastră” to “Glossă”.' },
+      { title: 'O scrisoare pierdută', author: 'I. L. Caragiale', surname: 'Caragiale', life: '1852–1912', year: 1884, kind: 'Play', blurb: 'A comedy about local politicians who fight over a lost love letter in the days before an election.' },
+      { title: 'Moara cu noroc', author: 'Ioan Slavici', surname: 'Slavici', life: '1848–1925', year: 1881, kind: 'Novella', blurb: 'An innkeeper takes over a busy inn at a crossroads and is slowly drawn into the crimes of a local gang leader.' },
+      { title: 'Ion', author: 'Liviu Rebreanu', surname: 'Rebreanu', life: '1885–1944', year: 1920, kind: 'Novel', blurb: 'A poor young man in a Transylvanian village wants land more than anything, and marries to get it.' },
+      { title: 'Balade și idile', author: 'George Coșbuc', surname: 'Coșbuc', life: '1866–1918', year: 1893, kind: 'Poetry', blurb: 'Coșbuc’s first book of poems: village life, love and old ballads.' },
+      { title: 'Mara', author: 'Ioan Slavici', surname: 'Slavici', life: '1848–1925', year: 1894, kind: 'Novel', blurb: 'A widow who sells at the market saves every coin for her two children.' },
+      { title: 'Pasteluri', author: 'Vasile Alecsandri', surname: 'Alecsandri', life: '1821–1890', year: 1868, kind: 'Poetry', blurb: 'Short poems about the seasons and the countryside around the poet’s home at Mircești.' },
+      { title: 'Apus de soare', author: 'Barbu Ștefănescu Delavrancea', surname: 'Delavrancea', life: '1858–1918', year: 1909, kind: 'Play', blurb: 'A play about the last days of Stephen the Great, prince of Moldavia.' },
+      { title: 'Alexandru Lăpușneanul', author: 'Costache Negruzzi', surname: 'Negruzzi', life: '1808–1868', year: 1840, kind: 'Short story', blurb: 'A cruel prince of Moldavia returns to the throne and takes his revenge on the boyars.' },
+      { title: 'Ciocoii vechi și noi', author: 'Nicolae Filimon', surname: 'Filimon', life: '1819–1865', year: 1863, kind: 'Novel', blurb: 'Often called the first Romanian novel: a young man climbs to power by any means he can find.' },
+      { title: 'Pădurea spânzuraților', author: 'Liviu Rebreanu', surname: 'Rebreanu', life: '1885–1944', year: 1922, kind: 'Novel', blurb: 'An officer in the Austro-Hungarian army in the First World War is sent to fight against Romanians.' },
+      { title: 'Răzvan și Vidra', author: 'B. P. Hasdeu', surname: 'Hasdeu', life: '1838–1907', year: 1867, kind: 'Play', blurb: 'A man born into slavery rises to become prince of Moldavia.' },
+      { title: 'Viața la țară', author: 'Duiliu Zamfirescu', surname: 'Zamfirescu', life: '1858–1922', year: 1898, kind: 'Novel', blurb: 'Life on a country estate, and the people who own it and work on it.' },
+      { title: 'Pe drumuri de munte', author: 'Calistrat Hogaș', surname: 'Hogaș', life: '1847–1917', year: 1912, kind: 'Travel writing', blurb: 'Stories from long walks through the mountains of Moldavia.' },
+      { title: 'Poezii', author: 'Octavian Goga', surname: 'Goga', life: '1881–1938', year: 1905, kind: 'Poetry', blurb: 'Poems about the villages of Transylvania and the people who lived there.' },
+      { title: 'Balade vesele și triste', author: 'George Topîrceanu', surname: 'Topîrceanu', life: '1886–1937', year: 1916, kind: 'Poetry', blurb: 'Funny and sad poems, many of them parodies.' },
+      { title: 'Craii de Curtea-Veche', author: 'Mateiu Caragiale', surname: 'Caragiale', life: '1885–1936', year: 1929, kind: 'Novel', blurb: 'Three men drift through the night life of old Bucharest.' }
+    ];
+    // The whole Romanian classics shelf has more books than one row shows (the See all page lists every one).
+    var roTotal = 24;
+    // World classics, in their original English.
+    var enData = [
+      { title: 'Pride and Prejudice', author: 'Jane Austen', surname: 'Austen', life: '1775–1817', year: 1813, kind: 'Novel', blurb: 'Elizabeth Bennet and Mr Darcy judge each other badly at first, then slowly change their minds.' },
+      { title: 'Frankenstein', author: 'Mary Shelley', surname: 'Shelley', life: '1797–1851', year: 1818, kind: 'Novel', blurb: 'A young scientist builds a living creature, then runs away from it. Left alone, the creature turns against him.' },
+      { title: 'A Christmas Carol', author: 'Charles Dickens', surname: 'Dickens', life: '1812–1870', year: 1843, kind: 'Novella', blurb: 'On Christmas Eve, a mean old businessman called Scrooge is visited by three ghosts.' },
+      { title: 'Alice’s Adventures in Wonderland', author: 'Lewis Carroll', surname: 'Carroll', life: '1832–1898', year: 1865, kind: 'Novel', blurb: 'Alice follows a white rabbit down a hole and lands in a world where nothing follows the usual rules.' },
+      { title: 'The Adventures of Sherlock Holmes', author: 'Arthur Conan Doyle', surname: 'Doyle', life: '1859–1930', year: 1892, kind: 'Short stories', blurb: 'Twelve detective stories in which Holmes and Dr Watson solve cases in London.' }
+    ];
+
+    var langs = [['all', 'All'], ['ro', 'Română'], ['en', 'English']];
+    var langChips = langs.map(function (l) {
+      var on = st.lang === l[0];
+      return {
+        label: l[1], pressed: on,
+        pick: function () { self.setState({ lang: l[0] }); },
+        // Pill system (17 Oct): visible edge, plum with a check when selected.
+        style: 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+      + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: #FFFFFF; color: #481C5F; border: 1px solid #8E7B99;')
+      };
+    });
+
+    // Designs are picked after sorting, so two neighbours on a shelf never match.
+    // One line of at most 20 books; when the shelf has more, the row ends with a View more card.
+    var MAX = 20;
+    var shelf = function (list) {
+      list = list.slice(0, MAX);
+      var keys = self.rowCovers(list.map(function (b) { return b.title; }));
+      return list.map(function (b, i) {
+        var look = self.coverLook(keys[i], { t: '21px', lh: 1.04, p: 12, gap: 6, title: b.title, inner: 174 });
+        return { title: b.title, author: b.author, life: b.life, kind: b.kind, blurb: b.blurb,
+          cover: coverStyle, cls: look.cls, boxStyle: look.box, tStyle: look.title, barStyle: look.bar, pStyle: look.pen };
+      });
+    };
+
+    return {
+      langChips: langChips,
+      sort: st.sort,
+      setSort: function (e) { self.setState({ sort: e && e.target ? e.target.value : 'popular' }); },
+      showRo: st.lang !== 'en', showEn: st.lang !== 'ro',
+      ro: shelf(this.sorted(roData, st.sort)),
+      en: shelf(this.sorted(enData, st.sort)),
+      roMore: roTotal > MAX, roMoreLabel: 'View all ' + roTotal + ' Romanian classics', roMoreText: 'See all ' + roTotal + ' Romanian classics.',
+      enMore: enData.length > MAX, enMoreLabel: 'View all ' + enData.length + ' world classics', enMoreText: 'See all ' + enData.length + ' world classics.',
+      // View more card at the end of a row: the same size as a book card, opens the See all page.
+      moreCard: 'flex: none; width: 210px; scroll-snap-align: start; text-decoration: none; color: inherit; display: flex; flex-direction: column',
+      moreBox: 'height: 280px; box-sizing: border-box; padding: 20px; border-radius: 16px; border: 2px dashed #B9A9C2; background: #FFFFFF; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px',
+      moreDot: 'width: 52px; height: 52px; border-radius: 999px; background: #481C5F; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center',
+      moreTitle: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F",
+      moreText: 'font-size: 14px; line-height: 1.5; color: #5C4965',
+      refRo: function (el) { self.shelves.ro = el; if (el) setTimeout(function () { self.measureShelf('ro'); }, 0); },
+      scrollRo: function () { self.measureShelf('ro'); }, maskRo: self.mask('ro'),
+      refEn: function (el) { self.shelves.en = el; if (el) setTimeout(function () { self.measureShelf('en'); }, 0); },
+      scrollEn: function () { self.measureShelf('en'); }, maskEn: self.mask('en'),
+      // Scroll arrows per row: shown only when the row overflows; disabled at the end they point to (Robert, 17 Oct).
+      ar: { ro: self.arrows('ro'), en: self.arrows('en') },
+      prevRo: function () { self.scrollShelf('ro', -1); }, nextRo: function () { self.scrollShelf('ro', 1); },
+      prevEn: function () { self.scrollShelf('en', -1); }, nextEn: function () { self.scrollShelf('en', 1); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Notifications</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}.tmc-rows>div{padding:12px 0;border-top:1px solid #DED3E4}.tmc-rows>div:first-of-type{border-top:0;padding-top:0}
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+/* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
+@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+/* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
+.tmc-chip{position:relative}
+.tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
+.tmc-chip:hover:not([aria-pressed="true"]):not([aria-selected="true"]):not([aria-checked="true"]):not([aria-expanded="true"]):not(.is-on):not(:has(input:checked)){background:#F1EAF4 !important}
+.tmc-chip:focus-visible,.tmc-chip:has(input:focus-visible){outline:2px solid #672786;outline-offset:2px}
+.tmc-chip .tmc-chk{display:none;flex:none}
+.tmc-chip[aria-pressed="true"] .tmc-chk,.tmc-chip[aria-selected="true"] .tmc-chk,.tmc-chip[aria-checked="true"] .tmc-chk,.tmc-chip.is-on .tmc-chk,.tmc-chip:has(input:checked) .tmc-chk{display:inline-block}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; overflow-x: clip; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Floating island nav: the bell is the current page here -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Main" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Discover.dc.html" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 30px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Home</a>
+        <a href="Discover.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Discover</a>
+        <a href="Library.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Library</a>
+        <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
+        <a href="Messages.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Messages<span aria-label="2 unread" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700">2</span></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <label style="display: inline-flex; align-items: center"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle; margin-right: 4px"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 12px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <a href="Notifications.dc.html" aria-current="page" aria-label="{{bellLabel}}" style="position: relative; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; background: #F1EAF4; box-shadow: inset 0 -2px 0 #E6C24C; color: #481C5F; cursor: pointer"><img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="26" height="26" style="flex: none; display: block; width: 26px; height: 26px"><sc-if value="{{hasUnread}}" hint-placeholder-val="{{true}}"><span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 50%; background: #E6C24C; border: 2px solid #FFFFFF"></span></sc-if></a>
+        <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><span aria-hidden="true" style="flex: none; width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/43adcaa63658a9f9f04c831dedc54baf" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span>Write</a>
+        <a href="Settings.dc.html" aria-label="Your account and settings" style="width: 44px; height: 44px; border: 0; background: transparent; padding: 0; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer"><span style="width: 36px; height: 36px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">LP</span></a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Page header with the one bulk action -->
+    <header style="position: relative; padding: 56px 0 28px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; animation: tmcRise 0.5s ease-out both">
+<img data-doodle="background" data-doodle-on="What’s new" src="/_blob/c23111eab51687499254aff73a9f8fa8" alt="" aria-hidden="true" class="tmc-dd-wide" width="120" height="120" style="position: absolute; top: 20px; right: 430px; width: 120px; height: 120px; transform: rotate(6deg); pointer-events: none; user-select: none; z-index: 0">
+<img data-doodle="background" data-doodle-on="What’s new" src="/_blob/c7264d2c28197ec223c423400809ee92" alt="" aria-hidden="true" class="tmc-dd-wide" width="54" height="54" style="position: absolute; top: 96px; left: 400px; width: 54px; height: 54px; transform: rotate(-8deg); pointer-events: none; user-select: none; z-index: 0">
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Notifications</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">What’s new</h1>
+        <p role="status" style="margin: 0; font-size: 18px; line-height: 1.6; color: #5C4965">{{summary}}</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+        <a href="Settings.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 15px; font-weight: 600; text-decoration: none"><img src="/_blob/86d5d1ab40063c9c460579d5ad428d06" alt="" aria-hidden="true" width="22" height="22" style="flex: none; display: block; width: 22px; height: 22px">Settings</a>
+        <button type="button" onClick="{{markAll}}" disabled="{{noUnread}}" style="{{markAllStyle}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 7 17l-5-5"></path><path d="m22 10-7.5 7.5L13 16"></path></svg>Mark all as read</button>
+      </div>
+    </header>
+
+    <!-- Filters -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; animation: tmcRise 0.5s 0.05s ease-out both">
+      <div role="group" aria-label="Show" style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="5">
+          <button type="button" class="tmc-chip" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}" style="{{f.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{f.label}}<span style="{{f.countStyle}}">{{f.count}}</span></button>
+        </sc-for>
+      </div>
+      <button type="button" role="switch" aria-checked="{{unreadOnlyStr}}" onClick="{{toggleUnreadOnly}}" style="display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: #26142E; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Unread only<span aria-hidden="true" style="{{switchTrack}}"><span style="{{switchKnob}}"></span></span></button>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+      <!-- The list, grouped by day -->
+      <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 28px; animation: tmcRise 0.5s 0.1s ease-out both">
+        <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+          <section aria-label="{{g.day}}" style="display: flex; flex-direction: column; gap: 10px">
+            <h2 style="font-family: 'Cutive', 'Courier New', serif; margin: 0; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">{{g.dayCaps}}</h2>
+            <ul style="list-style: none; margin: 0; padding: 0; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; overflow: hidden; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
+              <sc-for list="{{g.items}}" as="n" hint-placeholder-count="3">
+                <li style="{{n.rowStyle}}">
+                  <span aria-hidden="true" style="{{n.iconStyle}}">
+                    <sc-if value="{{n.isStory}}" hint-placeholder-val="{{true}}"><img src="/_blob/a7c7799609e54821cf904f7c954834d0" alt="" aria-hidden="true" width="24" height="24" style="flex: none; display: block; width: 24px; height: 24px"></sc-if>
+                    <sc-if value="{{n.isReply}}" hint-placeholder-val="{{false}}"><img src="/_blob/e14867216e97778f2dc03dbb8a120de2" alt="" aria-hidden="true" width="24" height="24" style="flex: none; display: block; width: 24px; height: 24px"></sc-if>
+                    <sc-if value="{{n.isFollow}}" hint-placeholder-val="{{false}}"><img src="/_blob/d3fb44b1b558f51871c870cf45b461ba" alt="" aria-hidden="true" width="24" height="24" style="flex: none; display: block; width: 24px; height: 24px"></sc-if>
+                    <sc-if value="{{n.isStaff}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="flex: none; width: 32px; height: 32px; border-radius: 50%; background: #FBF7EC; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" width="24" height="24" style="display: block; width: 24px; height: 24px"></span></sc-if>
+                  </span>
+                  <a href="{{n.href}}" onClick="{{n.read}}" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; color: inherit; text-decoration: none">
+                    <span style="font-size: 16px; line-height: 1.5; color: #26142E"><b>{{n.who}}</b> {{n.what}}</span>
+                    <sc-if value="{{n.hasQuote}}" hint-placeholder-val="{{false}}"><span style="font-size: 15px; line-height: 1.55; color: #5C4965">“{{n.quote}}”</span></sc-if>
+                    <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 13px; color: #6B5A73">
+                      <span>{{n.when}}</span>
+                      <sc-if value="{{n.hasGrouped}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC; font-size: 13px; font-weight: 700; white-space: nowrap">{{n.grouped}}</span></sc-if>
+                      <sc-if value="{{n.locked}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 13px; font-weight: 700; white-space: nowrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Always on</span></sc-if>
+                      <span style="font-weight: 600; color: #672786">{{n.action}}</span>
+                    </span>
+                  </a>
+                  <sc-if value="{{n.unread}}" hint-placeholder-val="{{false}}"><span aria-label="Unread" style="flex: none; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: #E6C24C; box-shadow: 0 0 0 2px #FFFFFF"></span></sc-if>
+                </li>
+              </sc-for>
+            </ul>
+          </section>
+        </sc-for>
+
+        <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+          <div style="position: relative; padding: 48px 32px; background: #FFFFFF; border: 1px dashed #B9A9C2; border-radius: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/24a7ac8f2dd38b86c302b928d2358327" alt="" aria-hidden="true" class="tmc-dd-lg" width="96" height="96" style="position: absolute; bottom: 12px; right: 18px; width: 96px; height: 96px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+            <img src="/_blob/209b6799fccfbd6e75b082c4f47b9024" alt="" aria-hidden="true" width="56" height="56" style="flex: none; display: block; width: 56px; height: 56px">
+            <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #481C5F">You’re all caught up</h2>
+            <p style="margin: 0; max-width: 420px; font-size: 16px; line-height: 1.6; color: #5C4965">New chapters, replies and follows will show up here.</p>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- Side: how you're told, and what can't be switched off -->
+      <aside aria-label="About notifications" style="position: relative; flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 20px; animation: tmcRise 0.5s 0.15s ease-out both">
+<img data-doodle="widget" data-doodle-on="About notifications" src="/_blob/36b54e06640486c6a06dbc26c16ecb5d" alt="" aria-hidden="true" class="tmc-dd-lg" width="60" height="60" style="position: absolute; bottom: -70px; left: 24px; width: 60px; height: 60px; transform: rotate(-10deg); pointer-events: none; user-select: none; z-index: 0">
+        <section aria-labelledby="how-h" style="position: relative; padding: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 14px">
+<img data-doodle="widget" data-doodle-on="Your choices" src="/_blob/86cce0664059fb540ee7ee3da590e514" alt="" aria-hidden="true" class="tmc-dd-lg" width="70" height="70" style="position: absolute; top: -50px; right: 150px; width: 70px; height: 70px; transform: rotate(6deg); pointer-events: none; user-select: none; z-index: 0">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">How you’re told</span>
+          <h2 id="how-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 24px; color: #481C5F">Your choices</h2>
+          <dl class="tmc-rows" style="margin: 0; display: flex; flex-direction: column; gap: 12px; font-size: 15px">
+            <div style="display: flex; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #EFE8F2"><dt style="color: #5C4965">New chapters</dt><dd style="margin: 0 0 0 auto; text-align: right; font-weight: 600; color: #26142E">Here and by email</dd></div>
+            <div style="display: flex; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #EFE8F2"><dt style="color: #5C4965">Replies</dt><dd style="margin: 0 0 0 auto; text-align: right; font-weight: 600; color: #26142E">Here, daily email</dd></div>
+            <div style="display: flex; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #EFE8F2"><dt style="color: #5C4965">Follows</dt><dd style="margin: 0 0 0 auto; text-align: right; font-weight: 600; color: #26142E">Here only</dd></div>
+            <div style="display: flex; justify-content: space-between; gap: 12px"><dt style="color: #5C4965">Browser alerts</dt><dd style="margin: 0 0 0 auto; text-align: right; font-weight: 600; color: #26142E">Quiet 22:00 to 07:00</dd></div>
+          </dl>
+          <a href="Settings.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600">Change notification settings</a>
+        </section>
+
+        <section aria-labelledby="always-h" style="padding: 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 24px; display: flex; flex-direction: column; gap: 10px">
+          <h2 id="always-h" style="margin: 0; display: flex; align-items: center; gap: 10px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E"><img src="/_blob/64266e3ee4beebf7d32232550d945d4d" alt="" aria-hidden="true" width="26" height="26" style="flex: none; display: block; width: 26px; height: 26px">Decisions about your posts</h2>
+          <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">When a moderator makes a decision about something you posted, you always hear about it here, with the reasons and how to appeal. You can’t switch these off.</p>
+          <a href="MyReports.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600">My reports and decisions</a>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Page footer -->
+  <footer style="max-width: 1280px; margin: 80px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="position: relative; border-top: 1px solid #DED3E4; padding-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/c9a4e5b50989a61aafd82e0acc9ab805" alt="" aria-hidden="true" class="tmc-dd-lg" width="62" height="62" style="position: absolute; top: -76px; right: 34%; width: 62px; height: 62px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+      <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 14px">
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Terms</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Privacy</a>
+        <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Accessibility</a>
+        <a href="Settings.dc.html#contact-us" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Contact us</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Report without an account</a>
+      </nav>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; font-size: 13px; color: #6B5A73">
+        <span>An app by The Magic Coffin</span>
+        <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5C4965"><span>Language</span><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select aria-label="Language" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 40px; padding: 0 36px 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 600; color: #26142E; cursor: pointer"><option value="en">English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1697}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Three unread items, matching the bell badge in the nav on other screens.
+    this.state = { filter: 'all', unreadOnly: false, read: {}, lang: 'en' };
+  }
+
+  // Pill system (17 Oct): filter chip with a visible #8E7B99 edge; selected is plum with a check.
+  chip(on) {
+    return 'position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; '
+      + (on ? 'background: #481C5F; color: #FFFFFF; border: 1px solid #481C5F;' : 'background: #FFFFFF; color: #481C5F; border: 1px solid #8E7B99;');
+  }
+
+  renderVals() {
+    var self = this, st = this.state;
+
+    // type: stories | replies | follows | staff. "locked" = can't be switched off (moderation decisions).
+    var all = [
+      { id: 1, day: 'Today', type: 'stories', who: 'inkwolf', what: 'published Chapter 15 of The Salt Mine Choir.', when: '2 hours ago', href: 'Reader.dc.html', action: 'Read now', unread: true },
+      { id: 2, day: 'Today', type: 'replies', who: 'ilinca.r, corbu and 10 others', what: 'reacted to your comment on Chapter 14 of The Salt Mine Choir.', when: '3 hours ago', grouped: '12 reactions in one hour', href: 'Reader.dc.html', action: 'See comment', unread: true },
+      { id: 3, day: 'Today', type: 'replies', who: 'matei.writes', what: 'replied to your post in “How do you start a chapter without a prologue?”', quote: 'Starting in the middle of a conversation works for me too. The reader catches up.', when: '5 hours ago', href: 'Thread.dc.html', action: 'Reply', unread: true },
+      { id: 4, day: 'Yesterday', type: 'staff', who: 'Moderation team:', what: 'someone reported your comment on Small Rooms. A moderator checked it and took no action, so your comment stays up.', when: 'Yesterday at 16:20', href: 'MyReports.dc.html', action: 'Read the reasons', locked: true },
+      { id: 5, day: 'Yesterday', type: 'follows', who: 'bea.writes and 4 others', what: 'started following you.', when: 'Yesterday', href: 'Profile.dc.html', action: 'See who' },
+      { id: 6, day: 'Yesterday', type: 'stories', who: 'matei.writes', what: 'published Part 4 of Inside the Student Housing Waitlist.', when: 'Yesterday', href: 'Reader.dc.html', action: 'Read now' },
+      { id: 7, day: 'Yesterday', type: 'staff', who: 'Ghemotoc:', what: 'your data download is ready. You’ll need to log in to get it, and the link stops working on 22 October.', when: 'Yesterday', href: 'Settings.dc.html', action: 'Download' },
+      { id: 8, day: 'Earlier this week', type: 'follows', who: 'corbu', what: 'started following your story The Girl Who Fixed Radios.', when: 'Tuesday', href: 'Story.dc.html', action: 'Open story' },
+      { id: 9, day: 'Earlier this week', type: 'staff', who: 'Ghemotoc:', what: 'you have a new certificate for the Autumn short story contest (Participant). Add the name you want printed on it.', when: 'Monday', href: 'Settings.dc.html', action: 'Open certificate' },
+      { id: 10, day: 'Earlier this week', type: 'replies', who: 'Ana Radu', what: 'mentioned you in “This week’s prompt: a letter you never sent”.', quote: '@lia.writes do one from Ana to her grandad, it would fit so well', when: 'Monday', href: 'Thread.dc.html', action: 'See post' }
+    ];
+
+    var isUnread = function (n) { return !!n.unread && !st.read[n.id]; };
+    var unreadCount = all.filter(isUnread).length;
+
+    var icon = {
+      stories: ['#F1EAF4', '#481C5F'], replies: ['#E8EDF7', '#2E4A8C'],
+      follows: ['#E3EFE8', '#2F6B4F'], staff: ['#2A0E33', '#FBF7EC']
+    };
+
+    var filterDefs = [['all', 'All'], ['replies', 'Replies'], ['follows', 'Follows'], ['stories', 'Stories'], ['staff', 'Staff']];
+    var filters = filterDefs.map(function (f) {
+      var on = st.filter === f[0];
+      var n = f[0] === 'all' ? all.length : all.filter(function (x) { return x.type === f[0]; }).length;
+      return {
+        label: f[1], count: n, pressed: on ? 'true' : 'false', style: self.chip(on),
+        countStyle: on ? 'display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #E6C24C; color: #26142E; font-size: 12px; font-weight: 700' : 'display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700',
+        pick: function () { self.setState({ filter: f[0] }); }
+      };
+    });
+
+    var shown = all.filter(function (n) {
+      return (st.filter === 'all' || n.type === st.filter) && (!st.unreadOnly || isUnread(n));
+    });
+
+    var days = ['Today', 'Yesterday', 'Earlier this week'];
+    var groups = days.map(function (d) {
+      var items = shown.filter(function (n) { return n.day === d; }).map(function (n, i) {
+        var un = isUnread(n), c = icon[n.type];
+        return {
+          who: n.who, what: n.what, when: n.when, href: n.href, action: n.action,
+          quote: n.quote || '', hasQuote: !!n.quote, grouped: n.grouped || '', hasGrouped: !!n.grouped, locked: !!n.locked, unread: un,
+          isStory: n.type === 'stories', isReply: n.type === 'replies', isFollow: n.type === 'follows', isStaff: n.type === 'staff',
+          rowStyle: 'display: flex; align-items: flex-start; gap: 16px; padding: 18px 22px; ' + (i ? 'border-top: 1px solid #EFE8F2; ' : '') + (un ? 'background: #FBF7FC;' : 'background: #FFFFFF;'),
+          iconStyle: 'flex: none; width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: ' + c[0] + '; color: ' + c[1] + ';',
+          read: function () { var r = Object.assign({}, st.read); r[n.id] = true; self.setState({ read: r }); }
+        };
+      });
+      return { day: d, dayCaps: d, items: items };
+    }).filter(function (g) { return g.items.length > 0; });
+
+    var langPill = function (on) {
+      return 'min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; font-family: inherit; font-size: 13px; cursor: pointer; '
+        + (on ? 'background: #481C5F; color: #FFFFFF; font-weight: 700;' : 'background: transparent; color: #5C4965; font-weight: 500;');
+    };
+
+    return {
+      summary: unreadCount ? (unreadCount + ' new since you last looked.') : 'You’re all caught up.',
+      bellLabel: unreadCount ? ('Notifications, ' + unreadCount + ' new') : 'Notifications',
+      hasUnread: unreadCount > 0, noUnread: unreadCount === 0,
+      markAllStyle: 'display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 22px; border: 0; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 600; '
+        + (unreadCount ? 'background: #2A0E33; color: #FBF7EC; cursor: pointer;' : 'background: #E9E2EC; color: #5C4965; cursor: default;'),
+      markAll: function () {
+        var r = Object.assign({}, st.read);
+        all.forEach(function (n) { r[n.id] = true; });
+        self.setState({ read: r });
+      },
+      filters: filters, groups: groups, empty: groups.length === 0,
+      unreadOnlyStr: st.unreadOnly ? 'true' : 'false',
+      toggleUnreadOnly: function () { self.setState({ unreadOnly: !st.unreadOnly }); },
+      switchTrack: 'position: relative; width: 44px; height: 26px; border-radius: 999px; transition: background 0.2s; background: ' + (st.unreadOnly ? '#481C5F' : '#CBBBD3') + ';',
+      switchKnob: 'position: absolute; top: 3px; left: ' + (st.unreadOnly ? '21px' : '3px') + '; width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF; transition: left 0.2s;',
+      ro: st.lang === 'ro' ? 'true' : 'false', en: st.lang === 'en' ? 'true' : 'false',
+      roStyle: langPill(st.lang === 'ro'), enStyle: langPill(st.lang === 'en'),
+      setRo: function () { self.setState({ lang: 'ro' }); }, setEn: function () { self.setState({ lang: 'en' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
