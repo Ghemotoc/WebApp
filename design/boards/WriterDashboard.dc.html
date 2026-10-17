@@ -15,7 +15,8 @@ a{color:#672786}a:hover{color:#481C5F}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
 @keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
-.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 599px){.tmc-dd-hide{display:none !important}}
 /* Automatic covers (S1-E3-13): the 16 approved backgrounds */
 .tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
 .tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
@@ -78,12 +79,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
         <a href="Editor.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-weight: 600; font-size: 15px; text-decoration: none; box-sizing: border-box">Continue draft</a>
         <a href="NewStory.dc.html" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 26px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 15px; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>New story</a>
       </div>
-      <img data-doodle="background" data-doodle-on="Your writing" src="/_blob/093d3efb301eb483969096d78322d770" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 14px; right: 330px; width: 136px; transform: rotate(-6deg)">
+      <img data-doodle="background" data-doodle-on="Your writing" src="/_blob/093d3efb301eb483969096d78322d770" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: 14px; right: 330px; width: 136px; transform: rotate(-6deg)">
     </header>
 
     <!-- Totals for all stories -->
     <section aria-labelledby="totals-title" style="position: relative; animation: tmcRise 0.5s 0.05s ease-out both">
-      <img data-doodle="background" data-doodle-on="How readers respond" src="/_blob/36b54e06640486c6a06dbc26c16ecb5d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -24px; left: 330px; width: 64px; transform: rotate(10deg)">
+      <img data-doodle="background" data-doodle-on="How readers respond" src="/_blob/36b54e06640486c6a06dbc26c16ecb5d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: -24px; left: 330px; width: 64px; transform: rotate(10deg)">
       <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
         <div style="display: flex; flex-direction: column; gap: 6px">
           <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">All your stories</span>
@@ -141,7 +142,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       </section>
 
       <section aria-labelledby="drafts-title" style="position: relative; padding: 24px 26px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
-        <img data-doodle="widget" data-doodle-on="Not published yet" src="/_blob/3418b6b2aefaca380d94789f7d9fb7f4" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -52px; right: 28px; width: 88px; transform: rotate(7deg)">
+        <img data-doodle="widget" data-doodle-on="Not published yet" src="/_blob/3418b6b2aefaca380d94789f7d9fb7f4" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -52px; right: 28px; width: 88px; transform: rotate(7deg)">
         <div style="display: flex; flex-direction: column; gap: 6px">
           <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Drafts and scheduled</span>
           <h2 id="drafts-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">Not published yet</h2>
@@ -235,7 +236,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
       <!-- Story 2: no published chapter, so only Lia can see it -->
       <article aria-labelledby="st2" style="position: relative; margin-top: 20px; padding: 24px 26px; display: flex; flex-wrap: wrap; gap: 22px; align-items: center; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
-        <img data-doodle="background" data-doodle-on="The Weather Station" src="/_blob/98cf6729b377176a6e850cfe42cbb1ab" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -44px; right: 250px; width: 86px; transform: rotate(-8deg)">
+        <img data-doodle="background" data-doodle-on="The Weather Station" src="/_blob/98cf6729b377176a6e850cfe42cbb1ab" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: -44px; right: 250px; width: 86px; transform: rotate(-8deg)">
         <div aria-hidden="true" class="tmc-cv tmc-cv-sky" style="flex: none; width: 96px; height: 130px; box-sizing: border-box; padding: 10px; border-radius: 16px; display: flex; align-items: flex-end"><span style="{{cv.weather}}">The Weather Station<span style="display: block; width: 22px; height: 2px; border-radius: 2px; background: #672786"></span></span></div>
         <div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
           <h3 id="st2" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; line-height: 1.1; color: #26142E">The Weather Station</h3>
@@ -248,7 +249,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
     <!-- Latest comments -->
     <section aria-labelledby="comments-title" style="position: relative; margin-top: 56px; animation: tmcRise 0.5s 0.2s ease-out both">
-      <img data-doodle="background" data-doodle-on="Latest on your chapters" src="/_blob/59feb281d9ed9664c1ef19c97f11612f" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -8px; right: 170px; width: 86px; transform: rotate(-6deg)">
+      <img data-doodle="background" data-doodle-on="Latest on your chapters" src="/_blob/59feb281d9ed9664c1ef19c97f11612f" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: -8px; right: 170px; width: 86px; transform: rotate(-6deg)">
       <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px">
         <div style="display: flex; flex-direction: column; gap: 6px">
           <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Comments</span>
@@ -273,7 +274,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
   <!-- Small page footer -->
   <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
-    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/24a7ac8f2dd38b86c302b928d2358327" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -84px; right: clamp(16px, 4vw, 64px); width: 84px">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/24a7ac8f2dd38b86c302b928d2358327" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -84px; right: clamp(16px, 4vw, 64px); width: 84px">
     <div style="padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6B5A73">
       <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
         <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Help</a>

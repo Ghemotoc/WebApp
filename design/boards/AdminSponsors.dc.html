@@ -326,7 +326,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
         </div>
         <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #5C4965">
           <li>“Free” means nobody has booked it: the ad network fills it if it’s on, otherwise a house ad does.</li>
-          <li>Discover’s featured slider is not an ad slot. Its contest slide carries a “Sponsored by” credit only, so Discover keeps 2 slots.</li>
+          <li>Discover’s featured slider is not an ad slot. When a contest runs, its slide carries a “Sponsored by” credit only, so Discover keeps 2 slots.</li>
           <li><span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px"><span>Contest landing page banner: should a sponsored contest’s page show another sponsor or an ad-network ad?</span><span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A">OPEN</span></span></li>
         </ul>
       </div>
@@ -340,7 +340,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
           </div>
           <div style="display: flex; flex-direction: column; gap: 6px">
             <label for="bk-camp" style="font-size: 14px; font-weight: 600; color: #26142E">Campaign (approved only)</label>
-            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="bk-camp" onChange="{{pl.onCamp}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option value="c1" selected>New young adult books · [Partner]</option><option value="c2">Poetry, sponsored by [Partner]</option><option value="c4">The First Chapter contest · [Partner]</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+            <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="bk-camp" onChange="{{pl.onCamp}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E"><option value="c1" selected>New young adult books · [Partner]</option><option value="c2">Poetry, sponsored by [Partner]</option><option value="c4">[Contest name] · [Partner]</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
             <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Campaigns waiting for review or sent back can’t be booked.</span>
           </div>
           <div style="display: flex; flex-direction: column; gap: 6px">
@@ -639,7 +639,7 @@ class Component extends DCLogic {
     var SLOTS = [["discover-wide", "Discover wide banner", "Discover · 970 × 120"], ["discover-card", "Discover sponsored card", "Discover, Popular shelf · card"], ["search-portrait", "Search portrait", "Search · 300 × 600, desktop"], ["classics-wide", "Classics wide banner", "Classics · 970 × 120"], ["seeall-wide", "See all wide banner", "See all · 970 × 120"], ["story-wide", "Story page wide banner", "Story page · 970 × 120"], ["apponly-wide", "App-only story banner", "App-only story · 970 × 120"], ["chapter-end", "Chapter end banner", "Chapter reader · below the text"], ["teaser-wide", "Shared-link page banner", "Shared link · 970 × 120"], ["library-wide", "Library wide banner", "Library · 970 × 120"], ["forums-wide", "Forums wide banner", "Forums · 970 × 120"], ["forums-side", "Forums side box", "Forums · 300 × 250, desktop"], ["thread-below", "Thread below reply box", "Forum thread · wide"], ["thread-side", "Thread side box", "Forum thread · 300 × 600, desktop"], ["space-wide", "Space wide banner", "Public space · 970 × 120"], ["profile-wide", "Profile wide banner", "Writer profile · 970 × 120"], ["contest-wide", "Contest landing page banner", "Contest page · 970 × 120, new"]];
     var WEEKS = ["19 Oct", "26 Oct", "2 Nov", "9 Nov", "16 Nov", "23 Nov"];
     var WEEK_ENDS = ["25 Oct", "1 Nov", "8 Nov", "15 Nov", "22 Nov", "29 Nov"];
-    var CAMPS = { c1: 'New young adult books', c2: 'Poetry, sponsored by [Partner]', c4: 'The First Chapter contest' };
+    var CAMPS = { c1: 'New young adult books', c2: 'Poetry, sponsored by [Partner]', c4: '[Contest name]' };
     // House ads scheduled into slots (example): slot -> weeks.
     var HOUSE = { 'discover-wide': [2, 3], 'story-wide': [0, 1], 'forums-wide': [4, 5], 'contest-wide': [0, 1, 2, 3, 4, 5] };
     var tone = {
@@ -658,7 +658,7 @@ class Component extends DCLogic {
         cells: WEEKS.map(function (wk, w) {
           var b = bookedAt(sl[0], w), kind, what;
           if (b) { kind = 'Booked'; what = '[Partner] · ' + CAMPS[b.camp]; }
-          else if ((HOUSE[sl[0]] || []).indexOf(w) >= 0) { kind = 'House ad'; what = 'The First Chapter contest'; }
+          else if ((HOUSE[sl[0]] || []).indexOf(w) >= 0) { kind = 'House ad'; what = 'Romanian classics'; }
           else if (st.netOn) { kind = 'Ad network'; what = 'Free to book'; }
           else { kind = 'Free'; what = 'A house ad fills it'; }
           return { kind: kind, what: what, pillStyle: pillOf(kind) };
@@ -706,10 +706,10 @@ class Component extends DCLogic {
       hasMsg: !!st.plMsg, msg: st.plMsg ? st.plMsg.text : '',
       msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; background: ' + bg[0] + '; color: ' + bg[1] + ';',
       house: [
-        { name: 'The First Chapter contest', state: 'Running', pillStyle: pillOf('Free'),
-          en: 'Write a first chapter. The First Chapter contest opens in February 2027.',
-          ro: 'Scrie un prim capitol. Concursul Primul capitol se deschide în februarie 2027.',
-          page: '/contests/the-first-chapter', href: 'Contest.dc.html', runs: 'Any free slot, and the weeks marked “House ad” above' },
+        { name: 'Romanian classics', state: 'Running', pillStyle: pillOf('Free'),
+          en: 'Read Creangă, Eminescu and other Romanian classics, free.',
+          ro: 'Citește gratuit clasicii români: Creangă, Eminescu și alții.',
+          page: '/classics', href: 'Classics.dc.html', runs: 'Any free slot, and the weeks marked “House ad” above' },
         { name: 'Get the app', state: 'When the apps exist', pillStyle: pillOf('Ad network'),
           en: 'Get the Ghemotoc app for your computer.',
           ro: 'Descarcă aplicația Ghemotoc pentru calculator.',
@@ -744,7 +744,7 @@ class Component extends DCLogic {
       { id: 'c1', name: 'New young adult books', sponsor: '[Partner] · bookshop', type: 'Banner', slots: 'Below the chapter, in story lists', target: 'Fiction · fantasy, school life · English, Română · Romania', dates: '5 Oct to 30 Nov 2026', status: 'Live', tone: 'ok', note: 'Approved by Robert, 3 Oct', shown: '15,120' },
       { id: 'c2', name: 'Poetry, sponsored by [Partner]', sponsor: '[Partner] · publisher', type: 'Sponsored by', slots: 'Poetry category', target: 'Poetry · any tag · English, Română · Romania', dates: '1 Oct to 31 Dec 2026', status: 'Live', tone: 'ok', note: 'Approved by Robert, 29 Sep', shown: '7,140' },
       { id: 'c3', name: 'Free writing workshops for teenagers', sponsor: '[Partner] · cultural centre', type: 'Banner', slots: 'Between shelves on Discover', target: 'Any category · school life · Română · Romania', dates: '20 Oct to 20 Nov 2026', status: 'Waiting for review', tone: 'warn', note: 'In the review queue', shown: '0' },
-      { id: 'c4', name: 'The First Chapter contest', sponsor: '[Partner]', type: 'Sponsored by', slots: 'Contest page and Discover tile', target: 'Contest pages only', dates: '1 Feb to 31 Mar 2027', status: 'Scheduled', tone: 'plan', note: 'Approved by Robert, 14 Oct', shown: '0' },
+      { id: 'c4', name: '[Contest name]', sponsor: '[Partner]', type: 'Sponsored by', slots: 'Contest page and Discover tile', target: 'Contest pages only', dates: '[date] to [date]', status: 'Scheduled', tone: 'plan', note: 'Approved by Robert, 14 Oct', shown: '0' },
       { id: 'c5', name: 'Meet people near you', sponsor: '[Partner] · dating app', type: 'Banner', slots: 'In story lists', target: 'Fiction · romance · English · Romania', dates: 'Not set', status: 'Sent back', tone: 'bad', note: 'Dating isn’t allowed. Andrei Mureșan, 9 Oct', shown: '0' },
       { id: 'c6', name: 'Back to school books', sponsor: '[Partner] · bookshop', type: 'Banner', slots: 'In story lists', target: 'Essays · any tag · Română · Romania', dates: '1 to 30 Sep 2026', status: 'Ended', tone: 'neutral', note: 'Report sent 1 Oct', shown: '23,310' }
     ];
@@ -827,7 +827,7 @@ class Component extends DCLogic {
       { name: 'In story lists', rule: 'One card per shelf, labelled “Sponsored”, the same size as a story card.', now: 'New young adult books' },
       { name: 'Between shelves on Discover', rule: 'One plain strip between two shelves.', now: 'Empty until a campaign is approved' },
       { name: 'Sponsored by: a category', rule: 'A “Sponsored by” line under the category name. The list and its order don’t change.', now: 'Poetry, sponsored by [Partner]' },
-      { name: 'Sponsored by: a contest', rule: 'A “Sponsored by” credit on the contest page and its Discover tile. Never inside a class space.', now: 'The First Chapter contest, from 1 Feb 2027' }
+      { name: 'Sponsored by: a contest', rule: 'A “Sponsored by” credit on the contest page and its Discover tile. Never inside a class space.', now: '[Contest name], from [date]' }
     ];
 
     // Sponsor report: daily totals for one campaign.

@@ -17,8 +17,8 @@ mark{background:#F6E7B0;color:#26142E;border-radius:4px;padding:0 2px}
 @keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
 /* Decorative doodles: margin ones hide when the layout narrows, big ones hide on phones */
-@media (max-width: 1180px){.tmc-dd-wide{display:none !important}}
-@media (max-width: 700px){.tmc-dd-lg{display:none !important}}
+@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 599px){.tmc-dd-hide{display:none !important}}
 /* The 16 approved cover backgrounds (S1-E3-13): 5:8 drawings with no text that fill any box */
 .tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat;outline:1px solid rgba(38,20,46,0.14);outline-offset:-1px}
 .tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
@@ -103,7 +103,7 @@ mark{background:#F6E7B0;color:#26142E;border-radius:4px;padding:0 2px}
 
     <!-- Tabs -->
     <div role="tablist" aria-label="Result types" style="position: relative; margin-top: 32px; display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid #DED3E4">
-<img data-doodle="background" data-doodle-on="Result types" src="/_blob/c9a4e5b50989a61aafd82e0acc9ab805" alt="" aria-hidden="true" class="tmc-dd-lg" width="56" height="56" style="position: absolute; top: -4px; right: 8px; width: 56px; height: 56px; transform: rotate(-10deg); pointer-events: none; user-select: none; z-index: 0">
+<img data-doodle="background" data-doodle-on="Result types" src="/_blob/c9a4e5b50989a61aafd82e0acc9ab805" alt="" aria-hidden="true" class="tmc-dd-hide" width="56" height="56" style="position: absolute; top: -4px; right: 8px; width: 56px; height: 56px; transform: rotate(-10deg); pointer-events: none; user-select: none; z-index: 0">
       <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
         <button type="button" role="tab" class="tmc-chip" id="{{t.id}}" aria-selected="{{t.selected}}" aria-controls="results-panel" onClick="{{t.pick}}" style="{{t.style}}"><svg class="tmc-chk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{t.label}}<span style="{{t.countStyle}}">{{t.count}}</span></button>
       </sc-for>
@@ -222,7 +222,7 @@ mark{background:#F6E7B0;color:#26142E;border-radius:4px;padding:0 2px}
       <!-- Side card: quick links -->
       <aside aria-label="More ways to find stories" style="flex: 0 0 300px; width: 300px; max-width: 100%; display: flex; flex-direction: column; gap: 16px">
         <div style="position: relative; padding: 22px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3)">
-<img data-doodle="widget" data-doodle-on="More ways to find stories" src="/_blob/f649bab025ce88672936a60fbc596247" alt="" aria-hidden="true" class="tmc-dd-lg" width="50" height="50" style="position: absolute; top: 12px; right: 16px; width: 50px; height: 50px; transform: rotate(14deg); pointer-events: none; user-select: none; z-index: 0">
+<img data-doodle="widget" data-doodle-on="More ways to find stories" src="/_blob/f649bab025ce88672936a60fbc596247" alt="" aria-hidden="true" class="tmc-dd-hide" width="50" height="50" style="position: absolute; top: 12px; right: 16px; width: 50px; height: 50px; transform: rotate(14deg); pointer-events: none; user-select: none; z-index: 0">
           <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Popular tags</span>
           <div style="display: flex; flex-wrap: wrap; gap: 8px">
             <sc-for list="{{popularTags}}" as="g" hint-placeholder-count="6">
@@ -231,7 +231,6 @@ mark{background:#F6E7B0;color:#26142E;border-radius:4px;padding:0 2px}
           </div>
         </div>
         <a href="Classics.dc.html" style="position: relative; padding: 22px; background: #E6C24C; border-radius: 24px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: #26142E">
-<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/d83027d3dd193abcc63034afc624a538" alt="" aria-hidden="true" class="tmc-dd-lg" width="76" height="76" style="position: absolute; bottom: -40px; right: -30px; width: 76px; height: 76px; transform: rotate(-6deg); pointer-events: none; user-select: none; z-index: 0">
           <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #26142E; line-height: 1.3">Classics</span>
           <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; line-height: 1.1; color: #2A0E33">Creangă, Eminescu, Austen and more</span>
           <span style="font-size: 14px; line-height: 1.5; color: #3A2442">Public-domain stories, free to read.</span>
@@ -250,7 +249,7 @@ mark{background:#F6E7B0;color:#26142E;border-radius:4px;padding:0 2px}
     <section aria-labelledby="empty-h" style="margin-top: 56px">
       <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">When nothing matches</span>
       <div style="position: relative; margin-top: 12px; padding: 40px 32px; background: #FFFFFF; border: 1px dashed #B9A9C2; border-radius: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px">
-<img data-doodle="background" data-doodle-on="No results for “dragoni in Sinaia”" src="/_blob/3f552d14fca9f8e869d5a5cff7d36901" alt="" aria-hidden="true" class="tmc-dd-lg" width="92" height="92" style="position: absolute; top: -58px; right: 330px; width: 92px; height: 92px; transform: rotate(8deg); pointer-events: none; user-select: none; z-index: 0">
+<img data-doodle="background" data-doodle-on="No results for “dragoni in Sinaia”" src="/_blob/3f552d14fca9f8e869d5a5cff7d36901" alt="" aria-hidden="true" class="tmc-dd-hide" width="92" height="92" style="position: absolute; top: -58px; right: 330px; width: 92px; height: 92px; transform: rotate(8deg); pointer-events: none; user-select: none; z-index: 0">
         <span aria-hidden="true" style="flex: none; width: 72px; height: 72px; border-radius: 50%; background: #F1EAF4; color: #672786; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/55f422a6526ded4541da26a992747953" alt="" aria-hidden="true" width="44" height="44" style="flex: none; display: block; width: 44px; height: 44px"></span>
         <div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
           <h2 id="empty-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">No results for “dragoni in Sinaia”</h2>
@@ -265,7 +264,7 @@ mark{background:#F6E7B0;color:#26142E;border-radius:4px;padding:0 2px}
 
     <!-- Small footer -->
     <footer style="position: relative; margin-top: 72px; padding-top: 20px; border-top: 1px solid #DED3E4; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #6B5A73">
-<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/ff639f727c03e7a669b0eb223c15e3c3" alt="" aria-hidden="true" class="tmc-dd-lg" width="76" height="76" style="position: absolute; top: -66px; right: 40px; width: 76px; height: 76px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
+<img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/ff639f727c03e7a669b0eb223c15e3c3" alt="" aria-hidden="true" class="tmc-dd-hide" width="76" height="76" style="position: absolute; top: -66px; right: 40px; width: 76px; height: 76px; transform: rotate(0deg); pointer-events: none; user-select: none; z-index: 0">
       <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 24px">
         <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
         <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Community guidelines</a>

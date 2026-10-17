@@ -1,19 +1,27 @@
 # Known board mismatches
 
-Found by the end-to-end check on 17 Oct 2026. The boards in design/boards are the source of truth for layout, but where a board below disagrees with docs/decisions.md or the story, **the decision and the story win**. Build the corrected version and mention the mismatch in the pull request. Rows marked "Depends on question N" wait for Robert's answer (docs/open-questions.md, "Raised by the end-to-end check").
+The boards in design/boards are the source of truth for layout, but where a board disagrees with docs/decisions.md or the story, **the decision and the story win**. Build the corrected version and mention the mismatch in the pull request.
+
+## Still open
 
 | Board | Element | Change |
 | --- | --- | --- |
-| Onboarding | Hint under the interface language: "We picked English because your device is set to English." | Romanian by default for everyone (17 Oct 11:48): "We start in Romanian. Change it here." |
-| Settings | Language tab: "When you're logged out, we use your device's language…" | Same decision: "When you're logged out, Ghemotoc opens in Romanian; pick English from the menu." |
-| AdminSettings | Markets: "with Romania and every English-speaking country opening together" | Romania first, others one by one after their legal check |
-| Website-Home | About line: "for readers in English-speaking countries and Romania" | "Starting in Romania; English-speaking countries follow" |
-| ModCase | "Helplines for English-speaking countries: [to be confirmed per country]" | Show the contacts for the person's country from `safety_contacts` (S1-E10-13; research G4 exists) |
-| Settings | No "Sessions" section anywhere | Add a signed-in devices list (device name, last seen, no IP) and "Sign out of all" (S1-E2-05, an MVP story) |
-| AdminUsers | No manual age check panel | Add the manual check queue and decision with reason (S1-E2-08b; architecture puts it on 8.5) |
-| Doodle CSS on boards | `tmc-dd-wide` is 999 px on 11 boards and 1180 px on 10; extra classes `tmc-dd-lg`, `-xl`, `-xxl`, `-w`, `-l`, `-m` | DoD knows only `tmc-dd-wide` (under 1000 px) and `tmc-dd-hide` (under 600 px). Standardise the boards, or add the extra classes to the DoD |
-| Teaser | Six widget doodles | Confirm the teaser is not a "sharing" screen under the no-doodle rule; remove them if it is |
-| Settings | "Download my data" copy: "as Word (.docx) files in one ZIP" | Depends on question 1 |
-| Contest, Website-Home | "Aged 13 to 19", "If you're 13 to 19" | Depends on question 4 |
-| AdminPages | Link note: notice strip "at the top of the website and the app" | Depends on question 3 |
-| AdminUsers | No Invites tab | Add Users › Invites (S1-E11-17, decided 17 Oct 2026, 13:01): "Make an invite link" (uses, expiry, private note), the link shown once with Copy, and a list with note, uses, expiry, status, made by, and Revoke |
+| Website-Home | The FAQ answers and the prize line say under-16s need a parent's consent and everyone does a Yoti age check | Right for the public launch. For the March test (invited adults only, decided 17 Oct 2026, 12:44) the public home page (S1-E5-08) says the test is for invited adults; the consent and age check copy goes live with S1-E2-03 and S1-E2-08, before minors join (architecture 1.7.9) |
+| Teaser | Six widget doodles | Confirm the teaser is not a "sharing" screen under the no-doodle rule; remove them if it is (OPEN for Robert) |
+
+## Fixed on the boards (17 Oct 2026)
+
+The end-to-end check found these; the boards were corrected the same day, so build what the board now shows.
+
+| Board | What the board now shows |
+| --- | --- |
+| Onboarding, Settings, AdminSettings, Website-Home | Romanian by default for everyone; Romania opens first, English-speaking countries follow one by one after their legal check (decided 17 Oct 2026, 11:48) |
+| ModCase | A "Safety contacts for Romania" panel built from `content/safety-contacts.json` (S1-E10-13) |
+| Settings | Account › Signed-in devices (device, last active, Sign out, "Sign out of all other devices", no IP or location; S1-E2-05). Download my data: one ZIP with a JSON data file plus every story as a Word file (decided 17 Oct 2026, 12:34) |
+| AdminUsers (8.5) | Manual age checks panel showing the year of birth with the age group (S1-E2-08b; decided 17 Oct 2026, 12:34) and a Users › Invites tab (S1-E11-17, decided 17 Oct 2026, 13:01) |
+| AdminMetrics | Return rate from daily totals only; aggregated metrics kept 3 years; class certificates with a real name deleted 30 days after the class is archived |
+| AdminPages, Contest, AdminContests, AdminSponsors, Forums, ClassSpace, AdminSchools, Discover, AdFormats, Website-Home | The First Chapter contest is gone (decided 17 Oct 2026, 12:34): placeholders "[Contest name]" and the age groups 13 to 15, 16 to 17 and 18 and over. AdminPages' notice strip shows on the website and the app (decided 17 Oct 2026, 12:44) |
+| Certificate-Participation, Certificate-Winner, AdminSchools | Online contest certificates print the pen name; class certificates may print the real name with the school and are deleted 30 days after the class is archived (decided 17 Oct 2026, 12:44) |
+| AdminClassics (8.16) | Only staff with the admin role manage Classics (decided 17 Oct 2026, 12:44) |
+| AdFormats | Two ads can be in view on wide screens, never the same ad twice (decided 17 Oct 2026, 12:44) |
+| Doodle CSS on every board | Only `tmc-dd-wide` (hides under 1000 px) and `tmc-dd-hide` (hides under 600 px), as in the DoD; doodles that overlapped text or links were moved or removed (Search, Legal, AppOnly, Thread, Discover) |

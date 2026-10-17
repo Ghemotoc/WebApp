@@ -15,7 +15,8 @@ a{color:#672786}a:hover{color:#481C5F}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
 @keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
-.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 599px){.tmc-dd-hide{display:none !important}}
 /* Pill system (17 Oct 2026, accessibility): chips show their edge, a check when selected, a plum focus ring and a 44 px tap area */
 .tmc-chip{position:relative}
 .tmc-chip::after{content:"";position:absolute;left:0;right:0;top:50%;height:44px;min-height:100%;transform:translateY(-50%)}
@@ -56,8 +57,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
     <!-- Page header -->
     <header style="position: relative; padding: 48px 0 28px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; animation: tmcRise 0.5s ease-out both">
-      <img data-doodle="background" data-doodle-on="Forums" src="/_blob/59feb281d9ed9664c1ef19c97f11612f" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 0; right: 300px; width: 150px; transform: rotate(-5deg)">
-      <img data-doodle="background" data-doodle-on="Forums" src="/_blob/3eb29ce44881d2b0ae1e93232991f874" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 74px; right: 500px; width: 66px; transform: rotate(6deg)">
+      <img data-doodle="background" data-doodle-on="Forums" src="/_blob/59feb281d9ed9664c1ef19c97f11612f" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: 0; right: 300px; width: 150px; transform: rotate(-5deg)">
+      <img data-doodle="background" data-doodle-on="Forums" src="/_blob/3eb29ce44881d2b0ae1e93232991f874" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: 74px; right: 500px; width: 66px; transform: rotate(6deg)">
       <div style="display: flex; flex-direction: column; gap: 16px; max-width: 680px">
         <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Forums · 1,762 threads</div>
         <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Forums</h1>
@@ -86,7 +87,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- Category: Writing craft -->
         <section aria-labelledby="cat-craft" style="position: relative; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
-          <img data-doodle="widget" data-doodle-on="Writing craft" src="/_blob/cb01c13602029560ca242fb10bc704d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 12px; right: 176px; width: 58px; transform: rotate(-14deg)">
+          <img data-doodle="widget" data-doodle-on="Writing craft" src="/_blob/cb01c13602029560ca242fb10bc704d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: 12px; right: 176px; width: 58px; transform: rotate(-14deg)">
           <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px">
             <div style="display: flex; align-items: center; gap: 12px">
               <span aria-hidden="true" style="width: 8px; height: 28px; border-radius: 999px; background: #4D1B5E"></span>
@@ -176,7 +177,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- Category: Reading -->
         <section aria-labelledby="cat-reading" style="position: relative; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
-          <img data-doodle="widget" data-doodle-on="Reading" src="/_blob/71c7c9a86495544c84425a6eef87e048" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 12px; right: 176px; width: 58px; transform: rotate(6deg)">
+          <img data-doodle="widget" data-doodle-on="Reading" src="/_blob/71c7c9a86495544c84425a6eef87e048" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: 12px; right: 176px; width: 58px; transform: rotate(6deg)">
           <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px">
             <div style="display: flex; align-items: center; gap: 12px">
               <span aria-hidden="true" style="width: 8px; height: 28px; border-radius: 999px; background: #2E4A8C"></span>
@@ -223,7 +224,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- Category: Essays and true stories (no journalism at launch, Q52) -->
         <section aria-labelledby="cat-essays" style="position: relative; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
-          <img data-doodle="widget" data-doodle-on="Essays and true stories" src="/_blob/f71342920dbb5c9f302486ccc693c98d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 12px; right: 176px; width: 58px; transform: rotate(-6deg)">
+          <img data-doodle="widget" data-doodle-on="Essays and true stories" src="/_blob/f71342920dbb5c9f302486ccc693c98d" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: 12px; right: 176px; width: 58px; transform: rotate(-6deg)">
           <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px">
             <div style="display: flex; align-items: center; gap: 12px">
               <span aria-hidden="true" style="width: 8px; height: 28px; border-radius: 999px; background: #8C2B3A"></span>
@@ -270,7 +271,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- Category: Community -->
         <section aria-labelledby="cat-community" style="position: relative; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); overflow: hidden">
-          <img data-doodle="widget" data-doodle-on="Community" src="/_blob/23be67a233f4be95609f0a2f1d6d0523" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: 12px; right: 176px; width: 58px; transform: rotate(8deg)">
+          <img data-doodle="widget" data-doodle-on="Community" src="/_blob/23be67a233f4be95609f0a2f1d6d0523" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: 12px; right: 176px; width: 58px; transform: rotate(8deg)">
           <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px">
             <div style="display: flex; align-items: center; gap: 12px">
               <span aria-hidden="true" style="width: 8px; height: 28px; border-radius: 999px; background: #2F6B4F"></span>
@@ -318,7 +319,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
             <span style="{{u.ct.dot}}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{u.ct.sr}}</span></span>
             <div style="flex: 1 1 300px; min-width: 0">
               <a href="Thread.dc.html" style="font-weight: 700; font-size: 17px; color: #26142E; text-decoration: none">Contests</a>
-              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">The First Chapter contest and other writing challenges</div>
+              <div style="margin-top: 2px; font-size: 14px; line-height: 1.5; color: #5C4965">Writing contests, prompts and challenges</div>
             </div>
             <dl style="margin: 0; flex: none; display: flex; gap: 22px">
               <div><dt style="font-size: 12px; color: #6B5A73">Threads</dt><dd style="margin: 0; font-weight: 700; font-size: 16px; color: #26142E; font-variant-numeric: tabular-nums">22</dd></div>
@@ -326,7 +327,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
             </dl>
             <div style="flex: 0 1 280px; min-width: 0; padding-left: 16px; border-left: 1px solid #EFE8F2">
               <span style="font-family: 'Cutive', 'Courier New', serif; display: block; font-size: 13px; font-weight: 400; color: #815E18; line-height: 1.3">Latest post</span>
-              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">First Chapter contest: rules and dates</a>
+              <a href="Thread.dc.html" style="display: block; margin-top: 2px; font-weight: 600; font-size: 14px; line-height: 1.35">How contests work on Ghemotoc</a>
               <span style="font-size: 13px; color: #6B5A73"><a href="Profile.dc.html" style="color: #5C4965">Andrei Mureșan</a> <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; white-space: nowrap">Staff</span> · yesterday</span>
             </div>
           </div>
@@ -401,7 +402,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- Forum rules in short -->
         <section aria-labelledby="rules-title" style="position: relative; padding: 20px 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 20px">
-          <img data-doodle="widget" data-doodle-on="Forum rules in short" src="/_blob/0ba01f0de219e755c8fa13cee158f7c5" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -38px; right: 18px; width: 72px; transform: rotate(8deg)">
+          <img data-doodle="widget" data-doodle-on="Forum rules in short" src="/_blob/0ba01f0de219e755c8fa13cee158f7c5" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -38px; right: 18px; width: 72px; transform: rotate(8deg)">
           <h2 id="rules-title" style="margin: 0 0 8px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 18px; color: #481C5F">Forum rules in short</h2>
           <ul style="margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6; color: #5C4965">
             <li>Comment on the writing, not the writer.</li>
@@ -422,8 +423,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
   <!-- Page footer -->
   <footer style="position: relative; max-width: 1280px; margin: 72px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
-    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/6febd794abf68310f4d8fcb7da994e51" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -70px; left: clamp(16px, 4vw, 64px); width: 64px; transform: rotate(-10deg)">
-    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/c9a4e5b50989a61aafd82e0acc9ab805" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -64px; right: clamp(16px, 4vw, 64px); width: 56px; transform: rotate(10deg)">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/6febd794abf68310f4d8fcb7da994e51" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -70px; left: clamp(16px, 4vw, 64px); width: 64px; transform: rotate(-10deg)">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/c9a4e5b50989a61aafd82e0acc9ab805" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -64px; right: clamp(16px, 4vw, 64px); width: 56px; transform: rotate(10deg)">
     <div style="border-top: 1px solid #DED3E4; padding-top: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: #6B5A73">
       <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 20px">
         <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>

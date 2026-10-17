@@ -53,10 +53,19 @@ button:disabled{cursor:not-allowed;opacity:0.55}
   <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
     <header style="padding: 48px 0 28px; display: flex; flex-direction: column; gap: 16px; animation: tmcRise 0.5s ease-out both">
       <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Staff · users</div>
-      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Find an account</h1>
-      <p style="margin: 0; max-width: 720px; font-size: 18px; line-height: 1.65; color: #5C4965">Search by handle, email or user ID. You see what you need to act on an account and nothing more. Every action here goes to the audit log.</p>
+      <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">{{tabTitle}}</h1>
+      <p style="margin: 0; max-width: 720px; font-size: 18px; line-height: 1.65; color: #5C4965">{{tabIntro}}</p>
 
     </header>
+
+    <!-- Users area tabs: Accounts (search, account panel, manual age checks) and Invites (S1-E11-17, decided 17 Oct 2026, 13:01) -->
+    <nav aria-label="Users sections" style="display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 20px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+        <button type="button" class="tmc-chip" aria-current="{{t.current}}" onClick="{{t.pick}}" style="{{t.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{t.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{t.label}}</button>
+      </sc-for>
+    </nav>
+
+    <sc-if value="{{isAccounts}}" hint-placeholder-val="{{true}}">
 
     <!-- Search and status filters -->
     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; animation: tmcRise 0.5s 0.05s ease-out both">
@@ -282,6 +291,171 @@ button:disabled{cursor:not-allowed;opacity:0.55}
         </div>
       </aside>
     </div>
+
+    <!-- Manual age checks (S1-E2-08b): people whose Yoti check failed, or who appealed its result, ask for a person to check.
+         Staff see the year of birth here, with the age group (decided 17 Oct 2026). Plain staff components, no doodles. -->
+    <section aria-labelledby="mac-title" style="margin-top: 24px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 24px; display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Age checks</span>
+          <h2 id="mac-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Manual age checks</h2>
+          <p style="margin: 0; max-width: 720px; font-size: 15px; line-height: 1.55; color: #5C4965">People whose Yoti check failed, or who think its result is wrong, can ask for a person to check. The account stays read-only until you decide.</p>
+        </div>
+        <span style="font-size: 13px; color: #6B5A73">{{mac.countLine}}</span>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+        <!-- Queue -->
+        <div style="flex: 999 1 520px; min-width: 0; border: 1px solid #DED3E4; border-radius: 16px; overflow: hidden">
+          <div tabindex="0" role="region" aria-label="Manual age check requests, scrolls sideways on small screens" style="overflow-x: auto">
+            <div role="table" aria-label="Requests waiting for a manual age check, oldest first" style="min-width: 480px">
+              <div role="row" style="display: grid; grid-template-columns: 1.4fr 1.4fr 1fr 1fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">ACCOUNT</span>
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">ASKED</span>
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">WHY</span>
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">STATUS</span>
+              </div>
+              <sc-for list="{{mac.rows}}" as="q" hint-placeholder-count="3">
+                <div role="row" style="{{q.rowStyle}}">
+                  <span role="cell"><button type="button" aria-pressed="{{q.pressed}}" onClick="{{q.pick}}" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 700; color: #481C5F; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left">{{q.handle}}</button></span>
+                  <span role="cell" style="font-size: 14px; line-height: 1.45; color: #26142E">{{q.asked}}</span>
+                  <span role="cell"><span style="{{q.whyStyle}}">{{q.why}}</span></span>
+                  <span role="cell" style="font-size: 14px; color: #26142E">{{q.status}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <p style="margin: 0; padding: 12px 16px; font-size: 13px; line-height: 1.5; color: #6B5A73">Oldest first. Pick a request to decide it.</p>
+        </div>
+
+        <!-- Decision form for the selected request -->
+        <form aria-labelledby="mac-form-title" style="flex: 1 1 380px; min-width: 0; padding: 20px; border-radius: 16px; border: 1px solid #672786; background: #FFFFFF; display: flex; flex-direction: column; gap: 16px">
+          <h3 id="mac-form-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Decide: {{mac.sel.handle}}</h3>
+          <dl style="margin: 0; display: grid; grid-template-columns: minmax(0, 130px) minmax(0, 1fr); font-size: 14px; line-height: 1.45">
+            <dt style="padding: 10px 0; border-top: 1px solid #EFE8F2; color: #6B5A73">Year of birth</dt>
+            <dd style="margin: 0; padding: 10px 0; border-top: 1px solid #EFE8F2; text-align: right; color: #26142E"><b>{{mac.sel.year}}</b> · age group {{mac.sel.band}}</dd>
+            <dt style="padding: 10px 0; border-top: 1px solid #EFE8F2; color: #6B5A73">Yoti result</dt>
+            <dd style="margin: 0; padding: 10px 0; border-top: 1px solid #EFE8F2; text-align: right; color: #26142E">{{mac.sel.yoti}}</dd>
+            <dt style="padding: 10px 0; border-top: 1px solid #EFE8F2; color: #6B5A73">Why they asked</dt>
+            <dd style="margin: 0; padding: 10px 0; border-top: 1px solid #EFE8F2; text-align: right; color: #26142E">{{mac.sel.why}}</dd>
+            <dt style="padding: 10px 0; border-top: 1px solid #EFE8F2; border-bottom: 1px solid #EFE8F2; color: #6B5A73">Their message</dt>
+            <dd style="margin: 0; padding: 10px 0; border-top: 1px solid #EFE8F2; border-bottom: 1px solid #EFE8F2; text-align: right; color: #26142E">“{{mac.sel.note}}”</dd>
+          </dl>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #6B5A73">You see the year of birth only on this panel, and opening a request is logged. We never keep a photo, an ID document or an estimated age.</p>
+
+          <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+            <legend style="padding: 0 0 8px; font-size: 14px; font-weight: 600; color: #26142E">Decision</legend>
+            <sc-for list="{{mac.options}}" as="o" hint-placeholder-count="3">
+              <label style="{{o.style}}"><input type="radio" name="mac-decision" checked="{{o.on}}" onChange="{{o.pick}}" style="margin: 0; width: 20px; height: 20px; flex: none; accent-color: #481C5F"><span style="display: flex; flex-direction: column; gap: 2px"><span>{{o.label}}</span><span style="font-size: 13px; font-weight: 400; color: #6B5A73">{{o.sub}}</span></span></label>
+            </sc-for>
+          </fieldset>
+
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <label for="mac-why" style="font-size: 14px; font-weight: 600; color: #26142E">Reason (required)</label>
+            <textarea id="mac-why" required aria-required="true" aria-describedby="mac-why-hint {{mac.errId}}" value="{{mac.reason}}" onChange="{{mac.setReason}}" placeholder="What you checked and why you decided this" style="width: 100%; box-sizing: border-box; min-height: 96px; padding: 14px 18px; border: 1px solid #8E7B99; border-radius: 20px; background: #FFFFFF; font-family: inherit; font-size: 16px; line-height: 1.5; color: #26142E; resize: vertical"></textarea>
+            <span id="mac-why-hint" style="font-size: 13px; color: #6B5A73">Goes to the audit log. The person gets a short notice in their language.</span>
+          </div>
+
+          <sc-if value="{{mac.hasErr}}" hint-placeholder-val="{{false}}">
+            <p id="mac-err" role="alert" style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #F6E9EB; border: 1px solid #DDB0B8; font-size: 14px; line-height: 1.5; color: #8C2B3A">{{mac.err}}</p>
+          </sc-if>
+          <sc-if value="{{mac.hasDone}}" hint-placeholder-val="{{false}}">
+            <p role="status" style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #E8F1EC; font-size: 14px; line-height: 1.5; color: #2F6B4F">{{mac.doneText}}</p>
+          </sc-if>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <button type="button" onClick="{{mac.save}}" style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Save decision</button>
+          </div>
+        </form>
+      </div>
+    </section>
+    </sc-if>
+
+    <!-- ============ INVITES (S1-E11-17) ============ -->
+    <sc-if value="{{isInvites}}" hint-placeholder-val="{{false}}">
+      <section aria-labelledby="inv-title" style="background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); padding: 24px; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Invites</span>
+            <h2 id="inv-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">Invite links</h2>
+            <p style="margin: 0; max-width: 720px; font-size: 15px; line-height: 1.55; color: #5C4965">Each link lets a set number of people sign up, until it expires or you revoke it. Making and revoking links goes to the audit log.</p>
+          </div>
+          <button type="button" aria-expanded="{{inv.formOpenStr}}" aria-controls="inv-form" onClick="{{inv.openForm}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 22px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Make an invite link</button>
+        </div>
+
+        <sc-if value="{{inv.formOpen}}" hint-placeholder-val="{{false}}">
+          <form id="inv-form" aria-label="New invite link" style="padding: 20px; border-radius: 16px; border: 1px solid #672786; background: #FFFFFF; display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-start">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="inv-count" style="font-size: 14px; font-weight: 600; color: #26142E">How many people</label>
+                <input id="inv-count" type="number" min="1" max="50" value="{{inv.count}}" onChange="{{inv.setCount}}" aria-describedby="inv-count-hint" style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; width: 120px">
+                <span id="inv-count-hint" style="font-size: 13px; color: #6B5A73">1 to 50</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="inv-exp" style="font-size: 14px; font-weight: 600; color: #26142E">Expires in</label>
+                <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><select id="inv-exp" value="{{inv.days}}" onChange="{{inv.setDays}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; cursor: pointer">
+                  <option value="1">1 day</option>
+                  <option value="7">7 days</option>
+                  <option value="14">14 days</option>
+                  <option value="30">30 days</option>
+                </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
+              </div>
+              <div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+                <label for="inv-note" style="font-size: 14px; font-weight: 600; color: #26142E">Private note <span style="font-weight: 400; color: #6B5A73">(optional)</span></label>
+                <input id="inv-note" type="text" maxlength="80" value="{{inv.note}}" onChange="{{inv.setNote}}" aria-describedby="inv-note-hint" placeholder="For example: writers from the Ploiești workshop" style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; width: 100%">
+                <span id="inv-note-hint" style="font-size: 13px; color: #6B5A73">Only staff see it. Don’t put anyone’s email or full name here.</span>
+              </div>
+            </div>
+            <sc-if value="{{inv.hasErr}}" hint-placeholder-val="{{false}}">
+              <p role="alert" style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #F6E9EB; border: 1px solid #DDB0B8; font-size: 14px; line-height: 1.5; color: #8C2B3A">{{inv.err}}</p>
+            </sc-if>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <button type="button" onClick="{{inv.make}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 22px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Make link</button>
+              <button type="button" onClick="{{inv.cancel}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Cancel</button>
+            </div>
+          </form>
+        </sc-if>
+
+        <!-- The new link is shown once: only a scrambled copy is stored, so it can't be shown again -->
+        <sc-if value="{{inv.hasNew}}" hint-placeholder-val="{{false}}">
+          <div role="status" style="padding: 18px 20px; border-radius: 16px; background: #E8F1EC; border: 1px solid #A9C9B6; display: flex; flex-direction: column; gap: 12px">
+            <span style="font-size: 15px; font-weight: 700; color: #245A41">Invite link made: {{inv.newSummary}}</span>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+              <label for="inv-link" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Invite link</label>
+              <input id="inv-link" type="text" readonly value="{{inv.newLink}}" style="height: 44px; box-sizing: border-box; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; flex: 1 1 320px; min-width: 0; font-family: ui-monospace, 'Courier New', monospace; font-size: 14px; background: #FFFFFF">
+              <button type="button" onClick="{{inv.copy}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{inv.copyLabel}}</button>
+            </div>
+            <span style="font-size: 14px; line-height: 1.5; color: #245A41"><b>Copy it now.</b> We won’t show this link again.</span>
+          </div>
+        </sc-if>
+
+        <div style="border: 1px solid #DED3E4; border-radius: 16px; overflow: hidden">
+          <div tabindex="0" role="region" aria-label="Invite links, scrolls sideways on small screens" style="overflow-x: auto">
+            <div role="table" aria-label="Invite links" style="min-width: 760px">
+              <div role="row" style="display: grid; grid-template-columns: 2.2fr 0.8fr 1.1fr 1fr 1.2fr 0.9fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">NOTE</span>
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">USES</span>
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">EXPIRES</span>
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">STATUS</span>
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">MADE BY</span>
+                <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Action</span></span>
+              </div>
+              <sc-for list="{{inv.rows}}" as="v" hint-placeholder-count="5">
+                <div role="row" style="display: grid; grid-template-columns: 2.2fr 0.8fr 1.1fr 1fr 1.2fr 0.9fr; gap: 16px; align-items: center; min-height: 44px; padding: 8px 16px; border-bottom: 1px solid #EFE8F2">
+                  <span role="cell" style="{{v.noteStyle}}">{{v.note}}</span>
+                  <span role="cell" style="font-size: 14px; color: #26142E; font-variant-numeric: tabular-nums">{{v.uses}}</span>
+                  <span role="cell" style="font-size: 14px; color: #26142E">{{v.expires}}</span>
+                  <span role="cell"><span style="{{v.statusStyle}}">{{v.status}}</span></span>
+                  <span role="cell" style="font-size: 14px; color: #26142E">{{v.by}}</span>
+                  <span role="cell"><sc-if value="{{v.canRevoke}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{v.revoke}}" aria-label="{{v.revokeLabel}}" style="display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 14px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #8C2B3A; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Revoke</button></sc-if></span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <p role="status" style="margin: 0; font-size: 14px; color: #5C4965">{{inv.msg}}</p>
+      </section>
+    </sc-if>
   </main>
 
   <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
@@ -304,7 +478,15 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     // Starts on a suspended account so the panel shows sanctions and a case.
-    this.state = { sel: 'raul', filter: 'All', action: null, done: null, copied: null };
+    this.state = {
+      sel: 'raul', filter: 'All', action: null, done: null, copied: null,
+      // Manual age checks (S1-E2-08b): the selected request, and each request's decision, reason and outcome.
+      macSel: 'm1', macDecision: {}, macReason: {}, macDone: {}, macErr: null,
+      // Users area tab, and the Invites tab (S1-E11-17): the form, the link shown once, revoked rows and new rows.
+      tab: 'accounts',
+      invForm: false, invCount: '1', invDays: '14', invNote: '', invErr: null,
+      invNew: null, invCopied: false, invRevoked: {}, invMade: [], invMsg: ''
+    };
   }
 
   // Toggle switch: a 44px-tall button holding a small track, so the touch target stays big.
@@ -330,7 +512,8 @@ class Component extends DCLogic {
   renderVals() {
     var self = this, st = this.state;
 
-    // Example accounts. Staff see the age group, never the year of birth itself.
+    // Example accounts. Staff see the age group, never the year of birth itself
+    // (the one exception is the Manual age checks panel, decided 17 Oct 2026).
     var A = {
       raul: {
         uid: 'usr_a41e…7c09', full: 'usr_a41e8d20c35f7c09', stories: 0,
@@ -413,6 +596,119 @@ class Component extends DCLogic {
       pick[k] = function () { self.setState({ sel: k, action: null, done: null, copied: null }); };
     });
 
+
+    // ---------- Manual age checks (S1-E2-08b) ----------
+    // Example queue. The year of birth shows only here, with the age group worked out from it (the younger possible age).
+    var MQ = [
+      { id: 'm1', handle: '@maria.scrie', asked: '15 Oct 2026, 18:20', why: 'Failed check', year: '2011', band: '13 to 15',
+        yoti: 'Not passed · 15 Oct 2026 · retry used', note: 'The camera on my laptop is very dark. I’m 15 and my mum can confirm.' },
+      { id: 'm2', handle: '@vlad.r', asked: '16 Oct 2026, 09:05', why: 'Appeal', year: '2008', band: '18 or over',
+        yoti: '13 or over · 14 Oct 2026', note: 'I turned 18 in March but the check says 13 or over, so adults can’t message me about my class project.' },
+      { id: 'm3', handle: '@ana_poems', asked: '16 Oct 2026, 21:47', why: 'Failed check', year: '2012', band: '13 to 15',
+        yoti: 'Not passed · 16 Oct 2026', note: 'It said it couldn’t check me. I tried twice.' }
+    ];
+    var pill = function (t) { return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';'; };
+    var DEC = { a13: ['Approve 13+', 'Unlocks the account. Under-18 protections stay on.'], a18: ['Approve 18+', 'Unlocks the account as an adult.'], refuse: ['Refuse', 'The account stays read-only. They can ask once more with new information.'] };
+    var waiting = MQ.filter(function (q) { return !st.macDone[q.id]; }).length;
+    var macRows = MQ.map(function (q) {
+      var on = st.macSel === q.id, d = st.macDone[q.id];
+      return {
+        handle: q.handle, asked: q.asked, why: q.why,
+        whyStyle: pill(q.why === 'Appeal' ? tone.staff : tone.neutral),
+        status: d ? DEC[d][0] : 'Waiting',
+        pressed: on ? 'true' : 'false',
+        rowStyle: 'display: grid; grid-template-columns: 1.4fr 1.4fr 1fr 1fr; gap: 16px; align-items: center; padding: 6px 16px; border-bottom: 1px solid #EFE8F2; ' + (on ? 'background: #F1EAF4;' : 'background: #FFFFFF;'),
+        pick: function () { self.setState({ macSel: q.id, macErr: null }); }
+      };
+    });
+    var q = MQ.filter(function (x) { return x.id === st.macSel; })[0] || MQ[0];
+    var curDec = st.macDecision[q.id] || null;
+    var curReason = st.macReason[q.id] || '';
+    var macOptions = ['a13', 'a18', 'refuse'].map(function (k) {
+      var on = curDec === k;
+      return {
+        label: DEC[k][0], sub: DEC[k][1], on: on,
+        style: 'display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 10px 14px; box-sizing: border-box; border-radius: 14px; font-size: 15px; cursor: pointer; '
+          + (on ? 'border: 1px solid #672786; background: #F1EAF4; color: #26142E; font-weight: 600;' : 'border: 1px solid #DED3E4; background: #FFFFFF; color: #26142E; font-weight: 500;'),
+        pick: function () { var n = Object.assign({}, st.macDecision); n[q.id] = k; self.setState({ macDecision: n, macErr: null }); }
+      };
+    });
+    var macDoneFor = st.macDone[q.id];
+    var mac = {
+      countLine: waiting === 1 ? '1 request waiting' : waiting + ' requests waiting',
+      rows: macRows, options: macOptions,
+      sel: { handle: q.handle, year: q.year, band: q.band, yoti: q.yoti, why: q.why, note: q.note },
+      reason: curReason,
+      setReason: function (e) { var n = Object.assign({}, st.macReason); n[q.id] = e && e.target ? e.target.value : curReason; self.setState({ macReason: n }); },
+      hasErr: !!st.macErr, err: st.macErr || '', errId: st.macErr ? 'mac-err' : '',
+      hasDone: !!macDoneFor, doneText: macDoneFor ? DEC[macDoneFor][0] + ' saved for ' + q.handle + '. Logged in the audit log and the person has been told.' : '',
+      save: function () {
+        if (!curDec) { self.setState({ macErr: 'Choose a decision.' }); return; }
+        if (!curReason.trim()) { self.setState({ macErr: 'Write a reason. It goes to the audit log.' }); return; }
+        var n = Object.assign({}, st.macDone); n[q.id] = curDec; self.setState({ macDone: n, macErr: null });
+      }
+    };
+
+
+    // ---------- Users area tabs ----------
+    var tabStyle = function (on) { return self.chipStyle(on) + ' text-decoration: none;'; };
+    var tabs = [['accounts', 'Accounts'], ['invites', 'Invites']].map(function (t) {
+      var on = st.tab === t[0];
+      return { label: t[1], current: on ? 'page' : 'false', style: tabStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ tab: t[0] }); } };
+    });
+
+    // ---------- Invites (S1-E11-17) ----------
+    // Example invites. A link's full address is shown once, when it is made; afterwards only its note and numbers.
+    var invTone = { Active: tone.ok, 'Used up': tone.neutral, Expired: ['#FBF3DA', '#5C3F0E', '#D9B54A'], Revoked: tone.bad };
+    var invPill = function (t) { return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; line-height: 1; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';'; };
+    var IV = st.invMade.concat([
+      { id: 'i1', note: 'Writers from the Ploiești workshop', used: 3, max: 10, expires: '31 Oct 2026', status: 'Active', by: 'Robert' },
+      { id: 'i2', note: '', used: 0, max: 1, expires: '30 Oct 2026', status: 'Active', by: 'Andrei Mureșan' },
+      { id: 'i3', note: 'Beta reader for the reader screen', used: 1, max: 1, expires: '20 Oct 2026', status: 'Used up', by: 'Robert' },
+      { id: 'i4', note: 'Book club test', used: 2, max: 5, expires: '10 Oct 2026', status: 'Expired', by: 'Andrei Mureșan' },
+      { id: 'i5', note: 'Sent to the wrong group', used: 0, max: 5, expires: '25 Oct 2026', status: 'Revoked', by: 'Robert' }
+    ]);
+    var invRows = IV.map(function (v) {
+      var status = st.invRevoked[v.id] ? 'Revoked' : v.status;
+      var noteText = v.note || 'No note';
+      return {
+        note: noteText,
+        noteStyle: 'font-size: 14px; line-height: 1.45; ' + (v.note ? 'font-weight: 600; color: #26142E;' : 'color: #6B5A73; font-style: italic;'),
+        uses: v.used + ' of ' + v.max, expires: v.expires, status: status, statusStyle: invPill(invTone[status]), by: v.by,
+        canRevoke: status === 'Active', revokeLabel: 'Revoke the invite: ' + noteText,
+        revoke: function () {
+          var n = Object.assign({}, st.invRevoked); n[v.id] = true;
+          self.setState({ invRevoked: n, invMsg: 'Revoked “' + noteText + '”. The link stops working at once. Logged in the audit log.' });
+        }
+      };
+    });
+    var inv = {
+      formOpen: st.invForm, formOpenStr: st.invForm ? 'true' : 'false',
+      openForm: function () { self.setState({ invForm: true, invErr: null }); },
+      cancel: function () { self.setState({ invForm: false, invErr: null }); },
+      count: st.invCount, setCount: function (e) { self.setState({ invCount: e && e.target ? e.target.value : st.invCount }); },
+      days: st.invDays, setDays: function (e) { self.setState({ invDays: e && e.target ? e.target.value : st.invDays }); },
+      note: st.invNote, setNote: function (e) { self.setState({ invNote: e && e.target ? e.target.value : st.invNote }); },
+      hasErr: !!st.invErr, err: st.invErr || '',
+      make: function () {
+        var n = parseInt(st.invCount, 10);
+        if (!(n >= 1 && n <= 50)) { self.setState({ invErr: 'Choose between 1 and 50 people.' }); return; }
+        var row = { id: 'n' + (st.invMade.length + 1), note: st.invNote.trim(), used: 0, max: n, expires: 'in ' + st.invDays + (st.invDays === '1' ? ' day' : ' days'), status: 'Active', by: 'You' };
+        self.setState({
+          invMade: [row].concat(st.invMade), invForm: false, invErr: null, invCopied: false, invNote: '',
+          invNew: { link: 'https://[site]/invite/K7Q2-M9XD-4TPA', summary: n + (n === 1 ? ' person' : ' people') + ', expires in ' + st.invDays + (st.invDays === '1' ? ' day.' : ' days.') },
+          invMsg: 'Invite link made. Logged in the audit log.'
+        });
+      },
+      hasNew: !!st.invNew, newLink: st.invNew ? st.invNew.link : '', newSummary: st.invNew ? st.invNew.summary : '',
+      copyLabel: st.invCopied ? 'Copied' : 'Copy',
+      copy: function () {
+        try { if (navigator.clipboard && st.invNew) navigator.clipboard.writeText(st.invNew.link); } catch (e) { /* copying can be blocked; the label still confirms */ }
+        self.setState({ invCopied: true });
+      },
+      rows: invRows, msg: st.invMsg
+    };
+
     var a = A[st.sel];
     var t = tone[a.kind];
     var acc = Object.assign({}, a, {
@@ -444,6 +740,10 @@ class Component extends DCLogic {
 
     return {
       chips: chips, row: row, pressed: pressed, pick: pick, acc: acc, act: act,
+      mac: mac,
+      tabs: tabs, inv: inv, isAccounts: st.tab === 'accounts', isInvites: st.tab === 'invites',
+      tabTitle: st.tab === 'invites' ? 'Invites' : 'Find an account',
+      tabIntro: st.tab === 'invites' ? 'Make invite links for the people taking part in the March test. Each link works for a set number of people until it expires or you revoke it.' : 'Search by handle, email or user ID. You see what you need to act on an account and nothing more. Every action here goes to the audit log.',
       copyLabel: st.copied === st.sel ? 'Copied' : 'Copy',
       copyId: function () {
         try { if (navigator.clipboard) navigator.clipboard.writeText(a.full); } catch (e) { /* clipboard blocked: the label still confirms */ }
