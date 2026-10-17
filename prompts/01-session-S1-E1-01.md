@@ -10,7 +10,7 @@ What I want from this session:
   1. On every pull request: lint, typecheck, unit tests, database tests against a local Supabase (`supabase db start`), the i18n key check and a Playwright + axe smoke test of the home page. A failing check blocks the merge.
   2. Database changes: Supabase's GitHub integration is connected to the staging project and applies supabase/migrations when main changes. Don't add a GitHub Actions job that also pushes migrations; make sure the supabase/ folder and config work with that integration.
   3. The web deploy step exists but is switched off: the hosting provider is OPEN (Q38).
-- A .claude/settings.json SessionStart hook that runs `npm ci` only when package-lock.json changed, so cloud sessions start ready.
+- A SessionStart hook that runs `npm ci` only when package-lock.json changed, so cloud sessions start ready. Merge it into the existing .claude/settings.json and keep its deny rules.
 - docs/runbooks/README.md with one line per runbook still to write.
 
 Production deploys and tagged releases: write the workflow but leave it disabled until a production project exists.
@@ -20,7 +20,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 2. A table mapping each acceptance criterion of S1-E1-01 to the check or test that proves it.
 3. Anything OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check, fix failures, push the branch story/S1-E1-01-repo-ci and give me:
+STEP 2, after I approve: build it, run every check, fix failures, push your working branch (in a cloud session, the branch the session was given) and open the pull request titled "S1-E1-01: Repository, environments and CI skeleton", then give me:
 - a summary of what changed and the check results,
 - step-by-step instructions for me, a non-developer on a Mac, to run the app locally and see it,
 - the pull request description using .github/pull_request_template.md.

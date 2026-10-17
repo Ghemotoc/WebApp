@@ -12,4 +12,4 @@ If this is too big for one pull request, propose a split into S1-E1-03a (tokens,
 
 STEP 1, PLAN ONLY. Give me the files, a table mapping each acceptance criterion and each design rule to its test or check, and anything OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build, run every check, push the branch story/S1-E1-03-design-system and give me the summary, the check results, the steps to open /design on my Mac next to the canvas pictures, and the pull request description.
+STEP 2, after I approve: build, run every check, push your working branch (in a cloud session, the branch the session was given), open the pull request titled "S1-E1-03: ..." and give me the summary, the check results, the steps to open /design on my Mac next to the canvas pictures, and the pull request description.

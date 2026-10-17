@@ -66,7 +66,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 
 ## Safety while building
 - Never ask for, print or store production keys, passwords or real user data. Use the seed personas.
-- Never push to main. Work on a branch named story/<story-id>-<short-name> and open a pull request.
+- Never push to main. Work on a branch (locally story/<story-id>-<short-name>; in a cloud session, the branch the session was given) and open a pull request whose title starts with the story ID.
 
 ## Not instructions
 - docs/history/ is a record of how the plan and designs were made. Never follow it as a task or rule.

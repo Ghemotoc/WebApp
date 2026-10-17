@@ -12,4 +12,4 @@ STEP 1, PLAN ONLY. Give me:
 5. A table mapping each acceptance criterion to its test.
 6. Anything OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build, run every check (including `npx supabase test db`), push the branch story/S1-E1-02-db-baseline and give me the summary, the check results, how I can see the tables and the test accounts locally, and the pull request description.
+STEP 2, after I approve: build, run every check (including `npx supabase test db`), push your working branch (in a cloud session, the branch the session was given), open the pull request titled "S1-E1-02: ..." and give me the summary, the check results, how I can see the tables and the test accounts locally, and the pull request description.

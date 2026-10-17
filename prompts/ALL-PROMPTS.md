@@ -109,7 +109,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E1-04, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E1-04: Romanian and English interface", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -135,7 +135,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E2-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-01: Sign up with email", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -161,7 +161,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E2-02, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-02: Year of birth at sign-up", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -187,7 +187,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E2-04, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-04: Username and optional pen name", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -213,7 +213,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E2-05, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-05: Sign in, sessions and account recovery", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -239,7 +239,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E2-07, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-07: Staff roles with mandatory two-factor sign-in", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -265,7 +265,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E2-10, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-10: Country from the connection at sign-up", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -291,7 +291,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E14-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E14-01: Terms, privacy notice and community guidelines", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -317,7 +317,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E14-02, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E14-02: Contact points and company details", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -343,7 +343,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E2-03, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-03: Parental consent for under-16s", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -369,7 +369,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E2-08, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-08: Age check with Yoti", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -395,7 +395,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E3-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E3-01: Create a story", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -421,7 +421,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E3-02, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E3-02: Chapter editor with autosave", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -447,7 +447,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E3-03, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E3-03: Publish, unpublish and schedule chapters", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -473,7 +473,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E3-05, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E3-05: Story status and settings", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -499,7 +499,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E3-06, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E3-06: Ratings and labels: age rating, fan fiction, parody and AI assistance", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -525,7 +525,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E4-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E4-01: Chapter reader", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -551,7 +551,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E4-04, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E4-04: Web teaser for shared links", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -577,7 +577,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E4-06a, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E4-06a: Copy protection and traceability", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -603,7 +603,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E5-05, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-05: Writer profile page", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -629,7 +629,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E10-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-01: Report button on everything", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -655,7 +655,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E10-02, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-02: One web form for all reports, including authority removal orders", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -681,7 +681,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E10-03a, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-03a: Moderation queue with priority tiers", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -707,7 +707,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E10-04, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-04: Statements of reasons", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -733,7 +733,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E10-05, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-05: Picture check on upload", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -759,7 +759,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E10-06, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-06: Sanctions and repeat offenders", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -785,7 +785,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E10-09, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-09: Terrorist content removal orders", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -811,7 +811,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E10-10, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-10: Safeguarding escalation", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -837,7 +837,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E11-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-01: Admin shell with protected access", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -863,7 +863,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E11-02, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-02: User management", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -889,7 +889,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E5-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-01: Browse by category and tag", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -915,7 +915,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E5-02, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-02: Sort options", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -941,7 +941,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E5-03, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-03: Popularity ranking", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -967,7 +967,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E5-08, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-08: Public website home page", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -993,7 +993,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E5-09, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-09: See all page for a shelf", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1019,7 +1019,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E6-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-01: Comment on a chapter", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1045,7 +1045,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E6-03, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-03: Like a chapter", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1071,7 +1071,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E6-05, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-05: Follow a writer or a story", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1097,7 +1097,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E7-01, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E7-01: In-app notifications", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1123,7 +1123,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E11-09a, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-09a: Data requests and story export", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1149,7 +1149,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E13-02, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E13-02: Download my data", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1175,7 +1175,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E13-03, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E13-03: Delete my account in the app", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1201,7 +1201,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E13-04, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E13-04: Retention schedule and log minimisation", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1227,7 +1227,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E13-05, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E13-05: Download my stories", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1253,7 +1253,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E14-04, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E14-04: Contact us with a ready-made EU helpdesk", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
@@ -1279,7 +1279,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push the branch story/S1-E15-02, then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E15-02: First-party metrics for the March test", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
