@@ -307,13 +307,29 @@ As an admin, I want to add public-domain books, stories, poems and plays from th
   - Given a reader report that a classic isn't public domain or the text is wrong, when it arrives, then it goes to the moderation queue like any report (S1-E10-01), and staff can unpublish the work at once.
 - **Legal and compliance:** only texts we know are free are used; a modern translation or edition can still be protected even when the author's work is free. Public-domain status differs by country, so the per-market check decides where a work is shown. Classics pages follow the normal ad rules (at most 2 slots a page). A lawyer's check of the public-domain test is on the lawyer's list (section 6).
 
+##### S1-E11-17 Invite links for the March test
+
+As an admin, I want to make invite links so that only the adults I invite can join the March test.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E2-01, S1-E11-01; S1-E11-02 (the Users area where the Invites tab sits; stub the menu entry until it lands)
+- **Added:** 17 Oct 2026, 13:01 (Robert, chat): "Make an inviting link... It can technically have the same logic as we have with the teachers inviting pupils to class." Board: 8.5 Users, Invites tab (to be drawn, docs/board-fixes.md).
+- **Data:** one shared `invites` table used by this story and later by class spaces (S1-E8-11a): `id`, `user_id` (the staff member or teacher who made it, not null, references `profiles.id`), `purpose` (`platform` or `class_space`), `space_id` (only for class spaces), a random code stored hashed, `max_uses`, `use_count`, `expires_at`, `revoked_at`, an optional private `note` ("for Ana, beta tester"). RLS: only staff with the admin role read and write platform invites, through `admin_*` functions; nobody reads codes back after creation.
+- **Acceptance criteria:**
+  - Given Users › Invites, when an admin chooses "Make an invite link", then they set how many people it admits (default 1), when it expires (default 14 days) and an optional private note, and get a link `<site address from the brand config>/join/<code>` with a Copy button; the code is shown once.
+  - Given an invite link, when someone opens it while `invite_only` is on, then sign-up opens with the code filled in (S1-E2-01); an expired, revoked or used-up link shows a kind "This invitation has ended, ask the person who invited you for a new one" page and stores nothing.
+  - Given a successful sign-up, when the account is created, then `use_count` goes up in the same transaction, so two people can't both use the last place.
+  - Given the list of invites, when an admin views it, then they see the note, uses (for example 1 of 1), expiry, status (Active, Used up, Expired, Revoked) and who made it, never who used it by name; they can revoke an active invite or make a new link.
+  - Given any invite action, when it happens, then the audit log records who made, revoked or used up which invite.
+  - Given the same mechanism, when class spaces arrive (S1-E8-11a), then they reuse the `invites` table and join function with `purpose = class_space`, instead of building a second one.
+- **Legal and compliance:** the note is for the admin's memory only; keep it to a first name or a role, and it is deleted with the invite 90 days after expiry (proposal, S1-E13-04 retention). The invitee's email is not stored on the invite. Invites never bypass the `adults_only` check (S1-E2-02).
+
 ##### S1-E11-QA Epic check: Admin site
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
 
-- **Priority:** Must · **Size:** S · **Depends on:** S1-E11-01, S1-E11-02
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E11-01, S1-E11-02, S1-E11-17
 - **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories (S1-E11-09a moved after March, 12:44) and comes last among them in the build order. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-06, S1-E11-07, S1-E11-08, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) get the same check when they land (proposal).
-- **Main journeys:** staff sign in to the admin shell, find a user, act on the account and take a data request from logging to sending the files, with every step in the audit log.
+- **Main journeys:** an admin makes an invite link and an invited adult joins with it; staff sign in to the admin shell, find a user and act on the account, with every step in the audit log. (Data requests moved after March, 12:44.)
 - **Acceptance criteria:**
   - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting` and the staff personas the epic uses, and every journey passes.
   - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.

@@ -16,3 +16,4 @@ Found by the end-to-end check on 17 Oct 2026. The boards in design/boards are th
 | Settings | "Download my data" copy: "as Word (.docx) files in one ZIP" | Depends on question 1 |
 | Contest, Website-Home | "Aged 13 to 19", "If you're 13 to 19" | Depends on question 4 |
 | AdminPages | Link note: notice strip "at the top of the website and the app" | Depends on question 3 |
+| AdminUsers | No Invites tab | Add Users › Invites (S1-E11-17, decided 17 Oct 2026, 13:01): "Make an invite link" (uses, expiry, private note), the link shown once with Copy, and a list with note, uses, expiry, status, made by, and Revoke |

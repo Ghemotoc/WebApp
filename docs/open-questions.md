@@ -10,7 +10,7 @@ Grouped by when the answer is needed. "Blocks" lists the stories that can't be f
 
 | # | Question | Answer, or my recommendation | Status | Blocks |
 | --- | --- | --- | --- | --- |
-| 1 | **March scope.** Which lever do you pull? | We try our best without a programmer. The March slice is re-cut to an MVP of 58 stories, about 498 hours, invited adults only (section 1.13; S1-E1-06 dropped and five Must stories added on 17 Oct 2026; epic check stories added 17 Oct 2026, 12:36; minors' gate and data rights moved after March 17 Oct 2026, 12:44). Hours a week and the date stay open (34m) | Decided 16 Oct 2026, Q32 | Section 1.13 |
+| 1 | **March scope.** Which lever do you pull? | We try our best without a programmer. The March slice is re-cut to an MVP of 59 stories, about 501 hours, invited adults only (section 1.13; S1-E1-06 dropped and five Must stories added on 17 Oct 2026; epic check stories added 17 Oct 2026, 12:36; minors' gate and data rights moved after March 17 Oct 2026, 12:44). Hours a week and the date stay open (34m) | Decided 16 Oct 2026, Q32 | Section 1.13 |
 | 2 | **Domain and trademark** | ghemotoc.com and @ghemotoc are free. Still to do: the trademark search (OSIM, EUIPO) before filing | Decided 16 Oct 2026, Q33 (availability); trademark search OPEN | S1-E1-01, S1-E14-02, S1-E16 |
 | 3 | **Company accounts** before the company exists | Open them in Robert's name with a written plan to transfer them; the plan is in section 1.11 | Decided 16 Oct 2026, Q34 | S1-E1-01, S1-E16-04 |
 | 4 | **Minimum age** | 13 | Decided 15 Oct 2026 | S1-E2-02 |

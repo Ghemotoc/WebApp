@@ -40,7 +40,7 @@ Scope: writing, reading, comments, follows, forums with user-created spaces, pri
 - Every story also has to pass the global Definition of Ready and Definition of Done in the CTO pack.
 - What each screen needs from the back end, what can be mocked and the build order are in the CTO pack, section 1.7. Each epic below names its screen group and wave.
 
-**Story count:** 141 stories in 16 epics: 125 feature stories plus one epic check story per epic (S1-E1-QA to S1-E16-QA, added 17 Oct 2026, 12:36 at Robert's request; Must for the 11 epics with March MVP stories, Should for the other five; S1-E13 has no March story since 17 Oct 2026, 12:44). S1-E11-16 (adding public-domain classics from the admin site) was added on 17 Oct 2026 at 12:00 at Robert's request. S1-E11-14 (landing pages), S1-E11-15 (contests) and S1-E12-05 (ad slot booking and fill order) were added on 17 Oct 2026 at 11:06 at Robert's request; all three are Should and come after the March MVP. S1-E11-13 (support tickets in the admin site) and S1-E10-13 (country-specific emergency and safety contacts) were added on 17 Oct 2026. Four were added on 16 Oct 2026 (evening): S1-E2-11, S1-E3-13, S1-E5-07 and S1-E11-06, all Should or Could. Eight were added on 16 Oct 2026 (late evening): S1-E5-08, S1-E11-07 to S1-E11-12 and S1-E13-05. Four more came with Robert's answers to the 71 questions (16 Oct 2026, late evening): S1-E1-06 (the move to our own Supabase), S1-E5-09 (See all page), S1-E12-04 (ad-network ads) and S1-E14-04 (Contact us). The March MVP is in section 1.13.
+**Story count:** 142 stories in 16 epics: 126 feature stories plus one epic check story per epic (S1-E1-QA to S1-E16-QA, added 17 Oct 2026, 12:36 at Robert's request; Must for the 11 epics with March MVP stories, Should for the other five; S1-E13 has no March story since 17 Oct 2026, 12:44). S1-E11-16 (adding public-domain classics from the admin site) was added on 17 Oct 2026 at 12:00 at Robert's request. S1-E11-14 (landing pages), S1-E11-15 (contests) and S1-E12-05 (ad slot booking and fill order) were added on 17 Oct 2026 at 11:06 at Robert's request; all three are Should and come after the March MVP. S1-E11-13 (support tickets in the admin site) and S1-E10-13 (country-specific emergency and safety contacts) were added on 17 Oct 2026. Four were added on 16 Oct 2026 (evening): S1-E2-11, S1-E3-13, S1-E5-07 and S1-E11-06, all Should or Could. Eight were added on 16 Oct 2026 (late evening): S1-E5-08, S1-E11-07 to S1-E11-12 and S1-E13-05. Four more came with Robert's answers to the 71 questions (16 Oct 2026, late evening): S1-E1-06 (the move to our own Supabase), S1-E5-09 (See all page), S1-E12-04 (ad-network ads) and S1-E14-04 (Contact us). The March MVP is in section 1.13.
 
 | Epic | Name | Stories |
 | --- | --- | --- |
@@ -54,7 +54,7 @@ Scope: writing, reading, comments, follows, forums with user-created spaces, pri
 | S1-E8 | Forums and spaces | 13 |
 | S1-E9 | Private messages | 5 |
 | S1-E10 | Reporting, moderation and safety | 14 |
-| S1-E11 | Admin site | 17 |
+| S1-E11 | Admin site | 18 |
 | S1-E12 | Banners and sponsor slots | 6 |
 | S1-E13 | Privacy and data rights | 6 |
 | S1-E14 | Legal pages and compliance | 5 |

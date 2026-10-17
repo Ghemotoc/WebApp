@@ -24,7 +24,7 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 **When the canvas changes:** ask Claude (in the WattPad Better Be Gone project) to refresh `design/` in the repository, so Claude Code always builds from the latest boards.
 
 
-**March MVP: 58 stories.**
+**March MVP: 59 stories.**
 
 | # | Story | Title | Priority | Size | Wave |
 | --- | --- | --- | --- | --- | --- |
@@ -65,27 +65,28 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 | 35 | S1-E10-08 | "Copied from a published work" report | Must | M | Wave 3: Safety and staff |
 | 36 | S1-E10-13a | Country-specific emergency and safety contacts | Must | M (split, decided 17 Oct 2026, 12:44: 13a in the March MVP, S: the table seeded from the researched defaults and the per-country block; 13b after March, M: the editing screen, the monthly check job with its ticket and the 45-day warning, starting at go-live) | Wave 3: Safety and staff |
 | 37 | S1-E11-02 | User management | Must | M | Wave 3: Safety and staff |
-| 38 | S1-E11-QA | Epic check: Admin site | Must | S | Wave 3: Safety and staff |
-| 39 | S1-E5-01 | Browse by category and tag | Must | M | Wave 4: Social and discovery |
-| 40 | S1-E6-01 | Comment on a chapter | Must | M | Wave 4: Social and discovery |
-| 41 | S1-E6-02 | Emoji reactions on comments | Must | S | Wave 4: Social and discovery |
-| 42 | S1-E6-03 | Like a chapter | Must | S | Wave 4: Social and discovery |
-| 43 | S1-E6-04 | Private downvote | Must | S | Wave 4: Social and discovery |
-| 44 | S1-E6-05 | Follow a writer or a story | Must | S | Wave 4: Social and discovery |
-| 45 | S1-E6-QA | Epic check: Comments, reactions and follows | Must | S | Wave 4: Social and discovery |
-| 46 | S1-E7-01 | In-app notifications | Must | M | Wave 4: Social and discovery |
-| 47 | S1-E10-04 | Statements of reasons | Must | M | Wave 3: Safety and staff |
-| 48 | S1-E10-QA | Epic check: Reporting, moderation and safety | Must | S | Wave 3: Safety and staff |
-| 49 | S1-E7-QA | Epic check: Notifications | Must | S | Wave 4: Social and discovery |
-| 50 | S1-E14-04 | Contact us with a ready-made EU helpdesk | Must | S | Wave 5: Rights, numbers and shipping |
-| 51 | S1-E14-QA | Epic check: Legal pages and compliance | Must | S | Wave 5: Rights, numbers and shipping |
-| 52 | S1-E15-02 | First-party metrics for the March test | Must | M | Wave 5: Rights, numbers and shipping |
-| 53 | S1-E5-03 | Popularity ranking | Must | M | Wave 4: Social and discovery |
-| 54 | S1-E5-02 | Sort options | Must | S | Wave 4: Social and discovery |
-| 55 | S1-E5-09 | See all page for a shelf | Must | S | Wave 4: Social and discovery |
-| 56 | S1-E5-08 | Public website home page | Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) | M | Wave 4: Social and discovery |
-| 57 | S1-E5-QA | Epic check: Discovery, search and profiles | Must | S | Wave 4: Social and discovery |
-| 58 | S1-E15-QA | Epic check: Analytics and the March test | Must | S | Wave 5: Rights, numbers and shipping |
+| 38 | S1-E11-17 | Invite links for the March test | Must | S | Wave 3: Safety and staff |
+| 39 | S1-E11-QA | Epic check: Admin site | Must | S | Wave 3: Safety and staff |
+| 40 | S1-E5-01 | Browse by category and tag | Must | M | Wave 4: Social and discovery |
+| 41 | S1-E6-01 | Comment on a chapter | Must | M | Wave 4: Social and discovery |
+| 42 | S1-E6-02 | Emoji reactions on comments | Must | S | Wave 4: Social and discovery |
+| 43 | S1-E6-03 | Like a chapter | Must | S | Wave 4: Social and discovery |
+| 44 | S1-E6-04 | Private downvote | Must | S | Wave 4: Social and discovery |
+| 45 | S1-E6-05 | Follow a writer or a story | Must | S | Wave 4: Social and discovery |
+| 46 | S1-E6-QA | Epic check: Comments, reactions and follows | Must | S | Wave 4: Social and discovery |
+| 47 | S1-E7-01 | In-app notifications | Must | M | Wave 4: Social and discovery |
+| 48 | S1-E10-04 | Statements of reasons | Must | M | Wave 3: Safety and staff |
+| 49 | S1-E10-QA | Epic check: Reporting, moderation and safety | Must | S | Wave 3: Safety and staff |
+| 50 | S1-E7-QA | Epic check: Notifications | Must | S | Wave 4: Social and discovery |
+| 51 | S1-E14-04 | Contact us with a ready-made EU helpdesk | Must | S | Wave 5: Rights, numbers and shipping |
+| 52 | S1-E14-QA | Epic check: Legal pages and compliance | Must | S | Wave 5: Rights, numbers and shipping |
+| 53 | S1-E15-02 | First-party metrics for the March test | Must | M | Wave 5: Rights, numbers and shipping |
+| 54 | S1-E5-03 | Popularity ranking | Must | M | Wave 4: Social and discovery |
+| 55 | S1-E5-02 | Sort options | Must | S | Wave 4: Social and discovery |
+| 56 | S1-E5-09 | See all page for a shelf | Must | S | Wave 4: Social and discovery |
+| 57 | S1-E5-08 | Public website home page | Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) | M | Wave 4: Social and discovery |
+| 58 | S1-E5-QA | Epic check: Discovery, search and profiles | Must | S | Wave 4: Social and discovery |
+| 59 | S1-E15-QA | Epic check: Analytics and the March test | Must | S | Wave 5: Rights, numbers and shipping |
 
 ## Prompts for every Stage 1 story
 
@@ -3040,12 +3041,12 @@ CONTEXT
 - Platform: web only for now.
 - Decisions that apply: class spaces are by invitation, follow the people in the room, mix ages and are never split at 16 (17 Oct 2026); a private class space never appears in search, discovery or public lists, and its posts and stories can't be opened by non-members; a student sees and posts only once fully active (age check passed and, for under-16s, parental consent); a story shared with the class stays members-only until the student makes it public, and a teacher can never do that for them; reports from inside go to the normal queue; DSA Art 28 protections apply inside.
 - Designs: design/boards/ClassSpace.dc.html (5.4) with design/renders/desktop/ClassSpace.jpg and design/renders/phone/ClassSpace.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces: real: B24 class space fields and space_invites, B23, B02 is_active_member(). Persona teacher.
+- Back-end pieces: real: B24 class space fields and the shared invites table (built by S1-E11-17; reuse it with purpose class_space), B23, B02 is_active_member(). Persona teacher.
 - Watch-outs: the teacher can reset the invite code and link at any time and sets how long they work. Teachers can never message under-16 students (S1-E9-03). The school's data role and the protocol need a Romanian lawyer before the pilot (L11): don't decide anything about it.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
-2. Migrations: the private class flag, space_invites with expiry and reset, the join function, class-only story visibility, RLS with an allowed and a denied pgTAP test each (non-member, kid_14_waiting, member, platform moderator).
+2. Migrations: the private class flag, class-space rows in the shared invites table (purpose class_space) with expiry and reset, reusing S1-E11-17's join function, the join function, class-only story visibility, RLS with an allowed and a denied pgTAP test each (non-member, kid_14_waiting, member, platform moderator).
 3. A table mapping each 11a acceptance criterion to its test.
 4. i18n keys (ro and en), analytics events and moderation hooks.
 5. Every OPEN or unclear point as a question, including my split of the criteria.
@@ -4508,16 +4509,51 @@ QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste 
 Then give me the hand-test steps STEP 2 asks for.
 ```
 
+### S1-E11-17 Invite links for the March test
+Must · S · March MVP (wave 3) · Depends on: S1-E2-01, S1-E11-01; S1-E11-02 (stub the menu entry until it lands)
+
+```text
+We are working on story S1-E11-17 (Invite links for the March test) only. Read CLAUDE.md, docs/architecture.md (1.6, 1.8 admin site) and docs/definition-of-done.md, then the story in docs/stories/s1-e11-admin-site.md and S1-E2-01 (the invite_only flag).
+
+CONTEXT
+- Already merged: S1-E2-01 (sign-up with the invite_only flag, where invites were seeded by a migration), S1-E11-01 (admin shell). S1-E11-02 (Users area) may not be merged yet: if not, give Invites its own menu entry and tell me.
+- Decisions that apply: the March test is invited adults only (17 Oct 2026, 12:44); admins make invite links with the same logic teachers will use to invite pupils to a class (Robert, 17 Oct 2026, 13:01). Only staff with the admin role manage invites. The site address in the link comes from the brand config (src/config/brand.ts), never hard-coded.
+- Designs: no board yet (docs/board-fixes.md lists the Invites tab for 8.5 Users). Use the plain staff components from AdminUsers.dc.html and show me the layout in your plan.
+- Back-end pieces: a shared `invites` table (purpose platform or class_space), a `create_invite` admin function, `revoke_invite`, and a `redeem_invite` step inside sign-up that checks and counts the code in the same transaction. Class spaces (S1-E8-11a) will reuse all of this later, so name things generally, not "beta" or "march".
+- Watch-outs: store the code hashed and show it once; an expired, revoked or used-up link shows a kind page and stores nothing; a redeemed invite never skips the adults_only year-of-birth check (S1-E2-02); no invitee email on the invite; every create, revoke and use goes to the audit log; RLS so nobody but admins (through admin_* functions) can read invites.
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change.
+2. The migration: the invites table, indexes, RLS policies (who and why), the three functions and how the seeded invites from S1-E2-01 move into it.
+3. A table mapping each acceptance criterion to the test(s) that prove it, including a race test for the last place on a link.
+4. New i18n keys (ro and en), analytics events (none expected) and audit log entries.
+5. Anything OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md and check that the code follows the Readable code section of CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-17: Invite links for the March test". Then give me:
+- a summary of what changed and the check results;
+- step-by-step test steps for a non-developer: as the admin persona make a one-use link, open it in a private window and sign up as a new adult, try the link again (it should say the invitation has ended), make a second link and revoke it;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
 ### S1-E11-QA Epic check: Admin site
-Must · S · March MVP (wave 3, last of its epic) · Depends on: S1-E11-01, S1-E11-02
+Must · S · March MVP (wave 3, last of its epic) · Depends on: S1-E11-01, S1-E11-02, S1-E11-17
 
 ```text
 We are working on story S1-E11-QA (Epic check: Admin site) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E11-QA and every story it depends on in docs/stories/s1-e11-admin-site.md.
 
 CONTEXT
-- Already merged: S1-E11-01, S1-E11-02. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-06, S1-E11-07, S1-E11-08, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) are not part of this check (S1-E11-09a moved after March, 12:44). This story adds no feature: it tests those stories together, end to end.
+- Already merged: S1-E11-01, S1-E11-02, S1-E11-17. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-06, S1-E11-07, S1-E11-08, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) are not part of this check (S1-E11-09a moved after March, 12:44). This story adds no feature: it tests those stories together, end to end.
 - Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
-- Main journeys to cover: staff sign in to the admin shell, find a user, act on the account and take a data request from logging to sending the files, with every step in the audit log.
+- Main journeys to cover: an admin makes an invite link and an invited adult joins with it; staff sign in to the admin shell, find a user and act on the account, with every step in the audit log.
 - Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
 - Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
 - Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E11.md (check with Robert).

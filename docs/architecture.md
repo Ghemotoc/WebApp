@@ -55,7 +55,7 @@ The plan says to decide the mobile approach in iteration 2. These are the realis
 ### 1.4 The March 2027 constraint (read this before committing to scope)
 
 - **Today to March is about 19 weeks.** Business Model Innovation and Startup Essentials take four evenings a week in November and December; Execution runs January to March. The developer and community manager are planned from launch, not before.
-- **Decided 16 Oct 2026 (late evening, Q32): Robert builds without a programmer.** The March slice is re-cut to a real MVP in section 1.13: 58 stories and about 498 hours. The March test is invited adults only (decided 17 Oct 2026, 12:44), so the age check, parental consent and the data rights stories (about 132 hours) move to the minors' launch gate after March. It was 66 and about 630 with the 12 epic checks (17 Oct 2026, 12:36), 54 and about 594 at 11:53, and 50 and about 564 on 16 Oct 2026, down from 53 stories and about 660. At 10 to 12 hours a week that is still two and a half to three times the time available, so section 1.13 sets out the capacity problem plainly.
+- **Decided 16 Oct 2026 (late evening, Q32): Robert builds without a programmer.** The March slice is re-cut to a real MVP in section 1.13: 59 stories and about 501 hours. The March test is invited adults only (decided 17 Oct 2026, 12:44), so the age check, parental consent and the data rights stories (about 132 hours) move to the minors' launch gate after March. It was 66 and about 630 with the 12 epic checks (17 Oct 2026, 12:36), 54 and about 594 at 11:53, and 50 and about 564 on 16 Oct 2026, down from 53 stories and about 660. At 10 to 12 hours a week that is still two and a half to three times the time available, so section 1.13 sets out the capacity problem plainly.
 - **Store steps add calendar time you can't speed up:** Apple and Google developer accounts in the company's name need the company (Romanian SRL or Swedish AB: **OPEN**, Q55) and a D-U-N-S number. A new Google Play personal account currently needs a closed test with 12 testers for 14 days (check the rule when you open it), and first app reviews can take days and bounce.
 - **What this means:** "all operating systems with real users by March" and "solo founder in the evenings" can't both hold. The developer hire and an SSES co-founder are off the table (Q32, Q57), so the levers left are hours a week, the date and scope. Section 1.13 proposes the scope; hours and date stay **OPEN** for Robert.
 
@@ -124,7 +124,7 @@ Names are suggestions for Claude Code. Every table has row-level security.
 | Messages | `conversations`, `conversation_members`, `messages`, `message_requests` |
 | Safety | `reports`, `cases`, `case_actions`, `picture_checks`, `statements_of_reasons`, `appeals`, `sanctions`, `authority_orders`, `audit_log` |
 | Money (Stage 1 only sponsors) | `sponsors`, `campaigns`, `campaign_daily_stats` |
-| Schools | `schools`, `teacher_checks`, `space_invites`, `certificates` |
+| Schools | `schools`, `teacher_checks`, `invites` (shared with platform invites, S1-E11-17), `certificates` |
 | Data rights | `exports`, `data_requests` |
 | Platform | `feature_flags`, `settings`, `rate_limits`, `reserved_names`, `markets`, `languages`, `seasonal_occasions`, `legal_documents`, `consents`, `notifications`, `jobs` |
 | Website (its own database; set-up OPEN; from March: inside the app until the website database exists, decided 17 Oct 2026, 12:34) | `hero_versions`, `site_banners`, `help_pages`, `faq_items`: read by the public website, written only through the `website-cms` bridge (section 1.8.6) |
@@ -220,7 +220,7 @@ Each piece has an ID (B01 and so on) so the screen tables below can point to it.
 | B21 | Discussion and people: `comments`, `reactions`, `downvotes`, `follows`, `blocks` | S1-E6, `blocks` in S1-E5-05 | nothing to mock |
 | B22 | Notifications: `notifications`, triggers, Realtime; email digests; push tokens | S1-E7-01 to S1-E7-03 | Realtime runs locally; push is a stub until S1-E16-03 |
 | B23 | Forums and spaces: forums, threads, posts, revisions, read marks, spaces, members, roles | S1-E8 | nothing to mock |
-| B24 | Schools: `schools`, `teacher_checks`, class space fields, `space_invites`, `certificates`, `certificate-pdf` | S1-E2-11, S1-E8-11, S1-E8-12 | the PDF is a stub until S1-E8-12 |
+| B24 | Schools: `schools`, `teacher_checks`, class space fields, `invites` (purpose `class_space`), `certificates`, `certificate-pdf` | S1-E2-11, S1-E8-11, S1-E8-12 | the PDF is a stub until S1-E8-12 |
 | B25 | Messages: conversations, messages, requests, `can_message(a, b)` | S1-E9 | nothing to mock |
 | B26 | Safety: `cases`, `case_actions`, `statements_of_reasons`, `appeals`, `sanctions`, `authority_orders`, queue views, on-call alert | S1-E10 | the phone alert is a stub that only logs |
 | B27 | Admin functions: `admin_*` functions, each checking role, permission and `is_staff_session()` and writing the audit log in the same transaction | S1-E11 | nothing to mock |
@@ -751,10 +751,10 @@ Updated 16 Oct 2026 (late evening). Robert builds without a programmer (Q32), so
 | S1-E5 Discovery | 01, 02, 03 (the Discover mix), 05, 08 (a short website: hero, safety lines, questions), 09 (See all), QA (epic check, S) | 57 |
 | S1-E6 and S1-E7 | 01 comments, 02 emoji reactions, 03 likes, 04 private downvote, 05 follows (02 and 04 added 17 Oct 2026), QA (epic check, S); S1-E7-01 notifications, S1-E7-QA (epic check, S) | 42 |
 | S1-E10 Safety | 01, 02 (the one report form and TCO contact point), 03a (one queue with tiers and deadlines, M), 04, 05 (picture check), 06, 09 (removal orders), 10 (safeguarding), 08 ("copied from a published work" report) and 13a (safety contacts by country, seeded from research G4, S), both added 17 Oct 2026, QA (epic check, S) | 114 |
-| S1-E11 Admin | 01, 02, QA (epic check, S) | 27 |
+| S1-E11 Admin | 01, 02, 17 (invite links, S, added 17 Oct 2026, 13:01), QA (epic check, S) | 30 |
 | S1-E14 Legal | 01, 02, 04 (Contact us), QA (epic check, S) | 21 |
 | S1-E15 The March numbers | 02, QA (epic check, S) | 15 |
-| **Total** | **58 stories: 2 L, 30 M, 26 S** | **about 498** |
+| **Total** | **59 stories: 2 L, 30 M, 27 S** | **about 501** |
 
 Updated 17 Oct 2026, 12:44: the March test is invited adults only, so S1-E2-08, S1-E2-03, S1-E2-07b, S1-E10-13b, S1-E11-09a, S1-E13-02 to 05 and S1-E13-QA move after March (next table). S1-E13 has no March story left.
 
@@ -790,7 +790,7 @@ Added since the old slice: S1-E1-06 (12, dropped again on 17 Oct 2026), S1-E2-03
 **Capacity, honestly**
 
 - **Time available.** About 19 weeks to 1 March 2027. At 10 to 12 hours a week that is 190 to 230 hours, and less in November and December while the SSES courses take four evenings a week. A fair estimate is 150 to 200 hours.
-- **The MVP needs about 498 hours** (invited adults only, decided 17 Oct 2026, 12:44; it was about 630 with minors in March). That is still two and a half to three times what the evenings give. At 11 hours a week it is about 45 weeks, which still puts real users around the end of summer 2027. To keep March with this scope you would need about 26 hours a week, every week, from now.
+- **The MVP needs about 501 hours** (invited adults only, decided 17 Oct 2026, 12:44; it was about 630 with minors in March). That is still two and a half to three times what the evenings give. At 11 hours a week it is about 45 weeks, which still puts real users around the end of summer 2027. To keep March with this scope you would need about 26 hours a week, every week, from now.
 - **The floor is high.** Foundations, the age gate, parental consent, the report form, removal orders, the moderation queue, the picture check, safeguarding and data rights come to about 280 hours before anyone writes or reads a single story. Limiting March to invited adults (decided 17 Oct 2026, 12:44) moves about 132 of those hours to the minors' launch gate; it doesn't remove them. With minors on the platform and consent as the legal basis, none of that can go before the first under-18 joins.
 - **The sizes assume Claude Code does the typing and you review.** A first-time builder is usually slower than this, not faster. Log the real hours for the first four stories and re-forecast in early December.
 - **Small cuts left inside the MVP** (each yours to make): a one-page website instead of S1-E5-08 (about 9), a simple newest-plus-most-liked Discover instead of the ranking job (about 9). Together about 18 hours, which does not change the picture. Word files after March is no longer a cut: Download my data holds every story as a Word file (decided 17 Oct 2026, 12:34).
