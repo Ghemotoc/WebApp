@@ -17,10 +17,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 @media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
 .tmc-dd{pointer-events:none;user-select:none}
 .tmc-dd-sticker{filter:drop-shadow(2px 0 0 #FBF7EC) drop-shadow(-2px 0 0 #FBF7EC) drop-shadow(0 2px 0 #FBF7EC) drop-shadow(0 -2px 0 #FBF7EC)}
-@media (max-width: 1199px){.tmc-dd-xxl{display:none !important}}
-@media (max-width: 1119px){.tmc-dd-xl{display:none !important}}
 @media (max-width: 999px){.tmc-dd-wide{display:none !important}}
-@media (max-width: 600px){.tmc-dd-hide{display:none !important}}
+@media (max-width: 599px){.tmc-dd-hide{display:none !important}}
 /* Automatic covers (S1-E3-13): the 16 approved backgrounds */
 .tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
 .tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
@@ -209,9 +207,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
             <span style="margin-left: auto; text-align: right; font-size: 13px; color: #6B5A73">One of the slides at the top of Discover</span>
           </div>
           <figure style="margin: 0; flex: 1; padding: 28px; border-radius: 16px; background: radial-gradient(circle at 88% 80%, rgba(255,255,255,0.35) 0, rgba(255,255,255,0) 26%), linear-gradient(120deg,#E6C24C 0%,#F0D47A 100%); display: flex; flex-direction: column; gap: 10px">
-            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #5C3F0E; line-height: 1.3">Contest · opens in February 2027</span>
-            <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.02em; color: #2A0E33">Write chapter one. Get read.</span>
-            <span style="font-size: 15px; line-height: 1.5; color: #3A2442">The First Chapter contest is for writers aged 13 to 19.</span>
+            <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #5C3F0E; line-height: 1.3">Contest · opens [date]</span>
+            <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.02em; color: #2A0E33">[Contest name]</span>
+            <span style="font-size: 15px; line-height: 1.5; color: #3A2442">For writers aged 13 to 15, 16 to 17 or 18 and over.</span>
             <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 6px">
               <span style="display: inline-flex; align-items: center; height: 40px; padding: 0 20px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600">Remind me</span>
               <span style="font-size: 14px; font-weight: 600; color: #3A2442">Presented by [Partner]</span>
@@ -230,15 +228,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
             <div style="width: 100%; box-sizing: border-box; padding: 18px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 16px; display: flex; gap: 14px">
               <span aria-hidden="true" style="flex: none; width: 48px; height: 48px; border-radius: 50%; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center"><img src="/_blob/bce56c2d54680b7b32b00a7d53382b01" alt="" aria-hidden="true" width="32" height="32" style="display: block; flex: none; width: 32px; height: 32px"></span>
               <div style="flex: 1; min-width: 0">
-                <span style="display: block; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; color: #26142E">The First Chapter contest</span>
+                <span style="display: block; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; color: #26142E">[Contest name]</span>
                 <span style="display: block; margin-top: 2px; font-size: 14px; color: #5C4965">Presented by <strong style="font-weight: 700; color: #26142E">[Partner]</strong></span>
                 <dl style="display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 12px 0 0; font-size: 14px">
                   <div><dt style="color: #6B5A73">Prize</dt><dd style="margin: 2px 0 0; font-weight: 700; color: #26142E">[prize]</dd></div>
                   <div><dt style="color: #6B5A73">Deadline</dt><dd style="margin: 2px 0 0; font-weight: 700; color: #26142E">[date]</dd></div>
-                  <div><dt style="color: #6B5A73">Who can enter</dt><dd style="margin: 2px 0 0; font-weight: 700; color: #26142E">Writers aged 13 to 19</dd></div>
+                  <div><dt style="color: #6B5A73">Who can enter</dt><dd style="margin: 2px 0 0; font-weight: 700; color: #26142E">13 to 15 · 16 to 17 · 18 and over</dd></div>
                 </dl>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px">
-                  <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600; text-decoration: none">Enter your first chapter</a>
+                  <a href="WriterDashboard.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-size: 14px; font-weight: 600; text-decoration: none">Enter a story</a>
                   <a href="Legal.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Read the rules</a>
                 </div>
               </div>
@@ -317,7 +315,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
         </div>
         <ul style="flex: 2 1 480px; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.55; color: #5C4965">
             <li style="display: flex; align-items: flex-start; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#672786" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 3px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span><b style="color: #26142E">Two at most on a page:</b> one wide banner and one smaller ad, such as a card in a list, a portrait beside search results or a side ad in a forum thread.</span></li>
-            <li style="display: flex; align-items: flex-start; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#672786" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 3px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span><b style="color: #26142E">One on screen at a time.</b> Never two side by side or one straight after another.</span></li>
+            <li style="display: flex; align-items: flex-start; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#672786" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 3px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span><b style="color: #26142E">Never the same ad twice in view.</b> On wide screens two ads can be in view at once, such as a wide banner and a side ad, and they’re always different ads. Never two banners one straight after another.</span></li>
             <li style="display: flex; align-items: flex-start; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#672786" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 3px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span><b style="color: #26142E">Never first.</b> Always below the page heading and the first row of stories or posts.</span></li>
             <li style="display: flex; align-items: flex-start; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#672786" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 3px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span><b style="color: #26142E">Lists and threads:</b> at most one ad card in every 12 stories, never in first place. In a thread, one wide ad below the reply box and one side ad on wide screens, never between replies.</span></li>
             <li style="display: flex; align-items: flex-start; gap: 10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#672786" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 3px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg><span><b style="color: #26142E">Only on public pages:</b> Discover, Search, Classics, See all, story pages, shared links, app-only pages, your library, forums, threads, public spaces and profiles. Never in class spaces, the writing tools, messages, settings or help pages.</span></li>

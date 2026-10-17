@@ -194,7 +194,7 @@ fieldset{min-width:0}
           <div style="display: flex; flex-direction: column; gap: 6px; max-width: 760px">
             <span class="tmc-eb">Add a work · part 16a</span>
             <h2 id="add-title" class="tmc-h2">{{f.heading}}</h2>
-            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Content editors and admins can add a work. Fill in the details and the check on the right shows, market by market, whether it is free.</p>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Only staff with the admin role manage Classics. Fill in the details and the check on the right shows, market by market, whether it is free.</p>
           </div>
           <span style="{{pub.statusStyle}}">{{pub.status}}</span>
         </div>
@@ -496,7 +496,7 @@ fieldset{min-width:0}
           <button type="button" class="tmc-btn" onClick="{{pub.publish}}">Publish</button>
           <button type="button" class="tmc-btn2" onClick="{{pub.ready}}">Mark ready to check</button>
           <button type="button" class="tmc-btn2" onClick="{{pub.save}}">Save draft</button>
-          <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: #4F3D57"><span>An admin publishes. A content editor marks it ready to check.</span><span class="tmc-pill tmc-prop">Proposal</span></span>
+          <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: #4F3D57"><span>Only admins add, check and publish classics. Mark it ready to check when you want a second admin to look first.</span></span>
         </div>
         <sc-if value="{{pub.hasMsg}}" hint-placeholder-val="{{false}}">
           <p role="status" style="{{pub.msgStyle}}">{{pub.msg}}</p>
@@ -871,7 +871,7 @@ class Component extends DCLogic {
       save: function () { self.setState({ msg: { tone: 'info', text: 'Draft saved. Nothing is public yet.' } }); },
       ready: function () {
         if (missing) { self.setState({ msg: { tone: 'warn', text: 'Not ready yet: ' + missing + (missing === 1 ? ' check is' : ' checks are') + ' still open above.' } }); return; }
-        self.setState({ status: 'Ready to check', msg: { tone: 'info', text: titleNow + ' is ready to check. An admin can now publish it.' } });
+        self.setState({ status: 'Ready to check', msg: { tone: 'info', text: titleNow + ' is ready to check. Another admin can now check it and publish it.' } });
       },
       publish: function () {
         if (missing) { self.setState({ msg: { tone: 'bad', text: 'Can’t publish yet: ' + missing + (missing === 1 ? ' check is' : ' checks are') + ' still open above.' } }); return; }

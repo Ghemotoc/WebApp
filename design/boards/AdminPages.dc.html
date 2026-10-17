@@ -152,7 +152,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
       <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
         <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
           <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Editing a page</span>
-          <h2 id="ed-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">The First Chapter contest</h2>
+          <h2 id="ed-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em; color: #481C5F">[Contest name]</h2>
           <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Your changes save as a draft. The scheduled version stays as it is until you publish again.</p>
         </div>
         <span style="{{edStatusStyle}}">{{edStatus}}</span>
@@ -284,7 +284,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
                     <div style="display: flex; flex-direction: column; gap: 10px">
                       <label for="sp-camp" style="font-size: 14px; font-weight: 700; color: #26142E">Approved sponsor campaign</label>
                       <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="sp-camp" value="{{sponsor.value}}" onChange="{{sponsor.change}}" aria-describedby="sp-camp-c" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; cursor: pointer">
-                        <option value="c4">The First Chapter contest · [Partner] · contest</option>
+                        <option value="c4">[Contest name] · [Partner] · contest</option>
                         <option value="c2">Poetry, sponsored by [Partner] · category</option>
                         <option value="c1">New young adult books · [Partner] · banner</option>
                       </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
@@ -319,16 +319,6 @@ button:disabled{cursor:not-allowed;opacity:0.55}
                           <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
                         </sc-for>
                       </div>
-                      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
-                        <label for="who-max" style="font-family: 'Cutive', 'Courier New', serif; width: 110px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Oldest age</label>
-                        <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="who-max" value="{{who.max}}" onChange="{{who.setMax}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; cursor: pointer">
-                          <option value="none">No upper age</option>
-                          <option value="19">19</option>
-                          <option value="21">21</option>
-                          <option value="25">25</option>
-                        </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
-                        <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; background: #FBF3DA; color: #5C3F0E; border: 1px dashed #D9B54A; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">Proposal</span>
-                      </div>
                       <div role="group" aria-label="Languages" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
                         <span style="font-family: 'Cutive', 'Courier New', serif; width: 110px; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Languages</span>
                         <sc-for list="{{who.langs}}" as="c" hint-placeholder-count="2">
@@ -360,7 +350,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
                     <div style="display: flex; flex-direction: column; gap: 6px">
                       <label for="rules-doc" style="font-size: 14px; font-weight: 700; color: #26142E">Full contest rules</label>
                       <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="rules-doc" value="{{rules.value}}" onChange="{{rules.change}}" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 44px; padding: 0 36px 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E; cursor: pointer">
-                        <option value="fc">The First Chapter contest rules (Legal centre)</option>
+                        <option value="fc">[Contest name] rules (Legal centre)</option>
                         <option value="none">Not linked yet</option>
                       </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
                       <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Required on a contest page. The rules live in the Legal centre with their own versions, in both languages.</span>
@@ -403,7 +393,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
                       <sc-if value="{{feat.byTag}}" hint-placeholder-val="{{false}}">
                         <div style="display: flex; flex-direction: column; gap: 6px">
                           <label for="feat-tag" style="font-size: 14px; font-weight: 700; color: #26142E">Tag</label>
-                          <input id="feat-tag" type="text" value="first chapter contest" style="width: 100%; max-width: 360px; box-sizing: border-box; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
+                          <input id="feat-tag" type="text" value="contest entry" style="width: 100%; max-width: 360px; box-sizing: border-box; height: 44px; padding: 0 16px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
                           <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Shows the newest public stories with this tag that fit the rule above. Staff can still hide any of them.</span>
                         </div>
                       </sc-if>
@@ -620,7 +610,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
         <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Restore brings a version back into the editor as a draft, in both languages. Nothing changes for readers until you publish.</p>
       </div>
       <div style="position: relative; overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px">
-        <div role="table" aria-label="Versions of The First Chapter contest page" style="min-width: 760px">
+        <div role="table" aria-label="Versions of the [Contest name] page" style="min-width: 760px">
           <div role="row" style="display: grid; grid-template-columns: 0.6fr 1.4fr 1.3fr 2.4fr 1fr 1fr; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
             <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">VERSION</span>
             <span role="columnheader" style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6B5A73">SAVED</span>
@@ -665,10 +655,11 @@ button:disabled{cursor:not-allowed;opacity:0.55}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    // The editor opens on the scheduled First Chapter contest page (Contest.dc.html shows what it produces).
+    // The editor opens on an example scheduled contest page, "[Contest name]" (Contest.dc.html shows what it produces).
+    // The First Chapter contest is a campaign for later (17 Oct 2026), so no real contest is named here.
     this.state = {
       filter: 'All', archived: {},
-      pageType: 'Contest', slug: 'first-chapter', theme: 'gold', device: 'desktop', pvLang: 'en',
+      pageType: 'Contest', slug: 'contest-name', theme: 'gold', device: 'desktop', pvLang: 'en',
       order: ['hero', 'sponsor', 'text', 'dates', 'who', 'prize', 'steps', 'rules', 'featured', 'qa', 'remind'],
       types: { hero: 'hero', sponsor: 'sponsor', text: 'text', dates: 'dates', who: 'who', prize: 'prize', steps: 'steps', rules: 'rules', featured: 'featured', qa: 'qa', remind: 'remind' },
       open: { hero: true, sponsor: true, text: false, dates: true, who: true, prize: false, steps: true, rules: false, featured: true, qa: false, remind: false },
@@ -676,7 +667,7 @@ class Component extends DCLogic {
       nextId: 5,
       tx: this.startText(),
       dates: { open: '[date]', close: '[date]', results: '[date]' },
-      ages: { a13: true, a16: true, a18: true }, maxAge: '19', langs: { English: true, 'Română': true }, markets: { Romania: true },
+      ages: { a13: true, a16: true, a18: true }, langs: { English: true, 'Română': true }, markets: { Romania: true },
       sponsor: 'c4', rules: 'fc', featMode: 'staff',
       picks: ['salt', 'tram', 'room12', 'lanterns', 'nightbus', 'clocktower', 'snow'], addPick: '',
       addType: 'text', removed: null, blockMsg: '',
@@ -688,21 +679,21 @@ class Component extends DCLogic {
   // English and Română copy for every block (empty means missing). Keys: block.field.lang.
   startText() {
     return {
-      'hero.title.en': 'The First Chapter contest', 'hero.title.ro': 'Concursul Primul capitol',
-      'hero.line.en': 'Write chapter one. Get read.', 'hero.line.ro': 'Scrie primul capitol. Ajunge la cititori.',
-      'hero.alt.en': 'A drawn book cover that reads: Chapter one, Your title here, by you.',
-      'hero.alt.ro': 'O copertă desenată pe care scrie: Capitolul unu, Titlul tău aici, de tine.',
+      'hero.title.en': '[Contest name]', 'hero.title.ro': '[Numele concursului]',
+      'hero.line.en': '[One line about the contest]', 'hero.line.ro': '[Un rând despre concurs]',
+      'hero.alt.en': 'A drawn book cover that reads: Your entry, Your title here, by you.',
+      'hero.alt.ro': 'O copertă desenată pe care scrie: Povestea ta, Titlul tău aici, de tine.',
       'hero.button.en': 'Remind me', 'hero.button.ro': 'Amintește-mi',
-      'text.heading.en': 'Post chapter one, enter in one tap', 'text.heading.ro': 'Publică primul capitol și înscrie-te dintr-o atingere',
-      'text.body.en': 'Write the first chapter of a new story and post it on Ghemotoc. Entering is free, and you keep every right in your story.',
-      'text.body.ro': 'Scrie primul capitol al unei povești noi și publică-l pe Ghemotoc. Înscrierea este gratuită, iar toate drepturile asupra poveștii rămân ale tale.',
+      'text.heading.en': 'Post your story, enter in one tap', 'text.heading.ro': 'Publică povestea și înscrie-te dintr-o atingere',
+      'text.body.en': 'Write a story on the contest’s theme and post it on Ghemotoc. Entering is free, and you keep every right in your story.',
+      'text.body.ro': 'Scrie o poveste pe tema concursului și publică-o pe Ghemotoc. Înscrierea este gratuită, iar toate drepturile asupra poveștii rămân ale tale.',
       'prize.prize.en': '[prize to be set]', 'prize.prize.ro': '[premiul urmează să fie stabilit]',
-      'steps.s1.en': 'Post chapter one of a new story.', 'steps.s1.ro': 'Publică primul capitol al unei povești noi.',
+      'steps.s1.en': 'Post a new story on the theme.', 'steps.s1.ro': 'Publică o poveste nouă pe tema concursului.',
       'steps.s2.en': 'Rate it, so readers know who it suits.', 'steps.s2.ro': 'Alege-i clasificarea de vârstă, ca cititorii să știe cui i se potrivește.',
-      'steps.s3.en': 'In story settings, tick “Enter The First Chapter contest”.', 'steps.s3.ro': 'În setările poveștii, bifează „Înscrie-te în concursul Primul capitol”.',
+      'steps.s3.en': 'In story settings, tick “Enter [Contest name]”.', 'steps.s3.ro': 'În setările poveștii, bifează „Înscrie-te în [Numele concursului]”.',
       'steps.s4.en': 'Do it before entries close on [date].', 'steps.s4.ro': 'Fă asta înainte de închiderea înscrierilor, pe [data].',
       'rules.label.en': 'Read the full rules', 'rules.label.ro': 'Citește regulamentul complet',
-      'featured.heading.en': 'Chapter ones we love', 'featured.heading.ro': 'Primele capitole care ne-au plăcut',
+      'featured.heading.en': 'Entries we love', 'featured.heading.ro': 'Povești înscrise care ne-au plăcut',
       'featured.note.en': 'Picked by our team. Shown by pen name only.', 'featured.note.ro': 'Alese de echipa noastră. Apar doar cu pseudonimul.',
       'qa.q1.q.en': 'Who judges the contest?', 'qa.q1.q.ro': 'Cine jurizează concursul?',
       'qa.q1.a.en': 'Our team and named judges from our partners. There’s no public vote.', 'qa.q1.a.ro': 'Echipa noastră și jurați numiți de partenerii noștri. Nu există vot public.',
@@ -792,12 +783,14 @@ class Component extends DCLogic {
     // Who can enter: youngest group sets the highest story rating allowed in Featured.
     var youngest = st.ages.a13 ? '13+' : (st.ages.a16 ? '16+' : (st.ages.a18 ? '18+' : '13+'));
     var under18 = !!(st.ages.a13 || st.ages.a16);
-    var minAge = st.ages.a13 ? 13 : (st.ages.a16 ? 16 : 18);
-    var maxAge = st.ages.a18 ? (st.maxAge === 'none' ? null : st.maxAge) : (st.ages.a16 ? '17' : '15');
     var langList = ['English', 'Română'].filter(function (l) { return st.langs[l]; });
     var mkList = Object.keys(st.markets).filter(function (k) { return st.markets[k]; });
-    var ageEn = maxAge ? 'aged ' + minAge + ' to ' + maxAge : 'aged ' + minAge + ' and over';
-    var ageRo = maxAge ? 'între ' + minAge + ' și ' + maxAge + ' ani' : 'de la ' + minAge + ' ani în sus';
+    // Contests use the platform age groups only (13 to 15, 16 to 17, 18 and over): no separate oldest age (17 Oct 2026).
+    var G = [['a13', '13 to 15', 'între 13 și 15 ani'], ['a16', '16 to 17', 'între 16 și 17 ani'], ['a18', '18 and over', 'de 18 ani sau mai mult']]
+      .filter(function (g) { return st.ages[g[0]]; });
+    var joinList = function (xs, word) { return xs.length < 2 ? (xs[0] || '') : xs.slice(0, -1).join(', ') + ' ' + word + ' ' + xs[xs.length - 1]; };
+    var ageEn = G.length ? 'aged ' + joinList(G.map(function (g) { return g[1]; }), 'or') : 'of any age group';
+    var ageRo = G.length ? joinList(G.map(function (g) { return g[2]; }), 'sau') : 'din orice grupă de vârstă';
     var langEn = langList.length ? ', writing in ' + langList.join(' or ') : '';
     var langRo = langList.length ? ', care scriu în ' + langList.map(function (l) { return l === 'English' ? 'engleză' : 'română'; }).join(' sau ') : '';
     var mkEn = mkList.length ? ', in ' + mkList.join(' or ') : '';
@@ -819,7 +812,7 @@ class Component extends DCLogic {
         who: whoLineEn,
         prize: tx['prize.prize.en'] || 'No prize yet',
         steps: (st.lists.steps || []).length + ' steps',
-        rules: st.rules === 'fc' ? 'The First Chapter contest rules' : 'No rules linked',
+        rules: st.rules === 'fc' ? '[Contest name] rules' : 'No rules linked',
         sponsor: 'Presented by [Partner] · ' + (st.sponsor === 'c4' ? 'approved contest campaign' : 'campaign not set up for a contest'),
         featured: st.featMode === 'staff' ? st.picks.length + ' stories picked by staff, all rated ' + youngest : 'Newest stories with a tag, rated ' + youngest,
         qa: (st.lists.qa || []).length + ' questions',
@@ -906,7 +899,7 @@ class Component extends DCLogic {
       mk(altOk, 'Every picture has alt text and passed the picture check', '1 picture, alt text in both languages, check passed.', 'The hero picture needs alt text in both languages.'),
       mk(!isContest || (rulesOk && datesOk), 'Contest pages have rules and dates', isContest ? 'Rules linked, three key dates set.' : 'Not a contest page.',
         !rulesOk && !datesOk ? 'Add the Rules and Key dates blocks.' : (!rulesOk ? 'Link the full contest rules.' : 'Fill in all three key dates.')),
-      mk(sponsorOk, 'Sponsor block uses an approved campaign', sponsorOn ? 'The First Chapter contest campaign, approved in Sponsors.' : 'No sponsor block on this page.', 'Pick the approved campaign set up for this contest.'),
+      mk(sponsorOk, 'Sponsor block uses an approved campaign', sponsorOn ? 'The [Contest name] campaign, approved in Sponsors.' : 'No sponsor block on this page.', 'Pick the approved campaign set up for this contest.'),
       mk(featOk, 'Featured stories fit the age groups', 'Every story is rated ' + youngest + ', the youngest group allowed to enter.', 'Pick at least one story, or switch to a tag.'),
       mk(slugOk, 'The address is free', 'ghemotoc.com/c/' + s, slugMsg)
     ];
@@ -954,7 +947,7 @@ class Component extends DCLogic {
       lineStyle: "font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: " + (phone ? '20px' : '24px') + '; line-height: 1.2; color: ' + T.soft + ';',
       btnStyle: 'align-self: flex-start; display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 999px; font-size: 14px; font-weight: 600; ' + T.btn,
       picStyle: 'flex: 0 0 ' + (phone ? '120px' : '150px') + '; height: ' + (phone ? '160px' : '200px') + '; box-sizing: border-box; padding: 14px; border-radius: 14px; background: #481C5F; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; transform: rotate(3deg);',
-      eyebrow: ro ? 'Concurs' : 'Contest', chapterOne: ro ? 'CAPITOLUL UNU' : 'CHAPTER ONE', yourTitle: ro ? 'Titlul tău aici' : 'Your title here',
+      eyebrow: ro ? 'Concurs' : 'Contest', chapterOne: ro ? 'POVESTEA TA' : 'YOUR ENTRY', yourTitle: ro ? 'Titlul tău aici' : 'Your title here',
       sponsoredLabel: ro ? 'SPONSORIZAT' : 'SPONSORED', presentedBy: ro ? 'Prezentat de' : 'Presented by',
       datesTitle: ro ? 'Date importante' : 'Key dates', whoTitle: ro ? 'Cine se poate înscrie' : 'Who can enter',
       prizeTitle: ro ? 'Premiul' : 'Prize', stepsTitle: ro ? 'Cum te înscrii' : 'How to enter', qaTitle: ro ? 'Întrebări și răspunsuri' : 'Questions and answers',
@@ -966,7 +959,7 @@ class Component extends DCLogic {
 
     // List of pages.
     var P = [
-      { id: 'fc', name: 'The First Chapter contest', slug: st.slug, type: 'Contest', status: 'Scheduled', tone: 'plan', note: 'Live at 00:00 Romanian time on its show-from date', from: '[date]', to: '[date]', en: true, ro: true, by: 'Robert', when: '16 Oct 2026, 11:20' },
+      { id: 'fc', name: '[Contest name]', slug: st.slug, type: 'Contest', status: 'Scheduled', tone: 'plan', note: 'Live at 00:00 Romanian time on its show-from date', from: '[date]', to: '[date]', en: true, ro: true, by: 'Robert', when: '16 Oct 2026, 11:20' },
       { id: 'tl', name: 'Two languages week', slug: 'two-languages-week', type: 'Campaign', status: 'Draft', tone: 'warn', note: 'Română copy to do', from: 'Not set', to: 'Not set', en: true, ro: false, by: 'Andrei Mureșan', when: '15 Oct 2026, 16:05' },
       { id: 'hc', name: 'How contests work', slug: 'how-contests-work', type: 'Information', status: 'Live', tone: 'ok', note: 'Linked from Help', from: '1 Oct 2026', to: 'No end date', en: true, ro: true, by: 'Robert', when: '30 Sep 2026, 18:40' },
       { id: 'ap', name: 'Autumn poetry prompt', slug: 'autumn-poetry', type: 'Contest', status: 'Ended', tone: 'neutral', note: 'Shows “This contest has ended” and the results', from: '1 Sep 2026', to: '1 Oct 2026', en: true, ro: true, by: 'Andrei Mureșan', when: '1 Oct 2026, 09:12' }
@@ -1065,7 +1058,6 @@ class Component extends DCLogic {
         ages: chipList([['a13', '13 to 15'], ['a16', '16 to 17'], ['a18', '18 and over']], 'ages'),
         langs: chipList(['English', 'Română'], 'langs'),
         markets: chipList(['Romania', 'UK', 'Ireland', 'US', 'Canada', 'Australia', 'New Zealand', 'Singapore'], 'markets'),
-        max: st.maxAge, setMax: function (e) { self.setState({ maxAge: self.val(e) }); },
         lineEn: whoLineEn, lineRo: whoLineRo
       },
       addStep: function () {

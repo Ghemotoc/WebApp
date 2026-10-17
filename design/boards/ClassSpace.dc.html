@@ -15,7 +15,8 @@ a{color:#672786}a:hover{color:#481C5F}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
 @keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
-.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width:1100px){.tmc-dd-w{display:none}}@media (max-width:1300px){.tmc-dd-l{display:none}}@media (max-width:600px){.tmc-dd-m{display:none}}
+.tmc-dd{position:absolute;pointer-events:none;user-select:none;z-index:0;height:auto;max-width:none}@media (max-width: 999px){.tmc-dd-wide{display:none !important}}
+@media (max-width: 599px){.tmc-dd-hide{display:none !important}}
 /* Automatic covers (S1-E3-13): the 16 approved backgrounds */
 .tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
 .tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
@@ -107,7 +108,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
     <!-- How a class space starts (answers: "how do they open the spaces?") -->
     <section aria-labelledby="how-h" style="position: relative; margin-top: 28px; display: flex; flex-direction: column; gap: 14px">
-      <img data-doodle="background" data-doodle-on="How a class space starts" src="/_blob/b82a2ffa9fe0cf7876402ee97900856a" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -50px; right: 40px; width: 92px; transform: rotate(10deg)">
+      <img data-doodle="background" data-doodle-on="How a class space starts" src="/_blob/b82a2ffa9fe0cf7876402ee97900856a" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: -50px; right: 40px; width: 92px; transform: rotate(10deg)">
       <h2 id="how-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; color: #481C5F">How a class space starts</h2>
       <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 12px">
         <li style="flex: 1 1 280px; min-width: 0; display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 20px"><span aria-hidden="true" style="flex: none; width: 36px; height: 36px; border-radius: 999px; background: #E6C24C; color: #26142E; display: inline-flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 17px">1</span><span><span style="display: block; font-weight: 700; font-size: 16px; color: #26142E">The teacher gets a Teacher badge</span><span style="display: block; margin-top: 4px; font-size: 14px; line-height: 1.55; color: #5C4965">They ask for it in Settings with a school email or a letter from the school. Our staff check it.</span></span></li>
@@ -124,7 +125,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- Class threads -->
         <section aria-labelledby="threads-h" style="position: relative; animation: tmcRise 0.5s 0.05s ease-out both">
-          <img data-doodle="background" data-doodle-on="Talk with your class" src="/_blob/cb01c13602029560ca242fb10bc704d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -4px; right: 24px; width: 62px; transform: rotate(-12deg)">
+          <img data-doodle="background" data-doodle-on="Talk with your class" src="/_blob/cb01c13602029560ca242fb10bc704d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: -4px; right: 24px; width: 62px; transform: rotate(-12deg)">
           <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px">
             <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Class threads</span>
             <h2 id="threads-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Talk with your class</h2>
@@ -148,20 +149,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
           </ul>
         </section>
 
-        <!-- First Chapter contest board (class round) -->
+        <!-- Contest board (class round). Example with a placeholder name: the First Chapter contest is a campaign for later (17 Oct 2026). -->
         <section aria-labelledby="contest-h" style="position: relative; padding: clamp(22px, 3vw, 32px); background: #FFFFFF; border: 1px solid #DED3E4; border-radius: 24px; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 18px 40px -28px rgba(38,20,46,0.3); display: flex; flex-direction: column; gap: 22px; animation: tmcRise 0.5s 0.1s ease-out both">
-          <img data-doodle="widget" data-doodle-on="The First Chapter contest" src="/_blob/8b35eff002c7149d8059704ce00b23d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -50px; right: 30px; width: 92px; transform: rotate(6deg)">
+          <img data-doodle="widget" data-doodle-on="[Contest name]" src="/_blob/8b35eff002c7149d8059704ce00b23d2" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -50px; right: 30px; width: 92px; transform: rotate(6deg)">
           <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
             <div style="display: flex; flex-direction: column; gap: 6px">
               <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Contest board · class round</span>
-              <h2 id="contest-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">The First Chapter contest</h2>
-              <span style="font-size: 15px; color: #5C4965">Opens in February 2027 · open to writers aged 13 to 19</span>
+              <h2 id="contest-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">[Contest name]</h2>
+              <span style="font-size: 15px; color: #5C4965">Opens [date] · age groups 13 to 15 and 16 to 17</span>
             </div>
           </div>
 
           <ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px">
-            <li style="padding: 16px; border-radius: 16px; background: #FFF8E1; border: 1px solid #E6C24C; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Now</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">Write the first chapter of a new story.</span></li>
-            <li style="padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">February 2027</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">The contest opens. Enter your chapter here.</span></li>
+            <li style="padding: 16px; border-radius: 16px; background: #FFF8E1; border: 1px solid #E6C24C; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Now</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">Write a new story on the theme.</span></li>
+            <li style="padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">[date]</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">The contest opens. Enter your story here.</span></li>
             <li style="padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">After the deadline</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">The class reads the entries and Ms Ionescu picks the finalists.</span></li>
             <li style="padding: 16px; border-radius: 16px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Certificates</span><span style="font-size: 15px; line-height: 1.5; color: #26142E">Everyone who enters gets one, issued with your school.</span></li>
           </ol>
@@ -177,7 +178,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
                 <thead>
                   <tr style="background: #FAF8F5; text-align: left">
                     <th scope="col" style="padding: 12px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">WRITER</th>
-                    <th scope="col" style="padding: 12px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">FIRST CHAPTER</th>
+                    <th scope="col" style="padding: 12px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">STORY</th>
                     <th scope="col" style="padding: 12px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: #815E18">STATUS</th>
                   </tr>
                 </thead>
@@ -211,7 +212,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- Class-only stories -->
         <section aria-labelledby="stories-h" style="position: relative; animation: tmcRise 0.5s 0.15s ease-out both">
-          <img data-doodle="background" data-doodle-on="Stories shared with the class" src="/_blob/f5c69995547466e6d428c768ff799288" alt="" aria-hidden="true" class="tmc-dd tmc-dd-w" style="top: -30px; right: 10px; width: 74px; transform: rotate(8deg)">
+          <img data-doodle="background" data-doodle-on="Stories shared with the class" src="/_blob/f5c69995547466e6d428c768ff799288" alt="" aria-hidden="true" class="tmc-dd tmc-dd-wide" style="top: -30px; right: 10px; width: 74px; transform: rotate(8deg)">
           <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px">
             <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; line-height: 1.3">Class only</span>
             <h2 id="stories-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 30px; letter-spacing: -0.01em; color: #481C5F">Stories shared with the class</h2>
@@ -237,7 +238,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- What happens when the school year ends -->
         <section aria-labelledby="archive-h" style="position: relative; padding: 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 24px; display: flex; gap: 16px; align-items: flex-start">
-          <img data-doodle="widget" data-doodle-on="When the school year ends" src="/_blob/86cce0664059fb540ee7ee3da590e514" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -44px; right: 30px; width: 88px; transform: rotate(-6deg)">
+          <img data-doodle="widget" data-doodle-on="When the school year ends" src="/_blob/86cce0664059fb540ee7ee3da590e514" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -44px; right: 30px; width: 88px; transform: rotate(-6deg)">
           <img src="/_blob/aa624b96e88057896d273ba76dc51e54" alt="" aria-hidden="true" width="32" height="32" style="display: block; flex: none; margin-top: 0">
           <div style="display: flex; flex-direction: column; gap: 8px">
             <h2 id="archive-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">When the school year ends</h2>
@@ -354,7 +355,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
         <!-- Safety -->
         <section aria-labelledby="safety-h" style="position: relative; padding: 24px; background: #F4F0EC; border: 1px solid #E5D7EA; border-radius: 24px; display: flex; flex-direction: column; gap: 12px">
-          <img data-doodle="widget" data-doodle-on="Something wrong here?" src="/_blob/864dbfce6ade2bfbf4cff7a68aeca985" alt="" aria-hidden="true" class="tmc-dd tmc-dd-m" style="top: -48px; right: 24px; width: 72px; transform: rotate(8deg)">
+          <img data-doodle="widget" data-doodle-on="Something wrong here?" src="/_blob/864dbfce6ade2bfbf4cff7a68aeca985" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -48px; right: 24px; width: 72px; transform: rotate(8deg)">
           <h2 id="safety-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #26142E">Something wrong here?</h2>
           <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #5C4965">Report a post, a story or a person. Someone on our team reads every report, as anywhere else on Ghemotoc.</p>
           <a href="ReportDialog.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Report</a>
@@ -365,7 +366,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
   <!-- Page footer -->
   <footer style="position: relative; max-width: 1280px; margin: 80px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
-    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/54accc0ef3e17953e306b84980f3448a" alt="" aria-hidden="true" class="tmc-dd tmc-dd-x" style="top: -78px; left: clamp(16px, 4vw, 64px); width: 66px; transform: rotate(-8deg)">
+    <img data-doodle="widget" data-doodle-on="shown in another state of this screen" src="/_blob/54accc0ef3e17953e306b84980f3448a" alt="" aria-hidden="true" class="tmc-dd tmc-dd-hide" style="top: -78px; left: clamp(16px, 4vw, 64px); width: 66px; transform: rotate(-8deg)">
     <div style="border-top: 1px solid #DED3E4; padding-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
       <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 0 22px; font-size: 14px">
         <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965">Help</a>
@@ -471,7 +472,7 @@ class Component extends DCLogic {
     var threadData = [
       { title: 'Welcome to Class 9B: read this first', by: 'Ms Ionescu', meta: 'started 1 October', replies: '26 replies', pinned: true, unread: false },
       { title: 'Homework: a 300-word scene set in your street', by: 'Ms Ionescu', meta: 'due Friday 23 October', replies: '14 replies', unread: true },
-      { title: 'Questions about the First Chapter contest', by: 'andra.m', meta: 'last reply 2 hours ago', replies: '9 replies', unread: true },
+      { title: 'Questions about the contest', by: 'andra.m', meta: 'last reply 2 hours ago', replies: '9 replies', unread: true },
       { title: 'Share your favourite opening line', by: 'teo_ink', meta: 'last reply yesterday', replies: '31 replies', unread: false,
         note: st.post === 'removed' ? 'Ms Ionescu removed 2 posts in this thread.' : 'Ms Ionescu removed 1 post in this thread.' },
       { title: 'Book club: what are you reading this month?', by: 'mara.p', meta: 'last reply 5 days ago', replies: '12 replies', locked: true, unread: false,

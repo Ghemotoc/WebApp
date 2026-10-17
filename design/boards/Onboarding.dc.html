@@ -17,10 +17,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 @media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
 .tmc-dd{pointer-events:none;user-select:none}
 .tmc-dd-sticker{filter:drop-shadow(2px 0 0 #FBF7EC) drop-shadow(-2px 0 0 #FBF7EC) drop-shadow(0 2px 0 #FBF7EC) drop-shadow(0 -2px 0 #FBF7EC)}
-@media (max-width: 1199px){.tmc-dd-xxl{display:none !important}}
-@media (max-width: 1119px){.tmc-dd-xl{display:none !important}}
 @media (max-width: 999px){.tmc-dd-wide{display:none !important}}
-@media (max-width: 600px){.tmc-dd-hide{display:none !important}}
+@media (max-width: 599px){.tmc-dd-hide{display:none !important}}
 /* Pill system (17 Oct): chips are 36 px tall with a 44 px tap area, plum focus ring, tinted hover */
 .tmc-chip{position:relative}
 .tmc-chip::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
@@ -94,7 +92,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
                 <option value="ro" lang="ro">Română</option>
               </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #481C5F; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg>
             </span>
-            <p id="ui-lang-hint" style="margin: 6px 0 0 20px; font-size: 13px; line-height: 1.5; color: #6B5A73">The language of menus and buttons. We picked English because your device is set to English. It applies on every device you use.</p>
+            <p id="ui-lang-hint" style="margin: 6px 0 0 20px; font-size: 13px; line-height: 1.5; color: #6B5A73">The language of menus and buttons. Ghemotoc opens in Romanian for everyone. If you’d rather use English, pick it here or from the language menu. It applies on every device you use.</p>
           </div>
 
           <!-- Country: never asked (Q20). It is set from the connection at sign-up; Settings shows it. -->
@@ -316,11 +314,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    // Lia’s choices: English, Prahova (country Romania comes from her connection, never asked),
+    // Lia’s choices: Română (the default interface language for everyone, decided 17 Oct 2026), Prahova (country Romania comes from her connection, never asked),
     // likes fiction and poetry, writes fiction.
     this.state = {
       handle: 'lia.writes',
-      lang: 'en',
+      lang: 'ro',
       country: 'RO',
       countryOpen: false,
       county: 'Prahova',
@@ -418,7 +416,7 @@ class Component extends DCLogic {
     var names = ['Alba', 'Arad', 'Argeș', 'Bacău', 'Bihor', 'Bistrița-Năsăud', 'Botoșani', 'Brăila', 'Brașov', 'București', 'Buzău', 'Călărași', 'Caraș-Severin', 'Cluj', 'Constanța', 'Covasna', 'Dâmbovița', 'Dolj', 'Galați', 'Giurgiu', 'Gorj', 'Harghita', 'Hunedoara', 'Ialomița', 'Iași', 'Ilfov', 'Maramureș', 'Mehedinți', 'Mureș', 'Neamț', 'Olt', 'Prahova', 'Sălaj', 'Satu Mare', 'Sibiu', 'Suceava', 'Teleorman', 'Timiș', 'Tulcea', 'Vâlcea', 'Vaslui', 'Vrancea'];
     var counties = [{ v: '', label: 'Not set' }].concat(names.map(function (n) { return { v: n, label: n }; }));
 
-    // Launch markets first (Romania and English-speaking countries), then "Another country".
+    // Romania first (the launch market, decided 17 Oct 2026); English-speaking countries open later, one by one, after their legal check. Then "Another country".
     // Only the two-letter country code is stored.
     var countryList = [['RO', 'Romania'], ['GB', 'United Kingdom'], ['IE', 'Ireland'], ['US', 'United States'], ['CA', 'Canada'], ['AU', 'Australia'], ['NZ', 'New Zealand'], ['SG', 'Singapore'], ['XX', 'Another country']];
     var countries = countryList.map(function (c) { return { v: c[0], label: c[1] }; });

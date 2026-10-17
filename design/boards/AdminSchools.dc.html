@@ -335,7 +335,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
           <div style="display: flex; flex-direction: column; gap: 6px">
             <label for="ce-what" style="font-size: 14px; font-weight: 600; color: #26142E">Contest or programme</label>
             <span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%; vertical-align: middle"><select id="ce-what" style="appearance: none; -webkit-appearance: none; width: auto; max-width: 100%; height: 48px; padding: 0 36px 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; font-family: inherit; font-size: 15px; color: #26142E">
-              <option selected>First Chapter contest 2027 · Class 9B</option>
+              <option selected>[Contest name] · Class 9B</option>
               <option>Autumn writing club 2026 · Class 9B</option>
             </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #26142E; pointer-events: none"><path d="m6 9 6 6 6-6"></path></svg></span>
           </div>
@@ -377,6 +377,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
           </sc-for>
         </div>
         <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #5C4965">Handles only. Staff never type real names here. A student types the name to print the first time they open their certificate, and that name is never shown on their profile.</p>
+        <p style="margin: 0; padding: 12px 14px; border-radius: 14px; background: #FBF3DA; border: 1px solid #D9B54A; font-size: 13px; line-height: 1.55; color: #5C3F0E"><b>Keep your own copies.</b> A class certificate may print the student’s real name with the school’s name, so Ghemotoc deletes it 30 days after the class is archived. Download the certificates before then.</p>
 
         <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
           <button type="button" onClick="{{issue}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{issueLabel}}</button>
@@ -387,7 +388,7 @@ button:disabled{cursor:not-allowed;opacity:0.55}
         </sc-if>
         <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; font-weight: 600">
           <a href="Certificate-Winner.dc.html">See a winner certificate</a>
-          <a href="Certificate-Participation.dc.html">See a participant certificate</a>
+          <a href="Certificate-Participation.dc.html">See an online contest certificate</a>
         </div>
         <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #6B5A73">Proposal for the March test: staff make the certificates by hand from the template and send them as PDFs. This screen is the automated version for later (story priority: Could).</p>
       </section>
@@ -607,9 +608,9 @@ class Component extends DCLogic {
     ];
     var fresh = [];
     if (st.issued) {
-      var fc = ['FC27-7K4M-Q9', 'FC27-3RTD-L2', 'FC27-8HXN-C5', 'FC27-2PVB-W7', 'FC27-6GLS-D4', 'FC27-9WCY-B1'];
+      var fc = ['CT27-7K4M-Q9', 'CT27-3RTD-L2', 'CT27-8HXN-C5', 'CT27-2PVB-W7', 'CT27-6GLS-D4', 'CT27-9WCY-B1'];
       var order = stud.slice().sort(function (a, b) { return opts.indexOf(st.results[b[0]]) - opts.indexOf(st.results[a[0]]); });
-      fresh = order.map(function (p, i) { return { id: 'f' + i, code: fc[i], what: 'First Chapter contest 2027', result: st.results[p[0]], date: '20 Mar 2027', status: 'Valid' }; });
+      fresh = order.map(function (p, i) { return { id: 'f' + i, code: fc[i], what: '[Contest name]', result: st.results[p[0]], date: '20 Mar 2027', status: 'Valid' }; });
     }
     var codes = fresh.concat(base).map(function (c) {
       var status = st.revoked[c.id] ? 'Revoked' : c.status;

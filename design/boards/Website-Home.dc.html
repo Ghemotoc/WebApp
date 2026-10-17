@@ -19,10 +19,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 @media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
 .tmc-dd{pointer-events:none;user-select:none}
 .tmc-dd-sticker{filter:drop-shadow(2px 0 0 #FBF7EC) drop-shadow(-2px 0 0 #FBF7EC) drop-shadow(0 2px 0 #FBF7EC) drop-shadow(0 -2px 0 #FBF7EC)}
-@media (max-width: 1199px){.tmc-dd-xxl{display:none !important}}
-@media (max-width: 1119px){.tmc-dd-xl{display:none !important}}
 @media (max-width: 999px){.tmc-dd-wide{display:none !important}}
-@media (max-width: 600px){.tmc-dd-hide{display:none !important}}
+@media (max-width: 599px){.tmc-dd-hide{display:none !important}}
 /* The 16 approved cover backgrounds (S1-E3-13): 5:8 drawings with no text that fill any box */
 .tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat;outline:1px solid rgba(38,20,46,0.14);outline-offset:-1px}
 .tmc-cv-plum{background-color:#481C5F;background-image:url(/_blob/60fa675a29d1351310f32d853068f9af)}
@@ -86,7 +84,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
         </ul>
       </div>
 
-      <!-- Wall of drawn covers (CSS only, no photos), with a reader comment and the contest sticker on top -->
+      <!-- Wall of drawn covers (CSS only, no photos), with a reader comment and the rights sticker on top -->
       <figure style="flex: 1 1 520px; min-width: 0; margin: 0; position: relative; padding: 8px 0 24px; animation: tmcRise 0.5s 0.08s ease-out both">
         <div role="img" aria-label="Covers of stories on Ghemotoc: The Salt Mine Choir, The Last Tram Home, Small Rooms, The Girl Who Fixed Radios, Night Bus to Ploiești and The Map Keeper’s Apprentice" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; transform: rotate(-3deg)">
           <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 56px">
@@ -297,7 +295,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
           <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">Readers comment on paragraphs</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">They comment on the exact paragraph they liked or didn’t understand, so you see what worked.</dd></div>
           <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">App only, if you want</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">When the apps arrive, you can share a story in the apps only. That gives you more privacy and makes copying harder.</dd></div>
           <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">Spaces for your group</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">Start a space for your writing group or book club. Teachers can start a private class space that only their class sees.</dd></div>
-          <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">Contests</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">Enter contests like the First Chapter contest, on your own or with your class.</dd></div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid rgba(230,194,76,0.45)"><dt style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #FBF7EC">Ratings and labels</dt><dd style="margin: 0; font-size: 16px; line-height: 1.6; color: #E8DDEC">Give your story a rating and content labels, so it reaches the right readers and nobody too young.</dd></div>
         </dl>
         <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 8px">
           <a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 52px; padding: 0 28px; border-radius: 999px; background: #E6C24C; color: #26142E; font-weight: 700; font-size: 16px; text-decoration: none">Start writing</a>
@@ -367,17 +365,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     </div>
   </section>
 
-  <!-- The First Chapter contest: gold band -->
-  <section id="contest" aria-labelledby="contest-h" style="position: relative; margin: clamp(72px, 8vw, 112px) clamp(16px, 3vw, 48px) 0; border-radius: 32px; padding: clamp(40px, 5vw, 72px) clamp(24px, 5vw, 80px); background: #E6C24C; color: #26142E; scroll-margin-top: 24px">
+  <!-- Start your first story: gold band (house promo; the First Chapter contest is a campaign for later, 17 Oct 2026) -->
+  <section id="first-story" aria-labelledby="first-story-h" style="position: relative; margin: clamp(72px, 8vw, 112px) clamp(16px, 3vw, 48px) 0; border-radius: 32px; padding: clamp(40px, 5vw, 72px) clamp(24px, 5vw, 80px); background: #E6C24C; color: #26142E; scroll-margin-top: 24px">
     <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: clamp(32px, 5vw, 72px)">
       <div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
-        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; line-height: 1.3; color: #3A2442">Contest · opens in February 2027</div>
-        <h2 id="contest-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #2A0E33">The First Chapter contest</h2>
-        <p style="margin: 0; max-width: 620px; font-size: 18px; line-height: 1.65; color: #26142E">Write the first chapter of a new story. If you’re 13 to 19, enter on your own or with your class. Entries open in February 2027. We’ll announce the winners on Ghemotoc.</p>
-        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #26142E"><b>Prize:</b> [Prize], from [Partner]. Under-16s need consent from a parent or guardian to enter.</p>
+        <div style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; line-height: 1.3; color: #3A2442">For new writers</div>
+        <h2 id="first-story-h" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #2A0E33">Start your first story</h2>
+        <p style="margin: 0; max-width: 620px; font-size: 18px; line-height: 1.65; color: #26142E">Write chapter one of something new, in Romanian or English. Your draft saves as you type, and nobody sees it until you publish.</p>
+        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #26142E">It’s free, and you keep every right in your story. Under-16s need consent from a parent or guardian to publish.</p>
         <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 4px">
-          <a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 52px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 16px; text-decoration: none">Join for free to enter</a>
-          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: 16px; color: #2A0E33; text-decoration: underline; text-underline-offset: 4px">Read the contest rules</a>
+          <a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 52px; padding: 0 28px; border-radius: 999px; background: #2A0E33; color: #FBF7EC; font-weight: 600; font-size: 16px; text-decoration: none">Join for free to start writing</a>
+          <a href="Legal.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; font-size: 16px; color: #2A0E33; text-decoration: underline; text-underline-offset: 4px">Read the community guidelines</a>
         </div>
       </div>
       <!-- Drawn chapter-one cover -->
@@ -470,7 +468,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       <div style="display: flex; flex-wrap: wrap; gap: 40px 56px; justify-content: space-between">
         <div style="flex: 1 1 340px; max-width: 460px; display: flex; flex-direction: column; gap: 14px">
           <a href="Website-Home.dc.html" style="align-self: flex-start; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px; letter-spacing: -0.01em; color: #481C5F; text-decoration: none">Ghemotoc</a>
-          <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #5C4965">A free website for writing and reading stories, poems and essays. Apps come after the web launch. Writers keep the rights to their work, and there are no tracking ads. Everyone aged 13 or older is welcome. In English and Romanian, for readers in English-speaking countries and Romania.</p>
+          <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #5C4965">A free website for writing and reading stories, poems and essays. Apps come after the web launch. Writers keep the rights to their work, and there are no tracking ads. Everyone aged 13 or older is welcome. In Romanian and English. Starting in Romania; English-speaking countries follow.</p>
         </div>
         <nav aria-label="Read" style="display: flex; flex-direction: column; gap: 4px; font-size: 15px">
           <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; padding-bottom: 6px; line-height: 1.3">Read</span>
@@ -482,7 +480,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
         <nav aria-label="Write and talk" style="display: flex; flex-direction: column; gap: 4px; font-size: 15px">
           <span style="font-family: 'Cutive', 'Courier New', serif; font-size: 14px; font-weight: 400; color: #815E18; padding-bottom: 6px; line-height: 1.3">Write and talk</span>
           <a href="Main.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Start writing</a>
-          <a href="#contest" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">First Chapter contest</a>
+          <a href="#first-story" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Start your first story</a>
           <a href="Forums.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Forums</a>
           <a href="mailto:robert.stanescu@themagiccoffin.com?subject=Bring%20my%20class" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">For teachers</a>
           <a href="mailto:robert.stanescu@themagiccoffin.com?subject=Partnering%20with%20Ghemotoc" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">For partners</a>
@@ -814,7 +812,7 @@ class Component extends DCLogic {
     var heroCol2 = heroes.slice(2, 4);
     var heroCol3 = heroes.slice(4, 6);
 
-    // Drawn chapter-one cover in the contest band: an automatic design, like any story without its own cover.
+    // Drawn chapter-one cover in the Start your first story band: an automatic design, like any story without its own cover.
     var ccLook = self.coverLook(self.rowCovers(['Your title here'])[0], { t: '26px', w: 800, lh: 1.02, p: 13, gap: 6, bw: 44, title: 'Your title here', inner: 156 });
     var cc = { cls: ccLook.cls, boxStyle: ccLook.box, tStyle: ccLook.title, barStyle: ccLook.bar, pStyle: ccLook.pen,
       eyebrow: 'font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: ' + ccLook.ink + ';' };
