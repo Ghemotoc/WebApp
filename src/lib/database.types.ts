@@ -441,6 +441,80 @@ export type Database = {
         };
         Relationships: [];
       };
+      staff_permissions: {
+        Row: {
+          created_at: string;
+          granted_by_user_id: string | null;
+          id: string;
+          permission: Database['public']['Enums']['staff_permission'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          granted_by_user_id?: string | null;
+          id?: string;
+          permission: Database['public']['Enums']['staff_permission'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          granted_by_user_id?: string | null;
+          id?: string;
+          permission?: Database['public']['Enums']['staff_permission'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_permissions_granted_by_user_id_fkey';
+            columns: ['granted_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'staff_permissions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      staff_role_areas: {
+        Row: {
+          access: string;
+          area: string;
+          created_at: string;
+          id: string;
+          required_permission: Database['public']['Enums']['staff_permission'] | null;
+          role: Database['public']['Enums']['staff_role'];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          access: string;
+          area: string;
+          created_at?: string;
+          id?: string;
+          required_permission?: Database['public']['Enums']['staff_permission'] | null;
+          role: Database['public']['Enums']['staff_role'];
+          updated_at?: string;
+        };
+        Update: {
+          access?: string;
+          area?: string;
+          created_at?: string;
+          id?: string;
+          required_permission?: Database['public']['Enums']['staff_permission'] | null;
+          role?: Database['public']['Enums']['staff_role'];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       staff_roles: {
         Row: {
           created_at: string;
@@ -589,6 +663,41 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_grant_role: {
+        Args: {
+          granted_role: Database['public']['Enums']['staff_role'];
+          reason_given: string;
+          target_user_id: string;
+        };
+        Returns: boolean;
+      };
+      admin_list_staff: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          handle: string;
+          permissions: Database['public']['Enums']['staff_permission'][];
+          roles: Database['public']['Enums']['staff_role'][];
+          user_id: string;
+        }[];
+      };
+      admin_remove_role: {
+        Args: {
+          reason_given: string;
+          removed_role: Database['public']['Enums']['staff_role'];
+          target_user_id: string;
+        };
+        Returns: boolean;
+      };
+      admin_set_permission: {
+        Args: {
+          changed_permission: Database['public']['Enums']['staff_permission'];
+          reason_given: string;
+          should_hold: boolean;
+          target_user_id: string;
+        };
+        Returns: boolean;
+      };
+      admin_user_id_for_handle: { Args: { wanted_handle: string }; Returns: string };
       age_band: {
         Args: Record<PropertyKey, never>;
         Returns: Database['public']['Enums']['age_band'];
@@ -603,6 +712,7 @@ export type Database = {
         Returns: Database['public']['Enums']['age_band'];
       };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
+      bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
       change_is_too_soon: {
         Args: { last_changed_at: string; setting_key: string };
         Returns: boolean;
@@ -701,6 +811,14 @@ export type Database = {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
       };
+      require_role_change_allowed: {
+        Args: { reason_given: string; target_user_id: string };
+        Returns: undefined;
+      };
+      require_role_in_reach: {
+        Args: { changed_role: Database['public']['Enums']['staff_role'] };
+        Returns: undefined;
+      };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
@@ -709,6 +827,7 @@ export type Database = {
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
       sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
+      staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
@@ -723,11 +842,13 @@ export type Database = {
         | 'awaiting_parental_consent'
         | 'minor_not_admitted'
         | 'handle_missing'
+        | 'staff_account'
         | 'legal_acceptance_required';
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
       reportable_type: 'profile';
+      staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
     };
     CompositeTypes: {
@@ -849,12 +970,14 @@ export const Constants = {
         'awaiting_parental_consent',
         'minor_not_admitted',
         'handle_missing',
+        'staff_account',
         'legal_acceptance_required',
       ],
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
       reportable_type: ['profile'],
+      staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
     },
   },

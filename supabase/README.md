@@ -40,6 +40,10 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `sign_in_pause_until(email_hash)`, `record_sign_in_failure(email_hash)` | the log-in pause: when it ends, and noting a wrong try (5 in 15 minutes pause logging in; both are settings). They take a SHA-256 hash of the email, never the email, and answer the same for any address | anyone, signed out included (the log-in screen) | S1-E2-05 |
 | `clear_my_sign_in_failures()` | forgets the caller's wrong tries after a log-in or a new password | any signed-in person | S1-E2-05 |
 | `list_my_sessions()`, `end_my_session(target_session_id)` | the caller's own devices from Supabase's `auth.sessions` (browser, start, last active, this device; never the IP), and logging one out | any signed-in person, own sessions only | S1-E2-05 |
+| `staff_may(area, access)` | may the caller use this admin area (`view` or `act`): role and permission from `staff_role_areas` (architecture 1.8.3) AND `is_staff_session()`. Every staff policy and `admin_*` function uses it | any signed-in person (answers about themselves) | S1-E2-07a |
+| `admin_grant_role()`, `admin_remove_role()`, `admin_set_permission()` | change someone else's staff role or permission, with a reason; logged. Owner: any role; admin: moderator, support, content editor; never your own; never the last owner | owner and admin in a staff session | S1-E2-07a |
+| `admin_list_staff()`, `admin_user_id_for_handle(handle)` | the staff list with roles and permissions; an account's user ID by username | owner and admin in a staff session | S1-E2-07a |
+| `bootstrap_first_owner(user_id)` | makes the first owner, once | only from the SQL editor, never through the API | S1-E2-07a |
 | `my_legal_documents_to_accept()` | the caller's own legal documents waiting for acceptance after an important change | any signed-in person | S1-E14-01 |
 | `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
 
@@ -56,6 +60,14 @@ Why `set_my_locale()` and not an update policy on `profiles`: a policy would let
 | `is_staff_session()` | may this session use staff powers (March: any staff role) | S1-E2-07b (Google Workspace sign-in) |
 
 While the `adults_only` flag is on (the March test), under-18s are `minor_not_admitted` and adults are active once their email is confirmed and a username chosen (`handle_missing` until then, S1-E2-04), without the age check.
+
+## Staff roles (S1-E2-07a)
+
+- **Roles and areas:** `staff_role_areas` holds architecture 1.8.3 row by row (area, role, `view` or `act`, and the permission a row needs). `staff_permissions` holds who has `safeguarding`, `teacher_checks` or `on_call`. Member roles are not stored: every account is a "user", and `space_moderator` will belong to space membership (S1-E8-07).
+- **Website CMS and interface text** are owner and admin only, so the content editor role has no area for now; whether to keep it is OPEN (decided 17 Oct 2026, 19:19).
+- **One check:** `staff_may()` combines the role, the permission and `is_staff_session()`. Every earlier staff policy now uses it (same names, same reach), so S1-E2-07b only changes `is_staff_session()`.
+- **Staff accounts are read-only as members:** `account_state()` answers `staff_account` for anyone with a staff role (decided 17 Oct 2026, 19:43, Q14a). Staff keep a separate writer account if they write.
+- **The first owner:** after signing up on staging, run `select public.bootstrap_first_owner('<user id>');` in the SQL editor. It refuses once an owner exists.
 
 ## Logging in (S1-E2-05)
 
