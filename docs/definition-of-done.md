@@ -25,6 +25,7 @@
 
 - [ ] TypeScript strict passes with no `any` added; ESLint and Prettier pass.
 - [ ] Code follows the conventions in `CLAUDE.md`; no dead code or commented-out blocks.
+- [ ] A junior developer can read and change the code without help: it follows the "Readable code" section of `CLAUDE.md` (plain names, small functions, a header comment on every file saying what it is, who calls it and what it calls, doc comments on everything exported, a plain-English comment for each step, rule sources named, no clever shortcuts), passes the ESLint complexity limits, and `docs/code-tour.md` is updated for anything new (decided 17 Oct 2026, 12:26 and 12:27).
 - [ ] Errors are handled and shown to users in plain words, in both languages.
 - [ ] Generated database types are up to date (`npm run types:check`); no hand-written copies of table, enum or function types.
 

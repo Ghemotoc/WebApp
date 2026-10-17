@@ -56,8 +56,26 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 - Commits: "S1-E3-02: short description". One story per branch and pull request.
 - Comments: explain why, not what. Every RLS policy has a comment saying who it allows and why.
 
+## Readable code (decided 17 Oct 2026, 12:26)
+Write every file so a junior developer who joins later can read it and change it without asking anyone.
+- Plain, full names that say what a thing is (`storyRating`, not `sr`). No abbreviations except common ones (id, url, ui).
+- Small pieces with one job each: functions under about 40 lines, components under about 150. Split anything bigger.
+- Clear over clever: no nested ternaries, no long chained one-liners, no metaprogramming. Spell the steps out.
+- Explain generously (Robert, 17 Oct 2026, 12:27: "a lot of explanations so they can understand where things start"):
+  - Every file starts with a short header comment: what it is for, which story built it, who calls it (where things come in from) and what it calls next (where things go).
+  - Every exported function, component, hook, SQL function, RLS policy, migration and edge function has a doc comment: what it does, its inputs, what it returns, the errors it can raise and one line on where it fits in the flow.
+  - Inside a function, each step gets a short plain-English comment, so a reader can follow it from top to bottom without knowing the libraries. Comments explain what the step does and why; they never just repeat the code word for word.
+  - Any rule from a law, a decision or the DoD gets a comment naming its source ("GDPR art. 8: under-16s need a parent's consent; story S1-E2-03").
+  - When code changes, its comments change in the same commit. A comment that no longer matches the code is a bug.
+- `docs/code-tour.md` is the map for a new developer: where the app starts (`index.html` → `src/main.tsx` → the router → each feature), how one click travels (screen → hook → Supabase call → RLS policy → table, and back), where each kind of thing lives, and a "start here" reading order. S1-E1-01 creates it; every story that adds a feature, table, edge function or job adds a few lines to it in the same pull request.
+- Handle errors where they happen with a plain message; never swallow an error silently.
+- One pattern everywhere: copy the structure of an existing feature folder instead of inventing a new one. Each folder in src/features/ has a short README.md saying what it holds and which story built it.
+- Test names read as plain sentences describing behaviour ("a 14-year-old can't see a 16+ story").
+- ESLint enforces it (limits are a proposal): complexity 10, max-depth 3, max-lines-per-function 60, max-params 4.
+
 ## Designs
 - design/boards/*.dc.html is the source of truth for layout, copy, colours, fonts and spacing. Read the board's HTML before building a screen, and copy values from it rather than guessing.
+- When a board disagrees with docs/decisions.md or the story, the decision and the story win. Known mismatches are in docs/board-fixes.md; read it before building any screen, and note any new mismatch in the pull request.
 - design/renders/desktop and design/renders/phone show how each board should look. design/README.md maps boards to stories.
 - Fonts: Bricolage Grotesque (headings), Inter (body), Cutive (eyebrow labels, 14 px, sentence case), Shadows Into Light Two (handwriting). The design rules (drop-downs, scroll arrows, label rows, ad slots) are in docs/definition-of-done.md.
 - Pictures the boards use (doodles, covers, photos) are in design/assets/; a board's /_blob/<id> is design/assets/<id>.<ext>.

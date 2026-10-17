@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Staff: classics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700&family=Cutive&display=swap">
+<style>
+body{margin:0;background:#FAF8F5}
+a{color:#672786}a:hover{color:#481C5F}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #E6C24C;outline-offset:2px}
+button:disabled{cursor:not-allowed;opacity:0.55}
+fieldset{min-width:0}
+@keyframes tmcRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;scroll-behavior:auto !important}}
+@media (max-width: 960px){.tmc-sticky{position: static !important}}
+.tmc-cv{background-size:cover;background-position:center;background-repeat:no-repeat}
+.tmc-cv-ink{background-color:#26142E;background-image:url(/_blob/f0db2ceef4aba28d00d79aa0247a0496)}
+.tmc-cv-violet{background-color:#672786;background-image:url(/_blob/36c514d360c56b4dbe2c9a990fce6055)}
+.tmc-cv-sage{background-color:#DCE8DF;background-image:url(/_blob/393c482ccb609b02d62bb9257c1ec2da)}
+.tmc-cv-paper{background-color:#F4EFE6;background-image:url(/_blob/7d94e9e8bc4d53e80e67434d7876f65c)}
+.tmc-chip{position:relative}.tmc-chip::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}.tmc-chip:not([aria-pressed="true"]):not([aria-selected="true"]):not(:disabled):hover{background:#F1EAF4 !important}.tmc-chip:focus-visible{outline:2px solid #672786;outline-offset:2px}
+/* Label and value lists get a fine line between rows (Robert, 17 Oct) */
+.tmc-rows{gap:0 !important;row-gap:0 !important;column-gap:0 !important}.tmc-rows>dt,.tmc-rows>dd{padding:10px 0;border-top:1px solid #DED3E4}.tmc-rows>dd{padding-left:16px}.tmc-rows>dt:first-of-type,.tmc-rows>dd:first-of-type{border-top:0;padding-top:0}
+.tmc-rows>li+li{border-top:1px solid #DED3E4}
+/* Shared pieces for this board */
+.tmc-eb{font-family:'Cutive','Courier New',serif;font-size:14px;font-weight:400;color:#815E18;line-height:1.3}
+.tmc-h2{margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:28px;letter-spacing:-0.01em;color:#481C5F}
+.tmc-card{background:#FFFFFF;border:1px solid #DED3E4;border-radius:24px;box-shadow:0 1px 2px rgba(38,20,46,0.04),0 18px 40px -28px rgba(38,20,46,0.3);padding:28px clamp(20px,3vw,36px);box-sizing:border-box}
+.tmc-fs{margin:0;padding:20px 0 0;border:0;border-top:1px solid #EFE8F2;display:flex;flex-direction:column;gap:14px;min-width:0}
+.tmc-fs>legend{padding:0 0 12px;font-size:17px;font-weight:700;color:#26142E}
+.tmc-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.tmc-lbl{font-size:14px;font-weight:600;color:#26142E}
+.tmc-help{font-size:13px;line-height:1.5;color:#6B5A73}
+.tmc-in{width:100%;box-sizing:border-box;height:48px;padding:0 18px;border:1px solid #8E7B99;border-radius:999px;background:#FFFFFF;font-family:inherit;font-size:15px;color:#26142E}
+.tmc-ta{display:block;width:100%;box-sizing:border-box;padding:14px 18px;border:1px solid #8E7B99;border-radius:16px;background:#FFFFFF;font-family:inherit;font-size:15px;line-height:1.55;color:#26142E;resize:vertical}
+.tmc-sel{position:relative;display:inline-flex;align-items:center;width:fit-content;max-width:100%;vertical-align:middle}
+.tmc-sel>select{appearance:none;-webkit-appearance:none;width:auto;max-width:100%;height:48px;padding:0 36px 0 18px;border:1px solid #8E7B99;border-radius:999px;background:#FFFFFF;font-family:inherit;font-size:15px;color:#26142E;cursor:pointer}
+.tmc-sel>svg{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#26142E;pointer-events:none}
+.tmc-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;border:0;border-radius:999px;background:#2A0E33;color:#FBF7EC;font-family:inherit;font-size:15px;font-weight:600;text-decoration:none;cursor:pointer;white-space:nowrap}
+.tmc-btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border:1px solid #8E7B99;border-radius:999px;background:#FFFFFF;color:#481C5F;font-family:inherit;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;white-space:nowrap}
+.tmc-btn:hover{background:#481C5F;color:#FBF7EC}.tmc-btn2:not(:disabled):hover{background:#F1EAF4;color:#481C5F}
+.tmc-pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:700;line-height:1;white-space:nowrap}
+.tmc-prop{background:#FBF3DA;color:#5C3F0E;border:1px dashed #D9B54A}
+.tmc-later{background:#E6EEF6;color:#2E4A8C;border:1px solid #AFC3DE}
+.tmc-th{font-size:12px;font-weight:700;letter-spacing:0.08em;color:#6B5A73;white-space:nowrap}
+.tmc-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+</style>
+</helmet>
+<div style="width: 100%; min-height: 100vh; background: #FAF8F5; color: #26142E; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 48px; box-sizing: border-box">
+
+  <!-- Staff island: same floating bar as the other staff screens; Stories is current (Classics sits inside Stories) -->
+  <div style="padding: 24px clamp(16px, 4vw, 64px) 0; position: relative; z-index: 3">
+    <nav aria-label="Staff" style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 10px 10px 10px 24px; border-radius: 2.1rem; background: rgba(255,255,255,0.85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid #DED3E4; box-shadow: 0 1px 2px rgba(38,20,46,0.04), 0 8px 24px -12px rgba(38,20,46,0.12)">
+      <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span></a>
+      <div style="flex: 1 1 420px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 26px; font-size: 15px; letter-spacing: 0.01em">
+        <a href="Moderation.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Queue</a>
+        <a href="Appeals.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Appeals</a>
+        <a href="AdminUsers.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Users</a>
+        <a href="AdminStories.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; text-decoration: none; font-weight: 700; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Stories</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: #5C4965; text-decoration: none">Support<span aria-label="6 open tickets" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 12px; font-weight: 700; line-height: 1">6</span></a>
+        <a href="AdminDataRequests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Data requests</a>
+        <a href="AdminContests.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Contests</a>
+        <a href="AdminPages.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Website</a>
+        <a href="AdminSponsors.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Sponsors</a>
+        <a href="AdminSchools.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Schools</a>
+        <a href="AdminMetrics.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Metrics</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Settings</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px">
+        <!-- Language picker in the top bar: a drop-down, not a toggle (Q11, 16 Oct); plain icon, no doodles on staff screens --><span class="tmc-sel" style="position: relative; display: inline-flex; align-items: center; width: fit-content; max-width: 100%"><label for="lang-top" class="tmc-sr">Language</label><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 14px; right: auto; top: 13px; transform: none; color: #481C5F; pointer-events: none"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"></path></svg><select id="lang-top" style="height: 44px; font-size: 14px; font-weight: 600; padding: 0 36px 0 40px; color: #481C5F"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #481C5F"><path d="m6 9 6 6 6-6"></path></svg></span>
+        <span style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25"><span style="font-size: 14px; font-weight: 600; color: #26142E">Robert</span><span style="font-size: 12px; color: #2F6B4F; font-weight: 600">Admin · 2FA on</span></span>
+        <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; background: #481C5F; color: #FBF7EC; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">R</span>
+        <a href="StaffSignIn.dc.html" style="display: inline-flex; justify-content: center; align-items: center; height: 44px; padding: 0 18px; border: 1px solid #8E7B99; border-radius: 999px; background: #FFFFFF; color: #481C5F; font-size: 14px; font-weight: 600; text-decoration: none">Sign out</a>
+      </div>
+    </nav>
+  </div>
+
+  <main style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+
+    <!-- Sub-navigation inside Stories: Classics is a section of Stories -->
+    <nav aria-label="Stories sections" style="margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 15px">
+      <a href="AdminStories.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">All stories</a>
+      <span aria-hidden="true" style="color: #8E7B99">·</span>
+      <a href="AdminClassics.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; color: #481C5F; font-weight: 700; text-decoration: none; border-bottom: 2px solid #E6C24C; box-sizing: border-box">Classics</a>
+    </nav>
+
+    <header style="padding: 28px 0 28px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 32px; animation: tmcRise 0.5s ease-out both">
+      <div style="flex: 1 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <div class="tmc-eb">Staff · stories · classics</div>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 64px); line-height: 0.98; letter-spacing: -0.025em; color: #481C5F">Classics</h1>
+        <p style="margin: 0; max-width: 760px; font-size: 18px; line-height: 1.65; color: #5C4965">Add public-domain books, stories, poems and plays to the Classics shelf without a developer. The check below decides where each work is free, and a work shows only in those markets. Staff never rewrite or shorten a classic.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <span class="tmc-pill" style="background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6">Posted by Ghemotoc Classics</span>
+          <span class="tmc-pill" style="background: #F4F0EC; color: #4F3D57; border: 1px solid #D6CCDC">Every action here goes to the audit log</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+        <a href="#add" class="tmc-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add a work</a>
+        <button type="button" class="tmc-btn2" style="height: 48px" aria-expanded="{{imp.expanded}}" aria-controls="import" onClick="{{imp.toggle}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>Import from list<span class="tmc-pill tmc-later" style="height: 22px; font-size: 11px">16b</span></button>
+      </div>
+    </header>
+
+    <!-- Import the research lists (16b): each row becomes a draft -->
+    <sc-if value="{{imp.open}}" hint-placeholder-val="{{false}}">
+      <section id="import" aria-labelledby="imp-title" class="tmc-card" style="margin-bottom: 24px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span class="tmc-eb">Import from list · part 16b</span>
+            <h2 id="imp-title" class="tmc-h2" style="font-size: 24px">Import the research lists</h2>
+          </div>
+          <button type="button" class="tmc-btn2" onClick="{{imp.toggle}}">Close</button>
+        </div>
+        <ul class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; font-size: 14px; line-height: 1.5">
+          <li style="padding: 10px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px"><code style="font-size: 13px; color: #26142E; overflow-wrap: anywhere">content/classics/G5_romanian-classics.csv</code><span style="color: #5C4965">175 rows</span></li>
+          <li style="padding: 10px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px"><code style="font-size: 13px; color: #26142E; overflow-wrap: anywhere">content/classics/G5_english-classics.csv</code><span style="color: #5C4965">128 rows</span></li>
+        </ul>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #26142E">Each row becomes a draft with its title, author, year of death, kind, language and source link filled in. Its text still has to be added and checked. Works already in Classics are skipped. The public-domain check runs again on every row: the list’s own yes or no is only a hint.</p>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
+          <button type="button" class="tmc-btn" onClick="{{imp.run}}">Import as drafts</button>
+          <span class="tmc-help">Example only: nothing is imported from this board.</span>
+        </div>
+        <sc-if value="{{imp.hasMsg}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="margin: 0; padding: 12px 16px; border-radius: 16px; background: #E6EEF6; color: #2E4A8C; font-size: 14px; line-height: 1.5">{{imp.msg}}</p>
+        </sc-if>
+      </section>
+    </sc-if>
+
+    <!-- 1. The list of classics -->
+    <section aria-labelledby="list-title" class="tmc-card" style="animation: tmcRise 0.5s 0.05s ease-out both">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span class="tmc-eb">Ghemotoc Classics</span>
+        <h2 id="list-title" class="tmc-h2">Public-domain works</h2>
+      </div>
+      <div style="margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+        <div role="group" aria-label="Filter by status" style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+            <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+          </sc-for>
+        </div>
+        <label for="f-lang" class="tmc-sr">Language</label>
+        <span class="tmc-sel"><select id="f-lang" value="{{lang}}" onChange="{{onLang}}" style="height: 44px; font-size: 14px">
+          <option value="All">All languages</option>
+          <option value="English">English</option>
+          <option value="Română" lang="ro">Română</option>
+        </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
+      </div>
+      <p role="status" style="margin: 12px 0 0; font-size: 13px; line-height: 1.5; color: #6B5A73">Example works from the research lists. Statuses and ratings are examples. {{shownLine}}</p>
+
+      <div style="margin-top: 16px; overflow-x: auto; border: 1px solid #DED3E4; border-radius: 16px" tabindex="0" role="region" aria-label="Classics table, scrolls sideways on small screens">
+        <div role="table" aria-label="Classics" style="min-width: 1140px">
+          <div role="row" style="display: grid; grid-template-columns: minmax(0, 2.1fr) 56px minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 2.7fr) minmax(0, 1.1fr) minmax(0, 0.7fr) 76px; gap: 14px; padding: 12px 16px; border-bottom: 1px solid #DED3E4">
+            <span role="columnheader" class="tmc-th">WORK</span>
+            <span role="columnheader" class="tmc-th">DIED</span>
+            <span role="columnheader" class="tmc-th">KIND</span>
+            <span role="columnheader" class="tmc-th">LANGUAGE</span>
+            <span role="columnheader" class="tmc-th">FREE IN</span>
+            <span role="columnheader" class="tmc-th">STATUS</span>
+            <span role="columnheader" class="tmc-th">RATING</span>
+            <span role="columnheader" class="tmc-th" style="position: relative"><span class="tmc-sr">Action</span></span>
+          </div>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="9">
+            <div role="row" style="{{r.rowStyle}}">
+              <span role="cell" style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span lang="{{r.langTag}}" style="font-size: 15px; font-weight: 700; color: #26142E">{{r.title}}</span><span style="font-size: 13px; line-height: 1.45; color: #5C4965">{{r.author}}</span><span style="font-size: 12px; line-height: 1.45; color: #6B5A73">{{r.note}}</span></span>
+              <span role="cell" style="font-size: 14px; color: #26142E">{{r.died}}</span>
+              <span role="cell" style="font-size: 14px; color: #26142E">{{r.kind}}</span>
+              <span role="cell" style="font-size: 14px; color: #26142E">{{r.lang}}</span>
+              <span role="cell" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px">
+                <sc-for list="{{r.free}}" as="fc" hint-placeholder-count="3">
+                  <span style="{{fc.style}}">{{fc.label}}</span>
+                </sc-for>
+              </span>
+              <span role="cell" style="display: flex; align-items: flex-start"><span style="{{r.statusStyle}}">{{r.status}}</span></span>
+              <span role="cell" style="display: flex; align-items: flex-start"><span style="{{r.ratingStyle}}">{{r.rating}}</span></span>
+              <span role="cell" style="display: flex; justify-content: flex-end; align-items: flex-start"><a href="#add" aria-label="{{r.editLabel}}" class="tmc-btn2" style="padding: 0 16px">Edit</a></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <sc-if value="{{none}}" hint-placeholder-val="{{false}}">
+        <p style="margin: 16px 0 0; font-size: 15px; color: #5C4965">No works match. Clear a filter.</p>
+      </sc-if>
+      <p style="margin: 14px 0 0; font-size: 13px; line-height: 1.5; color: #6B5A73">RO is Romania. A work shows only in the markets where it is free; elsewhere it is hidden. A reader report that a classic isn’t public domain, or that its text is wrong, goes to the <a href="Moderation.dc.html">moderation queue</a> like any report, and staff can unpublish the work at once.</p>
+    </section>
+
+    <!-- 2. Add a work: details on the left, the live public-domain check on the right -->
+    <section id="add" aria-labelledby="add-title" style="margin-top: 24px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+      <div class="tmc-card" style="flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 6px; max-width: 760px">
+            <span class="tmc-eb">Add a work · part 16a</span>
+            <h2 id="add-title" class="tmc-h2">{{f.heading}}</h2>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #5C4965">Content editors and admins can add a work. Fill in the details and the check on the right shows, market by market, whether it is free.</p>
+          </div>
+          <span style="{{pub.statusStyle}}">{{pub.status}}</span>
+        </div>
+
+        <!-- Example loader, so the check can be tried with real cases -->
+        <div role="group" aria-label="Load an example" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+          <span class="tmc-eb" style="margin-right: 4px">Load an example</span>
+          <sc-for list="{{presets}}" as="c" hint-placeholder-count="3">
+            <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+          </sc-for>
+        </div>
+
+        <fieldset class="tmc-fs">
+          <legend>The work</legend>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px">
+            <div class="tmc-field">
+              <label for="cl-title" class="tmc-lbl">Title</label>
+              <input id="cl-title" type="text" class="tmc-in" value="{{f.title}}" onChange="{{f.onTitle}}">
+            </div>
+            <div class="tmc-field">
+              <label for="cl-author" class="tmc-lbl">Author</label>
+              <input id="cl-author" type="text" class="tmc-in" value="{{f.author}}" onChange="{{f.onAuthor}}">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 16px">
+            <div class="tmc-field">
+              <label for="cl-died" class="tmc-lbl">Author’s year of death</label>
+              <input id="cl-died" type="text" inputmode="numeric" class="tmc-in" value="{{f.died}}" onChange="{{f.onDied}}" aria-describedby="cl-died-help">
+              <span id="cl-died-help" class="tmc-help">Four digits, for example 1944.</span>
+            </div>
+            <div class="tmc-field">
+              <label for="cl-pub" class="tmc-lbl">Year first published</label>
+              <input id="cl-pub" type="text" inputmode="numeric" class="tmc-in" value="{{f.pub}}" onChange="{{f.onPub}}" aria-describedby="cl-pub-help">
+              <span id="cl-pub-help" class="tmc-help">Used for the US. For a translation, the year the translation came out.</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 16px 24px">
+            <div class="tmc-field">
+              <label for="cl-orig" class="tmc-lbl">Original language</label>
+              <span class="tmc-sel"><select id="cl-orig" value="{{f.orig}}" onChange="{{f.onOrig}}">
+                <option value="Romanian">Romanian</option>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="German">German</option>
+                <option value="Norwegian">Norwegian</option>
+                <option value="Russian">Russian</option>
+                <option value="Other">Another language</option>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+            <div class="tmc-field">
+              <label for="cl-kind" class="tmc-lbl">Kind</label>
+              <span class="tmc-sel"><select id="cl-kind" value="{{f.kind}}" onChange="{{f.onKind}}">
+                <option value="Novel">Novel</option>
+                <option value="Short story">Short story</option>
+                <option value="Fairy tale">Fairy tale</option>
+                <option value="Poem">Poem</option>
+                <option value="Play">Play</option>
+                <option value="Essay">Essay</option>
+              </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="tmc-fs">
+          <legend>Source</legend>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px">
+            <div class="tmc-field">
+              <label for="cl-src" class="tmc-lbl">Source edition</label>
+              <input id="cl-src" type="text" class="tmc-in" value="{{f.src}}" onChange="{{f.onSrc}}">
+            </div>
+            <div class="tmc-field">
+              <label for="cl-url" class="tmc-lbl">Link to the source</label>
+              <input id="cl-url" type="url" class="tmc-in" value="{{f.url}}" onChange="{{f.onUrl}}" aria-describedby="cl-url-help">
+            </div>
+          </div>
+          <span id="cl-url-help" class="tmc-help">For example Wikisource or Project Gutenberg. Readers see the source edition on the work’s page.</span>
+        </fieldset>
+
+        <fieldset class="tmc-fs">
+          <legend>Translation</legend>
+          <label style="display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 15px; color: #26142E; cursor: pointer"><input type="checkbox" checked="{{f.isTr}}" onChange="{{f.onTr}}" style="width: 20px; height: 20px; margin: 0; flex: none; accent-color: #481C5F"><span>This is a translation</span></label>
+          <sc-if value="{{f.isTr}}" hint-placeholder-val="{{false}}">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px">
+              <div class="tmc-field">
+                <label for="cl-tr" class="tmc-lbl">Translator</label>
+                <input id="cl-tr" type="text" class="tmc-in" value="{{f.trName}}" onChange="{{f.onTrName}}">
+              </div>
+              <div class="tmc-field">
+                <label for="cl-trdied" class="tmc-lbl">Translator’s year of death</label>
+                <input id="cl-trdied" type="text" inputmode="numeric" class="tmc-in" value="{{f.trDied}}" onChange="{{f.onTrDied}}">
+              </div>
+              <div class="tmc-field">
+                <label for="cl-into" class="tmc-lbl">Translated into</label>
+                <span class="tmc-sel"><select id="cl-into" value="{{f.into}}" onChange="{{f.onInto}}">
+                  <option value="Română" lang="ro">Română</option>
+                  <option value="English">English</option>
+                </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
+              </div>
+            </div>
+            <span class="tmc-help">A translation has its own copyright. It is free only when the translator’s death is old enough too.</span>
+          </sc-if>
+        </fieldset>
+      </div>
+
+      <!-- The live public-domain check -->
+      <aside aria-labelledby="pd-title" class="tmc-card tmc-sticky" style="flex: 1 1 340px; min-width: 0; position: sticky; top: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span class="tmc-eb">Public-domain check</span>
+          <h3 id="pd-title" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px; color: #481C5F">Where it’s free</h3>
+          <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">Checked on 17 October 2026. Updates as you type.</span>
+        </div>
+        <ul aria-live="polite" class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+          <sc-for list="{{pd.markets}}" as="m" hint-placeholder-count="4">
+            <li style="padding: 12px 0; display: flex; flex-direction: column; gap: 6px">
+              <span style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px"><span style="font-size: 15px; font-weight: 700; color: #26142E">{{m.name}}</span><span style="{{m.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{m.okIcon}}"><path d="M20 6 9 17l-5-5"></path></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{m.noIcon}}"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>{{m.verdict}}</span></span>
+              <span style="font-size: 13px; line-height: 1.5; color: #5C4965">{{m.rule}}</span>
+              <span style="font-size: 12px; line-height: 1.45; color: #6B5A73">{{m.detail}}</span>
+            </li>
+          </sc-for>
+        </ul>
+        <sc-if value="{{pd.trWarn}}" hint-placeholder-val="{{false}}">
+          <p role="alert" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; padding: 12px 16px; border-radius: 16px; background: #F6E9EB; color: #8C2B3A; font-size: 14px; line-height: 1.5"><span style="flex: none; display: flex; padding-top: 1px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path></svg></span><span>{{pd.trWarnText}}</span></p>
+        </sc-if>
+        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #26142E; padding: 12px 16px; border-radius: 16px; background: #F4F0EC">For a translation, the translator counts too: the later of the two deaths decides. For example, Hamlet is free everywhere, but a Romanian translation whose translator died in 1980 isn’t free in Romania, the EU or the UK until 1 January 2051. Modern notes and introductions can still be protected.</p>
+        <span style="font-size: 12px; line-height: 1.5; color: #6B5A73">Law 8/1996 art. 28(1) and 34; research G5. A lawyer checks this test before launch (lawyer’s list, section 6).</span>
+      </aside>
+    </section>
+
+    <!-- 3. Text: paste or upload, split into chapters at headings -->
+    <section aria-labelledby="text-title" class="tmc-card" style="margin-top: 24px; display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span class="tmc-eb">Text</span>
+        <h2 id="text-title" class="tmc-h2">Add the text</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Paste the text or upload a plain text (.txt) or Markdown (.md) file. We split it into chapters at its headings. Fix any chapter title before you go on.</p>
+      </div>
+      <div role="group" aria-label="How to add the text" style="align-self: flex-start; display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border: 1px solid #8E7B99; border-radius: 28px; background: #FAF8F5">
+        <button type="button" class="tmc-chip" aria-pressed="{{tx.fileOn}}" onClick="{{tx.pickFile}}" style="{{tx.fileStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{tx.fileCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Upload a file</button>
+        <button type="button" class="tmc-chip" aria-pressed="{{tx.pasteOn}}" onClick="{{tx.pickPaste}}" style="{{tx.pasteStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{tx.pasteCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Paste the text</button>
+      </div>
+
+      <sc-if value="{{tx.isFile}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 16px; border: 1px dashed #8E7B99; border-radius: 16px; background: #FAF8F5">
+          <label for="cl-file" class="tmc-btn2" style="border-color: #672786; color: #672786"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg>Choose a .txt or .md file</label>
+          <input id="cl-file" type="file" accept=".txt,.md,text/plain,text/markdown" class="tmc-sr" onChange="{{tx.onFile}}">
+          <span style="font-size: 14px; color: #26142E; overflow-wrap: anywhere">{{tx.fileLine}}</span>
+        </div>
+      </sc-if>
+      <sc-if value="{{tx.isPaste}}" hint-placeholder-val="{{false}}">
+        <div class="tmc-field">
+          <label for="cl-text" class="tmc-lbl">Text</label>
+          <textarea id="cl-text" rows="8" class="tmc-ta" value="{{tx.pasted}}" onChange="{{tx.onPaste}}" aria-describedby="cl-text-help"></textarea>
+          <span id="cl-text-help" class="tmc-help">Chapters start at headings: Markdown headings (# Chapter one) or lines such as ACT I, CHAPTER 1 or CAPITOLUL I.</span>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px">
+        <div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">{{tx.foundLine}}</span>
+          <sc-if value="{{tx.hasCh}}" hint-placeholder-val="{{true}}">
+            <ol aria-label="Chapters found" class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+              <sc-for list="{{tx.chapters}}" as="ch" hint-placeholder-count="5">
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px">
+                  <span aria-hidden="true" style="flex: none; width: 28px; font-size: 13px; font-weight: 700; color: #6B5A73; text-align: right">{{ch.n}}</span>
+                  <label for="{{ch.id}}" class="tmc-sr">{{ch.label}}</label>
+                  <input id="{{ch.id}}" type="text" class="tmc-in" value="{{ch.title}}" onChange="{{ch.onTitle}}" style="height: 44px">
+                </li>
+              </sc-for>
+            </ol>
+          </sc-if>
+          <sc-if value="{{tx.noCh}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0; padding: 16px; border-radius: 16px; background: #F4F0EC; font-size: 14px; line-height: 1.5; color: #4F3D57">No text yet. Upload a file or paste the text, and the chapters show here.</p>
+          </sc-if>
+        </div>
+        <div style="flex: 1.4 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-size: 16px; font-weight: 700; color: #26142E">Preview of chapter one</span>
+          <div lang="{{tx.previewLang}}" style="padding: 20px 22px; border: 1px solid #DED3E4; border-radius: 16px; background: #FFFDF8; min-height: 120px; box-sizing: border-box">
+            <span style="display: block; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 20px; color: #481C5F; margin-bottom: 10px">{{tx.previewTitle}}</span>
+            <p style="margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; line-height: 1.7; color: #26142E">{{tx.preview}}</p>
+          </div>
+          <span class="tmc-help">{{tx.previewNote}}</span>
+        </div>
+      </div>
+
+      <div style="padding: 16px; border-radius: 16px; background: #F4F0EC; display: flex; flex-direction: column; gap: 8px">
+        <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; font-size: 14px; line-height: 1.5; color: #26142E; cursor: pointer"><input type="checkbox" checked="{{tx.leaveOut}}" onChange="{{tx.onLeaveOut}}" style="width: 20px; height: 20px; margin: 1px 0 0; flex: none; accent-color: #481C5F"><span><b>Leave out modern notes and introductions.</b> Editors’ notes, introductions and footnotes added later can still be protected. Keep them only if they are free too.</span></label>
+        <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; line-height: 1.5; color: #4F3D57"><span>Project Gutenberg’s header and licence are taken out of uploaded files.</span><span class="tmc-pill tmc-prop">Proposal</span></span>
+      </div>
+    </section>
+
+    <!-- 4. Publishing -->
+    <section aria-labelledby="pubsec-title" class="tmc-card" style="margin-top: 24px; display: flex; flex-direction: column; gap: 24px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span class="tmc-eb">Publishing</span>
+          <h2 id="pubsec-title" class="tmc-h2">How it shows to readers</h2>
+        </div>
+        <span style="{{pub.statusStyle}}">{{pub.status}}</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px">
+        <fieldset class="tmc-fs">
+          <legend>Category and tags</legend>
+          <div class="tmc-field">
+            <label for="cl-cat" class="tmc-lbl">Category</label>
+            <span class="tmc-sel"><select id="cl-cat" value="{{pub.cat}}" onChange="{{pub.onCat}}">
+              <option value="Fiction">Fiction</option>
+              <option value="Poetry">Poetry</option>
+              <option value="Essays">Essays</option>
+            </select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>
+          </div>
+          <div class="tmc-field">
+            <span id="cl-tags-l" class="tmc-lbl">Tags</span>
+            <ul aria-labelledby="cl-tags-l" style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{pub.tags}}" as="t" hint-placeholder-count="3">
+                <li style="display: inline-flex; align-items: center; gap: 2px; height: 36px; padding: 0 2px 0 14px; border: 1px solid #C9B3D6; border-radius: 999px; background: #F1EAF4; color: #481C5F; font-size: 14px; font-weight: 600"><span>{{t.label}}</span><button type="button" aria-label="{{t.removeLabel}}" onClick="{{t.remove}}" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 0; border-radius: 999px; background: transparent; color: #481C5F; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></li>
+              </sc-for>
+            </ul>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <label for="cl-tag" class="tmc-sr">New tag</label>
+              <input id="cl-tag" type="text" class="tmc-in" placeholder="Add a tag" value="{{pub.tagDraft}}" onChange="{{pub.onTagDraft}}" style="flex: 1 1 160px; width: auto; min-width: 0; height: 44px">
+              <button type="button" class="tmc-btn2" onClick="{{pub.addTag}}">Add</button>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="tmc-fs">
+          <legend>Rating</legend>
+          <div role="group" aria-label="Rating" style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{pub.ratings}}" as="c" hint-placeholder-count="4">
+              <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div class="tmc-field">
+            <label for="cl-note" class="tmc-lbl">Content note (where needed)</label>
+            <input id="cl-note" type="text" class="tmc-in" value="{{pub.note}}" onChange="{{pub.onNote}}" aria-describedby="cl-note-help">
+            <span id="cl-note-help" class="tmc-help">Staff choose the rating. Classics can have hard themes: Ion, for example, isn’t All ages.</span>
+          </div>
+        </fieldset>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px">
+        <fieldset class="tmc-fs">
+          <legend>Cover</legend>
+          <div role="group" aria-label="Cover type" style="align-self: flex-start; display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border: 1px solid #8E7B99; border-radius: 28px; background: #FAF8F5">
+            <button type="button" class="tmc-chip" aria-pressed="{{cv.autoOn}}" onClick="{{cv.pickAuto}}" style="{{cv.autoStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{cv.autoCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Automatic cover</button>
+            <button type="button" class="tmc-chip" aria-pressed="{{cv.drawOn}}" onClick="{{cv.pickDraw}}" style="{{cv.drawStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{cv.drawCheck}}"><path d="M20 6 9 17l-5-5"></path></svg>Draw a cover</button>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px 20px">
+            <div role="img" aria-label="{{cv.alt}}" class="{{cv.cls}}" style="flex: none; width: 132px; height: 198px; border-radius: 10px; box-shadow: 0 1px 2px rgba(38,20,46,0.2), 0 10px 24px -14px rgba(38,20,46,0.5); display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; box-sizing: border-box">
+              <span style="{{cv.plate}}"><span style="{{cv.titleStyle}}">{{cv.title}}</span><span style="{{cv.byStyle}}">{{cv.by}}</span></span>
+            </div>
+            <div style="flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+              <sc-if value="{{cv.isDraw}}" hint-placeholder-val="{{false}}">
+                <div role="group" aria-label="Background" style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <sc-for list="{{cv.swatches}}" as="s" hint-placeholder-count="4">
+                    <button type="button" aria-pressed="{{s.pressed}}" aria-label="{{s.label}}" onClick="{{s.pick}}" class="{{s.cls}}" style="{{s.style}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{s.check}}"><path d="M20 6 9 17l-5-5"></path></svg></button>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <span style="font-size: 14px; line-height: 1.5; color: #26142E">{{cv.line}}</span>
+              <span class="tmc-help">Same covers as a writer’s new story. No uploaded pictures for classics, so there are no picture rights to check.</span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="tmc-fs">
+          <legend>Shown under Ghemotoc Classics</legend>
+          <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(96px, 140px) 1fr; font-size: 14px; line-height: 1.5">
+            <dt style="font-weight: 600; color: #26142E">Account</dt>
+            <dd style="margin: 0; color: #26142E">Ghemotoc Classics, our official account</dd>
+            <dt style="font-weight: 600; color: #26142E">Label</dt>
+            <dd style="margin: 0"><span class="tmc-pill" style="background: #FBF3DA; color: #5C3F0E; border: 1px solid #D9B54A">Public domain</span></dd>
+            <dt style="font-weight: 600; color: #26142E">Author</dt>
+            <dd style="margin: 0; color: #26142E; overflow-wrap: anywhere">{{pub.authorLine}}</dd>
+            <dt style="font-weight: 600; color: #26142E">Source</dt>
+            <dd style="margin: 0; color: #26142E; overflow-wrap: anywhere">{{pub.srcLine}}</dd>
+          </dl>
+          <div class="tmc-field">
+            <span id="cl-mk-l" class="tmc-lbl">Markets it will show in</span>
+            <div role="group" aria-labelledby="cl-mk-l" style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{pub.markets}}" as="c" hint-placeholder-count="4">
+                <button type="button" class="tmc-chip" aria-pressed="{{c.pressed}}" disabled="{{c.off}}" onClick="{{c.pick}}" style="{{c.style}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{c.check}}"><path d="M20 6 9 17l-5-5"></path></svg>{{c.label}}</button>
+              </sc-for>
+            </div>
+            <span class="tmc-help">Only markets where the work is free can be picked. Everywhere else it stays hidden.</span>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- Before it can be published -->
+      <div style="padding: 20px; border-radius: 20px; background: #FAF8F5; border: 1px solid #EFE8F2; display: flex; flex-direction: column; gap: 12px">
+        <span style="font-size: 16px; font-weight: 700; color: #26142E">Before it can be published</span>
+        <ul class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; font-size: 14px; line-height: 1.5">
+          <sc-for list="{{pub.checks}}" as="k" hint-placeholder-count="4">
+            <li style="padding: 10px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px"><span style="flex: 1 1 auto; display: flex; align-items: flex-start; gap: 10px; min-width: 0"><span style="{{k.iconBox}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{k.okIcon}}"><path d="M20 6 9 17l-5-5"></path></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{k.noIcon}}"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></span><span style="color: #26142E">{{k.label}}</span></span><span style="{{k.pillStyle}}">{{k.state}}</span></li>
+          </sc-for>
+        </ul>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 4px">
+          <button type="button" class="tmc-btn" onClick="{{pub.publish}}">Publish</button>
+          <button type="button" class="tmc-btn2" onClick="{{pub.ready}}">Mark ready to check</button>
+          <button type="button" class="tmc-btn2" onClick="{{pub.save}}">Save draft</button>
+          <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: #4F3D57"><span>An admin publishes. A content editor marks it ready to check.</span><span class="tmc-pill tmc-prop">Proposal</span></span>
+        </div>
+        <sc-if value="{{pub.hasMsg}}" hint-placeholder-val="{{false}}">
+          <p role="status" style="{{pub.msgStyle}}">{{pub.msg}}</p>
+        </sc-if>
+      </div>
+
+      <!-- Version history and the audit note -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px">
+        <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+          <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-size: 17px; font-weight: 700; color: #26142E">Version history</span><span class="tmc-pill tmc-prop">Proposal</span></span>
+          <ul class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; font-size: 14px; line-height: 1.5">
+            <sc-for list="{{versions}}" as="v" hint-placeholder-count="2">
+              <li style="padding: 10px 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 700; color: #26142E">{{v.head}}</span><span style="color: #26142E">{{v.what}}</span><span style="font-size: 13px; color: #6B5A73">{{v.who}}</span></li>
+            </sc-for>
+          </ul>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px">
+            <button type="button" class="tmc-btn2" aria-expanded="{{typo.expanded}}" onClick="{{typo.toggle}}">Fix a typo from the source</button>
+          </div>
+          <sc-if value="{{typo.open}}" hint-placeholder-val="{{false}}">
+            <div class="tmc-field">
+              <label for="cl-reason" class="tmc-lbl">Reason (required)</label>
+              <input id="cl-reason" type="text" class="tmc-in" value="{{typo.reason}}" onChange="{{typo.onReason}}" placeholder="For example: matches the source edition">
+              <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px"><button type="button" class="tmc-btn2" onClick="{{typo.save}}">Save as a new version</button></div>
+              <sc-if value="{{typo.err}}" hint-placeholder-val="{{false}}"><span role="alert" style="font-size: 13px; color: #8C2B3A; font-weight: 600">Add a reason first.</span></sc-if>
+            </div>
+          </sc-if>
+          <span class="tmc-help">A typo fix from the source is saved as a new version with a reason. Staff never rewrite or abridge a work.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 20px; border-top: 1px solid #EFE8F2">
+          <span style="font-size: 17px; font-weight: 700; color: #26142E">Audit log</span>
+          <dl class="tmc-rows" style="margin: 0; display: grid; grid-template-columns: minmax(96px, 140px) 1fr; font-size: 14px; line-height: 1.5">
+            <dt style="font-weight: 600; color: #26142E">Added by</dt>
+            <dd style="margin: 0; color: #26142E">Robert, admin · 17 Oct 2026</dd>
+            <dt style="font-weight: 600; color: #26142E">Checked by</dt>
+            <dd style="margin: 0; color: #26142E">{{audit.checked}}</dd>
+            <dt style="font-weight: 600; color: #26142E">Published by</dt>
+            <dd style="margin: 0; color: #26142E">{{audit.published}}</dd>
+          </dl>
+          <span class="tmc-help">Every step is written to the <a href="AdminSettings.dc.html">audit log</a> with who did it and when.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. New on 1 January (16b): authors whose works have just become free -->
+    <section aria-labelledby="jan-title" class="tmc-card" style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span class="tmc-eb">New on 1 January</span><span class="tmc-pill tmc-later">16b</span></span>
+        <h2 id="jan-title" class="tmc-h2">Free from 1 January 2027</h2>
+        <p style="margin: 0; max-width: 760px; font-size: 15px; line-height: 1.55; color: #5C4965">Authors who died in 1956 become free in Romania, the EU and the UK on 1 January 2027. These are the ones in the research lists. Each suggestion becomes a draft only when staff add it.</p>
+      </div>
+      <sc-if value="{{jan.has}}" hint-placeholder-val="{{true}}">
+        <ul class="tmc-rows" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+          <sc-for list="{{jan.rows}}" as="j" hint-placeholder-count="2">
+            <li style="padding: 14px 0; display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px 24px">
+              <span style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+                <span style="font-size: 16px; font-weight: 700; color: #26142E">{{j.author}} <span style="font-weight: 500; color: #5C4965">· died {{j.died}}</span></span>
+                <span lang="{{j.langTag}}" style="font-size: 14px; color: #26142E">{{j.works}}</span>
+                <span style="font-size: 13px; line-height: 1.5; color: #6B5A73">{{j.note}}</span>
+              </span>
+              <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                <span style="{{j.stateStyle}}">{{j.state}}</span>
+                <button type="button" class="tmc-btn2" disabled="{{j.addedOff}}" aria-label="{{j.addLabel}}" onClick="{{j.add}}">{{j.addText}}</button>
+                <button type="button" class="tmc-btn2" aria-label="{{j.dismissLabel}}" onClick="{{j.dismiss}}" style="border-color: transparent">Dismiss</button>
+              </span>
+            </li>
+          </sc-for>
+        </ul>
+      </sc-if>
+      <sc-if value="{{jan.none}}" hint-placeholder-val="{{false}}">
+        <p style="margin: 0; padding: 16px; border-radius: 16px; background: #F4F0EC; font-size: 14px; line-height: 1.5; color: #4F3D57">No suggestions right now. This list fills each December with the authors who become free on the next 1 January.</p>
+      </sc-if>
+      <span class="tmc-help">The list fills each December from the research lists. Dates follow the same check as above: death year plus 70, from the next 1 January.</span>
+    </section>
+  </main>
+
+  <!-- Slim staff footer: the same on every staff page (17 Oct 2026) -->
+  <footer data-staff-footer="1" style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(16px, 4vw, 64px); box-sizing: content-box">
+    <div style="border-top: 1px solid #DED3E4; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 24px; font-size: 13px; color: #6B5A73">
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px"><span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 15px; color: #481C5F">Ghemotoc</span><span style="letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 calc(10px - 0.12em) 0 10px; border-radius: 999px; background: #F1EAF4; color: #481C5F; border: 1px solid #C9B3D6; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap">STAFF</span><span>An app by The Magic Coffin</span></span>
+      <nav aria-label="Staff footer" style="display: flex; flex-wrap: wrap; gap: 0 18px">
+        <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Staff handbook</a>
+        <a href="AdminSettings.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Audit log</a>
+        <a href="AdminTickets.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Support tickets</a>
+        <a href="NoticeForm.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: #5C4965; text-decoration: none">Public report form</a>
+      </nav>
+      <span style="display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px"><span>Every action and sensitive read is logged</span><span class="tmc-sel"><label for="lang-foot" class="tmc-sr">Language</label><select id="lang-foot" style="height: 44px; font-size: 13px; font-weight: 600; padding: 0 36px 0 14px"><option value="en" lang="en" selected>English</option><option value="ro" lang="ro">Română</option></select><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #481C5F"><path d="m6 9 6 6 6-6"></path></svg></span></span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":5452}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Board date is 17 Oct 2026, so the public-domain check counts 2026 as the current year.
+    this.NOW = 2026;
+    this.state = Object.assign({
+      filter: 'All', lang: 'All', impOpen: false, impMsg: '',
+      leaveOut: true, cat: 'Fiction', tags: ['tragedy', 'revenge', 'Denmark'], tagDraft: '',
+      rating: '13+', note: 'Violence and death, including a suicide.',
+      coverMode: 'auto', coverBg: 'violet',
+      markets: { Romania: true, EU: true, UK: true, US: true },
+      added: {}, dismissed: {},
+      versions: [{ n: 1, what: 'Text added from Project Gutenberg, ebook 1524.', who: 'Robert, admin · 17 Oct 2026' }],
+      typoOpen: false, typoReason: '', typoErr: false
+    }, this.preset('hamlet'));
+  }
+
+  // ---------- Example works for the form (real rows from content/classics, plus one made-up translation) ----------
+  preset(k) {
+    var P = {
+      hamlet: { title: 'Hamlet', author: 'William Shakespeare', died: '1616', pub: '1603', orig: 'English', kind: 'Play', src: 'Project Gutenberg, ebook 1524', url: 'https://www.gutenberg.org/ebooks/1524', isTr: false, trName: '', trDied: '', into: 'Română' },
+      ion: { title: 'Ion', author: 'Liviu Rebreanu', died: '1944', pub: '1920', orig: 'Romanian', kind: 'Novel', src: 'Wikisource (Romanian)', url: 'https://ro.wikisource.org/wiki/Ion_(Rebreanu)', isTr: false, trName: '', trDied: '', into: 'English' },
+      newtr: { title: 'Hamlet (Romanian translation)', author: 'William Shakespeare', died: '1616', pub: '', orig: 'English', kind: 'Play', src: '[Source edition]', url: '', isTr: true, trName: '[Translator], made-up example', trDied: '1980', into: 'Română' }
+    };
+    var f = JSON.parse(JSON.stringify(P[k] || P.hamlet));
+    // Only the Hamlet example comes with an uploaded file; the others start with no text.
+    var file = k === 'hamlet';
+    return {
+      preset: k, f: f, status: 'Draft', msg: null,
+      textMode: file ? 'file' : 'paste', fileName: file ? 'hamlet-gutenberg-1524.txt' : '', pasted: '',
+      chTitles: file ? ['Act I', 'Act II', 'Act III', 'Act IV', 'Act V'] : null
+    };
+  }
+
+  // Interactive chip (pill system, 17 Oct): 36 px tall in a 44 px tap area, white with a #8E7B99 edge,
+  // selected = solid plum plus a check icon, so the state is never colour alone.
+  chipStyle(on, off) {
+    var base = 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 14px; border-radius: 999px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; ';
+    if (off) return base + 'border: 1px dashed #8E7B99; background: #F4F0EC; color: #4F3D57; cursor: not-allowed; opacity: 1;';
+    return base + (on ? 'border: 1px solid #481C5F; background: #481C5F; color: #FFFFFF;' : 'border: 1px solid #8E7B99; background: #FFFFFF; color: #481C5F;');
+  }
+  // A segment inside a segmented control: no own edge, the wrapper carries it.
+  segment(on) {
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 36px; padding: 0 16px; border-radius: 999px; border: 0; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; cursor: pointer; '
+      + (on ? 'background: #481C5F; color: #FFFFFF;' : 'background: transparent; color: #481C5F;');
+  }
+  chipCheck(on) { return on ? 'flex: none; display: block;' : 'display: none;'; }
+  // Information pill tokens: background, text, border (text at least 7:1 on its tint).
+  pill(tone) {
+    var t = {
+      ok: ['#E8F1EC', '#245A41', '#A9C9B6'], warn: ['#FBF3DA', '#5C3F0E', '#D9B54A'], bad: ['#F6E9EB', '#8C2B3A', '#DDB0B8'],
+      neutral: ['#F4F0EC', '#4F3D57', '#D6CCDC'], info: ['#E6EEF6', '#2E4A8C', '#AFC3DE'], plum: ['#F1EAF4', '#481C5F', '#C9B3D6']
+    }[tone] || ['#F4F0EC', '#4F3D57', '#D6CCDC'];
+    return 'display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; background: ' + t[0] + '; color: ' + t[1] + '; border: 1px solid ' + t[2] + ';';
+  }
+  statusTone(s) { return { 'Draft': 'warn', 'Ready to check': 'info', 'Published': 'ok', 'Hidden': 'bad' }[s] || 'neutral'; }
+  ratingTone(r) { return (r === '16+' || r === '18+') ? 'bad' : (r === 'Not set' ? 'neutral' : 'plum'); }
+  val(e) { return e && e.target ? String(e.target.value) : ''; }
+  // A year typed as four digits, not in the future; anything else counts as missing.
+  year(v) {
+    var s = String(v == null ? '' : v).trim();
+    if (!/^\d{3,4}$/.test(s)) return null;
+    var n = parseInt(s, 10);
+    return n > 0 && n <= this.NOW ? n : null;
+  }
+  // Copy of the form with one change, so React sees a new object.
+  setF(change) { var f = JSON.parse(JSON.stringify(this.state.f)); change(f); this.setState({ f: f, msg: null }); }
+
+  // ---------- The public-domain test (Law 8/1996 art. 28(1) and 34; research G5) ----------
+  // Romania, the EU and the UK: free from 1 January of (year of death + 71), i.e. 70 years counted
+  // from the 1 January after the death. A translation also needs the translator's death to be old enough.
+  // US: by publication date, free from 1 January of (year first published + 96).
+  check(f) {
+    var NOW = this.NOW, a = this.year(f.died), t = f.isTr ? this.year(f.trDied) : null, p = this.year(f.pub);
+    var eu;
+    if (a == null) eu = { state: 'check', why: 'Add the author’s year of death to check.' };
+    else if (f.isTr && t == null) eu = { state: 'check', why: 'Add the translator’s year of death to check.' };
+    else {
+      var base = f.isTr ? Math.max(a, t) : a;
+      eu = { state: NOW >= base + 71 ? 'free' : 'not', from: base + 71, base: base, byTr: f.isTr && t > a };
+    }
+    var us = p == null ? { state: 'check', why: f.isTr ? 'Add the year this translation was first published.' : 'Add the year first published.' }
+      : { state: NOW >= p + 96 ? 'free' : 'not', from: p + 96 };
+    var authorFree = a != null && NOW >= a + 71;
+    return { eu: eu, us: us, trBlocks: f.isTr && authorFree && eu.state === 'not', a: a, t: t };
+  }
+  freeIn(c, key) { return key === 'US' ? c.us.state === 'free' : c.eu.state === 'free'; }
+
+  // Split pasted text into chapters at headings: Markdown #, or ACT / CHAPTER / CAPITOLUL / PART / PARTEA lines.
+  parse(text) {
+    var lines = String(text || '').split(/\r?\n/), out = [], cur = null;
+    var head = /^\s*(#{1,3}\s+\S.*|(ACT|ACTUL|CHAPTER|CAPITOLUL|PART|PARTEA)\s+[\wIVXLC]+.*)$/i;
+    lines.forEach(function (l) {
+      if (head.test(l)) { cur = { title: l.replace(/^\s*#{1,3}\s+/, '').trim(), body: [] }; out.push(cur); }
+      else if (cur) cur.body.push(l);
+    });
+    return out;
+  }
+
+  renderVals() {
+    var self = this, st = this.state, f = st.f;
+    var C = this.check(f);
+    var markets = ['Romania', 'EU', 'UK', 'US'];
+
+    // ---------- 1. List of classics (real rows from content/classics; statuses and ratings are examples) ----------
+    var W = [
+      { id: 'w1', title: 'Povestea lui Harap-Alb', author: 'Ion Creangă', died: '1889', kind: 'Fairy tale', lang: 'Română', ro: 'yes', eu: 'yes', us: 'yes', status: 'Published', rating: 'All ages', note: '' },
+      { id: 'w2', title: 'Luceafărul', author: 'Mihai Eminescu', died: '1889', kind: 'Poem', lang: 'Română', ro: 'yes', eu: 'yes', us: 'yes', status: 'Published', rating: 'All ages', note: '' },
+      { id: 'w3', title: 'Ion', author: 'Liviu Rebreanu', died: '1944', kind: 'Novel', lang: 'Română', ro: 'yes', eu: 'yes', us: 'yes', status: 'Ready to check', rating: '16+', note: 'First published 1920' },
+      { id: 'w4', title: 'Răscoala', author: 'Liviu Rebreanu', died: '1944', kind: 'Novel', lang: 'Română', ro: 'yes', eu: 'yes', us: 'check', status: 'Draft', rating: 'Not set', note: 'Imported. US depends on the 1932 publication' },
+      { id: 'w5', title: 'O scrisoare pierdută', author: 'Ion Luca Caragiale', died: '1912', kind: 'Play', lang: 'Română', ro: 'yes', eu: 'yes', us: 'yes', status: 'Hidden', rating: '13+', note: 'Hidden while the source’s footnotes are checked' },
+      { id: 'w6', title: 'Macbeth', author: 'William Shakespeare', died: '1616', kind: 'Play', lang: 'English', ro: 'yes', eu: 'yes', us: 'yes', status: 'Published', rating: '13+', note: '' },
+      { id: 'w7', title: 'Pride and Prejudice', author: 'Jane Austen', died: '1817', kind: 'Novel', lang: 'English', ro: 'yes', eu: 'yes', us: 'yes', status: 'Draft', rating: 'Not set', note: 'Imported. Text not added yet' },
+      { id: 'w8', title: 'Nineteen Eighty-Four', author: 'George Orwell', died: '1950', kind: 'Novel', lang: 'English', ro: 'yes', eu: 'yes', us: 'no', status: 'Published', rating: '13+', note: 'Hidden in the US until 1 January 2045' },
+      { id: 'w9', title: 'A Doll’s House (English translation)', author: 'Henrik Ibsen', died: '1906', kind: 'Play', lang: 'English', ro: 'yes', eu: 'yes', us: 'yes', status: 'Ready to check', rating: '13+', note: 'Translated by R. Farquharson Sharp, died 1945' }
+    ];
+
+    // ---------- 5. New on 1 January (authors who died in 1956, from the research lists) ----------
+    var J = [
+      { id: 'milne', author: 'A. A. Milne', died: '1956', works: 'Winnie-the-Pooh · novel · English', langTag: 'en', note: 'Text only: E. H. Shepard’s illustrations stay protected until 1 January 2047. Already free in the US.',
+        row: { title: 'Winnie-the-Pooh', author: 'A. A. Milne', died: '1956', kind: 'Novel', lang: 'English', ro: '2027', eu: '2027', us: 'yes', status: 'Draft', rating: 'Not set', note: 'Suggested for 1 January 2027' } },
+      { id: 'labis', author: 'Nicolae Labiș', died: '1956', works: 'Poems · poem · Română', langTag: 'ro', note: 'US status uncertain: check the publication dates.',
+        row: { title: 'Poems', author: 'Nicolae Labiș', died: '1956', kind: 'Poem', lang: 'Română', ro: '2027', eu: '2027', us: 'check', status: 'Draft', rating: 'Not set', note: 'Suggested for 1 January 2027' } }
+    ];
+    J.forEach(function (j) { if (st.added[j.id]) { var r = JSON.parse(JSON.stringify(j.row)); r.id = 'j-' + j.id; W.unshift(r); } });
+
+    var freeChip = function (label, v) {
+      if (v === 'yes') return { label: label + ' · yes', style: self.pill('ok') };
+      if (v === 'no') return { label: label + ' · no', style: self.pill('bad') };
+      if (v === 'check') return { label: label + ' · check', style: self.pill('warn') };
+      return { label: label + ' · from ' + v, style: self.pill('warn') };
+    };
+    var cols = 'grid-template-columns: minmax(0, 2.1fr) 56px minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 2.7fr) minmax(0, 1.1fr) minmax(0, 0.7fr) 76px; gap: 14px; align-items: start; padding: 14px 16px; border-bottom: 1px solid #EFE8F2;';
+    var shown = 0;
+    var rows = W.map(function (w) {
+      var vis = (st.filter === 'All' || w.status === st.filter) && (st.lang === 'All' || w.lang === st.lang);
+      if (vis) shown++;
+      return {
+        title: w.title, author: w.author, note: w.note, died: w.died, kind: w.kind, lang: w.lang, langTag: w.lang === 'Română' ? 'ro' : 'en',
+        free: [freeChip('RO', w.ro), freeChip('EU and UK', w.eu), freeChip('US', w.us)],
+        status: w.status, statusStyle: self.pill(self.statusTone(w.status)),
+        rating: w.rating, ratingStyle: self.pill(self.ratingTone(w.rating)),
+        editLabel: 'Edit ' + w.title,
+        rowStyle: (vis ? 'display: grid; ' : 'display: none; ') + cols
+      };
+    });
+    var chips = ['All', 'Draft', 'Ready to check', 'Published', 'Hidden'].map(function (s) {
+      var on = st.filter === s;
+      return { label: s, pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState({ filter: s }); } };
+    });
+
+    // ---------- 2. Form and live check ----------
+    var presets = [['hamlet', 'Hamlet'], ['ion', 'Ion'], ['newtr', 'A newer translation (made up)']].map(function (p) {
+      var on = st.preset === p[0];
+      return { label: p[1], pressed: on ? 'true' : 'false', style: self.chipStyle(on), check: self.chipCheck(on), pick: function () { self.setState(self.preset(p[0])); } };
+    });
+    var on = function (key) { return function (e) { var v = self.val(e); self.setF(function (x) { x[key] = v; }); }; };
+    var fv = {
+      heading: (f.title || '').trim() ? 'Add a work: ' + f.title.trim() : 'Add a work',
+      title: f.title, author: f.author, died: f.died, pub: f.pub, orig: f.orig, kind: f.kind, src: f.src, url: f.url,
+      isTr: !!f.isTr, trName: f.trName, trDied: f.trDied, into: f.into,
+      onTitle: on('title'), onAuthor: on('author'), onDied: on('died'), onPub: on('pub'), onOrig: on('orig'), onKind: on('kind'),
+      onSrc: on('src'), onUrl: on('url'), onTrName: on('trName'), onTrDied: on('trDied'), onInto: on('into'),
+      onTr: function () { self.setF(function (x) { x.isTr = !x.isTr; }); }
+    };
+
+    var names = { Romania: 'Romania', EU: 'European Union', UK: 'United Kingdom', US: 'United States' };
+    var rules = {
+      Romania: 'Free 70 years after the 1 January following the death.',
+      EU: 'Same 70-year rule in every EU country.',
+      UK: 'Same 70-year rule.',
+      US: 'By publication date: free from the 1 January after 95 years.'
+    };
+    var pdMarkets = markets.map(function (k) {
+      var r = k === 'US' ? C.us : C.eu, verdict, tone, detail;
+      if (r.state === 'free') { verdict = 'Free'; tone = 'ok'; detail = 'Free since 1 January ' + r.from + '.'; }
+      else if (r.state === 'not') { verdict = 'Not free until 1 January ' + r.from; tone = 'bad'; detail = k === 'US' ? 'Counted from first publication in ' + (r.from - 96) + '.' : 'Counted from ' + (r.byTr ? 'the translator’s' : 'the author’s') + ' death in ' + r.base + '.'; }
+      else { verdict = 'Can’t check yet'; tone = 'warn'; detail = r.why; }
+      if (r.state === 'free' && k !== 'US' && r.byTr) detail += ' The translator’s death (' + r.base + ') decided it.';
+      return {
+        name: names[k], verdict: verdict, style: self.pill(tone), rule: rules[k], detail: detail,
+        okIcon: r.state === 'free' ? 'flex: none; display: block;' : 'display: none;',
+        noIcon: r.state === 'not' ? 'flex: none; display: block;' : 'display: none;'
+      };
+    });
+    var pd = {
+      markets: pdMarkets, trWarn: C.trBlocks,
+      trWarnText: C.trBlocks ? 'The author’s work is free, but this translation isn’t free in Romania, the EU or the UK until 1 January ' + C.eu.from + '. Use an older translation that is free, or the original.' : ''
+    };
+
+    // ---------- 3. Text ----------
+    var HAMLET_PREVIEW = 'SCENE I. Elsinore. A platform before the Castle.\n\nEnter Francisco and Barnardo, two sentinels.\n\nBARNARDO. Who’s there?\nFRANCISCO. Nay, answer me. Stand and unfold yourself.\nBARNARDO. Long live the King!\nFRANCISCO. Barnardo?\nBARNARDO. He.';
+    var isFile = st.textMode === 'file', chs = [], previewTitle = '', preview = '', previewNote = '';
+    if (isFile && st.fileName && st.chTitles) {
+      chs = st.chTitles.slice();
+      previewTitle = chs[0]; preview = HAMLET_PREVIEW + '\n…';
+      previewNote = 'Example file. The preview shows the first lines of chapter one.';
+    } else if (!isFile) {
+      var parsed = this.parse(st.pasted);
+      chs = parsed.map(function (p, i) { return st.chTitles && st.chTitles[i] != null ? st.chTitles[i] : p.title; });
+      if (parsed.length) { previewTitle = chs[0]; preview = parsed[0].body.join('\n').trim().slice(0, 600) || '(No text under this heading yet.)'; previewNote = 'The preview shows up to the first 600 characters of chapter one.'; }
+    }
+    if (!chs.length) { previewTitle = 'Nothing to preview'; preview = 'Add the text and chapter one shows here.'; previewNote = ''; }
+    var hasText = chs.length > 0;
+    var tx = {
+      isFile: isFile, isPaste: !isFile,
+      fileOn: isFile ? 'true' : 'false', pasteOn: isFile ? 'false' : 'true',
+      fileStyle: self.segment(isFile), pasteStyle: self.segment(!isFile), fileCheck: self.chipCheck(isFile), pasteCheck: self.chipCheck(!isFile),
+      pickFile: function () { self.setState({ textMode: 'file', chTitles: st.fileName ? ['Act I', 'Act II', 'Act III', 'Act IV', 'Act V'] : null }); },
+      pickPaste: function () { self.setState({ textMode: 'paste', chTitles: null }); },
+      fileLine: st.fileName ? st.fileName + ' · example file' : 'No file chosen yet.',
+      onFile: function (e) {
+        var file = e && e.target && e.target.files && e.target.files[0];
+        if (!file) return;
+        // Read the chosen file and switch to the paste view so its chapters are found the same way.
+        try { file.text().then(function (t) { self.setState({ textMode: 'paste', pasted: t, chTitles: null }); }); } catch (err) { /* older browser: the staff member can paste instead */ }
+      },
+      pasted: st.pasted,
+      onPaste: function (e) { self.setState({ pasted: self.val(e), chTitles: null }); },
+      foundLine: hasText ? chs.length + (chs.length === 1 ? ' chapter found' : ' chapters found') + (isFile ? ' (acts)' : '') : 'Chapters',
+      hasCh: hasText, noCh: !hasText,
+      chapters: chs.map(function (t, i) {
+        return {
+          n: i + 1, id: 'cl-ch-' + (i + 1), title: t, label: 'Title of chapter ' + (i + 1),
+          onTitle: function (e) { var list = chs.slice(); list[i] = self.val(e); self.setState({ chTitles: list }); }
+        };
+      }),
+      previewTitle: previewTitle, preview: preview, previewNote: previewNote,
+      previewLang: f.isTr ? (f.into === 'Română' ? 'ro' : 'en') : (f.orig === 'Romanian' ? 'ro' : 'en'),
+      leaveOut: !!st.leaveOut, onLeaveOut: function () { self.setState({ leaveOut: !st.leaveOut }); }
+    };
+
+    // ---------- 4. Publishing ----------
+    var picked = markets.filter(function (k) { return st.markets[k] && self.freeIn(C, k); });
+    var mkLabels = { Romania: 'Romania', EU: 'EU', UK: 'UK', US: 'US' };
+    var pubMarkets = markets.map(function (k) {
+      var free = self.freeIn(C, k), sel = free && !!st.markets[k];
+      return {
+        label: free ? mkLabels[k] : mkLabels[k] + ' · not free', pressed: sel ? 'true' : 'false', off: !free,
+        style: self.chipStyle(sel, !free), check: self.chipCheck(sel),
+        pick: function () { if (!free) return; var m = JSON.parse(JSON.stringify(st.markets)); m[k] = !m[k]; self.setState({ markets: m, msg: null }); }
+      };
+    });
+    var ratings = ['All ages', '13+', '16+', '18+'].map(function (r) {
+      var sel = st.rating === r;
+      return { label: r, pressed: sel ? 'true' : 'false', style: self.chipStyle(sel), check: self.chipCheck(sel), pick: function () { self.setState({ rating: r, msg: null }); } };
+    });
+    var srcOk = !!String(f.src || '').trim() && !/^\[/.test(String(f.src).trim()) && /^https?:\/\/\S+\.\S+/.test(String(f.url || '').trim());
+    var checks = [
+      { label: 'Free in at least one market you picked', ok: picked.length > 0 },
+      { label: 'Source edition and link added', ok: srcOk },
+      { label: 'Text added and chapter titles checked', ok: hasText },
+      { label: 'Rating chosen', ok: !!st.rating }
+    ];
+    var missing = checks.filter(function (k) { return !k.ok; }).length;
+    var pubChecks = checks.map(function (k) {
+      return {
+        label: k.label, state: k.ok ? 'Done' : 'Not yet', pillStyle: self.pill(k.ok ? 'ok' : 'warn'),
+        okIcon: k.ok ? 'display: block;' : 'display: none;', noIcon: k.ok ? 'display: none;' : 'display: block;',
+        iconBox: 'flex: none; width: 22px; height: 22px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; ' + (k.ok ? 'background: #E8F1EC; color: #245A41;' : 'background: #FBF3DA; color: #5C3F0E;')
+      };
+    });
+    var msgTone = st.msg ? st.msg.tone : '';
+    var msgCol = { ok: ['#E8F1EC', '#245A41'], warn: ['#FBF3DA', '#5C3F0E'], bad: ['#F6E9EB', '#8C2B3A'], info: ['#E6EEF6', '#2E4A8C'] }[msgTone] || ['#F4F0EC', '#4F3D57'];
+    var titleNow = String(f.title || '').trim() || 'This work';
+    var mkText = picked.map(function (k) { return mkLabels[k]; }).join(', ').replace(/, ([^,]*)$/, ' and $1');
+    var pub = {
+      status: st.status, statusStyle: self.pill(self.statusTone(st.status)),
+      cat: st.cat, onCat: function (e) { self.setState({ cat: self.val(e) || 'Fiction' }); },
+      tags: st.tags.map(function (t, i) {
+        return { label: t, removeLabel: 'Remove the tag ' + t, remove: function () { var l = st.tags.slice(); l.splice(i, 1); self.setState({ tags: l }); } };
+      }),
+      tagDraft: st.tagDraft, onTagDraft: function (e) { self.setState({ tagDraft: self.val(e) }); },
+      addTag: function () { var t = String(st.tagDraft || '').trim(); if (!t || st.tags.indexOf(t) > -1) { self.setState({ tagDraft: '' }); return; } self.setState({ tags: st.tags.concat([t]), tagDraft: '' }); },
+      ratings: ratings, note: st.note, onNote: function (e) { self.setState({ note: self.val(e) }); },
+      authorLine: (String(f.author || '').trim() || '[Author]') + (self.year(f.died) ? ', died ' + f.died : '') + (f.isTr && String(f.trName || '').trim() ? '. Translated by ' + f.trName.trim() + (self.year(f.trDied) ? ', died ' + f.trDied : '') : ''),
+      srcLine: (String(f.src || '').trim() || '[Source edition]') + (String(f.url || '').trim() ? ' · ' + f.url.trim() : ''),
+      markets: pubMarkets, checks: pubChecks,
+      hasMsg: !!st.msg, msg: st.msg ? st.msg.text : '',
+      msgStyle: 'margin: 0; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; background: ' + msgCol[0] + '; color: ' + msgCol[1] + ';',
+      save: function () { self.setState({ msg: { tone: 'info', text: 'Draft saved. Nothing is public yet.' } }); },
+      ready: function () {
+        if (missing) { self.setState({ msg: { tone: 'warn', text: 'Not ready yet: ' + missing + (missing === 1 ? ' check is' : ' checks are') + ' still open above.' } }); return; }
+        self.setState({ status: 'Ready to check', msg: { tone: 'info', text: titleNow + ' is ready to check. An admin can now publish it.' } });
+      },
+      publish: function () {
+        if (missing) { self.setState({ msg: { tone: 'bad', text: 'Can’t publish yet: ' + missing + (missing === 1 ? ' check is' : ' checks are') + ' still open above.' } }); return; }
+        self.setState({ status: 'Published', msg: { tone: 'ok', text: titleNow + ' is published under Ghemotoc Classics in ' + mkText + '. Hidden everywhere else.' } });
+      }
+    };
+
+    // Cover: automatic, or drawn on one of four backgrounds; the full title always shows (size steps down with length).
+    var bgs = [['violet', 'Violet', true], ['ink', 'Ink', true], ['paper', 'Paper', false], ['sage', 'Sage', false]];
+    var autoKey = (String(f.title || '').length % 2) ? 'ink' : 'violet';
+    var key = st.coverMode === 'auto' ? autoKey : st.coverBg;
+    var dark = key === 'violet' || key === 'ink';
+    var len = titleNow.length, size = 20;
+    if (len > 40) size = Math.max(11, Math.round(20 * 0.62)); else if (len > 28) size = Math.round(20 * 0.72); else if (len > 18) size = Math.round(20 * 0.85);
+    var cv = {
+      autoOn: st.coverMode === 'auto' ? 'true' : 'false', drawOn: st.coverMode === 'draw' ? 'true' : 'false',
+      autoStyle: self.segment(st.coverMode === 'auto'), drawStyle: self.segment(st.coverMode === 'draw'),
+      autoCheck: self.chipCheck(st.coverMode === 'auto'), drawCheck: self.chipCheck(st.coverMode === 'draw'),
+      pickAuto: function () { self.setState({ coverMode: 'auto' }); }, pickDraw: function () { self.setState({ coverMode: 'draw' }); },
+      isDraw: st.coverMode === 'draw',
+      cls: 'tmc-cv tmc-cv-' + key,
+      alt: 'Cover preview: ' + titleNow + ' by ' + (String(f.author || '').trim() || 'the author'),
+      plate: 'display: flex; flex-direction: column; gap: 4px; padding: 8px 9px; border-radius: 6px; ' + (dark ? 'background: rgba(38,20,46,0.82);' : 'background: rgba(255,253,248,0.92);'),
+      titleStyle: 'font-family: \'Bricolage Grotesque\', sans-serif; font-weight: 800; font-size: ' + size + 'px; line-height: 1.05; overflow-wrap: break-word; color: ' + (dark ? '#FBF7EC' : '#481C5F') + ';',
+      byStyle: 'font-size: 11px; font-weight: 600; line-height: 1.3; color: ' + (dark ? '#E9DDF0' : '#4F3D57') + ';',
+      title: titleNow, by: String(f.author || '').trim() || '[Author]',
+      line: st.coverMode === 'auto' ? 'An automatic cover is used until you draw one. You can change it any time.' : 'Drawn cover on the ' + key + ' background, with the full title.',
+      swatches: bgs.map(function (b) {
+        var sel = st.coverBg === b[0];
+        return {
+          label: 'Background: ' + b[1], pressed: sel ? 'true' : 'false', cls: 'tmc-cv tmc-cv-' + b[0],
+          style: 'display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; cursor: pointer; color: ' + (b[2] ? '#FFFFFF' : '#481C5F') + '; border: ' + (sel ? '3px solid #481C5F' : '1px solid #8E7B99') + '; box-shadow: ' + (sel ? '0 0 0 2px #FFFFFF inset' : 'none') + ';',
+          check: self.chipCheck(sel),
+          pick: function () { self.setState({ coverBg: b[0] }); }
+        };
+      })
+    };
+
+    // Versions and audit
+    var versions = st.versions.slice().reverse().map(function (v) { return { head: 'Version ' + v.n, what: v.what, who: v.who }; });
+    var typo = {
+      open: !!st.typoOpen, expanded: st.typoOpen ? 'true' : 'false', reason: st.typoReason, err: !!st.typoErr,
+      toggle: function () { self.setState({ typoOpen: !st.typoOpen, typoErr: false }); },
+      onReason: function (e) { self.setState({ typoReason: self.val(e), typoErr: false }); },
+      save: function () {
+        var r = String(st.typoReason || '').trim();
+        if (!r) { self.setState({ typoErr: true }); return; }
+        var v = st.versions.concat([{ n: st.versions.length + 1, what: 'Typo from the source fixed. Reason: ' + r, who: 'Robert, admin · 17 Oct 2026' }]);
+        self.setState({ versions: v, typoOpen: false, typoReason: '', typoErr: false });
+      }
+    };
+    var audit = {
+      checked: st.status === 'Draft' ? 'Not yet' : 'Robert, admin · 17 Oct 2026',
+      published: st.status === 'Published' ? 'Robert, admin · 17 Oct 2026' : 'Not yet'
+    };
+
+    // New on 1 January
+    var jrows = J.filter(function (j) { return !st.dismissed[j.id]; }).map(function (j) {
+      var done = !!st.added[j.id];
+      return {
+        author: j.author, died: j.died, works: j.works, langTag: j.langTag, note: j.note,
+        state: done ? 'Added as a draft' : 'Free in RO, EU and UK from 1 January 2027', stateStyle: self.pill(done ? 'info' : 'warn'),
+        addText: done ? 'Added' : 'Add as a draft', addedOff: done, addLabel: (done ? 'Added ' : 'Add ') + j.author + ' as a draft',
+        add: function () { var a = JSON.parse(JSON.stringify(st.added)); a[j.id] = true; self.setState({ added: a }); },
+        dismissLabel: 'Dismiss the suggestion for ' + j.author,
+        dismiss: function () { var d = JSON.parse(JSON.stringify(st.dismissed)); d[j.id] = true; self.setState({ dismissed: d }); }
+      };
+    });
+
+    return {
+      imp: {
+        open: !!st.impOpen, expanded: st.impOpen ? 'true' : 'false', hasMsg: !!st.impMsg, msg: st.impMsg,
+        toggle: function () { self.setState({ impOpen: !st.impOpen, impMsg: '' }); },
+        run: function () { self.setState({ impMsg: 'Example: on the real site each row would now be a draft, ready for its text.' }); }
+      },
+      chips: chips, lang: st.lang, onLang: function (e) { self.setState({ lang: self.val(e) || 'All' }); },
+      rows: rows, none: shown === 0,
+      shownLine: shown + ' of ' + rows.length + (rows.length === 1 ? ' work' : ' works') + ' shown.',
+      presets: presets, f: fv, pd: pd, tx: tx, pub: pub, cv: cv,
+      versions: versions, typo: typo, audit: audit,
+      jan: { rows: jrows, has: jrows.length > 0, none: jrows.length === 0 }
+    };
+  }
+}
+</script>
+</body>
+</html>

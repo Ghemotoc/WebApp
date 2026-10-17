@@ -65,6 +65,7 @@ The design canvas (17 Oct 2026, version 162) is the source of truth for every sc
 | 8.13 Support tickets | `boards/AdminTickets.dc.html` | `renders/desktop/AdminTickets.jpg` | `renders/phone/AdminTickets.jpg` |
 | 8.14 Website: landing pages | `boards/AdminPages.dc.html` | `renders/desktop/AdminPages.jpg` | `renders/phone/AdminPages.jpg` |
 | 8.15 Contests | `boards/AdminContests.dc.html` | `renders/desktop/AdminContests.jpg` | `renders/phone/AdminContests.jpg` |
+| 8.16 Classics | `boards/AdminClassics.dc.html` | `renders/desktop/AdminClassics.jpg` | `renders/phone/AdminClassics.jpg` |
 | 9.1 TikTok: first-line challenge | `boards/Social-TikTok-FirstLine.dc.html` | `renders/desktop/Social-TikTok-FirstLine.jpg` | n/a |
 | 9.2 TikTok: writer POV (#ad) | `boards/Social-TikTok-POV.dc.html` | `renders/desktop/Social-TikTok-POV.jpg` | n/a |
 | 9.3 Reels: First Chapter contest | `boards/Social-Reels-Contest.dc.html` | `renders/desktop/Social-Reels-Contest.jpg` | n/a |

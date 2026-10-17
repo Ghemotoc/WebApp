@@ -49,7 +49,7 @@ Many people on Ghemotoc are under 18. Keeping them safe comes first.
 
 Never allowed, and reported to the authorities where the law says so:
 
-- sexual content involving anyone under 18, real or fictional, in words or pictures. Stories may tell of abuse, coercion and what they do to people, and characters aged 16 or 17 can have relationships, feelings and kisses, and the story can say that something happened between them. But no story may describe sexual activity involving anyone under 18 in an explicit or eroticised way. Stories with these themes must be rated 16+ or 18+ and carry a content note. We remove anything that crosses this line straight away.
+- sexual content involving anyone under 18, real or fictional, in words or pictures. Stories may tell of abuse, coercion and what they do to people, and characters aged 16 or 17 can have relationships, feelings and kisses, and the story can say that something happened between them. But no story may describe sexual activity involving anyone under 18 in an explicit or eroticised way. Stories about abuse or coercion, or that say something sexual happened, must be rated 16+ or 18+ and carry a content note. A relationship between characters aged 16 or 17 with no sexual content can be rated 13+. We remove anything that crosses this line straight away.
 - an adult trying to build a private relationship with someone under 18: for example by asking for pictures, personal details or secrecy or by asking them to move to another app;
 - content that supports or praises terrorism or violent extremist groups;
 - real threats to hurt someone, or plans to do so.

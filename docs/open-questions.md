@@ -112,3 +112,22 @@ Grouped by when the answer is needed. "Blocks" lists the stories that can't be f
 | 45 | Supporter money (decided 16 Oct 2026, a later stage, not Stage 1 and not the March slice): writers are paid only from paying supporters, none from free use; user-centric formula B (each supporter's writer share is split between the writers that supporter read); of a €5 subscription, €2 goes to writers and €3 is kept; a monthly report a month later and writers withdraw any time; only writers in the writer programme are paid (18+, living in a payout country, 1,000+ followers). Still open: a fixed €2 or 40% of what's left after VAT and app-store fees, and where the share for writers outside the programme goes | Later |
 
 ---
+
+### Raised by the end-to-end check (17 Oct 2026)
+
+All **OPEN** until Robert answers. The options are the checker's; any recommendation is not a decision. Until answered, a prompt that touches one of these stops and asks.
+
+| # | Question | Options | What each changes |
+| --- | --- | --- | --- |
+| 1 | What is in "Download my data"? | a) JSON plus readable HTML (story S1-E13-02); b) JSON plus Word files; c) Word only (board, Q28 read literally) | a: board copy changes. b: story and board change, reuses S1-E11-09a's Word builder. c: fails the GDPR Art 20 machine-readable copy. I recommend b |
+| 2 | Can staff doing a manual age check see the year of birth? | a) yes, as S1-E2-08 says; b) no, age group only, as architecture 1.8.3 says | a: add an exception to 1.8.3 and the record of processing. b: change the S1-E2-08 criterion; manual checks get harder |
+| 3 | Where do notice banners show? | a) website only (S1-E11-10); b) website and app (AdminPages board) | b: the app must read the website's banner table or a copy, a new link between two databases that architecture keeps apart |
+| 4 | Who can enter the First Chapter contest? | a) 13 to 19, with an "oldest age" field (AdminPages draws one, "proposal"); b) the age groups only (13 to 15, 16 to 17, 18 and over) | a: S1-E11-15 needs a maximum age worked out from the year of birth. b: Contest and Website-Home copy changes |
+| 5 | Certificates print a name the student types. CLAUDE.md rule 5 says store no legal names | a) allow it as a named exception, stored only on the certificate; b) print the pen name only; c) use the typed name to make the PDF and never store it | a: CLAUDE.md, privacy notice and DPIA change. b: certificate boards change. c: re-downloads ask again. Not urgent (S1-E8-12 is after March) |
+| 6 | Content editors and Classics | a) content editors may open Stories › Classics only; b) move Classics under Website; c) admins only | a: S1-E11-07 and the 1.8.3 table change. b: AdminClassics board moves. c: S1-E11-16 and the board change |
+| 7 | S1-E10-13 (MVP) needs monthly support tickets (S1-E11-13, after March) and an editing screen in admin Settings (S1-E11-03, after March) | a) for March, the monthly job emails support@ghemotoc.com and contacts change by migration; b) move S1-E11-13a into the MVP (about 15 to 30 hours); c) a monthly calendar reminder and migrations | Decides whether S1-E10-13 can be Done by March |
+| 8 | S1-E5-08 (MVP) needs the website's own database, which is OPEN | a) set up the website database before March; b) for March, the short page reads copy from the locale files and the app's `public-shelves`, with the CMS stories after; c) drop S1-E5-08 from the MVP (about 12 hours) | b fits the story's own proposal but means the website is part of the app until the split |
+| 9 | The March return rate needs per-reader reads, but `chapter_reads` is daily totals (architecture 1.6 and 1.7.9 say totals are enough; they aren't) | a) keep per-reader read records for a short window (for example 30 days), then only totals; b) change the metric to an aggregate (reads of N+1 divided by reads of N); c) build the library (S1-E4-03) before March | a: new personal data about minors' reading, so privacy notice, retention and DPIA. b: no new data, weaker metric. c: about 12 more hours |
+| 10 | Hosting provider (Q38) is OPEN, but S1-E2-10 (MVP) needs its country header and every story's "Done on staging" needs a host | Choose in November with the hours decision | Until then nothing can be Done on staging |
+| 11 | Two ads in view at once on wide screens (forum thread, Discover) | Allow or not (S1-E12-01) | After March; listed so it isn't lost |
+| 12 | Sort order A to Z with ă, â, î, ș, ț and the six reaction emoji | Confirm in the S1-E5-02 and S1-E6-02 plans | Small, MVP |

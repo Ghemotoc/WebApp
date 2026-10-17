@@ -554,6 +554,15 @@
    "title": "8.15 Contests",
    "expand": "fill",
    "is_interactive": true
+  },
+  "AdminClassics.dc.html": {
+   "x": 22800,
+   "y": 33088,
+   "w": 1440,
+   "h": 5452,
+   "title": "8.16 Classics",
+   "expand": "fill",
+   "is_interactive": true
   }
  },
  "order": [
@@ -619,7 +628,8 @@
   "Doodles.dc.html",
   "AdminPages.dc.html",
   "Contest.dc.html",
-  "AdminContests.dc.html"
+  "AdminContests.dc.html",
+  "AdminClassics.dc.html"
  ],
  "notes": {
   "rowWeb": {
@@ -676,7 +686,7 @@
    "y": 32788,
    "text": "8 · Staff and admin",
    "kind": "title1",
-   "maxW": 22720
+   "maxW": 24240
   },
   "rowSocial": {
    "x": 0,

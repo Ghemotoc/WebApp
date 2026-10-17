@@ -12,12 +12,13 @@ What I want from this session:
   3. The web deploy step exists but is switched off: the hosting provider is OPEN (Q38).
 - A SessionStart hook that runs `npm ci` only when package-lock.json changed, so cloud sessions start ready. Merge it into the existing .claude/settings.json and keep its deny rules.
 - docs/runbooks/README.md with one line per runbook still to write.
+- docs/code-tour.md, written for a junior developer: where the app starts, how a click travels from a screen to a database table and back, where things live (src/features, src/lib, supabase/migrations, supabase/functions, supabase/tests, e2e, docs) and a "start here" reading order. Every later story updates it (Definition of Done, Readable code).
 
 Production deploys and tagged releases: write the workflow but leave it disabled until a production project exists.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. The files you will create.
-2. A table mapping each acceptance criterion of S1-E1-01 to the check or test that proves it.
+2. A table mapping each acceptance criterion of S1-E1-01 to the check or test that proves it, plus one row for docs/code-tour.md (it exists and covers the four parts above).
 3. Anything OPEN or unclear. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check, fix failures, push your working branch (in a cloud session, the branch the session was given) and open the pull request titled "S1-E1-01: Repository, environments and CI skeleton", then give me:

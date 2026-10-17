@@ -13,11 +13,11 @@ As staff, I want an admin site that only verified staff can reach so that powerf
 - **Priority:** Must · **Size:** M · **Depends on:** S1-E2-07, S1-E1-02 (audit log)
 - **Updated:** 16 Oct 2026 (late evening): navigation, sensitive reads and staff sessions (section 1.8).
 - **Acceptance criteria:**
-  - Given a user without a staff role or without completed two-factor sign-in, when they open any admin route, then they are refused by the server, not only hidden in the interface.
+  - Given a user without a staff role or without a staff session from the company's Google Workspace sign-in (`is_staff_session()`, S1-E2-07), when they open any admin route, then they are refused by the server, not only hidden in the interface.
   - Given any admin action, when it is performed, then the audit log stores who, what, when and the before and after values.
   - Given a sensitive read (revealing an email, opening a draft, an export file, an evidence pack or a teacher's proof), when it happens, then it is logged too.
   - Given the audit log, when anyone tries to change or delete a row, then the database refuses, the owner included; admins and the owner can search it and export it as CSV.
-  - Given a staff session, when 12 hours have passed (proposal), then the person signs in again; changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text ask for a fresh two-factor code.
+  - Given a staff session, when 12 hours have passed (proposal), then the person signs in again; changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text ask the person to sign in with Google again (a fresh sign-in, proposal; no separate code, decided 17 Oct 2026, 11:53; section 1.8.3).
   - Given the menu, when a staff member opens the admin site, then it shows only the areas their role allows (section 1.8.2); the server still checks every action.
 - **Legal and compliance:** GDPR Art 32 and accountability (Art 5(2)).
 
@@ -236,7 +236,7 @@ As a staff member, I want every support request to arrive as a ticket in the adm
 
 As a content editor, I want to build a page for a contest or campaign from ready-made blocks so that we can announce it without a developer or a new release.
 
-- **Priority:** Should · **Size:** L · **Depends on:** S1-E11-01, S1-E11-06 (the website editing pattern), S1-E10-05 (picture check), S1-E7-01 (for "Remind me")
+- **Priority:** Should · **Size:** L · **Depends on:** S1-E11-01, S1-E11-06 (the website editing pattern), S1-E10-05 (picture check), S1-E7-01 (for "Remind me"), S1-E12-02 (approved campaigns for the Sponsor block)
 - **Added:** 17 Oct 2026 at Robert's request ("a way for admins to make landing pages too for whenever there's a competition and so on"). Canvas 8.14 and the public contest page.
 - **Where the data lives (proposal):** in the app's database, not the website's, because a landing page shows stories, contest entries and signed-in actions. Written only through `admin_*` functions like every other staff change.
 - **Acceptance criteria:**
@@ -283,5 +283,26 @@ As an admin, I want to run a writing contest from the admin site so that writers
   - A company can't be the beneficiary of sponsorship under Law 32/1994 art. 4, so a sponsor paying Ghemotoc for a contest is a commercial deal, not sponsorship in that law's sense.
   - Writers keep every right in their story: moral rights can't be waived (Law 8/1996 art. 11), a grant of rights in future works is void (art. 42(2)) and any licence must be in writing (art. 43). The rules may ask only for a licence to show the entry and the results on Ghemotoc.
   - School partners: research G1 (only schools can put a contest on official calendars).
+
+
+---
+
+##### S1-E11-16 Add and manage public-domain classics
+
+As a content editor, I want to add public-domain books, stories, poems and plays from the admin site so that the Classics shelf grows without a developer and only works that are really free appear.
+
+- **Priority:** Should · **Size:** L (split before building: 16a adding a work with the public-domain check and publishing it; 16b importing the lists in content/classics and the 1 January suggestions) · **Depends on:** S1-E11-01, S1-E3-01, S1-E3-03, S1-E5-06
+- **Added:** 17 Oct 2026 at Robert's request ("don't forget how the admins can add these classic public domain works"). Canvas 8.16 Classics. Data: content/classics/*.csv (research G5).
+- **Acceptance criteria:**
+  - Given Stories › Classics, when a content editor or admin adds a work, then they enter the title, author, the author's year of death, the original language, the kind (novel, short story, fairy tale, poem, play, essay), the source edition with its link (for example Wikisource) and, if the text is a translation, the translator and the translator's year of death.
+  - Given those details, when the form checks them, then it shows per market whether the work is free: Romania, the EU and the UK when 70 years have passed since 1 January after the author's death (Law 8/1996 art. 28(1) and 34; research G5), and for a translation also after the translator's death; the US by publication date (research G5). A work can be published only in markets where it is free; elsewhere it is hidden.
+  - Given a work, when the text is added, then staff paste it or upload a plain text or Markdown file; it is split into chapters at headings, with a preview where chapter titles can be fixed. Modern editors' notes, introductions and footnotes are left out unless they are free too.
+  - Given the text, when staff correct a typo from the source, then the change is saved as a new version with a reason; staff never rewrite or abridge the work (proposal).
+  - Given a work ready to publish, when it is published, then it appears under the official "Ghemotoc Classics" account with the "Public domain" label, the author's dates, the source edition, a rating chosen by staff (All ages, 13+, 16+ or 18+; for example Ion is not All ages) with a content note where needed, a category and tags, and an automatic or drawn cover.
+  - Given a work, when it is published, then an admin publishes it (proposal) and the audit log records who added, checked and published it.
+  - Given the research lists in content/classics, when staff import them, then each row becomes a draft with its details filled in, and its text still has to be added and checked (16b).
+  - Given 1 January, when the year changes, then the Classics area lists authors whose works have just become free (died 70 years before) as suggestions to add (16b; research G5 notes, for example, the authors who died in 1956 on 1 January 2027).
+  - Given a reader report that a classic isn't public domain or the text is wrong, when it arrives, then it goes to the moderation queue like any report (S1-E10-01), and staff can unpublish the work at once.
+- **Legal and compliance:** only texts we know are free are used; a modern translation or edition can still be protected even when the author's work is free. Public-domain status differs by country, so the per-market check decides where a work is shown. Classics pages follow the normal ad rules (at most 2 slots a page). A lawyer's check of the public-domain test is on the lawyer's list (section 6).
 
 ---

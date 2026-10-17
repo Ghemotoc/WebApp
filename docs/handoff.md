@@ -114,7 +114,7 @@ STEP 1, PLAN ONLY. Do not write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures,
+STEP 2, after I approve: build it, run every check in CLAUDE.md and check that the code follows the Readable code section of CLAUDE.md, fix failures,
 then give me:
 - a summary of what changed,
 - the check results,

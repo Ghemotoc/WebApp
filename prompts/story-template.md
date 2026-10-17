@@ -14,7 +14,7 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything in the story that is OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "[STORY ID]: [title]", then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md and check that the code follows the Readable code section of CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "[STORY ID]: [title]", then give me:
 - a summary of what changed,
 - the check results,
 - step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,

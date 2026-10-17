@@ -39,7 +39,7 @@ As anyone, a member of the public, a rights holder or an authority, I want one w
 
 As a moderator, I want one queue sorted by urgency so that the most serious reports are handled first.
 
-- **Priority:** Must · **Size:** L (split: 03a one queue with tiers, deadlines and a decision with a note, M, in the March MVP; 03b grouping, claiming and visible timers, after March) · **Depends on:** S1-E10-01, S1-E2-07
+- **Priority:** Must · **Size:** L (split: 03a one queue with tiers, deadlines and a decision with a note, M, in the March MVP; 03b grouping, claiming and visible timers, after March) · **Depends on:** S1-E10-01, S1-E2-07, S1-E11-01 (the /staff shell; section 1.7.7)
 - **Acceptance criteria:**
   - Given how cases start, when the queue fills, then every case comes from a report, an authority order or a flagged picture (S1-E10-05); there is no automated text screening (decided 16 Oct 2026, late evening, Q42 and Q43).
   - Given reports, when they enter the queue, then they are tiered: authority removal order (1 hour), child abuse material or threat to a minor or self-harm risk (same day), other illegal content (48 hours), everything else (7 days).
@@ -63,7 +63,7 @@ As a user whose content was removed, I want to know what was done and why so tha
 
 As a moderator, I want every uploaded picture checked automatically the moment it is uploaded so that nude, gory or known child abuse images never reach readers.
 
-- **Priority:** Must · **Size:** M · **Depends on:** S1-E10-03
+- **Priority:** Must · **Size:** M · **Depends on:** S1-E10-03, S1-E10-10 (safeguarding steps for an Arachnid Shield match)
 - **Updated:** 16 Oct 2026, late evening (decided 22:59): picture uploads on from launch; Sightengine and Arachnid Shield; no text screening (Q42).
 - **Acceptance criteria:**
   - Given any uploaded picture (cover, avatar, chapter picture, drawing, quote card background, space banner), when it is saved, then before anyone else can see it it goes to Sightengine (nudity, gore) and Arachnid Shield (hash matching against known child sexual abuse images). Teachers' proof files are excluded: only staff see them (S1-E2-11).

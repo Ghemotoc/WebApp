@@ -10,7 +10,8 @@ Goal: readers find new writers without an algorithmic feed (the personalised fee
 
 As a reader, I want to browse by category and tag so that I find stories I like.
 
-- **Priority:** Must · **Size:** M · **Depends on:** S1-E3-01, S1-E3-06 (ratings), S1-E5-05 (blocks), S1-E5-09 (See all)
+- **Priority:** Must · **Size:** M · **Depends on:** S1-E3-01, S1-E3-06 (ratings), S1-E5-05 (blocks)
+- **Build note (17 Oct 2026, checker):** the "View more" card links to its shelf's See all address; the See all page itself is S1-E5-09, built after S1-E5-02. S1-E5-09 was listed as a dependency here, which made a loop with S1-E5-09 depending on this story.
 - **Updated:** 16 Oct 2026 (late evening): one-side faded edge (true fade), SVG doodles and icons; ratings replace the mature label; shelves of at most 20 with View more.
 - **Acceptance criteria:**
   - Given a category page, when it opens, then it shows stories in that category with the category's accent colour and filters for ongoing or completed and language.
@@ -25,7 +26,7 @@ As a reader, I want to browse by category and tag so that I find stories I like.
 
 As a reader, I want to sort stories in different ways so that I can explore beyond the most popular.
 
-- **Priority:** Must · **Size:** S · **Depends on:** S1-E5-01; S1-E5-03 for popularity
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E5-01, S1-E5-03 (popularity is the default sort and is there from the start, as the last criterion says)
 - **Acceptance criteria:**
   - Given any story list, when the reader opens "Sort", then the options are popularity (default), newest, oldest, A to Z, Z to A and by writer.
   - Given two stories with equal scores, when sorted by popularity, then the newer one appears first.
@@ -99,7 +100,7 @@ As a reader, I want the doodle by the Discover greeting and the one by Search's 
 
 As a visitor without an account, I want a public home page that explains Ghemotoc and shows what people are reading so that I can decide whether to join or get the app.
 
-- **Priority:** Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) · **Size:** M · **Depends on:** S1-E1-03, S1-E1-04, S1-E11-06, S1-E11-12, S1-E5-03 (for the rows), S1-E16-02 (download links); back end: the website's own database and `public-shelves` (section 1.7, group A)
+- **Priority:** Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) · **Size:** M · **Depends on:** S1-E1-03, S1-E1-04, S1-E11-06, S1-E11-12, S1-E5-03 (for the rows), S1-E5-09 (View more), S1-E16-02 (download links); back end: the website's own database and `public-shelves` (section 1.7, group A)
 - **Added:** 16 Oct 2026 (late evening). The website was on the canvas (1.1) but no story built it.
 - **Acceptance criteria:**
   - Given the home page, when it loads, then the hero shows the published copy from the website's database in the visitor's language: the line above the headline, the two-line headline with its gold-underlined word, the line under it, the two buttons and the three short points. The copy is "Write stories. Get read." with "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." (decided 16 Oct 2026, late evening: no "articles"). If the read fails, the last published version shows.

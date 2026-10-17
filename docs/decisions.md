@@ -15,6 +15,8 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Staff sign in with Google Workspace only; Google's own 2-Step Verification is the second factor, no separate code | Chat, 17 Oct 2026, 11:53 |
 | A relationship between 16 and 17-year-old characters with no sexual content can be rated 13+; every rating is explained where the writer picks it | Chat, 17 Oct 2026, 11:53 |
 | At most 2 ad slots on any page | Chat, 17 Oct 2026, 11:53 |
+| Staff can add public-domain classics from the admin site (S1-E11-16, canvas 8.16; its details are proposals) | Chat, 17 Oct 2026, 12:00 |
+| Code must be clean enough for any junior programmer to read and change, with plenty of plain-English explanations of where things start and how they connect: header and step comments, and docs/code-tour.md as the map (the Readable code section of CLAUDE.md; ESLint limits are a proposal) | Chat, 17 Oct 2026, 12:26 and 12:27 |
 | Staff can build landing pages for contests and campaigns, run contests, and book sponsors into ad slots; the ad network fills unbooked slots automatically (stories S1-E11-14, S1-E11-15, S1-E12-05; their details are proposals until confirmed) | Chat, 17 Oct 2026, 11:06 |
 
 ## Notes from the CTO pack (decisions applied to the stories)

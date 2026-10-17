@@ -517,7 +517,7 @@ Added 16 Oct 2026 (late evening) at Robert's request. Screens 8.1 to 8.9 are on 
 | Moderation | The report queue by tier and deadline, claimed cases, automated flags, the case page with decisions, statements of reasons, safeguarding and moderator mail | 8.2, 8.3 | S1-E10-03 to 06, S1-E10-08, S1-E10-10, S1-E10-11 |
 | Appeals and orders | Appeals (decided by a different moderator where possible) and authority removal orders with "Emergency disable" | 8.4 | S1-E10-07, S1-E10-09 |
 | Users | Find an account by handle, email or user ID; status, age check result and date, sanctions, open cases; suspend, ban, reset pen name, sign out everywhere; manual age checks | 8.5 | S1-E11-02, S1-E2-08 |
-| Stories | Every story, searchable by title, handle or user ID; open one to change its settings, see its history or download it | 8.10, 8.11 | S1-E11-07, S1-E11-08 |
+| Stories | Every story, searchable by title, handle or user ID; open one to change its settings, see its history or download it. A Classics section adds and checks public-domain works (added 17 Oct 2026) | 8.10, 8.11, 8.16 | S1-E11-07, S1-E11-08, S1-E11-16 |
 | Support tickets | Every support email and Contact us message as a ticket: views, statuses, assignee, internal notes, canned replies, merge, links to reports and data requests | 8.13 | S1-E11-13 |
 | Data requests | Requests to see, move, correct or delete data, with deadlines; story export as Word and PDF plus a machine-readable copy | 8.12 | S1-E11-09 |
 | Schools and teacher checks | Pilot schools, partnership status, teacher checks, class spaces and invite sheets, certificates | 8.9 | S1-E2-11, S1-E8-11, S1-E8-12 |
