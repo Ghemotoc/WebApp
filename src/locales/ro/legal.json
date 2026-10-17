@@ -19,6 +19,11 @@
       "tab": "Regulile comunității",
       "name": "Regulile comunității",
       "intro": "Cum ne purtăm unii cu alții aici. Se aplică poveștilor, comentariilor, forumurilor și mesajelor private."
+    },
+    "contact": {
+      "tab": "Contact",
+      "name": "Contact și datele companiei",
+      "intro": "Cum ne poți contacta: ca utilizator, ca autoritate sau pentru ordine de eliminare, și cine administrează {{productName}}. Până când formularul de raportare și Scrie-ne sunt gata, scrie-ne la adresele de mai jos."
     }
   },
   "status": {

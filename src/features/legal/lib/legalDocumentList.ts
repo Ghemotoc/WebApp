@@ -4,12 +4,15 @@
  *
  * Who reads it: LegalCentrePage and LegalDocumentNav (the tabs), the footer links
  * (src/app/navigation.ts) and LegalUpdateNotice. Each slug is the document's web address
- * (/legal/<slug>) and its row in public.legal_documents. S1-E14-02 adds the contact page and
- * S1-E14-03 the accessibility statement, each with its own line here.
+ * (/legal/<slug>) and its row in public.legal_documents. S1-E14-02 added the contact page;
+ * S1-E14-03 adds the accessibility statement with its own line here.
  */
 
-/** The documents, in the order of the board's tabs (design/boards/Legal.dc.html). */
-export const legalDocumentSlugs = ['terms', 'privacy', 'guidelines'] as const;
+/**
+ * The documents, in the order of the board's tabs (design/boards/Legal.dc.html); "contact" is the
+ * contact and company details page (S1-E14-02).
+ */
+export const legalDocumentSlugs = ['terms', 'privacy', 'guidelines', 'contact'] as const;
 
 /** One of the documents above. */
 export type LegalDocumentSlug = (typeof legalDocumentSlugs)[number];

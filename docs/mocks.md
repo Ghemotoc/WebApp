@@ -25,6 +25,8 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | Signing in for tests | e2e tests still sign personas in from code (`e2e/support/personas.ts`) where the log-in screen isn't what is tested; `e2e/sign-in.spec.ts` uses the real screen | stays for tests only | the log-in screen works on staging (S1-E2-05) |
 | The log-in pause | works through our screens only; Supabase's per-address limits cover direct calls | a per-account Auth hook, if the paid plan allows it (Q12) | same |
 | Changing the password while logged in | use "Forgot your password?" | S1-E2-09 (Ways to log in) | same |
+| Contact points on /legal/contact | the report form and Contact us are named in the text, but people reach us through the email links on the page | S1-E10-02 (report form) and S1-E14-04 (Contact us) | same |
+| Company details on /legal/contact | placeholders, shown highlighted, until the company is registered (Q55, OPEN) | a new version of the contact page once the company exists | same |
 | Legal texts | version 0.1 of the terms, privacy notice and guidelines are drafts, in English and in a Romanian draft translation, marked as such in the Legal centre | the lawyer's review, then a new version made with `scripts/build-legal-migration.ts` (S1-E14-01) | same |
 | "After the invited test" labels | lines of the legal drafts that start only after the March test carry a label (`content/legal/after-the-invited-test.json`) | the version published when sign-up opens to the public | same |
 | `reportable_type` | holds `profile` only | each user-content story adds its value (S1-E3-01 first) | same |

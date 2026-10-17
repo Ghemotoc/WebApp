@@ -102,7 +102,12 @@ test.describe('after a new important version of the terms', () => {
   });
 });
 
-for (const view of everyView(['/legal/terms', '/legal/privacy', '/legal/guidelines'])) {
+for (const view of everyView([
+  '/legal/terms',
+  '/legal/privacy',
+  '/legal/guidelines',
+  '/legal/contact',
+])) {
   test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
     page,
   }) => {

@@ -74,6 +74,12 @@ const legalComponents: Components = {
   p: (props) => <LegalParagraph {...withoutNode(props)} />,
   ul: (props) => <ul className="m-0 flex list-disc flex-col gap-2 pl-5" {...withoutNode(props)} />,
   li: (props) => <LegalListItem {...withoutNode(props)} />,
+  // Our own links only (email addresses, S1-E14-02): the drafts hold no user text.
+  a: ({ children, ...props }) => (
+    <a className="text-link underline hover:text-link-hover" {...withoutNode(props)}>
+      {children}
+    </a>
+  ),
   mark: (props) => (
     <mark
       className="rounded-sm bg-(--pill-gold-bg) px-0.5 text-(--pill-gold-text)"

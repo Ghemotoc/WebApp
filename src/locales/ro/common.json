@@ -26,7 +26,8 @@
     "logIn": "Conectare",
     "account": "Contul tău",
     "logOut": "Deconectare",
-    "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou."
+    "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
+    "contact": "Contact"
   },
   "theme": {
     "label": "Temă",

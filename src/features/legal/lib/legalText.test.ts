@@ -81,12 +81,16 @@ describe('parseLegalDocument', () => {
 
 describe('fillBrandTokens', () => {
   it('fills every token from the brand config, so renaming the product needs no new text', () => {
-    const filled = fillBrandTokens(
-      '{{productName}}, {{companyName}}, {{contactEmail}}, {{privacyEmail}}',
-      brand,
-    );
+    const filled = fillBrandTokens('{{productName}}, {{companyName}}', brand);
+    expect(filled).toBe(`${brand.productName}, ${brand.companyName}`);
+  });
+
+  it('turns every address into an email link (S1-E14-02)', () => {
+    const filled = fillBrandTokens('{{contactEmail}} {{privacyEmail}} {{authoritiesEmail}}', brand);
     expect(filled).toBe(
-      `${brand.productName}, ${brand.companyName}, ${brand.contactEmail}, ${brand.privacyEmail}`,
+      [brand.contactEmail, brand.privacyEmail, brand.authoritiesEmail]
+        .map((address) => `[${address}](mailto:${address})`)
+        .join(' '),
     );
   });
 });

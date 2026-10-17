@@ -19,6 +19,11 @@
       "tab": "Community guidelines",
       "name": "Community guidelines",
       "intro": "How we treat each other here. They apply to stories, comments, forums and private messages."
+    },
+    "contact": {
+      "tab": "Contact",
+      "name": "Contact and company details",
+      "intro": "How to reach us: for users, for authorities and for removal orders, and who runs {{productName}}. Until the report form and Contact us are ready, write to the addresses below."
     }
   },
   "status": {

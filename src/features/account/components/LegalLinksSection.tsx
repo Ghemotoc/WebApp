@@ -1,7 +1,7 @@
 /**
- * LegalLinksSection: the Legal panel of Settings, with a link to the Legal centre (story S1-E2-04,
- * decided 17 Oct 2026, 19:43, Q8: Settings links to the Legal centre; S1-E14-02 adds the contact
- * details here).
+ * LegalLinksSection: the Legal panel of Settings, with links to the Legal centre (story S1-E2-04,
+ * decided 17 Oct 2026, 19:43, Q8) and to the contact and company details, one tap away as the
+ * story asks (S1-E14-02).
  *
  * Who shows it: SettingsPage.
  */
@@ -27,8 +27,18 @@ export function LegalLinksSection() {
         {t('settings.legalHeading')}
       </h2>
       <p className="m-0 text-body">{t('settings.legalText')}</p>
-      <Link to="/legal/terms" className="self-start text-link underline">
+      <Link
+        to="/legal/terms"
+        className="inline-flex min-h-11 items-center self-start text-link underline"
+      >
         {t('settings.legalLink')}
+      </Link>
+      {/* The contact points one tap from Settings (S1-E14-02; DSA art. 11 and 12). */}
+      <Link
+        to="/legal/contact"
+        className="inline-flex min-h-11 items-center self-start text-link underline"
+      >
+        {t('settings.contactLink')}
       </Link>
     </section>
   );

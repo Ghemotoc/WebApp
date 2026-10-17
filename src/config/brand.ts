@@ -33,6 +33,12 @@ export interface Brand {
    * until the company exists (Robert, 17 Oct 2026, 19:43, Q16).
    */
   privacyEmail: string;
+  /**
+   * The single point of contact for authorities (DSA art. 11) and for terrorist content removal
+   * orders (Regulation (EU) 2021/784, art. 15), shown on the contact page (S1-E14-02). The contact
+   * address until the company exists (Robert, 17 Oct 2026, 19:43, Q16).
+   */
+  authoritiesEmail: string;
   /** The handle we use on social networks, with the leading "@". */
   socialHandle: string;
   /** The company behind the product, for the footer line "An app by …" (S1-E1-03). */
@@ -41,9 +47,9 @@ export interface Brand {
 
 /**
  * The VITE_BRAND_* variables this file understands. Any of them may be missing.
- * VITE_BRAND_PRIVACY_EMAIL (added by S1-E14-01) is not yet listed in .env.example: that file is
- * covered by the repository's read-deny rule for .env files, so a session can't edit it (it is on
- * the by-hand list in the S1-E14-01 pull request).
+ * VITE_BRAND_PRIVACY_EMAIL (S1-E14-01) and VITE_BRAND_AUTHORITIES_EMAIL (S1-E14-02) are not yet
+ * listed in .env.example: that file is covered by the repository's read-deny rule for .env files,
+ * so a session can't edit it (both are on the by-hand lists of those pull requests).
  */
 export interface BrandEnvironment {
   VITE_BRAND_NAME?: string;
@@ -51,6 +57,7 @@ export interface BrandEnvironment {
   VITE_BRAND_CONTACT_EMAIL?: string;
   VITE_BRAND_SUPPORT_EMAIL?: string;
   VITE_BRAND_PRIVACY_EMAIL?: string;
+  VITE_BRAND_AUTHORITIES_EMAIL?: string;
   VITE_BRAND_SOCIAL_HANDLE?: string;
   VITE_BRAND_COMPANY_NAME?: string;
 }
@@ -59,7 +66,7 @@ export interface BrandEnvironment {
  * Today's values, used whenever a variable is not set.
  * Sources: working name "Ghemotoc" (decided 16 Oct 2026); working site and contact and support
  * address (decided 17 Oct 2026, 12:50); the privacy address is the same until the company exists
- * (decided 17 Oct 2026, 19:43, Q16); handle @ghemotoc everywhere (architecture.md, section 1.2);
+ * (decided 17 Oct 2026, 19:43, Q16), and so is the authorities' address; handle @ghemotoc everywhere (architecture.md, section 1.2);
  * the footer line "An app by The Magic Coffin" (canvas comment, 16 Oct 2026).
  */
 export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
@@ -68,6 +75,7 @@ export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
   contactEmail: 'hello@themagiccoffin.com',
   supportEmail: 'hello@themagiccoffin.com',
   privacyEmail: 'hello@themagiccoffin.com',
+  authoritiesEmail: 'hello@themagiccoffin.com',
   socialHandle: '@ghemotoc',
   companyName: 'The Magic Coffin',
 };
@@ -103,6 +111,10 @@ export function readBrand(environment: BrandEnvironment | undefined): Brand {
     contactEmail: valueOrDefault(environment?.VITE_BRAND_CONTACT_EMAIL, brandDefaults.contactEmail),
     supportEmail: valueOrDefault(environment?.VITE_BRAND_SUPPORT_EMAIL, brandDefaults.supportEmail),
     privacyEmail: valueOrDefault(environment?.VITE_BRAND_PRIVACY_EMAIL, brandDefaults.privacyEmail),
+    authoritiesEmail: valueOrDefault(
+      environment?.VITE_BRAND_AUTHORITIES_EMAIL,
+      brandDefaults.authoritiesEmail,
+    ),
     socialHandle: valueOrDefault(environment?.VITE_BRAND_SOCIAL_HANDLE, brandDefaults.socialHandle),
     companyName: valueOrDefault(environment?.VITE_BRAND_COMPANY_NAME, brandDefaults.companyName),
   };
