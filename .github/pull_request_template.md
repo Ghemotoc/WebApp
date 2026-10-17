@@ -1,6 +1,8 @@
 ## Story
 S1-E?-??: [title]
 
+Closes #[issue number of this story] <!-- or "Part of #n" when this pull request is one part of a split story -->
+
 ## What changed
 -
 

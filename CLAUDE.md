@@ -90,6 +90,11 @@ Write every file so a junior developer who joins later can read it and change it
 - Draft content (legal texts, safety contacts by country, public-domain classics) is in content/. Load it as seed data or CMS content; never hard-code it in components.
 - Staff (admin) screens use plain components, no doodles.
 
+## Story issues (Q39; issues created 17 Oct 2026)
+- Every story has one GitHub issue in this repository, titled "<story ID>: <title>" (created by Actions > Sync story issues). Find it at the start of every session by searching the issues for the story ID, and read its comments: Robert may add details or changes there after the story was written. If a comment contradicts docs/, stop and ask.
+- The pull request description starts with "Closes #<issue number>", so merging closes the issue. For one part of a split story (08a, 08b), write "Part of #<issue number>" until the last part.
+- Things you notice that are outside the story go in the pull request's Follow-ups list. Open a new issue only when Robert asks.
+
 ## Safety while building
 - Never ask for, print or store production keys, passwords or real user data. Use the seed personas.
 - Never push to main. Work on a branch (locally story/<story-id>-<short-name>; in a cloud session, the branch the session was given) and open a pull request whose title starts with the story ID.
