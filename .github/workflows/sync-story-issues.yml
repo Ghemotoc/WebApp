@@ -1,0 +1,37 @@
+# Creates one GitHub Issue for every Stage 1 story that doesn't have one yet (story S1-E1-01;
+# decided 16 Oct 2026, late evening, Q39).
+#
+# Who starts it: a person, from the Actions tab > "Sync story issues" > "Run workflow".
+# Leave "Only list, don't create" ticked the first time to see the list; untick it to create them.
+# What it runs: scripts/sync-story-issues.ts. It never edits or closes an issue.
+name: Sync story issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only list, don't create"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    name: Create missing story issues
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run issues:sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run }}

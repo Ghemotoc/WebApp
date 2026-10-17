@@ -13,4 +13,22 @@ This repository is built with Claude Code, one user story per pull request.
 - Draft content: [content/](content/) (legal texts, safety contacts, classics)
 - Prompts for each session: [prompts/](prompts/)
 
+## Run it locally
+
+You need Node.js 24 (`.nvmrc`), and Docker Desktop for the local database.
+
+```bash
+npm ci                 # install exactly the packages in package-lock.json
+npx supabase start     # start the local database in Docker (first time: several minutes)
+npm run dev            # open the address it prints, usually http://localhost:5173
+```
+
+Checks (run all before saying a story is done):
+
+```bash
+npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase test db && npm run test:e2e && npm run i18n:check
+```
+
+New here? Read [docs/code-tour.md](docs/code-tour.md) first.
+
 Private and proprietary. All rights reserved.

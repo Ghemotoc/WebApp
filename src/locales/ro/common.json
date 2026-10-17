@@ -1,0 +1,8 @@
+{
+  "home": {
+    "documentTitle": "{{productName}}",
+    "welcome": "Bun venit la {{productName}}",
+    "tagline": "Un loc pentru povești, poezii și eseuri.",
+    "comingSoon": "Construim platforma chiar acum. Revino curând."
+  }
+}

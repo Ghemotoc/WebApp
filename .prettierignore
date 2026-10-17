@@ -1,0 +1,18 @@
+# Files Prettier must not reformat (story S1-E1-01).
+# Generated or third-party output
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+package-lock.json
+# The starter kit's documents, designs and drafts keep their own formatting
+docs/
+design/
+content/
+prompts/
+CLAUDE.md
+README.md
+# Supabase's own config and SQL keep the CLI's formatting
+supabase/
+.github/pull_request_template.md

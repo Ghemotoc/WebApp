@@ -1,0 +1,18 @@
+<!doctype html>
+<!--
+  The single HTML page the whole app runs in (story S1-E1-01).
+  The browser loads it first; it loads src/main.tsx, which starts React.
+  The title below is filled in from src/config/brand.ts at build time by vite.config.ts,
+  so the product name is never typed here. lang="ro": the interface opens in Romanian.
+-->
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>%BRAND_PRODUCT_NAME%</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
