@@ -675,7 +675,7 @@ Four eyes: decided 16 Oct 2026, late evening (Q31), website copy goes live witho
 
 - Database changes only through migration files in `supabase/migrations/`. Never edit the production schema by hand or from the Supabase dashboard.
 - Feature flags in the `feature_flags` table let a feature be built, merged and switched on later.
-- Hosting for the web build: in the EU (decided 16 Oct 2026, late evening, Q38). Lovable's hosting, Vercel, Netlify or Cloudflare Pages all work with a Vite app; the provider is still **OPEN**: pick one that serves from the EU, signs a data processing agreement and passes a country header (S1-E2-10).
+- Hosting for the web build: in the EU (decided 16 Oct 2026, late evening, Q38). Provider decided 17 Oct 2026, 12:57: **Cloudflare Pages** (free plan for March; Robert already uses Cloudflare for DNS). Preview deploys per pull request, the country from the `CF-IPCountry` header or `request.cf.country` in a Pages Function (S1-E2-10), a self-serve data processing agreement under the EU-US Data Privacy Framework with SCCs as fallback. The working site is ghemotoc.themagiccoffin.com by CNAME; the product's own domain, once bought, is added as a Cloudflare zone. EU-only processing would need Cloudflare's Enterprise Data Localization Suite (not planned). Comparison: research H4.
 - Database: our own Supabase project in the EU (West EU, Ireland, eu-west-1) from day one, Claude Code builds first (decided 17 Oct 2026, 11:20; replaces Q37). No move is needed, so S1-E1-06 is Won't.
 - Tracker: GitHub Issues, one issue per story ID (Q39).
 

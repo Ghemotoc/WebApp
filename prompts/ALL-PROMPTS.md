@@ -109,7 +109,7 @@ What I want from this session:
 - GitHub Actions:
   1. On every pull request: lint, typecheck, unit tests, database tests against a local Supabase (`supabase db start`), the i18n key check and a Playwright + axe smoke test of the home page. A failing check blocks the merge.
   2. Database changes: Supabase's GitHub integration is connected to the staging project and applies supabase/migrations when main changes. Don't add a GitHub Actions job that also pushes migrations; make sure the supabase/ folder and config work with that integration.
-  3. The web deploy step exists but is switched off: the hosting provider is OPEN (Q38).
+  3. The web deploy step targets Cloudflare Pages (decided 17 Oct 2026, 12:57) and stays switched off until Robert connects the Cloudflare project to the repository.
 - A SessionStart hook that runs `npm ci` only when package-lock.json changed, so cloud sessions start ready. Merge it into the existing .claude/settings.json and keep its deny rules.
 - docs/runbooks/README.md with one line per runbook still to write.
 - docs/code-tour.md, written for a junior developer: where the app starts, how a click travels from a screen to a database table and back, where things live (src/features, src/lib, supabase/migrations, supabase/functions, supabase/tests, e2e, docs) and a "start here" reading order. Every later story updates it (Definition of Done, Readable code).
@@ -794,7 +794,7 @@ CONTEXT:
   - Australia stays closed to under-16s until a lawyer says otherwise (Q19): refuse with "Ghemotoc isn't open to under-16s in Australia yet" and store nothing.
   - The optional county or region stays a separate, self-chosen field.
 - Designs: design/boards/Onboarding.dc.html (2.5, no country question) and design/boards/Settings.dc.html (6.3, "From your connection"), with their renders in design/renders/desktop and design/renders/phone. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). The "not open in your country yet" page has no board: build it from the /design components (check with Robert).
-- Back-end pieces: B11, the signup-context function and seeded markets. The hosting provider is OPEN (Q38), so the country header is faked locally by a local-only setting.
+- Back-end pieces: B11, the signup-context function and seeded markets. Hosting is Cloudflare Pages (decided 17 Oct 2026, 12:57): in production the country comes from the CF-IPCountry header (or request.cf.country in a Pages Function); locally it is faked by a local-only setting.
 - Watch-outs:
   - OPEN, stop and ask me: whether to keep the email someone leaves on the "not open yet" page.
   - Correcting the country through support (S1-E14-04) is a proposal; show the line only.
@@ -1607,7 +1607,7 @@ CONTEXT:
   - Search engines index only story pages, with title, blurb and pen name or handle; chapter and teaser pages carry noindex; chapter text never goes into structured data or the sitemap (Q36).
   - The user ID never appears in a URL or link preview (architecture 1.6). The full title fits on drawn and automatic cover previews.
 - Designs: design/boards/Teaser.dc.html (3.8) and design/boards/Story.dc.html (3.4), with their renders in design/renders/desktop and design/renders/phone. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces (architecture 1.7.4, group C): B19 the teaser edge function, which renders a small HTML page with Open Graph tags for /s/:story/:chapter and runs locally; B12 teaser_length (seeded). The hosting provider is OPEN (Q38): tell me anything the route needs from it.
+- Back-end pieces (architecture 1.7.4, group C): B19 the teaser edge function, which renders a small HTML page with Open Graph tags for /s/:story/:chapter and runs locally; B12 teaser_length (seeded). Hosting is Cloudflare Pages (decided 17 Oct 2026, 12:57): tell me anything the route needs from it (for example a Pages Function or a redirect rule).
 - Watch-outs:
   - Signed-out visitors see the blurb and the first one to two pages, then a prompt to sign up or open the app.
   - For 16+ and 18+ stories, signed-out visitors see no teaser text and no cover text beyond the title. Counting signed-out visitors as under 16 is a proposal (lawyer list L14): ask me.
@@ -2234,7 +2234,7 @@ CONTEXT
 - Decisions that apply: "Write stories. Get read." with "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." (no "articles"); "Yoti does the age check. We only get the result, never a photo."; one messaging line: never between under-16s and adults, off by default for 16 and 17-year-olds (Q6, Q13); "parent or guardian" (Q8); language drop-down in top bar and footer (Q11); Romanian is the default interface language; the separate website with its own database (Q54) comes after March, and for March the page lives inside the app (decided 17 Oct 2026, 12:34); EU hosting (Q38).
 - Designs: design/boards/Website-Home.dc.html with design/renders/desktop/Website-Home.jpg and design/renders/phone/Website-Home.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: for March, no B31 website database: the copy live on 16 Oct 2026 and the 16 Oct questions go into the ro and en locale files; the rows read the app's public views (or public-shelves), with a fixture of 12 stories including one app-only story until S1-E5-03's ranking runs. Download buttons use fixed links.
-- Watch-outs: public-shelves returns only public All ages or 13+ stories, never chapter text of app-only stories, nothing from class spaces, never a user ID. No cookies, no third-party script (cookieless analytics is S1-E15-01, after March); one h1 and the right lang attribute. The claims must stay true (Law 363/2007). Leave out the board's contest block: no contest is planned for now (decided 17 Oct 2026, 12:34). Stop and ask me: the hosting provider (OPEN); what the download buttons point to while March is web only.
+- Watch-outs: public-shelves returns only public All ages or 13+ stories, never chapter text of app-only stories, nothing from class spaces, never a user ID. No cookies, no third-party script (cookieless analytics is S1-E15-01, after March); one h1 and the right lang attribute. The claims must stay true (Law 363/2007). Leave out the board's contest block: no contest is planned for now (decided 17 Oct 2026, 12:34). Hosting is Cloudflare Pages (decided 17 Oct 2026, 12:57). Stop and ask me: what the download buttons point to while March is web only.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -5360,7 +5360,7 @@ We are working on story S1-E16-01 (Installable web app) only. Read CLAUDE.md, do
 
 CONTEXT
 - Already merged: S1-E1-03 (design tokens and app shell). The offline state comes from S1-E1-05 (7.4); if it isn't merged, tell me before building your own.
-- Decisions that apply: web first; the Tauri desktop app and the phone wrapper come later and this story adds neither. The web hosting provider is OPEN, so leave deploy steps switched off. No third-party scripts (CLAUDE.md rule 7). The app is called Ghemotoc, "An app by The Magic Coffin".
+- Decisions that apply: web first; the Tauri desktop app and the phone wrapper come later and this story adds neither. Web hosting is Cloudflare Pages (decided 17 Oct 2026, 12:57); leave deploy steps switched off until Robert has connected the Cloudflare project. No third-party scripts (CLAUDE.md rule 7). The app is called Ghemotoc, "An app by The Magic Coffin".
 - Designs: design/boards/GetApp.dc.html (7.1: "Use Ghemotoc in your browser" and the add-to-home-screen steps per device) and design/boards/States.dc.html (7.4, the offline state); renders in design/renders/desktop and design/renders/phone for both. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: none.
 - Watch-outs: the service worker and its cache are device storage (ePrivacy Art 5(3)), so keep them to what is strictly necessary and add them to the S1-E14-03 allow-list if that check exists. Cache only the app shell, never chapters or other user content, unless I say otherwise (check with Robert): copy protection (S1-E4-06) and offline reading in the apps (S1-E4-08) are other stories.

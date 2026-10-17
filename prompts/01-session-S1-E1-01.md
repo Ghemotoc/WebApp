@@ -10,7 +10,7 @@ What I want from this session:
 - GitHub Actions:
   1. On every pull request: lint, typecheck, unit tests, database tests against a local Supabase (`supabase db start`), the i18n key check and a Playwright + axe smoke test of the home page. A failing check blocks the merge.
   2. Database changes: Supabase's GitHub integration is connected to the staging project and applies supabase/migrations when main changes. Don't add a GitHub Actions job that also pushes migrations; make sure the supabase/ folder and config work with that integration.
-  3. The web deploy step exists but is switched off: the hosting provider is OPEN (Q38).
+  3. The web deploy step targets Cloudflare Pages (decided 17 Oct 2026, 12:57) and stays switched off until Robert connects the Cloudflare project to the repository.
 - A SessionStart hook that runs `npm ci` only when package-lock.json changed, so cloud sessions start ready. Merge it into the existing .claude/settings.json and keep its deny rules.
 - docs/runbooks/README.md with one line per runbook still to write.
 - docs/code-tour.md, written for a junior developer: where the app starts, how a click travels from a screen to a database table and back, where things live (src/features, src/lib, supabase/migrations, supabase/functions, supabase/tests, e2e, docs) and a "start here" reading order. Every later story updates it (Definition of Done, Readable code).

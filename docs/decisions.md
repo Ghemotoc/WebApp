@@ -34,6 +34,7 @@ Every decision Robert has made, with its date and source. The live list is the m
 | "Ghemotoc" is a working name until the name and domain are bought; product name, domain and emails are settings, never hard-coded (replaces the 16 Oct wording that the app is called Ghemotoc) | Chat, 17 Oct 2026, 12:47 |
 | Contact and support email is hello@themagiccoffin.com until the product's own domain is bought | Chat, 17 Oct 2026, 12:50 |
 | The working site is ghemotoc.themagiccoffin.com once hosting is chosen, until the product's own domain is bought | Chat, 17 Oct 2026, 12:50 |
+| The web app is hosted on Cloudflare Pages (free plan for March); Cloudflare already runs Robert's DNS | Chat, 17 Oct 2026, 12:57 |
 | Staff can build landing pages for contests and campaigns, run contests, and book sponsors into ad slots; the ad network fills unbooked slots automatically (stories S1-E11-14, S1-E11-15, S1-E12-05; their details are proposals until confirmed) | Chat, 17 Oct 2026, 11:06 |
 
 ## Notes from the CTO pack (decisions applied to the stories)
