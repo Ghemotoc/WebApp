@@ -8,7 +8,7 @@
  * - S1-E1-02 (database baseline, account gate, seed personas) × S1-E1-04 (account language): the
  *   personas adult_writer, teen_17, kid_14_ok and kid_14_waiting sign in, read only their own data,
  *   are refused other people's, and keep their language on a second device.
- * - S1-E1-02 alone, from a real API client: signed-out reads return nothing but public switches.
+ * - S1-E1-02 alone, from a real API client: signed-out reads of people's tables are refused; only public switches come back.
  * - Every screen of the epic (/ and /design) passes axe at 390, 768 and 1440 px, in light and
  *   night, in Romanian and English (CLAUDE.md rule 21; WCAG 2.2 AA).
  * Test data: seed personas only (supabase/seed.sql), never real accounts.
@@ -219,11 +219,12 @@ test.describe('journeys 2 to 4: the personas (S1-E1-02 × S1-E1-04)', () => {
 test("journey 5: signed out, the API returns no one's data, only the public switches (S1-E1-02)", async () => {
   const signedOutClient = makeTestClient();
 
-  // Tables about people: nothing at all.
+  // Tables about people: refused outright, because anon holds no grant on them (S1-E1-02 fix,
+  // 17 Oct 2026), the same as on staging and production.
   for (const tableName of ['profiles', 'staff_roles', 'audit_log'] as const) {
     const { data, error } = await signedOutClient.from(tableName).select('id');
-    expect(error).toBeNull();
-    expect(data).toEqual([]);
+    expect(error?.code).toBe('42501');
+    expect(data).toBeNull();
   }
 
   // Switches and settings: only the rows marked public, with the March switches on.

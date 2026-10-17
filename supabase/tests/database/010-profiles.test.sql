@@ -26,17 +26,21 @@ select is_empty(
 );
 
 -- Writes are denied by default: there is no update policy, so nothing changes.
-select is_empty(
+select throws_ok(
   $$ update public.profiles set birth_year = 1950 returning id $$,
-  'a signed-in user cannot change their own year of birth through the API'
+  '42501',
+  null,
+  'a signed-in user cannot change their own year of birth through the API (no update grant)'
 );
 
 -- Signed out: nothing at all.
 reset role;
 set local role anon;
-select is_empty(
+select throws_ok(
   $$ select id from public.profiles $$,
-  'a signed-out visitor reads no profiles'
+  '42501',
+  null,
+  'a signed-out visitor cannot read the profiles table at all'
 );
 
 -- The user ID can never change, not even for the table's owner (architecture 1.6).

@@ -30,8 +30,9 @@ API call                      src/features/<feature>/api/saveStory.ts
   │  typed with the generated src/lib/database.types.ts; the request carries the user's sign-in token
   ▼
 Supabase (Postgres)           supabase/migrations/<time>_<story>.sql
-  │  a row-level security policy decides if this user may do this (CLAUDE.md rule 1);
-  │  if not, the database refuses, whatever the screen showed
+  │  first a table grant decides if the role (anon or authenticated) may use the table at all,
+  │  then a row-level security policy decides which rows this user may see or change (CLAUDE.md
+  │  rule 1); if not, the database refuses, whatever the screen showed
   ▼
 Table                         public.stories
   │  the row is saved (or refused)
@@ -71,7 +72,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `supabase/config.toml` | Local Supabase settings; also read by Supabase's GitHub integration | S1-E1-01 |
 | `supabase/migrations/` | Every schema change, as SQL files. The only way the database changes (CLAUDE.md rule 3). Staging gets them from Supabase's GitHub integration when main changes | S1-E1-02 onwards |
 | `supabase/functions/` | Edge functions (Deno), the only code that may hold secrets | first story with a function |
-| `supabase/tests/` | pgTAP database tests: an allowed and a denied test for every policy, plus the CI guards (`001` RLS on every table, `002` table kinds and `user_id`) | S1-E1-02 onwards |
+| `supabase/tests/` | pgTAP database tests: an allowed and a denied test for every policy, plus the CI guards (`001` RLS on every table, `002` table kinds and `user_id`, `003` table grants match the policies) | S1-E1-02 onwards |
 | `supabase/seed.sql` | The 16 synthetic seed personas (accounts, profiles, staff roles); never real data | S1-E1-02 |
 | `supabase/README.md` | The database conventions every migration follows, the account gate and the persona list with the shared test password | S1-E1-02 |
 | `e2e/` | Playwright tests in a real browser, with axe accessibility checks. `e2e/support/personas.ts` signs a seed persona in against the local Supabase (no sign-in screen needed). Tests run one at a time, because they share the personas in one database | S1-E1-01, S1-E1-04, S1-E1-QA |
@@ -97,6 +98,8 @@ Five tables exist, each with row-level security and only read policies; every wr
 | `audit_log` | every staff action, written only by `log_staff_action()`; nobody can change or delete a row | owner and admin |
 | `legal_documents`, `legal_document_versions` (S1-E14-01) | the Legal centre's documents and every live version, per language; written only by migrations | anyone, for live versions; owner and admin also see versions not live yet |
 | `consents` (S1-E14-01) | which version of the terms and privacy notice each person accepted, and when | the person themselves; written only by the sign-up trigger (S1-E2-01) and `accept_current_legal_versions()` |
+
+**Table grants come before policies (S1-E1-02 fix, 17 Oct 2026).** Postgres checks two things: whether the role may use the table at all (a `grant`), then which rows the policy lets through. The hosted Supabase projects grant nothing to the Data API roles (`anon`, `authenticated`) on a new table, and `supabase/config.toml` sets `auto_expose_new_tables = false` so local works the same way. So every migration that adds a table grants exactly what its policies need: one `grant <command> on public.<table> to <role>` per role and command a policy names, and never `truncate`, `references`, `trigger` or `maintain`. `supabase/migrations/…_fix_table_grants.sql` holds the grants for the tables above, and `supabase/tests/database/003-table-grants-match-policies.test.sql` fails when a policy has no matching grant, when a grant has no policy, or when a new table starts with any privileges. Without the grant, the API answers 401 "permission denied for table", which is what broke the Legal centre on staging.
 
 The **account gate** is a handful of SQL functions in `supabase/migrations/…_account_gate.sql`. Every write policy in later stories calls `is_active_member()`, and every under-18 protection reads `age_band()`. Staff checks use `is_staff(role)` and `is_staff_session()`. `supabase/README.md` explains them and what each later story fills in.
 

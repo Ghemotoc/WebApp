@@ -79,9 +79,11 @@ select is(
 
 set local role authenticated;
 set local request.jwt.claims to '{"sub": "00000000-0000-4000-8000-000000000001", "role": "authenticated"}';
-select is_empty(
+select throws_ok(
   $$ update public.profiles set birth_year = 1950 returning id $$,
-  'saving a language did not open other profile columns to changes through the API'
+  '42501',
+  null,
+  'saving a language did not open other profile columns to changes through the API (no update grant)'
 );
 
 select * from finish();
