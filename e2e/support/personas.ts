@@ -18,8 +18,11 @@ import type { Database } from '../../src/lib/database.types';
 /** The shared password of every synthetic seed persona (supabase/README.md). */
 const PERSONA_PASSWORD = 'Persona-Test-2026!';
 
-/** The seed personas the tests sign in as. */
+/** The seed personas the epic checks walk through, one by one. */
 export type PersonaName = 'adult_writer' | 'teen_17' | 'kid_14_ok' | 'kid_14_waiting';
+
+/** Every seed persona a test may sign in as: teacher is changed only by e2e/usernames.spec.ts. */
+export type SignInPersonaName = PersonaName | 'teacher';
 
 /**
  * Makes a Supabase client for the test itself (not the browser), using the local stack's values.
@@ -45,7 +48,7 @@ export function makeTestClient() {
  * @returns the session (to hand to a browser) and the signed-in client (for set-up and clean-up)
  * Errors: throws when the sign-in is refused, naming the persona.
  */
-export async function signInPersona(persona: PersonaName) {
+export async function signInPersona(persona: SignInPersonaName) {
   const client = makeTestClient();
   const { data, error } = await client.auth.signInWithPassword({
     email: `${persona}@personas.test`,

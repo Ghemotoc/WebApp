@@ -7,7 +7,7 @@
  * starts this instance in the language this browser last chose (src/lib/language-preference.ts).
  *
  * Where things come in from: src/locales/<language>/common.json, legal.json (the Legal centre,
- * S1-E14-01) and auth.json (sign-up and sign-in, S1-E2-01); email.json is for the auth emails only
+ * S1-E14-01) and auth.json (sign-up and sign-in, S1-E2-01), account.json (setup and Settings, S1-E2-04); email.json is for the auth emails only
  * (scripts/build-auth-email-templates.ts) (the /design page adds its own
  * design.json when it loads, so production builds never carry it), and the product and company names from
  * src/config/brand.ts, which every translation can use as {{productName}} and {{companyName}}.
@@ -20,9 +20,11 @@ import i18next, { type i18n as I18nInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { brand } from '@/config/brand';
+import englishAccount from '@/locales/en/account.json';
 import englishAuth from '@/locales/en/auth.json';
 import englishCommon from '@/locales/en/common.json';
 import englishLegal from '@/locales/en/legal.json';
+import romanianAccount from '@/locales/ro/account.json';
 import romanianAuth from '@/locales/ro/auth.json';
 import romanianCommon from '@/locales/ro/common.json';
 import romanianLegal from '@/locales/ro/legal.json';
@@ -48,8 +50,13 @@ export function isSupportedLanguage(value: unknown): value is SupportedLanguage 
 
 /** All translations, grouped by language and then by namespace (one JSON file per namespace). */
 const translations = {
-  ro: { common: romanianCommon, legal: romanianLegal, auth: romanianAuth },
-  en: { common: englishCommon, legal: englishLegal, auth: englishAuth },
+  ro: {
+    common: romanianCommon,
+    legal: romanianLegal,
+    auth: romanianAuth,
+    account: romanianAccount,
+  },
+  en: { common: englishCommon, legal: englishLegal, auth: englishAuth, account: englishAccount },
 };
 
 /**
@@ -71,7 +78,7 @@ export function createI18n(language: SupportedLanguage = defaultLanguage): I18nI
     fallbackLng: defaultLanguage,
     supportedLngs: supportedLanguages,
     defaultNS: 'common',
-    ns: ['common', 'legal', 'auth'],
+    ns: ['common', 'legal', 'auth', 'account'],
     initAsync: false,
     interpolation: {
       // React already escapes text it renders, so i18next must not escape it a second time.

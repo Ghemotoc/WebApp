@@ -40,10 +40,11 @@ select throws_ok(
   'nobody inserts into the audit log directly'
 );
 
--- The admin reads the moderator's row, with who did it.
+-- The admin reads the moderator's row, with who did it. (Only this test's action is compared:
+-- rows written by end-to-end runs on the same local database can't be deleted, by design.)
 set local request.jwt.claims to '{"sub": "00000000-0000-4000-8000-000000000009", "role": "authenticated"}';
 select results_eq(
-  $$ select user_id, action from public.audit_log $$,
+  $$ select user_id, action from public.audit_log where action = 'profile.viewed' $$,
   $$ values ('00000000-0000-4000-8000-000000000010'::uuid, 'profile.viewed') $$,
   'allowed: audit_log_select_admin: the admin reads the audit log, including who acted'
 );

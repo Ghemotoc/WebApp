@@ -33,6 +33,10 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `log_staff_action(...)` | writes one audit log row for the signed-in staff member | staff sessions only | S1-E1-02 |
 | `check_invite(code)` | answers `valid`, `ended` or `unknown` for a platform invite code, never the invite itself | anyone, signed out included (the sign-up form) | S1-E2-01 |
 | `sign_up_age_outcome(birth_year, birth_month)` | what sign-up says about a year (and month): `ok`, `year_needed`, `month_needed`, `under_13` or `adults_only`; stores nothing | anyone, signed out included (the sign-up form) | S1-E2-02 |
+| `check_handle(candidate)` | whether a username is allowed for the caller: `ok`, `too_short`, `too_long`, `invisible_characters`, `spaces`, `looks_like_staff`, `reserved`, `not_allowed` or `taken`; never says who has a name | any signed-in person (setup and Settings) | S1-E2-04 |
+| `check_pen_name(candidate)` | the same for a pen name (no `taken`: pen names needn't be unique) | any signed-in person | S1-E2-04 |
+| `set_my_handle(new_handle)`, `set_my_pen_name(new_pen_name)` | save the caller's own name, or answer why not (also `too_soon` within 30 days of the last change; the first choice doesn't count); the old name goes to the audit log | any signed-in person with a live profile | S1-E2-04 |
+| `admin_approve_username(target_user_id, name_kind, approved_name, reason_given)` | a moderator approves one exact name the word checks refused by mistake; logged | owner, admin and moderator with a staff session | S1-E2-04 (button in S1-E11-02) |
 | `my_legal_documents_to_accept()` | the caller's own legal documents waiting for acceptance after an important change | any signed-in person | S1-E14-01 |
 | `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
 
@@ -48,9 +52,18 @@ Why `set_my_locale()` and not an update policy on `profiles`: a policy would let
 | `is_staff(role)` | does the signed-in user hold that staff role (any role when empty) | S1-E2-07a (role hierarchy, permissions) |
 | `is_staff_session()` | may this session use staff powers (March: any staff role) | S1-E2-07b (Google Workspace sign-in) |
 
-While the `adults_only` flag is on (the March test), under-18s are `minor_not_admitted` and adults are active once their email is confirmed, without the age check.
+While the `adults_only` flag is on (the March test), under-18s are `minor_not_admitted` and adults are active once their email is confirmed and a username chosen (`handle_missing` until then, S1-E2-04), without the age check.
+
+## Usernames and pen names (S1-E2-04)
+
+- **Rules:** 3 to 30 characters in any script, emoji included; no invisible or control characters, no spaces. Staff and brand words of 6 letters or more are refused anywhere, shorter ones as a word of the name; the app's own addresses (`settings`, `legal`…) only as the whole username. Swearwords of 4 letters or more are refused anywhere, shorter ones (and entries marked `=` in the list) only as a word. Everything is compared after folding case, accents, look-alike letters (Unicode TR39, `confusable_characters`) and digits used as letters.
+- **Where the lists live:** `reserved_names` (staff titles and app addresses, in `…_s1_e2_04_name_rules.sql`), the settings row `reserved_brand_words` (the one migration allowed to hold brand names, `…_s1_e2_04_brand_words.sql`), `username_word_lists` (generated from `content/username-word-lists/`) and `confusable_characters` (generated from Unicode's list, version 10.0.0 for now). Change a list with a new migration until the settings screen (S1-E11-03).
+- **Uniqueness:** `profiles.handle_skeleton` is unique, so "lia" and "IIa" can't both exist; `handle_slug` is the web-address form. A deleted account's username stays taken, so nobody can pick it up to fake its owner.
+- **False hits:** a moderator approves the exact name with `admin_approve_username()`; the person then saves it themselves.
 
 ## Seed personas
+
+Every persona's username is its persona name (for example `adult_writer`); adult_writer's pen name is `Lia Scrie`.
 
 Every persona signs in with `<persona>@personas.test` and the shared test password **`Persona-Test-2026!`** (synthetic accounts only; the same locally and on staging, decided 17 Oct 2026). Years of birth are worked out from the current year.
 

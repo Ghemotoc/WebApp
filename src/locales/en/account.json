@@ -1,0 +1,72 @@
+{
+  "setup": {
+    "documentTitle": "Set up your profile · {{productName}}",
+    "eyebrow": "Welcome",
+    "heading": "Set up your profile",
+    "intro": "Only your username is required. You can change both names later in Settings.",
+    "save": "Save and continue",
+    "saving": "Saving…",
+    "penNameNotSaved": "Your username is saved, but not the pen name. You can add it in Settings."
+  },
+  "handle": {
+    "label": "Username",
+    "hint": "3 to 30 characters. Any characters work, but we block swearwords, names that look like our staff’s and look-alike letters that copy another name. People use it to find and mention you.",
+    "checking": "Checking…",
+    "free": "@{{handle}} is free.",
+    "checkFailed": "We couldn’t check this name just now. We’ll check again when you save.",
+    "outcomes": {
+      "too_short": "Use 3 to 30 characters.",
+      "too_long": "Use 3 to 30 characters.",
+      "invisible_characters": "Remove the invisible characters. They’re used to fake names.",
+      "spaces": "A username can’t have spaces. Try a dot or an underscore instead.",
+      "looks_like_staff": "This username looks like a staff name. Try another one.",
+      "reserved": "One of our pages uses this name. Try another one.",
+      "not_allowed": "This username isn’t allowed. Try another one.",
+      "taken": "Someone already has this username, or one that looks the same.",
+      "too_soon": "You can change your username once every {{days}} days."
+    }
+  },
+  "penName": {
+    "label": "Pen name (optional)",
+    "hint": "Shown on your stories instead of your username. You can change it once every {{days}} days. We never ask for your real name.",
+    "outcomes": {
+      "too_long": "Use 50 characters or fewer.",
+      "invisible_characters": "Remove the invisible characters. They’re used to fake names.",
+      "looks_like_staff": "This pen name looks like a staff name. Try another one.",
+      "not_allowed": "This pen name isn’t allowed. Try another one.",
+      "too_soon": "You can change your pen name once every {{days}} days."
+    }
+  },
+  "falseHit": {
+    "text": "Think we got this wrong, for example because it’s your surname?",
+    "link": "Ask a moderator to check it",
+    "emailSubject": "Please check my username"
+  },
+  "settings": {
+    "documentTitle": "Settings · {{productName}}",
+    "eyebrow": "Your account",
+    "heading": "Settings",
+    "signedInAs": "Signed in as {{name}} · @{{handle}}",
+    "accountHeading": "Account",
+    "usernameHint": "People find you by this. You can change it once every {{days}} days.",
+    "penNameHint": "Shown on your stories instead of your username. Leave it empty to show your username. You can change it once every {{days}} days.",
+    "nextChange": "You can change it again on {{date}}.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved.",
+    "legalHeading": "Legal",
+    "legalText": "The terms of use, the privacy notice and the community guidelines, with every earlier version.",
+    "legalLink": "Open the Legal centre",
+    "signedOut": "Log in to see your settings.",
+    "noHandle": "Choose a username first."
+  },
+  "notice": {
+    "heading": "Choose a username",
+    "body": "You need a username before you can publish, comment or post. It only takes a moment.",
+    "action": "Set up your profile"
+  },
+  "errors": {
+    "loadFailed": "We couldn’t load your account. Check your connection and try again.",
+    "saveFailed": "We couldn’t save that. Check your connection and try again."
+  }
+}

@@ -3,7 +3,7 @@
 -- - the month is needed only for years that leave the age unclear at 13 or 16;
 -- - under-13s are refused and, while adults_only is on, under-18s too; nothing is kept;
 -- - an adult's year is stored, the month only when needed, and age_check_result starts 'pending';
--- - while adults_only is on an adult is active once the email is confirmed;
+-- - while adults_only is on an adult is active once the email is confirmed (and a username chosen);
 -- - nobody but the account's owner reads the year of birth (allowed and denied).
 begin;
 
@@ -78,10 +78,13 @@ select results_eq(
   'the year is stored, a month given for a year that doesn''t need it is not, and the age check is pending'
 );
 update auth.users set email_confirmed_at = now() where email = 'adult.year@example.com';
+-- The username comes next in setup (S1-E2-04); this test is about the age check, so it sets one.
+update public.profiles set handle = 'adult.year'
+  where id = (select id from auth.users where email = 'adult.year@example.com');
 select is(
   public.account_state((select id from auth.users where email = 'adult.year@example.com'))::text,
   'active',
-  'while adults_only is on, an adult is active once the email is confirmed, without the age check'
+  'while adults_only is on, an adult with a username is active once the email is confirmed, without the age check'
 );
 
 -- Refusals keep nothing.

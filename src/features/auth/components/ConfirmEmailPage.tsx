@@ -5,7 +5,8 @@
  * What it does: hands the one-time token to Supabase (verifyOtp), which confirms the email and
  * signs the person in on this device. The token-hash link works on any device, unlike a link that
  * needs the browser the sign-up started in. Then it says so, or that the link no longer works
- * (used, or older than an hour) and how to get a new one.
+ * (used, or older than an hour) and how to get a new one. "Continue" goes to /setup to choose a
+ * username (S1-E2-04); someone who already has one is sent on to the home page from there.
  * Who shows it: the router. What it calls: api/signUp.ts → confirmEmail().
  */
 import { useQuery } from '@tanstack/react-query';
@@ -54,7 +55,7 @@ export function ConfirmEmailPage() {
           description={t('confirm.doneBody')}
           action={
             <Link
-              to="/"
+              to="/setup"
               className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline"
             >
               {t('confirm.continue')}

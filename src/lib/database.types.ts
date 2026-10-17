@@ -58,6 +58,31 @@ export type Database = {
           },
         ];
       };
+      confusable_characters: {
+        Row: {
+          created_at: string;
+          id: string;
+          prototype_text: string;
+          source_text: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          prototype_text: string;
+          source_text: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          prototype_text?: string;
+          source_text?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       consents: {
         Row: {
           accepted_at: string;
@@ -280,8 +305,14 @@ export type Database = {
           birth_year: number;
           created_at: string;
           deleted_at: string | null;
+          handle: string | null;
+          handle_changed_at: string | null;
+          handle_skeleton: string | null;
+          handle_slug: string | null;
           id: string;
           locale: string;
+          pen_name: string | null;
+          pen_name_changed_at: string | null;
           updated_at: string;
         };
         ComputedFields: never;
@@ -293,8 +324,14 @@ export type Database = {
           birth_year: number;
           created_at?: string;
           deleted_at?: string | null;
+          handle?: string | null;
+          handle_changed_at?: string | null;
+          handle_skeleton?: string | null;
+          handle_slug?: string | null;
           id: string;
           locale?: string;
+          pen_name?: string | null;
+          pen_name_changed_at?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -305,8 +342,45 @@ export type Database = {
           birth_year?: number;
           created_at?: string;
           deleted_at?: string | null;
+          handle?: string | null;
+          handle_changed_at?: string | null;
+          handle_skeleton?: string | null;
+          handle_slug?: string | null;
           id?: string;
           locale?: string;
+          pen_name?: string | null;
+          pen_name_changed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      reserved_names: {
+        Row: {
+          created_at: string;
+          folded_name: string;
+          id: string;
+          match_rule: string;
+          name: string;
+          reason: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          folded_name?: string;
+          id?: string;
+          match_rule?: string;
+          name: string;
+          reason: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          folded_name?: string;
+          id?: string;
+          match_rule?: string;
+          name?: string;
+          reason?: string;
           updated_at?: string;
         };
         Relationships: [];
@@ -385,6 +459,89 @@ export type Database = {
           },
         ];
       };
+      username_approvals: {
+        Row: {
+          approved_by_user_id: string;
+          approved_name: string;
+          approved_skeleton: string;
+          created_at: string;
+          id: string;
+          name_kind: string;
+          reason: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          approved_by_user_id: string;
+          approved_name: string;
+          approved_skeleton: string;
+          created_at?: string;
+          id?: string;
+          name_kind: string;
+          reason: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          approved_by_user_id?: string;
+          approved_name?: string;
+          approved_skeleton?: string;
+          created_at?: string;
+          id?: string;
+          name_kind?: string;
+          reason?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'username_approvals_approved_by_user_id_fkey';
+            columns: ['approved_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'username_approvals_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      username_word_lists: {
+        Row: {
+          created_at: string;
+          folded_word: string;
+          id: string;
+          language: string;
+          match_rule: string;
+          updated_at: string;
+          word: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          folded_word?: string;
+          id?: string;
+          language: string;
+          match_rule?: string;
+          updated_at?: string;
+          word: string;
+        };
+        Update: {
+          created_at?: string;
+          folded_word?: string;
+          id?: string;
+          language?: string;
+          match_rule?: string;
+          updated_at?: string;
+          word?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -397,6 +554,15 @@ export type Database = {
       account_state: {
         Args: { target_user_id: string };
         Returns: Database['public']['Enums']['account_status'];
+      };
+      admin_approve_username: {
+        Args: {
+          approved_name: string;
+          name_kind: string;
+          reason_given: string;
+          target_user_id: string;
+        };
+        Returns: string;
       };
       age_band: {
         Args: Record<PropertyKey, never>;
@@ -412,7 +578,16 @@ export type Database = {
         Returns: Database['public']['Enums']['age_band'];
       };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
+      change_is_too_soon: {
+        Args: { last_changed_at: string; setting_key: string };
+        Returns: boolean;
+      };
+      check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
+      check_pen_name: { Args: { candidate: string }; Returns: string };
+      display_name: { Args: { handle: string; pen_name: string }; Returns: string };
+      fold_look_alike_characters: { Args: { name: string }; Returns: string };
+      has_invisible_characters: { Args: { name: string }; Returns: boolean };
       invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
@@ -439,6 +614,15 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      log_account_change: {
+        Args: {
+          action_taken: string;
+          target_user_id: string;
+          values_after: Json;
+          values_before: Json;
+        };
+        Returns: undefined;
+      };
       log_staff_action: {
         Args: {
           action_taken: string;
@@ -459,17 +643,35 @@ export type Database = {
           version_label: string;
         }[];
       };
+      name_has_listed_word: { Args: { name: string }; Returns: boolean };
+      name_is_approved: {
+        Args: { name: string; name_kind: string; target_user_id: string };
+        Returns: boolean;
+      };
+      name_matching_words: { Args: { name: string }; Returns: string[] };
+      name_reserved_reason: { Args: { name: string }; Returns: string };
+      name_slug: { Args: { name: string }; Returns: string };
+      name_word_check: {
+        Args: { name: string; name_kind: string; target_user_id: string };
+        Returns: string;
+      };
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
       normalise_invite_code: { Args: { code: string }; Returns: string };
+      normalise_pen_name: { Args: { typed_name: string }; Returns: string };
       record_sign_up_consent: {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
       };
+      set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
+      set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
+      setting_value: { Args: { setting_key: string }; Returns: Json };
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
       sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
+      strip_combining_marks: { Args: { name: string }; Returns: string };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
+      username_skeleton: { Args: { name: string }; Returns: string };
     };
     Enums: {
       account_status:
@@ -480,6 +682,7 @@ export type Database = {
         | 'age_check_failed'
         | 'awaiting_parental_consent'
         | 'minor_not_admitted'
+        | 'handle_missing'
         | 'legal_acceptance_required';
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
@@ -605,6 +808,7 @@ export const Constants = {
         'age_check_failed',
         'awaiting_parental_consent',
         'minor_not_admitted',
+        'handle_missing',
         'legal_acceptance_required',
       ],
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],

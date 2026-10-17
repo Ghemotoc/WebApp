@@ -83,13 +83,19 @@ begin
 
     -- 3. The profile: year of birth from the current year. No month: none of these years leaves
     --    the age unclear at 13 or 16 (S1-E2-02). The check date is set when there is a result.
-    insert into public.profiles (id, birth_year, age_check_result, age_checked_at, age_check_method)
+    --    Every persona has chosen a username (its persona name, S1-E2-04), so the account gate
+    --    doesn't stop it at handle_missing; adult_writer also has a pen name.
+    insert into public.profiles (
+      id, birth_year, age_check_result, age_checked_at, age_check_method, handle, pen_name
+    )
     values (
       persona.user_id,
       current_year - persona.years_by_birth_year,
       persona.check_result::public.age_check_result,
       case when persona.check_result = 'pending' then null else now() end,
-      case when persona.check_result = 'pending' then null else 'facial_estimation'::public.age_check_method end
+      case when persona.check_result = 'pending' then null else 'facial_estimation'::public.age_check_method end,
+      persona.persona_name,
+      case when persona.persona_name = 'adult_writer' then 'Lia Scrie' end
     );
 
     -- 4. Staff personas get their role (S1-E2-07a later adds permissions).

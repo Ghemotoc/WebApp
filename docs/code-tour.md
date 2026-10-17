@@ -172,8 +172,33 @@ auth.users insert → trigger handle_new_auth_user()   …_s1_e2_01_sign_up_trig
   ▼
 Supabase emails supabase/templates/confirmation.html (Mailpit locally)
   ▼
-/auth/confirm?token_hash=…  → ConfirmEmailPage → verifyOtp → signed in; account_state() is active
+/auth/confirm?token_hash=…  → ConfirmEmailPage → verifyOtp → signed in; account_state() is handle_missing
+  ▼  "Continue"
+/setup → choosing a username (next section) → account_state() is active
 ```
+
+## Usernames and pen names (S1-E2-04)
+
+```
+/setup (SetupPage, SetupForm) or /settings (SettingsPage, AccountNamesSection)   src/features/account/
+  │  typing: HandleField → useHandleCheck
+  │     1. lib/nameRules.ts answers length, spaces and invisible characters at once
+  │     2. after a short pause: api/accountNames.ts → check_handle(candidate)
+  │  saving: useNamesForm → useMyNames → set_my_handle() / set_my_pen_name()
+  ▼
+check_handle() / set_my_handle()                     …_s1_e2_04_handles.sql
+  │  has_invisible_characters() → name_word_check():
+  │     name_matching_words() folds case, accents, look-alikes (confusable_characters, Unicode
+  │     TR39) and digits (0 → o), then name_reserved_reason() (reserved_names + the brand words
+  │     in settings) and name_has_listed_word() (username_word_lists), unless a moderator approved
+  │     the exact name (username_approvals)
+  │  username_skeleton(): another name that looks the same is "taken" (unique index)
+  │  30 days between changes (settings); the old name → log_account_change() → audit_log
+  ▼
+profiles.handle (+ handle_slug, handle_skeleton by trigger), profiles.pen_name
+```
+
+The word lists start in `content/username-word-lists/` and reach the database through `scripts/build-word-list-migration.ts`; the look-alike table through `scripts/build-confusables-migration.ts`. A moderator approves a false hit with `admin_approve_username()` (its button arrives with S1-E11-02).
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
