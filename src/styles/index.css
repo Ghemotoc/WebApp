@@ -1,0 +1,6 @@
+/*
+ * Global styles (story S1-E1-01).
+ * Loaded once by src/main.tsx. Tailwind generates the utility classes the components use.
+ * The design tokens (colours, fonts, light and night mode) come in S1-E1-03.
+ */
+@import 'tailwindcss';

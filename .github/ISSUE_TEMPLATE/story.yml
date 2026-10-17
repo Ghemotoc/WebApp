@@ -1,0 +1,30 @@
+# Issue form for one user story (story S1-E1-01; decided 16 Oct 2026, late evening, Q39:
+# one GitHub Issue per story ID). The "Sync story issues" workflow creates these automatically
+# from docs/stories/; use this form only for a story added by hand.
+name: Story
+description: One user story from docs/stories/, tracked as one issue.
+title: 'S1-E?-??: '
+body:
+  - type: markdown
+    attributes:
+      value: 'The story text and its acceptance criteria live in docs/stories/. Keep the title as "<story ID>: <title>".'
+  - type: input
+    id: story-file
+    attributes:
+      label: Stories file
+      description: The file in docs/stories/ that holds this story.
+      placeholder: s1-e01-foundations-and-delivery-pipeline.md
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options: [Must, Should, Could]
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Anything not in the story file, such as a dependency that changed.

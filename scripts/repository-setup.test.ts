@@ -1,0 +1,60 @@
+/**
+ * Checks the repository settings that hosting and CI depend on (story S1-E1-01).
+ * Each test names the decision it protects, so a change that breaks one is easy to trace.
+ */
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+import { describe, expect, it } from 'vitest';
+
+/**
+ * Reads a file from the repository root.
+ *
+ * @param relativePath - path from the repository root
+ * @returns the file's text
+ */
+function readRepositoryFile(relativePath: string): string {
+  return readFileSync(fileURLToPath(new URL(`../${relativePath}`, import.meta.url)), 'utf8');
+}
+
+describe('repository setup', () => {
+  it('pins Node.js 24 in .nvmrc and package.json (decided 17 Oct 2026, 13:18)', () => {
+    const packageJson = JSON.parse(readRepositoryFile('package.json')) as {
+      engines?: { node?: string };
+    };
+
+    expect(readRepositoryFile('.nvmrc').trim()).toBe('24');
+    expect(packageJson.engines?.node).toBe('>=24 <25');
+  });
+
+  it('uses the Node version from .nvmrc in every GitHub Actions job that sets up Node', () => {
+    const workflows = ['ci.yml', 'release-production.yml', 'sync-story-issues.yml'].map((name) =>
+      readRepositoryFile(`.github/workflows/${name}`),
+    );
+
+    for (const workflow of workflows) {
+      const setupNodeSteps = workflow.match(/uses: actions\/setup-node@/g) ?? [];
+      const nvmrcSettings = workflow.match(/node-version-file: \.nvmrc/g) ?? [];
+      expect(nvmrcSettings.length).toBe(setupNodeSteps.length);
+    }
+  });
+
+  it('sends every address to index.html on Cloudflare Pages, so reloading any page works', () => {
+    expect(readRepositoryFile('public/_redirects').trim()).toBe('/* /index.html 200');
+  });
+
+  it('has no GitHub Actions job that deploys staging or pushes migrations (Cloudflare and Supabase integrations do that)', () => {
+    const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
+
+    expect(ciWorkflow).not.toMatch(/supabase db push|wrangler|pages deploy/);
+  });
+
+  it('has a code tour that covers where the app starts, how a click travels, where things live and where to start reading', () => {
+    const codeTour = readRepositoryFile('docs/code-tour.md');
+
+    expect(codeTour).toMatch(/^## Where the app starts$/m);
+    expect(codeTour).toMatch(/^## How a click travels$/m);
+    expect(codeTour).toMatch(/^## Where things live$/m);
+    expect(codeTour).toMatch(/^## Start here$/m);
+  });
+});

@@ -38,6 +38,10 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Admins make invite links for the March test in the admin site (S1-E11-17), with the same logic as class-space invites (one shared invites table) | Chat, 17 Oct 2026, 13:01 |
 | Node.js 24 LTS everywhere (repository, CI and Cloudflare) | Chat, 17 Oct 2026, 13:18 |
 | Staff can build landing pages for contests and campaigns, run contests, and book sponsors into ad slots; the ad network fills unbooked slots automatically (stories S1-E11-14, S1-E11-15, S1-E12-05; their details are proposals until confirmed) | Chat, 17 Oct 2026, 11:06 |
+| Story issues (Q39): a story issue template plus a "Sync story issues" workflow, started by hand, that creates one issue per Stage 1 story still missing one; Claude Code doesn't create the issues from a session | Claude Code session S1-E1-01, 17 Oct 2026 |
+| The brand-name check ignores letter case: any spelling of the product name, site domain, contact addresses or handle fails CI outside `src/config/brand.ts` and the locale files | Claude Code session S1-E1-01, 17 Oct 2026 |
+| When a `VITE_BRAND_*` variable is missing, `src/config/brand.ts` uses today's values, so builds work without setting variables in Cloudflare | Claude Code session S1-E1-01, 17 Oct 2026 |
+| The production release workflow covers the web app only; how migrations reach the production database is decided when the production Supabase project exists | Claude Code session S1-E1-01, 17 Oct 2026 |
 
 ## Notes from the CTO pack (decisions applied to the stories)
 

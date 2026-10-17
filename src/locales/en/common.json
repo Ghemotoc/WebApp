@@ -1,0 +1,8 @@
+{
+  "home": {
+    "documentTitle": "{{productName}}",
+    "welcome": "Welcome to {{productName}}",
+    "tagline": "A place for stories, poems and essays.",
+    "comingSoon": "We're building the platform right now. Come back soon."
+  }
+}
