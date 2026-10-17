@@ -58,7 +58,7 @@ As the founder, I want a dashboard of key numbers and a log of legal requests so
 As the founder, I want to open a language and a country only when we can moderate it so that every open market is safe and lawful.
 
 - **Priority:** Must · **Size:** M · **Depends on:** S1-E11-03, S1-E2-10
-- **Added:** 16 Oct 2026, Robert's decision (chat): launch in English and Romanian, for English-speaking countries and Romania. Updated 16 Oct 2026 (evening): all English-speaking countries open at the same time as Romania. **OPEN (known conflict):** the 17 Oct Decisions made tab also says Romania is the first market; Robert to confirm which holds.
+- **Added:** 16 Oct 2026, Robert's decision (chat): launch in English and Romanian, for English-speaking countries and Romania. Updated 17 Oct 2026, 11:48: Romania opens first; English-speaking countries open later, one by one, each after its legal check (replaces "all at the same time", 16 Oct evening). At launch only Romania is Open; the others show Ready to open or Closed.
 - **Acceptance criteria:**
   - Given admin settings, when staff look at Markets and languages, then each language (English, Română to start) and each market (UK, Ireland, US, Canada, Australia, New Zealand, Singapore, Romania, others) shows Open, Ready to open or Closed.
   - Given a language with no moderator who reads it on the rota, when staff try to open it, then it is blocked.

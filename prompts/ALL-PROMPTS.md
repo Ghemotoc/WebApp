@@ -23,6 +23,7 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 
 **When the canvas changes:** ask Claude (in the WattPad Better Be Gone project) to refresh `design/` in the repository, so Claude Code always builds from the latest boards.
 
+
 **March MVP: 49 stories.**
 
 | # | Story | Title | Priority | Size | Wave |

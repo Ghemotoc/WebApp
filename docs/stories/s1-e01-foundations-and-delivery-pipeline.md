@@ -54,7 +54,7 @@ As a Romanian or English speaker, I want the whole interface in my language so t
 
 - **Priority:** Must · **Size:** M · **Depends on:** S1-E1-01
 - **Acceptance criteria:**
-  - Given a first visit with the device set to Romanian, when the app loads, then the interface is in Romanian; any other device language falls back to English.
+  - Given a first visit, when the app loads, then the interface is in Romanian whatever the device language, and English is one choice away in the language menu (decided 17 Oct 2026, 11:48: Romanian by default, English too; replaces "falls back to English").
   - Given a signed-in user, when they switch language in settings, then the choice is saved to their account and applies on every device.
   - Given a pull request, when a string key exists in one locale file and not the other, then CI fails.
   - Given Romanian text, when it is stored or shown, then the comma-below letters ș and ț are used, and cedilla forms (ş, ţ) are normalised on input.

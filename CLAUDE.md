@@ -4,7 +4,7 @@
 A writer-first social platform for stories, poems, essays and discussion. Stage 1 only:
 writing, reading, comments, follows, forums with user-created spaces, private
 messages, reporting and moderation, contextual banners, admin site.
-Launch: English and Romanian, in Romania and English-speaking countries [markets OPEN: together or Romania first].
+Launch: Romania first (decided 17 Oct 2026); English-speaking countries open later, one by one. The interface opens in Romanian for everyone; English is available in the language menu.
 Users include minors (13+). Design rules (covers, doodles, rows) are in the DoD.
 Read @docs/architecture.md and @docs/definition-of-done.md before planning.
 Decisions with dates and sources are in docs/decisions.md. Stories are in docs/stories/.
@@ -46,6 +46,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 18. Ratings (All ages, 13+, 16+, 18+) hide a story from anyone younger, enforced in RLS through age_band(). Staff never edit a writer's words.
 19. Every uploaded picture goes through the picture check (S1-E10-05) before anyone else sees it. No automated text moderation.
 20. Shelves of stories are one scrolling line of at most 20 with a "View more" card to a See all page.
+21. Every screen is responsive for every screen size: phones, tablets and desktops (decided 17 Oct 2026). Check each screen at 390, 768 and 1440 px wide; nothing overlaps, cuts off or scrolls sideways. Use design/renders/phone and design/renders/desktop as the two reference widths.
 
 ## Conventions
 - Database: snake_case, plural table names, uuid primary keys, created_at/updated_at timestamptz, soft delete with deleted_at; the owner column is user_id, other people get role names (reporter_user_id).

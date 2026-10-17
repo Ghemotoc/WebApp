@@ -33,7 +33,7 @@ Claude Code reads `CLAUDE.md` at the start of every session. Keep it short and p
 A writer-first social platform for stories, poems, essays and discussion. Stage 1 only:
 writing, reading, comments, follows, forums with user-created spaces, private
 messages, reporting and moderation, contextual banners, admin site.
-Launch: English and Romanian, in Romania and English-speaking countries [markets OPEN: together or Romania first].
+Launch: Romania first (decided 17 Oct 2026); English-speaking countries open later. The interface opens in Romanian for everyone; English is available in the language menu.
 Users include minors (13+). Design rules (covers, doodles, rows) are in the DoD.
 Read @docs/architecture.md and @docs/definition-of-done.md before planning.
 

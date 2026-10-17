@@ -8,6 +8,9 @@ Every decision Robert has made, with its date and source. The live list is the m
 | --- | --- |
 | Build in Claude Code first, on our own Supabase project in the EU (West EU, Ireland, eu-west-1) from day one, owned by Robert and then the company. Replaces "Lovable's database first" (Q37); S1-E1-06 is no longer needed | Chat, 17 Oct 2026, 11:20 |
 | The staging Supabase project stays in West EU (Ireland, eu-west-1); Frankfurt is no longer required | Chat, 17 Oct 2026, 11:40 |
+| Romania is the first market; English-speaking countries open later, one by one, each after its legal check (replaces "all English-speaking countries at the same time", 16 Oct) | Chat, 17 Oct 2026, 11:48 |
+| The interface opens in Romanian for everyone; English is available in the language menu (English and Romanian both still ship) | Chat, 17 Oct 2026, 11:48 |
+| Every screen is responsive for every screen size: phones, tablets and desktops | Chat, 17 Oct 2026, 11:48 |
 | Staff can build landing pages for contests and campaigns, run contests, and book sponsors into ad slots; the ad network fills unbooked slots automatically (stories S1-E11-14, S1-E11-15, S1-E12-05; their details are proposals until confirmed) | Chat, 17 Oct 2026, 11:06 |
 
 ## Notes from the CTO pack (decisions applied to the stories)

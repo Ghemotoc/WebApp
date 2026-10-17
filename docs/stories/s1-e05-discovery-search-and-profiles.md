@@ -93,7 +93,7 @@ As a reader, I want the doodle by the Discover greeting and the one by Search's 
   - Given the same date, when Search opens, then the popular-tags doodle switches in the same way.
   - Given the schedule staff keep in S1-E11-11, when an occasion is added or changed, then the app shows the new doodle within a minute with no release.
   - Given any seasonal doodle, when it is shown, then it is an SVG file, it is decorative (hidden from screen readers, takes no clicks, never over text) and it does not move or animate.
-- **Legal and compliance:** none beyond the global checklist; no location is used, only the device's date. OPEN: the list of occasions, and whether they should follow the reader's country if English-speaking countries open with Romania (markets OPEN, section 1.2).
+- **Legal and compliance:** none beyond the global checklist; no location is used, only the device's date. OPEN: the list of occasions, and whether they should follow the reader's country once English-speaking countries open after Romania (Romania first, decided 17 Oct 2026).
 
 ##### S1-E5-08 Public website home page
 

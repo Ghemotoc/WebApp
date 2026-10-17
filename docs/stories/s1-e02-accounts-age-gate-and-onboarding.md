@@ -164,7 +164,7 @@ As a reader or writer, I want to join and log in with my Google, Apple or Micros
 
 ##### S1-E2-10 Country from the connection at sign-up
 
-As the company, I want to know each account's country without storing IP addresses so that we can open or close markets by country (whether all open together or Romania first is **OPEN**, section 1.2), apply the right local rules and report users by country.
+As the company, I want to know each account's country without storing IP addresses so that we can open or close markets by country (Romania first, decided 17 Oct 2026, 11:48; section 1.2), apply the right local rules and report users by country.
 
 - **Priority:** Should · **Size:** S · **Depends on:** S1-E2-01, S1-E11-05
 - **Added:** 16 Oct 2026 as a proposal; decided 16 Oct 2026, late evening (Q20): the country comes from the connection and is never asked.
