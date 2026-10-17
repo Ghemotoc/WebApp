@@ -14,7 +14,8 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 - Supabase (EU region): Postgres with row-level security, Auth, Storage, Edge Functions (Deno), pg_cron
 - i18next with locales in src/locales/ro and src/locales/en
 - Web first: March 2027 is web only (decided 17 Oct 2026). Tauri 2 desktop and the mobile wrapper (Capacitor proposed, OPEN) come after March; don't add them yet.
-- Web hosting: Cloudflare Pages (decided 17 Oct 2026, 12:57), with a preview site per pull request. The visitor's country comes from `CF-IPCountry` / `request.cf.country` in a Pages Function. Deploy steps stay off until Robert has connected the Cloudflare project to the repository.
+- Web hosting: Cloudflare Pages (decided 17 Oct 2026, 12:57), project `ghemotoc`, connected to this repository through Cloudflare's GitHub app: it builds `main` (`npm run build`, output `dist`) and gives every pull request a preview link. No GitHub Actions deploy job. The visitor's country comes from `CF-IPCountry` / `request.cf.country` in a Pages Function.
+- Node.js 24 LTS everywhere: `.nvmrc`, `engines` in package.json, CI and Cloudflare (decided 17 Oct 2026, 13:18).
 - Database: our own Supabase project in the EU (Ireland) (decided 17 Oct 2026). Local development uses the Supabase CLI in Docker; migrations reach staging only through Supabase's GitHub integration when main changes, never from a session.
 - Tests: Vitest (unit), pgTAP (supabase/tests), Playwright + axe (e2e)
 

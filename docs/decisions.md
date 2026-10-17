@@ -36,6 +36,7 @@ Every decision Robert has made, with its date and source. The live list is the m
 | The working site is ghemotoc.themagiccoffin.com once hosting is chosen, until the product's own domain is bought | Chat, 17 Oct 2026, 12:50 |
 | The web app is hosted on Cloudflare Pages (free plan for March); Cloudflare already runs Robert's DNS | Chat, 17 Oct 2026, 12:57 |
 | Admins make invite links for the March test in the admin site (S1-E11-17), with the same logic as class-space invites (one shared invites table) | Chat, 17 Oct 2026, 13:01 |
+| Node.js 24 LTS everywhere (repository, CI and Cloudflare) | Chat, 17 Oct 2026, 13:18 |
 | Staff can build landing pages for contests and campaigns, run contests, and book sponsors into ad slots; the ad network fills unbooked slots automatically (stories S1-E11-14, S1-E11-15, S1-E12-05; their details are proposals until confirmed) | Chat, 17 Oct 2026, 11:06 |
 
 ## Notes from the CTO pack (decisions applied to the stories)
