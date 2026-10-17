@@ -55,7 +55,7 @@ Read @docs/architecture.md and @docs/definition-of-done.md before planning.
 1. Every table has RLS on and explicit policies. Every policy gets an allowed and a denied pgTAP test.
 2. Never use the service role key in client code. It is only for Edge Functions.
 3. Schema changes only through files in supabase/migrations/. Never suggest dashboard edits.
-4. No hard-coded user-facing strings. Add keys to both ro and en. Romanian uses ș and ț (comma below).
+4. No hard-coded user-facing strings. Add keys to both ro and en. Romanian uses ș and ț (comma below). Website page text (home page, questions, help, notices) comes only from the CMS, never from locale files; interface text lives in the ro and en locale files and staff may override it from the admin site (decided 17 Oct 2026, 19:14 to 19:19).
 5. Store no legal names and no full dates of birth. Age is birth_year (plus birth_month only when the year leaves the age unclear at 13 or 16) plus the Yoti result (age_check_result, age_checked_at, age_check_method). Never store a selfie, an ID image or an estimated age; the Yoti API key lives only in Edge Function secrets.
 6. Every new user-content type must be registered as reportable (reportable_type enum), have a report button and respect blocks.
 7. No tracking. No ad code except the non-personalised ad network in S1-E12-04; no other third-party scripts or cookies without an ADR.

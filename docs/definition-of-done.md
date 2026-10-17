@@ -81,7 +81,7 @@
 
 **Internationalisation**
 
-- [ ] All strings in `ro` and `en` locale files; no hard-coded text.
+- [ ] All interface strings in the `ro` and `en` locale files (admins may override them from the admin site, S1-E11-18); website page text (home page, questions, help, notices) only in the CMS, never in the locale files (decided 17 Oct 2026, 19:14 to 19:19); no hard-coded text.
 - [ ] Romanian copy checked by a native speaker before release; ș and ț correct.
 - [ ] Dates, numbers and plurals use locale-aware formatting.
 

@@ -58,6 +58,7 @@ As the founder, I want a dashboard of key numbers and a log of legal requests so
 As the founder, I want to open a language and a country only when we can moderate it so that every open market is safe and lawful.
 
 - **Priority:** Must · **Size:** M · **Depends on:** S1-E11-03, S1-E2-10
+- **Updated:** 17 Oct 2026, 19:14: stays after March. The website CMS (S1-E11-06, in the March MVP) reads the markets list seeded by migration until this screen lands; when a market opens here, the CMS offers it with its languages.
 - **Added:** 16 Oct 2026, Robert's decision (chat): launch in English and Romanian, for English-speaking countries and Romania. Updated 17 Oct 2026, 11:48: Romania opens first; English-speaking countries open later, one by one, each after its legal check (replaces "all at the same time", 16 Oct evening). At launch only Romania is Open; the others show Ready to open or Closed.
 - **Acceptance criteria:**
   - Given admin settings, when staff look at Markets and languages, then each language (English, Română to start) and each market (UK, Ireland, US, Canada, Australia, New Zealand, Singapore, Romania, others) shows Open, Ready to open or Closed.
@@ -68,24 +69,28 @@ As the founder, I want to open a language and a country only when we can moderat
   - Given the interface, when a user picks a language, then English and Română are available.
 - **Legal and compliance:** each market has its own child-safety law (research H1, 16 Oct 2026): for example the UK Online Safety Act (children's risk assessment and highly effective age assurance), Australia's under-16 social media minimum age (in force since 10 Dec 2025), US COPPA and state laws, and Ireland's GDPR consent age of 16. The legal check per market comes before opening it, so if every English-speaking market opens alongside Romania (OPEN, see above), each of those checks has to be done before the March test. Australia: closed to under-16s until a lawyer says otherwise (Q19); whether the law applies to Ghemotoc at all is on the lawyer's list (section 6).
 
-##### S1-E11-06 Website home page copy
+##### S1-E11-06 Website CMS and home page copy
 
-As an admin, I want to change the words at the top of the public website's home page from the admin site so that we can refresh the message monthly or so without a new release.
+As an admin, I want to edit the public website's pages, starting with the home page, for each market and language from the admin site so that we can refresh the message without a new release and without an engineer.
 
-- **Priority:** Should · **Size:** M · **Depends on:** S1-E11-01, S1-E11-03, S1-E2-07, the website's own database and the `website-cms` bridge (a new CMS built from scratch, decided 16 Oct 2026, Q54; sections 1.2 and 1.8.6; group A and B31 in section 1.7)
+- **Priority:** Must · **Size:** M · **Depends on:** S1-E11-01, S1-E2-07a, S1-E1-04; markets come from the markets list (seeded by migration for March; the admin screen for markets is S1-E11-05, after March); back end: the CMS tables in the app's database behind the `WebsiteContentStore` contract (sections 1.6 and 1.8.6; B31 in section 1.7)
+- **Updated:** 17 Oct 2026, 19:14 to 19:19 (Robert): retitled from "Website home page copy" and moved into the March MVP as Must. It builds the shared CMS core that S1-E11-10, S1-E11-12 and S1-E11-18 reuse. Website pages get their text only from the CMS, never from the locale files (replaces the 12:34 rule for the March home page copy; the page itself still lives inside the web app). Staff pick the market and the language of the page they edit, and every market can have its own home page in each of its languages (19:14). A visitor from a country with no page of its own sees the Romanian market's English page (19:16). Until the website database exists (set-up OPEN), the content is stored in the app's database behind one store interface (19:16). Only the admin role and the owner edit and publish (19:19).
 - **Updated:** 16 Oct 2026 (late evening): today's live copy, roles.
 - **Added:** 16 Oct 2026, Robert's comment (canvas, 1.1 Website home page hero).
 - **Acceptance criteria:**
-  - Given admin settings, when staff open Website home page, then they can edit the line above the headline, the headline on two lines, which headline word gets the gold underline, the line under the headline, the two button labels and the three short points, prefilled with the copy that is live now (the headline is "Write stories. Get read." and the line under it is "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them.", decided 16 Oct 2026, late evening).
-  - Given any edit, when staff type, then a live preview shows the hero text in the website's fonts and colours (text only, no drawings or images).
-  - Given the English and Română tabs, when staff switch, then each language has its own copy and preview; one version holds both languages and it can't be published unless both are filled in.
-  - Given the character limits (proposal: line above the headline 50, headline 40 across both lines, line under it 170, each button 20, each point 30), when a field is empty or over its limit, then its counter turns red, the field is marked invalid for screen readers and Publish is refused with the list of fields to fix.
-  - Given a "Show from" date, when staff publish, then the new version goes live at 00:00 Romanian time on that date (or within a minute if the date is today) and the current copy stays up until then; Save draft keeps the work without changing the website.
-  - Given a publish, when it is saved, then the audit log stores who, when, the date it goes live and the before and after copy (S1-E11-01).
-  - Given a content editor or an admin, when they save or publish, then it works; anyone else is refused by the server (section 1.8.3).
-  - Given Earlier versions, when staff press Restore on one, then its copy in both languages comes back into the editor as a draft and goes live only when it is published again.
-  - Given the public website, when the home page loads, then it reads the hero copy for the visitor's language from the website's own database (decided 16 Oct 2026), never from the app's database, and shows the last published version if the read fails. Until this story lands the March home page lives inside the web app with its copy in the locale files (decided 17 Oct 2026, 12:34); this story moves the copy to the website database.
-- **Legal and compliance:** consumer law: the copy must not mislead (Law 363/2007 on unfair commercial practices, from Directive 2005/29/EC). Claims such as "free", "no tracking ads" and "you keep your rights" must stay true for as long as they are live, so check them against the current terms and any paid plans before publishing; calling something "free" when users have to pay is on the always-unfair list (Annex I, point 20, to verify). Accessibility: the headline stays the page's one `h1`, the gold underline is decoration only and the `lang` attribute matches the copy's language (WCAG 2.2, 1.3.1 and 3.1.1). Four eyes (decided 16 Oct 2026, late evening, Q31): home page copy is logged only; other people review copy before it goes live, outside the tool.
+  - Given the CMS core, when any page is stored, then it is identified by page, market and language, and every edit is a version with a status: draft, scheduled (published with a future "show from" date) or published; only one published version per page, market and language is live at a time.
+  - Given Website › Home page, when an admin opens it, then they first pick the market (from the markets list, seeded by migration for March) and one of that market's languages; each market can have its own home page in each of its languages (decided 17 Oct 2026, 19:14).
+  - Given the home page editor, when an admin opens a market and language, then they can edit the line above the headline, the headline on two lines, which headline word gets the gold underline, the line under the headline, the two button labels and the three short points. Version 1 of the Romanian market's page in Română and English is seeded with the copy that is live now (the headline is "Write stories. Get read." and the line under it is "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them.", decided 16 Oct 2026, late evening).
+  - Given any edit, when an admin types, then a live preview shows the hero text in the website's fonts and colours (text only, no drawings or images).
+  - Given the character limits (proposal: line above the headline 50, headline 40 across both lines, line under it 170, each button 20, each point 30), when a required field is empty or a field is over its limit, then its counter turns red, the field is marked invalid for screen readers and Publish is refused with the list of fields to fix.
+  - Given a "show from" date, when an admin publishes, then the new version goes live at 00:00 Romanian time on that date (or within a minute if the date is today) and the current version stays up until then; Save draft keeps the work without changing the website.
+  - Given Earlier versions, when an admin presses Restore on one, then its copy comes back into the editor as a draft for the same page, market and language and goes live only when it is published again.
+  - Given a publish, a restore or a scheduled version going live, when it is saved, then the audit log stores who, when, the page, market and language, the go-live date and the before and after copy (S1-E11-01).
+  - Given staff with the admin role or the owner, when they save or publish, then it works; anyone else, a content editor without the admin role included, is refused by the server, not only hidden in the menu (decided 17 Oct 2026, 19:19; section 1.8.3).
+  - Given the public home page, when it loads, then it reads the published version for the visitor's market (the country from the connection, S1-E2-10) and language; a visitor from a country with no page of its own sees the Romanian market's English page (decided 17 Oct 2026, 19:16); if the market has no page in the chosen language, the market's first language shows (proposal). It never reads a draft or scheduled version, and if a read fails it shows the last published version it has instead of an empty hero.
+  - Given the storage, when the CMS saves or reads, then it goes through the `WebsiteContentStore` contract to tables in the app's database (decided 17 Oct 2026, 19:16); the editors and the public page use only the contract, so moving to the website database later (set-up OPEN) swaps the storage, not the editors, and a contract test runs against the app-database store.
+  - Given the home page, when it is built, then none of its page text comes from the locale files (decided 17 Oct 2026, 19:14); the copy that was in them for the March plan is seeded as version 1 instead.
+- **Legal and compliance:** consumer law: the copy must not mislead (Law 363/2007 on unfair commercial practices, from Directive 2005/29/EC). Claims such as "free", "no tracking ads" and "you keep your rights" must stay true for as long as they are live, so check them against the current terms and any paid plans before publishing; calling something "free" when users have to pay is on the always-unfair list (Annex I, point 20, to verify). Each market's page must pass that market's legal check before that market opens (decided 17 Oct 2026, 11:48: every market opens only after its legal check; S1-E11-05). Accessibility: the headline stays the page's one `h1`, the gold underline is decoration only and the `lang` attribute matches the copy's language (WCAG 2.2, 1.3.1 and 3.1.1). Four eyes (decided 16 Oct 2026, late evening, Q31): home page copy is logged only; other people review copy before it goes live, outside the tool; only the admin role publishes (decided 17 Oct 2026, 19:19).
 
 ##### S1-E11-07 Every story in the admin site
 
@@ -159,30 +164,33 @@ As a support person, I want to find a user, log their data request and send them
 
 ##### S1-E11-10 Website notice banners
 
-As a content editor, I want to put a short notice at the top of the website and the app (for example news about a new feature) so that visitors see news without a new release.
+As an admin, I want to put a short notice at the top of the website and the app (for example news about a new feature) so that visitors see news without a new release.
 
-- **Priority:** Should · **Size:** S · **Depends on:** S1-E11-01, S1-E2-07; back end: one notice table that the website and the app both read; until the website database exists (and in March) it lives in the app's database (decided 17 Oct 2026, 12:44); the `website-cms` bridge once the website database exists (section 1.7, B31)
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E11-06 (the shared CMS core); back end: one notice table that the website and the app both read, in the app's database behind the `WebsiteContentStore` contract until the website database exists (decided 17 Oct 2026, 12:44 and 19:16; section 1.8.6, B31)
+- **Updated:** 17 Oct 2026, 19:14 to 19:19 (Robert): in the March MVP, built on the CMS core from S1-E11-06; notices are per market and language; admin-only.
 - **Added:** 16 Oct 2026 (late evening), Robert's request (chat): website CMS banners.
 - **Acceptance criteria:**
-  - Given Website › Banners, when a content editor creates a notice, then they enter the text in English and Română (each up to 120 characters, proposal), an optional link to one of our own pages, a type (news, contest or important) and the pages it shows on (every page or the home page only).
-  - Given a notice, when it is saved, then it has a "Show from" date and an optional "Show until" date, both at 00:00 Romanian time, and it can't be published unless both languages are filled in.
-  - Given a published notice, when the website or the app loads, then both show it, read from the same table (decided 17 Oct 2026, 12:44).
-  - Given two notices for the same page and time, when the website or the app loads, then only one shows: the one with the latest "Show from" date.
+  - Given Website › Notice banners, when an admin creates a notice, then they pick the market and enter the text in each of that market's languages (for Romania: Română and English; each up to 120 characters, proposal), an optional link to one of our own pages, a type (news, contest or important) and the pages it shows on (every page or the home page only).
+  - Given a notice, when it is saved, then it has a "show from" date and an optional "show until" date, both at 00:00 Romanian time, and it can't be published unless every language of its market is filled in.
+  - Given a published notice, when the website or the app loads, then both show it, read from the same table (decided 17 Oct 2026, 12:44), for the visitor's market and language with the same fallback as pages (the Romanian market's English notice for a country with no page of its own).
+  - Given two notices for the same page, market and time, when the website or the app loads, then only one shows: the one with the latest "show from" date.
   - Given the type, when the notice is shown, then its colours come from the design tokens and meet 4.5:1 contrast; it doesn't move focus, doesn't animate and is a labelled region that screen readers can find.
   - Given a visitor closes a notice, when they keep browsing, then it stays closed for that visit only (session storage, so no consent is needed).
-  - Given a publish or a change, when it is saved, then the audit log stores who, when and the before and after; earlier versions can be restored as drafts.
+  - Given a publish or a change, when it is saved, then the audit log stores who, when, the market and language and the before and after; earlier versions can be restored as drafts.
+  - Given anyone without the admin role (the owner excepted), when they try to save or publish a notice, then the server refuses (decided 17 Oct 2026, 19:19).
   - Given anything a sponsor pays for, when staff try to put it in a notice, then they can't: notices carry no sponsor names or logos, and paid content goes through Sponsors (S1-E12).
 - **Legal and compliance:** keeping sponsors out of notices keeps ads labelled and in their own slot (DSA art. 26 as good practice). Claims in notices must be true (Law 363/2007).
 
 ##### S1-E11-11 Seasonal doodle schedule
 
-As a content editor, I want to plan which seasonal doodle shows on which dates so that Discover and Search change with the seasons without a new release.
+As an admin, I want to plan which seasonal doodle shows on which dates so that Discover and Search change with the seasons without a new release.
 
 - **Priority:** Could · **Size:** S · **Depends on:** S1-E11-01, S1-E2-07, the doodle set (canvas 11.1); back end: B30 in the app's database (section 1.7)
 - **Added:** 16 Oct 2026 (late evening): the admin part of S1-E5-07, moved here so the website CMS tools sit together.
+- **Updated:** 17 Oct 2026, 19:19: stays after March; like the rest of the CMS it is admin-only (content editors hold the admin role, decided 12:44).
 - **Acceptance criteria:**
-  - Given Website › Seasonal doodles, when a content editor adds an occasion, then they set a name, a date range (with "every year"), the doodle and where it shows (the Discover greeting, the Search popular tags or both).
-  - Given the doodle choice, when the editor picks one, then they choose only from the approved SVG doodles shipped with the app; new doodles arrive as SVG files in a normal release, never as uploads.
+  - Given Website › Seasonal doodles, when an admin adds an occasion, then they set a name, a date range (with "every year"), the doodle and where it shows (the Discover greeting, the Search popular tags or both).
+  - Given the doodle choice, when the admin picks one, then they choose only from the approved SVG doodles shipped with the app; new doodles arrive as SVG files in a normal release, never as uploads.
   - Given two occasions that overlap, when a date falls in both, then the shorter one wins; a season's default doodle covers days with no occasion.
   - Given the schedule, when it is shown, then a year view shows every occasion and any gaps, with a preview in light and night mode.
   - Given a change, when it is saved, then it applies within a minute with no release and is logged.
@@ -190,20 +198,22 @@ As a content editor, I want to plan which seasonal doodle shows on which dates s
 
 ##### S1-E11-12 Help pages and questions
 
-As a content editor, I want to write and update help pages and frequently asked questions in English and Română so that the website and the app answer common questions without a new release.
+As an admin, I want to write and update help pages and frequently asked questions for each market and language so that the website and the app answer common questions without a new release.
 
-- **Priority:** Should · **Size:** M · **Depends on:** S1-E11-01, S1-E2-07, S1-E1-04, S1-E14-01; back end: the website's own database and the `website-cms` bridge (section 1.7, B31)
+- **Priority:** Should · **Size:** M · **Depends on:** S1-E11-06 (the shared CMS core), S1-E1-04, S1-E14-01; back end: help and question tables in the app's database behind the `WebsiteContentStore` contract until the website database exists (decided 17 Oct 2026, 19:16; section 1.8.6, B31)
+- **Updated:** 17 Oct 2026, 19:14 to 19:19 (Robert): in the March MVP, built on the CMS core from S1-E11-06; help pages and questions are per market and language; the home page's questions section reads them (its text comes only from the CMS); admin-only for all of it (replaces the proposal that only legal and safety answers need an admin).
 - **Added:** 16 Oct 2026 (late evening), Robert's request (chat): website CMS help and FAQ pages.
 - **Acceptance criteria:**
-  - Given Website › Help and questions, when a content editor writes a help page, then it has a title, a web address, a section and a body in the safe Markdown subset, in both languages.
-  - Given a question, when the editor writes it, then it has the question, the answer, its order and where it shows (the website home page, the help centre or both).
-  - Given the first version, when the CMS starts, then the questions live on the website on 16 Oct 2026 are imported as version 1, including "What is a class space?".
-  - Given an edit, when it is published, then it follows the CMS way of working: a preview, a "Show from" date, both languages required, earlier versions with Restore and an entry in the audit log (section 1.8.6).
-  - Given an answer about age checks, parental consent, messaging rules, privacy or money, when it is published, then it needs an admin, not only a content editor, because it repeats a promise made in the legal documents (proposal; the Decisions made tab logs Q31 as "website copy goes live without a second approver for now", so this exception is **OPEN** for Robert).
+  - Given Website › Help and questions, when an admin writes a help page, then they pick the market and language, and the page has a title, a web address, a section and a body in the safe Markdown subset.
+  - Given a question, when the admin writes it, then it has the market and language, the question, the answer, its order and where it shows (the website home page, the help centre or both).
+  - Given the first version, when the CMS starts, then the questions live on the website on 16 Oct 2026 are seeded as version 1 for the Romanian market in Română and English, including "What is a class space?".
+  - Given the home page's questions section (S1-E5-08), when it loads, then it reads the published questions marked for the home page for the visitor's market and language, with the same fallback as pages (the Romanian market's English page for a country with no page of its own).
+  - Given an edit, when it is published, then it follows the CMS way of working: a preview, a "show from" date, every language of the market required, earlier versions with Restore and an entry in the audit log (section 1.8.6).
+  - Given any help page or question, when someone saves or publishes it, then only staff with the admin role (and the owner) can; the server refuses everyone else (decided 17 Oct 2026, 19:19). Answers about age checks, parental consent, messaging rules, privacy, reporting or money are marked as legal wording and stay admin-only in any case.
   - Given a link inside a help page, when it is saved, then links to our own pages must work, or saving is refused with the broken link named.
-  - Given the app, when a user opens Help, then it shows these same pages in their language.
+  - Given the app, when a user opens Help, then it shows these same pages for their market and language.
   - Given any help page, when it is shown, then it has one `h1`, real headings and the right `lang`.
-- **Legal and compliance:** if a help page and the terms or privacy notice disagree, the legal documents win and the help page is fixed the same day. Plain language a 13-year-old can follow (DSA art. 14(3)). Claims must be true (Law 363/2007).
+- **Legal and compliance:** if a help page and the terms or privacy notice disagree, the legal documents win and the help page is fixed the same day. Plain language a 13-year-old can follow (DSA art. 14(3)). Claims must be true (Law 363/2007): version 1 describes the public launch (the Yoti age check, parental consent for under-16s), so for the invited-adults March test (decided 17 Oct 2026, 12:44) an admin edits or holds back any answer that isn't true yet before the page goes public (docs/board-fixes.md).
 
 ---
 
@@ -236,13 +246,13 @@ As a staff member, I want every support request to arrive as a ticket in the adm
 
 ##### S1-E11-14 Landing pages for contests and campaigns
 
-As a content editor, I want to build a page for a contest or campaign from ready-made blocks so that we can announce it without a developer or a new release.
+As an admin, I want to build a page for a contest or campaign from ready-made blocks so that we can announce it without a developer or a new release.
 
 - **Priority:** Should · **Size:** L · **Depends on:** S1-E11-01, S1-E11-06 (the website editing pattern), S1-E10-05 (picture check), S1-E7-01 (for "Remind me"), S1-E12-02 (approved campaigns for the Sponsor block)
 - **Added:** 17 Oct 2026 at Robert's request ("a way for admins to make landing pages too for whenever there's a competition and so on"). Canvas 8.14 and the public contest page.
 - **Where the data lives (proposal):** in the app's database, not the website's, because a landing page shows stories, contest entries and signed-in actions. Written only through `admin_*` functions like every other staff change.
 - **Acceptance criteria:**
-  - Given Website › Landing pages, when a content editor or admin creates a page, then they pick a type (Contest, Campaign or Information), a name and an address `<site>/c/<slug>` (proposal), where the site comes from the brand config (today ghemotoc.themagiccoffin.com, decided 17 Oct 2026, 12:50); a slug on the reserved names list or already in use is refused.
+  - Given Website › Landing pages, when an admin creates a page (website pages are admin-only, decided 17 Oct 2026, 19:19), then they pick a type (Contest, Campaign or Information), a name and an address `<site>/c/<slug>` (proposal), where the site comes from the brand config (today ghemotoc.themagiccoffin.com, decided 17 Oct 2026, 12:50); a slug on the reserved names list or already in use is refused.
   - Given the editor, when a page is built, then it uses only fixed blocks: Hero, Text, Key dates, Who can enter, Prize, How to enter, Rules, Sponsor, Featured stories, Questions and answers, Remind me. There is no free HTML, no custom script and no custom colour; the look comes from one of four brand themes.
   - Given any block, when it is edited, then English and Română are edited side by side with a phone and desktop preview.
   - Given blocks, when staff reorder them, then they move with Up and Down buttons that work from the keyboard (no drag-only control), and the page keeps one heading order (WCAG 2.2 AA).
@@ -323,13 +333,37 @@ As an admin, I want to make invite links so that only the adults I invite can jo
   - Given the same mechanism, when class spaces arrive (S1-E8-11a), then they reuse the `invites` table and join function with `purpose = class_space`, instead of building a second one.
 - **Legal and compliance:** the note is for the admin's memory only; keep it to a first name or a role, and it is deleted with the invite 90 days after expiry (proposal, S1-E13-04 retention). The invitee's email is not stored on the invite. Invites never bypass the `adults_only` check (S1-E2-02).
 
+##### S1-E11-18 Edit interface text
+
+As an admin, I want to change the app's interface text (buttons, errors, labels) from the admin site so that fixing or improving copy never needs an engineer or a new release.
+
+- **Priority:** Must · **Size:** M · **Depends on:** S1-E11-06 (the same editor and version pattern), S1-E1-04, S1-E11-01; back end: `interface_text_overrides` in the app's database (section 1.6; B34 in section 1.7)
+- **Added:** 17 Oct 2026, 19:16 to 19:19 (Robert, chat). The app's interface text stays in the ro and en language files, but staff can edit it from the admin site so changing copy never needs an engineer; edited text is stored in the database on top of the file text, and the files stay the default and what CI checks (19:16). In the March MVP, straight after the CMS, reusing its editor (19:19). Admin-only (19:19). One version per language, not per country, but stored by BCP 47 locale code (`ro`, `en`, later `en-GB`, `en-US`) so regional variants can come later (19:19).
+- **Data:** `interface_text_overrides` (names are proposals): `id`, `key` (must exist in the locale files), `locale` (a BCP 47 code; `ro` or `en` for March), `text`, `status` (draft, scheduled, published, retired), `show_from`, `user_id` (the admin who saved it, not null, references `profiles.id`), `created_at`, `updated_at`; earlier versions are kept for Restore. RLS: anyone, signed in or not, can read published rows (the app needs them on every screen); writes only through `admin_*` functions.
+- **Acceptance criteria:**
+  - Given the admin site, when an admin opens Website › Interface text, then they see every key from the locale files with its current text in each language, and can search by the words shown on screen or by key.
+  - Given a key, when an admin edits it, then the languages are edited side by side with a preview of the text as it will show (placeholders visible), and the file text is shown beside it as the default.
+  - Given a key with plural forms (i18next `_one`, `_few`, `_other`), when it is edited, then each form is its own field and follows the same checks.
+  - Given an override, when it is stored, then there is one version per language, not per country, keyed by a BCP 47 locale code (`ro`, `en`), so a regional variant such as `en-GB` or `en-US` can be added later without changing the table (decided 17 Oct 2026, 19:19); a regional variant falls back to its base language, then to the file text (proposal).
+  - Given a "show from" date, when an admin publishes, then the override goes live at 00:00 Romanian time on that date (within a minute if the date is today) and the current text stays until then.
+  - Given Earlier versions, when an admin presses Restore, then that text comes back as a draft and goes live only when it is published again.
+  - Given "Reset to default", when an admin confirms it, then the override is retired and the app shows the file text again.
+  - Given a save, when the text drops, adds or changes a placeholder from the file text (for example `{{productName}}` or `{{count}}`) or leaves a language empty, then the save is refused with the problem named; ş or ţ (cedilla) are changed to ș and ț (comma below) before saving, and the admin is told (CLAUDE.md rule 4).
+  - Given the app starts in a language, when it loads its text, then it lays the published overrides for that language over the locale files; if the read fails it uses the file text and keeps working, and the read never blocks the first screen (proposal: fetched once and cached for the visit).
+  - Given the locale files, when CI runs, then they stay the default and what `npm run i18n:check` checks. Keys exist only in the files: the admin site can't add a key, and an override whose key was removed from the files is ignored and listed for an admin to tidy up.
+  - Given keys about age, consent, privacy, reporting or messaging rules, when they are listed, then they are marked as legal wording and the editor reminds the admin that the change must match the legal documents; like every key they are admin-only (decided 17 Oct 2026, 19:19).
+  - Given anyone without the admin role (the owner excepted), when they try to save, publish, restore or reset, then the server refuses.
+  - Given any save, publish, restore or reset, when it happens, then the audit log stores who, when, the key and locale, the go-live date and the before and after text.
+  - Given the brand name check (S1-E1-01), when an override is saved, then it may use the `{{productName}}` placeholder but never the literal product name, so a rename stays a change in one place (decided 17 Oct 2026, 12:47).
+- **Legal and compliance:** claims in interface text must stay true (Law 363/2007). Wording that repeats a legal duty must stay accurate: reporting and statement-of-reasons wording (DSA, Regulation (EU) 2022/2065, art. 16 and 17) and consent and privacy wording (GDPR art. 7 and 12: clear and plain language, consent as easy to withdraw as to give). Accessibility: the overridden text keeps the right `lang` attribute (WCAG 2.2, 3.1.1 and 3.1.2), and a control's accessible name keeps containing its visible label (2.5.3, Label in Name). Romanian text is checked by a native speaker before it goes live (Definition of Done).
+
 ##### S1-E11-QA Epic check: Admin site
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
 
-- **Priority:** Must · **Size:** S · **Depends on:** S1-E11-01, S1-E11-02, S1-E11-17
-- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories (S1-E11-09a moved after March, 12:44) and comes last among them in the build order. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-06, S1-E11-07, S1-E11-08, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) get the same check when they land (proposal).
-- **Main journeys:** an admin makes an invite link and an invited adult joins with it; staff sign in to the admin shell, find a user and act on the account, with every step in the audit log. (Data requests moved after March, 12:44.)
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E11-01, S1-E11-02, S1-E11-06, S1-E11-10, S1-E11-12, S1-E11-17, S1-E11-18
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories (S1-E11-09a moved after March, 12:44) and comes last among them in the build order. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-07, S1-E11-08, S1-E11-11, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) get the same check when they land (proposal). Updated 17 Oct 2026, 19:14 to 19:19: the website CMS stories (S1-E11-06, 10, 12) and S1-E11-18 joined the March MVP, so this check covers them.
+- **Main journeys:** an admin makes an invite link and an invited adult joins with it; staff sign in to the admin shell, find a user and act on the account, with every step in the audit log; an admin edits the Romanian market's home page in Română with a future "show from" date, adds a notice and a home page question, and a signed-out visitor sees them go live, while a visitor from a country with no page of its own sees the Romanian market's English page; an admin overrides a button label, sees it in the app, then resets it to the file text; a moderator and a content editor without the admin role are refused on every CMS and interface text action. (Data requests moved after March, 12:44.)
 - **Acceptance criteria:**
   - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting` and the staff personas the epic uses, and every journey passes.
   - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
