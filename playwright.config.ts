@@ -88,6 +88,8 @@ export default defineConfig({
     // the local Supabase so signed-in tests work (S1-E1-04).
     env: {
       VITE_SHOW_DESIGN_PAGE: 'true',
+      // The leaked-password check answers from a fixed list, not the internet (S1-E2-01).
+      PASSWORD_CHECK_STUB: '1',
       VITE_SUPABASE_URL: localSupabase.url,
       VITE_SUPABASE_ANON_KEY: localSupabase.anonKey,
     },

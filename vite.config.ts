@@ -3,8 +3,9 @@
  *
  * Who reads it: `npm run dev` and `npm run build` (Vite), `npm test` (Vitest) and Cloudflare Pages,
  * which runs `npm run build` and publishes the `dist` folder (decided 17 Oct 2026, 12:57).
- * What it does next: compiles src/main.tsx and everything it imports into dist/, and fills the
- * page title in index.html from src/config/brand.ts.
+ * What it does next: compiles src/main.tsx and everything it imports into dist/, fills the page
+ * title in index.html from src/config/brand.ts, and serves our Cloudflare Pages Functions
+ * (functions/) during development and preview (server/pages-functions-plugin.ts, S1-E2-01).
  */
 import { fileURLToPath, URL } from 'node:url';
 
@@ -13,6 +14,7 @@ import react from '@vitejs/plugin-react';
 import { loadEnv, type Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
+import { pagesFunctionsPlugin } from './server/pages-functions-plugin.ts';
 import { readBrand } from './src/config/brand.ts';
 
 /**
@@ -35,7 +37,8 @@ export default defineConfig(({ mode }) => {
   const brand = readBrand(environment);
 
   return {
-    plugins: [react(), tailwindcss(), brandTitlePlugin(brand.productName)],
+    // pagesFunctionsPlugin serves functions/ (Cloudflare Pages Functions) locally (S1-E2-01).
+    plugins: [react(), tailwindcss(), brandTitlePlugin(brand.productName), pagesFunctionsPlugin()],
     resolve: {
       // "@/..." means "src/...", so imports don't need long ../../ chains.
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
@@ -59,7 +62,11 @@ export default defineConfig(({ mode }) => {
         {
           // Repository checks (scripts/) read files from disk, so they run in plain Node.
           extends: true,
-          test: { name: 'scripts', environment: 'node', include: ['scripts/**/*.test.ts'] },
+          test: {
+            name: 'scripts',
+            environment: 'node',
+            include: ['scripts/**/*.test.ts', 'server/**/*.test.ts'],
+          },
         },
       ],
     },

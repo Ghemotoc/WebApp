@@ -3,8 +3,9 @@
  * shouldn't be (story S1-E1-01; decided 17 Oct 2026, 12:47: names are settings, not code).
  *
  * Who calls it: scripts/find-hard-coded-brand-values.test.ts, which runs in `npm test` and so in CI.
- * What it reads: every file under src/, supabase/, public/ and e2e/, plus index.html.
- * Allowed places: src/config/brand.ts (the one brand config) and src/locales/ (the translations).
+ * What it reads: every file under src/, supabase/, public/, e2e/, server/ and functions/, plus index.html.
+ * Allowed places: src/config/brand.ts (the one brand config) and src/locales/ (the translations), plus
+ * supabase/templates/, the auth emails generated from those two (S1-E2-01).
  * The search ignores letter case (Robert, 17 Oct 2026), so "GHEMOTOC", "ghemotoc.com" and
  * "ghemotoc.themagiccoffin.com" are all caught.
  */
@@ -14,10 +15,23 @@ import { join, relative, sep } from 'node:path';
 import { brand, brandDefaults } from '../src/config/brand';
 
 /** Folders and files that must not contain a brand value. Paths are relative to the repository. */
-export const scannedPaths = ['src', 'supabase', 'public', 'e2e', 'index.html'];
+export const scannedPaths = [
+  'src',
+  'supabase',
+  'public',
+  'e2e',
+  'server',
+  'functions',
+  'index.html',
+];
 
 /** The only places a brand value may appear. A path ending in "/" allows the whole folder. */
-export const allowedPaths = ['src/config/brand.ts', 'src/locales/'];
+export const allowedPaths = [
+  'src/config/brand.ts',
+  'src/locales/',
+  // Generated from the two places above by scripts/build-auth-email-templates.ts (S1-E2-01).
+  'supabase/templates/',
+];
 
 /** Folders inside the scanned paths that hold tool output, not our code. */
 const ignoredFolderNames = new Set(['node_modules', '.temp', '.branches']);

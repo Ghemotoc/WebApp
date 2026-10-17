@@ -82,7 +82,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       # The local Supabase for signed-in tests (S1-E1-04): the database, Auth and the API only.
       # playwright.config.ts reads its address and public anon key from `supabase status`.
-      - run: npx supabase start -x studio,imgproxy,storage-api,realtime,edge-runtime,logflare,vector,supavisor,mailpit
+      # Mailpit stays on: sign-up and password-reset tests read their emails from it (S1-E2-01).
+      - run: npx supabase start -x studio,imgproxy,storage-api,realtime,edge-runtime,logflare,vector,supavisor
       - run: npm run test:e2e
       # Keep the report for a week when something fails, so the failure can be looked at.
       - uses: actions/upload-artifact@v4

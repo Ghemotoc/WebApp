@@ -17,5 +17,13 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["vite.config.ts", "playwright.config.ts", "eslint.config.js", "scripts", "e2e"]
+  "include": [
+    "vite.config.ts",
+    "playwright.config.ts",
+    "eslint.config.js",
+    "scripts",
+    "e2e",
+    "server",
+    "functions"
+  ]
 }
