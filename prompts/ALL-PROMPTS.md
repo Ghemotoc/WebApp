@@ -24,7 +24,7 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 **When the canvas changes:** ask Claude (in the WattPad Better Be Gone project) to refresh `design/` in the repository, so Claude Code always builds from the latest boards.
 
 
-**March MVP: 49 stories.**
+**March MVP: 54 stories.**
 
 | # | Story | Title | Priority | Size | Wave |
 | --- | --- | --- | --- | --- | --- |
@@ -45,50 +45,120 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 | 15 | S1-E3-01 | Create a story | Must | M | Wave 2: Write and read |
 | 16 | S1-E3-02 | Chapter editor with autosave | Must | L | Wave 2: Write and read |
 | 17 | S1-E3-03 | Publish, unpublish and schedule chapters | Must | M | Wave 2: Write and read |
-| 18 | S1-E3-05 | Story status and settings | Must | S | Wave 2: Write and read |
-| 19 | S1-E3-06 | Ratings and labels: age rating, fan fiction, parody and AI assistance | Must | S | Wave 2: Write and read |
-| 20 | S1-E4-01 | Chapter reader | Must | L | Wave 2: Write and read |
-| 21 | S1-E4-04 | Web teaser for shared links | Must | M | Wave 2: Write and read |
-| 22 | S1-E4-06a | Copy protection and traceability | Should (06a Must for March) | L (split: 06a the web, S, in the March MVP; 06b the apps, after March) | Wave 2: Write and read |
-| 23 | S1-E5-05 | Writer profile page | Must | M | Wave 2: Write and read |
-| 24 | S1-E10-01 | Report button on everything | Must | M | Wave 3: Safety and staff |
-| 25 | S1-E10-02 | One web form for all reports, including authority removal orders | Must | M | Wave 3: Safety and staff |
-| 26 | S1-E10-03a | Moderation queue with priority tiers | Must | L (split: 03a one queue with tiers, deadlines and a decision with a note, M, in the March MVP; 03b grouping, claiming and visible timers, after March) | Wave 3: Safety and staff |
-| 27 | S1-E10-04 | Statements of reasons | Must | M | Wave 3: Safety and staff |
-| 28 | S1-E10-05 | Picture check on upload | Must | M | Wave 3: Safety and staff |
-| 29 | S1-E10-06 | Sanctions and repeat offenders | Must | M | Wave 3: Safety and staff |
-| 30 | S1-E10-09 | Terrorist content removal orders | Must | M | Wave 3: Safety and staff |
-| 31 | S1-E10-10 | Safeguarding escalation | Must | M | Wave 3: Safety and staff |
-| 32 | S1-E11-01 | Admin shell with protected access | Must | M | Wave 3: Safety and staff |
-| 33 | S1-E11-02 | User management | Must | M | Wave 3: Safety and staff |
-| 34 | S1-E5-01 | Browse by category and tag | Must | M | Wave 4: Social and discovery |
-| 35 | S1-E5-02 | Sort options | Must | S | Wave 4: Social and discovery |
-| 36 | S1-E5-03 | Popularity ranking | Must | M | Wave 4: Social and discovery |
-| 37 | S1-E5-08 | Public website home page | Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) | M | Wave 4: Social and discovery |
-| 38 | S1-E5-09 | See all page for a shelf | Must | S | Wave 4: Social and discovery |
-| 39 | S1-E6-01 | Comment on a chapter | Must | M | Wave 4: Social and discovery |
-| 40 | S1-E6-03 | Like a chapter | Must | S | Wave 4: Social and discovery |
-| 41 | S1-E6-05 | Follow a writer or a story | Must | S | Wave 4: Social and discovery |
-| 42 | S1-E7-01 | In-app notifications | Must | M | Wave 4: Social and discovery |
-| 43 | S1-E11-09a | Data requests and story export | Must (GDPR) | L (split before building: 09a the request log, identity check, deadline, the machine-readable copy and the Word files, in the March MVP; 09b the PDF files, after March) | Wave 5: Rights, numbers and shipping |
-| 44 | S1-E13-02 | Download my data | Must | M | Wave 5: Rights, numbers and shipping |
-| 45 | S1-E13-03 | Delete my account in the app | Must | M | Wave 5: Rights, numbers and shipping |
-| 46 | S1-E13-04 | Retention schedule and log minimisation | Must | M | Wave 5: Rights, numbers and shipping |
-| 47 | S1-E13-05 | Download my stories | Should | S | Wave 5: Rights, numbers and shipping |
-| 48 | S1-E14-04 | Contact us with a ready-made EU helpdesk | Must | S | Wave 5: Rights, numbers and shipping |
-| 49 | S1-E15-02 | First-party metrics for the March test | Must | M | Wave 5: Rights, numbers and shipping |
+| 18 | S1-E3-04 | Manage chapters | Must | M | Wave 2: Write and read |
+| 19 | S1-E3-05 | Story status and settings | Must | S | Wave 2: Write and read |
+| 20 | S1-E3-06 | Ratings and labels: age rating, fan fiction, parody and AI assistance | Must | S | Wave 2: Write and read |
+| 21 | S1-E4-01 | Chapter reader | Must | L | Wave 2: Write and read |
+| 22 | S1-E4-04 | Web teaser for shared links | Must | M | Wave 2: Write and read |
+| 23 | S1-E4-06a | Copy protection and traceability | Should (06a Must for March) | L (split: 06a the web, S, in the March MVP; 06b the apps, after March) | Wave 2: Write and read |
+| 24 | S1-E5-05 | Writer profile page | Must | M | Wave 2: Write and read |
+| 25 | S1-E10-01 | Report button on everything | Must | M | Wave 3: Safety and staff |
+| 26 | S1-E10-02 | One web form for all reports, including authority removal orders | Must | M | Wave 3: Safety and staff |
+| 27 | S1-E10-03a | Moderation queue with priority tiers | Must | L (split: 03a one queue with tiers, deadlines and a decision with a note, M, in the March MVP; 03b grouping, claiming and visible timers, after March) | Wave 3: Safety and staff |
+| 28 | S1-E10-04 | Statements of reasons | Must | M | Wave 3: Safety and staff |
+| 29 | S1-E10-05 | Picture check on upload | Must | M | Wave 3: Safety and staff |
+| 30 | S1-E10-06 | Sanctions and repeat offenders | Must | M | Wave 3: Safety and staff |
+| 31 | S1-E10-09 | Terrorist content removal orders | Must | M | Wave 3: Safety and staff |
+| 32 | S1-E10-10 | Safeguarding escalation | Must | M | Wave 3: Safety and staff |
+| 33 | S1-E10-08 | "Copied from a published work" report | Must | M | Wave 3: Safety and staff |
+| 34 | S1-E10-13 | Country-specific emergency and safety contacts | Must | M | Wave 3: Safety and staff |
+| 35 | S1-E11-01 | Admin shell with protected access | Must | M | Wave 3: Safety and staff |
+| 36 | S1-E11-02 | User management | Must | M | Wave 3: Safety and staff |
+| 37 | S1-E5-01 | Browse by category and tag | Must | M | Wave 4: Social and discovery |
+| 38 | S1-E5-02 | Sort options | Must | S | Wave 4: Social and discovery |
+| 39 | S1-E5-03 | Popularity ranking | Must | M | Wave 4: Social and discovery |
+| 40 | S1-E5-08 | Public website home page | Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) | M | Wave 4: Social and discovery |
+| 41 | S1-E5-09 | See all page for a shelf | Must | S | Wave 4: Social and discovery |
+| 42 | S1-E6-01 | Comment on a chapter | Must | M | Wave 4: Social and discovery |
+| 43 | S1-E6-02 | Emoji reactions on comments | Must | S | Wave 4: Social and discovery |
+| 44 | S1-E6-03 | Like a chapter | Must | S | Wave 4: Social and discovery |
+| 45 | S1-E6-04 | Private downvote | Must | S | Wave 4: Social and discovery |
+| 46 | S1-E6-05 | Follow a writer or a story | Must | S | Wave 4: Social and discovery |
+| 47 | S1-E7-01 | In-app notifications | Must | M | Wave 4: Social and discovery |
+| 48 | S1-E11-09a | Data requests and story export | Must (GDPR) | L (split before building: 09a the request log, identity check, deadline, the machine-readable copy and the Word files, in the March MVP; 09b the PDF files, after March) | Wave 5: Rights, numbers and shipping |
+| 49 | S1-E13-02 | Download my data | Must | M | Wave 5: Rights, numbers and shipping |
+| 50 | S1-E13-03 | Delete my account in the app | Must | M | Wave 5: Rights, numbers and shipping |
+| 51 | S1-E13-04 | Retention schedule and log minimisation | Must | M | Wave 5: Rights, numbers and shipping |
+| 52 | S1-E13-05 | Download my stories | Should | S | Wave 5: Rights, numbers and shipping |
+| 53 | S1-E14-04 | Contact us with a ready-made EU helpdesk | Must | S | Wave 5: Rights, numbers and shipping |
+| 54 | S1-E15-02 | First-party metrics for the March test | Must | M | Wave 5: Rights, numbers and shipping |
 
 ## 1. S1-E1-01 Repository, environments and CI skeleton
 
-Use the dedicated prompt in `prompts/01-session-S1-E1-01.md` (the same text is in the build guide's Files and prompts tab).
+Copy this prompt whole. It is also saved on its own as `prompts/01-session-S1-E1-01.md` in the repository.
+
+```text
+We are working on story S1-E1-01 (Repository, environments and CI skeleton) only.
+This is the first session: the repository holds only the starter kit (CLAUDE.md, docs/, design/, prompts/). There is no app code yet.
+
+Read first: CLAUDE.md, docs/architecture.md (sections 1.5, 1.7, 1.11 and 1.12), docs/definition-of-done.md, and the story S1-E1-01 in docs/stories/.
+
+What I want from this session:
+- A React + Vite + TypeScript (strict) app skeleton with Tailwind, shadcn/ui, React Router, TanStack Query and i18next (ro and en), and an empty home route that says "Ghemotoc" in both languages.
+- The Supabase CLI as a dev dependency, `supabase init`, and the npm scripts CLAUDE.md lists (lint, typecheck, types:gen, types:check, test, test:e2e, i18n:check), each working, even if some only run an empty suite for now.
+- GitHub Actions:
+  1. On every pull request: lint, typecheck, unit tests, database tests against a local Supabase (`supabase db start`), the i18n key check and a Playwright + axe smoke test of the home page. A failing check blocks the merge.
+  2. Database changes: Supabase's GitHub integration is connected to the staging project and applies supabase/migrations when main changes. Don't add a GitHub Actions job that also pushes migrations; make sure the supabase/ folder and config work with that integration.
+  3. The web deploy step exists but is switched off: the hosting provider is OPEN (Q38).
+- A SessionStart hook that runs `npm ci` only when package-lock.json changed, so cloud sessions start ready. Merge it into the existing .claude/settings.json and keep its deny rules.
+- docs/runbooks/README.md with one line per runbook still to write.
+
+Production deploys and tagged releases: write the workflow but leave it disabled until a production project exists.
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The files you will create.
+2. A table mapping each acceptance criterion of S1-E1-01 to the check or test that proves it.
+3. Anything OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check, fix failures, push your working branch (in a cloud session, the branch the session was given) and open the pull request titled "S1-E1-01: Repository, environments and CI skeleton", then give me:
+- a summary of what changed and the check results,
+- step-by-step instructions for me, a non-developer on a Mac, to run the app locally and see it,
+- the pull request description using .github/pull_request_template.md.
+```
 
 ## 2. S1-E1-03 Design tokens, themes and app shell
 
-Use the dedicated prompt in `prompts/02-session-S1-E1-03.md` (the same text is in the build guide's Files and prompts tab).
+Copy this prompt whole. It is also saved on its own as `prompts/02-session-S1-E1-03.md` in the repository.
+
+```text
+We are working on story S1-E1-03 (Design tokens, themes and app shell) only. S1-E1-01 is merged.
+
+Read first: CLAUDE.md, docs/definition-of-done.md (all the design rules), the story S1-E1-03 in docs/stories/, design/README.md, and these boards' HTML in design/boards/: Discover, Story, Reader, Search, Settings, AdFormats, AdminSponsors and AdminUsers. Look at the matching pictures in design/renders/ too.
+
+What I want from this session:
+- Design tokens taken from the boards' HTML, not guessed: colours (light and night), the four fonts (Bricolage Grotesque headings, Inter body, Cutive eyebrows at 14 px in sentence case, Shadows Into Light Two handwriting), type sizes, spacing, radii, borders and focus rings.
+- The app shell: the floating top bar from the public boards, the staff bar from the admin boards, the footer, light and night mode, and "reduce motion" respected.
+- A /design route that shows every component on one page, built to match the boards: buttons, links, pills and chips (every state), the drop-down with the tmc-sel rule and the 14 px chevron, inputs, cards and story cards, shelves with scroll arrows that only show when the row overflows (no visible scrollbar), label rows with fine lines (tmc-rows), notices, the ad slots (wide banner, portrait, side box, in-list card, each labelled "Ad" or "Sponsored"), and an empty state.
+- A CI contrast test for every text and background token pair (WCAG 2.2 AA), and axe on /design.
+
+If this is too big for one pull request, propose a split into S1-E1-03a (tokens, themes, shell) and S1-E1-03b (the /design components page) in your plan.
+
+STEP 1, PLAN ONLY. Give me the files, a table mapping each acceptance criterion and each design rule to its test or check, and anything OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build, run every check, push your working branch (in a cloud session, the branch the session was given), open the pull request titled "S1-E1-03: ..." and give me the summary, the check results, the steps to open /design on my Mac next to the canvas pictures, and the pull request description.
+```
 
 ## 3. S1-E1-02 Database baseline with deny-by-default row-level security
 
-Use the dedicated prompt in `prompts/03-session-S1-E1-02.md` (the same text is in the build guide's Files and prompts tab).
+Copy this prompt whole. It is also saved on its own as `prompts/03-session-S1-E1-02.md` in the repository.
+
+```text
+We are working on story S1-E1-02 (Database baseline with deny-by-default row-level security) only. S1-E1-01 is merged.
+
+Read first: CLAUDE.md, docs/architecture.md (sections 1.6, 1.7 and 1.10), docs/definition-of-done.md and the story S1-E1-02 in docs/stories/.
+
+Follow "contract first" (architecture 1.7.2): migrations, then pgTAP tests, then generated types, then seed.
+
+STEP 1, PLAN ONLY. Give me:
+1. The migrations: tables, enums, functions (audit_log with log_staff_action(), reportable_type, feature_flags, settings, and the account gate skeleton account_state(), is_active_member(), age_band(), is_staff(), has_aal2()).
+2. Every RLS policy: who can select, insert, update or delete, and why.
+3. The CI checks: no table without RLS and a policy, no user-content table without a not-null user_id, no service role key in the bundle, types:check.
+4. The seed personas from architecture 1.7.2, with years of birth worked out from the current year.
+5. A table mapping each acceptance criterion to its test.
+6. Anything OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build, run every check (including `npx supabase test db`), push your working branch (in a cloud session, the branch the session was given), open the pull request titled "S1-E1-02: ..." and give me the summary, the check results, how I can see the tables and the test accounts locally, and the pull request description.
+```
 
 ## 4. S1-E1-04 Romanian and English interface
 
@@ -454,7 +524,33 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 18. S1-E3-05 Story status and settings
+## 18. S1-E3-04 Manage chapters
+
+```text
+We are working on story S1-E3-04 (Manage chapters) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
+
+CONTEXT:
+- Already merged: S1-E3-03
+- Decisions that apply: see docs/decisions.md; anything new: [write it here or delete this line]
+- Platform for this story: web (March is web only)
+- Designs: Chapters (4.4 Manage chapters)
+- Back-end pieces (architecture 1.7.3): B16, B17; check in architecture 1.7.4 which are real and which you may mock
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change.
+2. Migrations: tables, columns, indexes, RLS policies (who can select, insert, update or delete, and why).
+3. A table mapping each acceptance criterion to the test(s) that prove it.
+4. New i18n keys (ro and en), analytics events and moderation hooks.
+5. Anything in the story that is OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E3-04: Manage chapters", then give me:
+- a summary of what changed,
+- the check results,
+- step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
+- the pull request description using .github/pull_request_template.md.
+```
+
+## 19. S1-E3-05 Story status and settings
 
 ```text
 We are working on story S1-E3-05 (Story status and settings) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -480,7 +576,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 19. S1-E3-06 Ratings and labels: age rating, fan fiction, parody and AI assistance
+## 20. S1-E3-06 Ratings and labels: age rating, fan fiction, parody and AI assistance
 
 ```text
 We are working on story S1-E3-06 (Ratings and labels: age rating, fan fiction, parody and AI assistance) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -506,7 +602,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 20. S1-E4-01 Chapter reader
+## 21. S1-E4-01 Chapter reader
 
 ```text
 We are working on story S1-E4-01 (Chapter reader) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -532,7 +628,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 21. S1-E4-04 Web teaser for shared links
+## 22. S1-E4-04 Web teaser for shared links
 
 ```text
 We are working on story S1-E4-04 (Web teaser for shared links) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -558,7 +654,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 22. S1-E4-06a Copy protection and traceability
+## 23. S1-E4-06a Copy protection and traceability
 
 ```text
 We are working on story S1-E4-06a (Copy protection and traceability) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -584,7 +680,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 23. S1-E5-05 Writer profile page
+## 24. S1-E5-05 Writer profile page
 
 ```text
 We are working on story S1-E5-05 (Writer profile page) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -610,7 +706,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 24. S1-E10-01 Report button on everything
+## 25. S1-E10-01 Report button on everything
 
 ```text
 We are working on story S1-E10-01 (Report button on everything) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -636,7 +732,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 25. S1-E10-02 One web form for all reports, including authority removal orders
+## 26. S1-E10-02 One web form for all reports, including authority removal orders
 
 ```text
 We are working on story S1-E10-02 (One web form for all reports, including authority removal orders) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -662,7 +758,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 26. S1-E10-03a Moderation queue with priority tiers
+## 27. S1-E10-03a Moderation queue with priority tiers
 
 ```text
 We are working on story S1-E10-03a (Moderation queue with priority tiers) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -688,7 +784,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 27. S1-E10-04 Statements of reasons
+## 28. S1-E10-04 Statements of reasons
 
 ```text
 We are working on story S1-E10-04 (Statements of reasons) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -714,7 +810,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 28. S1-E10-05 Picture check on upload
+## 29. S1-E10-05 Picture check on upload
 
 ```text
 We are working on story S1-E10-05 (Picture check on upload) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -740,7 +836,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 29. S1-E10-06 Sanctions and repeat offenders
+## 30. S1-E10-06 Sanctions and repeat offenders
 
 ```text
 We are working on story S1-E10-06 (Sanctions and repeat offenders) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -766,7 +862,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 30. S1-E10-09 Terrorist content removal orders
+## 31. S1-E10-09 Terrorist content removal orders
 
 ```text
 We are working on story S1-E10-09 (Terrorist content removal orders) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -792,7 +888,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 31. S1-E10-10 Safeguarding escalation
+## 32. S1-E10-10 Safeguarding escalation
 
 ```text
 We are working on story S1-E10-10 (Safeguarding escalation) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -818,7 +914,59 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 32. S1-E11-01 Admin shell with protected access
+## 33. S1-E10-08 "Copied from a published work" report
+
+```text
+We are working on story S1-E10-08 ("Copied from a published work" report) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
+
+CONTEXT:
+- Already merged: S1-E10-01, S1-E10-03
+- Decisions that apply: see docs/decisions.md; anything new: [write it here or delete this line]
+- Platform for this story: web (March is web only)
+- Designs: ReportDialog (6.4 Report something), ModCase (8.3 Moderation case)
+- Back-end pieces (architecture 1.7.3): B04, B14, B26; check in architecture 1.7.4 which are real and which you may mock
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change.
+2. Migrations: tables, columns, indexes, RLS policies (who can select, insert, update or delete, and why).
+3. A table mapping each acceptance criterion to the test(s) that prove it.
+4. New i18n keys (ro and en), analytics events and moderation hooks.
+5. Anything in the story that is OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-08: "Copied from a published work" report", then give me:
+- a summary of what changed,
+- the check results,
+- step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
+- the pull request description using .github/pull_request_template.md.
+```
+
+## 34. S1-E10-13 Country-specific emergency and safety contacts
+
+```text
+We are working on story S1-E10-13 (Country-specific emergency and safety contacts) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
+
+CONTEXT:
+- Already merged: S1-E2-10 (country from the connection), S1-E10-02 (the report form), S1-E11-13 (support tickets), S1-E11-01; back end: a `safety_contacts` table (country, kind, label, number, link, language, last checked, checked by) and a monthly scheduled job
+- Decisions that apply: see docs/decisions.md; anything new: [write it here or delete this line]
+- Platform for this story: web (March is web only)
+- Designs: no board of its own; follow the components on /design
+- Back-end pieces (architecture 1.7.3): see the story; check in architecture 1.7.4 which are real and which you may mock
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change.
+2. Migrations: tables, columns, indexes, RLS policies (who can select, insert, update or delete, and why).
+3. A table mapping each acceptance criterion to the test(s) that prove it.
+4. New i18n keys (ro and en), analytics events and moderation hooks.
+5. Anything in the story that is OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-13: Country-specific emergency and safety contacts", then give me:
+- a summary of what changed,
+- the check results,
+- step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
+- the pull request description using .github/pull_request_template.md.
+```
+
+## 35. S1-E11-01 Admin shell with protected access
 
 ```text
 We are working on story S1-E11-01 (Admin shell with protected access) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -844,7 +992,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 33. S1-E11-02 User management
+## 36. S1-E11-02 User management
 
 ```text
 We are working on story S1-E11-02 (User management) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -870,7 +1018,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 34. S1-E5-01 Browse by category and tag
+## 37. S1-E5-01 Browse by category and tag
 
 ```text
 We are working on story S1-E5-01 (Browse by category and tag) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -896,7 +1044,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 35. S1-E5-02 Sort options
+## 38. S1-E5-02 Sort options
 
 ```text
 We are working on story S1-E5-02 (Sort options) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -922,7 +1070,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 36. S1-E5-03 Popularity ranking
+## 39. S1-E5-03 Popularity ranking
 
 ```text
 We are working on story S1-E5-03 (Popularity ranking) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -948,7 +1096,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 37. S1-E5-08 Public website home page
+## 40. S1-E5-08 Public website home page
 
 ```text
 We are working on story S1-E5-08 (Public website home page) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -974,7 +1122,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 38. S1-E5-09 See all page for a shelf
+## 41. S1-E5-09 See all page for a shelf
 
 ```text
 We are working on story S1-E5-09 (See all page for a shelf) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1000,7 +1148,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 39. S1-E6-01 Comment on a chapter
+## 42. S1-E6-01 Comment on a chapter
 
 ```text
 We are working on story S1-E6-01 (Comment on a chapter) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1026,7 +1174,33 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 40. S1-E6-03 Like a chapter
+## 43. S1-E6-02 Emoji reactions on comments
+
+```text
+We are working on story S1-E6-02 (Emoji reactions on comments) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
+
+CONTEXT:
+- Already merged: S1-E6-01
+- Decisions that apply: see docs/decisions.md; anything new: [write it here or delete this line]
+- Platform for this story: web (March is web only)
+- Designs: no board of its own; follow the components on /design
+- Back-end pieces (architecture 1.7.3): see the story; check in architecture 1.7.4 which are real and which you may mock
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change.
+2. Migrations: tables, columns, indexes, RLS policies (who can select, insert, update or delete, and why).
+3. A table mapping each acceptance criterion to the test(s) that prove it.
+4. New i18n keys (ro and en), analytics events and moderation hooks.
+5. Anything in the story that is OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-02: Emoji reactions on comments", then give me:
+- a summary of what changed,
+- the check results,
+- step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
+- the pull request description using .github/pull_request_template.md.
+```
+
+## 44. S1-E6-03 Like a chapter
 
 ```text
 We are working on story S1-E6-03 (Like a chapter) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1052,7 +1226,33 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 41. S1-E6-05 Follow a writer or a story
+## 45. S1-E6-04 Private downvote
+
+```text
+We are working on story S1-E6-04 (Private downvote) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
+
+CONTEXT:
+- Already merged: S1-E6-01, S1-E10-03
+- Decisions that apply: see docs/decisions.md; anything new: [write it here or delete this line]
+- Platform for this story: web (March is web only)
+- Designs: Thread (5.2 Forum thread)
+- Back-end pieces (architecture 1.7.3): B21, B23; check in architecture 1.7.4 which are real and which you may mock
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change.
+2. Migrations: tables, columns, indexes, RLS policies (who can select, insert, update or delete, and why).
+3. A table mapping each acceptance criterion to the test(s) that prove it.
+4. New i18n keys (ro and en), analytics events and moderation hooks.
+5. Anything in the story that is OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-04: Private downvote", then give me:
+- a summary of what changed,
+- the check results,
+- step-by-step instructions for me to test it by hand, written for a non-developer, with an adult, a 16 to 17 and an under-16 test account where relevant,
+- the pull request description using .github/pull_request_template.md.
+```
+
+## 46. S1-E6-05 Follow a writer or a story
 
 ```text
 We are working on story S1-E6-05 (Follow a writer or a story) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1078,7 +1278,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 42. S1-E7-01 In-app notifications
+## 47. S1-E7-01 In-app notifications
 
 ```text
 We are working on story S1-E7-01 (In-app notifications) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1104,7 +1304,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 43. S1-E11-09a Data requests and story export
+## 48. S1-E11-09a Data requests and story export
 
 ```text
 We are working on story S1-E11-09a (Data requests and story export) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1130,7 +1330,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 44. S1-E13-02 Download my data
+## 49. S1-E13-02 Download my data
 
 ```text
 We are working on story S1-E13-02 (Download my data) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1156,7 +1356,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 45. S1-E13-03 Delete my account in the app
+## 50. S1-E13-03 Delete my account in the app
 
 ```text
 We are working on story S1-E13-03 (Delete my account in the app) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1182,7 +1382,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 46. S1-E13-04 Retention schedule and log minimisation
+## 51. S1-E13-04 Retention schedule and log minimisation
 
 ```text
 We are working on story S1-E13-04 (Retention schedule and log minimisation) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1208,7 +1408,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 47. S1-E13-05 Download my stories
+## 52. S1-E13-05 Download my stories
 
 ```text
 We are working on story S1-E13-05 (Download my stories) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1234,7 +1434,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 48. S1-E14-04 Contact us with a ready-made EU helpdesk
+## 53. S1-E14-04 Contact us with a ready-made EU helpdesk
 
 ```text
 We are working on story S1-E14-04 (Contact us with a ready-made EU helpdesk) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1260,7 +1460,7 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the pull request description using .github/pull_request_template.md.
 ```
 
-## 49. S1-E15-02 First-party metrics for the March test
+## 54. S1-E15-02 First-party metrics for the March test
 
 ```text
 We are working on story S1-E15-02 (First-party metrics for the March test) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story itself in docs/stories/.
@@ -1296,7 +1496,6 @@ Use `prompts/story-template.md` for these, in the order of architecture section 
 | S1-E2-06 | Onboarding | Should | M |
 | S1-E2-09 | Sign up and log in with Google, Apple or Microsoft | Should | M |
 | S1-E2-11 | Teacher badge | Should | M |
-| S1-E3-04 | Manage chapters | Must | M |
 | S1-E3-07 | Writer dashboard | Should | M |
 | S1-E3-08 | Where a story can be read: web and app, or app only | Must | M |
 | S1-E3-09 | Pictures in chapters | Should | M |
@@ -1315,8 +1514,6 @@ Use `prompts/story-template.md` for these, in the order of architecture section 
 | S1-E5-04 | Search stories and writers | Must | M |
 | S1-E5-06 | Public-domain classics shelf | Should | M |
 | S1-E5-07 | Seasonal doodles | Could | S |
-| S1-E6-02 | Emoji reactions on comments | Must | S |
-| S1-E6-04 | Private downvote | Must | S |
 | S1-E6-06 | Inline paragraph comments | Could | L |
 | S1-E7-02 | Email notifications and digests | Should | M |
 | S1-E7-03 | Push notifications in the apps | Should | M |
@@ -1337,10 +1534,8 @@ Use `prompts/story-template.md` for these, in the order of architecture section 
 | S1-E9-03 | Adult and minor messaging rules | Must | M |
 | S1-E9-04 | Message settings and retention | Should | S |
 | S1-E10-07 | Appeals | Should | M |
-| S1-E10-08 | "Copied from a published work" report | Must | M |
 | S1-E10-11 | Moderator mail | Should | M |
 | S1-E10-12 | Spam and abuse rate limits | Must | M |
-| S1-E10-13 | Country-specific emergency and safety contacts | Must | M |
 | S1-E11-03 | Content settings and feature flags | Must | M |
 | S1-E11-04 | Metrics and compliance logs | Should | M |
 | S1-E11-05 | Markets and languages | Must | M |

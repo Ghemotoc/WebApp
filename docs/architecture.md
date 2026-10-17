@@ -55,7 +55,7 @@ The plan says to decide the mobile approach in iteration 2. These are the realis
 ### 1.4 The March 2027 constraint (read this before committing to scope)
 
 - **Today to March is about 19 weeks.** Business Model Innovation and Startup Essentials take four evenings a week in November and December; Execution runs January to March. The developer and community manager are planned from launch, not before.
-- **Decided 16 Oct 2026 (late evening, Q32): Robert builds without a programmer.** The March slice is re-cut to a real MVP in section 1.13: 49 stories and about 552 hours (50 and about 564 before S1-E1-06 was dropped on 17 Oct 2026, 11:20), down from 53 stories and about 660. At 10 to 12 hours a week that is still about three times the time available, so section 1.13 sets out the capacity problem plainly.
+- **Decided 16 Oct 2026 (late evening, Q32): Robert builds without a programmer.** The March slice is re-cut to a real MVP in section 1.13: 54 stories and about 594 hours (S1-E1-06 dropped and five Must stories added on 17 Oct 2026; it was 50 and about 564 on 16 Oct 2026, 11:20), down from 53 stories and about 660. At 10 to 12 hours a week that is still about three times the time available, so section 1.13 sets out the capacity problem plainly.
 - **Store steps add calendar time you can't speed up:** Apple and Google developer accounts in the company's name need the company (Romanian SRL or Swedish AB: **OPEN**, Q55) and a D-U-N-S number. A new Google Play personal account currently needs a closed test with 12 testers for 14 days (check the rule when you open it), and first app reviews can take days and bounce.
 - **What this means:** "all operating systems with real users by March" and "solo founder in the evenings" can't both hold. The developer hire and an SSES co-founder are off the table (Q32, Q57), so the levers left are hours a week, the date and scope. Section 1.13 proposes the scope; hours and date stay **OPEN** for Robert.
 
@@ -187,7 +187,7 @@ For any story that touches both the database and a screen, Claude Code works in 
 | `pending_check` | any | age check not done | read-only, 14-day clean-up |
 | `failed_check` | any | failed, manual check requested | read-only, manual check queue |
 | `teacher` | 18 or over | Teacher badge approved | class spaces |
-| `owner`, `admin`, `moderator`, `support`, `editor` | 18 or over | staff, TOTP enrolled | staff areas and least privilege |
+| `owner`, `admin`, `moderator`, `support`, `editor` | 18 or over | staff, Google Workspace session | staff areas and least privilege |
 | `suspended_user`, `banned_user` | 18 or over | sanctioned | sanctions everywhere |
 | `blocker`, `blocked` | mixed | one blocks the other | blocks everywhere |
 
@@ -198,7 +198,7 @@ Each piece has an ID (B01 and so on) so the screen tables below can point to it.
 | ID | Piece | Built in | While it isn't built yet |
 | --- | --- | --- | --- |
 | B01 | Supabase project, migrations, CI, generated types | S1-E1-01, S1-E1-02 | nothing to mock; it comes first |
-| B02 | **Account gate:** SQL functions `account_state(user_id)`, `is_active_member()`, `age_band()`, `is_staff(role)` and `has_aal2()` used by every write policy | skeleton in S1-E1-02, filled in by S1-E2-01, S1-E2-02, S1-E2-08, S1-E2-03 and S1-E10-06 | seed personas set the state directly |
+| B02 | **Account gate:** SQL functions `account_state(user_id)`, `is_active_member()`, `age_band()`, `is_staff(role)` and `is_staff_session()` used by every write policy | skeleton in S1-E1-02, filled in by S1-E2-01, S1-E2-02, S1-E2-08, S1-E2-03 and S1-E10-06 | seed personas set the state directly |
 | B03 | Audit log: append-only `audit_log` table and `log_staff_action()` | S1-E1-02 | nothing to mock |
 | B04 | Reporting registry: `reportable_type` enum, `reports`, `report_item()` | enum in S1-E1-02, the rest in S1-E10-01 | the Report button can call a stub until S1-E10-01 |
 | B05 | Auth and `profiles`: the user ID is created here (section 1.6) | S1-E2-01 | local Supabase Auth is real; local email goes to Mailpit |
@@ -206,7 +206,7 @@ Each piece has an ID (B01 and so on) so the screen tables below can point to it.
 | B07 | Age check: `age-check-start` and `yoti-webhook` edge functions, `age_check_sessions`, manual check requests | S1-E2-08 | a local `yoti-mock` function and a script that sends a webhook signed with a test key (pass, fail, time-out); the Yoti sandbox on staging before Done |
 | B08 | Parental consent: `parental_consents`, `consent-request` and `consent-confirm` | S1-E2-03 | Mailpit catches the parent's email |
 | B09 | Email: provider, sending function and templates in both languages | Auth email in S1-E2-01; notifications in S1-E7-02 | Mailpit locally; the real provider only on staging and production |
-| B10 | Staff roles, permissions and TOTP two-factor (aal2) | S1-E2-07 | local Auth supports TOTP, so nothing to mock |
+| B10 | Staff roles, permissions and `is_staff_session()` (Google Workspace sign-in with Google's 2-Step Verification) | S1-E2-07 | locally, a test flag marks a seeded staff persona's session as a Google Workspace session |
 | B11 | Markets, languages and the country from the connection (`signup-context`) | S1-E11-05, S1-E2-10 | seeded rows; the country header faked by a local-only setting |
 | B12 | Settings, feature flags, rate limits and reserved names, read by `get_client_config()` | tables in S1-E1-02, admin screens in S1-E11-03 | seeded defaults |
 | B13 | Writing: `stories`, `chapters`, revisions, tags, categories, content labels, `save_chapter_draft()` | S1-E3-01 to S1-E3-08 | nothing to mock |
@@ -223,7 +223,7 @@ Each piece has an ID (B01 and so on) so the screen tables below can point to it.
 | B24 | Schools: `schools`, `teacher_checks`, class space fields, `space_invites`, `certificates`, `certificate-pdf` | S1-E2-11, S1-E8-11, S1-E8-12 | the PDF is a stub until S1-E8-12 |
 | B25 | Messages: conversations, messages, requests, `can_message(a, b)` | S1-E9 | nothing to mock |
 | B26 | Safety: `cases`, `case_actions`, `statements_of_reasons`, `appeals`, `sanctions`, `authority_orders`, queue views, on-call alert | S1-E10 | the phone alert is a stub that only logs |
-| B27 | Admin functions: `admin_*` functions, each checking role, permission and aal2 and writing the audit log in the same transaction | S1-E11 | nothing to mock |
+| B27 | Admin functions: `admin_*` functions, each checking role, permission and `is_staff_session()` and writing the audit log in the same transaction | S1-E11 | nothing to mock |
 | B28 | Data rights: `exports`, `export-build`, `data_requests`, `story-export` (Word from the first version, PDF later), the deletion job | S1-E13-02, S1-E11-09, S1-E13-03, S1-E13-05 | Word returns a placeholder file until S1-E11-09a lands; PDF until S1-E11-09b |
 | B29 | Banners and sponsors: sponsors, campaigns, daily stats, `pick_banner(context)` | S1-E12 | one seeded test campaign |
 | B30 | Seasonal doodles: `seasonal_occasions`, `current_occasion()`; the doodles themselves are SVG files in the app | S1-E11-11 (S1-E5-07 shows them) | seeded occasions |
@@ -507,7 +507,7 @@ Added 16 Oct 2026 (late evening) at Robert's request. Screens 8.1 to 8.9 are on 
 #### 1.8.1 Shape
 
 - **Same codebase, staff routes.** The admin site lives in the same React app under `/staff`, loaded as a separate chunk so its code never ships in the reader's bundle. Plain components, no doodles (Definition of Done, design rules).
-- **The server decides, not the menu.** Every staff screen reads and writes only through `admin_*` database functions or staff edge functions (B27). Each one checks, in this order: a staff role, the permission for that area, two-factor completed in this session (aal2), then does the work and writes the audit log in the same transaction. Hiding a menu item is a convenience, never the protection.
+- **The server decides, not the menu.** Every staff screen reads and writes only through `admin_*` database functions or staff edge functions (B27). Each one checks, in this order: a staff role, the permission for that area, a staff session from the company's Google Workspace sign-in (`is_staff_session()`), then does the work and writes the audit log in the same transaction. Hiding a menu item is a convenience, never the protection.
 - **Staff accounts with company SSO (decided 16 Oct 2026, late evening, Q30).** Staff log in to a staff account only through the company's single sign-on, which is Google Workspace (decided 17 Oct 2026, 34n). They may also have a personal writer account, kept separate, so the audit log stays clean and staff powers stay off an account that talks to minors in forums.
 
 #### 1.8.2 Navigation
@@ -558,10 +558,11 @@ Opening a market is owner-only in this proposal because it carries the legal che
 
 **Two-factor and sessions**
 
-- Staff log in only through the company's single sign-on, Google Workspace (decided 16 Oct 2026, Q30; provider decided 17 Oct 2026, 34n). Canvas 8.1 shows Google's own two-step check and no separate code; whether that is enough for aal2 or staff also enrol a TOTP code is **OPEN**. Database policies still check that two-factor was completed in this session (aal2), so staff also enrol an authenticator app (TOTP) in Supabase after SSO (proposal, until we confirm the identity provider's own two-factor can be trusted for aal2) (S1-E2-07).
-- Recovery codes at enrolment. After five failed tries, sign-in pauses for 15 minutes and the person and the owner get an email (canvas 8.1).
+- Staff log in only through the company's Google Workspace sign-in, and Google's own two-step check is the second factor: no separate code in Ghemotoc (decided 17 Oct 2026, 11:53; Q30, 34n). Google Workspace's admin console must enforce 2-Step Verification for every staff account; that setting is part of S1-E2-07's set-up.
+- Supabase's own two-factor level (aal2) isn't used for staff. Instead `is_staff_session()` is true only when the session came from Google sign-in with an account on the company's Workspace domain, and every staff policy checks it (S1-E2-07).
+- Lock-out, recovery and suspicious sign-in alerts are Google Workspace's (canvas 8.1).
 - Member log-ins (email, Google, Apple, Microsoft) never give staff access.
-- Staff sessions end after 12 hours (proposal), and the most sensitive actions ask for a fresh code: changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text.
+- Staff sessions end after 12 hours (proposal), and the most sensitive actions ask the person to sign in with Google again (a fresh sign-in, proposal): changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text.
 
 **Least privilege in practice**
 
@@ -572,7 +573,7 @@ Opening a market is owner-only in this proposal because it carries the legal che
 
 #### 1.8.4 How each area works
 
-- **8.1 Staff log in.** Google Workspace SSO with Google's own two-step check (canvas 8.1); a separate six-digit code is the 1.8.3 proposal (**OPEN**). Separate from member log-in.
+- **8.1 Staff log in.** Google Workspace sign-in with Google's own two-step check, no separate code (decided 17 Oct 2026, 11:53; canvas 8.1). Separate from member log-in.
 - **8.2 and 8.3 Moderation.** One queue sorted by tier and deadline. A moderator claims a case; others see it is claimed. The case page shows the reported content, the reporter's note, what the automated checks flagged, the reported account's history and the reporter's track record. A decision needs an action and a note, and sends the statement of reasons (S1-E10-04). Safeguarding cases are visible only to staff with that permission and can produce an evidence pack.
 - **8.4 Appeals and orders.** Appeals within six months, decided by a different moderator where possible. Removal orders start a one-hour clock, a phone alert and "Emergency disable"; every timestamp is kept as proof.
 - **8.5 Users.** Search by handle, email or user ID. The account page shows status, age check result and date, parental consent, two-factor (staff), role, sanctions and open cases. Data export and deletion now open a request in Data requests instead of acting directly.
@@ -610,7 +611,7 @@ Removing one passage instead of the whole story is also in line with DSA art. 14
 **Where the content lives.** It was decided on 16 Oct 2026 that the public website has its own database, and later that evening (Q54) that its CMS is built new, from scratch, on that database and linked neatly to the front end. The design:
 
 - The editors live in the app's admin site, so staff have one log-in with two-factor and one audit log.
-- They save through one edge function in the app's project, `website-cms`. It checks the role (content editor or admin) and aal2, writes to the website's database with a key that can only write the website's content tables and logs the change in the app's audit log. Staff are stored on the website side by their user ID only.
+- They save through one edge function in the app's project, `website-cms`. It checks the role (content editor or admin) and `is_staff_session()`, writes to the website's database with a key that can only write the website's content tables and logs the change in the app's audit log. Staff are stored on the website side by their user ID only.
 - The website reads published rows through read-only views and keeps showing the last published version if a read fails.
 - The seasonal doodle schedule is the exception: the app reads it, so it lives in the app's database (B30). Whether the website also shows seasonal doodles is OPEN.
 
@@ -632,7 +633,7 @@ Four eyes: decided 16 Oct 2026, late evening (Q31), website copy goes live witho
 | --- | --- |
 | Access control | Deny by default; row-level security on every table; CI fails a migration that adds a table without RLS and policies |
 | Secrets | The service role key never reaches the client; secrets live in GitHub Actions secrets and Supabase's secret store; GitHub secret scanning and push protection on |
-| Staff accounts | Company SSO only (decided 16 Oct 2026, late evening) plus two-factor (aal2) enforced in database policies; staff actions written to `audit_log` |
+| Staff accounts | Google Workspace sign-in only, with Google's 2-Step Verification enforced for every staff account (decided 17 Oct 2026, 11:53); database policies check `is_staff_session()`; staff actions written to `audit_log` |
 | User input | Markdown subset only; sanitised on the server before saving and again before display; `rel="nofollow ugc noopener"` on links; strict Content Security Policy |
 | Files | Type and size checks, EXIF stripping, the picture check on upload (S1-E10-05); a flagged file stays private for a moderator |
 | Abuse | Rate limits per account and per action; lower limits for new accounts; accessible bot challenge on sign-up |
@@ -726,7 +727,7 @@ Updated 16 Oct 2026 (late evening). Robert builds without a programmer (Q32), so
 | --- | --- | --- |
 | Iteration 1: clickable prototype | The screens in the design direction, tested with 5 to 10 writers and readers (proposal); no backend | Design work, plus S1-E1-03 tokens so the prototype and the real app share the same look |
 | Iteration 2: working prototype for a closed group | Logins, publishing, reading, comments and reporting. Adults only until S1-E2-08 and S1-E2-03 are live (proposal) | S1-E1-01 to 04, S1-E2-01, 02, 04, 05, 07, S1-E3-01 to 03, S1-E4-01, S1-E5-05, S1-E6-01, 05, S1-E7-01, S1-E10-01, 03, 04, S1-E11-01, S1-E13-03, S1-E14-01, 02 (24 stories) |
-| March MVP (proposal) | 20 writers publishing (decided 16 Oct 2026, from any open market) and 200 readers (proposal), on the web, with the age gate, parental consent, the picture check and the legal minimum | Iteration 2 plus the stories in the table below: 49 stories, about 552 hours |
+| March MVP (proposal) | 20 writers publishing (decided 16 Oct 2026, from any open market) and 200 readers (proposal), on the web, with the age gate, parental consent, the picture check and the legal minimum | Iteration 2 plus the stories in the table below: 54 stories, about 594 hours |
 | After March | Forums, spaces, private messages, the desktop and phone apps, banners, the website CMS and everything else, Must first, then Should | The rest of Stage 1 |
 
 **What stays in the March MVP**
@@ -735,16 +736,16 @@ Updated 16 Oct 2026 (late evening). Robert builds without a programmer (Q32), so
 | --- | --- | --- |
 | S1-E1 Foundations | 01, 02, 03, 04 (06, the database move, is Won't since 17 Oct 2026, 11:20: own Supabase from day one) | 48 |
 | S1-E2 Accounts and age gate | 01, 02, 03 (parental consent, now Must), 04 (usernames, now M), 05, 07 (staff with SSO), 08 (Yoti), 10 (country) | 96 |
-| S1-E3 Writing | 01, 02, 03, 05, 06 (ratings and labels) | 60 |
+| S1-E3 Writing | 01, 02, 03, 04 (manage chapters, added 17 Oct 2026), 05, 06 (ratings and labels) | 72 |
 | S1-E4 Reading | 01, 04 (teaser and web reading), 06a (web: right-click and copy off, S) | 45 |
 | S1-E5 Discovery | 01, 02, 03 (the Discover mix), 05, 08 (a short website: hero, safety lines, questions), 09 (See all) | 54 |
-| S1-E6 and S1-E7 | 01 comments, 03 likes, 05 follows; S1-E7-01 notifications | 30 |
-| S1-E10 Safety | 01, 02 (the one report form and TCO contact point), 03a (one queue with tiers and deadlines, M), 04, 05 (picture check), 06, 09 (removal orders), 10 (safeguarding) | 96 |
+| S1-E6 and S1-E7 | 01 comments, 02 emoji reactions, 03 likes, 04 private downvote, 05 follows (02 and 04 added 17 Oct 2026); S1-E7-01 notifications | 36 |
+| S1-E10 Safety | 01, 02 (the one report form and TCO contact point), 03a (one queue with tiers and deadlines, M), 04, 05 (picture check), 06, 09 (removal orders), 10 (safeguarding), 08 ("copied from a published work" report) and 13 (safety contacts by country), both added 17 Oct 2026 | 120 |
 | S1-E11 Admin | 01, 02, 09a plus Word (L: the request log and deadline, about 12 hours, plus Word files, about 18) | 54 |
 | S1-E13 Data rights | 02, 03, 04, 05 (Word, S) | 39 |
 | S1-E14 Legal | 01, 02, 04 (Contact us) | 18 |
 | S1-E15 The March numbers | 02 | 12 |
-| **Total** | **49 stories: 4 L, 33 M, 12 S** | **about 552** |
+| **Total** | **54 stories: 4 L, 36 M, 14 S** | **about 594** |
 
 **What moves after March and why**
 
@@ -765,14 +766,14 @@ Updated 16 Oct 2026 (late evening). Robert builds without a programmer (Q32), so
 | S1-E11-09b PDF files | about 12 | Word comes first (Q29) |
 | S1-E1-06 Database move | 12 | Not needed: own Supabase from day one (decided 17 Oct 2026, 11:20) |
 
-**Fact-check note (17 Oct 2026).** These Must stories are neither in the March MVP nor in the table above: S1-E3-04 (manage chapters), S1-E6-02 (emoji reactions), S1-E6-04 (private downvote), S1-E10-08 ("copied from a published work" report) and S1-E10-13 (safety contacts, added 17 Oct). S1-E11-05 is covered for March by seeding (1.7.9) and S1-E11-13 by the support mailbox (proposal in the story). **OPEN** for Robert: move them after March or add them to the MVP (adding them raises the 552 hours). Three Should stories sit inside the MVP: S1-E2-10, S1-E5-08 and S1-E13-05.
+**Added to the MVP (decided 17 Oct 2026, 11:53).** Robert wants the MVP as complete as possible before a CTO joins, so the five Must stories that sat outside both lists are in: S1-E3-04 (manage chapters, M), S1-E6-02 (emoji reactions, S), S1-E6-04 (private downvote, S), S1-E10-08 ("copied from a published work" report, M) and S1-E10-13 (safety contacts by country, M). That adds about 42 hours. S1-E11-05 is covered for March by seeding (1.7.9) and S1-E11-13 by the support mailbox (proposal in the story). Three Should stories sit inside the MVP: S1-E2-10, S1-E5-08 and S1-E13-05.
 
 Added since the old slice: S1-E1-06 (12, dropped again on 17 Oct 2026), S1-E2-03 (12), S1-E2-04 grows from S to M (9 more), S1-E2-10 (3), S1-E5-03 (12), S1-E5-08 (12), S1-E5-09 (3), S1-E10-05 (12), S1-E4-06a (3), S1-E13-05 (3), S1-E14-04 (3), and Word files from the first version (about 18 inside S1-E11-09).
 
 **Capacity, honestly**
 
 - **Time available.** About 19 weeks to 1 March 2027. At 10 to 12 hours a week that is 190 to 230 hours, and less in November and December while the SSES courses take four evenings a week. A fair estimate is 150 to 200 hours.
-- **The MVP needs about 552 hours.** That is roughly three times what the evenings give. At 11 hours a week it is about 50 weeks, which puts real users around autumn 2027. To keep March with this scope you would need about 30 hours a week, every week, from now.
+- **The MVP needs about 594 hours.** That is roughly three times what the evenings give. At 11 hours a week it is about 54 weeks, which puts real users around autumn 2027. To keep March with this scope you would need about 31 hours a week, every week, from now.
 - **The floor is high.** Foundations, the age gate, parental consent, the report form, removal orders, the moderation queue, the picture check, safeguarding and data rights come to about 280 hours before anyone writes or reads a single story. With minors on the platform and consent as the legal basis, none of that can go.
 - **The sizes assume Claude Code does the typing and you review.** A first-time builder is usually slower than this, not faster. Log the real hours for the first four stories and re-forecast in early December.
 - **Small cuts left inside the MVP** (each yours to make): Word files after March (about 18 hours), a one-page website instead of S1-E5-08 (about 9), a simple newest-plus-most-liked Discover instead of the ranking job (about 9). Together about 36 hours, which does not change the picture.

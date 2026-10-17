@@ -11,6 +11,10 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Romania is the first market; English-speaking countries open later, one by one, each after its legal check (replaces "all English-speaking countries at the same time", 16 Oct) | Chat, 17 Oct 2026, 11:48 |
 | The interface opens in Romanian for everyone; English is available in the language menu (English and Romanian both still ship) | Chat, 17 Oct 2026, 11:48 |
 | Every screen is responsive for every screen size: phones, tablets and desktops | Chat, 17 Oct 2026, 11:48 |
+| The March MVP takes in five more Must stories: S1-E3-04, S1-E6-02, S1-E6-04, S1-E10-08, S1-E10-13 (54 stories, about 594 hours) | Chat, 17 Oct 2026, 11:53 |
+| Staff sign in with Google Workspace only; Google's own 2-Step Verification is the second factor, no separate code | Chat, 17 Oct 2026, 11:53 |
+| A relationship between 16 and 17-year-old characters with no sexual content can be rated 13+; every rating is explained where the writer picks it | Chat, 17 Oct 2026, 11:53 |
+| At most 2 ad slots on any page | Chat, 17 Oct 2026, 11:53 |
 | Staff can build landing pages for contests and campaigns, run contests, and book sponsors into ad slots; the ad network fills unbooked slots automatically (stories S1-E11-14, S1-E11-15, S1-E12-05; their details are proposals until confirmed) | Chat, 17 Oct 2026, 11:06 |
 
 ## Notes from the CTO pack (decisions applied to the stories)

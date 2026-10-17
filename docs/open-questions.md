@@ -10,7 +10,7 @@ Grouped by when the answer is needed. "Blocks" lists the stories that can't be f
 
 | # | Question | Answer, or my recommendation | Status | Blocks |
 | --- | --- | --- | --- | --- |
-| 1 | **March scope.** Which lever do you pull? | We try our best without a programmer. The March slice is re-cut to an MVP of 49 stories, about 552 hours (section 1.13; S1-E1-06 dropped on 17 Oct 2026). Hours a week and the date stay open (34m) | Decided 16 Oct 2026, Q32 | Section 1.13 |
+| 1 | **March scope.** Which lever do you pull? | We try our best without a programmer. The March slice is re-cut to an MVP of 54 stories, about 594 hours (section 1.13; S1-E1-06 dropped and five Must stories added on 17 Oct 2026). Hours a week and the date stay open (34m) | Decided 16 Oct 2026, Q32 | Section 1.13 |
 | 2 | **Domain and trademark** | ghemotoc.com and @ghemotoc are free. Still to do: the trademark search (OSIM, EUIPO) before filing | Decided 16 Oct 2026, Q33 (availability); trademark search OPEN | S1-E1-01, S1-E14-02, S1-E16 |
 | 3 | **Company accounts** before the company exists | Open them in Robert's name with a written plan to transfer them; the plan is in section 1.11 | Decided 16 Oct 2026, Q34 | S1-E1-01, S1-E16-04 |
 | 4 | **Minimum age** | 13 | Decided 15 Oct 2026 | S1-E2-02 |
@@ -66,7 +66,7 @@ Grouped by when the answer is needed. "Blocks" lists the stories that can't be f
 | 34k | **Picture uploads** | On from launch, with the picture check on upload (row 14) | Decided 16 Oct 2026, Q18 and 22:59 | S1-E3-01, S1-E3-09, S1-E5-05 |
 | 34l | **Separate staff accounts** | Staff log in only with company SSO; they may also have a separate personal account | Decided 16 Oct 2026, Q30 | S1-E2-07, S1-E11-01 |
 | 34m | **Hours a week and the March date** | Decided 17 Oct 2026: the stories keep the best functional MVP (section 1.13); hours a week or the test date are decided in November | Decided 17 Oct 2026 | Section 1.13 |
-| 34n | **Staff SSO identity provider** | Decided 17 Oct 2026: Google Workspace. Until SSO works on our Supabase plan, email, password and an authenticator code (proposal) | Decided 17 Oct 2026 | S1-E2-07 |
+| 34n | **Staff SSO identity provider** | Decided 17 Oct 2026: Google Workspace, with Google's own 2-Step Verification as the only second factor (decided 17 Oct 2026, 11:53); no separate code | Decided 17 Oct 2026 | S1-E2-07 |
 | 34o | **Desktop app after March** | Decided 17 Oct 2026: March is web only; the desktop and phone apps come after (replaces desktop first, 15 Oct) | Decided 17 Oct 2026 | S1-E16-02, S1-E3-08, S1-E4-09 |
 | 34p | **Under-16 spaces** | Decided 17 Oct 2026: adults can read one only if its owner made it public to everybody; a member who turns 16 stays in groups joined before but can't start or join under-16 groups. Open: what happens when the owner turns 16 (proposal: they hand the space over) | Decided 17 Oct 2026 | S1-E8-06 |
 | 34q | **Teacher's signature on certificates** | Proposal: the teacher's logged approval prints their name as signatory, "signed electronically" | OPEN | S1-E8-12 |
