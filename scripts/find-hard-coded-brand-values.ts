@@ -45,11 +45,13 @@ export function forbiddenBrandValues(): string[] {
     brandDefaults.contactEmail,
     brandDefaults.supportEmail,
     brandDefaults.socialHandle,
+    brandDefaults.companyName,
     brand.productName,
     brand.siteDomain,
     brand.contactEmail,
     brand.supportEmail,
     brand.socialHandle,
+    brand.companyName,
   ];
   return [...new Set(candidates.map((value) => value.toLowerCase()))];
 }

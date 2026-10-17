@@ -25,3 +25,18 @@ The end-to-end check found these; the boards were corrected the same day, so bui
 | AdminClassics (8.16) | Only staff with the admin role manage Classics (decided 17 Oct 2026, 12:44) |
 | AdFormats | Two ads can be in view on wide screens, never the same ad twice (decided 17 Oct 2026, 12:44) |
 | Doodle CSS on every board | Only `tmc-dd-wide` (hides under 1000 px) and `tmc-dd-hide` (hides under 600 px), as in the DoD; doodles that overlapped text or links were moved or removed (Search, Legal, AppOnly, Thread, Discover) |
+
+## Found while building S1-E1-03 (17 Oct 2026)
+
+The app follows the decision or the DoD rule on the right; the boards still draw the left-hand version.
+
+| Board | Element | What the app does |
+| --- | --- | --- |
+| Every board | Focus ring is gold (`#E6C24C`) everywhere, about 1.6:1 on paper, below the 3:1 WCAG 2.2 asks for | Plum on light backgrounds, gold on night (Robert, 17 Oct 2026) |
+| Every board | No night mode | Night colours derived from the board colours (starting from the Reader's Night theme) and shown on /design (Robert, 17 Oct 2026) |
+| Every public board | No theme control | A Device / Light / Night drop-down in the footer, beside the language drop-down; nothing in the top bar (Robert, 17 Oct 2026) |
+| Every public board | Top bar shows Home, Discover, Library, Forums, Messages, the bell, Write and the account button; footer shows seven links | Only links to pages that exist are shown; each story adds its own (src/app/navigation.ts). /design shows the full board top bar |
+| Discover, Search, Settings, AdminUsers, AdminSponsors | Drop-downs drawn at 40, 44 and 48 px | One 44 px drop-down everywhere (DoD drop-down rule) |
+| Most boards | Text and search fields with a `#DED3E4` border (about 1.3:1 on white) | `#8E7B99` border (3:1, WCAG 2.2 1.4.11), as the AdminUsers Invites fields already use |
+| Every board | Fonts loaded from Google Fonts | The same fonts served from our own site (no visitor IP sent to Google; CLAUDE.md rule 7) |
+| AdminUsers vs Discover, Search | Two versions of the chip CSS | The fuller Discover/Search version (44 px touch area, tick icon) |

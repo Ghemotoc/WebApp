@@ -16,6 +16,7 @@ describe('readBrand', () => {
     expect(brand.contactEmail).toBe(brandDefaults.contactEmail);
     expect(brand.supportEmail).toBe(brandDefaults.supportEmail);
     expect(brand.socialHandle).toBe(brandDefaults.socialHandle);
+    expect(brand.companyName).toBe(brandDefaults.companyName);
   });
 
   it("uses today's values when it is called outside Vite with no environment at all", () => {
@@ -29,6 +30,7 @@ describe('readBrand', () => {
       VITE_BRAND_CONTACT_EMAIL: 'contact@example.com',
       VITE_BRAND_SUPPORT_EMAIL: 'support@example.com',
       VITE_BRAND_SOCIAL_HANDLE: '@test',
+      VITE_BRAND_COMPANY_NAME: 'Test Company',
     });
 
     expect(brand).toEqual({
@@ -38,6 +40,7 @@ describe('readBrand', () => {
       contactEmail: 'contact@example.com',
       supportEmail: 'support@example.com',
       socialHandle: '@test',
+      companyName: 'Test Company',
     });
   });
 

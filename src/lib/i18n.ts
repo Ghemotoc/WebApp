@@ -5,8 +5,9 @@
  * (decided 17 Oct 2026, 11:48). So there is no browser-language detection here. The language menu
  * and saving the choice to the account come in S1-E1-04.
  *
- * Where things come in from: the JSON files in src/locales/<language>/, and the product name from
- * src/config/brand.ts, which every translation can use as {{productName}} without passing it in.
+ * Where things come in from: src/locales/<language>/common.json (the /design page adds its own
+ * design.json when it loads, so production builds never carry it), and the product and company names from
+ * src/config/brand.ts, which every translation can use as {{productName}} and {{companyName}}.
  * Where things go: src/app/AppProviders.tsx gives this instance to React; components call
  * `useTranslation()` from react-i18next and then `t('home.welcome')`.
  * The check `npm run i18n:check` (scripts/check-i18n-keys.ts) fails when a key exists in one
@@ -58,8 +59,8 @@ export function createI18n(language: SupportedLanguage = defaultLanguage): I18nI
     interpolation: {
       // React already escapes text it renders, so i18next must not escape it a second time.
       escapeValue: false,
-      // {{productName}} is filled in from the brand config in every string.
-      defaultVariables: { productName: brand.productName },
+      // {{productName}} and {{companyName}} are filled in from the brand config in every string.
+      defaultVariables: { productName: brand.productName, companyName: brand.companyName },
     },
   });
 

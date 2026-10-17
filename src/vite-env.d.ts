@@ -19,6 +19,10 @@ interface ImportMetaEnv {
   readonly VITE_BRAND_SUPPORT_EMAIL?: string;
   /** Social handle with the leading "@". */
   readonly VITE_BRAND_SOCIAL_HANDLE?: string;
+  /** Company name for the footer line "An app by …". */
+  readonly VITE_BRAND_COMPANY_NAME?: string;
+  /** "true" includes the /design page in a build (staging only, decided 17 Oct 2026). */
+  readonly VITE_SHOW_DESIGN_PAGE?: string;
   /** Supabase API address (local: printed by `npx supabase start`). */
   readonly VITE_SUPABASE_URL?: string;
   /** Supabase public anon key. Never the service role key (CLAUDE.md rule 2). */
