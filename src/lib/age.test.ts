@@ -4,7 +4,13 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { birthYearNeedsMonth, romanianToday, signUpAgeOutcome, youngestPossibleAge } from './age';
+import {
+  birthYearNeedsMonth,
+  isUnderMarketAge,
+  romanianToday,
+  signUpAgeOutcome,
+  youngestPossibleAge,
+} from './age';
 
 const midJune2027 = { year: 2027, month: 6 };
 
@@ -55,5 +61,18 @@ describe('signUpAgeOutcome', () => {
 describe('romanianToday', () => {
   it('reads the date in Romanian time: 31 December 23:30 in London is already 1 January in Bucharest', () => {
     expect(romanianToday(new Date('2026-12-31T23:30:00Z'))).toEqual({ year: 2027, month: 1 });
+  });
+});
+
+describe('the market minimum age (S1-E2-10)', () => {
+  const autumn2027 = { year: 2027, month: 10 };
+
+  it('refuses someone who could still be 15 where the market starts at 16 (Australia, Q19)', () => {
+    expect(isUnderMarketAge(2011, 11, 16, autumn2027)).toBe(true);
+  });
+
+  it('lets in someone who is surely 16', () => {
+    expect(isUnderMarketAge(2011, 5, 16, autumn2027)).toBe(false);
+    expect(isUnderMarketAge(2010, null, 16, autumn2027)).toBe(false);
   });
 });

@@ -177,6 +177,26 @@ Supabase emails supabase/templates/confirmation.html (Mailpit locally)
 /setup → choosing a username (next section) → account_state() is active
 ```
 
+## The country from the connection (S1-E2-10)
+
+```
+SignUpPage → useSignUpMarket                         src/features/auth/
+  │  GET /api/signup-context  (functions/api/signup-context.ts on Cloudflare;
+  │                            server/pages-functions-plugin.ts locally, country from
+  │                            LOCAL_FAKE_COUNTRY or a test's X-Fake-Country header)
+  │     server/signup-context.ts: request.cf.country → { country, token } (HMAC-SHA256,
+  │     SIGNUP_CONTEXT_SECRET, 10 minutes); the IP address is never read or kept
+  │  markets (public): is that country open, and its minimum age
+  │  once sign-up is public: closed or unknown → /not-open (NotOpenPage)
+  ▼
+signUp() sends signup_context = token
+  ▼
+handle_new_auth_user() → verified_signup_country(token) with Vault's signup_context_secret
+  → sign_up_market_outcome() (always ok in the invited test, Q6) → profiles.country_code
+```
+
+Settings › Account shows it as "Romania · From your connection" (`CountryRow`).
+
 ## Logging in (S1-E2-05)
 
 ```

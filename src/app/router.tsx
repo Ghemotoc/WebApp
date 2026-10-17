@@ -12,6 +12,7 @@ import { SettingsPage } from '@/features/account/components/SettingsPage';
 import { SetupPage } from '@/features/account/components/SetupPage';
 import { ConfirmEmailPage } from '@/features/auth/components/ConfirmEmailPage';
 import { ForgotPasswordPage } from '@/features/auth/components/ForgotPasswordPage';
+import { NotOpenPage } from '@/features/auth/components/NotOpenPage';
 import { ResetPasswordPage } from '@/features/auth/components/ResetPasswordPage';
 import { SignInPage } from '@/features/auth/components/SignInPage';
 import { SignUpPage } from '@/features/auth/components/SignUpPage';
@@ -73,6 +74,8 @@ export const appRoutes: RouteObject[] = [
       { path: '/sign-in', element: <SignInPage /> },
       { path: '/forgot-password', element: <ForgotPasswordPage /> },
       { path: '/reset-password', element: <ResetPasswordPage /> },
+      // Once sign-up is public, a visitor from a closed market lands here (S1-E2-10).
+      { path: '/not-open', element: <NotOpenPage /> },
       // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
       { path: '/setup', element: <SetupPage /> },
       { path: '/settings', element: <SettingsPage /> },

@@ -296,6 +296,37 @@ export type Database = {
         };
         Relationships: [];
       };
+      markets: {
+        Row: {
+          country_code: string;
+          created_at: string;
+          id: string;
+          is_open: boolean;
+          languages: string[];
+          minimum_age: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          country_code: string;
+          created_at?: string;
+          id?: string;
+          is_open?: boolean;
+          languages: string[];
+          minimum_age?: number;
+          updated_at?: string;
+        };
+        Update: {
+          country_code?: string;
+          created_at?: string;
+          id?: string;
+          is_open?: boolean;
+          languages?: string[];
+          minimum_age?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
@@ -303,6 +334,7 @@ export type Database = {
           age_checked_at: string | null;
           birth_month: number | null;
           birth_year: number;
+          country_code: string | null;
           created_at: string;
           deleted_at: string | null;
           handle: string | null;
@@ -322,6 +354,7 @@ export type Database = {
           age_checked_at?: string | null;
           birth_month?: number | null;
           birth_year: number;
+          country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           handle?: string | null;
@@ -340,6 +373,7 @@ export type Database = {
           age_checked_at?: string | null;
           birth_month?: number | null;
           birth_year?: number;
+          country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           handle?: string | null;
@@ -827,10 +861,15 @@ export type Database = {
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
       sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
+      sign_up_market_outcome: {
+        Args: { birth_month?: number; birth_year: number; country_code: string };
+        Returns: string;
+      };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
+      verified_signup_country: { Args: { token: string }; Returns: string };
     };
     Enums: {
       account_status:

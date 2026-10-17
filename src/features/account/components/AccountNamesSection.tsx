@@ -4,7 +4,7 @@
  *
  * The board's "Name … only you and our team see this" row is left out on purpose: the platform
  * never collects legal names (S1-E2-04, "Legal and compliance"; CLAUDE.md rule 5). Email, year of
- * birth, signed-in devices and the country rows arrive with S1-E2-05 and S1-E2-10.
+ * birth and the county or region come with later stories; the country row is S1-E2-10's.
  * Who shows it: SettingsPage. The two forms save separately, so a refusal in one never loses the
  * other.
  */
@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import type { MyNames } from '../api/accountNames';
 import type { useMyNames } from '../hooks/useMyNames';
 
+import { CountryRow } from './CountryRow';
 import { HandleSettingsForm } from './HandleSettingsForm';
 import { PenNameSettingsForm } from './PenNameSettingsForm';
 
@@ -43,6 +44,10 @@ export function AccountNamesSection({ account, names }: AccountNamesSectionProps
       <HandleSettingsForm account={account} names={names} />
       <div className="border-t border-border pt-6">
         <PenNameSettingsForm account={account} names={names} />
+      </div>
+      {/* The country from the connection (S1-E2-10). */}
+      <div className="border-t border-border pt-6">
+        <CountryRow countryCode={names.countryCode} />
       </div>
     </section>
   );

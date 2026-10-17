@@ -30,7 +30,15 @@ interface SignUpCardBodyProps {
  * @returns the form, the age refusal, or CheckYourEmail
  */
 export function SignUpCardBody({ form, context, includesAgeCheck }: SignUpCardBodyProps) {
-  if (form.refusedFor !== null) return <AgeRefusal reason={form.refusedFor} />;
+  if (form.refusedFor !== null) {
+    return (
+      <AgeRefusal
+        reason={form.refusedFor}
+        country={context?.country ?? null}
+        minimumAge={context?.marketMinimumAge ?? 13}
+      />
+    );
+  }
   if (form.sentTo === null) return <SignUpForm form={form} includesAgeCheck={includesAgeCheck} />;
 
   /** Sends the link again, the right way for how the person signed up. */

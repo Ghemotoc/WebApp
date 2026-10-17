@@ -6,7 +6,7 @@
  * instead" uses signInWithOtp(), which makes the account on first use. Both send the same sign-up
  * data, which the sign-up trigger (…_s1_e2_01_sign_up_trigger.sql, updated by …_s1_e2_02_birth_checks.sql)
  * checks before the account exists: the invite, the year (and month) of birth, the accepted legal
- * versions and the language.
+ * versions, the language and the signed country (S1-E2-10).
  * Either way Supabase emails a link (supabase/templates/), and the account can read but not write
  * until the email is confirmed.
  * Privacy: nothing here is logged (CLAUDE.md rule 12); errors carry Supabase's error code only.
@@ -23,6 +23,12 @@ export interface SignUpContext {
   privacyVersionId: string;
   /** The interface language, kept on the account and used for its emails. */
   locale: string;
+  /** The signed country token from /api/signup-context, or null when unknown (S1-E2-10). */
+  signupToken: string | null;
+  /** The visitor's country, for the words of a refusal only; the database reads the token. */
+  country: string | null;
+  /** The country's minimum age (13; 16 in Australia, Q19). */
+  marketMinimumAge: number;
 }
 
 /** Why a sign-up didn't work, in words the form can turn into a message. */
@@ -73,6 +79,8 @@ export async function signUp(
     accepted_terms_version_id: context.termsVersionId,
     accepted_privacy_version_id: context.privacyVersionId,
     locale: context.locale,
+    // The country, signed by our Pages Function; the trigger checks it (S1-E2-10).
+    signup_context: context.signupToken,
   };
   // Step 2: a password, or a link emailed each time.
   const { error } =
