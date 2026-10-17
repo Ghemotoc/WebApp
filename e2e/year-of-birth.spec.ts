@@ -85,6 +85,11 @@ for (const width of [390, 768, 1440]) {
     await page.getByRole('combobox', { name: 'Year of birth' }).selectOption(yearsAgo(13));
     await page.getByRole('button', { name: 'Why we ask for the month' }).focus();
     await expect(page.getByRole('tooltip')).toBeVisible();
+    // Let the page's entrance animation finish, so colours are measured at full strength
+    // (mid-fade, the eyebrow measured 4.48:1 in CI).
+    await page.evaluate(() =>
+      Promise.all(document.getAnimations().map((animation) => animation.finished)),
+    );
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();
