@@ -59,6 +59,9 @@ export default defineConfig({
   testDir: './e2e',
   // CI stops a pull request if someone left `test.only` in a file.
   forbidOnly: process.env.CI !== undefined,
+  // One test at a time: the tests share the seed personas in one local database, and some change
+  // a persona's saved language, so two at once could see each other's changes (S1-E1-QA).
+  workers: 1,
   // One retry in CI, so a slow runner is told apart from a real failure in the report.
   retries: process.env.CI === undefined ? 0 : 1,
   reporter: process.env.CI === undefined ? 'list' : [['list'], ['html', { open: 'never' }]],

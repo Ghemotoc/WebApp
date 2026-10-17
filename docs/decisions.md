@@ -49,6 +49,8 @@ Every decision Robert has made, with its date and source. The live list is the m
 | The focus ring is plum on light backgrounds and gold on dark ones | Claude Code session (S1-E1-03), 17 Oct 2026 |
 | Night mode follows the device setting by default, with a Device / Light / Night drop-down in the footer and no switch in the top bar | Claude Code session (S1-E1-03), 17 Oct 2026 |
 | Audit log entries are kept for 3 years; the purge job comes with the retention jobs story (S1-E13-04), and until then the log stays append-only for every role | Claude Code session (S1-E1-03), 17 Oct 2026, 17:41 |
+| The branch ruleset on `main` (a pull request and the three CI checks) stays as created but unenforced: GitHub doesn't enforce rulesets on a private repository on the Free plan. The no-push-to-main rule in CLAUDE.md and green CI before each merge cover it for now | Claude Code session (S1-E1-QA), 17 Oct 2026 |
+| Epic check reports live in `docs/epic-reports/<epic>.md` | Claude Code session, epic S1-E1 plan, 17 Oct 2026 |
 
 ## Notes from the CTO pack (decisions applied to the stories)
 
