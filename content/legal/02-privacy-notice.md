@@ -156,9 +156,9 @@ Companies that work for us. These companies handle data only on our instructions
 - Yoti (age check). Yoti processes the selfie or document in its UK data centres, deletes the photo and document when the check is done, and keeps the result for up to 6 months.
 - Sightengine (picture check for nudity and gore). [Where Sightengine processes pictures: to be confirmed]
 - Arachnid Shield, run by the Canadian Centre for Child Protection (picture check against known child sexual abuse images). Pictures are checked in Canada.
-- [Database and hosting provider: Lovable while it holds our database, then Supabase, in the EU (Frankfurt)]
-- [Web hosting provider, in the EU]
-- [Email provider, with an EU region]
+- Supabase (our database, sign-in and file storage), in the EU (Ireland).
+- Cloudflare (hosting for the website, through Cloudflare Pages).
+- Brevo (sending our emails), in the EU.
 - [Help desk provider, hosting data in the EU]
 - [Error tracking provider, in the EU, with personal data removed]
 - [Cookieless analytics provider, in the EU, once added]
@@ -324,7 +324,7 @@ Every new script or stored item is checked before it goes live, so this list sta
 - Section 3 (Why we use it): Minors’ defaults: CTO pack 1.10 and Q50 (no marketing email, quiet hours); messaging rules S1-E9-03 (Q6, Q13); no age revealed to adults (17 Oct 2026 canvas comment).
 - Section 3 (Why we use it): “We don’t sell your data” is a proposed promise consistent with the no-tracking model, not a recorded decision.
 - Section 4 (Who else sees it): GDPR art. 13(1)(e) recipients and 13(1)(f) transfers with safeguards and how to get a copy.
-- Section 4 (Who else sees it): Processor list: CTO pack 1.10 and 1.5 (Lovable, Supabase EU Frankfurt, Yoti, email, Sightengine, Arachnid Shield, helpdesk, error tracking, analytics, any ad network). Email provider, helpdesk, analytics and error tracking products are OPEN (Q49; S1-E11-13), so they are placeholders.
+- Section 4 (Who else sees it): Processor list: CTO pack 1.10 and 1.5. The database is our own Supabase project in the EU (West EU, Ireland; decided 17 Oct 2026, 11:20), the website is hosted on Cloudflare Pages (decided 17 Oct 2026, 12:57) and the email provider is Brevo, in the EU (decided 17 Oct 2026, 19:43). Factual correction approved by Robert on 17 Oct 2026, 19:43: the earlier draft named Lovable and Frankfurt. Cloudflare serves the site from its global network under a data processing agreement relying on the EU-US Data Privacy Framework, with standard contractual clauses as the fallback (architecture 1.11); please add it to “Data outside the EU” if needed. Helpdesk, analytics and error tracking products are OPEN (Q49; S1-E11-13), so they are placeholders.
 - Section 4 (Who else sees it): Yoti: UK data centres; sub-processors in India, the US and Brazil; photo deleted on completion (28 days only if manual fallback review is enabled); results kept 6 months (research F1, Yoti client terms Sched. 2 cl. 6(g) to (i)). The UK adequacy decision was not re-checked in F1.
 - Section 4 (Who else sees it): Arachnid Shield is run by the Canadian Centre for Child Protection (S1-E10-05). Canada’s adequacy decision covers organisations subject to PIPEDA; whether it covers a charity like C3P needs checking, or standard contractual clauses. Sightengine’s processing location is unconfirmed (S1-E10-05).
 - Section 4 (Who else sees it): Embeds load only on click and YouTube uses the privacy-enhanced player (S1-E3-10). Canva is after March (S1-E3-12).
@@ -362,9 +362,6 @@ Every placeholder in the full text, in order. Each needs the founder or the lawy
 - Section 3 (Why we use it): [OPEN: what happens to the account, its stories and its posts when consent is withdrawn; lawyer to decide (L1)]
 - Section 3 (Why we use it): [OPEN: how we check that the person is really a parent or guardian, beyond email (L2)]
 - Section 4 (Who else sees it): [Where Sightengine processes pictures: to be confirmed]
-- Section 4 (Who else sees it): [Database and hosting provider: Lovable while it holds our database, then Supabase, in the EU (Frankfurt)]
-- Section 4 (Who else sees it): [Web hosting provider, in the EU]
-- Section 4 (Who else sees it): [Email provider, with an EU region]
 - Section 4 (Who else sees it): [Help desk provider, hosting data in the EU]
 - Section 4 (Who else sees it): [Error tracking provider, in the EU, with personal data removed]
 - Section 4 (Who else sees it): [Cookieless analytics provider, in the EU, once added]

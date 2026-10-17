@@ -1,0 +1,72 @@
+{
+  "documentTitle": "{{documentTitle}} · Legal centre · {{productName}}",
+  "eyebrow": "Legal centre",
+  "heading": "The rules, in plain words",
+  "lead": "Every page starts with a short version that anyone aged 13 and up can follow. The full legal text sits under each part. If the two ever seem to disagree, ask us.",
+  "documentsNavLabel": "Legal documents",
+  "documents": {
+    "terms": {
+      "tab": "Terms",
+      "name": "Terms",
+      "intro": "The agreement between you and {{productName}}. Read the short version in each box. The full text sits under it, as a draft a Romanian lawyer reviews before launch."
+    },
+    "privacy": {
+      "tab": "Privacy notice",
+      "name": "Privacy notice",
+      "intro": "What we collect about you, why we need it and what you can do about it."
+    },
+    "guidelines": {
+      "tab": "Community guidelines",
+      "name": "Community guidelines",
+      "intro": "How we treat each other here. They apply to stories, comments, forums and private messages."
+    }
+  },
+  "status": {
+    "label": "Document status",
+    "draft": "Draft: a Romanian lawyer reviews this before launch",
+    "reviewed": "Checked by a lawyer",
+    "version": "Version {{version}}",
+    "updated": "Last updated {{date}}",
+    "bothLanguages": "In Romanian and English"
+  },
+  "translationDraft": "The Romanian translation is a draft and hasn’t been checked by a lawyer.",
+  "fallbackLanguage": "This text isn’t available in your language yet, so it is shown in English.",
+  "summaryHeading": "In short",
+  "shortVersion": "In short",
+  "fullTextDraft": "Full text · draft for lawyer review",
+  "fullText": "Full text",
+  "fullTextRegion": "Full text: {{title}}",
+  "proposedSection": "Proposed section",
+  "afterTheTest": {
+    "label": "After the invited test",
+    "explanation": "Parts marked “After the invited test” describe things that start only after the invited test. The test is for invited adults, so the age check, a parent’s or guardian’s consent and some features aren’t switched on yet."
+  },
+  "history": {
+    "heading": "Version history",
+    "item": "Version {{version}} · {{date}}",
+    "draft": "Draft",
+    "note": "Every version stays here, in Romanian and English. You can also find these pages at sign-up and in Settings."
+  },
+  "loading": "Loading the document…",
+  "loadFailed": {
+    "title": "We couldn’t load this page",
+    "body": "Check your connection and try again.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "title": "There’s no document at this address",
+    "body": "Choose one of the documents above."
+  },
+  "update": {
+    "regionLabel": "Updated rules",
+    "eyebrow": "Please read",
+    "titleOne": "We’ve updated our {{document}}",
+    "titleMany": "We’ve updated our rules",
+    "change": "Version {{version}} of the {{document}}: {{summary}}",
+    "body": "Read the new version and accept it before you post again. You can keep reading meanwhile.",
+    "read": "Read what changed",
+    "accept": "Accept and continue",
+    "accepting": "Saving…",
+    "failed": "That didn’t work. Check your connection and try again."
+  }
+}

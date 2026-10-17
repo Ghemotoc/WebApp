@@ -58,6 +58,52 @@ export type Database = {
           },
         ];
       };
+      consents: {
+        Row: {
+          accepted_at: string;
+          created_at: string;
+          id: string;
+          legal_document_version_id: string;
+          method: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accepted_at?: string;
+          created_at?: string;
+          id?: string;
+          legal_document_version_id: string;
+          method: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          accepted_at?: string;
+          created_at?: string;
+          id?: string;
+          legal_document_version_id?: string;
+          method?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'consents_legal_document_version_id_fkey';
+            columns: ['legal_document_version_id'];
+            isOneToOne: false;
+            referencedRelation: 'legal_document_versions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'consents_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       feature_flags: {
         Row: {
           created_at: string;
@@ -85,6 +131,88 @@ export type Database = {
           is_enabled?: boolean;
           is_public?: boolean;
           key?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      legal_document_versions: {
+        Row: {
+          body_markdown: string;
+          change_summary: string | null;
+          created_at: string;
+          document_id: string;
+          id: string;
+          is_lawyer_reviewed: boolean;
+          is_material: boolean;
+          language: string;
+          published_at: string;
+          title: string;
+          updated_at: string;
+          version_label: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body_markdown: string;
+          change_summary?: string | null;
+          created_at?: string;
+          document_id: string;
+          id?: string;
+          is_lawyer_reviewed?: boolean;
+          is_material?: boolean;
+          language: string;
+          published_at: string;
+          title: string;
+          updated_at?: string;
+          version_label: string;
+        };
+        Update: {
+          body_markdown?: string;
+          change_summary?: string | null;
+          created_at?: string;
+          document_id?: string;
+          id?: string;
+          is_lawyer_reviewed?: boolean;
+          is_material?: boolean;
+          language?: string;
+          published_at?: string;
+          title?: string;
+          updated_at?: string;
+          version_label?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'legal_document_versions_document_id_fkey';
+            columns: ['document_id'];
+            isOneToOne: false;
+            referencedRelation: 'legal_documents';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      legal_documents: {
+        Row: {
+          created_at: string;
+          id: string;
+          needs_acceptance: boolean;
+          slug: string;
+          sort_order: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          needs_acceptance?: boolean;
+          slug: string;
+          sort_order: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          needs_acceptance?: boolean;
+          slug?: string;
+          sort_order?: number;
           updated_at?: string;
         };
         Relationships: [];
@@ -208,6 +336,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      accept_current_legal_versions: {
+        Args: { document_slugs: string[]; reading_language?: string };
+        Returns: number;
+      };
       account_state: {
         Args: { target_user_id: string };
         Returns: Database['public']['Enums']['account_status'];
@@ -232,6 +364,24 @@ export type Database = {
         Returns: boolean;
       };
       is_staff_session: { Args: Record<PropertyKey, never>; Returns: boolean };
+      latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
+      legal_documents_to_accept: {
+        Args: { target_user_id: string };
+        Returns: {
+          created_at: string;
+          id: string;
+          needs_acceptance: boolean;
+          slug: string;
+          sort_order: number;
+          updated_at: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'legal_documents';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       log_staff_action: {
         Args: {
           action_taken: string;
@@ -244,6 +394,15 @@ export type Database = {
         };
         Returns: string;
       };
+      my_legal_documents_to_accept: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          change_summary: string;
+          document_slug: string;
+          version_label: string;
+        }[];
+      };
+      needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
     };
     Enums: {
@@ -254,7 +413,8 @@ export type Database = {
         | 'age_check_pending'
         | 'age_check_failed'
         | 'awaiting_parental_consent'
-        | 'minor_not_admitted';
+        | 'minor_not_admitted'
+        | 'legal_acceptance_required';
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
@@ -379,6 +539,7 @@ export const Constants = {
         'age_check_failed',
         'awaiting_parental_consent',
         'minor_not_admitted',
+        'legal_acceptance_required',
       ],
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],

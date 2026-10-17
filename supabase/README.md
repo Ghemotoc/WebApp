@@ -26,6 +26,8 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | --- | --- | --- | --- |
 | `set_my_locale(new_locale)` | saves `ro` or `en` as the caller's own interface language (`profiles.locale`) | any signed-in person, read-only accounts included; never signed-out visitors | S1-E1-04 |
 | `log_staff_action(...)` | writes one audit log row for the signed-in staff member | staff sessions only | S1-E1-02 |
+| `my_legal_documents_to_accept()` | the caller's own legal documents waiting for acceptance after an important change | any signed-in person | S1-E14-01 |
+| `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
 
 Why `set_my_locale()` and not an update policy on `profiles`: a policy would let a person change every column of their own row through the API, their year of birth too. The function changes one column. Test: `tests/database/014-profile-locale.test.sql`.
 
@@ -34,7 +36,7 @@ Why `set_my_locale()` and not an update policy on `profiles`: a policy would let
 | Function | Answers | Filled in later by |
 | --- | --- | --- |
 | `age_band()` | the signed-in user's age group (`under_13`, `13_to_15`, `16_to_17`, `18_plus`, `unknown`) | S1-E2-02 (sign-up), S1-E2-08 (Yoti) |
-| `is_active_member()` | may the signed-in user publish, comment, post or message | S1-E2-03 (consent), S1-E10-06 (sanctions) |
+| `is_active_member()` | may the signed-in user publish, comment, post or message; false until a new important version of the terms or privacy notice is accepted (`legal_acceptance_required`, S1-E14-01) | S1-E2-03 (consent), S1-E10-06 (sanctions) |
 | `account_state(user_id)` | why not (internal; clients can't call it) | same |
 | `is_staff(role)` | does the signed-in user hold that staff role (any role when empty) | S1-E2-07a (role hierarchy, permissions) |
 | `is_staff_session()` | may this session use staff powers (March: any staff role) | S1-E2-07b (Google Workspace sign-in) |

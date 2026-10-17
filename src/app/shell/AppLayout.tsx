@@ -8,12 +8,15 @@
  * (Q11), and useAccountLanguage shows a signed-in person's account language on every device.
  * Accessibility: the first thing a keyboard user reaches is "Skip to content", which jumps past the
  * top bar to the page (WCAG 2.2, 2.4.1 Bypass blocks). The page sits in the one <main> landmark.
+ * Legal updates (S1-E14-01): LegalUpdateNotice sits at the top of <main> on every page and shows
+ * "We've updated our Terms" when a signed-in person must accept a new version before posting.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
 
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
+import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice';
 
 import { Footer } from './Footer';
 import { TopBar } from './TopBar';
@@ -38,6 +41,8 @@ export function AppLayout() {
       </a>
       <TopBar endSlot={<LanguageSelect id="language-select-top" />} />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+        {/* "We've updated our Terms", for a signed-in person who must accept before posting (S1-E14-01). */}
+        <LegalUpdateNotice />
         <Outlet />
       </main>
       <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />
