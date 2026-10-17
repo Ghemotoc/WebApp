@@ -19,6 +19,8 @@ import { cn } from '@/lib/utils';
 export interface SelectOption {
   value: string;
   label: string;
+  /** The option's own language when it differs from the page, such as "Română" (WCAG 3.1.2). */
+  lang?: string;
 }
 
 /** What a Select needs. */
@@ -70,7 +72,7 @@ export function Select({
           className="h-11 w-auto max-w-full cursor-pointer appearance-none rounded-full border border-control-border bg-surface pr-9 pl-4 font-body text-sm font-semibold text-ink"
         >
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} lang={option.lang}>
               {option.label}
             </option>
           ))}

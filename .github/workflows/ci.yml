@@ -4,7 +4,8 @@
 # What it runs: lint, type check, unit tests, the i18n key check, the build and the bundle
 # secret scan (job "checks");
 # database tests with pgTAP and the generated-types check against a local Supabase (job "database");
-# a Playwright smoke test of the home page with axe accessibility checks (job "e2e").
+# Playwright tests with axe accessibility checks against a local Supabase, so signed-in journeys
+# run with the seed personas (job "e2e").
 # Blocking the merge: a branch ruleset on main lists these three jobs as required status checks.
 # What it never does: deploy or push migrations. Cloudflare Pages builds main and pull request
 # previews through its own GitHub app (decided 17 Oct 2026, 12:57), and Supabase's GitHub
@@ -79,6 +80,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      # The local Supabase for signed-in tests (S1-E1-04): the database, Auth and the API only.
+      # playwright.config.ts reads its address and public anon key from `supabase status`.
+      - run: npx supabase start -x studio,imgproxy,storage-api,realtime,edge-runtime,logflare,vector,supavisor,mailpit
       - run: npm run test:e2e
       # Keep the report for a week when something fails, so the failure can be looked at.
       - uses: actions/upload-artifact@v4

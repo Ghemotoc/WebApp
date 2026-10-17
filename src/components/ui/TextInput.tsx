@@ -4,11 +4,13 @@
  * Board values: 44 px tall, pill-shaped, 16 px horizontal padding. The border is #8E7B99 (3:1),
  * not the boards' paler #DED3E4, so the field's edge meets WCAG 2.2, 1.4.11 (docs/board-fixes.md).
  * The hint and the error are linked with aria-describedby so screen readers read them with the
- * field; an error also sets aria-invalid.
+ * field; an error also sets aria-invalid. Typed or pasted ş and ţ become ș and ț straight away
+ * (CLAUDE.md rule 4; S1-E1-04), before the form's own onChange sees the value.
  * Who uses it: every form from S1-E2 on.
  */
-import type { InputHTMLAttributes } from 'react';
+import type { ChangeEvent, InputHTMLAttributes } from 'react';
 
+import { normaliseTypedText } from '@/lib/romanian-text';
 import { cn } from '@/lib/utils';
 
 /** A normal <input>'s attributes plus the label, hint and error text. */
@@ -30,12 +32,19 @@ export function TextInput({
   hint,
   errorMessage,
   className,
+  onChange,
   ...inputProps
 }: TextInputProps) {
   // Ids for the hint and error, so the field can point at whichever exist.
   const hintId = hint === undefined ? undefined : `${id}-hint`;
   const errorId = errorMessage === undefined ? undefined : `${id}-error`;
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
+
+  /** Corrects Romanian letters, then hands the change to the form. */
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    normaliseTypedText(event.target);
+    onChange?.(event);
+  }
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -52,6 +61,7 @@ export function TextInput({
           className,
         )}
         {...inputProps}
+        onChange={handleChange}
       />
       {hint !== undefined && (
         <p id={hintId} className="text-[13px] text-meta">

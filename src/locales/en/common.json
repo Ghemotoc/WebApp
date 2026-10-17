@@ -25,6 +25,13 @@
     "light": "Light",
     "night": "Night"
   },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ro": "Română",
+    "savedToAccount": "Language saved to your account.",
+    "keptOnDevice": "We couldn't save the language to your account. It's kept on this device."
+  },
   "shelf": {
     "regionLabel": "{{title}}, scrolls sideways",
     "scrollBack": "Scroll back",

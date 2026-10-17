@@ -8,6 +8,8 @@ Rows marked **proposal** wait for Robert and the lawyer (docs/for-the-lawyer.md)
 | --- | --- | --- | --- | --- |
 | Year of birth, and the month only when the year leaves the age unclear at 13 or 16 | `profiles.birth_year`, `profiles.birth_month` | the life of the account | account deletion (S1-E13-05); the 14-day clean-up when no age check passes (S1-E2-08) | architecture 1.10; S1-E2-02 |
 | Age check result, date and method | `profiles.age_check_result`, `age_checked_at`, `age_check_method` | the life of the account | account deletion (S1-E13-05) | architecture 1.10; S1-E2-08 |
+| Interface language (ro or en) | `profiles.locale` | the life of the account | account deletion (S1-E13-05) | S1-E1-04 |
+| Interface language and light or night mode on a device | the browser's localStorage (`interface-language`, `theme-preference`) | until the person clears their browser; never sent to us | the person's browser | S1-E1-03, S1-E1-04 |
 | Staff roles | `staff_roles` | while the person is staff | role removal (S1-E2-07a) | architecture 1.8.3 |
 | Audit log rows (who acted, on whose account) | `audit_log` | 3 years from the action; never edited by any role | a purge job in the retention jobs story (S1-E13-04, piece B17); until it exists nothing is deleted. The append-only triggers refuse deletes for every role, the owner included, so that job needs one deliberate, audited way to remove rows older than 3 years | decided 17 Oct 2026, 17:41 (Robert); architecture 1.6; S1-E11-01 |
 | IP addresses | not stored yet | scrambled, kept 30 days | the job that stores them (S1-E10-12) | decided 16 Oct 2026, Q48 |

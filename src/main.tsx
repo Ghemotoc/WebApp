@@ -13,6 +13,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import { AppProviders } from '@/app/AppProviders';
 import { appRoutes } from '@/app/router';
 import { createI18n, syncDocumentLanguage } from '@/lib/i18n';
+import { readDeviceLanguage } from '@/lib/language-preference';
 import '@/styles/index.css';
 
 // Step 1: find the empty <div id="root"> in index.html that React draws into.
@@ -22,8 +23,10 @@ if (rootElement === null) {
   throw new Error('index.html must contain <div id="root"></div> for the app to start.');
 }
 
-// Step 2: start the translations in Romanian and keep <html lang> in step with the language.
-const i18n = createI18n();
+// Step 2: start the translations in the language this browser last chose (Romanian on a first
+// visit, whatever the browser's own language; S1-E1-04) and keep <html lang> in step with it.
+// A signed-in account's language is applied a moment later by useAccountLanguage in AppLayout.
+const i18n = createI18n(readDeviceLanguage());
 syncDocumentLanguage(i18n);
 
 // Step 3: build the router from the route list; it reads the address bar to pick the page.

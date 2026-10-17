@@ -40,3 +40,11 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | Most boards | Text and search fields with a `#DED3E4` border (about 1.3:1 on white) | `#8E7B99` border (3:1, WCAG 2.2 1.4.11), as the AdminUsers Invites fields already use |
 | Every board | Fonts loaded from Google Fonts | The same fonts served from our own site (no visitor IP sent to Google; CLAUDE.md rule 7) |
 | AdminUsers vs Discover, Search | Two versions of the chip CSS | The fuller Discover/Search version (44 px touch area, tick icon) |
+
+## Found while building S1-E1-04 (17 Oct 2026)
+
+| Board | Element | What the app does |
+| --- | --- | --- |
+| Discover (top bar) | Language drop-down drawn 40 px tall with 13 px text and 12 px left padding | The one 44 px Select (14 px text, 16 px padding), as in the footer (DoD drop-down rule) |
+| Discover (top bar) | Options without a `lang` attribute (the footer's have one) | Both drop-downs mark English as `lang="en"` and Română as `lang="ro"` (WCAG 2.2, 3.1.2) |
+| Discover (footer) | English shown as the selected language | Romanian is selected on a first visit, whatever the device language (decided 17 Oct 2026, 11:48); the board's option order (English, Română) is kept |
