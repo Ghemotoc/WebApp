@@ -1,42 +1,59 @@
 /**
- * AccountLinks: the top bar's account links (story S1-E2-01; S1-E2-04 adds Settings; S1-E2-05
- * adds "Log in" and the account button for signed-in people).
+ * AccountLinks: the top bar's account links (story S1-E2-01; S1-E2-05 adds "Log in" and the
+ * account button).
  *
- * Signed out, it shows "Join for free" as the board's dark pill (design/boards/Main.dc.html), linking
- * to /sign-up. Signed in, it shows a "Settings" link (S1-E2-04) until S1-E2-05's account button
- * replaces it. Only links to pages that exist are shown (docs/board-fixes.md).
+ * Signed out, it shows "Log in" and "Join for free" as on the board (design/boards/Main.dc.html,
+ * SignIn.dc.html): a plain link, then the dark pill. Signed in, it shows AccountMenu (Settings,
+ * Log out) with the first letter of the person's pen name or username.
  * Who uses it: AppLayout, in the top bar's end slot, after the language drop-down.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { useMyNames } from '@/features/account/hooks/useMyNames';
+import { displayName } from '@/features/account/lib/nameRules';
+
 import { useSession } from '../hooks/useSession';
+
+import { AccountMenu } from './AccountMenu';
+
+/**
+ * The letter on the account button.
+ *
+ * @returns the first letter of the shown name, or "?" before a username is chosen
+ */
+function useInitial(): string {
+  const { names } = useMyNames();
+  const name = names === null ? null : displayName(names.handle, names.penName);
+  return name === null ? '?' : ([...name][0] ?? '?');
+}
 
 /**
  * Renders the links for the person's state.
  *
- * @returns "Join for free" when signed out; "Settings" when signed in; nothing while unknown
+ * @returns "Log in" and "Join for free" when signed out; the account button when signed in;
+ *   nothing while unknown
  */
 export function AccountLinks() {
   const { t } = useTranslation();
   const { userId, isKnown } = useSession();
+  const initial = useInitial();
   if (!isKnown) return null;
-  if (userId !== null) {
-    return (
-      <Link
-        to="/settings"
-        className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold whitespace-nowrap text-heading no-underline hover:bg-tint"
-      >
-        {t('nav.settings')}
-      </Link>
-    );
-  }
+  if (userId !== null) return <AccountMenu initial={initial} />;
   return (
-    <Link
-      to="/sign-up"
-      className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold whitespace-nowrap text-on-primary no-underline hover:opacity-90"
-    >
-      {t('nav.join')}
-    </Link>
+    <>
+      <Link
+        to="/sign-in"
+        className="inline-flex h-11 items-center px-2 text-sm font-semibold whitespace-nowrap text-heading no-underline hover:underline"
+      >
+        {t('nav.logIn')}
+      </Link>
+      <Link
+        to="/sign-up"
+        className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold whitespace-nowrap text-on-primary no-underline hover:opacity-90"
+      >
+        {t('nav.join')}
+      </Link>
+    </>
   );
 }

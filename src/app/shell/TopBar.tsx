@@ -70,7 +70,8 @@ export function TopBar({
             ))}
           </ul>
         )}
-        <div className="ml-auto flex items-center gap-1.5">{endSlot}</div>
+        {/* Wraps on narrow phones, so the language menu, "Log in" and "Join for free" never push the page sideways (S1-E2-05; CLAUDE.md rule 21). */}
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-1.5">{endSlot}</div>
       </nav>
     </header>
   );

@@ -87,6 +87,7 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
 
   test('Settings changes the username once, then asks to wait 30 days', async ({ browser }) => {
     const page = await openAsPersona(browser, '/');
+    await page.getByRole('button', { name: 'Your account' }).click();
     await page.getByRole('link', { name: 'Settings' }).click();
     await expect(page.getByText('Signed in as Doamna Popescu · @ms.popescu')).toBeVisible();
 

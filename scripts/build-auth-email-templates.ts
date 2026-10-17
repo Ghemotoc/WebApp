@@ -24,6 +24,8 @@ export interface AuthEmail {
   textGroup: string;
   /** The Go template that Supabase fills with the link; never a fixed address. */
   linkTemplate: string;
+  /** False for a notice of something already done ("password changed"): there is nothing to ignore. */
+  includesIgnoreLine?: boolean;
 }
 
 /** The emails Supabase Auth sends with our wording. */
@@ -37,6 +39,20 @@ export const authEmails: AuthEmail[] = [
     fileName: 'magic_link.html',
     textGroup: 'magicLink',
     linkTemplate: '{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email',
+  },
+  // S1-E2-05: "Forgot your password?" sends this; the link opens /reset-password.
+  {
+    fileName: 'recovery.html',
+    textGroup: 'recovery',
+    linkTemplate: '{{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}&type=recovery',
+  },
+  // S1-E2-05: "the user gets an email" after a new password; its button starts a reset in case
+  // it wasn't them.
+  {
+    fileName: 'password_changed.html',
+    textGroup: 'passwordChanged',
+    linkTemplate: '{{ .SiteURL }}/forgot-password',
+    includesIgnoreLine: false,
   },
 ];
 
@@ -73,7 +89,9 @@ function emailBody(texts: EmailTexts, email: AuthEmail): string {
     `<p style="margin:0 0 24px">${fillAndEscape(group.body ?? '')}</p>`,
     `<p style="margin:0 0 24px"><a href="${email.linkTemplate}" style="display:inline-block;background:#2A0E33;color:#FBF7EC;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600">${fillAndEscape(group.button ?? '')}</a></p>`,
     `<p style="margin:0 0 8px;font-size:14px;color:#5C4965">${fillAndEscape(group.linkNote ?? '')}</p>`,
-    `<p style="margin:0 0 24px;font-size:14px;color:#5C4965">${shared('notYou')}</p>`,
+    email.includesIgnoreLine === false
+      ? ''
+      : `<p style="margin:0 0 24px;font-size:14px;color:#5C4965">${shared('notYou')}</p>`,
     `<p style="margin:0">${shared('signOff')}<br><span style="font-size:13px;color:#6B5A73">${shared('madeBy')}</span></p>`,
   ].join('\n    ');
 }

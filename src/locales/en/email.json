@@ -13,5 +13,17 @@
     "body": "Press the button to log in to {{productName}}. No password needed.",
     "button": "Log in",
     "linkNote": "The link works once and expires after an hour."
+  },
+  "recovery": {
+    "heading": "Reset your password",
+    "body": "Someone asked to reset the password for your {{productName}} account. If it was you, press the button to choose a new one.",
+    "button": "Choose a new password",
+    "linkNote": "The link works once and expires after an hour."
+  },
+  "passwordChanged": {
+    "heading": "Your password was changed",
+    "body": "The password for your {{productName}} account has just been changed, and we logged you out on every other device. If this wasn’t you, reset your password now.",
+    "button": "Reset my password",
+    "linkNote": "You can see where you’re logged in under Settings."
   }
 }

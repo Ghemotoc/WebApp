@@ -2,10 +2,10 @@
  * SettingsPage: Settings, screen 6.3 (story S1-E2-04 starts it; design/boards/Settings.dc.html).
  *
  * Who shows it: the router, at /settings; the top bar links here while signed in.
- * What it shows today: "Signed in as …", the Account panel (username and pen name) and the Legal
- * panel. The board's other tabs (Privacy, Ways to log in, Notifications, Messages, Language,
- * Signed-in devices, My certificates) arrive with their stories (S1-E2-05, S1-E13-01, S1-E7-02 and
- * others), so only what works is shown (docs/board-fixes.md).
+ * What it shows today: "Signed in as …", the Account panel (username and pen name), Signed-in
+ * devices (S1-E2-05) and the Legal panel. The board's other tabs (Privacy, Ways to log in,
+ * Notifications, Messages, Language, My certificates) arrive with their stories (S1-E13-01,
+ * S1-E2-09, S1-E7-02 and others), so only what works is shown (docs/board-fixes.md).
  * Signed out, it says to log in; without a username, it links to setup.
  */
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ import { displayName } from '../lib/nameRules';
 
 import { AccountNamesSection } from './AccountNamesSection';
 import { LegalLinksSection } from './LegalLinksSection';
+import { SignedInDevicesSection } from './SignedInDevicesSection';
 
 /**
  * What goes under the heading: a wait, a message, or the panels.
@@ -53,6 +54,7 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
         </p>
       )}
       {names.handle !== null && <AccountNamesSection account={account} names={names} />}
+      <SignedInDevicesSection />
       <LegalLinksSection />
     </>
   );

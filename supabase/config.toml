@@ -267,11 +267,16 @@ content_path = "./supabase/templates/confirmation.html"
 subject = "Linkul tău de conectare · Your log-in link"
 content_path = "./supabase/templates/magic_link.html"
 
-# Uncomment to customize notification email template
-# [auth.email.notification.password_changed]
-# enabled = true
-# subject = "Your password has been changed"
-# content_path = "./supabase/templates/password_changed_notification.html"
+# S1-E2-05: the reset link opens /reset-password.
+[auth.email.template.recovery]
+subject = "Resetează parola · Reset your password"
+content_path = "./supabase/templates/recovery.html"
+
+# S1-E2-05: "Given a password reset, when it completes, then ... the user gets an email."
+[auth.email.notification.password_changed]
+enabled = true
+subject = "Parola ta a fost schimbată · Your password was changed"
+content_path = "./supabase/templates/password_changed.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.

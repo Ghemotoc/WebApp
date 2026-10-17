@@ -13,5 +13,17 @@
     "body": "Apasă butonul ca să te conectezi la {{productName}}. Nu ai nevoie de parolă.",
     "button": "Mă conectez",
     "linkNote": "Linkul merge o singură dată și expiră după o oră."
+  },
+  "recovery": {
+    "heading": "Resetează parola",
+    "body": "Cineva a cerut resetarea parolei contului tău {{productName}}. Dacă ai fost tu, apasă butonul ca să alegi una nouă.",
+    "button": "Alege o parolă nouă",
+    "linkNote": "Linkul merge o singură dată și expiră după o oră."
+  },
+  "passwordChanged": {
+    "heading": "Parola ta a fost schimbată",
+    "body": "Parola contului tău {{productName}} tocmai a fost schimbată și te-am deconectat de pe toate celelalte dispozitive. Dacă nu ai fost tu, resetează parola acum.",
+    "button": "Resetează parola",
+    "linkNote": "Vezi în Setări dispozitivele conectate."
   }
 }

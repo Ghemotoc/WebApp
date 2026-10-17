@@ -19,13 +19,16 @@ describe('the Supabase Auth email templates', () => {
     expect(committed).toBe(buildAuthEmail(email, localesFolder));
   });
 
-  it.each(authEmails)(
-    '$fileName holds Romanian and English and links with a one-time token',
-    (email) => {
-      const html = buildAuthEmail(email, localesFolder);
-      expect(html).toContain('lang="ro"');
-      expect(html).toContain('lang="en"');
-      expect(html).toContain('{{ .TokenHash }}');
-    },
-  );
+  it.each(authEmails)('$fileName holds Romanian and English and its link', (email) => {
+    const html = buildAuthEmail(email, localesFolder);
+    expect(html).toContain('lang="ro"');
+    expect(html).toContain('lang="en"');
+    expect(html).toContain(email.linkTemplate);
+  });
+
+  it('every email that opens an account action links with a one-time token', () => {
+    // The "password changed" notice only links to "Forgot your password?" (S1-E2-05).
+    const actionEmails = authEmails.filter((email) => email.fileName !== 'password_changed.html');
+    for (const email of actionEmails) expect(email.linkTemplate).toContain('{{ .TokenHash }}');
+  });
 });

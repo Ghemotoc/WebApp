@@ -22,7 +22,11 @@
     "privacy": "Confidențialitate",
     "guidelines": "Regulile comunității",
     "join": "Înscrie-te gratuit",
-    "settings": "Setări"
+    "settings": "Setări",
+    "logIn": "Conectare",
+    "account": "Contul tău",
+    "logOut": "Deconectare",
+    "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou."
   },
   "theme": {
     "label": "Temă",
