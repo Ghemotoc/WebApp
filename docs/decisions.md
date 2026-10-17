@@ -64,6 +64,10 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Each legal version is its own migration, generated from `content/legal/` by `scripts/build-legal-migration.ts`; brand values are stored as `{{tokens}}` filled in from `src/config/brand.ts`, and published versions are never edited | Claude Code session (S1-E14-01), 17 Oct 2026 |
 | The Legal centre's documents are links with their own web addresses (`/legal/terms`, `/legal/privacy`, `/legal/guidelines`) instead of the board's tabs, so sign-up, Settings and the footer can link to one document | Claude Code session (S1-E14-01), 17 Oct 2026 |
 | "We've updated our Terms" is a panel at the top of every page, not a blocking dialog: reading never stops, and the database refuses posting until the new version is accepted | Claude Code session (S1-E14-01), 17 Oct 2026 |
+| Sign-up is checked in one trigger on `auth.users` that creates the profile and consents or refuses everything (ADR 0002) | Claude Code session (S1-E2-01), 17 Oct 2026 |
+| Email links carry a one-time token hash and land on `/auth/confirm`, so a confirmation or log-in link works on any device | Claude Code session (S1-E2-01), 17 Oct 2026 |
+| Forms use zod rules with plain React state; react-hook-form (architecture 1.5) isn't added while the forms stay this small, because the shared fields don't pass refs | Claude Code session (S1-E2-01), 17 Oct 2026 |
+| While the age check isn't part of sign-up (`adults_only` on), the sign-up screen leaves out the "Age check" step and the Yoti and parent lines, and its handwritten tag says the test is for invited writers | Claude Code session (S1-E2-01), 17 Oct 2026 |
 
 ## Notes from the CTO pack (decisions applied to the stories)
 

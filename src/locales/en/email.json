@@ -1,0 +1,17 @@
+{
+  "signOff": "The {{productName}} team",
+  "madeBy": "An app by {{companyName}}",
+  "notYou": "If you didn’t ask for this, you can ignore this email. Nothing will change.",
+  "confirmation": {
+    "heading": "Confirm your email address",
+    "body": "Thanks for joining {{productName}}. Press the button to confirm your email address. Until you do, you can read stories but you can’t publish, comment, post or send messages.",
+    "button": "Confirm my email",
+    "linkNote": "The link works once and expires after an hour."
+  },
+  "magicLink": {
+    "heading": "Your log-in link",
+    "body": "Press the button to log in to {{productName}}. No password needed.",
+    "button": "Log in",
+    "linkNote": "The link works once and expires after an hour."
+  }
+}

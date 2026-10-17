@@ -14,6 +14,7 @@
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
 
+import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
 import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice';
@@ -39,7 +40,15 @@ export function AppLayout() {
       >
         {t('shell.skipToContent')}
       </a>
-      <TopBar endSlot={<LanguageSelect id="language-select-top" />} />
+      <TopBar
+        endSlot={
+          <>
+            <LanguageSelect id="language-select-top" />
+            {/* "Join for free" while signed out (S1-E2-01). */}
+            <AccountLinks />
+          </>
+        }
+      />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* "We've updated our Terms", for a signed-in person who must accept before posting (S1-E14-01). */}
         <LegalUpdateNotice />

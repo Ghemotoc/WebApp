@@ -16,6 +16,7 @@
 --
 -- Persona states held in tables that later stories create are added by those stories:
 --   every persona's acceptance of the terms and privacy notice v0.1      S1-E14-01 (below)
+--   four test invite codes (one that works, one expired, used up, revoked) S1-E2-01 (end of file)
 --   kid_14_ok's agreed consent and kid_14_waiting's pending consent  S1-E2-03
 --   teacher's Teacher badge                                           S1-E2-11
 --   suspended_user's and banned_user's sanctions                      S1-E10-06
@@ -53,6 +54,8 @@ begin
   loop
     -- 1. The Supabase Auth account, with a confirmed email so the persona can sign in.
     --    Empty strings instead of nulls in the token columns: Supabase Auth expects them.
+    --    "seed_persona" in the app metadata tells the sign-up trigger (S1-E2-01) that this file
+    --    makes the profile itself; only the server can write app metadata.
     insert into auth.users (
       instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
       raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
@@ -61,7 +64,7 @@ begin
       '00000000-0000-0000-0000-000000000000', persona.user_id, 'authenticated', 'authenticated',
       persona.persona_name || '@personas.test',
       extensions.crypt(shared_password, extensions.gen_salt('bf')), now(),
-      '{"provider": "email", "providers": ["email"]}', '{}', now(), now(),
+      '{"provider": "email", "providers": ["email"], "seed_persona": true}', '{}', now(), now(),
       '', '', '', ''
     );
 
@@ -105,3 +108,18 @@ begin
   end loop;
 end;
 $$;
+
+-- Test invites for the March test's invite-only sign-up (S1-E2-01). Local and staging only: this
+-- file never runs in production, so no known code ever reaches real users. The admin persona made
+-- them; the codes are in supabase/README.md. S1-E11-17 adds the admin screen that makes real ones.
+insert into public.invites (user_id, code_hash, max_uses, use_count, expires_at, revoked_at, note)
+values
+  ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('PERSONAS-TEST-INVITE'),
+   1000, 0, '2100-01-01', null, 'Seed: works for every test sign-up'),
+  ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('EXPIRED-TEST-INVITE'),
+   5, 0, '2026-01-01', null, 'Seed: expired'),
+  ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('USED-UP-TEST-INVITE'),
+   1, 1, '2100-01-01', null, 'Seed: used up'),
+  ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('REVOKED-TEST-INVITE'),
+   5, 0, '2100-01-01', '2026-10-17', 'Seed: revoked');
+

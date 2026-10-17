@@ -185,7 +185,8 @@ enable_anonymous_sign_ins = false
 # Allow/disallow testing manual linking of accounts
 enable_manual_linking = false
 # Passwords shorter than this value will be rejected as weak. Minimum 6, recommended 8 or more.
-minimum_password_length = 6
+# At least 10 characters (canvas 2.1; story S1-E2-01). Set the same on staging by hand (PR by-hand list).
+minimum_password_length = 10
 # Passwords that do not meet the following requirements will be rejected as weak. Supported values
 # are: `letters_digits`, `lower_upper_letters_digits`, `lower_upper_letters_digits_symbols`
 password_requirements = ""
@@ -229,7 +230,8 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+# On: an account can read but not write until its email is confirmed (S1-E2-01).
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
@@ -249,10 +251,17 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Our own email templates, in Romanian and English (S1-E2-01). Generated from the locale files and
+# src/config/brand.ts by scripts/build-auth-email-templates.ts: never edit the HTML by hand. The
+# subjects are bilingual and name no brand (names are settings, not code). Staging gets the same
+# templates by hand (the S1-E2-01 pull request's by-hand list).
+[auth.email.template.confirmation]
+subject = "Confirmă-ți adresa de email · Confirm your email address"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.magic_link]
+subject = "Linkul tău de conectare · Your log-in link"
+content_path = "./supabase/templates/magic_link.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]

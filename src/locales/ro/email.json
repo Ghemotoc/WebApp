@@ -1,0 +1,17 @@
+{
+  "signOff": "Echipa {{productName}}",
+  "madeBy": "O aplicație de la {{companyName}}",
+  "notYou": "Dacă nu ai cerut asta, poți ignora acest email. Nu se schimbă nimic.",
+  "confirmation": {
+    "heading": "Confirmă-ți adresa de email",
+    "body": "Mulțumim că te-ai alăturat comunității {{productName}}. Apasă butonul ca să-ți confirmi adresa de email. Până atunci poți citi povești, dar nu poți publica, comenta, posta sau trimite mesaje.",
+    "button": "Confirm adresa de email",
+    "linkNote": "Linkul merge o singură dată și expiră după o oră."
+  },
+  "magicLink": {
+    "heading": "Linkul tău de conectare",
+    "body": "Apasă butonul ca să te conectezi la {{productName}}. Nu ai nevoie de parolă.",
+    "button": "Mă conectez",
+    "linkNote": "Linkul merge o singură dată și expiră după o oră."
+  }
+}

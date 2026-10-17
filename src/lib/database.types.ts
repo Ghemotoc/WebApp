@@ -135,6 +135,60 @@ export type Database = {
         };
         Relationships: [];
       };
+      invites: {
+        Row: {
+          code_hash: string;
+          created_at: string;
+          expires_at: string;
+          id: string;
+          max_uses: number;
+          note: string | null;
+          purpose: string;
+          revoked_at: string | null;
+          space_id: string | null;
+          updated_at: string;
+          use_count: number;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          code_hash: string;
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          max_uses?: number;
+          note?: string | null;
+          purpose?: string;
+          revoked_at?: string | null;
+          space_id?: string | null;
+          updated_at?: string;
+          use_count?: number;
+          user_id: string;
+        };
+        Update: {
+          code_hash?: string;
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          max_uses?: number;
+          note?: string | null;
+          purpose?: string;
+          revoked_at?: string | null;
+          space_id?: string | null;
+          updated_at?: string;
+          use_count?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'invites_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       legal_document_versions: {
         Row: {
           body_markdown: string;
@@ -357,6 +411,8 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['age_band'];
       };
+      check_invite: { Args: { code: string }; Returns: string };
+      invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
       is_staff: {
@@ -403,7 +459,14 @@ export type Database = {
         }[];
       };
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
+      normalise_invite_code: { Args: { code: string }; Returns: string };
+      record_sign_up_consent: {
+        Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
+        Returns: undefined;
+      };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
+      sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
+      use_platform_invite: { Args: { code: string }; Returns: undefined };
     };
     Enums: {
       account_status:
