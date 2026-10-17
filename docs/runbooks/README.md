@@ -7,8 +7,8 @@ Step-by-step instructions for things that go wrong or happen rarely. Created by 
 | `releasing-to-production.md` | Create the production Supabase and Cloudflare Pages projects, add the `production` environment with Robert as required reviewer, set `PRODUCTION_ENABLED`, tag a release | S1-E1-01 (workflow), before the first real user |
 | `deploy-and-rollback.md` | How staging and pull request previews build on Cloudflare Pages, pausing automatic deploys, rolling back to an earlier deployment | S1-E1-01 follow-up |
 | `branch-ruleset.md` | The ruleset on `main` that requires the three CI checks and a pull request | S1-E1-01 follow-up |
-| `supabase-github-integration.md` | How migrations reach staging when main changes, what to do when one fails, never pushing from a session | S1-E1-02 |
-| `staging-reset-and-seed.md` | Resetting staging and loading the synthetic seed; never copying production | S1-E1-02 |
+| [`supabase-github-integration.md`](supabase-github-integration.md) (written) | How migrations reach staging when main changes, what to do when one fails, never pushing from a session | S1-E1-02 |
+| [`staging-reset-and-seed.md`](staging-reset-and-seed.md) (written) | Resetting staging and loading the synthetic seed; never copying production | S1-E1-02 |
 | `restore.md` | Quarterly restore drill into a scratch project from Supabase backups and the nightly `pg_dump` | architecture.md 1.12, before real users |
 | `incident-and-breach.md` | Who decides, the GDPR 72-hour notice to ANSPDCP (Art 33) and telling users (Art 34) | architecture.md 1.9, before real users |
 | `key-rotation.md` | Rotating the Supabase keys, Edge Function secrets and Cloudflare tokens | architecture.md 1.9, before real users |

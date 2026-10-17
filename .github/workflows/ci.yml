@@ -1,7 +1,8 @@
 # Continuous integration: the checks every pull request must pass before it can merge (story S1-E1-01).
 #
 # Who starts it: GitHub, on every pull request and on every push to main.
-# What it runs: lint, type check, unit tests, the i18n key check and the build (job "checks");
+# What it runs: lint, type check, unit tests, the i18n key check, the build and the bundle
+# secret scan (job "checks");
 # database tests with pgTAP and the generated-types check against a local Supabase (job "database");
 # a Playwright smoke test of the home page with axe accessibility checks (job "e2e").
 # Blocking the merge: a branch ruleset on main lists these three jobs as required status checks.
@@ -45,6 +46,8 @@ jobs:
       - run: npm run build
       - name: Check the build wrote dist/index.html and dist/_redirects
         run: test -f dist/index.html && test -f dist/_redirects
+      # No service role key or secret API key may reach the browser bundle (CLAUDE.md rule 2).
+      - run: npm run scan:bundle
 
   database:
     name: Database tests and generated types
