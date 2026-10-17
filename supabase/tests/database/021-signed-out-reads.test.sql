@@ -34,17 +34,22 @@ begin
 end;
 $$;
 
--- Expected: only the public flags and the public settings; nothing from any other table.
+-- Expected: only the public flags and settings, and the published legal documents (S1-E14-01);
+-- nothing from any other table. Each story that adds a table adds its line here.
 select results_eq(
   $$ select table_name, visible_rows from pg_temp.rows_visible_to_anon() order by table_name $$,
   $$ select * from (values
        ('audit_log', 0::bigint),
+       ('consents', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
+       ('legal_document_versions',
+        (select count(*) from public.legal_document_versions where published_at <= now())),
+       ('legal_documents', (select count(*) from public.legal_documents)),
        ('profiles', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
        ('staff_roles', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
-  'a signed-out visitor sees only public flags and settings, and nothing from any other table'
+  'a signed-out visitor sees only public flags, settings and published legal documents, nothing else'
 );
 
 select * from finish();

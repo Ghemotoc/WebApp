@@ -2,7 +2,7 @@
 
 The map for a new developer: where the app starts, how one click travels to the database and back, where each kind of thing lives, and what to read first. Created by S1-E1-01. Every story that adds a feature, table, edge function or job adds a few lines here in the same pull request (CLAUDE.md, Readable code).
 
-Today the app is a skeleton: one home page, the brand config, translations and CI (S1-E1-01), the database baseline with its seed personas (S1-E1-02), the design tokens, light and night mode, the app shell and the /design components page (S1-E1-03), and the Romanian and English interface with the language saved to the account (S1-E1-04). Sections below say which later story fills in each part, so you can tell what exists from what is planned.
+Today the app is a skeleton: one home page, the brand config, translations and CI (S1-E1-01), the database baseline with its seed personas (S1-E1-02), the design tokens, light and night mode, the app shell and the /design components page (S1-E1-03), the Romanian and English interface with the language saved to the account (S1-E1-04), and the Legal centre with versioned terms, privacy notice and guidelines (S1-E14-01). Sections below say which later story fills in each part, so you can tell what exists from what is planned.
 
 ## Where the app starts
 
@@ -51,6 +51,9 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/components/ui/`, `src/components/icons/` | Shared components (buttons, drop-down, fields, pills, chips, cards, shelves, notices, ad slots) and the few plain icons; see its README | S1-E1-03 |
 | `src/features/theme/` | Light and night mode: the footer drop-down and the hook that applies it | S1-E1-03 |
 | `src/features/language/` | The English / Română drop-downs, the hooks that switch and save the language, and the Supabase calls for `profiles.locale` | S1-E1-04 |
+| `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
+| `src/features/auth/` | Who is signed in (`useSession`); sign-up and sign-in from S1-E2-01 and S1-E2-05 | S1-E14-01 |
+| `content/legal/`, `scripts/build-legal-migration.ts` | The legal drafts (English, and Romanian draft translations in `ro/`) and the script that turns a new version into a migration | S1-E14-01 |
 | `src/features/design-system/` | The /design page: every token and component on one page, with live contrast ratios | S1-E1-03 |
 | `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
@@ -87,6 +90,8 @@ Five tables exist, each with row-level security and only read policies; every wr
 | `staff_roles` | which staff role each team member holds | the person themselves; owner and admin see all |
 | `feature_flags`, `settings` | switches and values (`invite_only`, `adults_only` on for March) | anyone, for rows marked public; owner and admin see all |
 | `audit_log` | every staff action, written only by `log_staff_action()`; nobody can change or delete a row | owner and admin |
+| `legal_documents`, `legal_document_versions` (S1-E14-01) | the Legal centre's documents and every live version, per language; written only by migrations | anyone, for live versions; owner and admin also see versions not live yet |
+| `consents` (S1-E14-01) | which version of the terms and privacy notice each person accepted, and when | the person themselves; written only by the sign-up trigger (S1-E2-01) and `accept_current_legal_versions()` |
 
 The **account gate** is a handful of SQL functions in `supabase/migrations/…_account_gate.sql`. Every write policy in later stories calls `is_active_member()`, and every under-18 protection reads `age_band()`. Staff checks use `is_staff(role)` and `is_staff_session()`. `supabase/README.md` explains them and what each later story fills in.
 
@@ -117,6 +122,27 @@ profiles.locale = 'en'
 ```
 
 Which language shows: the account's (when signed in), else this browser's last choice, else Romanian. The browser's own language is never read (decided 17 Oct 2026, 11:48). Tests: `supabase/tests/database/014-profile-locale.test.sql`, `src/features/language/components/LanguageSelect.test.tsx` and `e2e/language.spec.ts` (two browsers, one persona).
+
+## The Legal centre and "accept before posting again" (S1-E14-01)
+
+How a legal text gets from a file to the screen:
+
+```
+content/legal/01-terms-of-use.md (English) and content/legal/ro/01-terms-of-use.md (Romanian draft)
+  │  scripts/build-legal-migration.ts: leaves out the lawyer's notes, marks the lines in
+  │  content/legal/after-the-invited-test.json, swaps brand values for {{tokens}}
+  ▼
+supabase/migrations/…_s1_e14_01_legal_versions_v0_1.sql   one row per document and language
+  ▼
+public.legal_document_versions   policy legal_document_versions_select_published: anyone reads live versions
+  ▼
+useLegalVersions → api/legalDocuments.ts             src/features/legal/
+  ▼
+LegalCentrePage → chooseLegalVersion (reader's language, else English) → LegalDocumentView
+  → fillBrandTokens (src/config/brand.ts) → parseLegalDocument → LegalSectionCard → LegalMarkdown
+```
+
+When an important (material) version goes live, `account_state()` answers `legal_acceptance_required` for everyone who hasn't accepted it, so `is_active_member()` is false and every write policy refuses. `LegalUpdateNotice` (at the top of every page, from AppLayout) asks `my_legal_documents_to_accept()`, links to the new text and calls `accept_current_legal_versions()`. Tests: `supabase/tests/database/015` to `017`, `e2e/legal.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 

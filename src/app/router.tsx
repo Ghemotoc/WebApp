@@ -9,6 +9,7 @@
 import { Navigate, type RouteObject } from 'react-router';
 
 import { HomePage } from '@/features/home/components/HomePage';
+import { LegalCentrePage } from '@/features/legal/components/LegalCentrePage';
 
 import { AppLayout } from './shell/AppLayout';
 
@@ -40,6 +41,9 @@ export const appRoutes: RouteObject[] = [
     element: <AppLayout />,
     children: [
       { path: '/', element: <HomePage /> },
+      // The Legal centre (S1-E14-01): /legal opens the terms; each document has its own address.
+      { path: '/legal', element: <Navigate to="/legal/terms" replace /> },
+      { path: '/legal/:documentSlug', element: <LegalCentrePage /> },
       ...(isDesignPageIncluded ? [designRoute] : []),
       // Any other address goes back home for now, so nobody sees React Router's built-in English
       // error page. S1-E1-05 replaces this with a proper 404 page in both languages.

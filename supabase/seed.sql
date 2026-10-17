@@ -15,6 +15,7 @@
 -- (Robert, 17 Oct 2026: one shared, documented password, the same locally and on staging).
 --
 -- Persona states held in tables that later stories create are added by those stories:
+--   every persona's acceptance of the terms and privacy notice v0.1      S1-E14-01 (below)
 --   kid_14_ok's agreed consent and kid_14_waiting's pending consent  S1-E2-03
 --   teacher's Teacher badge                                           S1-E2-11
 --   suspended_user's and banned_user's sanctions                      S1-E10-06
@@ -93,6 +94,14 @@ begin
       insert into public.staff_roles (user_id, role)
       values (persona.user_id, persona.staff_role::public.staff_role);
     end if;
+
+    -- 5. Every persona accepted version 0.1 of the terms and the privacy notice at sign-up, in
+    --    English (S1-E14-01), so nobody is asked to accept again until a new important version.
+    insert into public.consents (user_id, legal_document_version_id, method)
+    select persona.user_id, versions.id, 'sign_up'
+    from public.legal_document_versions as versions
+    join public.legal_documents as documents on documents.id = versions.document_id
+    where documents.needs_acceptance and versions.version_label = '0.1' and versions.language = 'en';
   end loop;
 end;
 $$;

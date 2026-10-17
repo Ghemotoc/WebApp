@@ -1,0 +1,72 @@
+{
+  "documentTitle": "{{documentTitle}} · Centrul legal · {{productName}}",
+  "eyebrow": "Centrul legal",
+  "heading": "Regulile, pe înțelesul tuturor",
+  "lead": "Fiecare pagină începe cu o versiune scurtă pe care o poate urmări oricine de la 13 ani în sus. Textul legal complet este sub fiecare parte. Dacă vreodată cele două par să nu se potrivească, întreabă-ne.",
+  "documentsNavLabel": "Documente legale",
+  "documents": {
+    "terms": {
+      "tab": "Termeni",
+      "name": "Termenii",
+      "intro": "Acordul dintre tine și {{productName}}. Citește versiunea scurtă din fiecare casetă. Textul complet este sub ea, ca ciornă pe care un avocat român o verifică înainte de lansare."
+    },
+    "privacy": {
+      "tab": "Nota de confidențialitate",
+      "name": "Nota de confidențialitate",
+      "intro": "Ce colectăm despre tine, de ce avem nevoie de asta și ce poți face în privința asta."
+    },
+    "guidelines": {
+      "tab": "Regulile comunității",
+      "name": "Regulile comunității",
+      "intro": "Cum ne purtăm unii cu alții aici. Se aplică poveștilor, comentariilor, forumurilor și mesajelor private."
+    }
+  },
+  "status": {
+    "label": "Starea documentului",
+    "draft": "Ciornă: un avocat român o verifică înainte de lansare",
+    "reviewed": "Verificat de un avocat",
+    "version": "Versiunea {{version}}",
+    "updated": "Actualizat la {{date}}",
+    "bothLanguages": "În română și engleză"
+  },
+  "translationDraft": "Traducerea în română este o ciornă și nu a fost verificată de un avocat.",
+  "fallbackLanguage": "Acest text nu este încă disponibil în limba ta, așa că îl arătăm în engleză.",
+  "summaryHeading": "Pe scurt",
+  "shortVersion": "Pe scurt",
+  "fullTextDraft": "Text complet · ciornă pentru avocat",
+  "fullText": "Text complet",
+  "fullTextRegion": "Text complet: {{title}}",
+  "proposedSection": "Secțiune propusă",
+  "afterTheTest": {
+    "label": "După testul cu invitație",
+    "explanation": "Părțile marcate „După testul cu invitație” descriu lucruri care încep doar după testul cu invitație. Testul este pentru adulții invitați, așa că verificarea vârstei, acordul unui părinte sau tutore și unele funcții nu sunt încă pornite."
+  },
+  "history": {
+    "heading": "Istoricul versiunilor",
+    "item": "Versiunea {{version}} · {{date}}",
+    "draft": "Ciornă",
+    "note": "Fiecare versiune rămâne aici, în română și engleză. Găsești aceste pagini și la înscriere și în Setări."
+  },
+  "loading": "Se încarcă documentul…",
+  "loadFailed": {
+    "title": "Nu am putut încărca această pagină",
+    "body": "Verifică-ți conexiunea și încearcă din nou.",
+    "retry": "Încearcă din nou"
+  },
+  "notFound": {
+    "title": "Nu există niciun document la această adresă",
+    "body": "Alege unul dintre documentele de mai sus."
+  },
+  "update": {
+    "regionLabel": "Reguli actualizate",
+    "eyebrow": "Te rugăm să citești",
+    "titleOne": "Am actualizat {{document}}",
+    "titleMany": "Am actualizat regulile",
+    "change": "Versiunea {{version}} pentru {{document}}: {{summary}}",
+    "body": "Citește noua versiune și accept-o înainte să publici din nou. Între timp poți citi în continuare.",
+    "read": "Citește ce s-a schimbat",
+    "accept": "Accept și continui",
+    "accepting": "Se salvează…",
+    "failed": "Nu a mers. Verifică-ți conexiunea și încearcă din nou."
+  }
+}

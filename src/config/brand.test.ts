@@ -29,6 +29,7 @@ describe('readBrand', () => {
       VITE_BRAND_SITE_DOMAIN: 'test.example.com',
       VITE_BRAND_CONTACT_EMAIL: 'contact@example.com',
       VITE_BRAND_SUPPORT_EMAIL: 'support@example.com',
+      VITE_BRAND_PRIVACY_EMAIL: 'privacy@example.com',
       VITE_BRAND_SOCIAL_HANDLE: '@test',
       VITE_BRAND_COMPANY_NAME: 'Test Company',
     });
@@ -39,6 +40,7 @@ describe('readBrand', () => {
       siteUrl: 'https://test.example.com',
       contactEmail: 'contact@example.com',
       supportEmail: 'support@example.com',
+      privacyEmail: 'privacy@example.com',
       socialHandle: '@test',
       companyName: 'Test Company',
     });

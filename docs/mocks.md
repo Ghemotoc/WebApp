@@ -18,5 +18,7 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | `account_state()`: age check | while `adults_only` is on, adults are active without a Yoti check | S1-E2-08 | same |
 | `profiles` rows | created by `supabase/seed.sql` only; sign-up doesn't create one yet | S1-E2-01 (the sign-up trigger) | personas loaded by hand (`docs/runbooks/staging-reset-and-seed.md`) |
 | Signing in | e2e tests sign personas in from code (`e2e/support/personas.ts`); there is no sign-in screen | S1-E2-05 | no sign-in on staging yet |
+| Legal texts | version 0.1 of the terms, privacy notice and guidelines are drafts, in English and in a Romanian draft translation, marked as such in the Legal centre | the lawyer's review, then a new version made with `scripts/build-legal-migration.ts` (S1-E14-01) | same |
+| "After the invited test" labels | lines of the legal drafts that start only after the March test carry a label (`content/legal/after-the-invited-test.json`) | the version published when sign-up opens to the public | same |
 | `reportable_type` | holds `profile` only | each user-content story adds its value (S1-E3-01 first) | same |
 | ş and ţ on save | corrected as people type, in the shared text fields; not yet on the server | S1-E3-02 (zod schemas) | same |

@@ -6,7 +6,8 @@
  * drop-downs and saving the choice to the account live in src/features/language/ (S1-E1-04); main.tsx
  * starts this instance in the language this browser last chose (src/lib/language-preference.ts).
  *
- * Where things come in from: src/locales/<language>/common.json (the /design page adds its own
+ * Where things come in from: src/locales/<language>/common.json and legal.json (the Legal centre,
+ * S1-E14-01) (the /design page adds its own
  * design.json when it loads, so production builds never carry it), and the product and company names from
  * src/config/brand.ts, which every translation can use as {{productName}} and {{companyName}}.
  * Where things go: src/app/AppProviders.tsx gives this instance to React; components call
@@ -19,7 +20,9 @@ import { initReactI18next } from 'react-i18next';
 
 import { brand } from '@/config/brand';
 import englishCommon from '@/locales/en/common.json';
+import englishLegal from '@/locales/en/legal.json';
 import romanianCommon from '@/locales/ro/common.json';
+import romanianLegal from '@/locales/ro/legal.json';
 
 /** The languages the interface is available in. Romanian comes first. */
 export const supportedLanguages = ['ro', 'en'] as const;
@@ -42,8 +45,8 @@ export function isSupportedLanguage(value: unknown): value is SupportedLanguage 
 
 /** All translations, grouped by language and then by namespace (one JSON file per namespace). */
 const translations = {
-  ro: { common: romanianCommon },
-  en: { common: englishCommon },
+  ro: { common: romanianCommon, legal: romanianLegal },
+  en: { common: englishCommon, legal: englishLegal },
 };
 
 /**
@@ -65,7 +68,7 @@ export function createI18n(language: SupportedLanguage = defaultLanguage): I18nI
     fallbackLng: defaultLanguage,
     supportedLngs: supportedLanguages,
     defaultNS: 'common',
-    ns: ['common'],
+    ns: ['common', 'legal'],
     initAsync: false,
     interpolation: {
       // React already escapes text it renders, so i18next must not escape it a second time.
