@@ -45,7 +45,7 @@ As a user with a disability, I want to know how accessible the platform is so th
 As any user or visitor, I want a "Contact us" page where I can ask a question or report a problem with my account so that a person answers me.
 
 - **Priority:** Must · **Size:** S · **Depends on:** S1-E14-02, S1-E1-04
-- **Added:** 16 Oct 2026, late evening (Q60). Updated 17 Oct 2026: every message becomes a ticket inside the admin site (S1-E11-13), linked to support@ghemotoc.com.
+- **Added:** 16 Oct 2026, late evening (Q60). Updated 17 Oct 2026: every message becomes a ticket inside the admin site (S1-E11-13), linked to hello@themagiccoffin.com.
 - **Acceptance criteria:**
   - Given the footer, Settings and Help, when someone opens "Contact us", then they see a short form (topic, message, email if signed out) in their language, and a line pointing reports of content to the report form (S1-E10-02).
   - Given a message is sent, when it reaches the helpdesk, then the sender gets an acknowledgement email with a reference, and staff answer from the helpdesk as "The Ghemotoc team".
@@ -53,5 +53,21 @@ As any user or visitor, I want a "Contact us" page where I can ask a question or
   - Given the helpdesk, when it is chosen, then it hosts data in the EU, signs a data processing agreement and adds no tracking script or cookie to our pages (the form posts through our own edge function, proposal).
   - Given a message is about a data request, when staff read it, then they open a data request in S1-E11-09 so the deadline is tracked.
 - **Legal and compliance:** DSA Art 12 (a contact point for users, chosen by electronic means and user-friendly); GDPR Art 12(2) (make rights easy to use). The helpdesk is a new processor: DPA, processor list, privacy notice. A ready-made external helpdesk runs behind our admin screens through its API (decided 17 Oct 2026); the product is **OPEN** (S1-E11-13).
+
+##### S1-E14-QA Epic check: Legal pages and compliance
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E14-01, S1-E14-02, S1-E14-04
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories and comes last among them in the build order. The epic's after-March stories (S1-E14-03) get the same check when they land (proposal).
+- **Main journeys:** a visitor reads the terms, privacy notice and community guidelines, finds the contact points and sends a Contact us message; sign-up records consent to the current versions.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting`, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. In March only invited adults sign up (`adults_only`, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove these protections are ready before minors are let in. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
 
 ---

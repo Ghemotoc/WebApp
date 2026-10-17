@@ -17,7 +17,8 @@ As a reader, I want ads that never interrupt my reading and never track me so th
   - Given any banner, when it is shown, then a direct sponsor's banner is labelled "Sponsored" ("Sponsorizat") with the sponsor's name and an ad-network ad is labelled "Ad" ("Reclamă") (decided 16 Oct 2026, late evening, Q7); "Why this ad?" explains it matches the page and was not chosen from anything about the reader.
   - Given a class space, when any page in it is shown, then no banner slot is shown (Q70).
   - Given a public page (Discover, Search, Classics, See all, Story page, shared-link teaser, app-only story page, Forums, forum thread, public spaces, writer profile, Library, chapter end; Library added 17 Oct 2026, Robert), when it is shown, then it has at least one ad slot (decided 17 Oct 2026). Pages that are not public (sign-up, log in, age check, parent consent, onboarding, writer tools, Messages, Notifications, Settings, reporting and appeals, legal and help, error and staff pages) and class spaces have none.
-  - Given any page, when ads are placed, then there are at most 2 ad slots on it (decided 17 Oct 2026, 11:53). Never more than one in view at a time, never two next to each other, and never above the page heading or the first row of content remain a proposal (canvas 7.5). **OPEN (known conflict):** a forum thread (one ad below the reply box plus a side ad on desktop, decided 17 Oct) and Discover (the big banner plus the sponsored card, canvas 3.1) can put two ads in view at once on a wide screen; Robert to confirm whether that is allowed.
+  - Given any page, when ads are placed, then there are at most 2 ad slots on it (decided 17 Oct 2026, 11:53). Never two next to each other and never above the page heading or the first row of content remain a proposal (canvas 7.5).
+  - Given a wide screen (a forum thread, Discover), when two ads are in view at once, then that is allowed, and the two are always different: never the same ad twice; a sponsor's ad, a house ad and a network ad each count as different (decided 17 Oct 2026, 12:44).
   - Given a forum thread, when it is shown, then its ad slots are one wide ad below the reply box and one side ad on desktop; no ads between replies (Robert, canvas comment, 17 Oct 2026, replaces "after the 3rd reply"). Canvas 7.5 (Ad formats) now shows the same rule (checked 17 Oct 2026). In story lists and grids, at most one ad card per 12 items and never in the first position (proposal).
   - Given the formats, when a slot is drawn, then it is a wide banner (full content width up to 970 px, 120 px tall on desktop, 100 px on phones), a portrait (300 × 600, desktop side column only, from 1200 px wide), a side box (300 × 250, desktop side column only; shown on canvas 5.1, not on 7.5) or an in-list card the size of a story card; every slot reserves its space so the page doesn't jump when the ad loads.
 - **Legal and compliance:** DSA Art 26 (ad labelling) and Art 28(2) (no profiling ads to minors) applied as good practice. Ad-network ads are S1-E12-04.
@@ -75,5 +76,21 @@ As an admin, I want to book a sponsor into a specific ad slot for specific dates
   - Given house ads, when staff add one, then it has English and Română copy, a link to one of our own pages and dates.
   - Given a booking, when it is made, changed or cancelled, then the audit log records it.
 - **Legal and compliance:** "Sponsored" and "Ad" labels (Q7); never personalised; no profiling ads to minors (DSA art. 28(2) as good practice); every sponsor creative still passes the minors check in S1-E12-02.
+
+##### S1-E12-QA Epic check: Banners and sponsor slots
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E12-01, S1-E12-02, S1-E12-03, S1-E12-04, S1-E12-05
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. Every story in this epic comes after March, so this check does too; it covers all of them and comes last.
+- **Main journeys:** the contextual banner slot, sponsor campaigns and "Sponsored" labels, sponsor reports, ad-network ads that are never personalised and slot booking.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting` and the staff personas the epic uses, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
 
 ---

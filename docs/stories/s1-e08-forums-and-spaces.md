@@ -150,7 +150,7 @@ As a teacher, I want a private space for my class so that my students can write,
   - Money (decided 17 Oct 2026): state high schools use class spaces free; universities and private schools pay a yearly licence; paid extras for every school are listed separately with prices to be set (research G3).
   - DSA Art 28: private spaces are still part of the platform; reporting, moderation and minors' protections must work inside them.
   - Ads: none at all inside class spaces, not even a sponsor's credit (decided 16 Oct 2026, late evening, Q70). Keeping posts readable for life while the member's account exists needs a line in the privacy notice and the school protocol (section 6).
-  - Pilot (Q65 to Q68): maybe a first pilot around March, as a writing club, the First Chapter contest or both; no inspectorate involvement until autumn 2027; a Romanian school protocol is being drafted for an avocat.
+  - Pilot (Q65 to Q68): maybe a first pilot around March, as a writing club (a contest is a campaign for later, decided 17 Oct 2026, 12:34); no inspectorate involvement until autumn 2027; a Romanian school protocol is being drafted for an avocat.
 
 ##### S1-E8-12 Writing certificates
 
@@ -160,17 +160,34 @@ As a student writer, I want a certificate when I take part in or win a contest o
 - **Added:** 16 Oct 2026, at Robert's request (canvas comment on the Facebook group mock-up).
 - **Acceptance criteria:**
   - Given a contest or class programme, when staff or the teacher mark entrants as participant, finalist or winner, then each student gets a certificate under "My certificates" in their account.
-  - Given a certificate is requested, when the student opens it the first time, then they type the name to print, which can differ from their pen name; that name is stored only on the certificate record and never shown on their public profile.
+  - Given a class certificate, when the student opens it the first time, then they may type their real name, which prints with the school name; the name is stored only with the certificate, never on the profile or anywhere else, and is deleted 30 days after the class is archived (decided 17 Oct 2026, 12:44). Every other certificate prints the pen name.
+  - Given a class is archived, when it happens, then the teacher is told in the app and by email to keep their own copies of the class certificates within 30 days, before the printed names are deleted (decided 17 Oct 2026, 12:44). What a certificate shows after its name is deleted is not decided (proposal: the pen name; check with Robert).
   - Given a certificate is generated, when it is downloaded, then it is an A4 PDF in Romanian or English with the printed name, the contest or programme, the result, the date and a unique code, co-signed by Ghemotoc and the teacher leading the contest or class (decided 16 Oct 2026, late evening, Q23 and Q71); the PDF has real, tagged text, not an image.
   - Given a class contest or programme, when the teacher approves the list of results in the class space, then their name prints as the second signatory (how the teacher's signature is captured is OPEN; proposal: the approval itself, logged, with the printed name and "signed electronically").
   - Given someone has a certificate's code, when they enter it on the public verification page, then it shows only whether it is valid, the contest or programme, the result and the date, never the student's name.
   - Given staff revoke a certificate (an error or a rule breach), when its code is checked, then the page shows "revoked".
   - Given a student deletes their account, when the deletion runs, then their certificate records are deleted and the code shows "no longer available".
 - **Legal and compliance:**
-  - Data minimisation (GDPR Art 5(1)(c)): the real name is collected only for the certificate, only if the student asks for one.
+  - Data minimisation (GDPR Art 5(1)(c)): the real name is collected only for a class certificate, only if the student asks for one, and deleted 30 days after the class is archived. It is the one named exception to "store no legal names" (CLAUDE.md rule 5; decided 17 Oct 2026, 12:44); the privacy notice and the retention schedule say so.
   - Official recognition (research G1, 16 Oct 2026): only schools and other public education units can put a contest on the official calendars; a company can only be a partner (OMEC 6.727/2025, Annex 2, art. 9(1)). A first edition cannot enter the national or interjudețean calendars (OMEC 6.727/2025, Annex 2, art. 11(1) to (2)). Pupils taking part in an outside organisation's activity need a partnership agreement with their school (ROFUIP art. 97(3)). Diplomas for listed contests are signed by the organising school, the ISJ and the partners (OMEC 6.727/2025, Annex 2, art. 20(11)), and results go into the pupil's educational portfolio (Law 198/2023 art. 98). So for 2027 the certificate is co-issued with each pilot school under a partnership agreement, and the teacher signs for the school (Q71). Decided 16 Oct 2026: no county contest calendars for now; no inspectorate involvement until autumn 2027 (Q67).
   - ROFUIP art. 178(2): in partnerships with companies, the company may not advertise its products or services. How this applies to our own app inside a school partnership needs a Romanian lawyer. OPEN.
   - Contest rules must say who issues certificates and on what terms.
   - Partner or school logos go on a certificate only with their written permission.
+
+##### S1-E8-QA Epic check: Forums and spaces
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E8-01, S1-E8-02, S1-E8-03, S1-E8-04, S1-E8-05, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, S1-E8-10, S1-E8-11, S1-E8-12
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. Every story in this epic comes after March, so this check does too; it covers all of them and comes last.
+- **Main journeys:** forum categories, threads and posts, quoting, read marks, sticky and locked threads, user spaces with their moderators, signatures, ranks, forum search, class spaces and certificates.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting` and the staff personas the epic uses, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
 
 ---

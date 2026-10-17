@@ -68,7 +68,7 @@ The design canvas (17 Oct 2026, version 162) is the source of truth for every sc
 | 8.16 Classics | `boards/AdminClassics.dc.html` | `renders/desktop/AdminClassics.jpg` | `renders/phone/AdminClassics.jpg` |
 | 9.1 TikTok: first-line challenge | `boards/Social-TikTok-FirstLine.dc.html` | `renders/desktop/Social-TikTok-FirstLine.jpg` | n/a |
 | 9.2 TikTok: writer POV (#ad) | `boards/Social-TikTok-POV.dc.html` | `renders/desktop/Social-TikTok-POV.jpg` | n/a |
-| 9.3 Reels: First Chapter contest | `boards/Social-Reels-Contest.dc.html` | `renders/desktop/Social-Reels-Contest.jpg` | n/a |
+| 9.3 Reels: contest promo (parked; contests are a campaign for later) | `boards/Social-Reels-Contest.dc.html` | `renders/desktop/Social-Reels-Contest.jpg` | n/a |
 | 9.4 Shorts: behind the chapter | `boards/Social-Shorts-Behind.dc.html` | `renders/desktop/Social-Shorts-Behind.jpg` | n/a |
 | 9.5 Instagram carousel, slide 1 | `boards/Social-Instagram-Carousel.dc.html` | `renders/desktop/Social-Instagram-Carousel.jpg` | n/a |
 | 9.6 Reddit: founder AMA and promoted post | `boards/Social-Reddit.dc.html` | `renders/desktop/Social-Reddit.jpg` | n/a |

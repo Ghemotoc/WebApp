@@ -18,6 +18,22 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Staff can add public-domain classics from the admin site (S1-E11-16, canvas 8.16; its details are proposals) | Chat, 17 Oct 2026, 12:00 |
 | Code must be clean enough for any junior programmer to read and change, with plenty of plain-English explanations of where things start and how they connect: header and step comments, and docs/code-tour.md as the map (the Readable code section of CLAUDE.md; ESLint limits are a proposal) | Chat, 17 Oct 2026, 12:26 and 12:27 |
 | Code comments and developer docs are in English only; the extra time the explanations take is accepted | Chat, 17 Oct 2026, 12:29 |
+| "Download my data" gives one ZIP: a machine-readable JSON file plus every story as a Word file | Chat, 17 Oct 2026, 12:34 |
+| Staff handling a manual age check can see the year of birth (an exception to "age group only") | Chat, 17 Oct 2026, 12:34 |
+| The First Chapter contest is scrapped for now; contests are a campaign for later. The contest and landing page features stay after March | Chat, 17 Oct 2026, 12:34 |
+| Metrics use aggregated data only, never per-reader records; aggregated data is kept for 3 years | Chat, 17 Oct 2026, 12:34 |
+| Until the apps exist everything is on the web: for March the public home page lives inside the web app, with no separate website database yet | Chat, 17 Oct 2026, 12:34 |
+| March MVP is a working product for invited adults only, no under-18s. Yoti, parental consent, data-rights screens (handled by email) and staff Google sign-in (a staff flag on a normal login instead) move after March. Replaces, for March only, consent on from launch (Q15), the Yoti check in March and Google-only staff sign-in in March | Chat, 17 Oct 2026, 12:44 (option A) |
+| Notice banners show on the website and in the app, from one table | Chat, 17 Oct 2026, 12:44 |
+| Class certificates may print the student's real name with the school name; deleted 30 days after the class is archived; the teacher is told to keep copies. Other certificates use the pen name | Chat, 17 Oct 2026, 12:44 |
+| Only employees with the admin role manage Classics; content editors will also hold the admin role | Chat, 17 Oct 2026, 12:44 |
+| Safety contacts use the researched defaults (research G4) for now; the monthly check starts at go-live | Chat, 17 Oct 2026, 12:44 |
+| On wide screens two ads can be in view at once, and they must be different ones | Chat, 17 Oct 2026, 12:44 |
+| A to Z sorting follows Romanian alphabetical order; the six reaction emoji are the ones on the Reader board | Chat, 17 Oct 2026, 12:44 |
+| Staff Google sign-in uses the Google Workspace domain themagiccoffin.com until the product name is bought | Chat, 17 Oct 2026, 12:47 |
+| "Ghemotoc" is a working name until the name and domain are bought; product name, domain and emails are settings, never hard-coded (replaces the 16 Oct wording that the app is called Ghemotoc) | Chat, 17 Oct 2026, 12:47 |
+| Contact and support email is hello@themagiccoffin.com until the product's own domain is bought | Chat, 17 Oct 2026, 12:50 |
+| The working site is ghemotoc.themagiccoffin.com once hosting is chosen, until the product's own domain is bought | Chat, 17 Oct 2026, 12:50 |
 | Staff can build landing pages for contests and campaigns, run contests, and book sponsors into ad slots; the ad network fills unbooked slots automatically (stories S1-E11-14, S1-E11-15, S1-E12-05; their details are proposals until confirmed) | Chat, 17 Oct 2026, 11:06 |
 
 ## Notes from the CTO pack (decisions applied to the stories)

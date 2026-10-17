@@ -24,7 +24,7 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 **When the canvas changes:** ask Claude (in the WattPad Better Be Gone project) to refresh `design/` in the repository, so Claude Code always builds from the latest boards.
 
 
-**March MVP: 54 stories.**
+**March MVP: 58 stories.**
 
 | # | Story | Title | Priority | Size | Wave |
 | --- | --- | --- | --- | --- | --- |
@@ -32,56 +32,60 @@ What stays out of the repository, on purpose: passwords, the Supabase database p
 | 2 | S1-E1-03 | Design tokens, themes and app shell | Must | M | Wave 0: Foundations |
 | 3 | S1-E1-02 | Database baseline with deny-by-default row-level security | Must | M | Wave 0: Foundations |
 | 4 | S1-E1-04 | Romanian and English interface | Must | M | Wave 0: Foundations |
-| 5 | S1-E14-01 | Terms, privacy notice and community guidelines | Must | M | Wave 1: Identity |
-| 6 | S1-E2-01 | Sign up with email | Must | M | Wave 1: Identity |
-| 7 | S1-E2-02 | Year of birth at sign-up | Must | M | Wave 1: Identity |
-| 8 | S1-E2-04 | Username and optional pen name | Must | M (was S; the word lists and look-alike checks add work) | Wave 1: Identity |
-| 9 | S1-E2-05 | Sign in, sessions and account recovery | Must | S | Wave 1: Identity |
-| 10 | S1-E2-07 | Staff roles with mandatory two-factor sign-in | Must | M | Wave 1: Identity |
-| 11 | S1-E2-10 | Country from the connection at sign-up | Should | S | Wave 1: Identity |
-| 12 | S1-E14-02 | Contact points and company details | Must | S | Wave 1: Identity |
-| 13 | S1-E2-08 (08a, then 08b) | Age check with Yoti | Must | L (split before building: 08a hosted check, deep link and webhook; 08b retries, manual check and appeal) | Wave 1b: Age gate (critical) |
-| 14 | S1-E2-03 | Parental consent for under-16s | Must | M | Wave 1b: Age gate (critical) |
+| 5 | S1-E1-QA | Epic check: Foundations and delivery pipeline | Must | S | Wave 0: Foundations |
+| 6 | S1-E14-01 | Terms, privacy notice and community guidelines | Must | M | Wave 1: Identity |
+| 7 | S1-E2-01 | Sign up with email | Must | M | Wave 1: Identity |
+| 8 | S1-E2-02 | Year of birth at sign-up | Must | M | Wave 1: Identity |
+| 9 | S1-E2-04 | Username and optional pen name | Must | M (was S; the word lists and look-alike checks add work) | Wave 1: Identity |
+| 10 | S1-E2-05 | Sign in, sessions and account recovery | Must | S | Wave 1: Identity |
+| 11 | S1-E2-07a | Staff roles with mandatory two-factor sign-in | Must | M (split, decided 17 Oct 2026, 12:44: 07a staff roles on the normal email login, S, in the March MVP; 07b Google Workspace sign-in, M, after March) | Wave 1: Identity |
+| 12 | S1-E2-10 | Country from the connection at sign-up | Should | S | Wave 1: Identity |
+| 13 | S1-E2-QA | Epic check: Accounts, age gate and onboarding | Must | S | Wave 1: Identity |
+| 14 | S1-E14-02 | Contact points and company details | Must | S | Wave 1: Identity |
 | 15 | S1-E3-01 | Create a story | Must | M | Wave 2: Write and read |
 | 16 | S1-E3-02 | Chapter editor with autosave | Must | L | Wave 2: Write and read |
 | 17 | S1-E3-03 | Publish, unpublish and schedule chapters | Must | M | Wave 2: Write and read |
 | 18 | S1-E3-04 | Manage chapters | Must | M | Wave 2: Write and read |
 | 19 | S1-E3-05 | Story status and settings | Must | S | Wave 2: Write and read |
 | 20 | S1-E3-06 | Ratings and labels: age rating, fan fiction, parody and AI assistance | Must | S | Wave 2: Write and read |
-| 21 | S1-E4-01 | Chapter reader | Must | L | Wave 2: Write and read |
-| 22 | S1-E4-04 | Web teaser for shared links | Must | M | Wave 2: Write and read |
-| 23 | S1-E4-06a | Copy protection and traceability | Should (06a Must for March) | L (split: 06a the web, S, in the March MVP; 06b the apps, after March) | Wave 2: Write and read |
-| 24 | S1-E5-05 | Writer profile page | Must | M | Wave 2: Write and read |
-| 25 | S1-E10-01 | Report button on everything | Must | M | Wave 3: Safety and staff |
-| 26 | S1-E11-01 | Admin shell with protected access | Must | M | Wave 3: Safety and staff |
-| 27 | S1-E10-03a | Moderation queue with priority tiers | Must | L (split: 03a one queue with tiers, deadlines and a decision with a note, M, in the March MVP; 03b grouping, claiming and visible timers, after March) | Wave 3: Safety and staff |
-| 28 | S1-E10-02 | One web form for all reports, including authority removal orders | Must | M | Wave 3: Safety and staff |
-| 29 | S1-E10-06 | Sanctions and repeat offenders | Must | M | Wave 3: Safety and staff |
-| 30 | S1-E10-09 | Terrorist content removal orders | Must | M | Wave 3: Safety and staff |
-| 31 | S1-E10-10 | Safeguarding escalation | Must | M | Wave 3: Safety and staff |
-| 32 | S1-E10-05 | Picture check on upload | Must | M | Wave 3: Safety and staff |
-| 33 | S1-E10-08 | "Copied from a published work" report | Must | M | Wave 3: Safety and staff |
-| 34 | S1-E10-13 | Country-specific emergency and safety contacts | Must | M | Wave 3: Safety and staff |
-| 35 | S1-E11-02 | User management | Must | M | Wave 3: Safety and staff |
-| 36 | S1-E5-01 | Browse by category and tag | Must | M | Wave 4: Social and discovery |
-| 37 | S1-E6-01 | Comment on a chapter | Must | M | Wave 4: Social and discovery |
-| 38 | S1-E6-02 | Emoji reactions on comments | Must | S | Wave 4: Social and discovery |
-| 39 | S1-E6-03 | Like a chapter | Must | S | Wave 4: Social and discovery |
-| 40 | S1-E6-04 | Private downvote | Must | S | Wave 4: Social and discovery |
-| 41 | S1-E6-05 | Follow a writer or a story | Must | S | Wave 4: Social and discovery |
-| 42 | S1-E7-01 | In-app notifications | Must | M | Wave 4: Social and discovery |
-| 43 | S1-E10-04 | Statements of reasons | Must | M | Wave 3: Safety and staff |
-| 44 | S1-E13-02 | Download my data | Must | M | Wave 5: Rights, numbers and shipping |
-| 45 | S1-E11-09a | Data requests and story export | Must (GDPR) | L (split before building: 09a the request log, identity check, deadline, the machine-readable copy and the Word files, in the March MVP; 09b the PDF files, after March) | Wave 5: Rights, numbers and shipping |
-| 46 | S1-E13-03 | Delete my account in the app | Must | M | Wave 5: Rights, numbers and shipping |
-| 47 | S1-E13-04 | Retention schedule and log minimisation | Must | M | Wave 5: Rights, numbers and shipping |
-| 48 | S1-E13-05 | Download my stories | Should | S | Wave 5: Rights, numbers and shipping |
-| 49 | S1-E14-04 | Contact us with a ready-made EU helpdesk | Must | S | Wave 5: Rights, numbers and shipping |
-| 50 | S1-E15-02 | First-party metrics for the March test | Must | M | Wave 5: Rights, numbers and shipping |
-| 51 | S1-E5-03 | Popularity ranking | Must | M | Wave 4: Social and discovery |
-| 52 | S1-E5-02 | Sort options | Must | S | Wave 4: Social and discovery |
-| 53 | S1-E5-09 | See all page for a shelf | Must | S | Wave 4: Social and discovery |
-| 54 | S1-E5-08 | Public website home page | Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) | M | Wave 4: Social and discovery |
+| 21 | S1-E3-QA | Epic check: Writer editor and chapters | Must | S | Wave 2: Write and read |
+| 22 | S1-E4-01 | Chapter reader | Must | L | Wave 2: Write and read |
+| 23 | S1-E4-04 | Web teaser for shared links | Must | M | Wave 2: Write and read |
+| 24 | S1-E4-06a | Copy protection and traceability | Should (06a Must for March) | L (split: 06a the web, S, in the March MVP; 06b the apps, after March) | Wave 2: Write and read |
+| 25 | S1-E4-QA | Epic check: Reading | Must | S | Wave 2: Write and read |
+| 26 | S1-E5-05 | Writer profile page | Must | M | Wave 2: Write and read |
+| 27 | S1-E10-01 | Report button on everything | Must | M | Wave 3: Safety and staff |
+| 28 | S1-E11-01 | Admin shell with protected access | Must | M | Wave 3: Safety and staff |
+| 29 | S1-E10-03a | Moderation queue with priority tiers | Must | L (split: 03a one queue with tiers, deadlines and a decision with a note, M, in the March MVP; 03b grouping, claiming and visible timers, after March) | Wave 3: Safety and staff |
+| 30 | S1-E10-02 | One web form for all reports, including authority removal orders | Must | M | Wave 3: Safety and staff |
+| 31 | S1-E10-06 | Sanctions and repeat offenders | Must | M | Wave 3: Safety and staff |
+| 32 | S1-E10-09 | Terrorist content removal orders | Must | M | Wave 3: Safety and staff |
+| 33 | S1-E10-10 | Safeguarding escalation | Must | M | Wave 3: Safety and staff |
+| 34 | S1-E10-05 | Picture check on upload | Must | M | Wave 3: Safety and staff |
+| 35 | S1-E10-08 | "Copied from a published work" report | Must | M | Wave 3: Safety and staff |
+| 36 | S1-E10-13a | Country-specific emergency and safety contacts | Must | M (split, decided 17 Oct 2026, 12:44: 13a in the March MVP, S: the table seeded from the researched defaults and the per-country block; 13b after March, M: the editing screen, the monthly check job with its ticket and the 45-day warning, starting at go-live) | Wave 3: Safety and staff |
+| 37 | S1-E11-02 | User management | Must | M | Wave 3: Safety and staff |
+| 38 | S1-E11-QA | Epic check: Admin site | Must | S | Wave 3: Safety and staff |
+| 39 | S1-E5-01 | Browse by category and tag | Must | M | Wave 4: Social and discovery |
+| 40 | S1-E6-01 | Comment on a chapter | Must | M | Wave 4: Social and discovery |
+| 41 | S1-E6-02 | Emoji reactions on comments | Must | S | Wave 4: Social and discovery |
+| 42 | S1-E6-03 | Like a chapter | Must | S | Wave 4: Social and discovery |
+| 43 | S1-E6-04 | Private downvote | Must | S | Wave 4: Social and discovery |
+| 44 | S1-E6-05 | Follow a writer or a story | Must | S | Wave 4: Social and discovery |
+| 45 | S1-E6-QA | Epic check: Comments, reactions and follows | Must | S | Wave 4: Social and discovery |
+| 46 | S1-E7-01 | In-app notifications | Must | M | Wave 4: Social and discovery |
+| 47 | S1-E10-04 | Statements of reasons | Must | M | Wave 3: Safety and staff |
+| 48 | S1-E10-QA | Epic check: Reporting, moderation and safety | Must | S | Wave 3: Safety and staff |
+| 49 | S1-E7-QA | Epic check: Notifications | Must | S | Wave 4: Social and discovery |
+| 50 | S1-E14-04 | Contact us with a ready-made EU helpdesk | Must | S | Wave 5: Rights, numbers and shipping |
+| 51 | S1-E14-QA | Epic check: Legal pages and compliance | Must | S | Wave 5: Rights, numbers and shipping |
+| 52 | S1-E15-02 | First-party metrics for the March test | Must | M | Wave 5: Rights, numbers and shipping |
+| 53 | S1-E5-03 | Popularity ranking | Must | M | Wave 4: Social and discovery |
+| 54 | S1-E5-02 | Sort options | Must | S | Wave 4: Social and discovery |
+| 55 | S1-E5-09 | See all page for a shelf | Must | S | Wave 4: Social and discovery |
+| 56 | S1-E5-08 | Public website home page | Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) | M | Wave 4: Social and discovery |
+| 57 | S1-E5-QA | Epic check: Discovery, search and profiles | Must | S | Wave 4: Social and discovery |
+| 58 | S1-E15-QA | Epic check: Analytics and the March test | Must | S | Wave 5: Rights, numbers and shipping |
 
 ## Prompts for every Stage 1 story
 
@@ -99,7 +103,8 @@ This is the first session: the repository holds only the starter kit (CLAUDE.md,
 Read first: CLAUDE.md, docs/architecture.md (sections 1.5, 1.7, 1.11 and 1.12), docs/definition-of-done.md, and the story S1-E1-01 in docs/stories/.
 
 What I want from this session:
-- A React + Vite + TypeScript (strict) app skeleton with Tailwind, shadcn/ui, React Router, TanStack Query and i18next (ro and en), and an empty home route that says "Ghemotoc" in both languages.
+- A React + Vite + TypeScript (strict) app skeleton with Tailwind, shadcn/ui, React Router, TanStack Query and i18next (ro and en), and an empty home route that shows the product name in both languages (from the brand config below, never typed in a component).
+- One brand config: the product name, the site domain, the support and contact email addresses and the social handle live only in src/config/brand.ts (built from VITE_ variables) on the front end, and in settings or Edge Function secrets on the back end. "Ghemotoc" is a working name until the name and domain are bought (decided 17 Oct 2026, 12:47). Today's values: name Ghemotoc, site ghemotoc.themagiccoffin.com (once hosting is chosen), contact and support address hello@themagiccoffin.com (decided 17 Oct 2026, 12:50). Add a test that fails if the literal "Ghemotoc" or "ghemotoc.com" appears in src/ or supabase/ outside that config and the locale files.
 - The Supabase CLI as a dev dependency, `supabase init`, and the npm scripts CLAUDE.md lists (lint, typecheck, types:gen, types:check, test, test:e2e, i18n:check), each working, even if some only run an empty suite for now.
 - GitHub Actions:
   1. On every pull request: lint, typecheck, unit tests, database tests against a local Supabase (`supabase db start`), the i18n key check and a Playwright + axe smoke test of the home page. A failing check blocks the merge.
@@ -113,13 +118,22 @@ Production deploys and tagged releases: write the workflow but leave it disabled
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. The files you will create.
-2. A table mapping each acceptance criterion of S1-E1-01 to the check or test that proves it, plus one row for docs/code-tour.md (it exists and covers the four parts above).
+2. A table mapping each acceptance criterion of S1-E1-01 to the check or test that proves it (including the brand config and its literal-name test), plus one row for docs/code-tour.md (it exists and covers the four parts above).
 3. Anything OPEN or unclear. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check, fix failures, push your working branch (in a cloud session, the branch the session was given) and open the pull request titled "S1-E1-01: Repository, environments and CI skeleton", then give me:
 - a summary of what changed and the check results,
 - step-by-step instructions for me, a non-developer on a Mac, to run the app locally and see it,
 - the pull request description using .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E1-02 Database baseline with deny-by-default row-level security
@@ -141,6 +155,15 @@ STEP 1, PLAN ONLY. Give me:
 6. Anything OPEN or unclear. Ask; don't guess.
 
 STEP 2, after I approve: build, run every check (including `npx supabase test db`), push your working branch (in a cloud session, the branch the session was given), open the pull request titled "S1-E1-02: ..." and give me the summary, the check results, how I can see the tables and the test accounts locally, and the pull request description.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E1-03 Design tokens, themes and app shell
@@ -162,6 +185,15 @@ If this is too big for one pull request, propose a split into S1-E1-03a (tokens,
 STEP 1, PLAN ONLY. Give me the files, a table mapping each acceptance criterion and each design rule to its test or check, and anything OPEN or unclear. Ask; don't guess.
 
 STEP 2, after I approve: build, run every check, push your working branch (in a cloud session, the branch the session was given), open the pull request titled "S1-E1-03: ..." and give me the summary, the check results, the steps to open /design on my Mac next to the canvas pictures, and the pull request description.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E1-04 Romanian and English interface
@@ -191,6 +223,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: open the app in a browser set to English and see Romanian; switch language from the top bar, then from the footer; sign in as adult_writer, switch to English, sign in again in a second browser and see English (if sign-in isn't built yet, tell me which step I can't do by hand yet),
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E1-05 Error, offline and maintenance states
@@ -222,12 +263,57 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: open a page that doesn't exist; as adult_writer, switch the browser offline and see the banner; switch maintenance mode on locally and see the maintenance page, then sign in as the admin staff persona and get in,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E1-06 Move from Lovable's database to our own Supabase project
 Won't · M · Not built · Depends on: S1-E1-01, S1-E1-02
 
 No prompt: replaced on 17 Oct 2026 (11:20) by the decision to use our own Supabase project in the EU (Ireland) from day one, so there is no Lovable database to move from.
+
+### S1-E1-QA Epic check: Foundations and delivery pipeline
+Must · S · March MVP (wave 0, last of its epic) · Depends on: S1-E1-01, S1-E1-02, S1-E1-03, S1-E1-04
+
+```text
+We are working on story S1-E1-QA (Epic check: Foundations and delivery pipeline) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E1-QA and every story it depends on in docs/stories/s1-e01-foundations-and-delivery-pipeline.md.
+
+CONTEXT
+- Already merged: S1-E1-01, S1-E1-02, S1-E1-03, S1-E1-04. The epic's after-March stories (S1-E1-05) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: a fresh clone installs, starts Supabase and the app and passes CI; the app shell opens in Romanian, switches to English and keeps its design tokens in light and night mode; the database baseline refuses anonymous and cross-user reads.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting.
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E1.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E1-QA: Epic check: Foundations and delivery pipeline". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
 
 ## S1-E2 Accounts, age gate and onboarding
 
@@ -243,6 +329,7 @@ CONTEXT:
   - Consent is the legal basis (Q15): store which terms and privacy notice versions were accepted, with a timestamp; withdrawing must be as easy as giving.
   - Every account gets an automatic, permanent user ID: the Supabase Auth UUID becomes profiles.id, never changes, is never reused and never appears on a public screen, URL, link preview, share card or public view (16 Oct 2026, late evening; architecture 1.6).
   - Data minimisation: email, handle, optional pen name, year of birth (month only where needed), country code and age check result only.
+  - The March test is invited adults only (decided 17 Oct 2026, 12:44). Proposal: a feature flag `invite_only` (on in March) means sign-up needs an invite link or code made by an admin; tell me in the plan how admins make codes (an admin_* function, logged) and what someone without a code sees.
   - The headline is "Write stories. Get read." (Q5). Username and pen name come in setup after the age check, not here.
 - Designs: design/boards/Main.dc.html (2.1 Sign up), design/renders/desktop/Main.jpg, design/renders/phone/Main.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces (architecture 1.7.3 and 1.7.4, group B):
@@ -264,6 +351,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: sign up a new account, try a 9-character password and a mismatched confirmation, open the confirmation email in Mailpit, see that an unverified account is read-only and check that adult_writer's public pages never show the user ID,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-02 Year of birth at sign-up
@@ -281,7 +377,7 @@ CONTEXT:
   - Year of birth, age and the age check result are never shown to other users.
   - The "why we ask" sentence is a tooltip (Definition of Done, tooltip pattern), plus a visible line that a quick age check follows.
 - Designs: design/boards/Main.dc.html (2.1 Sign up), design/renders/desktop/Main.jpg, design/renders/phone/Main.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). Use the one drop-down style for the year and month pickers.
-- Back-end pieces: B05 (profiles.birth_year, birth_month, age_check_result = pending) and B02 (fill in age_band() and account_state() for the year and month). Yoti (S1-E2-08) isn't built: the account stays read-only, as the pending_check persona shows. Nothing else to mock.
+- Back-end pieces: B05 (profiles.birth_year, birth_month, age_check_result = pending) and B02 (fill in age_band() and account_state() for the year and month). Yoti (S1-E2-08) and parental consent (S1-E2-03) come after March (decided 17 Oct 2026, 12:44). Proposal: while the March flag `adults_only` is on, a year of birth under 18 is refused with a kind message (ask me for the copy) and an adult's account is active once the email is confirmed. Keep birth_year, age_band() and the gate skeleton exactly as the story says, so S1-E2-08 and S1-E2-03 slot in later. Nothing else to mock.
 - Watch-outs:
   - Self-declaration alone isn't age assurance (Commission Guidelines C/2025/5519, para 52): the year only picks the check.
   - Unit-test the age maths with a fixed "today", including 1 January and the story's example (born May 2011 counts as 15 until 1 June 2027).
@@ -298,15 +394,25 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: pick a year that needs the month and see the month picker; pick one that doesn't; pick a year under 13 and see the refusal, then show me how to confirm nothing was saved; as adult_writer open kid_14_ok's profile and see no age,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-03 Parental consent for under-16s
-Must · M · March MVP (wave 1b) · Depends on: S1-E2-02, S1-E2-08
+Must · M · After March (before minors go live) · Depends on: S1-E2-02, S1-E2-08
 
 ```text
 We are working on story S1-E2-03 (Parental consent for under-16s) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story in docs/stories/s1-e02-accounts-age-gate-and-onboarding.md.
 
 CONTEXT:
+- Timing: after March (decided 17 Oct 2026, 12:44: the March test is invited adults only). Build it before going live to anyone under 18; stories it names as merged "in the March order" are merged by then.
 - Already merged: S1-E2-02 and S1-E2-08 (at least 08a, which hands under-16s to this step; tell me if it isn't merged).
 - Decisions that apply:
   - Consent is the legal basis, so a parent's or guardian's consent for under-16s is on from launch (Q15). Romania's digital consent age is 16.
@@ -332,6 +438,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as kid_14_waiting see the read-only state; with a new under-16 account enter a parent's email, open it in Mailpit and agree; repeat and refuse; run the clean-up job; check that teen_17 never sees the step; as owner try to turn the flag off and find the audit log row,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-04 Username and optional pen name
@@ -364,6 +479,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as a new account try "admin", "adm1n", a name with a hidden zero-width space, a swearword with diacritics, an emoji name and a near-copy of adult_writer's handle; then as adult_writer set a pen name, change it again and see the limit,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-05 Sign in, sessions and account recovery
@@ -374,7 +498,7 @@ We are working on story S1-E2-05 (Sign in, sessions and account recovery) only. 
 
 CONTEXT:
 - Already merged: S1-E2-01.
-- Decisions that apply: no IP addresses or emails in logs (CLAUDE.md rule 12). Romanian is the default language. Member log-ins never give staff access (staff sign-in is S1-E2-07).
+- Decisions that apply: no IP addresses or emails in logs (CLAUDE.md rule 12). Romanian is the default language. Member log-ins never give staff access (staff sign-in is S1-E2-07a in March, S1-E2-07b after).
 - Designs: design/boards/SignIn.dc.html (2.2), with design/renders/desktop/SignIn.jpg and design/renders/phone/SignIn.jpg. No board shows the Sessions list yet (checked 17 Oct 2026): put it in the Account tab of design/boards/Settings.dc.html (6.3) using the label rows and buttons on /design, and show me the layout in the plan. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). The passkey and Google, Apple and Microsoft buttons on these boards belong to S1-E2-09: keep them hidden.
 - Back-end pieces: B05 (Supabase Auth) and our own user_sessions table (device name and last-seen date, no IP address) written at sign-in; "Sign out of all" uses Supabase's global sign-out. B09 email goes to Mailpit. The story's CTO note says Supabase Auth doesn't give users a device list (check before relying on it): confirm that in the plan.
 - Watch-outs:
@@ -393,6 +517,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer type a wrong password and an unknown email and compare the messages; fail six times; sign in on two browsers, see both in Sessions and sign out of all; reset the password through Mailpit and see the other browser signed out,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-06 Onboarding
@@ -425,16 +558,67 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer, with a way to rerun setup for adult_writer, teen_17 and kid_14_ok: the teens see "Staying safe here", the adult sees the teacher question or skips step 3, skipping everything but the username works and "Go to Discover" lands on Discover,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
-### S1-E2-07 Staff roles with mandatory two-factor sign-in
-Must · M · March MVP (wave 1) · Depends on: S1-E1-02, S1-E2-05
+### S1-E2-07a Staff roles with mandatory two-factor sign-in (part a: staff roles on the normal login)
+Must · S (split: this is 07a) · March MVP (wave 1) · Depends on: S1-E1-02, S1-E2-05
 
 ```text
-We are working on story S1-E2-07 (Staff roles with mandatory two-factor sign-in) only. Read CLAUDE.md, docs/architecture.md (especially 1.8.1 and 1.8.3) and docs/definition-of-done.md first, then the story in docs/stories/s1-e02-accounts-age-gate-and-onboarding.md.
+We are working on story S1-E2-07a (Staff roles, part a) only: staff roles as a flag on the normal email login. Google Workspace sign-in is part b, after March. Read CLAUDE.md, docs/architecture.md (especially 1.8.1 and 1.8.3) and docs/definition-of-done.md first, then the story S1-E2-07 in docs/stories/s1-e02-accounts-age-gate-and-onboarding.md.
 
 CONTEXT:
 - Already merged: S1-E1-02, S1-E2-05.
+- Decisions that apply:
+  - Split (decided 17 Oct 2026, 12:44): in March staff sign in with the normal email login on a staff account, and the staff role is a flag on that account set by an owner or admin. Build roles and permissions, is_staff() checks and the audit log. is_staff_session() exists as a function that returns true for any session of an account with a staff role, with a comment saying it becomes the Google Workspace check in S1-E2-07b.
+  - A staff account is separate from any personal writer account, which never holds a staff role.
+  - Roles: member roles user and space_moderator (one space); staff roles owner, admin, moderator, support, content_editor; per-person permissions safeguarding, teacher_checks and on_call. What each may do is the table in architecture 1.8.3. Nobody changes their own role.
+- Designs: no staff sign-in screen of its own in March: staff use the normal sign-in (design/boards/Main.dc.html). Admin screens use plain components, no doodles. Match any screen you touch at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Back-end pieces: B10 (staff_roles, staff_permissions, is_staff(), is_staff_session() as above), B03 audit log for every role change with who and why. Nothing to mock.
+- Watch-outs:
+  - Every staff policy calls is_staff_session() now, so 07b only changes that one function.
+  - Spaces don't exist yet (S1-E8): tell me in the plan how space_moderator is modelled now.
+  - The 12-hour staff session and fresh sign-in in architecture 1.8.3 are proposals, not in this story: don't build them.
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change.
+2. Migrations: tables, enums, functions, RLS policies (who can grant which role, nobody their own) with allowed and denied pgTAP tests, including a denied test for a member account without a staff role.
+3. A table mapping each 07a acceptance criterion to the test(s) that prove it, and the criteria left for 07b.
+4. New i18n keys (ro and en), analytics events and moderation hooks.
+5. Anything OPEN or unclear. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-07a: Staff roles on the normal login". Then give me:
+- a summary of what changed and the check results,
+- step-by-step manual test steps for a non-developer using owner, admin, moderator, support and editor plus adult_writer: adult_writer has no staff powers; admin grants and removes a role; nobody can change their own role; where I see the audit log rows,
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E2-07b Staff roles with mandatory two-factor sign-in (part b: Google Workspace sign-in)
+Must · M (split: this is 07b) · After March · Depends on: S1-E2-07a
+
+```text
+We are working on story S1-E2-07b (Staff roles, part b: Google Workspace sign-in) only. Part a (roles on the normal login) is merged. Read CLAUDE.md, docs/architecture.md (especially 1.8.1 and 1.8.3) and docs/definition-of-done.md first, then the story in docs/stories/s1-e02-accounts-age-gate-and-onboarding.md.
+
+CONTEXT:
+- Already merged: S1-E2-07a (roles, permissions, is_staff(), the audit log, and is_staff_session() returning true for any staff-role session).
+- Timing: after March (decided 17 Oct 2026, 12:44). This story makes is_staff_session() the real Google Workspace check and replaces the normal login for staff accounts.
 - Decisions that apply:
   - Staff sign in with Google Workspace only; Google's own 2-Step Verification is the second factor, no separate code in Ghemotoc (17 Oct 2026, 11:53; 34n; Q30).
   - A staff account is separate from any personal writer account, which never holds a staff role.
@@ -442,8 +626,8 @@ CONTEXT:
 - Designs: design/boards/StaffSignIn.dc.html (8.1), design/renders/desktop/StaffSignIn.jpg, design/renders/phone/StaffSignIn.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). Staff screens use plain components, no doodles.
 - Back-end pieces: B10 (staff_roles, staff_permissions, is_staff(), is_staff_session()), B03 audit log for every role change with who and why. Mocked locally: a test flag marks a seeded staff persona's session as a Google Workspace session (architecture 1.7.3); real Google sign-in is tested on staging.
 - Watch-outs:
-  - The company's Workspace domain isn't in the docs: stop and ask me.
-  - Plain "Sign in with Google" restricted to the company domain works on Supabase's free plan; SAML SSO needs a paid plan (check before relying on it). Stop and ask me which to build.
+  - Accept only accounts on the Google Workspace domain themagiccoffin.com, read from the setting STAFF_EMAIL_DOMAIN (decided 17 Oct 2026, 12:47); never hard-code it, and add a denied test for a Google account on any other domain.
+  - Plain "Sign in with Google" restricted to that domain works on Supabase's free plan; SAML SSO needs a paid plan (check before relying on it). Stop and ask me which to build.
   - Enforcing 2-Step Verification is a setting in the Google Workspace admin console: write the steps for me in a runbook under docs/runbooks/.
   - Spaces don't exist yet (S1-E8): tell me in the plan how space_moderator is modelled now.
   - The 12-hour staff session and fresh sign-in in architecture 1.8.3 are proposals, not in this story: don't build them.
@@ -455,19 +639,29 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 4. New i18n keys (ro and en), analytics events and moderation hooks.
 5. Anything OPEN or unclear. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-07: Staff roles with mandatory two-factor sign-in". Then give me:
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-07b: Google Workspace sign-in for staff". Then give me:
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer using owner, admin, moderator, support and editor plus adult_writer: adult_writer can't reach staff sign-in powers; admin grants and removes a role; nobody can change their own role; where I see the audit log rows,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-08a Age check with Yoti: hosted check, return and webhook
-Must · L (split: this is 08a) · March MVP (wave 1b) · Depends on: S1-E1-02, S1-E2-02 (S1-E16-02 only for the desktop return, after March)
+Must · L (split: this is 08a) · After March (before minors go live) · Depends on: S1-E1-02, S1-E2-02 (S1-E16-02 only for the desktop return, after March)
 
 ```text
 We are working on story S1-E2-08a (Age check with Yoti: hosted check, return and webhook) only. Part 08b (retries, manual check and appeal) is a separate session. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story S1-E2-08 in docs/stories/s1-e02-accounts-age-gate-and-onboarding.md.
 
 CONTEXT:
+- Timing: after March (decided 17 Oct 2026, 12:44: the March test is invited adults only). Build it before going live to anyone under 18; stories it names as merged "in the March order" are merged by then.
 - Already merged: S1-E1-02, S1-E2-02.
 - Scope of 08a: the start function; Yoti's hosted page opened from the browser and the web redirect back to "Checking your age"; the signed webhook; saving the result; the "13 or over" result when the year says 18; handing under-16s to parental consent (S1-E2-03, a stub until merged); starting again after an expired session. The Tauri criteria wait for the desktop app.
 - Decisions that apply: year of birth, then Yoti (16 Oct 2026); minimum age 13; March is web only (34o). Store only age_check_result (13_or_over, 18_or_over, failed), age_checked_at and age_check_method; never a selfie, document image, estimated age or Yoti evidence (CLAUDE.md rule 5).
@@ -491,25 +685,34 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as pending_check start the check and send each mock result (13 or over, 18 or over, failed, time-out); see what the profile stores; with a new under-16 account see the hand-off to the parent step; close the page mid-check and start again,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-08b Age check with Yoti: retries, manual check and appeal
-Must · L (split: this is 08b) · March MVP (wave 1b) · Depends on: S1-E2-08a; staff side needs S1-E2-07
+Must · L (split: this is 08b) · After March (before minors go live) · Depends on: S1-E2-08a; staff side needs S1-E2-07
 
 ```text
 We are working on story S1-E2-08b (Age check with Yoti: retries, manual check and appeal) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md first, then the story S1-E2-08 in docs/stories/s1-e02-accounts-age-gate-and-onboarding.md.
 
 CONTEXT:
+- Timing: after March (decided 17 Oct 2026, 12:44: the March test is invited adults only). Build it before going live to anyone under 18; stories it names as merged "in the March order" are merged by then.
 - Already merged: S1-E2-08a, S1-E2-07.
 - Scope of 08b: retries (2 facial attempts per session) and switching to an ID document; asking for a manual check (read-only meanwhile) and staff deciding it; the 1 January job inviting people who turn 18 by year to an "18 or over" check; the 14-day clean-up with no passed check and no open appeal. Putting the two jobs here is my reading of the split (check with Robert).
-- Decisions that apply: staff see only the handle, the year of birth and the attempt history, never images; the decision and reason go to the audit log within 5 working days (canvas 2.3). Staff sign in with Google Workspace only. Under-18 protections stay on until an "18 or over" result is stored.
+- Decisions that apply: staff handling a manual check see only the handle, the year of birth with the age group and the attempt history, never images. Seeing the year of birth is a named exception in architecture 1.8.3 (decided 17 Oct 2026, 12:34); everywhere else staff see the age group only, so show the year of birth only inside the manual check view. Add it to the record of processing in the same pull request (or tell me where it lives if there is none yet); the decision and reason go to the audit log within 5 working days (canvas 2.3). Staff sign in with Google Workspace only. Under-18 protections stay on until an "18 or over" result is stored.
 - Designs: design/boards/AgeCheck.dc.html (2.3) and design/boards/AdminUsers.dc.html (8.5 Users: it shows the age check column but no manual check panel yet, checked 17 Oct 2026), with their renders in design/renders/desktop and design/renders/phone. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). Staff screens use plain components.
 - Back-end pieces: B07, B27 (an admin_* function that checks role, permission and is_staff_session() and writes the audit log), B03, B17 jobs (tests call each job's SQL function directly). The yoti-mock from 08a stays for local use.
 - Watch-outs:
   - OPEN, stop and ask me: the manual check method (for example Yoti's ID route with manual review, or a parent confirming for a 13 to 15-year-old without ID).
   - Architecture puts manual checks on screen 8.5, which S1-E11-02 builds later: stop and ask me whether to build the staff screen now or only the function.
   - Which staff role handles manual checks isn't in architecture 1.8.3: ask me.
-  - This story lets the staff member see the year of birth, but architecture 1.8.3 says staff never see it: stop and ask me which wins before building the staff view.
   - How the user is told the outcome (email or in-app; notifications come in S1-E7-01): ask me.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
@@ -523,6 +726,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as failed_check retry, switch to ID and ask for a manual check; as the staff persona you chose decide it with a reason and find the audit log row; run the 1 January job and the 14-day clean-up and see what happens to pending_check,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-09 Sign up and log in with Google, Apple or Microsoft
@@ -557,6 +769,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer on staging: sign up with Google and still get the year of birth and age check; as adult_writer connect and disconnect a method and get the email; try to disconnect the last one; sign in with a provider whose email already has an account,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-10 Country from the connection at sign-up
@@ -590,6 +811,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: fake Romania and sign up, then see "From your connection" in Settings; fake Australia with an under-16 year and see the refusal; fake a closed country and see the page; show me that no IP address was saved,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E2-11 Teacher badge
@@ -623,6 +853,51 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer try a Gmail address, then a .edu.ro one through Mailpit; upload a proof; as admin with the teacher_checks permission approve one and reject one and see the file gone; check teen_17 never sees the option; look at the teacher persona's profile badge,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E2-QA Epic check: Accounts, age gate and onboarding
+Must · S · March MVP (wave 1, last of its epic) · Depends on: S1-E2-01, S1-E2-02, S1-E2-04, S1-E2-05, S1-E2-07a, S1-E2-10
+
+```text
+We are working on story S1-E2-QA (Epic check: Accounts, age gate and onboarding) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E2-QA and every story it depends on in docs/stories/s1-e02-accounts-age-gate-and-onboarding.md.
+
+CONTEXT
+- Already merged: S1-E2-01, S1-E2-02, S1-E2-04, S1-E2-05, S1-E2-07a, S1-E2-10. The epic's after-March stories (S1-E2-03, S1-E2-06, S1-E2-07b, S1-E2-08, S1-E2-09, S1-E2-11) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: an invited adult signs up with an invite code made by an admin and gives a year of birth (a year under 18 is refused while adults_only is on), chooses a username and pen name, signs out and back in, recovers the account and sees the country taken from the connection; a staff member signs in with the normal login and a staff role.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E2.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E2-QA: Epic check: Accounts, age gate and onboarding". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting and one staff persona;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E3 Writer editor and chapters
@@ -662,6 +937,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer create a story with tags "Fantezie" and "fantezie"; upload a tall cover and crop the square with the keyboard; upload a file named cover_fail and see it stay private; draw a cover with a long title at phone width; as teen_17 check the story isn't visible yet,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-02 Chapter editor with autosave
@@ -695,6 +979,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer type and watch "Saved"; switch the browser offline, keep typing, come back online; edit the same chapter in two tabs to see the warning; paste a page from Word; use the toolbar with the keyboard only; as teen_17 check you can't see the draft,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-03 Publish, unpublish and schedule chapters
@@ -727,6 +1020,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer publish a chapter and open it as teen_17; unpublish it and check teen_17 can't open it; schedule one a few minutes ahead and run the job; as kid_14_waiting and pending_check try to publish and be refused,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-04 Manage chapters
@@ -757,6 +1059,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer reorder chapters with the buttons, by dragging and with the keyboard; edit a published chapter and see "Edited on" as teen_17; delete a chapter, undo it, delete it again and run the purge job,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-05 Story status and settings
@@ -787,6 +1098,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer mark a story Completed and see it on the card as teen_17; switch comments off; delete the story with both confirmations and check teen_17 can't find it; run the purge job,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-06 Ratings and labels: age rating, fan fiction, parody and AI assistance
@@ -821,6 +1141,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer publish a 13+, a 16+ and an 18+ story and tick "abuse or coercion" on one; check what kid_14_ok, teen_17, adult_writer and a signed-out visitor can see; add fan fiction and AI labels and see them on the story page,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-07 Writer dashboard
@@ -850,6 +1179,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer open the dashboard with the seeded totals; find a chapter with few readers and see "fewer than 5"; as teen_17 try to open adult_writer's numbers and be refused,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-08 Where a story can be read: web and app, or app only
@@ -883,6 +1221,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer switch a story to app only; as teen_17 and signed out on the web see the cover, blurb and chapter list but no text; check the link preview and search; switch back and check teen_17's library entry is still there,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-09 Pictures in chapters
@@ -913,6 +1260,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer insert a picture without alt text and be stopped, then with alt text; upload one the test check flags; as teen_17 see "Picture being checked" and report the other picture; as moderator see the held picture,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-10 Music and video from other services
@@ -946,6 +1302,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer paste a YouTube link and a link from a site not on the list; as teen_17 open the chapter, see the card, press play and report the embed; as moderator disable that one embed,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-11 Drawings in chapters
@@ -975,6 +1340,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer draw, undo, clear and insert a drawing with alt text; as teen_17 see it in the chapter and report it,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-12 Design a cover in Canva
@@ -1005,6 +1379,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer on staging: as adult_writer press "Design it in Canva", make a cover, return and see it held until the check passes; disconnect Canva in Settings,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E3-13 Automatic covers
@@ -1035,6 +1418,51 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as adult_writer skip the cover step, see the automatic cover, change the title and see the same design; look at a shelf where two neighbours would match; switch back to the automatic cover from story settings,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E3-QA Epic check: Writer editor and chapters
+Must · S · March MVP (wave 2, last of its epic) · Depends on: S1-E3-01, S1-E3-02, S1-E3-03, S1-E3-04, S1-E3-05, S1-E3-06
+
+```text
+We are working on story S1-E3-QA (Epic check: Writer editor and chapters) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E3-QA and every story it depends on in docs/stories/s1-e03-writer-editor-and-chapters.md.
+
+CONTEXT
+- Already merged: S1-E3-01, S1-E3-02, S1-E3-03, S1-E3-04, S1-E3-05, S1-E3-06. The epic's after-March stories (S1-E3-07, S1-E3-08, S1-E3-09, S1-E3-10, S1-E3-11, S1-E3-12, S1-E3-13) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: create a story with its settings and rating, write a chapter with autosave, publish, unpublish and schedule chapters, and reorder them.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting.
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E3.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E3-QA: Epic check: Writer editor and chapters". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E4 Reading
@@ -1054,7 +1482,7 @@ CONTEXT:
 - Designs: design/boards/Reader.dc.html (3.5), design/renders/desktop/Reader.jpg, design/renders/phone/Reader.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21), and at 320 px for the reflow criterion. Leave out the board's reading settings panel (S1-E4-02).
 - Back-end pieces (architecture 1.7.4, group C):
   - Real before building: get_chapter(), which checks status, the reader's age against the story's rating and blocks in one place, with its RLS tests.
-  - B20: the reader records daily chapter_reads totals itself (architecture 1.7.9; the March return rate needs them).
+  - B20: the reader records daily chapter_reads totals per chapter itself (architecture 1.7.9; the March return rate is computed from them). Totals only: never store which reader read which chapter (decided 17 Oct 2026, 12:34).
   - B21 blocks arrive with S1-E5-05, later in the March order: stop and ask me how to leave the block check ready.
   - read_on belongs to S1-E3-08 (after March): ask me whether get_chapter() should check it now.
   - B29 the banner: pick_banner() comes with S1-E12-01 (after March); use a banner fixture below the chapter text.
@@ -1074,6 +1502,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 read a 13+ chapter and move with previous, next and contents using the keyboard; as kid_14_ok try a 16+ chapter and be refused; read at phone width, at 320 px and at 200% zoom; switch on night mode; see the banner only below the text,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-02 Reading settings
@@ -1104,6 +1541,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 change each setting, sign in on a second browser and see them kept; set the computer's text size larger and open the reader as a new visitor,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-03 Library and continue reading
@@ -1137,6 +1583,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 read halfway, leave, open on a second browser and continue; move stories between the three lists; as adult_writer look at teen_17's profile and see no library; fill a list past 20 and use "View more",
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-04 Web teaser for shared links
@@ -1170,6 +1625,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: signed out, open a chapter link and see the teaser and the prompt; as teen_17 open the same link and read it all; signed out, open a 16+ story and see no text; show me how to see the link preview a messaging app would get,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-05 Share a chapter
@@ -1200,6 +1664,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 share a chapter on a phone-sized window and on desktop; paste the link and check it has nothing extra in it; see the share count go up for adult_writer's story,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-06a Copy protection and traceability
@@ -1230,6 +1703,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 right-click and try to copy chapter text and see the note; zoom to 200% and make the text bigger; turn on the Mac's VoiceOver and listen to a paragraph; as adult_writer publish a chapter and read the line at Publish,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-06b Copy protection and traceability in the apps
@@ -1261,6 +1743,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 open a chapter in the desktop app on my Mac, take a screenshot and a screen recording and see them blank; check VoiceOver still reads the text; the same for each other platform you built,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-07 Quote-share card
@@ -1292,6 +1783,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 select a passage over 280 characters, then a shorter one, make a card with each background and read its alt text; try a second card from the same chapter; as adult_writer switch quote cards off and check the option has gone,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-08 Offline reading in the apps
@@ -1324,6 +1824,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 download a story in the app, switch the phone to flight mode and read; sign out and check it is gone; open the web app and check there is no Download,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-09 "Only in the app" notice on the web
@@ -1353,6 +1862,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 open a chapter of adult_writer's app-only story on a desktop browser and on a phone-sized window; use the dialog with the keyboard only and close it with Escape,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-10 Any font on your device, in the apps
@@ -1383,6 +1901,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 in the desktop app on my Mac search for and pick a font I have; open the same account in the browser and see one of our fonts; check the browser offers only our fonts,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E4-11 Share a passage or a picture
@@ -1413,6 +1940,51 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - a summary of what changed and the check results,
 - step-by-step manual test steps for a non-developer: as teen_17 select lines and share a link to the spot, open it signed out and see the highlight; share a picture card; try both on a 16+ story and get a plain link; as adult_writer switch sharing off and check the options are gone,
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E4-QA Epic check: Reading
+Must · S · March MVP (wave 2, last of its epic) · Depends on: S1-E4-01, S1-E4-04, S1-E4-06a
+
+```text
+We are working on story S1-E4-QA (Epic check: Reading) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E4-QA and every story it depends on in docs/stories/s1-e04-reading.md.
+
+CONTEXT
+- Already merged: S1-E4-01, S1-E4-04, S1-E4-06a. The epic's after-March stories (S1-E4-02, S1-E4-03, S1-E4-05, S1-E4-07, S1-E4-08, S1-E4-09, S1-E4-10, S1-E4-11) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: a signed-in reader opens a chapter and moves through it; a signed-out visitor opens a shared link and sees the teaser; copying is switched off on the web.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting.
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E4.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E4-QA: Epic check: Reading". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E5 Discovery, search and profiles
@@ -1439,6 +2011,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-01: Browse by category and tag". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17, kid_14_ok, blocker and blocked and a signed-out window; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-02 Sort options
@@ -1453,7 +2034,7 @@ CONTEXT
 - Decisions that apply: popularity is the default and S1-E5-03 is in the March MVP (Q46); a shelf keeps its own order and Sort applies on its See all page (S1-E5-09); no personal reading history is used; no cookies or third-party scripts (CLAUDE.md rule 7).
 - Designs: the Sort control on design/boards/Discover.dc.html and design/boards/SeeAll.dc.html (renders in design/renders/desktop/ and design/renders/phone/ under the same names). The drop-down follows the one drop-down style in the Definition of Done. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: real: B13 and the public story views from S1-E5-01; B17 ranking scores once S1-E5-03 is merged. Mocked: the seeded stories from S1-E5-01.
-- Watch-outs: options are popularity, newest, oldest, A to Z, Z to A and by writer; on equal scores the newer story comes first. Keeping the choice "in the same session" must not use a cookie: say in the plan where you keep it. Tell me how A to Z will order Romanian letters (ă, â, î, ș, ț) (check with Robert).
+- Watch-outs: options are popularity, newest, oldest, A to Z, Z to A and by writer; on equal scores the newer story comes first. Keeping the choice "in the same session" must not use a cookie: say in the plan where you keep it. A to Z follows the Romanian alphabet (ă after a, â after ă, î after i, ș after s, ț after t): use Intl.Collator('ro') in the app or the Postgres ICU collation "ro-x-icu" in the database (decided 17 Oct 2026, 12:44).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -1463,6 +2044,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-02: Sort options". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer (and a signed-out window); the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-03 Popularity ranking
@@ -1487,6 +2077,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-03: Popularity ranking". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer and kid_14_ok (to check rating filters still apply on every shelf); the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-04 Search stories and writers
@@ -1511,6 +2110,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-04: Search stories and writers". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_ok, blocker and blocked; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-05 Writer profile page
@@ -1535,6 +2143,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-05: Writer profile page". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_ok, blocker and blocked; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-06 Public-domain classics shelf
@@ -1560,6 +2177,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-06: Public-domain classics shelf". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_ok and a signed-out window; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-07 Seasonal doodles
@@ -1584,30 +2210,49 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-07: Seasonal doodles". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer, changing the device date and using a staff persona such as editor to change the schedule; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-08 Public website home page
-Should · M · March MVP (wave 4) · Depends on: S1-E1-03, S1-E1-04, S1-E11-06, S1-E11-12, S1-E5-03 (for the rows), S1-E5-09 (View more), S1-E16-02 (download links); back end: the website's own database and public-shelves
+Should · M · March MVP (wave 4) · Depends on: S1-E1-03, S1-E1-04, S1-E5-03 (for the rows), S1-E5-09 (View more); S1-E16-02 for the download links (after March); S1-E11-06 and S1-E11-12 later move the copy and questions to the website database (after March); back end for March: the locale files and the app's own public views or public-shelves
 
 ```text
 We are working on story S1-E5-08 (Public website home page) only. Read CLAUDE.md, docs/architecture.md (1.7.4 group A and 1.8.6), docs/definition-of-done.md and the story in docs/stories/s1-e05-discovery-search-and-profiles.md.
 
 CONTEXT
-- Already merged: S1-E1-03, S1-E1-04, S1-E5-03, S1-E5-09. S1-E11-06, S1-E11-12 and S1-E16-02 are after March, so for March build the short version (proposal in the story): hero, safety lines, questions and download buttons, with the copy in the locale files until the CMS stories land; the live rows can follow. Confirm the scope with me in the plan.
+- Already merged: S1-E1-03, S1-E1-04, S1-E5-03, S1-E5-09. S1-E11-06, S1-E11-12 and S1-E16-02 are after March.
+- Where it lives (decided 17 Oct 2026, 12:34): until the apps exist everything is on the web, so for March this home page is a page inside the web app, in this repository. Its copy (hero, safety lines, questions) comes from the locale files in src/locales/ro and src/locales/en; its live rows come from the app's own public views or public-shelves. There is no separate website database yet: don't create one and don't build the WebsiteContentStore. The CMS stories (S1-E11-06, 10, 11, 12) and the website database come later and will move the copy out of the locale files. Build the short version (proposal in the story): hero, safety lines, questions and download buttons; the live rows can follow. Confirm the scope with me in the plan.
 - Platform: web only.
-- Decisions that apply: "Write stories. Get read." with "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." (no "articles"); "Yoti does the age check. We only get the result, never a photo."; one messaging line: never between under-16s and adults, off by default for 16 and 17-year-olds (Q6, Q13); "parent or guardian" (Q8); language drop-down in top bar and footer (Q11); Romanian is the default interface language; the website has its own database and never reads app tables (Q54); EU hosting (Q38).
+- Decisions that apply: "Write stories. Get read." with "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." (no "articles"); "Yoti does the age check. We only get the result, never a photo."; one messaging line: never between under-16s and adults, off by default for 16 and 17-year-olds (Q6, Q13); "parent or guardian" (Q8); language drop-down in top bar and footer (Q11); Romanian is the default interface language; the separate website with its own database (Q54) comes after March, and for March the page lives inside the app (decided 17 Oct 2026, 12:34); EU hosting (Q38).
 - Designs: design/boards/Website-Home.dc.html with design/renders/desktop/Website-Home.jpg and design/renders/phone/Website-Home.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces: B31 is mocked with the WebsiteContentStore stub: a JSON fixture of the copy live on 16 Oct 2026, a fixture of the 16 Oct questions and a public-shelves fixture of 12 stories including one app-only story. Download buttons use fixed links.
-- Watch-outs: public-shelves returns only public All ages or 13+ stories, never chapter text of app-only stories, nothing from class spaces, never a user ID. No cookies, no third-party script (cookieless analytics is S1-E15-01, after March); one h1 and the right lang attribute. The claims must stay true (Law 363/2007). Stop and ask me: where the website code lives and how its database is set up (OPEN); the hosting provider (OPEN); what the download buttons point to while March is web only; whether the contest block goes in (it needs published contest rules and the ROFUIP art. 178(2) check).
+- Back-end pieces: for March, no B31 website database: the copy live on 16 Oct 2026 and the 16 Oct questions go into the ro and en locale files; the rows read the app's public views (or public-shelves), with a fixture of 12 stories including one app-only story until S1-E5-03's ranking runs. Download buttons use fixed links.
+- Watch-outs: public-shelves returns only public All ages or 13+ stories, never chapter text of app-only stories, nothing from class spaces, never a user ID. No cookies, no third-party script (cookieless analytics is S1-E15-01, after March); one h1 and the right lang attribute. The claims must stay true (Law 363/2007). Leave out the board's contest block: no contest is planned for now (decided 17 Oct 2026, 12:34). Stop and ask me: the hosting provider (OPEN); what the download buttons point to while March is web only.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
-2. The WebsiteContentStore and public-shelves contracts (zod) and any migration with RLS and allowed and denied pgTAP tests.
+2. The locale keys for the copy, the public view or public-shelves contract (zod) and any migration with RLS and allowed and denied pgTAP tests.
 3. A table mapping each acceptance criterion to the test that proves it (mark which wait for the live rows).
 4. i18n keys (ro and en), analytics events and moderation hooks.
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-08: Public website home page". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer as a signed-out visitor in Romanian and English; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E5-09 See all page for a shelf
@@ -1632,6 +2277,51 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-09: See all page for a shelf". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_ok and blocked, keyboard only for one pass; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E5-QA Epic check: Discovery, search and profiles
+Must · S · March MVP (wave 4, last of its epic) · Depends on: S1-E5-01, S1-E5-02, S1-E5-03, S1-E5-05, S1-E5-08, S1-E5-09
+
+```text
+We are working on story S1-E5-QA (Epic check: Discovery, search and profiles) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E5-QA and every story it depends on in docs/stories/s1-e05-discovery-search-and-profiles.md.
+
+CONTEXT
+- Already merged: S1-E5-01, S1-E5-02, S1-E5-03, S1-E5-05, S1-E5-08, S1-E5-09. The epic's after-March stories (S1-E5-04, S1-E5-06, S1-E5-07) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: a visitor goes from the public home page to Discover, browses by category and tag, sorts, opens a See all page and a writer profile.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting.
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E5.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E5-QA: Epic check: Discovery, search and profiles". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E6 Comments, reactions and follows
@@ -1658,6 +2348,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-01: Comment on a chapter". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17, kid_14_ok, kid_14_waiting, blocker and blocked; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E6-02 Emoji reactions on comments
@@ -1670,7 +2369,7 @@ CONTEXT
 - Already merged: S1-E6-01.
 - Platform: web only.
 - Decisions that apply: added to the March MVP on 17 Oct 2026; emoji stay in user content only and the interface uses no emoji (design direction); icons are SVG files (CLAUDE.md rule 16); writes go through is_active_member().
-- Designs: the reaction picker and counts on design/boards/Reader.dc.html with design/renders/desktop/Reader.jpg and design/renders/phone/Reader.jpg. The board draws a fixed set of six as SVG icons, each with a text name (Heart, Fire, Laugh, Wow, Sad, Star), one reaction per person per comment, and picking it again removes it. The story calls the set of six a proposal: confirm the set with me in the plan (check with Robert). No doodles on the reader. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Designs: the reaction picker and counts on design/boards/Reader.dc.html with design/renders/desktop/Reader.jpg and design/renders/phone/Reader.jpg. The board draws a fixed set of six as SVG icons, each with a text name (Heart, Fire, Laugh, Wow, Sad, Star), one reaction per person per comment, and picking it again removes it. The set is these six (decided 17 Oct 2026, 12:44). No doodles on the reader. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: real: B21 reactions. Nothing to mock.
 - Watch-outs: a user can change or remove their reaction; each count has a text name for screen readers (for example "heart, 4"); the picker works by keyboard with 24 px minimum targets. Reactions respect blocks. No legal notes beyond the global checklist.
 
@@ -1682,6 +2381,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-02: Emoji reactions on comments". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_ok and kid_14_waiting, with one pass using a screen reader; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E6-03 Like a chapter
@@ -1706,6 +2414,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-03: Like a chapter". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_ok and kid_14_waiting; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E6-04 Private downvote
@@ -1730,6 +2447,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-04: Private downvote". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17, kid_14_ok and the moderator persona; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E6-05 Follow a writer or a story
@@ -1754,6 +2480,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-05: Follow a writer or a story". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_ok, blocker and blocked; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E6-06 Inline paragraph comments
@@ -1778,6 +2513,51 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question, and a split proposal if needed.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-06: Inline paragraph comments". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer (editing a chapter) and kid_14_ok (commenting); the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E6-QA Epic check: Comments, reactions and follows
+Must · S · March MVP (wave 4, last of its epic) · Depends on: S1-E6-01, S1-E6-02, S1-E6-03, S1-E6-04, S1-E6-05
+
+```text
+We are working on story S1-E6-QA (Epic check: Comments, reactions and follows) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E6-QA and every story it depends on in docs/stories/s1-e06-comments-reactions-and-follows.md.
+
+CONTEXT
+- Already merged: S1-E6-01, S1-E6-02, S1-E6-03, S1-E6-04, S1-E6-05. The epic's after-March stories (S1-E6-06) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: a reader comments on a chapter, reacts to a comment, likes the chapter, downvotes privately and follows the writer and the story; a blocked person can do none of this to the person who blocked them.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting.
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E6.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E6-QA: Epic check: Comments, reactions and follows". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E7 Notifications
@@ -1804,6 +2584,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E7-01: In-app notifications". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer (publishing), kid_14_ok and teen_17 (following and reacting), blocked and the moderator persona (a decision); the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E7-02 Email notifications and digests
@@ -1828,6 +2617,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question, plus the privacy notice and processor list changes this needs.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E7-02: Email notifications and digests". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17 and kid_14_ok, reading the emails in Mailpit; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E7-03 Push notifications in the apps
@@ -1852,6 +2650,51 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question, plus the privacy label and data safety changes.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E7-03: Push notifications in the apps". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer on a phone using adult_writer and kid_14_ok (late evening); the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E7-QA Epic check: Notifications
+Must · S · March MVP (wave 4, last of its epic) · Depends on: S1-E7-01
+
+```text
+We are working on story S1-E7-QA (Epic check: Notifications) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E7-QA and every story it depends on in docs/stories/s1-e07-notifications.md.
+
+CONTEXT
+- Already merged: S1-E7-01. The epic's after-March stories (S1-E7-02, S1-E7-03) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: a follow, a comment and a new chapter each notify the right person in the app, and nobody is notified about a person they blocked.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting.
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E7.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E7-QA: Epic check: Notifications". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E8 Forums and spaces
@@ -1878,6 +2721,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-01: Forum categories and subforums". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using the admin and moderator staff personas and adult_writer; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-02 Threads and posts with safe formatting
@@ -1902,6 +2754,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question, and a split proposal if needed.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-02: Threads and posts with safe formatting". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17, kid_14_ok, kid_14_waiting, blocker, blocked and the moderator persona; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-03 Quote, multi-quote and quick reply
@@ -1926,6 +2787,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-03: Quote, multi-quote and quick reply". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17, blocker and blocked; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-04 Read and unread tracking
@@ -1950,6 +2820,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question, plus any privacy notice change.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-04: Read and unread tracking". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer and teen_17 posting to each other; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-05 Sticky and locked threads, reply without bumping
@@ -1974,6 +2853,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-05: Sticky and locked threads, reply without bumping". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using the moderator persona and adult_writer; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-06 User-created spaces
@@ -1998,6 +2886,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question, and a split proposal if needed.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-06: User-created spaces". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17, kid_14_ok, kid_14_waiting, blocked and a signed-out window; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-07 Space moderators and permissions
@@ -2022,6 +2919,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-07: Space moderators and permissions". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer (owner), teen_17 (space moderator), kid_14_ok (refused for a 16+ space) and the moderator staff persona; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-08 Signatures and profile customisation limits
@@ -2046,6 +2952,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-08: Signatures and profile customisation limits". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer and the moderator persona, on a phone width and a desktop width; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-09 Ranks and light reputation
@@ -2070,6 +2985,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-09: Ranks and light reputation". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer and kid_14_ok publishing and removing chapters; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-10 Forum search
@@ -2094,6 +3018,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-10: Forum search". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_ok, blocker and blocked; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-11a Private class spaces: private visibility and invite codes
@@ -2118,6 +3051,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question, including my split of the criteria.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-11a: Private class spaces: private visibility and invite codes". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using teacher, kid_14_ok, kid_14_waiting, teen_17 and adult_writer (as an outsider); the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-11b Private class spaces: Class space option and teacher tools
@@ -2142,6 +3084,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-11b: Private class spaces: Class space option and teacher tools". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using teacher, adult_writer (no badge), kid_14_ok, the admin staff persona and the moderator persona; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E8-12 Writing certificates
@@ -2156,7 +3107,7 @@ CONTEXT
 - Decisions that apply: certificates are co-signed by Ghemotoc and the teacher leading the contest or class (Q23, Q71); no county contest calendars and no inspectorate involvement until autumn 2027 (Q67); partner or school logos only with their written permission; the PDF has real, tagged text, not an image.
 - Designs: design/boards/Certificate-Winner.dc.html and design/boards/Certificate-Participation.dc.html (desktop renders only), "My certificates" on design/boards/Settings.dc.html and the staff side on design/boards/AdminContests.dc.html and design/boards/AdminSchools.dc.html; renders under the same names. Match the screens at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: real: B24 certificates and the certificate-pdf function, B27, B03. Mocked: the PDF is a stub until this story makes it real (architecture 1.7.3).
-- Watch-outs: the printed name is asked only when a student requests a certificate, stored only on the certificate record and never on the profile (GDPR Art 5(1)(c)). CLAUDE.md rule 5 says "store no legal names": stop and ask me how to square the two (check with Robert). The public verification page shows only valid or revoked, the contest or programme, the result and the date, never the name; deleting an account deletes its certificates and the code shows "no longer available". Stop and ask me about each OPEN point: the PDF tool (34f; pdf-lib is a recommendation, not a decision), how the teacher's signature is captured (34q) and ROFUIP art. 178(2) for our own app in a school partnership.
+- Watch-outs: the printed name is asked only when a student requests a certificate, stored only on the certificate record and never on the profile (GDPR Art 5(1)(c)). Decided (decided 17 Oct 2026, 12:44): a class certificate may print the student's real name with the school name, stored only with the certificate and deleted 30 days after the class is archived; the teacher is told in the app and by email to keep their own copies before then; other certificates print the pen name. This is the named exception to CLAUDE.md rule 5; add the deletion job to docs/retention.md and tell me what the certificate shows after its name is deleted. The public verification page shows only valid or revoked, the contest or programme, the result and the date, never the name; deleting an account deletes its certificates and the code shows "no longer available". Stop and ask me about each OPEN point: the PDF tool (34f; pdf-lib is a recommendation, not a decision), how the teacher's signature is captured (34q) and ROFUIP art. 178(2) for our own app in a school partnership.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -2166,6 +3117,51 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point as a question, plus the privacy notice and retention changes.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-12: Writing certificates". Then give me: a summary; the check results; step-by-step manual test steps for a non-developer using teacher, kid_14_ok, the admin staff persona and a signed-out window for the verification page; the PR description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E8-QA Epic check: Forums and spaces
+Should · S · After March · Depends on: S1-E8-01, S1-E8-02, S1-E8-03, S1-E8-04, S1-E8-05, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, S1-E8-10, S1-E8-11, S1-E8-12
+
+```text
+We are working on story S1-E8-QA (Epic check: Forums and spaces) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E8-QA and every story it depends on in docs/stories/s1-e08-forums-and-spaces.md.
+
+CONTEXT
+- Already merged: S1-E8-01, S1-E8-02, S1-E8-03, S1-E8-04, S1-E8-05, S1-E8-06, S1-E8-07, S1-E8-08, S1-E8-09, S1-E8-10, S1-E8-11, S1-E8-12. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data.
+- Main journeys to cover: forum categories, threads and posts, quoting, read marks, sticky and locked threads, user spaces with their moderators, signatures, ranks, forum search, class spaces and certificates.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E8.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E8-QA: Epic check: Forums and spaces". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting and one staff persona;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E9 Private messages
@@ -2192,6 +3188,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E9-01: One-to-one private messages". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17, kid_14_ok, blocker and blocked (a first message to someone who doesn't follow you, accepting it, adult_writer trying to message kid_14_ok); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E9-02 Block and report inside messages
@@ -2215,6 +3220,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E9-02: Block and report inside messages". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using blocker, blocked, adult_writer and moderator (block from a chat, check the blocked person sees nothing about it, report a message, open the case as moderator); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E9-03 Adult and minor messaging rules
@@ -2240,6 +3254,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E9-03: Adult and minor messaging rules". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer, teacher, teen_17 and kid_14_ok (teen_17 turning the switch on and off, adult_writer seeing only the neutral note, kid_14_ok blocked both ways); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E9-04 Message settings and retention
@@ -2263,6 +3286,51 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E9-04: Message settings and retention". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer, teen_17 and kid_14_ok (change who can message you, delete a chat on both sides, run the clean-up); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E9-QA Epic check: Private messages
+Should · S · After March · Depends on: S1-E9-01, S1-E9-02, S1-E9-03, S1-E9-04
+
+```text
+We are working on story S1-E9-QA (Epic check: Private messages) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E9-QA and every story it depends on in docs/stories/s1-e09-private-messages.md.
+
+CONTEXT
+- Already merged: S1-E9-01, S1-E9-02, S1-E9-03, S1-E9-04. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data.
+- Main journeys to cover: send a private message, block and report inside messages, the adult and minor messaging rules, message settings and retention.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E9.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E9-QA: Epic check: Private messages". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting and one staff persona;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E10 Reporting, moderation and safety
@@ -2288,6 +3356,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-01: Report button on everything". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer, kid_14_waiting and pending_check (report a chapter and a profile by keyboard only, see the confirmation); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-02 One web form for all reports, including authority removal orders
@@ -2299,7 +3376,7 @@ We are working on story S1-E10-02 (One web form for all reports, including autho
 CONTEXT
 - Already merged: S1-E14-02 (contact points), S1-E10-03a (the queue, where the tier-1 case opens), S1-E10-01 (the shared report form this page reuses).
 - Decisions that apply: one web form takes every report and is our TCO contact point (16 Oct 2026, 22:59), in English and Romanian, no account needed. Authority orders arrive here, never through user reports. One-hour removal is mandatory (Regulation (EU) 2021/784, art. 3(3)) and the on-call founder is alerted. A reporter's name, email and report are kept 3 years after the report is closed, then deleted (17 Oct 2026). Platform: web.
-- Designs: design/boards/NoticeForm.dc.html (design/renders/desktop/NoticeForm.jpg, design/renders/phone/NoticeForm.jpg), including "Report received". Match it at 390, 768 and 1440 px (CLAUDE.md rule 21). No doodles. The country contacts in "Is someone in danger right now?" are S1-E10-13: ask me what that block shows until it lands.
+- Designs: design/boards/NoticeForm.dc.html (design/renders/desktop/NoticeForm.jpg, design/renders/phone/NoticeForm.jpg), including "Report received". Match it at 390, 768 and 1440 px (CLAUDE.md rule 21). No doodles. The country contacts in "Is someone in danger right now?" are S1-E10-13a, later in the March order: ask me what that block shows until it lands.
 - Back-end pieces: a `public-notice` edge function (bot check, rate limit), B26 (cases, authority_orders), B09 email. Mock: Mailpit for every email; the on-call phone alert is the B26 stub that only logs until S1-E10-09.
 - Watch-outs: an illegal-content notice requires the exact URL, why it is illegal, the notifier's name and email (optional for child sexual abuse reports) and a good-faith statement. The page says plainly it is our contact point for authorities and removal orders under Regulation (EU) 2021/784 and that we accept English and Romanian. An order opens a tier-1 case, starts the one-hour clock and the authority gets an acknowledgement with the time of receipt. Every notifier gets an acknowledgement email and later the decision. The bot check is accessible (no puzzle only) and never blocks an authority's order. If the rate limit uses IP addresses, they are scrambled and kept 30 days (Q48); never log emails or IPs (rule 12). Lawyer's list: which Romanian authority issues orders and whether a web form alone is enough.
 
@@ -2311,16 +3388,25 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-02: One web form for all reports, including authority removal orders". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer: a signed-out visitor sending a notice and an authority order, adult_writer reporting while signed in, the owner persona finding the tier-1 case and the logged alert, and the emails in Mailpit; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-03a Moderation queue with priority tiers (part a: one queue, tiers, deadlines and a decision with a note)
-Must · L, split (03a is M) · March MVP (wave 3) · Depends on: S1-E10-01, S1-E2-07, S1-E11-01 (the /staff shell)
+Must · L, split (03a is M) · March MVP (wave 3) · Depends on: S1-E10-01, S1-E2-07a, S1-E11-01 (the /staff shell)
 
 ```text
 We are working on story S1-E10-03a (Moderation queue with priority tiers) only: part a, one queue with tiers, deadlines and a decision with a note. Grouping, claiming and visible timers are part b, after March. Read CLAUDE.md, docs/architecture.md, docs/definition-of-done.md and the story S1-E10-03 in docs/stories/s1-e10-reporting-moderation-and-safety.md.
 
 CONTEXT
-- Already merged: S1-E10-01 (reports), S1-E2-07 (staff roles and is_staff_session()), S1-E11-01 (the /staff shell and the audit log; architecture 1.7.7).
+- Already merged: S1-E10-01 (reports), S1-E2-07a (staff roles; is_staff_session() returns true for any staff-role session until S1-E2-07b), S1-E11-01 (the /staff shell and the audit log; architecture 1.7.7).
 - Decisions that apply: every case comes from a report, an authority order or a flagged picture; there is no automated text screening (Q42, Q43). In-house moderators, English and Romanian. Tiers: authority removal order 1 hour (the legal rule); child abuse material, a threat to a minor or self-harm risk the same day; other illegal content 48 hours; everything else 7 days. Apart from the one-hour rule these are proposals (canvas 8.7, Q62), so keep them changeable without a release (architecture 1.1, principle 12). Platform: web (staff).
 - Designs: design/boards/Moderation.dc.html ("Report queue", "Open cases", "Decision") and the decision panel in design/boards/ModCase.dc.html, with renders in design/renders/desktop/ and design/renders/phone/. Plain components, no doodles. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B26 (cases, case_actions, the queue view with tier and deadline), B16, B27 admin_* functions writing B03 audit_log. Mock: 20 seeded cases across the tiers (architecture 1.7.4).
@@ -2334,6 +3420,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-03a: Moderation queue with priority tiers". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer (files a report), moderator (sorts the queue, decides with a note), and support and editor (both refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-03b Moderation queue with priority tiers (part b: grouping, claiming and visible timers)
@@ -2357,6 +3452,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-03b: Moderation queue with priority tiers (grouping, claiming and timers)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer and teen_17 (both report the same chapter), moderator (claims the case) and admin (sees it claimed); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-04 Statements of reasons
@@ -2381,6 +3485,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-04: Statements of reasons". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using teen_17 (reports a comment or chapter), adult_writer (whose content is removed) and moderator, plus a signed-out notifier's email in Mailpit; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-05 Picture check on upload
@@ -2404,6 +3517,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-05: Picture check on upload". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer (uploads a normal cover and one named cover_fail.jpg), kid_14_ok (sees "Picture being checked") and moderator (decides on the held picture); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-06 Sanctions and repeat offenders
@@ -2427,6 +3549,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-06: Sanctions and repeat offenders". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using moderator, suspended_user (reads but can't comment), banned_user (sign-up again refused) and adult_writer (reporting paused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-07 Appeals
@@ -2451,6 +3582,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-07: Appeals". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer (appeals a removal), moderator (who made the decision, refused) and admin (decides the appeal); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-08 "Copied from a published work" report
@@ -2474,6 +3614,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-08: \"Copied from a published work\" report". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer (selects a passage and reports it with only a title), teen_17 (the writer, who sees nothing until a decision) and moderator (compares side by side and confirms); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-09 Terrorist content removal orders
@@ -2497,6 +3646,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-09: Terrorist content removal orders". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using owner (on call, gets the logged alert and uses Emergency disable), admin (escalation after 15 minutes, simulated), moderator without the permission (refused) and adult_writer (the uploader, told when allowed); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-10 Safeguarding escalation
@@ -2509,7 +3667,7 @@ CONTEXT
 - Already merged: S1-E10-03a (queue and cases).
 - Decisions that apply: in-house moderators acting on reports (Q42, Q43). Safeguarding is a permission an owner or admin ticks for trained staff only (architecture 1.8.3). Staff see a person's age group only, never the year of birth (1.8.3). The Romanian child helpline is 116 111, Monday to Friday 10:00 to 20:00 (research G4); Romania has no confirmed youth crisis line. Platform: web (staff).
 - Designs: "Keep the young person safe" and "Evidence pack" in design/boards/ModCase.dc.html (design/renders/desktop/ModCase.jpg, design/renders/phone/ModCase.jpg). Plain components, no doodles. Match it at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Content: load helplines from content/safety-contacts.json as seed data, never hard-coded. The per-country block and its admin screen are S1-E10-13.
+- Content: load helplines from content/safety-contacts.json as seed data, never hard-coded. The per-country block is S1-E10-13a (March); its editing screen and monthly check are S1-E10-13b (after March).
 - Back-end pieces: B26 cases with a safeguarding tag, B14 the private `evidence` bucket, B27 admin_* functions with the B03 audit log. Real; seed one safeguarding case about kid_14_ok and one staff persona with the safeguarding permission (tell me which).
 - Watch-outs: a case tagged self-harm, grooming or threat to a minor shows the checklist and support resources. Only staff with the safeguarding permission can see these cases, enforced in RLS. Escalating a credible threat produces an evidence pack (content, account data, timestamps) for police or prosecutors and logs the referral; opening an evidence pack is a logged sensitive read (S1-E11-01). The story doesn't define the pack's file format or what "account data" includes: stop and ask me. The written safeguarding process (risk table) is a document that must exist before launch, not code. DSA Art 18 and Law 50/2024 art 31 (to verify).
 
@@ -2521,6 +3679,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-10: Safeguarding escalation". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using the staff persona with the safeguarding permission (opens the case, sees 116 111, builds an evidence pack), moderator without it (sees nothing) and kid_14_ok (the young person, who sees no change); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-11 Moderator mail
@@ -2545,6 +3712,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-11: Moderator mail". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using teen_17 (writes to the moderators), moderator (assigns, adds a note, replies) and admin; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E10-12 Spam and abuse rate limits
@@ -2568,46 +3744,133 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-12: Spam and abuse rate limits". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using a new account you create during the test (two links refused, then the wait message), adult_writer (normal limits) and admin (changes a limit and sees it in the audit log); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
-### S1-E10-13 Country-specific emergency and safety contacts
-Must · M · March MVP (wave 3) · Depends on: S1-E2-10, S1-E10-02, S1-E11-13, S1-E11-01; back end: a `safety_contacts` table and a monthly scheduled job
+### S1-E10-13a Country-specific emergency and safety contacts (part a: seeded contacts and the block)
+Must · S (split: this is 13a) · March MVP (wave 3) · Depends on: S1-E2-10, S1-E10-02, S1-E11-01
 
 ```text
-We are working on story S1-E10-13 (Country-specific emergency and safety contacts) only. Read CLAUDE.md, docs/architecture.md, docs/definition-of-done.md and the story in docs/stories/s1-e10-reporting-moderation-and-safety.md.
+We are working on story S1-E10-13a (Country-specific emergency and safety contacts, part a) only: the seeded contacts and the "If someone is in danger" block. The editing screen and the monthly check are part b, after March. Read CLAUDE.md, docs/architecture.md, docs/definition-of-done.md and the story S1-E10-13 in docs/stories/s1-e10-reporting-moderation-and-safety.md.
 
 CONTEXT
-- Already merged: S1-E2-10 (country from the connection), S1-E10-02 (the report form), S1-E11-01 (admin shell). S1-E11-13 (support tickets) is after March, so there is nowhere for the monthly ticket to go; for March, Contact us messages go to support@ghemotoc.com. Settings › Safety contacts sits in the admin Settings area, whose screen (S1-E11-03) is also after March. Stop and ask me how the monthly check and the editing screen work for March (open question for Robert).
-- Decisions that apply: contacts follow the account's country, taken from the connection at sign-up and never asked (Q20), and a support task checks them every month (canvas comment, 17 Oct 2026). Romania is the first and, at launch, only open market (17 Oct 2026, 11:48). Telefonul Copilului 116 111 runs Monday to Friday 10:00 to 20:00. Platform: web.
-- Designs: the "Is someone in danger right now?" block in design/boards/NoticeForm.dc.html (7.3) and the safeguarding panel in design/boards/ModCase.dc.html, with renders in design/renders/desktop/ and design/renders/phone/. Settings › Safety contacts has no board: use the plain section style of design/boards/AdminSettings.dc.html. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Content: content/safety-contacts.json (research G4, checked 17 Oct 2026) is seed data only; never show a number from memory. Store the source link and check date with each contact.
-- Back-end pieces: `safety_contacts` (country, kind, label, number, link, language, last checked, checked by), B11 country (header faked locally), B17 pg_cron monthly job, B03 audit log.
-- Watch-outs: the story speaks of "every launch country" (8 in the research) while only Romania opens at launch: ask me which list "Not your country?" and the monthly job use. A country with no row shows "Call your local emergency number" plus "the international links we keep for that case": no such list exists yet, so ask me for it; the gap is logged for staff. Numbers are tappable phone links on phones and selectable text everywhere; official links open in a new tab with no tracking. The 45-day unconfirmed warning is a proposal. DSA art. 16 and 28.
+- Already merged: S1-E2-10 (country from the connection), S1-E10-02 (the report form), S1-E11-01 (admin shell).
+- Decisions that apply: split (decided 17 Oct 2026, 12:44): in March the contacts are seeded from the researched defaults (research G4, content/safety-contacts.json) by migration; a change before part b is a new migration. Contacts follow the account's country, taken from the connection at sign-up and never asked (Q20). Romania is the first and, at launch, only open market (17 Oct 2026, 11:48). Telefonul Copilului 116 111 runs Monday to Friday 10:00 to 20:00. Platform: web.
+- Designs: the "Is someone in danger right now?" block in design/boards/NoticeForm.dc.html (7.3) and the safeguarding panel in design/boards/ModCase.dc.html, with renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Content: content/safety-contacts.json is seed data only; never show a number from memory. Store the source link and check date with each contact.
+- Back-end pieces: `safety_contacts` (country, kind, label, number, link, language, last checked, checked by), B11 country (header faked locally). Nothing to mock.
+- Watch-outs: the story speaks of "every launch country" (8 in the research) while only Romania opens at launch: ask me which list "Not your country?" uses. A country with no row shows "Call your local emergency number" plus "the international links we keep for that case": no such list exists yet, so ask me for it; the gap is logged for staff. Numbers are tappable phone links on phones and selectable text everywhere; official links open in a new tab with no tracking. DSA art. 16 and 28.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
-1. Files you will create or change.
-2. Migrations: tables, columns, indexes and RLS policies (who can select, insert, update or delete, and why), with an allowed and a denied pgTAP test for each: everyone reads, only staff change, every change records who and when.
-3. A table mapping each acceptance criterion to the test(s) that prove it.
+1. Files you will create or change, including the seed migration.
+2. Migrations: tables, columns, indexes and RLS policies (who can select, insert, update or delete, and why), with an allowed and a denied pgTAP test for each: everyone reads, nobody changes from the app until part b.
+3. A table mapping each 13a acceptance criterion to the test(s) that prove it, and the criteria left for 13b.
 4. New i18n keys (ro and en), analytics events (none on helpline links) and moderation hooks.
 5. Every OPEN or unclear point. Ask; don't guess.
 
-STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-13: Country-specific emergency and safety contacts". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer (Romania), a signed-out visitor with a faked country and one with no row, and admin (edits a contact, runs the monthly job by hand); and the pull request description from .github/pull_request_template.md.
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-13a: Country-specific emergency and safety contacts (seeded)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer (Romania), a signed-out visitor with a faked country and one with no row; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E10-13b Country-specific emergency and safety contacts (part b: editing screen and monthly check)
+Must · M (split: this is 13b) · After March · Depends on: S1-E10-13a, S1-E11-13, S1-E11-03
+
+```text
+We are working on story S1-E10-13b (Country-specific emergency and safety contacts, part b) only: Settings › Safety contacts, the monthly check job with its ticket and the 45-day warning. Read CLAUDE.md, docs/architecture.md, docs/definition-of-done.md and the story S1-E10-13 in docs/stories/s1-e10-reporting-moderation-and-safety.md.
+
+CONTEXT
+- Already merged: S1-E10-13a (the seeded table and the block), S1-E11-13 (support tickets), S1-E11-03 (the admin Settings area).
+- Timing: after March; the monthly check starts at go-live (decided 17 Oct 2026, 12:44).
+- Decisions that apply: a support task checks the contacts every month (canvas comment, 17 Oct 2026). Staff changes are logged with who and when. Platform: web (staff).
+- Designs: Settings › Safety contacts has no board: use the plain section style of design/boards/AdminSettings.dc.html. Match it at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Back-end pieces: `safety_contacts` from 13a, B17 pg_cron monthly job, the ticket API from S1-E11-13, B27 admin_* functions, B03 audit log.
+- Watch-outs: one ticket per open market each month, assigned to support, closed only when each contact is confirmed or changed; ask me whether "launch country" means open markets or all 8 researched. The 45-day unconfirmed warning is a proposal.
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. Files you will create or change.
+2. Migrations: the job, the admin_* functions and any RLS change (only staff change, every change records who and when), with an allowed and a denied pgTAP test for each.
+3. A table mapping each 13b acceptance criterion to the test(s) that prove it.
+4. New i18n keys (ro and en), analytics events and moderation hooks.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-13b: Safety contacts editing and monthly check". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (edits a contact, runs the monthly job by hand, closes a ticket) and support (sees the ticket); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E10-QA Epic check: Reporting, moderation and safety
+Must · S · March MVP (wave 3, last of its epic) · Depends on: S1-E10-01, S1-E10-02, S1-E10-03a, S1-E10-04, S1-E10-05, S1-E10-06, S1-E10-08, S1-E10-09, S1-E10-10, S1-E10-13a
+
+```text
+We are working on story S1-E10-QA (Epic check: Reporting, moderation and safety) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E10-QA and every story it depends on in docs/stories/s1-e10-reporting-moderation-and-safety.md.
+
+CONTEXT
+- Already merged: S1-E10-01, S1-E10-02, S1-E10-03a, S1-E10-04, S1-E10-05, S1-E10-06, S1-E10-08, S1-E10-09, S1-E10-10, S1-E10-13a. The epic's after-March stories (S1-E10-07, S1-E10-11, S1-E10-12) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: report a chapter, a comment and a profile; a signed-out visitor uses the web form; a moderator works the queue, decides with a statement of reasons and a sanction; a flagged picture is held; a removal order and a safeguarding case reach the on-call staff; a "copied from a published work" report; the safety contacts for the reader's country.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E10.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E10-QA: Epic check: Reporting, moderation and safety". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting and one staff persona;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E11 Admin site
 
 ### S1-E11-01 Admin shell with protected access
-Must · M · March MVP (wave 3) · Depends on: S1-E2-07, S1-E1-02 (audit log)
+Must · M · March MVP (wave 3) · Depends on: S1-E2-07a, S1-E1-02 (audit log)
 
 ```text
 We are working on story S1-E11-01 (Admin shell with protected access) only. Read CLAUDE.md, docs/architecture.md (especially section 1.8), docs/definition-of-done.md and the story in docs/stories/s1-e11-admin-site.md.
 
 CONTEXT
-- Already merged: S1-E2-07 (staff roles, Google Workspace sign-in, is_staff_session()), S1-E1-02 (append-only audit_log and log_staff_action()).
-- Decisions that apply: staff sign in with Google Workspace only; Google's 2-Step Verification is the second factor, no separate code (17 Oct 2026, 11:53; Q30, 34n). Staff accounts are separate from any personal writer account. The admin site lives in the same React app under /staff, loaded as a separate chunk so its code never ships to readers (architecture 1.8.1). The server decides, not the menu. Platform: web (staff).
+- Already merged: S1-E2-07a (staff roles on the normal email login; is_staff_session() returns true for any staff-role session until S1-E2-07b makes it the Google Workspace check after March), S1-E1-02 (append-only audit_log and log_staff_action()).
+- Decisions that apply: in March staff sign in with the normal email login and a staff role (S1-E2-07a); Google Workspace sign-in with Google's 2-Step Verification comes after March (S1-E2-07b; decided 17 Oct 2026, 12:44). Staff accounts are separate from any personal writer account. The admin site lives in the same React app under /staff, loaded as a separate chunk so its code never ships to readers (architecture 1.8.1). The server decides, not the menu. Platform: web (staff).
 - Designs: the staff menu and page frame as drawn on the admin boards, for example design/boards/AdminUsers.dc.html and design/boards/AdminSettings.dc.html (with "Audit log" and "Recent changes"), renders in design/renders/desktop/ and design/renders/phone/. Plain components, no doodles. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces: B03 audit log, B10 staff roles and is_staff_session(), B27 the admin_* function pattern (role, permission, staff session, then the work and the audit entry in one transaction). Real; locally a test flag marks a seeded staff persona's session as Google Workspace (B10).
-- Watch-outs: anyone without a staff role or a Google Workspace staff session is refused by the server on every admin route. The audit log stores who, what, when and before and after values, also for sensitive reads (revealing an email, opening a draft, an export file, an evidence pack or a teacher's proof). No role, the owner included, can change or delete an audit row; admins and the owner can search it and export CSV. The menu shows only what the role allows (1.8.2 and the 1.8.3 table). Proposals: sessions end after 12 hours; changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text ask for a fresh Google sign-in. GDPR Art 32 and 5(2).
+- Back-end pieces: B03 audit log, B10 staff roles and is_staff_session(), B27 the admin_* function pattern (role, permission, staff session, then the work and the audit entry in one transaction). Real.
+- Watch-outs: anyone without a staff role and a staff session (is_staff_session()) is refused by the server on every admin route. The audit log stores who, what, when and before and after values, also for sensitive reads (revealing an email, opening a draft, an export file, an evidence pack or a teacher's proof). No role, the owner included, can change or delete an audit row; admins and the owner can search it and export CSV. The menu shows only what the role allows (1.8.2 and the 1.8.3 table). Proposals: sessions end after 12 hours; changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text ask for a fresh sign-in. GDPR Art 32 and 5(2).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -2617,6 +3880,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-01: Admin shell with protected access". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using owner, admin, moderator, support and editor (each sees only their menu), adult_writer (refused at /staff) and the audit log CSV export; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-02 User management
@@ -2627,10 +3899,10 @@ We are working on story S1-E11-02 (User management) only. Read CLAUDE.md, docs/a
 
 CONTEXT
 - Already merged: S1-E11-01 (admin shell and audit log), S1-E10-06 (sanctions).
-- Decisions that apply: every account has a permanent user ID; staff see it shortened with a copy button, never publicly (architecture 1.6). Staff see the age group and the age check result with its date, never the year of birth, a photo or a document (1.8.3, S1-E2-08). Usernames block swearwords, staff look-alikes and confusable characters, and moderators can approve a false hit: that approval is one action on this account page (architecture 1.7.9, S1-E2-04). Platform: web (staff).
+- Decisions that apply: every account has a permanent user ID; staff see it shortened with a copy button, never publicly (architecture 1.6). Staff see the age group and the age check result with its date, never the year of birth, a photo or a document (1.8.3, S1-E2-08); the one exception is staff handling a manual age check, who see the year of birth inside that check (S1-E2-08b, decided 17 Oct 2026, 12:34). Usernames block swearwords, staff look-alikes and confusable characters, and moderators can approve a false hit: that approval is one action on this account page (architecture 1.7.9, S1-E2-04). Platform: web (staff).
 - Designs: design/boards/AdminUsers.dc.html (8.5; design/renders/desktop/AdminUsers.jpg, design/renders/phone/AdminUsers.jpg). Plain components, no doodles; label and value rows with a fine line between them (Definition of Done). Match it at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B27 admin_user_lookup() (handle, email or user ID; revealing an email is logged), B26 sanctions and open cases, B03 audit log. Real; seed personas.
-- Watch-outs: roles from 1.8.3: owner, admin and moderator look up and sanction; support only views; everyone but the content editor can reveal an email after pressing "Show", and that click is logged. Actions: suspend, ban, reset a pen name, sign out everywhere, and start a data export or deletion on the user's request. Until S1-E11-09 exists those last two need a holding path: ask me what they do meanwhile. Private messages are visible only when part of a report. Need-to-know access, GDPR Art 5(1)(f).
+- Watch-outs: roles from 1.8.3: owner, admin and moderator look up and sanction; support only views; everyone but the content editor can reveal an email after pressing "Show", and that click is logged. Actions: suspend, ban, reset a pen name, sign out everywhere, and start a data export or deletion on the user's request. In March data requests and deletions arrive by email and are handled by hand; S1-E11-09a and S1-E13-03 come after March (decided 17 Oct 2026, 12:44), so build no export or deletion action now and list them as follow-ups. Private messages are visible only when part of a report. Need-to-know access, GDPR Art 5(1)(f).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -2640,6 +3912,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-02: User management". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using moderator (finds kid_14_ok by handle and teen_17 by short user ID, suspends suspended_user, approves a username false hit), support (views and reveals an email, then checks the audit log entry) and editor (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-03 Content settings and feature flags
@@ -2663,6 +3944,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-03: Content settings and feature flags". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (adds a reserved name, changes the teaser length and checks the change shows within a minute and in the audit log) and moderator (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-04 Metrics and compliance logs
@@ -2676,7 +3966,7 @@ CONTEXT
 - Decisions that apply: no tracking; the March numbers come from our own database. Staff see aggregates only. Metrics: owner and admin view, moderators see queue numbers only (architecture 1.8.3). Platform: web (staff).
 - Designs: design/boards/AdminMetrics.dc.html (8.7: "March test numbers", "Sign-ups by age group", "Age checks with Yoti", "Reports by tier", "Authority orders and legal requests"; design/renders/desktop/AdminMetrics.jpg, design/renders/phone/AdminMetrics.jpg). Example numbers on the board are made up. Charts need real text alternatives (WCAG 2.2 AA). Match it at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B17 daily metrics job, the compliance log, B26 (reports by tier, SLA), B27 admin_* functions with the B03 audit log. Mock: seeded totals.
-- Watch-outs: sign-ups by age (13 to 15, 16 to 17, 18 or over) are counted from year of birth and shown only as totals. The dashboard shows age checks passed, failed and appealed, writers who published, readers, the March return rate, reports by tier and the share handled within SLA. OPEN: the return rate definition (proposal: readers of chapter N who open chapter N+1 within 14 days of its release; docs/open-questions.md row 23). Stop and ask me. A logged authority order or legal request records the authority, date, content, action and timestamps. Add the ANCOM notification within 45 days of launch (Law 50/2024) as a launch task here; ask me how it should appear. Small totals could point to one person: tell me how you'd avoid that (check with Robert). DSA Art 15(2): transparency reports aren't required yet.
+- Watch-outs: sign-ups by age (13 to 15, 16 to 17, 18 or over) are counted from year of birth and shown only as totals. The dashboard shows age checks passed, failed and appealed, writers who published, readers, the March return rate, reports by tier and the share handled within SLA. The return rate is an aggregate approximation from daily totals: reads of chapter N+1 within 7 days of its release divided by reads of chapter N, labelled "approximation" on screen; only aggregated data, never per-reader records; aggregated metrics are kept 3 years (decided 17 Oct 2026, 12:34; docs/open-questions.md row 23). A logged authority order or legal request records the authority, date, content, action and timestamps. Add the ANCOM notification within 45 days of launch (Law 50/2024) as a launch task here; ask me how it should appear. Small totals could point to one person: tell me how you'd avoid that (check with Robert). DSA Art 15(2): transparency reports aren't required yet.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -2686,6 +3976,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-04: Metrics and compliance logs". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using owner (reads the dashboard, logs a legal request), moderator (queue numbers only) and support (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-05 Markets and languages
@@ -2709,6 +4008,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-05: Markets and languages". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using owner (tries to open a market without its legal check), admin (refused), adult_writer (sees only open story languages) and kid_14_ok with a faked Australian connection; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-06 Website home page copy
@@ -2718,8 +4026,8 @@ Should · M · After March · Depends on: S1-E11-01, S1-E11-03, S1-E2-07, the we
 We are working on story S1-E11-06 (Website home page copy) only. Read CLAUDE.md, docs/architecture.md (sections 1.7.4 group A and 1.8.6), docs/definition-of-done.md and the story in docs/stories/s1-e11-admin-site.md.
 
 CONTEXT
-- Already merged: S1-E11-01 (admin shell), S1-E11-03 (settings), S1-E2-07 (staff roles).
-- Decisions that apply: the public website has its own database, separate from the app (16 Oct 2026); its CMS is built new on that database (Q54). The live copy: headline "Write stories. Get read." and the line under it "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." Website copy goes live without a second approver for now (Q31); home page copy is logged only. Content editors and admins can save and publish (1.8.3). Platform: web (staff and the public website).
+- Already merged: S1-E11-01 (admin shell), S1-E11-03 (settings), S1-E2-07 (staff roles), S1-E5-08 (the March home page).
+- Decisions that apply: the public website has its own database, separate from the app (16 Oct 2026); its CMS is built new on that database (Q54). For March the home page lived inside the web app with its copy in the locale files (decided 17 Oct 2026, 12:34); this story moves the hero copy to the website database, so plan how the locale copy becomes version 1 and how the page switches over. The live copy: headline "Write stories. Get read." and the line under it "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." Website copy goes live without a second approver for now (Q31); home page copy is logged only. Content editors and admins can save and publish (1.8.3). Platform: web (staff and the public website).
 - Designs: "Website home page" and "Earlier versions" in design/boards/AdminSettings.dc.html (the board notes these now live under Website, as in the menu of design/boards/AdminPages.dc.html), and the hero on design/boards/Website-Home.dc.html for the preview; renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B31 (`hero_versions` on the website's database, written only through the `website-cms` function, which checks the role and is_staff_session() and logs to the app's audit log). Mock: the `WebsiteContentStore` stub with the same contract and a fixture of the copy live on 16 Oct 2026. The website database set-up is OPEN: the story is Done only when it is real or behind an off flag (docs/mocks.md).
 - Watch-outs: fields are the line above the headline, the headline on two lines, the underlined word, the line under it, two button labels and three short points; both languages required; character limits are proposals (50, 40, 170, 20, 30). Publish is refused with the list of fields to fix, and counters are announced to screen readers. "Show from" goes live at 00:00 Romanian time. Restore brings a version back as a draft. The website reads its own database and falls back to the last published version. The headline stays the page's one h1, the underline is decoration and lang matches the copy. Claims must stay true (Law 363/2007).
@@ -2732,6 +4040,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-06: Website home page copy". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (drafts, previews, publishes with a future "Show from" date, restores), moderator (refused) and a signed-out visitor on the home page; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-07 Every story in the admin site
@@ -2742,7 +4059,7 @@ We are working on story S1-E11-07 (Every story in the admin site) only. Read CLA
 
 CONTEXT
 - Already merged: S1-E11-01 (admin shell), S1-E2-07 (staff roles), S1-E3-01 (stories), S1-E10-03 (cases, for open report counts).
-- Decisions that apply: the admin site can open every story (16 Oct 2026). Every story links to its owner's permanent user ID; staff see it shortened with a copy button. Staff see the age group only, never the year of birth (1.8.3). Roles: owner, admin and moderator list and open; support sees titles and metadata; content editors are refused (1.8.3). Platform: web (staff).
+- Decisions that apply: the admin site can open every story (16 Oct 2026). Every story links to its owner's permanent user ID; staff see it shortened with a copy button. Staff see the age group only, never the year of birth (1.8.3). Roles: owner, admin and moderator list and open; support sees titles and metadata; content editors are refused (1.8.3). Stories › Classics is admin-only; content editors who work on Classics also hold the admin role (decided 17 Oct 2026, 12:44). Platform: web (staff).
 - Designs: design/boards/AdminStories.dc.html (8.10; design/renders/desktop/AdminStories.jpg, design/renders/phone/AdminStories.jpg). Plain components; drop-downs follow the one drop-down style (Definition of Done). Match it at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B27 admin_search_stories() (title, current or earlier handle from the audit log, user ID full or short), B13, B26 open reports, B03. Real; seed stories in every status and one by a writer under 18.
 - Watch-outs: filters are category, language, status (draft, published, hidden, removed), where it can be read, rating, open reports and writers under 18. A row never shows year of birth, email or chapter text. A draft shows only its title and metadata; its text opens only from a case or a data request, and opening it is logged with the reason (proposal). No bulk actions; changes happen one story at a time in S1-E11-08. Searching by user ID uses the index on stories.user_id. GDPR Art 5(1)(f) and 32.
@@ -2755,6 +4072,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-07: Every story in the admin site". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using moderator (finds adult_writer's story by an earlier handle and by short user ID, filters writers under 18), support (no change controls) and editor (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-08a Staff can open and change any story (part a: open a story, settings, visibility and metadata)
@@ -2778,6 +4104,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-08a: Staff can open and change any story (settings, visibility and metadata)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using moderator (raises a rating and fixes a tag on teen_17's story), teen_17 (gets a statement for one and a notification for the other), support and editor (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-08b Staff can open and change any story (part b: version history, Restore and removing a passage)
@@ -2802,19 +4137,29 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-08b: Staff can open and change any story (history, restore and removing a passage)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using moderator (removes a passage from adult_writer's chapter, then restores an earlier version), adult_writer (sees the marker and the statement) and admin (a staff member not on the case, refused on the original); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-09a Data requests and story export (part a: request log, identity check, deadline, machine-readable copy and Word files)
-Must (GDPR) · L, split (09a about 30 hours) · March MVP (wave 5) · Depends on: S1-E11-01, S1-E11-02, S1-E13-02, S1-E2-07, S1-E7-01; S1-E2-03 for requests made by a parent
+Must (GDPR) · L, split (09a about 12 hours; the Word builder, about 18, is built in S1-E13-02) · After March (before minors go live) · Depends on: S1-E11-01, S1-E11-02, S1-E13-02, S1-E2-07, S1-E7-01; S1-E2-03 for requests made by a parent
 
 ```text
 We are working on story S1-E11-09a (Data requests and story export) only: part a, the request log, identity check, deadline, the machine-readable copy and the Word files. PDF files are part b, after March. Read CLAUDE.md, docs/architecture.md (sections 1.7.3 B28 and 1.8), docs/definition-of-done.md and the story S1-E11-09 in docs/stories/s1-e11-admin-site.md.
 
 CONTEXT
-- Already merged: S1-E11-01, S1-E11-02, S1-E2-07, S1-E7-01; S1-E2-03 for requests made by a parent; S1-E13-02 (the machine-readable export, which this story reuses).
+- Timing: after March (decided 17 Oct 2026, 12:44: the March test is invited adults only). Build it before going live to anyone under 18; stories it names as merged "in the March order" are merged by then. In March, data requests arrive by email and are answered by hand.
+- Already merged: S1-E11-01, S1-E11-02, S1-E2-07, S1-E7-01; S1-E2-03 for requests made by a parent; S1-E13-02 (Download my data: one ZIP with the JSON file and every story as a Word file, and the shared Word builder; this story reuses both, decided 17 Oct 2026, 12:34).
 - Decisions that apply: Word (.docx) files from the first version, no EPUB (Q28, Q29); PDF after March. 13 to 15-year-olds download their own data from their own account; requests made on a child's behalf go through the parent or guardian in the consent record (Q27). Data requests: support, admin and owner act; moderators and content editors are refused (1.8.3). Platform: web (staff).
 - Designs: design/boards/AdminDataRequests.dc.html (8.12; design/renders/desktop/AdminDataRequests.jpg, design/renders/phone/AdminDataRequests.jpg). Plain components. Match it at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces: B28 (data_requests, exports, export-build, story-export); this story replaces story-export's Word placeholder. B14 `exports` bucket, B22 and B09 for notices (Mailpit locally), B03 audit log. The `docx` npm library is a recommendation still waiting for me (Q49, docs/open-questions.md 34r): stop and ask before adding it.
+- Back-end pieces: B28 (data_requests, exports, export-build, story-export); story-export calls the shared Word builder that S1-E13-02 built: reuse it, never write a second one, and if it is missing stop and tell me. B14 `exports` bucket, B22 and B09 for notices (Mailpit locally), B03 audit log.
 - Watch-outs: staff find the user by user ID, handle or email and record the type, the channel and the date received. The deadline is one month, with a reminder 7 days and an alert 2 days before (proposal); staff can extend by up to two months with a reason and the user is told within the first month. A request not made inside the signed-in account needs an identity check (confirmation link to the account's email or a sign-in), logged, and nothing ever goes to another address. The export finds every story by user_id, including earlier handles, drafts and unpublished chapters. Each Word file has the title, pen name, user ID, dates, status and every chapter in order; Romanian letters (ă, â, î, ș, ț) render, headings are real headings, pictures keep alt text and embeds are links. Files go one per story or as a zip, through a link that needs sign-in (a one-time link for a parent) and expires after seven days; files are deleted after seven days (S1-E13-04). Opening a file's contents is logged. Large exports run one job per story and zip at the end. GDPR Art 12, 15 and 20 (some article numbers to verify).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
@@ -2825,6 +4170,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-09a: Data requests and story export". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using support (logs an email request for adult_writer, checks identity, sends Word files and opens one in Word to check ș and ț), a parent request for kid_14_ok checked against the consent record, and moderator and editor (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-09b Data requests and story export (part b: PDF files)
@@ -2849,6 +4203,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-09b: Data requests and story export (PDF files)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using support (exports adult_writer's stories as PDF and zip, opens one and checks ă, î, ș, ț and the headings) and teen_17 (downloads through the sign-in link); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-10 Website notice banners
@@ -2859,10 +4222,10 @@ We are working on story S1-E11-10 (Website notice banners) only. Read CLAUDE.md,
 
 CONTEXT
 - Already merged: S1-E11-01 (admin shell), S1-E2-07 (staff roles); S1-E11-06 if you want to reuse its CMS pattern.
-- Decisions that apply: the website has its own database and a new CMS built on it (16 Oct 2026, Q54). Website copy goes live without a second approver for now (Q31). Content editors, admins and the owner use the Website CMS (1.8.3). Sponsors never appear in notices; paid content goes through Sponsors (S1-E12). Platform: web (staff and the public website).
-- Designs: "Notice banners" in the Website menu of design/boards/AdminPages.dc.html; no screen of its own, so use the CMS editing pattern of design/boards/AdminSettings.dc.html ("Website home page"). The public strip is on design/boards/Website-Home.dc.html. Renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). The AdminPages board describes the strip as showing on the website and the app; the story says the website: stop and ask me which (check with Robert).
-- Back-end pieces: B31 (`site_banners` on the website's database, written only through `website-cms`, logged in the app's audit log). Mock: the `WebsiteContentStore` stub and a fixture; Done only when the website database is real or the feature sits behind an off flag.
-- Watch-outs: text in English and Română, each up to 120 characters (proposal), an optional link to one of our own pages, a type (news, contest or important) and the pages it shows on (every page or the home page only). "Show from" and optional "Show until" at 00:00 Romanian time; both languages required. Two notices for the same page and time: only the one with the latest "Show from" shows. Colours from design tokens at 4.5:1, no focus move, no animation, a labelled region. Closing it lasts for the visit only (session storage, no consent needed). Versions restore as drafts. No sponsor names or logos. Claims must be true (Law 363/2007).
+- Decisions that apply: the website has its own database and a new CMS built on it (16 Oct 2026, Q54). Website copy goes live without a second approver for now (Q31). Content editors, admins and the owner use the Website CMS (1.8.3). Sponsors never appear in notices; paid content goes through Sponsors (S1-E12). Notices show on the website and in the app, read from one table; until the website database exists it lives in the app's database (decided 17 Oct 2026, 12:44). Platform: web (staff, the public website and the app).
+- Designs: "Notice banners" in the Website menu of design/boards/AdminPages.dc.html; no screen of its own, so use the CMS editing pattern of design/boards/AdminSettings.dc.html ("Website home page"). The public strip is on design/boards/Website-Home.dc.html. Renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21). The strip shows on the website and in the app, as the AdminPages board says.
+- Back-end pieces: one notice table in the app's database (written through admin_* functions, logged in the audit log) that the app and the website both read; it moves behind the `website-cms` bridge (B31) once the website database exists. Nothing to mock for the app side.
+- Watch-outs: text in English and Română, each up to 120 characters (proposal), an optional link to one of our own pages, a type (news, contest or important; no contest is planned for now, decided 17 Oct 2026, 12:34) and the pages it shows on (every page or the home page only). "Show from" and optional "Show until" at 00:00 Romanian time; both languages required. Two notices for the same page and time: only the one with the latest "Show from" shows. Colours from design tokens at 4.5:1, no focus move, no animation, a labelled region. Closing it lasts for the visit only (session storage, no consent needed). Versions restore as drafts. No sponsor names or logos. Claims must be true (Law 363/2007).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -2872,6 +4235,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-10: Website notice banners". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (creates two overlapping notices, publishes, restores one), moderator (refused) and a signed-out visitor (sees one notice, closes it, reloads in the same visit); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-11 Seasonal doodle schedule
@@ -2896,6 +4268,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-11: Seasonal doodle schedule". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (adds two overlapping occasions, checks the year view in light and night mode), moderator (refused) and adult_writer (sees the doodle change on Discover); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-12 Help pages and questions
@@ -2920,6 +4301,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-12: Help pages and questions". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (writes a help page with a broken link, fixes it, publishes a question), moderator (refused), and adult_writer opening Help in the app in Romanian and English; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-13a Support tickets inside the admin site (part a: inbox, ticket view and email in and out)
@@ -2930,7 +4320,7 @@ We are working on story S1-E11-13a (Support tickets inside the admin site) only:
 
 CONTEXT
 - Already merged: S1-E11-01, S1-E2-07, S1-E14-04 (Contact us), S1-E7-02 (email provider), S1-E10-02 (report form), S1-E11-09 (data requests).
-- Decisions that apply (17 Oct 2026): every support request arrives as a ticket in the admin site, linked to support@ghemotoc.com, following normal ticketing logic; a ready-made external helpdesk (EU hosting, DPA) runs behind our screens through its API and handles email in and out, threading and spam filtering. Tickets never replace reports; the TCO contact point stays the web form. Platform: web (staff, plus "Your support requests" in Settings).
+- Decisions that apply (17 Oct 2026): every support request arrives as a ticket in the admin site, linked to hello@themagiccoffin.com, following normal ticketing logic; a ready-made external helpdesk (EU hosting, DPA) runs behind our screens through its API and handles email in and out, threading and spam filtering. Tickets never replace reports; the TCO contact point stays the web form. Platform: web (staff, plus "Your support requests" in Settings).
 - Designs: design/boards/AdminTickets.dc.html (8.13) and "Your support requests" in design/boards/Settings.dc.html, with renders in design/renders/desktop/ and design/renders/phone/. Plain components on staff screens. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: `tickets`, `ticket_messages`, `ticket_events`, an inbound-email webhook and an outbound sender (story), B27 and B03. Mock: Mailpit locally.
 - OPEN: which helpdesk product (question 34t; cheapest suitable option, research pending), and so what lives in our tables and what stays in the helpdesk. Stop and ask me before planning tables.
@@ -2944,6 +4334,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-13a: Support tickets inside the admin site (inbox, ticket view and email)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using kid_14_ok (sends a Contact us message and sees the under-16 banner from the staff side), adult_writer (replies by email in Mailpit), support (answers, adds an internal note) and editor (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-13b Support tickets inside the admin site (part b: views, timers, canned replies, merge and reports)
@@ -2967,6 +4366,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-13b: Support tickets inside the admin site (views, timers, canned replies, merge and reports)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using support (uses a canned reply in Romanian, merges two tickets from adult_writer, runs the 7-day job by hand), moderator (receives a ticket converted to a report) and admin (changes the first-reply target); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-14 Landing pages for contests and campaigns
@@ -2977,10 +4385,10 @@ We are working on story S1-E11-14 (Landing pages for contests and campaigns) onl
 
 CONTEXT
 - Already merged: S1-E11-01, S1-E11-06, S1-E10-05, S1-E7-01, S1-E12-02 (approved sponsor campaigns for the Sponsor block).
-- Decisions that apply: staff can build landing pages for contests and campaigns; the details are proposals until confirmed (17 Oct 2026, 11:06). "Sponsored" marks direct sponsors (Q7). At most 2 ad slots on any page (17 Oct 2026, 11:53). Ratings All ages, 13+, 16+ and 18+ hide stories from anyone younger (rule 18). Website copy has no second approver (Q31). Platform: web (staff and public pages).
+- Decisions that apply: staff can build landing pages for contests and campaigns; the details are proposals until confirmed (17 Oct 2026, 11:06). No contest is planned for now, so build the feature without a named first contest (decided 17 Oct 2026, 12:34). "Sponsored" marks direct sponsors (Q7). At most 2 ad slots on any page (17 Oct 2026, 11:53). Ratings All ages, 13+, 16+ and 18+ hide stories from anyone younger (rule 18). Website copy has no second approver (Q31). Platform: web (staff and public pages).
 - Designs: design/boards/AdminPages.dc.html (8.14: page settings with type, address and one of four themes, "Blocks", "Before it goes live", "How readers will see it", "Where people find it", "Earlier versions") and the public page design/boards/Contest.dc.html (3.11), with renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces (proposal in the story): tables in the app's database, written only through admin_* functions (B27) with the B03 audit log; B15 picture check, B14 storage, B22 notifications, B19 teaser preview. Real.
-- Watch-outs: types Contest, Campaign or Information; address ghemotoc.com/c/<slug> (proposal), refusing reserved or used slugs. Only the fixed blocks (Hero, Text, Key dates, Who can enter, Prize, How to enter, Rules, Sponsor, Featured stories, Questions and answers, Remind me): no free HTML, script or custom colour. English and Română side by side with phone and desktop previews; Up and Down buttons, no drag-only control; one heading order. Pictures need alt text and a passed check. Featured stories only at the youngest targeted rating; hidden stories drop off at once. "Remind me" sends one in-app notification when entries open (tell me where that date comes from). Publish checks per the story; an admin publishes a page with a Sponsor block or an under-18 contest (proposal). "Show from" and "Take down" at 00:00 Romanian time, then "This contest has ended" and results unless archived. No countdown timers or "only today" for minors.
+- Watch-outs: types Contest, Campaign or Information; address <site>/c/<slug> (proposal; the site comes from the brand config, today ghemotoc.themagiccoffin.com, decided 17 Oct 2026, 12:50), refusing reserved or used slugs. Only the fixed blocks (Hero, Text, Key dates, Who can enter, Prize, How to enter, Rules, Sponsor, Featured stories, Questions and answers, Remind me): no free HTML, script or custom colour. English and Română side by side with phone and desktop previews; Up and Down buttons, no drag-only control; one heading order. Pictures need alt text and a passed check. Featured stories only at the youngest targeted rating; hidden stories drop off at once. "Remind me" sends one in-app notification when entries open (tell me where that date comes from). Publish checks per the story; an admin publishes a page with a Sponsor block or an under-18 contest (proposal). "Show from" and "Take down" at 00:00 Romanian time, then "This contest has ended" and results unless archived. No countdown timers or "only today" for minors.
 - OPEN: whether a landing page may also carry an ad-network ad (proposal: no; only the sponsor or a house ad). Stop and ask me.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
@@ -2991,6 +4399,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-14: Landing pages for contests and campaigns". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor (builds a contest page by keyboard, tries to publish with a missing translation), admin (publishes it), kid_14_ok (taps "Remind me", sees only suitable featured stories) and a signed-out visitor; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-15 Contests: set up, entries, judging and results
@@ -3004,7 +4421,7 @@ CONTEXT
 - Decisions that apply: staff can run contests; the details are proposals until confirmed (17 Oct 2026, 11:06). Staff never edit an entry's words (1.8.5). Certificates are co-signed by Ghemotoc and the leading teacher (Q23, Q71). Sponsors have no say in results. Under-16s need a parent or guardian (Q8, Q15). Platform: web (staff, story settings and the landing page).
 - Designs: design/boards/AdminContests.dc.html (8.15: contests, "Entries", "Winners and finalists", "Checks for this contest"), design/boards/Contest.dc.html (3.11), the certificate boards design/boards/Certificate-Winner.dc.html and design/boards/Certificate-Participation.dc.html; "Enter <contest>" in story settings has no board, so use the settings components of design/boards/NewStory.dc.html. Renders in design/renders/desktop/ and design/renders/phone/. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: new contest and entry tables written through admin_* functions (B27) with the B03 audit log; B13 stories, B24 certificates, B26 statements. Real.
-- Watch-outs: the story says "as an admin": tell me whether content editors may also run contests (architecture 1.8.3 has no contests row; check with Robert). Who can enter uses the age groups 13 to 15, 16 to 17 and 18 and over, but the First Chapter contest is for writers aged 13 to 19, which those groups can't express: ask me. Opening is refused until the rules are published in both languages and linked. One entry per writer (proposal), withdrawable before closing. Under-16 contests take only All ages or 13+ stories (proposal). Staff see pen name, age group, rating, date and status only. Disqualifying needs a reason and sends a statement of reasons. No public vote (proposal). Results show pen names only unless the writer (and for under-16s a parent or guardian) agreed. Prize delivery details for an under-16 need the parent's consent on file (proposal); they are new personal data, so plan where they live, who sees them and when they are deleted, and ask me before storing anything (Definition of Done, privacy). Never build anything that holds or moves money (rule 10). Prize tax and withholding are for the accountant.
+- Watch-outs: the story says "as an admin": tell me whether content editors may also run contests (architecture 1.8.3 has no contests row; check with Robert). Who can enter uses the platform age groups only (13 to 15, 16 to 17, 18 and over); no oldest-age field and no named first contest (decided 17 Oct 2026, 12:34). Opening is refused until the rules are published in both languages and linked. One entry per writer (proposal), withdrawable before closing. Under-16 contests take only All ages or 13+ stories (proposal). Staff see pen name, age group, rating, date and status only. Disqualifying needs a reason and sends a statement of reasons. No public vote (proposal). Results show pen names only unless the writer (and for under-16s a parent or guardian) agreed. Prize delivery details for an under-16 need the parent's consent on file (proposal); they are new personal data, so plan where they live, who sees them and when they are deleted, and ask me before storing anything (Definition of Done, privacy). Never build anything that holds or moves money (rule 10). Prize tax and withholding are for the accountant.
 - OPEN: whether a sponsor-funded prize needs an ONJN opinion (OUG 77/2009 art. 3(3)). Stop and ask me. A lawyer and an accountant confirm before the first contest. The rules may ask writers only for a licence to show the entry and results (Law 8/1996 art. 11, 42(2), 43).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
@@ -3015,6 +4432,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-15: Contests: set up, entries, judging and results". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (creates a contest, tries to open it without rules, publishes results, issues certificates), kid_14_ok (enters a 13+ story, tries a 16+ one), teen_17 (enters and withdraws) and adult_writer (disqualified, gets a statement); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-16a Add and manage public-domain classics (part a: adding a work, the public-domain check and publishing)
@@ -3028,7 +4454,7 @@ CONTEXT
 - Decisions that apply: seed the reader side with free public-domain Romanian classics (Q51). Only texts we know are free are used; a modern translation or edition can still be protected. Ratings All ages, 13+, 16+ and 18+ hide a work from anyone younger (rule 18). Romania is the only open market at launch (17 Oct 2026, 11:48). Classics pages follow the normal ad rules (at most 2 slots a page). Platform: web (staff, plus the public classics pages).
 - Designs: design/boards/AdminClassics.dc.html ("8.16 Classics", renders design/renders/desktop/AdminClassics.jpg and design/renders/phone/AdminClassics.jpg). Public side: design/boards/Classics.dc.html (3.3) and design/boards/SeeAll.dc.html (3.10). Plain components on staff screens. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B13 (stories, chapters, revisions, ratings, labels), B27 admin_* functions with the B03 audit log, B04 reports. Real.
-- Watch-outs: the story lets content editors add works under Stories › Classics, but S1-E11-07 and architecture 1.8.3 refuse content editors on Stories: stop and ask me which wins (check with Robert). Fields: title, author, author's year of death, original language, kind, source edition with link and, for a translation, the translator and their year of death. The check shows per market whether the work is free: Romania, the EU and the UK 70 years after 1 January following the author's death (and the translator's) (Law 8/1996 art. 28(1) and 34; research G5); the US by publication date, which isn't in the field list: ask me. A work shows only where it is free. Text is pasted or uploaded as plain text or Markdown, split into chapters at headings with a preview; modern notes are left out unless free. Typo fixes are new versions with a reason; staff never rewrite or abridge (proposal). Publishing puts it under "Ghemotoc Classics" with the "Public domain" label, dates, source, a staff-chosen rating with a content note where needed, category, tags and an automatic or drawn cover. An admin publishes (proposal); the audit log records who added, checked and published. A report that a work isn't free goes to the queue and staff can unpublish at once. The public-domain test is on the lawyer's list.
+- Watch-outs: only staff with the admin role (and the owner) manage Classics; content editors also hold the admin role (decided 17 Oct 2026, 12:44; architecture 1.8.3). Fields: title, author, author's year of death, original language, kind, source edition with link and, for a translation, the translator and their year of death. The check shows per market whether the work is free: Romania, the EU and the UK 70 years after 1 January following the author's death (and the translator's) (Law 8/1996 art. 28(1) and 34; research G5); the US by publication date, which isn't in the field list: ask me. A work shows only where it is free. Text is pasted or uploaded as plain text or Markdown, split into chapters at headings with a preview; modern notes are left out unless free. Typo fixes are new versions with a reason; staff never rewrite or abridge (proposal). Publishing puts it under "Ghemotoc Classics" with the "Public domain" label, dates, source, a staff-chosen rating with a content note where needed, category, tags and an automatic or drawn cover. An admin publishes (proposal); the audit log records who added, checked and published. A report that a work isn't free goes to the queue and staff can unpublish at once. The public-domain test is on the lawyer's list.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -3038,6 +4464,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-16a: Add and manage public-domain classics (adding, checking and publishing)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor or admin (adds a Creangă tale from Wikisource, fixes a chapter title, admin publishes it with a rating), kid_14_ok (sees it on the Classics shelf only if the rating allows) and moderator (unpublishes after a report); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E11-16b Add and manage public-domain classics (part b: importing content/classics and the 1 January suggestions)
@@ -3062,6 +4497,51 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-16b: Add and manage public-domain classics (import and 1 January suggestions)". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using editor or admin (imports both lists, imports again, opens a draft, runs the 1 January job by hand) and moderator (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E11-QA Epic check: Admin site
+Must · S · March MVP (wave 3, last of its epic) · Depends on: S1-E11-01, S1-E11-02
+
+```text
+We are working on story S1-E11-QA (Epic check: Admin site) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E11-QA and every story it depends on in docs/stories/s1-e11-admin-site.md.
+
+CONTEXT
+- Already merged: S1-E11-01, S1-E11-02. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-06, S1-E11-07, S1-E11-08, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) are not part of this check (S1-E11-09a moved after March, 12:44). This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: staff sign in to the admin shell, find a user, act on the account and take a data request from logging to sending the files, with every step in the audit log.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E11.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E11-QA: Epic check: Admin site". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting and one staff persona;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E12 Banners and sponsor slots
@@ -3077,8 +4557,7 @@ CONTEXT
 - Decisions that apply: contextual banners, no tracking, never inside chapter text, as a pop-up or full screen; everyone sees the same kind of banners. "Sponsored" ("Sponsorizat") marks direct sponsors with their name and "Ad" ("Reclamă") marks ad-network ads (Q7). No ads in class spaces (Q70). Ads show on every public page, but never too many; at most 2 ad slots on any page (17 Oct 2026, 11:53). A big banner on Discover, a portrait ad on Search, and in a forum thread one wide ad below the reply box plus a side ad on desktop, never between replies; Library shows ads; side ads go on the forum thread, Forums, the app-only story page and Search (17 Oct 2026). Writers get no share of ad income. Rule 7: no ad code except S1-E12-04. Platform: web.
 - Designs: design/boards/AdFormats.dc.html (7.5) for formats, labels, "Why this ad?" and "How many ads", plus the slot on each public page's board (Discover, Search, Classics, SeeAll, Story, Teaser, AppOnly, Forums, Thread, Space, Profile, Library, Reader, Contest), with renders in design/renders/desktop/ and design/renders/phone/. If any board still shows an ad between forum replies, the decision wins. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B29 pick_banner(context) using page context only (category, tag, language), never user data, cookies or device identifiers. Mock: one seeded test campaign and a banner fixture.
-- Watch-outs: the public pages and the pages with no slot are listed in the story; class spaces never get one. Add the slot to every public page that exists in the app now and list the missing ones as follow-ups in the PR (check with Robert). Formats: wide banner (up to 970 px, 120 px tall on desktop, 100 px on phones), portrait 300 × 600 and side box 300 × 250 (desktop side column only, portrait from 1200 px), in-list card; every slot reserves its space. Proposals still waiting for me: never more than one in view, never two adjacent, never above the heading or first row, one in-list card per 12 items and never first.
-- OPEN (known conflict): a forum thread and Discover can show two ads in view at once on a wide screen. Stop and ask me whether that is allowed.
+- Watch-outs: the public pages and the pages with no slot are listed in the story; class spaces never get one. Add the slot to every public page that exists in the app now and list the missing ones as follow-ups in the PR (check with Robert). Formats: wide banner (up to 970 px, 120 px tall on desktop, 100 px on phones), portrait 300 × 600 and side box 300 × 250 (desktop side column only, portrait from 1200 px), in-list card; every slot reserves its space. On wide screens two ads may be in view at once; when they are, they must be different: never the same ad twice, and a sponsor's ad, a house ad and a network ad each count as different (decided 17 Oct 2026, 12:44). Proposals still waiting for me: never two adjacent, never above the heading or first row, one in-list card per 12 items and never first.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
 1. Files you will create or change.
@@ -3088,6 +4567,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E12-01: Contextual banner slot". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer and kid_14_ok (same banner on the same chapter, "Why this ad?", no slot in a class space or in Settings) at phone and desktop widths; and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E12-02 Sponsor campaigns and "Sponsored" placements
@@ -3111,6 +4599,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E12-02: Sponsor campaigns and \"Sponsored\" placements". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (sets up a sponsored category, approves the creative, tries a class space), moderator and editor (refused) and kid_14_ok (sees "Sponsored by" with the same story order); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E12-03 Sponsor reporting
@@ -3134,6 +4631,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E12-03: Sponsor reporting". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using adult_writer (views a page with the seeded campaign and clicks it), admin (exports the CSV and opens it in a spreadsheet) and moderator (refused); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E12-04 Ad-network ads that are never personalised
@@ -3158,6 +4664,15 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E12-04: Ad-network ads that are never personalised". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (switches the network on, blocks a category), kid_14_ok and adult_writer (same ad behaviour, "Ad" label, no new cookies in the browser's storage panel) and a class space (no ad); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E12-05 Ad slot booking and fill order
@@ -3181,6 +4696,51 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 5. Every OPEN or unclear point. Ask; don't guess.
 
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E12-05: Ad slot booking and fill order". Then give me: a summary of what changed; the check results; step-by-step manual test steps for a non-developer using admin (books a slot, tries a clashing booking, adds a house ad, cancels a booking and checks the audit log), moderator (refused) and adult_writer (sees the sponsor, then the house ad after the booking ends); and the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E12-QA Epic check: Banners and sponsor slots
+Should · S · After March · Depends on: S1-E12-01, S1-E12-02, S1-E12-03, S1-E12-04, S1-E12-05
+
+```text
+We are working on story S1-E12-QA (Epic check: Banners and sponsor slots) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E12-QA and every story it depends on in docs/stories/s1-e12-banners-and-sponsor-slots.md.
+
+CONTEXT
+- Already merged: S1-E12-01, S1-E12-02, S1-E12-03, S1-E12-04, S1-E12-05. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data.
+- Main journeys to cover: the contextual banner slot, sponsor campaigns and "Sponsored" labels, sponsor reports, ad-network ads that are never personalised and slot booking.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E12.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E12-QA: Epic check: Banners and sponsor slots". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting and one staff persona;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E13 Privacy and data rights
@@ -3215,27 +4775,39 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer using teen_17 and kid_14_ok (every setting starts at its most private value), adult_writer (change each setting, then view the profile signed out and as teen_17);
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E13-02 Download my data
-Must · M · March MVP (wave 5) · Depends on: S1-E3-02, S1-E7-01 for the ready notice (email until then); each later content type, such as messages from S1-E9-01, adds itself to the export
+Must · M · After March (before minors go live) · Depends on: S1-E3-02, S1-E7-01 for the ready notice (email until then); each later content type, such as messages from S1-E9-01, adds itself to the export
 
 ```text
 We are working on story S1-E13-02 (Download my data) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md, then the story in docs/stories/s1-e13-privacy-and-data-rights.md.
 
 CONTEXT
+- Timing: after March (decided 17 Oct 2026, 12:44: the March test is invited adults only). Build it before going live to anyone under 18; stories it names as merged "in the March order" are merged by then. In March, data requests arrive by email and are answered by hand.
 - Already merged: S1-E3-02 (chapters), S1-E7-01 (in-app notifications, for the ready notice). In the March order, S1-E6-01 to 05, S1-E10-01 and S1-E2-03 are merged too. Forums, messages and certificates come after March, so each later content type must be able to add itself.
-- Decisions that apply: a 13 to 15-year-old can request their own export from their own signed-in account; a parent or guardian asking for a child's data goes through S1-E11-09 and the consent record, not this screen (Q27). The user ID is shown only to its owner.
+- Decisions that apply: the export is one ZIP with a machine-readable JSON file of everything about the account plus every story as a Word (.docx) file; no HTML copy (decided 17 Oct 2026, 12:34). Word from the first version, no EPUB (Q28, Q29). A 13 to 15-year-old can request their own export from their own signed-in account; a parent or guardian asking for a child's data goes through S1-E11-09 and the consent record, not this screen (Q27). The user ID is shown only to its owner.
 - Designs: design/boards/Settings.dc.html, "Download my data" panel with its idle, preparing and ready states; design/renders/desktop/Settings.jpg and design/renders/phone/Settings.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: real: B28 `exports` and the `export-build` job contract, B14 `exports` bucket, B22 notifications. Email goes to Mailpit locally (B09). Nothing else to mock.
-- Watch-outs: GDPR Art 15 and Art 20; one month to respond (Art 12(3)). The link needs sign-in and expires after seven days; storage policies must stop anyone but the owner reaching the file. S1-E13-04 purges expired exports. No user content or emails in logs (rule 12). Word copies of stories are S1-E13-05 and S1-E11-09, not this story.
+- Watch-outs: GDPR Art 15 and Art 20; one month to respond (Art 12(3)). The link needs sign-in and expires after seven days; storage policies must stop anyone but the owner reaching the file. S1-E13-04 purges expired exports. No user content or emails in logs (rule 12).
+- Word builder: this story comes before S1-E11-09a in the March order, so it builds the shared Word builder (one .docx per story with the title, pen name, user ID, dates, status and every chapter in order; Romanian letters ă, â, î, ș, ț correct; real headings; pictures with alt text; embeds as links, as in S1-E11-09's criteria). S1-E11-09a and S1-E13-05 reuse it, so put it where both can call it. Large exports build one story at a time and zip at the end.
 - Stop and ask me about each of these:
-  - The story says machine-readable JSON plus readable HTML; the board copy says "Word (.docx) files in one ZIP". Which wins? (check with Robert)
+  - The `docx` npm library is a recommendation still waiting for me (Q49, docs/open-questions.md 34r): stop and ask before adding it.
+  - The board copy may not yet mention the JSON file: tell me if it doesn't match the ZIP of JSON plus Word, and don't change the board.
   - The story's list doesn't name likes, emoji reactions, private downvotes, follows, blocks or reading records. Ask before including or leaving them out (check with Robert).
   - S1-E11-09a comes right after this story and reuses this export for staff-handled requests: plan the job so it can run for any user through a staff function, and never build a second export.
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
-1. Files you will create or change, including the job and the export's file layout.
+1. Files you will create or change, including the job, the shared Word builder and the export's file layout (the JSON file and one .docx per story).
 2. Migrations: tables, columns, indexes, storage policies and RLS policies (who can select, insert, update or delete, and why); how repeated requests are limited.
 3. A table mapping each acceptance criterion to the test(s) that prove it.
 4. New i18n keys (ro and en), analytics events and moderation hooks.
@@ -3244,20 +4816,30 @@ STEP 1, PLAN ONLY. Don't write code yet. Give me:
 STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E13-02: Download my data". Then give me:
 - a summary of what changed;
 - the check results;
-- step-by-step manual test steps for a non-developer using adult_writer (request, notice, download, open the files), kid_14_ok (requests their own export) and teen_17 (tries adult_writer's link and is refused);
+- step-by-step manual test steps for a non-developer using adult_writer (request, notice, download, open the JSON file and a Word file and check ș and ț), kid_14_ok (requests their own export) and teen_17 (tries adult_writer's link and is refused);
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E13-03 Delete my account in the app
-Must · M · March MVP (wave 5) · Depends on: S1-E2-05 (offer the export from S1-E13-02 once it exists)
+Must · M · After March (before minors go live) · Depends on: S1-E2-05 (offer the export from S1-E13-02 once it exists)
 
 ```text
 We are working on story S1-E13-03 (Delete my account in the app) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md, then the story in docs/stories/s1-e13-privacy-and-data-rights.md.
 
 CONTEXT
+- Timing: after March (decided 17 Oct 2026, 12:44: the March test is invited adults only). Build it before going live to anyone under 18; stories it names as merged "in the March order" are merged by then. In March, data requests arrive by email and are answered by hand.
 - Already merged: S1-E2-05 (reuse its fresh sign-in), S1-E13-02 (offer "Download my data first"); in the March order also S1-E6-01 (comments) and S1-E10-03a and 04 (cases).
 - Decisions that apply: when an account is deleted, its forum posts stay as "Deleted user"; stories, chapters and comments are deleted (Q47). Every account has a permanent user ID that is never given to anyone else (16 Oct 2026). March is web only, so "in the app" means the web app.
-- Designs: design/boards/Settings.dc.html, "Delete account" tab and its second panel (log in again to confirm), plus the web route ghemotoc.com/delete-account named on the board; design/renders/desktop/Settings.jpg and design/renders/phone/Settings.jpg. Show only the sign-in methods that exist (others are S1-E2-09, after March). Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Designs: design/boards/Settings.dc.html, "Delete account" tab and its second panel (log in again to confirm), plus the web route /delete-account on the site from the brand config (today ghemotoc.themagiccoffin.com, decided 17 Oct 2026, 12:50; the board shows ghemotoc.com); design/renders/desktop/Settings.jpg and design/renders/phone/Settings.jpg. Show only the sign-in methods that exist (others are S1-E2-09, after March). Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: real: B28 deletion job on B17 `pg_cron`, B02 `account_state()` and `is_active_member()`, B05 auth. Tests call the job function directly (1.7.5).
 - Watch-outs: GDPR Art 17; Apple 5.1.1(v) and Google Play's deletion rule want an in-app and a web route (check before relying on them). Kept forum posts need a legal basis and a privacy-notice line (lawyer's list). Forums don't exist in March: make the "Deleted user" rule ready for them and note it as a follow-up. No emails in logs (rule 12).
 - Stop and ask me about each of these:
@@ -3277,18 +4859,28 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer using adult_writer (delete, cancel by logging in, delete again, run the purge), teen_17 (checks adult_writer's profile, stories and comments are gone) and the web route while signed out;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E13-04 Retention schedule and log minimisation
-Must · M · March MVP (wave 5) · Depends on: S1-E1-02
+Must · M · After March (before minors go live) · Depends on: S1-E1-02
 
 ```text
 We are working on story S1-E13-04 (Retention schedule and log minimisation) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md, then the story in docs/stories/s1-e13-privacy-and-data-rights.md.
 
 CONTEXT
+- Timing: after March (decided 17 Oct 2026, 12:44: the March test is invited adults only). Build it before going live to anyone under 18; stories it names as merged "in the March order" are merged by then. In March, data requests arrive by email and are answered by hand.
 - Already merged: S1-E1-02. In the March order, S1-E2-01, S1-E10-02 (public report form), S1-E13-02 and S1-E13-03 are merged too.
 - Decisions that apply: IP addresses are stored scrambled and kept 30 days (Q48). Reports, with the reporter's name and email, are kept 3 years after the report closes, then deleted (canvas comment, 17 Oct 2026). Never log emails, IP addresses or user content (CLAUDE.md rule 12).
-- Schedule from the story (canvas 8.7): soft-deleted content 30 days, unverified accounts 7 days, expired exports 7 days. design/boards/AdminMetrics.dc.html ("Retention") shows it, but that screen is S1-E11-04, so build no screen here.
+- Schedule from the story (canvas 8.7): soft-deleted content 30 days, unverified accounts 7 days, expired exports 7 days. Aggregated metrics (daily totals such as chapter_reads and the March numbers) are kept 3 years, Robert's default for aggregated data (decided 17 Oct 2026, 12:34). design/boards/AdminMetrics.dc.html ("Retention") shows it, but that screen is S1-E11-04, so build no screen here.
 - Back-end pieces: real: B17 scheduled jobs, B28 `exports`. Tests call each job's SQL function directly (1.7.5). Nothing to mock.
 - Files: docs/retention.md and the record of processing change in the same pull request as any schedule change.
 - Watch-outs: GDPR Art 5(1)(e) and Art 30. A scrambled IP address is still personal data, so it stays in the record of processing. The hash key lives only in a secret store (rule 2).
@@ -3311,20 +4903,30 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: one command that backdates a soft-deleted comment by adult_writer, an unconfirmed new sign-up and an expired export, runs the nightly job and shows what was deleted;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E13-05 Download my stories
-Should · S · March MVP (wave 5) · Depends on: S1-E13-02, S1-E11-09 (09a makes the Word files, 09b the PDF)
+Should · S · After March (before minors go live) · Depends on: S1-E13-02 (builds the shared Word builder), S1-E11-09 (09a adds `story-export` for staff requests, 09b the PDF)
 
 ```text
 We are working on story S1-E13-05 (Download my stories) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md, then the story in docs/stories/s1-e13-privacy-and-data-rights.md.
 
 CONTEXT
-- Already merged: S1-E13-02 (Download my data and its job), S1-E11-09a (`story-export` and the Word files). S1-E11-09b (PDF) comes after March: offer Word only and add PDF when 09b lands. Also merged in the March order: S1-E10-06 (sanctions) and S1-E7-01 (notifications).
+- Timing: after March (decided 17 Oct 2026, 12:44: the March test is invited adults only). Build it before going live to anyone under 18; stories it names as merged "in the March order" are merged by then. In March, data requests arrive by email and are answered by hand.
+- Already merged: S1-E13-02 (Download my data, its job and the shared Word builder), S1-E11-09a (`story-export`, which calls that builder). S1-E11-09b (PDF) comes after March: offer Word only and add PDF when 09b lands. Also merged in the March order: S1-E10-06 (sanctions) and S1-E7-01 (notifications).
 - Decisions that apply: Word (.docx) from the first version, no EPUB (Q28, Q29). 13 to 15-year-olds can use it on their own (Q27). The user ID in the files is the writer's own data and is shown only to them.
 - Designs: design/boards/Settings.dc.html, "Download my stories" block inside "Download my data" (story picker with "All my stories", "Get Word files"); design/renders/desktop/Settings.jpg and design/renders/phone/Settings.jpg. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
-- Back-end pieces: real: B28 `story-export` and `exports`, B14 `exports` bucket, B22 notifications. If Word is still the B28 placeholder file, stop and tell me.
-- Watch-outs: same contents as S1-E11-09 (every chapter including drafts, the dates and the user ID), so reuse its builder; never write a second one. The link needs sign-in and stops working after seven days; S1-E13-04 purges the files. A suspended writer can still download (S1-E10-06), so the request must not be gated by `is_active_member()`; check how S1-E10-06 handles this. GDPR Art 20 is met by S1-E13-02; this is a convenience on top.
+- Back-end pieces: real: B28 `story-export` and `exports`, B14 `exports` bucket, B22 notifications. If the shared Word builder from S1-E13-02 is missing, stop and tell me.
+- Watch-outs: same contents as S1-E11-09 (every chapter including drafts, the dates and the user ID), so reuse the shared Word builder from S1-E13-02; never write a second one. The link needs sign-in and stops working after seven days; S1-E13-04 purges the files. A suspended writer can still download (S1-E10-06), so the request must not be gated by `is_active_member()`; check how S1-E10-06 handles this. GDPR Art 20 is met by S1-E13-02; this is a convenience on top.
 - Stop and ask me about each of these:
   - The 24-hour rule (offer the earlier files instead of new ones) is a proposal (check with Robert).
   - Whether a banned writer, not only a suspended one, can download isn't stated (check with Robert).
@@ -3341,6 +4943,51 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer using adult_writer (one story, then all stories; check drafts, dates and Romanian letters in Word), suspended_user (can still download), kid_14_ok (own stories) and teen_17 (tries adult_writer's link and is refused);
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E13-QA Epic check: Privacy and data rights
+Should · S · After March · Depends on: S1-E13-01, S1-E13-02, S1-E13-03, S1-E13-04, S1-E13-05
+
+```text
+We are working on story S1-E13-QA (Epic check: Privacy and data rights) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E13-QA and every story it depends on in docs/stories/s1-e13-privacy-and-data-rights.md.
+
+CONTEXT
+- Already merged: S1-E13-01, S1-E13-02, S1-E13-03, S1-E13-04, S1-E13-05. Every story in this epic comes after March since decided 17 Oct 2026, 12:44. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data.
+- Main journeys to cover: a user downloads their data, downloads their stories as Word files, deletes their account, and the retention jobs purge what is due.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E13.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E13-QA: Epic check: Privacy and data rights". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting and one staff persona;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E14 Legal pages and compliance
@@ -3376,6 +5023,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: a signed-out visitor (footer links, both languages), teen_17 (accepts at sign-up without a parent), kid_14_waiting (told a parent or guardian must agree) and adult_writer (sees the new-version notice and can't post until accepting);
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E14-02 Contact points and company details
@@ -3408,6 +5064,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: a signed-out visitor (opens the page from the footer in Romanian and English, checks the authority and user contact points and the languages) and adult_writer (opens it from Settings, if Settings exists);
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E14-03 Accessibility statement and no-cookie check
@@ -3440,6 +5105,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: a signed-out visitor opens the statement in both languages; then where to look on GitHub to see the check fail on a test branch that adds a cookie, and pass again without it;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E14-04 Contact us with a ready-made EU helpdesk
@@ -3449,15 +5123,15 @@ Must · S · March MVP (wave 5) · Depends on: S1-E14-02, S1-E1-04
 We are working on story S1-E14-04 (Contact us with a ready-made EU helpdesk) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md, then the story in docs/stories/s1-e14-legal-pages-and-compliance.md.
 
 CONTEXT
-- Already merged: S1-E14-02, S1-E1-04; in the March order also S1-E10-02 and S1-E11-09a.
-- Decisions that apply: support tickets live inside the admin site, linked to support@ghemotoc.com, with a ready-made external helpdesk behind it through its API (17 Oct 2026, refines Q60).
+- Already merged: S1-E14-02, S1-E1-04; in the March order also S1-E10-02. S1-E11-09a comes after March.
+- Decisions that apply: support tickets live inside the admin site, linked to hello@themagiccoffin.com, with a ready-made external helpdesk behind it through its API (17 Oct 2026, refines Q60).
 - Designs: design/boards/Settings.dc.html, the "Contact us" panel ("Ask us something": topic, message, email, the line pointing to the report form); design/renders/desktop/Settings.jpg and design/renders/phone/Settings.jpg; "Contact us" in every footer. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: our own edge function receives the form (a proposal in the story); B09 email goes to Mailpit locally. Mock: the helpdesk call is a stub behind one typed contract, listed in docs/mocks.md.
 - Watch-outs: DSA Art 12; GDPR Art 12(2). A signed-in sender's message carries only their handle and user ID, never year of birth or age check result. No tracking script or cookie from the helpdesk on our pages. Don't log emails or message text (rule 12). Rate-limit the signed-out form (DoD security). The helpdesk is a new processor (DoD privacy).
 - Stop and ask me about each of these:
   - The helpdesk product is OPEN (open questions 34t) and the email provider is OPEN (Q49). Don't choose either.
-  - S1-E11-13 (tickets in the admin site) is after March and proposes that, for March, messages arrive at support@ghemotoc.com and staff answer from that mailbox. Confirm that and say who creates the reference number (check with Robert).
-  - How staff open a data request (S1-E11-09a) from a "My data" message.
+  - S1-E11-13 (tickets in the admin site) is after March and proposes that, for March, messages arrive at hello@themagiccoffin.com and staff answer from that mailbox. Confirm that and say who creates the reference number (check with Robert).
+  - In March a "My data" message is answered by hand from the mailbox (data requests tooling is after March, decided 17 Oct 2026, 12:44): tell me what the form says about it.
   - The board pre-fills the account email for signed-in users and shows "Your support requests"; the story asks for email only when signed out and has no request list (that list is S1-E11-13). Confirm scope (check with Robert).
 
 STEP 1, PLAN ONLY. Don't write code yet. Give me:
@@ -3472,6 +5146,51 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: a signed-out visitor (sends a message, sees the acknowledgement in Mailpit), adult_writer and kid_14_ok (send from Settings; check only handle and user ID go with it) and the support staff persona (where the message arrives);
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E14-QA Epic check: Legal pages and compliance
+Must · S · March MVP (wave 5, last of its epic) · Depends on: S1-E14-01, S1-E14-02, S1-E14-04
+
+```text
+We are working on story S1-E14-QA (Epic check: Legal pages and compliance) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E14-QA and every story it depends on in docs/stories/s1-e14-legal-pages-and-compliance.md.
+
+CONTEXT
+- Already merged: S1-E14-01, S1-E14-02, S1-E14-04. The epic's after-March stories (S1-E14-03) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: a visitor reads the terms, privacy notice and community guidelines, finds the contact points and sends a Contact us message; sign-up records consent to the current versions.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting.
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E14.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E14-QA: Epic check: Legal pages and compliance". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E15 Analytics and the March test
@@ -3504,6 +5223,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: as adult_writer, browse a few pages on staging and see the events arrive in the tool, then check in the browser that no cookie or storage was set;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E15-02 First-party metrics for the March test
@@ -3513,14 +5241,13 @@ Must · M · March MVP (wave 5) · Depends on: S1-E4-01 (daily `chapter_reads` t
 We are working on story S1-E15-02 (First-party metrics for the March test) only. Read CLAUDE.md, docs/architecture.md and docs/definition-of-done.md, then the story in docs/stories/s1-e15-analytics-and-the-march-test.md.
 
 CONTEXT
-- Already merged: S1-E4-01 (daily `chapter_reads`), S1-E3-03; in the March order also S1-E2-07, S1-E11-01 (admin shell) and S1-E2-10. Open markets are seeded (1.7.9).
-- Decisions that apply: the target is 20 writers publishing, from any open market (16 Oct 2026). The 200 readers and 30% return targets are proposals. Staff sign in with Google Workspace only. Who sees metrics follows architecture 1.8.3: owner and admin view; support none; moderators see only queue numbers, which aren't part of this story.
-- Designs: design/boards/AdminMetrics.dc.html (8.7), the "March test numbers" block; design/renders/desktop/AdminMetrics.jpg and design/renders/phone/AdminMetrics.jpg. Keep the board's line that the targets and the definition are proposals. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
+- Already merged: S1-E4-01 (daily `chapter_reads`), S1-E3-03; in the March order also S1-E2-07a, S1-E11-01 (admin shell) and S1-E2-10. Open markets are seeded (1.7.9).
+- Decisions that apply: the target is 20 writers publishing, from any open market (16 Oct 2026). The 200 readers and 30% return targets are proposals. Only aggregated data, never per-reader records (decided 17 Oct 2026, 12:34). The return rate is an aggregate approximation from the daily chapter_reads totals: reads of chapter N+1 within 7 days of its release divided by reads of chapter N, labelled "approximation" on screen. Aggregated metrics are kept 3 years (Robert's default for aggregated data); the purge belongs with S1-E13-04's jobs, after March. In March staff sign in with the normal login and a staff role (S1-E2-07a). Who sees metrics follows architecture 1.8.3: owner and admin view; support none; moderators see only queue numbers, which aren't part of this story.
+- Designs: design/boards/AdminMetrics.dc.html (8.7), the "March test numbers" block; design/renders/desktop/AdminMetrics.jpg and design/renders/phone/AdminMetrics.jpg. Keep the board's line that the targets are proposals; the definition is now decided, so tell me if the board still calls it a proposal (don't change the board). Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: real: B17 daily metrics job and the metrics table (1.7.4 group H). Mock while building: seeded totals.
 - Watch-outs: aggregates only; no individual-level export and no per-person rows reachable from the screen. Staff reads are checked in the database (`is_staff_session()` and the role).
 - Stop and ask me about each of these:
-  - The return rate definition is a proposal (open questions 23) (check with Robert).
-  - The return rate needs to know whether the same reader opened chapter N and then N+1. If `chapter_reads` holds only daily totals, it can't. Before building, tell me what it holds, what you'd need and how that fits "aggregated only".
+  - If `chapter_reads` doesn't hold daily totals per chapter in a form that gives reads within 7 days of a chapter's release, tell me what it holds before building. Don't add per-reader records to fix it.
   - "Signed-up readers": the board says accounts that opened at least one chapter. Confirm (check with Robert).
   - The board's other panels (readers per day, sign-ups by age group, age checks, reports by tier, product analytics, compliance log, retention) look like S1-E11-04, after March. Confirm which are in scope (check with Robert).
 
@@ -3536,6 +5263,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: adult_writer publishes a chapter, teen_17 and kid_14_ok read it, run the daily job, then owner and admin see the numbers while support and moderator are refused;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E15-03 Event catalogue
@@ -3567,6 +5303,51 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: where to read the catalogue on GitHub, and where to see the check fail on a test branch that adds a made-up event name and pass once it is removed (no seed personas needed);
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E15-QA Epic check: Analytics and the March test
+Must · S · March MVP (wave 5, last of its epic) · Depends on: S1-E15-02
+
+```text
+We are working on story S1-E15-QA (Epic check: Analytics and the March test) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E15-QA and every story it depends on in docs/stories/s1-e15-analytics-and-the-march-test.md.
+
+CONTEXT
+- Already merged: S1-E15-02. The epic's after-March stories (S1-E15-01, S1-E15-03) are not part of this check. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data. In March only invited adults sign up (adults_only, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove the protections are ready before minors are let in.
+- Main journeys to cover: after test reading, the daily job produces the March numbers and staff with the right role see them, aggregates only.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting, plus the staff personas the epic uses (owner, admin, moderator, support, editor).
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E15.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E15-QA: Epic check: Analytics and the March test". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting and one staff persona;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## S1-E16 Platforms and app stores
@@ -3599,6 +5380,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: as adult_writer on an Android phone and an iPhone, add Ghemotoc to the home screen, open it full screen, switch on airplane mode and see the offline state;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E16-02 Desktop apps for Windows, macOS and Linux
@@ -3632,6 +5422,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer: install each build, sign in as adult_writer and read a chapter, open a chapter link from the browser, start the age check as pending_check and come back to the app, then install an update;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E16-03 iOS and Android apps with deep links
@@ -3646,7 +5445,7 @@ CONTEXT
 - Decisions that apply: in the apps, each platform's own protection blanks the screen during screenshots and recordings (Q41), described as "makes copying harder" (Q9). Under-18s get quiet hours for push (Q50). Apple and Google developer accounts open only in the company's name (1.11). No external purchase links in iOS where Apple restricts them (CLAUDE.md rule 11). Screens never import native code directly; use src/lib/platform/ (rule 16).
 - Designs: design/boards/GetApp.dc.html ("iPhone and Android apps", links open straight in the app) and design/boards/Teaser.dc.html (3.8, the install prompt); renders in design/renders/desktop and design/renders/phone for both. Match them at 390, 768 and 1440 px (CLAUDE.md rule 21).
 - Back-end pieces: B22 push tokens (a stub until this story), B19 teaser, the platform adapter extended for phones.
-- Watch-outs: Apple's minimum functionality rule: the app must offer native value (push, offline or capture protection), not a web page in a frame. Deep links need files served from ghemotoc.com; the web host is OPEN, so tell me what the host must serve.
+- Watch-outs: Apple's minimum functionality rule: the app must offer native value (push, offline or capture protection), not a web page in a frame. Deep links need files served from the site in the brand config (today ghemotoc.themagiccoffin.com, decided 17 Oct 2026, 12:50); the web host is OPEN, so tell me what the host must serve.
 - Stop and ask me about each of these:
   - This is an L story with no split in the pack. Propose one (check with Robert).
   - The developer accounts don't exist yet (they need the company (OPEN, Q55) and a D-U-N-S number).
@@ -3664,6 +5463,15 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer on a test iPhone and Android phone: adult_writer taps a shared chapter link with and without the app, gets a push notification, tries a screenshot; kid_14_ok checks push waits during quiet hours;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ### S1-E16-04 App store compliance pack
@@ -3696,6 +5504,51 @@ STEP 2, after I approve: build it, run every check in CLAUDE.md, fix failures, p
 - the check results;
 - step-by-step manual test steps for a non-developer in the phone builds: as adult_writer, report a story, find the contact details and delete the account; as blocker, block blocked; as kid_14_ok, check 16+ and 18+ stories are hidden; check no purchase link shows anywhere;
 - the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
+```
+
+### S1-E16-QA Epic check: Platforms and app stores
+Should · S · After March · Depends on: S1-E16-01, S1-E16-02, S1-E16-03, S1-E16-04
+
+```text
+We are working on story S1-E16-QA (Epic check: Platforms and app stores) only. Read CLAUDE.md, docs/architecture.md (1.7.2 seed personas, 1.12 testing) and docs/definition-of-done.md, then the story S1-E16-QA and every story it depends on in docs/stories/s1-e16-platforms-and-app-stores.md.
+
+CONTEXT
+- Already merged: S1-E16-01, S1-E16-02, S1-E16-03, S1-E16-04. This story adds no feature: it tests those stories together, end to end.
+- Decisions that apply: every epic ends with a quality check (Robert, decided 17 Oct 2026, 12:36). Seed personas only, never real data.
+- Main journeys to cover: the installable web app, the desktop apps, the iOS and Android apps with deep links and the store compliance pack.
+- Personas (architecture 1.7.2): adult_writer, teen_17, kid_14_ok and kid_14_waiting.
+- Designs: every board the stories above touch, with their renders in design/renders/desktop and design/renders/phone. Check each screen at 390, 768 and 1440 px (CLAUDE.md rule 21); docs/board-fixes.md and docs/decisions.md win where they differ from a board.
+- Watch-outs: fix a break between two stories here only if it is small; otherwise open a GitHub issue naming the stories and tell me. Don't add features or change what a story does. List every mock still on in docs/mocks.md with the story that removes it. Where the epic report lives isn't decided: I suggest docs/epic-reports/S1-E16.md (check with Robert).
+
+STEP 1, PLAN ONLY. Don't write code yet. Give me:
+1. The journeys you will test end to end, each as steps with the persona and the stories it crosses.
+2. The screens axe will check, at 390, 768 and 1440 px.
+3. The tables the epic touches and any RLS policy that lacks an allowed or a denied test.
+4. A table mapping each acceptance criterion to the test or document that proves it.
+5. Every OPEN or unclear point. Ask; don't guess.
+
+STEP 2, after I approve: write the tests, fix or ticket what they find, update docs/code-tour.md, write the epic report, run every check in CLAUDE.md, fix failures, push your working branch (in a cloud session, the branch the session was given) and open a pull request titled "S1-E16-QA: Epic check: Platforms and app stores". Then give me:
+- a summary of what changed, the epic report and the check results;
+- step-by-step manual test steps for a non-developer: walk the main journeys as adult_writer, teen_17, kid_14_ok and kid_14_waiting;
+- the pull request description from .github/pull_request_template.md.
+
+QUALITY CHECK, part of STEP 2: do it before you open the pull request and paste the results into the PR description.
+1. A table: each acceptance criterion, the test that proves it and pass or fail. Every row must pass.
+2. The Definition of Done (docs/definition-of-done.md), ticked item by item, with evidence or "not applicable" and why.
+3. Screenshots of every changed screen at 390, 768 and 1440 px next to its board render. List any difference, and any place where docs/board-fixes.md or a decision overrode the board. If no screen changed, say so.
+4. The Readable code section of CLAUDE.md: confirm the file headers, doc comments, step comments and the docs/code-tour.md lines are there.
+5. Run every check command in CLAUDE.md again from a clean start and paste the summary.
+6. Anything you couldn't do or had to stub, with the story that will finish it.
+Then give me the hand-test steps STEP 2 asks for.
 ```
 
 ## Review prompt (after every pull request, in a fresh session)

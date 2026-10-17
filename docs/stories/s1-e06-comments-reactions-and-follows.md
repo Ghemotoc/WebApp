@@ -22,7 +22,7 @@ As a reader, I want to react to a comment with an emoji so that I can respond wi
 
 - **Priority:** Must · **Size:** S · **Depends on:** S1-E6-01
 - **Acceptance criteria:**
-  - Given a comment, when a user reacts, then they choose one from a fixed set of six emoji (proposal) and can change or remove it.
+  - Given a comment, when a user reacts, then they choose one from the fixed set of six on the Reader board (heart, fire, laugh, wow, sad and star, drawn as SVG icons, decided 17 Oct 2026, 12:44) and can change or remove it.
   - Given reaction counts, when a screen reader reads them, then each reaction has a text name (for example "heart, 4").
 - **Legal and compliance:** emoji stay in user content only; the interface itself uses no emoji (design direction).
 
@@ -67,5 +67,21 @@ As a reader, I want to comment on a single paragraph so that I can react to a sp
   - Given a paragraph, when a reader taps its comment marker, then they see and add comments for that paragraph only.
   - Given the writer edits a chapter, when a paragraph changes, then its comments stay attached by a stable paragraph ID or move to "comments on an earlier version".
 - **Legal and compliance:** the research marks this as a strong Stage 1b candidate (Wattpad added it in February 2014).
+
+##### S1-E6-QA Epic check: Comments, reactions and follows
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E6-01, S1-E6-02, S1-E6-03, S1-E6-04, S1-E6-05
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories and comes last among them in the build order. The epic's after-March stories (S1-E6-06) get the same check when they land (proposal).
+- **Main journeys:** a reader comments on a chapter, reacts to a comment, likes the chapter, downvotes privately and follows the writer and the story; a blocked person can do none of this to the person who blocked them.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting`, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. In March only invited adults sign up (`adults_only`, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove these protections are ready before minors are let in. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
 
 ---

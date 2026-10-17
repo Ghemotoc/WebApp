@@ -53,4 +53,20 @@ As a user, I want to control who can message me and how long messages stay so th
   - Given reported messages, when the case closes, then they are kept for the retention period in the retention schedule and then deleted.
 - **Legal and compliance:** GDPR Art 5(1)(e) storage limitation.
 
+##### S1-E9-QA Epic check: Private messages
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E9-01, S1-E9-02, S1-E9-03, S1-E9-04
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. Every story in this epic comes after March, so this check does too; it covers all of them and comes last.
+- **Main journeys:** send a private message, block and report inside messages, the adult and minor messaging rules, message settings and retention.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting` and the staff personas the epic uses, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
+
 ---

@@ -149,7 +149,7 @@ What we never do. We don’t sell your data. We don’t use it to choose ads, fo
 
 Other people on Ghemotoc. What you publish is shown under your pen name or username to the readers your settings and ratings allow. The people you message see your messages. Space and class members see what you post in that space, and your teacher sees what you share with the class. Writers see their readers only as totals; below five readers they see “fewer than 5”. Nobody else sees your email address, your age, your year of birth or your age check result.
 
-Our staff. Only staff who need it for their job, and each look is logged. They read private messages only when the messages are part of a report or the law requires it.
+Our staff. Only staff who need it for their job, and each look is logged. They read private messages only when the messages are part of a report or the law requires it. During a manual age check, the staff member handling it sees your year of birth.
 
 Companies that work for us. These companies handle data only on our instructions, under a contract that protects it (a data processing agreement):
 
@@ -335,7 +335,7 @@ Every new script or stored item is checked before it goes live, so this list sta
 - Section 5 (How long we keep it): Two clocks run at sign-up: 7 days for an unverified email (S1-E13-04) and 14 days for the age check (S1-E2-08). Both are kept; please confirm they are meant to differ.
 - Section 5 (How long we keep it): Reported messages: S1-E9-04 points to “the retention period in the retention schedule”, which is not set; aligning with the 3-year report rule is a proposal only.
 - Section 6 (Your rights): GDPR arts 15 to 22 and 77; art. 12(3) one month plus two; art. 12(5) free; art. 12(6) identity check (S1-E11-09). Art. 13(2)(b) to (d).
-- Section 6 (Your rights): Download formats: the GDPR copy is the machine-readable export (JSON and readable HTML, S1-E13-02); Word files per story are a service on top (S1-E13-05, S1-E11-09; Q28, Q29). The board summary says “download it as a Word file”; strictly only the stories come as Word files, so a summary update is suggested.
+- Section 6 (Your rights): Download formats: the GDPR copy is the machine-readable export (a machine-readable JSON file plus your stories as Word files, in one ZIP, S1-E13-02; decided 17 Oct 2026, 12:34); Word files per story are a service on top (S1-E13-05, S1-E11-09; Q28, Q29). The board summary says “download it as a Word file”; strictly only the stories come as Word files, so a summary update is suggested.
 - Section 6 (Your rights): 13 to 15-year-olds download their own data; parents checked against the consent record (Q27). Parent access versus the child’s own rights and Civil Code art. 41 is L13.
 - Section 6 (Your rights): ANSPDCP postal address and email are not in the research files, so only the website is given; add the address after checking.
 - Section 7 (Cookies and storage): ePrivacy Directive art. 5(3) and Law 506/2004 art. 4(5) and 4(6): consent unless strictly necessary for a service the user asked for (research A2). Strict necessity covers local and session storage too (S1-E14-03).

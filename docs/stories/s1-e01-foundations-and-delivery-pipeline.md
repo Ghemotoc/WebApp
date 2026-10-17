@@ -17,6 +17,8 @@ As the founder, I want one GitHub repository with local, staging and production 
   - Given a tagged release, when the founder approves it in GitHub, then production deploys; production never deploys from an untagged commit.
   - Given the staging database, when it is seeded, then it holds synthetic data only and never a copy of production.
   - Given the backlog, when stories are tracked, then each story ID is one GitHub Issue in the organisation's repository (decided 16 Oct 2026, late evening, Q39).
+  - Given the product name, the site domain, the support and contact email addresses and the social handle, when any code needs them, then they come from one brand config: `src/config/brand.ts`, built from `VITE_` variables on the front end, and settings or Edge Function secrets on the back end. "Ghemotoc" is a working name until the name and domain are bought (decided 17 Oct 2026, 12:47); today's values are the site ghemotoc.themagiccoffin.com (once hosting is chosen) and the contact and support address hello@themagiccoffin.com (decided 17 Oct 2026, 12:50).
+  - Given the code, when CI runs, then a test fails if the literal "Ghemotoc" or "ghemotoc.com" appears in `src/` or `supabase/` outside the brand config and the locale files (decided 17 Oct 2026, 12:47).
 - **Legal and compliance:** the accounts are opened in Robert's name now and moved to the company the week it is registered, following the transfer plan in section 1.11 (decided 16 Oct 2026, late evening, Q34), so the IP sits with the company (proposal: Robert's Q3 and Q104 answers left the owner open).
 
 ##### S1-E1-02 Database baseline with deny-by-default row-level security
@@ -88,5 +90,21 @@ As the founder, I want the app moved from Lovable's managed database to our own 
   - Given real accounts already exist (only if the move happens after the first real user), when they are moved, then users, their user IDs, stories and files arrive unchanged, the move is rehearsed on a copy first and users are told in advance.
   - Given the move is done, when it is checked, then the Lovable database is emptied and closed and the processor list is updated.
 - **Legal and compliance:** proposal: move before the first real user, so no minors' data ever sits with Lovable and no transfer of real data is needed. If real data moves, Lovable needs a data processing agreement for the time it held it and the move goes in the record of processing. When to move was **OPEN** (section 5, question 9); closed on 17 Oct 2026 by the own-Supabase-from-day-one decision.
+
+##### S1-E1-QA Epic check: Foundations and delivery pipeline
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E1-01, S1-E1-02, S1-E1-03, S1-E1-04
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories and comes last among them in the build order. The epic's after-March stories (S1-E1-05) get the same check when they land (proposal).
+- **Main journeys:** a fresh clone installs, starts Supabase and the app and passes CI; the app shell opens in Romanian, switches to English and keeps its design tokens in light and night mode; the database baseline refuses anonymous and cross-user reads.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting`, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. In March only invited adults sign up (`adults_only`, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove these protections are ready before minors are let in. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
 
 ---

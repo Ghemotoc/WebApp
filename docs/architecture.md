@@ -28,13 +28,13 @@
 | March 2027 is web only; the desktop and phone apps come after (decided 17 Oct 2026, 34o; replaces desktop first, 15 Oct). Desktop with Tauri 2, built by GitHub Actions, signed and auto-updated, is the plan's route (master-plan/01), not a logged decision | Tauri 2 wrapper in the same repository after March; macOS runner for Mac builds |
 | Two prototype iterations before release | Iteration 1 is clickable screens; iteration 2 is a real build for a closed group |
 | Contextual banners and direct sponsors, no tracking; ad-network ads only from vendors that don't personalise, for everyone (16 Oct 2026, late evening) | Our own banners chosen on the server from page context; ad-network code only through S1-E12-04, never on chapter text, never in class spaces |
-| Consent is the legal basis; parental consent for under-16s from launch (16 Oct 2026, late evening) | `consents` and `parental_consents` are live from the first real user; S1-E2-03 is on the launch gate |
+| Consent is the legal basis; parental consent for under-16s from launch (16 Oct 2026, late evening) | `consents` is live from the first real user; `parental_consents` is live before the first user under 18 joins (the March test is invited adults only, decided 17 Oct 2026, 12:44); S1-E2-03 is on the minors' launch gate |
 | Picture uploads on from launch, every picture checked on upload by Sightengine and Arachnid Shield; moderation is in-house and report-based (16 Oct 2026, late evening) | An `image-check` edge function on every upload; no text moderation vendor and no pre-publication hold |
 | Our own Supabase project in the EU (West EU, Ireland, eu-west-1) from day one, Claude Code builds first (decided 17 Oct 2026, 11:20; replaces Q37, Lovable's database first); EU hosting (Q38); GitHub Issues (Q39) | Every schema change is a migration in `supabase/migrations/` from day one; no database move is needed, so S1-E1-06 is Won't |
 | Pen name optional, identity checks only where money changes hands | No legal names in Stage 1 |
 | Private downvotes, no auto-archive, private messages, user-created spaces | Data model in section 1.6 |
 | Plagiarism scanning only for imprint acquisitions | No scanner in Stage 1; a structured "copied from a published work" report instead |
-| The app is called Ghemotoc, "An app by The Magic Coffin" (16 Oct 2026) | Name in store listings, the bundle ID and the reserved handles list; website ghemotoc.com and handle @ghemotoc everywhere (availability to be checked) |
+| The app is called Ghemotoc, "An app by The Magic Coffin" (16 Oct 2026) | Name in store listings, the bundle ID and the reserved handles list; website ghemotoc.com and handle @ghemotoc everywhere (availability to be checked). Ghemotoc is a working name until the name and domain are bought (decided 17 Oct 2026, 12:47): code reads the name, site, contact addresses and handle from one brand config (S1-E1-01); today the site is ghemotoc.themagiccoffin.com and the contact address hello@themagiccoffin.com (decided 17 Oct 2026, 12:50) |
 | The public website has its own database; Home and Discover are separate screens for now and Discover is the main one; they merge later (16 Oct 2026). The website CMS is built new, from scratch, on that database and linked neatly to the front end (16 Oct 2026, late evening, Q54) | The website's data lives apart from the app's Supabase project; keep Home and Discover as separate routes so merging later is a routing change |
 | Every account gets an automatic, permanent user ID that everything a person makes is linked to; staff can open any story and export a user's stories as Word or PDF (16 Oct 2026, late evening) | `profiles.id` is the Supabase Auth UUID and every user-owned table has a `user_id` column (section 1.6); Stories and Data requests areas in the admin site (section 1.8) |
 | Romania is the first market; English-speaking countries open later, one by one, each after its legal check (decided 17 Oct 2026, 11:48; replaces "all at the same time", 16 Oct). The interface opens in Romanian for everyone, with English available in the language menu (decided 17 Oct 2026, 11:48). Moderation by our own team in both languages | Market and language switches in admin (S1-E11-05); every market still needs its legal check before it opens |
@@ -55,7 +55,7 @@ The plan says to decide the mobile approach in iteration 2. These are the realis
 ### 1.4 The March 2027 constraint (read this before committing to scope)
 
 - **Today to March is about 19 weeks.** Business Model Innovation and Startup Essentials take four evenings a week in November and December; Execution runs January to March. The developer and community manager are planned from launch, not before.
-- **Decided 16 Oct 2026 (late evening, Q32): Robert builds without a programmer.** The March slice is re-cut to a real MVP in section 1.13: 54 stories and about 594 hours (S1-E1-06 dropped and five Must stories added on 17 Oct 2026; it was 50 and about 564 on 16 Oct 2026, 11:20), down from 53 stories and about 660. At 10 to 12 hours a week that is still about three times the time available, so section 1.13 sets out the capacity problem plainly.
+- **Decided 16 Oct 2026 (late evening, Q32): Robert builds without a programmer.** The March slice is re-cut to a real MVP in section 1.13: 58 stories and about 498 hours. The March test is invited adults only (decided 17 Oct 2026, 12:44), so the age check, parental consent and the data rights stories (about 132 hours) move to the minors' launch gate after March. It was 66 and about 630 with the 12 epic checks (17 Oct 2026, 12:36), 54 and about 594 at 11:53, and 50 and about 564 on 16 Oct 2026, down from 53 stories and about 660. At 10 to 12 hours a week that is still two and a half to three times the time available, so section 1.13 sets out the capacity problem plainly.
 - **Store steps add calendar time you can't speed up:** Apple and Google developer accounts in the company's name need the company (Romanian SRL or Swedish AB: **OPEN**, Q55) and a D-U-N-S number. A new Google Play personal account currently needs a closed test with 12 testers for 14 days (check the rule when you open it), and first app reviews can take days and bounce.
 - **What this means:** "all operating systems with real users by March" and "solo founder in the evenings" can't both hold. The developer hire and an SSES co-founder are off the table (Q32, Q57), so the levers left are hours a week, the date and scope. Section 1.13 proposes the scope; hours and date stay **OPEN** for Robert.
 
@@ -107,7 +107,7 @@ The plan says to decide the mobile approach in iteration 2. These are the realis
 | Moderation | In-house moderators, acting on reports; no text moderation vendor and no hold before publishing | Decided 16 Oct 2026, late evening (Q42, Q43) |
 | Picture check | Every uploaded picture goes to Sightengine (nudity, gore) and Arachnid Shield (hash matching against known child abuse images) on upload; a flagged picture is held for an in-house moderator | Decided 16 Oct 2026, late evening (S1-E10-05); both need data processing agreements |
 | Word and PDF files | Word (.docx) from the first version, PDF later | Recommendation (Q49): the `docx` npm library for Word, `pdf-lib` for certificates; PDF for stories **OPEN** |
-| Helpdesk | Tickets inside our admin site, linked to support@ghemotoc.com, with a ready-made external helpdesk behind it through its API (S1-E11-13) | Decided 17 Oct 2026; product **OPEN** |
+| Helpdesk | Tickets inside our admin site, linked to hello@themagiccoffin.com, with a ready-made external helpdesk behind it through its API (S1-E11-13) | Decided 17 Oct 2026; product **OPEN** |
 | Analytics | Cookieless, EU-hosted | Choice **OPEN** (Q49). Recommendation: Plausible or Umami Cloud (EU) |
 | Error tracking | Sentry (EU data region) or similar, with personal data scrubbing | Never send emails, IPs or user text |
 
@@ -119,7 +119,7 @@ Names are suggestions for Claude Code. Every table has row-level security.
 | --- | --- |
 | Identity | `profiles` (`id` is the user ID; handle, handle_slug, pen name, bio, avatar, locale, country_code, birth_year, birth_month (only when the year leaves the age unclear at 13 or 16), age_check_result, age_checked_at, age_check_method, settings), `age_check_sessions` (short-lived link between a Yoti session and a user, deleted once the result is stored), `parental_consents`, `user_sessions` (signed-in devices, no IP address), `staff_roles`, `staff_permissions`, `on_call_rota`, `blocks`, `follows_users`, `username_word_lists`, `username_approvals` |
 | Writing | `stories`, `story_revisions` (settings and metadata history, including staff changes), `chapters` (status, scheduled time, structured content), `chapter_revisions`, `story_tags`, `tags`, `categories`, `content_labels`, `ratings` (All ages, 13+, 16+, 18+) |
-| Reading | `reading_progress`, `library_entries`, `likes`, `chapter_reads` (aggregated daily) |
+| Reading | `reading_progress`, `library_entries`, `likes`, `chapter_reads` (daily totals per chapter; no per-reader records) |
 | Discussion | `comments`, `reactions`, `downvotes` (private), `forums`, `spaces`, `space_members`, `space_roles`, `threads`, `posts`, `post_revisions`, `read_marks` (user, forum and thread levels) |
 | Messages | `conversations`, `conversation_members`, `messages`, `message_requests` |
 | Safety | `reports`, `cases`, `case_actions`, `picture_checks`, `statements_of_reasons`, `appeals`, `sanctions`, `authority_orders`, `audit_log` |
@@ -127,7 +127,7 @@ Names are suggestions for Claude Code. Every table has row-level security.
 | Schools | `schools`, `teacher_checks`, `space_invites`, `certificates` |
 | Data rights | `exports`, `data_requests` |
 | Platform | `feature_flags`, `settings`, `rate_limits`, `reserved_names`, `markets`, `languages`, `seasonal_occasions`, `legal_documents`, `consents`, `notifications`, `jobs` |
-| Website (its own database; set-up OPEN) | `hero_versions`, `site_banners`, `help_pages`, `faq_items`: read by the public website, written only through the `website-cms` bridge (section 1.8.6) |
+| Website (its own database; set-up OPEN; from March: inside the app until the website database exists, decided 17 Oct 2026, 12:34) | `hero_versions`, `site_banners`, `help_pages`, `faq_items`: read by the public website, written only through the `website-cms` bridge (section 1.8.6) |
 
 **Rules baked into the model**
 
@@ -224,10 +224,10 @@ Each piece has an ID (B01 and so on) so the screen tables below can point to it.
 | B25 | Messages: conversations, messages, requests, `can_message(a, b)` | S1-E9 | nothing to mock |
 | B26 | Safety: `cases`, `case_actions`, `statements_of_reasons`, `appeals`, `sanctions`, `authority_orders`, queue views, on-call alert | S1-E10 | the phone alert is a stub that only logs |
 | B27 | Admin functions: `admin_*` functions, each checking role, permission and `is_staff_session()` and writing the audit log in the same transaction | S1-E11 | nothing to mock |
-| B28 | Data rights: `exports`, `export-build`, `data_requests`, `story-export` (Word from the first version, PDF later), the deletion job | S1-E13-02, S1-E11-09, S1-E13-03, S1-E13-05 | Word returns a placeholder file until S1-E11-09a lands; PDF until S1-E11-09b |
+| B28 | Data rights: `exports`, `export-build`, `data_requests`, `story-export` (Word from the first version, PDF later; the shared Word builder is built in S1-E13-02, which comes first in the build order, decided 17 Oct 2026, 12:34), the deletion job | S1-E13-02, S1-E11-09, S1-E13-03, S1-E13-05 | nothing for Word (real from S1-E13-02); PDF returns a placeholder file until S1-E11-09b |
 | B29 | Banners and sponsors: sponsors, campaigns, daily stats, `pick_banner(context)` | S1-E12 | one seeded test campaign |
 | B30 | Seasonal doodles: `seasonal_occasions`, `current_occasion()`; the doodles themselves are SVG files in the app | S1-E11-11 (S1-E5-07 shows them) | seeded occasions |
-| B31 | **Website database and CMS bridge:** the website's own tables (home page copy, banners, help pages and questions), the `website-cms` function in the app's project that writes to them and `public-shelves`, a read-only list of public stories for the website | S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08 | a `WebsiteContentStore` stub with the same contract; real once the website database exists (a new CMS built from scratch, decided 16 Oct 2026, Q54) |
+| B31 | **Website database and CMS bridge:** the website's own tables (home page copy, banners, help pages and questions), the `website-cms` function in the app's project that writes to them and `public-shelves`, a read-only list of public stories for the website | S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08 | a `WebsiteContentStore` stub with the same contract; real once the website database exists (a new CMS built from scratch, decided 16 Oct 2026, Q54). From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34): S1-E5-08 uses the locale files and the app's public views, not B31 |
 | B32 | Cookieless analytics and error tracking | S1-E15-01, S1-E1-05 | switched off locally |
 | B33 | Desktop shell: Tauri deep link, opener, single instance, updater, content protection | S1-E16-02 | build on the web first; the desktop parts are tested when S1-E16-02 lands |
 
@@ -237,15 +237,17 @@ Screen numbers are the design canvas numbers. "Real before building" is the smal
 
 **A. Public website (1.1)**
 
+From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34). Until the apps exist everything is on the web, so for March the public home page (S1-E5-08) is a page of the web app: its copy comes from the locale files and its rows from the app's own public views or `public-shelves`. The B31 rows below apply once the website database and the CMS stories (S1-E11-06, 10, 11, 12) arrive, after March.
+
 | Screen part | Stories | Back-end pieces | Real before building | Mock while building |
 | --- | --- | --- | --- | --- |
 | Hero, safety lines and the three points | S1-E5-08, S1-E11-06 | B31 home page copy (published view) | the published-copy contract (fields, both languages) | a JSON fixture of the copy live on 16 Oct 2026 |
 | Trending, Completed, New and rising rows | S1-E5-08, S1-E5-03 | B31 `public-shelves` reading the app's public views; B13; B17 ranking | the `public-shelves` response contract | a fixture of 12 stories including one app-only story; real once S1-E5-03 runs |
 | Questions | S1-E5-08, S1-E11-12 | B31 questions table | the contract | a fixture of the 16 Oct 2026 questions |
-| Notice strip | S1-E11-10 | B31 banners table | the contract | a fixture |
+| Notice strip | S1-E11-10 | one notice table read by the website and the app; in the app's database until the website database exists (decided 17 Oct 2026, 12:44) | the contract | a fixture |
 | Download buttons | S1-E16-02 | the release list the Tauri updater already publishes | nothing | fixed links |
 
-The website never reads the app's tables directly. It reads only its own database, `public-shelves` and the release list, so a fault on the website can't expose app data.
+The website never reads the app's tables directly. It reads only its own database, `public-shelves` and the release list, so a fault on the website can't expose app data. From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34); this rule applies once the website is split out.
 
 **B. Join and log in (2.1 to 2.5)**
 
@@ -296,7 +298,7 @@ The website never reads the app's tables directly. It reads only its own databas
 | --- | --- | --- | --- | --- |
 | 6.1 Writer profile | S1-E5-05, S1-E6-05, S1-E8-08 | public profile view (no user ID, no age), B14 `avatars`, B21 | the view | seed |
 | 6.2 Notifications | S1-E7-01 to 03 | B22 | the table | Mailpit; push stub |
-| 6.3 Settings | S1-E13-01 to 05, S1-E2-05, S1-E2-09, S1-E9-04, S1-E8-12 | `profiles.settings`, Auth identities, `user_sessions`, B28 | `exports` and the job contract | Word and PDF placeholders until S1-E11-09b |
+| 6.3 Settings | S1-E13-01 to 05, S1-E2-05, S1-E2-09, S1-E9-04, S1-E8-12 | `profiles.settings`, Auth identities, `user_sessions`, B28 | `exports` and the job contract | PDF placeholder until S1-E11-09b (Word is real from S1-E13-02) |
 | 6.4 Report something | S1-E10-01, S1-E10-08 | B04 | `report_item()` | nothing |
 | 6.5 My reports and appeals | S1-E10-04, S1-E10-07 | B26 (the reporter's own rows) | the views | a seeded closed case |
 
@@ -325,7 +327,7 @@ The website never reads the app's tables directly. It reads only its own databas
 | 8.9 Schools and certificates | S1-E2-11, S1-E8-11, S1-E8-12 | B24, B14 `teacher-proofs` | the tables | seed |
 | 8.10 Stories | S1-E11-07 | B27 `admin_search_stories()` (title, current or earlier handle, user ID) | the function | seed |
 | 8.11 Story in admin | S1-E11-08 | B27 `admin_update_story()`, `admin_remove_passage()`, story and chapter revisions, B26 statements | the functions | seed |
-| 8.12 Data requests | S1-E11-09 | B28 | `data_requests` and the job contract | Word and PDF placeholders until S1-E11-09b |
+| 8.12 Data requests | S1-E11-09 | B28 | `data_requests` and the job contract | PDF placeholder until S1-E11-09b (Word is real from S1-E13-02) |
 | Website CMS | S1-E11-06, S1-E11-10, S1-E11-11, S1-E11-12 | B31 bridge; B30 lives in the app's database | the bridge contract | `WebsiteContentStore` stub |
 | Audit log | S1-E11-01 | B03 | B03 | nothing |
 
@@ -364,6 +366,10 @@ Waves run top to bottom. Inside a wave, back-end and screen work can be interlea
 | 4 Social and discovery | S1-E6-01, S1-E6-03, S1-E6-05, S1-E7-01, S1-E5-01, S1-E5-02, S1-E5-04, S1-E8-01, S1-E8-02, S1-E8-05 | 3.1, 3.2, 5.1, 5.2, 6.2 | S1-E10-01 before any comment or post; wave 2 | wave 5 |
 | 5 Rights, numbers and shipping | S1-E13-01 to 04, S1-E11-09, S1-E15-01 to 03, S1-E16-01, S1-E16-02 | 6.3, 8.7, 8.12, 7.1 | waves 2 to 4 | S1-E16-02 from wave 2 onwards |
 | After March | everything else, in the order of section 1.13 | | | |
+
+Updated 17 Oct 2026, 12:44: the March test is invited adults only, so wave 1b (S1-E2-08, S1-E2-03), S1-E2-07b, S1-E10-13b and the data rights stories in wave 5 (S1-E13-02 to 05, S1-E11-09a) come after March and before minors go live; S1-E2-07a stays in wave 1 and S1-E10-13a in wave 3.
+
+Every epic ends with an epic check story (S1-Ex-QA, 17 Oct 2026, 12:36): it runs once the epic's March stories are merged, in the wave of the last of them, and tests them together end to end.
 
 Updated 16 Oct 2026 (late evening): the March MVP in section 1.13 is web only, so S1-E16-01 and S1-E16-02 leave wave 5, and S1-E4-02, S1-E4-03, S1-E5-04, S1-E8-01, S1-E8-02, S1-E8-05, S1-E10-12, S1-E11-03, S1-E13-01, S1-E15-01 and S1-E15-03 move after March. S1-E1-06 (the database move) joins wave 0 or 1 (no longer needed since 17 Oct 2026, 11:20: own Supabase from day one), S1-E2-03 joins wave 1b, S1-E2-10 wave 1, S1-E10-05 wave 3, S1-E5-03, S1-E5-09 and S1-E5-08 wave 4 and S1-E13-05 and S1-E14-04 wave 5. The waves keep their order.
 
@@ -452,7 +458,7 @@ flowchart TD
   E3_02 --> E13_02 --> E11_09 --> E13_05
   E11_01 --> E11_09
   E11_01 --> CMS --> WEBDB
-  WEBDB --> E5_08
+  WEBDB -.-> E5_08
 
   classDef crit stroke:#481C5F,stroke-width:4px;
   classDef ext stroke-dasharray:4 3;
@@ -463,18 +469,20 @@ flowchart TD
 
 #### 1.7.8 The critical path
 
-There are two chains, and both have to close before the March test.
+There are two chains. The build chain has to close before the March test. The launch gate has a March part (invited adults) and a minors' part that has to close before anyone under 18 joins (decided 17 Oct 2026, 12:44).
 
 **1. The build chain** (the longest run of stories that each wait for the one before):
 S1-E1-01 → S1-E1-02 → S1-E2-01 → S1-E3-01 → S1-E3-02 → S1-E3-03 → S1-E4-01.
 That is 2 L and 5 M stories, about 120 hours with Claude Code, now that the desktop app moves after March (section 1.13). At 10 to 12 hours a week it is 10 to 12 weeks on its own, out of about 19 left. Anything that slips on this chain moves March.
 
-**2. The launch gate** (what has to be real before the first under-18 can publish, comment, post or message):
-S1-E2-02 → S1-E2-08 → S1-E2-03 (on from launch, decided 16 Oct 2026) all feed the account gate, and S1-E2-07 → S1-E11-01 → S1-E10-03 → S1-E10-04 (plus S1-E10-09 and S1-E10-10) give a working moderation path.
+**2. The launch gate.**
 
-Why the age check gates everything a minor can do: every write policy in the database (publish a chapter, comment, post in a forum, send a message, create a space, join a class) calls one function, `is_active_member()`. It returns true only when the email is confirmed, an age check has passed, a parent has agreed where the flag requires it and there is no suspension or ban. Every under-18 protection reads `age_band()`, which uses the younger possible age from the year of birth and the Yoti result. So the gate is one function. Its skeleton ships in S1-E1-02 so writing, comments and forums can be built and tested against seed personas long before Yoti is live; S1-E2-02, S1-E2-08, S1-E2-03 and S1-E10-06 then fill it in. Reporting is the one exception: a signed-in account that is still read-only can report what it reads, and anyone can use the public notice form (S1-E10-02).
+- **In March (invited adults only, decided 17 Oct 2026, 12:44):** S1-E2-01 with the `invite_only` flag and S1-E2-02 with the `adults_only` flag (both proposals) keep the test to invited adults, and S1-E2-07a → S1-E11-01 → S1-E10-03 → S1-E10-04 (plus S1-E10-09 and S1-E10-10) give a working moderation path. Data requests arrive by email and are answered by hand.
+- **Before minors go live** (what has to be real before the first under-18 can publish, comment, post or message): S1-E2-02 → S1-E2-08 → S1-E2-03 (parental consent, decided 16 Oct 2026) feed the account gate, S1-E2-07b moves staff to Google Workspace sign-in, and the data rights stories (S1-E13-02 to 05, S1-E11-09a) are in place.
 
-The launch gate's real risks sit outside the code: the Yoti contract and set-up (and whether Yoti onboards before the company exists, proposed for about 1 February 2027, with SRL or AB **OPEN** (Q55), question 4a), the DPIA (question 4c) and a lawyer's check of consent as the legal basis and of how parents are verified (section 6). If Yoti needs the SRL, real age checks can start only about six weeks before the test.
+Why the age check gates everything a minor can do: every write policy in the database (publish a chapter, comment, post in a forum, send a message, create a space, join a class) calls one function, `is_active_member()`. It returns true only when the email is confirmed, an age check has passed, a parent has agreed where the flag requires it and there is no suspension or ban. Every under-18 protection reads `age_band()`, which uses the younger possible age from the year of birth and the Yoti result. So the gate is one function. In March, while `adults_only` is on, `is_active_member()` doesn't ask for an age check result (proposal): an invited adult is active once the email is confirmed, and the age check and parental consent switch on before minors are let in (decided 17 Oct 2026, 12:44). Its skeleton ships in S1-E1-02 so writing, comments and forums can be built and tested against seed personas long before Yoti is live; S1-E2-02, S1-E2-08, S1-E2-03 and S1-E10-06 then fill it in. Reporting is the one exception: a signed-in account that is still read-only can report what it reads, and anyone can use the public notice form (S1-E10-02).
+
+The launch gate's real risks sit outside the code: the Yoti contract and set-up (and whether Yoti onboards before the company exists, proposed for about 1 February 2027, with SRL or AB **OPEN** (Q55), question 4a), the DPIA (question 4c) and a lawyer's check of consent as the legal basis and of how parents are verified (section 6). If Yoti needs the SRL, real age checks can start only about six weeks before the test. With March limited to invited adults (decided 17 Oct 2026, 12:44), that no longer blocks the test, only going live to minors.
 
 #### 1.7.9 Slice gaps this map found
 
@@ -484,12 +492,12 @@ These are places where a story in the March slice depends on one that isn't in i
 | --- | --- | --- |
 | S1-E3-01 cover upload, S1-E5-05 avatar upload | S1-E10-05 picture check | Closed: uploads are on from launch and S1-E10-05 is Must and in the slice (Q18) |
 | S1-E5-02 sort, the Discover mix | S1-E5-03 ranking | Closed: S1-E5-03 is in the slice (Q46) |
-| Sign-up copy and the website's questions say under-16s need a parent's consent | S1-E2-03 | Closed: consent is the legal basis and S1-E2-03 is Must and in the slice (Q15) |
-| GDPR requests from real users in March | S1-E11-09 | Closed: 09a plus Word in the slice, PDF after (Q29) |
+| Sign-up copy and the website's questions say under-16s need a parent's consent | S1-E2-03 (after March since 17 Oct 2026, 12:44) | The March test is invited adults only (decided 17 Oct 2026, 12:44), so March copy says the test is for invited adults; the parental consent copy goes live with S1-E2-03, before minors join |
+| GDPR requests from real users in March | S1-E11-09, S1-E13-02 to 05 (after March since 17 Oct 2026, 12:44) | In March requests arrive by email at the contact address and are answered by hand within a month (decided 17 Oct 2026, 12:44); the self-service and staff tools come before going live |
 | S1-E3-01 story language, S1-E2-10 closed markets | S1-E11-05 markets and languages | Seed the open languages and markets in a migration for March; the admin screen follows |
 | Settings, flags, reserved names and the username word lists | S1-E11-03 (after March) | Seeded by migration for March; changing them means a new migration until S1-E11-03 lands |
 | Moderators approving a username false hit (S1-E2-04) | S1-E11-03 | The approval is one action on the account page in S1-E11-02 (in the slice) |
-| S1-E15-02 March numbers (return rate) | S1-E4-03 library (after March) | The reader records daily `chapter_reads` itself (S1-E4-01), which is all the return rate needs |
+| S1-E15-02 March numbers (return rate) | S1-E4-03 library (after March) | The reader records daily `chapter_reads` totals itself (S1-E4-01). Totals can't follow one reader from chapter N to N+1, so the March return rate is an aggregate approximation: reads of chapter N+1 within 7 days of its release divided by reads of chapter N. Only aggregated data, never per-reader records (decided 17 Oct 2026, 12:34) |
 | Comment and sign-up limits | S1-E10-12 (after March) | Supabase Auth's built-in limits and the account gate cover March (proposal); a fixed comment limit in the comment function |
 
 #### 1.7.10 Working this way with Claude Code
@@ -507,8 +515,8 @@ Added 16 Oct 2026 (late evening) at Robert's request. Screens 8.1 to 8.9 are on 
 #### 1.8.1 Shape
 
 - **Same codebase, staff routes.** The admin site lives in the same React app under `/staff`, loaded as a separate chunk so its code never ships in the reader's bundle. Plain components, no doodles (Definition of Done, design rules).
-- **The server decides, not the menu.** Every staff screen reads and writes only through `admin_*` database functions or staff edge functions (B27). Each one checks, in this order: a staff role, the permission for that area, a staff session from the company's Google Workspace sign-in (`is_staff_session()`), then does the work and writes the audit log in the same transaction. Hiding a menu item is a convenience, never the protection.
-- **Staff accounts with company SSO (decided 16 Oct 2026, late evening, Q30).** Staff log in to a staff account only through the company's single sign-on, which is Google Workspace (decided 17 Oct 2026, 34n). They may also have a personal writer account, kept separate, so the audit log stays clean and staff powers stay off an account that talks to minors in forums.
+- **The server decides, not the menu.** Every staff screen reads and writes only through `admin_*` database functions or staff edge functions (B27). Each one checks, in this order: a staff role, the permission for that area, a staff session from the company's Google Workspace sign-in on themagiccoffin.com (`is_staff_session()`; `STAFF_EMAIL_DOMAIN`), then does the work and writes the audit log in the same transaction. Hiding a menu item is a convenience, never the protection.
+- **Staff accounts with company SSO (decided 16 Oct 2026, late evening, Q30).** Staff log in to a staff account only through the company's single sign-on, which is Google Workspace (decided 17 Oct 2026, 34n), and only with an account on the Workspace domain themagiccoffin.com (read from the setting `STAFF_EMAIL_DOMAIN`, decided 17 Oct 2026, 12:47); in March staff use the normal login with a staff role until S1-E2-07b (decided 17 Oct 2026, 12:44). They may also have a personal writer account, kept separate, so the audit log stays clean and staff powers stay off an account that talks to minors in forums.
 
 #### 1.8.2 Navigation
 
@@ -545,6 +553,7 @@ Stage 1 staff roles are **owner**, **admin**, **moderator**, **support** and **c
 | Roles | grant any | grant moderator, support, content editor | None | None | None |
 | Stories: list and open | Act | Act | Act | View (titles and metadata) | None |
 | Stories: change (S1-E11-08) | Act | Act | Act | None | None |
+| Stories › Classics (S1-E11-16) | Act | Act | None | None | None |
 | Data requests | Act | Act | None | Act | None |
 | Schools and teacher checks | Act | Act | with the permission | None | None |
 | Website CMS | Act | Act | None | None | Act |
@@ -554,19 +563,19 @@ Stage 1 staff roles are **owner**, **admin**, **moderator**, **support** and **c
 | Metrics and logs | View | View | View (queue numbers) | None | None |
 | Audit log | View and export | View and export | None | None | None |
 
-Opening a market is owner-only in this proposal because it carries the legal check (S1-E11-05). Nobody can change their own role, and nobody, owner included, can edit or delete the audit log.
+Classics are managed only by staff with the admin role (and the owner); content editors will also hold the admin role (decided 17 Oct 2026, 12:44). Opening a market is owner-only in this proposal because it carries the legal check (S1-E11-05). Nobody can change their own role, and nobody, owner included, can edit or delete the audit log.
 
 **Two-factor and sessions**
 
 - Staff log in only through the company's Google Workspace sign-in, and Google's own two-step check is the second factor: no separate code in Ghemotoc (decided 17 Oct 2026, 11:53; Q30, 34n). Google Workspace's admin console must enforce 2-Step Verification for every staff account; that setting is part of S1-E2-07's set-up.
-- Supabase's own two-factor level (aal2) isn't used for staff. Instead `is_staff_session()` is true only when the session came from Google sign-in with an account on the company's Workspace domain, and every staff policy checks it (S1-E2-07).
+- Supabase's own two-factor level (aal2) isn't used for staff. Instead `is_staff_session()` is true only when the session came from Google sign-in with an account on the company's Google Workspace domain, themagiccoffin.com (read from the setting `STAFF_EMAIL_DOMAIN`, decided 17 Oct 2026, 12:47), and every staff policy checks it (S1-E2-07b; in March it returns true for any staff-role session, S1-E2-07a).
 - Lock-out, recovery and suspicious sign-in alerts are Google Workspace's (canvas 8.1).
 - Member log-ins (email, Google, Apple, Microsoft) never give staff access.
 - Staff sessions end after 12 hours (proposal), and the most sensitive actions ask the person to sign in with Google again (a fresh sign-in, proposal): changing a role, starting an export for someone else, "Emergency disable" and removing part of a writer's text.
 
 **Least privilege in practice**
 
-- Staff see the age group only: never the year of birth and never a photo or document (S1-E2-08).
+- Staff see the age group only: never the year of birth and never a photo or document (S1-E2-08), except staff handling a manual age check, who see the year of birth (decided 17 Oct 2026, 12:34). The record of processing must say so.
 - Private messages are hidden unless they are part of a report (S1-E11-02).
 - An email address is shown only after "Show", and that click is logged.
 - Sensitive reads are logged as well as changes: revealing an email, opening a draft chapter, opening an export file, opening an evidence pack or a teacher's proof.
@@ -606,9 +615,9 @@ Removing one passage instead of the whole story is also in line with DSA art. 14
 
 #### 1.8.6 Website CMS
 
-**What it covers:** the home page copy (S1-E11-06), notice banners (S1-E11-10), the seasonal doodle schedule (S1-E11-11) and help pages and questions (S1-E11-12). Sponsor banners are not part of it; they stay in Sponsors (S1-E12), so an ad can never be published as a notice.
+**What it covers:** the home page copy (S1-E11-06), notice banners (S1-E11-10; they show on the website and in the app from one table, which lives in the app's database until the website database exists, decided 17 Oct 2026, 12:44), the seasonal doodle schedule (S1-E11-11) and help pages and questions (S1-E11-12). Sponsor banners are not part of it; they stay in Sponsors (S1-E12), so an ad can never be published as a notice.
 
-**Where the content lives.** It was decided on 16 Oct 2026 that the public website has its own database, and later that evening (Q54) that its CMS is built new, from scratch, on that database and linked neatly to the front end. The design:
+**Where the content lives.** It was decided on 16 Oct 2026 that the public website has its own database, and later that evening (Q54) that its CMS is built new, from scratch, on that database and linked neatly to the front end. From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34); the March home page reads its copy from the locale files, and the CMS stories and the website database come later. The design:
 
 - The editors live in the app's admin site, so staff have one log-in with two-factor and one audit log.
 - They save through one edge function in the app's project, `website-cms`. It checks the role (content editor or admin) and `is_staff_session()`, writes to the website's database with a key that can only write the website's content tables and logs the change in the app's audit log. Staff are stored on the website side by their user ID only.
@@ -633,7 +642,7 @@ Four eyes: decided 16 Oct 2026, late evening (Q31), website copy goes live witho
 | --- | --- |
 | Access control | Deny by default; row-level security on every table; CI fails a migration that adds a table without RLS and policies |
 | Secrets | The service role key never reaches the client; secrets live in GitHub Actions secrets and Supabase's secret store; GitHub secret scanning and push protection on |
-| Staff accounts | Google Workspace sign-in only, with Google's 2-Step Verification enforced for every staff account (decided 17 Oct 2026, 11:53); database policies check `is_staff_session()`; staff actions written to `audit_log` |
+| Staff accounts | Google Workspace sign-in only, accepting only accounts on themagiccoffin.com (`STAFF_EMAIL_DOMAIN`, decided 17 Oct 2026, 12:47), with Google's 2-Step Verification enforced for every staff account (decided 17 Oct 2026, 11:53); database policies check `is_staff_session()`; staff actions written to `audit_log` |
 | User input | Markdown subset only; sanitised on the server before saving and again before display; `rel="nofollow ugc noopener"` on links; strict Content Security Policy |
 | Files | Type and size checks, EXIF stripping, the picture check on upload (S1-E10-05); a flagged file stays private for a moderator |
 | Abuse | Rate limits per account and per action; lower limits for new accounts; accessible bot challenge on sign-up |
@@ -652,6 +661,7 @@ Four eyes: decided 16 Oct 2026, late evening (Q31), website copy goes live witho
 - **Legal basis decided (16 Oct 2026, late evening, Q15): consent.** Under-16s need a parent's or guardian's consent (GDPR Art 8), so S1-E2-03 is on from launch. Consent must be as easy to withdraw as to give (Art 7(3)); what happens to an account when consent is withdrawn is on the lawyer's list (section 6).
 - **Rights built in:** export (Art 15 and 20), deletion in the app and on the web (Art 17 and app store rules), correction in settings (Art 16), objection where relevant (Art 21).
 - **Retention schedule** in `docs/retention.md`, enforced by `pg_cron` jobs. IP addresses are scrambled and kept 30 days (decided 16 Oct 2026, late evening, Q48).
+- **Real names on class certificates (decided 17 Oct 2026, 12:44):** the one place a legal name is stored. A student may print their real name with the school name on a class certificate; the name is stored only with that certificate and deleted 30 days after the class is archived, and the teacher is told in the app and by email to keep their own copies before then. Every other certificate uses the pen name (S1-E8-12, S1-E13-04).
 - **Staff access** on a need-to-know basis; interns and part-time moderators sign confidentiality terms before getting access (Q47).
 
 ### 1.11 Environments
@@ -726,31 +736,38 @@ Updated 16 Oct 2026 (late evening). Robert builds without a programmer (Q32), so
 | Iteration | What | Stories |
 | --- | --- | --- |
 | Iteration 1: clickable prototype | The screens in the design direction, tested with 5 to 10 writers and readers (proposal); no backend | Design work, plus S1-E1-03 tokens so the prototype and the real app share the same look |
-| Iteration 2: working prototype for a closed group | Logins, publishing, reading, comments and reporting. Adults only until S1-E2-08 and S1-E2-03 are live (proposal) | S1-E1-01 to 04, S1-E2-01, 02, 04, 05, 07, S1-E3-01 to 03, S1-E4-01, S1-E5-05, S1-E6-01, 05, S1-E7-01, S1-E10-01, 03, 04, S1-E11-01, S1-E13-03, S1-E14-01, 02 (24 stories) |
-| March MVP (proposal) | 20 writers publishing (decided 16 Oct 2026, from any open market) and 200 readers (proposal), on the web, with the age gate, parental consent, the picture check and the legal minimum | Iteration 2 plus the stories in the table below: 54 stories, about 594 hours |
+| Iteration 2: working prototype for a closed group | Logins, publishing, reading, comments and reporting. Adults only (the whole March test is invited adults only, decided 17 Oct 2026, 12:44) | S1-E1-01 to 04, S1-E2-01, 02, 04, 05, 07a, S1-E3-01 to 03, S1-E4-01, S1-E5-05, S1-E6-01, 05, S1-E7-01, S1-E10-01, 03, 04, S1-E11-01, S1-E14-01, 02 (23 stories) |
+| March MVP (proposal) | 20 writers publishing (decided 16 Oct 2026, from any open market) and 200 readers (proposal), on the web, invited adults only (decided 17 Oct 2026, 12:44), with the picture check, moderation and the legal minimum; the age check, parental consent and data rights come before minors go live | Iteration 2 plus the stories in the table below: 58 stories, about 498 hours (47 feature stories plus 11 epic checks) |
 | After March | Forums, spaces, private messages, the desktop and phone apps, banners, the website CMS and everything else, Must first, then Should | The rest of Stage 1 |
 
 **What stays in the March MVP**
 
 | Epic | Stories | Hours |
 | --- | --- | --- |
-| S1-E1 Foundations | 01, 02, 03, 04 (06, the database move, is Won't since 17 Oct 2026, 11:20: own Supabase from day one) | 48 |
-| S1-E2 Accounts and age gate | 01, 02, 03 (parental consent, now Must), 04 (usernames, now M), 05, 07 (staff with SSO), 08 (Yoti), 10 (country) | 96 |
-| S1-E3 Writing | 01, 02, 03, 04 (manage chapters, added 17 Oct 2026), 05, 06 (ratings and labels) | 72 |
-| S1-E4 Reading | 01, 04 (teaser and web reading), 06a (web: right-click and copy off, S) | 45 |
-| S1-E5 Discovery | 01, 02, 03 (the Discover mix), 05, 08 (a short website: hero, safety lines, questions), 09 (See all) | 54 |
-| S1-E6 and S1-E7 | 01 comments, 02 emoji reactions, 03 likes, 04 private downvote, 05 follows (02 and 04 added 17 Oct 2026); S1-E7-01 notifications | 36 |
-| S1-E10 Safety | 01, 02 (the one report form and TCO contact point), 03a (one queue with tiers and deadlines, M), 04, 05 (picture check), 06, 09 (removal orders), 10 (safeguarding), 08 ("copied from a published work" report) and 13 (safety contacts by country), both added 17 Oct 2026 | 120 |
-| S1-E11 Admin | 01, 02, 09a plus Word (L: the request log and deadline, about 12 hours, plus Word files, about 18) | 54 |
-| S1-E13 Data rights | 02, 03, 04, 05 (Word, S) | 39 |
-| S1-E14 Legal | 01, 02, 04 (Contact us) | 18 |
-| S1-E15 The March numbers | 02 | 12 |
-| **Total** | **54 stories: 4 L, 36 M, 14 S** | **about 594** |
+| S1-E1 Foundations | 01, 02, 03, 04 (06, the database move, is Won't since 17 Oct 2026, 11:20: own Supabase from day one), QA (epic check, S) | 51 |
+| S1-E2 Accounts and age gate | 01 (with the `invite_only` flag, proposal), 02 (with the `adults_only` flag, proposal), 04 (usernames, now M), 05, 07a (staff roles on the normal login, S), 10 (country), QA (epic check, S) | 48 |
+| S1-E3 Writing | 01, 02, 03, 04 (manage chapters, added 17 Oct 2026), 05, 06 (ratings and labels), QA (epic check, S) | 75 |
+| S1-E4 Reading | 01, 04 (teaser and web reading), 06a (web: right-click and copy off, S), QA (epic check, S) | 48 |
+| S1-E5 Discovery | 01, 02, 03 (the Discover mix), 05, 08 (a short website: hero, safety lines, questions), 09 (See all), QA (epic check, S) | 57 |
+| S1-E6 and S1-E7 | 01 comments, 02 emoji reactions, 03 likes, 04 private downvote, 05 follows (02 and 04 added 17 Oct 2026), QA (epic check, S); S1-E7-01 notifications, S1-E7-QA (epic check, S) | 42 |
+| S1-E10 Safety | 01, 02 (the one report form and TCO contact point), 03a (one queue with tiers and deadlines, M), 04, 05 (picture check), 06, 09 (removal orders), 10 (safeguarding), 08 ("copied from a published work" report) and 13a (safety contacts by country, seeded from research G4, S), both added 17 Oct 2026, QA (epic check, S) | 114 |
+| S1-E11 Admin | 01, 02, QA (epic check, S) | 27 |
+| S1-E14 Legal | 01, 02, 04 (Contact us), QA (epic check, S) | 21 |
+| S1-E15 The March numbers | 02, QA (epic check, S) | 15 |
+| **Total** | **58 stories: 2 L, 30 M, 26 S** | **about 498** |
+
+Updated 17 Oct 2026, 12:44: the March test is invited adults only, so S1-E2-08, S1-E2-03, S1-E2-07b, S1-E10-13b, S1-E11-09a, S1-E13-02 to 05 and S1-E13-QA move after March (next table). S1-E13 has no March story left.
 
 **What moves after March and why**
 
 | Story | Hours saved | Why it can wait |
 | --- | --- | --- |
+| S1-E2-08 Age check with Yoti | 30 | March is invited adults only (decided 17 Oct 2026, 12:44); needed before the first under-18 joins |
+| S1-E2-03 Parental consent | 12 | The same: needed before the first under-16 joins |
+| S1-E2-07b Google Workspace sign-in for staff | about 9 | In March staff use the normal login with a staff role (S1-E2-07a, decided 17 Oct 2026, 12:44) |
+| S1-E10-13b Safety contacts: editing screen and monthly check | about 9 | Contacts are seeded from research G4 for March; the monthly check starts at go-live (decided 17 Oct 2026, 12:44) |
+| S1-E13-02 to 05 and S1-E11-09a Data rights | 69 | In March, data requests arrive by email and are answered by hand (decided 17 Oct 2026, 12:44); needed before going live. S1-E13-02 is about 30 with the shared Word builder, 03 and 04 about 12 each, 05 about 3, 09a about 12 |
+| S1-E13-QA Epic check | 3 | No March story is left in the epic |
 | S1-E16-02 Desktop apps | 30 | Signed-in readers read in the browser until the apps exist (Q35). March is web only (decided 17 Oct 2026, 34o) |
 | S1-E3-08, S1-E4-09 App-only stories | not in the old slice | They need an app; writers are told that web reading is on |
 | S1-E8-01, 02, 05 Forums | 45 | Comments carry the conversation for 20 writers; forums are the first thing to add back if hours allow |
@@ -773,10 +790,10 @@ Added since the old slice: S1-E1-06 (12, dropped again on 17 Oct 2026), S1-E2-03
 **Capacity, honestly**
 
 - **Time available.** About 19 weeks to 1 March 2027. At 10 to 12 hours a week that is 190 to 230 hours, and less in November and December while the SSES courses take four evenings a week. A fair estimate is 150 to 200 hours.
-- **The MVP needs about 594 hours.** That is roughly three times what the evenings give. At 11 hours a week it is about 54 weeks, which puts real users around autumn 2027. To keep March with this scope you would need about 31 hours a week, every week, from now.
-- **The floor is high.** Foundations, the age gate, parental consent, the report form, removal orders, the moderation queue, the picture check, safeguarding and data rights come to about 280 hours before anyone writes or reads a single story. With minors on the platform and consent as the legal basis, none of that can go.
+- **The MVP needs about 498 hours** (invited adults only, decided 17 Oct 2026, 12:44; it was about 630 with minors in March). That is still two and a half to three times what the evenings give. At 11 hours a week it is about 45 weeks, which still puts real users around the end of summer 2027. To keep March with this scope you would need about 26 hours a week, every week, from now.
+- **The floor is high.** Foundations, the age gate, parental consent, the report form, removal orders, the moderation queue, the picture check, safeguarding and data rights come to about 280 hours before anyone writes or reads a single story. Limiting March to invited adults (decided 17 Oct 2026, 12:44) moves about 132 of those hours to the minors' launch gate; it doesn't remove them. With minors on the platform and consent as the legal basis, none of that can go before the first under-18 joins.
 - **The sizes assume Claude Code does the typing and you review.** A first-time builder is usually slower than this, not faster. Log the real hours for the first four stories and re-forecast in early December.
-- **Small cuts left inside the MVP** (each yours to make): Word files after March (about 18 hours), a one-page website instead of S1-E5-08 (about 9), a simple newest-plus-most-liked Discover instead of the ranking job (about 9). Together about 36 hours, which does not change the picture.
+- **Small cuts left inside the MVP** (each yours to make): a one-page website instead of S1-E5-08 (about 9), a simple newest-plus-most-liked Discover instead of the ranking job (about 9). Together about 18 hours, which does not change the picture. Word files after March is no longer a cut: Download my data holds every story as a Word file (decided 17 Oct 2026, 12:34).
 
 The real levers are hours a week and the date. Both are **OPEN** and Robert's call. My recommendation as CTO: keep this list as the scope, decide in November between more hours and a later test date, and keep forums as the first story to add back.
 

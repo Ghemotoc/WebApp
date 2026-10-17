@@ -76,7 +76,7 @@ How to reach us:
 
 - email [accessibility email];
 - use Contact us in Settings, Help or the footer;
-- or email support@ghemotoc.com.
+- or email hello@themagiccoffin.com.
 
 Tell us the page or the task, what happened and, if you like, what device and assistive technology you use. A person reads every message. We reply within [number] working days and tell you what we’ll do and when. If we can’t fix it quickly, we’ll help you get the content or do the task another way.
 

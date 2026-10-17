@@ -277,7 +277,7 @@ What we’re responsible for. We’re responsible for harm we cause by breaking 
 
 Other services. Some things on Ghemotoc come from other services, such as music and video you choose to play, or signing in with Google, Apple or Microsoft. Their own terms and age rules apply when you use them.
 
-Complaints. If something goes wrong, please tell us first through Contact us in Settings or at support@ghemotoc.com. We answer in Romanian or English. For decisions about content or accounts, you can also use the appeal routes in our Notice and action policy. If you’re not happy with how we handled a complaint, you can contact [consumer protection authority] or ANCOM, which supervises online platforms in Romania.
+Complaints. If something goes wrong, please tell us first through Contact us in Settings or at hello@themagiccoffin.com. We answer in Romanian or English. For decisions about content or accounts, you can also use the appeal routes in our Notice and action policy. If you’re not happy with how we handled a complaint, you can contact [consumer protection authority] or ANCOM, which supervises online platforms in Romania.
 
 The law. These terms are governed by [Romanian law / Swedish law: depends on where the company is registered; lawyer to confirm]. If you live in the EU, you keep the protection of the mandatory laws of the country where you live, and you can go to court there.
 

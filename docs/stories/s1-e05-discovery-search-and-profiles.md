@@ -29,6 +29,7 @@ As a reader, I want to sort stories in different ways so that I can explore beyo
 - **Priority:** Must · **Size:** S · **Depends on:** S1-E5-01, S1-E5-03 (popularity is the default sort and is there from the start, as the last criterion says)
 - **Acceptance criteria:**
   - Given any story list, when the reader opens "Sort", then the options are popularity (default), newest, oldest, A to Z, Z to A and by writer.
+  - Given A to Z or Z to A, when titles or writers are sorted, then the order follows the Romanian alphabet (ă after a, â after ă, î after i, ș after s, ț after t), using `Intl.Collator('ro')` in the app or the Postgres ICU collation "ro-x-icu" in the database (decided 17 Oct 2026, 12:44).
   - Given two stories with equal scores, when sorted by popularity, then the newer one appears first.
   - Given a chosen sort, when the reader moves to another list in the same session, then the choice is kept.
   - Given a shelf, when it is shown, then it keeps its own order (for example newest or popular) and Sort applies on its See all page (S1-E5-09). S1-E5-03 is in the March MVP, so popularity is there from the start (decided 16 Oct 2026, late evening, Q46).
@@ -100,22 +101,23 @@ As a reader, I want the doodle by the Discover greeting and the one by Search's 
 
 As a visitor without an account, I want a public home page that explains Ghemotoc and shows what people are reading so that I can decide whether to join or get the app.
 
-- **Priority:** Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) · **Size:** M · **Depends on:** S1-E1-03, S1-E1-04, S1-E11-06, S1-E11-12, S1-E5-03 (for the rows), S1-E5-09 (View more), S1-E16-02 (download links); back end: the website's own database and `public-shelves` (section 1.7, group A)
+- **Priority:** Should (proposal: for the March test a short version is enough, with the hero, the safety lines, the questions and the download buttons; the live rows can follow) · **Size:** M · **Depends on:** S1-E1-03, S1-E1-04, S1-E5-03 (for the rows), S1-E5-09 (View more); S1-E16-02 for the download links (after March); S1-E11-06 and S1-E11-12 later move the copy and questions to the website database (after March); back end for March: the locale files and the app's own public views or `public-shelves`, no website database (section 1.7, group A)
 - **Added:** 16 Oct 2026 (late evening). The website was on the canvas (1.1) but no story built it.
+- **Updated:** 17 Oct 2026, 12:34 (Robert): until the apps exist everything is on the web, so for March the public home page lives inside the web app: copy from the locale files, live rows from the app's own public views or `public-shelves`, no separate website database yet. The website CMS stories (S1-E11-06, 10, 11, 12) and the separate website database come later.
 - **Acceptance criteria:**
-  - Given the home page, when it loads, then the hero shows the published copy from the website's database in the visitor's language: the line above the headline, the two-line headline with its gold-underlined word, the line under it, the two buttons and the three short points. The copy is "Write stories. Get read." with "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." (decided 16 Oct 2026, late evening: no "articles"). If the read fails, the last published version shows.
-  - Given the safety block, when it is shown, then it includes "Yoti does the age check. We only get the result, never a photo." and the one messaging line (Q6, Q13): messaging is never possible between under-16s and adults, and for 16 and 17-year-olds it is off by default and only the teen can turn it on; both lines come from the CMS.
-  - Given the Trending, Completed and New and rising rows, when they load, then they come from `public-shelves`, which returns only public stories rated All ages or 13+: never chapter text from an app-only story, never a 16+ or 18+ story, never anything from a private class space and never a user ID. App-only stories show "In the app only".
+  - Given the home page, when it loads, then the hero shows the copy from the locale files in the visitor's language (from the website's database once S1-E11-06 and the website database exist): the line above the headline, the two-line headline with its gold-underlined word, the line under it, the two buttons and the three short points. The copy is "Write stories. Get read." with "Post your stories, poems and essays, one chapter at a time, and find the people who want to read them." (decided 16 Oct 2026, late evening: no "articles"). Once the copy comes from the website's database, the last published version shows if the read fails.
+  - Given the safety block, when it is shown, then it includes "Yoti does the age check. We only get the result, never a photo." and the one messaging line (Q6, Q13): messaging is never possible between under-16s and adults, and for 16 and 17-year-olds it is off by default and only the teen can turn it on; both lines come from the locale files for March (from the CMS later).
+  - Given the Trending, Completed and New and rising rows, when they load, then they come from the app's own public views or `public-shelves`, which return only public stories rated All ages or 13+: never chapter text from an app-only story, never a 16+ or 18+ story, never anything from a private class space and never a user ID. App-only stories show "In the app only".
   - Given a row with more than 20 stories, when it is shown, then it holds 20 in one scrolling line and ends with a "View more" card to its See all page (S1-E5-09).
   - Given the top bar and the footer, when they are shown, then both have the language drop-down (S1-E1-04).
-  - Given the questions section, when it loads, then the questions and answers come from the help and questions CMS (S1-E11-12) in the visitor's language, including "What is a class space?".
+  - Given the questions section, when it loads, then the questions and answers come from the locale files for March (from the help and questions CMS, S1-E11-12, later) in the visitor's language, including "What is a class space?".
   - Given the side-scrolling rows, when they are shown, then the row fades out on one side only, never both; every doodle and icon is an SVG file (Definition of Done, design rules).
   - Given any visitor, when the page loads, then it sets no cookies and loads no third-party script apart from the cookieless analytics (S1-E15-01), and each language version has the right `lang` attribute and one `h1`.
 - **Legal and compliance:**
   - Consumer law: "free", "no tracking ads", "you keep your rights" and the Yoti line must stay true while they are live (Law 363/2007). The Yoti line is true only while S1-E2-08 stores the result and nothing else.
   - The questions say 13 to 15-year-olds need a parent's or guardian's consent (Q8). That is now true: consent is the legal basis and S1-E2-03 is on from launch (Q15).
-  - The contest block (ages 13 to 19, a prize and a partner still in brackets) needs published contest rules, and for school partners the ROFUIP art. 178(2) check in S1-E8-12. The example contest copy names no announcement date (Q10).
-  - Decided (Q54): the website's CMS is new, built from scratch on its own database. For the March MVP a short version is enough (proposal): hero, safety lines, questions and the rows, with the copy in the locale files until the CMS stories land. Hosting: in the EU (Q38).
+  - No contest block for March: no contest is planned for now; contests are a campaign for later (decided 17 Oct 2026, 12:34). When one comes back it needs published contest rules, and for school partners the ROFUIP art. 178(2) check in S1-E8-12.
+  - Decided (Q54): the website's CMS is new, built from scratch on its own database. From March: inside the app until the website database exists (decided 17 Oct 2026, 12:34): for the March MVP the page is part of the web app, with the copy in the locale files until the CMS stories land. A short version is enough (proposal): hero, safety lines, questions and the rows. Hosting: in the EU (Q38).
 
 ##### S1-E5-09 See all page for a shelf
 
@@ -130,5 +132,21 @@ As a reader, I want a "View more" card at the end of a full shelf that opens a p
   - Given the See all page, when it is shown, then it respects ratings, blocks, app-only rules and removed content exactly as the shelf does, and the page has its own address so it can be shared.
   - Given covers on the See all page, when they are shown, then the full title fits on every drawn or automatic cover (Definition of Done, design rules).
 - **Legal and compliance:** none beyond the global checklist; no personal reading history is used to fill a shelf.
+
+##### S1-E5-QA Epic check: Discovery, search and profiles
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E5-01, S1-E5-02, S1-E5-03, S1-E5-05, S1-E5-08, S1-E5-09
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories and comes last among them in the build order. The epic's after-March stories (S1-E5-04, S1-E5-06, S1-E5-07) get the same check when they land (proposal).
+- **Main journeys:** a visitor goes from the public home page to Discover, browses by category and tag, sorts, opens a See all page and a writer profile.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting`, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. In March only invited adults sign up (`adults_only`, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove these protections are ready before minors are let in. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
 
 ---

@@ -13,7 +13,7 @@ As staff, I want an admin site that only verified staff can reach so that powerf
 - **Priority:** Must · **Size:** M · **Depends on:** S1-E2-07, S1-E1-02 (audit log)
 - **Updated:** 16 Oct 2026 (late evening): navigation, sensitive reads and staff sessions (section 1.8).
 - **Acceptance criteria:**
-  - Given a user without a staff role or without a staff session from the company's Google Workspace sign-in (`is_staff_session()`, S1-E2-07), when they open any admin route, then they are refused by the server, not only hidden in the interface.
+  - Given a user without a staff role or without a staff session from the company's Google Workspace sign-in on themagiccoffin.com (`is_staff_session()`, S1-E2-07; in March any staff-role session, S1-E2-07a), when they open any admin route, then they are refused by the server, not only hidden in the interface.
   - Given any admin action, when it is performed, then the audit log stores who, what, when and the before and after values.
   - Given a sensitive read (revealing an email, opening a draft, an export file, an evidence pack or a teacher's proof), when it happens, then it is logged too.
   - Given the audit log, when anyone tries to change or delete a row, then the database refuses, the owner included; admins and the owner can search it and export it as CSV.
@@ -84,7 +84,7 @@ As an admin, I want to change the words at the top of the public website's home 
   - Given a publish, when it is saved, then the audit log stores who, when, the date it goes live and the before and after copy (S1-E11-01).
   - Given a content editor or an admin, when they save or publish, then it works; anyone else is refused by the server (section 1.8.3).
   - Given Earlier versions, when staff press Restore on one, then its copy in both languages comes back into the editor as a draft and goes live only when it is published again.
-  - Given the public website, when the home page loads, then it reads the hero copy for the visitor's language from the website's own database (decided 16 Oct 2026), never from the app's database, and shows the last published version if the read fails.
+  - Given the public website, when the home page loads, then it reads the hero copy for the visitor's language from the website's own database (decided 16 Oct 2026), never from the app's database, and shows the last published version if the read fails. Until this story lands the March home page lives inside the web app with its copy in the locale files (decided 17 Oct 2026, 12:34); this story moves the copy to the website database.
 - **Legal and compliance:** consumer law: the copy must not mislead (Law 363/2007 on unfair commercial practices, from Directive 2005/29/EC). Claims such as "free", "no tracking ads" and "you keep your rights" must stay true for as long as they are live, so check them against the current terms and any paid plans before publishing; calling something "free" when users have to pay is on the always-unfair list (Annex I, point 20, to verify). Accessibility: the headline stays the page's one `h1`, the gold underline is decoration only and the `lang` attribute matches the copy's language (WCAG 2.2, 1.3.1 and 3.1.1). Four eyes (decided 16 Oct 2026, late evening, Q31): home page copy is logged only; other people review copy before it goes live, outside the tool.
 
 ##### S1-E11-07 Every story in the admin site
@@ -99,7 +99,7 @@ As a moderator or support person, I want to find any story by title, handle or u
   - Given the results, when they are shown, then each row has the title, the owner's handle, the owner's user ID in short form with a copy button, category, language, status, where it can be read, rating, chapter count, last update and open reports. It never shows year of birth, email or chapter text.
   - Given a draft story, when it appears in the results, then only its title and metadata show; its text opens only from a case or a data request, and opening it is logged with the reason (proposal).
   - Given the list, when staff look for bulk actions, then there are none: every change is made on one story in S1-E11-08.
-  - Given a support person, when they open a story, then they see its metadata but not the change controls; given a content editor, when they open Stories, then the server refuses.
+  - Given a support person, when they open a story, then they see its metadata but not the change controls; given a content editor, when they open Stories, then the server refuses. Stories › Classics is for the admin role only; content editors who work on Classics also hold the admin role (decided 17 Oct 2026, 12:44).
 - **Legal and compliance:** need-to-know access (GDPR Art 5(1)(f) and Art 32). A writer's unpublished drafts are their personal data and unpublished work, so reading them needs a reason that is logged. Searching by user ID uses the index on each story's `user_id`.
 
 ##### S1-E11-08 Staff can open and change any story
@@ -133,7 +133,8 @@ As a moderator or admin, I want to open any story and change its settings, visib
 
 As a support person, I want to find a user, log their data request and send them every story they wrote, plus a machine-readable copy of their data, so that we answer correctly and within the legal deadline.
 
-- **Priority:** Must (GDPR) · **Size:** L (split before building: 09a the request log, identity check, deadline, the machine-readable copy and the Word files, in the March MVP; 09b the PDF files, after March) · **Depends on:** S1-E11-01, S1-E11-02, S1-E13-02, S1-E2-07, S1-E7-01; S1-E2-03 for requests made by a parent; back end: section 1.7, B28
+- **Priority:** Must (GDPR) · **Size:** L (split before building: 09a the request log, identity check, deadline, the machine-readable copy and the Word files; 09b the PDF files; both after March since 17 Oct 2026, 12:44) · **Depends on:** S1-E11-01, S1-E11-02, S1-E13-02, S1-E2-07, S1-E7-01; S1-E2-03 for requests made by a parent; back end: section 1.7, B28
+- **Updated:** 17 Oct 2026, 12:44 (Robert): after March. The March test is invited adults only and data requests arrive by email and are answered by hand; this story comes before going live. Priority unchanged.
 - **Added:** 16 Oct 2026 (late evening), Robert's request (chat): "download as Doc or PDF every single story when a user wants to have a data request". Canvas 8.12.
 - **Acceptance criteria:**
   - Given Data requests, when staff open a new request, then they find the user by user ID, handle or email and record the type (a copy of my data, move my data, correct, delete, other), how it arrived (in the app, by email, by post) and the date it was received.
@@ -144,28 +145,29 @@ As a support person, I want to find a user, log their data request and send them
   - Given an export starts, when the job runs, then it finds every story by the owner's user ID, so stories published under an earlier handle or pen name are included, along with drafts and unpublished chapters.
   - Given each story, when the files are made, then there is one Word (.docx) file per story from the first version (09a; decided 16 Oct 2026, late evening, Q28 and Q29: writers may want to edit it or send it to an agent) and, once 09b lands, one .pdf, each with the title, the pen name, the user ID, the dates created, first published and last updated, the status and every chapter in order with its title and dates.
   - Given the Word and PDF files, when they are opened, then Romanian letters (ă, â, î, ș, ț) show correctly, headings are real headings so screen readers can use them, pictures in chapters are included with their alt text and music or video embeds are listed as links.
-  - Given the machine-readable copy, when it is built (09a), then it reuses the S1-E13-02 export (JSON of everything the user put on Ghemotoc plus their account data, including the user ID) and the Word file for each story; no EPUB (decided 16 Oct 2026, late evening, Q28).
+  - Given the machine-readable copy, when it is built (09a), then it reuses the S1-E13-02 export: one ZIP with the JSON file of everything the user put on Ghemotoc plus their account data, including the user ID, and the Word file for each story made by the shared Word builder that S1-E13-02 builds (decided 17 Oct 2026, 12:34); no HTML copy and no EPUB (decided 16 Oct 2026, late evening, Q28).
   - Given the files are ready, when staff choose, then they can send one file per story or one zip of all; the user gets a link that needs sign-in (or, for a parent, a one-time link to the checked email address) and expires after seven days.
   - Given the files, when staff look at the request, then they see the file names and sizes; opening a file's contents is possible but logged, because staff don't need to read them.
   - Given a request is closed, when it is stored, then the log keeps the user ID, the type, the dates, the identity check, which files were sent and who handled it, but not the files; export files are deleted after seven days (S1-E13-04).
   - Given a moderator or a content editor, when they open Data requests, then the server refuses; support, admins and the owner can use it.
 - **Legal and compliance:**
   - GDPR articles 12(3), 12(6) and 15(3) below are not in the research files (to verify against the regulation's text). GDPR Art 15 (a copy of the data, in a commonly used electronic form when the request was made electronically, Art 15(3)), Art 20 (portability: structured, commonly used and machine-readable), Art 12(3) (one month, extendable by two further months with notice within the first month), Art 12(6) (identity check) and Art 5(2) (the log is our proof).
-  - GDPR requires the machine-readable copy, not Word or PDF; the Word files are a service on top. Decided (Q29): 09a and Word are in the March MVP, about 30 hours (12 for the request log and deadline, 18 for Word); PDF after March.
+  - GDPR requires the machine-readable copy, not Word or PDF; the Word files are a service on top. Decided (Q29): 09a and Word were in the March MVP, about 30 hours; both moved after March on 17 Oct 2026, 12:44 (invited adults only, requests by email) (12 for the request log and deadline, 18 for Word); PDF after March. The Word builder itself is built in S1-E13-02, which comes first in the build order, and 09a reuses it (decided 17 Oct 2026, 12:34), so the 18 hours of Word work sit in S1-E13-02.
   - Under-16s, decided (Q27): a 13 to 15-year-old can download their own data from their own signed-in account; requests made on a child's behalf go through the parent or guardian checked against the consent record (S1-E2-03). Minors' legal capacity follows the Civil Code (art. 41 for 14 to 17-year-olds); an avocat confirms (section 6).
   - Tools: recommendation (Q49, pending): the `docx` npm library in an edge function for Word; the PDF tool is OPEN (question 34f). A library inside the edge function is simplest, while an HTML-to-PDF renderer gives tagged, accessible PDFs. A hosted renderer would be a new processor and needs a data processing agreement.
   - Large exports run as a job per story and are zipped at the end, so edge function time limits are never hit.
 
 ##### S1-E11-10 Website notice banners
 
-As a content editor, I want to put a short notice at the top of the website (for example "The First Chapter contest opens in February") so that visitors see news without a new release.
+As a content editor, I want to put a short notice at the top of the website and the app (for example news about a new feature) so that visitors see news without a new release.
 
-- **Priority:** Should · **Size:** S · **Depends on:** S1-E11-01, S1-E2-07; back end: the website's own database and the `website-cms` bridge (section 1.7, B31)
+- **Priority:** Should · **Size:** S · **Depends on:** S1-E11-01, S1-E2-07; back end: one notice table that the website and the app both read; until the website database exists (and in March) it lives in the app's database (decided 17 Oct 2026, 12:44); the `website-cms` bridge once the website database exists (section 1.7, B31)
 - **Added:** 16 Oct 2026 (late evening), Robert's request (chat): website CMS banners.
 - **Acceptance criteria:**
   - Given Website › Banners, when a content editor creates a notice, then they enter the text in English and Română (each up to 120 characters, proposal), an optional link to one of our own pages, a type (news, contest or important) and the pages it shows on (every page or the home page only).
   - Given a notice, when it is saved, then it has a "Show from" date and an optional "Show until" date, both at 00:00 Romanian time, and it can't be published unless both languages are filled in.
-  - Given two notices for the same page and time, when the website loads, then only one shows: the one with the latest "Show from" date.
+  - Given a published notice, when the website or the app loads, then both show it, read from the same table (decided 17 Oct 2026, 12:44).
+  - Given two notices for the same page and time, when the website or the app loads, then only one shows: the one with the latest "Show from" date.
   - Given the type, when the notice is shown, then its colours come from the design tokens and meet 4.5:1 contrast; it doesn't move focus, doesn't animate and is a labelled region that screen readers can find.
   - Given a visitor closes a notice, when they keep browsing, then it stays closed for that visit only (session storage, so no consent is needed).
   - Given a publish or a change, when it is saved, then the audit log stores who, when and the before and after; earlier versions can be restored as drafts.
@@ -207,14 +209,14 @@ As a content editor, I want to write and update help pages and frequently asked 
 
 ##### S1-E11-13 Support tickets inside the admin site
 
-As a staff member, I want every support request to arrive as a ticket in the admin site, linked to support@ghemotoc.com, so that we answer every person from one place with the user's account, reports and data requests beside the conversation.
+As a staff member, I want every support request to arrive as a ticket in the admin site, linked to hello@themagiccoffin.com, so that we answer every person from one place with the user's account, reports and data requests beside the conversation.
 
 - **Priority:** Must · **Size:** L (split before building: 13a inbox, ticket view and email in and out; 13b views, timers, canned replies, merge and reports) · **Depends on:** S1-E11-01, S1-E2-07, S1-E14-04, S1-E7-02 (email provider), S1-E10-02, S1-E11-09; back end: `tickets`, `ticket_messages`, `ticket_events`, an inbound-email webhook and an outbound mail sender (section 1.7)
-- **Added:** 17 Oct 2026, Robert (chat). Slice: after March (proposal); for the March MVP, Contact us messages arrive at support@ghemotoc.com and staff answer from that mailbox. Robert's words: "I do want the ticketing system to be integrated in the admin portal where everything is available", linked to a general email address and following normal ticketing logic. Refines Q60. Engine decided 17 Oct 2026: a ready-made external helpdesk (EU data hosting, DPA) runs behind these screens through its API; email in and out, threading and spam filtering come from the helpdesk, and our admin site shows and answers every ticket. Which product is **OPEN** (cheapest suitable option, research pending).
+- **Added:** 17 Oct 2026, Robert (chat). Slice: after March (proposal); for the March MVP, Contact us messages arrive at hello@themagiccoffin.com and staff answer from that mailbox. Robert's words: "I do want the ticketing system to be integrated in the admin portal where everything is available", linked to a general email address and following normal ticketing logic. Refines Q60. Engine decided 17 Oct 2026: a ready-made external helpdesk (EU data hosting, DPA) runs behind these screens through its API; email in and out, threading and spam filtering come from the helpdesk, and our admin site shows and answers every ticket. Which product is **OPEN** (cheapest suitable option, research pending).
 - **Acceptance criteria:**
-  - Given an email to support@ghemotoc.com, a Contact us form (S1-E14-04) or an in-app message, when it arrives, then a ticket is created with a number (#1042), subject, channel, the first message and, if the sender has an account, their user ID and username; an email from an unknown address creates a ticket marked "email only".
-  - Given a new ticket, when it is created, then the sender gets an acknowledgement email from support@ghemotoc.com with the ticket number in the subject, and the user also sees it under "Your support requests" in Settings.
-  - Given a staff reply, when it is sent, then it goes out from support@ghemotoc.com with the ticket number in the subject and the right threading headers, and the user's email reply lands back in the same ticket, not in a new one.
+  - Given an email to hello@themagiccoffin.com, a Contact us form (S1-E14-04) or an in-app message, when it arrives, then a ticket is created with a number (#1042), subject, channel, the first message and, if the sender has an account, their user ID and username; an email from an unknown address creates a ticket marked "email only".
+  - Given a new ticket, when it is created, then the sender gets an acknowledgement email from hello@themagiccoffin.com with the ticket number in the subject, and the user also sees it under "Your support requests" in Settings.
+  - Given a staff reply, when it is sent, then it goes out from hello@themagiccoffin.com with the ticket number in the subject and the right threading headers, and the user's email reply lands back in the same ticket, not in a new one.
   - Given a ticket, when staff work on it, then they can set status (New, Open, Pending on user, On hold, Solved, Closed), priority (low, normal, high, urgent), category (account, writing, reading, safety question, school or university, bug, other), assignee and tags, and every change is kept in the ticket's history.
   - Given the reply box, when staff choose "Internal note", then the note is visible to staff only and is never emailed.
   - Given the inbox, when staff open it, then they see views (My tickets, Unassigned, All open, Pending on user, Solved, Spam) with counts, and a first-reply timer against the target set in admin settings (proposal: one working day).
@@ -240,7 +242,7 @@ As a content editor, I want to build a page for a contest or campaign from ready
 - **Added:** 17 Oct 2026 at Robert's request ("a way for admins to make landing pages too for whenever there's a competition and so on"). Canvas 8.14 and the public contest page.
 - **Where the data lives (proposal):** in the app's database, not the website's, because a landing page shows stories, contest entries and signed-in actions. Written only through `admin_*` functions like every other staff change.
 - **Acceptance criteria:**
-  - Given Website › Landing pages, when a content editor or admin creates a page, then they pick a type (Contest, Campaign or Information), a name and an address `ghemotoc.com/c/<slug>` (proposal); a slug on the reserved names list or already in use is refused.
+  - Given Website › Landing pages, when a content editor or admin creates a page, then they pick a type (Contest, Campaign or Information), a name and an address `<site>/c/<slug>` (proposal), where the site comes from the brand config (today ghemotoc.themagiccoffin.com, decided 17 Oct 2026, 12:50); a slug on the reserved names list or already in use is refused.
   - Given the editor, when a page is built, then it uses only fixed blocks: Hero, Text, Key dates, Who can enter, Prize, How to enter, Rules, Sponsor, Featured stories, Questions and answers, Remind me. There is no free HTML, no custom script and no custom colour; the look comes from one of four brand themes.
   - Given any block, when it is edited, then English and Română are edited side by side with a phone and desktop preview.
   - Given blocks, when staff reorder them, then they move with Up and Down buttons that work from the keyboard (no drag-only control), and the page keeps one heading order (WCAG 2.2 AA).
@@ -263,7 +265,7 @@ As a content editor, I want to build a page for a contest or campaign from ready
 As an admin, I want to run a writing contest from the admin site so that writers can enter with a story they post on Ghemotoc and we can publish results and certificates without spreadsheets.
 
 - **Priority:** Should · **Size:** L · **Depends on:** S1-E11-14, S1-E3-05 (story settings), S1-E3-06 (ratings), S1-E8-12 (certificates), S1-E10-04 (statements of reasons)
-- **Added:** 17 Oct 2026 at Robert's request. Canvas 8.15. The First Chapter contest (writers aged 13 to 19) is the first planned contest.
+- **Added:** 17 Oct 2026 at Robert's request. Canvas 8.15. No contest is planned for now; contests are a campaign for later (decided 17 Oct 2026, 12:34). Who can enter uses the platform age groups (13 to 15, 16 to 17, 18 and over).
 - **Acceptance criteria:**
   - Given Contests, when an admin creates a contest, then they enter the name in English and Română, the dates entries open and close and the results date, who can enter (age groups 13 to 15, 16 to 17, 18 and over; markets; languages), what counts as an entry, an optional word limit, the prize and who delivers it, the judges, an optional approved sponsor campaign and the landing page.
   - Given a contest, when it is opened, then opening is refused until the full contest rules are published in both languages and linked from the landing page.
@@ -289,12 +291,12 @@ As an admin, I want to run a writing contest from the admin site so that writers
 
 ##### S1-E11-16 Add and manage public-domain classics
 
-As a content editor, I want to add public-domain books, stories, poems and plays from the admin site so that the Classics shelf grows without a developer and only works that are really free appear.
+As an admin, I want to add public-domain books, stories, poems and plays from the admin site so that the Classics shelf grows without a developer and only works that are really free appear.
 
 - **Priority:** Should · **Size:** L (split before building: 16a adding a work with the public-domain check and publishing it; 16b importing the lists in content/classics and the 1 January suggestions) · **Depends on:** S1-E11-01, S1-E3-01, S1-E3-03, S1-E5-06
 - **Added:** 17 Oct 2026 at Robert's request ("don't forget how the admins can add these classic public domain works"). Canvas 8.16 Classics. Data: content/classics/*.csv (research G5).
 - **Acceptance criteria:**
-  - Given Stories › Classics, when a content editor or admin adds a work, then they enter the title, author, the author's year of death, the original language, the kind (novel, short story, fairy tale, poem, play, essay), the source edition with its link (for example Wikisource) and, if the text is a translation, the translator and the translator's year of death.
+  - Given Stories › Classics, when an admin adds a work (only the admin role manages Classics; content editors also hold the admin role, decided 17 Oct 2026, 12:44), then they enter the title, author, the author's year of death, the original language, the kind (novel, short story, fairy tale, poem, play, essay), the source edition with its link (for example Wikisource) and, if the text is a translation, the translator and the translator's year of death.
   - Given those details, when the form checks them, then it shows per market whether the work is free: Romania, the EU and the UK when 70 years have passed since 1 January after the author's death (Law 8/1996 art. 28(1) and 34; research G5), and for a translation also after the translator's death; the US by publication date (research G5). A work can be published only in markets where it is free; elsewhere it is hidden.
   - Given a work, when the text is added, then staff paste it or upload a plain text or Markdown file; it is split into chapters at headings, with a preview where chapter titles can be fixed. Modern editors' notes, introductions and footnotes are left out unless they are free too.
   - Given the text, when staff correct a typo from the source, then the change is saved as a new version with a reason; staff never rewrite or abridge the work (proposal).
@@ -304,5 +306,21 @@ As a content editor, I want to add public-domain books, stories, poems and plays
   - Given 1 January, when the year changes, then the Classics area lists authors whose works have just become free (died 70 years before) as suggestions to add (16b; research G5 notes, for example, the authors who died in 1956 on 1 January 2027).
   - Given a reader report that a classic isn't public domain or the text is wrong, when it arrives, then it goes to the moderation queue like any report (S1-E10-01), and staff can unpublish the work at once.
 - **Legal and compliance:** only texts we know are free are used; a modern translation or edition can still be protected even when the author's work is free. Public-domain status differs by country, so the per-market check decides where a work is shown. Classics pages follow the normal ad rules (at most 2 slots a page). A lawyer's check of the public-domain test is on the lawyer's list (section 6).
+
+##### S1-E11-QA Epic check: Admin site
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E11-01, S1-E11-02
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories (S1-E11-09a moved after March, 12:44) and comes last among them in the build order. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-06, S1-E11-07, S1-E11-08, S1-E11-10, S1-E11-11, S1-E11-12, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) get the same check when they land (proposal).
+- **Main journeys:** staff sign in to the admin shell, find a user, act on the account and take a data request from logging to sending the files, with every step in the audit log.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting` and the staff personas the epic uses, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. In March only invited adults sign up (`adults_only`, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove these protections are ready before minors are let in. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
 
 ---

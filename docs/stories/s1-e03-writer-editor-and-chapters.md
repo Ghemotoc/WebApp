@@ -180,4 +180,20 @@ As a writer, I want my story to get a good-looking cover automatically if I skip
   - Given a story uses the automatic cover, when it is saved, then no cover file is stored; the cover is drawn from the story's id and title.
 - **Legal and compliance:** our own artwork, so no picture rights and no image check. Each cover is shown as real text plus a decorative background, so screen readers read the title once. OPEN: the "never changes" rule and the neighbour rule can clash in a row; proposal: the story page and the writer's own screens always show the id design, and only lists move a clashing card, using a second choice that is also taken from the id so the same row always looks the same.
 
+##### S1-E3-QA Epic check: Writer editor and chapters
+
+As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E3-01, S1-E3-02, S1-E3-03, S1-E3-04, S1-E3-05, S1-E3-06
+- **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories and comes last among them in the build order. The epic's after-March stories (S1-E3-07, S1-E3-08, S1-E3-09, S1-E3-10, S1-E3-11, S1-E3-12, S1-E3-13) get the same check when they land (proposal).
+- **Main journeys:** create a story with its settings and rating, write a chapter with autosave, publish, unpublish and schedule chapters, and reorder them.
+- **Acceptance criteria:**
+  - Given the epic's stories are merged, when the end-to-end suite runs, then Playwright tests walk the main journeys across those stories with the seed personas `adult_writer`, `teen_17`, `kid_14_ok` and `kid_14_waiting`, and every journey passes.
+  - Given a journey breaks where two stories meet, when it is found, then it is fixed in this pull request or ticketed as a GitHub issue that names the stories involved.
+  - Given every screen in the epic, when axe runs at 390, 768 and 1440 px wide, then it reports no serious or critical issues.
+  - Given the RLS tests, when they run as one suite (`npx supabase test db`), then every policy on every table the epic touches has an allowed and a denied test, with no gaps.
+  - Given `docs/code-tour.md`, when it is read, then it covers the epic: where its screens, hooks, tables, functions and jobs live and how one main journey travels through them.
+  - Given the check is finished, when the pull request is opened, then it includes a short epic report listing what works, the known gaps and every stub or mock still on (with the story that removes it, `docs/mocks.md`).
+- **Legal and compliance:** minors' journeys are tested with the under-16 (`kid_14_ok`, `kid_14_waiting`) and 16 to 17 (`teen_17`) personas, so the age gate, ratings, blocks and under-18 defaults are proved across stories, not only inside each one. In March only invited adults sign up (`adults_only`, decided 17 Oct 2026, 12:44), so the minor personas are seed data that prove these protections are ready before minors are let in. The test data is the seed personas only, never real user data (CLAUDE.md, Safety while building).
+
 ---

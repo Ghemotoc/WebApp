@@ -5,7 +5,7 @@ A writer-first social platform for stories, poems, essays and discussion. Stage 
 writing, reading, comments, follows, forums with user-created spaces, private
 messages, reporting and moderation, contextual banners, admin site.
 Launch: Romania first (decided 17 Oct 2026); English-speaking countries open later, one by one. The interface opens in Romanian for everyone; English is available in the language menu.
-Users include minors (13+). Design rules (covers, doodles, rows) are in the DoD.
+Users include minors (13+) once the platform goes live. The March 2027 MVP is for invited adults only (decided 17 Oct 2026, 12:44): the Yoti age check, parental consent, data-rights screens and Google staff sign-in come after March, so stories that build them are not in the March order. Keep the database ready for them (birth_year, age_band(), is_staff_session() stubs) so they slot in later. Design rules (covers, doodles, rows) are in the DoD.
 Read @docs/architecture.md and @docs/definition-of-done.md before planning.
 Decisions with dates and sources are in docs/decisions.md. Stories are in docs/stories/.
 
@@ -30,7 +30,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 2. Never use the service role key in client code. It is only for Edge Functions.
 3. Schema changes only through files in supabase/migrations/. Never suggest dashboard edits.
 4. No hard-coded user-facing strings. Add keys to both ro and en. Romanian uses ș and ț (comma below).
-5. Store no legal names and no full dates of birth. Age is birth_year (plus birth_month only when the year leaves the age unclear at 13 or 16) plus the Yoti result (age_check_result, age_checked_at, age_check_method). Never store a selfie, an ID image or an estimated age; the Yoti API key lives only in Edge Function secrets.
+5. Store no legal names and no full dates of birth. One exception: a class certificate may print a student's real name with the school name; it is deleted 30 days after the class is archived (decided 17 Oct 2026, 12:44). Age is birth_year (plus birth_month only when the year leaves the age unclear at 13 or 16) plus the Yoti result (age_check_result, age_checked_at, age_check_method). Never store a selfie, an ID image or an estimated age; the Yoti API key lives only in Edge Function secrets.
 6. Every new user-content type must be registered as reportable (reportable_type enum), have a report button and respect blocks.
 7. No tracking. No ad code except the non-personalised ad network in S1-E12-04; no other third-party scripts or cookies without an ADR.
 8. User text is a Markdown subset, sanitised on save and before display. Links get rel="nofollow ugc noopener".
@@ -47,6 +47,12 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 19. Every uploaded picture goes through the picture check (S1-E10-05) before anyone else sees it. No automated text moderation.
 20. Shelves of stories are one scrolling line of at most 20 with a "View more" card to a See all page.
 21. Every screen is responsive for every screen size: phones, tablets and desktops (decided 17 Oct 2026). Check each screen at 390, 768 and 1440 px wide; nothing overlaps, cuts off or scrolls sideways. Use design/renders/phone and design/renders/desktop as the two reference widths.
+
+## Names and domains are settings, not code (decided 17 Oct 2026, 12:47)
+- "Ghemotoc" is a working name until the name and domain are bought. Never hard-code the product name, domain, email addresses or handle in components, emails, SQL or tests.
+- Read them from one place: `src/config/brand.ts` (front end, from VITE_ environment variables) and the `settings` table or Edge Function secrets (back end). Renaming the product must be a change to that one place plus the locale files.
+- Staff Google sign-in (after March) accepts only accounts on the Google Workspace domain in `STAFF_EMAIL_DOMAIN`, today `themagiccoffin.com`.
+- Today's values (decided 17 Oct 2026, 12:50): contact and support email `hello@themagiccoffin.com`; working site `ghemotoc.themagiccoffin.com` once hosting is chosen, until the product's own domain is bought.
 
 ## Conventions
 - Database: snake_case, plural table names, uuid primary keys, created_at/updated_at timestamptz, soft delete with deleted_at; the owner column is user_id, other people get role names (reporter_user_id).
