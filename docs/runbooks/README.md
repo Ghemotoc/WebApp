@@ -6,7 +6,7 @@ Step-by-step instructions for things that go wrong or happen rarely. Created by 
 | --- | --- | --- |
 | `releasing-to-production.md` | Create the production Supabase and Cloudflare Pages projects, add the `production` environment with Robert as required reviewer, set `PRODUCTION_ENABLED`, tag a release | S1-E1-01 (workflow), before the first real user |
 | `deploy-and-rollback.md` | How staging and pull request previews build on Cloudflare Pages, pausing automatic deploys, rolling back to an earlier deployment | S1-E1-01 follow-up |
-| `branch-ruleset.md` | The ruleset on `main` that requires the three CI checks and a pull request | S1-E1-01 follow-up |
+| `branch-ruleset.md` | The ruleset on `main` that requires the three CI checks and a pull request. Created by Robert; not enforced while the repository is private on GitHub's Free plan (decided 17 Oct 2026, S1-E1-QA). Write this runbook when the plan changes and the ruleset starts to apply | S1-E1-01 follow-up |
 | [`supabase-github-integration.md`](supabase-github-integration.md) (written) | How migrations reach staging when main changes, what to do when one fails, never pushing from a session | S1-E1-02 |
 | [`staging-reset-and-seed.md`](staging-reset-and-seed.md) (written) | Resetting staging and loading the synthetic seed; never copying production | S1-E1-02 |
 | `restore.md` | Quarterly restore drill into a scratch project from Supabase backups and the nightly `pg_dump` | architecture.md 1.12, before real users |

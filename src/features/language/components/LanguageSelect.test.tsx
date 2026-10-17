@@ -23,18 +23,31 @@ const supabaseStandIn = vi.hoisted(() => ({
   accountLocale: 'ro',
   saveFails: false,
   savedLocales: [] as string[],
+  // Replaced by the stand-in client with a way to send it another Auth event.
+  sendAuthEvent: (() => undefined) as (event: string) => void,
 }));
+
+/** The part of a Supabase session the language feature reads. */
+interface StandInSession {
+  user: { id: string };
+}
+
+/** A signed-in persona's session, as the stand-in reports it. */
+const standInSession: StandInSession = { user: { id: 'persona' } };
 
 /** A stand-in client with only the calls the language feature makes. */
 function makeStandInClient() {
   return {
     auth: {
       getSession: async () => ({
-        data: { session: supabaseStandIn.isSignedIn ? { user: { id: 'persona' } } : null },
+        data: { session: supabaseStandIn.isSignedIn ? standInSession : null },
       }),
-      onAuthStateChange: (callback: (event: string) => void) => {
-        // Supabase reports the stored session straight after a listener is added.
-        window.setTimeout(() => callback('INITIAL_SESSION'), 0);
+      onAuthStateChange: (callback: (event: string, session: StandInSession | null) => void) => {
+        // Supabase reports the stored session straight after a listener is added; the test can
+        // also send later events (such as a repeated SIGNED_IN) through sendAuthEvent.
+        const session = supabaseStandIn.isSignedIn ? standInSession : null;
+        window.setTimeout(() => callback('INITIAL_SESSION', session), 0);
+        supabaseStandIn.sendAuthEvent = (event: string) => callback(event, session);
         return { data: { subscription: { unsubscribe: () => undefined } } };
       },
     },
@@ -81,6 +94,7 @@ afterEach(() => {
     accountLocale: 'ro',
     saveFails: false,
     savedLocales: [],
+    sendAuthEvent: () => undefined,
   });
 });
 
@@ -162,6 +176,22 @@ describe('the language drop-downs', () => {
 });
 
 describe('the account language', () => {
+  it('is not applied again when Supabase repeats the sign-in for the same person', async () => {
+    // The account says English; the person switches to Romanian on this device.
+    Object.assign(supabaseStandIn, { isConfigured: true, isSignedIn: true, accountLocale: 'en' });
+    renderApp();
+    await screen.findByRole('link', { name: 'Skip to content' });
+    fireEvent.change(languageDropDowns('Language').footer, { target: { value: 'ro' } });
+    await screen.findByRole('link', { name: 'Sari la conținut' });
+
+    // Supabase repeats SIGNED_IN (for example when the window gets focus again).
+    supabaseStandIn.sendAuthEvent('SIGNED_IN');
+    await new Promise((resolve) => window.setTimeout(resolve, 20));
+
+    // The person's choice stays on screen.
+    expect(screen.getByRole('link', { name: 'Sari la conținut' })).toBeInTheDocument();
+  });
+
   it('is shown as soon as the app opens for someone signed in, on any device', async () => {
     Object.assign(supabaseStandIn, { isConfigured: true, isSignedIn: true, accountLocale: 'en' });
     renderApp();

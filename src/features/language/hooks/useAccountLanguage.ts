@@ -5,11 +5,14 @@
  * Who calls it: AppLayout (src/app/shell/AppLayout.tsx), once for the whole app.
  * What it calls: api/profileLocale.ts to read profiles.locale, then i18next to switch the screen
  * and src/lib/language-preference.ts so this browser remembers it for signed-out visits.
- * When it runs: when the page opens with a stored session, and again whenever someone signs in.
+ * When it runs: once per signed-in person: when the page opens with a stored session, or when a
+ * different person signs in. Supabase repeats the sign-in event for the same person (for example
+ * when the window gets focus again); those repeats are ignored, so a language the person has just
+ * picked is never switched back by a late read (found by the S1-E1-QA epic check).
  * Without Supabase settings (getSupabaseClient() returns null) it does nothing.
  */
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useContext, useEffect } from 'react';
+import { I18nContext } from 'react-i18next';
 
 import { saveDeviceLanguage } from '@/lib/language-preference';
 import { getSupabaseClient, type AppSupabaseClient } from '@/lib/supabase';
@@ -35,16 +38,26 @@ function logReadFailure(error: unknown): void {
  *   rule 12) and the screen stays in the language it already shows.
  */
 export function useAccountLanguage(): void {
-  const { i18n } = useTranslation();
+  // The one translation instance from AppProviders. Not useTranslation(): that hands back a new
+  // object after every language change, which would restart this listener and re-apply the
+  // account language over the person's fresh choice (found by the S1-E1-QA epic check).
+  const { i18n } = useContext(I18nContext);
 
   useEffect(() => {
     let isMounted = true;
     let stopListening: () => void = () => undefined;
+    // The person whose account language is already on screen; null when nobody is signed in.
+    let appliedUserId: string | null = null;
 
-    /** Reads the account's language and shows it, if it differs from what is on screen. */
+    /**
+     * Reads the account's language and shows it, if it differs from what is on screen. If the
+     * person picks a language while the read is on its way, their choice wins.
+     */
     async function applyAccountLanguage(client: AppSupabaseClient) {
+      const languageBeforeRead = i18n.language;
       const accountLanguage = await readAccountLanguage(client);
       if (!isMounted || accountLanguage === null) return;
+      if (i18n.language !== languageBeforeRead) return;
       saveDeviceLanguage(accountLanguage);
       if (i18n.language !== accountLanguage) await i18n.changeLanguage(accountLanguage);
     }
@@ -56,9 +69,15 @@ export function useAccountLanguage(): void {
       if (client === null || !isMounted) return;
 
       // Step 2: Supabase reports the stored session first (INITIAL_SESSION), then each sign-in.
-      // Its advice is not to call Supabase inside this callback directly, so the read waits a tick.
-      const { data } = client.auth.onAuthStateChange((event) => {
-        if (!eventsThatBringAnAccount.has(event)) return;
+      // Apply the account language once per person: a repeated event for the same person is ignored.
+      // Supabase's advice is not to call it inside this callback directly, so the read waits a tick.
+      const { data } = client.auth.onAuthStateChange((event, session) => {
+        const userId = session?.user.id ?? null;
+        if (event === 'SIGNED_OUT') appliedUserId = null;
+        if (!eventsThatBringAnAccount.has(event) || userId === null || userId === appliedUserId) {
+          return;
+        }
+        appliedUserId = userId;
         window.setTimeout(() => void applyAccountLanguage(client).catch(logReadFailure), 0);
       });
       stopListening = () => data.subscription.unsubscribe();
