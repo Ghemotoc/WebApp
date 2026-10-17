@@ -2,7 +2,7 @@
 
 The map for a new developer: where the app starts, how one click travels to the database and back, where each kind of thing lives, and what to read first. Created by S1-E1-01. Every story that adds a feature, table, edge function or job adds a few lines here in the same pull request (CLAUDE.md, Readable code).
 
-Today (S1-E1-01) the app is a skeleton: one empty home page, the brand config, translations, the Supabase folder and CI. Sections below say which later story fills in each part, so you can tell what exists from what is planned.
+Today the app is a skeleton: one empty home page, the brand config, translations and CI (S1-E1-01), and the database baseline with its seed personas (S1-E1-02). Sections below say which later story fills in each part, so you can tell what exists from what is planned.
 
 ## Where the app starts
 
@@ -58,10 +58,11 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `supabase/config.toml` | Local Supabase settings; also read by Supabase's GitHub integration | S1-E1-01 |
 | `supabase/migrations/` | Every schema change, as SQL files. The only way the database changes (CLAUDE.md rule 3). Staging gets them from Supabase's GitHub integration when main changes | S1-E1-02 onwards |
 | `supabase/functions/` | Edge functions (Deno), the only code that may hold secrets | first story with a function |
-| `supabase/tests/` | pgTAP database tests: an allowed and a denied test for every policy | S1-E1-01 (smoke test), S1-E1-02 onwards |
-| `supabase/seed.sql` | Synthetic test data for local and staging; never real data | S1-E1-01, personas in S1-E1-02 |
+| `supabase/tests/` | pgTAP database tests: an allowed and a denied test for every policy, plus the CI guards (`001` RLS on every table, `002` table kinds and `user_id`) | S1-E1-02 onwards |
+| `supabase/seed.sql` | The 16 synthetic seed personas (accounts, profiles, staff roles); never real data | S1-E1-02 |
+| `supabase/README.md` | The database conventions every migration follows, the account gate and the persona list with the shared test password | S1-E1-02 |
 | `e2e/` | Playwright tests in a real browser, with axe accessibility checks | S1-E1-01 |
-| `scripts/` | Repository checks: the i18n check, the brand-value check, the generated-types check, the story issue sync, and their tests | S1-E1-01 |
+| `scripts/` | Repository checks: the i18n check, the brand-value check, the generated-types check, the story issue sync (S1-E1-01); the policy-test coverage check and the bundle secret scan (S1-E1-02); and their tests | S1-E1-01, S1-E1-02 |
 | `.github/workflows/` | CI (`ci.yml`), the disabled production release, the story issue sync | S1-E1-01 |
 | `.claude/` | Claude Code settings and the SessionStart hook that installs packages when the lock file changes | S1-E1-01 |
 | `docs/` | Architecture, Definition of Done, decisions, stories, runbooks, this tour | starter kit, then every story |
@@ -69,7 +70,22 @@ Things that need a secret or talk to another company (email, the picture check, 
 
 **Where the app runs.** Locally: Vite's dev server plus the Supabase CLI in Docker. Staging: Cloudflare Pages project `ghemotoc` builds `main` (`npm run build`, output `dist`) and gives each pull request a preview link; Supabase's GitHub integration applies migrations to the staging project. Production: a tagged release, approved in GitHub (`.github/workflows/release-production.yml`, switched off until a production project exists).
 
-**Checks.** `npm run lint`, `npm run typecheck`, `npm run types:check`, `npm test`, `npx supabase test db`, `npm run test:e2e`, `npm run i18n:check`. CI runs all of them on every pull request.
+**Checks.** `npm run lint`, `npm run typecheck`, `npm run types:check`, `npm test`, `npx supabase test db`, `npm run test:e2e`, `npm run i18n:check`, and after a build `npm run scan:bundle`. CI runs all of them on every pull request.
+
+## The database baseline (S1-E1-02)
+
+Five tables exist, each with row-level security and only read policies; every write will go through a function a later story adds:
+
+| Table | Holds | Who can read it |
+| --- | --- | --- |
+| `profiles` | one row per account: the user ID, year of birth (and month when needed), the age check result | the account's owner only |
+| `staff_roles` | which staff role each team member holds | the person themselves; owner and admin see all |
+| `feature_flags`, `settings` | switches and values (`invite_only`, `adults_only` on for March) | anyone, for rows marked public; owner and admin see all |
+| `audit_log` | every staff action, written only by `log_staff_action()`; nobody can change or delete a row | owner and admin |
+
+The **account gate** is a handful of SQL functions in `supabase/migrations/…_account_gate.sql`. Every write policy in later stories calls `is_active_member()`, and every under-18 protection reads `age_band()`. Staff checks use `is_staff(role)` and `is_staff_session()`. `supabase/README.md` explains them and what each later story fills in.
+
+**Following one check end to end (example for a later story):** a writer presses Publish → the hook calls `supabase.rpc('publish_chapter', …)` → Postgres runs the function as that user → the chapters policy asks `is_active_member()` → that calls `account_state(auth.uid())`, which reads `profiles`, `auth.users` and `feature_flags` → false for, say, kid_14_waiting, so the database refuses and the screen shows the plain-language message.
 
 ## Start here
 
@@ -80,6 +96,6 @@ Read in this order; each file's header comment says what it is for and where thi
 3. `src/features/home/components/HomePage.tsx` and its test: the smallest complete feature.
 4. `src/config/brand.ts` and `src/lib/i18n.ts`: where the name and the words come from.
 5. `src/locales/ro/common.json` and `src/locales/en/common.json`: the interface text.
-6. `supabase/config.toml`, `supabase/seed.sql`, `supabase/tests/database/000-smoke.test.sql`: the database side.
+6. `supabase/README.md`, then `supabase/migrations/` in order, `supabase/seed.sql` and `supabase/tests/database/010-profiles.test.sql`: the database side and how a policy is tested.
 7. `.github/workflows/ci.yml`: what has to pass before anything merges.
 8. `e2e/home.spec.ts` and `scripts/`: how the checks prove each rule.

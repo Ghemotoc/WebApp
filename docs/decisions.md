@@ -42,6 +42,9 @@ Every decision Robert has made, with its date and source. The live list is the m
 | The brand-name check ignores letter case: any spelling of the product name, site domain, contact addresses or handle fails CI outside `src/config/brand.ts` and the locale files | Claude Code session S1-E1-01, 17 Oct 2026 |
 | When a `VITE_BRAND_*` variable is missing, `src/config/brand.ts` uses today's values, so builds work without setting variables in Cloudflare | Claude Code session S1-E1-01, 17 Oct 2026 |
 | The production release workflow covers the web app only; how migrations reach the production database is decided when the production Supabase project exists | Claude Code session S1-E1-01, 17 Oct 2026 |
+| S1-E1-02 creates minimal `profiles` (user ID and age columns) and `staff_roles` tables, so the account gate and the seed personas work now; S1-E2-01 and S1-E2-07a add the rest | Claude Code session, epic S1-E1 plan, 17 Oct 2026 |
+| The seed personas share one documented test password, the same locally and on staging (synthetic accounts only) | Claude Code session, epic S1-E1 plan, 17 Oct 2026 |
+| The /design components page is reachable locally and on staging only, never in production | Claude Code session, epic S1-E1 plan, 17 Oct 2026 |
 
 ## Notes from the CTO pack (decisions applied to the stories)
 
