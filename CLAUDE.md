@@ -67,6 +67,7 @@ Write every file so a junior developer who joins later can read it and change it
   - Inside a function, each step gets a short plain-English comment, so a reader can follow it from top to bottom without knowing the libraries. Comments explain what the step does and why; they never just repeat the code word for word.
   - Any rule from a law, a decision or the DoD gets a comment naming its source ("GDPR art. 8: under-16s need a parent's consent; story S1-E2-03").
   - When code changes, its comments change in the same commit. A comment that no longer matches the code is a bug.
+- Code comments, doc comments, commit messages and docs/ are in English only (decided 17 Oct 2026, 12:29). User-facing text stays in the ro and en locale files.
 - `docs/code-tour.md` is the map for a new developer: where the app starts (`index.html` → `src/main.tsx` → the router → each feature), how one click travels (screen → hook → Supabase call → RLS policy → table, and back), where each kind of thing lives, and a "start here" reading order. S1-E1-01 creates it; every story that adds a feature, table, edge function or job adds a few lines to it in the same pull request.
 - Handle errors where they happen with a plain message; never swallow an error silently.
 - One pattern everywhere: copy the structure of an existing feature folder instead of inventing a new one. Each folder in src/features/ has a short README.md saying what it holds and which story built it.
