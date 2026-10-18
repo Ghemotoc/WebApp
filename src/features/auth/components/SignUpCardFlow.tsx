@@ -22,7 +22,8 @@ import { SignUpCardBody } from './SignUpCardBody';
 /** What the flow needs from the page. */
 interface SignUpCardFlowProps {
   gateReason: InviteGateReason | 'checking' | null;
-  hasInviteCode: boolean;
+  /** The code in /join/<code>, or null on /sign-up. */
+  inviteCode: string | null;
   form: ReturnType<typeof useSignUpForm>;
   context: SignUpContext | null;
   legalFailed: boolean;
@@ -38,10 +39,12 @@ export function SignUpCardFlow(props: SignUpCardFlowProps) {
   const { t } = useTranslation('auth');
   const { gateReason, form } = props;
   if (gateReason === 'checking') return <p className="m-0 text-body">{t('invite.checking')}</p>;
-  if (gateReason !== null) return <InviteGate reason={gateReason} />;
+  if (gateReason !== null) {
+    return <InviteGate reason={gateReason} codeFromAddress={props.inviteCode} />;
+  }
   return (
     <>
-      {props.hasInviteCode && form.sentTo === null && (
+      {props.inviteCode !== null && form.sentTo === null && (
         <Notice tone="success">{t('invite.accepted')}</Notice>
       )}
       {props.legalFailed && <Notice tone="error">{t('signUp.errors.legalNotLoaded')}</Notice>}

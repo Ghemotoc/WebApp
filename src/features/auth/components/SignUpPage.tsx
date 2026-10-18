@@ -127,7 +127,7 @@ export function SignUpPage() {
         </div>
         <SignUpCardFlow
           gateReason={gateReason}
-          hasInviteCode={inviteCode !== null}
+          inviteCode={inviteCode}
           form={form}
           context={context}
           legalFailed={legalFailed}

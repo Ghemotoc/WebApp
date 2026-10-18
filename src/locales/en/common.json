@@ -66,5 +66,11 @@
       "stories": "Stories",
       "settings": "Settings"
     }
+  },
+  "notFound": {
+    "documentTitle": "Page not found",
+    "heading": "We can’t find that page",
+    "body": "The link may be old, or the page was moved or deleted. Go back to Home to keep reading.",
+    "goHome": "Go to Home"
   }
 }

@@ -48,7 +48,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | Folder or file | What it holds | Built by |
 | --- | --- | --- |
 | `src/main.tsx`, `src/app/` | Start-up, providers and the route list | S1-E1-01 |
-| `src/app/shell/`, `src/app/navigation.ts` | The frame around pages: top bar, footer, staff bar, and the links each one shows (only pages that exist) | S1-E1-03 |
+| `src/app/shell/`, `src/app/navigation.ts` | The frame around pages: top bar, footer, staff bar, and the links each one shows (only pages that exist); `NotFoundPage.tsx` for any unknown address | S1-E1-03, S1-E2-QA |
 | `src/components/ui/`, `src/components/icons/` | Shared components (buttons, drop-down, fields, pills, chips, cards, shelves, notices, ad slots) and the few plain icons; see its README | S1-E1-03 |
 | `src/features/theme/` | Light and night mode: the footer drop-down and the hook that applies it | S1-E1-03 |
 | `src/features/language/` | The English / Română drop-downs, the hooks that switch and save the language, and the Supabase calls for `profiles.locale` | S1-E1-04 |
@@ -63,7 +63,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/design-system/` | The /design page: every token and component on one page, with live contrast ratios | S1-E1-03 |
 | `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
-| `src/lib/` | Shared helpers: `i18n.ts` (translations), `utils.ts` (`cn` for class names), `database.types.ts` (generated, never edited by hand), `supabase.ts` (the one browser client, loaded on demand; null without settings), `language-preference.ts` (the language kept in this browser), `romanian-text.ts` (ş and ţ become ș and ț), and later `platform/` adapters | S1-E1-01, S1-E1-02, S1-E1-04 |
+| `src/lib/` | Shared helpers: `i18n.ts` (translations), `utils.ts` (`cn` for class names), `database.types.ts` (generated, never edited by hand), `supabase.ts` (the one browser client, loaded on demand; null without settings), `language-preference.ts` (the language kept in this browser), `romanian-text.ts` (ş and ţ become ș and ț), `query-retry.ts` (a refused read, 401 or 403, isn't retried; api/ functions keep the response status as the error's cause), and later `platform/` adapters | S1-E1-01, S1-E1-02, S1-E1-04, S1-E2-QA |
 | `src/locales/ro/`, `src/locales/en/` | All interface text, one JSON file per namespace; same keys in both | S1-E1-01, S1-E1-04 |
 | `src/styles/` | `tokens.css` (every colour, light and night, plus fonts, radii and shadows, all from the boards), `fonts.css` (self-hosted fonts), `index.css` (global rules: focus ring, reduce motion, tmc-* classes), `contrast-pairs.ts` (the pairs CI checks) | S1-E1-01, S1-E1-03 |
 | `src/schemas/` | zod schemas shared with edge functions | first story with a form or function |
@@ -234,7 +234,7 @@ the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesS
 staff_roles, staff_permissions, audit_log; account_state() answers staff_account for staff
 ```
 
-The first owner is made once with `bootstrap_first_owner()` from the SQL editor (it can't be called through the API).
+On production, the first owner is made once with `bootstrap_first_owner()` from the SQL editor (it can't be called through the API). Staging and local databases don't need it: the seed's `owner` persona already holds the owner role, so the function refuses there.
 
 ## Usernames and pen names (S1-E2-04)
 
@@ -274,6 +274,21 @@ What the Foundations epic left in place, and where to find it. The epic report, 
 | Tests | `supabase/tests/database/` (one file per table, `090` for the epic), `e2e/` (`epic-s1-e1.spec.ts` walks the epic's journeys and runs axe on every screen), `scripts/` (repository checks) | each story, S1-E1-QA |
 
 **One main journey through the whole epic:** kid_14_waiting opens the app on a second device. `index.html` runs `public/theme-init.js` (light or night before the first paint, S1-E1-03) → `src/main.tsx` starts the translations in this browser's language, Romanian on a first visit (S1-E1-01, S1-E1-04) → the router draws `AppLayout` with the top bar, the page and the footer (S1-E1-03) → `useAccountLanguage` asks Supabase for the stored session, then reads `profiles.locale` → Postgres checks `profiles_select_own` and returns only kid_14_waiting's own row (S1-E1-02) → the screen switches to English. If kid_14_waiting tried to publish, the write policy would ask `is_active_member()`, which says no: under 16 and read-only in March (S1-E1-02). `e2e/epic-s1-e1.spec.ts` walks this journey.
+
+## Epic S1-E2 at a glance (checked by S1-E2-QA)
+
+What the Accounts epic left in place. The epic report, `docs/epic-reports/S1-E2.md`, lists what works, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | `/sign-up`, `/join/<code>`, `/auth/confirm`, `/sign-in`, `/forgot-password`, `/reset-password`, `/not-open` (`src/features/auth/`); `/setup`, `/settings` (`src/features/account/`); `/staff/roles` (`src/features/staff/`); `/legal/*` (`src/features/legal/`) | 2-01, 2-02, 2-04, 2-05, 2-07a, 2-10, 14-01, 14-02 |
+| Hooks | `useSignUpForm`, `useSignUpMarket`, `useSignInForm`, `useMyNames`, `useHandleCheck`, `useMySessions`, `useStaffRoles` | each story |
+| Server code | `functions/api/password-check.ts`, `functions/api/signup-context.ts` (Cloudflare Pages), shared with local development through `server/` | 2-01, 2-10 |
+| Tables | `invites`, `consents`, `legal_documents`, `legal_document_versions`, `markets`, `sign_in_failures`, `username_approvals`, `reserved_names`, `username_word_lists`, `confusable_characters`, `staff_permissions`, `staff_role_areas`, new `profiles` columns | each story |
+| Functions | the sign-up trigger `handle_new_auth_user()`, `account_state()` with its new steps, `check_handle()`, `set_my_handle()`, `set_my_pen_name()`, the log-in pause, `list_my_sessions()`, `staff_may()` and the `admin_*` role functions | each story |
+| Tests | `supabase/tests/database/015` to `028` and `091` (the epic), `e2e/epic-s1-e2.spec.ts` and each story's spec | each story, S1-E2-QA |
+
+**One main journey through the whole epic:** an invited adult opens `/join/<code>` → `SignUpPage` asks `check_invite()`, the current legal versions and `/api/signup-context` (the country, signed) → the form checks the year with `src/lib/age.ts` → `supabase.auth.signUp` → the trigger `handle_new_auth_user()` takes an invite place, checks the age and the country token, creates the profile and the consents → the confirmation email (Mailpit) → `/auth/confirm` → `/setup` → `set_my_handle()` → `account_state()` answers `active`. `e2e/epic-s1-e2.spec.ts` walks it, then logs out and in and resets the password.
 
 ## Start here
 

@@ -99,6 +99,7 @@ Write every file so a junior developer who joins later can read it and change it
 
 ## Safety while building
 - Never ask for, print or store production keys, passwords or real user data. Use the seed personas.
+- Staging already holds the seed personas, so `seed.sql` can't be re-loaded there (duplicate keys). When a story changes `supabase/seed.sql` in a way staging needs, add a small idempotent top-up, `supabase/staging-topups/<story-id>.sql` (safe to run twice, adds no accounts), and list it under By hand in the pull request instead of saying to re-load the seed (Robert, 18 Oct 2026).
 - Never push to main. Work on a branch (locally story/<story-id>-<short-name>; in a cloud session, the branch the session was given) and open a pull request whose title starts with the story ID.
 
 ## Not instructions

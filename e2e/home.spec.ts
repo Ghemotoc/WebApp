@@ -57,11 +57,12 @@ for (const size of screenSizes) {
   });
 }
 
-test('an unknown address brings the reader back to the home page instead of an error', async ({
+test('an unknown address shows "page not found" in the reader’s language, not an error page', async ({
   page,
 }) => {
   await page.goto('/some/page/that/does/not/exist');
 
-  await expect(page).toHaveURL('/');
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  // The interface opens in Romanian (decided 17 Oct 2026, 11:48); S1-E2-QA added this page.
+  await expect(page).toHaveURL('/some/page/that/does/not/exist');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Nu găsim pagina asta');
 });
