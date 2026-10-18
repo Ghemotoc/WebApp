@@ -73,5 +73,29 @@
     "heading": "We can’t find that page",
     "body": "The link may be old, or the page was moved or deleted. Go back to Home to keep reading.",
     "goHome": "Go to Home"
+  },
+  "errorPage": {
+    "documentTitle": "Something went wrong",
+    "heading": "Something went wrong on our side",
+    "body": "It isn’t your fault. Try again. If it keeps happening, contact us and quote the error code if one is shown.",
+    "code": "Error code {{code}}",
+    "tryAgain": "Try again",
+    "goHome": "Go to Home",
+    "contactUs": "Contact us",
+    "whatWeSendLabel": "What we send to our error log:",
+    "whatWeSend": "the type of error, the page and the app version. Never your email, your IP address or anything you wrote."
+  },
+  "maintenance": {
+    "documentTitle": "{{productName}} is being updated",
+    "heading": "We’re updating {{productName}}",
+    "body": "You can’t read or post for a short while. Everything you saved before is safe.",
+    "checkAgain": "Check again",
+    "checking": "Checking…",
+    "staffLine": "Staff can still sign in.",
+    "staffSignIn": "Staff sign-in"
+  },
+  "offline": {
+    "offline": "You’re offline. Pages that need the internet won’t load until you’re back online.",
+    "backOnline": "You’re back online."
   }
 }

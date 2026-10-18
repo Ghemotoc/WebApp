@@ -3,8 +3,9 @@
  * from Robert's staging check, 17 Oct 2026; the copy is board 7.4, States, card 1).
  *
  * Before this, an unknown address sent people to the home page without a word. This is the small
- * March version: the heading, one line and "Go to Home". S1-E1-05 (after March) finishes the
- * board: the search button (it needs Search, S1-E5-04) and the doodles.
+ * March version: the heading, one line and "Go to Home". It stays this way for now (S1-E1-05,
+ * 18 Oct 2026): the board's search button waits for Search (S1-E5-04), and its doodles for the
+ * story that sets up doodles with token colours.
  * Who shows it: the router's catch-all route (src/app/router.tsx).
  */
 import { useTranslation } from 'react-i18next';

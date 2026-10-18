@@ -18,6 +18,17 @@ import { pagesFunctionsPlugin } from './server/pages-functions-plugin.ts';
 import { readBrand } from './src/config/brand.ts';
 
 /**
+ * The version an error report names (S1-E1-05): the first seven characters of the commit
+ * Cloudflare Pages is building (it sets CF_PAGES_COMMIT_SHA), or "local" anywhere else.
+ *
+ * @returns for example "a1b2c3d"
+ */
+function appVersion(): string {
+  const commit = process.env.CF_PAGES_COMMIT_SHA ?? '';
+  return commit === '' ? 'local' : commit.slice(0, 7);
+}
+
+/**
  * A small Vite plugin that swaps %BRAND_PRODUCT_NAME% in index.html for the product name,
  * so the name lives only in the brand config (CLAUDE.md: names are settings, not code).
  *
@@ -39,6 +50,8 @@ export default defineConfig(({ mode }) => {
   return {
     // pagesFunctionsPlugin serves functions/ (Cloudflare Pages Functions) locally (S1-E2-01).
     plugins: [react(), tailwindcss(), brandTitlePlugin(brand.productName), pagesFunctionsPlugin()],
+    // The build's version, read by src/config/appVersion.ts for error reports (S1-E1-05).
+    define: { 'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion()) },
     resolve: {
       // "@/..." means "src/...", so imports don't need long ../../ chains.
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
