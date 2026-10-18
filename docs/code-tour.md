@@ -78,7 +78,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `e2e/` | Playwright tests in a real browser, with axe accessibility checks. `e2e/support/personas.ts` signs a seed persona in against the local Supabase (no sign-in screen needed). Tests run one at a time, because they share the personas in one database | S1-E1-01, S1-E1-04, S1-E1-QA |
 | `scripts/` | Repository checks: the i18n check, the brand-value check, the generated-types check, the story issue sync (S1-E1-01); the policy-test coverage check and the bundle secret scan (S1-E1-02); and their tests | S1-E1-01, S1-E1-02 |
 | `.github/workflows/` | CI (`ci.yml`), the disabled production release, the story issue sync | S1-E1-01 |
-| `.claude/` | Claude Code settings and the SessionStart hook that installs packages when the lock file changes | S1-E1-01 |
+| `.claude/` | Claude Code settings and the SessionStart hook: on every start and resume it puts Node 24 first on PATH (through `CLAUDE_ENV_FILE`), starts Docker for the local Supabase stack if it is down, and installs packages when the lock file changes | S1-E1-01, Tooling (18 Oct 2026) |
 | `docs/` | Architecture, Definition of Done, decisions, stories, runbooks, this tour; `mocks.md` (mocks and stubs still on); `epic-reports/` (one report per epic check) | starter kit, then every story |
 | `design/` | Boards (source of truth for screens), renders and pictures | starter kit |
 
