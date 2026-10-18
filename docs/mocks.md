@@ -19,6 +19,8 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | `account_state()`: parental consent | under-16s are always `awaiting_parental_consent` (or `minor_not_admitted` while `adults_only` is on) | S1-E2-03 | same |
 | `account_state()`: sanctions | no suspensions or bans are checked yet | S1-E10-06 | same |
 | `account_state()`: age check | while `adults_only` is on, adults are active without a Yoti check | S1-E2-08 | same |
+| The country of the connection, locally | `server/pages-functions-plugin.ts` answers `/api/signup-context` with `LOCAL_FAKE_COUNTRY` (Romania by default) or a test's `X-Fake-Country` header, signed with `SIGNUP_CONTEXT_SECRET` from the environment | stays for local development and tests; Cloudflare's own country is used on staging and production (`functions/api/signup-context.ts`) | real on staging once `SIGNUP_CONTEXT_SECRET` and the Vault secret are set (by-hand list); without them every country counts as unknown, which the invited test still admits |
+| Markets | seeded by migration; no screen yet | S1-E11-05 | same |
 | Invites | four test codes seeded by `supabase/seed.sql`; no screen makes new ones yet | S1-E11-17 (admin screen and `admin_create_invite()`) | loaded with the seed (`docs/runbooks/staging-reset-and-seed.md`) |
 | Signing in for tests | e2e tests still sign personas in from code (`e2e/support/personas.ts`) where the log-in screen isn't what is tested; `e2e/sign-in.spec.ts` uses the real screen | stays for tests only | the log-in screen works on staging (S1-E2-05) |
 | The log-in pause | works through our screens only; Supabase's per-address limits cover direct calls | a per-account Auth hook, if the paid plan allows it (Q12) | same |

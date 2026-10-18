@@ -142,10 +142,15 @@ select throws_ok(
   'the second person is refused: two people can''t both use the last place'
 );
 
--- 4. With invite_only off (after March), no code is needed.
+-- 4. With invite_only off (after March), no code is needed. Sign-up is then public, so the market
+-- rules apply (S1-E2-10): the person signs up from Romania with a signed country token.
 update public.feature_flags set is_enabled = false where key = 'invite_only';
+select vault.create_secret('test-signup-secret', 'signup_context_secret')
+  where not exists (select 1 from vault.secrets where name = 'signup_context_secret');
+select vault.update_secret(id, 'test-signup-secret') from vault.secrets where name = 'signup_context_secret';
 select lives_ok(
-  $$ select pg_temp.sign_up('open.sign.up@example.com', pg_temp.sign_up_data(null)) $$,
+  $$ select pg_temp.sign_up('open.sign.up@example.com', pg_temp.sign_up_data(null) || jsonb_build_object('signup_context',
+       'v1.RO.' || extract(epoch from now())::bigint || '.' || encode(extensions.hmac('v1.RO.' || extract(epoch from now())::bigint, 'test-signup-secret', 'sha256'), 'hex'))) $$,
   'with invite_only off, sign-up needs no invite'
 );
 

@@ -3,17 +3,23 @@
  * `npm run preview` and the end-to-end tests behave like Cloudflare (story S1-E2-01).
  *
  * Who uses it: vite.config.ts. It never runs in production: Cloudflare runs functions/ itself.
- * Routes today: POST /api/password-check (server/password-check.ts). S1-E2-10 adds
- * /api/signup-context.
- * Stand-in: with PASSWORD_CHECK_STUB=1 (set by playwright.config.ts) the leaked-password check
- * answers from a fixed list instead of the internet, so tests don't depend on an outside service:
- * the one leaked password is "Password1234".
+ * Routes: POST /api/password-check (server/password-check.ts) and GET /api/signup-context
+ * (server/signup-context.ts, S1-E2-10).
+ * Stand-ins:
+ * - with PASSWORD_CHECK_STUB=1 (set by playwright.config.ts) the leaked-password check answers
+ *   from a fixed list instead of the internet, so tests don't depend on an outside service: the
+ *   one leaked password is "Password1234";
+ * - there is no Cloudflare locally, so the country is LOCAL_FAKE_COUNTRY (Romania when unset; any
+ *   other value, for example "XX" for unknown, to try another country; end-to-end tests send an
+ *   X-Fake-Country header instead) and the token is signed
+ *   with SIGNUP_CONTEXT_SECRET from the environment (none: no token, as on a site without it).
  */
 import { createHash } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
 import type { Connect, Plugin } from 'vite';
 
+import { handleSignupContext } from './signup-context.ts';
 import {
   fetchFromHaveIBeenPwned,
   handlePasswordCheck,
@@ -65,17 +71,42 @@ async function sendWebResponse(response: Response, nodeResponse: ServerResponse)
 }
 
 /**
- * The middleware that answers /api/password-check.
+ * Picks the handler for an address, or none.
+ *
+ * @param url - the request's address
+ * @returns the function that answers it, or null for every other address
+ */
+function handlerFor(url: string | undefined): ((request: Request) => Promise<Response>) | null {
+  if (url === '/api/password-check') {
+    const fetchRange =
+      process.env.PASSWORD_CHECK_STUB === '1' ? fetchFromStub : fetchFromHaveIBeenPwned;
+    return (request) => handlePasswordCheck(request, fetchRange);
+  }
+  if (url === '/api/signup-context') {
+    // A test can ask for another country with the X-Fake-Country header; this file never runs on
+    // Cloudflare, where only the real connection counts.
+    return (request) =>
+      handleSignupContext(request, {
+        cloudflareCountry:
+          request.headers.get('X-Fake-Country') ?? process.env.LOCAL_FAKE_COUNTRY ?? 'RO',
+        secret: process.env.SIGNUP_CONTEXT_SECRET,
+        now: new Date(),
+      });
+  }
+  return null;
+}
+
+/**
+ * The middleware that answers the functions' addresses.
  *
  * @returns Connect middleware for Vite's dev and preview servers
  */
 function pagesFunctionsMiddleware(): Connect.NextHandleFunction {
-  const fetchRange =
-    process.env.PASSWORD_CHECK_STUB === '1' ? fetchFromStub : fetchFromHaveIBeenPwned;
   return (request, response, next) => {
-    if (request.url !== '/api/password-check') return next();
+    const handler = handlerFor(request.url);
+    if (handler === null) return next();
     void toWebRequest(request)
-      .then((webRequest) => handlePasswordCheck(webRequest, fetchRange))
+      .then(handler)
       .then((webResponse) => sendWebResponse(webResponse, response))
       .catch(next);
   };

@@ -44,6 +44,7 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `admin_grant_role()`, `admin_remove_role()`, `admin_set_permission()` | change someone else's staff role or permission, with a reason; logged. Owner: any role; admin: moderator, support, content editor; never your own; never the last owner | owner and admin in a staff session | S1-E2-07a |
 | `admin_list_staff()`, `admin_user_id_for_handle(handle)` | the staff list with roles and permissions; an account's user ID by username | owner and admin in a staff session | S1-E2-07a |
 | `bootstrap_first_owner(user_id)` | makes the first owner, once | only from the SQL editor, never through the API | S1-E2-07a |
+| `sign_up_market_outcome(country_code, birth_year, birth_month)` | what sign-up says about a country and age: `ok`, `market_closed` or `under_market_age`; always `ok` while `invite_only` and `adults_only` are both on (Q6) | anyone, signed out included (the sign-up form) | S1-E2-10 |
 | `my_legal_documents_to_accept()` | the caller's own legal documents waiting for acceptance after an important change | any signed-in person | S1-E14-01 |
 | `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
 
@@ -60,6 +61,13 @@ Why `set_my_locale()` and not an update policy on `profiles`: a policy would let
 | `is_staff_session()` | may this session use staff powers (March: any staff role) | S1-E2-07b (Google Workspace sign-in) |
 
 While the `adults_only` flag is on (the March test), under-18s are `minor_not_admitted` and adults are active once their email is confirmed and a username chosen (`handle_missing` until then, S1-E2-04), without the age check.
+
+## Country and markets (S1-E2-10)
+
+- **`markets`** lists each country: open or not, its minimum age (16 in Australia, Q19) and its languages (BCP 47). Romania is open; GB, IE, US, CA, AU and NZ are closed until their legal check. Anyone may read it; it changes by migration until S1-E11-05.
+- **`profiles.country_code`** is the two-letter code of the connection at sign-up, never asked and never the IP address.
+- **The token:** the sign-up form gets `{ country, token }` from our Pages Function; the trigger trusts the country only when `verified_signup_country()` finds a valid HMAC-SHA256 signature made with the Vault secret `signup_context_secret` (the same value as Cloudflare's `SIGNUP_CONTEXT_SECRET`) and the token is at most 10 minutes old. Without the secret, every country counts as unknown.
+- **The rules:** while `invite_only` and `adults_only` are both on, a valid invite admits any country, unknown included (Q6b, Q6c). Once sign-up is public, a closed or unknown country is refused and the form shows `/not-open`; an under-16 in a 16-and-over market is refused.
 
 ## Staff roles (S1-E2-07a)
 

@@ -7,14 +7,20 @@
  * 2. the leaked-password check (lib/passwordLeak.ts), for a password sign-up;
  * 3. api/signUp.ts → Supabase Auth → the sign-up trigger, which checks everything again.
  * Before any of that, the age rules (src/lib/age.ts): a year that makes the person under 13, or
- * under 18 while adults_only is on, is refused; every answer is cleared and nothing is sent
- * ("We don't keep anything you typed", S1-E2-02).
+ * under 18 while adults_only is on, or under their country's minimum age (16 in Australia,
+ * S1-E2-10), is refused; every answer is cleared and nothing is sent ("We don't keep anything you
+ * typed", S1-E2-02).
  * What it returns: the answers and a setter per field, the problems to show (translation keys),
  * the age outcome, whether it is sending, a failure or refusal, and the email the link went to.
  */
 import { useState } from 'react';
 
-import { romanianToday, signUpAgeOutcome, type SignUpAgeOutcome } from '@/lib/age';
+import {
+  isUnderMarketAge,
+  romanianToday,
+  signUpAgeOutcome,
+  type SignUpAgeOutcome,
+} from '@/lib/age';
 import { getSupabaseClient } from '@/lib/supabase';
 import { findSignUpProblems, type SignUpAnswers, type SignUpProblems } from '@/schemas/signUp';
 
@@ -35,8 +41,34 @@ const emptyDraft: SignUpDraft = {
   acceptsTerms: false,
 };
 
-/** The two age outcomes that end sign-up. */
-export type AgeRefusalReason = Extract<SignUpAgeOutcome, 'under_13' | 'adults_only'>;
+/** The age outcomes that end sign-up; under_market_age is the country's own minimum (S1-E2-10). */
+export type AgeRefusalReason =
+  Extract<SignUpAgeOutcome, 'under_13' | 'adults_only'> | 'under_market_age';
+
+/**
+ * Which refusal, if any, applies before anything is sent.
+ *
+ * @param ageOutcome - the age rules' answer
+ * @param answers - the form's answers
+ * @param marketMinimumAge - the visitor's market's minimum age
+ * @returns the reason, or null when the form may be sent
+ */
+function refusalBeforeSending(
+  ageOutcome: SignUpAgeOutcome,
+  answers: SignUpDraft,
+  marketMinimumAge: number,
+): AgeRefusalReason | null {
+  if (ageOutcome === 'under_13' || ageOutcome === 'adults_only') return ageOutcome;
+  if (ageOutcome !== 'ok') return null;
+  const month = answers.birthMonth === '' ? null : Number(answers.birthMonth);
+  const isTooYoung = isUnderMarketAge(
+    Number(answers.birthYear),
+    month,
+    marketMinimumAge,
+    romanianToday(),
+  );
+  return isTooYoung ? 'under_market_age' : null;
+}
 
 /**
  * What the age rules say about the year and month chosen so far.
@@ -101,10 +133,12 @@ export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boole
   /** Checks and sends the form; shows problems or the "check your email" step. */
   async function submit() {
     if (context === null || isSending) return;
-    // The age rules first: a refusal clears every answer and sends nothing.
-    if (ageOutcome === 'under_13' || ageOutcome === 'adults_only') {
+    // The age rules first, the market's own minimum age included: a refusal clears every answer
+    // and sends nothing.
+    const refusal = refusalBeforeSending(ageOutcome, answers, context.marketMinimumAge);
+    if (refusal !== null) {
       setAnswers(emptyDraft);
-      setRefusedFor(ageOutcome);
+      setRefusedFor(refusal);
       return;
     }
     setIsSending(true);

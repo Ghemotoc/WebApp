@@ -84,5 +84,12 @@
     "loadFailed": "Nu am putut încărca dispozitivele. Verifică-ți conexiunea și încearcă din nou.",
     "actionFailed": "Nu a mers. Verifică-ți conexiunea și încearcă din nou.",
     "lagNote": "Un dispozitiv deconectat nu își mai poate reînnoi accesul; poate rămâne deschis cel mult o oră."
+  },
+  "country": {
+    "label": "Țara",
+    "value": "{{country}} · Din conexiunea ta",
+    "unknown": "Necunoscută",
+    "note": "O aflăm din conexiunea ta când te înscrii și nu o cerem niciodată. Crezi că e greșită?",
+    "contact": "Scrie-ne"
   }
 }

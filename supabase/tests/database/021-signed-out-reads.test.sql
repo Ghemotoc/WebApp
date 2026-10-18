@@ -55,6 +55,7 @@ select results_eq(
        ('legal_document_versions',
         (select count(*) from public.legal_document_versions where published_at <= now())),
        ('legal_documents', (select count(*) from public.legal_documents)),
+       ('markets', (select count(*) from public.markets)),
        ('profiles', 0::bigint),
        ('reserved_names', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
@@ -65,7 +66,7 @@ select results_eq(
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
-  'a signed-out visitor sees only public flags, settings and published legal documents, nothing else'
+  'a signed-out visitor sees only public flags, settings, markets and published legal documents, nothing else'
 );
 
 select * from finish();

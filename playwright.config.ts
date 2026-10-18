@@ -90,6 +90,9 @@ export default defineConfig({
       VITE_SHOW_DESIGN_PAGE: 'true',
       // The leaked-password check answers from a fixed list, not the internet (S1-E2-01).
       PASSWORD_CHECK_STUB: '1',
+      // The sign-up country token's secret for local tests only (S1-E2-10); e2e/country.spec.ts
+      // puts the same value in the local database's Vault. Never a real secret.
+      SIGNUP_CONTEXT_SECRET: 'local-e2e-signup-secret',
       VITE_SUPABASE_URL: localSupabase.url,
       VITE_SUPABASE_ANON_KEY: localSupabase.anonKey,
     },

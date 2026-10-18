@@ -168,6 +168,10 @@ describe('the sign-up form', () => {
       termsVersionId: 'terms-en',
       privacyVersionId: 'privacy-en',
       locale: 'en',
+      // No Pages Function in unit tests: the country is unknown, which the invited test admits.
+      signupToken: null,
+      country: null,
+      marketMinimumAge: 13,
     });
     expect(await screen.findByText(/We sent a link to new.writer@example.com/)).toBeInTheDocument();
   });

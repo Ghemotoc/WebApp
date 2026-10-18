@@ -93,3 +93,24 @@ export function signUpAgeOutcome(
   if (isAdultsOnly && age < 18) return 'adults_only';
   return 'ok';
 }
+
+/**
+ * Whether someone is younger than their market's minimum age (story S1-E2-10; decided 16 Oct
+ * 2026, late evening, Q19: Australia is 16 and over). Uses the younger possible age, like every
+ * other age rule here.
+ *
+ * @param birthYear - the year of birth
+ * @param birthMonth - the month, or null when the year doesn't need it
+ * @param minimumAge - the market's minimum age
+ * @param today - today in Romania
+ * @returns true when the person is too young for this market
+ */
+export function isUnderMarketAge(
+  birthYear: number,
+  birthMonth: number | null,
+  minimumAge: number,
+  today: CalendarDate,
+): boolean {
+  const needsMonth = birthYearNeedsMonth(birthYear, today);
+  return youngestPossibleAge(birthYear, needsMonth ? birthMonth : null, today) < minimumAge;
+}

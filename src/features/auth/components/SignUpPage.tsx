@@ -10,13 +10,14 @@
  * 2. once the link has been sent: CheckYourEmail;
  * 3. otherwise: the steps, the heading and SignUpForm.
  * What it reads: the public flags (useFeatureFlags), the invite (useInviteCheck), the current terms
- * and privacy notice (useLegalVersions, so the sign-up records the versions shown).
+ * and privacy notice (useLegalVersions, so the sign-up records the versions shown) and the
+ * country of the connection with its market (useSignUpMarket, S1-E2-10). Once sign-up is public,
+ * a closed or unknown country goes to /not-open.
  */
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, Navigate, useParams } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 import { useLegalVersions } from '@/features/legal/hooks/useLegalVersions';
@@ -25,9 +26,10 @@ import { chooseLegalVersion } from '@/features/legal/lib/chooseLegalVersion';
 import type { SignUpContext } from '../api/signUp';
 import { useInviteCheck } from '../hooks/useInviteCheck';
 import { useSignUpForm } from '../hooks/useSignUpForm';
+import { useSignUpMarket, type SignUpMarket } from '../hooks/useSignUpMarket';
 
-import { InviteGate, type InviteGateReason } from './InviteGate';
-import { SignUpCardBody } from './SignUpCardBody';
+import type { InviteGateReason } from './InviteGate';
+import { SignUpCardFlow } from './SignUpCardFlow';
 import { SignUpHero } from './SignUpHero';
 import { SignUpSteps } from './SignUpSteps';
 
@@ -37,7 +39,10 @@ import { SignUpSteps } from './SignUpSteps';
  * @param inviteCode - the code from the address, when invite_only is on
  * @returns the context, or null while the legal versions are loading or can't be read
  */
-function useSignUpContext(inviteCode: string | null): {
+function useSignUpContext(
+  inviteCode: string | null,
+  market: SignUpMarket,
+): {
   context: SignUpContext | null;
   legalFailed: boolean;
 } {
@@ -55,6 +60,9 @@ function useSignUpContext(inviteCode: string | null): {
       termsVersionId: termsVersion.id,
       privacyVersionId: privacyVersion.id,
       locale: i18n.language,
+      signupToken: market.token,
+      country: market.country,
+      marketMinimumAge: market.minimumAge,
     },
     legalFailed: false,
   };
@@ -92,10 +100,14 @@ export function SignUpPage() {
   const isInviteOnly = flags.isOn('invite_only', true);
   const inviteCode = isInviteOnly ? (code ?? null) : null;
   const invite = useInviteCheck(inviteCode);
-  const { context, legalFailed } = useSignUpContext(inviteCode);
   const isAdultsOnly = flags.isOn('adults_only', true);
+  // The country of the connection (S1-E2-10): any country may join the invited test (Q6).
+  const market = useSignUpMarket(isInviteOnly && isAdultsOnly);
+  const { context, legalFailed } = useSignUpContext(inviteCode, market);
   const form = useSignUpForm(context, isAdultsOnly);
   const gateReason = inviteGateReason(isInviteOnly, inviteCode, invite);
+  // Once sign-up is public, a closed or unknown country sees the "not open yet" page instead.
+  if (market.isClosed) return <Navigate to="/not-open" replace />;
 
   return (
     <PageContainer className="tmc-rise grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] gap-14 pt-12 pb-7">
@@ -113,17 +125,14 @@ export function SignUpPage() {
           </h2>
           <p className="m-0 text-body">{t('signUp.subheading')}</p>
         </div>
-        {gateReason === 'checking' && <p className="m-0 text-body">{t('invite.checking')}</p>}
-        {gateReason !== null && gateReason !== 'checking' && <InviteGate reason={gateReason} />}
-        {gateReason === null && (
-          <>
-            {inviteCode !== null && form.sentTo === null && (
-              <Notice tone="success">{t('invite.accepted')}</Notice>
-            )}
-            {legalFailed && <Notice tone="error">{t('signUp.errors.legalNotLoaded')}</Notice>}
-            <SignUpCardBody form={form} context={context} includesAgeCheck={!isAdultsOnly} />
-          </>
-        )}
+        <SignUpCardFlow
+          gateReason={gateReason}
+          hasInviteCode={inviteCode !== null}
+          form={form}
+          context={context}
+          legalFailed={legalFailed}
+          includesAgeCheck={!isAdultsOnly}
+        />
         {/* "Already have an account? Log in" (S1-E2-05). */}
         <p className="m-0 text-sm text-body">
           {t('signIn.haveAccount')}{' '}

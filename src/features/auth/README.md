@@ -27,3 +27,10 @@ Logging in (S1-E2-05):
 - `components/AccountMenu.tsx`: the top bar's account button (Settings, Log out); `AccountLinks` shows "Log in" and "Join for free" while signed out.
 - `api/signIn.ts` (log in with the pause, log-in and reset links, new password, log out), `api/sessions.ts` (`list_my_sessions()`, `end_my_session()`), `lib/emailHash.ts`, `lib/deviceName.ts`.
 - Settings › Signed-in devices lives in `src/features/account/` (`SignedInDevicesSection`, `DeviceRow`, `hooks/useMySessions.ts`).
+
+Country from the connection (S1-E2-10):
+
+- `hooks/useSignUpMarket.ts` with `api/signupContext.ts`: the country and its signed token from `/api/signup-context` (`functions/api/signup-context.ts`, `server/signup-context.ts`), and the public `markets`. Once sign-up is public, a closed or unknown country goes to `components/NotOpenPage.tsx` (`/not-open`); the invited test admits every country.
+- `components/AgeRefusal.tsx` also refuses someone under their country's minimum age (16 in Australia, Q19); `src/lib/age.ts` has `isUnderMarketAge()`.
+- `components/SignUpCardFlow.tsx`: the changing part of the sign-up card (invite gate or form).
+
