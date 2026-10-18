@@ -12,4 +12,4 @@ Rules for each file:
 - It starts with a header comment: the story, what it adds, and how to check it worked.
 - The pull request lists it under **By hand**. Running it: `docs/runbooks/staging-reset-and-seed.md`, "Top-ups".
 
-No story has needed one yet in the repository: the S1-E2 top-up (consents, the four test invites, the persona usernames and pen name) was given to Robert directly on 18 Oct 2026.
+`S1-E2.sql` brings a staging database seeded before epic S1-E2 up to date: consents, the four test invites, and the persona usernames and pen name.
