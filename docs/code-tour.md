@@ -197,6 +197,25 @@ the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesS
   → signOut({ scope: 'others' }) → Supabase sends supabase/templates/password_changed.html
 ```
 
+## Staff roles (S1-E2-07a)
+
+```
+/staff/roles (StaffRolesPage, loaded on its own)        src/features/staff/
+  │  useStaffRoles → api/staffRoles.ts
+  │     admin_list_staff(), admin_user_id_for_handle(),
+  │     admin_grant_role() / admin_remove_role() / admin_set_permission()
+  ▼
+…_s1_e2_07a_staff_roles.sql
+  │  staff_may(area, access): the caller's role in staff_role_areas (architecture 1.8.3), plus the
+  │  permission the row needs, AND is_staff_session() (true for any staff role in March; Google
+  │  Workspace sign-in from S1-E2-07b)
+  │  every staff policy and admin_* function asks staff_may(); every change → log_staff_action()
+  ▼
+staff_roles, staff_permissions, audit_log; account_state() answers staff_account for staff
+```
+
+The first owner is made once with `bootstrap_first_owner()` from the SQL editor (it can't be called through the API).
+
 ## Usernames and pen names (S1-E2-04)
 
 ```

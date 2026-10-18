@@ -59,6 +59,8 @@ select results_eq(
        ('reserved_names', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
        ('sign_in_failures', 0::bigint),
+       ('staff_permissions', 0::bigint),
+       ('staff_role_areas', 0::bigint),
        ('staff_roles', 0::bigint),
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint)

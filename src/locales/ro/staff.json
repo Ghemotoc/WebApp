@@ -1,0 +1,44 @@
+{
+  "roles": {
+    "documentTitle": "Roluri în echipă · {{productName}}",
+    "eyebrow": "Echipă",
+    "heading": "Roluri în echipă",
+    "intro": "Cine din echipă are ce rol și ce permisiuni. Orice schimbare cere un motiv și ajunge în jurnalul de audit. Nimeni nu își poate schimba propriul rol.",
+    "notAllowed": "Doar un proprietar sau un administrator poate vedea această pagină.",
+    "signedOut": "Conectează-te cu un cont de echipă ca să vezi această pagină.",
+    "loadFailed": "Nu am putut încărca lista echipei. Verifică-ți conexiunea și încearcă din nou.",
+    "grantHeading": "Dă cuiva un rol",
+    "username": "Nume de utilizator",
+    "role": "Rol",
+    "reason": "Motivul schimbării",
+    "reasonHint": "Obligatoriu. Ajunge în jurnalul de audit.",
+    "grant": "Dă rolul",
+    "remove": "Elimină {{role}}",
+    "removeLabel": "Elimină {{role}} de la @{{handle}}",
+    "permissions": "Permisiuni",
+    "permissionsHint": "Bifarea sau debifarea folosește motivul de mai sus.",
+    "noHandle": "(încă fără nume de utilizator)",
+    "changing": "Se salvează…",
+    "changed": "Salvat. Apare în jurnalul de audit.",
+    "failures": {
+      "not_allowed": "Nu poți face această schimbare. Administratorii pot da rolurile de moderator, suport și editor de conținut; doar un proprietar poate da rolurile de proprietar sau administrator; nimeni nu își poate schimba propriul rol.",
+      "refused": "Schimbarea nu a fost salvată. Verifică numele de utilizator și motivul. Ultimul proprietar nu poate fi eliminat, iar permisiunile sunt doar pentru echipă.",
+      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "reasonMissing": "Scrie mai întâi un motiv.",
+    "usernameMissing": "Scrie mai întâi numele de utilizator.",
+    "staffAccountNote": "Un cont de echipă nu poate publica, comenta, posta sau trimite mesaje ca membru. Folosește un cont separat de scriitor pentru asta."
+  },
+  "roleNames": {
+    "owner": "Proprietar",
+    "admin": "Administrator",
+    "moderator": "Moderator",
+    "support": "Suport",
+    "content_editor": "Editor de conținut"
+  },
+  "permissionNames": {
+    "safeguarding": "Protecția copiilor",
+    "teacher_checks": "Verificarea profesorilor",
+    "on_call": "De serviciu pentru ordinele de eliminare"
+  }
+}

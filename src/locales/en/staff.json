@@ -1,0 +1,44 @@
+{
+  "roles": {
+    "documentTitle": "Staff roles · {{productName}}",
+    "eyebrow": "Staff",
+    "heading": "Staff roles",
+    "intro": "Who on the team holds which role and permission. Every change needs a reason and goes to the audit log. Nobody can change their own role.",
+    "notAllowed": "Only an owner or admin can see this page.",
+    "signedOut": "Log in with a staff account to see this page.",
+    "loadFailed": "We couldn’t load the staff list. Check your connection and try again.",
+    "grantHeading": "Give someone a role",
+    "username": "Username",
+    "role": "Role",
+    "reason": "Reason for this change",
+    "reasonHint": "Required. It goes to the audit log.",
+    "grant": "Give role",
+    "remove": "Remove {{role}}",
+    "removeLabel": "Remove {{role}} from @{{handle}}",
+    "permissions": "Permissions",
+    "permissionsHint": "Ticking or unticking uses the reason above.",
+    "noHandle": "(no username yet)",
+    "changing": "Saving…",
+    "changed": "Saved. It’s in the audit log.",
+    "failures": {
+      "not_allowed": "You can’t make that change. Admins can give moderator, support and content editor; only an owner can give owner or admin; nobody can change their own role.",
+      "refused": "That wasn’t saved. Check the username and the reason. The last owner can’t be removed, and permissions are only for staff.",
+      "unreachable": "We couldn’t reach our server. Check your connection and try again."
+    },
+    "reasonMissing": "Write a reason first.",
+    "usernameMissing": "Write the username first.",
+    "staffAccountNote": "A staff account can’t publish, comment, post or message as a member. Use a separate writer account for that."
+  },
+  "roleNames": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "moderator": "Moderator",
+    "support": "Support",
+    "content_editor": "Content editor"
+  },
+  "permissionNames": {
+    "safeguarding": "Safeguarding",
+    "teacher_checks": "Teacher checks",
+    "on_call": "On call for removal orders"
+  }
+}

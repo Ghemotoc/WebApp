@@ -40,6 +40,19 @@ const designRoute: RouteObject = {
 };
 
 /**
+ * The /staff/roles route (S1-E2-07a), loaded only when someone opens it, so staff code never ships
+ * in the reader's bundle (architecture 1.8.1). S1-E11-01 moves it into the admin shell.
+ */
+const staffRolesRoute: RouteObject = {
+  path: '/staff/roles',
+  HydrateFallback: () => null,
+  lazy: async () => {
+    const { StaffRolesPage } = await import('@/features/staff/components/StaffRolesPage');
+    return { Component: StaffRolesPage };
+  },
+};
+
+/**
  * Every route in the app, in one list so a reader can see the whole map at a glance.
  * Exported separately from the router so tests can render a route in memory.
  */
@@ -63,6 +76,7 @@ export const appRoutes: RouteObject[] = [
       // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
       { path: '/setup', element: <SetupPage /> },
       { path: '/settings', element: <SettingsPage /> },
+      staffRolesRoute,
       ...(isDesignPageIncluded ? [designRoute] : []),
       // Any other address goes back home for now, so nobody sees React Router's built-in English
       // error page. S1-E1-05 replaces this with a proper 404 page in both languages.

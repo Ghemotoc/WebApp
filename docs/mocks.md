@@ -14,7 +14,8 @@ These are not mocks of an outside service: they are the safe, simple version of 
 
 | Stub | What it does today | Story that finishes it | On staging |
 | --- | --- | --- | --- |
-| `is_staff_session()` | true for any staff-role session, from the normal login | S1-E2-07b (Google Workspace sign-in) | same |
+| `is_staff_session()` | true for any staff-role session, from the normal login; every staff rule reaches it through `staff_may()` (S1-E2-07a) | S1-E2-07b (Google Workspace sign-in) | same |
+| `/staff/roles` | a small plain page outside the admin shell | S1-E11-01 moves it into the admin site | same |
 | `account_state()`: parental consent | under-16s are always `awaiting_parental_consent` (or `minor_not_admitted` while `adults_only` is on) | S1-E2-03 | same |
 | `account_state()`: sanctions | no suspensions or bans are checked yet | S1-E10-06 | same |
 | `account_state()`: age check | while `adults_only` is on, adults are active without a Yoti check | S1-E2-08 | same |
