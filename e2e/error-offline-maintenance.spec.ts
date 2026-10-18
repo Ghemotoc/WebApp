@@ -101,7 +101,11 @@ test.describe('offline banner (S1-E1-05)', () => {
       await page.goto('/legal/terms');
       await context.setOffline(true);
       await expect(page.getByRole('status').filter({ hasText: /Nu ești conectat/ })).toBeVisible();
-      // The page is already loaded, so axe can check it with the banner showing.
+      // The page is already loaded, so axe can check it with the banner showing. First let every
+      // entrance animation finish: axe measures colours as they are, and a fading line reads paler.
+      await page.waitForFunction(() =>
+        document.getAnimations().every((animation) => animation.playState !== 'running'),
+      );
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
         .analyze();
