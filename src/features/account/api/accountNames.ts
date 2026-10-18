@@ -44,11 +44,12 @@ export async function fetchMyNames(client: AppSupabaseClient): Promise<MyNames |
     .maybeSingle();
   if (error !== null) throw new Error(`Could not read your names: ${error.message}`);
   if (data === null) return null;
+  // Missing values read as null, so every screen can rely on one shape.
   return {
-    handle: data.handle,
-    penName: data.pen_name,
-    handleChangedAt: data.handle_changed_at,
-    penNameChangedAt: data.pen_name_changed_at,
+    handle: data.handle ?? null,
+    penName: data.pen_name ?? null,
+    handleChangedAt: data.handle_changed_at ?? null,
+    penNameChangedAt: data.pen_name_changed_at ?? null,
   };
 }
 

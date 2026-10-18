@@ -11,6 +11,9 @@ import { Navigate, type RouteObject } from 'react-router';
 import { SettingsPage } from '@/features/account/components/SettingsPage';
 import { SetupPage } from '@/features/account/components/SetupPage';
 import { ConfirmEmailPage } from '@/features/auth/components/ConfirmEmailPage';
+import { ForgotPasswordPage } from '@/features/auth/components/ForgotPasswordPage';
+import { ResetPasswordPage } from '@/features/auth/components/ResetPasswordPage';
+import { SignInPage } from '@/features/auth/components/SignInPage';
 import { SignUpPage } from '@/features/auth/components/SignUpPage';
 import { HomePage } from '@/features/home/components/HomePage';
 import { LegalCentrePage } from '@/features/legal/components/LegalCentrePage';
@@ -53,6 +56,10 @@ export const appRoutes: RouteObject[] = [
       { path: '/sign-up', element: <SignUpPage /> },
       { path: '/join/:code', element: <SignUpPage /> },
       { path: '/auth/confirm', element: <ConfirmEmailPage /> },
+      // Log in and password reset (S1-E2-05): /reset-password is where the reset email lands.
+      { path: '/sign-in', element: <SignInPage /> },
+      { path: '/forgot-password', element: <ForgotPasswordPage /> },
+      { path: '/reset-password', element: <ResetPasswordPage /> },
       // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
       { path: '/setup', element: <SetupPage /> },
       { path: '/settings', element: <SettingsPage /> },

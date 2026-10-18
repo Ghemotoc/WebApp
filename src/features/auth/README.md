@@ -1,6 +1,6 @@
 # Auth
 
-Who is signed in, and (from S1-E2-01 and S1-E2-05) signing up, confirming the email and signing in. Started by S1-E14-01.
+Who is signed in, signing up, confirming the email, logging in and out, and password resets. Started by S1-E14-01; built by S1-E2-01, S1-E2-02 and S1-E2-05.
 
 - `hooks/useSession.ts`: follows the signed-in person through Supabase Auth; answers their user ID (for data caches only, never shown on screen) and whether the first answer has arrived. Without Supabase settings it answers "signed out".
 
@@ -20,3 +20,10 @@ Year of birth (S1-E2-02):
 - `components/AgeRefusal.tsx`: the full refusal (under 13, or under 18 while `adults_only` is on); the answers are cleared and nothing is sent.
 - The rules are in `src/lib/age.ts`, and the database applies the same ones (`sign_up_age_outcome()`).
 
+Logging in (S1-E2-05):
+
+- `components/SignInPage.tsx` with `SignInForm`, `PasswordInput` (Show / Hide) and `SignInMessage`: `/sign-in` (board 2.2). `hooks/useSignInForm.ts` holds the answers.
+- `components/ForgotPasswordPage.tsx` (`/forgot-password`, `hooks/useResetRequest.ts`, `SendProblem`) and `ResetPasswordPage.tsx` with `NewPasswordForm` (`/reset-password`, `hooks/useNewPasswordForm.ts`). `AuthCard` is the card all three share.
+- `components/AccountMenu.tsx`: the top bar's account button (Settings, Log out); `AccountLinks` shows "Log in" and "Join for free" while signed out.
+- `api/signIn.ts` (log in with the pause, log-in and reset links, new password, log out), `api/sessions.ts` (`list_my_sessions()`, `end_my_session()`), `lib/emailHash.ts`, `lib/deviceName.ts`.
+- Settings › Signed-in devices lives in `src/features/account/` (`SignedInDevicesSection`, `DeviceRow`, `hooks/useMySessions.ts`).

@@ -68,5 +68,21 @@
   "errors": {
     "loadFailed": "Nu am putut încărca contul. Verifică-ți conexiunea și încearcă din nou.",
     "saveFailed": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
+  },
+  "devices": {
+    "heading": "Dispozitive conectate",
+    "body": "Unde e deschis contul tău acum. Dacă nu recunoști un dispozitiv, deconectează-l și schimbă-ți parola.",
+    "unknownBrowser": "Un browser",
+    "deviceName": "{{browser}} pe {{system}}",
+    "thisDevice": "Acest dispozitiv",
+    "lastActive": "Activ ultima dată pe {{date}}",
+    "signOut": "Deconectează",
+    "signOutLabel": "Deconectează {{device}}",
+    "signOutOthers": "Deconectează toate celelalte dispozitive",
+    "signedOutOthers": "Celelalte dispozitive sunt deconectate.",
+    "privacy": "Arătăm doar browserul și tipul de dispozitiv. Nu păstrăm adresa IP și nici locul în care ești.",
+    "loadFailed": "Nu am putut încărca dispozitivele. Verifică-ți conexiunea și încearcă din nou.",
+    "actionFailed": "Nu a mers. Verifică-ți conexiunea și încearcă din nou.",
+    "lagNote": "Un dispozitiv deconectat nu își mai poate reînnoi accesul; poate rămâne deschis cel mult o oră."
   }
 }

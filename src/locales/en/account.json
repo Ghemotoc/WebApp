@@ -68,5 +68,21 @@
   "errors": {
     "loadFailed": "We couldn’t load your account. Check your connection and try again.",
     "saveFailed": "We couldn’t save that. Check your connection and try again."
+  },
+  "devices": {
+    "heading": "Signed-in devices",
+    "body": "Where you’re logged in right now. If you don’t recognise a device, log it out and change your password.",
+    "unknownBrowser": "A browser",
+    "deviceName": "{{browser}} on {{system}}",
+    "thisDevice": "This device",
+    "lastActive": "Last active {{date}}",
+    "signOut": "Log out",
+    "signOutLabel": "Log out {{device}}",
+    "signOutOthers": "Log out of all other devices",
+    "signedOutOthers": "Your other devices are logged out.",
+    "privacy": "We show the browser and the kind of device only. We don’t keep your IP address or where you are.",
+    "loadFailed": "We couldn’t load your devices. Check your connection and try again.",
+    "actionFailed": "That didn’t work. Check your connection and try again.",
+    "lagNote": "A device you log out can’t renew its access; it may stay open for up to an hour."
   }
 }

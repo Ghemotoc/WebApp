@@ -416,6 +416,31 @@ export type Database = {
         };
         Relationships: [];
       };
+      sign_in_failures: {
+        Row: {
+          created_at: string;
+          email_hash: string;
+          failed_at: string;
+          id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          email_hash: string;
+          failed_at?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          email_hash?: string;
+          failed_at?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       staff_roles: {
         Row: {
           created_at: string;
@@ -585,9 +610,12 @@ export type Database = {
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
       check_pen_name: { Args: { candidate: string }; Returns: string };
+      clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
+      end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
+      hash_email: { Args: { email: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
@@ -613,6 +641,16 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      list_my_sessions: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          is_current: boolean;
+          last_active_at: string;
+          session_id: string;
+          started_at: string;
+          user_agent: string;
+        }[];
       };
       log_account_change: {
         Args: {
@@ -658,6 +696,7 @@ export type Database = {
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
       normalise_invite_code: { Args: { code: string }; Returns: string };
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
+      record_sign_in_failure: { Args: { email_hash: string }; Returns: string };
       record_sign_up_consent: {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
@@ -666,6 +705,7 @@ export type Database = {
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
       setting_value: { Args: { setting_key: string }; Returns: Json };
+      sign_in_pause_until: { Args: { email_hash: string }; Returns: string };
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
       sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };

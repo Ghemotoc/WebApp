@@ -177,6 +177,26 @@ Supabase emails supabase/templates/confirmation.html (Mailpit locally)
 /setup → choosing a username (next section) → account_state() is active
 ```
 
+## Logging in (S1-E2-05)
+
+```
+/sign-in (SignInPage → SignInForm)                     src/features/auth/
+  │  useSignInForm → api/signIn.ts signInWithPassword()
+  │     1. lib/emailHash.ts: SHA-256 of the email, in the browser
+  │     2. sign_in_pause_until(hash)  → paused? stop here (the same for any email)
+  │     3. supabase.auth.signInWithPassword
+  │        wrong details → record_sign_in_failure(hash) (5 in 15 minutes pause it)
+  │        logged in    → clear_my_sign_in_failures()
+  ▼
+the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesSection
+  │  useMySessions → list_my_sessions() / end_my_session() read auth.sessions, never the IP
+  │  "Log out of all other devices" → supabase.auth.signOut({ scope: 'others' })
+/forgot-password → resetPasswordForEmail → supabase/templates/recovery.html
+  ▼
+/reset-password?token_hash=… → verifyOtp(recovery) → NewPasswordForm → updateUser
+  → signOut({ scope: 'others' }) → Supabase sends supabase/templates/password_changed.html
+```
+
 ## Usernames and pen names (S1-E2-04)
 
 ```

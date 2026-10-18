@@ -13,7 +13,7 @@
  * and privacy notice (useLegalVersions, so the sign-up records the versions shown).
  */
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -124,6 +124,13 @@ export function SignUpPage() {
             <SignUpCardBody form={form} context={context} includesAgeCheck={!isAdultsOnly} />
           </>
         )}
+        {/* "Already have an account? Log in" (S1-E2-05). */}
+        <p className="m-0 text-sm text-body">
+          {t('signIn.haveAccount')}{' '}
+          <Link to="/sign-in" className="text-link underline">
+            {t('signIn.logInLink')}
+          </Link>
+        </p>
       </section>
     </PageContainer>
   );

@@ -6,3 +6,4 @@ The public feature flags (`invite_only`, `adults_only`, `social_login`, `mainten
 - `hooks/useFeatureFlags.ts`: `isOn(flagKey, safeDefault)`, cached for the visit. While loading, or if the read fails, it answers with the safe default the caller gives (the March value).
 
 A flag on screen is a convenience: the database enforces each rule itself.
+- `api/publicSettings.ts` and `hooks/usePublicSettings.ts`: the public settings (for example the log-in pause's tries and minutes), for the words on screen only (S1-E2-05).

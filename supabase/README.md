@@ -37,6 +37,9 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `check_pen_name(candidate)` | the same for a pen name (no `taken`: pen names needn't be unique) | any signed-in person | S1-E2-04 |
 | `set_my_handle(new_handle)`, `set_my_pen_name(new_pen_name)` | save the caller's own name, or answer why not (also `too_soon` within 30 days of the last change; the first choice doesn't count); the old name goes to the audit log | any signed-in person with a live profile | S1-E2-04 |
 | `admin_approve_username(target_user_id, name_kind, approved_name, reason_given)` | a moderator approves one exact name the word checks refused by mistake; logged | owner, admin and moderator with a staff session | S1-E2-04 (button in S1-E11-02) |
+| `sign_in_pause_until(email_hash)`, `record_sign_in_failure(email_hash)` | the log-in pause: when it ends, and noting a wrong try (5 in 15 minutes pause logging in; both are settings). They take a SHA-256 hash of the email, never the email, and answer the same for any address | anyone, signed out included (the log-in screen) | S1-E2-05 |
+| `clear_my_sign_in_failures()` | forgets the caller's wrong tries after a log-in or a new password | any signed-in person | S1-E2-05 |
+| `list_my_sessions()`, `end_my_session(target_session_id)` | the caller's own devices from Supabase's `auth.sessions` (browser, start, last active, this device; never the IP), and logging one out | any signed-in person, own sessions only | S1-E2-05 |
 | `my_legal_documents_to_accept()` | the caller's own legal documents waiting for acceptance after an important change | any signed-in person | S1-E14-01 |
 | `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
 
@@ -53,6 +56,12 @@ Why `set_my_locale()` and not an update policy on `profiles`: a policy would let
 | `is_staff_session()` | may this session use staff powers (March: any staff role) | S1-E2-07b (Google Workspace sign-in) |
 
 While the `adults_only` flag is on (the March test), under-18s are `minor_not_admitted` and adults are active once their email is confirmed and a username chosen (`handle_missing` until then, S1-E2-04), without the age check.
+
+## Logging in (S1-E2-05)
+
+- **The pause** works through our screens: the log-in form asks `sign_in_pause_until()` before trying and calls `record_sign_in_failure()` after Supabase says no. Direct, scripted calls to Supabase Auth are held back by Supabase's own per-address limits; a true per-account lock needs a paid-plan Auth hook (decided 17 Oct 2026, 19:43, Q12). Rows hold an email hash and a time only, and are removed after 24 hours by `record_sign_in_failure()` itself.
+- **Devices** are Supabase's own sessions (Q13). Logging a device out removes its session, so it can't renew its access; a token it already holds lasts until it expires (at most an hour), as with Supabase's own "sign out other devices".
+- **Emails:** `recovery.html` (the reset link, to `/reset-password`) and `password_changed.html` (Supabase's security notice) are generated like the others (`npm run emails:build`).
 
 ## Usernames and pen names (S1-E2-04)
 
