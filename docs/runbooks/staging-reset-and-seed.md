@@ -14,7 +14,7 @@ Supabase's GitHub integration applies `supabase/migrations/` to staging when `ma
 
 Every persona signs in with its email and the shared test password in `supabase/README.md`.
 
-Staff work on staging uses the staff personas (`owner`, `admin`, `moderator`, `support`, `editor`): the `owner` persona already holds the owner role, so `bootstrap_first_owner()` refuses on staging and nobody makes a personal staff account there. That function is for production only (decided 18 Oct 2026).
+Staff work on staging uses the staff personas (`owner`, `admin`, `moderator`, `support`, `editor`). The `owner` persona already holds the owner role, so `bootstrap_first_owner()` refuses on staging: that function is for production, or any database without the seed, only. A personal staff account on staging gets its role from the `owner` persona at /staff/roles instead. Robert's own staging account, on the staff Google Workspace domain (`STAFF_EMAIL_DOMAIN`), gets the owner role that way (Robert, 18 Oct 2026).
 
 **Running it twice** fails with "duplicate key", because the personas already exist. That's safe: nothing is changed. To start again, ask a developer to reset staging; never delete users by hand in production.
 

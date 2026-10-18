@@ -236,7 +236,7 @@ the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesS
 staff_roles, staff_permissions, audit_log; account_state() answers staff_account for staff
 ```
 
-On production, the first owner is made once with `bootstrap_first_owner()` from the SQL editor (it can't be called through the API). Staging and local databases don't need it: the seed's `owner` persona already holds the owner role, so the function refuses there.
+On production, the first owner is made once with `bootstrap_first_owner()` from the SQL editor (it can't be called through the API). Staging and local databases don't need it: the seed's `owner` persona already holds the owner role, so the function refuses there. On staging, personal staff accounts (Robert's own, with the owner role, included) get their role from the `owner` persona at /staff/roles.
 
 ## Usernames and pen names (S1-E2-04)
 
