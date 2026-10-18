@@ -8,17 +8,29 @@
  */
 import type { Brand } from '@/config/brand';
 
+/**
+ * An email address as a Markdown link, so people can write straight from the page (S1-E14-02:
+ * until the report form and Contact us exist, the contact points are email links).
+ *
+ * @param address - the address
+ * @returns "[address](mailto:address)"
+ */
+const emailLink = (address: string) => `[${address}](mailto:${address})`;
+
 /** Each token and the brand value it stands for. */
 const tokenValues: { token: string; value: (brand: Brand) => string }[] = [
   { token: '{{productName}}', value: (brand) => brand.productName },
   { token: '{{companyName}}', value: (brand) => brand.companyName },
-  { token: '{{contactEmail}}', value: (brand) => brand.contactEmail },
-  { token: '{{supportEmail}}', value: (brand) => brand.supportEmail },
-  { token: '{{privacyEmail}}', value: (brand) => brand.privacyEmail },
+  { token: '{{contactEmail}}', value: (brand) => emailLink(brand.contactEmail) },
+  { token: '{{supportEmail}}', value: (brand) => emailLink(brand.supportEmail) },
+  { token: '{{privacyEmail}}', value: (brand) => emailLink(brand.privacyEmail) },
+  { token: '{{authoritiesEmail}}', value: (brand) => emailLink(brand.authoritiesEmail) },
 ];
 
 /**
  * Replaces every brand token with its value.
+ *
+ * Email addresses become mailto links, so fill a title only when it holds no address (none does).
  *
  * @param text - a stored title or body
  * @param brand - the brand config (src/config/brand.ts)

@@ -152,6 +152,8 @@ LegalCentrePage → chooseLegalVersion (reader's language, else English) → Leg
 
 When an important (material) version goes live, `account_state()` answers `legal_acceptance_required` for everyone who hasn't accepted it, so `is_active_member()` is false and every write policy refuses. `LegalUpdateNotice` (at the top of every page, from AppLayout) asks `my_legal_documents_to_accept()`, links to the new text and calls `accept_current_legal_versions()`. Tests: `supabase/tests/database/015` to `017`, `e2e/legal.spec.ts`.
 
+The contact and company details page (S1-E14-02) is a fourth legal document, `contact`, made the same way from `content/legal/04-contact-and-company-details.md` and its Romanian draft. Its addresses come from `src/config/brand.ts` (`{{authoritiesEmail}}`, `{{privacyEmail}}`) and show as email links; Settings and the footer link to it.
+
 ## Signing up (S1-E2-01)
 
 ```

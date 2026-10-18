@@ -126,6 +126,9 @@ const brandTokens: { value: string; token: string }[] = [
   { value: brandDefaults.supportEmail, token: '{{supportEmail}}' },
   { value: '[privacy email]', token: '{{privacyEmail}}' },
   { value: '[emailul pentru confidențialitate]', token: '{{privacyEmail}}' },
+  // S1-E14-02: the authorities' contact point (Q16: the contact address until the company exists).
+  { value: '[authorities email]', token: '{{authoritiesEmail}}' },
+  { value: '[emailul pentru autorități]', token: '{{authoritiesEmail}}' },
   { value: brandDefaults.companyName, token: '{{companyName}}' },
   { value: brandDefaults.productName, token: '{{productName}}' },
 ];

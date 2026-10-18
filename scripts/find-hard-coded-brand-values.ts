@@ -62,6 +62,7 @@ export function forbiddenBrandValues(): string[] {
     brandDefaults.contactEmail,
     brandDefaults.supportEmail,
     brandDefaults.privacyEmail,
+    brandDefaults.authoritiesEmail,
     brandDefaults.socialHandle,
     brandDefaults.companyName,
     brand.productName,
@@ -69,6 +70,7 @@ export function forbiddenBrandValues(): string[] {
     brand.contactEmail,
     brand.supportEmail,
     brand.privacyEmail,
+    brand.authoritiesEmail,
     brand.socialHandle,
     brand.companyName,
   ];

@@ -58,7 +58,8 @@
     "legalText": "The terms of use, the privacy notice and the community guidelines, with every earlier version.",
     "legalLink": "Open the Legal centre",
     "signedOut": "Log in to see your settings.",
-    "noHandle": "Choose a username first."
+    "noHandle": "Choose a username first.",
+    "contactLink": "Contact and company details"
   },
   "notice": {
     "heading": "Choose a username",
