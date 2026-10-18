@@ -273,10 +273,16 @@ subject = "Resetează parola · Reset your password"
 content_path = "./supabase/templates/recovery.html"
 
 # S1-E2-05: "Given a password reset, when it completes, then ... the user gets an email."
+# Careful: this path is relative to the supabase/ folder, NOT the project root like the
+# [auth.email.template.*] paths above. The CLI's Go config loader (also used by Supabase's GitHub
+# integration) joins notification paths onto supabase/ but template paths onto the root (its own
+# "FIXME" in pkg/config/config.go, resolve()). "./supabase/templates/..." here became
+# supabase/supabase/templates/... and stopped every staging migration after S1-E2-04
+# (S1-E2-05 fix, 18 Oct 2026). The local CLI accepts this form too.
 [auth.email.notification.password_changed]
 enabled = true
 subject = "Parola ta a fost schimbată · Your password was changed"
-content_path = "./supabase/templates/password_changed.html"
+content_path = "./templates/password_changed.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
