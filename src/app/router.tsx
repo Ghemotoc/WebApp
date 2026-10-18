@@ -8,6 +8,8 @@
  */
 import { Navigate, type RouteObject } from 'react-router';
 
+import { SettingsPage } from '@/features/account/components/SettingsPage';
+import { SetupPage } from '@/features/account/components/SetupPage';
 import { ConfirmEmailPage } from '@/features/auth/components/ConfirmEmailPage';
 import { SignUpPage } from '@/features/auth/components/SignUpPage';
 import { HomePage } from '@/features/home/components/HomePage';
@@ -51,6 +53,9 @@ export const appRoutes: RouteObject[] = [
       { path: '/sign-up', element: <SignUpPage /> },
       { path: '/join/:code', element: <SignUpPage /> },
       { path: '/auth/confirm', element: <ConfirmEmailPage /> },
+      // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
+      { path: '/setup', element: <SetupPage /> },
+      { path: '/settings', element: <SettingsPage /> },
       ...(isDesignPageIncluded ? [designRoute] : []),
       // Any other address goes back home for now, so nobody sees React Router's built-in English
       // error page. S1-E1-05 replaces this with a proper 404 page in both languages.

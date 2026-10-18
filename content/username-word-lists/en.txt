@@ -1,0 +1,81 @@
+# English words refused in usernames and pen names (story S1-E2-04). DRAFT, 17 Oct 2026.
+#
+# How the list is used: names are folded first (case, accents, look-alike letters and digits such
+# as 0 for o), so write each word once, in plain lower-case letters.
+#   word    refused anywhere in a name when it has 4 letters or more; shorter words only as a
+#           whole word of the name
+#   =word   refused only as a whole word, because it hides inside ordinary words
+#           ("cock" in "peacock", "rapist" in "therapist")
+# A moderator can approve a name that's a false hit (S1-E11-02).
+# After a change: npx tsx scripts/build-word-list-migration.ts (see its header) and commit the new
+# migration.
+
+# Swearing and sexual words
+fuck
+shit
+cunt
+bitch
+bastard
+asshole
+arsehole
+wank
+twat
+bollocks
+bellend
+dildo
+jizz
+porn
+blowjob
+handjob
+milf
+=horny
+=dick
+=cock
+=pussy
+=prick
+=knob
+=cum
+=tits
+=titties
+=boobs
+=ass
+=arse
+=anal
+=sex
+=sexy
+=nude
+=nudes
+=boner
+=slut
+=whore
+=piss
+
+# Slurs
+nigger
+nigga
+faggot
+retard
+tranny
+=fag
+=kike
+=chink
+=spic
+=paki
+=dyke
+=coon
+=spaz
+=gook
+=wetback
+
+# Abuse, violence and hate
+=rape
+=rapist
+=raping
+paedo
+pedophile
+paedophile
+=pedo
+hitler
+=nazi
+=killyourself
+=kys

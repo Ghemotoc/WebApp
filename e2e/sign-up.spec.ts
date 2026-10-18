@@ -5,7 +5,8 @@
  * What it proves:
  * - without an invite code, sign-up explains the test is by invitation and stores nothing;
  * - with the seeded invite link, an adult signs up, gets the confirmation email (Mailpit), opens
- *   it and is confirmed; the profile, the consents and the invite place are in the database;
+ *   it and is confirmed; the profile, the consents and the invite place are in the database; then
+ *   it chooses a username in setup (S1-E2-04) and becomes active;
  * - a 9-character password is refused and a mismatched confirmation is shown before sending;
  * - pasting into the password fields works (WCAG 2.2, 3.3.8);
  * - the sign-up screens pass axe and don't scroll sideways at 390, 768 and 1440 px.
@@ -115,6 +116,19 @@ test('an invited adult signs up, confirms the email from Mailpit and is confirme
     expect(email.HTML).toContain('Confirm your email address');
     await page.goto(appPathFromEmail(email.HTML));
     await expect(page.getByRole('heading', { name: 'Your email is confirmed' })).toBeVisible();
+    // Confirmed, but still read-only until a username is chosen (S1-E2-04).
+    expect(runSql(`select account_state(id) from auth.users where email = '${address}'`)).toBe(
+      'handle_missing',
+    );
+
+    // "Continue" leads to setup; choosing a username makes the account active.
+    await page.getByRole('link', { name: 'Continue' }).click();
+    await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
+    const handle = `new.writer.${Date.now()}`;
+    await page.getByLabel('Username').fill(handle);
+    await expect(page.getByText(`@${handle} is free.`)).toBeVisible();
+    await page.getByRole('button', { name: 'Save and continue' }).click();
+    await expect(page).toHaveURL(/\/$/);
     expect(runSql(`select account_state(id) from auth.users where email = '${address}'`)).toBe(
       'active',
     );

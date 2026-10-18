@@ -1,0 +1,158 @@
+/**
+ * Turns Unicode's list of look-alike characters into a migration that fills
+ * public.confusable_characters (story S1-E2-04).
+ *
+ * Why: usernames may use any script, so "аdmin" with a Cyrillic "а" must count as "admin", and a
+ * name must not copy another one with look-alike letters (Unicode Technical Standard #39,
+ * "skeleton" comparison). The database folds names with this table (username_skeleton()).
+ * Who runs it: a person, by hand, when Unicode publishes a new list. Example (one line):
+ *   npx tsx scripts/build-confusables-migration.ts --input confusables.txt --unicode-version 16.0.0
+ *     --output supabase/migrations/<time>_<name>.sql
+ * What it reads: either Unicode's own confusables.txt
+ *   (https://www.unicode.org/Public/security/latest/confusables.txt), or a JSON file that maps each
+ *   character to its look-alike prototype (the unicode-confusables npm package's
+ *   data/confusables.json, MIT, which is that same file for Unicode 10.0.0).
+ * What it writes: one SQL file that empties the table and inserts one row per character.
+ * The data is © Unicode, Inc., used under the Unicode License (https://www.unicode.org/license.txt),
+ * which allows copying it with this notice.
+ */
+import { readFileSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
+import { parseArgs } from 'node:util';
+
+/** One look-alike: the character people might type and the prototype it looks like. */
+export interface ConfusablePair {
+  sourceText: string;
+  prototypeText: string;
+}
+
+/** How many rows go in each insert statement, so no single statement gets huge. */
+const rowsPerInsert = 500;
+
+/**
+ * Turns a field of hexadecimal code points ("0061 0308") into text.
+ *
+ * @param field - space-separated code points from confusables.txt
+ * @returns the characters
+ */
+function codePointsToText(field: string): string {
+  return field
+    .trim()
+    .split(/\s+/)
+    .map((codePoint) => String.fromCodePoint(Number.parseInt(codePoint, 16)))
+    .join('');
+}
+
+/**
+ * Reads Unicode's confusables.txt format: "source ; prototype ; type # comment" per line.
+ *
+ * @param fileText - the file's contents
+ * @returns one pair per data line; comments and blank lines are skipped
+ */
+export function parseConfusablesText(fileText: string): ConfusablePair[] {
+  const pairs: ConfusablePair[] = [];
+  for (const rawLine of fileText.split(/\r?\n/)) {
+    // Drop the comment part and the byte order mark, then skip what's left if it's empty.
+    const line =
+      rawLine
+        .replace(/^\uFEFF/, '')
+        .split('#')[0]
+        ?.trim() ?? '';
+    if (line === '') continue;
+    const [sourceField, prototypeField] = line.split(';');
+    if (sourceField === undefined || prototypeField === undefined) continue;
+    pairs.push({
+      sourceText: codePointsToText(sourceField),
+      prototypeText: codePointsToText(prototypeField),
+    });
+  }
+  return pairs;
+}
+
+/**
+ * Reads the JSON format: an object whose keys are characters and values their prototypes.
+ *
+ * @param fileText - the file's contents
+ * @returns one pair per key
+ */
+export function parseConfusablesJson(fileText: string): ConfusablePair[] {
+  const map = JSON.parse(fileText) as Record<string, string>;
+  return Object.entries(map).map(([sourceText, prototypeText]) => ({ sourceText, prototypeText }));
+}
+
+/**
+ * Quotes text for SQL: standard strings, with each single quote doubled.
+ *
+ * @param text - any text without a NUL character (Postgres text can't hold one)
+ * @returns the quoted literal
+ */
+function sqlLiteral(text: string): string {
+  return `'${text.replaceAll("'", "''")}'`;
+}
+
+/**
+ * Builds the migration's SQL.
+ *
+ * @param pairs - the look-alikes, from one of the parsers above
+ * @param unicodeVersion - for the header and the table comment, for example "10.0.0"
+ * @returns the SQL file's text
+ * Errors: throws when a character appears twice, which would break the table's unique key.
+ */
+export function buildConfusablesMigration(pairs: ConfusablePair[], unicodeVersion: string): string {
+  // Step 1: refuse duplicates now rather than half-way through a migration.
+  const seen = new Set<string>();
+  for (const pair of pairs) {
+    if (seen.has(pair.sourceText)) throw new Error(`"${pair.sourceText}" appears twice.`);
+    seen.add(pair.sourceText);
+  }
+  // Step 2: one insert per batch of rows.
+  const inserts: string[] = [];
+  for (let start = 0; start < pairs.length; start += rowsPerInsert) {
+    const rows = pairs
+      .slice(start, start + rowsPerInsert)
+      .map((pair) => `  (${sqlLiteral(pair.sourceText)}, ${sqlLiteral(pair.prototypeText)})`);
+    inserts.push(
+      `insert into public.confusable_characters (source_text, prototype_text) values\n${rows.join(',\n')};`,
+    );
+  }
+  // Step 3: the header, a clean table, the rows and the version.
+  return [
+    `-- Look-alike characters from Unicode ${unicodeVersion} (story S1-E2-04).`,
+    '-- Generated by scripts/build-confusables-migration.ts. Do not edit by hand: run the script on a',
+    '-- newer Unicode list and commit the result as a new migration. Data © Unicode, Inc., used under',
+    '-- the Unicode License (https://www.unicode.org/license.txt).',
+    '',
+    'delete from public.confusable_characters;',
+    '',
+    inserts.join('\n\n'),
+    '',
+    `comment on table public.confusable_characters is 'kind: platform`,
+    `Look-alike characters and their prototypes, Unicode ${unicodeVersion} (UTS #39), used to fold names (S1-E2-04).';`,
+    '',
+  ].join('\n');
+}
+
+/** Reads the command line, builds the migration and writes it. */
+function main(): void {
+  const { values } = parseArgs({
+    options: {
+      input: { type: 'string' },
+      'unicode-version': { type: 'string' },
+      output: { type: 'string' },
+    },
+  });
+  if (!values.input || !values['unicode-version'] || !values.output) {
+    throw new Error('Give --input, --unicode-version and --output (see the header).');
+  }
+  const fileText = readFileSync(values.input, 'utf8');
+  const pairs = values.input.endsWith('.json')
+    ? parseConfusablesJson(fileText)
+    : parseConfusablesText(fileText);
+  writeFileSync(values.output, buildConfusablesMigration(pairs, values['unicode-version']));
+  console.log(`Wrote ${String(pairs.length)} look-alikes to ${values.output}.`);
+}
+
+// Run main() only when this file is started directly, not when a test imports it.
+if (process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}

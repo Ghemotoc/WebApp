@@ -1,0 +1,72 @@
+{
+  "setup": {
+    "documentTitle": "Configurează-ți profilul · {{productName}}",
+    "eyebrow": "Bine ai venit",
+    "heading": "Configurează-ți profilul",
+    "intro": "Doar numele de utilizator e obligatoriu. Poți schimba ambele nume mai târziu, în Setări.",
+    "save": "Salvează și continuă",
+    "saving": "Se salvează…",
+    "penNameNotSaved": "Numele de utilizator e salvat, dar pseudonimul nu. Îl poți adăuga în Setări."
+  },
+  "handle": {
+    "label": "Nume de utilizator",
+    "hint": "Între 3 și 30 de caractere. Merge orice caracter, dar blocăm înjurăturile, numele care seamănă cu ale echipei noastre și literele care imită alt nume. Ceilalți te găsesc și te menționează după el.",
+    "checking": "Verificăm…",
+    "free": "@{{handle}} e liber.",
+    "checkFailed": "Nu am putut verifica numele acum. Îl verificăm din nou când salvezi.",
+    "outcomes": {
+      "too_short": "Folosește între 3 și 30 de caractere.",
+      "too_long": "Folosește între 3 și 30 de caractere.",
+      "invisible_characters": "Șterge caracterele invizibile. Sunt folosite ca să falsifice nume.",
+      "spaces": "Numele de utilizator nu poate avea spații. Încearcă un punct sau o liniuță jos.",
+      "looks_like_staff": "Numele seamănă cu al cuiva din echipă. Încearcă altul.",
+      "reserved": "Una dintre paginile noastre folosește acest nume. Încearcă altul.",
+      "not_allowed": "Acest nume de utilizator nu e permis. Încearcă altul.",
+      "taken": "Cineva are deja acest nume sau unul care arată la fel.",
+      "too_soon": "Poți schimba numele de utilizator o dată la {{days}} de zile."
+    }
+  },
+  "penName": {
+    "label": "Pseudonim (opțional)",
+    "hint": "Apare pe poveștile tale în locul numelui de utilizator. Îl poți schimba o dată la {{days}} de zile. Nu îți cerem niciodată numele real.",
+    "outcomes": {
+      "too_long": "Folosește cel mult 50 de caractere.",
+      "invisible_characters": "Șterge caracterele invizibile. Sunt folosite ca să falsifice nume.",
+      "looks_like_staff": "Pseudonimul seamănă cu numele cuiva din echipă. Încearcă altul.",
+      "not_allowed": "Acest pseudonim nu e permis. Încearcă altul.",
+      "too_soon": "Poți schimba pseudonimul o dată la {{days}} de zile."
+    }
+  },
+  "falseHit": {
+    "text": "Crezi că am greșit, de exemplu pentru că e numele tău de familie?",
+    "link": "Cere unui moderator să verifice",
+    "emailSubject": "Vă rog să verificați numele meu de utilizator"
+  },
+  "settings": {
+    "documentTitle": "Setări · {{productName}}",
+    "eyebrow": "Contul tău",
+    "heading": "Setări",
+    "signedInAs": "Contul conectat: {{name}} · @{{handle}}",
+    "accountHeading": "Cont",
+    "usernameHint": "Ceilalți te găsesc după el. Îl poți schimba o dată la {{days}} de zile.",
+    "penNameHint": "Apare pe poveștile tale în locul numelui de utilizator. Lasă-l gol ca să apară numele de utilizator. Îl poți schimba o dată la {{days}} de zile.",
+    "nextChange": "Îl poți schimba din nou pe {{date}}.",
+    "save": "Salvează",
+    "saving": "Se salvează…",
+    "saved": "Salvat.",
+    "legalHeading": "Informații legale",
+    "legalText": "Termenii de utilizare, nota de informare privind confidențialitatea și regulile comunității, cu toate versiunile anterioare.",
+    "legalLink": "Deschide Centrul legal",
+    "signedOut": "Conectează-te ca să îți vezi setările.",
+    "noHandle": "Alege mai întâi un nume de utilizator."
+  },
+  "notice": {
+    "heading": "Alege un nume de utilizator",
+    "body": "Ai nevoie de un nume de utilizator înainte să publici, să comentezi sau să postezi. Durează doar un moment.",
+    "action": "Configurează-ți profilul"
+  },
+  "errors": {
+    "loadFailed": "Nu am putut încărca contul. Verifică-ți conexiunea și încearcă din nou.",
+    "saveFailed": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
+  }
+}

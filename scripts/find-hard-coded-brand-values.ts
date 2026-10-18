@@ -31,6 +31,9 @@ export const allowedPaths = [
   'src/locales/',
   // Generated from the two places above by scripts/build-auth-email-templates.ts (S1-E2-01).
   'supabase/templates/',
+  // The settings row with the brand names usernames may not imitate (S1-E2-04, decided 17 Oct
+  // 2026, 19:43, Q5): the back end reads brand values from settings, and this is where they start.
+  'supabase/migrations/20261017230005_s1_e2_04_brand_words.sql',
 ];
 
 /** Folders inside the scanned paths that hold tool output, not our code. */

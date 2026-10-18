@@ -1,0 +1,61 @@
+# Romanian words refused in usernames and pen names (story S1-E2-04). DRAFT, 17 Oct 2026:
+# Robert checks this list before release (decided 17 Oct 2026, 19:43, Q4).
+#
+# How the list is used: names are folded first (case, diacritics such as ș and ț, look-alike
+# letters and digits such as 0 for o), so write each word once, without diacritics.
+#   word    refused anywhere in a name when it has 4 letters or more; shorter words only as a
+#           whole word of the name
+#   =word   refused only as a whole word, because it hides inside ordinary words
+#           ("pula" in "populara", "muie" in "muiere")
+# A moderator can approve a name that's a false hit, such as a surname (S1-E11-02).
+# After a change: npx tsx scripts/build-word-list-migration.ts (see its header) and commit the new
+# migration.
+
+# Swearing and sexual words
+pizda
+pizde
+pizdos
+pulamea
+cacat
+coaie
+coaiele
+futai
+futut
+futu-ti
+futui
+fututi
+muist
+labagiu
+tarfa
+curvar
+curvele
+=pula
+=pule
+=pulii
+=muie
+=fut
+=fute
+=curva
+=laba
+=sugi
+=coi
+=sex
+=sexi
+
+# Slurs and insults
+bulangiu
+poponar
+jidan
+handicapatule
+retardat
+=cioara
+=bozgor
+=tigan
+
+# Abuse and hate
+=viol
+=violator
+=pedofil
+hitler
+=nazist
+=sinucide

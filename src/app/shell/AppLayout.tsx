@@ -10,10 +10,13 @@
  * top bar to the page (WCAG 2.2, 2.4.1 Bypass blocks). The page sits in the one <main> landmark.
  * Legal updates (S1-E14-01): LegalUpdateNotice sits at the top of <main> on every page and shows
  * "We've updated our Terms" when a signed-in person must accept a new version before posting.
+ * Usernames (S1-E2-04): SetupProfileNotice sits under it and links a signed-in person without a
+ * username to /setup.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
 
+import { SetupProfileNotice } from '@/features/account/components/SetupProfileNotice';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
@@ -52,6 +55,8 @@ export function AppLayout() {
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* "We've updated our Terms", for a signed-in person who must accept before posting (S1-E14-01). */}
         <LegalUpdateNotice />
+        {/* "Choose a username", for a signed-in person who hasn't chosen one yet (S1-E2-04). */}
+        <SetupProfileNotice />
         <Outlet />
       </main>
       <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />

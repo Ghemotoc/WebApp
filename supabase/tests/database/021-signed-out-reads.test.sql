@@ -48,6 +48,7 @@ select results_eq(
   $$ select table_name, visible_rows from pg_temp.rows_visible_to_anon() order by table_name $$,
   $$ select * from (values
        ('audit_log', 0::bigint),
+       ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
        ('invites', 0::bigint),
@@ -55,8 +56,11 @@ select results_eq(
         (select count(*) from public.legal_document_versions where published_at <= now())),
        ('legal_documents', (select count(*) from public.legal_documents)),
        ('profiles', 0::bigint),
+       ('reserved_names', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
-       ('staff_roles', 0::bigint)
+       ('staff_roles', 0::bigint),
+       ('username_approvals', 0::bigint),
+       ('username_word_lists', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
   'a signed-out visitor sees only public flags, settings and published legal documents, nothing else'
 );
