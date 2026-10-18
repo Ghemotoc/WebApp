@@ -75,7 +75,7 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Website CMS and interface text** are owner and admin only, so the content editor role has no area for now; whether to keep it is OPEN (decided 17 Oct 2026, 19:19).
 - **One check:** `staff_may()` combines the role, the permission and `is_staff_session()`. Every earlier staff policy now uses it (same names, same reach), so S1-E2-07b only changes `is_staff_session()`.
 - **Staff accounts are read-only as members:** `account_state()` answers `staff_account` for anyone with a staff role (decided 17 Oct 2026, 19:43, Q14a). Staff keep a separate writer account if they write.
-- **The first owner:** only for production, or any database without the seed. After signing up there, run `select public.bootstrap_first_owner('<user id>');` in the SQL editor; it refuses once an owner exists. **Not on staging or locally:** the seed already gives the `owner` persona the owner role, so the function refuses there. On staging, use the `owner` persona for owner-only work; nobody makes a personal staff account on staging (Robert, 18 Oct 2026).
+- **The first owner:** only for production, or any database without the seed. After signing up there, run `select public.bootstrap_first_owner('<user id>');` in the SQL editor; it refuses once an owner exists. **Not on staging or locally:** the seed already gives the `owner` persona the owner role, so the function refuses there. **Personal staff accounts on staging:** Robert's own staging account, on the staff Google Workspace domain (`STAFF_EMAIL_DOMAIN`), gets the owner role from the `owner` persona at /staff/roles, the same way any staff role is granted there (Robert, 18 Oct 2026).
 
 ## Logging in (S1-E2-05)
 
