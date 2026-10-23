@@ -24,12 +24,17 @@ create function pg_temp.drawn_cover() returns jsonb language sql as $$
   select '{"kind": "drawn", "design": "stripes", "background": "plum", "accent": "gold"}'::jsonb;
 $$;
 
+-- The labels every story needs since S1-E3-06: a rating and the AI answer.
+create function pg_temp.labels() returns jsonb language sql as $$
+  select '{"rating": "all_ages", "ai_disclosure": "no_ai"}'::jsonb;
+$$;
+
 -- 1. adult_writer creates a story.
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 
 select is(
   (public.create_story('  Fata care repara   radiouri ', 'O vară în atelierul bunicului.', 'ro', 'fiction',
-    array['Fantezie', 'fantezie', ' fantézie ', 'set in Romania'], pg_temp.drawn_cover())) ->> 'outcome',
+    array['Fantezie', 'fantezie', ' fantézie ', 'set in Romania'], pg_temp.drawn_cover(), null, pg_temp.labels())) ->> 'outcome',
   'ok',
   'an active adult creates a story'
 );
@@ -76,24 +81,24 @@ select throws_ok($$ insert into public.story_tags (story_id, tag_id, user_id)
 
 -- 4. The rules create_story() enforces.
 select throws_ok($$ select public.create_story('Too many', '', 'ro', 'fiction',
-  array['a','b','c','d','e','f','g','h','i','j','k'], '{"kind": "automatic"}') $$, '23514', null,
+  array['a','b','c','d','e','f','g','h','i','j','k'], '{"kind": "automatic"}', null, pg_temp.labels()) $$, '23514', null,
   'an eleventh tag is refused');
-select throws_ok($$ select public.create_story('Closed language', '', 'hu', 'fiction', '{}', '{"kind": "automatic"}') $$,
+select throws_ok($$ select public.create_story('Closed language', '', 'hu', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels()) $$,
   '23514', null, 'a language with no open market is refused');
-select throws_ok($$ select public.create_story('Unknown category', '', 'ro', 'journalism', '{}', '{"kind": "automatic"}') $$,
+select throws_ok($$ select public.create_story('Unknown category', '', 'ro', 'journalism', '{}', '{"kind": "automatic"}', null, pg_temp.labels()) $$,
   '23514', null, 'an unknown category (such as journalism) is refused');
-select throws_ok($$ select public.create_story('', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}') $$,
+select throws_ok($$ select public.create_story('', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels()) $$,
   '23514', null, 'an empty title is refused');
 select throws_ok($$ select public.create_story('Odd colour', '', 'ro', 'fiction', '{}',
-  '{"kind": "drawn", "design": "waves", "background": "sky", "accent": "#6E93BF"}') $$, '23514', null,
+  '{"kind": "drawn", "design": "waves", "background": "sky", "accent": "#6E93BF"}', null, pg_temp.labels()) $$, '23514', null,
   'a cover colour outside the 9-colour palette is refused');
 select throws_ok($$ select public.create_story('Upload', '', 'ro', 'fiction', '{}',
-  '{"kind": "upload", "tall_path": "x/tall.jpg"}') $$, '0A000', null,
+  '{"kind": "upload", "tall_path": "x/tall.jpg"}', null, pg_temp.labels()) $$, '0A000', null,
   'an uploaded cover is refused while picture_uploads is off (no uploads in the demo, 23 Oct 2026)');
 
 -- 5. An automatic cover stores nothing.
 select is(
-  (public.create_story('Automatic', '', 'en', 'poetry', '{}', '{"kind": "automatic"}')) ->> 'outcome', 'ok',
+  (public.create_story('Automatic', '', 'en', 'poetry', '{}', '{"kind": "automatic"}', null, pg_temp.labels())) ->> 'outcome', 'ok',
   'a story with the automatic cover is created'
 );
 select results_eq(
@@ -106,11 +111,11 @@ select results_eq(
 --     an ID already in use is refused.
 select is(
   (public.create_story('Chosen ID', '', 'en', 'poetry', '{}', '{"kind": "automatic"}',
-    '11111111-1111-4111-8111-111111111111')) ->> 'outcome', 'ok',
+    '11111111-1111-4111-8111-111111111111', pg_temp.labels())) ->> 'outcome', 'ok',
   'the form''s own story ID is used (S1-E3-13)'
 );
 select throws_ok($$ select public.create_story('Same ID again', '', 'en', 'poetry', '{}', '{"kind": "automatic"}',
-  '11111111-1111-4111-8111-111111111111') $$, '23514', null,
+  '11111111-1111-4111-8111-111111111111', pg_temp.labels()) $$, '23514', null,
   'a story ID already in use is refused, never reused');
 
 -- 6. The owner stays the same when the pen name changes.
@@ -120,21 +125,21 @@ select is((select user_id from public.stories where id = (select id from made)),
 
 -- 7. The account gate: read-only accounts can''t create.
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
-select is((public.create_story('Teen', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}')) ->> 'outcome', 'not_active',
+select is((public.create_story('Teen', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels())) ->> 'outcome', 'not_active',
   'teen_17 can''t create a story while the test is adults only');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000004');
-select is((public.create_story('Kid', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}')) ->> 'outcome', 'not_active',
+select is((public.create_story('Kid', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels())) ->> 'outcome', 'not_active',
   'kid_14_waiting can''t create a story');
 -- While adults_only is on, an adult is active without a Yoti result (decided 17 Oct 2026, 12:44;
 -- docs/mocks.md), so pending_check may write in March; S1-E2-08 makes this 'not_active' again.
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000005');
-select is((public.create_story('Pending', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}')) ->> 'outcome', 'ok',
+select is((public.create_story('Pending', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels())) ->> 'outcome', 'ok',
   'pending_check (an adult without an age check) may create a story while adults_only is on');
 
 -- 8. Signed out: nothing.
 reset role;
 set local role anon;
-select throws_ok($$ select public.create_story('Anon', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}') $$, '42501', null,
+select throws_ok($$ select public.create_story('Anon', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels()) $$, '42501', null,
   'a signed-out visitor can''t call create_story()');
 
 -- 9. The owner column can never change (architecture 1.6).

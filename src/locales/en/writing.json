@@ -132,7 +132,12 @@
     "tooManyTags": "A story can have at most 10 tags.",
     "duplicateTag": "Two of these tags are the same once we ignore capitals and diacritics.",
     "loadFailed": "We couldn’t load this page. Check your connection and try again.",
-    "storyIdInvalid": "The story could not be given an ID. Reload the page and try again."
+    "storyIdInvalid": "The story could not be given an ID. Reload the page and try again.",
+    "ratingRequired": "Pick a rating.",
+    "aiRequired": "Say whether you used AI.",
+    "abuseNeedsRating": "A story about abuse or coercion must be rated 16+ or 18+.",
+    "abuseNeedsNote": "Add a content note for a story about abuse or coercion.",
+    "contentNoteTooLong": "A content note can have at most {{max}} characters."
   },
   "storyCard": {
     "settings": "Story settings",
@@ -182,5 +187,59 @@
     "heading": "Recently deleted",
     "intro": "Deleted stories are hidden straight away and deleted for good after 30 days. Until then you can undo.",
     "goneOn": "Gone for good on {{date}}"
+  },
+  "labels": {
+    "heading": "Labels",
+    "intro": "Labels show on your story card and story page. If your story is fan fiction or a parody, you must tick it.",
+    "fanFiction": "Fan fiction",
+    "fanFictionHint": "It uses characters or a world from someone else’s book, film, game or show.",
+    "parody": "Parody",
+    "parodyHint": "It copies another work on purpose to make fun of it or comment on it.",
+    "abuse": "Deals with abuse or coercion",
+    "abuseHint": "Abuse, coercion or grooming is a theme of the story. It then needs the 16+ or 18+ rating and a content note.",
+    "contentNote": "Content note",
+    "contentNoteHint": "A short warning readers see before they open the story. {{count}} of {{max}} characters.",
+    "rating": "Rating",
+    "required": "(required)",
+    "ratingNoteAllAges": "Anyone can find and read it. Pick 13+, 16+ or 18+ if your story isn’t right for younger readers; it’s then hidden from anyone younger.",
+    "ratingNoteHidden": "Hidden from anyone under {{age}}, in search, on Discover and on your profile. Readers see the rating before they open the story.",
+    "guide": {
+      "all_ages": {
+        "who": "For every reader, children included",
+        "what": "Feelings and friendships, a first kiss at most. Nothing frightening shown in detail, no swearing."
+      },
+      "13_plus": {
+        "who": "For readers 13 and over",
+        "what": "Crushes, relationships and kisses between characters of any age, 16 and 17-year-olds included, with no sexual content. Mild swearing, fights and scary moments."
+      },
+      "16_plus": {
+        "who": "For readers 16 and over",
+        "what": "Darker themes such as abuse, self-harm or war, told with care and a content note. Sex between adult characters can be mentioned, never described."
+      },
+      "18_plus": {
+        "who": "For adults only",
+        "what": "Strong violence, strong language and sexual content between adult characters."
+      }
+    },
+    "guideRule": "At every rating: no sexual content involving anyone under 18, real or fictional. Not sure? Pick the higher rating; our team can change it if a reader reports it.",
+    "ai": "Did you use AI?",
+    "aiHint": "Shown as a label on your story. If someone reports a missing label, a person on our team decides. We never use AI detectors to judge your writing.",
+    "previewBanner": "{{rating}}: hidden from readers under {{age}}"
+  },
+  "rating": {
+    "all_ages": "All ages",
+    "13_plus": "13+",
+    "16_plus": "16+",
+    "18_plus": "18+"
+  },
+  "aiDisclosure": {
+    "no_ai": "No AI",
+    "ai_brainstorming": "AI for brainstorming or outlining",
+    "partly_ai_written": "Partly AI-written",
+    "undisclosed": "AI-written, not disclosed"
+  },
+  "pills": {
+    "fanFiction": "Fan fiction",
+    "parody": "Parody"
   }
 }

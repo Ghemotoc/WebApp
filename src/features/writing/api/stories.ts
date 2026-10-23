@@ -12,13 +12,15 @@
  *   ones included so "Recently deleted" can offer undo (S1-E3-05).
  * - Settings (S1-E3-05): update_my_story(), delete_my_story() and restore_my_story()
  *   (supabase/migrations/…_s1_e3_05_story_settings.sql), which answer with an outcome.
+ * - The labels (S1-E3-06): create_story() and update_my_story() take a `labels` object
+ *   (…_s1_e3_06_ratings_and_labels.sql, check_story_labels()).
  * Readers never read these tables: they go through get_story_page() and get_chapter()
  * (ADR 0004, S1-E3-05 and S1-E4-01a).
  */
 import type { CoverColourKey, CoverDesignKey } from '@/components/covers/coverDesigns';
 import type { Database } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
-import type { NewStoryInput, StorySettingsInput } from '@/schemas/story';
+import type { AiDisclosure, NewStoryInput, StoryRating, StorySettingsInput } from '@/schemas/story';
 
 /** A category as the form shows it: its key (translated by the screen) and its order. */
 export interface StoryCategory {
@@ -51,6 +53,43 @@ export interface MyStory {
   commentsEnabled: boolean;
   /** When the writer deleted it; null for a live story. Undo is possible for 30 days (S1-E3-05). */
   deletedAt: string | null;
+  /** The labels (S1-E3-06). */
+  rating: StoryRating;
+  isFanFiction: boolean;
+  isParody: boolean;
+  dealsWithAbuseOrCoercion: boolean;
+  contentNote: string;
+  aiDisclosure: AiDisclosure;
+  /** When staff labelled it "AI-written, not disclosed"; null otherwise (Q24). */
+  aiUndisclosedLabelledAt: string | null;
+}
+
+/** The labels as create_story() and update_my_story() take them (check_story_labels()). */
+type StoryLabelsPayload = Pick<
+  NewStoryInput,
+  | 'rating'
+  | 'isFanFiction'
+  | 'isParody'
+  | 'dealsWithAbuseOrCoercion'
+  | 'contentNote'
+  | 'aiDisclosure'
+>;
+
+/**
+ * Turns the form's label answers into the JSON the database functions take.
+ *
+ * @param labels - the checked answers
+ * @returns the labels object, snake_case as the SQL reads it
+ */
+function toLabelsJson(labels: StoryLabelsPayload) {
+  return {
+    rating: labels.rating,
+    is_fan_fiction: labels.isFanFiction,
+    is_parody: labels.isParody,
+    deals_with_abuse_or_coercion: labels.dealsWithAbuseOrCoercion,
+    content_note: labels.contentNote,
+    ai_disclosure: labels.aiDisclosure,
+  };
 }
 
 /** What the settings functions answer. */
@@ -106,6 +145,7 @@ export async function createStory(
     tag_names: input.tags,
     cover: input.cover,
     story_id: input.storyId,
+    labels: toLabelsJson(input),
   });
   if (error !== null) throw new Error(`Could not create the story: ${error.message}`);
   // The function answers JSON; read it back into the two shapes the screen knows.
@@ -129,7 +169,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, first_published_at, created_at, completion_status, comments_enabled, deleted_at, categories(slug), story_tags(tags(name))',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, first_published_at, created_at, completion_status, comments_enabled, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name))',
     )
     .order('created_at', { ascending: false });
   if (error !== null) throw new Error(`Could not read your stories: ${error.message}`);
@@ -158,6 +198,13 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     completionStatus: row.completion_status,
     commentsEnabled: row.comments_enabled,
     deletedAt: row.deleted_at,
+    rating: row.rating,
+    isFanFiction: row.is_fan_fiction,
+    isParody: row.is_parody,
+    dealsWithAbuseOrCoercion: row.deals_with_abuse_or_coercion,
+    contentNote: row.content_note,
+    aiDisclosure: row.ai_disclosure,
+    aiUndisclosedLabelledAt: row.ai_undisclosed_labelled_at,
   }));
 }
 
@@ -199,6 +246,7 @@ export async function updateMyStory(
       cover: settings.cover,
       completion_status: settings.completionStatus,
       comments_enabled: settings.commentsEnabled,
+      labels: toLabelsJson(settings),
     },
   });
   if (error !== null) throw new Error(`Could not save the story settings: ${error.message}`);

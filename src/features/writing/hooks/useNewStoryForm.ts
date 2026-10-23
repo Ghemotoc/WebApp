@@ -22,7 +22,8 @@ import { myStoriesKey } from './useMyStories';
 
 /**
  * What the form starts with: Romanian (the first market) and fiction, as the board shows, a
- * fresh story ID, and the defaults a new story gets (Ongoing, comments on; S1-E3-05).
+ * fresh story ID, the defaults a new story gets (Ongoing, comments on; S1-E3-05) and no labels
+ * ticked (S1-E3-06).
  *
  * @returns the empty answers
  */
@@ -37,6 +38,13 @@ function emptyAnswers(): StoryAnswers {
     cover: { kind: 'automatic' },
     completionStatus: 'ongoing',
     commentsEnabled: true,
+    // The rating and the AI answer have no default: the writer must pick them (S1-E3-06).
+    rating: null,
+    isFanFiction: false,
+    isParody: false,
+    dealsWithAbuseOrCoercion: false,
+    contentNote: '',
+    aiDisclosure: null,
   };
 }
 

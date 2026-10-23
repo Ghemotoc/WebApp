@@ -3,21 +3,23 @@
  * story (story S1-E3-05; board Story 3.4, the side column).
  *
  * Board values: the writer card (name, 22 px; the bio, numbers, Follow and "See profile" come
- * with S1-E5-05 and S1-E6-05), the label rows with a fine line between them (LabelRows; rating,
- * labels and AI use join with S1-E3-06, "Where to read" with S1-E3-08), the content note box
- * (S1-E3-06) and the "Report this story" link. The mug and the mushroom doodles sit on the card
+ * with S1-E5-05 and S1-E6-05), the label rows with a fine line between them (LabelRows: language,
+ * rating, labels, AI, status, comments; "Where to read" joins with S1-E3-08) and the "Report
+ * this story" link. The content note sits in StoryHeader, under the blurb. The mug and the mushroom doodles sit on the card
  * corners as on the board.
  * Report button (CLAUDE.md rule 6): Lane C's <ReportButton> from src/features/reporting replaces
  * ReportStoryLink when S1-E10-01 lands; until then it opens an email to the support address with
  * the story's address in the subject (docs/mocks.md).
  * Who uses it: StoryPage.
  */
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LabelRows } from '@/components/ui/LabelRows';
 import { brand } from '@/config/brand';
+import { ratingMinimumAge } from '@/schemas/story';
 
 import type { StoryPageData } from '../api/storyPage';
 
@@ -66,6 +68,28 @@ function WriterCard({ writer }: { writer: StoryPageData['writer'] }) {
   );
 }
 
+/** The rating row: "16+ · hidden from readers under 16"; All ages and 13+ say only the name. */
+function ratingRowText(rating: StoryPageData['labels']['rating'], t: TFunction<'reading'>) {
+  const name = t(`rating.${rating}`, { ns: 'writing' });
+  // Nobody under 13 has an account, so 13+ hides the story from no reader (docs/board-fixes.md).
+  if (rating === 'all_ages' || rating === '13_plus') return name;
+  return t('storyPage.ratingHidden', { rating: name, age: ratingMinimumAge[rating] });
+}
+
+/** The labels row: "Fan fiction", "Parody", both, or "None". */
+function labelsRowText(labels: StoryPageData['labels'], t: TFunction<'reading'>) {
+  const names: string[] = [];
+  if (labels.isFanFiction) names.push(t('pills.fanFiction', { ns: 'writing' }));
+  if (labels.isParody) names.push(t('pills.parody', { ns: 'writing' }));
+  return names.length === 0 ? t('storyPage.noLabels') : names.join(' · ');
+}
+
+/** The AI row: the writer's answer, or the staff label when one was added (Q24). */
+function aiRowText(labels: StoryPageData['labels'], t: TFunction<'reading'>) {
+  if (labels.aiUndisclosedLabelled) return t('aiDisclosure.undisclosed', { ns: 'writing' });
+  return t(`aiDisclosure.${labels.aiDisclosure}`, { ns: 'writing' });
+}
+
 /**
  * Renders the column.
  *
@@ -93,6 +117,12 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
                 </span>
               ),
             },
+            {
+              label: t('storyPage.ratingLabel'),
+              value: ratingRowText(story.labels.rating, t),
+            },
+            { label: t('storyPage.labelsLabel'), value: labelsRowText(story.labels, t) },
+            { label: t('storyPage.aiLabel'), value: aiRowText(story.labels, t) },
             {
               label: t('storyPage.statusLabel'),
               value: t(`status.${story.completionStatus}`, { ns: 'writing' }),

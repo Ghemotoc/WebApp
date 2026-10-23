@@ -83,6 +83,9 @@ test.describe('automatic covers (S1-E3-13)', () => {
     // Create with the automatic cover: the card on Your writing draws the same design, with the
     // full title, and the database stores nothing for the cover.
     await page.getByRole('radio', { name: 'Română' }).click();
+    // Every story needs a rating and an AI answer before it saves (S1-E3-06).
+    await page.getByRole('radio', { name: 'All ages', exact: true }).click();
+    await page.getByRole('radio', { name: 'No AI', exact: true }).click();
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
     await expect(page).toHaveURL(/\/write$/);
     const card = page.getByRole('article', { name: title });

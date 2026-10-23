@@ -14,8 +14,14 @@
     "reportSubject": "Report a story: {{slug}}",
     "ownerPreview": "Only you can see this story until you publish its first chapter. This is how readers will see it.",
     "unavailableTitle": "This story isn’t available",
-    "unavailableBody": "It may not be published yet, it may have been removed, or the link may be wrong.",
+    "unavailableBody": "It may not be published yet, it may be rated for older readers, it may have been removed, or the link may be wrong.",
     "goHome": "Go to Home",
-    "loadFailed": "We couldn’t load this story. Check your connection and try again."
+    "loadFailed": "We couldn’t load this story. Check your connection and try again.",
+    "ratingLabel": "Rating",
+    "ratingHidden": "{{rating}} · hidden from readers under {{age}}",
+    "labelsLabel": "Labels",
+    "noLabels": "None",
+    "aiLabel": "AI",
+    "contentNoteHeading": "Content note"
   }
 }

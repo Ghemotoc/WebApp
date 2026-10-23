@@ -3,9 +3,10 @@
  * S1-E3-01; board NewStory 4.2, the right-hand aside).
  *
  * Board values: a card with the 300 px cover, the title at 28 px with the pen name, then the
- * chips (category, language; status, where-to-read, labels and rating join with S1-E3-05 and
- * S1-E3-06), the blurb and the tag line, with an "Only you" lock pill at the top. Under the
- * card: the line about deleting the story later.
+ * chips (category, language, the label pills from S1-E3-06; where-to-read joins with S1-E3-08),
+ * the rating banner when the story is 13+, 16+ or 18+ (S1-E3-06), the blurb and the tag line,
+ * with an "Only you" lock pill at the top. Under the card: the line about deleting the story
+ * later.
  * Who uses it: NewStoryPage. On phones it drops below the form.
  */
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,8 @@ import { DrawnCover } from '@/components/covers/DrawnCover';
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
+import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
+import { ratingMinimumAge } from '@/schemas/story';
 
 import type { StoryAnswers } from '../hooks/storyAnswers';
 
@@ -22,6 +25,17 @@ import type { StoryAnswers } from '../hooks/storyAnswers';
 export interface StoryPreviewAsideProps {
   answers: StoryAnswers;
   penName: string;
+}
+
+/** The board's rating banner: who the story is hidden from (CLAUDE.md rule 18); nothing for All ages. */
+function RatingBanner({ rating }: { rating: StoryAnswers['rating'] }) {
+  const { t } = useTranslation('writing');
+  if (rating === null || rating === 'all_ages') return null;
+  return (
+    <p className="m-0 rounded-card bg-tint px-3 py-2 text-[13px] font-semibold text-(--info-text)">
+      {t('labels.previewBanner', { rating: t(`rating.${rating}`), age: ratingMinimumAge[rating] })}
+    </p>
+  );
 }
 
 /**
@@ -63,7 +77,9 @@ export function StoryPreviewAside({ answers, penName }: StoryPreviewAsideProps) 
               {t(`languages.${answers.languageCode}`, { defaultValue: answers.languageCode })}
             </span>
           </InfoPill>
+          <StoryLabelPills labels={{ ...answers, aiUndisclosedLabelled: false }} />
         </div>
+        <RatingBanner rating={answers.rating} />
         <p className="m-0 text-sm leading-normal text-body">
           {answers.blurb.trim() === '' ? t('preview.noBlurb') : answers.blurb}
         </p>

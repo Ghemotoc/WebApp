@@ -3,7 +3,8 @@
  * WriterDashboard 4.1, "Story by story").
  *
  * Board values: a card with the 96 × 130 drawn cover on the left, the title in Bricolage, the
- * blurb, the chips (category, Ongoing or Completed from S1-E3-05, the language), the tags, the
+ * blurb, the chips (category, Ongoing or Completed from S1-E3-05, the language, the label pills
+ * from S1-E3-06), the tags, the
  * lock line "Only you can see this story until you publish its first chapter" while nothing is
  * published, and the buttons: "Story settings" and "See story page" (S1-E3-05); "Write chapter
  * one" (S1-E3-02a) and "Manage chapters" (S1-E3-03) join with their stories.
@@ -15,6 +16,7 @@ import { Link } from 'react-router';
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { InfoPill } from '@/components/ui/InfoPill';
+import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
 
 import type { MyStory } from '../api/stories';
 
@@ -84,6 +86,9 @@ export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
               {t(`languages.${story.languageCode}`, { defaultValue: story.languageCode })}
             </span>
           </InfoPill>
+          <StoryLabelPills
+            labels={{ ...story, aiUndisclosedLabelled: story.aiUndisclosedLabelledAt !== null }}
+          />
         </div>
         {story.tags.length > 0 && (
           <p className="m-0 text-[13px] text-meta">{story.tags.join(' · ')}</p>

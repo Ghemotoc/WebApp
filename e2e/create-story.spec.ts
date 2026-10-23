@@ -107,6 +107,9 @@ test.describe('create a story (S1-E3-01)', () => {
       390,
     );
 
+    // Every story needs a rating and an AI answer before it saves (S1-E3-06).
+    await page.getByRole('radio', { name: 'All ages', exact: true }).click();
+    await page.getByRole('radio', { name: 'No AI', exact: true }).click();
     // Create: the story appears on Your writing, only to its writer until published.
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
     await expect(page).toHaveURL(/\/write$/);
@@ -142,6 +145,9 @@ test.describe('create a story (S1-E3-01)', () => {
 
     await page.goto('/write/new');
     await page.getByRole('textbox', { name: 'Title' }).fill('Fata care repara radiouri (teen)');
+    // Every story needs a rating and an AI answer before it saves (S1-E3-06).
+    await page.getByRole('radio', { name: 'All ages', exact: true }).click();
+    await page.getByRole('radio', { name: 'No AI', exact: true }).click();
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
     await expect(
       page.getByText('Your account can’t create stories yet.', { exact: false }),

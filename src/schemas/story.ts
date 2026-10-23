@@ -1,6 +1,7 @@
 /**
- * The new story form's rules, shared by the form and any later server code that checks the same
- * answers (story S1-E3-01; architecture 1.5: one zod schema in the browser and on the server).
+ * The story forms' rules, shared by the forms and any later server code that checks the same
+ * answers (stories S1-E3-01, S1-E3-05, S1-E3-06; architecture 1.5: one zod schema in the
+ * browser and on the server).
  *
  * Who uses it: useNewStoryForm (src/features/writing/hooks/) checks the answers before sending
  * them to create_story(). The database checks them again (supabase/migrations/…_s1_e3_01_stories.sql),
@@ -11,6 +12,7 @@ import { z } from 'zod';
 
 import { coverColourKeys, coverDesignKeys } from '@/components/covers/coverDesigns';
 import { MAXIMUM_TAG_LENGTH, MAXIMUM_TAGS, normaliseTag } from '@/features/writing/lib/tags';
+import type { Database } from '@/lib/database.types';
 
 /** The title's limits (board 4.2: maxlength 120). */
 export const MAXIMUM_TITLE_LENGTH = 120;
@@ -32,8 +34,67 @@ export const storyCoverSchema = z.discriminatedUnion('kind', [
 /** A cover choice as the form keeps it. */
 export type StoryCoverChoice = z.infer<typeof storyCoverSchema>;
 
-/** The answers on the new story form. */
-export const newStorySchema = z.object({
+/** The four ratings, youngest first (Q17; the database enum story_rating). */
+export const storyRatings = ['all_ages', '13_plus', '16_plus', '18_plus'] as const;
+
+/** A rating as stored. */
+export type StoryRating = Database['public']['Enums']['story_rating'];
+
+/** The youngest reader each rating allows; the copy says "hidden from anyone under N". */
+export const ratingMinimumAge: Record<StoryRating, number> = {
+  all_ages: 0,
+  '13_plus': 13,
+  '16_plus': 16,
+  '18_plus': 18,
+};
+
+/** The writer's AI answers (Q24; the database enum ai_disclosure). */
+export const aiDisclosures = ['no_ai', 'ai_brainstorming', 'partly_ai_written'] as const;
+
+/** An AI answer as stored. */
+export type AiDisclosure = Database['public']['Enums']['ai_disclosure'];
+
+/** The content note's limit (S1-E3-06). */
+export const MAXIMUM_CONTENT_NOTE_LENGTH = 300;
+
+/** The ratings that may carry abuse or coercion as a theme (17 Oct 2026, 10:36). */
+const ratingsAllowingAbuseTheme: readonly StoryRating[] = ['16_plus', '18_plus'];
+
+/**
+ * The labels (S1-E3-06): the rating and the AI answer are required; a story about abuse or
+ * coercion must be 16+ or 18+ with a content note. The database checks the same rules in
+ * check_story_labels().
+ */
+const storyLabelsShape = {
+  rating: z.enum(storyRatings, { error: 'errors.ratingRequired' }),
+  isFanFiction: z.boolean(),
+  isParody: z.boolean(),
+  dealsWithAbuseOrCoercion: z.boolean(),
+  contentNote: z.string().trim().max(MAXIMUM_CONTENT_NOTE_LENGTH, 'errors.contentNoteTooLong'),
+  aiDisclosure: z.enum(aiDisclosures, { error: 'errors.aiRequired' }),
+};
+
+/**
+ * The rules that span fields: abuse or coercion as a theme needs 16+ or 18+ and a content note
+ * (17 Oct 2026, 10:36). Applied last, because zod drops refinements when a schema is extended.
+ */
+function labelRules(
+  labels: { dealsWithAbuseOrCoercion: boolean; rating: StoryRating; contentNote: string },
+  context: z.RefinementCtx,
+) {
+  if (!labels.dealsWithAbuseOrCoercion) return;
+  // Step 1: abuse or coercion as a theme needs the 16+ or 18+ rating.
+  if (!ratingsAllowingAbuseTheme.includes(labels.rating)) {
+    context.addIssue({ code: 'custom', path: ['rating'], message: 'errors.abuseNeedsRating' });
+  }
+  // Step 2: and a content note, so readers know before they open it.
+  if (labels.contentNote === '') {
+    context.addIssue({ code: 'custom', path: ['contentNote'], message: 'errors.abuseNeedsNote' });
+  }
+}
+
+/** The answers on the new story form, before the rules that span fields. */
+const newStoryShape = z.object({
   // The form makes the story's ID (crypto.randomUUID()) so the automatic cover is known before
   // the story exists (S1-E3-13); the database refuses an ID already in use.
   storyId: z.uuid('errors.storyIdInvalid'),
@@ -51,16 +112,23 @@ export const newStorySchema = z.object({
     // Look-alikes count as one tag, so two of them are a mistake the form prevents.
     .refine((tags) => new Set(tags.map(normaliseTag)).size === tags.length, 'errors.duplicateTag'),
   cover: storyCoverSchema,
+  ...storyLabelsShape,
 });
+
+/** The new story form's answers, with the label rules (S1-E3-06). */
+export const newStorySchema = newStoryShape.superRefine(labelRules);
 
 /** The checked answers. */
 export type NewStoryInput = z.infer<typeof newStorySchema>;
 
 /** The story settings form's answers (S1-E3-05): the same fields plus status and comments. */
-export const storySettingsSchema = newStorySchema.omit({ storyId: true }).extend({
-  completionStatus: z.enum(['ongoing', 'completed']),
-  commentsEnabled: z.boolean(),
-});
+export const storySettingsSchema = newStoryShape
+  .omit({ storyId: true })
+  .extend({
+    completionStatus: z.enum(['ongoing', 'completed']),
+    commentsEnabled: z.boolean(),
+  })
+  .superRefine(labelRules);
 
 /** The checked settings. */
 export type StorySettingsInput = z.infer<typeof storySettingsSchema>;

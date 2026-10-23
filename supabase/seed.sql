@@ -134,24 +134,26 @@ values
 -- one automatic) and a draft for teen_17, so the demo and every test have something to open.
 -- Fixed IDs and addresses so tests can name them; later stories of the lane add chapters and
 -- publish some of them. Titles and blurbs are synthetic, never real users' text.
+-- Every story has a rating and an AI answer (S1-E3-06): the first two are All ages, the
+-- third is 13+ so the seed has one story a reader's age can hide.
 insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
-  cover_kind, cover_design, cover_background, cover_accent)
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure)
 values
   ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-000000000001',
    'statia-meteo-seed01', 'Stația meteo',
    'Bunica mea notează vremea în fiecare dimineață din 1971. În ziua în care a ajuns la spital, am găsit restul săptămânii deja completat.',
    'ro', (select id from public.categories where slug = 'fiction'),
-   'drawn', 'waves', 'sky', 'violet'),
+   'drawn', 'waves', 'sky', 'violet', 'all_ages', 'no_ai'),
   ('00000000-0000-4000-9000-000000000002', '00000000-0000-4000-8000-000000000001',
    'the-girl-who-fixed-radios-seed02', 'The Girl Who Fixed Radios',
    'Ana spends her summer in her grandfather’s repair shop in Ploiești. One old radio keeps picking up a station that stopped broadcasting in 1989, and tonight it said her name.',
    'en', (select id from public.categories where slug = 'fiction'),
-   'automatic', null, null, null),
+   'automatic', null, null, null, 'all_ages', 'no_ai'),
   ('00000000-0000-4000-9000-000000000003', '00000000-0000-4000-8000-000000000002',
    'scrisori-din-cutia-postala-seed03', 'Scrisori din cutia poștală',
    'Poeme scurte despre un bloc din Brașov și oamenii care trec prin el.',
    'ro', (select id from public.categories where slug = 'poetry'),
-   'drawn', 'dots', 'lilac', 'violet');
+   'drawn', 'dots', 'lilac', 'violet', '13_plus', 'no_ai');
 
 -- Their tags, through the same function the app uses, so look-alikes merge the same way.
 select public.set_story_tags('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-000000000001',

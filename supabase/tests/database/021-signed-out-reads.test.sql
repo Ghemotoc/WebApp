@@ -54,6 +54,7 @@ select results_eq(
        ('consents', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
        ('invites', 0::bigint),
+       ('jobs', 0::bigint),
        ('legal_document_versions',
         (select count(*) from public.legal_document_versions where published_at <= now())),
        ('legal_documents', (select count(*) from public.legal_documents)),
