@@ -58,6 +58,36 @@ export type Database = {
           },
         ];
       };
+      banned_email_hashes: {
+        Row: {
+          created_at: string;
+          email_hash: string;
+          id: string;
+          sanction_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          email_hash: string;
+          id?: string;
+          sanction_id: string;
+        };
+        Update: {
+          created_at?: string;
+          email_hash?: string;
+          id?: string;
+          sanction_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'banned_email_hashes_sanction_id_fkey';
+            columns: ['sanction_id'];
+            isOneToOne: false;
+            referencedRelation: 'sanctions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       case_actions: {
         Row: {
           action: Database['public']['Enums']['moderation_action'];
@@ -486,6 +516,84 @@ export type Database = {
         };
         Relationships: [];
       };
+      moderated_items: {
+        Row: {
+          case_id: string | null;
+          created_at: string;
+          id: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          moderated_by_user_id: string;
+          note: string;
+          restore_reason: string | null;
+          restored_at: string | null;
+          restored_by_user_id: string | null;
+          state: Database['public']['Enums']['moderated_state'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          case_id?: string | null;
+          created_at?: string;
+          id?: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          moderated_by_user_id: string;
+          note: string;
+          restore_reason?: string | null;
+          restored_at?: string | null;
+          restored_by_user_id?: string | null;
+          state: Database['public']['Enums']['moderated_state'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          case_id?: string | null;
+          created_at?: string;
+          id?: string;
+          item_id?: string;
+          item_type?: Database['public']['Enums']['reportable_type'];
+          moderated_by_user_id?: string;
+          note?: string;
+          restore_reason?: string | null;
+          restored_at?: string | null;
+          restored_by_user_id?: string | null;
+          state?: Database['public']['Enums']['moderated_state'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'moderated_items_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderated_items_moderated_by_user_id_fkey';
+            columns: ['moderated_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderated_items_restored_by_user_id_fkey';
+            columns: ['restored_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderated_items_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
@@ -758,6 +866,84 @@ export type Database = {
         };
         Relationships: [];
       };
+      sanctions: {
+        Row: {
+          applied_by_user_id: string;
+          case_id: string | null;
+          created_at: string;
+          ends_at: string | null;
+          id: string;
+          kind: Database['public']['Enums']['sanction_kind'];
+          lift_reason: string | null;
+          lifted_at: string | null;
+          lifted_by_user_id: string | null;
+          note: string;
+          starts_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          applied_by_user_id: string;
+          case_id?: string | null;
+          created_at?: string;
+          ends_at?: string | null;
+          id?: string;
+          kind: Database['public']['Enums']['sanction_kind'];
+          lift_reason?: string | null;
+          lifted_at?: string | null;
+          lifted_by_user_id?: string | null;
+          note: string;
+          starts_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          applied_by_user_id?: string;
+          case_id?: string | null;
+          created_at?: string;
+          ends_at?: string | null;
+          id?: string;
+          kind?: Database['public']['Enums']['sanction_kind'];
+          lift_reason?: string | null;
+          lifted_at?: string | null;
+          lifted_by_user_id?: string | null;
+          note?: string;
+          starts_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'sanctions_applied_by_user_id_fkey';
+            columns: ['applied_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sanctions_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sanctions_lifted_by_user_id_fkey';
+            columns: ['lifted_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sanctions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       settings: {
         Row: {
           created_at: string;
@@ -1027,6 +1213,54 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: Database['public']['Enums']['account_status'];
       };
+      active_sanction: {
+        Args: { target_user_id: string; wanted_kind: Database['public']['Enums']['sanction_kind'] };
+        Returns: {
+          applied_by_user_id: string;
+          case_id: string | null;
+          created_at: string;
+          ends_at: string | null;
+          id: string;
+          kind: Database['public']['Enums']['sanction_kind'];
+          lift_reason: string | null;
+          lifted_at: string | null;
+          lifted_by_user_id: string | null;
+          note: string;
+          starts_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'sanctions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_account_sanctions: {
+        Args: { target_user_id: string };
+        Returns: {
+          applied_by_handle: string;
+          case_reference: string;
+          ends_at: string;
+          id: string;
+          is_live: boolean;
+          kind: Database['public']['Enums']['sanction_kind'];
+          lifted_at: string;
+          note: string;
+          starts_at: string;
+        }[];
+      };
+      admin_apply_sanction: {
+        Args: {
+          days?: number;
+          note_text?: string;
+          source_case_id?: string;
+          target_user_id: string;
+          wanted_kind: Database['public']['Enums']['sanction_kind'];
+        };
+        Returns: string;
+      };
       admin_approve_username: {
         Args: {
           approved_name: string;
@@ -1068,6 +1302,7 @@ export type Database = {
         Args: {
           chosen_action: Database['public']['Enums']['moderation_action'];
           note_text: string;
+          suspension_days?: number;
           target_case_id: string;
         };
         Returns: boolean;
@@ -1094,6 +1329,10 @@ export type Database = {
           reason_given: string;
           target_user_id: string;
         };
+        Returns: boolean;
+      };
+      admin_lift_sanction: {
+        Args: { reason_given: string; target_sanction_id: string };
         Returns: boolean;
       };
       admin_list_client_errors: {
@@ -1147,12 +1386,20 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      admin_pause_reporting: {
+        Args: { note_text?: string; reporter_handle: string; source_case_id?: string };
+        Returns: string;
+      };
       admin_remove_role: {
         Args: {
           reason_given: string;
           removed_role: Database['public']['Enums']['staff_role'];
           target_user_id: string;
         };
+        Returns: boolean;
+      };
+      admin_restore_item: {
+        Args: { reason_given: string; target_item_id: string };
         Returns: boolean;
       };
       admin_revoke_invite: {
@@ -1227,6 +1474,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      banned_email_hash: { Args: { email: string }; Returns: string };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
       change_is_too_soon: {
@@ -1245,7 +1493,12 @@ export type Database = {
       hash_email: { Args: { email: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
+      is_email_banned: { Args: { email: string }; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
+      is_moderated_away: {
+        Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: boolean;
+      };
       is_staff: {
         Args: { required_role?: Database['public']['Enums']['staff_role'] };
         Returns: boolean;
@@ -1310,12 +1563,35 @@ export type Database = {
         Returns: string;
       };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
+      moderate_item: {
+        Args: {
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          note_text: string;
+          owner_user_id: string;
+          source_case_id: string;
+          wanted_state: Database['public']['Enums']['moderated_state'];
+        };
+        Returns: string;
+      };
+      moderated_state_of: {
+        Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: Database['public']['Enums']['moderated_state'];
+      };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
         Returns: {
           change_summary: string;
           document_slug: string;
           version_label: string;
+        }[];
+      };
+      my_sanctions: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          ends_at: string;
+          kind: Database['public']['Enums']['sanction_kind'];
+          starts_at: string;
         }[];
       };
       my_staff_areas: {
@@ -1388,6 +1664,10 @@ export type Database = {
         Args: { changed_role: Database['public']['Enums']['staff_role'] };
         Returns: undefined;
       };
+      sanction_end: {
+        Args: { days: number; wanted_kind: Database['public']['Enums']['sanction_kind'] };
+        Returns: string;
+      };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
@@ -1395,6 +1675,7 @@ export type Database = {
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       sign_in_pause_until: { Args: { email_hash: string }; Returns: string };
+      sign_out_everywhere: { Args: { target_user_id: string }; Returns: undefined };
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
       sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
@@ -1429,14 +1710,17 @@ export type Database = {
         | 'minor_not_admitted'
         | 'handle_missing'
         | 'staff_account'
-        | 'legal_acceptance_required';
+        | 'legal_acceptance_required'
+        | 'suspended'
+        | 'banned';
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
       case_source: 'report' | 'authority_order' | 'picture_check';
       case_status: 'open' | 'decided';
       case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
-      moderation_action: 'no_action' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban';
+      moderated_state: 'hidden' | 'removed';
+      moderation_action: 'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -1457,6 +1741,7 @@ export type Database = {
         | 'crisis_youth'
         | 'police_online_child'
         | 'regulator';
+      sanction_kind: 'warning' | 'suspension' | 'ban' | 'reporting_pause';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
     };
@@ -1494,6 +1779,7 @@ export type Database = {
         decision: Database['public']['Enums']['moderation_action'] | null;
         decided_at: string | null;
         decided_by_handle: string | null;
+        reported_user_id: string | null;
       };
     };
   };
@@ -1614,6 +1900,8 @@ export const Constants = {
         'handle_missing',
         'staff_account',
         'legal_acceptance_required',
+        'suspended',
+        'banned',
       ],
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
@@ -1621,7 +1909,8 @@ export const Constants = {
       case_source: ['report', 'authority_order', 'picture_check'],
       case_status: ['open', 'decided'],
       case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
-      moderation_action: ['no_action', 'remove', 'restrict', 'warn', 'suspend', 'ban'],
+      moderated_state: ['hidden', 'removed'],
+      moderation_action: ['no_action', 'hide', 'remove', 'restrict', 'warn', 'suspend', 'ban'],
       report_reason: [
         'illegal_content',
         'harassment',
@@ -1644,6 +1933,7 @@ export const Constants = {
         'police_online_child',
         'regulator',
       ],
+      sanction_kind: ['warning', 'suspension', 'ban', 'reporting_pause'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
     },

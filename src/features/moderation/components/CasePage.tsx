@@ -1,6 +1,7 @@
 /**
  * CasePage: /staff/moderation/cases/:caseId, one case: what was reported, the reports, the
- * decisions and the decision form (story S1-E10-03a; architecture 1.8.4, screen 8.3).
+ * decisions, the decision form, and (S1-E10-06) the account's sanctions, the pause and restore
+ * actions (story S1-E10-03a; architecture 1.8.4, screen 8.3).
  *
  * Board (ModCase): "Case R-2318", the tier and deadline pills, the reason, the summary line, the
  * reported content and the reporter's note, the Decision panel. Not in part a: the reported
@@ -24,13 +25,16 @@ import { PageContainer } from '@/components/ui/PageContainer';
 
 import type { QueueCase } from '../api/moderationQueue';
 import { useCase } from '../hooks/useCase';
+import { useSanctions } from '../hooks/useSanctions';
 import { registerModerationTranslations } from '../registerModerationTranslations';
 
+import { AccountSanctions } from './AccountSanctions';
 import { CaseDecisions } from './CaseDecisions';
 import { CaseReports } from './CaseReports';
 import { CaseSignals } from './CaseSignals';
 import { DeadlineLabel } from './DeadlineLabel';
 import { DecisionForm } from './DecisionForm';
+import { ModeratedItemNotice } from './ModeratedItemNotice';
 import { TierPill } from './TierPill';
 
 /**
@@ -94,12 +98,18 @@ function CaseHeader({ theCase }: { theCase: QueueCase }) {
 }
 
 /**
- * What goes on the page once the case is known: the header, the reports, the decisions and the
- * form (or the decided notice).
+ * What goes on the page once the case is known: the header, the reports, the decisions, the
+ * account's sanctions, and the form (or the decided notice and what happened to the item).
  *
  * @returns the page's body
  */
-function CaseBody({ caseState }: { caseState: ReturnType<typeof useCase> }) {
+function CaseBody({
+  caseState,
+  sanctions,
+}: {
+  caseState: ReturnType<typeof useCase>;
+  sanctions: ReturnType<typeof useSanctions>;
+}) {
   const { t } = useTranslation('moderation');
   if (caseState.loadFailure === 'not_allowed') {
     return <p className="m-0 text-body">{t('case.notAllowed')}</p>;
@@ -115,8 +125,9 @@ function CaseBody({ caseState }: { caseState: ReturnType<typeof useCase> }) {
       <CaseHeader theCase={theCase} />
       <div className="grid max-w-[1100px] grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
-          <CaseReports reports={caseState.reports} />
+          <CaseReports reports={caseState.reports} sanctions={sanctions} />
           <CaseDecisions actions={caseState.actions} />
+          <AccountSanctions sanctions={sanctions} />
         </div>
         <div className="flex flex-col gap-4">
           {caseState.hasDecided && <Notice tone="success">{t('case.form.sent')}</Notice>}
@@ -133,6 +144,7 @@ function CaseBody({ caseState }: { caseState: ReturnType<typeof useCase> }) {
               })}
             </Notice>
           )}
+          <ModeratedItemNotice sanctions={sanctions} />
         </div>
       </div>
     </>
@@ -150,6 +162,7 @@ export function CasePage() {
   const { t } = useTranslation('moderation');
   const { caseId = '' } = useParams();
   const caseState = useCase(caseId);
+  const sanctions = useSanctions(caseId, caseState.theCase?.reportedUserId ?? null);
   return (
     <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
       <title>
@@ -158,7 +171,7 @@ export function CasePage() {
       <Link to="/staff/moderation" className="w-fit text-sm font-semibold text-link underline">
         {t('case.back')}
       </Link>
-      <CaseBody caseState={caseState} />
+      <CaseBody caseState={caseState} sanctions={sanctions} />
     </PageContainer>
   );
 }

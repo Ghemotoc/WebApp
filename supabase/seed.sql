@@ -19,7 +19,7 @@
 --   four test invite codes (one that works, one expired, used up, revoked) S1-E2-01 (end of file)
 --   kid_14_ok's agreed consent and kid_14_waiting's pending consent  S1-E2-03
 --   teacher's Teacher badge                                           S1-E2-11
---   suspended_user's and banned_user's sanctions                      S1-E10-06
+--   suspended_user's and banned_user's sanctions                      S1-E10-06 (the decided cases at the end)
 --   blocker blocking blocked                                          S1-E5-05
 --   owner's and moderator's safeguarding permission, 20 cases        S1-E10-03a (end of file)
 --   staff personas' Google Workspace sessions                         S1-E2-07b
@@ -135,6 +135,18 @@ values
    5, 0, '2100-01-01', '2026-10-17', 'Seed: revoked');
 
 
+-- A local-only Vault secret so a ban can hash the banned email (S1-E10-06; decided 23 Oct 2026,
+-- Q8). Staging and production set their own value by hand; this one never leaves a developer's
+-- machine. Secrets never go in migrations.
+do $$
+begin
+  if not exists (select 1 from vault.secrets where name = 'banned_email_secret') then
+    perform vault.create_secret('local-only-banned-email-secret-not-for-staging', 'banned_email_secret',
+      'Keyed hash for banned emails (S1-E10-06). Local seed value; staging and production set their own by hand.');
+  end if;
+end;
+$$;
+
 -- The safeguarding permission for owner and moderator (S1-E10-03a; decided 23 Oct 2026, Q6), so
 -- the safeguarding cases below are visible to them and hidden from the admin persona, which lets
 -- tests and hand checks see both sides.
@@ -167,8 +179,8 @@ begin
       ('adult_writer',   'teacher',      'other'::public.report_reason,      'Bio says they sell essays. Not clearly against a rule.',  moderator_id, 'no_action'::public.moderation_action, 'Looked at the bio: an offer of writing help, no sale. Nothing to act on.'),
       ('blocked',        'blocker',      'harassment',                       'Keeps calling me a copycat in replies.',                  moderator_id, 'warn',      'First upheld case. Warned about name-calling; the reply was removed by the writer meanwhile.'),
       ('teen_17',        'adult_writer', 'spam',                             'Posted the same link in six threads.',                    admin_id,     'no_action', 'The link is to their own story on this site; not spam under our rule.'),
-      ('suspended_user', 'teacher',      'harassment',                       'Threatening private replies after I reported them.',      moderator_id, 'suspend',   'Second upheld case in 30 days. Next step on the ladder: a 7-day suspension. S1-E10-06 applies it.'),
-      ('banned_user',    'teacher',      'hate',                             'Profile text attacks an ethnic group.',                   admin_id,     'ban',       'Repeat hate speech after a suspension. Ban; the email can''t be used to sign up again (S1-E10-06).'),
+      ('suspended_user', 'teacher',      'harassment',                       'Threatening private replies after I reported them.',      moderator_id, 'suspend',   'Second upheld case in 30 days. Next step on the ladder: a 7-day suspension.'),
+      ('banned_user',    'teacher',      'hate',                             'Profile text attacks an ethnic group.',                   admin_id,     'ban',       'Repeat hate speech after a suspension. Ban; the email can''t be used to sign up again.'),
       ('kid_14_ok',      'teacher',      'illegal_content',                  'Posted someone''s home address.',                         moderator_id, 'remove',    'Personal data of another member. Removed the passage; the writer was told.')
     ) as rows (reported_handle, reporter_handle, reason, details, decided_by, action, note)
   loop
@@ -176,10 +188,12 @@ begin
       'sub', (select id from public.profiles where handle = decided.reporter_handle), 'role', 'authenticated')::text, true);
     perform public.report_item('profile', decided.reported_handle, decided.reason, decided.details);
     perform set_config('request.jwt.claims', json_build_object('sub', decided.decided_by, 'role', 'authenticated')::text, true);
+    -- The decision carries the action out (S1-E10-06): the suspend on suspended_user becomes a
+    -- 7-day suspension, the ban on banned_user a ban, the remove on kid_14_ok a removed profile.
     perform public.admin_decide_case(
       (select cases.id from public.cases join public.profiles on profiles.id = cases.user_id
         where profiles.handle = decided.reported_handle and cases.status = 'open'),
-      decided.action, decided.note);
+      decided.action, decided.note, case when decided.action = 'suspend' then 7 end);
   end loop;
 
   -- Step 2: the open report cases, one row per report; reports of one profile join one case.

@@ -99,7 +99,8 @@
     "restrict": "Restricționează",
     "warn": "Avertizează",
     "suspend": "Suspendă",
-    "ban": "Interzice"
+    "ban": "Interzice",
+    "hide": "Ascunde"
   },
   "case": {
     "documentTitle": "Cazul {{reference}} · {{productName}}",
@@ -133,13 +134,60 @@
       "send": "Trimite decizia",
       "sending": "Se trimite…",
       "sent": "Decizia a fost salvată. Cazul este închis, împreună cu raportările lui.",
-      "nextSteps": "Punerea în aplicare a acțiunii (ascunderea sau eliminarea, avertizarea, suspendarea sau interzicerea) vine cu S1-E10-06, iar expunerea de motive către cont cu S1-E10-04."
+      "nextSteps": "Acțiunea este pusă în aplicare imediat: un avertisment, o suspendare, o interdicție, ascunderea sau eliminarea. Expunerea de motive către cont vine cu S1-E10-04.",
+      "suspensionDays": "Pentru cât timp?",
+      "days_1": "1 zi",
+      "days_7": "7 zile",
+      "days_30": "30 de zile",
+      "daysMissing": "Alege cât durează suspendarea.",
+      "daysChoose": "Alege…"
     },
     "summary": "{{what}}. Raportări: {{count}}, prima primită {{when}}. Raportările despre același lucru sunt grupate aici."
   },
   "failures": {
     "not_allowed": "Nu poți face asta. Doar echipa de moderare poate, iar cazurile de protecția copilului cer permisiunea de protecție.",
     "refused": "Baza de date a refuzat: nota poate fi goală sau cazul este deja decis.",
-    "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+    "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
+    "not_built": "Restricționarea unui element vine cu S1-E11-08."
+  },
+  "reason": {
+    "hint": "Ajunge în jurnalul de audit. Doar echipa o poate citi.",
+    "missing": "Spune mai întâi de ce.",
+    "cancel": "Renunță"
+  },
+  "sanctions": {
+    "heading": "Contul raportat: sancțiuni",
+    "none": "Nicio sancțiune pe acest cont.",
+    "live": "Activă",
+    "lifted": "Ridicată",
+    "noEnd": "Fără dată de sfârșit.",
+    "until": "Până la {{when}}.",
+    "noCase": "fără caz",
+    "appliedBy": "De @{{handle}}, {{when}}, cazul {{reference}}.",
+    "lift": "Ridică",
+    "liftReason": "De ce este ridicată?",
+    "liftConfirm": "Ridică sancțiunea",
+    "kinds": {
+      "warning": "Avertisment",
+      "suspension": "Suspendare",
+      "ban": "Interdicție",
+      "reporting_pause": "Raportare suspendată"
+    }
+  },
+  "moderatedItem": {
+    "hidden": "Elementul este ascuns: autorul și echipa îl văd în continuare.",
+    "removed": "Elementul este eliminat: doar echipa îl vede; toți ceilalți văd „[Eliminat de echipa de moderare]”.",
+    "explain": "Echipa nu editează niciodată cuvintele unui autor. Restaurarea aduce elementul înapoi așa cum era.",
+    "restore": "Restaurează",
+    "restoreReason": "De ce este restaurat?",
+    "restoreConfirm": "Restaurează elementul",
+    "restored": "Elementul a fost restaurat."
+  },
+  "pause": {
+    "open": "Suspendă raportarea",
+    "openLabel": "Suspendă raportarea pentru @{{handle}}",
+    "reason": "De ce este suspendată raportarea?",
+    "confirm": "Suspendă pentru {{days}} de zile",
+    "done": "Raportarea a fost suspendată."
   }
 }

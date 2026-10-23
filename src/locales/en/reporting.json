@@ -31,19 +31,38 @@
     "signed_out": "Log in to report this.",
     "refused": "We couldn’t take this report. You can’t report your own things, and the item may no longer exist.",
     "too_many": "You’ve sent a lot of reports in the last hour. Please try again later.",
-    "unreachable": "We couldn’t reach our server. Check your connection and try again."
+    "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+    "paused": "Your reporting is paused for now. You can still read and write."
   },
   "reasons": {
-    "illegal_content": { "label": "Illegal content", "hint": "Breaks the law in another way." },
-    "harassment": { "label": "Harassment", "hint": "Bullying, threats or targeting a person." },
-    "self_harm": { "label": "Self-harm", "hint": "Encourages or shows self-harm or suicide." },
+    "illegal_content": {
+      "label": "Illegal content",
+      "hint": "Breaks the law in another way."
+    },
+    "harassment": {
+      "label": "Harassment",
+      "hint": "Bullying, threats or targeting a person."
+    },
+    "self_harm": {
+      "label": "Self-harm",
+      "hint": "Encourages or shows self-harm or suicide."
+    },
     "child_sexual_content": {
       "label": "Sexual content involving a minor",
       "hint": "Any sexual content involving someone under 18. We act on this first."
     },
-    "terrorism": { "label": "Terrorism", "hint": "Supports or promotes terrorism." },
-    "hate": { "label": "Hate", "hint": "Attacks people for who they are." },
-    "spam": { "label": "Spam", "hint": "Ads, scams or the same post over and over." },
+    "terrorism": {
+      "label": "Terrorism",
+      "hint": "Supports or promotes terrorism."
+    },
+    "hate": {
+      "label": "Hate",
+      "hint": "Attacks people for who they are."
+    },
+    "spam": {
+      "label": "Spam",
+      "hint": "Ads, scams or the same post over and over."
+    },
     "copyright": {
       "label": "Copyright",
       "hint": "Uses your own work, or someone else’s, without permission."
@@ -56,6 +75,9 @@
       "label": "Missing AI label",
       "hint": "Written with AI but not labelled as AI-assisted."
     },
-    "other": { "label": "Other", "hint": "Something else. Tell us below." }
+    "other": {
+      "label": "Other",
+      "hint": "Something else. Tell us below."
+    }
   }
 }

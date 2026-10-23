@@ -20,6 +20,7 @@
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
 
+import { SanctionNotice } from '@/features/account/components/SanctionNotice';
 import { SetupProfileNotice } from '@/features/account/components/SetupProfileNotice';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
@@ -70,6 +71,8 @@ export function AppLayout() {
           <LegalUpdateNotice />
           {/* "Choose a username", for a signed-in person who hasn't chosen one yet (S1-E2-04). */}
           <SetupProfileNotice />
+          {/* A live suspension or reporting pause, said plainly on every page (S1-E10-06). */}
+          <SanctionNotice />
           <Outlet />
         </MaintenanceGate>
       </main>
