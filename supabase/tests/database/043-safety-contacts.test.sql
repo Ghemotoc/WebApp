@@ -43,13 +43,13 @@ set local request.jwt.claims to '{"role": "anon"}';
 select isnt_empty($$ select id from public.safety_contacts where country_code = 'RO' $$,
   'allowed: safety_contacts_select_public: a visitor reads Romania''s contacts');
 select throws_ok($$ update public.safety_contacts set phone_number = '000' where country_code = 'RO' $$, '42501', null,
-  'denied: a visitor can''t change a contact');
+  'denied: safety_contacts_select_public: a visitor can''t change a contact (reads only)');
 set local role authenticated;
 set local request.jwt.claims to '{"sub": "00000000-0000-4000-8000-000000000001", "role": "authenticated"}';
 select isnt_empty($$ select id from public.safety_contacts where country_code = 'GB' $$,
   'allowed: safety_contacts_select_public: a member reads another country''s contacts');
 select throws_ok($$ delete from public.safety_contacts $$, '42501', null,
-  'denied: a member can''t delete contacts (changes come by migration until S1-E10-13b)');
+  'denied: safety_contacts_select_public: a member can''t delete contacts (changes come by migration until S1-E10-13b)');
 
 /* ---------- 3. Gaps ---------- */
 
