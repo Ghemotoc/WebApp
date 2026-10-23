@@ -97,5 +97,8 @@
   "offline": {
     "offline": "Nu ești conectat la internet. Paginile care au nevoie de internet nu se încarcă până revii online.",
     "backOnline": "Ești din nou online."
+  },
+  "actions": {
+    "report": "Raportează"
   }
 }

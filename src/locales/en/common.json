@@ -97,5 +97,8 @@
   "offline": {
     "offline": "You’re offline. Pages that need the internet won’t load until you’re back online.",
     "backOnline": "You’re back online."
+  },
+  "actions": {
+    "report": "Report"
   }
 }

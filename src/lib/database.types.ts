@@ -422,6 +422,70 @@ export type Database = {
         };
         Relationships: [];
       };
+      reports: {
+        Row: {
+          closed_at: string | null;
+          created_at: string;
+          details: string | null;
+          id: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+          reference: string;
+          reported_user_id: string;
+          reporter_age_band: Database['public']['Enums']['age_band'];
+          source: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          closed_at?: string | null;
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+          reference: string;
+          reported_user_id: string;
+          reporter_age_band: Database['public']['Enums']['age_band'];
+          source?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          closed_at?: string | null;
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          item_id?: string;
+          item_type?: Database['public']['Enums']['reportable_type'];
+          reason?: Database['public']['Enums']['report_reason'];
+          reference?: string;
+          reported_user_id?: string;
+          reporter_age_band?: Database['public']['Enums']['age_band'];
+          source?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reports_reported_user_id_fkey';
+            columns: ['reported_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reports_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       reserved_names: {
         Row: {
           created_at: string;
@@ -997,6 +1061,29 @@ export type Database = {
         };
         Returns: string;
       };
+      report_item: {
+        Args: {
+          details?: string;
+          item_reference: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+        };
+        Returns: {
+          received_at: string;
+          report_reference: string;
+        }[];
+      };
+      reportable_item_owner: {
+        Args: { item_reference: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: {
+          item_id: string;
+          owner_user_id: string;
+        }[];
+      };
+      reportable_item_summary: {
+        Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: string;
+      };
       require_role_change_allowed: {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
@@ -1042,6 +1129,18 @@ export type Database = {
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
+      report_reason:
+        | 'illegal_content'
+        | 'harassment'
+        | 'self_harm'
+        | 'child_sexual_content'
+        | 'terrorism'
+        | 'hate'
+        | 'spam'
+        | 'copyright'
+        | 'copied_published_work'
+        | 'undisclosed_ai'
+        | 'other';
       reportable_type: 'profile';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
@@ -1183,6 +1282,19 @@ export const Constants = {
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
+      report_reason: [
+        'illegal_content',
+        'harassment',
+        'self_harm',
+        'child_sexual_content',
+        'terrorism',
+        'hate',
+        'spam',
+        'copyright',
+        'copied_published_work',
+        'undisclosed_ai',
+        'other',
+      ],
       reportable_type: ['profile'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],

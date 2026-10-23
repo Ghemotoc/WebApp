@@ -121,5 +121,10 @@
     "staffBarNote": "The staff bar from the admin boards. The admin site mounts it from S1-E11-01.",
     "staffName": "Sample staff member",
     "staffRole": "Admin"
+  },
+  "report": {
+    "title": "Report button",
+    "intro": "The one Report action every kind of user content shows (S1-E10-01). It opens the report dialog with the item filled in. Signed in as a test persona, the report is real and lands in the moderation queue.",
+    "sampleItem": "A sample profile: @adult_writer"
   }
 }
