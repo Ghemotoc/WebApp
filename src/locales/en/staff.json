@@ -45,7 +45,8 @@
   },
   "nav": {
     "roles": "Roles",
-    "auditLog": "Audit log"
+    "auditLog": "Audit log",
+    "invites": "Invites"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -68,7 +69,8 @@
     "comingAreas": "Moderation, Users, Invites and the other areas arrive with their own stories; the menu shows an area as soon as its page exists.",
     "areas": {
       "roles": "Who on the team holds which role and permission.",
-      "audit_log": "Every staff action and sensitive read, searchable and exportable."
+      "audit_log": "Every staff action and sensitive read, searchable and exportable.",
+      "invites": "Invite links for the March test: make, copy and revoke."
     }
   },
   "auditLog": {
@@ -110,6 +112,74 @@
       "bad_filter": "Check the user ID and the dates: a user ID has 36 characters, a date is a day.",
       "unreachable": "We couldn’t reach our server. Check your connection and try again.",
       "not_allowed": "Only an owner or admin can export the audit log."
+    }
+  },
+  "invites": {
+    "documentTitle": "Invite links · {{productName}}",
+    "eyebrow": "Staff · invites",
+    "heading": "Invite links",
+    "intro": "Each link lets a set number of people sign up, until it expires or you revoke it. Making and revoking links goes to the audit log. A link never records who used it.",
+    "open": "Make an invite link",
+    "notAllowed": "Only an owner or admin can make invite links.",
+    "listHeading": "Links made",
+    "loading": "Loading…",
+    "none": "No link yet.",
+    "noNote": "(no note)",
+    "usesOf": "{{used}} of {{total}}",
+    "columns": {
+      "note": "Note",
+      "uses": "Uses",
+      "expires": "Expires",
+      "status": "Status",
+      "madeBy": "Made by"
+    },
+    "status": {
+      "active": "Active",
+      "used_up": "Used up",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "form": {
+      "label": "New invite link",
+      "admits": "How many people",
+      "admitsHint": "1 to 50.",
+      "admitsOutOfRange": "A link admits between 1 and 50 people.",
+      "expires": "Expires in",
+      "days": {
+        "1": "1 day",
+        "7": "7 days",
+        "14": "14 days",
+        "30": "30 days"
+      },
+      "note": "Private note (optional)",
+      "noteHint": "Only staff see it. A first name or a role, never an email or a full name. It goes into the audit log.",
+      "noteHasEmail": "Don’t put an email address in the note.",
+      "make": "Make link",
+      "making": "Making…",
+      "cancel": "Cancel"
+    },
+    "made": {
+      "heading": "Invite link made. It expires on {{expires}}.",
+      "linkLabel": "Invite link",
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyFailed": "We couldn’t copy it. Select the link and copy it yourself.",
+      "copyNow": "Copy it now.",
+      "notAgain": "We won’t show this link again.",
+      "dismiss": "I’ve copied it"
+    },
+    "revoke": {
+      "open": "Revoke",
+      "openLabel": "Revoke the link “{{note}}”",
+      "reason": "Reason",
+      "reasonHint": "Required. It goes to the audit log.",
+      "reasonMissing": "Write a reason first.",
+      "confirm": "Revoke “{{note}}”"
+    },
+    "failures": {
+      "not_allowed": "Only an owner or admin can make or revoke invite links.",
+      "refused": "That wasn’t saved. A link admits 1 to 50 people, lasts 1 to 90 days, and the note is at most 80 characters with no email address.",
+      "unreachable": "We couldn’t reach our server. Check your connection and try again."
     }
   }
 }

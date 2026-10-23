@@ -731,6 +731,14 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_create_invite: {
+        Args: { admits?: number; private_note?: string; valid_days?: number };
+        Returns: {
+          code: string;
+          expires_at: string;
+          invite_id: string;
+        }[];
+      };
       admin_export_audit_log: {
         Args: {
           action_prefix?: string;
@@ -767,6 +775,20 @@ export type Database = {
           route_path: string;
         }[];
       };
+      admin_list_invites: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          created_at: string;
+          expires_at: string;
+          id: string;
+          made_by_handle: string;
+          max_uses: number;
+          note: string;
+          revoked_at: string;
+          status: string;
+          use_count: number;
+        }[];
+      };
       admin_list_staff: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -782,6 +804,10 @@ export type Database = {
           removed_role: Database['public']['Enums']['staff_role'];
           target_user_id: string;
         };
+        Returns: boolean;
+      };
+      admin_revoke_invite: {
+        Args: { reason_given: string; target_invite_id: string };
         Returns: boolean;
       };
       admin_search_audit_log: {
@@ -856,6 +882,7 @@ export type Database = {
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
+      generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
