@@ -9,6 +9,8 @@
  * How it is a dialog: the browser's own <dialog> element with showModal(), which traps focus,
  * closes on Escape and gives focus back to the button that opened it (WCAG 2.2, 2.1.2 and 2.4.3).
  * Signed out, it says to log in: reporting needs an account (the web form is S1-E10-02).
+ * Above the form, "Is someone in danger right now?" shows the helplines for the reader's country
+ * (S1-E10-13a), because a report is never the right tool for an emergency.
  * Who shows it: ReportButton. What it calls: useReportItem → api/reports.ts → report_item().
  */
 import { useEffect, useRef, useState, type FormEvent } from 'react';
@@ -18,6 +20,7 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
+import { SafetyContactsBlock } from '@/features/safety/components/SafetyContactsBlock';
 import { findReportProblem, reportDetailsMaxLength, type ReportReason } from '@/schemas/report';
 
 import type { ReportableType } from '../api/reports';
@@ -176,6 +179,8 @@ export function ReportDialog(props: ReportDialogProps) {
             </div>
             <CloseButton label={t('dialog.close')} onClick={() => dialogRef.current?.close()} />
           </div>
+          {/* "Is someone in danger right now?": the reader's country's helplines (S1-E10-13a). */}
+          {report.receipt === null && <SafetyContactsBlock />}
           {report.receipt !== null && <ReportSent receipt={report.receipt} onClose={handleClose} />}
           {report.receipt === null && report.isSessionKnown && !report.isSignedIn && (
             <p className="m-0 text-body">

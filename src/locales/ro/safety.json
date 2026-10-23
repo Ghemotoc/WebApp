@@ -1,0 +1,23 @@
+{
+  "block": {
+    "heading": "E cineva în pericol chiar acum?",
+    "intro": "Sună mai întâi aici. Noi citim raportările, dar nu putem ajuta într-o urgență.",
+    "forCountry": "Contacte pentru {{country}}, din surse oficiale.",
+    "loading": "Căutăm contactele pentru țara ta…",
+    "fallbackCall": "Sună la numărul local de urgență.",
+    "fallbackNoRow": "Nu avem încă contacte verificate pentru țara ta. Alege altă țară mai jos sau caută linia telefonică pentru copii din țara ta.",
+    "fallbackUnknown": "Nu am putut afla în ce țară ești. Alege-o mai jos.",
+    "notYourCountry": "Nu e țara ta?",
+    "chooseCountry": "Alege o țară",
+    "call": "Sună la {{label}}, {{number}}",
+    "officialSite": "Site oficial: {{label}} (se deschide într-o filă nouă)"
+  },
+  "kinds": {
+    "emergency": "Urgențe",
+    "child_helpline": "Telefonul copilului",
+    "csam_hotline": "Raportează materiale cu abuz sexual asupra copiilor",
+    "crisis_youth": "Linie de criză pentru tineri",
+    "police_online_child": "Poliție",
+    "regulator": "Autoritate"
+  }
+}
