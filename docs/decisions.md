@@ -2,6 +2,15 @@
 
 Every decision Robert has made, with its date and source. The live list is the master plan's "Decisions made" tab; it wins if this file is out of date. Proposals and OPEN items are not decisions.
 
+## Added 23 Oct 2026 (Lane C: safety and admin; Robert, chat)
+
+| Decision | Source |
+| --- | --- |
+| The investor demo is planned for January 2027 (month only); it needs the report button, a moderation queue with deadlines, and invite links Robert makes himself | Chat, 23 Oct 2026 |
+| A staff session ends after 12 hours, enforced in the database (`staff_session_hours`); the person signs in again. Proposal from S1-E11-01, accepted | Chat, 23 Oct 2026 (Q11) |
+| Changing a staff role needs a sign-in from the last 15 minutes (`staff_fresh_sign_in_minutes`); exports for someone else, "Emergency disable" and removing part of a writer's text ask the same when their stories land. Proposal, accepted | Chat, 23 Oct 2026 (Q11) |
+| Lane C's pull requests go on `claude/funny-einstein-pkv35k-<story-id>` branches, one per story, each cut from the one before; screenshots are sent in chat, never committed | Chat, 23 Oct 2026 (Q13, Q14) |
+
 ## Added 17 Oct 2026 (after the snapshot below)
 
 | Decision | Source |

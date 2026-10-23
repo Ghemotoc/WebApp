@@ -15,7 +15,6 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | Stub | What it does today | Story that finishes it | On staging |
 | --- | --- | --- | --- |
 | `is_staff_session()` | true for any staff-role session, from the normal login; every staff rule reaches it through `staff_may()` (S1-E2-07a) | S1-E2-07b (Google Workspace sign-in) | same |
-| `/staff/roles` | a small plain page outside the admin shell | S1-E11-01 moves it into the admin site | same |
 | `account_state()`: parental consent | under-16s are always `awaiting_parental_consent` (or `minor_not_admitted` while `adults_only` is on) | S1-E2-03 | same |
 | `account_state()`: sanctions | no suspensions or bans are checked yet | S1-E10-06 | same |
 | `account_state()`: age check | while `adults_only` is on, adults are active without a Yoti check | S1-E2-08 | same |
@@ -37,3 +36,10 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | Look-alike letters | Unicode's 10.0.0 list (from the MIT `unicode-confusables` package, because unicode.org was out of reach from the build session) | a newer list from unicode.org with `scripts/build-confusables-migration.ts` | same |
 | Settings › Account | username, pen name and the Legal centre link only; the board's other rows and tabs come with their stories | S1-E2-05, S1-E2-10, S1-E13-01 and others | same |
 | ş and ţ on save | corrected as people type, in the shared text fields; not yet on the server | S1-E3-02 (zod schemas) | same |
+
+## Stubs and stand-ins from Lane C (safety and admin, from 23 Oct 2026)
+
+| Stub | What it does today | Story that finishes it | On staging |
+| --- | --- | --- | --- |
+| The fresh sign-in (15 minutes) | asked only before a role change (`require_role_change_allowed()`); exports for someone else, "Emergency disable" and removing part of a writer's text ask the same question when their stories land (S1-E11-01) | S1-E11-09a, S1-E10-09, S1-E11-08 | same |
+| The admin menu | shows Roles and Audit log only; every other area appears when its page is built (`src/features/staff/staffAreas.ts`) | each staff story (S1-E10-03a next) | same |

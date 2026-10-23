@@ -731,6 +731,22 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_export_audit_log: {
+        Args: {
+          action_prefix?: string;
+          from_date?: string;
+          staff_handle?: string;
+          target_user_id?: string;
+          to_date?: string;
+        };
+        Returns: Database['public']['CompositeTypes']['audit_log_row'][];
+        SetofOptions: {
+          from: '*';
+          to: 'audit_log_row';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       admin_grant_role: {
         Args: {
           granted_role: Database['public']['Enums']['staff_role'];
@@ -768,6 +784,24 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_search_audit_log: {
+        Args: {
+          action_prefix?: string;
+          from_date?: string;
+          page_number?: number;
+          page_size?: number;
+          staff_handle?: string;
+          target_user_id?: string;
+          to_date?: string;
+        };
+        Returns: Database['public']['CompositeTypes']['audit_log_row'][];
+        SetofOptions: {
+          from: '*';
+          to: 'audit_log_row';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       admin_set_permission: {
         Args: {
           changed_permission: Database['public']['Enums']['staff_permission'];
@@ -790,6 +824,24 @@ export type Database = {
           on_date: string;
         };
         Returns: Database['public']['Enums']['age_band'];
+      };
+      audit_log_rows: {
+        Args: {
+          action_prefix: string;
+          from_date: string;
+          row_limit: number;
+          row_offset: number;
+          staff_handle: string;
+          target_user_id: string;
+          to_date: string;
+        };
+        Returns: Database['public']['CompositeTypes']['audit_log_row'][];
+        SetofOptions: {
+          from: '*';
+          to: 'audit_log_row';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
@@ -851,6 +903,15 @@ export type Database = {
         };
         Returns: undefined;
       };
+      log_sensitive_read: {
+        Args: {
+          affected_user_id?: string;
+          read_kind: string;
+          target_row_id?: string;
+          target_table: string;
+        };
+        Returns: string;
+      };
       log_staff_action: {
         Args: {
           action_taken: string;
@@ -869,6 +930,13 @@ export type Database = {
           change_summary: string;
           document_slug: string;
           version_label: string;
+        }[];
+      };
+      my_staff_areas: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          access: string;
+          area: string;
         }[];
       };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
@@ -925,6 +993,8 @@ export type Database = {
         Returns: string;
       };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
+      staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
+      staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
@@ -950,7 +1020,19 @@ export type Database = {
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
     };
     CompositeTypes: {
-      [_ in never]: never;
+      audit_log_row: {
+        id: string | null;
+        created_at: string | null;
+        staff_handle: string | null;
+        action: string | null;
+        target_type: string | null;
+        target_id: string | null;
+        target_handle: string | null;
+        target_user_id_short: string | null;
+        reason: string | null;
+        before_values: Json | null;
+        after_values: Json | null;
+      };
     };
   };
 };

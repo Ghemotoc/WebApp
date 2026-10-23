@@ -1,14 +1,14 @@
 /**
- * StaffRolesPage: /staff/roles, a small plain page to manage staff roles and permissions until the
- * admin shell exists (story S1-E2-07a; decided 17 Oct 2026, 19:43, Q14c; S1-E11-01 moves it into
- * the admin site).
+ * StaffRolesPage: /staff/roles, the plain page to manage staff roles and permissions (story
+ * S1-E2-07a; decided 17 Oct 2026, 19:43, Q14c), inside the admin shell since S1-E11-01.
  *
- * Who shows it: the router, loaded on its own only when someone opens it (architecture 1.8.1:
- * staff code never ships in the reader's bundle). Only owner and admin get the list; the database
+ * Who shows it: the router, inside StaffLayout, loaded only when someone opens it (architecture
+ * 1.8.1: staff code never ships in the reader's bundle). Only owner and admin get the list; the database
  * refuses everyone else (admin_list_staff()), and the page says so.
  * What it calls: useStaffRoles → api/staffRoles.ts.
  */
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -36,7 +36,15 @@ function StaffRolesBody({ roles }: { roles: ReturnType<typeof useStaffRoles> }) 
   return (
     <>
       {roles.changeFailure !== null && (
-        <Notice tone="error">{t(`roles.failures.${roles.changeFailure}`)}</Notice>
+        <Notice tone="error">
+          {t(`roles.failures.${roles.changeFailure}`)}{' '}
+          {/* A role change needs a sign-in from the last 15 minutes (S1-E11-01). */}
+          {roles.changeFailure === 'sign_in_again' && (
+            <Link to="/sign-in" className="font-semibold underline">
+              {t('roles.signInAgain')}
+            </Link>
+          )}
+        </Notice>
       )}
       {roles.changeSucceeded && <Notice tone="success">{t('roles.changed')}</Notice>}
       <GrantRoleForm

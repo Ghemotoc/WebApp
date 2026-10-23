@@ -23,11 +23,13 @@
     "failures": {
       "not_allowed": "Nu poți face această schimbare. Administratorii pot da rolurile de moderator, suport și editor de conținut; doar un proprietar poate da rolurile de proprietar sau administrator; nimeni nu își poate schimba propriul rol.",
       "refused": "Schimbarea nu a fost salvată. Verifică numele de utilizator și motivul. Ultimul proprietar nu poate fi eliminat, iar permisiunile sunt doar pentru echipă.",
-      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
+      "sign_in_again": "Conectează-te din nou ca să schimbi un rol din echipă. Schimbarea unui rol cere o conectare din ultimele 15 minute."
     },
     "reasonMissing": "Scrie mai întâi un motiv.",
     "usernameMissing": "Scrie mai întâi numele de utilizator.",
-    "staffAccountNote": "Un cont de echipă nu poate publica, comenta, posta sau trimite mesaje ca membru. Folosește un cont separat de scriitor pentru asta."
+    "staffAccountNote": "Un cont de echipă nu poate publica, comenta, posta sau trimite mesaje ca membru. Folosește un cont separat de scriitor pentru asta.",
+    "signInAgain": "Conectează-te din nou"
   },
   "roleNames": {
     "owner": "Proprietar",
@@ -40,5 +42,74 @@
     "safeguarding": "Protecția copiilor",
     "teacher_checks": "Verificarea profesorilor",
     "on_call": "De serviciu pentru ordinele de eliminare"
+  },
+  "nav": {
+    "roles": "Roluri",
+    "auditLog": "Jurnal de audit"
+  },
+  "shell": {
+    "eyebrow": "Echipă",
+    "noHandle": "(încă fără nume de utilizator)",
+    "byCompany": "O aplicație de la {{companyName}}"
+  },
+  "refused": {
+    "documentTitle": "Doar pentru echipă · {{productName}}",
+    "heading": "Această parte este pentru echipă",
+    "signed_out": "Conectează-te cu un cont de echipă ca să deschizi site-ul de administrare.",
+    "not_staff": "Contul tău nu are un rol în echipă, așa că site-ul de administrare rămâne închis. Dacă lucrezi în echipă, cere unui proprietar sau administrator să dea un rol contului tău de echipă.",
+    "signIn": "Conectare",
+    "goHome": "Mergi la Acasă"
+  },
+  "home": {
+    "documentTitle": "Site de administrare · {{productName}}",
+    "heading": "Site de administrare",
+    "intro": "Zonele pe care rolul tău le poate folosi. Fiecare acțiune și fiecare citire sensibilă se scrie în jurnalul de audit; serverul îți verifică rolul la fiecare, nu doar acest meniu.",
+    "noAreas": "Nicio zonă nu îți este deschisă acum. Rolul tău poate să nu aibă încă o zonă, sau sesiunea ta de echipă poate fi mai veche de 12 ore: deconectează-te și conectează-te din nou ca să începi una nouă.",
+    "comingAreas": "Moderarea, Utilizatorii, Invitațiile și celelalte zone vin cu propriile lor povești; meniul arată o zonă imediat ce pagina ei există.",
+    "areas": {
+      "roles": "Cine din echipă are ce rol și ce permisiuni.",
+      "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export."
+    }
+  },
+  "auditLog": {
+    "documentTitle": "Jurnal de audit · {{productName}}",
+    "eyebrow": "Echipă · jurnal de audit",
+    "heading": "Jurnal de audit",
+    "intro": "Cine a făcut ce, când și de ce, cu valorile dinainte și de după. Nimeni nu poate schimba sau șterge un rând, nici măcar un proprietar. Căutarea este liberă; exportul unui fișier este el însuși înregistrat.",
+    "searchForm": "Caută în jurnalul de audit",
+    "action": "Acțiunea începe cu",
+    "actionHint": "De exemplu staff. sau sensitive_read.",
+    "staffMember": "Membru al echipei",
+    "staffMemberHint": "Numele de utilizator, cu sau fără @.",
+    "targetUserId": "ID-ul de utilizator al contului",
+    "targetUserIdHint": "ID-ul complet al contului asupra căruia s-a acționat.",
+    "fromDate": "De la",
+    "toDate": "Până la",
+    "search": "Caută",
+    "export": "Exportă CSV",
+    "exporting": "Se exportă…",
+    "exportNote": "Tot ce se potrivește cu filtrele, până la 10.000 de rânduri. Exportul este înregistrat.",
+    "exported": "S-au exportat {{count}} rânduri. Fișierul este în descărcările tale.",
+    "loading": "Se încarcă…",
+    "noRows": "Nimic nu se potrivește. Lărgește datele sau șterge un filtru.",
+    "notAllowed": "Doar un proprietar sau un administrator poate vedea jurnalul de audit.",
+    "pages": "Paginile jurnalului de audit",
+    "newer": "Mai noi",
+    "older": "Mai vechi",
+    "page": "Pagina {{number}}",
+    "columns": {
+      "time": "Când",
+      "staff": "Cine",
+      "action": "Acțiune",
+      "target": "Ce",
+      "reason": "Motiv",
+      "before": "Înainte",
+      "after": "După"
+    },
+    "failures": {
+      "bad_filter": "Verifică ID-ul de utilizator și datele: un ID are 36 de caractere, o dată este o zi.",
+      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
+      "not_allowed": "Doar un proprietar sau un administrator poate exporta jurnalul de audit."
+    }
   }
 }

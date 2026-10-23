@@ -242,10 +242,37 @@ AppLayout: TopBar → OfflineBanner (navigator.onLine) → <main> MaintenanceGat
 
 The error page shows the first six characters of the stored row's ID as the code to quote ("E-4F7A2C"), so support can find the row without the log keeping anything about the person.
 
+## The admin shell (S1-E11-01)
+
+```
+/staff/* (src/app/router.tsx: staffRoutes, loaded only when opened)     src/features/staff/
+  │  StaffLayout: skip link, StaffBar (the areas the person may open), the page, StaffFooter
+  │     useMyStaffAccess → api/staffAccess.ts → my_staff_areas() + own staff_roles + own handle
+  │     a member or a visitor gets StaffAccessRefused instead (the server refused already)
+  │  staffAreas.ts: area → page (roles, audit_log; each staff story adds its own)
+  ├─ /staff            StaffHomePage: one card per area the person may open
+  ├─ /staff/roles      StaffRolesPage (S1-E2-07a, below)
+  └─ /staff/audit-log  AuditLogPage: AuditLogFilters → useAuditLog → api/auditLog.ts
+                         admin_search_audit_log() (one page) / admin_export_audit_log() (CSV rows,
+                         the export itself logged as audit_log.exported) → lib/auditLogCsv.ts
+  ▼
+…_s1_e11_01_admin_shell.sql
+  │  is_staff_session(): a staff role AND a session younger than staff_session_hours (12)
+  │  staff_signed_in_recently(): a sign-in within staff_fresh_sign_in_minutes (15), from the
+  │  token's amr claim; require_role_change_allowed() asks it before any role change
+  │  my_staff_areas(): the areas the caller's roles allow (what the menu shows)
+  │  log_sensitive_read(kind, …): email_revealed, draft_opened, export_file_opened,
+  │  evidence_pack_opened, teacher_proof_opened → log_staff_action()
+  ▼
+audit_log (append-only: no role, the owner included, can change or delete a row)
+```
+
+Every staff screen reads and writes only through policies and `admin_*` functions, each of which asks `staff_may()` → `is_staff_session()` (architecture 1.8.1). The menu is built from the same answer, but it is a convenience: the server refuses on its own.
+
 ## Staff roles (S1-E2-07a)
 
 ```
-/staff/roles (StaffRolesPage, loaded on its own)        src/features/staff/
+/staff/roles (StaffRolesPage, inside StaffLayout since S1-E11-01)        src/features/staff/
   │  useStaffRoles → api/staffRoles.ts
   │     admin_list_staff(), admin_user_id_for_handle(),
   │     admin_grant_role() / admin_remove_role() / admin_set_permission()
