@@ -62,6 +62,7 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | NewStory (4.2) | The dashed "coming" languages (Magyar, Deutsch, Français, Español) with "Coming once we have moderators who read it" | Only the open markets' languages are listed (`open_story_languages()`); the hint says more open once we have moderators who read them |
 | NewStory (4.2) | Waves' default accent is #6E93BF, outside the 9-colour palette | Violet, the nearest palette colour |
 | NewStory (4.2) | "Status and comments", "Where can people read this story?" and "Labels" | Come with S1-E3-05, S1-E3-08 (after March) and S1-E3-06 |
+| NewStory (4.2) | "Right now: Sky, picked for you automatically" is fixed to Sky on the board | The design comes from the story's ID, which the form makes before the story exists (S1-E3-13) |
 | Editor (4.3) | "Story details" panel: a rating select without the explanations, "Content notes" ticks and a "Visibility" select | Becomes a read-only summary with "Change in story settings" (S1-E3-06): ratings and labels are set in one place, always with the full guide; "Visibility" goes because the rule is "only you until the first chapter is published" (Robert, 23 Oct 2026, Q15) |
 | WriterDashboard (4.1) | The statistics tiles, the followers chart, the drafts list and the latest comments | S1-E3-07 (after March); `/write` shows the "Story by story" list only ("Your writing", Robert, 23 Oct 2026, Q15) |
 | WriterDashboard (4.1) | Draft pills in the old solid-gold style | The pill system's gold information pill |

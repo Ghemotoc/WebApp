@@ -67,7 +67,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/design-system/` | The /design page: every token and component on one page, with live contrast ratios | S1-E1-03 |
 | `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
 | `src/features/writing/` | The writer's side: `/write` (Your writing) and `/write/new` (the new story form), the tag rule, `create_story()`; see its README | S1-E3-01 |
-| `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size) and `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) | S1-E3-01 |
+| `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets a design from the story's ID; `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
 | `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
 | `src/lib/` | Shared helpers: `i18n.ts` (translations), `utils.ts` (`cn` for class names), `database.types.ts` (generated, never edited by hand), `supabase.ts` (the one browser client, loaded on demand; null without settings), `language-preference.ts` (the language kept in this browser), `romanian-text.ts` (ş and ţ become ș and ț), `query-retry.ts` (a refused read, 401 or 403, isn't retried; api/ functions keep the response status as the error's cause), and later `platform/` adapters | S1-E1-01, S1-E1-02, S1-E1-04, S1-E2-QA |
@@ -309,6 +309,8 @@ stories (user_id = auth.uid(), cover_kind and the drawn cover's design and colou
 /write lists them (useMyStories); readers see nothing until publish_chapter() (S1-E3-03) sets
 first_published_at and get_story_page() (S1-E3-05) serves the public page (ADR 0004).
 ```
+
+**Automatic covers (S1-E3-13):** the form makes the story's ID (`crypto.randomUUID()`) and hands it to `create_story()`, so `automaticCoverFor(storyId)` can draw the design the story will get before it exists ("Right now: Sky, picked for you automatically"). Nothing is stored for an automatic cover: every screen calls `resolveCoverChoice()` (a drawn choice, else the ID's design), and rows of cards call `designsForRow()` so two neighbours never share a design while a chosen design is never moved.
 
 The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 

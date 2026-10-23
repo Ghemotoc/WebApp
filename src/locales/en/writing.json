@@ -118,7 +118,6 @@
   "preview": {
     "eyebrow": "How readers will see it",
     "onlyYou": "Only you",
-    "automaticCover": "Automatic cover",
     "noBlurb": "Your blurb shows here.",
     "deleteLater": "You can also delete the story later in story settings. We ask twice, hide it straight away and delete it for good after 30 days. Until then you can undo it."
   },
@@ -131,6 +130,7 @@
     "tagTooLong": "A tag can have at most 40 characters.",
     "tooManyTags": "A story can have at most 10 tags.",
     "duplicateTag": "Two of these tags are the same once we ignore capitals and diacritics.",
-    "loadFailed": "We couldn’t load this page. Check your connection and try again."
+    "loadFailed": "We couldn’t load this page. Check your connection and try again.",
+    "storyIdInvalid": "The story could not be given an ID. Reload the page and try again."
   }
 }

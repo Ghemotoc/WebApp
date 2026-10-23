@@ -10,6 +10,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
+import { automaticCoverFor } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -39,20 +40,16 @@ export function StoryPreviewAside({ answers, penName }: StoryPreviewAsideProps) 
         <InfoPill tone="neutral">{t('preview.onlyYou')}</InfoPill>
       </div>
       <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card">
-        {answers.cover.kind === 'drawn' ? (
-          <DrawnCover
-            title={shownTitle}
-            penName={penName}
-            choice={answers.cover}
-            size="card"
-            className="h-[300px] w-full max-w-[188px] self-center"
-          />
-        ) : (
-          // S1-E3-13 draws the automatic cover from the story's ID once the story exists.
-          <div className="flex h-[300px] w-full max-w-[188px] items-center justify-center self-center rounded-cover border border-dashed border-dashed-border bg-panel p-4 text-center text-sm text-meta">
-            {t('preview.automaticCover')}
-          </div>
-        )}
+        {/* A skipped cover shows the automatic design the story gets from its ID (S1-E3-13). */}
+        <DrawnCover
+          title={shownTitle}
+          penName={penName}
+          choice={
+            answers.cover.kind === 'drawn' ? answers.cover : automaticCoverFor(answers.storyId)
+          }
+          size="card"
+          className="h-[300px] w-full max-w-[188px] self-center"
+        />
         <h2 className="m-0 font-heading text-[22px] leading-[1.1] font-bold text-heading break-words">
           {shownTitle}
         </h2>

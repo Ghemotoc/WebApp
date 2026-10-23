@@ -13,7 +13,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(28);
+select plan(30);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -101,6 +101,17 @@ select results_eq(
   $$ values (null::text, null::text, null::text, null::text) $$,
   'an automatic cover stores no design, colours or file (S1-E3-13)'
 );
+
+-- 5b. The form may choose the story's ID, so the automatic cover is known in advance (S1-E3-13);
+--     an ID already in use is refused.
+select is(
+  (public.create_story('Chosen ID', '', 'en', 'poetry', '{}', '{"kind": "automatic"}',
+    '11111111-1111-4111-8111-111111111111')) ->> 'outcome', 'ok',
+  'the form''s own story ID is used (S1-E3-13)'
+);
+select throws_ok($$ select public.create_story('Same ID again', '', 'en', 'poetry', '{}', '{"kind": "automatic"}',
+  '11111111-1111-4111-8111-111111111111') $$, '23514', null,
+  'a story ID already in use is refused, never reused');
 
 -- 6. The owner stays the same when the pen name changes.
 select is(public.set_my_pen_name('Un alt nume'), 'ok', 'the writer changes their pen name');

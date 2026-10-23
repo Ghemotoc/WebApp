@@ -12,6 +12,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
+import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
 import { Doodle } from '@/components/ui/Doodle';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -49,10 +50,16 @@ function StoriesBody({ writing }: { writing: ReturnType<typeof useMyStories> }) 
       />
     );
   }
+  // Automatic covers come from each story's ID; two neighbours never share a design (S1-E3-13).
+  const covers = designsForRow(writing.stories);
   return (
     <div className="flex flex-col gap-5">
-      {writing.stories.map((story) => (
-        <WriterStoryCard key={story.id} story={story} />
+      {writing.stories.map((story, index) => (
+        <WriterStoryCard
+          key={story.id}
+          story={story}
+          cover={covers[index] ?? automaticCoverFor(story.id)}
+        />
       ))}
     </div>
   );

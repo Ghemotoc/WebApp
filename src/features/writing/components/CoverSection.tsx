@@ -1,7 +1,7 @@
 /**
  * CoverSection: "Cover": draw a cover, or skip it for the automatic one (story S1-E3-01; the
- * automatic cover's own text and "Right now: …" line come with S1-E3-13; board NewStory 4.2,
- * section 3).
+ * automatic cover drawn from the story's ID and the "Right now: …" line, S1-E3-13; board
+ * NewStory 4.2, section 3).
  *
  * What it shows: the preview (180 × 288), "Pick a background. We add your title and pen name.",
  * the automatic-cover box, the 16 tiles, the colour swatches and the rights line.
@@ -22,6 +22,7 @@ import {
   type CoverDesignKey,
   type DrawnCoverChoice,
 } from '@/components/covers/coverDesigns';
+import { automaticCoverFor } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { Button } from '@/components/ui/Button';
 import { Doodle } from '@/components/ui/Doodle';
@@ -35,6 +36,8 @@ import { FormSection } from './FormSection';
 
 /** What the section needs. */
 export interface CoverSectionProps {
+  /** The story's ID, made by the form, so the automatic cover is known (S1-E3-13). */
+  storyId: string;
   title: string;
   penName: string;
   cover: StoryCoverChoice;
@@ -88,16 +91,53 @@ function CoverPreview({
 }
 
 /**
+ * The automatic-cover box: "Skip this and we’ll give your story one of these covers
+ * automatically…", the design the story would get, and the way back to it (S1-E3-13).
+ *
+ * @returns the box
+ */
+function AutomaticCoverBox({
+  automaticDesign,
+  isAutomatic,
+  onUseAutomatic,
+}: {
+  automaticDesign: CoverDesignKey;
+  isAutomatic: boolean;
+  onUseAutomatic: () => void;
+}) {
+  const { t } = useTranslation('writing');
+  return (
+    <div className="flex flex-col gap-2 rounded-[14px] bg-panel p-4 text-sm text-body">
+      <p className="m-0">{t('cover.automatic.intro')}</p>
+      <p className="m-0 text-[13px] text-meta">
+        {isAutomatic
+          ? t('cover.automatic.current', { design: t(`cover.designNames.${automaticDesign}`) })
+          : t('cover.automatic.chosen')}
+      </p>
+      {!isAutomatic && (
+        <div>
+          <Button variant="secondary" onClick={onUseAutomatic}>
+            {t('cover.automatic.use')}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
  * Renders the section.
  *
  * @returns the fieldset
  */
-export function CoverSection({ title, penName, cover, onChange }: CoverSectionProps) {
+export function CoverSection({ storyId, title, penName, cover, onChange }: CoverSectionProps) {
   const { t } = useTranslation('writing');
   const { isOn } = useFeatureFlags();
   const drawnChoice = cover.kind === 'drawn' ? cover : null;
-  // What the preview shows while the cover is still automatic: the first design's defaults.
-  const previewChoice = drawnChoice ?? defaultChoiceFor('sky');
+  // While the cover is automatic, the preview shows the design the story gets from its ID
+  // (S1-E3-13), so "Skip this" is never a surprise.
+  const automaticChoice = automaticCoverFor(storyId);
+  const previewChoice = drawnChoice ?? automaticChoice;
   const shownTitle = title.trim() === '' ? t('cover.untitled') : title;
 
   /** Picks a design, starting from its board colours. */
@@ -129,16 +169,11 @@ export function CoverSection({ title, penName, cover, onChange }: CoverSectionPr
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-4">
           <p className="m-0 text-sm font-semibold text-ink">{t('cover.pickBackground')}</p>
-          <div className="flex flex-col gap-2 rounded-[14px] bg-panel p-4 text-sm text-body">
-            <p className="m-0">{t('cover.automatic.intro')}</p>
-            {drawnChoice !== null && (
-              <div>
-                <Button variant="secondary" onClick={() => onChange({ kind: 'automatic' })}>
-                  {t('cover.automatic.use')}
-                </Button>
-              </div>
-            )}
-          </div>
+          <AutomaticCoverBox
+            automaticDesign={automaticChoice.design}
+            isAutomatic={drawnChoice === null}
+            onUseAutomatic={() => onChange({ kind: 'automatic' })}
+          />
           <DrawnCoverPicker choice={drawnChoice} onPick={pickDesign} />
         </div>
       </div>
