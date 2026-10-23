@@ -44,6 +44,7 @@
     "on_call": "On call for removal orders"
   },
   "nav": {
+    "moderation": "Moderation",
     "roles": "Roles",
     "auditLog": "Audit log",
     "invites": "Invites"

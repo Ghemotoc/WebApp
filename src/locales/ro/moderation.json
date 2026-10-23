@@ -1,0 +1,145 @@
+{
+  "queue": {
+    "documentTitle": "Coada de raportări · {{productName}}",
+    "eyebrow": "Echipă · moderare",
+    "heading": "Coada de raportări",
+    "intro": "Cele mai urgente primele. Moderatorii noștri acționează pe baza raportărilor. Singura verificare automată este pentru imagini: reține o imagine semnalată pentru un moderator și nu decide niciodată singură.",
+    "grouped": "Raportările despre același lucru sunt grupate într-un singur caz.",
+    "notAllowed": "Doar echipa de moderare poate vedea coada.",
+    "loading": "Se încarcă coada…",
+    "none": "Niciun caz nu se potrivește cu aceste filtre.",
+    "listHeading": "Cazuri",
+    "open": "Deschide cazul {{reference}}",
+    "filtersLabel": "Restrânge coada",
+    "columns": {
+      "case": "Caz",
+      "what": "Ce a fost raportat",
+      "signals": "Semnale",
+      "user": "Cont",
+      "deadline": "Termen",
+      "decision": "Decizie"
+    },
+    "filters": {
+      "tier": "Nivel",
+      "allTiers": "Toate nivelurile",
+      "status": "Stare",
+      "allStatuses": "Deschise și decise",
+      "under18": "Raportor sub 18 ani",
+      "under18All": "Toți",
+      "under18Yes": "Da",
+      "under18No": "Nu",
+      "source": "Găsit prin",
+      "allSources": "Raportări, ordine și verificări de imagini"
+    },
+    "showing": "Cazuri afișate: {{count}}, cele mai urgente primele."
+  },
+  "tiers": {
+    "one_hour": "1 oră",
+    "same_day": "În aceeași zi",
+    "two_days": "48 de ore",
+    "seven_days": "7 zile"
+  },
+  "tierSummary": {
+    "heading": "Cazuri deschise pe niveluri",
+    "one_hour": "Ordine de eliminare de la o autoritate (legea UE ne dă o oră)",
+    "same_day": "Material cu abuz asupra copiilor, o amenințare la adresa unui minor, un risc de autovătămare sau conținut terorist",
+    "two_days": "Alt conținut ilegal, cum ar fi lucrări copiate",
+    "seven_days": "Tot restul: insulte, spam, mesaje în afara subiectului",
+    "open": "Deschise: {{count}}"
+  },
+  "sources": {
+    "report": "Raportare",
+    "authority_order": "Ordin de eliminare",
+    "picture_check": "Verificare de imagine"
+  },
+  "statuses": {
+    "open": "Deschis",
+    "decided": "Decis"
+  },
+  "signals": {
+    "noReports": "Fără raportări",
+    "reporterUnder18": "Raportor sub 18 ani",
+    "adultReporters": "Raportori adulți",
+    "safeguarding": "Protecția copilului",
+    "authorityOrder": "Ordin al unei autorități",
+    "pictureHeld": "Imagine reținută",
+    "reports": "Raportări: {{count}}"
+  },
+  "deadline": {
+    "hoursLeft": "{{hours}} h {{minutes}} min rămase",
+    "daysLeft": "{{days}} z {{hours}} h rămase",
+    "hoursOverdue": "depășit cu {{hours}} h {{minutes}} min",
+    "daysOverdue": "depășit cu {{days}} z {{hours}} h",
+    "decidedOn": "Decis {{when}}"
+  },
+  "ageBands": {
+    "under_13": "sub 13 ani",
+    "13_to_15": "13–15 ani",
+    "16_to_17": "16–17 ani",
+    "18_plus": "adult",
+    "unknown": "vârstă necunoscută"
+  },
+  "reasons": {
+    "illegal_content": "Conținut ilegal",
+    "harassment": "Hărțuire",
+    "self_harm": "Risc de autovătămare",
+    "child_sexual_content": "Conținut sexual cu un minor",
+    "terrorism": "Conținut terorist",
+    "hate": "Ură",
+    "spam": "Spam",
+    "copyright": "Drepturi de autor",
+    "copied_published_work": "Copiat dintr-o lucrare publicată",
+    "undisclosed_ai": "Lipsește eticheta AI",
+    "other": "Altceva",
+    "none": "Niciun motiv înregistrat"
+  },
+  "actions": {
+    "no_action": "Fără acțiune",
+    "remove": "Elimină",
+    "restrict": "Restricționează",
+    "warn": "Avertizează",
+    "suspend": "Suspendă",
+    "ban": "Interzice"
+  },
+  "case": {
+    "documentTitle": "Cazul {{reference}} · {{productName}}",
+    "eyebrow": "Echipă · moderare · caz",
+    "heading": "Cazul {{reference}}",
+    "back": "Înapoi la coadă",
+    "loading": "Se încarcă cazul…",
+    "notFound": "Nu există niciun caz aici sau nu este unul pe care îl poți vedea.",
+    "notAllowed": "Doar echipa de moderare poate deschide un caz.",
+    "summaryOrder": "{{what}}. Un ordin de eliminare de la o autoritate, primit {{when}}. Ceasul de o oră a pornit la primire.",
+    "summaryPicture": "{{what}}. Reținută de verificarea de imagini {{when}}; nimeni altcineva nu a văzut-o.",
+    "reported": "Contul raportat",
+    "reportedAccount": "@{{handle}}, {{ageBand}}",
+    "noHandle": "(încă fără nume de utilizator)",
+    "reportsHeading": "Raportări",
+    "noReports": "Fără raportări: acest caz vine dintr-un ordin sau dintr-o verificare de imagine.",
+    "reportBy": "{{reference}} · @{{handle}}, {{ageBand}} · {{when}}",
+    "noDetails": "Raportorul nu a scris nimic în plus.",
+    "anonymous": "Raportorii nu sunt niciodată numiți contului raportat.",
+    "decisionsHeading": "Decizii",
+    "noDecisions": "Nicio decizie încă.",
+    "decisionBy": "{{action}} · @{{handle}} · {{when}}",
+    "decidedNotice": "Acest caz este decis: {{action}}. Contestațiile vin cu S1-E10-07.",
+    "form": {
+      "heading": "Decizie",
+      "legend": "Ce decizi?",
+      "actionMissing": "Alege mai întâi o acțiune.",
+      "note": "Notă pentru jurnalul cazului (obligatorie)",
+      "noteHint": "Ce ai verificat și de ce ai ales această acțiune. Doar echipa o poate citi.",
+      "noteMissing": "Scrie o notă ca să trimiți decizia.",
+      "send": "Trimite decizia",
+      "sending": "Se trimite…",
+      "sent": "Decizia a fost salvată. Cazul este închis, împreună cu raportările lui.",
+      "nextSteps": "Punerea în aplicare a acțiunii (ascunderea sau eliminarea, avertizarea, suspendarea sau interzicerea) vine cu S1-E10-06, iar expunerea de motive către cont cu S1-E10-04."
+    },
+    "summary": "{{what}}. Raportări: {{count}}, prima primită {{when}}. Raportările despre același lucru sunt grupate aici."
+  },
+  "failures": {
+    "not_allowed": "Nu poți face asta. Doar echipa de moderare poate, iar cazurile de protecția copilului cer permisiunea de protecție.",
+    "refused": "Baza de date a refuzat: nota poate fi goală sau cazul este deja decis.",
+    "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+  }
+}
