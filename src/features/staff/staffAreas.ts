@@ -25,6 +25,8 @@ export interface StaffAreaPage {
 export const staffAreaPages: StaffAreaPage[] = [
   // S1-E2-07a built /staff/roles outside the shell; S1-E11-01 moves it in.
   { area: 'roles', href: '/staff/roles', labelKey: 'nav.roles' },
+  // Invite links for the March test (S1-E11-17); a tab under Users once S1-E11-02 lands.
+  { area: 'invites', href: '/staff/invites', labelKey: 'nav.invites' },
   { area: 'audit_log', href: '/staff/audit-log', labelKey: 'nav.auditLog' },
 ];
 

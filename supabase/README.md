@@ -116,6 +116,14 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Sensitive reads:** `log_sensitive_read(kind, table, row, user)` with the kinds architecture 1.8.3 lists; later screens call it before showing the thing.
 - **Search and export:** `admin_search_audit_log()` (one page of up to 100, usernames and an 8-character target ID, never a full ID) and `admin_export_audit_log()` (up to 10,000 rows, logged as `audit_log.exported` with the filters), both owner and admin only.
 
+## Invite links (S1-E11-17)
+
+- **Making one:** `admin_create_invite(admits, valid_days, private_note)` (owner and admin): 1 to 50 people, 1 to 90 days, a note of at most 80 characters with no "@". It returns the code once; the table keeps only its SHA-256 hash, so nobody can read a code back. The screen builds the link from the brand config: `<site>/join/<code>`.
+- **The list:** `admin_list_invites()` gives the note, uses, expiry, status (active, used_up, expired, revoked) and the maker's username. An invite never records who used it.
+- **Revoking:** `admin_revoke_invite(id, reason)`; a second revoke changes nothing.
+- **The last place:** `use_platform_invite()` (S1-E2-01) is still one conditional UPDATE inside the sign-up transaction, so two sign-ups at the same moment can't both take it; when the last place goes it writes `invite.used_up` on behalf of the maker, without naming the new account. Make, revoke and used-up are the three audit actions of the story.
+- **Class spaces** (S1-E8-11a) reuse the same table and functions with `purpose = 'class_space'`.
+
 ## Logging in (S1-E2-05)
 
 - **The pause** works through our screens: the log-in form asks `sign_in_pause_until()` before trying and calls `record_sign_in_failure()` after Supabase says no. Direct, scripted calls to Supabase Auth are held back by Supabase's own per-address limits; a true per-account lock needs a paid-plan Auth hook (decided 17 Oct 2026, 19:43, Q12). Rows hold an email hash and a time only, and are removed after 24 hours by `record_sign_in_failure()` itself.
