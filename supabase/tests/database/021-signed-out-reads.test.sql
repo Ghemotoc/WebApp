@@ -60,6 +60,8 @@ select results_eq(
        ('profiles', 0::bigint),
        ('reports', 0::bigint),
        ('reserved_names', 0::bigint),
+       ('safety_contact_gaps', 0::bigint),
+       ('safety_contacts', (select count(*) from public.safety_contacts)),
        ('settings', (select count(*) from public.settings where is_public)),
        ('sign_in_failures', 0::bigint),
        ('staff_permissions', 0::bigint),
