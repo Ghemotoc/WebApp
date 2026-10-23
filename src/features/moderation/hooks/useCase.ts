@@ -15,6 +15,7 @@ import {
   getCase,
   listCaseActions,
   listCaseReports,
+  type Decision,
   type ModerationAction,
 } from '../api/moderationQueue';
 
@@ -44,8 +45,7 @@ export function useCase(caseId: string) {
     queryFn: async () => listCaseActions(await requireClient(), caseId),
   });
   const decide = useMutation({
-    mutationFn: async (decision: { action: ModerationAction; note: string }) =>
-      decideCase(await requireClient(), caseId, decision.action, decision.note),
+    mutationFn: async (decision: Decision) => decideCase(await requireClient(), caseId, decision),
     // The case, its decisions and the queue all change with a decision: every key starts with
     // 'moderation', so one call refreshes them all.
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['moderation'] }),
@@ -57,7 +57,8 @@ export function useCase(caseId: string) {
     loadFailure: moderationFailureOf(theCase.isError, theCase.error),
     reports: reports.data ?? [],
     actions: actions.data ?? [],
-    decide: (action: ModerationAction, note: string) => decide.mutateAsync({ action, note }),
+    decide: (action: ModerationAction, note: string, suspensionDays?: number) =>
+      decide.mutateAsync({ action, note, suspensionDays }),
     isDeciding: decide.isPending,
     decideFailure: moderationFailureOf(decide.isError, decide.error),
     hasDecided: decide.isSuccess,

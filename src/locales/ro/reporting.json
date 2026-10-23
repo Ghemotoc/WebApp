@@ -34,10 +34,14 @@
     "signed_out": "Conectează-te ca să raportezi.",
     "refused": "Nu am putut prelua această raportare. Nu îți poți raporta propriile lucruri, iar elementul poate să nu mai existe.",
     "too_many": "Ai trimis multe raportări în ultima oră. Te rugăm să încerci mai târziu.",
-    "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+    "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
+    "paused": "Raportarea ta este suspendată deocamdată. Poți citi și scrie în continuare."
   },
   "reasons": {
-    "illegal_content": { "label": "Conținut ilegal", "hint": "Încalcă legea în alt fel." },
+    "illegal_content": {
+      "label": "Conținut ilegal",
+      "hint": "Încalcă legea în alt fel."
+    },
     "harassment": {
       "label": "Hărțuire",
       "hint": "Intimidare, amenințări sau atacuri la adresa unei persoane."
@@ -70,6 +74,9 @@
       "label": "Fără eticheta AI",
       "hint": "Scris cu AI, dar neetichetat ca asistat de AI."
     },
-    "other": { "label": "Altceva", "hint": "Altă problemă. Spune-ne mai jos." }
+    "other": {
+      "label": "Altceva",
+      "hint": "Altă problemă. Spune-ne mai jos."
+    }
   }
 }

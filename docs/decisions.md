@@ -37,6 +37,9 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Moderation cases (S1-E10-03a): reports about one item are grouped into one open case (Q4); claiming and timers wait for S1-E10-03b | Chat, 23 Oct 2026 (Q4) |
 | Tiers (S1-E10-03a): same day means 24 hours from the first report; self-harm, sexual content involving a minor and terrorist content reported by a member are same day; other illegal content, copyright and copied work 48 hours; the rest 7 days; the one-hour tier is only for removal orders from an authority (TCO art. 3(3)) | Chat, 23 Oct 2026 (Q5) |
 | Safeguarding cases are hidden from moderators without the safeguarding permission from S1-E10-03a on; the owner and moderator personas hold the permission in the seed | Chat, 23 Oct 2026 (Q6) |
+| Moderation actions (S1-E10-06): hide = the writer and staff still see the item; remove = staff only, with a "[Removed by the moderation team]" marker; restrict waits for S1-E11-08 | Chat, 23 Oct 2026 (Q3) |
+| Sanctions (S1-E10-06, proposals accepted): a suspension lasts 1, 7 or 30 days; a reporting pause 30 days; a ban uses Supabase's own ban and signs the person out everywhere | Chat, 23 Oct 2026 (Q7) |
+| Banned emails are kept as a keyed hash (HMAC) with a secret in Supabase Vault, set by hand on each environment, never in a migration | Chat, 23 Oct 2026 (Q8) |
 | Lane C's pull requests go on `claude/funny-einstein-pkv35k-<story-id>` branches, one per story, each cut from the one before; screenshots are sent in chat, never committed | Chat, 23 Oct 2026 (Q13, Q14) |
 
 ## Added 17 Oct 2026 (after the snapshot below)
