@@ -52,6 +52,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/components/ui/`, `src/components/icons/` | Shared components (buttons, drop-down, fields, pills, chips, cards, shelves, notices, ad slots) and the few plain icons; see its README | S1-E1-03 |
 | `src/features/theme/` | Light and night mode: the footer drop-down and the hook that applies it | S1-E1-03 |
 | `src/features/language/` | The English / Română drop-downs, the hooks that switch and save the language, and the Supabase calls for `profiles.locale` | S1-E1-04 |
+| `src/features/reporting/` | The shared Report button and dialog (`<ReportButton>`), the one report form; see its README and architecture 1.7.11 | S1-E10-01 |
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
 | `src/features/flags/` | The public feature flags for screens that change with them (`useFeatureFlags`) | S1-E2-01 |
@@ -277,6 +278,23 @@ audit_log (append-only: no role, the owner included, can change or delete a row)
 Invite links (S1-E11-17): an admin makes a link at /staff/invites; sign-up at /join/<code> calls `use_platform_invite()` inside the sign-up transaction, once the new profile exists (one conditional UPDATE, so the last place goes once). The audit log gets `invite.created` and `invite.revoked` from the admin, `invite.redeemed` from the new account (its user ID only) and `invite.used_up` from the system (`audit_log.actor = 'system'`, no user ID), never on behalf of the admin (CTO, 24 Oct 2026).
 
 Every staff screen reads and writes only through policies and `admin_*` functions, each of which asks `staff_may()` → `is_staff_session()` (architecture 1.8.1). The menu is built from the same answer, but it is a convenience: the server refuses on its own.
+
+## Reporting something (S1-E10-01)
+
+```
+any screen with user content: <ReportButton itemType itemReference itemLabel />   src/features/reporting/
+  │  ReportDialog (the browser's <dialog>): ReportReasonList (the enum, src/schemas/report.ts),
+  │  details, Send → useReportItem → api/reports.ts → rpc report_item()
+  ▼
+…_s1_e10_01_reports.sql
+  │  report_item(): signed in (any state, architecture 1.7.8) → reportable_item_owner() finds the
+  │  item and its owner (one branch per reportable_type; test 042) → not one's own → the same
+  │  report within 24 h gives the same reference → the hourly limit → insert into reports
+  ▼
+reports (user_id = the reporter; read by moderation staff only) → ReportSent shows "R-000123"
+```
+
+S1-E10-03a opens a moderation case from the new row; S1-E10-06 adds the reporting pause; S1-E10-02 reuses the dialog on the public form.
 
 ## Staff roles (S1-E2-07a)
 

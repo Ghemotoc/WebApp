@@ -20,6 +20,7 @@ import { ColourSection } from './components/ColourSection';
 import { FormSection } from './components/FormSection';
 import { NoticeSection } from './components/NoticeSection';
 import { PillSection } from './components/PillSection';
+import { ReportSection } from './components/ReportSection';
 import { ShelfSection } from './components/ShelfSection';
 import { ShellSection } from './components/ShellSection';
 import { TypeSection } from './components/TypeSection';
@@ -55,6 +56,8 @@ export function DesignPage() {
       <CardSection />
       <ShelfSection />
       <NoticeSection />
+      {/* The shared Report button and dialog (S1-E10-01). */}
+      <ReportSection />
       <AdSection />
       <ShellSection />
     </PageContainer>

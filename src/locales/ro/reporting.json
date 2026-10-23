@@ -1,0 +1,67 @@
+{
+  "button": {
+    "label": "Raportează {{item}}"
+  },
+  "dialog": {
+    "eyebrow": "Raportare",
+    "title": {
+      "profile": "Raportează acest profil"
+    },
+    "anonymous": "{{item}}. Nu va vedea cine a raportat.",
+    "whatIsWrong": "Ce nu e în regulă?",
+    "pickOne": "Alege motivul care se potrivește cel mai bine.",
+    "reasonMissing": "Alege mai întâi un motiv.",
+    "details": "Altceva? (opțional)",
+    "detailsHint": "Spune-ne orice ne ajută să verificăm. Cel mult {{max}} de caractere.",
+    "detailsTooLong": "E prea lung. Păstrează sub 2.000 de caractere.",
+    "aPersonReads": "O persoană din echipa noastră citește fiecare raportare. Nimic nu se schimbă până nu verificăm.",
+    "cancel": "Renunță",
+    "send": "Trimite raportarea",
+    "sending": "Se trimite…",
+    "signedOut": "Conectează-te ca să raportezi. Dacă nu ai cont, formularul public de raportare vine în curând.",
+    "logIn": "Conectare"
+  },
+  "sent": {
+    "heading": "Raportare trimisă",
+    "body": "Mulțumim. O persoană din echipa noastră o va citi și îți va spune ce am decis.",
+    "reference": "Referința ta: {{reference}}, primită la {{receivedAt}}.",
+    "back": "Înapoi"
+  },
+  "failures": {
+    "signed_out": "Conectează-te ca să raportezi.",
+    "refused": "Nu am putut prelua această raportare. Nu îți poți raporta propriile lucruri, iar elementul poate să nu mai existe.",
+    "too_many": "Ai trimis multe raportări în ultima oră. Te rugăm să încerci mai târziu.",
+    "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+  },
+  "reasons": {
+    "illegal_content": { "label": "Conținut ilegal", "hint": "Încalcă legea în alt fel." },
+    "harassment": {
+      "label": "Hărțuire",
+      "hint": "Intimidare, amenințări sau atacuri la adresa unei persoane."
+    },
+    "self_harm": {
+      "label": "Autovătămare",
+      "hint": "Încurajează sau arată autovătămarea sau sinuciderea."
+    },
+    "child_sexual_content": {
+      "label": "Conținut sexual cu un minor",
+      "hint": "Orice conținut sexual care implică o persoană sub 18 ani. Acționăm întâi aici."
+    },
+    "terrorism": { "label": "Terorism", "hint": "Susține sau promovează terorismul." },
+    "hate": { "label": "Ură", "hint": "Atacă oamenii pentru ceea ce sunt." },
+    "spam": { "label": "Spam", "hint": "Reclame, înșelătorii sau aceeași postare iar și iar." },
+    "copyright": {
+      "label": "Drepturi de autor",
+      "hint": "Folosește munca ta sau a altcuiva fără permisiune."
+    },
+    "copied_published_work": {
+      "label": "Copiat dintr-o lucrare publicată",
+      "hint": "Text luat dintr-o carte sau dintr-un articol deja publicat."
+    },
+    "undisclosed_ai": {
+      "label": "Fără eticheta AI",
+      "hint": "Scris cu AI, dar neetichetat ca asistat de AI."
+    },
+    "other": { "label": "Altceva", "hint": "Altă problemă. Spune-ne mai jos." }
+  }
+}

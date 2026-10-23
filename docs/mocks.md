@@ -29,7 +29,7 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | Company details on /legal/contact | placeholders, shown highlighted, until the company is registered (Q55, OPEN) | a new version of the contact page once the company exists | same |
 | Legal texts | version 0.1 of the terms, privacy notice and guidelines are drafts, in English and in a Romanian draft translation, marked as such in the Legal centre | the lawyer's review, then a new version made with `scripts/build-legal-migration.ts` (S1-E14-01) | same |
 | "After the invited test" labels | lines of the legal drafts that start only after the March test carry a label (`content/legal/after-the-invited-test.json`) | the version published when sign-up opens to the public | same |
-| `reportable_type` | holds `profile` only | each user-content story adds its value (S1-E3-01 first) | same |
+| `reportable_type` | holds `profile` only; `reportable_item_owner()` and `reportable_item_summary()` have the profile branch only | each user-content story adds its value and its branches (S1-E3-01 first; architecture 1.7.11) | same |
 | "Ask a moderator to check it" (a username or pen name refused by mistake) | opens an email to the support address with the name in the subject; a moderator approves with `admin_approve_username()` | S1-E14-04 (Contact us) and S1-E11-02 (the approve button on the account page) | same |
 | Username word lists | drafts in `content/username-word-lists/`; the Romanian one waits for Robert's check (Q4) | Robert's check, then a new migration from `scripts/build-word-list-migration.ts`; the editing screen is S1-E11-03 | same |
 | Look-alike letters | Unicode's 10.0.0 list (from the MIT `unicode-confusables` package, because unicode.org was out of reach from the build session) | a newer list from unicode.org with `scripts/build-confusables-migration.ts` | same |
@@ -56,4 +56,5 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | --- | --- | --- | --- |
 | The fresh sign-in (15 minutes) | asked only before a role change (`require_role_change_allowed()`); exports for someone else, "Emergency disable" and removing part of a writer's text ask the same question when their stories land (S1-E11-01) | S1-E11-09a, S1-E10-09, S1-E11-08 | same |
 | Invites under Users | Invites has its own menu entry until the Users area exists (S1-E11-17) | S1-E11-02 (the Invites tab on 8.5) | same |
+| The Report button's home | shown on the /design page's Report panel until a public profile (S1-E5-05) or a story screen (Lane A) exists; the in-app copy of the confirmation (notifications) waits for S1-E7-01 | S1-E5-05, Lane A's story and chapter screens, S1-E7-01 | same |
 | The admin menu | shows Roles, Invites and Audit log only; every other area appears when its page is built (`src/features/staff/staffAreas.ts`) | each staff story (S1-E10-03a next) | same |
