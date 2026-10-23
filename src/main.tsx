@@ -12,6 +12,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 
 import { AppProviders } from '@/app/AppProviders';
 import { appRoutes } from '@/app/router';
+import { installGlobalErrorHandlers } from '@/features/errors/lib/installGlobalErrorHandlers';
 import { createI18n, syncDocumentLanguage } from '@/lib/i18n';
 import { readDeviceLanguage } from '@/lib/language-preference';
 import '@/styles/index.css';
@@ -23,16 +24,20 @@ if (rootElement === null) {
   throw new Error('index.html must contain <div id="root"></div> for the app to start.');
 }
 
-// Step 2: start the translations in the language this browser last chose (Romanian on a first
+// Step 2: report errors nothing else catches to our own error log, scrubbed of anything personal
+// (S1-E1-05). Errors while a page draws go to the router's error page instead.
+installGlobalErrorHandlers();
+
+// Step 3: start the translations in the language this browser last chose (Romanian on a first
 // visit, whatever the browser's own language; S1-E1-04) and keep <html lang> in step with it.
 // A signed-in account's language is applied a moment later by useAccountLanguage in AppLayout.
 const i18n = createI18n(readDeviceLanguage());
 syncDocumentLanguage(i18n);
 
-// Step 3: build the router from the route list; it reads the address bar to pick the page.
+// Step 4: build the router from the route list; it reads the address bar to pick the page.
 const router = createBrowserRouter(appRoutes);
 
-// Step 4: draw the app. StrictMode runs extra checks in development only.
+// Step 5: draw the app. StrictMode runs extra checks in development only.
 createRoot(rootElement).render(
   <StrictMode>
     <AppProviders i18n={i18n}>

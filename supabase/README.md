@@ -46,6 +46,8 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `bootstrap_first_owner(user_id)` | makes the first owner, once, on a database without the seed (production) | only from the SQL editor, never through the API | S1-E2-07a |
 | `sign_up_market_outcome(country_code, birth_year, birth_month)` | what sign-up says about a country and age: `ok`, `market_closed` or `under_market_age`; always `ok` while `invite_only` and `adults_only` are both on (Q6) | anyone, signed out included (the sign-up form) | S1-E2-10 |
 | `my_legal_documents_to_accept()` | the caller's own legal documents waiting for acceptance after an important change | any signed-in person | S1-E14-01 |
+| `report_client_error(error_name, error_message, route_path, app_version, browser_family)` | stores one browser error in `client_errors` after trimming and scrubbing it again (no emails, tokens, IDs, quoted text, long numbers, query strings); answers the row's ID, or null over the shared limit (`client_errors_per_minute`, 60) | anyone, signed out included (the app's error reporter) | S1-E1-05 |
+| `admin_list_client_errors(since, max_rows)` | the newest browser errors (default: the last 7 days, 200 rows) | owner and admin in a staff session | S1-E1-05 |
 | `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
 
 Why `set_my_locale()` and not an update policy on `profiles`: a policy would let a person change every column of their own row through the API, their year of birth too. The function changes one column. Test: `tests/database/014-profile-locale.test.sql`.
@@ -68,6 +70,18 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **`profiles.country_code`** is the two-letter code of the connection at sign-up, never asked and never the IP address.
 - **The token:** the sign-up form gets `{ country, token }` from our Pages Function; the trigger trusts the country only when `verified_signup_country()` finds a valid HMAC-SHA256 signature made with the Vault secret `signup_context_secret` (the same value as Cloudflare's `SIGNUP_CONTEXT_SECRET`) and the token is at most 10 minutes old. Without the secret, every country counts as unknown.
 - **The rules:** while `invite_only` and `adults_only` are both on, a valid invite admits any country, unknown included (Q6b, Q6c). Once sign-up is public, a closed or unknown country is refused and the form shows `/not-open`; an under-16 in a 16-and-over market is refused.
+
+## Error log and maintenance mode (S1-E1-05)
+
+- **Error log.** `client_errors` keeps what broke in a browser, never who: the error's name, a scrubbed message, the route pattern (`/join/:code`), the app version, the browser family and the time. It has no `user_id` on purpose. Rows arrive only through `report_client_error()` and are deleted after 30 days by the pg_cron job `purge-old-client-errors` (03:17 UTC every night; `client_errors_keep_days`, a proposal). Owner and admin read it with `select * from public.admin_list_client_errors();` (or the table, in the SQL editor) until the admin site (S1-E11-01) gives it a screen. This migration also switches on pg_cron (`create extension if not exists pg_cron`).
+- **Maintenance mode.** Until the settings screen (S1-E11-03), switch it in the SQL editor:
+
+  ```sql
+  update public.feature_flags set is_enabled = true where key = 'maintenance_mode';   -- on
+  update public.feature_flags set is_enabled = false where key = 'maintenance_mode';  -- off
+  ```
+
+  Open pages notice within a minute. Everyone except a staff session sees the maintenance page; log in, the password pages and the Legal centre stay open, so staff can still sign in. It is a notice, not a lock: the database's rules don't change while it is on.
 
 ## Staff roles (S1-E2-07a)
 

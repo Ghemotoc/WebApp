@@ -12,6 +12,10 @@
  * "We've updated our Terms" when a signed-in person must accept a new version before posting.
  * Usernames (S1-E2-04): SetupProfileNotice sits under it and links a signed-in person without a
  * username to /setup.
+ * Error, offline and maintenance states (S1-E1-05): OfflineBanner sits under the top bar;
+ * MaintenanceGate swaps the notices and the page for the maintenance page while maintenance mode is
+ * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
+ * for error reports, as a pattern such as "/join/:code", never the address itself.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
@@ -19,8 +23,11 @@ import { Outlet } from 'react-router';
 import { SetupProfileNotice } from '@/features/account/components/SetupProfileNotice';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
+import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePattern';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
 import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice';
+import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
+import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
 
 import { Footer } from './Footer';
 import { TopBar } from './TopBar';
@@ -34,6 +41,8 @@ export function AppLayout() {
   const { t } = useTranslation();
   // Show a signed-in person's account language, whichever device they are on.
   useAccountLanguage();
+  // Remember the page on screen for error reports (S1-E1-05).
+  useTrackRoutePattern();
 
   return (
     <div className="flex min-h-dvh flex-col bg-paper text-ink">
@@ -52,12 +61,17 @@ export function AppLayout() {
           </>
         }
       />
+      {/* "You're offline" and "You're back online" (S1-E1-05). */}
+      <OfflineBanner />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
-        {/* "We've updated our Terms", for a signed-in person who must accept before posting (S1-E14-01). */}
-        <LegalUpdateNotice />
-        {/* "Choose a username", for a signed-in person who hasn't chosen one yet (S1-E2-04). */}
-        <SetupProfileNotice />
-        <Outlet />
+        {/* While maintenance mode is on, the maintenance page replaces all of this (S1-E1-05). */}
+        <MaintenanceGate>
+          {/* "We've updated our Terms", for a signed-in person who must accept before posting (S1-E14-01). */}
+          <LegalUpdateNotice />
+          {/* "Choose a username", for a signed-in person who hasn't chosen one yet (S1-E2-04). */}
+          <SetupProfileNotice />
+          <Outlet />
+        </MaintenanceGate>
       </main>
       <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />
     </div>

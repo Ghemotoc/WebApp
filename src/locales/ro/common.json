@@ -73,5 +73,29 @@
     "heading": "Nu găsim pagina asta",
     "body": "Poate linkul e vechi sau pagina a fost mutată ori ștearsă. Întoarce-te la prima pagină ca să citești mai departe.",
     "goHome": "Mergi la prima pagină"
+  },
+  "errorPage": {
+    "documentTitle": "A apărut o problemă",
+    "heading": "Ceva n-a mers bine la noi",
+    "body": "Nu e vina ta. Încearcă din nou. Dacă se repetă, scrie-ne și spune-ne codul erorii, dacă apare unul.",
+    "code": "Codul erorii {{code}}",
+    "tryAgain": "Încearcă din nou",
+    "goHome": "Mergi la prima pagină",
+    "contactUs": "Scrie-ne",
+    "whatWeSendLabel": "Ce trimitem în jurnalul nostru de erori:",
+    "whatWeSend": "tipul erorii, pagina și versiunea aplicației. Niciodată adresa ta de email, adresa IP sau ceva ce ai scris."
+  },
+  "maintenance": {
+    "documentTitle": "{{productName}} se actualizează",
+    "heading": "Actualizăm {{productName}}",
+    "body": "Pentru scurt timp nu poți citi sau publica. Tot ce ai salvat înainte este în siguranță.",
+    "checkAgain": "Verifică din nou",
+    "checking": "Verificăm…",
+    "staffLine": "Echipa se poate conecta în continuare.",
+    "staffSignIn": "Conectare pentru echipă"
+  },
+  "offline": {
+    "offline": "Nu ești conectat la internet. Paginile care au nevoie de internet nu se încarcă până revii online.",
+    "backOnline": "Ești din nou online."
   }
 }

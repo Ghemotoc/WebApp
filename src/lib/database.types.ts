@@ -58,6 +58,40 @@ export type Database = {
           },
         ];
       };
+      client_errors: {
+        Row: {
+          app_version: string;
+          browser_family: string;
+          created_at: string;
+          error_message: string;
+          error_name: string;
+          id: string;
+          route_path: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          app_version: string;
+          browser_family: string;
+          created_at?: string;
+          error_message: string;
+          error_name: string;
+          id?: string;
+          route_path: string;
+          updated_at?: string;
+        };
+        Update: {
+          app_version?: string;
+          browser_family?: string;
+          created_at?: string;
+          error_message?: string;
+          error_name?: string;
+          id?: string;
+          route_path?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       confusable_characters: {
         Row: {
           created_at: string;
@@ -705,6 +739,18 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_list_client_errors: {
+        Args: { max_rows?: number; since?: string };
+        Returns: {
+          app_version: string;
+          browser_family: string;
+          created_at: string;
+          error_message: string;
+          error_name: string;
+          id: string;
+          route_path: string;
+        }[];
+      };
       admin_list_staff: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -840,10 +886,21 @@ export type Database = {
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
       normalise_invite_code: { Args: { code: string }; Returns: string };
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
+      purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       record_sign_in_failure: { Args: { email_hash: string }; Returns: string };
       record_sign_up_consent: {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
+      };
+      report_client_error: {
+        Args: {
+          app_version: string;
+          browser_family: string;
+          error_message: string;
+          error_name: string;
+          route_path: string;
+        };
+        Returns: string;
       };
       require_role_change_allowed: {
         Args: { reason_given: string; target_user_id: string };
@@ -853,6 +910,8 @@ export type Database = {
         Args: { changed_role: Database['public']['Enums']['staff_role'] };
         Returns: undefined;
       };
+      scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
+      scrub_route_path: { Args: { raw_path: string }; Returns: string };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };

@@ -55,6 +55,10 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
 | `src/features/flags/` | The public feature flags for screens that change with them (`useFeatureFlags`) | S1-E2-01 |
+| `src/features/errors/` | Our own error log's browser side: the global handlers, the router's error page ("Something went wrong on our side") and the scrubbing before anything is sent; see its README | S1-E1-05 |
+| `src/features/maintenance/` | The maintenance page and the gate in AppLayout that shows it while `maintenance_mode` is on (staff and the log-in pages excepted) | S1-E1-05 |
+| `src/features/offline/` | The "You're offline" / "You're back online" banner under the top bar | S1-E1-05 |
+| `src/config/appVersion.ts` | The build's version for error reports: the short commit on Cloudflare, `local` elsewhere (set in `vite.config.ts`) | S1-E1-05 |
 | `src/schemas/` | zod rules shared by forms and (later) edge functions, starting with `signUp.ts` | S1-E2-01 |
 | `src/lib/age.ts` | The age rules from a year (and month), the same as the database's `age_band_from_birth()` and `sign_up_age_outcome()` | S1-E2-02 |
 | `functions/`, `server/` | Cloudflare Pages Functions (`functions/api/…`, run by Cloudflare next to the site) and their logic (`server/`), served locally by `server/pages-functions-plugin.ts`; the first is the leaked-password check (ADR 0003) | S1-E2-01 |
@@ -218,6 +222,25 @@ the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesS
 /reset-password?token_hash=… → verifyOtp(recovery) → NewPasswordForm → updateUser
   → signOut({ scope: 'others' }) → Supabase sends supabase/templates/password_changed.html
 ```
+
+## When something goes wrong: errors, offline and maintenance (S1-E1-05)
+
+```
+an error nobody caught (window "error", "unhandledrejection")   src/main.tsx → installGlobalErrorHandlers
+a page that fails to draw → the router's errorElement            src/app/router.tsx → ErrorPage
+  │  errorReporter.reportError(): at most 5 per page load, no repeats
+  │  buildErrorReport(): name, scrubbed message (scrubErrorText), route pattern (useTrackRoutePattern
+  │  in AppLayout keeps "/join/:code", never the address), app version, browser family
+  ▼  api/clientErrors.ts → rpc report_client_error()
+…_s1_e1_05_client_errors.sql: scrubs again, shared limit of 60 a minute, insert into client_errors
+  (no user_id); pg_cron deletes rows after 30 days; admin_list_client_errors() for owner and admin
+
+AppLayout: TopBar → OfflineBanner (navigator.onLine) → <main> MaintenanceGate → notices + page
+  MaintenanceGate: maintenance_mode on (read every minute) and not is_staff_session() and not a
+  log-in or legal page → MaintenancePage ("Check again", "Staff sign-in")
+```
+
+The error page shows the first six characters of the stored row's ID as the code to quote ("E-4F7A2C"), so support can find the row without the log keeping anything about the person.
 
 ## Staff roles (S1-E2-07a)
 

@@ -16,6 +16,7 @@ import { NotOpenPage } from '@/features/auth/components/NotOpenPage';
 import { ResetPasswordPage } from '@/features/auth/components/ResetPasswordPage';
 import { SignInPage } from '@/features/auth/components/SignInPage';
 import { SignUpPage } from '@/features/auth/components/SignUpPage';
+import { ErrorPage } from '@/features/errors/components/ErrorPage';
 import { HomePage } from '@/features/home/components/HomePage';
 import { LegalCentrePage } from '@/features/legal/components/LegalCentrePage';
 
@@ -61,30 +62,48 @@ const staffRolesRoute: RouteObject = {
 export const appRoutes: RouteObject[] = [
   {
     element: <AppLayout />,
+    // If the frame itself fails, the error page shows on its own (S1-E1-05).
+    errorElement: <ErrorPage />,
     children: [
-      { path: '/', element: <HomePage /> },
-      // The Legal centre (S1-E14-01): /legal opens the terms; each document has its own address.
-      { path: '/legal', element: <Navigate to="/legal/terms" replace /> },
-      { path: '/legal/:documentSlug', element: <LegalCentrePage /> },
-      // Sign-up (S1-E2-01): /join/<code> is an invite link (S1-E11-17); /auth/confirm is where the
-      // confirmation and log-in emails land (supabase/templates/).
-      { path: '/sign-up', element: <SignUpPage /> },
-      { path: '/join/:code', element: <SignUpPage /> },
-      { path: '/auth/confirm', element: <ConfirmEmailPage /> },
-      // Log in and password reset (S1-E2-05): /reset-password is where the reset email lands.
-      { path: '/sign-in', element: <SignInPage /> },
-      { path: '/forgot-password', element: <ForgotPasswordPage /> },
-      { path: '/reset-password', element: <ResetPasswordPage /> },
-      // Once sign-up is public, a visitor from a closed market lands here (S1-E2-10).
-      { path: '/not-open', element: <NotOpenPage /> },
-      // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
-      { path: '/setup', element: <SetupPage /> },
-      { path: '/settings', element: <SettingsPage /> },
-      staffRolesRoute,
-      ...(isDesignPageIncluded ? [designRoute] : []),
-      // Any other address: "We can't find that page" in the reader's language (S1-E2-QA, board
-      // 7.4). S1-E1-05 adds the board's search button and doodles after March.
-      { path: '*', element: <NotFoundPage /> },
+      {
+        // A page that fails shows "Something went wrong on our side" inside the frame, and the
+        // error goes to our own error log without anything personal (S1-E1-05, board 7.4).
+        errorElement: <ErrorPage />,
+        children: pageRoutes(),
+      },
     ],
   },
 ];
+
+/**
+ * The pages inside the frame.
+ *
+ * @returns one route per page, in the order a reader meets them
+ */
+function pageRoutes(): RouteObject[] {
+  return [
+    { path: '/', element: <HomePage /> },
+    // The Legal centre (S1-E14-01): /legal opens the terms; each document has its own address.
+    { path: '/legal', element: <Navigate to="/legal/terms" replace /> },
+    { path: '/legal/:documentSlug', element: <LegalCentrePage /> },
+    // Sign-up (S1-E2-01): /join/<code> is an invite link (S1-E11-17); /auth/confirm is where the
+    // confirmation and log-in emails land (supabase/templates/).
+    { path: '/sign-up', element: <SignUpPage /> },
+    { path: '/join/:code', element: <SignUpPage /> },
+    { path: '/auth/confirm', element: <ConfirmEmailPage /> },
+    // Log in and password reset (S1-E2-05): /reset-password is where the reset email lands.
+    { path: '/sign-in', element: <SignInPage /> },
+    { path: '/forgot-password', element: <ForgotPasswordPage /> },
+    { path: '/reset-password', element: <ResetPasswordPage /> },
+    // Once sign-up is public, a visitor from a closed market lands here (S1-E2-10).
+    { path: '/not-open', element: <NotOpenPage /> },
+    // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
+    { path: '/setup', element: <SetupPage /> },
+    { path: '/settings', element: <SettingsPage /> },
+    staffRolesRoute,
+    ...(isDesignPageIncluded ? [designRoute] : []),
+    // Any other address: "We can't find that page" in the reader's language (S1-E2-QA, board
+    // 7.4). Its search button waits for Search (S1-E5-04).
+    { path: '*', element: <NotFoundPage /> },
+  ];
+}

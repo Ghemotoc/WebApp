@@ -48,6 +48,7 @@ select results_eq(
   $$ select table_name, visible_rows from pg_temp.rows_visible_to_anon() order by table_name $$,
   $$ select * from (values
        ('audit_log', 0::bigint),
+       ('client_errors', 0::bigint),
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),

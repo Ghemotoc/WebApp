@@ -27,6 +27,8 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL?: string;
   /** Supabase public anon key. Never the service role key (CLAUDE.md rule 2). */
   readonly VITE_SUPABASE_ANON_KEY?: string;
+  /** The build's version, set by vite.config.ts: a short commit ID on Cloudflare, else "local" (S1-E1-05). */
+  readonly VITE_APP_VERSION?: string;
 }
 
 interface ImportMeta {
