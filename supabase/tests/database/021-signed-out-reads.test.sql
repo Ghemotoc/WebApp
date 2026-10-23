@@ -63,6 +63,7 @@ select results_eq(
        ('legal_documents', (select count(*) from public.legal_documents)),
        ('markets', (select count(*) from public.markets)),
        ('profiles', 0::bigint),
+       ('reports', 0::bigint),
        ('reserved_names', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
        ('sign_in_failures', 0::bigint),
