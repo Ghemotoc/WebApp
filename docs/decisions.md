@@ -23,6 +23,7 @@ Every decision Robert has made, with its date and source. The live list is the m
 | A staff session ends after 12 hours, enforced in the database (`staff_session_hours`); the person signs in again. Proposal from S1-E11-01, accepted | Chat, 23 Oct 2026 (Q11) |
 | Changing a staff role needs a sign-in from the last 15 minutes (`staff_fresh_sign_in_minutes`); exports for someone else, "Emergency disable" and removing part of a writer's text ask the same when their stories land. Proposal, accepted | Chat, 23 Oct 2026 (Q11) |
 | Invite links admit 1 to 50 people and last 1 to 90 days (the screen offers 1, 7, 14 or 30 days); the private note goes into the audit log's before and after values, so it is a first name or a role, never an email | Chat, 23 Oct 2026 (Q12) |
+| Safety contacts (S1-E10-13a): the block shows the emergency number, the children's helpline, where to report child sexual abuse material and, where one exists, a youth crisis line; no adult-only line (Romania's ARPS line is left out); "Not your country?" lists all ten researched countries, Romania first; the international fallback is Child Helpline International's and INHOPE's directories, checked online before seeding with the check date; the block also shows on /legal/contact for signed-out visitors | Chat, 23 Oct 2026 (Q9) |
 | Lane C's pull requests go on `claude/funny-einstein-pkv35k-<story-id>` branches, one per story, each cut from the one before; screenshots are sent in chat, never committed | Chat, 23 Oct 2026 (Q13, Q14) |
 
 ## Added 17 Oct 2026 (after the snapshot below)

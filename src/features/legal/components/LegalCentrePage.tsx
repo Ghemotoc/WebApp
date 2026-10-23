@@ -13,6 +13,7 @@ import { useParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { SafetyContactsBlock } from '@/features/safety/components/SafetyContactsBlock';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -89,6 +90,8 @@ export function LegalCentrePage() {
       ) : (
         <LegalDocumentLoader key={knownSlug} documentSlug={knownSlug} />
       )}
+      {/* The contact page also carries the helplines for the visitor's country (S1-E10-13a, Q9d). */}
+      {knownSlug === 'contact' && <SafetyContactsBlock />}
     </PageContainer>
   );
 }

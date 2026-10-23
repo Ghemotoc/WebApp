@@ -133,6 +133,13 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **The shared contract** (architecture 1.7.11): `reportable_item_owner()` and `reportable_item_summary()` have one branch per `reportable_type` value; test `042` fails when one is missing.
 - **Kept:** reports stay 3 years after they close (canvas comment, 17 Oct 2026); the purge job is S1-E13-04. The details text is never logged.
 
+## Safety contacts (S1-E10-13a)
+
+- **Where the numbers come from:** `content/safety-contacts.json` (research G4, checked 17 Oct 2026) through `scripts/build-safety-contacts-migration.ts`, which writes the seed migration. Never a number typed from memory; every row keeps its official link, the check date and the research's confidence. Adult-only lines are left out (decided 23 Oct 2026, Q9a). To change a contact before the editing screen (S1-E10-13b): change the JSON, run `npx tsx scripts/build-safety-contacts-migration.ts supabase/migrations/<timestamp>_s1_e10_13a_safety_contacts_seed.sql` for a new migration (the old rows are replaced by a `delete` at its top: see the generated file).
+- **Who reads:** everyone, signed out included (`safety_contacts_select_public`); nobody writes from the app.
+- **Gaps:** `note_safety_contact_gap(code)` counts a country asked for with no row; owner, admin and moderator read `safety_contact_gaps`. No user is recorded.
+- **International fallback:** country code `ZZ` is reserved for the Child Helpline International and INHOPE directory links (decided 23 Oct 2026, Q9c); seeded by a later migration once Robert has checked the two links online.
+
 ## Logging in (S1-E2-05)
 
 - **The pause** works through our screens: the log-in form asks `sign_in_pause_until()` before trying and calls `record_sign_in_failure()` after Supabase says no. Direct, scripted calls to Supabase Auth are held back by Supabase's own per-address limits; a true per-account lock needs a paid-plan Auth hook (decided 17 Oct 2026, 19:43, Q12). Rows hold an email hash and a time only, and are removed after 24 hours by `record_sign_in_failure()` itself.

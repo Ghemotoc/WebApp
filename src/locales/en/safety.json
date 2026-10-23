@@ -1,0 +1,23 @@
+{
+  "block": {
+    "heading": "Is someone in danger right now?",
+    "intro": "Call these first. We read reports, but we can’t help in an emergency.",
+    "forCountry": "Contacts for {{country}}, from official sources.",
+    "loading": "Finding the contacts for your country…",
+    "fallbackCall": "Call your local emergency number.",
+    "fallbackNoRow": "We don’t have checked contacts for your country yet. Choose another country below, or search for your country’s children’s helpline.",
+    "fallbackUnknown": "We couldn’t tell which country you’re in. Choose it below.",
+    "notYourCountry": "Not your country?",
+    "chooseCountry": "Choose a country",
+    "call": "Call {{label}} on {{number}}",
+    "officialSite": "Official site: {{label}} (opens in a new tab)"
+  },
+  "kinds": {
+    "emergency": "Emergency",
+    "child_helpline": "Children’s helpline",
+    "csam_hotline": "Report child sexual abuse material",
+    "crisis_youth": "Crisis line for young people",
+    "police_online_child": "Police",
+    "regulator": "Regulator"
+  }
+}
