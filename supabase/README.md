@@ -130,6 +130,13 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Test clean-ups:** an account the audit log names can't be deleted (the log is append-only), so e2e clean-ups leave such accounts; test addresses are unique per run.
 - **Class spaces** (S1-E8-11a) reuse the same table and functions with `purpose = 'class_space'`.
 
+## Reports (S1-E10-01)
+
+- **One way in:** `report_item(item_type, item_reference, reason, details)`, for any signed-in account whatever its state (reporting is the one action the account gate always allows, architecture 1.7.8). It refuses one's own item, a missing item and details over 2,000 characters; past `report_hourly_limit` (20 an hour, proposal) it answers `54000`; the same item reported again within 24 hours gives the first reference back.
+- **Who reads:** moderation staff only (`reports_select_moderation`). A reporter never reads rows: for a profile the item is a user ID (rule 15). "My reports" (board 6.5) will be a view without IDs.
+- **The shared contract** (architecture 1.7.11): `reportable_item_owner()` and `reportable_item_summary()` have one branch per `reportable_type` value; test `042` fails when one is missing.
+- **Kept:** reports stay 3 years after they close (canvas comment, 17 Oct 2026); the purge job is S1-E13-04. The details text is never logged.
+
 ## Logging in (S1-E2-05)
 
 - **The pause** works through our screens: the log-in form asks `sign_in_pause_until()` before trying and calls `record_sign_in_failure()` after Supabase says no. Direct, scripted calls to Supabase Auth are held back by Supabase's own per-address limits; a true per-account lock needs a paid-plan Auth hook (decided 17 Oct 2026, 19:43, Q12). Rows hold an email hash and a time only, and are removed after 24 hours by `record_sign_in_failure()` itself.

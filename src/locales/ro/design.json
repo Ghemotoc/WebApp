@@ -121,5 +121,10 @@
     "staffBarNote": "Bara echipei din planșele de administrare. Site-ul de administrare o folosește din S1-E11-01.",
     "staffName": "Membru de probă al echipei",
     "staffRole": "Administrator"
+  },
+  "report": {
+    "title": "Butonul Raportează",
+    "intro": "Singura acțiune Raportează pe care o arată fiecare tip de conținut al utilizatorilor (S1-E10-01). Deschide dialogul de raportare cu elementul deja completat. Conectat ca o persoană de test, raportarea este reală și ajunge în coada de moderare.",
+    "sampleItem": "Un profil de probă: @adult_writer"
   }
 }

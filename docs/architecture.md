@@ -512,6 +512,19 @@ These are places where a story in the March slice depends on one that isn't in i
 - **Use Lovable for screens only after the contract is merged,** so it builds against generated types instead of inventing its own tables.
 - **When you are blocked on an outside answer** (Yoti, the lawyer, the website database), switch to the next screen story in the same wave whose contract is already merged.
 
+#### 1.7.11 Shared contracts between lanes (decided 23 Oct 2026)
+
+Three sessions build in parallel from 23 Oct 2026 (Lane A: stories, chapters and the reader; Lane C: reporting, moderation and the admin site). Where one lane's screens must call the other lane's pieces, the contract is fixed here so both build against the same thing. Lane C builds each piece in the story named; Lane A adds its branches and calls in its own stories, or Lane C adds them on rebase if Lane A merges first.
+
+| Piece | Contract | Built in | Who calls it |
+| --- | --- | --- | --- |
+| `<ReportButton itemType itemReference itemLabel />` (`src/features/reporting/components/ReportButton.tsx`) | The one Report action for every user-content type (rule 6). `itemType` is a `reportable_type` value; `itemReference` is a username for a profile and the row ID (text) for anything else; `itemLabel` is what the reporter sees ("@inkwolf", a story's title). It opens the shared dialog; the screen adds nothing else | S1-E10-01 | every screen that shows a story, chapter, profile, comment, post, space or message |
+| `public.reportable_item_owner(item_type reportable_type, item_reference text) returns table (item_id uuid, owner_user_id uuid)` | One `when '<type>' then` branch per enum value: finds the item and whose it is; raises `check_violation` when there is none. Database test `042` fails the build when a value has no branch | S1-E10-01 | `report_item()` |
+| `public.reportable_item_summary(item_type reportable_type, item_id uuid) returns text` | One branch per enum value: a few words saying what was reported (a story's title, "chapter 3 of …", a comment's first words), for the moderation queue | S1-E10-01 | the queue (S1-E10-03a) |
+| `public.is_moderated_away(item_type reportable_type, item_id uuid) returns boolean` | True when staff hid or removed the item (`moderated_items`, S1-E10-06). Every public read policy on user content adds `and not public.is_moderated_away('<type>', id)`; the owner and staff still see a hidden item, only staff a removed one (the policy for the owner's own rows stays as it is) | S1-E10-06 | every read policy on stories, chapters, comments, posts |
+
+A new user-content table therefore does four things in its own migration: adds its `reportable_type` value, its branch in both functions, the `is_moderated_away()` clause in its public read policy, and `<ReportButton>` on its screen.
+
 ### 1.8 Admin site and CMS
 
 Added 16 Oct 2026 (late evening) at Robert's request. Screens 8.1 to 8.9 are on the design canvas; 8.10 to 8.12 are being added. Wording on those screens may still change, so this section describes behaviour.
