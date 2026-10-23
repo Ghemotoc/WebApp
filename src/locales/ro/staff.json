@@ -44,6 +44,7 @@
     "on_call": "De serviciu pentru ordinele de eliminare"
   },
   "nav": {
+    "moderation": "Moderare",
     "roles": "Roluri",
     "auditLog": "Jurnal de audit",
     "invites": "Invitații"

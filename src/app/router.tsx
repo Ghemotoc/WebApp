@@ -67,6 +67,22 @@ const staffRoutes: RouteObject = {
         return { Component: StaffHomePage };
       },
     },
+    // The moderation queue and one case (S1-E10-03a; Lane C).
+    {
+      path: 'moderation',
+      lazy: async () => {
+        const { ModerationQueuePage } =
+          await import('@/features/moderation/components/ModerationQueuePage');
+        return { Component: ModerationQueuePage };
+      },
+    },
+    {
+      path: 'moderation/cases/:caseId',
+      lazy: async () => {
+        const { CasePage } = await import('@/features/moderation/components/CasePage');
+        return { Component: CasePage };
+      },
+    },
     // Staff roles and permissions (S1-E2-07a), now inside the shell.
     {
       path: 'roles',

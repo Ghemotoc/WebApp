@@ -53,6 +53,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/theme/` | Light and night mode: the footer drop-down and the hook that applies it | S1-E1-03 |
 | `src/features/language/` | The English / Română drop-downs, the hooks that switch and save the language, and the Supabase calls for `profiles.locale` | S1-E1-04 |
 | `src/features/reporting/` | The shared Report button and dialog (`<ReportButton>`), the one report form; see its README and architecture 1.7.11 | S1-E10-01 |
+| `src/features/moderation/` | The report queue and the case page of the admin site: tiers, deadlines, grouped reports and the decision; see its README | S1-E10-03a |
 | `src/features/safety/` | "Is someone in danger right now?": the helplines for the reader's country, on the report dialog and the contact page; see its README | S1-E10-13a |
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
@@ -296,6 +297,32 @@ reports (user_id = the reporter; read by moderation staff only) → ReportSent s
 ```
 
 S1-E10-03a opens a moderation case from the new row; S1-E10-06 adds the reporting pause; S1-E10-02 reuses the dialog on the public form.
+
+## The moderation queue (S1-E10-03a)
+
+```
+/staff/moderation (router: staffRoutes)                                src/features/moderation/
+  │  ModerationQueuePage: TierSummary (open counts per tier) → QueueFilters → CaseList → CaseRow
+  │     useModerationQueue → api/moderationQueue.ts → rpc admin_moderation_queue(filters)
+  │     (read again every minute, so "5 h 50 min left" keeps moving: lib/deadline.ts, useNow)
+  ├─ /staff/moderation/cases/:caseId
+  │     CasePage: CaseReports (admin_case_reports) · CaseDecisions (admin_case_actions)
+  │     · DecisionForm → useCase.decide() → rpc admin_decide_case(case, action, note)
+  ▼
+…_s1_e10_03a_moderation_queue.sql
+  │  report_item() (S1-E10-01) now ends with attach_report_to_case(): one open case per item;
+  │  the tier from report_reason_tiers (Q5), the deadline from the FIRST report, the more urgent
+  │  reason wins, an under-18 reporter and a safeguarding reason are flagged on the case
+  │  may_see_case(): moderation staff; a safeguarding case needs the safeguarding permission (Q6)
+  │  admin_decide_case(): a note is required → case_actions row → the case and its reports close
+  │  → log_staff_action('case.decided', …) in the same transaction
+  │  hooks for later stories sit at its end: S1-E10-06 carries the action out, S1-E10-04 sends
+  │  the statement of reasons
+  ▼
+cases (user_id = the reported account), case_actions (user_id = the staff member), reports.case_id
+```
+
+An authority order (S1-E10-09) and a picture check (S1-E10-05) will insert their own cases with `source` set; the seed holds one of each so the queue shows every tier.
 
 ## The helplines for the reader's country (S1-E10-13a)
 

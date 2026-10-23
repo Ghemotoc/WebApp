@@ -29,6 +29,10 @@ create temp table ids as select
   '00000000-0000-4000-8000-000000000012'::uuid as editor;
 grant select on ids to authenticated, anon;
 
+-- The seed gives the moderator the safeguarding permission (S1-E10-03a); this test proves the
+-- permission's own rules, so it starts without it.
+delete from public.staff_permissions where user_id = (select moderator from ids) and permission = 'safeguarding';
+
 -- A sign-in as Supabase's tokens carry it: the person, a fresh "amr" sign-in time (the default)
 -- or an older one, and optionally the session_id of a row in auth.sessions.
 create function pg_temp.sign_in_as(

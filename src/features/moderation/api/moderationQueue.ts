@@ -1,0 +1,267 @@
+/**
+ * Reads the moderation queue and one case, and saves a decision (story S1-E10-03a; architecture
+ * 1.8.4, screens 8.2 and 8.3).
+ *
+ * Who calls it: hooks/useModerationQueue.ts and hooks/useCase.ts.
+ * What it calls next: admin_moderation_queue(), admin_case_reports(), admin_case_actions() and
+ * admin_decide_case() (…_s1_e10_03a_moderation_queue.sql). Each checks the caller's role, staff
+ * session and, for a safeguarding case, the safeguarding permission itself (Q6) and writes the
+ * audit log; this file only passes the answers on. Rows carry usernames and age groups, never a
+ * user ID or a birth year (architecture 1.8.3).
+ */
+import type { CompositeTypes, Enums } from '@/lib/database.types';
+import type { AppSupabaseClient } from '@/lib/supabase';
+
+/** The tiers, sources, statuses and actions as the database lists them. */
+export type CaseTier = Enums<'case_tier'>;
+export type CaseSource = Enums<'case_source'>;
+export type CaseStatus = Enums<'case_status'>;
+export type ModerationAction = Enums<'moderation_action'>;
+export type ReportReason = Enums<'report_reason'>;
+export type AgeBand = Enums<'age_band'>;
+
+/** One case as the queue and the case page show it. */
+export interface QueueCase {
+  id: string;
+  reference: string;
+  source: CaseSource;
+  tier: CaseTier;
+  status: CaseStatus;
+  itemType: Enums<'reportable_type'>;
+  /** A few words saying what was reported (reportable_item_summary()). */
+  itemSummary: string;
+  reportedHandle: string | null;
+  reportedAgeBand: AgeBand;
+  topReason: ReportReason | null;
+  reportCount: number;
+  reporterUnder18: boolean;
+  isSafeguarding: boolean;
+  receivedAt: string;
+  deadlineAt: string;
+  decision: ModerationAction | null;
+  decidedAt: string | null;
+  decidedByHandle: string | null;
+}
+
+/** One report on a case, for the case page. */
+export interface CaseReport {
+  reference: string;
+  reason: ReportReason;
+  details: string | null;
+  reporterHandle: string | null;
+  reporterAgeBand: AgeBand;
+  createdAt: string;
+}
+
+/** One decision on a case. */
+export interface CaseAction {
+  action: ModerationAction;
+  note: string;
+  staffHandle: string | null;
+  createdAt: string;
+}
+
+/** What the queue can be narrowed by. Empty strings mean "all". */
+export interface QueueFilters {
+  tier: CaseTier | '';
+  status: CaseStatus | '';
+  reporterUnder18: 'yes' | 'no' | '';
+  source: CaseSource | '';
+}
+
+/** The queue as it opens: every open case, most urgent first. */
+export const defaultQueueFilters: QueueFilters = {
+  tier: '',
+  status: 'open',
+  reporterUnder18: '',
+  source: '',
+};
+
+/** Why a call was refused, in words the page can explain. */
+export type ModerationFailure = 'not_allowed' | 'refused' | 'unreachable';
+
+/** The error a refused call throws. */
+export class ModerationError extends Error {
+  constructor(public readonly failure: ModerationFailure) {
+    super(`Moderation call failed: ${failure}`);
+  }
+}
+
+/**
+ * Turns a database error into a reason.
+ *
+ * @param code - Postgres's error code
+ * @returns not_allowed (42501), refused (23514: the note or an already decided case) or unreachable
+ */
+function failureFromCode(code: string | undefined): ModerationFailure {
+  if (code === '42501') return 'not_allowed';
+  if (code === '23514') return 'refused';
+  return 'unreachable';
+}
+
+/** The queue row as the database returns it: a composite type, so every field may be null. */
+type QueueRow = CompositeTypes<'moderation_queue_row'>;
+
+/**
+ * The part of a row that says what the case is: reference, source, tier, the item and the
+ * account. A missing value (the composite type allows it) falls back to the safest reading: the
+ * longest tier, an unknown age group.
+ *
+ * @param row - as admin_moderation_queue() returns it
+ * @returns those fields
+ */
+function caseIdentityFromRow(row: QueueRow) {
+  return {
+    id: row.id ?? '',
+    reference: row.reference ?? '',
+    source: row.source ?? 'report',
+    tier: row.tier ?? 'seven_days',
+    status: row.status ?? 'open',
+    itemType: row.item_type ?? 'profile',
+    itemSummary: row.item_summary ?? '',
+    reportedHandle: row.reported_handle,
+    reportedAgeBand: row.reported_age_band ?? 'unknown',
+  };
+}
+
+/**
+ * The part of a row that says how the case is going: the reports' signals, the times and the
+ * decision, if any.
+ *
+ * @param row - as admin_moderation_queue() returns it
+ * @returns those fields
+ */
+function caseProgressFromRow(row: QueueRow) {
+  return {
+    topReason: row.top_reason,
+    reportCount: row.report_count ?? 0,
+    reporterUnder18: row.reporter_under_18 ?? false,
+    isSafeguarding: row.is_safeguarding ?? false,
+    receivedAt: row.received_at ?? '',
+    deadlineAt: row.deadline_at ?? '',
+    decision: row.decision,
+    decidedAt: row.decided_at,
+    decidedByHandle: row.decided_by_handle,
+  };
+}
+
+/**
+ * Reads one queue row into the shape the screens use.
+ *
+ * @param row - as admin_moderation_queue() returns it
+ * @returns the case
+ */
+function caseFromRow(row: QueueRow): QueueCase {
+  return { ...caseIdentityFromRow(row), ...caseProgressFromRow(row) };
+}
+
+/**
+ * Lists the cases the caller may see, most urgent first.
+ *
+ * @param client - the shared Supabase client
+ * @param filters - tier, status, reporter under 18 and source; empty means all
+ * @returns the cases
+ * Errors: throws ModerationError('not_allowed') for anyone outside moderation staff.
+ */
+export async function listCases(
+  client: AppSupabaseClient,
+  filters: QueueFilters,
+): Promise<QueueCase[]> {
+  const { data, error } = await client.rpc('admin_moderation_queue', {
+    tier_filter: filters.tier === '' ? undefined : filters.tier,
+    status_filter: filters.status === '' ? undefined : filters.status,
+    under_18_filter: filters.reporterUnder18 === '' ? undefined : filters.reporterUnder18 === 'yes',
+    source_filter: filters.source === '' ? undefined : filters.source,
+  });
+  if (error !== null) throw new ModerationError(failureFromCode(error.code));
+  return data.map(caseFromRow);
+}
+
+/**
+ * Reads one case, whatever its status.
+ *
+ * @param client - the shared Supabase client
+ * @param caseId - the case's ID (from the queue's link)
+ * @returns the case, or null when there is none the caller may see
+ * Errors: throws ModerationError('not_allowed') for anyone outside moderation staff.
+ */
+export async function getCase(
+  client: AppSupabaseClient,
+  caseId: string,
+): Promise<QueueCase | null> {
+  // No status filter: the case is wanted whether it is open or decided.
+  const { data, error } = await client.rpc('admin_moderation_queue', { case_id: caseId });
+  if (error !== null) throw new ModerationError(failureFromCode(error.code));
+  const first = data[0];
+  return first === undefined ? null : caseFromRow(first);
+}
+
+/**
+ * Lists a case's reports, oldest first.
+ *
+ * @param client - the shared Supabase client
+ * @param caseId - the case
+ * @returns the reports with what each reporter wrote
+ * Errors: throws ModerationError('not_allowed') when the caller may not see the case.
+ */
+export async function listCaseReports(
+  client: AppSupabaseClient,
+  caseId: string,
+): Promise<CaseReport[]> {
+  const { data, error } = await client.rpc('admin_case_reports', { target_case_id: caseId });
+  if (error !== null) throw new ModerationError(failureFromCode(error.code));
+  return data.map((row) => ({
+    reference: row.reference,
+    reason: row.reason,
+    details: row.details,
+    reporterHandle: row.reporter_handle,
+    reporterAgeBand: row.reporter_age_band,
+    createdAt: row.created_at,
+  }));
+}
+
+/**
+ * Lists a case's decisions.
+ *
+ * @param client - the shared Supabase client
+ * @param caseId - the case
+ * @returns the decisions, newest first
+ * Errors: throws ModerationError('not_allowed') when the caller may not see the case.
+ */
+export async function listCaseActions(
+  client: AppSupabaseClient,
+  caseId: string,
+): Promise<CaseAction[]> {
+  const { data, error } = await client.rpc('admin_case_actions', { target_case_id: caseId });
+  if (error !== null) throw new ModerationError(failureFromCode(error.code));
+  return data.map((row) => ({
+    action: row.action,
+    note: row.note,
+    staffHandle: row.staff_handle,
+    createdAt: row.created_at,
+  }));
+}
+
+/**
+ * Saves a decision on an open case.
+ *
+ * @param client - the shared Supabase client
+ * @param caseId - the case
+ * @param action - what was decided
+ * @param note - the required note for the case log
+ * Errors: throws ModerationError: not_allowed (role, session or safeguarding), refused (a blank
+ *   note or a case already decided) or unreachable.
+ */
+export async function decideCase(
+  client: AppSupabaseClient,
+  caseId: string,
+  action: ModerationAction,
+  note: string,
+): Promise<void> {
+  const { error } = await client.rpc('admin_decide_case', {
+    target_case_id: caseId,
+    chosen_action: action,
+    note_text: note,
+  });
+  if (error !== null) throw new ModerationError(failureFromCode(error.code));
+}
