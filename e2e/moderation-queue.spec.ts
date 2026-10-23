@@ -47,6 +47,7 @@ test.describe('moderation queue (S1-E10-03a)', () => {
 
   test.afterAll(() => {
     runSql(`
+      delete from public.sanctions where case_id in (select id from public.cases where reference = '${reference}');
       delete from public.case_actions where case_id in (select id from public.cases where reference = '${reference}');
       delete from public.reports where reference = '${reference}';
       delete from public.cases where reference = '${reference}';

@@ -29,7 +29,7 @@ export interface ReportReceipt {
 }
 
 /** Why a report was refused, in words the dialog can explain. */
-export type ReportFailure = 'signed_out' | 'refused' | 'too_many' | 'unreachable';
+export type ReportFailure = 'signed_out' | 'refused' | 'too_many' | 'paused' | 'unreachable';
 
 /** The error a refused report throws. */
 export class ReportError extends Error {
@@ -43,12 +43,14 @@ export class ReportError extends Error {
  *
  * @param code - Postgres's error code
  * @returns signed_out (42501), refused (23514: one's own item, a missing item, details too long),
- *   too_many (54000: the hourly limit) or unreachable
+ *   too_many (54000: the hourly limit), paused (55000: a reporting pause, S1-E10-06) or
+ *   unreachable
  */
 function failureFromCode(code: string | undefined): ReportFailure {
   if (code === '42501') return 'signed_out';
   if (code === '23514') return 'refused';
   if (code === '54000') return 'too_many';
+  if (code === '55000') return 'paused';
   return 'unreachable';
 }
 

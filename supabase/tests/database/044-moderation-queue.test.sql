@@ -41,6 +41,10 @@ $$;
 -- the new reports open fresh cases with known values.
 create temp table cleared as select id from public.cases
   where user_id in ((select blocker from ids), (select blocked from ids));
+-- Sanctions and moderated items point at cases (S1-E10-06), so they go first.
+delete from public.banned_email_hashes where sanction_id in (select id from public.sanctions where case_id in (select id from cleared));
+delete from public.sanctions where case_id in (select id from cleared);
+delete from public.moderated_items where case_id in (select id from cleared);
 delete from public.case_actions where case_id in (select id from cleared);
 delete from public.reports where case_id in (select id from cleared);
 delete from public.cases where id in (select id from cleared);

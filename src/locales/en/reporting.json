@@ -34,7 +34,8 @@
     "signed_out": "Log in to report this.",
     "refused": "We couldn’t take this report. You can’t report your own things, and the item may no longer exist.",
     "too_many": "You’ve sent a lot of reports in the last hour. Please try again later.",
-    "unreachable": "We couldn’t reach our server. Check your connection and try again."
+    "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+    "paused": "Your reporting is paused for now. You can still read and write."
   },
   "reasons": {
     "illegal_content": { "label": "Illegal content", "hint": "Breaks the law in another way." },
@@ -64,6 +65,9 @@
       "label": "Missing AI label",
       "hint": "Written with AI but not labelled as AI-assisted."
     },
-    "other": { "label": "Other", "hint": "Something else. Tell us below." }
+    "other": {
+      "label": "Other",
+      "hint": "Something else. Tell us below."
+    }
   }
 }

@@ -142,6 +142,16 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Reading:** `admin_moderation_queue(tier, status, under_18, source, case_id)` (usernames and age groups, never a birth year), `admin_case_reports(case)` (with what each reporter wrote), `admin_case_actions(case)`.
 - **Seed:** 20 cases across the tiers (14 open, 6 decided; `supabase/seed.sql`, end of file), made through `report_item()` as each reporter; the staging top-up `staging-topups/S1-E10-03a.sql` adds the same.
 
+## Sanctions (S1-E10-06)
+
+- **What a decision does:** `admin_decide_case(case, action, note, suspension_days)` closes the case (S1-E10-03a) and then carries the action out: `warn` a warning row, `suspend` a suspension of 1, 7 or 30 days (`suspension_day_choices`; null means `suspension_default_days`, 7), `ban` a ban, `hide` or `remove` a `moderated_items` row (decided 23 Oct 2026, Q3). `restrict` is refused (`0A000`) until S1-E11-08.
+- **A suspension** makes `account_state()` answer `suspended`, so `is_active_member()` is false and every write policy refuses; signing in, reading and downloading data still work. **A ban** answers `banned`, sets Supabase's own `auth.users.banned_until` (sign-in refused with `user_banned`), ends every session and keeps the email's keyed hash in `banned_email_hashes`; `handle_new_auth_user()` refuses a sign-up with that email (Q8). **A reporting pause** (30 days, `reporting_pause_days`) makes `report_item()` refuse the reporter with `55000`.
+- **The keyed hash:** `banned_email_hash()` is HMAC-SHA256 with the Vault secret `banned_email_secret`. Set it by hand on each environment: `select vault.create_secret('<a long random value>', 'banned_email_secret');` in the SQL editor (never in a migration). The local seed sets a local-only value. Without the secret a ban still works, but the email isn't blocked.
+- **Staff functions:** `admin_apply_sanction(user, kind, days, case, note)`, `admin_lift_sanction(id, reason)` (a lifted ban clears Supabase's ban and the hash), `admin_pause_reporting(handle, case, note)`, `admin_account_sanctions(user)`, `admin_restore_item(id, reason)`; owner, admin and moderator (`user_sanctions` and `moderation` areas). A staff account can't be sanctioned. Every action is logged (`sanction.applied`, `sanction.lifted`, `item.hidden`, `item.removed`, `item.restored`).
+- **Members:** `my_sanctions()` gives the caller's own live sanctions (kind and dates, never the note).
+- **The shared contract** (architecture 1.7.11): `is_moderated_away(type, id)` is true for a live hidden or removed row; `moderated_state_of(type, id)` says which.
+- **Seed:** the decided cases of S1-E10-03a now apply their actions: suspended_user is suspended for 7 days, banned_user is banned (and its email hashed), kid_14_ok's profile is removed. The staging top-up `staging-topups/S1-E10-06.sql` applies the two sanctions when the S1-E10-03a top-up ran before this story merged.
+
 ## Safety contacts (S1-E10-13a)
 
 - **Where the numbers come from:** `content/safety-contacts.json` (research G4, checked 17 Oct 2026) through `scripts/build-safety-contacts-migration.ts`, which writes the seed migration. Never a number typed from memory; every row keeps its official link, the check date and the research's confidence. Adult-only lines are left out (decided 23 Oct 2026, Q9a). To change a contact before the editing screen (S1-E10-13b): change the JSON, run `npx tsx scripts/build-safety-contacts-migration.ts supabase/migrations/<timestamp>_s1_e10_13a_safety_contacts_seed.sql` for a new migration (the old rows are replaced by a `delete` at its top: see the generated file).
@@ -193,7 +203,7 @@ Every persona signs in with `<persona>@personas.test` and the shared test passwo
 | …0006 | failed_check | 18 plus | read-only, age check failed | manual check: S1-E2-08b |
 | …0007 | teacher | 18 plus | active | Teacher badge: S1-E2-11 |
 | …0008 to …0012 | owner, admin, moderator, support, editor | 18 plus | active, with their staff role | Google sessions: S1-E2-07b |
-| …0013, …0014 | suspended_user, banned_user | 18 plus | active | sanctions: S1-E10-06 |
+| …0013, …0014 | suspended_user, banned_user | 18 plus | suspended (7 days), banned | from the decided seed cases (S1-E10-06) |
 | …0015, …0016 | blocker, blocked | 18 plus, 16 to 17 | active, not admitted | the block: S1-E5-05 |
 
 Full IDs are `00000000-0000-4000-8000-0000000000NN`. Tests sign a persona in by setting the role and the JWT claims, as in `tests/database/010-profiles.test.sql`.

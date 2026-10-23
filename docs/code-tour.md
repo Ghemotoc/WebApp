@@ -324,6 +324,34 @@ cases (user_id = the reported account), case_actions (user_id = the staff member
 
 An authority order (S1-E10-09) and a picture check (S1-E10-05) will insert their own cases with `source` set; the seed holds one of each so the queue shows every tier.
 
+## Sanctions, and what a decision does (S1-E10-06)
+
+```
+CasePage → DecisionForm (warn, suspend 1/7/30 days, ban, hide, remove; restrict waits for S1-E11-08)
+  │  useCase.decide() → rpc admin_decide_case(case, action, note, suspension_days)
+  ▼
+…_s1_e10_06_sanctions.sql
+  │  admin_decide_case(): closes the case (S1-E10-03a) then carries the action out:
+  │    warn/suspend/ban → admin_apply_sanction(): a sanctions row; a ban also sets Supabase's own
+  │      auth.users.banned_until, ends every session (sign_out_everywhere) and keeps the email's
+  │      keyed hash (banned_email_hashes, HMAC with the Vault secret banned_email_secret, Q8)
+  │    hide/remove → moderate_item(): a moderated_items row (hidden: writer and staff still see
+  │      it; removed: staff only, "[Removed by the moderation team]" for the rest, Q3)
+  │  account_state(): banned, then suspended, right after the email check → is_active_member()
+  │  false, so every write policy refuses; reading and downloading data still work
+  │  handle_new_auth_user(): refuses a sign-up whose email is on the banned list
+  │  report_item(): refuses a reporter with a live reporting_pause (SQLSTATE 55000)
+  ▼
+CasePage: AccountSanctions (admin_account_sanctions(), Lift → admin_lift_sanction()),
+  CaseReports › Pause reporting (admin_pause_reporting(handle)), ModeratedItemNotice › Restore
+  (admin_restore_item()); every action asks for a reason and goes to the audit log
+AppLayout → SanctionNotice (my_sanctions(): kind and dates only) "Your account is suspended until …"
+Sign-in: Supabase answers user_banned → "This account is banned"; the report dialog: "Your
+  reporting is paused"
+```
+
+Lane A's public read policies add `and not public.is_moderated_away('<type>', id)` (architecture 1.7.11); `moderated_state_of()` tells a screen whether to draw the removed marker.
+
 ## The helplines for the reader's country (S1-E10-13a)
 
 ```

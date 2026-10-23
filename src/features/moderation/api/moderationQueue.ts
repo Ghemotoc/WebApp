@@ -31,6 +31,8 @@ export interface QueueCase {
   /** A few words saying what was reported (reportable_item_summary()). */
   itemSummary: string;
   reportedHandle: string | null;
+  /** The reported account's ID, for its sanctions (staff may see IDs, architecture 1.6). */
+  reportedUserId: string;
   reportedAgeBand: AgeBand;
   topReason: ReportReason | null;
   reportCount: number;
@@ -78,7 +80,7 @@ export const defaultQueueFilters: QueueFilters = {
 };
 
 /** Why a call was refused, in words the page can explain. */
-export type ModerationFailure = 'not_allowed' | 'refused' | 'unreachable';
+export type ModerationFailure = 'not_allowed' | 'refused' | 'not_built' | 'unreachable';
 
 /** The error a refused call throws. */
 export class ModerationError extends Error {
@@ -91,11 +93,13 @@ export class ModerationError extends Error {
  * Turns a database error into a reason.
  *
  * @param code - Postgres's error code
- * @returns not_allowed (42501), refused (23514: the note or an already decided case) or unreachable
+ * @returns not_allowed (42501), refused (23514: the note, an already decided case or a sanction
+ *   rule), not_built (0A000: restrict waits for S1-E11-08) or unreachable
  */
 function failureFromCode(code: string | undefined): ModerationFailure {
   if (code === '42501') return 'not_allowed';
   if (code === '23514') return 'refused';
+  if (code === '0A000') return 'not_built';
   return 'unreachable';
 }
 
@@ -120,6 +124,7 @@ function caseIdentityFromRow(row: QueueRow) {
     itemType: row.item_type ?? 'profile',
     itemSummary: row.item_summary ?? '',
     reportedHandle: row.reported_handle,
+    reportedUserId: row.reported_user_id ?? '',
     reportedAgeBand: row.reported_age_band ?? 'unknown',
   };
 }
@@ -242,26 +247,34 @@ export async function listCaseActions(
   }));
 }
 
+/** What a moderator decided. */
+export interface Decision {
+  action: ModerationAction;
+  /** The required note for the case log. */
+  note: string;
+  /** For suspend: 1, 7 or 30 (S1-E10-06); ignored otherwise. */
+  suspensionDays?: number;
+}
+
 /**
  * Saves a decision on an open case.
  *
  * @param client - the shared Supabase client
  * @param caseId - the case
- * @param action - what was decided
- * @param note - the required note for the case log
+ * @param decision - the action, the note and, for suspend, the days
  * Errors: throws ModerationError: not_allowed (role, session or safeguarding), refused (a blank
- *   note or a case already decided) or unreachable.
+ *   note, a case already decided or a sanction rule), not_built (restrict) or unreachable.
  */
 export async function decideCase(
   client: AppSupabaseClient,
   caseId: string,
-  action: ModerationAction,
-  note: string,
+  decision: Decision,
 ): Promise<void> {
   const { error } = await client.rpc('admin_decide_case', {
     target_case_id: caseId,
-    chosen_action: action,
-    note_text: note,
+    chosen_action: decision.action,
+    note_text: decision.note,
+    suspension_days: decision.suspensionDays,
   });
   if (error !== null) throw new ModerationError(failureFromCode(error.code));
 }

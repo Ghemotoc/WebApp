@@ -46,8 +46,8 @@ begin
       ('adult_writer',   'teacher',      'other'::public.report_reason,      'Bio says they sell essays. Not clearly against a rule.',  moderator_id, 'no_action'::public.moderation_action, 'Looked at the bio: an offer of writing help, no sale. Nothing to act on.'),
       ('blocked',        'blocker',      'harassment',                       'Keeps calling me a copycat in replies.',                  moderator_id, 'warn',      'First upheld case. Warned about name-calling; the reply was removed by the writer meanwhile.'),
       ('teen_17',        'adult_writer', 'spam',                             'Posted the same link in six threads.',                    admin_id,     'no_action', 'The link is to their own story on this site; not spam under our rule.'),
-      ('suspended_user', 'teacher',      'harassment',                       'Threatening private replies after I reported them.',      moderator_id, 'suspend',   'Second upheld case in 30 days. Next step on the ladder: a 7-day suspension. S1-E10-06 applies it.'),
-      ('banned_user',    'teacher',      'hate',                             'Profile text attacks an ethnic group.',                   admin_id,     'ban',       'Repeat hate speech after a suspension. Ban; the email can''t be used to sign up again (S1-E10-06).'),
+      ('suspended_user', 'teacher',      'harassment',                       'Threatening private replies after I reported them.',      moderator_id, 'suspend',   'Second upheld case in 30 days. Next step on the ladder: a 7-day suspension.'),
+      ('banned_user',    'teacher',      'hate',                             'Profile text attacks an ethnic group.',                   admin_id,     'ban',       'Repeat hate speech after a suspension. Ban; the email can''t be used to sign up again.'),
       ('kid_14_ok',      'teacher',      'illegal_content',                  'Posted someone''s home address.',                         moderator_id, 'remove',    'Personal data of another member. Removed the passage; the writer was told.')
     ) as rows (reported_handle, reporter_handle, reason, details, decided_by, action, note)
   loop
@@ -58,7 +58,7 @@ begin
     perform public.admin_decide_case(
       (select cases.id from public.cases join public.profiles on profiles.id = cases.user_id
         where profiles.handle = decided.reported_handle and cases.status = 'open'),
-      decided.action, decided.note);
+      decided.action, decided.note, case when decided.action = 'suspend' then 7 end);
   end loop;
 
   -- Step 2: the open report cases, one row per report; reports of one profile join one case.
