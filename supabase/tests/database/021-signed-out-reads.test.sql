@@ -49,6 +49,8 @@ select results_eq(
   $$ select * from (values
        ('audit_log', 0::bigint),
        ('categories', (select count(*) from public.categories)),
+       ('chapter_revisions', 0::bigint),
+       ('chapters', 0::bigint),
        ('client_errors', 0::bigint),
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),

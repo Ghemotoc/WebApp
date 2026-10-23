@@ -112,8 +112,10 @@ test.describe('create a story (S1-E3-01)', () => {
     await page.getByRole('radio', { name: 'No AI', exact: true }).click();
     // Create: the story appears on Your writing, only to its writer until published.
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
-    await expect(page).toHaveURL(/\/write$/);
-    await expect(page.getByText('Your story is saved.', { exact: false })).toBeVisible();
+    // Chapter one is made with the story and the editor opens on it (S1-E3-02a).
+    await expect(page).toHaveURL(/\/write\/s\/[a-z0-9-]+\/c\/[a-z0-9]{8}$/);
+    await expect(page.getByRole('textbox', { name: 'Chapter text' })).toBeVisible();
+    await page.goto('/write');
     const card = page.getByRole('article', { name: longTitle });
     await expect(card).toBeVisible();
     await expect(card.getByText('Fantezie · set in Romania')).toBeVisible();
@@ -175,6 +177,11 @@ test.describe('create a story (S1-E3-01)', () => {
       test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
         page,
       }) => {
+        // The account's own language wins over the device's (S1-E1-04), so it is set to the view's
+        // language first; otherwise the check races the profile load.
+        runSql(
+          `update public.profiles set locale = '${view.language}' where id = '${personaIds.adult_writer ?? ''}';`,
+        );
         await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
         await checkScreen(page, view);
         await expectNoDoodleOverlap(page);

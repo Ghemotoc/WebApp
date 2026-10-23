@@ -7,9 +7,9 @@
  *   the categories table (categories_select_public).
  * - Making a story: create_story() (supabase/migrations/…_s1_e3_01_stories.sql), which answers
  *   {outcome: 'ok', slug} or {outcome: 'not_active'} when the account may not write yet.
- * - Reading the writer's own stories: stories with their tags and category, through
- *   stories_select_own and story_tags_select_own (a writer reads only their own rows), deleted
- *   ones included so "Recently deleted" can offer undo (S1-E3-05).
+ * - Reading the writer's own stories: stories with their tags, category and live chapters,
+ *   through stories_select_own, story_tags_select_own and chapters_select_own (a writer reads
+ *   only their own rows), deleted stories included so "Recently deleted" can offer undo (S1-E3-05).
  * - Settings (S1-E3-05): update_my_story(), delete_my_story() and restore_my_story()
  *   (supabase/migrations/…_s1_e3_05_story_settings.sql), which answer with an outcome.
  * - The labels (S1-E3-06): create_story() and update_my_story() take a `labels` object
@@ -30,6 +30,9 @@ export interface StoryCategory {
 
 /** What create_story() answers. */
 export type CreateStoryResult = { outcome: 'ok'; slug: string } | { outcome: 'not_active' };
+
+/** A chapter's status as stored (S1-E3-02a). */
+export type ChapterStatus = Database['public']['Enums']['chapter_status'];
 
 /** The cover kind as stored (automatic, drawn or upload). */
 export type StoredCoverKind = Database['public']['Enums']['cover_kind'];
@@ -62,6 +65,8 @@ export interface MyStory {
   aiDisclosure: AiDisclosure;
   /** When staff labelled it "AI-written, not disclosed"; null otherwise (Q24). */
   aiUndisclosedLabelledAt: string | null;
+  /** The live chapters in order (S1-E3-02a): the card links to the latest one. */
+  chapters: { code: string; position: number; status: ChapterStatus }[];
 }
 
 /** The labels as create_story() and update_my_story() take them (check_story_labels()). */
@@ -169,8 +174,11 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, first_published_at, created_at, completion_status, comments_enabled, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name))',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, first_published_at, created_at, completion_status, comments_enabled, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
+    // Only live chapters, in order; the deleted ones wait for the purge (S1-E3-04 shows undo).
+    .is('chapters.deleted_at', null)
+    .order('position', { referencedTable: 'chapters', ascending: true })
     .order('created_at', { ascending: false });
   if (error !== null) throw new Error(`Could not read your stories: ${error.message}`);
   return data.map((row) => ({
@@ -205,6 +213,11 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     contentNote: row.content_note,
     aiDisclosure: row.ai_disclosure,
     aiUndisclosedLabelledAt: row.ai_undisclosed_labelled_at,
+    chapters: row.chapters.map((chapter) => ({
+      code: chapter.code,
+      position: chapter.position,
+      status: chapter.status,
+    })),
   }));
 }
 

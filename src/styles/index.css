@@ -112,3 +112,70 @@
 .tmc-icon-on-dark {
   filter: brightness(0) invert(1);
 }
+
+/* The chapter text, in the editor (S1-E3-02a) and the reader (S1-E4-01a): board 4.3's 18 px at
+   1.75 line height, headings in Bricolage, quotes with a plum bar, the scene break centred. */
+.tmc-chapter-text {
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.tmc-chapter-text > * + * {
+  margin-top: 18px;
+}
+.tmc-chapter-text p {
+  margin: 0;
+}
+.tmc-chapter-text h2,
+.tmc-chapter-text h3 {
+  margin: 28px 0 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--heading);
+}
+.tmc-chapter-text h2 {
+  font-size: 26px;
+}
+.tmc-chapter-text h3 {
+  font-size: 21px;
+}
+.tmc-chapter-text blockquote {
+  margin: 18px 0 0;
+  padding-left: 18px;
+  border-left: 3px solid var(--border);
+  color: var(--body);
+}
+.tmc-chapter-text ul,
+.tmc-chapter-text ol {
+  margin: 18px 0 0;
+  padding-left: 28px;
+}
+.tmc-chapter-text ul {
+  list-style: disc;
+}
+.tmc-chapter-text ol {
+  list-style: decimal;
+}
+.tmc-chapter-text li + li {
+  margin-top: 6px;
+}
+.tmc-chapter-text hr {
+  margin: 28px auto;
+  width: 120px;
+  border: 0;
+  height: 1px;
+  background: var(--border);
+}
+.tmc-chapter-text a {
+  color: var(--link);
+  text-decoration: underline;
+}
+/* ProseMirror's own needs: the placeholder-free empty paragraph still takes a line. */
+.tmc-chapter-text .ProseMirror {
+  outline: none;
+  min-height: 320px;
+}
+.tmc-chapter-text .ProseMirror p.is-empty::before {
+  content: '';
+}

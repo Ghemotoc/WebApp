@@ -66,7 +66,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `content/legal/`, `scripts/build-legal-migration.ts` | The legal drafts (English, and Romanian draft translations in `ro/`) and the script that turns a new version into a migration | S1-E14-01 |
 | `src/features/design-system/` | The /design page: every token and component on one page, with live contrast ratios | S1-E1-03 |
 | `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
-| `src/features/writing/` | The writer's side: `/write` (Your writing), `/write/new` (the new story form), `/write/s/:storySlug/settings` (story settings, delete and undo), the tag rule, `create_story()`, `update_my_story()`; see its README | S1-E3-01, S1-E3-05 |
+| `src/features/writing/` | The writer's side: `/write` (Your writing), `/write/new` (the new story form), `/write/s/:storySlug/settings` (story settings, delete and undo), `/write/s/:storySlug/c/:chapterCode` (the chapter editor and its autosave), the tag rule, the Markdown converters, `create_story()`, `update_my_story()`, `save_chapter_draft()`; see its README | S1-E3-01, S1-E3-05, S1-E3-02a |
 | `src/features/reading/` | The reader's side: `/s/:storySlug` (the story page) through `get_story_page()`, the label pills; later the chapter reader and the teaser; see its README | S1-E3-05, S1-E3-06 |
 | `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets a design from the story's ID; `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
 | `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
@@ -365,6 +365,30 @@ Staff: admin_raise_story_rating() (never lowers; audit_log; a 'statement_of_reas
 ```
 
 Tests: `supabase/tests/database/104-ratings-and-labels.test.sql`, `e2e/ratings.spec.ts`.
+
+## The chapter editor and the autosave (S1-E3-02a)
+
+```
+"Create and write chapter one" (useNewStoryForm) or "Write chapter one" (NewChapterButton)
+  → create_chapter(story_slug) → {ok, code}              …_s1_e3_02a_chapters.sql
+  ▼
+/write/s/<slug>/c/<code> (ChapterEditorPage)                           src/features/writing/
+  │  useChapterDraft → the chapters table (chapters_select_own: the owner only)
+  │  useChapterEditor → TipTap with chapterEditorExtensions (only the allowed formatting);
+  │    the stored Markdown becomes a document (lib/chapterMarkdown.ts) and back on every save
+  │  EditorToolbar (role=toolbar, one tab stop, aria-keyshortcuts), LinkDialog (Ctrl+K)
+  │  useAutosave: every 10 s while there are changes, and on blur
+  │    → chapterDraftSchema (src/schemas/chapter.ts: no HTML, safe links, ş/ţ corrected)
+  │    → api/chapters.ts → save_chapter_draft(code, title, body, expected_version)
+  │  EditorAside: SaveStatus (role=status), Publish (S1-E3-03), Story details, Your stories
+  ▼
+save_chapter_draft(): is_active_member(), the caller's own live chapter (locked), a stale
+  expected_version → {status: conflict} (S1-E3-02b shows it), check_chapter_text() (the same
+  rules again), count_words(); the draft_version moves on
+delete_my_story() / restore_my_story() now take the chapters along
+```
+
+Stored format and why: ADR 0005. Tests: `supabase/tests/database/110-chapters.test.sql`, `111-save-chapter-draft.test.sql`, `src/features/writing/lib/chapterMarkdown.test.ts`, `src/schemas/chapter.test.ts`, `src/features/writing/hooks/useAutosave.test.tsx`, `e2e/chapter-editor.spec.ts`.
 
 The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 

@@ -1,0 +1,87 @@
+{
+  "documentTitle": "{{chapter}} · {{story}} · {{productName}}",
+  "back": "Panoul autorului",
+  "chapterNumber": "Capitolul {{number}}",
+  "state": {
+    "draft": "Ciornă",
+    "scheduled": "Programat",
+    "published": "Publicat"
+  },
+  "titleLabel": "Titlul capitolului",
+  "bodyLabel": "Textul capitolului",
+  "toolbar": {
+    "label": "Formatare",
+    "bold": "Aldin",
+    "italic": "Cursiv",
+    "heading": "Titlu de secțiune",
+    "quote": "Citat",
+    "list": "Listă",
+    "link": "Link",
+    "sceneBreak": "Pauză de scenă",
+    "withShortcut": "{{name}} ({{keys}})",
+    "keys": {
+      "bold": "Ctrl+B",
+      "italic": "Ctrl+I",
+      "heading": "Ctrl+Alt+2",
+      "quote": "Ctrl+Shift+9",
+      "list": "Ctrl+Shift+8",
+      "link": "Ctrl+K",
+      "sceneBreak": "Ctrl+Enter"
+    }
+  },
+  "wordCount_one": "{{count}} cuvânt",
+  "wordCount_few": "{{count}} cuvinte",
+  "wordCount_other": "{{count}} de cuvinte",
+  "pasteNote": "Lipirea din Word sau Google Docs păstrează titlurile, aldinul, cursivul, citatele, listele, pauzele de scenă și linkurile. Restul formatării este eliminat.",
+  "rights": "Ce scrii rămâne al tău. Poți publica oriunde, oricând.",
+  "rightsLink": "Cum funcționează drepturile aici",
+  "saving": {
+    "heading": "Salvare",
+    "explain": "Salvăm la fiecare 10 secunde și când dai clic în afara textului.",
+    "idle": "Nimic de salvat încă.",
+    "unsaved": "Modificări nesalvate.",
+    "saving": "Se salvează…",
+    "savedJustNow": "Salvat chiar acum.",
+    "savedAt": "Salvat la {{time}}.",
+    "conflict": "Acest capitol a fost modificat pe alt dispozitiv. Salvarea s-a oprit ca să nu se suprascrie nimic. Copiază textul tău cel mai nou undeva în siguranță, apoi reîncarcă pagina ca să vezi cealaltă versiune.",
+    "failed": "Nu am putut salva. Verifică conexiunea; încercăm din nou în 10 secunde.",
+    "notActive": "Contul tău nu poate salva capitole încă."
+  },
+  "link": {
+    "heading": "Adaugă un link",
+    "urlLabel": "Adresa web",
+    "urlHint": "Începe cu http://, https:// sau mailto:.",
+    "invalid": "Scrie o adresă completă care începe cu http://, https:// sau mailto:.",
+    "add": "Adaugă linkul",
+    "remove": "Elimină linkul",
+    "cancel": "Renunță"
+  },
+  "publish": {
+    "heading": "Publicare",
+    "comingSoon": "Publicarea vine în curând. Până atunci, capitolul este o ciornă pe care o vezi doar tu."
+  },
+  "details": {
+    "heading": "Detaliile poveștii",
+    "intro": "Se aplică fiecărui capitol.",
+    "category": "Categorie",
+    "rating": "Clasificare",
+    "tags": "Etichete",
+    "noTags": "Niciuna încă",
+    "change": "Schimbă din setările poveștii"
+  },
+  "yourStories": {
+    "heading": "Poveștile tale",
+    "newStory": "Poveste nouă"
+  },
+  "notFound": "Nu găsim acest capitol printre ale tale.",
+  "signedOut": "Intră în cont ca să scrii.",
+  "errors": {
+    "titleTooLong": "Titlul unui capitol poate avea cel mult {{max}} de caractere.",
+    "bodyTooLong": "Un capitol poate avea cel mult {{max}} de caractere. Împarte-l în două capitole.",
+    "htmlNotAllowed": "Ceva din text arată ca un cod HTML, care nu este permis. Elimină-l și capitolul se va salva.",
+    "linkNotAllowed": "Sunt permise doar linkuri http, https și mailto.",
+    "saveFailed": "Nu am putut salva capitolul.",
+    "loadFailed": "Nu am putut încărca acest capitol. Verifică conexiunea și încearcă din nou.",
+    "createFailed": "Nu am putut adăuga un capitol. Verifică conexiunea și încearcă din nou."
+  }
+}

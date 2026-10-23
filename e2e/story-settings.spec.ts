@@ -145,6 +145,9 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
       test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
         page,
       }) => {
+        // The account's own language wins over the device's (S1-E1-04), so it is set to the view's
+        // language first; otherwise the check races the profile load.
+        runSql(`update public.profiles set locale = '${view.language}' where id = '${writerId}';`);
         await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
         await checkScreen(page, view);
         await expectNoDoodleOverlap(page);

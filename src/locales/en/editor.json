@@ -1,0 +1,87 @@
+{
+  "documentTitle": "{{chapter}} · {{story}} · {{productName}}",
+  "back": "Writer dashboard",
+  "chapterNumber": "Chapter {{number}}",
+  "state": {
+    "draft": "Draft",
+    "scheduled": "Scheduled",
+    "published": "Published"
+  },
+  "titleLabel": "Chapter title",
+  "bodyLabel": "Chapter text",
+  "toolbar": {
+    "label": "Formatting",
+    "bold": "Bold",
+    "italic": "Italic",
+    "heading": "Heading",
+    "quote": "Quote",
+    "list": "List",
+    "link": "Link",
+    "sceneBreak": "Scene break",
+    "withShortcut": "{{name}} ({{keys}})",
+    "keys": {
+      "bold": "Ctrl+B",
+      "italic": "Ctrl+I",
+      "heading": "Ctrl+Alt+2",
+      "quote": "Ctrl+Shift+9",
+      "list": "Ctrl+Shift+8",
+      "link": "Ctrl+K",
+      "sceneBreak": "Ctrl+Enter"
+    }
+  },
+  "wordCount_one": "{{count}} word",
+  "wordCount_few": "{{count}} words",
+  "wordCount_other": "{{count}} words",
+  "pasteNote": "Pasting from Word or Google Docs keeps headings, bold, italic, quotes, lists, scene breaks and links. Other formatting is removed.",
+  "rights": "Your work stays yours. You can publish it anywhere, any time.",
+  "rightsLink": "How rights work here",
+  "saving": {
+    "heading": "Saving",
+    "explain": "We save every 10 seconds and when you click away from the text.",
+    "idle": "Nothing to save yet.",
+    "unsaved": "Unsaved changes.",
+    "saving": "Saving…",
+    "savedJustNow": "Saved just now.",
+    "savedAt": "Saved at {{time}}.",
+    "conflict": "This chapter was changed on another device. Saving has stopped so nothing is overwritten. Copy your latest text somewhere safe, then reload the page to see the other version.",
+    "failed": "We couldn’t save. Check your connection; we’ll try again in 10 seconds.",
+    "notActive": "Your account can’t save chapters yet."
+  },
+  "link": {
+    "heading": "Add a link",
+    "urlLabel": "Web address",
+    "urlHint": "Starts with http://, https:// or mailto:.",
+    "invalid": "Enter a full address that starts with http://, https:// or mailto:.",
+    "add": "Add link",
+    "remove": "Remove link",
+    "cancel": "Cancel"
+  },
+  "publish": {
+    "heading": "Publish",
+    "comingSoon": "Publishing comes soon. Until then this chapter is a draft only you can see."
+  },
+  "details": {
+    "heading": "Story details",
+    "intro": "These apply to every chapter.",
+    "category": "Category",
+    "rating": "Rating",
+    "tags": "Tags",
+    "noTags": "None yet",
+    "change": "Change in story settings"
+  },
+  "yourStories": {
+    "heading": "Your stories",
+    "newStory": "New story"
+  },
+  "notFound": "We can’t find this chapter among yours.",
+  "signedOut": "Log in to write.",
+  "errors": {
+    "titleTooLong": "A chapter title can have at most {{max}} characters.",
+    "bodyTooLong": "A chapter can have at most {{max}} characters. Split it into two chapters.",
+    "htmlNotAllowed": "Something in the text looks like HTML code, which isn’t allowed. Remove it and the chapter will save.",
+    "linkNotAllowed": "Only http, https and mailto links are allowed.",
+    "saveFailed": "We couldn’t save the chapter.",
+    "loadFailed": "We couldn’t load this chapter. Check your connection and try again.",
+    "createFailed": "We couldn’t add a chapter. Check your connection and try again."
+  }
+}
