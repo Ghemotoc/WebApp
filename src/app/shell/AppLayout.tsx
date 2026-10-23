@@ -28,6 +28,7 @@ import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage
 import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice';
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
+import { WriteLink } from '@/features/writing/components/WriteLink';
 
 import { Footer } from './Footer';
 import { TopBar } from './TopBar';
@@ -56,6 +57,8 @@ export function AppLayout() {
         endSlot={
           <>
             <LanguageSelect id="language-select-top" />
+            {/* "Write", while signed in (S1-E3-01). */}
+            <WriteLink />
             {/* "Join for free" while signed out (S1-E2-01). */}
             <AccountLinks />
           </>

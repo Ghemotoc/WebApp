@@ -7,22 +7,12 @@ import { useTranslation } from 'react-i18next';
 
 import { Shelf, type ShelfItem } from '@/components/ui/Shelf';
 import { StoryCard } from '@/components/ui/StoryCard';
-import type { CoverTone } from '@/lib/cover-colours';
+import { coverDesignKeys, defaultChoiceFor } from '@/components/covers/coverDesigns';
 
 import { DesignSection } from './DesignSection';
 
-/** Cover tones to cycle through, so the samples show each one. */
-const tones: CoverTone[] = [
-  'plum',
-  'gold',
-  'lilac',
-  'ink',
-  'sky',
-  'blush',
-  'sage',
-  'violet',
-  'paper',
-];
+/** The 16 drawn designs, cycled through so the samples show each one (S1-E3-01). */
+const designs = coverDesignKeys;
 
 /**
  * Builds sample shelf items from the sample titles.
@@ -39,7 +29,7 @@ function sampleItems(count: number, titles: string[], metaLine: string): ShelfIt
       <StoryCard
         title={titles[index % titles.length] ?? ''}
         metaLine={metaLine}
-        coverTone={tones[index % tones.length] ?? 'plum'}
+        cover={defaultChoiceFor(designs[index % designs.length] ?? 'plum')}
         href="/design#shelves"
       />
     ),

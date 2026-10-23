@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "write": "Scrie"
+  },
+  "yourWriting": {
+    "documentTitle": "Scrierile tale · {{productName}}",
+    "eyebrow": "Scrie · panoul scriitorului",
+    "heading": "Scrierile tale",
+    "intro": "Vezi cum merge fiecare poveste, reia ciornele și citește ce au spus cititorii.",
+    "newStory": "+ Poveste nouă",
+    "storiesEyebrow": "Poveștile tale",
+    "storiesHeading": "Poveste cu poveste",
+    "signedOut": "Conectează-te ca să-ți vezi poveștile.",
+    "empty": {
+      "title": "Nicio poveste încă",
+      "description": "Începe o poveste și scrie primul capitol. Doar tu o vezi până o publici.",
+      "action": "Începe o poveste nouă"
+    },
+    "onlyYou": "Doar tu vezi această poveste până îi publici primul capitol.",
+    "created": "Povestea ta e salvată. Doar tu o vezi până îi publici primul capitol."
+  },
+  "newStory": {
+    "documentTitle": "Începe o poveste nouă · {{productName}}",
+    "back": "Panoul scriitorului",
+    "eyebrow": "Scrie · poveste nouă",
+    "heading": "Începe o poveste nouă",
+    "intro": "Completează lucrurile de bază, apoi scrie primul capitol. Le poți schimba pe toate mai târziu, din setările poveștii.",
+    "basics": "Lucrurile de bază",
+    "title": "Titlu",
+    "blurb": "Descriere scurtă",
+    "blurbHint": "Una sau două propoziții: despre cine e povestea și ce se întâmplă. {{count}} din {{max}} caractere.",
+    "language": "Limba poveștii (obligatoriu)",
+    "languageHint": "Alege limba în care e scrisă povestea. Alte limbi se deschid când avem moderatori care le citesc.",
+    "categoryAndTags": "Categorie și etichete",
+    "category": "Categorie",
+    "tags": "Etichete",
+    "tagsHint": "{{count}} din {{max}} etichete. Majusculele și diacriticele nu contează, așa că „Fantezie” și „fantezie” sunt aceeași etichetă.",
+    "tagsFull": "{{max}} din {{max}} etichete. Scoate una ca să adaugi alta.",
+    "tagPlaceholder": "Adaugă o etichetă",
+    "removeTag": "Scoate eticheta {{tag}}",
+    "rights": "Munca ta rămâne a ta. Păstrezi drepturile și o poți publica oriunde. Doar tu vezi această poveste până îi publici primul capitol.",
+    "cancel": "Renunță",
+    "create": "Creează și scrie primul capitol",
+    "creating": "Se creează…",
+    "notActive": "Contul tău nu poate crea povești încă. Confirmă-ți adresa de e-mail și alege un nume de utilizator, sau așteaptă să se deschidă testul pentru vârsta ta.",
+    "createFailed": "Nu am putut salva povestea. Verifică-ți conexiunea și încearcă din nou.",
+    "signedOut": "Conectează-te ca să începi o poveste."
+  },
+  "categories": {
+    "fiction": "Ficțiune",
+    "poetry": "Poezie",
+    "nonfiction_essays": "Eseuri"
+  },
+  "languages": {
+    "ro": "Română",
+    "en": "English"
+  },
+  "cover": {
+    "heading": "Copertă",
+    "kindLabel": "Tipul copertei",
+    "draw": "Desenează o copertă",
+    "upload": "Încarcă o imagine",
+    "preview": "Previzualizare",
+    "previewLabel": "Previzualizarea copertei: {{design}}, fundal {{background}} cu {{part}} {{accent}}. Titlul {{title}}, de {{penName}}.",
+    "partLine": "linie",
+    "partBand": "bandă",
+    "partPattern": "model",
+    "untitled": "Poveste fără titlu",
+    "pickBackground": "Alege un fundal. Noi adăugăm titlul și numele tău de autor.",
+    "designs": "Fundaluri",
+    "tileTitle": "Titlu",
+    "changeColours": "Schimbă culorile",
+    "background": "Fundal",
+    "accent": "Model sau accent",
+    "backgroundChoice": "Fundal: {{colour}}",
+    "accentChoice": "Model sau accent: {{colour}}",
+    "accentNotePlain": "Pe un fundal simplu, asta colorează linia de sub titlu.",
+    "accentNoteTwotone": "Pe Două tonuri, asta colorează banda de jos, cu titlul.",
+    "accentNotePattern": "Asta colorează modelul.",
+    "autoContrast": "Alegem noi text închis sau deschis, ca titlul tău să fie mereu ușor de citit.",
+    "drawnNote": "O copertă desenată nu are nevoie de drepturi de imagine și apare imediat.",
+    "automatic": {
+      "intro": "Sari peste acest pas și îți dăm automat una dintre aceste coperte. O poți schimba oricând.",
+      "current": "Acum: {{design}}, aleasă automat pentru tine.",
+      "chosen": "Ți-ai ales propria copertă.",
+      "use": "Folosește coperta automată"
+    },
+    "designNames": {
+      "plum": "Prună",
+      "ink": "Cerneală",
+      "violet": "Violet",
+      "gold": "Auriu",
+      "lilac": "Liliac",
+      "blush": "Roz pal",
+      "sky": "Cer",
+      "sage": "Salvie",
+      "paper": "Hârtie",
+      "stripes": "Dungi aurii",
+      "dots": "Buline",
+      "grid": "Hârtie cu pătrățele",
+      "waves": "Valuri",
+      "starry": "Noapte înstelată",
+      "doodles": "Mâzgăleli",
+      "twotone": "Două tonuri"
+    },
+    "colourNames": {
+      "plum": "Prună",
+      "ink": "Cerneală",
+      "violet": "Violet",
+      "gold": "Auriu",
+      "lilac": "Liliac",
+      "blush": "Roz pal",
+      "sky": "Cer",
+      "sage": "Salvie",
+      "paper": "Hârtie"
+    }
+  },
+  "preview": {
+    "eyebrow": "Cum o vor vedea cititorii",
+    "onlyYou": "Doar tu",
+    "automaticCover": "Copertă automată",
+    "noBlurb": "Descrierea ta scurtă apare aici.",
+    "deleteLater": "Poți șterge povestea mai târziu, din setările ei. Te întrebăm de două ori, o ascundem imediat și o ștergem definitiv după 30 de zile. Până atunci poți reveni."
+  },
+  "errors": {
+    "titleMissing": "Dă-i poveștii un titlu.",
+    "titleTooLong": "Un titlu poate avea cel mult 120 de caractere.",
+    "blurbTooLong": "Descrierea scurtă poate avea cel mult 500 de caractere.",
+    "languageMissing": "Alege limba în care e scrisă povestea.",
+    "categoryMissing": "Alege o categorie.",
+    "tagTooLong": "O etichetă poate avea cel mult 40 de caractere.",
+    "tooManyTags": "O poveste poate avea cel mult 10 etichete.",
+    "duplicateTag": "Două dintre aceste etichete sunt la fel dacă ignorăm majusculele și diacriticele.",
+    "loadFailed": "Nu am putut încărca pagina. Verifică-ți conexiunea și încearcă din nou."
+  }
+}

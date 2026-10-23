@@ -49,6 +49,9 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `report_client_error(error_name, error_message, route_path, app_version, browser_family)` | stores one browser error in `client_errors` after trimming and scrubbing it again (no emails, tokens, IDs, quoted text, long numbers, query strings); answers the row's ID, or null over the shared limit (`client_errors_per_minute`, 60) | anyone, signed out included (the app's error reporter) | S1-E1-05 |
 | `admin_list_client_errors(since, max_rows)` | the newest browser errors (default: the last 7 days, 200 rows) | owner and admin in a staff session | S1-E1-05 |
 | `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
+| `open_story_languages()` | the languages a story may be written in (the open markets' languages) | anyone, signed out included (the new story form) | S1-E3-01 |
+| `create_story(title, blurb, language_code, category_slug, tag_names, cover)` | makes a story owned by the caller: `{outcome: ok, slug}` or `{outcome: not_active}` when the account may not write; refuses a bad title, language, category, tag or cover, and an upload cover while `picture_uploads` is off | any signed-in person (the account gate decides) | S1-E3-01 |
+| `cover_upload_allowed(object_name)` | may the caller add or read this covers-bucket file: only the story's owner, under `<story id>/…`, while `picture_uploads` is on; the two storage policies call it | any signed-in person (answers about themselves) | S1-E3-01 |
 
 Why `set_my_locale()` and not an update policy on `profiles`: a policy would let a person change every column of their own row through the API, their year of birth too. The function changes one column. Test: `tests/database/014-profile-locale.test.sql`.
 
@@ -103,6 +106,16 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Where the lists live:** `reserved_names` (staff titles and app addresses, in `…_s1_e2_04_name_rules.sql`), the settings row `reserved_brand_words` (the one migration allowed to hold brand names, `…_s1_e2_04_brand_words.sql`), `username_word_lists` (generated from `content/username-word-lists/`) and `confusable_characters` (generated from Unicode's list, version 10.0.0 for now). Change a list with a new migration until the settings screen (S1-E11-03).
 - **Uniqueness:** `profiles.handle_skeleton` is unique, so "lia" and "IIa" can't both exist; `handle_slug` is the web-address form. A deleted account's username stays taken, so nobody can pick it up to fake its owner.
 - **False hits:** a moderator approves the exact name with `admin_approve_username()`; the person then saves it themselves.
+
+## Stories (S1-E3-01, Lane A)
+
+- **Readers never read the tables** (ADR 0004): `stories` and `story_tags` have owner-only select policies; readers go through `get_story_page()` (S1-E3-05) and `get_chapter()` (S1-E4-01a). Every write is a function: `create_story()` here, `update_my_story()` and the rest in later stories.
+- **Owner and address:** `stories.user_id` is the writer's user ID (never shown); `stories.slug` is the public address, the title's web form plus six random characters, fixed at creation.
+- **Categories and tags:** `categories` (fiction, poetry, nonfiction_essays; changed by migration until S1-E11-03); `tags` holds every tag once per `normalise_tag()` form (lower case, trimmed, no diacritics, ş/ţ corrected), so "Fantezie" and "fantezie" are one tag; at most 10 per story (trigger).
+- **Covers:** `cover_kind` is automatic (nothing stored; drawn from the ID, S1-E3-13), drawn (one of the 16 approved designs plus two palette colours, checked by constraints) or upload (behind the `picture_uploads` flag, off; the private `covers` bucket and its owner-only rules are the contract for the upload story).
+- **Languages:** `open_story_languages()` is the open markets' languages; a story can only be in one of them.
+- **Shared contract with Lane C:** `is_moderated_away(type, id)` is a stub answering false, created only if no function of that name exists, so Lane C's real one wins.
+- Tests: `tests/database/100-categories-and-tags`, `101-stories`, `102-covers-bucket`.
 
 ## Seed personas
 

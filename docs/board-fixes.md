@@ -53,3 +53,17 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | Discover (top bar) | Language drop-down drawn 40 px tall with 13 px text and 12 px left padding | The one 44 px Select (14 px text, 16 px padding), as in the footer (DoD drop-down rule) |
 | Discover (top bar) | Options without a `lang` attribute (the footer's have one) | Both drop-downs mark English as `lang="en"` and Română as `lang="ro"` (WCAG 2.2, 3.1.2) |
 | Discover (footer) | English shown as the selected language | Romanian is selected on a first visit, whatever the device language (decided 17 Oct 2026, 11:48); the board's option order (English, Română) is kept |
+
+## Found while building S1-E3-01 (23 Oct 2026)
+
+| Board | Element | What the app does |
+| --- | --- | --- |
+| NewStory (4.2) | The "Draw a cover / Upload a picture" switch, the tall and square upload flow and the "Design it in Canva" button | Not shown: no picture uploads in the demo (decided 23 Oct 2026), the flag `picture_uploads` is off; Canva is S1-E3-12, after March |
+| NewStory (4.2) | The dashed "coming" languages (Magyar, Deutsch, Français, Español) with "Coming once we have moderators who read it" | Only the open markets' languages are listed (`open_story_languages()`); the hint says more open once we have moderators who read them |
+| NewStory (4.2) | Waves' default accent is #6E93BF, outside the 9-colour palette | Violet, the nearest palette colour |
+| NewStory (4.2) | "Status and comments", "Where can people read this story?" and "Labels" | Come with S1-E3-05, S1-E3-08 (after March) and S1-E3-06 |
+| Editor (4.3) | "Story details" panel: a rating select without the explanations, "Content notes" ticks and a "Visibility" select | Becomes a read-only summary with "Change in story settings" (S1-E3-06): ratings and labels are set in one place, always with the full guide; "Visibility" goes because the rule is "only you until the first chapter is published" (Robert, 23 Oct 2026, Q15) |
+| WriterDashboard (4.1) | The statistics tiles, the followers chart, the drafts list and the latest comments | S1-E3-07 (after March); `/write` shows the "Story by story" list only ("Your writing", Robert, 23 Oct 2026, Q15) |
+| WriterDashboard (4.1) | Draft pills in the old solid-gold style | The pill system's gold information pill |
+| Every signed-in board | The "Write" pill's pen icon is the dark pen on the dark button | The icon is inverted with a CSS filter until Lane B's tokenised doodle icons land |
+| Every signed-in board | Top bar links Home, Discover, Library, Forums, Messages and the bell | Still only the links to pages that exist (src/app/navigation.ts); "Write" joins them in S1-E3-01 |

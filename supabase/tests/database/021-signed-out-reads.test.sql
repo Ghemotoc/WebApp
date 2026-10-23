@@ -48,6 +48,7 @@ select results_eq(
   $$ select table_name, visible_rows from pg_temp.rows_visible_to_anon() order by table_name $$,
   $$ select * from (values
        ('audit_log', 0::bigint),
+       ('categories', (select count(*) from public.categories)),
        ('client_errors', 0::bigint),
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
@@ -64,10 +65,13 @@ select results_eq(
        ('staff_permissions', 0::bigint),
        ('staff_role_areas', 0::bigint),
        ('staff_roles', 0::bigint),
+       ('stories', 0::bigint),
+       ('story_tags', 0::bigint),
+       ('tags', (select count(*) from public.tags)),
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
-  'a signed-out visitor sees only public flags, settings, markets and published legal documents, nothing else'
+  'a signed-out visitor sees only public flags, settings, markets, published legal documents, categories and tags, nothing else'
 );
 
 select * from finish();
