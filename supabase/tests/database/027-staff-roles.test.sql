@@ -26,8 +26,13 @@ create temp table ids as select
   '00000000-0000-4000-8000-000000000011'::uuid as support;
 grant select on ids to authenticated, anon;
 
+-- A fresh password sign-in, as Supabase's tokens carry it in "amr": changing a role needs one
+-- within staff_fresh_sign_in_minutes (S1-E11-01).
 create function pg_temp.sign_in_as(user_id uuid) returns void language sql as $$
-  select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated')::text, true);
+  select set_config('request.jwt.claims', json_build_object(
+    'sub', user_id, 'role', 'authenticated',
+    'amr', json_build_array(json_build_object('method', 'password', 'timestamp', extract(epoch from now())::bigint))
+  )::text, true);
 $$;
 
 -- 1. What each role may do.

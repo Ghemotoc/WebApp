@@ -25,7 +25,7 @@ export interface StaffMember {
 }
 
 /** Why a change was refused, in words the page can explain. */
-export type StaffChangeFailure = 'not_allowed' | 'refused' | 'unreachable';
+export type StaffChangeFailure = 'not_allowed' | 'sign_in_again' | 'refused' | 'unreachable';
 
 /** The error a refused change throws. */
 export class StaffChangeError extends Error {
@@ -38,11 +38,13 @@ export class StaffChangeError extends Error {
  * Turns a database error into a reason.
  *
  * @param code - Postgres's error code
- * @returns not_allowed (42501: not the caller's to change), refused (23514: a rule such as the
- *   reason or the last owner) or unreachable
+ * @returns not_allowed (42501: not the caller's to change), sign_in_again (28000: the person's
+ *   sign-in is older than staff_fresh_sign_in_minutes, S1-E11-01), refused (23514: a rule such as
+ *   the reason or the last owner) or unreachable
  */
 function failureFromCode(code: string | undefined): StaffChangeFailure {
   if (code === '42501') return 'not_allowed';
+  if (code === '28000') return 'sign_in_again';
   if (code === '23514') return 'refused';
   return 'unreachable';
 }
