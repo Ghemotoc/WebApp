@@ -76,6 +76,26 @@ const writeRoutes: RouteObject[] = [
       return { Component: NewStoryPage };
     },
   },
+  // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
+  // or deletes it.
+  {
+    path: '/write/s/:storySlug/settings',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { StorySettingsPage } = await import('@/features/writing/components/StorySettingsPage');
+      return { Component: StorySettingsPage };
+    },
+  },
+  // The public story page (S1-E3-05): readers reach a story only through get_story_page()
+  // (ADR 0004); the address carries the story's slug, never an ID.
+  {
+    path: '/s/:storySlug',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { StoryPage } = await import('@/features/reading/components/StoryPage');
+      return { Component: StoryPage };
+    },
+  },
 ];
 
 /**

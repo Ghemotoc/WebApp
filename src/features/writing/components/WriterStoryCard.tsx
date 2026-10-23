@@ -3,13 +3,14 @@
  * WriterDashboard 4.1, "Story by story").
  *
  * Board values: a card with the 96 × 130 drawn cover on the left, the title in Bricolage, the
- * blurb, the chips (category; status joins with S1-E3-05), a meta line and the buttons. In this
- * story a new story has no chapters yet, so the card shows the lock line "Only you can see this
- * story until you publish its first chapter"; "Write chapter one" (S1-E3-02a), "Manage chapters"
- * (S1-E3-03) and "Story settings" (S1-E3-05) join with their stories.
+ * blurb, the chips (category, Ongoing or Completed from S1-E3-05, the language), the tags, the
+ * lock line "Only you can see this story until you publish its first chapter" while nothing is
+ * published, and the buttons: "Story settings" and "See story page" (S1-E3-05); "Write chapter
+ * one" (S1-E3-02a) and "Manage chapters" (S1-E3-03) join with their stories.
  * Who uses it: YourWritingPage.
  */
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { DrawnCover } from '@/components/covers/DrawnCover';
@@ -22,6 +23,24 @@ export interface WriterStoryCardProps {
   story: MyStory;
   /** The writer's drawn choice, or the automatic design from the ID (S1-E3-13). */
   cover: DrawnCoverChoice;
+}
+
+/** "Story settings" and "See story page" (S1-E3-05). */
+function StoryCardLinks({ slug }: { slug: string }) {
+  const { t } = useTranslation('writing');
+  return (
+    <div className="mt-1 flex flex-wrap items-center gap-3">
+      <Link
+        to={`/write/s/${slug}/settings`}
+        className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+      >
+        {t('storyCard.settings')}
+      </Link>
+      <Link to={`/s/${slug}`} className="inline-flex min-h-11 items-center text-sm font-semibold">
+        {t('storyCard.seePage')}
+      </Link>
+    </div>
+  );
 }
 
 /**
@@ -57,6 +76,9 @@ export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
           <InfoPill tone="plum">
             {t(`categories.${story.categorySlug}`, { defaultValue: story.categorySlug })}
           </InfoPill>
+          <InfoPill tone={story.completionStatus === 'completed' ? 'gold' : 'sage'}>
+            {t(`status.${story.completionStatus}`)}
+          </InfoPill>
           <InfoPill tone="neutral">
             <span lang={story.languageCode}>
               {t(`languages.${story.languageCode}`, { defaultValue: story.languageCode })}
@@ -69,6 +91,7 @@ export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
         {story.firstPublishedAt === null && (
           <p className="m-0 text-[13px] text-meta">{t('yourWriting.onlyYou')}</p>
         )}
+        <StoryCardLinks slug={story.slug} />
       </div>
     </article>
   );

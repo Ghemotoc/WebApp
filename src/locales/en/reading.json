@@ -1,0 +1,21 @@
+{
+  "storyPage": {
+    "documentTitle": "{{title}} · {{productName}}",
+    "by": "by",
+    "tags": "Tags",
+    "writerEyebrow": "The writer",
+    "labelsHeading": "Labels from the writer",
+    "languageLabel": "Language",
+    "statusLabel": "Status",
+    "commentsLabel": "Comments",
+    "commentsOn": "On",
+    "commentsOff": "Off",
+    "report": "Report this story",
+    "reportSubject": "Report a story: {{slug}}",
+    "ownerPreview": "Only you can see this story until you publish its first chapter. This is how readers will see it.",
+    "unavailableTitle": "This story isn’t available",
+    "unavailableBody": "It may not be published yet, it may have been removed, or the link may be wrong.",
+    "goHome": "Go to Home",
+    "loadFailed": "We couldn’t load this story. Check your connection and try again."
+  }
+}

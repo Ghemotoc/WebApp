@@ -13,34 +13,20 @@ import { useNavigate } from 'react-router';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
-import { newStorySchema, type NewStoryInput, type StoryCoverChoice } from '@/schemas/story';
+import { newStorySchema, type NewStoryInput } from '@/schemas/story';
 
 import { createStory } from '../api/stories';
 
+import { toStoryFieldErrors, type StoryAnswers, type StoryFieldErrors } from './storyAnswers';
 import { myStoriesKey } from './useMyStories';
 
-/** The answers as the form keeps them while typing. */
-export interface NewStoryAnswers {
-  /** Made once per form, so the automatic cover can be shown before the story exists (S1-E3-13). */
-  storyId: string;
-  title: string;
-  blurb: string;
-  languageCode: string;
-  categorySlug: string;
-  tags: string[];
-  cover: StoryCoverChoice;
-}
-
-/** A translation key per field that has a mistake. */
-export type FieldErrors = Partial<Record<keyof NewStoryAnswers, string>>;
-
 /**
- * What the form starts with: Romanian (the first market) and fiction, as the board shows, and a
- * fresh story ID.
+ * What the form starts with: Romanian (the first market) and fiction, as the board shows, a
+ * fresh story ID, and the defaults a new story gets (Ongoing, comments on; S1-E3-05).
  *
  * @returns the empty answers
  */
-function emptyAnswers(): NewStoryAnswers {
+function emptyAnswers(): StoryAnswers {
   return {
     storyId: crypto.randomUUID(),
     title: '',
@@ -49,22 +35,9 @@ function emptyAnswers(): NewStoryAnswers {
     categorySlug: 'fiction',
     tags: [],
     cover: { kind: 'automatic' },
+    completionStatus: 'ongoing',
+    commentsEnabled: true,
   };
-}
-
-/**
- * Turns zod's issues into one message key per field (the first issue wins).
- *
- * @param issues - from safeParse
- * @returns the field errors
- */
-function toFieldErrors(issues: { path: PropertyKey[]; message: string }[]): FieldErrors {
-  const errors: FieldErrors = {};
-  for (const issue of issues) {
-    const field = issue.path[0] as keyof NewStoryAnswers | undefined;
-    if (field !== undefined && errors[field] === undefined) errors[field] = issue.message;
-  }
-  return errors;
 }
 
 /**
@@ -74,8 +47,8 @@ function toFieldErrors(issues: { path: PropertyKey[]; message: string }[]): Fiel
  *   | null), submit, isSubmitting
  */
 export function useNewStoryForm() {
-  const [answers, setAnswers] = useState<NewStoryAnswers>(emptyAnswers);
-  const [errors, setErrors] = useState<FieldErrors>({});
+  const [answers, setAnswers] = useState<StoryAnswers>(emptyAnswers);
+  const [errors, setErrors] = useState<StoryFieldErrors>({});
   const [formError, setFormError] = useState<'notActive' | 'createFailed' | null>(null);
   const { userId } = useSession();
   const queryClient = useQueryClient();
@@ -96,7 +69,7 @@ export function useNewStoryForm() {
   });
 
   /** Changes one answer and clears that field's error, so the message goes as the writer fixes it. */
-  function set<Field extends keyof NewStoryAnswers>(field: Field, value: NewStoryAnswers[Field]) {
+  function set<Field extends keyof StoryAnswers>(field: Field, value: StoryAnswers[Field]) {
     setAnswers((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   }
@@ -106,7 +79,7 @@ export function useNewStoryForm() {
     // Step 1: the shared rules; the database checks them again (architecture 1.7.1).
     const result = newStorySchema.safeParse(answers);
     if (!result.success) {
-      setErrors(toFieldErrors(result.error.issues));
+      setErrors(toStoryFieldErrors(result.error.issues));
       return;
     }
     // Step 2: send.

@@ -14,7 +14,8 @@
     "empty": {
       "title": "No stories yet",
       "description": "Start a story and write chapter one. Only you can see it until you publish.",
-      "action": "Start a new story"
+      "action": "Start a new story",
+      "filteredTitle": "No stories with this status"
     },
     "onlyYou": "Only you can see this story until you publish its first chapter.",
     "created": "Your story is saved. Only you can see it until you publish its first chapter."
@@ -132,5 +133,54 @@
     "duplicateTag": "Two of these tags are the same once we ignore capitals and diacritics.",
     "loadFailed": "We couldn’t load this page. Check your connection and try again.",
     "storyIdInvalid": "The story could not be given an ID. Reload the page and try again."
+  },
+  "storyCard": {
+    "settings": "Story settings",
+    "seePage": "See story page"
+  },
+  "status": {
+    "heading": "Status and comments",
+    "label": "Status",
+    "ongoing": "Ongoing",
+    "completed": "Completed",
+    "hint": "Shown on your story card. Readers can filter by it.",
+    "filterLabel": "Show",
+    "all": "All stories"
+  },
+  "comments": {
+    "label": "Comments",
+    "on": "On. Readers can comment on every chapter.",
+    "off": "Off. Existing comments are hidden and nobody can add new ones."
+  },
+  "settings": {
+    "documentTitle": "Story settings · {{productName}}",
+    "eyebrow": "Write · story settings",
+    "heading": "Story settings",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Saved.",
+    "saveFailed": "We couldn’t save the changes. Check your connection and try again.",
+    "notFound": "We can’t find this story among yours."
+  },
+  "deleteStory": {
+    "eyebrow": "The whole story",
+    "heading": "Delete this story",
+    "intro": "We ask you twice. The story and all its chapters are hidden straight away and deleted for good after 30 days.",
+    "button": "Delete story",
+    "firstTitle": "Delete “{{title}}” and all its chapters?",
+    "firstBody": "Readers lose access straight away.",
+    "keep": "Keep story",
+    "confirmFirst": "Yes, delete story",
+    "lastCheckTitle": "Last check.",
+    "lastCheckBody": "We hide the story now and delete it for good on {{date}}. You can undo until then.",
+    "confirmLast": "Delete story",
+    "deleted": "Story deleted. It’s hidden from readers and will be gone for good on {{date}}.",
+    "undo": "Undo"
+  },
+  "recentlyDeleted": {
+    "eyebrow": "Undo",
+    "heading": "Recently deleted",
+    "intro": "Deleted stories are hidden straight away and deleted for good after 30 days. Until then you can undo.",
+    "goneOn": "Gone for good on {{date}}"
   }
 }

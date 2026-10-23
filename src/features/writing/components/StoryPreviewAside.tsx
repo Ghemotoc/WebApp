@@ -16,11 +16,11 @@ import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
 
-import type { NewStoryAnswers } from '../hooks/useNewStoryForm';
+import type { StoryAnswers } from '../hooks/storyAnswers';
 
 /** What the aside needs. */
 export interface StoryPreviewAsideProps {
-  answers: NewStoryAnswers;
+  answers: StoryAnswers;
   penName: string;
 }
 

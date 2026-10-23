@@ -43,5 +43,8 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | Stub | What it does today | Story that finishes it | On staging |
 | --- | --- | --- | --- |
 | Flag `picture_uploads` (off, public) | The `covers` bucket (private, JPEG/PNG/WebP, 5 MB) and its owner-only rules exist; `create_story()` refuses an upload cover and the form shows no upload tab or Canva button (decided 23 Oct 2026: no picture uploads in the demo; the contract only) | the cover-upload story once the picture check (S1-E10-05) is real: the tall and square upload, the crop tool and `IMAGE_CHECK=stub` for local work; Canva is S1-E3-12 | same |
+| `content_is_held_for_moderation(type, id)` | answers false: the nightly purge deletes every story (and, from S1-E3-04, chapter) past its 30 days; nothing is under report yet | S1-E10-01 and S1-E10-04 fill it in, so content under an open report is kept for the moderators | same |
+| "Report this story" on the story page | an email to the support address with the story's address in the subject | Lane C's `<ReportButton>` from `src/features/reporting` (S1-E10-01) replaces `ReportStoryLink` in `src/features/reading/components/StorySideColumn.tsx` | same |
+| The comments switch | stored on the story and shown on the page; nothing enforces it yet | S1-E6-01 hides existing comments and refuses new ones while it is off | same |
 | `is_moderated_away(type, id)` | answers false: nothing is hidden or removed by a moderator yet (shared contract with Lane C; guarded so Lane C's real function replaces it) | S1-E10-01 and the moderation stories | same |
 | Doodle colours | the SVG files carry the boards' own ink colours; night mode shows them as they are | Lane B's `--doodle-*` tokens and recoloured files | same |
