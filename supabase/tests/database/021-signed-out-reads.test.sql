@@ -48,6 +48,8 @@ select results_eq(
   $$ select table_name, visible_rows from pg_temp.rows_visible_to_anon() order by table_name $$,
   $$ select * from (values
        ('audit_log', 0::bigint),
+       ('case_actions', 0::bigint),
+       ('cases', 0::bigint),
        ('client_errors', 0::bigint),
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
@@ -58,6 +60,7 @@ select results_eq(
        ('legal_documents', (select count(*) from public.legal_documents)),
        ('markets', (select count(*) from public.markets)),
        ('profiles', 0::bigint),
+       ('report_reason_tiers', 0::bigint),
        ('reports', 0::bigint),
        ('reserved_names', 0::bigint),
        ('safety_contact_gaps', 0::bigint),

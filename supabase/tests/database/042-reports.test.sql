@@ -26,6 +26,12 @@ create temp table ids as select
   '00000000-0000-4000-8000-000000000012'::uuid as editor;
 grant select on ids to authenticated, anon;
 
+-- The seed holds reports and cases already (S1-E10-03a); this test counts rows and repeats
+-- reports, so it starts from none (the transaction is rolled back at the end).
+delete from public.case_actions;
+delete from public.reports;
+delete from public.cases;
+
 create function pg_temp.sign_in_as(user_id uuid) returns void language sql as $$
   select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated')::text, true);
 $$;
