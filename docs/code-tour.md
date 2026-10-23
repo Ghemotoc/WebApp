@@ -53,6 +53,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/theme/` | Light and night mode: the footer drop-down and the hook that applies it | S1-E1-03 |
 | `src/features/language/` | The English / Română drop-downs, the hooks that switch and save the language, and the Supabase calls for `profiles.locale` | S1-E1-04 |
 | `src/features/reporting/` | The shared Report button and dialog (`<ReportButton>`), the one report form; see its README and architecture 1.7.11 | S1-E10-01 |
+| `src/features/safety/` | "Is someone in danger right now?": the helplines for the reader's country, on the report dialog and the contact page; see its README | S1-E10-13a |
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
 | `src/features/flags/` | The public feature flags for screens that change with them (`useFeatureFlags`) | S1-E2-01 |
@@ -291,6 +292,19 @@ reports (user_id = the reporter; read by moderation staff only) → ReportSent s
 ```
 
 S1-E10-03a opens a moderation case from the new row; S1-E10-06 adds the reporting pause; S1-E10-02 reuses the dialog on the public form.
+
+## The helplines for the reader's country (S1-E10-13a)
+
+```
+ReportDialog or /legal/contact → <SafetyContactsBlock />                 src/features/safety/
+  │  useVisitorCountry: profiles.country_code (signed in) or /api/signup-context (signed out)
+  │  useSafetyContacts(country) → api/safetyContacts.ts → safety_contacts (read by everyone)
+  │     no row → "Call your local emergency number" + rpc note_safety_contact_gap() for staff
+  │  CountryPicker: "Not your country?", the ten covered countries, Romania first
+  ▼
+content/safety-contacts.json (research G4) → scripts/build-safety-contacts-migration.ts
+  → …_s1_e10_13a_safety_contacts_seed.sql (generated; never a number typed from memory)
+```
 
 ## Staff roles (S1-E2-07a)
 

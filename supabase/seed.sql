@@ -86,7 +86,8 @@ begin
     --    Every persona has chosen a username (its persona name, S1-E2-04), so the account gate
     --    doesn't stop it at handle_missing; adult_writer also has a pen name.
     insert into public.profiles (
-      id, birth_year, age_check_result, age_checked_at, age_check_method, handle, pen_name
+      id, birth_year, age_check_result, age_checked_at, age_check_method, handle, pen_name,
+      country_code
     )
     values (
       persona.user_id,
@@ -95,7 +96,10 @@ begin
       case when persona.check_result = 'pending' then null else now() end,
       case when persona.check_result = 'pending' then null else 'facial_estimation'::public.age_check_method end,
       persona.persona_name,
-      case when persona.persona_name = 'adult_writer' then 'Lia Scrie' end
+      case when persona.persona_name = 'adult_writer' then 'Lia Scrie' end,
+      -- Every persona joined from Romania, so country-specific blocks (safety contacts,
+      -- S1-E10-13a) have a country to show; real sign-ups record it from the connection (S1-E2-10).
+      'RO'
     );
 
     -- 4. Staff personas get their role (S1-E2-07a later adds permissions).

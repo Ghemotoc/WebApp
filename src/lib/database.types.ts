@@ -517,6 +517,83 @@ export type Database = {
         };
         Relationships: [];
       };
+      safety_contact_gaps: {
+        Row: {
+          country_code: string;
+          first_seen_at: string;
+          id: string;
+          last_seen_at: string;
+          times_seen: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          country_code: string;
+          first_seen_at?: string;
+          id?: string;
+          last_seen_at?: string;
+          times_seen?: number;
+        };
+        Update: {
+          country_code?: string;
+          first_seen_at?: string;
+          id?: string;
+          last_seen_at?: string;
+          times_seen?: number;
+        };
+        Relationships: [];
+      };
+      safety_contacts: {
+        Row: {
+          checked_by: string;
+          confidence: string;
+          country_code: string;
+          created_at: string;
+          id: string;
+          kind: Database['public']['Enums']['safety_contact_kind'];
+          label: string;
+          last_checked_on: string;
+          link: string | null;
+          note: string | null;
+          opening_hours: string | null;
+          phone_number: string | null;
+          position: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          checked_by?: string;
+          confidence: string;
+          country_code: string;
+          created_at?: string;
+          id?: string;
+          kind: Database['public']['Enums']['safety_contact_kind'];
+          label: string;
+          last_checked_on: string;
+          link?: string | null;
+          note?: string | null;
+          opening_hours?: string | null;
+          phone_number?: string | null;
+          position: number;
+          updated_at?: string;
+        };
+        Update: {
+          checked_by?: string;
+          confidence?: string;
+          country_code?: string;
+          created_at?: string;
+          id?: string;
+          kind?: Database['public']['Enums']['safety_contact_kind'];
+          label?: string;
+          last_checked_on?: string;
+          link?: string | null;
+          note?: string | null;
+          opening_hours?: string | null;
+          phone_number?: string | null;
+          position?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       settings: {
         Row: {
           created_at: string;
@@ -1045,6 +1122,7 @@ export type Database = {
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
       normalise_invite_code: { Args: { code: string }; Returns: string };
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
+      note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       record_sign_in_failure: { Args: { email_hash: string }; Returns: string };
       record_sign_up_consent: {
@@ -1142,6 +1220,13 @@ export type Database = {
         | 'undisclosed_ai'
         | 'other';
       reportable_type: 'profile';
+      safety_contact_kind:
+        | 'emergency'
+        | 'child_helpline'
+        | 'csam_hotline'
+        | 'crisis_youth'
+        | 'police_online_child'
+        | 'regulator';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
     };
@@ -1296,6 +1381,14 @@ export const Constants = {
         'other',
       ],
       reportable_type: ['profile'],
+      safety_contact_kind: [
+        'emergency',
+        'child_helpline',
+        'csam_hotline',
+        'crisis_youth',
+        'police_online_child',
+        'regulator',
+      ],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
     },
