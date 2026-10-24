@@ -29,7 +29,8 @@
     "draftChapter": "Draft",
     "scheduledChapter": "Scheduled",
     "notPublicYet": "Only you can see this story until you publish a chapter. This is how readers will see it.",
-    "seeProfile": "See profile"
+    "seeProfile": "See profile",
+    "copiedWorkNote": "Moderators found that parts of this story copy a published work."
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

@@ -102,7 +102,8 @@
     "warn": "Warn",
     "suspend": "Suspend",
     "ban": "Ban",
-    "hide": "Hide"
+    "hide": "Hide",
+    "public_note": "Add a public note"
   },
   "case": {
     "documentTitle": "Case {{reference}} · {{productName}}",
@@ -191,5 +192,39 @@
     "reason": "Why is reporting paused?",
     "confirm": "Pause for {{days}} days",
     "done": "Reporting paused."
+  },
+  "notices": {
+    "caseHeading": "From the public form",
+    "orderFrom": "Removal order from {{authority}} ({{orderReference}})",
+    "noOrderReference": "no reference given",
+    "received": "{{reference}} · received {{when}} (Romania time) · written in {{language}}",
+    "address": "Address as sent",
+    "sentBy": "Sent by",
+    "anonymous": "No name or email given (allowed for child sexual content)",
+    "ordersHeading": "Removal orders received in the last 7 days",
+    "orderAlert": "{{reference}}, received {{when}} (Romania time). On call alerted.",
+    "orderUnmatched": "The address matched nothing we host: check it below.",
+    "openCase": "Open case {{reference}}",
+    "unmatchedHeading": "Notices to check by hand",
+    "unmatchedIntro": "The address in these notices matched nothing we host. Check each one, act on the content if you find it, then close the notice with what you found.",
+    "receivedAt": "Received {{when}} (Romania time)",
+    "actBy": "Act by {{when}} (Romania time)",
+    "close": "Close",
+    "closeLabel": "Close notice {{reference}}",
+    "closeNote": "What did you find?",
+    "closeConfirm": "Close the notice"
+  },
+  "copied": {
+    "source": "Source",
+    "notGiven": "Not given",
+    "inTheStory": "In the story",
+    "inTheSource": "In the published work",
+    "asked": "Asked the reporter",
+    "answer": "Answer",
+    "waiting": "Waiting for the reporter",
+    "question": "What do you need to know?",
+    "send": "Send the question",
+    "ask": "Ask for more details",
+    "askLabel": "Ask the reporter of {{reference}} for more details"
   }
 }

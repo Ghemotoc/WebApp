@@ -6,7 +6,8 @@
  * Reporters appear by username and age group to staff (the reported account never learns who
  * reported it). An order or a picture check has no reports, and says so. Pausing a reporter
  * (Q83: when their reports are unfounded again and again) asks for a reason and lasts
- * reporting_pause_days (30, Q7).
+ * reporting_pause_days (30, Q7). Each report can also ask its reporter for more details, and a
+ * copied-work report shows its passage and source side by side (S1-E10-08).
  * Who shows it: CasePage. What it calls: useSanctions.pause().
  */
 import { useState } from 'react';
@@ -18,6 +19,7 @@ import { Notice } from '@/components/ui/Notice';
 import type { CaseReport } from '../api/moderationQueue';
 import type { useSanctions } from '../hooks/useSanctions';
 
+import { AskForDetails, CopiedWorkComparison } from './CopiedWorkReportParts';
 import { ReasonForm } from './ReasonForm';
 
 /** useSanctions's result, passed down once. */
@@ -31,7 +33,15 @@ const reportingPauseDays = 30;
  *
  * @returns a list item
  */
-function ReportCard({ report, sanctions }: { report: CaseReport; sanctions: Sanctions }) {
+function ReportCard({
+  report,
+  sanctions,
+  isCaseOpen,
+}: {
+  report: CaseReport;
+  sanctions: Sanctions;
+  isCaseOpen: boolean;
+}) {
   const { t, i18n } = useTranslation('moderation');
   const [isPauseOpen, setIsPauseOpen] = useState(false);
   const handle = report.reporterHandle ?? t('case.noHandle');
@@ -53,6 +63,9 @@ function ReportCard({ report, sanctions }: { report: CaseReport; sanctions: Sanc
       <blockquote className="m-0 border-l-4 border-(--pill-gold-border) pl-3 text-body">
         {report.details === null || report.details === '' ? t('case.noDetails') : report.details}
       </blockquote>
+      {/* A copied-work report: the passage and the source side by side (S1-E10-08). */}
+      {report.reason === 'copied_published_work' && <CopiedWorkComparison report={report} />}
+      <AskForDetails report={report} isCaseOpen={isCaseOpen} />
       {report.reporterHandle !== null && !isPauseOpen && (
         <div>
           <Button
@@ -86,14 +99,17 @@ function ReportCard({ report, sanctions }: { report: CaseReport; sanctions: Sanc
  *
  * @param props.reports - the case's reports, oldest first
  * @param props.sanctions - useSanctions's result, for the pause action
+ * @param props.isCaseOpen - whether the case is open, so a moderator may still ask for details
  * @returns the section
  */
 export function CaseReports({
   reports,
   sanctions,
+  isCaseOpen,
 }: {
   reports: CaseReport[];
   sanctions: Sanctions;
+  isCaseOpen: boolean;
 }) {
   const { t } = useTranslation('moderation');
   return (
@@ -108,7 +124,12 @@ export function CaseReports({
       {sanctions.hasPaused && <Notice tone="success">{t('pause.done')}</Notice>}
       <ul className="m-0 flex list-none flex-col gap-3 p-0">
         {reports.map((report) => (
-          <ReportCard key={report.reference} report={report} sanctions={sanctions} />
+          <ReportCard
+            key={report.reference}
+            report={report}
+            sanctions={sanctions}
+            isCaseOpen={isCaseOpen}
+          />
         ))}
       </ul>
       {reports.length > 0 && <p className="m-0 text-sm text-meta">{t('case.anonymous')}</p>}

@@ -1,5 +1,5 @@
 /**
- * MakeInviteForm: "Make an invite link" on /staff/invites (story S1-E11-17).
+ * MakeInviteForm: "Make an invite link" on /staff/users/invites (story S1-E11-17).
  *
  * Board (AdminUsers, Invites tab): how many people (1 to 50, default 1), expires in (1, 7, 14 or
  * 30 days, default 14) and an optional private note (at most 80 characters; only staff see it;

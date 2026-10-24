@@ -29,6 +29,7 @@ import { useStoryPreview } from '../hooks/useStoryPreview';
 
 import { NoPreviewNotice } from './NoPreviewNotice';
 import { StoryChapterList } from './StoryChapterList';
+import { CopiedWorkNote } from './CopiedWorkNote';
 import { StoryHeader } from './StoryHeader';
 import { StorySideColumn } from './StorySideColumn';
 
@@ -101,6 +102,8 @@ export function StoryPage() {
           220 px and their label rows (140 px labels) would push the page sideways (rule 21). */}
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
         <div className="relative flex min-w-0 flex-[999_1_620px] flex-col gap-12">
+          {/* A moderator confirmed this story copies a published work (S1-E10-08). */}
+          <CopiedWorkNote storyId={story.id} />
           <StoryHeader story={story} />
           <StoryChapterList
             chapters={story.chapters}

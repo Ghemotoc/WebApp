@@ -25,10 +25,11 @@ export interface StaffAreaPage {
 export const staffAreaPages: StaffAreaPage[] = [
   // The moderation queue and case pages (S1-E10-03a), first in the menu (architecture 1.8.2).
   { area: 'moderation', href: '/staff/moderation', labelKey: 'nav.moderation' },
+  // Users (S1-E11-02): look-up and accounts, with Invites (S1-E11-17) as its second tab. Owner
+  // and admin, the only roles with the invites area, also hold users, so they reach it there.
+  { area: 'users', href: '/staff/users', labelKey: 'nav.users' },
   // S1-E2-07a built /staff/roles outside the shell; S1-E11-01 moves it in.
   { area: 'roles', href: '/staff/roles', labelKey: 'nav.roles' },
-  // Invite links for the March test (S1-E11-17); a tab under Users once S1-E11-02 lands.
-  { area: 'invites', href: '/staff/invites', labelKey: 'nav.invites' },
   { area: 'audit_log', href: '/staff/audit-log', labelKey: 'nav.auditLog' },
 ];
 

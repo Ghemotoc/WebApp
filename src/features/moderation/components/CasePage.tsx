@@ -30,6 +30,7 @@ import { registerModerationTranslations } from '../registerModerationTranslation
 
 import { AccountSanctions } from './AccountSanctions';
 import { CaseDecisions } from './CaseDecisions';
+import { CaseNotices } from './CaseNotices';
 import { CaseReports } from './CaseReports';
 import { CaseSignals } from './CaseSignals';
 import { DeadlineLabel } from './DeadlineLabel';
@@ -125,7 +126,12 @@ function CaseBody({
       <CaseHeader theCase={theCase} />
       <div className="grid max-w-[1100px] grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
-          <CaseReports reports={caseState.reports} sanctions={sanctions} />
+          <CaseReports
+            reports={caseState.reports}
+            sanctions={sanctions}
+            isCaseOpen={theCase.status === 'open'}
+          />
+          <CaseNotices caseId={theCase.id} />
           <CaseDecisions actions={caseState.actions} />
           <AccountSanctions sanctions={sanctions} />
         </div>
@@ -133,6 +139,7 @@ function CaseBody({
           {caseState.hasDecided && <Notice tone="success">{t('case.form.sent')}</Notice>}
           {theCase.status === 'open' ? (
             <DecisionForm
+              itemType={theCase.itemType}
               onDecide={caseState.decide}
               isDeciding={caseState.isDeciding}
               failure={caseState.decideFailure}

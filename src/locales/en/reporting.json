@@ -38,10 +38,22 @@
     "paused": "Your reporting is paused for now. You can still read and write."
   },
   "reasons": {
-    "illegal_content": { "label": "Illegal content", "hint": "Breaks the law in another way." },
-    "harassment": { "label": "Harassment", "hint": "Bullying, threats or targeting a person." },
-    "insults": { "label": "Insults", "hint": "Name-calling or insulting someone." },
-    "self_harm": { "label": "Self-harm", "hint": "Encourages or shows self-harm or suicide." },
+    "illegal_content": {
+      "label": "Illegal content",
+      "hint": "Breaks the law in another way."
+    },
+    "harassment": {
+      "label": "Harassment",
+      "hint": "Bullying, threats or targeting a person."
+    },
+    "insults": {
+      "label": "Insults",
+      "hint": "Name-calling or insulting someone."
+    },
+    "self_harm": {
+      "label": "Self-harm",
+      "hint": "Encourages or shows self-harm or suicide."
+    },
     "child_sexual_content": {
       "label": "Sexual content involving a minor",
       "hint": "Any sexual content involving someone under 18. We act on this first."
@@ -50,9 +62,18 @@
       "label": "Threat to a minor",
       "hint": "Grooming, threats or pressure aimed at someone under 18. We act on this first."
     },
-    "terrorism": { "label": "Terrorism", "hint": "Supports or promotes terrorism." },
-    "hate": { "label": "Hate", "hint": "Attacks people for who they are." },
-    "spam": { "label": "Spam", "hint": "Ads, scams or the same post over and over." },
+    "terrorism": {
+      "label": "Terrorism",
+      "hint": "Supports or promotes terrorism."
+    },
+    "hate": {
+      "label": "Hate",
+      "hint": "Attacks people for who they are."
+    },
+    "spam": {
+      "label": "Spam",
+      "hint": "Ads, scams or the same post over and over."
+    },
     "copyright": {
       "label": "Copyright",
       "hint": "Uses your own work, or someone else’s, without permission."
@@ -69,5 +90,26 @@
       "label": "Other",
       "hint": "Something else. Tell us below."
     }
+  },
+  "copied": {
+    "legend": "Where was it copied from? (all optional)",
+    "titleHelps": "Even just the title of the published work helps us check.",
+    "selected": "The passage you selected",
+    "removeSelected": "Leave the selected passage out",
+    "title": "Title of the published work (optional)",
+    "author": "Author (optional)",
+    "reference": "ISBN or link (optional)",
+    "passage": "The matching passage in the published work (optional)",
+    "passageHint": "Paste the lines the story copies, so a moderator can compare them."
+  },
+  "questions": {
+    "heading": "Questions about your reports",
+    "intro": "The moderation team needs a little more to check what you reported. Your answer goes only to them.",
+    "about": "About your report {{reference}} ({{reason}})",
+    "answer": "Your answer",
+    "send": "Send answer",
+    "thanks": "Thank you. The moderation team has your answer.",
+    "loadFailed": "We couldn’t load the questions about your reports. Try again later.",
+    "answerFailed": "We couldn’t send your answer. Check your connection and try again."
   }
 }

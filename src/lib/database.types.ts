@@ -195,8 +195,9 @@ export type Database = {
           top_reason: Database['public']['Enums']['report_reason'] | null;
           updated_at: string;
           user_id: string;
+          add_copied_work_note: undefined | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'add_copied_work_note';
         Insert: {
           created_at?: string;
           deadline_at: string;
@@ -555,6 +556,56 @@ export type Database = {
           },
           {
             foreignKeyName: 'consents_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      copied_work_notes: {
+        Row: {
+          case_id: string;
+          created_at: string;
+          id: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          case_id: string;
+          created_at?: string;
+          id?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          case_id?: string;
+          created_at?: string;
+          id?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'copied_work_notes_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'copied_work_notes_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: true;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'copied_work_notes_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
@@ -949,6 +1000,49 @@ export type Database = {
           },
         ];
       };
+      on_call_alerts: {
+        Row: {
+          acknowledged_at: string | null;
+          case_id: string | null;
+          created_at: string;
+          id: string;
+          kind: string;
+          notice_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          acknowledged_at?: string | null;
+          case_id?: string | null;
+          created_at?: string;
+          id?: string;
+          kind: string;
+          notice_id?: string | null;
+        };
+        Update: {
+          acknowledged_at?: string | null;
+          case_id?: string | null;
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          notice_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'on_call_alerts_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'on_call_alerts_notice_id_fkey';
+            columns: ['notice_id'];
+            isOneToOne: false;
+            referencedRelation: 'public_notices';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
@@ -1016,6 +1110,179 @@ export type Database = {
         };
         Relationships: [];
       };
+      public_notices: {
+        Row: {
+          authority_name: string | null;
+          case_id: string | null;
+          closed_at: string | null;
+          content_url: string;
+          copy_source_author: string | null;
+          copy_source_passage: string | null;
+          copy_source_reference: string | null;
+          copy_source_title: string | null;
+          created_at: string;
+          decided_at: string | null;
+          decision_emailed_at: string | null;
+          explanation: string;
+          good_faith_confirmed: boolean;
+          id: string;
+          item_id: string | null;
+          item_type: Database['public']['Enums']['reportable_type'] | null;
+          kind: string;
+          language: string;
+          notifier_email: string | null;
+          notifier_name: string | null;
+          order_reference: string | null;
+          owner_user_id: string | null;
+          reason: Database['public']['Enums']['report_reason'] | null;
+          received_at: string;
+          reference: string;
+          updated_at: string;
+          attach_notice_to_case: string | null;
+        };
+        ComputedFields: 'attach_notice_to_case';
+        Insert: {
+          authority_name?: string | null;
+          case_id?: string | null;
+          closed_at?: string | null;
+          content_url: string;
+          copy_source_author?: string | null;
+          copy_source_passage?: string | null;
+          copy_source_reference?: string | null;
+          copy_source_title?: string | null;
+          created_at?: string;
+          decided_at?: string | null;
+          decision_emailed_at?: string | null;
+          explanation: string;
+          good_faith_confirmed?: boolean;
+          id?: string;
+          item_id?: string | null;
+          item_type?: Database['public']['Enums']['reportable_type'] | null;
+          kind: string;
+          language?: string;
+          notifier_email?: string | null;
+          notifier_name?: string | null;
+          order_reference?: string | null;
+          owner_user_id?: string | null;
+          reason?: Database['public']['Enums']['report_reason'] | null;
+          received_at?: string;
+          reference: string;
+          updated_at?: string;
+        };
+        Update: {
+          authority_name?: string | null;
+          case_id?: string | null;
+          closed_at?: string | null;
+          content_url?: string;
+          copy_source_author?: string | null;
+          copy_source_passage?: string | null;
+          copy_source_reference?: string | null;
+          copy_source_title?: string | null;
+          created_at?: string;
+          decided_at?: string | null;
+          decision_emailed_at?: string | null;
+          explanation?: string;
+          good_faith_confirmed?: boolean;
+          id?: string;
+          item_id?: string | null;
+          item_type?: Database['public']['Enums']['reportable_type'] | null;
+          kind?: string;
+          language?: string;
+          notifier_email?: string | null;
+          notifier_name?: string | null;
+          order_reference?: string | null;
+          owner_user_id?: string | null;
+          reason?: Database['public']['Enums']['report_reason'] | null;
+          received_at?: string;
+          reference?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'public_notices_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'public_notices_owner_user_id_fkey';
+            columns: ['owner_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      report_detail_requests: {
+        Row: {
+          answer: string | null;
+          answered_at: string | null;
+          case_id: string;
+          created_at: string;
+          id: string;
+          question: string;
+          report_id: string;
+          requested_by_user_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          answer?: string | null;
+          answered_at?: string | null;
+          case_id: string;
+          created_at?: string;
+          id?: string;
+          question: string;
+          report_id: string;
+          requested_by_user_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          answer?: string | null;
+          answered_at?: string | null;
+          case_id?: string;
+          created_at?: string;
+          id?: string;
+          question?: string;
+          report_id?: string;
+          requested_by_user_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'report_detail_requests_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'report_detail_requests_report_id_fkey';
+            columns: ['report_id'];
+            isOneToOne: false;
+            referencedRelation: 'reports';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'report_detail_requests_requested_by_user_id_fkey';
+            columns: ['requested_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'report_detail_requests_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       report_reason_tiers: {
         Row: {
           created_at: string;
@@ -1048,6 +1315,10 @@ export type Database = {
         Row: {
           case_id: string | null;
           closed_at: string | null;
+          copy_source_author: string | null;
+          copy_source_passage: string | null;
+          copy_source_reference: string | null;
+          copy_source_title: string | null;
           created_at: string;
           details: string | null;
           id: string;
@@ -1055,6 +1326,7 @@ export type Database = {
           item_type: Database['public']['Enums']['reportable_type'];
           reason: Database['public']['Enums']['report_reason'];
           reference: string;
+          reported_passage: string | null;
           reported_user_id: string;
           reporter_age_band: Database['public']['Enums']['age_band'];
           source: string;
@@ -1066,6 +1338,10 @@ export type Database = {
         Insert: {
           case_id?: string | null;
           closed_at?: string | null;
+          copy_source_author?: string | null;
+          copy_source_passage?: string | null;
+          copy_source_reference?: string | null;
+          copy_source_title?: string | null;
           created_at?: string;
           details?: string | null;
           id?: string;
@@ -1073,6 +1349,7 @@ export type Database = {
           item_type: Database['public']['Enums']['reportable_type'];
           reason: Database['public']['Enums']['report_reason'];
           reference: string;
+          reported_passage?: string | null;
           reported_user_id: string;
           reporter_age_band: Database['public']['Enums']['age_band'];
           source?: string;
@@ -1082,6 +1359,10 @@ export type Database = {
         Update: {
           case_id?: string | null;
           closed_at?: string | null;
+          copy_source_author?: string | null;
+          copy_source_passage?: string | null;
+          copy_source_reference?: string | null;
+          copy_source_title?: string | null;
           created_at?: string;
           details?: string | null;
           id?: string;
@@ -1089,6 +1370,7 @@ export type Database = {
           item_type?: Database['public']['Enums']['reportable_type'];
           reason?: Database['public']['Enums']['report_reason'];
           reference?: string;
+          reported_passage?: string | null;
           reported_user_id?: string;
           reporter_age_band?: Database['public']['Enums']['age_band'];
           source?: string;
@@ -1776,6 +2058,26 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      add_copied_work_note: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['cases']['Row'],
+            Database['public']['Tables']['cases']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
+      admin_account_open_cases: {
+        Args: { target_user_id: string };
+        Returns: {
+          case_id: string;
+          deadline_at: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reference: string;
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason: Database['public']['Enums']['report_reason'];
+        }[];
+      };
       admin_account_sanctions: {
         Args: { target_user_id: string };
         Returns: {
@@ -1818,16 +2120,50 @@ export type Database = {
           staff_handle: string;
         }[];
       };
+      admin_case_notices: {
+        Args: { target_case_id: string };
+        Returns: {
+          alerted_at: string;
+          authority_name: string;
+          content_url: string;
+          copy_source_author: string;
+          copy_source_passage: string;
+          copy_source_reference: string;
+          copy_source_title: string;
+          explanation: string;
+          kind: string;
+          language: string;
+          notice_id: string;
+          notifier_email: string;
+          notifier_name: string;
+          order_reference: string;
+          reason: Database['public']['Enums']['report_reason'];
+          received_at: string;
+          reference: string;
+        }[];
+      };
       admin_case_reports: {
         Args: { target_case_id: string };
         Returns: {
+          copy_source_author: string;
+          copy_source_passage: string;
+          copy_source_reference: string;
+          copy_source_title: string;
           created_at: string;
+          detail_answer: string;
+          detail_asked_at: string;
+          detail_question: string;
           details: string;
           reason: Database['public']['Enums']['report_reason'];
           reference: string;
+          reported_passage: string;
           reporter_age_band: Database['public']['Enums']['age_band'];
           reporter_handle: string;
         }[];
+      };
+      admin_close_unmatched_notice: {
+        Args: { note: string; target_notice_id: string };
+        Returns: undefined;
       };
       admin_create_invite: {
         Args: { admits?: number; private_note?: string; valid_days?: number };
@@ -1936,6 +2272,17 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      admin_on_call_alerts: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          alert_id: string;
+          case_id: string;
+          case_reference: string;
+          created_at: string;
+          kind: string;
+          notice_reference: string;
+        }[];
+      };
       admin_pause_reporting: {
         Args: { note_text?: string; reporter_handle: string; source_case_id?: string };
         Returns: string;
@@ -1954,6 +2301,14 @@ export type Database = {
           removed_role: Database['public']['Enums']['staff_role'];
           target_user_id: string;
         };
+        Returns: boolean;
+      };
+      admin_request_report_details: {
+        Args: { question: string; report_reference: string };
+        Returns: undefined;
+      };
+      admin_reset_pen_name: {
+        Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
       };
       admin_restore_item: {
@@ -1996,7 +2351,60 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_sign_out_everywhere: {
+        Args: { reason_given: string; target_user_id: string };
+        Returns: number;
+      };
+      admin_unmatched_notices: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          authority_name: string;
+          content_url: string;
+          deadline_at: string;
+          explanation: string;
+          kind: string;
+          notice_id: string;
+          reason: Database['public']['Enums']['report_reason'];
+          received_at: string;
+          reference: string;
+        }[];
+      };
+      admin_user_account: {
+        Args: { target_user_id: string };
+        Returns: {
+          account_status: Database['public']['Enums']['account_status'];
+          age_band: Database['public']['Enums']['age_band'];
+          age_check_method: string;
+          age_check_result: Database['public']['Enums']['age_check_result'];
+          age_checked_at: string;
+          email_masked: string;
+          handle: string;
+          joined_at: string;
+          may_act: boolean;
+          may_read_audit_log: boolean;
+          may_reveal_email: boolean;
+          may_view_sanctions: boolean;
+          pen_name: string;
+          staff_roles: Database['public']['Enums']['staff_role'][];
+          user_id: string;
+        }[];
+      };
       admin_user_id_for_handle: { Args: { wanted_handle: string }; Returns: string };
+      admin_user_lookup: {
+        Args: { search_text: string };
+        Returns: {
+          account_status: Database['public']['Enums']['account_status'];
+          age_check_result: Database['public']['Enums']['age_check_result'];
+          age_checked_at: string;
+          handle: string;
+          matched_by: string;
+          open_case_count: number;
+          pen_name: string;
+          sanction_kinds: Database['public']['Enums']['sanction_kind'][];
+          staff_roles: Database['public']['Enums']['staff_role'][];
+          user_id: string;
+        }[];
+      };
       age_band: {
         Args: Record<PropertyKey, never>;
         Returns: Database['public']['Enums']['age_band'];
@@ -2009,6 +2417,19 @@ export type Database = {
           on_date: string;
         };
         Returns: Database['public']['Enums']['age_band'];
+      };
+      answer_report_detail_request: {
+        Args: { answer_text: string; target_request_id: string };
+        Returns: undefined;
+      };
+      attach_notice_to_case: {
+        Args: {
+          new_notice: Omit<
+            Database['public']['Tables']['public_notices']['Row'],
+            Database['public']['Tables']['public_notices']['ComputedFields']
+          >;
+        };
+        Returns: string;
       };
       attach_report_to_case: {
         Args: {
@@ -2130,6 +2551,14 @@ export type Database = {
         Returns: boolean;
       };
       is_staff_session: { Args: Record<PropertyKey, never>; Returns: boolean };
+      item_for_public_address: {
+        Args: { address: string };
+        Returns: {
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          owner_user_id: string;
+        }[];
+      };
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
       legal_documents_to_accept: {
         Args: { target_user_id: string };
@@ -2264,6 +2693,16 @@ export type Database = {
         };
       };
       my_live_story_id: { Args: { story_slug: string }; Returns: string };
+      my_report_detail_requests: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          asked_at: string;
+          question: string;
+          reason: Database['public']['Enums']['report_reason'];
+          report_reference: string;
+          request_id: string;
+        }[];
+      };
       my_sanctions: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2292,6 +2731,7 @@ export type Database = {
         Returns: string;
       };
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
+      next_notice_reference: { Args: { notice_kind: string }; Returns: string };
       normalise_invite_code: { Args: { code: string }; Returns: string };
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
@@ -2329,11 +2769,16 @@ export type Database = {
         };
       };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
+      public_notice_payload_is_signed: {
+        Args: { payload: string; signature: string };
+        Returns: boolean;
+      };
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
       rating_allows: {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;
@@ -2396,6 +2841,7 @@ export type Database = {
       };
       report_item: {
         Args: {
+          copy_details?: Json;
           details?: string;
           item_reference: string;
           item_type: Database['public']['Enums']['reportable_type'];
@@ -2416,6 +2862,10 @@ export type Database = {
       reportable_item_summary: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: string;
+      };
+      require_account_action_allowed: {
+        Args: { reason_given: string; target_user_id: string };
+        Returns: undefined;
       };
       require_not_last_owner: {
         Args: { removed_role: Database['public']['Enums']['staff_role']; target_user_id: string };
@@ -2467,10 +2917,18 @@ export type Database = {
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
+      story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
+      submit_public_notice: {
+        Args: { payload: string; signature: string };
+        Returns: {
+          notice_reference: string;
+          received_at: string;
+        }[];
+      };
       teaser_of: { Args: { chapter_body: string; word_limit: number }; Returns: string };
       tier_hours: {
         Args: { target_tier: Database['public']['Enums']['case_tier'] };
@@ -2515,7 +2973,8 @@ export type Database = {
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
       moderated_state: 'hidden' | 'removed';
-      moderation_action: 'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban';
+      moderation_action:
+        'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban' | 'public_note';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -2716,7 +3175,16 @@ export const Constants = {
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
       moderated_state: ['hidden', 'removed'],
-      moderation_action: ['no_action', 'hide', 'remove', 'restrict', 'warn', 'suspend', 'ban'],
+      moderation_action: [
+        'no_action',
+        'hide',
+        'remove',
+        'restrict',
+        'warn',
+        'suspend',
+        'ban',
+        'public_note',
+      ],
       report_reason: [
         'illegal_content',
         'harassment',

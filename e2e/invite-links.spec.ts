@@ -69,7 +69,7 @@ test.describe('invite links (S1-E11-17)', () => {
   test('the admin makes a one-use link, an adult joins with it, and the link ends', async ({
     browser,
   }) => {
-    const admin = await openAs(browser, 'admin', '/staff/invites');
+    const admin = await openAs(browser, 'admin', '/staff/users/invites');
     await expect(admin.getByRole('heading', { name: 'Invite links' })).toBeVisible();
     await admin.getByRole('button', { name: 'Make an invite link' }).click();
     const form = admin.getByRole('form', { name: 'New invite link' });
@@ -137,7 +137,7 @@ test.describe('invite links (S1-E11-17)', () => {
   });
 
   test('the admin makes a second link and revokes it with a reason', async ({ browser }) => {
-    const admin = await openAs(browser, 'admin', '/staff/invites');
+    const admin = await openAs(browser, 'admin', '/staff/users/invites');
     await admin.getByRole('button', { name: 'Make an invite link' }).click();
     const form = admin.getByRole('form', { name: 'New invite link' });
     await form.getByLabel('How many people').fill('5');
@@ -209,12 +209,12 @@ test.describe('invite links (S1-E11-17)', () => {
   });
 
   test('a moderator is refused', async ({ browser }) => {
-    const page = await openAs(browser, 'moderator', '/staff/invites');
+    const page = await openAs(browser, 'moderator', '/staff/users/invites');
     await expect(page.getByText('Only an owner or admin can make invite links.')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Make an invite link' })).toHaveCount(0);
   });
 
-  for (const view of everyView(['/staff/invites'])) {
+  for (const view of everyView(['/staff/users/invites'])) {
     test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {

@@ -55,6 +55,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/reporting/` | The shared Report button and dialog (`<ReportButton>`), the one report form; see its README and architecture 1.7.11 | S1-E10-01 |
 | `src/features/moderation/` | The report queue and the case page of the admin site: tiers, deadlines, grouped reports and the decision; see its README | S1-E10-03a |
 | `src/features/contact/` | "Write to us": the Contact us form, through our own Pages Function and Brevo; see its README | S1-E14-04 |
+| `src/features/notices/` | "Report illegal content": the public report form and the authorities' removal-order contact point, through our own Pages Function; see its README | S1-E10-02 |
 | `src/features/safety/` | "Is someone in danger right now?": the helplines for the reader's country, on the report dialog and the contact page; see its README | S1-E10-13a |
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
@@ -259,10 +260,16 @@ The error page shows the first six characters of the stored row's ID as the code
   │  StaffLayout: skip link, StaffBar (the areas the person may open), the page, StaffFooter
   │     useMyStaffAccess → api/staffAccess.ts → my_staff_areas() + own staff_roles + own handle
   │     a member or a visitor gets StaffAccessRefused instead (the server refused already)
-  │  staffAreas.ts: area → page (roles, audit_log; each staff story adds its own)
+  │  staffAreas.ts: area → page (moderation, users, roles, audit_log; each staff story adds its own)
   ├─ /staff            StaffHomePage: one card per area the person may open
   ├─ /staff/roles      StaffRolesPage (S1-E2-07a, below)
-  ├─ /staff/invites    InvitesPage (S1-E11-17): MakeInviteForm → useInviteLinks → api/inviteLinks.ts
+  ├─ /staff/users      UsersPage (S1-E11-02): search → useUserLookup → admin_user_lookup()
+  ├─ /staff/users/:id  AccountPage: useAccount → admin_user_account(), admin_account_open_cases(),
+  │                      admin_account_sanctions(), admin_search_audit_log(), admin_reveal_email();
+  │                      AccountActions → useAccountActions → admin_apply_sanction(),
+  │                      admin_reset_pen_name(), admin_sign_out_everywhere(), admin_approve_username()
+  ├─ /staff/users/invites  InvitesPage (S1-E11-17), the Users area's second tab (/staff/invites
+  │                      redirects): MakeInviteForm → useInviteLinks → api/inviteLinks.ts
   │                      admin_create_invite() (the code once, hashed in invites) / admin_list_invites()
   │                      / admin_revoke_invite(); the link is brand.siteUrl + /join/<code> (S1-E2-01)
   └─ /staff/audit-log  AuditLogPage: AuditLogFilters → useAuditLog → api/auditLog.ts
@@ -280,7 +287,7 @@ The error page shows the first six characters of the stored row's ID as the code
 audit_log (append-only: no role, the owner included, can change or delete a row)
 ```
 
-Invite links (S1-E11-17): an admin makes a link at /staff/invites; sign-up at /join/<code> calls `use_platform_invite()` inside the sign-up transaction, once the new profile exists (one conditional UPDATE, so the last place goes once). The audit log gets `invite.created` and `invite.revoked` from the admin, `invite.redeemed` from the new account (its user ID only) and `invite.used_up` from the system (`audit_log.actor = 'system'`, no user ID), never on behalf of the admin (CTO, 24 Oct 2026).
+Invite links (S1-E11-17): an admin makes a link at /staff/users/invites; sign-up at /join/<code> calls `use_platform_invite()` inside the sign-up transaction, once the new profile exists (one conditional UPDATE, so the last place goes once). The audit log gets `invite.created` and `invite.revoked` from the admin, `invite.redeemed` from the new account (its user ID only) and `invite.used_up` from the system (`audit_log.actor = 'system'`, no user ID), never on behalf of the admin (CTO, 24 Oct 2026).
 
 Every staff screen reads and writes only through policies and `admin_*` functions, each of which asks `staff_may()` → `is_staff_session()` (architecture 1.8.1). The menu is built from the same answer, but it is a convenience: the server refuses on its own.
 
@@ -375,6 +382,58 @@ Brevo's HTTP API (BREVO_API_KEY, by hand) on Cloudflare · Mailpit (http://127.0
 ```
 
 No table, no log: the message, the email and the IP address are never stored (ADR 0006). Abuse: the honeypot here and a Cloudflare rate-limit rule on `/api/contact`, set by hand (`docs/runbooks/contact-form.md`).
+
+## Reporting without an account and removal orders (S1-E10-02)
+
+```
+footer "Report content" · /legal/contact "Report illegal content" / "Authorities: send a removal order"
+  │  /report (router) → NoticePage → NoticeForm                            src/features/notices/
+  │     the kind (the report reasons, or a removal order), the link, why, name and email
+  │     (optional only for child sexual content), the good-faith box, the hidden honeypot;
+  │     lib/noticeDraft.ts checks it; src/schemas/notice.ts is the shared contract
+  │  useNoticeForm → api/notice.ts → POST /api/notice (JSON)
+  ▼
+functions/api/notice.ts (Cloudflare) · server/pages-functions-plugin.ts (locally)
+  │  server/notice.ts handleNotice(): the schema → a notice that looks like a bot (honeypot or
+  │  under 3 seconds) gets a made-up answer; an order never meets this check → signs the fields
+  │  with NOTICE_SECRET → rpc submit_public_notice(payload, signature)
+  ▼
+submit_public_notice() (…_s1_e10_02_public_notices.sql)
+  │  checks the signature against Vault's public_notice_secret → public_notices row with an
+  │  N-000123 or TCO-0001 reference → item_for_public_address() matches /s/…, /s/…/<code>, /u/…
+  │  → attach_notice_to_case(): opens or joins the item's case (an order: one hour from receipt)
+  │  → an order logs on_call_alerts at once (the phone alert is S1-E10-09)
+  ▼
+server/notice.ts emails the acknowledgement (reference and time of receipt) and, for an order,
+the support inbox. Staff: the case page's "From the public form" (admin_case_notices), the queue's
+orders and "Notices to check by hand" (admin_on_call_alerts, admin_unmatched_notices,
+admin_close_unmatched_notice). Deciding a case marks its notices decided for the decision email
+(S1-E10-04). purge_old_public_notices() deletes closed notices after 3 years.
+```
+
+Set-up by hand: `docs/runbooks/notice-form.md`.
+
+## Copied-work reports (S1-E10-08)
+
+```
+story page: the reader selects a passage, presses Report      src/features/reporting/
+  │  ReportButton reads the selection (on pointer down too, a mouse press can clear it)
+  │  ReportDialog → "Copied from a published work" → CopySourceFields: the selected passage
+  │  and the published work's title, author, ISBN or link and matching passage, all optional
+  │  api/reports.ts → rpc report_item(…, copy_details)            (the public form: /report sends
+  │                                                                copySource, S1-E10-02)
+  ▼
+reports.copy_source_* and reported_passage (…_s1_e10_08_copied_work.sql)
+  ▼
+case page: CaseReports → CopiedWorkComparison (the source, the two passages side by side)
+  │  AskForDetails → admin_request_report_details() → report_detail_requests
+  │     the reporter: Settings → ReportQuestionsSection → my_report_detail_requests(),
+  │     answer_report_detail_request()
+  │  DecisionForm "Add a public note" (stories and chapters only) → admin_decide_case()
+  │     → add_copied_work_note() → copied_work_notes
+  ▼
+story page: CopiedWorkNote ← story_has_copied_work_note()     src/features/reading/
+```
 
 ## The helplines for the reader's country (S1-E10-13a)
 

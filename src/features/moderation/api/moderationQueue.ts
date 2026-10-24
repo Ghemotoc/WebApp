@@ -53,6 +53,21 @@ export interface CaseReport {
   reporterHandle: string | null;
   reporterAgeBand: AgeBand;
   createdAt: string;
+  /** A copied-work report's source, as the reporter gave it (S1-E10-08); null for other reasons. */
+  copySource: CopySource | null;
+  /** The passage the reporter selected in the story, if any. */
+  reportedPassage: string | null;
+  /** The latest question to the reporter (S1-E10-08), with its answer once given. */
+  detailQuestion: string | null;
+  detailAnswer: string | null;
+}
+
+/** Where a reporter says the text was copied from; every field is optional (S1-E10-08). */
+export interface CopySource {
+  title: string | null;
+  author: string | null;
+  reference: string | null;
+  passage: string | null;
 }
 
 /** One decision on a case. */
@@ -202,6 +217,28 @@ export async function getCase(
 }
 
 /**
+ * A copied-work report's source, or null when the reporter gave none.
+ *
+ * @param row - the four source columns of admin_case_reports()
+ * @returns the source, or null
+ */
+function copySourceFromRow(row: {
+  copy_source_title: string | null;
+  copy_source_author: string | null;
+  copy_source_reference: string | null;
+  copy_source_passage: string | null;
+}): CopySource | null {
+  const source = {
+    title: row.copy_source_title,
+    author: row.copy_source_author,
+    reference: row.copy_source_reference,
+    passage: row.copy_source_passage,
+  };
+  const hasAnything = Object.values(source).some((value) => value !== null);
+  return hasAnything ? source : null;
+}
+
+/**
  * Lists a case's reports, oldest first.
  *
  * @param client - the shared Supabase client
@@ -222,6 +259,10 @@ export async function listCaseReports(
     reporterHandle: row.reporter_handle,
     reporterAgeBand: row.reporter_age_band,
     createdAt: row.created_at,
+    copySource: copySourceFromRow(row),
+    reportedPassage: row.reported_passage,
+    detailQuestion: row.detail_question,
+    detailAnswer: row.detail_answer,
   }));
 }
 

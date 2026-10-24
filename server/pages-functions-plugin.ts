@@ -4,7 +4,9 @@
  *
  * Who uses it: vite.config.ts. It never runs in production: Cloudflare runs functions/ itself.
  * Routes: POST /api/password-check (server/password-check.ts), GET /api/signup-context
- * (server/signup-context.ts, S1-E2-10), POST /api/contact (server/contact.ts, S1-E14-04) and
+ * (server/signup-context.ts, S1-E2-10), POST /api/contact (server/contact.ts, S1-E14-04),
+ * POST /api/notice (server/notice.ts, S1-E10-02: signed with NOTICE_SECRET, the same value the
+ * tests put in the local Vault; its emails go to Mailpit too) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * Stand-ins:
@@ -29,6 +31,7 @@ import { brandDefaults } from '../src/config/brand.ts';
 
 import { handleContact, sendWithMailpit } from './contact.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
+import { handleNotice } from './notice.ts';
 import { handleSignupContext } from './signup-context.ts';
 import {
   fetchFromHaveIBeenPwned,
@@ -113,11 +116,13 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
  *
  * @param url - the request's address
  * @param sharedLink - the shared-link handler for this server
+ * @param environment - the VITE_ values, for the functions that read the database
  * @returns the function that answers it, or null for every other address
  */
 function handlerFor(
   url: string | undefined,
   sharedLink: (request: Request) => Promise<Response>,
+  environment: Record<string, string>,
 ): ((request: Request) => Promise<Response>) | null {
   // A shared story or chapter (S1-E4-04); the query, if any, is ignored as on Cloudflare.
   if (parseSharedAddress((url ?? '').split('?')[0] ?? '') !== null) return sharedLink;
@@ -131,6 +136,18 @@ function handlerFor(
     // has, with today's values as the fallback (src/config/brand.ts).
     return (request) =>
       handleContact(request, {
+        supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
+        productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
+        sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
+      });
+  }
+  if (url === '/api/notice') {
+    // The public report form (S1-E10-02): the local Supabase, the local secret, Mailpit.
+    return (request) =>
+      handleNotice(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+        secret: process.env.NOTICE_SECRET,
         supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
         productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
         sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
@@ -154,15 +171,17 @@ function handlerFor(
  * The middleware that answers the functions' addresses.
  *
  * @param sharedLink - the shared-link handler for this server
+ * @param environment - the VITE_ values, passed on to handlerFor()
  * @returns Connect middleware for Vite's dev and preview servers
  */
 function pagesFunctionsMiddleware(
   sharedLink: (request: Request) => Promise<Response>,
+  environment: Record<string, string>,
 ): Connect.NextHandleFunction {
   return (request, response, next) => {
     // Only page loads: the app's own files and data calls under /s/ don't exist, but be safe.
     if (request.method !== 'GET' && request.url?.startsWith('/s/')) return next();
-    const handler = handlerFor(request.url, sharedLink);
+    const handler = handlerFor(request.url, sharedLink, environment);
     if (handler === null) return next();
     void toWebRequest(request)
       .then(handler)
@@ -200,7 +219,7 @@ export function pagesFunctionsPlugin(): Plugin {
           await readFile(resolve(server.config.root, 'index.html'), 'utf8'),
         );
       server.middlewares.use(
-        pagesFunctionsMiddleware(sharedLinkHandler(readIndexHtml, environment)),
+        pagesFunctionsMiddleware(sharedLinkHandler(readIndexHtml, environment), environment),
       );
     },
     configurePreviewServer: (server) => {
@@ -208,7 +227,7 @@ export function pagesFunctionsPlugin(): Plugin {
       const outDir = resolve(server.config.root, server.config.build.outDir);
       const readIndexHtml: ReadIndexHtml = () => readFile(resolve(outDir, 'index.html'), 'utf8');
       server.middlewares.use(
-        pagesFunctionsMiddleware(sharedLinkHandler(readIndexHtml, environment)),
+        pagesFunctionsMiddleware(sharedLinkHandler(readIndexHtml, environment), environment),
       );
     },
   };

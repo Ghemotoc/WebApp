@@ -90,14 +90,30 @@ const staffRoutes: RouteObject = {
         return { Component: StaffRolesPage };
       },
     },
-    // Invite links for the March test, owner and admin (S1-E11-17).
+    // Users: the Accounts tab, one account, and the Invites tab (S1-E11-02; Invites from
+    // S1-E11-17, owner and admin). The old /staff/invites address still works.
     {
-      path: 'invites',
+      path: 'users',
+      lazy: async () => {
+        const { UsersPage } = await import('@/features/staff/components/users/UsersPage');
+        return { Component: UsersPage };
+      },
+    },
+    {
+      path: 'users/invites',
       lazy: async () => {
         const { InvitesPage } = await import('@/features/staff/components/invites/InvitesPage');
         return { Component: InvitesPage };
       },
     },
+    {
+      path: 'users/:userId',
+      lazy: async () => {
+        const { AccountPage } = await import('@/features/staff/components/users/AccountPage');
+        return { Component: AccountPage };
+      },
+    },
+    { path: 'invites', element: <Navigate to="/staff/users/invites" replace /> },
     // The audit log: search and CSV export for owner and admin (S1-E11-01).
     {
       path: 'audit-log',
@@ -263,6 +279,15 @@ function pageRoutes(): RouteObject[] {
       lazy: async () => {
         const { ContactPage } = await import('@/features/contact/components/ContactPage');
         return { Component: ContactPage };
+      },
+    },
+    // Report illegal content: the public report form and the authorities' contact point
+    // (S1-E10-02; Lane C), loaded when opened.
+    {
+      path: '/report',
+      lazy: async () => {
+        const { NoticePage } = await import('@/features/notices/components/NoticePage');
+        return { Component: NoticePage };
       },
     },
     ...(isDesignPageIncluded ? [designRoute] : []),

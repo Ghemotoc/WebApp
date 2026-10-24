@@ -29,7 +29,8 @@
     "draftChapter": "Ciornă",
     "scheduledChapter": "Programat",
     "notPublicYet": "Doar tu vezi această poveste până publici un capitol. Așa o vor vedea cititorii.",
-    "seeProfile": "Vezi profilul"
+    "seeProfile": "Vezi profilul",
+    "copiedWorkNote": "Moderatorii au constatat că unele părți ale acestei povești copiază o operă publicată."
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

@@ -102,7 +102,8 @@
     "warn": "Avertizează",
     "suspend": "Suspendă",
     "ban": "Interzice",
-    "hide": "Ascunde"
+    "hide": "Ascunde",
+    "public_note": "Adaugă o notă publică"
   },
   "case": {
     "documentTitle": "Cazul {{reference}} · {{productName}}",
@@ -191,5 +192,39 @@
     "reason": "De ce este suspendată raportarea?",
     "confirm": "Suspendă pentru {{days}} de zile",
     "done": "Raportarea a fost suspendată."
+  },
+  "notices": {
+    "caseHeading": "Din formularul public",
+    "orderFrom": "Ordin de eliminare de la {{authority}} ({{orderReference}})",
+    "noOrderReference": "fără referință",
+    "received": "{{reference}} · primit pe {{when}} (ora României) · scris în {{language}}",
+    "address": "Adresa trimisă",
+    "sentBy": "Trimis de",
+    "anonymous": "Fără nume sau email (permis pentru conținut sexual cu minori)",
+    "ordersHeading": "Ordine de eliminare primite în ultimele 7 zile",
+    "orderAlert": "{{reference}}, primit pe {{when}} (ora României). Persoana de serviciu a fost alertată.",
+    "orderUnmatched": "Adresa nu corespunde cu nimic de la noi: verific-o mai jos.",
+    "openCase": "Deschide cazul {{reference}}",
+    "unmatchedHeading": "Raportări de verificat manual",
+    "unmatchedIntro": "Adresa din aceste raportări nu corespunde cu nimic de la noi. Verifică-le pe rând, acționează asupra conținutului dacă îl găsești, apoi închide raportarea cu ce ai găsit.",
+    "receivedAt": "Primită pe {{when}} (ora României)",
+    "actBy": "Acționează până la {{when}} (ora României)",
+    "close": "Închide",
+    "closeLabel": "Închide raportarea {{reference}}",
+    "closeNote": "Ce ai găsit?",
+    "closeConfirm": "Închide raportarea"
+  },
+  "copied": {
+    "source": "Sursa",
+    "notGiven": "Nu a fost dat",
+    "inTheStory": "În poveste",
+    "inTheSource": "În opera publicată",
+    "asked": "Întrebarea pentru cel care a raportat",
+    "answer": "Răspuns",
+    "waiting": "Așteptăm răspunsul",
+    "question": "Ce ai nevoie să afli?",
+    "send": "Trimite întrebarea",
+    "ask": "Cere mai multe detalii",
+    "askLabel": "Cere mai multe detalii celui care a trimis {{reference}}"
   }
 }
