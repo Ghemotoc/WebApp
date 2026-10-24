@@ -21,6 +21,8 @@ import { myStoriesKey } from './useMyStories';
 
 /** The answers as the form keeps them while typing. */
 export interface NewStoryAnswers {
+  /** Made once per form, so the automatic cover can be shown before the story exists (S1-E3-13). */
+  storyId: string;
   title: string;
   blurb: string;
   languageCode: string;
@@ -32,15 +34,23 @@ export interface NewStoryAnswers {
 /** A translation key per field that has a mistake. */
 export type FieldErrors = Partial<Record<keyof NewStoryAnswers, string>>;
 
-/** What the form starts with: Romanian (the first market) and fiction, as the board shows. */
-const emptyAnswers: NewStoryAnswers = {
-  title: '',
-  blurb: '',
-  languageCode: 'ro',
-  categorySlug: 'fiction',
-  tags: [],
-  cover: { kind: 'automatic' },
-};
+/**
+ * What the form starts with: Romanian (the first market) and fiction, as the board shows, and a
+ * fresh story ID.
+ *
+ * @returns the empty answers
+ */
+function emptyAnswers(): NewStoryAnswers {
+  return {
+    storyId: crypto.randomUUID(),
+    title: '',
+    blurb: '',
+    languageCode: 'ro',
+    categorySlug: 'fiction',
+    tags: [],
+    cover: { kind: 'automatic' },
+  };
+}
 
 /**
  * Turns zod's issues into one message key per field (the first issue wins).

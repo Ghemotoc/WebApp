@@ -94,6 +94,7 @@ export async function createStory(
     category_slug: input.categorySlug,
     tag_names: input.tags,
     cover: input.cover,
+    story_id: input.storyId,
   });
   if (error !== null) throw new Error(`Could not create the story: ${error.message}`);
   // The function answers JSON; read it back into the two shapes the screen knows.

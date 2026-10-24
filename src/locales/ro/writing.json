@@ -118,7 +118,6 @@
   "preview": {
     "eyebrow": "Cum o vor vedea cititorii",
     "onlyYou": "Doar tu",
-    "automaticCover": "Copertă automată",
     "noBlurb": "Descrierea ta scurtă apare aici.",
     "deleteLater": "Poți șterge povestea mai târziu, din setările ei. Te întrebăm de două ori, o ascundem imediat și o ștergem definitiv după 30 de zile. Până atunci poți reveni."
   },
@@ -131,6 +130,7 @@
     "tagTooLong": "O etichetă poate avea cel mult 40 de caractere.",
     "tooManyTags": "O poveste poate avea cel mult 10 etichete.",
     "duplicateTag": "Două dintre aceste etichete sunt la fel dacă ignorăm majusculele și diacriticele.",
-    "loadFailed": "Nu am putut încărca pagina. Verifică-ți conexiunea și încearcă din nou."
+    "loadFailed": "Nu am putut încărca pagina. Verifică-ți conexiunea și încearcă din nou.",
+    "storyIdInvalid": "Povestea nu a putut primi un identificator. Reîncarcă pagina și încearcă din nou."
   }
 }

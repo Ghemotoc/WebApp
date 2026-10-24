@@ -8,5 +8,5 @@ The writer's side: creating a story, its cover, and (later in the lane) chapters
 - `hooks/useNewStoryForm.ts` (answers, zod checks, `create_story()`), `useStoryFormOptions.ts` (open languages and categories), `useMyStories.ts` (the writer's own list).
 - `api/stories.ts`: `open_story_languages()`, `categories`, `create_story()`, `stories` with tags.
 - `lib/tags.ts`: the tag rule the form applies as the writer types, the same as the database's `normalise_tag()`.
-- Covers are drawn by `src/components/covers/` (`DrawnCover`, `coverDesigns.ts`), shared with every screen that shows a cover.
+- Covers are drawn by `src/components/covers/` (`DrawnCover`, `coverDesigns.ts`, `automaticCover.ts` for a skipped cover, S1-E3-13), shared with every screen that shows a cover. The form makes the story's ID so the automatic design is known before the story exists.
 - The database side: `supabase/README.md`, "Stories".

@@ -44,5 +44,4 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | --- | --- | --- | --- |
 | Flag `picture_uploads` (off, public) | The `covers` bucket (private, JPEG/PNG/WebP, 5 MB) and its owner-only rules exist; `create_story()` refuses an upload cover and the form shows no upload tab or Canva button (decided 23 Oct 2026: no picture uploads in the demo; the contract only) | the cover-upload story once the picture check (S1-E10-05) is real: the tall and square upload, the crop tool and `IMAGE_CHECK=stub` for local work; Canva is S1-E3-12 | same |
 | `is_moderated_away(type, id)` | answers false: nothing is hidden or removed by a moderator yet (shared contract with Lane C; guarded so Lane C's real function replaces it) | S1-E10-01 and the moderation stories | same |
-| Automatic covers on screen | a dashed "Automatic cover" box where the drawn-from-the-ID cover will be | S1-E3-13 | same |
 | Doodle colours | the SVG files carry the boards' own ink colours; night mode shows them as they are | Lane B's `--doodle-*` tokens and recoloured files | same |

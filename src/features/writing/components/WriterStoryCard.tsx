@@ -11,40 +11,38 @@
  */
 import { useTranslation } from 'react-i18next';
 
+import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { InfoPill } from '@/components/ui/InfoPill';
 
 import type { MyStory } from '../api/stories';
+
+/** What the card needs: the story and the cover to draw (YourWritingPage works it out per row). */
+export interface WriterStoryCardProps {
+  story: MyStory;
+  /** The writer's drawn choice, or the automatic design from the ID (S1-E3-13). */
+  cover: DrawnCoverChoice;
+}
 
 /**
  * Renders the card.
  *
  * @returns the story card
  */
-export function WriterStoryCard({ story }: { story: MyStory }) {
+export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
   const { t } = useTranslation('writing');
   return (
     <article
       aria-labelledby={`story-${story.id}-title`}
       className="flex gap-5 rounded-card border border-border bg-surface p-5 shadow-card"
     >
-      {story.drawnCover !== null ? (
-        <DrawnCover
-          title={story.title}
-          choice={story.drawnCover}
-          size="tile"
-          isDecorative
-          className="w-24 shrink-0 self-start"
-        />
-      ) : (
-        // S1-E3-13 draws the automatic cover from the story's ID.
-        <span
-          aria-hidden="true"
-          className="flex aspect-[5/8] w-24 shrink-0 items-center justify-center self-start rounded-cover border border-dashed border-dashed-border bg-panel p-2 text-center text-[11px] text-meta"
-        >
-          {t('preview.automaticCover')}
-        </span>
-      )}
+      <DrawnCover
+        title={story.title}
+        choice={cover}
+        size="tile"
+        isDecorative
+        className="w-24 shrink-0 self-start"
+      />
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <h3
           id={`story-${story.id}-title`}

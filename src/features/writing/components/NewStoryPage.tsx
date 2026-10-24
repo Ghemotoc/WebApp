@@ -144,6 +144,7 @@ export function NewStoryPage() {
             set={form.set}
           />
           <CoverSection
+            storyId={form.answers.storyId}
             title={form.answers.title}
             penName={penName}
             cover={form.answers.cover}

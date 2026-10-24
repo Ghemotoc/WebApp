@@ -985,6 +985,7 @@ export type Database = {
           category_slug: string;
           cover: Json;
           language_code: string;
+          story_id?: string;
           tag_names: string[];
           title: string;
         };

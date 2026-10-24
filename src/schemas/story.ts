@@ -34,6 +34,9 @@ export type StoryCoverChoice = z.infer<typeof storyCoverSchema>;
 
 /** The answers on the new story form. */
 export const newStorySchema = z.object({
+  // The form makes the story's ID (crypto.randomUUID()) so the automatic cover is known before
+  // the story exists (S1-E3-13); the database refuses an ID already in use.
+  storyId: z.uuid('errors.storyIdInvalid'),
   title: z
     .string()
     .trim()

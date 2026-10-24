@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { newStorySchema } from './story';
 
 const good = {
+  storyId: '00000000-0000-4000-9000-000000000099',
   title: 'Stația meteo',
   blurb: 'Bunica notează vremea.',
   languageCode: 'ro',
