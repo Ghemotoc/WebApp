@@ -2,7 +2,7 @@
 --
 -- What it adds: the part of supabase/seed.sql that arrived after the test personas were loaded on
 -- staging: the safeguarding permission for the owner and moderator personas, and the 20 moderation
--- cases across the tiers (14 open, 6 decided) that the queue shows at the investor demo.
+-- cases across the tiers (14 open, 6 decided) that the queue shows at the demo.
 -- Rules (supabase/staging-topups/README.md): adds no accounts, touches only persona rows and is
 -- safe to run twice: it stops when the order TCO-0001 already exists.
 -- How to check it worked: the last query shows open_cases 14 and decided_cases 6.
