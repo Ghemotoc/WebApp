@@ -63,7 +63,8 @@
     "moderation": "Moderation",
     "roles": "Roles",
     "auditLog": "Audit log",
-    "invites": "Invites"
+    "invites": "Invites",
+    "users": "Users"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -83,11 +84,12 @@
     "heading": "Admin site",
     "intro": "The areas your role can use. Every action and every sensitive read is written to the audit log; the server checks your role on each one, not just this menu.",
     "noAreas": "No area is open to you right now. Your role may have no area yet, or your staff session may be older than 12 hours: sign out and log in again to start a new one.",
-    "comingAreas": "Moderation, Users, Invites and the other areas arrive with their own stories; the menu shows an area as soon as its page exists.",
+    "comingAreas": "Appeals, Stories, Website and the other areas arrive with their own stories; the menu shows an area as soon as its page exists.",
     "areas": {
       "roles": "Who on the team holds which role and permission.",
       "audit_log": "Every staff action and sensitive read, searchable and exportable.",
-      "invites": "Invite links for the March test: make, copy and revoke."
+      "invites": "Invite links for the March test: make, copy and revoke.",
+      "users": "Find an account, see its status and sanctions, and act on it. Invite links are a tab here."
     }
   },
   "auditLog": {
@@ -197,6 +199,161 @@
     "failures": {
       "not_allowed": "Only an owner or admin can make or revoke invite links.",
       "refused": "That wasn’t saved. A link admits 1 to 50 people, lasts 1 to 90 days, and the note is at most 80 characters with no email address.",
+      "unreachable": "We couldn’t reach our server. Check your connection and try again."
+    }
+  },
+  "users": {
+    "documentTitle": "Users · {{productName}}",
+    "eyebrow": "Staff · users",
+    "heading": "Users",
+    "intro": "Find an account by its username, pen name, email or user ID. Opening an account shows its status, age check, sanctions and open cases. Every action and every email shown goes to the audit log.",
+    "tabs": {
+      "label": "Users",
+      "accounts": "Accounts",
+      "invites": "Invites"
+    },
+    "searchLabel": "Username, pen name, email or user ID",
+    "searchHint": "A whole email address, a full user ID or its first 8 characters. Finding an account by its email is logged.",
+    "search": "Search",
+    "beforeSearch": "Search for an account to see it here.",
+    "tooShort": "Type at least 2 characters.",
+    "notAllowed": "Only owners, admins, moderators and support can look up accounts.",
+    "resultsHeading": "Results",
+    "found_one": "{{count}} account found.",
+    "found_few": "{{count}} accounts found.",
+    "found_other": "{{count}} accounts found.",
+    "ageNote": "The age check column shows the result and date only. We never keep or show photos or documents, and staff never see the year of birth here.",
+    "notForYourRole": "Not shown to your role",
+    "noSanctions": "None",
+    "openAccount": "Open the account {{name}}",
+    "columns": {
+      "account": "Account",
+      "status": "Status",
+      "ageCheck": "Age check",
+      "sanctions": "Sanctions",
+      "openCases": "Open cases"
+    },
+    "statuses": {
+      "active": "Active",
+      "deleted": "Deleted",
+      "email_unconfirmed": "Email not confirmed",
+      "age_check_pending": "Age check not done",
+      "age_check_failed": "Age check failed",
+      "awaiting_parental_consent": "Waiting for a parent",
+      "minor_not_admitted": "Not admitted yet (under 18)",
+      "legal_acceptance_required": "Terms not accepted",
+      "handle_missing": "No username yet",
+      "staff_account": "Staff",
+      "suspended": "Suspended",
+      "banned": "Banned"
+    },
+    "ageBands": {
+      "under_13": "Under 13",
+      "13_to_15": "13 to 15",
+      "16_to_17": "16 to 17",
+      "18_plus": "18 or over",
+      "unknown": "Unknown"
+    },
+    "ageChecks": {
+      "pending": "Not done yet",
+      "13_or_over": "13 or over",
+      "18_or_over": "18 or over",
+      "failed": "Failed"
+    },
+    "sanctionsHeading": "Sanctions history",
+    "account": {
+      "documentTitle": "@{{handle}} · Users",
+      "eyebrow": "Staff · users · account",
+      "back": "Back to Users",
+      "loading": "Account",
+      "userId": "User ID",
+      "copyId": "Copy user ID",
+      "copied": "Copied.",
+      "copyFailed": "Copying didn’t work. Select it by hand: {{userId}}",
+      "penName": "Pen name",
+      "noPenName": "No pen name",
+      "joined": "Joined",
+      "status": "Status",
+      "email": "Email",
+      "noEmail": "No email",
+      "showEmail": "Show (logged)",
+      "emailFailed": "We couldn’t show the email. Try again.",
+      "ageBand": "Age group",
+      "ageCheck": "Age check",
+      "roles": "Staff role",
+      "noRole": "None (a member account)"
+    },
+    "actions": {
+      "heading": "Actions",
+      "staffAccount": "This is a staff account: it can’t be warned, suspended or banned. Remove its role in Roles first.",
+      "labels": {
+        "warning": "Warn",
+        "suspension": "Suspend",
+        "ban": "Ban",
+        "reset_pen_name": "Reset pen name",
+        "sign_out_everywhere": "Sign out everywhere",
+        "approve_username": "Approve a name"
+      },
+      "explain": {
+        "warning": "A warning is a record on the account. It doesn’t stop the person doing anything.",
+        "suspension": "The account becomes read-only until the suspension ends.",
+        "ban": "The person can’t sign in again, every session ends, and their email can’t be used to sign up again.",
+        "reset_pen_name": "The pen name is removed and the username shows instead. The person can choose a new pen name straight away; the old one stays in the audit log.",
+        "sign_out_everywhere": "Every device signed in to this account is signed out. A page already open keeps working for up to an hour.",
+        "approve_username": "Use this when the word checks refused a harmless name by mistake. The person then saves the name themselves."
+      },
+      "howLong": "How long",
+      "days_1": "24 hours",
+      "days_7": "7 days",
+      "days_30": "30 days",
+      "nameKind": "Which name",
+      "nameKinds": {
+        "handle": "Username",
+        "pen_name": "Pen name"
+      },
+      "approvedName": "The exact name to approve",
+      "reason": "Reason (required)",
+      "confirm": {
+        "warning": "Warn",
+        "suspension": "Suspend",
+        "ban": "Ban",
+        "reset_pen_name": "Reset the pen name",
+        "sign_out_everywhere": "Sign out everywhere",
+        "approve_username": "Approve the name"
+      },
+      "done": {
+        "warning": "Done. The warning is on the account.",
+        "suspension": "Done. The account is suspended.",
+        "ban": "Done. The account is banned.",
+        "reset_pen_name": "Done. The pen name was reset.",
+        "sign_out_everywhere": "Done. Every session ended.",
+        "approve_username": "Done. The person can now save that name."
+      },
+      "dataRequests": "Data export and deletion: during the invited test, people ask by email and we answer by hand. The Data requests area comes later."
+    },
+    "cases": {
+      "heading": "Open cases",
+      "none": "No open cases.",
+      "line": "{{reason}} · {{tier}} · due {{deadline}}",
+      "noReason": "No reason"
+    },
+    "audit": {
+      "heading": "Staff actions on @{{handle}}",
+      "none": "No staff actions on this account yet.",
+      "line": "{{when}} · {{who}} · {{action}}",
+      "more": "Search the whole audit log"
+    },
+    "messages": {
+      "heading": "Private messages",
+      "text": "Private messages are hidden. You see a message only when it is part of a report, on that report’s case page."
+    },
+    "failures": {
+      "not_allowed": "Your role can’t do this.",
+      "own_account": "Use Settings for your own account.",
+      "reason_missing": "Write a reason first. It goes to the audit log.",
+      "no_such_account": "There is no such account. Search again.",
+      "no_pen_name": "This account has no pen name.",
+      "refused": "That wasn’t saved. The account may already have this sanction, or a field is missing.",
       "unreachable": "We couldn’t reach our server. Check your connection and try again."
     }
   }

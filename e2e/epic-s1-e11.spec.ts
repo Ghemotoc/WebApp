@@ -61,7 +61,7 @@ test.describe('epic S1-E11 journeys', () => {
     browser,
   }) => {
     // Step 1: the admin makes a one-use link (S1-E11-17).
-    const admin = await openAs(browser, 'admin', '/staff/invites');
+    const admin = await openAs(browser, 'admin', '/staff/users/invites');
     await admin.getByRole('button', { name: 'Make an invite link' }).click();
     const form = admin.getByRole('form', { name: 'New invite link' });
     await form.getByLabel('Private note').fill(`epic ${stamp}`);
@@ -110,12 +110,12 @@ test.describe('epic S1-E11 journeys', () => {
     await expect(owner.getByRole('table')).not.toContainText('example.com');
 
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a).
-    expect(await menuLinks(owner)).toEqual(['Moderation', 'Roles', 'Invites', 'Audit log']);
+    expect(await menuLinks(owner)).toEqual(['Moderation', 'Users', 'Roles', 'Audit log']);
     const moderator = await openAs(browser, 'moderator', '/staff');
-    expect(await menuLinks(moderator)).toEqual(['Moderation']);
+    expect(await menuLinks(moderator)).toEqual(['Moderation', 'Users']);
     const support = await openAs(browser, 'support', '/staff');
-    expect(await menuLinks(support)).toEqual([]);
-    const editor = await openAs(browser, 'editor', '/staff/invites');
+    expect(await menuLinks(support)).toEqual(['Users']);
+    const editor = await openAs(browser, 'editor', '/staff/users/invites');
     await expect(editor.getByText('Only an owner or admin can make invite links.')).toBeVisible();
   });
 });

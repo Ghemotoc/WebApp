@@ -1,5 +1,5 @@
 /**
- * Makes, lists and revokes invite links, for /staff/invites (story S1-E11-17).
+ * Makes, lists and revokes invite links, for /staff/users/invites (story S1-E11-17).
  *
  * Who calls it: hooks/useInviteLinks.ts.
  * What it calls next: admin_create_invite(), admin_list_invites() and admin_revoke_invite()

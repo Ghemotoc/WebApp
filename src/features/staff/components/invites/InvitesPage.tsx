@@ -1,10 +1,10 @@
 /**
- * InvitesPage: /staff/invites, where an owner or admin makes invite links for the March test and
+ * InvitesPage: /staff/users/invites, where an owner or admin makes invite links for the March test and
  * sees the ones made (story S1-E11-17; decided 17 Oct 2026, 13:01; the March test is invited
  * adults only, decided 17 Oct 2026, 12:44).
  *
- * Board: AdminUsers (8.5), the Invites tab. It has its own menu entry until the Users area exists
- * (S1-E11-02 gives it the tab; the S1-E11-17 prompt allows this). Plain components, no doodles.
+ * Board: AdminUsers (8.5), the Invites tab: /staff/users/invites since S1-E11-02, under the Users
+ * tabs (/staff/invites redirects here). Plain components, no doodles.
  * Who shows it: the router, inside StaffLayout. The database refuses anyone but owner and admin
  * (admin_list_invites()), and the page says so.
  * What it calls: useInviteLinks → api/inviteLinks.ts.
@@ -22,6 +22,7 @@ import { useInviteLinks } from '../../hooks/useInviteLinks';
 import { InviteList } from './InviteList';
 import { MakeInviteForm } from './MakeInviteForm';
 import { NewInviteLink } from './NewInviteLink';
+import { UsersTabs } from '../users/UsersTabs';
 
 /** useInviteLinks's result, passed down once. */
 type Invites = ReturnType<typeof useInviteLinks>;
@@ -113,6 +114,7 @@ export function InvitesPage() {
         </h1>
         <p className="m-0 text-body">{t('invites.intro')}</p>
       </div>
+      <UsersTabs />
       <div className="flex max-w-[860px] flex-col gap-6">
         <InvitesBody invites={invites} />
       </div>

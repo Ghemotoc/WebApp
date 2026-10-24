@@ -6,9 +6,9 @@
  * - a member at /staff sees "This part is for staff" and no staff menu, and a visitor is sent to
  *   log in; the database gives neither anything (the pgTAP test 040 proves the server side);
  * - each staff persona sees only the areas its role allows (architecture 1.8.3): owner and admin
- *   get Moderation (S1-E10-03a), Roles, Invites (S1-E11-17) and Audit log, the moderator gets
- *   Moderation only, support gets none yet (Users has no page until S1-E11-02), the content
- *   editor gets none;
+ *   get Moderation (S1-E10-03a), Users (S1-E11-02, with Invites as its tab), Roles and Audit
+ *   log, the moderator gets Moderation and Users, support gets Users, the content editor gets
+ *   none;
  * - the owner searches the audit log, exports a CSV file, and the export is itself logged;
  * - every staff screen passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
  * Test data: seed personas only.
@@ -64,21 +64,20 @@ test.describe('admin shell (S1-E11-01)', () => {
 
   test('each staff persona sees only the areas its role allows', async ({ browser }) => {
     const ownerPage = await openAs(browser, 'owner', '/staff');
-    expect(await menuLinks(ownerPage)).toEqual(['Moderation', 'Roles', 'Invites', 'Audit log']);
+    expect(await menuLinks(ownerPage)).toEqual(['Moderation', 'Users', 'Roles', 'Audit log']);
     await expect(ownerPage.getByText('@owner')).toBeVisible();
     await expect(ownerPage.getByText('Owner', { exact: true })).toBeVisible();
 
     const adminPage = await openAs(browser, 'admin', '/staff');
-    expect(await menuLinks(adminPage)).toEqual(['Moderation', 'Roles', 'Invites', 'Audit log']);
+    expect(await menuLinks(adminPage)).toEqual(['Moderation', 'Users', 'Roles', 'Audit log']);
 
-    // A moderator gets the queue (S1-E10-03a); Users has no page yet (S1-E11-02).
+    // A moderator gets the queue (S1-E10-03a) and Users (S1-E11-02).
     const moderatorPage = await openAs(browser, 'moderator', '/staff');
-    expect(await menuLinks(moderatorPage)).toEqual(['Moderation']);
+    expect(await menuLinks(moderatorPage)).toEqual(['Moderation', 'Users']);
 
-    // Support's one area, Users, has no page yet, so the menu is empty for now.
+    // Support's one area is Users (S1-E11-02).
     const supportPage = await openAs(browser, 'support', '/staff');
-    expect(await menuLinks(supportPage)).toEqual([]);
-    await expect(supportPage.getByText('No area is open to you right now.')).toBeVisible();
+    expect(await menuLinks(supportPage)).toEqual(['Users']);
 
     const editorPage = await openAs(browser, 'editor', '/staff/audit-log');
     expect(await menuLinks(editorPage)).toEqual([]);

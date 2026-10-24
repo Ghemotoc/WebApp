@@ -3,7 +3,8 @@
  * with "Lift" on each live one (story S1-E10-06; board 8.3's "Reported account" panel and board
  * 8.5's "Sanctions history").
  *
- * Who shows it: CasePage. What it calls: useSanctions.lift().
+ * Who shows it: CasePage, and the admin site's account page (S1-E11-02) with its own heading.
+ * What it calls: lift() from useSanctions, or from useAccountActions on the account page.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,8 +18,11 @@ import type { useSanctions } from '../hooks/useSanctions';
 
 import { ReasonForm } from './ReasonForm';
 
-/** useSanctions's result, passed down once. */
-type Sanctions = ReturnType<typeof useSanctions>;
+/** The part of useSanctions's result the panel uses; useAccountActions gives the same shape. */
+type Sanctions = Pick<
+  ReturnType<typeof useSanctions>,
+  'sanctions' | 'lift' | 'liftFailure' | 'isBusy'
+>;
 
 /**
  * The small line under a sanction: who applied it, when, from which case, and until when.
@@ -86,10 +90,17 @@ function SanctionRow({ sanction, sanctions }: { sanction: AccountSanction; sanct
 /**
  * Renders the panel.
  *
- * @param props.sanctions - useSanctions's result
+ * @param props.sanctions - the sanctions and lift()
+ * @param props.heading - the heading, when not "Reported account: sanctions"
  * @returns the section
  */
-export function AccountSanctions({ sanctions }: { sanctions: Sanctions }) {
+export function AccountSanctions({
+  sanctions,
+  heading,
+}: {
+  sanctions: Sanctions;
+  heading?: string;
+}) {
   const { t } = useTranslation('moderation');
   return (
     <section aria-labelledby="account-sanctions-heading" className="flex flex-col gap-4">
@@ -97,7 +108,7 @@ export function AccountSanctions({ sanctions }: { sanctions: Sanctions }) {
         id="account-sanctions-heading"
         className="m-0 font-heading text-[24px] font-bold text-heading"
       >
-        {t('sanctions.heading')}
+        {heading ?? t('sanctions.heading')}
       </h2>
       {sanctions.liftFailure !== null && (
         <Notice tone="error">{t(`failures.${sanctions.liftFailure}`)}</Notice>

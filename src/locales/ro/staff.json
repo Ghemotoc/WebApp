@@ -63,7 +63,8 @@
     "moderation": "Moderare",
     "roles": "Roluri",
     "auditLog": "Jurnal de audit",
-    "invites": "Invitații"
+    "invites": "Invitații",
+    "users": "Utilizatori"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -83,11 +84,12 @@
     "heading": "Site de administrare",
     "intro": "Zonele pe care rolul tău le poate folosi. Fiecare acțiune și fiecare citire sensibilă se scrie în jurnalul de audit; serverul îți verifică rolul la fiecare, nu doar acest meniu.",
     "noAreas": "Nicio zonă nu îți este deschisă acum. Rolul tău poate să nu aibă încă o zonă, sau sesiunea ta de echipă poate fi mai veche de 12 ore: deconectează-te și conectează-te din nou ca să începi una nouă.",
-    "comingAreas": "Moderarea, Utilizatorii, Invitațiile și celelalte zone vin cu propriile lor povești; meniul arată o zonă imediat ce pagina ei există.",
+    "comingAreas": "Contestațiile, Poveștile, Site-ul și celelalte zone vin cu propriile lor povești; meniul arată o zonă imediat ce pagina ei există.",
     "areas": {
       "roles": "Cine din echipă are ce rol și ce permisiuni.",
       "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export.",
-      "invites": "Linkuri de invitație pentru testul din martie: fă, copiază și revocă."
+      "invites": "Linkuri de invitație pentru testul din martie: fă, copiază și revocă.",
+      "users": "Găsește un cont, vezi starea și sancțiunile lui și acționează. Linkurile de invitație sunt o filă aici."
     }
   },
   "auditLog": {
@@ -198,6 +200,161 @@
       "not_allowed": "Doar un proprietar sau un administrator poate face sau revoca linkuri de invitație.",
       "refused": "Nu s-a salvat. Un link primește între 1 și 50 de persoane, ține între 1 și 90 de zile, iar notița are cel mult 80 de caractere, fără adresă de email.",
       "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+    }
+  },
+  "users": {
+    "documentTitle": "Utilizatori · {{productName}}",
+    "eyebrow": "Echipă · utilizatori",
+    "heading": "Utilizatori",
+    "intro": "Găsește un cont după numele de utilizator, pseudonim, email sau ID-ul de utilizator. Contul arată starea, verificarea vârstei, sancțiunile și cazurile deschise. Fiecare acțiune și fiecare email afișat intră în jurnalul de audit.",
+    "tabs": {
+      "label": "Utilizatori",
+      "accounts": "Conturi",
+      "invites": "Invitații"
+    },
+    "searchLabel": "Nume de utilizator, pseudonim, email sau ID",
+    "searchHint": "O adresă de email întreagă, un ID complet sau primele lui 8 caractere. Căutarea după email intră în jurnal.",
+    "search": "Caută",
+    "beforeSearch": "Caută un cont ca să-l vezi aici.",
+    "tooShort": "Scrie cel puțin 2 caractere.",
+    "notAllowed": "Doar proprietarii, administratorii, moderatorii și echipa de suport pot căuta conturi.",
+    "resultsHeading": "Rezultate",
+    "found_one": "Am găsit {{count}} cont.",
+    "found_few": "Am găsit {{count}} conturi.",
+    "found_other": "Am găsit {{count}} de conturi.",
+    "ageNote": "Coloana verificării vârstei arată doar rezultatul și data. Nu păstrăm și nu arătăm fotografii sau documente, iar echipa nu vede aici anul nașterii.",
+    "notForYourRole": "Nu se arată rolului tău",
+    "noSanctions": "Niciuna",
+    "openAccount": "Deschide contul {{name}}",
+    "columns": {
+      "account": "Cont",
+      "status": "Stare",
+      "ageCheck": "Verificarea vârstei",
+      "sanctions": "Sancțiuni",
+      "openCases": "Cazuri deschise"
+    },
+    "statuses": {
+      "active": "Activ",
+      "deleted": "Șters",
+      "email_unconfirmed": "Email neconfirmat",
+      "age_check_pending": "Verificarea vârstei nefăcută",
+      "age_check_failed": "Verificarea vârstei nereușită",
+      "awaiting_parental_consent": "Așteaptă un părinte",
+      "minor_not_admitted": "Neadmis încă (sub 18 ani)",
+      "legal_acceptance_required": "Termeni neacceptați",
+      "handle_missing": "Fără nume de utilizator",
+      "staff_account": "Echipă",
+      "suspended": "Suspendat",
+      "banned": "Interzis"
+    },
+    "ageBands": {
+      "under_13": "Sub 13 ani",
+      "13_to_15": "13–15 ani",
+      "16_to_17": "16–17 ani",
+      "18_plus": "18 ani sau peste",
+      "unknown": "Necunoscută"
+    },
+    "ageChecks": {
+      "pending": "Nefăcută încă",
+      "13_or_over": "13 ani sau peste",
+      "18_or_over": "18 ani sau peste",
+      "failed": "Nereușită"
+    },
+    "sanctionsHeading": "Istoricul sancțiunilor",
+    "account": {
+      "documentTitle": "@{{handle}} · Utilizatori",
+      "eyebrow": "Echipă · utilizatori · cont",
+      "back": "Înapoi la Utilizatori",
+      "loading": "Cont",
+      "userId": "ID de utilizator",
+      "copyId": "Copiază ID-ul",
+      "copied": "Copiat.",
+      "copyFailed": "Copierea n-a mers. Selectează-l de mână: {{userId}}",
+      "penName": "Pseudonim",
+      "noPenName": "Fără pseudonim",
+      "joined": "Înscris",
+      "status": "Stare",
+      "email": "Email",
+      "noEmail": "Fără email",
+      "showEmail": "Arată (intră în jurnal)",
+      "emailFailed": "N-am putut arăta emailul. Încearcă din nou.",
+      "ageBand": "Grupa de vârstă",
+      "ageCheck": "Verificarea vârstei",
+      "roles": "Rol în echipă",
+      "noRole": "Niciunul (cont de membru)"
+    },
+    "actions": {
+      "heading": "Acțiuni",
+      "staffAccount": "Acesta e un cont al echipei: nu poate primi avertisment, suspendare sau interdicție. Scoate-i întâi rolul din Roluri.",
+      "labels": {
+        "warning": "Avertizează",
+        "suspension": "Suspendă",
+        "ban": "Interzice",
+        "reset_pen_name": "Resetează pseudonimul",
+        "sign_out_everywhere": "Deconectează peste tot",
+        "approve_username": "Aprobă un nume"
+      },
+      "explain": {
+        "warning": "Avertismentul rămâne în istoricul contului. Nu oprește persoana să facă ceva.",
+        "suspension": "Contul devine doar pentru citit până se termină suspendarea.",
+        "ban": "Persoana nu se mai poate conecta, toate sesiunile se închid, iar emailul ei nu mai poate fi folosit la înscriere.",
+        "reset_pen_name": "Pseudonimul e șters și se vede numele de utilizator. Persoana poate alege imediat alt pseudonim; cel vechi rămâne în jurnalul de audit.",
+        "sign_out_everywhere": "Toate dispozitivele conectate la acest cont sunt deconectate. O pagină deja deschisă mai merge până la o oră.",
+        "approve_username": "Folosește asta când verificarea cuvintelor a refuzat din greșeală un nume nevinovat. Persoana salvează apoi singură numele."
+      },
+      "howLong": "Cât timp",
+      "days_1": "24 de ore",
+      "days_7": "7 zile",
+      "days_30": "30 de zile",
+      "nameKind": "Ce nume",
+      "nameKinds": {
+        "handle": "Nume de utilizator",
+        "pen_name": "Pseudonim"
+      },
+      "approvedName": "Numele exact de aprobat",
+      "reason": "Motiv (obligatoriu)",
+      "confirm": {
+        "warning": "Avertizează",
+        "suspension": "Suspendă",
+        "ban": "Interzice",
+        "reset_pen_name": "Resetează pseudonimul",
+        "sign_out_everywhere": "Deconectează peste tot",
+        "approve_username": "Aprobă numele"
+      },
+      "done": {
+        "warning": "Gata. Avertismentul e pe cont.",
+        "suspension": "Gata. Contul e suspendat.",
+        "ban": "Gata. Contul e interzis.",
+        "reset_pen_name": "Gata. Pseudonimul a fost resetat.",
+        "sign_out_everywhere": "Gata. Toate sesiunile s-au închis.",
+        "approve_username": "Gata. Persoana poate salva acum numele."
+      },
+      "dataRequests": "Exportul și ștergerea datelor: în timpul testului pe bază de invitație, oamenii cer prin email și răspundem de mână. Zona Cereri de date vine mai târziu."
+    },
+    "cases": {
+      "heading": "Cazuri deschise",
+      "none": "Niciun caz deschis.",
+      "line": "{{reason}} · {{tier}} · termen {{deadline}}",
+      "noReason": "Fără motiv"
+    },
+    "audit": {
+      "heading": "Acțiunile echipei pe @{{handle}}",
+      "none": "Încă nicio acțiune a echipei pe acest cont.",
+      "line": "{{when}} · {{who}} · {{action}}",
+      "more": "Caută în tot jurnalul de audit"
+    },
+    "messages": {
+      "heading": "Mesaje private",
+      "text": "Mesajele private sunt ascunse. Vezi un mesaj doar când face parte dintr-o raportare, pe pagina cazului acelei raportări."
+    },
+    "failures": {
+      "not_allowed": "Rolul tău nu poate face asta.",
+      "own_account": "Folosește Setările pentru propriul cont.",
+      "reason_missing": "Scrie întâi un motiv. Intră în jurnalul de audit.",
+      "no_such_account": "Nu există un astfel de cont. Caută din nou.",
+      "no_pen_name": "Contul nu are pseudonim.",
+      "refused": "N-am salvat. Contul poate avea deja această sancțiune sau lipsește un câmp.",
+      "unreachable": "Nu am putut ajunge la server. Verifică conexiunea și încearcă din nou."
     }
   }
 }
