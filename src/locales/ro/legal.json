@@ -23,7 +23,7 @@
     "contact": {
       "tab": "Contact",
       "name": "Contact și datele companiei",
-      "intro": "Cum ne poți contacta: ca utilizator, ca autoritate sau pentru ordine de eliminare, și cine administrează {{productName}}. Până când formularul de raportare și Scrie-ne sunt gata, scrie-ne la adresele de mai jos."
+      "intro": "Cum ne poți contacta: ca utilizator, ca autoritate sau pentru ordine de eliminare, și cine administrează {{productName}}."
     }
   },
   "status": {
@@ -77,5 +77,10 @@
   "contactUs": {
     "text": "Ai o întrebare sau o problemă cu contul tău?",
     "link": "Scrie-ne"
+  },
+  "reportForm": {
+    "text": "Vrei să raportezi conținut ilegal? Oricine poate folosi formularul de raportare.",
+    "link": "Raportează conținut ilegal",
+    "orderLink": "Autorități: trimiteți un ordin de eliminare"
   }
 }

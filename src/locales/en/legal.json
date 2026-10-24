@@ -23,7 +23,7 @@
     "contact": {
       "tab": "Contact",
       "name": "Contact and company details",
-      "intro": "How to reach us: for users, for authorities and for removal orders, and who runs {{productName}}. Until the report form and Contact us are ready, write to the addresses below."
+      "intro": "How to reach us: for users, for authorities and for removal orders, and who runs {{productName}}."
     }
   },
   "status": {
@@ -77,5 +77,10 @@
   "contactUs": {
     "text": "Have a question or a problem with your account?",
     "link": "Write to us"
+  },
+  "reportForm": {
+    "text": "Want to report illegal content? Anyone can use the report form.",
+    "link": "Report illegal content",
+    "orderLink": "Authorities: send a removal order"
   }
 }

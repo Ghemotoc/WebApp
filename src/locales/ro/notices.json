@@ -1,0 +1,81 @@
+{
+  "documentTitle": "Raportează conținut ilegal · {{productName}}",
+  "eyebrow": "Raportează fără cont",
+  "heading": "Raportează conținut ilegal",
+  "intro": "Oricine poate folosi acest formular, cu sau fără cont. Spune-ne unde este conținutul și de ce crezi că încalcă legea. O persoană din echipa noastră citește fiecare raportare.",
+  "contactPoint": "Acest formular este punctul nostru de contact pentru autorități, inclusiv pentru ordinele de eliminare emise în temeiul Regulamentului (UE) 2021/784. Acceptăm raportări și ordine în română și engleză și acționăm asupra ordinelor de eliminare în cel mult o oră.",
+  "form": {
+    "heading": "Raportarea ta",
+    "kind": "Ce fel de conținut este?",
+    "required": "obligatoriu",
+    "optional": "opțional",
+    "removalOrder": "Ordin de eliminare de la o autoritate",
+    "contentUrl": "Linkul exact către conținut",
+    "contentUrlHint": "Copiază-l din bara de adrese a browserului.",
+    "explanation": "De ce crezi că este ilegal?",
+    "explanationHint": "Explică în cuvintele tale. Dacă îți copiază o lucrare, spune care și unde a fost publicată prima dată.",
+    "name": "Numele tău",
+    "email": "Adresa ta de email",
+    "contactHint": "Îți trimitem la această adresă o confirmare și, mai târziu, decizia noastră.",
+    "contactOptionalHint": "Pentru acest fel de raportare poți să nu îți scrii numele și adresa de email. Fără email nu îți putem trimite confirmarea sau decizia.",
+    "goodFaith": "Declar, cu bună-credință, că informațiile din această raportare sunt corecte și complete.",
+    "website": "Lasă acest câmp gol",
+    "send": "Trimite raportarea",
+    "sending": "Se trimite…",
+    "aPersonReads": "O persoană citește fiecare raportare.",
+    "problems": {
+      "kind_missing": "Alege ce fel de conținut este.",
+      "url_missing": "Lipește linkul exact către conținut.",
+      "explanation_missing": "Spune de ce crezi că este ilegal.",
+      "explanation_too_long": "Scrie cel mult {{max}} de caractere.",
+      "name_missing": "Scrie-ți numele.",
+      "email_invalid": "Scrie o adresă de email la care îți putem răspunde, de exemplu nume@exemplu.ro.",
+      "good_faith_missing": "Bifează declarația de bună-credință ca să trimiți raportarea.",
+      "authority_missing": "Scrie numele autorității care trimite ordinul."
+    }
+  },
+  "order": {
+    "heading": "Ordin de eliminare",
+    "intro": "Pentru autoritățile competente care trimit un ordin de eliminare în temeiul Regulamentului (UE) 2021/784. Ordinul ajunge imediat la persoana de serviciu și acționăm în cel mult o oră de la primire.",
+    "authority": "Autoritatea emitentă",
+    "orderReference": "Numărul ordinului",
+    "orderText": "Ordinul sau un rezumat al lui",
+    "orderTextHint": "Lipește textul ordinului sau rezumă-l și spune unde poate fi citit.",
+    "email": "Adresa de email pentru confirmare",
+    "emailHint": "Confirmăm imediat primirea, cu ora.",
+    "send": "Trimite ordinul de eliminare"
+  },
+  "failures": {
+    "invalid": "Ceva din raportare nu este în regulă. Verifică câmpurile și încearcă din nou.",
+    "unavailable": "Nu am putut salva raportarea acum. Încearcă din nou peste un minut sau scrie la {{supportEmail}}.",
+    "unreachable": "Nu am putut ajunge la server. Verifică-ți conexiunea și încearcă din nou."
+  },
+  "received": {
+    "heading": "Raportare primită",
+    "body": "Referința ta este {{reference}}. Am primit-o pe {{time}}.",
+    "emailed": "Ți-am trimis o confirmare la {{email}}. O persoană îți va citi raportarea și îți vom trimite decizia noastră pe email.",
+    "noEmail": "O persoană îți va citi raportarea. Nu ne-ai lăsat o adresă de email, așa că nu îți putem răspunde.",
+    "unsent": "Ți-am salvat raportarea, dar nu am putut trimite confirmarea. Păstrează referința de mai sus.",
+    "orderBody": "Referința noastră este {{reference}}. Ora primirii: {{time}} (ora României). Persoana de serviciu a fost alertată.",
+    "again": "Trimite altă raportare",
+    "home": "Înapoi la {{productName}}"
+  },
+  "next": {
+    "heading": "Ce urmează",
+    "steps": {
+      "receipt": "Îți trimitem pe email o confirmare cu un număr de referință.",
+      "check": "O persoană din echipa noastră verifică conținutul față de lege și regulile noastre.",
+      "decision": "Îți trimitem pe email decizia noastră și cum ne poți cere să ne uităm din nou."
+    }
+  },
+  "account": {
+    "heading": "Ai cont?",
+    "body": "Intră în cont și folosește butonul Raportează de pe poveste, capitol sau profil. Completează linkul pentru tine.",
+    "logIn": "Intră în cont"
+  },
+  "details": {
+    "heading": "Datele tale",
+    "body": "Folosim numele și adresa ta de email doar ca să ne ocupăm de această raportare. Le păstrăm 3 ani după închiderea raportării, apoi le ștergem.",
+    "privacy": "Citește Nota de informare privind datele"
+  }
+}

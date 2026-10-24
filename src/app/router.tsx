@@ -265,6 +265,15 @@ function pageRoutes(): RouteObject[] {
         return { Component: ContactPage };
       },
     },
+    // Report illegal content: the public report form and the authorities' contact point
+    // (S1-E10-02; Lane C), loaded when opened.
+    {
+      path: '/report',
+      lazy: async () => {
+        const { NoticePage } = await import('@/features/notices/components/NoticePage');
+        return { Component: NoticePage };
+      },
+    },
     ...(isDesignPageIncluded ? [designRoute] : []),
     // Any other address: "We can't find that page" in the reader's language (S1-E2-QA, board
     // 7.4). Its search button waits for Search (S1-E5-04).

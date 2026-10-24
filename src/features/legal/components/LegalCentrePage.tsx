@@ -100,6 +100,18 @@ export function LegalCentrePage() {
           </Link>
         </p>
       )}
+      {/* The public report form and the removal-order contact point (S1-E10-02). */}
+      {knownSlug === 'contact' && (
+        <p className="m-0 text-body">
+          {t('reportForm.text')}{' '}
+          <Link to="/report" className="font-semibold text-link underline">
+            {t('reportForm.link')}
+          </Link>{' '}
+          <Link to="/report?kind=removal_order" className="font-semibold text-link underline">
+            {t('reportForm.orderLink')}
+          </Link>
+        </p>
+      )}
       {knownSlug === 'contact' && <SafetyContactsBlock />}
     </PageContainer>
   );
