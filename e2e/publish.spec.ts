@@ -144,7 +144,9 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
   }) => {
     const page = await openEditor(browser, 'publish1');
     await publishPanel(page).getByRole('button', { name: 'Unpublish chapter' }).click();
-    await expect(publishPanel(page).getByRole('button', { name: 'Publish chapter', exact: true })).toBeVisible();
+    await expect(
+      publishPanel(page).getByRole('button', { name: 'Publish chapter', exact: true }),
+    ).toBeVisible();
     await expect(page.getByRole('navigation').getByText('Draft', { exact: true })).toBeVisible();
     await visitor.goto(`/s/${slug}`);
     await expect(
