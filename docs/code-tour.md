@@ -666,6 +666,20 @@ What the Safety epic has in place so far. The epic report, `docs/epic-reports/S1
 
 **One main journey through the whole epic:** a reader presses `<ReportButton>` → `ReportDialog` shows the helplines (`SafetyContactsBlock`) and the reasons → `report_item()` stores the report and `attach_report_to_case()` opens or joins the item's case with its tier and deadline → the moderator opens `/staff/moderation`, the case page, and sends a decision → `admin_decide_case()` closes the case and calls `admin_apply_sanction()` → `account_state()` answers `suspended` and every write policy refuses → the person sees `SanctionNotice`. `e2e/epic-s1-e10.spec.ts` walks it.
 
+## Epic S1-E11 at a glance (checked by S1-E11-QA)
+
+What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`) | 11-01, 11-17, 2-07a |
+| Hooks | `useMyStaffAccess`, `useAuditLog`, `useInviteLinks`, `useStaffRoles` | each story |
+| Tables | `audit_log` (append-only), `invites`, `staff_roles`, `staff_permissions`, `staff_role_areas`, the settings `staff_session_hours` and `staff_fresh_sign_in_minutes` | 1-02, 2-01, 2-07a, 11-01, 11-17 |
+| Functions | `is_staff_session()` (12 hours), `staff_signed_in_recently()`, `my_staff_areas()`, `log_sensitive_read()`, `admin_search_audit_log()`, `admin_export_audit_log()`, `admin_create_invite()`, `admin_revoke_invite()`, `admin_list_invites()`, `use_platform_invite()` | each story |
+| Tests | `supabase/tests/database/040`, `041` and `093` (the epic), `e2e/epic-s1-e11.spec.ts` and each story's spec | each story, S1-E11-QA |
+
+**One main journey through the whole epic:** the admin opens `/staff/invites` → `admin_create_invite()` returns the code once and logs `invite.created` → an adult opens `/join/<code>` → the sign-up trigger calls `use_platform_invite()`, which takes the last place and logs `invite.used_up` on behalf of the maker → the owner opens `/staff/audit-log` → `admin_search_audit_log()` finds both rows. `e2e/epic-s1-e11.spec.ts` walks it.
+
 ## Start here
 
 Read in this order; each file's header comment says what it is for and where things go next.
