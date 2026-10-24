@@ -58,8 +58,9 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
     await page.getByRole('link', { name: 'Set up your profile' }).click();
     await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
 
-    // A staff look-alike (Cyrillic а) is refused, with a way to ask for a review.
-    const username = page.getByLabel('Username');
+    // A staff look-alike (Cyrillic а) is refused, with a way to ask for a review. The "Choose a
+    // username" notice is labelled with the word too, so ask for the text box by role.
+    const username = page.getByRole('textbox', { name: 'Username' });
     await username.fill('\u0430dmin');
     await expect(
       page.getByText('This username looks like a staff name. Try another one.'),
@@ -92,7 +93,7 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
     await expect(page.getByText('Signed in as Doamna Popescu · @ms.popescu')).toBeVisible();
 
     // The first change after setup is allowed straight away.
-    const username = page.getByLabel('Username');
+    const username = page.getByRole('textbox', { name: 'Username' });
     await username.fill('ms.popescu.writes');
     await expect(page.getByText('@ms.popescu.writes is free.')).toBeVisible();
     await page.getByRole('button', { name: 'Save' }).first().click();

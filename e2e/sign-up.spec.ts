@@ -125,7 +125,10 @@ test('an invited adult signs up, confirms the email from Mailpit and is confirme
     await page.getByRole('link', { name: 'Continue' }).click();
     await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
     const handle = `new.writer.${Date.now()}`;
-    await page.getByLabel('Username').fill(handle);
+    // The "Choose a username" notice is labelled with the word too, so ask for the text box by role.
+    const usernameField = page.getByRole('textbox', { name: 'Username' });
+    await usernameField.fill(handle);
+    await expect(usernameField).toHaveValue(handle);
     await expect(page.getByText(`@${handle} is free.`)).toBeVisible();
     await page.getByRole('button', { name: 'Save and continue' }).click();
     await expect(page).toHaveURL(/\/$/);
