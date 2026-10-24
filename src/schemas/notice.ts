@@ -15,6 +15,8 @@ import { z } from 'zod';
 
 import { Constants } from '../lib/database.types';
 
+import { copySourceLimits } from './report';
+
 /** The report reasons, the same list as the Report button (S1-E10-01). */
 export const noticeReasons = Constants.public.Enums.report_reason;
 
@@ -77,6 +79,15 @@ export const contentNoticeSchema = z
     notifierName: optionalText(noticeLimits.name),
     notifierEmail: optionalEmail,
     goodFaith: z.literal(true),
+    // "Copied from a published work" (S1-E10-08): where it was copied from, all optional.
+    copySource: z
+      .object({
+        title: z.string().max(copySourceLimits.title).optional(),
+        author: z.string().max(copySourceLimits.author).optional(),
+        reference: z.string().max(copySourceLimits.reference).optional(),
+        passage: z.string().max(copySourceLimits.passage).optional(),
+      })
+      .optional(),
     website: z.string().max(2000).optional(),
     openedAt: z.number().int().nonnegative().optional(),
   })

@@ -1,8 +1,9 @@
 /**
  * The public form's notices for staff: one case's notices, and the queue page's unmatched
- * notices and on-call alerts (story S1-E10-02).
+ * notices and on-call alerts (story S1-E10-02); asking a reporter for more details (S1-E10-08).
  *
- * Who calls it: CaseNotices (case page) and PublicNoticesPanel (queue page). What it calls:
+ * Who calls it: CaseNotices and CopiedWorkReportParts (case page) and PublicNoticesPanel (queue
+ * page). What it calls:
  * api/publicNotices.ts. Closing a notice reads every 'moderation' query again.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -11,6 +12,7 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 
 import {
   closeUnmatchedNotice,
+  requestReportDetails,
   listCaseNotices,
   listOnCallAlerts,
   listUnmatchedNotices,
@@ -65,5 +67,24 @@ export function useQueueNotices() {
     close: (noticeId: string, note: string) => close.mutateAsync({ noticeId, note }),
     isClosing: close.isPending,
     closeFailure: moderationFailureOf(close.isError, close.error),
+  };
+}
+
+/**
+ * Asks a reporter for more details from the case page (S1-E10-08).
+ *
+ * @returns ask(), its state and its failure
+ */
+export function useAskForDetails() {
+  const queryClient = useQueryClient();
+  const ask = useMutation({
+    mutationFn: async ({ reference, question }: { reference: string; question: string }) =>
+      requestReportDetails(await requireClient(), reference, question),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['moderation'] }),
+  });
+  return {
+    ask: (reference: string, question: string) => ask.mutateAsync({ reference, question }),
+    isAsking: ask.isPending,
+    askFailure: moderationFailureOf(ask.isError, ask.error),
   };
 }

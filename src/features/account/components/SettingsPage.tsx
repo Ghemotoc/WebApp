@@ -15,6 +15,8 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
+import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
+
 import { useMyNames } from '../hooks/useMyNames';
 import { displayName } from '../lib/nameRules';
 
@@ -57,6 +59,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       )}
       {names.handle !== null && <AccountNamesSection account={account} names={names} />}
       {names.handle !== null && <BioSettingsSection handle={names.handle} />}
+      {/* A moderator's question about one of the person's reports (S1-E10-08). */}
+      <ReportQuestionsSection />
       <BlockedAccountsSection />
       <SignedInDevicesSection />
       <LegalLinksSection />

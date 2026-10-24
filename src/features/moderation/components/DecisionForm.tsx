@@ -25,6 +25,8 @@ import type { ModerationAction, ModerationFailure } from '../api/moderationQueue
 
 /** What the form needs. */
 export interface DecisionFormProps {
+  /** What the case is about: a public note goes on a story or a chapter only (S1-E10-08). */
+  itemType: string;
   onDecide: (action: ModerationAction, note: string, suspensionDays?: number) => Promise<unknown>;
   isDeciding: boolean;
   failure: ModerationFailure | null;
@@ -33,10 +35,20 @@ export interface DecisionFormProps {
 /** What is still missing when Send is pressed. */
 type Problem = 'action_missing' | 'days_missing' | 'note_missing' | null;
 
-/** The actions a moderator may pick today: every value but restrict (S1-E11-08). */
-const offeredActions = Constants.public.Enums.moderation_action.filter(
-  (action) => action !== 'restrict',
-);
+/**
+ * The actions a moderator may pick on a case: every value but restrict (S1-E11-08), and "Add a
+ * public note" only on a story or a chapter (S1-E10-08; the database refuses it elsewhere too).
+ *
+ * @param itemType - what the case is about
+ * @returns the actions to offer
+ */
+function offeredActionsFor(itemType: string): ModerationAction[] {
+  const allowsPublicNote = itemType === 'story' || itemType === 'chapter';
+  return Constants.public.Enums.moderation_action.filter((action) => {
+    if (action === 'restrict') return false;
+    return action !== 'public_note' || allowsPublicNote;
+  });
+}
 
 /** The suspension lengths, the same as the setting suspension_day_choices (Q7). */
 const suspensionDayChoices = [1, 7, 30] as const;
@@ -47,10 +59,12 @@ const suspensionDayChoices = [1, 7, 30] as const;
  * @returns the fieldset
  */
 function ActionChips({
+  offeredActions,
   chosen,
   onChoose,
   problem,
 }: {
+  offeredActions: ModerationAction[];
   chosen: ModerationAction | null;
   onChoose: (action: ModerationAction) => void;
   problem: Problem;
@@ -155,7 +169,7 @@ function findProblem(action: ModerationAction | null, days: string, note: string
  *
  * @returns the Decision panel
  */
-export function DecisionForm({ onDecide, isDeciding, failure }: DecisionFormProps) {
+export function DecisionForm({ itemType, onDecide, isDeciding, failure }: DecisionFormProps) {
   const { t } = useTranslation('moderation');
   const [action, setAction] = useState<ModerationAction | null>(null);
   const [days, setDays] = useState('');
@@ -182,7 +196,12 @@ export function DecisionForm({ onDecide, isDeciding, failure }: DecisionFormProp
       <h2 id="decision-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
         {t('case.form.heading')}
       </h2>
-      <ActionChips chosen={action} onChoose={setAction} problem={problem} />
+      <ActionChips
+        offeredActions={offeredActionsFor(itemType)}
+        chosen={action}
+        onChoose={setAction}
+        problem={problem}
+      />
       {action === 'suspend' && <SuspensionDays days={days} onChange={setDays} problem={problem} />}
       <Textarea
         id="decision-note"

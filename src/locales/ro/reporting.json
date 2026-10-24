@@ -46,7 +46,10 @@
       "label": "Hărțuire",
       "hint": "Intimidare, amenințări sau atacuri la adresa unei persoane."
     },
-    "insults": { "label": "Insulte", "hint": "Jigniri sau cuvinte urâte la adresa cuiva." },
+    "insults": {
+      "label": "Insulte",
+      "hint": "Jigniri sau cuvinte urâte la adresa cuiva."
+    },
     "self_harm": {
       "label": "Autovătămare",
       "hint": "Încurajează sau arată autovătămarea sau sinuciderea."
@@ -59,9 +62,18 @@
       "label": "Amenințare la adresa unui minor",
       "hint": "Racolare, amenințări sau presiuni asupra cuiva sub 18 ani. Acționăm întâi aici."
     },
-    "terrorism": { "label": "Terorism", "hint": "Susține sau promovează terorismul." },
-    "hate": { "label": "Ură", "hint": "Atacă oamenii pentru ceea ce sunt." },
-    "spam": { "label": "Spam", "hint": "Reclame, înșelătorii sau aceeași postare iar și iar." },
+    "terrorism": {
+      "label": "Terorism",
+      "hint": "Susține sau promovează terorismul."
+    },
+    "hate": {
+      "label": "Ură",
+      "hint": "Atacă oamenii pentru ceea ce sunt."
+    },
+    "spam": {
+      "label": "Spam",
+      "hint": "Reclame, înșelătorii sau aceeași postare iar și iar."
+    },
     "copyright": {
       "label": "Drepturi de autor",
       "hint": "Folosește munca ta sau a altcuiva fără permisiune."
@@ -78,5 +90,26 @@
       "label": "Altceva",
       "hint": "Altă problemă. Spune-ne mai jos."
     }
+  },
+  "copied": {
+    "legend": "De unde a fost copiat? (totul opțional)",
+    "titleHelps": "Ne ajută și doar titlul operei publicate.",
+    "selected": "Fragmentul pe care l-ai selectat",
+    "removeSelected": "Nu trimite fragmentul selectat",
+    "title": "Titlul operei publicate (opțional)",
+    "author": "Autorul (opțional)",
+    "reference": "ISBN sau link (opțional)",
+    "passage": "Fragmentul care se potrivește din opera publicată (opțional)",
+    "passageHint": "Lipește rândurile pe care povestea le copiază, ca un moderator să le poată compara."
+  },
+  "questions": {
+    "heading": "Întrebări despre raportările tale",
+    "intro": "Echipa de moderare are nevoie de câteva detalii în plus ca să verifice ce ai raportat. Răspunsul tău ajunge doar la ei.",
+    "about": "Despre raportarea ta {{reference}} ({{reason}})",
+    "answer": "Răspunsul tău",
+    "send": "Trimite răspunsul",
+    "thanks": "Mulțumim. Echipa de moderare a primit răspunsul tău.",
+    "loadFailed": "Nu am putut încărca întrebările despre raportările tale. Încearcă din nou mai târziu.",
+    "answerFailed": "Nu am putut trimite răspunsul. Verifică-ți conexiunea și încearcă din nou."
   }
 }

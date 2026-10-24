@@ -4,6 +4,7 @@
  *
  * Who calls it: hooks/useNoticeDraft.ts and its tests. Pure functions, no React.
  */
+import { emptyCopySource, type CopySource } from '@/schemas/report';
 import {
   anonymousReason,
   noticeLimits,
@@ -22,6 +23,8 @@ export interface NoticeDraft {
   goodFaith: boolean;
   authorityName: string;
   orderReference: string;
+  /** "Copied from a published work" (S1-E10-08): the optional source. */
+  copySource: CopySource;
   /** The honeypot: a person never fills it. */
   website: string;
 }
@@ -36,6 +39,7 @@ export const emptyNoticeDraft: NoticeDraft = {
   goodFaith: false,
   authorityName: '',
   orderReference: '',
+  copySource: emptyCopySource,
   website: '',
 };
 
@@ -136,6 +140,22 @@ export function findNoticeProblems(draft: NoticeDraft): NoticeProblems {
 }
 
 /**
+ * The copied-work source to send: only for that reason, trimmed, with empty fields left out.
+ *
+ * @param draft - the answers
+ * @returns the source, or undefined when there is nothing to send
+ */
+function copySourceForRequest(draft: NoticeDraft): Partial<CopySource> | undefined {
+  if (draft.kind !== 'copied_published_work') return undefined;
+  const source: Partial<CopySource> = {};
+  for (const field of ['title', 'author', 'reference', 'passage'] as const) {
+    const value = draft.copySource[field].trim();
+    if (value !== '') source[field] = value;
+  }
+  return Object.keys(source).length === 0 ? undefined : source;
+}
+
+/**
  * Turns complete answers into the request the server takes.
  *
  * @param draft - answers with no problems and a kind chosen
@@ -168,6 +188,7 @@ export function toNoticeRequest(
     notifierEmail: draft.notifierEmail.trim() || undefined,
     goodFaith: true,
     language,
+    copySource: copySourceForRequest(draft),
     website: draft.website === '' ? undefined : draft.website,
     openedAt,
   };

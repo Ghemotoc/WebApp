@@ -121,6 +121,8 @@ export function databasePayload(request: NoticeRequest): Record<string, unknown>
     notifierEmail: request.notifierEmail,
     goodFaith: request.goodFaith,
     language: request.language,
+    // Only a copied-work notice keeps a source; the database refuses it on any other reason.
+    copySource: request.reason === 'copied_published_work' ? request.copySource : undefined,
   };
 }
 

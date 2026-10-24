@@ -8,6 +8,8 @@
  * 24 Oct 2026). No doodles on reporting screens (DoD).
  * How it is a dialog: the browser's own <dialog> element with showModal(), which traps focus,
  * closes on Escape and gives focus back to the button that opened it (WCAG 2.2, 2.1.2 and 2.4.3).
+ * With "Copied from a published work" it asks where the text came from, all optional, and attaches
+ * the passage the reader selected before pressing Report (S1-E10-08).
  * Signed out, it says to log in: reporting needs an account (the web form is S1-E10-02).
  * Above the form, "Is someone in danger right now?" shows the helplines for the reader's country
  * (S1-E10-13a), because a report is never the right tool for an emergency.
@@ -21,11 +23,20 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
 import { SafetyContactsBlock } from '@/features/safety/components/SafetyContactsBlock';
-import { findReportProblem, reportDetailsMaxLength, type ReportReason } from '@/schemas/report';
+import {
+  copiedWorkReason,
+  copySourceForDatabase,
+  emptyCopySource,
+  findReportProblem,
+  reportDetailsMaxLength,
+  type CopySource,
+  type ReportReason,
+} from '@/schemas/report';
 
 import type { ReportableType } from '../api/reports';
 import { useReportItem } from '../hooks/useReportItem';
 
+import { CopySourceFields } from './CopySourceFields';
 import { ReportReasonList } from './ReportReasonList';
 import { ReportSent } from './ReportSent';
 
@@ -37,6 +48,58 @@ export interface ReportDialogProps {
   itemReference: string;
   /** How the item is named to the reporter, for example "@inkwolf" or a story's title. */
   itemLabel: string;
+  /** The text the reader had selected when they pressed Report (S1-E10-08), if any. */
+  selectedPassage?: string | null;
+}
+
+/**
+ * "Anything else? (optional)", with its "too long" error.
+ *
+ * @returns the field and its error
+ */
+function DetailsField(props: {
+  details: string;
+  onChange: (details: string) => void;
+  isTooLong: boolean;
+}) {
+  const { t } = useTranslation('reporting');
+  return (
+    <>
+      <Textarea
+        id="report-details"
+        label={t('dialog.details')}
+        hint={t('dialog.detailsHint', { max: reportDetailsMaxLength })}
+        aria-invalid={props.isTooLong ? true : undefined}
+        rows={3}
+        value={props.details}
+        onChange={(event) => props.onChange(event.target.value)}
+      />
+      {props.isTooLong && (
+        <p role="alert" className="m-0 text-sm text-destructive">
+          {t('dialog.detailsTooLong')}
+        </p>
+      )}
+    </>
+  );
+}
+
+/**
+ * Cancel and Send report.
+ *
+ * @returns the button row
+ */
+function FormButtons(props: { onCancel: () => void; isSending: boolean }) {
+  const { t } = useTranslation('reporting');
+  return (
+    <div className="flex flex-wrap justify-end gap-3">
+      <Button variant="secondary" onClick={props.onCancel}>
+        {t('dialog.cancel')}
+      </Button>
+      <Button type="submit" disabled={props.isSending}>
+        {t(props.isSending ? 'dialog.sending' : 'dialog.send')}
+      </Button>
+    </div>
+  );
 }
 
 /**
@@ -49,6 +112,9 @@ function ReportForm(props: ReportDialogProps & { report: ReturnType<typeof useRe
   const [reason, setReason] = useState<ReportReason | null>(null);
   const [details, setDetails] = useState('');
   const [problem, setProblem] = useState<ReturnType<typeof findReportProblem>>(null);
+  // "Copied from a published work" (S1-E10-08): the source, and the passage selected on the page.
+  const [copySource, setCopySource] = useState<CopySource>(emptyCopySource);
+  const [passage, setPassage] = useState(props.selectedPassage ?? null);
 
   /** Checks the answers, then sends. A refusal is shown from useReportItem. */
   async function handleSubmit(event: FormEvent) {
@@ -56,8 +122,18 @@ function ReportForm(props: ReportDialogProps & { report: ReturnType<typeof useRe
     const found = findReportProblem({ reason, details });
     setProblem(found);
     if (found !== null || reason === null) return;
+    const copyDetails = {
+      ...copySourceForDatabase(copySource),
+      ...(passage === null ? {} : { reportedPassage: passage }),
+    };
     await props.report
-      .send({ itemType: props.itemType, itemReference: props.itemReference, reason, details })
+      .send({
+        itemType: props.itemType,
+        itemReference: props.itemReference,
+        reason,
+        details,
+        copyDetails,
+      })
       .catch(() => undefined);
   }
 
@@ -68,32 +144,25 @@ function ReportForm(props: ReportDialogProps & { report: ReturnType<typeof useRe
         onChoose={setReason}
         errorMessage={problem === 'reason_missing' ? t('dialog.reasonMissing') : undefined}
       />
-      <Textarea
-        id="report-details"
-        label={t('dialog.details')}
-        hint={t('dialog.detailsHint', { max: reportDetailsMaxLength })}
-        aria-invalid={problem === 'details_too_long' ? true : undefined}
-        rows={3}
-        value={details}
-        onChange={(event) => setDetails(event.target.value)}
-      />
-      {problem === 'details_too_long' && (
-        <p role="alert" className="m-0 text-sm text-destructive">
-          {t('dialog.detailsTooLong')}
-        </p>
+      {reason === copiedWorkReason && (
+        <CopySourceFields
+          idPrefix="report"
+          source={copySource}
+          onChange={(change) => setCopySource((current) => ({ ...current, ...change }))}
+          selectedPassage={passage}
+          onRemovePassage={() => setPassage(null)}
+        />
       )}
+      <DetailsField
+        details={details}
+        onChange={setDetails}
+        isTooLong={problem === 'details_too_long'}
+      />
       <p className="m-0 text-sm text-body">{t('dialog.aPersonReads')}</p>
       {props.report.failure !== null && (
         <Notice tone="error">{t(`failures.${props.report.failure}`)}</Notice>
       )}
-      <div className="flex flex-wrap justify-end gap-3">
-        <Button variant="secondary" onClick={props.onClose}>
-          {t('dialog.cancel')}
-        </Button>
-        <Button type="submit" disabled={props.report.isSending}>
-          {t(props.report.isSending ? 'dialog.sending' : 'dialog.send')}
-        </Button>
-      </div>
+      <FormButtons onCancel={props.onClose} isSending={props.report.isSending} />
     </form>
   );
 }

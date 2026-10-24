@@ -4,7 +4,8 @@
  * Who calls it: hooks/useReportItem.ts.
  * What it calls next: report_item() (…_s1_e10_01_reports.sql), which finds the item, refuses one's
  * own item, applies the hourly limit, stores the row and returns the reference. The details text
- * is sent and never logged here (CLAUDE.md rule 12).
+ * is sent and never logged here (CLAUDE.md rule 12). A copied-work report also carries its source
+ * and the selected passage (S1-E10-08).
  */
 import type { Enums } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -20,6 +21,11 @@ export interface ReportRequest {
   itemReference: string;
   reason: ReportReason;
   details: string;
+  /**
+   * For "Copied from a published work" only (S1-E10-08): the source fields as the database takes
+   * them (copySourceForDatabase) and the passage the reader selected.
+   */
+  copyDetails?: Record<string, string>;
 }
 
 /** The confirmation of receipt (DSA art. 16(4)). */
@@ -55,6 +61,19 @@ function failureFromCode(code: string | undefined): ReportFailure {
 }
 
 /**
+ * The copied-work details to send, or nothing: only that reason carries them, and an empty set
+ * isn't sent.
+ *
+ * @param request - the report
+ * @returns the details, or undefined
+ */
+function copyDetailsFor(request: ReportRequest): Record<string, string> | undefined {
+  if (request.reason !== 'copied_published_work' || request.copyDetails === undefined)
+    return undefined;
+  return Object.keys(request.copyDetails).length === 0 ? undefined : request.copyDetails;
+}
+
+/**
  * Sends the report.
  *
  * @param client - the shared Supabase client
@@ -71,6 +90,7 @@ export async function sendReport(
     item_reference: request.itemReference,
     reason: request.reason,
     details: request.details.trim() === '' ? undefined : request.details.trim(),
+    copy_details: copyDetailsFor(request),
   });
   if (error !== null) throw new ReportError(failureFromCode(error.code));
   const receipt = data[0];

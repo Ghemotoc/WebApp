@@ -1,10 +1,12 @@
 /**
  * Reads the public form's notices for staff: the notices in one case, the notices whose address
  * points to nothing we host, and the logged on-call alerts; closes an unmatched notice (story
- * S1-E10-02; DSA art. 16; Regulation (EU) 2021/784 art. 15).
+ * S1-E10-02; DSA art. 16; Regulation (EU) 2021/784 art. 15). Also asks a reporter for more
+ * details (S1-E10-08), the other way a case reaches the people who reported it.
  *
  * Who calls it: hooks/usePublicNotices.ts. What it calls next: admin_case_notices(),
- * admin_unmatched_notices(), admin_close_unmatched_notice() and admin_on_call_alerts()
+ * admin_unmatched_notices(), admin_close_unmatched_notice(), admin_on_call_alerts() and
+ * admin_request_report_details()
  * (…_s1_e10_02_public_notices.sql). Each checks the caller's role, staff session and, for a
  * child-safety notice, the safeguarding permission; closing writes the audit log.
  */
@@ -162,4 +164,25 @@ export async function listOnCallAlerts(client: AppSupabaseClient): Promise<OnCal
     noticeReference: row.notice_reference,
     createdAt: row.created_at,
   }));
+}
+
+/**
+ * Asks the reporter of one report for more details (S1-E10-08; audited by the database).
+ *
+ * @param client - the shared Supabase client
+ * @param reportReference - the report's reference, R-000123
+ * @param question - what the moderator asks
+ * Errors: throws ModerationError: not_allowed, refused (no question, a decided case or a question
+ *   still waiting), unreachable.
+ */
+export async function requestReportDetails(
+  client: AppSupabaseClient,
+  reportReference: string,
+  question: string,
+): Promise<void> {
+  const { error } = await client.rpc('admin_request_report_details', {
+    report_reference: reportReference,
+    question,
+  });
+  if (error !== null) throw new ModerationError(failureFromCode(error.code));
 }

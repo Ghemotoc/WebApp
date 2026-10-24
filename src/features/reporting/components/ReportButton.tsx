@@ -26,6 +26,19 @@ export interface ReportButtonProps {
   itemLabel: string;
 }
 
+/** The longest passage the database keeps (reports_copy_field_lengths). */
+const longestPassage = 4000;
+
+/**
+ * The text selected on the page, if any.
+ *
+ * @returns the selection, trimmed and cut to 4,000 characters, or null when nothing is selected
+ */
+function readSelectedPassage(): string | null {
+  const text = window.getSelection()?.toString().trim() ?? '';
+  return text === '' ? null : text.slice(0, longestPassage);
+}
+
 /**
  * Renders the button and its dialog.
  *
@@ -36,13 +49,23 @@ export function ReportButton({ itemType, itemReference, itemLabel }: ReportButto
   registerReportingTranslations(i18n);
   const { t: tReporting } = useTranslation('reporting');
   const [isOpen, setIsOpen] = useState(false);
+  // The text the reader had selected when they pressed Report, attached to a copied-work report
+  // automatically (S1-E10-08). Read on the press, before the dialog takes focus.
+  const [selectedPassage, setSelectedPassage] = useState<string | null>(null);
+
+  /** Opens the dialog with whatever text is selected on the page. */
+  function open() {
+    setSelectedPassage(readSelectedPassage());
+    setIsOpen(true);
+  }
+
   return (
     <>
       <Button
         variant="text"
         aria-haspopup="dialog"
         aria-label={tReporting('button.label', { item: itemLabel })}
-        onClick={() => setIsOpen(true)}
+        onClick={open}
       >
         {t('actions.report')}
       </Button>
@@ -52,6 +75,7 @@ export function ReportButton({ itemType, itemReference, itemLabel }: ReportButto
         itemType={itemType}
         itemReference={itemReference}
         itemLabel={itemLabel}
+        selectedPassage={selectedPassage}
       />
     </>
   );

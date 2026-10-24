@@ -102,7 +102,8 @@
     "warn": "Warn",
     "suspend": "Suspend",
     "ban": "Ban",
-    "hide": "Hide"
+    "hide": "Hide",
+    "public_note": "Add a public note"
   },
   "case": {
     "documentTitle": "Case {{reference}} · {{productName}}",
@@ -212,5 +213,18 @@
     "closeLabel": "Close notice {{reference}}",
     "closeNote": "What did you find?",
     "closeConfirm": "Close the notice"
+  },
+  "copied": {
+    "source": "Source",
+    "notGiven": "Not given",
+    "inTheStory": "In the story",
+    "inTheSource": "In the published work",
+    "asked": "Asked the reporter",
+    "answer": "Answer",
+    "waiting": "Waiting for the reporter",
+    "question": "What do you need to know?",
+    "send": "Send the question",
+    "ask": "Ask for more details",
+    "askLabel": "Ask the reporter of {{reference}} for more details"
   }
 }

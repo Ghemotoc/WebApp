@@ -9,6 +9,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { TextInput } from '@/components/ui/TextInput';
+import { CopySourceFields } from '@/features/reporting/components/CopySourceFields';
 import { noticeLimits } from '@/schemas/notice';
 
 import { useFieldLabel, useProblemMessage } from '../hooks/useNoticeFieldText';
@@ -89,6 +90,14 @@ export function ContentNoticeFields({ draft, problems, onChange }: NoticeFieldsP
         errorMessage={messageFor(problems.explanation)}
         onChange={(explanation) => onChange({ explanation })}
       />
+      {/* "Copied from a published work": where from, all optional (S1-E10-08). */}
+      {draft.kind === 'copied_published_work' && (
+        <CopySourceFields
+          idPrefix="notice"
+          source={draft.copySource}
+          onChange={(change) => onChange({ copySource: { ...draft.copySource, ...change } })}
+        />
+      )}
       <NotifierFields draft={draft} problems={problems} onChange={onChange} />
       <GoodFaithCheckbox
         isChecked={draft.goodFaith}
