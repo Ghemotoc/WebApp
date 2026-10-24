@@ -2067,6 +2067,17 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_account_open_cases: {
+        Args: { target_user_id: string };
+        Returns: {
+          case_id: string;
+          deadline_at: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reference: string;
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason: Database['public']['Enums']['report_reason'];
+        }[];
+      };
       admin_account_sanctions: {
         Args: { target_user_id: string };
         Returns: {
@@ -2296,6 +2307,10 @@ export type Database = {
         Args: { question: string; report_reference: string };
         Returns: undefined;
       };
+      admin_reset_pen_name: {
+        Args: { reason_given: string; target_user_id: string };
+        Returns: boolean;
+      };
       admin_restore_item: {
         Args: { reason_given: string; target_item_id: string };
         Returns: boolean;
@@ -2336,6 +2351,10 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_sign_out_everywhere: {
+        Args: { reason_given: string; target_user_id: string };
+        Returns: number;
+      };
       admin_unmatched_notices: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2350,7 +2369,42 @@ export type Database = {
           reference: string;
         }[];
       };
+      admin_user_account: {
+        Args: { target_user_id: string };
+        Returns: {
+          account_status: Database['public']['Enums']['account_status'];
+          age_band: Database['public']['Enums']['age_band'];
+          age_check_method: string;
+          age_check_result: Database['public']['Enums']['age_check_result'];
+          age_checked_at: string;
+          email_masked: string;
+          handle: string;
+          joined_at: string;
+          may_act: boolean;
+          may_read_audit_log: boolean;
+          may_reveal_email: boolean;
+          may_view_sanctions: boolean;
+          pen_name: string;
+          staff_roles: Database['public']['Enums']['staff_role'][];
+          user_id: string;
+        }[];
+      };
       admin_user_id_for_handle: { Args: { wanted_handle: string }; Returns: string };
+      admin_user_lookup: {
+        Args: { search_text: string };
+        Returns: {
+          account_status: Database['public']['Enums']['account_status'];
+          age_check_result: Database['public']['Enums']['age_check_result'];
+          age_checked_at: string;
+          handle: string;
+          matched_by: string;
+          open_case_count: number;
+          pen_name: string;
+          sanction_kinds: Database['public']['Enums']['sanction_kind'][];
+          staff_roles: Database['public']['Enums']['staff_role'][];
+          user_id: string;
+        }[];
+      };
       age_band: {
         Args: Record<PropertyKey, never>;
         Returns: Database['public']['Enums']['age_band'];
@@ -2808,6 +2862,10 @@ export type Database = {
       reportable_item_summary: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: string;
+      };
+      require_account_action_allowed: {
+        Args: { reason_given: string; target_user_id: string };
+        Returns: undefined;
       };
       require_not_last_owner: {
         Args: { removed_role: Database['public']['Enums']['staff_role']; target_user_id: string };
