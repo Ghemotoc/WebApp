@@ -21,6 +21,7 @@ const chapter: ReaderChapter = {
     languageCode: 'ro',
     writer: { displayName: 'Lia Scrie', handle: 'lia' },
   },
+  id: '7d1c5e4a-0000-4000-a000-000000000001',
   code: 'abcdefgh',
   title: 'Caietele bunicii',
   number: 1,
@@ -43,6 +44,8 @@ vi.mock('../hooks/useChapter', () => ({
 }));
 vi.mock('../hooks/useChapterBanner', () => ({ useChapterBanner: () => ({ banner }) }));
 vi.mock('../hooks/useRecordRead', () => ({ useRecordRead: () => undefined }));
+// The Like button and the comments read the database; this test is about the banner slot only.
+vi.mock('./LikeButton', () => ({ LikeButton: () => null }));
 
 /** Draws the reader at a chapter's address, in English. */
 function renderReader() {

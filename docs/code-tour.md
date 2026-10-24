@@ -709,6 +709,22 @@ Blocks: `blocks` (the blocker's own rows only) and `is_blocked_with()`, which re
 
 Tests: `143-writer-profile-and-blocks.test.sql`, `144-follows.test.sql`, `lib/formatting.test.ts`, `e2e/writer-profile.spec.ts`, `e2e/follows.spec.ts`.
 
+## Likes, comments and reactions on a chapter (S1-E6-03, S1-E6-01, S1-E6-02)
+
+Under the chapter text, on `/s/<story>/<chapter>`:
+
+```
+ChapterEnd
+  │  LikeButton → useChapterLike → api/likes.ts → chapter_like_state() / like_chapter(story, chapter, should_like)
+  │     readable_chapter(): the same rules as get_chapter() (rating, blocks, moderation)
+  │     chapter_likes (one row per reader and chapter; the count is public, who liked isn't)
+  ▼  ReportButton ("Report chapter", the chapter's row ID; the dialog's file loads on the first press)
+```
+
+The popularity job (S1-E5-03) reads `chapter_like_totals()`, which leaves out the writer's own like.
+
+Tests: `148-chapter-likes.test.sql`, `e2e/chapter-likes.spec.ts`.
+
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
 What the Foundations epic left in place, and where to find it. The epic report, `docs/epic-reports/S1-E1.md`, lists what works, the known gaps and the steps Robert does by hand.

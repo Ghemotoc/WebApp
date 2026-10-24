@@ -1,7 +1,4 @@
 {
-  "button": {
-    "label": "Raportează {{item}}"
-  },
   "dialog": {
     "eyebrow": "Raportare",
     "title": {

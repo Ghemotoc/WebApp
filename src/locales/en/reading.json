@@ -54,7 +54,8 @@
     "unavailableTitle": "This chapter isn’t available",
     "unavailableBody": "It may not be published, it may be rated for older readers, it may have been removed, or the link may be wrong.",
     "loadFailed": "We couldn’t load this chapter. Check your connection and try again.",
-    "copyNotice": "On the web, right-click and copying are turned off for chapters. That makes copying harder, but it can’t stop screenshots. {{penName}} keeps all the rights to this story."
+    "copyNotice": "On the web, right-click and copying are turned off for chapters. That makes copying harder, but it can’t stop screenshots. {{penName}} keeps all the rights to this story.",
+    "reportLabel": "chapter {{number}} of {{story}}"
   },
   "teaser": {
     "shared": "Shared with you · chapter {{number}} of {{total}}",
@@ -74,5 +75,15 @@
   "linkPreview": {
     "byWriter": "by {{name}}",
     "hiddenDescription": "Rated {{rating}}. Log in to check if you can read it."
+  },
+  "likes": {
+    "like": "Like this chapter",
+    "liked": "Liked",
+    "logIn": "Log in to like",
+    "count_one": "{{count}} like",
+    "count_few": "{{count}} likes",
+    "count_other": "{{count}} likes",
+    "readOnly": "Your account can’t like chapters yet.",
+    "failed": "We couldn’t save your like. Try again."
   }
 }

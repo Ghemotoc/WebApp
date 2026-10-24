@@ -282,6 +282,46 @@ export type Database = {
         };
         Relationships: [];
       };
+      chapter_likes: {
+        Row: {
+          chapter_id: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          chapter_id?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_likes_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapter_likes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_reads: {
         Row: {
           chapter_id: string;
@@ -2477,6 +2517,17 @@ export type Database = {
         Returns: string;
       };
       chapter_is_readable: { Args: { chapter_id: string }; Returns: boolean };
+      chapter_like_count_of: { Args: { target_chapter_id: string }; Returns: number };
+      chapter_like_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      chapter_like_totals: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          chapter_id: string;
+          like_count: number;
+          likes_last_7_days: number;
+          story_id: string;
+        }[];
+      };
       chapter_publish_now: {
         Args: {
           chapter: Omit<
@@ -2577,6 +2628,11 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      like_chapter: {
+        Args: { chapter_code: string; should_like: boolean; story_slug: string };
+        Returns: Json;
+      };
+      like_state_of: { Args: { target_chapter_id: string }; Returns: Json };
       list_my_sessions: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2783,6 +2839,39 @@ export type Database = {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;
       };
+      readable_chapter: {
+        Args: { chapter_code: string; story_slug: string };
+        Returns: {
+          code: string;
+          created_at: string;
+          deleted_at: string | null;
+          draft_body: string;
+          draft_saved_at: string | null;
+          draft_title: string;
+          draft_version: number;
+          edited_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          last_published_at: string | null;
+          position: number;
+          published_body: string | null;
+          published_title: string | null;
+          published_word_count: number | null;
+          scheduled_for: string | null;
+          status: Database['public']['Enums']['chapter_status'];
+          story_id: string;
+          unpublished_at: string | null;
+          updated_at: string;
+          user_id: string;
+          word_count: number;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'chapters';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       reader_visible_story: {
         Args: { story_slug: string };
         Returns: {
@@ -2919,6 +3008,7 @@ export type Database = {
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
+      story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };

@@ -1,7 +1,4 @@
 {
-  "button": {
-    "label": "Report {{item}}"
-  },
   "dialog": {
     "eyebrow": "Report",
     "title": {

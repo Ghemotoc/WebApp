@@ -3,17 +3,19 @@
  *
  * Board values: a Cutive line "End of chapter 14" between two fine rules, then "Read chapter 15 ›"
  * as the solid 48 px button. After the latest chapter: "That's the latest chapter so far." and
- * a way back to the story. Like (S1-E6-03), Share (S1-E4-05), the copy notice (S1-E4-06a) and
- * the comments (S1-E6-01) join here in their own stories.
- * Report chapter: Lane C's shared `<ReportButton>` (S1-E10-01) goes at the end of the row below,
- * as on the board ("Report chapter", reportable type "chapter").
- * Who uses it: ChapterReaderPage.
+ * a way back to the story. The row starts with Like (S1-E6-03) and ends with "Report chapter":
+ * the shared `<ReportButton>` (S1-E10-01; reportable type "chapter", with the chapter's row ID),
+ * pushed to the right as on the board. Share joins with S1-E4-05 (after March).
+ * Who uses it: ChapterReaderPage. What it calls: LikeButton and ReportButton.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { ReportButton } from '@/features/reporting/components/ReportButton';
+
 import type { ReaderChapter } from '../api/chapter';
 
+import { LikeButton } from './LikeButton';
 import { ForwardIcon } from './ReaderIcons';
 
 /**
@@ -32,6 +34,7 @@ export function ChapterEnd({ chapter }: { chapter: ReaderChapter }) {
         <span aria-hidden="true" className="h-px flex-1 bg-border" />
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-2.5 lg:mr-20">
+        <LikeButton address={{ storySlug: chapter.story.slug, chapterCode: chapter.code }} />
         {chapter.nextCode !== null ? (
           <Link
             to={`${storyAddress}/${chapter.nextCode}`}
@@ -51,7 +54,16 @@ export function ChapterEnd({ chapter }: { chapter: ReaderChapter }) {
             </Link>
           </>
         )}
-        {/* Report chapter: Lane C's <ReportButton type="chapter"> (S1-E10-01) goes here, last in the row. */}
+        <span className="ml-auto">
+          <ReportButton
+            itemType="chapter"
+            itemReference={chapter.id}
+            itemLabel={t('reader.reportLabel', {
+              number: chapter.number,
+              story: chapter.story.title,
+            })}
+          />
+        </span>
       </div>
     </>
   );

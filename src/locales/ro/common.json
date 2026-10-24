@@ -101,6 +101,7 @@
     "backOnline": "Ești din nou online."
   },
   "actions": {
-    "report": "Raportează"
+    "report": "Raportează",
+    "reportItem": "Raportează {{item}}"
   }
 }

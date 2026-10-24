@@ -54,7 +54,8 @@
     "unavailableTitle": "Capitolul nu este disponibil",
     "unavailableBody": "Poate nu e publicat, poate e clasificat pentru cititori mai mari, poate a fost eliminat sau linkul e greșit.",
     "loadFailed": "Nu am putut încărca capitolul. Verifică-ți conexiunea și încearcă din nou.",
-    "copyNotice": "Pe web, clicul dreapta și copierea sunt oprite pentru capitole. Asta face copierea mai grea, dar nu poate opri capturile de ecran. {{penName}} păstrează toate drepturile asupra acestei povești."
+    "copyNotice": "Pe web, clicul dreapta și copierea sunt oprite pentru capitole. Asta face copierea mai grea, dar nu poate opri capturile de ecran. {{penName}} păstrează toate drepturile asupra acestei povești.",
+    "reportLabel": "capitolul {{number}} din {{story}}"
   },
   "teaser": {
     "shared": "Trimis ție · capitolul {{number}} din {{total}}",
@@ -74,5 +75,15 @@
   "linkPreview": {
     "byWriter": "de {{name}}",
     "hiddenDescription": "Clasificată {{rating}}. Conectează-te ca să vezi dacă o poți citi."
+  },
+  "likes": {
+    "like": "Apreciază capitolul",
+    "liked": "Apreciat",
+    "logIn": "Intră în cont ca să apreciezi",
+    "count_one": "{{count}} apreciere",
+    "count_few": "{{count}} aprecieri",
+    "count_other": "{{count}} de aprecieri",
+    "readOnly": "Contul tău nu poate aprecia capitole încă.",
+    "failed": "Nu am putut salva aprecierea. Încearcă din nou."
   }
 }
