@@ -2,6 +2,12 @@
 
 Every decision Robert has made, with its date and source. The live list is the master plan's "Decisions made" tab; it wins if this file is out of date. Proposals and OPEN items are not decisions.
 
+## Added 24 Oct 2026 (Lane C: safety and admin; the CTO, to whom Robert handed technical calls, chat)
+
+| Decision | Source |
+| --- | --- |
+| The international fallback for safety contacts (S1-E10-13a, Q9c), checked online by the CTO on 24 Oct 2026: Child Helpline International's directory https://childhelplineinternational.org/helplines/ (the old /child-helplines/child-helpline-network/ address returns an error) and INHOPE's at https://inhope.org (the directory is on the home page). A country with an INHOPE member hotline keeps that member's own report page instead (Romania: Ora de Net, https://oradenet.ro/esc-abuz) | Chat, 24 Oct 2026 |
+
 ## Added 23 Oct 2026 (Lane C: safety and admin; Robert, chat)
 
 | Decision | Source |

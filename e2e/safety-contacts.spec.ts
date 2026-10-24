@@ -7,7 +7,8 @@
  *   dialog, each from the database, with "Official site" links that open in a new tab;
  * - a signed-out visitor from Great Britain (faked connection) sees British contacts on
  *   /legal/contact, and "Not your country?" switches to Romania;
- * - a visitor from a country with no row (France) sees "Call your local emergency number" and
+ * - a visitor from a country with no row (France) sees "Call your local emergency number", the
+ *   two international directories (Child Helpline International, INHOPE) and
  *   the gap is counted for staff;
  * - on a phone the number is a tel: link, on a desktop plain text;
  * - /legal/contact with the block passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
@@ -80,6 +81,14 @@ test.describe('safety contacts (S1-E10-13a)', () => {
     const block = page.getByRole('region', { name: 'Is someone in danger right now?' });
     await expect(block).toContainText('Call your local emergency number.');
     await expect(block).toContainText('We don’t have checked contacts for your country yet.');
+    // The two international directories, checked by the CTO on 24 Oct 2026 (Q9c).
+    await expect(block).toContainText('International directories, checked October 24, 2026:');
+    await expect(
+      block.getByRole('link', { name: /Child Helpline International: find a child helpline/ }),
+    ).toHaveAttribute('href', 'https://childhelplineinternational.org/helplines/');
+    await expect(
+      block.getByRole('link', { name: /INHOPE: find your national hotline/ }),
+    ).toHaveAttribute('href', 'https://inhope.org');
     await expect
       .poll(() =>
         Number(

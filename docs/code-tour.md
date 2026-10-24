@@ -299,7 +299,8 @@ S1-E10-03a opens a moderation case from the new row; S1-E10-06 adds the reportin
 ReportDialog or /legal/contact → <SafetyContactsBlock />                 src/features/safety/
   │  useVisitorCountry: profiles.country_code (signed in) or /api/signup-context (signed out)
   │  useSafetyContacts(country) → api/safetyContacts.ts → safety_contacts (read by everyone)
-  │     no row → "Call your local emergency number" + rpc note_safety_contact_gap() for staff
+  │     no row → "Call your local emergency number", the ZZ directories (Child Helpline International,
+  │     INHOPE) + rpc note_safety_contact_gap() for staff
   │  CountryPicker: "Not your country?", the ten covered countries, Romania first
   ▼
 content/safety-contacts.json (research G4) → scripts/build-safety-contacts-migration.ts
