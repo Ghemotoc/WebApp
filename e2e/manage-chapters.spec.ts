@@ -181,7 +181,7 @@ test.describe('Manage chapters (S1-E3-04)', () => {
     const rows = chapterList(page).getByRole('listitem');
     await expect(rows).toHaveCount(5);
     await expect(rows.nth(0)).toContainText('Published');
-    await expect(rows.nth(1)).toContainText(/readers see “Edited on \w+ \d+”/);
+    await expect(rows.nth(1)).toContainText(/readers see “Edited on \d+ \w+”/);
     await expect(rows.nth(2)).toContainText('Draft · 228 words · saved');
     await expect(rows.nth(3)).toContainText(/Goes live .*, Romania time/);
     await expect(rows.nth(4)).toContainText('readers can’t open it · comments hidden but kept');
@@ -195,7 +195,7 @@ test.describe('Manage chapters (S1-E3-04)', () => {
     );
     const deleted = page.getByRole('region', { name: 'Recently deleted' });
     await expect(deleted).toContainText('Nota autorului');
-    await expect(deleted).toContainText(/Deleted \w+ \d+ · gone for good on/);
+    await expect(deleted).toContainText(/Deleted \d+ \w+ · gone for good on \d+ \w+ \d{4}/);
   });
 
   test('passes axe with no doodle overlaps at 390, 768 and 1440 px, in English and Romanian', async ({
