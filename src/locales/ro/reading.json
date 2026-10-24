@@ -55,6 +55,7 @@
     "signIn": "Conectare",
     "unavailableTitle": "Capitolul nu este disponibil",
     "unavailableBody": "Poate nu e publicat, poate e clasificat pentru cititori mai mari, poate a fost eliminat sau linkul e greșit.",
-    "loadFailed": "Nu am putut încărca capitolul. Verifică-ți conexiunea și încearcă din nou."
+    "loadFailed": "Nu am putut încărca capitolul. Verifică-ți conexiunea și încearcă din nou.",
+    "copyNotice": "Pe web, clicul dreapta și copierea sunt oprite pentru capitole. Asta face copierea mai grea, dar nu poate opri capturile de ecran. {{penName}} păstrează toate drepturile asupra acestei povești."
   }
 }

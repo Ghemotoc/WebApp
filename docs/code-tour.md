@@ -458,7 +458,9 @@ useRecordRead → record_chapter_read(): +1 on today's chapter_reads total, once
 
 Speed (S1-E4-01b): the route's loader in `src/app/router.tsx` calls `prefetchChapter()` (`api/chapterPrefetch.ts`) the moment the address matches, so the Supabase library, the session and `get_chapter()` load while the reader's code downloads; `useChapter` takes that answer. The banner slot, `ChapterBannerSlot`, comes after the `<article>` and shows nothing until `pick_banner()` (S1-E12-01; `hooks/useChapterBanner.ts`).
 
-Tests: `140-get-chapter.test.sql`, `141-chapter-reads.test.sql`, `hooks/useRecordRead.test.tsx`, `hooks/useReadingProgress.test.ts`, `components/ChapterReaderPage.test.tsx` (the banner's place), `e2e/chapter-reader.spec.ts`, `e2e/reader-performance.spec.ts` (2 seconds on a throttled phone, the script budget, 200% zoom).
+Copying (S1-E4-06a): the text sits in `ProtectedChapterText`, which cancels `contextmenu`, `copy`, `cut` and `dragstart` on the chapter text only (no `user-select: none`, so selecting, find and screen readers still work); `CopyNotice` under the chapter says it makes copying harder and can't stop screenshots (Q9), and `copyWording.test.ts` keeps "can't be copied" out of every locale file. The Publish panel tells the writer the same (`publish.webReadingNote`).
+
+Tests: `140-get-chapter.test.sql`, `141-chapter-reads.test.sql`, `hooks/useRecordRead.test.tsx`, `hooks/useReadingProgress.test.ts`, `components/ChapterReaderPage.test.tsx` (the banner's place), `e2e/chapter-reader.spec.ts`, `e2e/reader-performance.spec.ts` (2 seconds on a throttled phone, the script budget, 200% zoom), `components/ProtectedChapterText.test.tsx`, `copyWording.test.ts`, `e2e/copy-protection.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
