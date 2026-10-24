@@ -372,7 +372,7 @@ functions/api/contact.ts (Cloudflare) · server/pages-functions-plugin.ts (local
 Brevo's HTTP API (BREVO_API_KEY, by hand) on Cloudflare · Mailpit (http://127.0.0.1:54324) locally
 ```
 
-No table, no log: the message, the email and the IP address are never stored (ADR 0004). Abuse: the honeypot here and a Cloudflare rate-limit rule on `/api/contact`, set by hand (`docs/runbooks/contact-form.md`).
+No table, no log: the message, the email and the IP address are never stored (ADR 0006). Abuse: the honeypot here and a Cloudflare rate-limit rule on `/api/contact`, set by hand (`docs/runbooks/contact-form.md`).
 
 ## The helplines for the reader's country (S1-E10-13a)
 
