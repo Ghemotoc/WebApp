@@ -90,7 +90,7 @@ function ChapterRowText(props: {
   const { t, i18n } = useTranslation('writing');
   const { chapter } = props;
   return (
-    <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-1">
+    <div className="flex min-w-0 flex-[1_1_180px] flex-col gap-1">
       {props.isRenaming ? (
         <RenameChapterForm
           code={chapter.code}
