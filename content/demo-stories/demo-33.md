@@ -48,7 +48,7 @@ Am schimbat scrisori tot anul, cam o dată pe lună. Cu fiecare plic, scrisorile
 
 Am observat la copii lucruri pe care nicio fișă de evaluare nu le prinde. Au început să întrebe. Nu doar să povestească despre ei, ci să vrea să afle: cum se mulge o vacă, de ce se face focul în sobă dimineața devreme, dacă e frică noaptea, când nu sunt felinare. O scrisoare bună, au descoperit singuri, are întrebări în ea, pentru că altfel celălalt nu are la ce să răspundă.
 
-Au început să scrie mai frumos. Nu pentru că le-am cerut eu, ci pentru că Ana din Valea Socilor scrisese, cu toată sinceritatea ei de zece ani, că nu înțelege jumătate din ce a scris Robert. Robert a refăcut scrisoarea de două ori, de bunăvoie, cu limba scoasă de concentrare. Am văzut copii care tăiau un rând și îl rescriau, care întrebau dacă „dor” se scrie cu majusculă când e foarte mare.
+Au început să scrie mai frumos. Nu pentru că le-am cerut eu, ci pentru că Ioana din Valea Socilor scrisese, cu toată sinceritatea ei de zece ani, că nu înțelege jumătate din ce a scris Matei. Matei a refăcut scrisoarea de două ori, de bunăvoie, cu limba scoasă de concentrare. Am văzut copii care tăiau un rând și îl rescriau, care întrebau dacă „dor” se scrie cu majusculă când e foarte mare.
 
 În mai, am făcut ce părea imposibil în septembrie: am închiriat un autocar și ne-am dus în vizită. Am crezut că va fi o întâlnire zgomotoasă. A fost, în primele zece minute, cea mai timidă oră din cariera mea. Douăzeci și opt de copii care își scriseseră lucruri despre pisici, frici și clătite stăteau acum în două grupuri, față în față, și se uitau în pământ. Apoi o fată din clasa mea a întrebat, foarte încet: „Care e Florica?” Și toată lumea a pornit spre grajd.
 
