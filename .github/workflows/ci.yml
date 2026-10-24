@@ -14,6 +14,8 @@
 #   - They also skip when a pull request changes only documentation (docs/, prompts/, *.md); the
 #     small "changes" job decides that with scripts/only-docs-changed.sh.
 #   - On a push to main nothing skips: the full suite runs after every merge.
+#   - On a pull request they also wait for "checks" and skip when it fails: a lint or unit-test
+#     failure costs about 3 minutes instead of 25. On main they wait for it but always run.
 #   - If "changes" fails, the long jobs run anyway, so a broken check never skips the tests.
 # Blocking the merge: a branch ruleset on main lists "checks", "database" and "e2e" as required
 # status checks. A job skipped by its `if:` reports "Success" and still satisfies a required check
@@ -95,14 +97,17 @@ jobs:
 
   database:
     name: Database tests and generated types
-    needs: changes
-    # Runs on every push to main. On a pull request, only once it is out of draft and only when
-    # it changes more than documentation. `!cancelled()` replaces the default "every needed job
-    # succeeded", so the job also runs when "changes" is skipped (push to main) or fails (its
-    # answer is then empty, which is not 'true').
+    needs: [changes, checks]
+    # Runs on every push to main, after "checks", even if "checks" failed there (main always gets
+    # the full suite). On a pull request, only once it is out of draft, only when "checks" passed
+    # (a lint or unit-test failure no longer pays for a 19-minute e2e run; CTO, 24 Oct 2026) and
+    # only when it changes more than documentation. `!cancelled()` replaces the default "every
+    # needed job succeeded", so the job also runs when "changes" is skipped (push to main) or
+    # fails (its answer is then empty, which is not 'true').
     if: >-
       !cancelled()
-      && (github.event_name == 'push' || github.event.pull_request.draft == false)
+      && (github.event_name == 'push'
+        || (github.event.pull_request.draft == false && needs.checks.result == 'success'))
       && needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -122,14 +127,17 @@ jobs:
 
   e2e:
     name: End-to-end and accessibility smoke test
-    needs: changes
-    # Runs on every push to main. On a pull request, only once it is out of draft and only when
-    # it changes more than documentation. `!cancelled()` replaces the default "every needed job
-    # succeeded", so the job also runs when "changes" is skipped (push to main) or fails (its
-    # answer is then empty, which is not 'true').
+    needs: [changes, checks]
+    # Runs on every push to main, after "checks", even if "checks" failed there (main always gets
+    # the full suite). On a pull request, only once it is out of draft, only when "checks" passed
+    # (a lint or unit-test failure no longer pays for a 19-minute e2e run; CTO, 24 Oct 2026) and
+    # only when it changes more than documentation. `!cancelled()` replaces the default "every
+    # needed job succeeded", so the job also runs when "changes" is skipped (push to main) or
+    # fails (its answer is then empty, which is not 'true').
     if: >-
       !cancelled()
-      && (github.event_name == 'push' || github.event.pull_request.draft == false)
+      && (github.event_name == 'push'
+        || (github.event.pull_request.draft == false && needs.checks.result == 'success'))
       && needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     # The suite runs on one worker (playwright.config.ts) and grows with every screen: about

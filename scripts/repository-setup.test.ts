@@ -58,14 +58,18 @@ describe('repository setup', () => {
     expect(ciWorkflow).not.toMatch(/^ {2}pull_request:\n(?:\s+#.*\n)*\s+branches:/m);
   });
 
-  it('runs the database and e2e jobs on main, and on pull requests once they are ready and change more than docs', () => {
+  it('runs the database and e2e jobs on main, and on pull requests once they are ready, pass checks and change more than docs', () => {
     // "Tooling: run the long CI jobs only when they matter" (24 Oct 2026).
     const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
     const gate =
-      "!cancelled()\n      && (github.event_name == 'push' || github.event.pull_request.draft == false)\n      && needs.changes.outputs.docs_only != 'true'";
+      'needs: [changes, checks]\n' +
+      '    # Runs on every push to main, after "checks", even if "checks" failed there';
+    const condition =
+      "!cancelled()\n      && (github.event_name == 'push'\n        || (github.event.pull_request.draft == false && needs.checks.result == 'success'))\n      && needs.changes.outputs.docs_only != 'true'";
 
     expect(ciWorkflow).toContain('types: [opened, synchronize, reopened, ready_for_review]');
     expect(ciWorkflow.split(gate)).toHaveLength(3);
+    expect(ciWorkflow.split(condition)).toHaveLength(3);
     expect(ciWorkflow).toContain('bash scripts/only-docs-changed.sh');
   });
 

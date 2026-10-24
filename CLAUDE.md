@@ -20,7 +20,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 - Tests: Vitest (unit), pgTAP (supabase/tests), Playwright + axe (e2e)
 
 ## Commands
-- Install: npm ci
+- Install: npm ci. Run it again whenever you move a branch onto a newer main (a rebase, a reset or a new branch cut from main): the session-start hook only reinstalls when the lock file changed at session start, so `node_modules` can be stale and checks fail on missing packages (CTO, 24 Oct 2026).
 - Dev: npx supabase start && npm run dev
 - Checks (run all before saying you're done): npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase test db && npm run test:e2e && npm run i18n:check
 - Regenerate database types after a migration: npm run types:gen
