@@ -16,3 +16,6 @@ README.md
 # Supabase's own config and SQL keep the CLI's formatting
 supabase/
 .github/pull_request_template.md
+# The paste fixtures copy Word's and Google Docs' own HTML on purpose (S1-E3-02b): reformatting
+# them would change what the paste-cleaning tests check
+src/test/fixtures/paste/
