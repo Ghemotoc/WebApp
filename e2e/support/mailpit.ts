@@ -12,6 +12,8 @@ const mailpitUrl = 'http://127.0.0.1:54324/api/v1';
 /** The parts of a Mailpit message the tests read. */
 interface MailpitMessage {
   Subject: string;
+  /** The plain-text body (the Contact us emails are plain text, S1-E14-04). */
+  Text: string;
   HTML: string;
 }
 

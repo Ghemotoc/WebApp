@@ -23,7 +23,8 @@ test('the contact page lists every contact point, the languages and the company 
 }) => {
   await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   await page.goto('/');
-  await page.getByRole('contentinfo').getByRole('link', { name: 'Contact' }).click();
+  // Exact: the footer also has "Contact us", the form (S1-E14-04).
+  await page.getByRole('contentinfo').getByRole('link', { name: 'Contact', exact: true }).click();
   await expect(page).toHaveURL(/\/legal\/contact$/);
   await expect(
     page.getByRole('heading', { name: 'Contact and company details', level: 2 }),
@@ -59,8 +60,9 @@ test('a signed-in person reaches the contact page from Settings in one tap', asy
   await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
   const page = await context.newPage();
   await page.goto('/settings');
+  // The legal contact page, not "Contact us" (the form, S1-E14-04), which sits beside it.
   await page
-    .getByRole('link', { name: /Contact/ })
+    .getByRole('link', { name: /company details|datele companiei/ })
     .first()
     .click();
   await expect(page).toHaveURL(/\/legal\/contact$/);

@@ -40,6 +40,7 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Moderation actions (S1-E10-06): hide = the writer and staff still see the item; remove = staff only, with a "[Removed by the moderation team]" marker; restrict waits for S1-E11-08 | Chat, 23 Oct 2026 (Q3) |
 | Sanctions (S1-E10-06, proposals accepted): a suspension lasts 1, 7 or 30 days; a reporting pause 30 days; a ban uses Supabase's own ban and signs the person out everywhere | Chat, 23 Oct 2026 (Q7) |
 | Banned emails are kept as a keyed hash (HMAC) with a secret in Supabase Vault, set by hand on each environment, never in a migration | Chat, 23 Oct 2026 (Q8) |
+| Contact us (S1-E14-04): the form posts to our own Cloudflare Pages Function, which sends through Brevo's HTTP API (`BREVO_API_KEY` by hand); the reference is made by the function and not stored; abuse is kept down by a honeypot field and a Cloudflare rate-limit rule set by hand; a signed-in person's account email is the reply-to; the acknowledgement says "we reply within one month"; no list of past requests; the report line points to the Report button and /legal/contact | Chat, 23 Oct 2026 (Q10) |
 | Lane C's pull requests go on `claude/funny-einstein-pkv35k-<story-id>` branches, one per story, each cut from the one before; screenshots are sent in chat, never committed | Chat, 23 Oct 2026 (Q13, Q14) |
 
 ## Added 17 Oct 2026 (after the snapshot below)

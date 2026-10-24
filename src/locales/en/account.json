@@ -59,7 +59,8 @@
     "legalLink": "Open the Legal centre",
     "signedOut": "Log in to see your settings.",
     "noHandle": "Choose a username first.",
-    "contactLink": "Contact and company details"
+    "contactLink": "Contact and company details",
+    "contactUsLink": "Contact us"
   },
   "notice": {
     "heading": "Choose a username",

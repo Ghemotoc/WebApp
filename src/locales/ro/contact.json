@@ -1,0 +1,40 @@
+{
+  "documentTitle": "Contactează-ne · {{productName}}",
+  "eyebrow": "Contactează-ne",
+  "heading": "Scrie-ne",
+  "intro": "O întrebare, o problemă cu contul tău sau ceva legat de datele tale: o persoană din echipa noastră citește fiecare mesaj și răspunde prin email în cel mult o lună, de obicei mult mai repede.",
+  "reportInstead": "Raportezi o poveste, un comentariu sau un profil? Folosește butonul Raportează de lângă el, ca să ajungă direct la moderatorii noștri. Raportarea fără cont și cum ne contactezi pentru chestiuni legale sunt pe",
+  "reportInsteadLink": "pagina de contact și date ale companiei",
+  "form": {
+    "heading": "Mesajul tău",
+    "topic": "Despre ce este vorba?",
+    "topics": {
+      "question": "O întrebare",
+      "account": "O problemă cu contul meu",
+      "data_request": "Datele mele (să le văd, corectez, descarc sau șterg)",
+      "other": "Altceva"
+    },
+    "message": "Mesaj",
+    "messageHint": "Spune ce s-a întâmplat și ce ai vrea să facem. Cel mult {{max}} de caractere.",
+    "messageMissing": "Scrie mai întâi mesajul.",
+    "messageTooLong": "E prea lung. Păstrează-l sub 4.000 de caractere.",
+    "email": "Emailul tău",
+    "emailHint": "Răspundem la această adresă și îți trimitem o referință.",
+    "emailInvalid": "Verifică adresa de email.",
+    "signedInAs": "Îți răspundem la {{email}}, adresa contului tău @{{handle}}. Numele de utilizator și ID-ul de utilizator merg împreună cu mesajul, ca să îți găsim contul; niciodată anul nașterii sau verificarea vârstei.",
+    "website": "Lasă acest câmp gol",
+    "send": "Trimite mesajul",
+    "sending": "Se trimite…",
+    "aPersonReads": "O persoană citește fiecare mesaj. Răspundem în cel mult o lună."
+  },
+  "sent": {
+    "heading": "Mesaj trimis",
+    "body": "Mulțumim. Ți-am trimis prin email o confirmare cu referința ta, {{reference}}. Păstreaz-o în caz că ne scrii din nou despre același lucru.",
+    "again": "Trimite alt mesaj"
+  },
+  "failures": {
+    "invalid": "Ceva din mesaj a fost refuzat. Verifică câmpurile și încearcă din nou.",
+    "unsent": "Nu am putut trimite mesajul acum. Te rugăm să încerci din nou în câteva minute sau scrie-ne direct la {{supportEmail}}.",
+    "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+  }
+}

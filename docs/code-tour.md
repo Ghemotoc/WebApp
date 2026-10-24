@@ -54,6 +54,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/language/` | The English / Română drop-downs, the hooks that switch and save the language, and the Supabase calls for `profiles.locale` | S1-E1-04 |
 | `src/features/reporting/` | The shared Report button and dialog (`<ReportButton>`), the one report form; see its README and architecture 1.7.11 | S1-E10-01 |
 | `src/features/moderation/` | The report queue and the case page of the admin site: tiers, deadlines, grouped reports and the decision; see its README | S1-E10-03a |
+| `src/features/contact/` | "Write to us": the Contact us form, through our own Pages Function and Brevo; see its README | S1-E14-04 |
 | `src/features/safety/` | "Is someone in danger right now?": the helplines for the reader's country, on the report dialog and the contact page; see its README | S1-E10-13a |
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
@@ -351,6 +352,27 @@ Sign-in: Supabase answers user_banned → "This account is banned"; the report d
 ```
 
 Lane A's public read policies add `and not public.is_moderated_away('<type>', id)` (architecture 1.7.11); `moderated_state_of()` tells a screen whether to draw the removed marker.
+
+## Writing to us (S1-E14-04)
+
+```
+footer "Contact us" · Settings › Legal · /legal/contact "Write to us" · "Ask a moderator to check it"
+  │  /contact (router) → ContactPage → ContactForm                        src/features/contact/
+  │     topic chips, the message, the email (a visitor) or the account's email (signed in),
+  │     the hidden honeypot field; checked with src/schemas/contact.ts
+  │  useContactForm → api/contact.ts → POST /api/contact (JSON)
+  ▼
+functions/api/contact.ts (Cloudflare) · server/pages-functions-plugin.ts (locally)
+  │  server/contact.ts handleContact(): the same zod schema → a filled honeypot gets a reference
+  │  and nothing is sent → reference C-<year>-<4 digits> (never stored) → two plain-text emails:
+  │    staff: "[C-2026-0482] Account problem", the message, "@handle (user ID …)" or "not signed in",
+  │           reply-to the sender
+  │    sender: "We've received your message (C-2026-0482)", "we reply within one month"
+  ▼
+Brevo's HTTP API (BREVO_API_KEY, by hand) on Cloudflare · Mailpit (http://127.0.0.1:54324) locally
+```
+
+No table, no log: the message, the email and the IP address are never stored (ADR 0004). Abuse: the honeypot here and a Cloudflare rate-limit rule on `/api/contact`, set by hand (`docs/runbooks/contact-form.md`).
 
 ## The helplines for the reader's country (S1-E10-13a)
 

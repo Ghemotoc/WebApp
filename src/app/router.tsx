@@ -221,6 +221,14 @@ function pageRoutes(): RouteObject[] {
     { path: '/settings', element: <SettingsPage /> },
     // Lane A: writing and reading (S1-E3, S1-E4).
     ...writeRoutes,
+    // Contact us: the form for users and visitors (S1-E14-04; Lane C), loaded when opened.
+    {
+      path: '/contact',
+      lazy: async () => {
+        const { ContactPage } = await import('@/features/contact/components/ContactPage');
+        return { Component: ContactPage };
+      },
+    },
     ...(isDesignPageIncluded ? [designRoute] : []),
     // Any other address: "We can't find that page" in the reader's language (S1-E2-QA, board
     // 7.4). Its search button waits for Search (S1-E5-04).

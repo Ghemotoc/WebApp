@@ -9,7 +9,7 @@
  * Public page: no sign-in needed, and no ads on legal pages (terms, section 6).
  */
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -90,7 +90,16 @@ export function LegalCentrePage() {
       ) : (
         <LegalDocumentLoader key={knownSlug} documentSlug={knownSlug} />
       )}
-      {/* The contact page also carries the helplines for the visitor's country (S1-E10-13a, Q9d). */}
+      {/* The contact page points at the Contact us form (S1-E14-04) and carries the helplines for
+          the visitor's country (S1-E10-13a, Q9d). */}
+      {knownSlug === 'contact' && (
+        <p className="m-0 text-body">
+          {t('contactUs.text')}{' '}
+          <Link to="/contact" className="font-semibold text-link underline">
+            {t('contactUs.link')}
+          </Link>
+        </p>
+      )}
       {knownSlug === 'contact' && <SafetyContactsBlock />}
     </PageContainer>
   );
