@@ -54,8 +54,10 @@ async function signUpWith(page: Page, link: string, email: string) {
 function cleanUp() {
   runSql(`
     delete from public.consents where user_id in (select id from auth.users where email like 'invite-${stamp}-%@example.com');
-    delete from public.profiles where id in (select id from auth.users where email like 'invite-${stamp}-%@example.com');
-    delete from auth.users where email like 'invite-${stamp}-%@example.com';
+    -- Accounts the append-only audit log names (invite.redeemed, S1-E11-17) stay; addresses are unique per run.
+    delete from public.profiles where id in (select id from auth.users where email like 'invite-${stamp}-%@example.com')
+      and id not in (select user_id from public.audit_log where user_id is not null);
+    delete from auth.users where email like 'invite-${stamp}-%@example.com' and id not in (select id from public.profiles);
     delete from public.invites where note like 'e2e ${stamp}%';
     update public.profiles set locale = 'ro' where handle in ('admin', 'moderator');`);
 }
@@ -105,10 +107,33 @@ test.describe('invite links (S1-E11-17)', () => {
     await expect(row).toContainText('Used up');
     await expect(row).toContainText('@admin');
     await expect(row).not.toContainText('example.com');
+    // The log: the admin made it, the new account used it (by user ID, never by email) and the
+    // system closed it (CTO, 24 Oct 2026: nothing on behalf of the admin).
+    const inviteId = runSql(`select id from public.invites where note = 'e2e ${stamp} one use'`);
+    const firstAccountId = runSql(
+      `select id from auth.users where email = 'invite-${stamp}-first@example.com'`,
+    );
     expect(
-      runSql(`select count(*) from public.audit_log where action in ('invite.created', 'invite.used_up')
-        and after_values ->> 'note' = 'e2e ${stamp} one use'`),
-    ).toBe('2');
+      runSql(`select action || ' ' || actor || ' ' || coalesce(user_id::text, '-')
+        from public.audit_log where target_id = '${inviteId}' order by action`),
+    ).toBe(
+      [
+        'invite.created person 00000000-0000-4000-8000-000000000009',
+        `invite.redeemed person ${firstAccountId}`,
+        'invite.used_up system -',
+      ].join('\n'),
+    );
+    expect(
+      runSql(`select count(*) from public.audit_log where target_id = '${inviteId}'
+        and (after_values::text like '%example.com%' or coalesce(reason, '') like '%example.com%')`),
+    ).toBe('0');
+
+    // The Audit log screen names the system as who closed the invite.
+    await admin.goto('/staff/audit-log');
+    const search = admin.getByRole('form', { name: 'Search the audit log' });
+    await search.getByLabel('Action starts with').fill('invite.used_up');
+    await search.getByRole('button', { name: 'Search' }).click();
+    await expect(admin.getByRole('row').nth(1)).toContainText('System');
   });
 
   test('the admin makes a second link and revokes it with a reason', async ({ browser }) => {

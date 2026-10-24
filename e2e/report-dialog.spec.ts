@@ -6,7 +6,7 @@
  * story, chapter and profile screens exist (Lane A, S1-E5-05).
  * What it proves:
  * - by keyboard only: Tab to "Report @adult_writer", Enter opens the dialog with focus inside, the
- *   eleven reasons are radio buttons in the story's order, Space picks one, the report sends and
+ *   thirteen reasons (the story's eleven plus the board's two) are radio buttons in order, Space picks one, the report sends and
  *   "Report sent" shows a reference; Escape closes and focus returns to the button;
  * - a read-only account (kid_14_waiting) can report; a signed-out visitor is told to log in;
  * - a person can't report their own profile (adult_writer gets a plain refusal);
@@ -24,8 +24,10 @@ import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './su
 const reasonLabels = [
   'Illegal content',
   'Harassment',
+  'Insults',
   'Self-harm',
   'Sexual content involving a minor',
+  'Threat to a minor',
   'Terrorism',
   'Hate',
   'Spam',
@@ -63,7 +65,7 @@ test.describe('report dialog (S1-E10-01)', () => {
     const dialog = page.getByRole('dialog', { name: 'Report this profile' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText('@adult_writer. They won’t see who reported it.')).toBeVisible();
-    await expect(dialog.getByRole('radio')).toHaveCount(11);
+    await expect(dialog.getByRole('radio')).toHaveCount(13);
     const labels = await dialog
       .getByRole('group', { name: 'What’s wrong?' })
       .locator('label')
@@ -102,6 +104,29 @@ test.describe('report dialog (S1-E10-01)', () => {
     await expect(dialog.getByRole('radio', { name: 'Spam' })).toBeChecked();
     await dialog.getByRole('button', { name: 'Send report' }).click();
     await expect(dialog.getByRole('alert')).toContainText('You can’t report your own things');
+  });
+
+  test('the corner × closes the dialog by keyboard and gives focus back, in both languages', async ({
+    page,
+  }) => {
+    await openPanel(page, 'teen_17');
+    const button = page.getByRole('button', { name: 'Report @adult_writer' });
+    await button.focus();
+    await page.keyboard.press('Enter');
+    const dialog = page.getByRole('dialog', { name: 'Report this profile' });
+    const close = dialog.getByRole('button', { name: 'Close', exact: true });
+    await close.focus();
+    await page.keyboard.press('Enter');
+    await expect(dialog).toBeHidden();
+    await expect(button).toBeFocused();
+
+    // In Romanian the same button is named "Închide".
+    runSql(`update public.profiles set locale = 'ro' where handle = 'teen_17';`);
+    await page.evaluate((key) => localStorage.setItem(key, 'ro'), LANGUAGE_STORAGE_KEY);
+    await page.reload();
+    await page.getByRole('button', { name: 'Raportează @adult_writer' }).click();
+    await expect(page.getByRole('dialog').getByRole('button', { name: 'Închide' })).toBeVisible();
+    runSql(`update public.profiles set locale = 'en' where handle = 'teen_17';`);
   });
 
   test('a signed-out visitor is told to log in', async ({ page }) => {

@@ -4,7 +4,8 @@
  *
  * Board (ReportDialog): "Report this <kind>", what is reported and "They won't see who reported
  * it", the reasons, "Anything else? (optional)", the "a person reads every report" line, Cancel
- * and Send report; after sending, the confirmation. No doodles on reporting screens (DoD).
+ * and Send report; after sending, the confirmation; a corner "×" named "Close" / "Închide" (CTO,
+ * 24 Oct 2026). No doodles on reporting screens (DoD).
  * How it is a dialog: the browser's own <dialog> element with showModal(), which traps focus,
  * closes on Escape and gives focus back to the button that opened it (WCAG 2.2, 2.1.2 and 2.4.3).
  * Signed out, it says to log in: reporting needs an account (the web form is S1-E10-02).
@@ -98,6 +99,41 @@ function ReportForm(props: ReportDialogProps & { report: ReturnType<typeof useRe
 }
 
 /**
+ * The corner "×" from the board (ReportDialog, CTO 24 Oct 2026): a 44 px round button whose
+ * accessible name is "Close" / "Închide". Closing the native dialog fires its close event, so it
+ * goes through the same path as Escape. The × is a close icon, which the doodle rule exempts.
+ *
+ * @param props.label - the accessible name, in the page's language
+ * @param props.onClick - closes the dialog
+ * @returns the button
+ */
+function CloseButton(props: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-label={props.label}
+      onClick={props.onClick}
+      className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-body hover:bg-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+    </button>
+  );
+}
+
+/**
  * Renders the dialog.
  *
  * @returns the <dialog>, open or closed as asked
@@ -130,15 +166,18 @@ export function ReportDialog(props: ReportDialogProps) {
     >
       {props.isOpen && (
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <p className="m-0 font-eyebrow text-sm text-eyebrow">{t('dialog.eyebrow')}</p>
-            <h2
-              id="report-dialog-title"
-              className="m-0 font-heading text-[26px] font-bold text-heading"
-            >
-              {t(`dialog.title.${props.itemType}`)}
-            </h2>
-            <p className="m-0 text-body">{t('dialog.anonymous', { item: props.itemLabel })}</p>
+          <div className="flex items-start gap-3">
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <p className="m-0 font-eyebrow text-sm text-eyebrow">{t('dialog.eyebrow')}</p>
+              <h2
+                id="report-dialog-title"
+                className="m-0 font-heading text-[26px] font-bold text-heading"
+              >
+                {t(`dialog.title.${props.itemType}`)}
+              </h2>
+              <p className="m-0 text-body">{t('dialog.anonymous', { item: props.itemLabel })}</p>
+            </div>
+            <CloseButton label={t('dialog.close')} onClick={() => dialogRef.current?.close()} />
           </div>
           {/* "Is someone in danger right now?": the reader's country's helplines (S1-E10-13a). */}
           {report.receipt === null && <SafetyContactsBlock />}

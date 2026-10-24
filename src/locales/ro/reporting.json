@@ -15,6 +15,7 @@
     "detailsHint": "Spune-ne orice ne ajută să verificăm. Cel mult {{max}} de caractere.",
     "detailsTooLong": "E prea lung. Păstrează sub 2.000 de caractere.",
     "aPersonReads": "O persoană din echipa noastră citește fiecare raportare. Nimic nu se schimbă până nu verificăm.",
+    "close": "Închide",
     "cancel": "Renunță",
     "send": "Trimite raportarea",
     "sending": "Se trimite…",
@@ -39,6 +40,7 @@
       "label": "Hărțuire",
       "hint": "Intimidare, amenințări sau atacuri la adresa unei persoane."
     },
+    "insults": { "label": "Insulte", "hint": "Jigniri sau cuvinte urâte la adresa cuiva." },
     "self_harm": {
       "label": "Autovătămare",
       "hint": "Încurajează sau arată autovătămarea sau sinuciderea."
@@ -46,6 +48,10 @@
     "child_sexual_content": {
       "label": "Conținut sexual cu un minor",
       "hint": "Orice conținut sexual care implică o persoană sub 18 ani. Acționăm întâi aici."
+    },
+    "threat_to_minor": {
+      "label": "Amenințare la adresa unui minor",
+      "hint": "Racolare, amenințări sau presiuni asupra cuiva sub 18 ani. Acționăm întâi aici."
     },
     "terrorism": { "label": "Terorism", "hint": "Susține sau promovează terorismul." },
     "hate": { "label": "Ură", "hint": "Atacă oamenii pentru ceea ce sunt." },
