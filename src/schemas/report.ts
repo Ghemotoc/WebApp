@@ -10,7 +10,7 @@ import { z } from 'zod';
 
 import { Constants } from '@/lib/database.types';
 
-/** The eleven reasons, in the story's order, straight from the database enum. */
+/** The thirteen reasons (the story's eleven plus the board's two), straight from the database enum. */
 export const reportReasons = Constants.public.Enums.report_reason;
 
 /** One reason. */

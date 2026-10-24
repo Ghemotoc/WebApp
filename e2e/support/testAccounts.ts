@@ -41,6 +41,9 @@ export function createTestAccount(email: string, password: string, handle: strin
 
 /**
  * Removes a test account and everything it left: consents, profile, sessions, wrong tries.
+ * An account the audit log names (invite.redeemed at sign-up, S1-E11-17) keeps its profile and
+ * login, because audit rows can never be deleted; test addresses are unique per run, so a kept
+ * account never gets in the way of the next run.
  *
  * @param email - the account's address
  */
@@ -48,6 +51,7 @@ export function removeTestAccount(email: string) {
   runSql(`
     delete from public.sign_in_failures where email_hash = public.hash_email('${email}');
     delete from public.consents where user_id in (select id from auth.users where email = '${email}');
-    delete from public.profiles where id in (select id from auth.users where email = '${email}');
-    delete from auth.users where email = '${email}';`);
+    delete from public.profiles where id in (select id from auth.users where email = '${email}')
+      and id not in (select user_id from public.audit_log where user_id is not null);
+    delete from auth.users where email = '${email}' and id not in (select id from public.profiles);`);
 }
