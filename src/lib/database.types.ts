@@ -83,6 +83,147 @@ export type Database = {
         };
         Relationships: [];
       };
+      chapter_revisions: {
+        Row: {
+          body: string;
+          chapter_id: string;
+          created_at: string;
+          created_by_user_id: string;
+          id: string;
+          reason: Database['public']['Enums']['revision_reason'];
+          title: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          chapter_id: string;
+          created_at?: string;
+          created_by_user_id: string;
+          id?: string;
+          reason: Database['public']['Enums']['revision_reason'];
+          title: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          chapter_id?: string;
+          created_at?: string;
+          created_by_user_id?: string;
+          id?: string;
+          reason?: Database['public']['Enums']['revision_reason'];
+          title?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_revisions_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapter_revisions_created_by_user_id_fkey';
+            columns: ['created_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapter_revisions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      chapters: {
+        Row: {
+          code: string;
+          created_at: string;
+          deleted_at: string | null;
+          draft_body: string;
+          draft_saved_at: string | null;
+          draft_title: string;
+          draft_version: number;
+          edited_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          last_published_at: string | null;
+          position: number;
+          published_body: string | null;
+          published_title: string | null;
+          scheduled_for: string | null;
+          status: Database['public']['Enums']['chapter_status'];
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+          word_count: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          code: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          draft_body?: string;
+          draft_saved_at?: string | null;
+          draft_title?: string;
+          draft_version?: number;
+          edited_at?: string | null;
+          first_published_at?: string | null;
+          id?: string;
+          last_published_at?: string | null;
+          position: number;
+          published_body?: string | null;
+          published_title?: string | null;
+          scheduled_for?: string | null;
+          status?: Database['public']['Enums']['chapter_status'];
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+          word_count?: number;
+        };
+        Update: {
+          code?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          draft_body?: string;
+          draft_saved_at?: string | null;
+          draft_title?: string;
+          draft_version?: number;
+          edited_at?: string | null;
+          first_published_at?: string | null;
+          id?: string;
+          last_published_at?: string | null;
+          position?: number;
+          published_body?: string | null;
+          published_title?: string | null;
+          scheduled_for?: string | null;
+          status?: Database['public']['Enums']['chapter_status'];
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+          word_count?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapters_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapters_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       client_errors: {
         Row: {
           app_version: string;
@@ -1043,6 +1184,8 @@ export type Database = {
         Args: { last_changed_at: string; setting_key: string };
         Returns: boolean;
       };
+      chapter_code: { Args: Record<PropertyKey, never>; Returns: string };
+      check_chapter_text: { Args: { body: string }; Returns: string };
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
       check_pen_name: { Args: { candidate: string }; Returns: string };
@@ -1062,7 +1205,9 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
       };
+      count_words: { Args: { body: string }; Returns: number };
       cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      create_chapter: { Args: { story_slug: string }; Returns: Json };
       create_story: {
         Args: {
           blurb: string;
@@ -1168,6 +1313,7 @@ export type Database = {
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
       normalise_invite_code: { Args: { code: string }; Returns: string };
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
+      normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
@@ -1200,6 +1346,10 @@ export type Database = {
         Returns: undefined;
       };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
+      save_chapter_draft: {
+        Args: { body: string; chapter_code: string; expected_version: number; title: string };
+        Returns: Json;
+      };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
@@ -1242,9 +1392,11 @@ export type Database = {
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
+      chapter_status: 'draft' | 'scheduled' | 'published';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
-      reportable_type: 'profile' | 'story';
+      reportable_type: 'profile' | 'story' | 'chapter';
+      revision_reason: 'published' | 'edited' | 'restored';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
       story_rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
@@ -1375,9 +1527,11 @@ export const Constants = {
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
+      chapter_status: ['draft', 'scheduled', 'published'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
-      reportable_type: ['profile', 'story'],
+      reportable_type: ['profile', 'story', 'chapter'],
+      revision_reason: ['published', 'edited', 'restored'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
       story_rating: ['all_ages', '13_plus', '16_plus', '18_plus'],

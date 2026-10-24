@@ -87,7 +87,8 @@ test.describe('automatic covers (S1-E3-13)', () => {
     await page.getByRole('radio', { name: 'All ages', exact: true }).click();
     await page.getByRole('radio', { name: 'No AI', exact: true }).click();
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
-    await expect(page).toHaveURL(/\/write$/);
+    await expect(page).toHaveURL(/\/c\/[a-z0-9]{8}$/);
+    await page.goto('/write');
     const card = page.getByRole('article', { name: title });
     await expect(card).toBeVisible();
     await expect(card.locator('[data-cover-design]')).toHaveAttribute(

@@ -2,8 +2,8 @@
  * useNewStoryForm: the new story form's state, checks and the create call (story S1-E3-01).
  *
  * Who calls it: NewStoryPage. What it calls: the zod schema (src/schemas/story.ts) to check the
- * answers, then api/stories.ts → create_story(); on success the writer's story list is refreshed
- * and the page moves to /write (the chapter editor, S1-E3-02a, takes over from there).
+ * answers, then api/stories.ts → create_story(); on success the writer's story list is refreshed,
+ * chapter one is made (api/chapters.ts → create_chapter(), S1-E3-02a) and the editor opens on it.
  * Errors: each field's mistake is a translation key; 'not_active' and a failed call become a
  * plain message at the top of the form.
  */
@@ -15,6 +15,7 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { newStorySchema, type NewStoryInput } from '@/schemas/story';
 
+import { createChapter } from '../api/chapters';
 import { createStory } from '../api/stories';
 
 import { toStoryFieldErrors, type StoryAnswers, type StoryFieldErrors } from './storyAnswers';
@@ -71,7 +72,18 @@ export function useNewStoryForm() {
         return;
       }
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
-      await navigate('/write', { state: { createdSlug: result.slug } });
+      // Step 4: chapter one is made straight away and the editor opens on it (board 4.2's
+      // "Create and write chapter one"); if that fails the story is still there on Your writing.
+      try {
+        const chapter = await createChapter(await requireClient(), result.slug);
+        if (chapter.outcome === 'ok') {
+          await navigate(`/write/s/${result.slug}/c/${chapter.code}`);
+          return;
+        }
+      } catch {
+        // Fall through to the list: the story exists and "Write chapter one" is there.
+      }
+      await navigate('/write', { state: { createdSlug: result.slug, chapterFailed: true } });
     },
     onError: () => setFormError('createFailed'),
   });

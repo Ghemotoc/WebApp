@@ -6,6 +6,7 @@
  * the component so that file exports only a component (React's fast refresh asks for it).
  */
 import croissant from '@/assets/doodles/croissant.svg';
+import deskLamp from '@/assets/doodles/desk-lamp.svg';
 import fountainPen from '@/assets/doodles/fountain-pen.svg';
 import ideasNotepad from '@/assets/doodles/ideas-notepad.svg';
 import mug from '@/assets/doodles/mug.svg';
@@ -17,11 +18,14 @@ import owlReadingGlasses from '@/assets/doodles/owl-reading-glasses.svg';
 import pencilCup from '@/assets/doodles/pencil-cup.svg';
 import rainCloud from '@/assets/doodles/rain-cloud.svg';
 import rainbow from '@/assets/doodles/rainbow.svg';
+import rocket from '@/assets/doodles/rocket.svg';
+import toteBagOfBooks from '@/assets/doodles/tote-bag-of-books.svg';
 import typewriter from '@/assets/doodles/typewriter.svg';
 
 /** Each doodle's name and the file it comes from. */
 export const doodleSources = {
   croissant,
+  'desk-lamp': deskLamp,
   'fountain-pen': fountainPen,
   'ideas-notepad': ideasNotepad,
   mug,
@@ -33,6 +37,8 @@ export const doodleSources = {
   'pencil-cup': pencilCup,
   'rain-cloud': rainCloud,
   rainbow,
+  rocket,
+  'tote-bag-of-books': toteBagOfBooks,
   typewriter,
 } as const;
 

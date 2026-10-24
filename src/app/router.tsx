@@ -86,6 +86,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: StorySettingsPage };
     },
   },
+  // The chapter editor (S1-E3-02a): the writer's own chapter, by the story's slug and the
+  // chapter's 8-character code (never a position, so reordering keeps links alive).
+  {
+    path: '/write/s/:storySlug/c/:chapterCode',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ChapterEditorPage } = await import('@/features/writing/components/ChapterEditorPage');
+      return { Component: ChapterEditorPage };
+    },
+  },
   // The public story page (S1-E3-05): readers reach a story only through get_story_page()
   // (ADR 0004); the address carries the story's slug, never an ID.
   {

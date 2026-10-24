@@ -125,8 +125,11 @@ function StoriesBody({
 export function YourWritingPage() {
   const { t } = useTranslation('writing');
   const writing = useMyStories();
-  const location = useLocation() as { state?: { createdSlug?: string } | null };
+  const location = useLocation() as {
+    state?: { createdSlug?: string; chapterFailed?: boolean } | null;
+  };
   const justCreated = typeof location.state?.createdSlug === 'string';
+  const chapterFailed = location.state?.chapterFailed === true;
   const [filter, setFilter] = useState<StatusFilter>('all');
   const deletedStories = writing.stories.filter((story) => story.deletedAt !== null);
 
@@ -150,6 +153,7 @@ export function YourWritingPage() {
         />
       </header>
       {justCreated && <Notice tone="success">{t('yourWriting.created')}</Notice>}
+      {chapterFailed && <Notice tone="warning">{t('errors.chapterCreateFailed')}</Notice>}
       <section className="flex flex-col gap-5">
         <div className="relative flex flex-col gap-1 pr-24">
           <Eyebrow>{t('yourWriting.storiesEyebrow')}</Eyebrow>

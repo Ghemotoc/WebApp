@@ -137,11 +137,17 @@
     "aiRequired": "Say whether you used AI.",
     "abuseNeedsRating": "A story about abuse or coercion must be rated 16+ or 18+.",
     "abuseNeedsNote": "Add a content note for a story about abuse or coercion.",
-    "contentNoteTooLong": "A content note can have at most {{max}} characters."
+    "contentNoteTooLong": "A content note can have at most {{max}} characters.",
+    "chapterCreateFailed": "Your story was saved, but we couldn’t open chapter one. Open it from Your writing."
   },
   "storyCard": {
     "settings": "Story settings",
-    "seePage": "See story page"
+    "seePage": "See story page",
+    "writeChapterOne": "Write chapter one",
+    "continueChapter": "Continue chapter {{number}}",
+    "chapterCount_one": "{{count}} chapter",
+    "chapterCount_few": "{{count}} chapters",
+    "chapterCount_other": "{{count}} chapters"
   },
   "status": {
     "heading": "Status and comments",

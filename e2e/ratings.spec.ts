@@ -91,6 +91,9 @@ test.describe('ratings and labels (S1-E3-06)', () => {
     await expect(preview.getByText('16+', { exact: true })).toBeVisible();
     await expect(preview.getByText('Fan fiction', { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
+    // The editor opens on chapter one (S1-E3-02a); the card is on Your writing.
+    await expect(page).toHaveURL(/\/c\/[a-z0-9]{8}$/);
+    await page.goto('/write');
     const card = page.getByRole('article', { name: storyTitle });
     await expect(card).toBeVisible();
     await expect(card.getByText('16+', { exact: true })).toBeVisible();

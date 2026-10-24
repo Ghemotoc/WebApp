@@ -137,11 +137,17 @@
     "aiRequired": "Spune dacă ai folosit AI.",
     "abuseNeedsRating": "O poveste despre abuz sau constrângere trebuie clasificată 16+ sau 18+.",
     "abuseNeedsNote": "Adaugă o notă de conținut pentru o poveste despre abuz sau constrângere.",
-    "contentNoteTooLong": "O notă de conținut poate avea cel mult {{max}} caractere."
+    "contentNoteTooLong": "O notă de conținut poate avea cel mult {{max}} caractere.",
+    "chapterCreateFailed": "Povestea a fost salvată, dar nu am putut deschide capitolul unu. Deschide-l din Scrierile tale."
   },
   "storyCard": {
     "settings": "Setările poveștii",
-    "seePage": "Vezi pagina poveștii"
+    "seePage": "Vezi pagina poveștii",
+    "writeChapterOne": "Scrie capitolul unu",
+    "continueChapter": "Continuă capitolul {{number}}",
+    "chapterCount_one": "{{count}} capitol",
+    "chapterCount_few": "{{count}} capitole",
+    "chapterCount_other": "{{count}} de capitole"
   },
   "status": {
     "heading": "Stare și comentarii",

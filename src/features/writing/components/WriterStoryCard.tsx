@@ -6,8 +6,8 @@
  * blurb, the chips (category, Ongoing or Completed from S1-E3-05, the language, the label pills
  * from S1-E3-06), the tags, the
  * lock line "Only you can see this story until you publish its first chapter" while nothing is
- * published, and the buttons: "Story settings" and "See story page" (S1-E3-05); "Write chapter
- * one" (S1-E3-02a) and "Manage chapters" (S1-E3-03) join with their stories.
+ * published, and the buttons: "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Story
+ * settings" and "See story page" (S1-E3-05); "Manage chapters" joins with S1-E3-04.
  * Who uses it: YourWritingPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,8 @@ import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
 
 import type { MyStory } from '../api/stories';
 
+import { NewChapterButton } from './NewChapterButton';
+
 /** What the card needs: the story and the cover to draw (YourWritingPage works it out per row). */
 export interface WriterStoryCardProps {
   story: MyStory;
@@ -27,11 +29,14 @@ export interface WriterStoryCardProps {
   cover: DrawnCoverChoice;
 }
 
-/** "Story settings" and "See story page" (S1-E3-05). */
-function StoryCardLinks({ slug }: { slug: string }) {
+/** "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Story settings" and "See story page" (S1-E3-05). */
+function StoryCardLinks({ story }: { story: MyStory }) {
   const { t } = useTranslation('writing');
+  const { slug } = story;
+  const latestChapter = story.chapters.at(-1);
   return (
     <div className="mt-1 flex flex-wrap items-center gap-3">
+      <WriteChapterLink slug={slug} latestChapter={latestChapter} />
       <Link
         to={`/write/s/${slug}/settings`}
         className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
@@ -42,6 +47,26 @@ function StoryCardLinks({ slug }: { slug: string }) {
         {t('storyCard.seePage')}
       </Link>
     </div>
+  );
+}
+
+/** The primary button: a new story's "Write chapter one" makes the chapter on the way (NewChapterButton). */
+function WriteChapterLink({
+  slug,
+  latestChapter,
+}: {
+  slug: string;
+  latestChapter: MyStory['chapters'][number] | undefined;
+}) {
+  const { t } = useTranslation('writing');
+  if (latestChapter === undefined) return <NewChapterButton slug={slug} />;
+  return (
+    <Link
+      to={`/write/s/${slug}/c/${latestChapter.code}`}
+      className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
+    >
+      {t('storyCard.continueChapter', { number: latestChapter.position })}
+    </Link>
   );
 }
 
@@ -96,7 +121,7 @@ export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
         {story.firstPublishedAt === null && (
           <p className="m-0 text-[13px] text-meta">{t('yourWriting.onlyYou')}</p>
         )}
-        <StoryCardLinks slug={story.slug} />
+        <StoryCardLinks story={story} />
       </div>
     </article>
   );
