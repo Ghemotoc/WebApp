@@ -74,7 +74,12 @@ test.describe('epic S1-E2 journeys', () => {
       // Confirm, then choose a username and pen name (S1-E2-04).
       await page.goto(appPathFromEmail((await waitForEmail(address)).HTML));
       await page.getByRole('link', { name: 'Continue' }).click();
-      await page.getByLabel('Username').fill(`epic.${stamp}`);
+      // The "Choose a username" notice is labelled with the word too, so ask for the text box by
+      // role, and only once the setup form is on the page.
+      await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
+      const usernameField = page.getByRole('textbox', { name: 'Username' });
+      await usernameField.fill(`epic.${stamp}`);
+      await expect(usernameField).toHaveValue(`epic.${stamp}`);
       await expect(page.getByText(`@epic.${stamp} is free.`)).toBeVisible();
       await page.getByLabel('Pen name (optional)').fill('Epic Writer');
       await page.getByRole('button', { name: 'Save and continue' }).click();
