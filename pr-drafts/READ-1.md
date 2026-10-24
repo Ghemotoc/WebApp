@@ -16,7 +16,7 @@ Closes #37
 Closes #45
 Part of #39
 
-**Base branch:** `main`. One branch, nine commits in story order, rebased on `main` (on 24 Oct at `4d85da5`; rebased again on merge day, after TOOL-1). It replaces the closed Ghemotoc/WebApp#191 and Ghemotoc/WebApp#192 and Lane A's three unopened branches (`claude/s1-e4-06a-copy-off`, `claude/s1-e4-04-teaser`, `claude/s1-e4-qa`), whose branches are kept. Each story's full write-up (every criterion, its test and the screenshots against the board) is in those PRs and in `pr-drafts/S1-E4-06a.md`, `S1-E4-04.md` and `S1-E4-QA.md`; this description is the bundle's summary.
+**Base branch:** `main`. One branch, Lane A's nine commits in story order plus one wording commit, rebased on `main` at `3b4cd18` (after TOOL-1, Ghemotoc/WebApp#195). It replaces the closed Ghemotoc/WebApp#191 and Ghemotoc/WebApp#192 and Lane A's three unopened branches (`claude/s1-e4-06a-copy-off`, `claude/s1-e4-04-teaser`, `claude/s1-e4-qa`), whose branches are kept. Each story's full write-up (every criterion, its test and the screenshots against the board) is in those PRs and in `pr-drafts/S1-E4-06a.md`, `S1-E4-04.md` and `S1-E4-QA.md`; this description is the bundle's summary.
 
 ## What changed
 
@@ -98,23 +98,22 @@ In Ghemotoc/WebApp#191 (reader at 390, 768 and 1440 px, signed out) and in `pr-d
 ## Readable code
 Header comments on both migrations, tests `140`, `141`, `142` and `093`, `server/link-preview.ts`, the Pages Function, the image script, each hook and component and each spec. Step comments in `get_chapter()`, `record_chapter_read()`, `teaser_of()`, `get_link_preview()`, `handleSharedLink()`, `useRecordRead` and `useReadingProgress`. Sources named: ADR 0004, rules 7, 15 and 18, Q6, Q7, Q8, Q9, Q12, Q13, Q35, Q36, WCAG 1.4.4, 1.4.10 and 3.1.2, boards 3.5 and 3.8, the 18 Oct doodle decision.
 
-## Checks from a clean start
-Run on 24 Oct 2026 on branch `claude/affectionate-galileo-wfsc0h` at `5fdf332`, after `npx supabase stop --no-backup && npx supabase start` (every migration applied from empty) and `npm ci`:
+## Local check run (the merge gate, 24 Oct 2026)
+Commit `7d7e936` on `claude/affectionate-galileo-wfsc0h`, rebased on `main` at `3b4cd18` (TOOL-1, Ghemotoc/WebApp#195). Clean start: `npm ci`, `npx supabase stop --no-backup && npx supabase start` (every migration applied from empty), then `npm run build` and `npm run checks` (which resets the database before the database tests):
 ```
 npm run lint          clean
 npm run typecheck     clean
-npm run types:check   generated types match the committed file (regenerated after the rebase: no change)
+npm run types:check   generated types match the committed file
 npm run build         clean
-npm test              69 files, 416 tests passed
-npx supabase test db  41 files, 780 tests passed (140, 141, 142, 093 included)
-npm run test:e2e      454 passed, 1 skipped, 0 failed (the whole suite, 22.8 min)
+npm test              70 files, 424 tests passed, 0 failed
+npx supabase db reset done
+npx supabase test db  41 files, 780 tests passed, 0 failed (140, 141, 142, 093 included)
+npm run test:e2e      454 passed, 0 failed, 1 skipped (the whole suite with axe, 21.7 min)
 npm run i18n:check    ro and en have the same keys; ș and ț used
 ```
-The database suite also ran once straight after the e2e suite, without a reset: `014-profile-locale` then fails ("every account starts with Romanian"), because accounts the e2e tests switch to English are still in the database. It passes on a clean database, and CI runs the database suite before e2e, so CI is not affected; it is the cross-test state TOOL-1 is cleaning up. The two older e2e flakes Lane A saw (Manage chapters keyboard drag, the story-settings axe view) did not show up in this run.
+`npm run checks` ended with "All checks passed." GitHub CI may not run or may stop part-way (Actions minutes for October are nearly used up); this local run is the gate.
 
-**Re-run on merge day** after rebasing on `main` with TOOL-1: <TO FILL ON 1 NOV>.
-
-**Rebase notes (24 Oct):** two conflicts, both resolved by keeping both sides: `src/lib/database.types.ts` (`generate_invite_code` from S1-E11-17 next to `get_chapter`; confirmed by regenerating the types) and `docs/code-tour.md` (Lane B's demo-content section next to "Epic S1-E4 at a glance"). Lane A's merge commit of `main` is gone; the history is linear.
+**Rebase notes:** on 24 Oct onto `4d85da5`, two conflicts, both resolved by keeping both sides: `src/lib/database.types.ts` (`generate_invite_code` from S1-E11-17 next to `get_chapter`; confirmed by regenerating the types) and `docs/code-tour.md` (Lane B's demo-content section next to "Epic S1-E4 at a glance"). Lane A's merge commit of `main` is gone; the history is linear. Onto `3b4cd18` (TOOL-1): no conflicts. One small commit on top: two lines say "the demo" (the epic report and the banner hook's comment).
 
 ## Hand-test steps (as a non-developer)
 Once merged, on staging, on your phone where it says so:
@@ -133,7 +132,7 @@ Once merged, on staging, on your phone where it says so:
 - Read every new Romanian line yourself (decided 17 Oct 2026, 19:33): `reading.json` `reader.*`, the copy notice, the Publish line, `teaser.*`, `linkPreview.*`.
 
 ## Follow-ups (for the CTO; none opened as issues)
-- **Link-preview picture back to the real cover (Robert's choice):** Cloudflare Workers Paid ($5 a month, about 1 day, satori and resvg on request) or a Supabase edge function that draws it once at publish ($0 extra, about 2 days, a `link-previews` bucket). Details in `pr-drafts/handover/lane-a.md`.
+- **Link-preview picture back to the real cover (Robert's choice):** draw it on request in a Pages Function with satori and resvg (needs a Cloudflare plan with more processor time a request; about 1 day), or draw it once at publish in a Supabase edge function and store it in a `link-previews` bucket (about 2 days). Details in `pr-drafts/handover/lane-a.md`.
 - **Sign-in doesn't return the reader to the chapter** ("Log in to read on" goes to `/sign-in`); a "return to" address belongs to S1-E2-05's owner.
 - **Sitemap** with story pages only (Q36): not built; its home is S1-E5-08.
 - **`record_chapter_read()`** trusts the browser to send it once per tab; S1-E10-12's rate limits or a per-account daily cap would close it. Low risk with invited adults.
