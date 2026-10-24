@@ -4,8 +4,8 @@
 # Who runs it: you, before saying a branch is done. CI runs the same checks as separate jobs
 # (.github/workflows/ci.yml), with the database tests before e2e.
 # What it does: runs, in order and stopping at the first failure: lint, type check, the
-# generated-types check, unit tests, a reset of the local database, the database tests, e2e and
-# the i18n key check.
+# generated-types check, unit tests, a reset of the local database, the database tests, e2e, the
+# i18n key check and the migration version check.
 # Why the reset: the database tests expect the seed's state (for example
 # supabase/tests/database/014-profile-locale.test.sql: "every account starts with Romanian"), and
 # an earlier e2e run or a hand test can leave accounts changed. Resetting right before them makes
@@ -29,6 +29,7 @@ run_check npx supabase db reset
 run_check npx supabase test db
 run_check npm run test:e2e
 run_check npm run i18n:check
+run_check npm run migrations:check
 
 echo
 echo "All checks passed."
