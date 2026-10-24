@@ -280,6 +280,10 @@ for (const { address, width, theme, language } of everyEpicScreenView()) {
       },
       [THEME_STORAGE_KEY, theme, LANGUAGE_STORAGE_KEY, language] as const,
     );
+    // Reduce motion turns off the entrance fade (src/styles/index.css), so axe reads the final
+    // colours even when a lazily loaded page renders after waitForAnimations found nothing to wait
+    // for (a part-faded eyebrow on /design, TOOL-2). The checks themselves are unchanged.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width, height: 900 });
     await page.goto(address);
     await expect(page.locator('html')).toHaveAttribute('lang', language);

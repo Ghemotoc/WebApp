@@ -31,6 +31,9 @@ async function waitForAnimations(page: Page) {
 
 /** Runs axe for WCAG 2.0 to 2.2 A and AA and returns the serious and critical issues. */
 async function seriousAccessibilityIssues(page: Page) {
+  // Reduce motion turns off the entrance fade at once (src/styles/index.css), so axe reads final
+  // colours even if the page rendered after waitForAnimations looked (TOOL-2).
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await waitForAnimations(page);
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])

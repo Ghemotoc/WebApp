@@ -2,6 +2,8 @@
 
 Every picture the boards use. A board's `/_blob/<id>` is the file `design/assets/<id>.<ext>` in this folder. When building, copy what you need into `src/assets/` or `public/` with a readable name, and keep doodles as SVG (CLAUDE.md rule 16).
 
+**Colours are tokens (Lane B, 23 Oct 2026).** Every doodle's colours are written as `var(--doodle-ink, #2a0e33)`: the design token when the SVG is drawn inline in a page (so it follows night mode), today's colour as a fallback when the file is opened on its own. `npm run doodles:tokens` rewrites new files this way and `npm run doodles:check` (run by CI) refuses any raw hex colour. The 16 drawn cover backgrounds in this folder (viewBox `0 0 100 160`) are left as they are: covers keep their colours in night mode (`src/lib/cover-colours.ts`). See `docs/code-tour.md`, "Doodles through the tokens".
+
 | Doodle | url |
 | --- | --- |
 | 01 peeking cat | /_blob/046fb8a00941dcf5a7051dd98d11bbef |

@@ -67,10 +67,15 @@ export async function checkScreen(page: Page, view: ScreenView): Promise<void> {
     },
     [THEME_STORAGE_KEY, view.theme, LANGUAGE_STORAGE_KEY, view.language] as const,
   );
+  // Reduce motion turns off every animation and transition (src/styles/index.css, S1-E1-03), so
+  // axe measures the colours the page settles on. Without it, a page whose data arrived late was
+  // still fading in (tmc-rise) when axe ran, and its eyebrow read as low contrast (story-settings,
+  // TOOL-2). Only the motion changes; the colours, theme and layout checked are the same.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: view.width, height: 900 });
   await page.goto(view.address);
   await expect(page.locator('html')).toHaveAttribute('lang', view.language);
-  // Step 2: let the 0.5 s entrance animation finish, so colours are measured at full strength.
+  // Step 2: give the page's data a moment to arrive, so axe checks the loaded screen.
   await page.waitForTimeout(600);
   // Step 3: axe against WCAG 2.0, 2.1 and 2.2, levels A and AA.
   const results = await new AxeBuilder({ page })

@@ -4,7 +4,7 @@
 -- `picture_uploads` (off), the private `covers` storage bucket (JPEG, PNG or WebP up to 5 MB)
 -- and its rules, so that when the picture check (S1-E10-05) and the upload screen (its own story)
 -- arrive, only the flag changes.
--- Decision (Robert, 23 Oct 2026): no picture uploads in the investor demo; the contract only.
+-- Decision (Robert, 23 Oct 2026): no picture uploads in the demo; the contract only.
 -- Rules: files live under <story id>/<file>, never under the user ID (architecture 1.6). Only the
 -- story's owner may add or read a file, and only while the flag is on. Everyone else is refused,
 -- which also keeps a flagged picture private until a moderator decides (S1-E10-05).

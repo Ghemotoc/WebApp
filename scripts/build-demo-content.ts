@@ -1,7 +1,7 @@
 /**
  * Builds the demo content top-up (Lane B, "Staging top-up: demo content", decided 23 Oct 2026).
  *
- * The investor demo needs 30 to 40 real-looking stories. They are written as Markdown files in
+ * The demo needs 30 to 40 real-looking stories. They are written as Markdown files in
  * content/demo-stories/ (synthetic, never real people's work) and, once their texts arrive, the
  * public-domain classics in content/classics/texts/. This script reads those files, checks every
  * rule (lengths, ratings, ș and ț, no HTML) and writes one SQL file,
@@ -9,6 +9,8 @@
  *
  * Who runs it: `npm run demo:build`, after any story file changes; the SQL file is committed, so
  * staging never needs Node. Exit code 1 and a plain list of problems when a file breaks a rule.
+ * It also writes the same top-up as numbered parts under 500 KB each, for the Supabase SQL
+ * Editor, which refuses the single file (scripts/demo-content-parts.ts; CTO, 24 Oct 2026).
  * What it writes: accounts for the new synthetic writers and the classics account (the one
  * exception to "top-ups never create accounts", Robert, 23 Oct 2026), the stories with their tags,
  * and their chapters already published. Everything has a fixed id, so the file is safe to run
@@ -20,6 +22,8 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import { splitIntoParts, writeParts, type TopUpPieces } from './demo-content-parts';
+
 /** Where the story files live and where the SQL goes. */
 export const demoStoriesFolder = fileURLToPath(new URL('../content/demo-stories', import.meta.url));
 export const classicsTextsFolder = fileURLToPath(
@@ -27,6 +31,10 @@ export const classicsTextsFolder = fileURLToPath(
 );
 export const topUpPath = fileURLToPath(
   new URL('../supabase/staging-topups/demo-content-2a.sql', import.meta.url),
+);
+/** The same top-up in parts the SQL Editor accepts (scripts/demo-content-parts.ts). */
+export const topUpPartsFolder = fileURLToPath(
+  new URL('../supabase/staging-topups/demo-content-2a', import.meta.url),
 );
 
 /** The writers a story may name: seed personas (fixed ids from supabase/seed.sql) and the new ones. */
@@ -567,8 +575,48 @@ function writerRowSql(handle: string, writer: DemoWriter): string {
   return `      (${sqlValue(writer.userId)}::uuid, ${handleSql}, ${penNameSql}, ${writer.yearsOld})`;
 }
 
+/**
+ * Step 1 of every run, the whole file and each part alike: refuse any database without the 16
+ * seed personas, so the top-up can never run in production (supabase/staging-topups/README.md).
+ */
+export const guardSql = `-- 1. Never production: the 16 seed personas exist only on local and staging databases.
+do $$
+begin
+  if (select count(*) from auth.users where email like '%@personas.test') < 16 then
+    raise exception 'This top-up is for local and staging databases only: the 16 seed personas are missing.';
+  end if;
+end;
+$$;
+`;
+
+/** The check the whole run ends with: what was added, to compare with the header's numbers. */
+export const checkQuerySql = `select json_build_object(
+  'demo_stories', (select count(*) from public.stories where slug like '%-demo-__'),
+  'demo_chapters', (select count(*) from public.chapters where code like 'd___c___'),
+  'classic_chapters', (select count(*) from public.chapters where code like 'k___c___'),
+  'classics', (select count(*) from public.stories where slug like '%-classic'),
+  'demo_writers', (select count(*) from public.profiles where id::text like '00000000-0000-4000-8000-0000000001__')
+)::text as after_top_up;
+`;
+
+/**
+ * The classics account's two settings (its handle and pen name; names are settings, not code).
+ *
+ * @returns SQL, ending with a newline
+ */
+export function settingsSql(): string {
+  return `-- The classics account's names are settings, not code (CLAUDE.md): change them here, not below.
+insert into public.settings (key, value, is_public, description) values
+  ('classics_account_handle', ${sqlValue(JSON.stringify(classicsHandle))}::jsonb, true,
+   'Handle of the official account that publishes public-domain classics (S1-E5-06, S1-E11-16; demo top-up 23 Oct 2026).'),
+  ('classics_account_pen_name', ${sqlValue(JSON.stringify(classicsPenName))}::jsonb, true,
+   'Pen name of the official classics account.')
+on conflict (key) do nothing;
+`;
+}
+
 /** The SQL that creates the new writers' accounts, the same way supabase/seed.sql does. */
-function accountsSql(): string {
+export function accountsSql(): string {
   const rows = Object.entries(demoWriters)
     .filter(([, writer]) => writer.isNew)
     .map(([handle, writer]) => writerRowSql(handle, writer))
@@ -624,12 +672,34 @@ $$;
 }
 
 /**
- * The SQL for one story: the row (skipped when it exists) and its tags (replaced with the same).
+ * The SQL for one story: its row and tags, then its chapters.
  *
  * @param story - the story
  * @returns SQL
  */
 function storySql(story: DemoStory): string {
+  return storyRowSql(story) + storyChapterSql(story).join('');
+}
+
+/**
+ * The SQL for one chapter of each story, in order: one statement each. The split top-up packs
+ * these one by one, so a long story's chapters may continue in the next part.
+ *
+ * @param story - the story
+ * @returns one SQL statement per chapter
+ */
+export function storyChapterSql(story: DemoStory): string[] {
+  return story.chapters.map((chapter, index) => chapterSql(story, chapter, index + 1));
+}
+
+/**
+ * The SQL for one story's row (skipped when it exists) and its tags (replaced with the same).
+ * It must run before the story's chapters, which point at it.
+ *
+ * @param story - the story
+ * @returns SQL, ending with a newline
+ */
+export function storyRowSql(story: DemoStory): string {
   const writer = demoWriters[story.writer];
   if (writer === undefined) throw new Error(`unknown writer "${story.writer}"`);
   const lastChapterDaysAgo = Math.max(1, daysAgo(story) - 3 * (story.chapters.length - 1));
@@ -650,7 +720,7 @@ select ${sqlValue(fixedId(story))}::uuid, ${sqlValue(writer.userId)}::uuid, ${sq
   now() - interval '${daysAgo(story)} days', now() - interval '${lastChapterDaysAgo} days', now() - interval '${daysAgo(story) + 2} days'
 where not exists (select 1 from public.stories where stories.id = ${sqlValue(fixedId(story))}::uuid);
 select public.set_story_tags(${sqlValue(fixedId(story))}::uuid, ${sqlValue(writer.userId)}::uuid, array[${tags}]);
-${story.chapters.map((chapter, index) => chapterSql(story, chapter, index + 1)).join('')}`;
+`;
 }
 
 /**
@@ -710,23 +780,8 @@ export function buildTopUpSql(demoStories: DemoStory[], classics: DemoStory[]): 
 -- ${demoStories.reduce((sum, story) => sum + story.chapters.length, 0)}, classic_chapters ${classics.reduce((sum, story) => sum + story.chapters.length, 0)}, classics ${classics.length}, demo_writers ${Object.values(demoWriters).filter((writer) => writer.isNew).length}.
 begin;
 
--- 1. Never production: the 16 seed personas exist only on local and staging databases.
-do $$
-begin
-  if (select count(*) from auth.users where email like '%@personas.test') < 16 then
-    raise exception 'This top-up is for local and staging databases only: the 16 seed personas are missing.';
-  end if;
-end;
-$$;
-
--- The classics account's names are settings, not code (CLAUDE.md): change them here, not below.
-insert into public.settings (key, value, is_public, description) values
-  ('classics_account_handle', ${sqlValue(JSON.stringify(classicsHandle))}::jsonb, true,
-   'Handle of the official account that publishes public-domain classics (S1-E5-06, S1-E11-16; demo top-up 23 Oct 2026).'),
-  ('classics_account_pen_name', ${sqlValue(JSON.stringify(classicsPenName))}::jsonb, true,
-   'Pen name of the official classics account.')
-on conflict (key) do nothing;
-
+${guardSql}
+${settingsSql()}
 ${accountsSql()}
 -- 3. The synthetic stories, their tags and their chapters, already published.
 ${demoStories.map(storySql).join('\n')}
@@ -734,15 +789,30 @@ ${demoStories.map(storySql).join('\n')}
 ${classics.map(storySql).join('\n')}
 commit;
 
-select json_build_object(
-  'demo_stories', (select count(*) from public.stories where slug like '%-demo-__'),
-  'demo_chapters', (select count(*) from public.chapters where code like 'd___c___'),
-  'classic_chapters', (select count(*) from public.chapters where code like 'k___c___'),
-  'classics', (select count(*) from public.stories where slug like '%-classic'),
-  'demo_writers', (select count(*) from public.profiles where id::text like '00000000-0000-4000-8000-0000000001__')
-)::text as after_top_up;
-`;
+${checkQuerySql}`;
   return header;
+}
+
+/**
+ * The top-up as pieces, for the split version (scripts/demo-content-parts.ts): the same
+ * statements as buildTopUpSql(), in the same order, one story row or chapter at a time.
+ *
+ * @param demoStories - the synthetic stories, in file order
+ * @param classics - the classics
+ * @returns the guard, the opening (settings and accounts), the statements and the check query
+ */
+export function topUpPieces(demoStories: DemoStory[], classics: DemoStory[]): TopUpPieces {
+  const statements = [...demoStories, ...classics].flatMap((story) => [
+    // A blank line before each story keeps the parts readable, as in the single file.
+    `\n${storyRowSql(story)}`,
+    ...storyChapterSql(story),
+  ]);
+  return {
+    guard: guardSql,
+    opening: `${settingsSql()}\n${accountsSql()}`,
+    statements,
+    checkQuery: checkQuerySql,
+  };
 }
 
 /**
@@ -809,8 +879,12 @@ function main(): void {
     return;
   }
   writeFileSync(topUpPath, buildTopUpSql(demo.stories, classics.stories));
+  // The same top-up in parts under 500 KB, for the SQL Editor (CTO, 24 Oct 2026).
+  const parts = splitIntoParts(topUpPieces(demo.stories, classics.stories));
+  writeParts(topUpPartsFolder, parts);
   console.log(
-    `Wrote ${topUpPath}: ${demo.stories.length} demo stories, ${classics.stories.length} classics.`,
+    `Wrote ${topUpPath}: ${demo.stories.length} demo stories, ${classics.stories.length} classics; ` +
+      `and the same in ${parts.length} parts in ${topUpPartsFolder}.`,
   );
 }
 

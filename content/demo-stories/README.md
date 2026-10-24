@@ -1,4 +1,4 @@
-# Demo stories (investor demo, January 2027)
+# Demo stories (for the demo, January 2027)
 
 Synthetic stories for the staging demo (Robert, chat, 23 Oct 2026): 30 to 40 Romanian stories (three in English) with 2 to 4 chapters each, written by the seed personas and a few new synthetic writers. `scripts/build-demo-content.ts` turns these files into `supabase/staging-topups/demo-content-2a.sql`. Nothing here is loaded in production.
 
