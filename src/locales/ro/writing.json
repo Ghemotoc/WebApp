@@ -14,7 +14,8 @@
     "empty": {
       "title": "Nicio poveste încă",
       "description": "Începe o poveste și scrie primul capitol. Doar tu o vezi până o publici.",
-      "action": "Începe o poveste nouă"
+      "action": "Începe o poveste nouă",
+      "filteredTitle": "Nicio poveste cu această stare"
     },
     "onlyYou": "Doar tu vezi această poveste până îi publici primul capitol.",
     "created": "Povestea ta e salvată. Doar tu o vezi până îi publici primul capitol."
@@ -132,5 +133,54 @@
     "duplicateTag": "Două dintre aceste etichete sunt la fel dacă ignorăm majusculele și diacriticele.",
     "loadFailed": "Nu am putut încărca pagina. Verifică-ți conexiunea și încearcă din nou.",
     "storyIdInvalid": "Povestea nu a putut primi un identificator. Reîncarcă pagina și încearcă din nou."
+  },
+  "storyCard": {
+    "settings": "Setările poveștii",
+    "seePage": "Vezi pagina poveștii"
+  },
+  "status": {
+    "heading": "Stare și comentarii",
+    "label": "Stare",
+    "ongoing": "În curs",
+    "completed": "Terminată",
+    "hint": "Apare pe cardul poveștii. Cititorii pot filtra după ea.",
+    "filterLabel": "Arată",
+    "all": "Toate poveștile"
+  },
+  "comments": {
+    "label": "Comentarii",
+    "on": "Pornite. Cititorii pot comenta la fiecare capitol.",
+    "off": "Oprite. Comentariile existente sunt ascunse și nimeni nu poate adăuga altele."
+  },
+  "settings": {
+    "documentTitle": "Setările poveștii · {{productName}}",
+    "eyebrow": "Scrie · setările poveștii",
+    "heading": "Setările poveștii",
+    "save": "Salvează modificările",
+    "saving": "Se salvează…",
+    "saved": "Salvat.",
+    "saveFailed": "Nu am putut salva modificările. Verifică-ți conexiunea și încearcă din nou.",
+    "notFound": "Nu găsim această poveste printre ale tale."
+  },
+  "deleteStory": {
+    "eyebrow": "Toată povestea",
+    "heading": "Șterge această poveste",
+    "intro": "Te întrebăm de două ori. Povestea și toate capitolele ei sunt ascunse imediat și șterse definitiv după 30 de zile.",
+    "button": "Șterge povestea",
+    "firstTitle": "Ștergi „{{title}}” și toate capitolele ei?",
+    "firstBody": "Cititorii pierd accesul imediat.",
+    "keep": "Păstrează povestea",
+    "confirmFirst": "Da, șterge povestea",
+    "lastCheckTitle": "Ultima verificare.",
+    "lastCheckBody": "Ascundem povestea acum și o ștergem definitiv pe {{date}}. Până atunci poți reveni.",
+    "confirmLast": "Șterge povestea",
+    "deleted": "Povestea a fost ștearsă. E ascunsă de cititori și va dispărea definitiv pe {{date}}.",
+    "undo": "Anulează ștergerea"
+  },
+  "recentlyDeleted": {
+    "eyebrow": "Anulare",
+    "heading": "Șterse recent",
+    "intro": "Poveștile șterse sunt ascunse imediat și șterse definitiv după 30 de zile. Până atunci poți reveni.",
+    "goneOn": "Dispare definitiv pe {{date}}"
   }
 }

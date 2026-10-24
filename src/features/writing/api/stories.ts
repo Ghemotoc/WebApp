@@ -8,14 +8,17 @@
  * - Making a story: create_story() (supabase/migrations/…_s1_e3_01_stories.sql), which answers
  *   {outcome: 'ok', slug} or {outcome: 'not_active'} when the account may not write yet.
  * - Reading the writer's own stories: stories with their tags and category, through
- *   stories_select_own and story_tags_select_own (a writer reads only their own rows).
+ *   stories_select_own and story_tags_select_own (a writer reads only their own rows), deleted
+ *   ones included so "Recently deleted" can offer undo (S1-E3-05).
+ * - Settings (S1-E3-05): update_my_story(), delete_my_story() and restore_my_story()
+ *   (supabase/migrations/…_s1_e3_05_story_settings.sql), which answer with an outcome.
  * Readers never read these tables: they go through get_story_page() and get_chapter()
  * (ADR 0004, S1-E3-05 and S1-E4-01a).
  */
 import type { CoverColourKey, CoverDesignKey } from '@/components/covers/coverDesigns';
 import type { Database } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
-import type { NewStoryInput } from '@/schemas/story';
+import type { NewStoryInput, StorySettingsInput } from '@/schemas/story';
 
 /** A category as the form shows it: its key (translated by the screen) and its order. */
 export interface StoryCategory {
@@ -43,7 +46,15 @@ export interface MyStory {
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
   firstPublishedAt: string | null;
   createdAt: string;
+  /** Ongoing or Completed (S1-E3-05). */
+  completionStatus: 'ongoing' | 'completed';
+  commentsEnabled: boolean;
+  /** When the writer deleted it; null for a live story. Undo is possible for 30 days (S1-E3-05). */
+  deletedAt: string | null;
 }
+
+/** What the settings functions answer. */
+export type SettingsOutcome = 'ok' | 'not_active' | 'not_found';
 
 /**
  * Reads the languages a story may be written in.
@@ -107,7 +118,8 @@ export async function createStory(
 }
 
 /**
- * Reads the signed-in writer's own stories, newest first, live ones only.
+ * Reads the signed-in writer's own stories, newest first, deleted ones included (the screen
+ * shows those under "Recently deleted" with undo).
  *
  * @param client - the shared Supabase client
  * @returns the stories with their tags and category
@@ -117,9 +129,8 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, first_published_at, created_at, categories(slug), story_tags(tags(name))',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, first_published_at, created_at, completion_status, comments_enabled, deleted_at, categories(slug), story_tags(tags(name))',
     )
-    .is('deleted_at', null)
     .order('created_at', { ascending: false });
   if (error !== null) throw new Error(`Could not read your stories: ${error.message}`);
   return data.map((row) => ({
@@ -144,5 +155,86 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
         : null,
     firstPublishedAt: row.first_published_at,
     createdAt: row.created_at,
+    completionStatus: row.completion_status,
+    commentsEnabled: row.comments_enabled,
+    deletedAt: row.deleted_at,
   }));
+}
+
+/**
+ * Reads an outcome the settings functions answer.
+ *
+ * @param data - the function's JSON answer
+ * @returns 'ok', 'not_active' or 'not_found'
+ * Errors: throws on anything else.
+ */
+function toSettingsOutcome(data: unknown): SettingsOutcome {
+  const outcome = (data as { outcome?: string } | null)?.outcome;
+  if (outcome === 'ok' || outcome === 'not_active' || outcome === 'not_found') return outcome;
+  throw new Error(`Unexpected answer from the story settings: ${JSON.stringify(data)}`);
+}
+
+/**
+ * Saves the settings of the writer's own story (S1-E3-05).
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's public address
+ * @param settings - the checked answers (src/schemas/story.ts)
+ * @returns the outcome
+ * Errors: throws when the database refuses the answers or can't be reached.
+ */
+export async function updateMyStory(
+  client: AppSupabaseClient,
+  slug: string,
+  settings: StorySettingsInput,
+): Promise<SettingsOutcome> {
+  const { data, error } = await client.rpc('update_my_story', {
+    story_slug: slug,
+    changes: {
+      title: settings.title,
+      blurb: settings.blurb,
+      language_code: settings.languageCode,
+      category_slug: settings.categorySlug,
+      tag_names: settings.tags,
+      cover: settings.cover,
+      completion_status: settings.completionStatus,
+      comments_enabled: settings.commentsEnabled,
+    },
+  });
+  if (error !== null) throw new Error(`Could not save the story settings: ${error.message}`);
+  return toSettingsOutcome(data);
+}
+
+/**
+ * Hides the writer's own story at once; it can be undone for 30 days (S1-E3-05).
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's public address
+ * @returns the outcome
+ * Errors: throws when the database can't be reached.
+ */
+export async function deleteMyStory(
+  client: AppSupabaseClient,
+  slug: string,
+): Promise<SettingsOutcome> {
+  const { data, error } = await client.rpc('delete_my_story', { story_slug: slug });
+  if (error !== null) throw new Error(`Could not delete the story: ${error.message}`);
+  return toSettingsOutcome(data);
+}
+
+/**
+ * Undoes a deletion within 30 days (S1-E3-05).
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's public address
+ * @returns the outcome; 'not_found' once the 30 days have passed
+ * Errors: throws when the database can't be reached.
+ */
+export async function restoreMyStory(
+  client: AppSupabaseClient,
+  slug: string,
+): Promise<SettingsOutcome> {
+  const { data, error } = await client.rpc('restore_my_story', { story_slug: slug });
+  if (error !== null) throw new Error(`Could not restore the story: ${error.message}`);
+  return toSettingsOutcome(data);
 }

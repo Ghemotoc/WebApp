@@ -51,6 +51,9 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `accept_current_legal_versions(document_slugs, reading_language)` | records the caller's acceptance of the current versions, in the language they read | any signed-in person, at any age (16 and 17-year-olds without a parent) | S1-E14-01 |
 | `open_story_languages()` | the languages a story may be written in (the open markets' languages) | anyone, signed out included (the new story form) | S1-E3-01 |
 | `create_story(title, blurb, language_code, category_slug, tag_names, cover, story_id?)` | makes a story owned by the caller (the form may choose the ID so the automatic cover is known in advance, S1-E3-13): `{outcome: ok, slug}` or `{outcome: not_active}` when the account may not write; refuses a bad title, language, category, tag or cover, and an upload cover while `picture_uploads` is off | any signed-in person (the account gate decides) | S1-E3-01 |
+| `update_my_story(story_slug, changes)` | changes the caller's own live story: title, blurb, language, category, tags, cover, status, comments; `{outcome: ok \| not_active \| not_found}` | any signed-in person (own stories only) | S1-E3-05 |
+| `delete_my_story(story_slug)`, `restore_my_story(story_slug)` | the 30-day soft delete and its undo; `{outcome: ok \| not_active \| not_found}` | any signed-in person (own stories only) | S1-E3-05 |
+| `get_story_page(story_slug)` | the public story page as JSON, or null when the reader may not see it; never the user ID | anyone, signed out included | S1-E3-05 |
 | `cover_upload_allowed(object_name)` | may the caller add or read this covers-bucket file: only the story's owner, under `<story id>/…`, while `picture_uploads` is on; the two storage policies call it | any signed-in person (answers about themselves) | S1-E3-01 |
 
 Why `set_my_locale()` and not an update policy on `profiles`: a policy would let a person change every column of their own row through the API, their year of birth too. The function changes one column. Test: `tests/database/014-profile-locale.test.sql`.
@@ -115,7 +118,8 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Covers:** `cover_kind` is automatic (nothing stored; the design comes from the story's ID, `src/components/covers/automaticCover.ts`, S1-E3-13), drawn (one of the 16 approved designs plus two palette colours, checked by constraints) or upload (behind the `picture_uploads` flag, off; the private `covers` bucket and its owner-only rules are the contract for the upload story).
 - **Languages:** `open_story_languages()` is the open markets' languages; a story can only be in one of them.
 - **Shared contract with Lane C:** `is_moderated_away(type, id)` is a stub answering false, created only if no function of that name exists, so Lane C's real one wins.
-- Tests: `tests/database/100-categories-and-tags`, `101-stories`, `102-covers-bucket`.
+- **Settings, deletion and the page (S1-E3-05):** `completion_status` (ongoing, completed) and `comments_enabled` on `stories`; `update_my_story(slug, changes)` changes the caller's own live story (the slug never changes); `delete_my_story(slug)` sets `deleted_at`, `restore_my_story(slug)` undoes it within `content_purge_days` (30), and `purge_deleted_stories()` runs nightly, skipping `content_is_held_for_moderation()` (a stub until S1-E10). `get_story_page(slug)` is the public page: null unless published (or the caller's own), not deleted and not `is_moderated_away()`; never the user ID.
+- Tests: `tests/database/100-categories-and-tags`, `101-stories`, `102-covers-bucket`, `103-story-settings`.
 
 ## Seed personas
 

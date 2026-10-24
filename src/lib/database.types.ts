@@ -655,6 +655,8 @@ export type Database = {
         Row: {
           blurb: string;
           category_id: string;
+          comments_enabled: boolean;
+          completion_status: Database['public']['Enums']['completion_status'];
           cover_accent: string | null;
           cover_background: string | null;
           cover_design: string | null;
@@ -676,6 +678,8 @@ export type Database = {
         Insert: {
           blurb?: string;
           category_id: string;
+          comments_enabled?: boolean;
+          completion_status?: Database['public']['Enums']['completion_status'];
           cover_accent?: string | null;
           cover_background?: string | null;
           cover_design?: string | null;
@@ -696,6 +700,8 @@ export type Database = {
         Update: {
           blurb?: string;
           category_id?: string;
+          comments_enabled?: boolean;
+          completion_status?: Database['public']['Enums']['completion_status'];
           cover_accent?: string | null;
           cover_background?: string | null;
           cover_design?: string | null;
@@ -976,8 +982,21 @@ export type Database = {
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
       check_pen_name: { Args: { candidate: string }; Returns: string };
+      check_story_basics: {
+        Args: {
+          category_slug: string;
+          clean_blurb: string;
+          clean_title: string;
+          language_code: string;
+        };
+        Returns: string;
+      };
       check_story_cover: { Args: { cover: Json }; Returns: undefined };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
+      content_is_held_for_moderation: {
+        Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: boolean;
+      };
       cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       create_story: {
         Args: {
@@ -991,9 +1010,11 @@ export type Database = {
         };
         Returns: Json;
       };
+      delete_my_story: { Args: { story_slug: string }; Returns: Json };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
+      get_story_page: { Args: { story_slug: string }; Returns: Json };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
@@ -1065,6 +1086,7 @@ export type Database = {
           version_label: string;
         }[];
       };
+      my_live_story_id: { Args: { story_slug: string }; Returns: string };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
         Args: { name: string; name_kind: string; target_user_id: string };
@@ -1082,6 +1104,7 @@ export type Database = {
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
+      purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       record_sign_in_failure: { Args: { email_hash: string }; Returns: string };
       record_sign_up_consent: {
@@ -1106,6 +1129,7 @@ export type Database = {
         Args: { changed_role: Database['public']['Enums']['staff_role'] };
         Returns: undefined;
       };
+      restore_my_story: { Args: { story_slug: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
@@ -1127,6 +1151,7 @@ export type Database = {
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
+      update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
@@ -1146,6 +1171,7 @@ export type Database = {
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
+      completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
       reportable_type: 'profile' | 'story';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
@@ -1276,6 +1302,7 @@ export const Constants = {
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
+      completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
       reportable_type: ['profile', 'story'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],

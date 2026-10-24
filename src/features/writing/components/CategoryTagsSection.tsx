@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
 
 import type { StoryCategory } from '../api/stories';
-import type { FieldErrors, NewStoryAnswers } from '../hooks/useNewStoryForm';
+import type { SetStoryAnswer, StoryAnswers, StoryFieldErrors } from '../hooks/storyAnswers';
 
 import { FormSection } from './FormSection';
 import { TagInput } from './TagInput';
@@ -25,10 +25,10 @@ const categoryDots: Record<string, string> = {
 
 /** What the section needs. */
 export interface CategoryTagsSectionProps {
-  answers: NewStoryAnswers;
-  errors: FieldErrors;
+  answers: StoryAnswers;
+  errors: StoryFieldErrors;
   categories: StoryCategory[];
-  set: <Field extends keyof NewStoryAnswers>(field: Field, value: NewStoryAnswers[Field]) => void;
+  set: SetStoryAnswer;
 }
 
 /**

@@ -55,3 +55,12 @@ export const newStorySchema = z.object({
 
 /** The checked answers. */
 export type NewStoryInput = z.infer<typeof newStorySchema>;
+
+/** The story settings form's answers (S1-E3-05): the same fields plus status and comments. */
+export const storySettingsSchema = newStorySchema.omit({ storyId: true }).extend({
+  completionStatus: z.enum(['ongoing', 'completed']),
+  commentsEnabled: z.boolean(),
+});
+
+/** The checked settings. */
+export type StorySettingsInput = z.infer<typeof storySettingsSchema>;

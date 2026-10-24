@@ -4,24 +4,46 @@
  *
  * Who shows it: the router, at /write; the top bar's "Write" button leads here.
  * What it shows: the header with "+ New story", then "Story by story" with one WriterStoryCard
- * per story, or an empty state. The board's statistics tiles, followers chart, drafts list and
- * latest comments are the writer dashboard proper (S1-E3-07, after March) and stay out.
+ * per live story (filtered by Ongoing or Completed, S1-E3-05), or an empty state, and "Recently
+ * deleted" with undo when a story was deleted in the last 30 days (S1-E3-05). The board's
+ * statistics tiles, followers chart, drafts list and latest comments are the writer dashboard
+ * proper (S1-E3-07, after March) and stay out.
  * What it calls: useMyStories (stories through stories_select_own). After creating a story,
  * NewStoryPage lands here with a "saved" notice (router state).
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
 import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
+import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { Doodle } from '@/components/ui/Doodle';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
+import type { MyStory } from '../api/stories';
 import { useMyStories } from '../hooks/useMyStories';
 
+import { RecentlyDeleted } from './RecentlyDeleted';
 import { WriterStoryCard } from './WriterStoryCard';
+
+/** The status filter's choices: everything, Ongoing or Completed (S1-E3-05). */
+type StatusFilter = 'all' | 'ongoing' | 'completed';
+
+/**
+ * The live stories that match the filter.
+ *
+ * @param stories - every story the writer has, deleted ones included
+ * @param filter - the chosen status
+ * @returns the stories to list
+ */
+function liveStoriesFor(stories: MyStory[], filter: StatusFilter): MyStory[] {
+  return stories.filter(
+    (story) => story.deletedAt === null && (filter === 'all' || story.completionStatus === filter),
+  );
+}
 
 /** The "+ New story" button, a link drawn as the primary button. */
 function NewStoryLink({ label }: { label: string }) {
@@ -35,26 +57,56 @@ function NewStoryLink({ label }: { label: string }) {
   );
 }
 
-/** What goes under the header: a wait, a message, or the stories. */
-function StoriesBody({ writing }: { writing: ReturnType<typeof useMyStories> }) {
+/** The Ongoing / Completed filter chips ("Readers can filter by it"; the writer can too). */
+function StatusFilterChips({
+  value,
+  onChange,
+}: {
+  value: StatusFilter;
+  onChange: (value: StatusFilter) => void;
+}) {
+  const { t } = useTranslation('writing');
+  return (
+    <ChoiceChips
+      label={t('status.filterLabel')}
+      options={[
+        { value: 'all', label: t('status.all') },
+        { value: 'ongoing', label: t('status.ongoing') },
+        { value: 'completed', label: t('status.completed') },
+      ]}
+      value={value}
+      onChange={(next) => onChange(next as StatusFilter)}
+    />
+  );
+}
+
+/** What goes under the heading: a wait, a message, or the stories. */
+function StoriesBody({
+  writing,
+  filter,
+}: {
+  writing: ReturnType<typeof useMyStories>;
+  filter: StatusFilter;
+}) {
   const { t } = useTranslation('writing');
   if (!writing.isKnown) return null;
   if (!writing.isSignedIn) return <p className="m-0 text-body">{t('yourWriting.signedOut')}</p>;
   if (writing.loadFailed) return <Notice tone="error">{t('errors.loadFailed')}</Notice>;
-  if (writing.stories.length === 0) {
+  const stories = liveStoriesFor(writing.stories, filter);
+  if (stories.length === 0) {
     return (
       <EmptyState
-        title={t('yourWriting.empty.title')}
+        title={t(filter === 'all' ? 'yourWriting.empty.title' : 'yourWriting.empty.filteredTitle')}
         description={t('yourWriting.empty.description')}
         action={<NewStoryLink label={t('yourWriting.empty.action')} />}
       />
     );
   }
   // Automatic covers come from each story's ID; two neighbours never share a design (S1-E3-13).
-  const covers = designsForRow(writing.stories);
+  const covers = designsForRow(stories);
   return (
     <div className="flex flex-col gap-5">
-      {writing.stories.map((story, index) => (
+      {stories.map((story, index) => (
         <WriterStoryCard
           key={story.id}
           story={story}
@@ -75,6 +127,8 @@ export function YourWritingPage() {
   const writing = useMyStories();
   const location = useLocation() as { state?: { createdSlug?: string } | null };
   const justCreated = typeof location.state?.createdSlug === 'string';
+  const [filter, setFilter] = useState<StatusFilter>('all');
+  const deletedStories = writing.stories.filter((story) => story.deletedAt !== null);
 
   return (
     <PageContainer className="tmc-rise flex flex-col gap-10 pt-12 pb-7">
@@ -111,8 +165,10 @@ export function YourWritingPage() {
             className="absolute top-0 right-2 w-16"
           />
         </div>
-        <StoriesBody writing={writing} />
+        {writing.isSignedIn && <StatusFilterChips value={filter} onChange={setFilter} />}
+        <StoriesBody writing={writing} filter={filter} />
       </section>
+      <RecentlyDeleted stories={deletedStories} />
     </PageContainer>
   );
 }

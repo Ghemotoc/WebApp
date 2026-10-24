@@ -1,0 +1,21 @@
+{
+  "storyPage": {
+    "documentTitle": "{{title}} · {{productName}}",
+    "by": "de",
+    "tags": "Etichete",
+    "writerEyebrow": "Autorul",
+    "labelsHeading": "Etichete de la autor",
+    "languageLabel": "Limbă",
+    "statusLabel": "Stare",
+    "commentsLabel": "Comentarii",
+    "commentsOn": "Pornite",
+    "commentsOff": "Oprite",
+    "report": "Raportează această poveste",
+    "reportSubject": "Raportez o poveste: {{slug}}",
+    "ownerPreview": "Doar tu vezi această poveste până îi publici primul capitol. Așa o vor vedea cititorii.",
+    "unavailableTitle": "Povestea nu este disponibilă",
+    "unavailableBody": "Poate nu e publicată încă, poate a fost ștearsă sau poate linkul e greșit.",
+    "goHome": "Mergi la Acasă",
+    "loadFailed": "Nu am putut încărca povestea. Verifică-ți conexiunea și încearcă din nou."
+  }
+}

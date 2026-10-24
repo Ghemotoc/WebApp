@@ -11,6 +11,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `InfoPill` | Six information pill tones (pills tell) |
 | `Chip` | A switchable filter (chips do): tick plus aria-pressed when selected |
 | `ChoiceChips` | Pick one of a few choices: a radiogroup of chips with arrow-key moves, a tick on the chosen one, dashed when disabled (S1-E3-01) |
+| `LabelRows` is used by the story page's "Labels from the writer" (S1-E3-05) |
 | `Doodle` (+ `doodleSources.ts`) | A decorative doodle: `data-doodle` background or widget, hidden under 1000 or 600 px, never over text (checked by `e2e/support/doodles.ts`) (S1-E3-01) |
 | `Card`, `LabelRows`, `Eyebrow`, `EmptyState`, `Notice` | Panels, label and value rows with fine lines, eyebrow labels, empty states, coloured messages |
 | `StoryCard` | A story with a drawn cover (`src/components/covers/DrawnCover`); the title is always shown in full |

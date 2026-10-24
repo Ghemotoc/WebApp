@@ -8,7 +8,11 @@
 import croissant from '@/assets/doodles/croissant.svg';
 import fountainPen from '@/assets/doodles/fountain-pen.svg';
 import ideasNotepad from '@/assets/doodles/ideas-notepad.svg';
+import mug from '@/assets/doodles/mug.svg';
+import mushroom from '@/assets/doodles/mushroom.svg';
+import musicNotes from '@/assets/doodles/music-notes.svg';
 import onceUponATime from '@/assets/doodles/once-upon-a-time.svg';
+import openBook from '@/assets/doodles/open-book.svg';
 import owlReadingGlasses from '@/assets/doodles/owl-reading-glasses.svg';
 import pencilCup from '@/assets/doodles/pencil-cup.svg';
 import rainCloud from '@/assets/doodles/rain-cloud.svg';
@@ -20,7 +24,11 @@ export const doodleSources = {
   croissant,
   'fountain-pen': fountainPen,
   'ideas-notepad': ideasNotepad,
+  mug,
+  mushroom,
+  'music-notes': musicNotes,
   'once-upon-a-time': onceUponATime,
+  'open-book': openBook,
   'owl-reading-glasses': owlReadingGlasses,
   'pencil-cup': pencilCup,
   'rain-cloud': rainCloud,

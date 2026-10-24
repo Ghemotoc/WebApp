@@ -16,16 +16,16 @@ import { Textarea } from '@/components/ui/Textarea';
 import { TextInput } from '@/components/ui/TextInput';
 import { MAXIMUM_BLURB_LENGTH, MAXIMUM_TITLE_LENGTH } from '@/schemas/story';
 
-import type { FieldErrors, NewStoryAnswers } from '../hooks/useNewStoryForm';
+import type { SetStoryAnswer, StoryAnswers, StoryFieldErrors } from '../hooks/storyAnswers';
 
 import { FormSection } from './FormSection';
 
 /** What the section needs. */
 export interface StoryBasicsSectionProps {
-  answers: NewStoryAnswers;
-  errors: FieldErrors;
+  answers: StoryAnswers;
+  errors: StoryFieldErrors;
   languages: string[];
-  set: <Field extends keyof NewStoryAnswers>(field: Field, value: NewStoryAnswers[Field]) => void;
+  set: SetStoryAnswer;
 }
 
 /**

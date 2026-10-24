@@ -66,7 +66,8 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `content/legal/`, `scripts/build-legal-migration.ts` | The legal drafts (English, and Romanian draft translations in `ro/`) and the script that turns a new version into a migration | S1-E14-01 |
 | `src/features/design-system/` | The /design page: every token and component on one page, with live contrast ratios | S1-E1-03 |
 | `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
-| `src/features/writing/` | The writer's side: `/write` (Your writing) and `/write/new` (the new story form), the tag rule, `create_story()`; see its README | S1-E3-01 |
+| `src/features/writing/` | The writer's side: `/write` (Your writing), `/write/new` (the new story form), `/write/s/:storySlug/settings` (story settings, delete and undo), the tag rule, `create_story()`, `update_my_story()`; see its README | S1-E3-01, S1-E3-05 |
+| `src/features/reading/` | The reader's side: `/s/:storySlug` (the story page) through `get_story_page()`; later the chapter reader and the teaser; see its README | S1-E3-05 |
 | `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets a design from the story's ID; `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
 | `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
@@ -311,6 +312,32 @@ first_published_at and get_story_page() (S1-E3-05) serves the public page (ADR 0
 ```
 
 **Automatic covers (S1-E3-13):** the form makes the story's ID (`crypto.randomUUID()`) and hands it to `create_story()`, so `automaticCoverFor(storyId)` can draw the design the story will get before it exists ("Right now: Sky, picked for you automatically"). Nothing is stored for an automatic cover: every screen calls `resolveCoverChoice()` (a drawn choice, else the ID's design), and rows of cards call `designsForRow()` so two neighbours never share a design while a chosen design is never moved.
+
+## Story settings, deletion and the story page (S1-E3-05)
+
+```
+/write → "Story settings" → /write/s/<slug>/settings (StorySettingsPage)     src/features/writing/
+  │  the same sections as the new story form, filled from the story (useStorySettingsForm),
+  │  plus StoryStatusSection (Ongoing | Completed, the comments switch)
+  │  saving: storySettingsSchema (zod) → api/stories.ts → update_my_story(slug, changes)
+  │  DeleteStoryControl: asked twice → delete_my_story(slug); Undo → restore_my_story(slug)
+  ▼
+update_my_story(): is_active_member(), my_live_story_id() (the caller's own live story),
+  check_story_basics() (shared with create_story()), check_story_cover(), set_story_tags();
+  the slug never changes                                           …_s1_e3_05_story_settings.sql
+delete_my_story(): deleted_at = now(); restore within content_purge_days (30);
+  purge_deleted_stories() runs nightly (pg_cron) and skips content_is_held_for_moderation()
+  ▼
+/s/<slug> (StoryPage, src/features/reading/) → useStoryPage → get_story_page(slug)
+  │  null unless: not deleted, first_published_at set (or the caller owns it) and
+  │  not is_moderated_away('story', id) (Lane C's contract); rating_allows() joins in S1-E3-06
+  ▼
+StoryHeader (cover from resolveCoverChoice(), pills, title, "by <pen name>", blurb, tags) and
+StorySideColumn (the writer, "Labels from the writer", "Report this story": an email until
+Lane C's ReportButton lands)
+```
+
+Tests: `supabase/tests/database/103-story-settings.test.sql`, `e2e/story-settings.spec.ts`.
 
 The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 
