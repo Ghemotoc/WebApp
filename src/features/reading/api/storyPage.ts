@@ -38,7 +38,8 @@ export interface StoryPageData {
   commentsEnabled: boolean;
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
-  writer: { displayName: string; handle: string };
+  /** The writer's public name, username and bio (S1-E5-05). */
+  writer: { displayName: string; handle: string; bio: string };
   firstPublishedAt: string | null;
   lastChapterPublishedAt: string | null;
   isOwner: boolean;
@@ -75,7 +76,7 @@ interface StoryPageRow {
     background: string | null;
     accent: string | null;
   };
-  writer: { display_name: string; handle: string };
+  writer: { display_name: string; handle: string; bio: string };
   first_published_at: string | null;
   last_chapter_published_at: string | null;
   is_owner: boolean;
@@ -139,7 +140,11 @@ export async function fetchStoryPage(
             accent: cover.accent as CoverColourKey,
           }
         : null,
-    writer: { displayName: row.writer.display_name, handle: row.writer.handle },
+    writer: {
+      displayName: row.writer.display_name,
+      handle: row.writer.handle,
+      bio: row.writer.bio,
+    },
     firstPublishedAt: row.first_published_at,
     lastChapterPublishedAt: row.last_chapter_published_at,
     isOwner: row.is_owner,

@@ -122,11 +122,11 @@ select results_eq($$ select handle from public.my_blocked_accounts() $$, $$ valu
   'my_blocked_accounts() lists the blocked person by username');
 
 -- Policy blocks_select_own: allowed for the blocker, denied for the blocked person and others.
-select is((select count(*)::integer from public.blocks), 1, 'blocks_select_own allows the blocker to read their block');
+select is((select count(*)::integer from public.blocks), 1, 'allowed: blocks_select_own, the blocker reads their block');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000016');
-select is((select count(*)::integer from public.blocks), 0, 'blocks_select_own denies the blocked person');
+select is((select count(*)::integer from public.blocks), 0, 'denied: blocks_select_own, the blocked person reads nothing');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
-select is((select count(*)::integer from public.blocks), 0, 'and denies a third member');
+select is((select count(*)::integer from public.blocks), 0, 'denied: blocks_select_own, a third member reads nothing');
 select throws_ok($$ insert into public.blocks (user_id, blocked_user_id)
     values ('00000000-0000-4000-8000-000000000007', '00000000-0000-4000-8000-000000000001') $$,
   '42501', null, 'nobody writes the table directly');

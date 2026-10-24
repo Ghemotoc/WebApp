@@ -6,8 +6,8 @@
  * from S1-E3-06; "Web and app" joins with S1-E3-08), the H1 in Bricolage 800 at
  * clamp(36px, 4.4vw, 64px), "by <name>" at 16 px, the blurb at 17 px / 1.6 up to 640 px wide,
  * the content note box when the writer left one (S1-E3-06: readers see it before they open the
- * story) and the tag chips. The stats row and the action buttons arrive with chapters, follows
- * and likes (S1-E3-03, S1-E6).
+ * story), the tag chips and "Follow story" (S1-E6-05). The stats row and the other action buttons
+ * arrive with likes and the library (S1-E6-03, S1-E4-03).
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { InfoPill } from '@/components/ui/InfoPill';
+import { FollowButton } from '@/features/people/components/FollowButton';
 
 import type { StoryPageData } from '../api/storyPage';
 
@@ -57,6 +58,10 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
         {t('storyPage.by')}{' '}
         <strong className="font-bold text-heading">{story.writer.displayName}</strong>
       </p>
+      {/* Follow the story, so new chapters reach the reader (S1-E6-05); not on one's own. */}
+      {!story.isOwner && story.isPublic && (
+        <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
+      )}
       {story.blurb !== '' && (
         <p className="m-0 max-w-[640px] text-[17px] leading-[1.6] text-body">{story.blurb}</p>
       )}

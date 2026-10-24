@@ -28,7 +28,8 @@
     "noChaptersOwner": "Niciun capitol încă. Scrie capitolul unu din Scrierile tale.",
     "draftChapter": "Ciornă",
     "scheduledChapter": "Programat",
-    "notPublicYet": "Doar tu vezi această poveste până publici un capitol. Așa o vor vedea cititorii."
+    "notPublicYet": "Doar tu vezi această poveste până publici un capitol. Așa o vor vedea cititorii.",
+    "seeProfile": "Vezi profilul"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

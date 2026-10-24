@@ -7,7 +7,7 @@
  * starts this instance in the language this browser last chose (src/lib/language-preference.ts).
  *
  * Where things come in from: src/locales/<language>/common.json, legal.json (the Legal centre,
- * S1-E14-01) and auth.json (sign-up and sign-in, S1-E2-01), account.json (setup and Settings, S1-E2-04), writing.json (the writer screens, S1-E3-01), reading.json (the story page and reader, S1-E3-05), editor.json (the chapter editor, S1-E3-02a); email.json is for the auth emails only
+ * S1-E14-01) and auth.json (sign-up and sign-in, S1-E2-01), account.json (setup and Settings, S1-E2-04), writing.json (the writer screens, S1-E3-01), reading.json (the story page and reader, S1-E3-05), editor.json (the chapter editor, S1-E3-02a), people.json (profiles, blocks and follows, S1-E5-05 and S1-E6-05); email.json is for the auth emails only
  * (scripts/build-auth-email-templates.ts) (the /design page adds its own
  * design.json when it loads, so production builds never carry it), and the product and company names from
  * src/config/brand.ts, which every translation can use as {{productName}} and {{companyName}}.
@@ -35,6 +35,9 @@ import englishWriting from '@/locales/en/writing.json';
 import romanianEditor from '@/locales/ro/editor.json';
 import romanianReading from '@/locales/ro/reading.json';
 import romanianWriting from '@/locales/ro/writing.json';
+// People: profiles, blocks and follows (PEOPLE-1: S1-E5-05, S1-E6-05).
+import englishPeople from '@/locales/en/people.json';
+import romanianPeople from '@/locales/ro/people.json';
 
 /** The languages the interface is available in. Romanian comes first. */
 export const supportedLanguages = ['ro', 'en'] as const;
@@ -65,6 +68,7 @@ const translations = {
     writing: romanianWriting,
     reading: romanianReading,
     editor: romanianEditor,
+    people: romanianPeople,
   },
   en: {
     common: englishCommon,
@@ -74,6 +78,7 @@ const translations = {
     writing: englishWriting,
     reading: englishReading,
     editor: englishEditor,
+    people: englishPeople,
   },
 };
 

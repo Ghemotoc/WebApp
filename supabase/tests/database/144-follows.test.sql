@@ -79,11 +79,11 @@ select is((select count(*)::integer from public.my_followers()), 0,
 
 -- Policies: the follower reads their own rows; the writer and a third member read none.
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
-select is((select count(*)::integer from public.follows_users), 1, 'follows_users_select_own allows the follower');
-select is((select count(*)::integer from public.follows_stories), 1, 'follows_stories_select_own allows the follower');
+select is((select count(*)::integer from public.follows_users), 1, 'allowed: follows_users_select_own, the follower reads their own row');
+select is((select count(*)::integer from public.follows_stories), 1, 'allowed: follows_stories_select_own, the follower reads their own row');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
-select is((select count(*)::integer from public.follows_users), 0, 'follows_users_select_own denies the writer followed');
-select is((select count(*)::integer from public.follows_stories), 0, 'follows_stories_select_own denies the story''s writer');
+select is((select count(*)::integer from public.follows_users), 0, 'denied: follows_users_select_own, the writer followed reads nothing');
+select is((select count(*)::integer from public.follows_stories), 0, 'denied: follows_stories_select_own, the story''s writer reads nothing');
 select throws_ok($$ insert into public.follows_users (user_id, followed_user_id)
     values ('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000007') $$,
   '42501', null, 'nobody writes follows directly');

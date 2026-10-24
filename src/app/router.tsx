@@ -177,6 +177,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: ChapterReaderPage };
     },
   },
+  // A writer's public profile (S1-E5-05): by username, never the user ID (architecture 1.6);
+  // the page reaches the profile only through get_writer_profile() (ADR 0004).
+  {
+    path: '/u/:handle',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { WriterProfilePage } = await import('@/features/people/components/WriterProfilePage');
+      return { Component: WriterProfilePage };
+    },
+  },
   // The public story page (S1-E3-05): readers reach a story only through get_story_page()
   // (ADR 0004); the address carries the story's slug, never an ID.
   {
