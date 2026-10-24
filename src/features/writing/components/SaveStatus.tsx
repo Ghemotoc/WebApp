@@ -3,7 +3,7 @@
  * status can say").
  *
  * Board values: a tinted box with an icon and one line; sage for saved, plum for saving,
- * gold for unsaved or failed, red for the conflict. It is a role="status" region, so a screen
+ * gold for unsaved, offline or failed, red for the conflict. It is a role="status" region, so a screen
  * reader hears "Saved" without the writer leaving the text (WCAG 4.1.3).
  * Who uses it: EditorAside.
  */
@@ -22,6 +22,7 @@ const toneClasses: Record<SaveState['kind'], string> = {
   saving: 'bg-tint text-(--info-text)',
   saved: 'bg-(--success-bg) text-(--success-text)',
   conflict: 'bg-(--error-bg) text-(--error-text)',
+  offline: 'bg-(--warning-bg) text-(--warning-text)',
   failed: 'bg-(--warning-bg) text-(--warning-text)',
   notActive: 'bg-(--warning-bg) text-(--warning-text)',
   invalid: 'bg-(--error-bg) text-(--error-text)',

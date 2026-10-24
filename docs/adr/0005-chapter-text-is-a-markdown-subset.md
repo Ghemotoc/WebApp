@@ -18,6 +18,8 @@ The text is sanitised twice on save, as architecture 1.9 asks: the shared zod sc
 - It is readable by a person in the database and in an export, which matters for data requests (S1-E11-09).
 - The cost is the two converters, which have a round-trip test for every allowed node.
 
+Pasted HTML (Word, Google Docs, web pages) is cleaned before the editor parses it (`lib/pasteCleaning.ts`, S1-E3-02b): it is read into a detached document where nothing runs or loads, scripts, pictures and media are removed, Word's list paragraphs become lists, and every attribute goes except a link's address and the bold and italic styles. The editor's schema then keeps only the allowed nodes.
+
 ## Consequences
 
 - A new kind of content (a picture, a drawing, an embed; S1-E3-09 to 11) needs a Markdown form, a converter case in both directions, an editor node and a renderer case, plus the server check.

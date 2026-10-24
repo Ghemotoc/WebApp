@@ -388,7 +388,21 @@ save_chapter_draft(): is_active_member(), the caller's own live chapter (locked)
 delete_my_story() / restore_my_story() now take the chapters along
 ```
 
-Stored format and why: ADR 0005. Tests: `supabase/tests/database/110-chapters.test.sql`, `111-save-chapter-draft.test.sql`, `src/features/writing/lib/chapterMarkdown.test.ts`, `src/schemas/chapter.test.ts`, `src/features/writing/hooks/useAutosave.test.tsx`, `e2e/chapter-editor.spec.ts`.
+Offline, paste and conflicts (S1-E3-02b):
+
+```
+every edit → useDeviceKeep: half a second later the title and text go to IndexedDB
+  (lib/draftStore.ts, key: the chapter code, with the version they are based on)
+offline (useOnlineStatus, S1-E1-05) → nothing is sent; the Saving box says the words are kept
+back online, or the editor opens with a device copy → that copy is sent at once
+the server has the text → the device copy is forgotten
+a conflict → "Keep this version" (save over the server's version) or "Compare versions"
+  (CompareVersionsDialog: both side by side; "Keep this one" on the other loads it)
+paste → TipTap's transformPastedHTML → lib/pasteCleaning.ts (Word lists, Docs wrappers,
+  headings snapped, scripts and pictures out) → the editor's schema → Markdown on save
+```
+
+Stored format and why: ADR 0005. Tests: `supabase/tests/database/110-chapters.test.sql`, `111-save-chapter-draft.test.sql`, `src/features/writing/lib/chapterMarkdown.test.ts`, `src/schemas/chapter.test.ts`, `src/features/writing/hooks/useAutosave.test.tsx`, `lib/draftStore.test.ts`, `lib/pasteCleaning.test.ts` (Word, Google Docs and hostile fixtures in `src/test/fixtures/paste/`), `e2e/chapter-editor.spec.ts`, `e2e/chapter-editor-offline.spec.ts`.
 
 The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 

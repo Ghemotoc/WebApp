@@ -261,3 +261,26 @@ function listToMarkdown(list: EditorNode): string {
 export function editorDocumentToMarkdown(document: EditorNode): string {
   return blocksToMarkdown(document.content).trim();
 }
+
+/** The text of a node and its children, blocks separated by a blank line. */
+function plainTextOfEditorNode(node: EditorNode): string {
+  if (node.type === 'text') return node.text ?? '';
+  if (node.type === 'hardBreak') return '\n';
+  if (node.type === 'horizontalRule') return '* * *';
+  const parts = (node.content ?? []).map(plainTextOfEditorNode);
+  const isInline = (node.content ?? []).every(
+    (child) => child.type === 'text' || child.type === 'hardBreak',
+  );
+  return parts.join(isInline ? '' : '\n\n');
+}
+
+/**
+ * The words of a stored chapter without its Markdown marks, for reading two versions side by
+ * side (the compare dialog, S1-E3-02b).
+ *
+ * @param markdown - the chapter body as saved
+ * @returns plain text, paragraphs separated by a blank line
+ */
+export function markdownToPlainText(markdown: string): string {
+  return plainTextOfEditorNode(markdownToEditorDocument(markdown)).trim();
+}

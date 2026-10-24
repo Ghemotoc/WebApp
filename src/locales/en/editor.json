@@ -43,9 +43,10 @@
     "saving": "Saving…",
     "savedJustNow": "Saved just now.",
     "savedAt": "Saved at {{time}}.",
-    "conflict": "This chapter was changed on another device. Saving has stopped so nothing is overwritten. Copy your latest text somewhere safe, then reload the page to see the other version.",
+    "conflict": "This chapter was changed on another device. Saving has stopped so nothing is overwritten. Choose which version to keep.",
     "failed": "We couldn’t save. Check your connection; we’ll try again in 10 seconds.",
-    "notActive": "Your account can’t save chapters yet."
+    "notActive": "Your account can’t save chapters yet.",
+    "offline": "You’re offline. Your changes are kept on this device and will save when you’re back online."
   },
   "link": {
     "heading": "Add a link",
@@ -83,5 +84,21 @@
     "saveFailed": "We couldn’t save the chapter.",
     "loadFailed": "We couldn’t load this chapter. Check your connection and try again.",
     "createFailed": "We couldn’t add a chapter. Check your connection and try again."
+  },
+  "conflict": {
+    "keepMine": "Keep this version",
+    "compare": "Compare versions"
+  },
+  "compare": {
+    "heading": "Compare versions",
+    "intro": "Pick the version to keep. The other one is replaced.",
+    "thisDevice": "This device",
+    "otherDevice": "The other device",
+    "savedAt": "Saved {{time}}",
+    "unsaved": "Not saved yet",
+    "keepThis": "Keep this one",
+    "cancel": "Cancel",
+    "loading": "Loading the other version…",
+    "loadFailed": "We couldn’t load the other version. Check your connection and try again."
   }
 }
