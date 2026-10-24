@@ -6,8 +6,9 @@
  * Why inline: an <img> can't see the page's CSS variables, so a doodle only follows night mode
  * when its SVG sits in the page. The files are our own artwork, rewritten by
  * scripts/doodle-tokens.ts, never user input, so drawing their text into the page is safe.
- * Who uses it: DoodleSection (the /design page) and its test. Vite bundles the files into the
- * lazily loaded /design chunk only, so readers never download them from here.
+ * Who uses it: DoodleSection (the /design page) and its test. The three samples ride in the
+ * lazily loaded /design chunk; the full sheet is a separate chunk fetched on request, so readers
+ * never download any of it.
  * What it leaves out: the 16 drawn cover backgrounds that share the folder (viewBox 0 0 100 160);
  * covers keep their colours in night mode (src/lib/cover-colours.ts).
  */
@@ -25,11 +26,20 @@ export interface DoodleFile {
 /** The drawn cover backgrounds' viewBox: the same rule scripts/doodle-tokens.ts uses. */
 const coverViewBox = 'viewBox="0 0 100 160"';
 
-// Every SVG in design/assets/ as text, keyed by its path, bundled at build time.
-const svgFilesByPath = import.meta.glob<string>('/design/assets/*.svg', {
+// The three samples are bundled with the /design page; the full sheet's 95 others are loaded
+// only when someone asks for them. All 98 inline (about 2.3 MB of text) made the /design chunk so
+// slow to load that its entrance animation could still be running when a test checked contrast.
+const sampleFilesByPath = import.meta.glob<string>(
+  [
+    '/design/assets/046fb8a00941dcf5a7051dd98d11bbef.svg',
+    '/design/assets/c96e4c6d379974d9168df6dc534ab327.svg',
+    '/design/assets/c7264d2c28197ec223c423400809ee92.svg',
+  ],
+  { query: '?raw', import: 'default', eager: true },
+);
+const loadersByPath = import.meta.glob<string>('/design/assets/*.svg', {
   query: '?raw',
   import: 'default',
-  eager: true,
 });
 
 /**
@@ -45,21 +55,22 @@ function toDoodleFile(path: string, svg: string): DoodleFile {
   return { id: fileName.replace(/\.svg$/, ''), title, svg };
 }
 
-/** All 98 doodles, by name, without the cover backgrounds. */
-export const doodles: DoodleFile[] = Object.entries(svgFilesByPath)
-  .filter(([, svg]) => !svg.includes(coverViewBox))
-  .map(([path, svg]) => toDoodleFile(path, svg))
-  .sort((first, second) => first.title.localeCompare(second.title, 'en'));
-
 /** The three doodles /design shows side by side in light and night: the cat, the mug, the heart. */
-const sampleDoodleIds = [
-  '046fb8a00941dcf5a7051dd98d11bbef',
-  'c96e4c6d379974d9168df6dc534ab327',
-  'c7264d2c28197ec223c423400809ee92',
-];
+export const sampleDoodles: DoodleFile[] = Object.entries(sampleFilesByPath).map(([path, svg]) =>
+  toDoodleFile(path, svg),
+);
 
-/** The three sample doodles, in that order. */
-export const sampleDoodles: DoodleFile[] = sampleDoodleIds.flatMap((id) => {
-  const doodle = doodles.find((candidate) => candidate.id === id);
-  return doodle === undefined ? [] : [doodle];
-});
+/**
+ * Loads all 98 doodles for the sign-off sheet, by name, without the cover backgrounds.
+ *
+ * @returns the doodles, sorted by title
+ * Errors: rejects when a file can't be loaded (the section shows a plain message).
+ */
+export async function loadAllDoodles(): Promise<DoodleFile[]> {
+  const files = await Promise.all(
+    Object.entries(loadersByPath).map(async ([path, load]) => toDoodleFile(path, await load())),
+  );
+  return files
+    .filter((file) => !file.svg.includes(coverViewBox))
+    .sort((first, second) => first.title.localeCompare(second.title, 'en'));
+}
