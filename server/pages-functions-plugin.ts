@@ -3,8 +3,8 @@
  * `npm run preview` and the end-to-end tests behave like Cloudflare (story S1-E2-01).
  *
  * Who uses it: vite.config.ts. It never runs in production: Cloudflare runs functions/ itself.
- * Routes: POST /api/password-check (server/password-check.ts) and GET /api/signup-context
- * (server/signup-context.ts, S1-E2-10).
+ * Routes: POST /api/password-check (server/password-check.ts), GET /api/signup-context
+ * (server/signup-context.ts, S1-E2-10) and POST /api/contact (server/contact.ts, S1-E14-04).
  * Stand-ins:
  * - with PASSWORD_CHECK_STUB=1 (set by playwright.config.ts) the leaked-password check answers
  *   from a fixed list instead of the internet, so tests don't depend on an outside service: the
@@ -12,13 +12,18 @@
  * - there is no Cloudflare locally, so the country is LOCAL_FAKE_COUNTRY (Romania when unset; any
  *   other value, for example "XX" for unknown, to try another country; end-to-end tests send an
  *   X-Fake-Country header instead) and the token is signed
- *   with SIGNUP_CONTEXT_SECRET from the environment (none: no token, as on a site without it).
+ *   with SIGNUP_CONTEXT_SECRET from the environment (none: no token, as on a site without it);
+ * - the Contact us form's emails go into Mailpit, the local Supabase's mail catcher
+ *   (http://127.0.0.1:54324), instead of Brevo, so they can be read locally and by the tests.
  */
 import { createHash } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
 import type { Connect, Plugin } from 'vite';
 
+import { brandDefaults } from '../src/config/brand.ts';
+
+import { handleContact, sendWithMailpit } from './contact.ts';
 import { handleSignupContext } from './signup-context.ts';
 import {
   fetchFromHaveIBeenPwned,
@@ -81,6 +86,16 @@ function handlerFor(url: string | undefined): ((request: Request) => Promise<Res
     const fetchRange =
       process.env.PASSWORD_CHECK_STUB === '1' ? fetchFromStub : fetchFromHaveIBeenPwned;
     return (request) => handlePasswordCheck(request, fetchRange);
+  }
+  if (url === '/api/contact') {
+    // The emails land in Mailpit locally; the brand values come from the same variables Cloudflare
+    // has, with today's values as the fallback (src/config/brand.ts).
+    return (request) =>
+      handleContact(request, {
+        supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
+        productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
+        sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
+      });
   }
   if (url === '/api/signup-context') {
     // A test can ask for another country with the X-Fake-Country header; this file never runs on

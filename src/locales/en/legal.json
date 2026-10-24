@@ -73,5 +73,9 @@
     "accept": "Accept and continue",
     "accepting": "Saving…",
     "failed": "That didn’t work. Check your connection and try again."
+  },
+  "contactUs": {
+    "text": "Have a question or a problem with your account?",
+    "link": "Write to us"
   }
 }

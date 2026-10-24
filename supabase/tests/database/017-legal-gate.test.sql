@@ -58,8 +58,11 @@ select results_eq(
   'the notice lists the new terms, with what changed'
 );
 
+-- Only the terms' 0.2: other documents have their own 0.2 (the contact page, S1-E14-04).
 select ok(
-  (select count(*) from public.legal_document_versions where version_label = '0.2') = 1,
+  (select count(*) from public.legal_document_versions as versions
+     join public.legal_documents as documents on documents.id = versions.document_id
+     where documents.slug = 'terms' and versions.version_label = '0.2') = 1,
   'reading never stops: adult_writer still reads the new version while it waits'
 );
 

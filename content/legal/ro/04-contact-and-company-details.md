@@ -17,7 +17,7 @@
 **Pe scurt** (ca pe planșă)
 
 - Întrebări, probleme sau reclamații: hello@themagiccoffin.com.
-- Ești conectat? Folosește Scrie-ne din Setări. Poți urmări fiecare cerere acolo, la „Cererile tale de ajutor”.
+- Ești conectat? Folosește Scrie-ne din Setări, din Ajutor sau din subsolul paginii. Fiecare mesaj primește un număr de referință și un email care confirmă că l-am primit.
 - Limbi: română și engleză.
 
 **Text complet**
@@ -26,9 +26,9 @@ Acesta este punctul nostru de contact pentru toți cei care folosesc Ghemotoc.
 
 Întrebări, probleme sau reclamații: scrie la hello@themagiccoffin.com. Nu ai nevoie de cont.
 
-Ești conectat? Folosește Scrie-ne din Setări, din Ajutor sau din subsolul paginii. Fiecare mesaj primește un număr de referință și un email care confirmă că l-am primit. Poți urmări fiecare cerere în Setări, la „Cererile tale de ajutor”.
+Ești conectat? Folosește Scrie-ne din Setări, din Ajutor sau din subsolul paginii. Fiecare mesaj primește un număr de referință și un email care confirmă că l-am primit. Păstrează referința în caz că ne scrii din nou despre același lucru.
 
-Răspunde un om. Mesajele sunt citite și primesc răspuns de la echipa noastră, nu doar de la un sistem automat. Ne propunem să răspundem în [număr] zile lucrătoare.
+Răspunde un om. Mesajele sunt citite și primesc răspuns de la echipa noastră, nu doar de la un sistem automat. Răspundem în cel mult o lună, de obicei mult mai repede.
 
 Raportezi conținut? Te rugăm să folosești butonul Raportează sau formularul public de raportare, ca raportul să ajungă imediat la moderatorii noștri.
 
