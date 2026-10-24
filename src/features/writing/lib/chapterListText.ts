@@ -9,7 +9,7 @@
  */
 import type { TFunction } from 'i18next';
 
-import { formatRomaniaDateTime } from '@/lib/romania-time';
+import { dateLocaleFor, formatRomaniaDateTime, withShortSeptember } from '@/lib/romania-time';
 
 import type { ManagedChapter, ManagedChapterState } from '../api/manageChapters';
 import { purgeDateFor } from './purgeDate';
@@ -18,18 +18,19 @@ import { purgeDateFor } from './purgeDate';
 const summaryOrder: ManagedChapterState[] = ['published', 'draft', 'scheduled', 'unpublished'];
 
 /**
- * A short date in Romania time: "5 Sep" or "5 sept.".
+ * A short date in Romania time: "5 Sep" (British order) or "5 sept.".
  *
  * @param isoTime - the moment, as an ISO timestamp
  * @param language - the interface language
  * @returns the text
  */
 export function shortRomaniaDate(isoTime: string, language: string): string {
-  return new Intl.DateTimeFormat(language, {
+  const text = new Intl.DateTimeFormat(dateLocaleFor(language), {
     timeZone: 'Europe/Bucharest',
     day: 'numeric',
     month: 'short',
   }).format(new Date(isoTime));
+  return withShortSeptember(text);
 }
 
 /**
