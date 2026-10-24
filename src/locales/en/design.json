@@ -15,7 +15,8 @@
     "shelves": "Shelves",
     "notices": "Notices and empty states",
     "ads": "Ad and sponsor slots",
-    "shell": "Top bar, staff bar and footer"
+    "shell": "Top bar, staff bar and footer",
+    "doodles": "Doodles"
   },
   "colours": {
     "light": "Light",
@@ -121,5 +122,9 @@
     "staffBarNote": "The staff bar from the admin boards. The admin site mounts it from S1-E11-01.",
     "staffName": "Sample staff member",
     "staffRole": "Admin"
+  },
+  "doodles": {
+    "intro": "The hand-drawn doodles from design/assets, drawn inline so they take their colours from the --doodle-* tokens. Light mode shows them exactly as drawn on the canvas; at night the ink turns light and every fill turns dark. The script scripts/doodle-tokens.ts keeps the files this way and CI fails on any raw colour.",
+    "all": "All {{count}} doodles, in the page's current mode"
   }
 }
