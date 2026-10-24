@@ -3,14 +3,14 @@
 -- Made by `npm run demo:build` from content/demo-stories/*.md and content/classics/texts/*.md;
 -- edit those files, not this one. What it adds: the five synthetic writers and the classics
 -- account (the one agreed exception to "top-ups never create accounts"), 36 synthetic
--- stories with 106 published chapters, and 16 public-domain classics.
+-- stories with 106 published chapters, and 19 public-domain classics.
 -- Synthetic text only, never real people's work or names. Robert reads every title and blurb
 -- plus these whole stories: demo-07 "Fântâna care trebuia să râdă"; demo-10 "Ultimul schimb de pe Stația Horia"; demo-19 "Tura de noapte"; demo-28 "The Quarry Lake in Winter"; demo-35 "Ghinda de la Trei Pruni".
 -- Rules (supabase/staging-topups/README.md): safe to run twice (every row has a fixed id and is
 -- skipped when it exists; tags are replaced with the same); never production (step 1 refuses a
 -- database without the 16 seed personas). Merge after S1-E3-03 and S1-E3-06.
 -- How to check it worked: the last query should show demo_stories 36, demo_chapters
--- 106, classic_chapters 27, classics 16, demo_writers 6.
+-- 106, classic_chapters 30, classics 19, demo_writers 6.
 begin;
 
 -- 1. Never production: the 16 seed personas exist only on local and staging databases.
@@ -16260,6 +16260,141 @@ Totuși este trist în lume!
 (1873, 1 aprilie)$demo$), now() - interval '81 days'
 where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000700010000'::uuid);
 
+-- classic-08-sara-pe-deal: "Sara pe deal" by clasice
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
+  first_published_at, last_chapter_published_at, created_at)
+select '00000000-0000-4000-9300-000800000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'sara-pe-deal-classic',
+  $demo$Sara pe deal$demo$, $demo$Seara în sat: buciumul, turmele, clopotele și un salcâm sub care așteaptă cineva. Poezia unei întâlniri în liniștea satului.
+
+Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=119448, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
+  (select id from public.categories where slug = 'poetry'),
+  'automatic', null, null, null, 'all_ages', 'no_ai',
+  now() - interval '27 days', now() - interval '27 days', now() - interval '29 days'
+where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000800000000'::uuid);
+select public.set_story_tags('00000000-0000-4000-9300-000800000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
+select '00000000-0000-4000-9300-000800010000'::uuid, '00000000-0000-4000-9300-000800000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
+  'k008c001', 1, $demo$Sara pe deal$demo$, public.check_chapter_text($demo$Sara pe deal buciumul sună cu jale,  
+Turmele-l urc, stele le scapără-n cale,  
+Apele plîng, clar izvorînd în fîntîne;  
+Sub un salcîm dragă, m-aștepți tu pe mine.
+
+Luna pe cer trece-așa sfîntă și clară,  
+Ochii tăi mari caută-n frunza cea rară,  
+Stelele nasc umezi pe bolta senină,  
+Pieptul de dor, fruntea de gînduri ți-e plină.
+
+Nourii curg, raze-a lor șiruri despică,  
+Streșine vechi casele-n lună ridică,  
+Scîrțîie-n vînt cumpăna de la fîntînă,  
+Valea-i în fum, fluiere murmură-n stînă.
+
+Și osteniți oameni cu coasa-n spinare  
+Vin de la cîmp; toaca răsună mai tare,  
+Clopotul vechi împle cu glasul lui sara,  
+Sufletul meu arde-n iubire ca para.
+
+Ah! în curînd satul în vale-amuțește;  
+Ah! în curînd pasu-mi spre tine grăbește:  
+Lîngă salcîm sta-vom noi noaptea întreagă,  
+Ore întregi spune-ți-voi cît îmi ești dragă.
+
+Ne-om răzima capetele-unul de altul,  
+Și surîzînd vom adormi sub înaltul,  
+Vechiul salcîm. — Astfel de noapte bogată,  
+Cine pe ea n-ar da viața lui toată?$demo$), 1,
+  now() - interval '27 days', $demo$Sara pe deal$demo$, public.check_chapter_text($demo$Sara pe deal buciumul sună cu jale,  
+Turmele-l urc, stele le scapără-n cale,  
+Apele plîng, clar izvorînd în fîntîne;  
+Sub un salcîm dragă, m-aștepți tu pe mine.
+
+Luna pe cer trece-așa sfîntă și clară,  
+Ochii tăi mari caută-n frunza cea rară,  
+Stelele nasc umezi pe bolta senină,  
+Pieptul de dor, fruntea de gînduri ți-e plină.
+
+Nourii curg, raze-a lor șiruri despică,  
+Streșine vechi casele-n lună ridică,  
+Scîrțîie-n vînt cumpăna de la fîntînă,  
+Valea-i în fum, fluiere murmură-n stînă.
+
+Și osteniți oameni cu coasa-n spinare  
+Vin de la cîmp; toaca răsună mai tare,  
+Clopotul vechi împle cu glasul lui sara,  
+Sufletul meu arde-n iubire ca para.
+
+Ah! în curînd satul în vale-amuțește;  
+Ah! în curînd pasu-mi spre tine grăbește:  
+Lîngă salcîm sta-vom noi noaptea întreagă,  
+Ore întregi spune-ți-voi cît îmi ești dragă.
+
+Ne-om răzima capetele-unul de altul,  
+Și surîzînd vom adormi sub înaltul,  
+Vechiul salcîm. — Astfel de noapte bogată,  
+Cine pe ea n-ar da viața lui toată?$demo$), 'published',
+  now() - interval '27 days', now() - interval '27 days', public.count_words($demo$Sara pe deal buciumul sună cu jale,  
+Turmele-l urc, stele le scapără-n cale,  
+Apele plîng, clar izvorînd în fîntîne;  
+Sub un salcîm dragă, m-aștepți tu pe mine.
+
+Luna pe cer trece-așa sfîntă și clară,  
+Ochii tăi mari caută-n frunza cea rară,  
+Stelele nasc umezi pe bolta senină,  
+Pieptul de dor, fruntea de gînduri ți-e plină.
+
+Nourii curg, raze-a lor șiruri despică,  
+Streșine vechi casele-n lună ridică,  
+Scîrțîie-n vînt cumpăna de la fîntînă,  
+Valea-i în fum, fluiere murmură-n stînă.
+
+Și osteniți oameni cu coasa-n spinare  
+Vin de la cîmp; toaca răsună mai tare,  
+Clopotul vechi împle cu glasul lui sara,  
+Sufletul meu arde-n iubire ca para.
+
+Ah! în curînd satul în vale-amuțește;  
+Ah! în curînd pasu-mi spre tine grăbește:  
+Lîngă salcîm sta-vom noi noaptea întreagă,  
+Ore întregi spune-ți-voi cît îmi ești dragă.
+
+Ne-om răzima capetele-unul de altul,  
+Și surîzînd vom adormi sub înaltul,  
+Vechiul salcîm. — Astfel de noapte bogată,  
+Cine pe ea n-ar da viața lui toată?$demo$),
+  public.count_words($demo$Sara pe deal buciumul sună cu jale,  
+Turmele-l urc, stele le scapără-n cale,  
+Apele plîng, clar izvorînd în fîntîne;  
+Sub un salcîm dragă, m-aștepți tu pe mine.
+
+Luna pe cer trece-așa sfîntă și clară,  
+Ochii tăi mari caută-n frunza cea rară,  
+Stelele nasc umezi pe bolta senină,  
+Pieptul de dor, fruntea de gînduri ți-e plină.
+
+Nourii curg, raze-a lor șiruri despică,  
+Streșine vechi casele-n lună ridică,  
+Scîrțîie-n vînt cumpăna de la fîntînă,  
+Valea-i în fum, fluiere murmură-n stînă.
+
+Și osteniți oameni cu coasa-n spinare  
+Vin de la cîmp; toaca răsună mai tare,  
+Clopotul vechi împle cu glasul lui sara,  
+Sufletul meu arde-n iubire ca para.
+
+Ah! în curînd satul în vale-amuțește;  
+Ah! în curînd pasu-mi spre tine grăbește:  
+Lîngă salcîm sta-vom noi noaptea întreagă,  
+Ore întregi spune-ți-voi cît îmi ești dragă.
+
+Ne-om răzima capetele-unul de altul,  
+Și surîzînd vom adormi sub înaltul,  
+Vechiul salcîm. — Astfel de noapte bogată,  
+Cine pe ea n-ar da viața lui toată?$demo$), now() - interval '28 days'
+where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000800010000'::uuid);
+
 -- classic-09-lacul: "Lacul" by clasice
 insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
   cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
@@ -18323,6 +18458,1464 @@ Ei, auzi! Vedea-i-aș mari,
 Parcă trece-adunătură  
 De tătari!$demo$), now() - interval '86 days'
 where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-001200010000'::uuid);
+
+-- classic-13-balada-unui-greier-mic: "Balada unui greier mic" by clasice
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
+  first_published_at, last_chapter_published_at, created_at)
+select '00000000-0000-4000-9300-001300000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'balada-unui-greier-mic-classic',
+  $demo$Balada unui greier mic$demo$, $demo$Un greier mic a cântat toată vara, iar acum vine toamna cu ploi. O baladă hazlie și tristă despre cine nu s-a pregătit de iarnă.
+
+Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=134554, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
+  (select id from public.categories where slug = 'poetry'),
+  'automatic', null, null, null, 'all_ages', 'no_ai',
+  now() - interval '32 days', now() - interval '32 days', now() - interval '34 days'
+where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001300000000'::uuid);
+select public.set_story_tags('00000000-0000-4000-9300-001300000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'toamnă']);
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
+select '00000000-0000-4000-9300-001300010000'::uuid, '00000000-0000-4000-9300-001300000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
+  'k013c001', 1, $demo$Balada unui greier mic$demo$, public.check_chapter_text($demo$Peste dealuri zgribulite,  
+Peste țarini zdrențuite,  
+A venit așa, deodată,  
+Toamna cea întunecată.
+
+Lungă, slabă și zăludă,  
+Botezând natura udă  
+C-un mănunchi de ciumafai, -  
+Când se scutură de ciudă,  
+Împrejurul ei departe  
+Risipește-n evantai  
+Ploi mărunte,  
+Frunze moarte,  
+Stropi de tină,  
+Guturai...
+
+Și cum vine de la munte,  
+Blestemând  
+Și lăcrimând,  
+Toți ciulinii de pe vale  
+Se pitesc prin văgăuni,  
+Iar măceșii de pe câmpuri  
+O întâmpină în cale  
+Cu grăbite plecăciuni...
+
+Doar pe coastă, la urcuș,  
+Din căsuța lui de humă  
+A ieșit un greieruș,  
+Negru, mic, muiat în tuș  
+Și pe-aripi pudrat cu brumă:
+
+– Cri-cri-cri,  
+Toamnă gri,  
+Nu credeam c-o să mai vii  
+Înainte de Crăciun,  
+Că puteam și eu s-adun  
+O grăunță cât de mică,  
+Ca să nu cer împrumut  
+La vecina mea furnică,  
+Fiindcă nu-mi dă niciodată,  
+Și-apoi umple lumea toată  
+Că m-am dus și i-am cerut...
+
+Dar de-acuș,  
+Zise el cu glas sfârșit  
+Ridicând un picioruș,  
+Dar de-acuș s-a isprăvit...  
+Cri-cri-cri,  
+Toamnă gri,  
+Tare-s mic și necăjit!$demo$), 1,
+  now() - interval '32 days', $demo$Balada unui greier mic$demo$, public.check_chapter_text($demo$Peste dealuri zgribulite,  
+Peste țarini zdrențuite,  
+A venit așa, deodată,  
+Toamna cea întunecată.
+
+Lungă, slabă și zăludă,  
+Botezând natura udă  
+C-un mănunchi de ciumafai, -  
+Când se scutură de ciudă,  
+Împrejurul ei departe  
+Risipește-n evantai  
+Ploi mărunte,  
+Frunze moarte,  
+Stropi de tină,  
+Guturai...
+
+Și cum vine de la munte,  
+Blestemând  
+Și lăcrimând,  
+Toți ciulinii de pe vale  
+Se pitesc prin văgăuni,  
+Iar măceșii de pe câmpuri  
+O întâmpină în cale  
+Cu grăbite plecăciuni...
+
+Doar pe coastă, la urcuș,  
+Din căsuța lui de humă  
+A ieșit un greieruș,  
+Negru, mic, muiat în tuș  
+Și pe-aripi pudrat cu brumă:
+
+– Cri-cri-cri,  
+Toamnă gri,  
+Nu credeam c-o să mai vii  
+Înainte de Crăciun,  
+Că puteam și eu s-adun  
+O grăunță cât de mică,  
+Ca să nu cer împrumut  
+La vecina mea furnică,  
+Fiindcă nu-mi dă niciodată,  
+Și-apoi umple lumea toată  
+Că m-am dus și i-am cerut...
+
+Dar de-acuș,  
+Zise el cu glas sfârșit  
+Ridicând un picioruș,  
+Dar de-acuș s-a isprăvit...  
+Cri-cri-cri,  
+Toamnă gri,  
+Tare-s mic și necăjit!$demo$), 'published',
+  now() - interval '32 days', now() - interval '32 days', public.count_words($demo$Peste dealuri zgribulite,  
+Peste țarini zdrențuite,  
+A venit așa, deodată,  
+Toamna cea întunecată.
+
+Lungă, slabă și zăludă,  
+Botezând natura udă  
+C-un mănunchi de ciumafai, -  
+Când se scutură de ciudă,  
+Împrejurul ei departe  
+Risipește-n evantai  
+Ploi mărunte,  
+Frunze moarte,  
+Stropi de tină,  
+Guturai...
+
+Și cum vine de la munte,  
+Blestemând  
+Și lăcrimând,  
+Toți ciulinii de pe vale  
+Se pitesc prin văgăuni,  
+Iar măceșii de pe câmpuri  
+O întâmpină în cale  
+Cu grăbite plecăciuni...
+
+Doar pe coastă, la urcuș,  
+Din căsuța lui de humă  
+A ieșit un greieruș,  
+Negru, mic, muiat în tuș  
+Și pe-aripi pudrat cu brumă:
+
+– Cri-cri-cri,  
+Toamnă gri,  
+Nu credeam c-o să mai vii  
+Înainte de Crăciun,  
+Că puteam și eu s-adun  
+O grăunță cât de mică,  
+Ca să nu cer împrumut  
+La vecina mea furnică,  
+Fiindcă nu-mi dă niciodată,  
+Și-apoi umple lumea toată  
+Că m-am dus și i-am cerut...
+
+Dar de-acuș,  
+Zise el cu glas sfârșit  
+Ridicând un picioruș,  
+Dar de-acuș s-a isprăvit...  
+Cri-cri-cri,  
+Toamnă gri,  
+Tare-s mic și necăjit!$demo$),
+  public.count_words($demo$Peste dealuri zgribulite,  
+Peste țarini zdrențuite,  
+A venit așa, deodată,  
+Toamna cea întunecată.
+
+Lungă, slabă și zăludă,  
+Botezând natura udă  
+C-un mănunchi de ciumafai, -  
+Când se scutură de ciudă,  
+Împrejurul ei departe  
+Risipește-n evantai  
+Ploi mărunte,  
+Frunze moarte,  
+Stropi de tină,  
+Guturai...
+
+Și cum vine de la munte,  
+Blestemând  
+Și lăcrimând,  
+Toți ciulinii de pe vale  
+Se pitesc prin văgăuni,  
+Iar măceșii de pe câmpuri  
+O întâmpină în cale  
+Cu grăbite plecăciuni...
+
+Doar pe coastă, la urcuș,  
+Din căsuța lui de humă  
+A ieșit un greieruș,  
+Negru, mic, muiat în tuș  
+Și pe-aripi pudrat cu brumă:
+
+– Cri-cri-cri,  
+Toamnă gri,  
+Nu credeam c-o să mai vii  
+Înainte de Crăciun,  
+Că puteam și eu s-adun  
+O grăunță cât de mică,  
+Ca să nu cer împrumut  
+La vecina mea furnică,  
+Fiindcă nu-mi dă niciodată,  
+Și-apoi umple lumea toată  
+Că m-am dus și i-am cerut...
+
+Dar de-acuș,  
+Zise el cu glas sfârșit  
+Ridicând un picioruș,  
+Dar de-acuș s-a isprăvit...  
+Cri-cri-cri,  
+Toamnă gri,  
+Tare-s mic și necăjit!$demo$), now() - interval '33 days'
+where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-001300010000'::uuid);
+
+-- classic-14-neghinita: "Neghiniță" by clasice
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
+  first_published_at, last_chapter_published_at, created_at)
+select '00000000-0000-4000-9300-001400000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'neghinita-classic',
+  $demo$Neghiniță$demo$, $demo$Doi bătrâni își doresc un copil și primesc unul cât un bob de neghină. Neghiniță se strecoară în urechile oamenilor, le aude gândurile și ajunge la urechea împăratului, căruia îi spune adevărul. Un basm amar despre ce pățește cine le spune adevărul celor puternici.
+
+Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=123622, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
+  (select id from public.categories where slug = 'fiction'),
+  'drawn', 'doodles', 'gold', 'sage', '13_plus', 'no_ai',
+  now() - interval '69 days', now() - interval '69 days', now() - interval '71 days'
+where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001400000000'::uuid);
+select public.set_story_tags('00000000-0000-4000-9300-001400000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'poveste']);
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
+select '00000000-0000-4000-9300-001400010000'::uuid, '00000000-0000-4000-9300-001400000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
+  'k014c001', 1, $demo$Neghiniță$demo$, public.check_chapter_text($demo$A fost odată o babă, bătrână, bătrână. Abia zărea de bătrână ce era. Și mâinile îi umblau la ciorap, iar în gândul ei se ruga la Dumnezeu s-o dăruiască cu un copil, că n-avea decât pe unchiașul ei. Și unchiașul, ba la pădure, ba la arie, ba la târg, iar baba sta singură cuc, că toată ziulica i-ar fi țiuit tăcerea în fundul urechilor dacă n-ar fi strănunat și n-ar fi tușit câteodată. Ba uneori, ca să-și
+mai ție de urât, tot ea vorbea și tot ea răspundea. Și râdea ea de ea, ca și cum ar fi râs ea de altcineva, înșirând ochiurile pe cârlige.
+
+— Ei, ei, ce n-ar plăti un flăcău la bătrânețile noastre!
+
+— Cât, de? cât?
+
+— Ihi, ihi, mult de tot!
+
+— Adică ce, nu te-ai mulțumi și c-o fată mare?
+
+— Ba, ce să zic, bine ar fi ș-o fată...
+
+— Da, dar la fată vrea zestre.
+
+— S-ar găsi, că eu și unchiașul avem ce ne trebuie și nu ne trebuie mult, trei coți de pânză albă și câte un coșciug; iar boii moșului, iar plugul moșului, iar casa moșului și a babei, toate ar fi ale fetei.
+
+— Bine, mătușă, bine, da' de unde și fată? Tu nu știi că copacii uscați nu mai dau de la rădăcină?
+
+Și bătrâna începu să râdă și să ofteze: "hi, hi, hi, ooof, of!"
+
+— Ei, toate se întorc, și apele se întorc de la Dumnezeu, numai tinerețile ba. Ce nu e la timp nu mai e niciodată. M-aș mulțumi eu și pe un prichindel de băiat.
+
+— Ba te-ai mulțumi și pe-o codană. Tu să-nșiri, și ea să deșire, tu să cerni, și ea să risipească, tu să pui de mămăligă, și ea să răstoarne căldarea pe foc.
+
+— Dacă e pe-așa, m-aș mulțumi și pe-un copil cât ghemul, numai s-aud în casă "mamă", că mult e pustiu când ușa se închide peste doi bătrâni.
+
+— Da' dacă ar fi mai mic?
+
+— Fie și mai mic.
+
+Și bătrâna începu să râdă.
+
+— Ce neroadă!
+
+— Ba neroadă, nu glumă!
+
+— Dar dacă ar fi cât un bob de mazăre?
+
+Și tocmai când da bătrâna capul peste cap de râs, odată tresări că, de după ușă, se-auzi un glas ascuțit și înțepat:
+
+— Dar dacă ar fi cât o neghiniță?
+
+Bătrâna se uită, se uită și începu să se închine.
+
+— Bine, bine, zise același glas, văd eu că nu-ți trebuie copii...
+
+Baba își luă inima în dinți și zise:
+
+— Ba-mi trebuie... da' unde ești... cine ești?
+
+— Cine sunt? *Neghiniță*, gândul lumii. De mic ce sunt, pătrund în urechile oamenilor și-i ascult cum gândesc. Adineauri eram în urechea ta a dreaptă, apoi am trecut în a stângă, ș-am râs de m-am prăpădit când am văzut ce-ți trec prin minte...
+
+— Ei, aș! Ce mi-a trecut? Nimic!
+
+— Nu e adevărat, răspunse Neghiniță râzând, omul spune mai puțin decât gândește. Dacă nu-ți șopteam eu că copacul uscat nu mai dă de la rădăcină, cine știe ce-ai mai fi spus...
+
+Baba se făcu ca para focului.
+
+— Zău așa... nu te rușina, mamă, nu zău... Așa e omul. Când e mic face nebunii fiindcă e mic; când e la tinerețe face nebunii fiindcă e tânăr, iar la bătrânețe se gândește la nebunii fiindcă nu le poate face...
+
+Bătrâna pierdu sfiala și răbdarea și se răsti cât putu:
+
+— Neghiniță, ci tacă-ți gura și vin să te văd!
+
+Și pe loc se-auzi un țâșt ca de lăcustă și un bâzâit ca de albină. Bătrâna simți pe mână o picătura caldă.
+
+— Iacătă-mă și pe mine!...
+
+Biata femeie facu niște ochi mari cât toate zilele și se miră toată de ce văzu pe mână, că cerul de i s-ar fi deschis nu s-ar fi minunat mai mult.
+
+Neghiniță era frumos ca o piatră scumpă; și era mic cât o neghină; și avea niște ochișori ca două scântei albastre, și niște mâini și piciorușe ca niște firișoare de păiajen.
+
+Bătrâna dădu să-l sărute. Neghiniță, țâști pe nas, țâști iar pe mână!
+
+— Încet, mamă, încet, că mă strivești, zise Neghiniță.
+
+— Să te sărut, că-mi umpluși casa cu dragoste când îmi ziseși *mamă*.
+
+— Încet, să nu mă sorbi.
+
+Îl sărută.
+
+— Cum mănânci tu, Neghiniță al maicăi?
+
+— Eu? Eu mă satur din fum. Până acum am mâncat la mese împărătești fără să știe nimeni. Și ce-am mai râs când ceilalți tremurau înaintea împăraților, iar eu mă plimbam prin urechile lor și le aflam gândul.
+
+— Bine o fi de ei, Neghiniță mamă...
+
+— Aș, binele focului! Săracii mor de foame, iar ei mor de mâncare. De săraci e rău că n-au cui să poruncească, și de ei e rău că trebuie să poruncească la mulți. Pe ceilalți oameni când îi minți te iau de guler și te judecă judecată dreaptă; pe ei îi minți și dau din cap; ba și mai și: ei știu că-i minți, și tac, și înghit, și n-au ce face, ca să nu se strice trebile împărăției.
+
+— Da' bine, Neghiniță, ție-ți trebuie un an ca să umbli cât altul umblă într-o zi.
+
+— Da? Ei, nu e așa deloc. Eu mă las pe-o adiere și plutesc ca pe apă, și mă mlădii pe apa vântului ca pe valurile mării. Ba uneori întrec rândunelele ca o săgeată de argint.
+
+— Ce bucurie pe unchiașul meu, zise bătrâna, când o afla că are și el un copil. Deseară o să se îmbete de bucurie.
+
+— Ba e vorbă, răspunse Neghinită, eu vreau să văd pe tata acuși-acușic!
+
+Și bătrâna, când auzi cuvântul *tată*, se bucură de bucuria moșului și îi zise:
+
+— Aria moșului este cât vezi cu ochiul de departe, pusă pe-un deal mare și întins. Unde-i vedea șase cai murgi treierând grâu, acolo să te oprești, că dai peste unchiașul babei.
+
+— Iată, plec.
+
+Cum îi deschise ușa, Neghiniță se aruncă, cu mâinile întinse și cu piciorușele deschise, într-o undă de adiere. Și se făcu nevăzut, ca un strop de lumină.
+
+Pe drum întâlni o cireadă de vaci. De minunici ce era, se dete afund într-o urmă de vacă și începu să strige:
+
+— Măi văcari, măi, veniți de mă scoateți din inima pământului, că vă fac pe voia gândului!
+
+Văcarii se luară după glas, până deteră peste Neghiniță. Unul, mai rău și mai prost dintre ei, vru să-l strivească și-și repezi călcâiul din băierile inimii. Neghiniță țâști, și sări alăturea, iar văcarul, lovind cu sete pământul, își scrinti piciorul și începu să se vaiete. Ceilalți începură cu măciuca și, cum izbeau, rămâneau cu jumătatea în mână, iar ailaltă se ducea zbârnâind.
+
+— Să nu vă păziți vacile, cum vă păziți mințile. Cruce lată, minte întunecată, urechi de văcar, urechi de măgar! le zise Neghiniță, și se dădu vântului.
+
+Ajunse la unchiaș. I se sui pe nas, ca să-l vadă mai bine. Unchiașul se bucură, dar nu ca baba, iar Neghiniță se întristă. Dar ca să se-arate grozav, zise unchiașului:
+
+— Nu căta că-s mititel. Calul nu e mai mare ca copilul? și-l încalecă copilul. Bivolul nu e mai mare ca omul? și-l înjugă omul. Munții nu-s mai mari ca oile? și-i pasc turmele. Pământul nu e mai mare ca fierul plugului? și-l despică fierul plugului. Codrul nu e mai mare ca un topor? și-l culcă toporul la pământ. Tu nu ești mai mare ca mine? și te-au ostenit murgii în arie. Ia să vezi cum îi dau eu la arie, fără bici, fără nimic.
+
+Unchiașul, minunat, îl duse la arie. Cum ajunse, Neghiniță sări pe-un cal și începu să strige: "Hi, hăi, hi, hăi!" Ciupește pe unul, ciupește pe altul, caii începură să fugă, dar ce fugă, parc-ar fi avut douăzeci de bice pe șalele lor. Și cum se crucea moșul, iată și un negustor care trecea la scaunul împărăției.
+
+— Moșule, îi zise negustorul, cine mână caii așa de grozav, că eu aud "hi-hăi, hi-hăi" și nu văd pe nimeni!
+
+— Ei, tată, răspunse bătrânul, m-a dăruit Dumnezeu cu un copil ca o neghină, da' cu mintea cât zece ca mine și ca d-ta.
+
+Neghiniță opri caii și sări în palma unchiașului. Cum îl văzu negustorul, se gândi să ducă împăratului așa minune.
+
+— Moșule, zise negustorul, îți dau o pungă de bani pe el. Neghiniță, sfâr, în urechea moșului și îi șopti ce să vorbească. Și moșul zise, crezând că de la el zice:
+
+— Tu, care vinzi și cumperi, ai cumpărat vreun suflet pe-o pungă de bani?
+
+— Îți dau... două.
+
+Și iar moșul, după Neghiniță:
+
+— Două pungi... pentru un suflet?
+
+— Îți dau... zece.
+
+Moșul îngălbeni și zise, iar după șoapta lui Neghiniță:
+
+— Sufletele se dăruiesc Domnului și se vând Necuratului.
+
+— Îți dau... douăzeci!
+
+Și moșul, călcând în gura lăcomiei, tăcu, cu toate șoaptele bietului Neghiniță.
+
+Neghiniță văzu lăcomia, da' tot el șopti moșului:: "Fie!" Și moșul zise:
+
+— Fie!
+
+Bătu palmă în palmă cu negustorul. Tocmeala se făcuse. Negustorul plăti și luă pe Neghiniță, vândut de bunăvoie. Negustorul plecă. Neghiniță strigă moșului:
+
+— Moșule, moșule, ai fost să n-ai copii, iar biată babă, da!
+
+Împăratul era la mare și la greu sfat cu toți cărturarii, că bântuia seceta și molima. Și dacă negustorul îi spuse că are un copil ca o neghiniță, împăratul rămase înmărmurit, învățații împărăției căscară ochii mari și se traseră de bărbile lungi.
+
+— Nu se poate, măria-ta, așa ceva nu scrie la carte.
+
+— Ba se poate, zise Neghiniță, sărind pe masa sfatului, că multe se pot și nu stau în cărți; și mult mai multe sunt altfel de cum sunt ticluite din condei. Și după ce se minunară cât se minunară, începu sfatul. Neghiniță se sui pe mâna împăratului, pe umăr, apoi în creștetul capului, și de-acolo zise râzând:
+
+— Învață, măria-ta, că cei mai mici sunt cei mai mari.
+
+Împăratul, cam de voie, cam de nevoie, răspunse:
+
+— Așa e, Neghiniță, așa e.
+
+Iar cărturarii își deteră ghies pe sub masă și plecară ochii în jos. Împăratul porunci să-i toarne lui Neghiniță o casă cu zece caturi, cât o nucă de mare, toată din aur-lamur și împodobită cu pietre scumpe.
+
+Neghiniță rămase la sfat și se pierdu din ochii tuturora, numai ca să se ție de năzdrăvănii. Și, încet-încet, pâși-pâși, până intră în urechea învățatului care căuta în stele cu ocheanele. Acolo ascultă ce ascultă, și înțelese că acest vestit cărturar, în loc să se gândească la sfat, se gândea că împăratul are nasul cam mare. Se duse binișor și intră în urechea cărturarului care zicea că știe mărtuntaiele omului și leacurile bolilor. Ăsta se gândea nu la sfat, ci că-i plăcea inelul împăratului. Așa află, pe rând, că unul se gândea la o cucoană frumoasă, că altul se gândea cam ce lingușeală să cârpească împăratului, altul că ce n-ar da el pentru o sticlă de vin, altul că bine e să fii împărat, altul că împăratul e om ca toți oamenii, numai unul, cu fruntea cât toate zilele, asculta cuvintele și întrebările împăratului.
+
+Neghiniță, cum află gândul tuturora, zbughi în urechea împăratului și îi șopti tot, din fir până în ață. Împăratul, crezând că singur, el de la el, a citit în mintea lor, se mânie foc și le zise:
+
+— Ei, tu, care cați în stele, ți-ai făcut ochii ochean și-mi vezi nasul cât un buștean. Astfel ți-e gândul la sfatul domnesc?
+
+Cărturarul se cutremură și dădu în genunchi, cerând iertare.
+
+— Tu, se răsti împăratul către doctor, dacă ai avea inelul meu, ai omorî mai puțini oameni?
+
+Doctorul se cutremură și dădu și el în genunchi.
+
+— Tu, zise împăratul necăjit ălorlalți, te gândești la secături și nu vezi că ești cu un picior în groapă; tu îți pregătești limba ca să mă minți; tu crezi că într-o sticlă cu vin este mai mult duh decât
+în capul meu; tu nu știi că un învățat pe scaunul domniei ar face mai multe boroboațe ca un neghiob; tu te pricepi că împăratul e om ca toți oamenii, da' nu te gândești că învățații sunt ca neoamenii; iar tu abia te ții să nu caști o gură cât să înghiți împărăția toată; numai ție ți-e mintea la sfatul domnesc.
+
+Cu toții căzură în genunchi.
+
+— Acum ce să le fac, zise împăratul mânios, să le tai capul?
+
+Cărturarii muriră și înviară, iar Neghiniță, care se suise în creștetul împăratului:
+
+— Ferit-a Dumnezeu, măria-ta, fără învățați cine să mintă lumea?
+
+— Să nu fie decât adevărul pe lume!
+
+— Ferit-a Dumnezeu! Ce-ai face chiar măria-ta fără minciună? Apoi măria-ta ți-ai făcut socoteala vieții? Mai multe ceasuri ai mâncat, ai dormit, ai vânat, ți-ai socotit cazanele cu bani, ai petrecut, ba cu luminăția-sa împărăteasa, ba și fără ea, decât te-ai necăjit cu trebile și cu nevoile împărăției. Cum ai sta măria-ta pe scaunul lumii când lumea ar afla adevărul?
+
+Împăratul zâmbi, cu ciudă, nu e vorbă, dar zâmbi ca să dreagă treaba și îi iertă pe toți. Văzând însă că cel din urmă cărturar, care se gândise la sfat, tremura mereu, îi zise:
+
+— Ei, dar tu, cel mai cuminte, de ce tremuri?
+
+— Măria-ta, zise bietul bătrân, mai bine să spun și eu decât să afli măria-ta. Iată, socotesc că nu știu nimic și tot mă gândesc că mi-e leafa prea mică.
+
+Împăratul râse cu poftă și-i făgădui o leafă mai mare, apoi sparse sfatul cărturarilor și plecă cu Neghiniță în creștetul capului, nedomirit de cum ghicise gândurile tuturora.
+
+Împărăteasa și cuconii ei, văzând pe Neghiniță, se minunară, dar, când aflară că împăratul, la vreme de bătrânețe, ghicește gândurile oamenilor, se cruciră și tot nu le venea să creadă.
+
+— Împărate, zise împărăteasa, zău așa, ghicește-mi și mie un gând.
+
+— Să vedem, răspunse împăratul.
+
+Împărăteasa se gândi și începu să râdă... Neghiniță o zbughise în urechea împărătesei și-i aflase gândul: "Că ce bine-ar fi să mai fie o dată împăratul tânăr!" Și într-o clipă intră în urechea dreaptă
+a împăratului, și șopa-șopa-șopa. Împăratul — pace! Împărăteasa râdea și zicea:
+
+— Vezi că nu ghicești? vezi?
+
+Pasămite, împăratul era cam tare de urechea dreaptă. Neghiniță înțelese, și țâști în urechea stângă, și iar șopa-șopa.
+
+Împăratul se lumină la față, dădu din cap, râse cu hohote și zise:
+
+— Ei... împărăteasă, împărăteasă... da' tot muiere! De, bine te gândiși tu, da' nu se poate...
+
+Împărăteasa se rușină, plecă ochii în jos și se gândi: "Dar dacă o ghici și la ce m-oi fi gândit înainte, intru în pământ! De câte ori n-am dat dracului sfaturile împărăției când nu se mai isprăveau până după miezul nopții."
+
+În sfârșit, ce-i veni lui Neghiniță, vru să râdă și de împărat; și își zise într-o bună dimineață: "Vezi ce e omul! Spune-i orice, spune-i mereu același lucru... omul crede, că omul e prost. Ce nu
+crede întâi crede mai pe urmă. Am să-i fac una și bună împăratului, să-l las fără sfetnicii cei credincioși și să-l încurc cu nebunii."
+
+Împăratul, de umbla în fruntea oștilor, de sta la sfat mare, de se culca, de se scula, de mânca, de-și mângâia cuconii, un gând nu-l mai slăbea: "Nu vezi, omule de Dumnezeu, că ți-au îmbătrânit sfetnicii și împărăția merge rău?"
+
+Pasămite, Neghiniță îi intrase într-o ureche. Azi așa, mâine așa, până nu mai avu încotro. Sparse sfatul cel vechi și chemă altul nou.
+
+Tot unu și unu!
+
+Cum veniră, cum aruncară pe bietul împărat din scaunul neamului lui...
+
+— Acu să-l vedem! zise împielițatul de Neghiniță. Împăratul ieși plângând din cetate. Neghiniță, sus pe umărul lui.
+
+— De ce plângi, măria-ta? ține-ți firea, nu fi muiere.
+
+— Ei, ei, Neghiniță, cum să nu plâng?! Unde mi-e toiagul împărătesc?
+
+— Ci taci, măria-ta! Ia taie un corn și fă-ți, colea, o cârjă. Buzduganul e greu la bătrânețe, te doboară. Cârja te sprijină.
+
+— Ei, ei, Neghiniță, unde mi-e scaunul împărătesc pe care au stat atâția moși-strămoși ai mei?
+
+— Ci taci, măria-ta! Întinde-te colea, pe fânul înflorit și moale, și să-mi spui drept care e mai dulce la oase? Scaunul cu scumpetea, sau fânul cu frumusețea?
+
+— Ei, ei, Neghiniță, unde mi-e coroana cu stemele și cu luminile?
+
+— Ci taci, măria-ta! Pune foaie lată de lipan pe deasupra pletelor albe și spune-mi drept, care e mai ușoară, coroana cu grijile sau lipanul cu umbrele?
+
+— Așa o fi, Neghiniță, mai zise împăratul, oftând tocmai din băierile inimii, așa o fi, se potrivește ș-așa, fiindcă știi tu să le potrivești, dar când mă gândesc în ce slavă eram ieri... îmi vine să scald tot pământul cu lacrimile mele!
+
+— Ci taci, măria-ta! Adică ce slăvire? Toată viața, ba războaie, ba sfaturi, ba taie capul unuia, ba întinde la bice pe altul, ba citește jalbele, ba ascultă păsurile, ba câte și mai câte, și mai multe fără să vrei de câte pe vrute. Mărire să fi fost asta? Dar ia gândește-te măria-ta că un supus era supusul măriei-tale ș-avea un stăpân, iar măria-ta, purtând grija tuturora, erai sluga tuturora. Vezi, de-aia măria-ta ai fost cel mai slugă, cel mai nevolnic din toată împărăția. Curată socoteală: erai împărat, nu om; acum ești om, nu împărat. Și ești mai mare, că unde-ți spune gândul, acolo te duc picioarele. Ș-apoi, cine știe? Socotești măria-ta că boierii pot ceva fără prostime? Să ceară prostimea pe vechiul lor împărat... și să vezi măria-ta...
+
+Se mai îmbună împăratul la cuvântul lui Neghiniță și se duse, în cruciș și în curmeziș, în toată împărăția, c-o foaie de lipan pe cap și sprijinit pe-o cârjă de corn. Și de ce vedea se minuna și întreba pe Neghiniță:
+
+— Neghiniță, de ce-l bat pe ăla, de răcnește ca din gură de șarpe?
+
+— Fiindcă împăratul e surd și n-aude, răspunse Neghiniță.
+
+— Neghiniță, de ce-or fi atâția oameni goi și desculți?
+
+— Fiindcă împăratul e orb și nu vede.
+
+— Neghiniță, de ce bătrânul ăla s-o fi muncind să roadă în gingii o cojiță uscată?
+
+— Fiindcă împăratul mănâncă prea mult.
+
+— Neghiniță, de ce-o munci unii și noaptea, de dau pe brânci?
+
+— Ca să doarmă împăratul și ziua, de i-o veni poftă.
+
+— Neghiniță, atunci de ce să vie pe scaunul meu un împărat și surd, și orb, și lacom, și somnoros?
+
+— Ei, apoi, înainte de-a fi împărat, vedea, auzea, muncea, cumpătat la mâncare și la băutură.
+
+Bietul pribeag stătu pe gânduri, în mijlocul unui oraș mare, mare și zise:
+
+— Ei, ei, Neghiniță, mult cuvânt ai! Acum s-ajung împărat, și aș ști eu să fac cum e bine.
+
+Și, ca din senin, abia sfârșise vorba de pe urmă, ș-auzi o gălăgie, un vaiet, o duduitură, că parcă se cutremura pământul. Când colo, ce să fie? Ștafetă mare. Niște voinici, cu suliți lungi, aduceau vestea că norodul a băgat la dubă pe împăratul ăl nou, cu sfetnici cu tot, și că cheamă iarăși pe adevăratul împărat. Cum auzi bătrânul, zise voinicilor:
+
+— Stați, că eu sunt!
+
+Și-l cunoscură toți, și îi deteră în genunchi. Iar Neghiniță, de colo, de pe umăr:
+
+— Măria-ta, mai vezi, mai auzi, ori ți s-a făcut foame și-ți vine să dormi?
+
+La toate vine rândul, după cum se întoarce roata, că de-aia e roată, să se întoarcă, iar nu să stea locului. Și-i veni rândul și lui Neghiniță, gândul lumii.
+
+Într-o zi vru să glumească cu împăratul, să mai facă vreo drăcie. Îi intră în urechea *dreaptă*, crezând că e în a *stângă*. Cu stânga n-auzea de loc. "Nu face nimic. Mi-e lene să mă mut, se gândi Neghiniță. În loc să șoptesc, voi striga." Și începu să strige din toate puterile în urechea cu care împăratul auzea de minune.
+
+— Un împărat dacă n-a ști el de la el adevărul, nu-l mai află de la nimeni!
+
+Împăratul, auzind acest glas tare în fundul urechii, îi zvâcni inima și-și trase o palma cât putu peste ureche, zicând:
+
+— Iiiii, să știi că ce credeam eu că-mi trece prin minte era numai în ureche!
+
+Și când își scutură urechea în podul palmei... Neghiniță căzu leșinat...
+
+— Tu mi-ai fost? Tu m-ai făcut să cad din scaunul împărăției? Bine! Am eu ac de cojocul tău!
+
+Împăratul, înfuriat, porunci să-l lege de gât cu un fir lung de mătase și-l coborî de-l înecă în puțul din curtea domnească.
+
+Așa sfârși bietul Neghiniță.$demo$), 1,
+  now() - interval '69 days', $demo$Neghiniță$demo$, public.check_chapter_text($demo$A fost odată o babă, bătrână, bătrână. Abia zărea de bătrână ce era. Și mâinile îi umblau la ciorap, iar în gândul ei se ruga la Dumnezeu s-o dăruiască cu un copil, că n-avea decât pe unchiașul ei. Și unchiașul, ba la pădure, ba la arie, ba la târg, iar baba sta singură cuc, că toată ziulica i-ar fi țiuit tăcerea în fundul urechilor dacă n-ar fi strănunat și n-ar fi tușit câteodată. Ba uneori, ca să-și
+mai ție de urât, tot ea vorbea și tot ea răspundea. Și râdea ea de ea, ca și cum ar fi râs ea de altcineva, înșirând ochiurile pe cârlige.
+
+— Ei, ei, ce n-ar plăti un flăcău la bătrânețile noastre!
+
+— Cât, de? cât?
+
+— Ihi, ihi, mult de tot!
+
+— Adică ce, nu te-ai mulțumi și c-o fată mare?
+
+— Ba, ce să zic, bine ar fi ș-o fată...
+
+— Da, dar la fată vrea zestre.
+
+— S-ar găsi, că eu și unchiașul avem ce ne trebuie și nu ne trebuie mult, trei coți de pânză albă și câte un coșciug; iar boii moșului, iar plugul moșului, iar casa moșului și a babei, toate ar fi ale fetei.
+
+— Bine, mătușă, bine, da' de unde și fată? Tu nu știi că copacii uscați nu mai dau de la rădăcină?
+
+Și bătrâna începu să râdă și să ofteze: "hi, hi, hi, ooof, of!"
+
+— Ei, toate se întorc, și apele se întorc de la Dumnezeu, numai tinerețile ba. Ce nu e la timp nu mai e niciodată. M-aș mulțumi eu și pe un prichindel de băiat.
+
+— Ba te-ai mulțumi și pe-o codană. Tu să-nșiri, și ea să deșire, tu să cerni, și ea să risipească, tu să pui de mămăligă, și ea să răstoarne căldarea pe foc.
+
+— Dacă e pe-așa, m-aș mulțumi și pe-un copil cât ghemul, numai s-aud în casă "mamă", că mult e pustiu când ușa se închide peste doi bătrâni.
+
+— Da' dacă ar fi mai mic?
+
+— Fie și mai mic.
+
+Și bătrâna începu să râdă.
+
+— Ce neroadă!
+
+— Ba neroadă, nu glumă!
+
+— Dar dacă ar fi cât un bob de mazăre?
+
+Și tocmai când da bătrâna capul peste cap de râs, odată tresări că, de după ușă, se-auzi un glas ascuțit și înțepat:
+
+— Dar dacă ar fi cât o neghiniță?
+
+Bătrâna se uită, se uită și începu să se închine.
+
+— Bine, bine, zise același glas, văd eu că nu-ți trebuie copii...
+
+Baba își luă inima în dinți și zise:
+
+— Ba-mi trebuie... da' unde ești... cine ești?
+
+— Cine sunt? *Neghiniță*, gândul lumii. De mic ce sunt, pătrund în urechile oamenilor și-i ascult cum gândesc. Adineauri eram în urechea ta a dreaptă, apoi am trecut în a stângă, ș-am râs de m-am prăpădit când am văzut ce-ți trec prin minte...
+
+— Ei, aș! Ce mi-a trecut? Nimic!
+
+— Nu e adevărat, răspunse Neghiniță râzând, omul spune mai puțin decât gândește. Dacă nu-ți șopteam eu că copacul uscat nu mai dă de la rădăcină, cine știe ce-ai mai fi spus...
+
+Baba se făcu ca para focului.
+
+— Zău așa... nu te rușina, mamă, nu zău... Așa e omul. Când e mic face nebunii fiindcă e mic; când e la tinerețe face nebunii fiindcă e tânăr, iar la bătrânețe se gândește la nebunii fiindcă nu le poate face...
+
+Bătrâna pierdu sfiala și răbdarea și se răsti cât putu:
+
+— Neghiniță, ci tacă-ți gura și vin să te văd!
+
+Și pe loc se-auzi un țâșt ca de lăcustă și un bâzâit ca de albină. Bătrâna simți pe mână o picătura caldă.
+
+— Iacătă-mă și pe mine!...
+
+Biata femeie facu niște ochi mari cât toate zilele și se miră toată de ce văzu pe mână, că cerul de i s-ar fi deschis nu s-ar fi minunat mai mult.
+
+Neghiniță era frumos ca o piatră scumpă; și era mic cât o neghină; și avea niște ochișori ca două scântei albastre, și niște mâini și piciorușe ca niște firișoare de păiajen.
+
+Bătrâna dădu să-l sărute. Neghiniță, țâști pe nas, țâști iar pe mână!
+
+— Încet, mamă, încet, că mă strivești, zise Neghiniță.
+
+— Să te sărut, că-mi umpluși casa cu dragoste când îmi ziseși *mamă*.
+
+— Încet, să nu mă sorbi.
+
+Îl sărută.
+
+— Cum mănânci tu, Neghiniță al maicăi?
+
+— Eu? Eu mă satur din fum. Până acum am mâncat la mese împărătești fără să știe nimeni. Și ce-am mai râs când ceilalți tremurau înaintea împăraților, iar eu mă plimbam prin urechile lor și le aflam gândul.
+
+— Bine o fi de ei, Neghiniță mamă...
+
+— Aș, binele focului! Săracii mor de foame, iar ei mor de mâncare. De săraci e rău că n-au cui să poruncească, și de ei e rău că trebuie să poruncească la mulți. Pe ceilalți oameni când îi minți te iau de guler și te judecă judecată dreaptă; pe ei îi minți și dau din cap; ba și mai și: ei știu că-i minți, și tac, și înghit, și n-au ce face, ca să nu se strice trebile împărăției.
+
+— Da' bine, Neghiniță, ție-ți trebuie un an ca să umbli cât altul umblă într-o zi.
+
+— Da? Ei, nu e așa deloc. Eu mă las pe-o adiere și plutesc ca pe apă, și mă mlădii pe apa vântului ca pe valurile mării. Ba uneori întrec rândunelele ca o săgeată de argint.
+
+— Ce bucurie pe unchiașul meu, zise bătrâna, când o afla că are și el un copil. Deseară o să se îmbete de bucurie.
+
+— Ba e vorbă, răspunse Neghinită, eu vreau să văd pe tata acuși-acușic!
+
+Și bătrâna, când auzi cuvântul *tată*, se bucură de bucuria moșului și îi zise:
+
+— Aria moșului este cât vezi cu ochiul de departe, pusă pe-un deal mare și întins. Unde-i vedea șase cai murgi treierând grâu, acolo să te oprești, că dai peste unchiașul babei.
+
+— Iată, plec.
+
+Cum îi deschise ușa, Neghiniță se aruncă, cu mâinile întinse și cu piciorușele deschise, într-o undă de adiere. Și se făcu nevăzut, ca un strop de lumină.
+
+Pe drum întâlni o cireadă de vaci. De minunici ce era, se dete afund într-o urmă de vacă și începu să strige:
+
+— Măi văcari, măi, veniți de mă scoateți din inima pământului, că vă fac pe voia gândului!
+
+Văcarii se luară după glas, până deteră peste Neghiniță. Unul, mai rău și mai prost dintre ei, vru să-l strivească și-și repezi călcâiul din băierile inimii. Neghiniță țâști, și sări alăturea, iar văcarul, lovind cu sete pământul, își scrinti piciorul și începu să se vaiete. Ceilalți începură cu măciuca și, cum izbeau, rămâneau cu jumătatea în mână, iar ailaltă se ducea zbârnâind.
+
+— Să nu vă păziți vacile, cum vă păziți mințile. Cruce lată, minte întunecată, urechi de văcar, urechi de măgar! le zise Neghiniță, și se dădu vântului.
+
+Ajunse la unchiaș. I se sui pe nas, ca să-l vadă mai bine. Unchiașul se bucură, dar nu ca baba, iar Neghiniță se întristă. Dar ca să se-arate grozav, zise unchiașului:
+
+— Nu căta că-s mititel. Calul nu e mai mare ca copilul? și-l încalecă copilul. Bivolul nu e mai mare ca omul? și-l înjugă omul. Munții nu-s mai mari ca oile? și-i pasc turmele. Pământul nu e mai mare ca fierul plugului? și-l despică fierul plugului. Codrul nu e mai mare ca un topor? și-l culcă toporul la pământ. Tu nu ești mai mare ca mine? și te-au ostenit murgii în arie. Ia să vezi cum îi dau eu la arie, fără bici, fără nimic.
+
+Unchiașul, minunat, îl duse la arie. Cum ajunse, Neghiniță sări pe-un cal și începu să strige: "Hi, hăi, hi, hăi!" Ciupește pe unul, ciupește pe altul, caii începură să fugă, dar ce fugă, parc-ar fi avut douăzeci de bice pe șalele lor. Și cum se crucea moșul, iată și un negustor care trecea la scaunul împărăției.
+
+— Moșule, îi zise negustorul, cine mână caii așa de grozav, că eu aud "hi-hăi, hi-hăi" și nu văd pe nimeni!
+
+— Ei, tată, răspunse bătrânul, m-a dăruit Dumnezeu cu un copil ca o neghină, da' cu mintea cât zece ca mine și ca d-ta.
+
+Neghiniță opri caii și sări în palma unchiașului. Cum îl văzu negustorul, se gândi să ducă împăratului așa minune.
+
+— Moșule, zise negustorul, îți dau o pungă de bani pe el. Neghiniță, sfâr, în urechea moșului și îi șopti ce să vorbească. Și moșul zise, crezând că de la el zice:
+
+— Tu, care vinzi și cumperi, ai cumpărat vreun suflet pe-o pungă de bani?
+
+— Îți dau... două.
+
+Și iar moșul, după Neghiniță:
+
+— Două pungi... pentru un suflet?
+
+— Îți dau... zece.
+
+Moșul îngălbeni și zise, iar după șoapta lui Neghiniță:
+
+— Sufletele se dăruiesc Domnului și se vând Necuratului.
+
+— Îți dau... douăzeci!
+
+Și moșul, călcând în gura lăcomiei, tăcu, cu toate șoaptele bietului Neghiniță.
+
+Neghiniță văzu lăcomia, da' tot el șopti moșului:: "Fie!" Și moșul zise:
+
+— Fie!
+
+Bătu palmă în palmă cu negustorul. Tocmeala se făcuse. Negustorul plăti și luă pe Neghiniță, vândut de bunăvoie. Negustorul plecă. Neghiniță strigă moșului:
+
+— Moșule, moșule, ai fost să n-ai copii, iar biată babă, da!
+
+Împăratul era la mare și la greu sfat cu toți cărturarii, că bântuia seceta și molima. Și dacă negustorul îi spuse că are un copil ca o neghiniță, împăratul rămase înmărmurit, învățații împărăției căscară ochii mari și se traseră de bărbile lungi.
+
+— Nu se poate, măria-ta, așa ceva nu scrie la carte.
+
+— Ba se poate, zise Neghiniță, sărind pe masa sfatului, că multe se pot și nu stau în cărți; și mult mai multe sunt altfel de cum sunt ticluite din condei. Și după ce se minunară cât se minunară, începu sfatul. Neghiniță se sui pe mâna împăratului, pe umăr, apoi în creștetul capului, și de-acolo zise râzând:
+
+— Învață, măria-ta, că cei mai mici sunt cei mai mari.
+
+Împăratul, cam de voie, cam de nevoie, răspunse:
+
+— Așa e, Neghiniță, așa e.
+
+Iar cărturarii își deteră ghies pe sub masă și plecară ochii în jos. Împăratul porunci să-i toarne lui Neghiniță o casă cu zece caturi, cât o nucă de mare, toată din aur-lamur și împodobită cu pietre scumpe.
+
+Neghiniță rămase la sfat și se pierdu din ochii tuturora, numai ca să se ție de năzdrăvănii. Și, încet-încet, pâși-pâși, până intră în urechea învățatului care căuta în stele cu ocheanele. Acolo ascultă ce ascultă, și înțelese că acest vestit cărturar, în loc să se gândească la sfat, se gândea că împăratul are nasul cam mare. Se duse binișor și intră în urechea cărturarului care zicea că știe mărtuntaiele omului și leacurile bolilor. Ăsta se gândea nu la sfat, ci că-i plăcea inelul împăratului. Așa află, pe rând, că unul se gândea la o cucoană frumoasă, că altul se gândea cam ce lingușeală să cârpească împăratului, altul că ce n-ar da el pentru o sticlă de vin, altul că bine e să fii împărat, altul că împăratul e om ca toți oamenii, numai unul, cu fruntea cât toate zilele, asculta cuvintele și întrebările împăratului.
+
+Neghiniță, cum află gândul tuturora, zbughi în urechea împăratului și îi șopti tot, din fir până în ață. Împăratul, crezând că singur, el de la el, a citit în mintea lor, se mânie foc și le zise:
+
+— Ei, tu, care cați în stele, ți-ai făcut ochii ochean și-mi vezi nasul cât un buștean. Astfel ți-e gândul la sfatul domnesc?
+
+Cărturarul se cutremură și dădu în genunchi, cerând iertare.
+
+— Tu, se răsti împăratul către doctor, dacă ai avea inelul meu, ai omorî mai puțini oameni?
+
+Doctorul se cutremură și dădu și el în genunchi.
+
+— Tu, zise împăratul necăjit ălorlalți, te gândești la secături și nu vezi că ești cu un picior în groapă; tu îți pregătești limba ca să mă minți; tu crezi că într-o sticlă cu vin este mai mult duh decât
+în capul meu; tu nu știi că un învățat pe scaunul domniei ar face mai multe boroboațe ca un neghiob; tu te pricepi că împăratul e om ca toți oamenii, da' nu te gândești că învățații sunt ca neoamenii; iar tu abia te ții să nu caști o gură cât să înghiți împărăția toată; numai ție ți-e mintea la sfatul domnesc.
+
+Cu toții căzură în genunchi.
+
+— Acum ce să le fac, zise împăratul mânios, să le tai capul?
+
+Cărturarii muriră și înviară, iar Neghiniță, care se suise în creștetul împăratului:
+
+— Ferit-a Dumnezeu, măria-ta, fără învățați cine să mintă lumea?
+
+— Să nu fie decât adevărul pe lume!
+
+— Ferit-a Dumnezeu! Ce-ai face chiar măria-ta fără minciună? Apoi măria-ta ți-ai făcut socoteala vieții? Mai multe ceasuri ai mâncat, ai dormit, ai vânat, ți-ai socotit cazanele cu bani, ai petrecut, ba cu luminăția-sa împărăteasa, ba și fără ea, decât te-ai necăjit cu trebile și cu nevoile împărăției. Cum ai sta măria-ta pe scaunul lumii când lumea ar afla adevărul?
+
+Împăratul zâmbi, cu ciudă, nu e vorbă, dar zâmbi ca să dreagă treaba și îi iertă pe toți. Văzând însă că cel din urmă cărturar, care se gândise la sfat, tremura mereu, îi zise:
+
+— Ei, dar tu, cel mai cuminte, de ce tremuri?
+
+— Măria-ta, zise bietul bătrân, mai bine să spun și eu decât să afli măria-ta. Iată, socotesc că nu știu nimic și tot mă gândesc că mi-e leafa prea mică.
+
+Împăratul râse cu poftă și-i făgădui o leafă mai mare, apoi sparse sfatul cărturarilor și plecă cu Neghiniță în creștetul capului, nedomirit de cum ghicise gândurile tuturora.
+
+Împărăteasa și cuconii ei, văzând pe Neghiniță, se minunară, dar, când aflară că împăratul, la vreme de bătrânețe, ghicește gândurile oamenilor, se cruciră și tot nu le venea să creadă.
+
+— Împărate, zise împărăteasa, zău așa, ghicește-mi și mie un gând.
+
+— Să vedem, răspunse împăratul.
+
+Împărăteasa se gândi și începu să râdă... Neghiniță o zbughise în urechea împărătesei și-i aflase gândul: "Că ce bine-ar fi să mai fie o dată împăratul tânăr!" Și într-o clipă intră în urechea dreaptă
+a împăratului, și șopa-șopa-șopa. Împăratul — pace! Împărăteasa râdea și zicea:
+
+— Vezi că nu ghicești? vezi?
+
+Pasămite, împăratul era cam tare de urechea dreaptă. Neghiniță înțelese, și țâști în urechea stângă, și iar șopa-șopa.
+
+Împăratul se lumină la față, dădu din cap, râse cu hohote și zise:
+
+— Ei... împărăteasă, împărăteasă... da' tot muiere! De, bine te gândiși tu, da' nu se poate...
+
+Împărăteasa se rușină, plecă ochii în jos și se gândi: "Dar dacă o ghici și la ce m-oi fi gândit înainte, intru în pământ! De câte ori n-am dat dracului sfaturile împărăției când nu se mai isprăveau până după miezul nopții."
+
+În sfârșit, ce-i veni lui Neghiniță, vru să râdă și de împărat; și își zise într-o bună dimineață: "Vezi ce e omul! Spune-i orice, spune-i mereu același lucru... omul crede, că omul e prost. Ce nu
+crede întâi crede mai pe urmă. Am să-i fac una și bună împăratului, să-l las fără sfetnicii cei credincioși și să-l încurc cu nebunii."
+
+Împăratul, de umbla în fruntea oștilor, de sta la sfat mare, de se culca, de se scula, de mânca, de-și mângâia cuconii, un gând nu-l mai slăbea: "Nu vezi, omule de Dumnezeu, că ți-au îmbătrânit sfetnicii și împărăția merge rău?"
+
+Pasămite, Neghiniță îi intrase într-o ureche. Azi așa, mâine așa, până nu mai avu încotro. Sparse sfatul cel vechi și chemă altul nou.
+
+Tot unu și unu!
+
+Cum veniră, cum aruncară pe bietul împărat din scaunul neamului lui...
+
+— Acu să-l vedem! zise împielițatul de Neghiniță. Împăratul ieși plângând din cetate. Neghiniță, sus pe umărul lui.
+
+— De ce plângi, măria-ta? ține-ți firea, nu fi muiere.
+
+— Ei, ei, Neghiniță, cum să nu plâng?! Unde mi-e toiagul împărătesc?
+
+— Ci taci, măria-ta! Ia taie un corn și fă-ți, colea, o cârjă. Buzduganul e greu la bătrânețe, te doboară. Cârja te sprijină.
+
+— Ei, ei, Neghiniță, unde mi-e scaunul împărătesc pe care au stat atâția moși-strămoși ai mei?
+
+— Ci taci, măria-ta! Întinde-te colea, pe fânul înflorit și moale, și să-mi spui drept care e mai dulce la oase? Scaunul cu scumpetea, sau fânul cu frumusețea?
+
+— Ei, ei, Neghiniță, unde mi-e coroana cu stemele și cu luminile?
+
+— Ci taci, măria-ta! Pune foaie lată de lipan pe deasupra pletelor albe și spune-mi drept, care e mai ușoară, coroana cu grijile sau lipanul cu umbrele?
+
+— Așa o fi, Neghiniță, mai zise împăratul, oftând tocmai din băierile inimii, așa o fi, se potrivește ș-așa, fiindcă știi tu să le potrivești, dar când mă gândesc în ce slavă eram ieri... îmi vine să scald tot pământul cu lacrimile mele!
+
+— Ci taci, măria-ta! Adică ce slăvire? Toată viața, ba războaie, ba sfaturi, ba taie capul unuia, ba întinde la bice pe altul, ba citește jalbele, ba ascultă păsurile, ba câte și mai câte, și mai multe fără să vrei de câte pe vrute. Mărire să fi fost asta? Dar ia gândește-te măria-ta că un supus era supusul măriei-tale ș-avea un stăpân, iar măria-ta, purtând grija tuturora, erai sluga tuturora. Vezi, de-aia măria-ta ai fost cel mai slugă, cel mai nevolnic din toată împărăția. Curată socoteală: erai împărat, nu om; acum ești om, nu împărat. Și ești mai mare, că unde-ți spune gândul, acolo te duc picioarele. Ș-apoi, cine știe? Socotești măria-ta că boierii pot ceva fără prostime? Să ceară prostimea pe vechiul lor împărat... și să vezi măria-ta...
+
+Se mai îmbună împăratul la cuvântul lui Neghiniță și se duse, în cruciș și în curmeziș, în toată împărăția, c-o foaie de lipan pe cap și sprijinit pe-o cârjă de corn. Și de ce vedea se minuna și întreba pe Neghiniță:
+
+— Neghiniță, de ce-l bat pe ăla, de răcnește ca din gură de șarpe?
+
+— Fiindcă împăratul e surd și n-aude, răspunse Neghiniță.
+
+— Neghiniță, de ce-or fi atâția oameni goi și desculți?
+
+— Fiindcă împăratul e orb și nu vede.
+
+— Neghiniță, de ce bătrânul ăla s-o fi muncind să roadă în gingii o cojiță uscată?
+
+— Fiindcă împăratul mănâncă prea mult.
+
+— Neghiniță, de ce-o munci unii și noaptea, de dau pe brânci?
+
+— Ca să doarmă împăratul și ziua, de i-o veni poftă.
+
+— Neghiniță, atunci de ce să vie pe scaunul meu un împărat și surd, și orb, și lacom, și somnoros?
+
+— Ei, apoi, înainte de-a fi împărat, vedea, auzea, muncea, cumpătat la mâncare și la băutură.
+
+Bietul pribeag stătu pe gânduri, în mijlocul unui oraș mare, mare și zise:
+
+— Ei, ei, Neghiniță, mult cuvânt ai! Acum s-ajung împărat, și aș ști eu să fac cum e bine.
+
+Și, ca din senin, abia sfârșise vorba de pe urmă, ș-auzi o gălăgie, un vaiet, o duduitură, că parcă se cutremura pământul. Când colo, ce să fie? Ștafetă mare. Niște voinici, cu suliți lungi, aduceau vestea că norodul a băgat la dubă pe împăratul ăl nou, cu sfetnici cu tot, și că cheamă iarăși pe adevăratul împărat. Cum auzi bătrânul, zise voinicilor:
+
+— Stați, că eu sunt!
+
+Și-l cunoscură toți, și îi deteră în genunchi. Iar Neghiniță, de colo, de pe umăr:
+
+— Măria-ta, mai vezi, mai auzi, ori ți s-a făcut foame și-ți vine să dormi?
+
+La toate vine rândul, după cum se întoarce roata, că de-aia e roată, să se întoarcă, iar nu să stea locului. Și-i veni rândul și lui Neghiniță, gândul lumii.
+
+Într-o zi vru să glumească cu împăratul, să mai facă vreo drăcie. Îi intră în urechea *dreaptă*, crezând că e în a *stângă*. Cu stânga n-auzea de loc. "Nu face nimic. Mi-e lene să mă mut, se gândi Neghiniță. În loc să șoptesc, voi striga." Și începu să strige din toate puterile în urechea cu care împăratul auzea de minune.
+
+— Un împărat dacă n-a ști el de la el adevărul, nu-l mai află de la nimeni!
+
+Împăratul, auzind acest glas tare în fundul urechii, îi zvâcni inima și-și trase o palma cât putu peste ureche, zicând:
+
+— Iiiii, să știi că ce credeam eu că-mi trece prin minte era numai în ureche!
+
+Și când își scutură urechea în podul palmei... Neghiniță căzu leșinat...
+
+— Tu mi-ai fost? Tu m-ai făcut să cad din scaunul împărăției? Bine! Am eu ac de cojocul tău!
+
+Împăratul, înfuriat, porunci să-l lege de gât cu un fir lung de mătase și-l coborî de-l înecă în puțul din curtea domnească.
+
+Așa sfârși bietul Neghiniță.$demo$), 'published',
+  now() - interval '69 days', now() - interval '69 days', public.count_words($demo$A fost odată o babă, bătrână, bătrână. Abia zărea de bătrână ce era. Și mâinile îi umblau la ciorap, iar în gândul ei se ruga la Dumnezeu s-o dăruiască cu un copil, că n-avea decât pe unchiașul ei. Și unchiașul, ba la pădure, ba la arie, ba la târg, iar baba sta singură cuc, că toată ziulica i-ar fi țiuit tăcerea în fundul urechilor dacă n-ar fi strănunat și n-ar fi tușit câteodată. Ba uneori, ca să-și
+mai ție de urât, tot ea vorbea și tot ea răspundea. Și râdea ea de ea, ca și cum ar fi râs ea de altcineva, înșirând ochiurile pe cârlige.
+
+— Ei, ei, ce n-ar plăti un flăcău la bătrânețile noastre!
+
+— Cât, de? cât?
+
+— Ihi, ihi, mult de tot!
+
+— Adică ce, nu te-ai mulțumi și c-o fată mare?
+
+— Ba, ce să zic, bine ar fi ș-o fată...
+
+— Da, dar la fată vrea zestre.
+
+— S-ar găsi, că eu și unchiașul avem ce ne trebuie și nu ne trebuie mult, trei coți de pânză albă și câte un coșciug; iar boii moșului, iar plugul moșului, iar casa moșului și a babei, toate ar fi ale fetei.
+
+— Bine, mătușă, bine, da' de unde și fată? Tu nu știi că copacii uscați nu mai dau de la rădăcină?
+
+Și bătrâna începu să râdă și să ofteze: "hi, hi, hi, ooof, of!"
+
+— Ei, toate se întorc, și apele se întorc de la Dumnezeu, numai tinerețile ba. Ce nu e la timp nu mai e niciodată. M-aș mulțumi eu și pe un prichindel de băiat.
+
+— Ba te-ai mulțumi și pe-o codană. Tu să-nșiri, și ea să deșire, tu să cerni, și ea să risipească, tu să pui de mămăligă, și ea să răstoarne căldarea pe foc.
+
+— Dacă e pe-așa, m-aș mulțumi și pe-un copil cât ghemul, numai s-aud în casă "mamă", că mult e pustiu când ușa se închide peste doi bătrâni.
+
+— Da' dacă ar fi mai mic?
+
+— Fie și mai mic.
+
+Și bătrâna începu să râdă.
+
+— Ce neroadă!
+
+— Ba neroadă, nu glumă!
+
+— Dar dacă ar fi cât un bob de mazăre?
+
+Și tocmai când da bătrâna capul peste cap de râs, odată tresări că, de după ușă, se-auzi un glas ascuțit și înțepat:
+
+— Dar dacă ar fi cât o neghiniță?
+
+Bătrâna se uită, se uită și începu să se închine.
+
+— Bine, bine, zise același glas, văd eu că nu-ți trebuie copii...
+
+Baba își luă inima în dinți și zise:
+
+— Ba-mi trebuie... da' unde ești... cine ești?
+
+— Cine sunt? *Neghiniță*, gândul lumii. De mic ce sunt, pătrund în urechile oamenilor și-i ascult cum gândesc. Adineauri eram în urechea ta a dreaptă, apoi am trecut în a stângă, ș-am râs de m-am prăpădit când am văzut ce-ți trec prin minte...
+
+— Ei, aș! Ce mi-a trecut? Nimic!
+
+— Nu e adevărat, răspunse Neghiniță râzând, omul spune mai puțin decât gândește. Dacă nu-ți șopteam eu că copacul uscat nu mai dă de la rădăcină, cine știe ce-ai mai fi spus...
+
+Baba se făcu ca para focului.
+
+— Zău așa... nu te rușina, mamă, nu zău... Așa e omul. Când e mic face nebunii fiindcă e mic; când e la tinerețe face nebunii fiindcă e tânăr, iar la bătrânețe se gândește la nebunii fiindcă nu le poate face...
+
+Bătrâna pierdu sfiala și răbdarea și se răsti cât putu:
+
+— Neghiniță, ci tacă-ți gura și vin să te văd!
+
+Și pe loc se-auzi un țâșt ca de lăcustă și un bâzâit ca de albină. Bătrâna simți pe mână o picătura caldă.
+
+— Iacătă-mă și pe mine!...
+
+Biata femeie facu niște ochi mari cât toate zilele și se miră toată de ce văzu pe mână, că cerul de i s-ar fi deschis nu s-ar fi minunat mai mult.
+
+Neghiniță era frumos ca o piatră scumpă; și era mic cât o neghină; și avea niște ochișori ca două scântei albastre, și niște mâini și piciorușe ca niște firișoare de păiajen.
+
+Bătrâna dădu să-l sărute. Neghiniță, țâști pe nas, țâști iar pe mână!
+
+— Încet, mamă, încet, că mă strivești, zise Neghiniță.
+
+— Să te sărut, că-mi umpluși casa cu dragoste când îmi ziseși *mamă*.
+
+— Încet, să nu mă sorbi.
+
+Îl sărută.
+
+— Cum mănânci tu, Neghiniță al maicăi?
+
+— Eu? Eu mă satur din fum. Până acum am mâncat la mese împărătești fără să știe nimeni. Și ce-am mai râs când ceilalți tremurau înaintea împăraților, iar eu mă plimbam prin urechile lor și le aflam gândul.
+
+— Bine o fi de ei, Neghiniță mamă...
+
+— Aș, binele focului! Săracii mor de foame, iar ei mor de mâncare. De săraci e rău că n-au cui să poruncească, și de ei e rău că trebuie să poruncească la mulți. Pe ceilalți oameni când îi minți te iau de guler și te judecă judecată dreaptă; pe ei îi minți și dau din cap; ba și mai și: ei știu că-i minți, și tac, și înghit, și n-au ce face, ca să nu se strice trebile împărăției.
+
+— Da' bine, Neghiniță, ție-ți trebuie un an ca să umbli cât altul umblă într-o zi.
+
+— Da? Ei, nu e așa deloc. Eu mă las pe-o adiere și plutesc ca pe apă, și mă mlădii pe apa vântului ca pe valurile mării. Ba uneori întrec rândunelele ca o săgeată de argint.
+
+— Ce bucurie pe unchiașul meu, zise bătrâna, când o afla că are și el un copil. Deseară o să se îmbete de bucurie.
+
+— Ba e vorbă, răspunse Neghinită, eu vreau să văd pe tata acuși-acușic!
+
+Și bătrâna, când auzi cuvântul *tată*, se bucură de bucuria moșului și îi zise:
+
+— Aria moșului este cât vezi cu ochiul de departe, pusă pe-un deal mare și întins. Unde-i vedea șase cai murgi treierând grâu, acolo să te oprești, că dai peste unchiașul babei.
+
+— Iată, plec.
+
+Cum îi deschise ușa, Neghiniță se aruncă, cu mâinile întinse și cu piciorușele deschise, într-o undă de adiere. Și se făcu nevăzut, ca un strop de lumină.
+
+Pe drum întâlni o cireadă de vaci. De minunici ce era, se dete afund într-o urmă de vacă și începu să strige:
+
+— Măi văcari, măi, veniți de mă scoateți din inima pământului, că vă fac pe voia gândului!
+
+Văcarii se luară după glas, până deteră peste Neghiniță. Unul, mai rău și mai prost dintre ei, vru să-l strivească și-și repezi călcâiul din băierile inimii. Neghiniță țâști, și sări alăturea, iar văcarul, lovind cu sete pământul, își scrinti piciorul și începu să se vaiete. Ceilalți începură cu măciuca și, cum izbeau, rămâneau cu jumătatea în mână, iar ailaltă se ducea zbârnâind.
+
+— Să nu vă păziți vacile, cum vă păziți mințile. Cruce lată, minte întunecată, urechi de văcar, urechi de măgar! le zise Neghiniță, și se dădu vântului.
+
+Ajunse la unchiaș. I se sui pe nas, ca să-l vadă mai bine. Unchiașul se bucură, dar nu ca baba, iar Neghiniță se întristă. Dar ca să se-arate grozav, zise unchiașului:
+
+— Nu căta că-s mititel. Calul nu e mai mare ca copilul? și-l încalecă copilul. Bivolul nu e mai mare ca omul? și-l înjugă omul. Munții nu-s mai mari ca oile? și-i pasc turmele. Pământul nu e mai mare ca fierul plugului? și-l despică fierul plugului. Codrul nu e mai mare ca un topor? și-l culcă toporul la pământ. Tu nu ești mai mare ca mine? și te-au ostenit murgii în arie. Ia să vezi cum îi dau eu la arie, fără bici, fără nimic.
+
+Unchiașul, minunat, îl duse la arie. Cum ajunse, Neghiniță sări pe-un cal și începu să strige: "Hi, hăi, hi, hăi!" Ciupește pe unul, ciupește pe altul, caii începură să fugă, dar ce fugă, parc-ar fi avut douăzeci de bice pe șalele lor. Și cum se crucea moșul, iată și un negustor care trecea la scaunul împărăției.
+
+— Moșule, îi zise negustorul, cine mână caii așa de grozav, că eu aud "hi-hăi, hi-hăi" și nu văd pe nimeni!
+
+— Ei, tată, răspunse bătrânul, m-a dăruit Dumnezeu cu un copil ca o neghină, da' cu mintea cât zece ca mine și ca d-ta.
+
+Neghiniță opri caii și sări în palma unchiașului. Cum îl văzu negustorul, se gândi să ducă împăratului așa minune.
+
+— Moșule, zise negustorul, îți dau o pungă de bani pe el. Neghiniță, sfâr, în urechea moșului și îi șopti ce să vorbească. Și moșul zise, crezând că de la el zice:
+
+— Tu, care vinzi și cumperi, ai cumpărat vreun suflet pe-o pungă de bani?
+
+— Îți dau... două.
+
+Și iar moșul, după Neghiniță:
+
+— Două pungi... pentru un suflet?
+
+— Îți dau... zece.
+
+Moșul îngălbeni și zise, iar după șoapta lui Neghiniță:
+
+— Sufletele se dăruiesc Domnului și se vând Necuratului.
+
+— Îți dau... douăzeci!
+
+Și moșul, călcând în gura lăcomiei, tăcu, cu toate șoaptele bietului Neghiniță.
+
+Neghiniță văzu lăcomia, da' tot el șopti moșului:: "Fie!" Și moșul zise:
+
+— Fie!
+
+Bătu palmă în palmă cu negustorul. Tocmeala se făcuse. Negustorul plăti și luă pe Neghiniță, vândut de bunăvoie. Negustorul plecă. Neghiniță strigă moșului:
+
+— Moșule, moșule, ai fost să n-ai copii, iar biată babă, da!
+
+Împăratul era la mare și la greu sfat cu toți cărturarii, că bântuia seceta și molima. Și dacă negustorul îi spuse că are un copil ca o neghiniță, împăratul rămase înmărmurit, învățații împărăției căscară ochii mari și se traseră de bărbile lungi.
+
+— Nu se poate, măria-ta, așa ceva nu scrie la carte.
+
+— Ba se poate, zise Neghiniță, sărind pe masa sfatului, că multe se pot și nu stau în cărți; și mult mai multe sunt altfel de cum sunt ticluite din condei. Și după ce se minunară cât se minunară, începu sfatul. Neghiniță se sui pe mâna împăratului, pe umăr, apoi în creștetul capului, și de-acolo zise râzând:
+
+— Învață, măria-ta, că cei mai mici sunt cei mai mari.
+
+Împăratul, cam de voie, cam de nevoie, răspunse:
+
+— Așa e, Neghiniță, așa e.
+
+Iar cărturarii își deteră ghies pe sub masă și plecară ochii în jos. Împăratul porunci să-i toarne lui Neghiniță o casă cu zece caturi, cât o nucă de mare, toată din aur-lamur și împodobită cu pietre scumpe.
+
+Neghiniță rămase la sfat și se pierdu din ochii tuturora, numai ca să se ție de năzdrăvănii. Și, încet-încet, pâși-pâși, până intră în urechea învățatului care căuta în stele cu ocheanele. Acolo ascultă ce ascultă, și înțelese că acest vestit cărturar, în loc să se gândească la sfat, se gândea că împăratul are nasul cam mare. Se duse binișor și intră în urechea cărturarului care zicea că știe mărtuntaiele omului și leacurile bolilor. Ăsta se gândea nu la sfat, ci că-i plăcea inelul împăratului. Așa află, pe rând, că unul se gândea la o cucoană frumoasă, că altul se gândea cam ce lingușeală să cârpească împăratului, altul că ce n-ar da el pentru o sticlă de vin, altul că bine e să fii împărat, altul că împăratul e om ca toți oamenii, numai unul, cu fruntea cât toate zilele, asculta cuvintele și întrebările împăratului.
+
+Neghiniță, cum află gândul tuturora, zbughi în urechea împăratului și îi șopti tot, din fir până în ață. Împăratul, crezând că singur, el de la el, a citit în mintea lor, se mânie foc și le zise:
+
+— Ei, tu, care cați în stele, ți-ai făcut ochii ochean și-mi vezi nasul cât un buștean. Astfel ți-e gândul la sfatul domnesc?
+
+Cărturarul se cutremură și dădu în genunchi, cerând iertare.
+
+— Tu, se răsti împăratul către doctor, dacă ai avea inelul meu, ai omorî mai puțini oameni?
+
+Doctorul se cutremură și dădu și el în genunchi.
+
+— Tu, zise împăratul necăjit ălorlalți, te gândești la secături și nu vezi că ești cu un picior în groapă; tu îți pregătești limba ca să mă minți; tu crezi că într-o sticlă cu vin este mai mult duh decât
+în capul meu; tu nu știi că un învățat pe scaunul domniei ar face mai multe boroboațe ca un neghiob; tu te pricepi că împăratul e om ca toți oamenii, da' nu te gândești că învățații sunt ca neoamenii; iar tu abia te ții să nu caști o gură cât să înghiți împărăția toată; numai ție ți-e mintea la sfatul domnesc.
+
+Cu toții căzură în genunchi.
+
+— Acum ce să le fac, zise împăratul mânios, să le tai capul?
+
+Cărturarii muriră și înviară, iar Neghiniță, care se suise în creștetul împăratului:
+
+— Ferit-a Dumnezeu, măria-ta, fără învățați cine să mintă lumea?
+
+— Să nu fie decât adevărul pe lume!
+
+— Ferit-a Dumnezeu! Ce-ai face chiar măria-ta fără minciună? Apoi măria-ta ți-ai făcut socoteala vieții? Mai multe ceasuri ai mâncat, ai dormit, ai vânat, ți-ai socotit cazanele cu bani, ai petrecut, ba cu luminăția-sa împărăteasa, ba și fără ea, decât te-ai necăjit cu trebile și cu nevoile împărăției. Cum ai sta măria-ta pe scaunul lumii când lumea ar afla adevărul?
+
+Împăratul zâmbi, cu ciudă, nu e vorbă, dar zâmbi ca să dreagă treaba și îi iertă pe toți. Văzând însă că cel din urmă cărturar, care se gândise la sfat, tremura mereu, îi zise:
+
+— Ei, dar tu, cel mai cuminte, de ce tremuri?
+
+— Măria-ta, zise bietul bătrân, mai bine să spun și eu decât să afli măria-ta. Iată, socotesc că nu știu nimic și tot mă gândesc că mi-e leafa prea mică.
+
+Împăratul râse cu poftă și-i făgădui o leafă mai mare, apoi sparse sfatul cărturarilor și plecă cu Neghiniță în creștetul capului, nedomirit de cum ghicise gândurile tuturora.
+
+Împărăteasa și cuconii ei, văzând pe Neghiniță, se minunară, dar, când aflară că împăratul, la vreme de bătrânețe, ghicește gândurile oamenilor, se cruciră și tot nu le venea să creadă.
+
+— Împărate, zise împărăteasa, zău așa, ghicește-mi și mie un gând.
+
+— Să vedem, răspunse împăratul.
+
+Împărăteasa se gândi și începu să râdă... Neghiniță o zbughise în urechea împărătesei și-i aflase gândul: "Că ce bine-ar fi să mai fie o dată împăratul tânăr!" Și într-o clipă intră în urechea dreaptă
+a împăratului, și șopa-șopa-șopa. Împăratul — pace! Împărăteasa râdea și zicea:
+
+— Vezi că nu ghicești? vezi?
+
+Pasămite, împăratul era cam tare de urechea dreaptă. Neghiniță înțelese, și țâști în urechea stângă, și iar șopa-șopa.
+
+Împăratul se lumină la față, dădu din cap, râse cu hohote și zise:
+
+— Ei... împărăteasă, împărăteasă... da' tot muiere! De, bine te gândiși tu, da' nu se poate...
+
+Împărăteasa se rușină, plecă ochii în jos și se gândi: "Dar dacă o ghici și la ce m-oi fi gândit înainte, intru în pământ! De câte ori n-am dat dracului sfaturile împărăției când nu se mai isprăveau până după miezul nopții."
+
+În sfârșit, ce-i veni lui Neghiniță, vru să râdă și de împărat; și își zise într-o bună dimineață: "Vezi ce e omul! Spune-i orice, spune-i mereu același lucru... omul crede, că omul e prost. Ce nu
+crede întâi crede mai pe urmă. Am să-i fac una și bună împăratului, să-l las fără sfetnicii cei credincioși și să-l încurc cu nebunii."
+
+Împăratul, de umbla în fruntea oștilor, de sta la sfat mare, de se culca, de se scula, de mânca, de-și mângâia cuconii, un gând nu-l mai slăbea: "Nu vezi, omule de Dumnezeu, că ți-au îmbătrânit sfetnicii și împărăția merge rău?"
+
+Pasămite, Neghiniță îi intrase într-o ureche. Azi așa, mâine așa, până nu mai avu încotro. Sparse sfatul cel vechi și chemă altul nou.
+
+Tot unu și unu!
+
+Cum veniră, cum aruncară pe bietul împărat din scaunul neamului lui...
+
+— Acu să-l vedem! zise împielițatul de Neghiniță. Împăratul ieși plângând din cetate. Neghiniță, sus pe umărul lui.
+
+— De ce plângi, măria-ta? ține-ți firea, nu fi muiere.
+
+— Ei, ei, Neghiniță, cum să nu plâng?! Unde mi-e toiagul împărătesc?
+
+— Ci taci, măria-ta! Ia taie un corn și fă-ți, colea, o cârjă. Buzduganul e greu la bătrânețe, te doboară. Cârja te sprijină.
+
+— Ei, ei, Neghiniță, unde mi-e scaunul împărătesc pe care au stat atâția moși-strămoși ai mei?
+
+— Ci taci, măria-ta! Întinde-te colea, pe fânul înflorit și moale, și să-mi spui drept care e mai dulce la oase? Scaunul cu scumpetea, sau fânul cu frumusețea?
+
+— Ei, ei, Neghiniță, unde mi-e coroana cu stemele și cu luminile?
+
+— Ci taci, măria-ta! Pune foaie lată de lipan pe deasupra pletelor albe și spune-mi drept, care e mai ușoară, coroana cu grijile sau lipanul cu umbrele?
+
+— Așa o fi, Neghiniță, mai zise împăratul, oftând tocmai din băierile inimii, așa o fi, se potrivește ș-așa, fiindcă știi tu să le potrivești, dar când mă gândesc în ce slavă eram ieri... îmi vine să scald tot pământul cu lacrimile mele!
+
+— Ci taci, măria-ta! Adică ce slăvire? Toată viața, ba războaie, ba sfaturi, ba taie capul unuia, ba întinde la bice pe altul, ba citește jalbele, ba ascultă păsurile, ba câte și mai câte, și mai multe fără să vrei de câte pe vrute. Mărire să fi fost asta? Dar ia gândește-te măria-ta că un supus era supusul măriei-tale ș-avea un stăpân, iar măria-ta, purtând grija tuturora, erai sluga tuturora. Vezi, de-aia măria-ta ai fost cel mai slugă, cel mai nevolnic din toată împărăția. Curată socoteală: erai împărat, nu om; acum ești om, nu împărat. Și ești mai mare, că unde-ți spune gândul, acolo te duc picioarele. Ș-apoi, cine știe? Socotești măria-ta că boierii pot ceva fără prostime? Să ceară prostimea pe vechiul lor împărat... și să vezi măria-ta...
+
+Se mai îmbună împăratul la cuvântul lui Neghiniță și se duse, în cruciș și în curmeziș, în toată împărăția, c-o foaie de lipan pe cap și sprijinit pe-o cârjă de corn. Și de ce vedea se minuna și întreba pe Neghiniță:
+
+— Neghiniță, de ce-l bat pe ăla, de răcnește ca din gură de șarpe?
+
+— Fiindcă împăratul e surd și n-aude, răspunse Neghiniță.
+
+— Neghiniță, de ce-or fi atâția oameni goi și desculți?
+
+— Fiindcă împăratul e orb și nu vede.
+
+— Neghiniță, de ce bătrânul ăla s-o fi muncind să roadă în gingii o cojiță uscată?
+
+— Fiindcă împăratul mănâncă prea mult.
+
+— Neghiniță, de ce-o munci unii și noaptea, de dau pe brânci?
+
+— Ca să doarmă împăratul și ziua, de i-o veni poftă.
+
+— Neghiniță, atunci de ce să vie pe scaunul meu un împărat și surd, și orb, și lacom, și somnoros?
+
+— Ei, apoi, înainte de-a fi împărat, vedea, auzea, muncea, cumpătat la mâncare și la băutură.
+
+Bietul pribeag stătu pe gânduri, în mijlocul unui oraș mare, mare și zise:
+
+— Ei, ei, Neghiniță, mult cuvânt ai! Acum s-ajung împărat, și aș ști eu să fac cum e bine.
+
+Și, ca din senin, abia sfârșise vorba de pe urmă, ș-auzi o gălăgie, un vaiet, o duduitură, că parcă se cutremura pământul. Când colo, ce să fie? Ștafetă mare. Niște voinici, cu suliți lungi, aduceau vestea că norodul a băgat la dubă pe împăratul ăl nou, cu sfetnici cu tot, și că cheamă iarăși pe adevăratul împărat. Cum auzi bătrânul, zise voinicilor:
+
+— Stați, că eu sunt!
+
+Și-l cunoscură toți, și îi deteră în genunchi. Iar Neghiniță, de colo, de pe umăr:
+
+— Măria-ta, mai vezi, mai auzi, ori ți s-a făcut foame și-ți vine să dormi?
+
+La toate vine rândul, după cum se întoarce roata, că de-aia e roată, să se întoarcă, iar nu să stea locului. Și-i veni rândul și lui Neghiniță, gândul lumii.
+
+Într-o zi vru să glumească cu împăratul, să mai facă vreo drăcie. Îi intră în urechea *dreaptă*, crezând că e în a *stângă*. Cu stânga n-auzea de loc. "Nu face nimic. Mi-e lene să mă mut, se gândi Neghiniță. În loc să șoptesc, voi striga." Și începu să strige din toate puterile în urechea cu care împăratul auzea de minune.
+
+— Un împărat dacă n-a ști el de la el adevărul, nu-l mai află de la nimeni!
+
+Împăratul, auzind acest glas tare în fundul urechii, îi zvâcni inima și-și trase o palma cât putu peste ureche, zicând:
+
+— Iiiii, să știi că ce credeam eu că-mi trece prin minte era numai în ureche!
+
+Și când își scutură urechea în podul palmei... Neghiniță căzu leșinat...
+
+— Tu mi-ai fost? Tu m-ai făcut să cad din scaunul împărăției? Bine! Am eu ac de cojocul tău!
+
+Împăratul, înfuriat, porunci să-l lege de gât cu un fir lung de mătase și-l coborî de-l înecă în puțul din curtea domnească.
+
+Așa sfârși bietul Neghiniță.$demo$),
+  public.count_words($demo$A fost odată o babă, bătrână, bătrână. Abia zărea de bătrână ce era. Și mâinile îi umblau la ciorap, iar în gândul ei se ruga la Dumnezeu s-o dăruiască cu un copil, că n-avea decât pe unchiașul ei. Și unchiașul, ba la pădure, ba la arie, ba la târg, iar baba sta singură cuc, că toată ziulica i-ar fi țiuit tăcerea în fundul urechilor dacă n-ar fi strănunat și n-ar fi tușit câteodată. Ba uneori, ca să-și
+mai ție de urât, tot ea vorbea și tot ea răspundea. Și râdea ea de ea, ca și cum ar fi râs ea de altcineva, înșirând ochiurile pe cârlige.
+
+— Ei, ei, ce n-ar plăti un flăcău la bătrânețile noastre!
+
+— Cât, de? cât?
+
+— Ihi, ihi, mult de tot!
+
+— Adică ce, nu te-ai mulțumi și c-o fată mare?
+
+— Ba, ce să zic, bine ar fi ș-o fată...
+
+— Da, dar la fată vrea zestre.
+
+— S-ar găsi, că eu și unchiașul avem ce ne trebuie și nu ne trebuie mult, trei coți de pânză albă și câte un coșciug; iar boii moșului, iar plugul moșului, iar casa moșului și a babei, toate ar fi ale fetei.
+
+— Bine, mătușă, bine, da' de unde și fată? Tu nu știi că copacii uscați nu mai dau de la rădăcină?
+
+Și bătrâna începu să râdă și să ofteze: "hi, hi, hi, ooof, of!"
+
+— Ei, toate se întorc, și apele se întorc de la Dumnezeu, numai tinerețile ba. Ce nu e la timp nu mai e niciodată. M-aș mulțumi eu și pe un prichindel de băiat.
+
+— Ba te-ai mulțumi și pe-o codană. Tu să-nșiri, și ea să deșire, tu să cerni, și ea să risipească, tu să pui de mămăligă, și ea să răstoarne căldarea pe foc.
+
+— Dacă e pe-așa, m-aș mulțumi și pe-un copil cât ghemul, numai s-aud în casă "mamă", că mult e pustiu când ușa se închide peste doi bătrâni.
+
+— Da' dacă ar fi mai mic?
+
+— Fie și mai mic.
+
+Și bătrâna începu să râdă.
+
+— Ce neroadă!
+
+— Ba neroadă, nu glumă!
+
+— Dar dacă ar fi cât un bob de mazăre?
+
+Și tocmai când da bătrâna capul peste cap de râs, odată tresări că, de după ușă, se-auzi un glas ascuțit și înțepat:
+
+— Dar dacă ar fi cât o neghiniță?
+
+Bătrâna se uită, se uită și începu să se închine.
+
+— Bine, bine, zise același glas, văd eu că nu-ți trebuie copii...
+
+Baba își luă inima în dinți și zise:
+
+— Ba-mi trebuie... da' unde ești... cine ești?
+
+— Cine sunt? *Neghiniță*, gândul lumii. De mic ce sunt, pătrund în urechile oamenilor și-i ascult cum gândesc. Adineauri eram în urechea ta a dreaptă, apoi am trecut în a stângă, ș-am râs de m-am prăpădit când am văzut ce-ți trec prin minte...
+
+— Ei, aș! Ce mi-a trecut? Nimic!
+
+— Nu e adevărat, răspunse Neghiniță râzând, omul spune mai puțin decât gândește. Dacă nu-ți șopteam eu că copacul uscat nu mai dă de la rădăcină, cine știe ce-ai mai fi spus...
+
+Baba se făcu ca para focului.
+
+— Zău așa... nu te rușina, mamă, nu zău... Așa e omul. Când e mic face nebunii fiindcă e mic; când e la tinerețe face nebunii fiindcă e tânăr, iar la bătrânețe se gândește la nebunii fiindcă nu le poate face...
+
+Bătrâna pierdu sfiala și răbdarea și se răsti cât putu:
+
+— Neghiniță, ci tacă-ți gura și vin să te văd!
+
+Și pe loc se-auzi un țâșt ca de lăcustă și un bâzâit ca de albină. Bătrâna simți pe mână o picătura caldă.
+
+— Iacătă-mă și pe mine!...
+
+Biata femeie facu niște ochi mari cât toate zilele și se miră toată de ce văzu pe mână, că cerul de i s-ar fi deschis nu s-ar fi minunat mai mult.
+
+Neghiniță era frumos ca o piatră scumpă; și era mic cât o neghină; și avea niște ochișori ca două scântei albastre, și niște mâini și piciorușe ca niște firișoare de păiajen.
+
+Bătrâna dădu să-l sărute. Neghiniță, țâști pe nas, țâști iar pe mână!
+
+— Încet, mamă, încet, că mă strivești, zise Neghiniță.
+
+— Să te sărut, că-mi umpluși casa cu dragoste când îmi ziseși *mamă*.
+
+— Încet, să nu mă sorbi.
+
+Îl sărută.
+
+— Cum mănânci tu, Neghiniță al maicăi?
+
+— Eu? Eu mă satur din fum. Până acum am mâncat la mese împărătești fără să știe nimeni. Și ce-am mai râs când ceilalți tremurau înaintea împăraților, iar eu mă plimbam prin urechile lor și le aflam gândul.
+
+— Bine o fi de ei, Neghiniță mamă...
+
+— Aș, binele focului! Săracii mor de foame, iar ei mor de mâncare. De săraci e rău că n-au cui să poruncească, și de ei e rău că trebuie să poruncească la mulți. Pe ceilalți oameni când îi minți te iau de guler și te judecă judecată dreaptă; pe ei îi minți și dau din cap; ba și mai și: ei știu că-i minți, și tac, și înghit, și n-au ce face, ca să nu se strice trebile împărăției.
+
+— Da' bine, Neghiniță, ție-ți trebuie un an ca să umbli cât altul umblă într-o zi.
+
+— Da? Ei, nu e așa deloc. Eu mă las pe-o adiere și plutesc ca pe apă, și mă mlădii pe apa vântului ca pe valurile mării. Ba uneori întrec rândunelele ca o săgeată de argint.
+
+— Ce bucurie pe unchiașul meu, zise bătrâna, când o afla că are și el un copil. Deseară o să se îmbete de bucurie.
+
+— Ba e vorbă, răspunse Neghinită, eu vreau să văd pe tata acuși-acușic!
+
+Și bătrâna, când auzi cuvântul *tată*, se bucură de bucuria moșului și îi zise:
+
+— Aria moșului este cât vezi cu ochiul de departe, pusă pe-un deal mare și întins. Unde-i vedea șase cai murgi treierând grâu, acolo să te oprești, că dai peste unchiașul babei.
+
+— Iată, plec.
+
+Cum îi deschise ușa, Neghiniță se aruncă, cu mâinile întinse și cu piciorușele deschise, într-o undă de adiere. Și se făcu nevăzut, ca un strop de lumină.
+
+Pe drum întâlni o cireadă de vaci. De minunici ce era, se dete afund într-o urmă de vacă și începu să strige:
+
+— Măi văcari, măi, veniți de mă scoateți din inima pământului, că vă fac pe voia gândului!
+
+Văcarii se luară după glas, până deteră peste Neghiniță. Unul, mai rău și mai prost dintre ei, vru să-l strivească și-și repezi călcâiul din băierile inimii. Neghiniță țâști, și sări alăturea, iar văcarul, lovind cu sete pământul, își scrinti piciorul și începu să se vaiete. Ceilalți începură cu măciuca și, cum izbeau, rămâneau cu jumătatea în mână, iar ailaltă se ducea zbârnâind.
+
+— Să nu vă păziți vacile, cum vă păziți mințile. Cruce lată, minte întunecată, urechi de văcar, urechi de măgar! le zise Neghiniță, și se dădu vântului.
+
+Ajunse la unchiaș. I se sui pe nas, ca să-l vadă mai bine. Unchiașul se bucură, dar nu ca baba, iar Neghiniță se întristă. Dar ca să se-arate grozav, zise unchiașului:
+
+— Nu căta că-s mititel. Calul nu e mai mare ca copilul? și-l încalecă copilul. Bivolul nu e mai mare ca omul? și-l înjugă omul. Munții nu-s mai mari ca oile? și-i pasc turmele. Pământul nu e mai mare ca fierul plugului? și-l despică fierul plugului. Codrul nu e mai mare ca un topor? și-l culcă toporul la pământ. Tu nu ești mai mare ca mine? și te-au ostenit murgii în arie. Ia să vezi cum îi dau eu la arie, fără bici, fără nimic.
+
+Unchiașul, minunat, îl duse la arie. Cum ajunse, Neghiniță sări pe-un cal și începu să strige: "Hi, hăi, hi, hăi!" Ciupește pe unul, ciupește pe altul, caii începură să fugă, dar ce fugă, parc-ar fi avut douăzeci de bice pe șalele lor. Și cum se crucea moșul, iată și un negustor care trecea la scaunul împărăției.
+
+— Moșule, îi zise negustorul, cine mână caii așa de grozav, că eu aud "hi-hăi, hi-hăi" și nu văd pe nimeni!
+
+— Ei, tată, răspunse bătrânul, m-a dăruit Dumnezeu cu un copil ca o neghină, da' cu mintea cât zece ca mine și ca d-ta.
+
+Neghiniță opri caii și sări în palma unchiașului. Cum îl văzu negustorul, se gândi să ducă împăratului așa minune.
+
+— Moșule, zise negustorul, îți dau o pungă de bani pe el. Neghiniță, sfâr, în urechea moșului și îi șopti ce să vorbească. Și moșul zise, crezând că de la el zice:
+
+— Tu, care vinzi și cumperi, ai cumpărat vreun suflet pe-o pungă de bani?
+
+— Îți dau... două.
+
+Și iar moșul, după Neghiniță:
+
+— Două pungi... pentru un suflet?
+
+— Îți dau... zece.
+
+Moșul îngălbeni și zise, iar după șoapta lui Neghiniță:
+
+— Sufletele se dăruiesc Domnului și se vând Necuratului.
+
+— Îți dau... douăzeci!
+
+Și moșul, călcând în gura lăcomiei, tăcu, cu toate șoaptele bietului Neghiniță.
+
+Neghiniță văzu lăcomia, da' tot el șopti moșului:: "Fie!" Și moșul zise:
+
+— Fie!
+
+Bătu palmă în palmă cu negustorul. Tocmeala se făcuse. Negustorul plăti și luă pe Neghiniță, vândut de bunăvoie. Negustorul plecă. Neghiniță strigă moșului:
+
+— Moșule, moșule, ai fost să n-ai copii, iar biată babă, da!
+
+Împăratul era la mare și la greu sfat cu toți cărturarii, că bântuia seceta și molima. Și dacă negustorul îi spuse că are un copil ca o neghiniță, împăratul rămase înmărmurit, învățații împărăției căscară ochii mari și se traseră de bărbile lungi.
+
+— Nu se poate, măria-ta, așa ceva nu scrie la carte.
+
+— Ba se poate, zise Neghiniță, sărind pe masa sfatului, că multe se pot și nu stau în cărți; și mult mai multe sunt altfel de cum sunt ticluite din condei. Și după ce se minunară cât se minunară, începu sfatul. Neghiniță se sui pe mâna împăratului, pe umăr, apoi în creștetul capului, și de-acolo zise râzând:
+
+— Învață, măria-ta, că cei mai mici sunt cei mai mari.
+
+Împăratul, cam de voie, cam de nevoie, răspunse:
+
+— Așa e, Neghiniță, așa e.
+
+Iar cărturarii își deteră ghies pe sub masă și plecară ochii în jos. Împăratul porunci să-i toarne lui Neghiniță o casă cu zece caturi, cât o nucă de mare, toată din aur-lamur și împodobită cu pietre scumpe.
+
+Neghiniță rămase la sfat și se pierdu din ochii tuturora, numai ca să se ție de năzdrăvănii. Și, încet-încet, pâși-pâși, până intră în urechea învățatului care căuta în stele cu ocheanele. Acolo ascultă ce ascultă, și înțelese că acest vestit cărturar, în loc să se gândească la sfat, se gândea că împăratul are nasul cam mare. Se duse binișor și intră în urechea cărturarului care zicea că știe mărtuntaiele omului și leacurile bolilor. Ăsta se gândea nu la sfat, ci că-i plăcea inelul împăratului. Așa află, pe rând, că unul se gândea la o cucoană frumoasă, că altul se gândea cam ce lingușeală să cârpească împăratului, altul că ce n-ar da el pentru o sticlă de vin, altul că bine e să fii împărat, altul că împăratul e om ca toți oamenii, numai unul, cu fruntea cât toate zilele, asculta cuvintele și întrebările împăratului.
+
+Neghiniță, cum află gândul tuturora, zbughi în urechea împăratului și îi șopti tot, din fir până în ață. Împăratul, crezând că singur, el de la el, a citit în mintea lor, se mânie foc și le zise:
+
+— Ei, tu, care cați în stele, ți-ai făcut ochii ochean și-mi vezi nasul cât un buștean. Astfel ți-e gândul la sfatul domnesc?
+
+Cărturarul se cutremură și dădu în genunchi, cerând iertare.
+
+— Tu, se răsti împăratul către doctor, dacă ai avea inelul meu, ai omorî mai puțini oameni?
+
+Doctorul se cutremură și dădu și el în genunchi.
+
+— Tu, zise împăratul necăjit ălorlalți, te gândești la secături și nu vezi că ești cu un picior în groapă; tu îți pregătești limba ca să mă minți; tu crezi că într-o sticlă cu vin este mai mult duh decât
+în capul meu; tu nu știi că un învățat pe scaunul domniei ar face mai multe boroboațe ca un neghiob; tu te pricepi că împăratul e om ca toți oamenii, da' nu te gândești că învățații sunt ca neoamenii; iar tu abia te ții să nu caști o gură cât să înghiți împărăția toată; numai ție ți-e mintea la sfatul domnesc.
+
+Cu toții căzură în genunchi.
+
+— Acum ce să le fac, zise împăratul mânios, să le tai capul?
+
+Cărturarii muriră și înviară, iar Neghiniță, care se suise în creștetul împăratului:
+
+— Ferit-a Dumnezeu, măria-ta, fără învățați cine să mintă lumea?
+
+— Să nu fie decât adevărul pe lume!
+
+— Ferit-a Dumnezeu! Ce-ai face chiar măria-ta fără minciună? Apoi măria-ta ți-ai făcut socoteala vieții? Mai multe ceasuri ai mâncat, ai dormit, ai vânat, ți-ai socotit cazanele cu bani, ai petrecut, ba cu luminăția-sa împărăteasa, ba și fără ea, decât te-ai necăjit cu trebile și cu nevoile împărăției. Cum ai sta măria-ta pe scaunul lumii când lumea ar afla adevărul?
+
+Împăratul zâmbi, cu ciudă, nu e vorbă, dar zâmbi ca să dreagă treaba și îi iertă pe toți. Văzând însă că cel din urmă cărturar, care se gândise la sfat, tremura mereu, îi zise:
+
+— Ei, dar tu, cel mai cuminte, de ce tremuri?
+
+— Măria-ta, zise bietul bătrân, mai bine să spun și eu decât să afli măria-ta. Iată, socotesc că nu știu nimic și tot mă gândesc că mi-e leafa prea mică.
+
+Împăratul râse cu poftă și-i făgădui o leafă mai mare, apoi sparse sfatul cărturarilor și plecă cu Neghiniță în creștetul capului, nedomirit de cum ghicise gândurile tuturora.
+
+Împărăteasa și cuconii ei, văzând pe Neghiniță, se minunară, dar, când aflară că împăratul, la vreme de bătrânețe, ghicește gândurile oamenilor, se cruciră și tot nu le venea să creadă.
+
+— Împărate, zise împărăteasa, zău așa, ghicește-mi și mie un gând.
+
+— Să vedem, răspunse împăratul.
+
+Împărăteasa se gândi și începu să râdă... Neghiniță o zbughise în urechea împărătesei și-i aflase gândul: "Că ce bine-ar fi să mai fie o dată împăratul tânăr!" Și într-o clipă intră în urechea dreaptă
+a împăratului, și șopa-șopa-șopa. Împăratul — pace! Împărăteasa râdea și zicea:
+
+— Vezi că nu ghicești? vezi?
+
+Pasămite, împăratul era cam tare de urechea dreaptă. Neghiniță înțelese, și țâști în urechea stângă, și iar șopa-șopa.
+
+Împăratul se lumină la față, dădu din cap, râse cu hohote și zise:
+
+— Ei... împărăteasă, împărăteasă... da' tot muiere! De, bine te gândiși tu, da' nu se poate...
+
+Împărăteasa se rușină, plecă ochii în jos și se gândi: "Dar dacă o ghici și la ce m-oi fi gândit înainte, intru în pământ! De câte ori n-am dat dracului sfaturile împărăției când nu se mai isprăveau până după miezul nopții."
+
+În sfârșit, ce-i veni lui Neghiniță, vru să râdă și de împărat; și își zise într-o bună dimineață: "Vezi ce e omul! Spune-i orice, spune-i mereu același lucru... omul crede, că omul e prost. Ce nu
+crede întâi crede mai pe urmă. Am să-i fac una și bună împăratului, să-l las fără sfetnicii cei credincioși și să-l încurc cu nebunii."
+
+Împăratul, de umbla în fruntea oștilor, de sta la sfat mare, de se culca, de se scula, de mânca, de-și mângâia cuconii, un gând nu-l mai slăbea: "Nu vezi, omule de Dumnezeu, că ți-au îmbătrânit sfetnicii și împărăția merge rău?"
+
+Pasămite, Neghiniță îi intrase într-o ureche. Azi așa, mâine așa, până nu mai avu încotro. Sparse sfatul cel vechi și chemă altul nou.
+
+Tot unu și unu!
+
+Cum veniră, cum aruncară pe bietul împărat din scaunul neamului lui...
+
+— Acu să-l vedem! zise împielițatul de Neghiniță. Împăratul ieși plângând din cetate. Neghiniță, sus pe umărul lui.
+
+— De ce plângi, măria-ta? ține-ți firea, nu fi muiere.
+
+— Ei, ei, Neghiniță, cum să nu plâng?! Unde mi-e toiagul împărătesc?
+
+— Ci taci, măria-ta! Ia taie un corn și fă-ți, colea, o cârjă. Buzduganul e greu la bătrânețe, te doboară. Cârja te sprijină.
+
+— Ei, ei, Neghiniță, unde mi-e scaunul împărătesc pe care au stat atâția moși-strămoși ai mei?
+
+— Ci taci, măria-ta! Întinde-te colea, pe fânul înflorit și moale, și să-mi spui drept care e mai dulce la oase? Scaunul cu scumpetea, sau fânul cu frumusețea?
+
+— Ei, ei, Neghiniță, unde mi-e coroana cu stemele și cu luminile?
+
+— Ci taci, măria-ta! Pune foaie lată de lipan pe deasupra pletelor albe și spune-mi drept, care e mai ușoară, coroana cu grijile sau lipanul cu umbrele?
+
+— Așa o fi, Neghiniță, mai zise împăratul, oftând tocmai din băierile inimii, așa o fi, se potrivește ș-așa, fiindcă știi tu să le potrivești, dar când mă gândesc în ce slavă eram ieri... îmi vine să scald tot pământul cu lacrimile mele!
+
+— Ci taci, măria-ta! Adică ce slăvire? Toată viața, ba războaie, ba sfaturi, ba taie capul unuia, ba întinde la bice pe altul, ba citește jalbele, ba ascultă păsurile, ba câte și mai câte, și mai multe fără să vrei de câte pe vrute. Mărire să fi fost asta? Dar ia gândește-te măria-ta că un supus era supusul măriei-tale ș-avea un stăpân, iar măria-ta, purtând grija tuturora, erai sluga tuturora. Vezi, de-aia măria-ta ai fost cel mai slugă, cel mai nevolnic din toată împărăția. Curată socoteală: erai împărat, nu om; acum ești om, nu împărat. Și ești mai mare, că unde-ți spune gândul, acolo te duc picioarele. Ș-apoi, cine știe? Socotești măria-ta că boierii pot ceva fără prostime? Să ceară prostimea pe vechiul lor împărat... și să vezi măria-ta...
+
+Se mai îmbună împăratul la cuvântul lui Neghiniță și se duse, în cruciș și în curmeziș, în toată împărăția, c-o foaie de lipan pe cap și sprijinit pe-o cârjă de corn. Și de ce vedea se minuna și întreba pe Neghiniță:
+
+— Neghiniță, de ce-l bat pe ăla, de răcnește ca din gură de șarpe?
+
+— Fiindcă împăratul e surd și n-aude, răspunse Neghiniță.
+
+— Neghiniță, de ce-or fi atâția oameni goi și desculți?
+
+— Fiindcă împăratul e orb și nu vede.
+
+— Neghiniță, de ce bătrânul ăla s-o fi muncind să roadă în gingii o cojiță uscată?
+
+— Fiindcă împăratul mănâncă prea mult.
+
+— Neghiniță, de ce-o munci unii și noaptea, de dau pe brânci?
+
+— Ca să doarmă împăratul și ziua, de i-o veni poftă.
+
+— Neghiniță, atunci de ce să vie pe scaunul meu un împărat și surd, și orb, și lacom, și somnoros?
+
+— Ei, apoi, înainte de-a fi împărat, vedea, auzea, muncea, cumpătat la mâncare și la băutură.
+
+Bietul pribeag stătu pe gânduri, în mijlocul unui oraș mare, mare și zise:
+
+— Ei, ei, Neghiniță, mult cuvânt ai! Acum s-ajung împărat, și aș ști eu să fac cum e bine.
+
+Și, ca din senin, abia sfârșise vorba de pe urmă, ș-auzi o gălăgie, un vaiet, o duduitură, că parcă se cutremura pământul. Când colo, ce să fie? Ștafetă mare. Niște voinici, cu suliți lungi, aduceau vestea că norodul a băgat la dubă pe împăratul ăl nou, cu sfetnici cu tot, și că cheamă iarăși pe adevăratul împărat. Cum auzi bătrânul, zise voinicilor:
+
+— Stați, că eu sunt!
+
+Și-l cunoscură toți, și îi deteră în genunchi. Iar Neghiniță, de colo, de pe umăr:
+
+— Măria-ta, mai vezi, mai auzi, ori ți s-a făcut foame și-ți vine să dormi?
+
+La toate vine rândul, după cum se întoarce roata, că de-aia e roată, să se întoarcă, iar nu să stea locului. Și-i veni rândul și lui Neghiniță, gândul lumii.
+
+Într-o zi vru să glumească cu împăratul, să mai facă vreo drăcie. Îi intră în urechea *dreaptă*, crezând că e în a *stângă*. Cu stânga n-auzea de loc. "Nu face nimic. Mi-e lene să mă mut, se gândi Neghiniță. În loc să șoptesc, voi striga." Și începu să strige din toate puterile în urechea cu care împăratul auzea de minune.
+
+— Un împărat dacă n-a ști el de la el adevărul, nu-l mai află de la nimeni!
+
+Împăratul, auzind acest glas tare în fundul urechii, îi zvâcni inima și-și trase o palma cât putu peste ureche, zicând:
+
+— Iiiii, să știi că ce credeam eu că-mi trece prin minte era numai în ureche!
+
+Și când își scutură urechea în podul palmei... Neghiniță căzu leșinat...
+
+— Tu mi-ai fost? Tu m-ai făcut să cad din scaunul împărăției? Bine! Am eu ac de cojocul tău!
+
+Împăratul, înfuriat, porunci să-l lege de gât cu un fir lung de mătase și-l coborî de-l înecă în puțul din curtea domnească.
+
+Așa sfârși bietul Neghiniță.$demo$), now() - interval '70 days'
+where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-001400010000'::uuid);
 
 -- classic-15-a-christmas-carol: "A Christmas Carol" by clasice
 insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,

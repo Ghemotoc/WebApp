@@ -1,6 +1,6 @@
 # Classics texts for the demo top-up
 
-The full texts of 20 short public-domain works (14 Romanian, 6 English), one file each, read by `scripts/build-demo-content.ts` and published on staging under the official classics account (`clasice`, its names read from `settings`) with the "domeniu public" tag (decided 23 Oct 2026; S1-E5-06 and S1-E11-16 bring the real "Public domain" label and the staff screen after March).
+The full texts of 19 short public-domain works (13 Romanian, 6 English; *Capra cu trei iezi* follows in a separate pull request, because Wikisource's API kept refusing this session's address), one file each, read by `scripts/build-demo-content.ts` and published on staging under the official classics account (`clasice`, its names read from `settings`) with the "domeniu public" tag (decided 23 Oct 2026; S1-E5-06 and S1-E11-16 bring the real "Public domain" label and the staff screen after March).
 
 ## Which works
 
@@ -17,6 +17,7 @@ Only titles marked `yes` in `pd_romania_2026` in `content/classics/G5_romanian-c
 
 **What `source_edition` means.**
 - Wikisource: the year the source page itself names, beside the title ("Floare albastră (1873)") or in its notes ("publicată prima oară … 1876"), so anyone can check it against the linked revision.
+- *Sara pe deal*, *Balada unui greier mic* and *Neghiniță* have a blank year: their pages name none, and the lookups on Wikisource's author and collection pages were refused (HTTP 429) on every try, so no year could be confirmed.
 - When the Wikisource page names no year, the year comes from Wikisource's own page for the author or the collection; if it can't be confirmed there, `source_edition` is left blank and the credit line gives only the source (CTO, 24 Oct 2026: blank rather than a guess). The build allows a blank year only for Wikisource texts, whose credit still carries the link and licence.
 - Gutenberg: the year the ebook names for its edition (*A Christmas Carol*: the 1843 preface; *Goblin Market*: Oxford World's Classics, 1913). When the ebook names no edition (*The Raven*, *The Fall of the House of Usher*, *The Yellow Wallpaper*, *The Rime of the Ancient Mariner*) it is the first publication year, and the transcription may follow a later revision (Poe and Coleridge revised these). Replace it when the edition is known.
 
