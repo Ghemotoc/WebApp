@@ -161,6 +161,9 @@ test.describe('sanctions (S1-E10-06)', () => {
     test(`axe: a decided case at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {
+      // The account's language wins over the browser's (S1-E1-04), and earlier tests here set it
+      // to English, so it is set to the view's language first (no race between the two).
+      runSql(`update public.profiles set locale = '${view.language}' where handle = 'moderator';`);
       await useSessionInBrowser(page.context(), (await signInPersona('moderator')).session);
       const caseId = runSql(`select id from public.cases where decision = 'suspend' limit 1`);
       await checkScreen(page, { ...view, address: `/staff/moderation/cases/${caseId}` });

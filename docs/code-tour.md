@@ -652,6 +652,20 @@ public.stories, story_tags, chapters   read by Discover, the story page and the 
 - Tests: `scripts/build-demo-content.test.ts` (the parser, every rule, the SQL shape, and that the committed SQL matches the files).
 - Likes, comments and follows between the writers come with part 2b, after S1-E6.
 
+## Epic S1-E10 at a glance (checked by S1-E10-QA)
+
+What the Safety epic has in place so far. The epic report, `docs/epic-reports/S1-E10.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | the Report dialog (`src/features/reporting/`), the safety block (`src/features/safety/`), `/staff/moderation` and `/staff/moderation/cases/:id` (`src/features/moderation/`), the sanction notice (`src/features/account/`) | 10-01, 10-13a, 10-03a, 10-06 |
+| Hooks | `useReportItem`, `useSafetyContacts`, `useVisitorCountry`, `useModerationQueue`, `useCase`, `useSanctions`, `useMySanctions` | each story |
+| Tables | `reports`, `safety_contacts`, `safety_contact_gaps`, `report_reason_tiers`, `cases`, `case_actions`, `sanctions`, `banned_email_hashes`, `moderated_items` | each story |
+| Functions | `report_item()`, `reportable_item_owner()`, `reportable_item_summary()`, `attach_report_to_case()`, `admin_moderation_queue()`, `admin_decide_case()`, `admin_apply_sanction()`, `admin_lift_sanction()`, `admin_pause_reporting()`, `is_moderated_away()`, `account_state()` (suspended, banned), `note_safety_contact_gap()` | each story |
+| Tests | `supabase/tests/database/042` to `045` and `092` (the epic), `e2e/epic-s1-e10.spec.ts` and each story's spec | each story, S1-E10-QA |
+
+**One main journey through the whole epic:** a reader presses `<ReportButton>` → `ReportDialog` shows the helplines (`SafetyContactsBlock`) and the reasons → `report_item()` stores the report and `attach_report_to_case()` opens or joins the item's case with its tier and deadline → the moderator opens `/staff/moderation`, the case page, and sends a decision → `admin_decide_case()` closes the case and calls `admin_apply_sanction()` → `account_state()` answers `suspended` and every write policy refuses → the person sees `SanctionNotice`. `e2e/epic-s1-e10.spec.ts` walks it.
+
 ## Start here
 
 Read in this order; each file's header comment says what it is for and where things go next.
