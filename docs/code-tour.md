@@ -472,6 +472,22 @@ What the Accounts epic left in place. The epic report, `docs/epic-reports/S1-E2.
 
 **One main journey through the whole epic:** an invited adult opens `/join/<code>` → `SignUpPage` asks `check_invite()`, the current legal versions and `/api/signup-context` (the country, signed) → the form checks the year with `src/lib/age.ts` → `supabase.auth.signUp` → the trigger `handle_new_auth_user()` takes an invite place, checks the age and the country token, creates the profile and the consents → the confirmation email (Mailpit) → `/auth/confirm` → `/setup` → `set_my_handle()` → `account_state()` answers `active`. `e2e/epic-s1-e2.spec.ts` walks it, then logs out and in and resets the password.
 
+## Epic S1-E3 at a glance (checked by S1-E3-QA)
+
+What the writing epic left in place. The epic report, `docs/epic-reports/S1-E3.md`, lists what works, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | `/write` (Your writing), `/write/new`, `/write/s/<story>/settings`, `/write/s/<story>/c/<chapter>` (the editor), `/write/s/<story>/chapters` (Manage chapters) in `src/features/writing/`; the story page `/s/<story>` in `src/features/reading/` | 3-01, 3-05, 3-02a, 3-04 |
+| Shared pieces | `src/components/covers/` (drawn and automatic covers), `src/components/ui/Doodle.tsx`, `src/lib/romania-time.ts`, `src/lib/safe-links.ts`, `ChapterText` (the reader's renderer) | 3-01, 3-13, 3-03 |
+| Hooks | `useNewStoryForm`, `useStorySettingsForm`, `useStoryActions`, `useMyStories`, `useChapterDraft`, `useChapterEditor`, `useAutosave` (with `useDeviceKeep`, `useDeviceDraft`), `useChapterPublishing`, `useManageChapters` | each story |
+| Tables | `categories`, `tags`, `stories`, `story_tags`, `chapters`, `chapter_revisions`, `jobs` (a queue staff read; S1-E7-01 and S1-E10-04 consume it) | 3-01, 3-02a, 3-06 |
+| Functions | `create_story()`, `update_my_story()`, `delete_my_story()`/`restore_my_story()`, `get_story_page()`, `rating_allows()`, `create_chapter()`, `save_chapter_draft()`, the publishing functions with `chapter_publish_now()` and `chapter_is_readable()`, the chapter management functions, `admin_raise_story_rating()`, `admin_set_ai_undisclosed_label()` | each story |
+| Jobs (pg_cron) | `publish-due-chapters` (every minute), `purge-deleted-stories` (03:23), `purge-deleted-chapters` (03:29); `docs/runbooks/scheduled-jobs.md` | 3-03, 3-05, 3-04 |
+| Tests | `supabase/tests/database/100` to `114` and `092` (the epic), `e2e/epic-s1-e3.spec.ts` and each story's spec | each story, S1-E3-QA |
+
+**One main journey through the whole epic:** adult_writer opens `/write/new` → `useNewStoryForm` checks the answers with `src/schemas/story.ts` and calls `create_story()` (the rating and labels checked again by `check_story_labels()`) and `create_chapter()` → the editor opens on chapter one → `useAutosave` sends `save_chapter_draft()` every 10 seconds and on blur → "Publish chapter" saves first, then `publish_chapter()` → `chapter_publish_now()` copies the draft, stamps the story and queues a `chapter_published` job → `get_story_page()` now shows the story to readers whose age `rating_allows()` → Manage chapters reorders with `move_chapter()` → a scheduled chapter goes live through `publish_due_chapters()`. `e2e/epic-s1-e3.spec.ts` walks it in the browser and `092-epic-s1-e3.test.sql` in the database.
+
 ## Start here
 
 Read in this order; each file's header comment says what it is for and where things go next.
