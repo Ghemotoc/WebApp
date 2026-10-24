@@ -87,7 +87,13 @@ test.describe('country from the connection (S1-E2-10)', () => {
       // Confirm, choose a username, then Settings shows the country.
       await page.goto(appPathFromEmail((await waitForEmail(address)).HTML));
       await page.getByRole('link', { name: 'Continue' }).click();
-      await page.getByLabel('Username').fill(`from.ro.${Date.now()}`);
+      // The "Choose a username" notice is labelled with the word too, so ask for the text box by
+      // role, and only once the setup form is on the page.
+      await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
+      const handle = `from.ro.${Date.now()}`;
+      const usernameField = page.getByRole('textbox', { name: 'Username' });
+      await usernameField.fill(handle);
+      await expect(usernameField).toHaveValue(handle);
       await page.getByRole('button', { name: 'Save and continue' }).click();
       await expect(page).toHaveURL(/\/$/);
       await page.goto('/settings');
