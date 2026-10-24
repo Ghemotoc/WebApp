@@ -21,7 +21,8 @@
     "i18n:check": "tsx scripts/check-i18n-keys.ts",
     "scan:bundle": "tsx scripts/scan-bundle-for-secrets.ts",
     "issues:sync": "tsx scripts/sync-story-issues.ts",
-    "emails:build": "tsx scripts/build-auth-email-templates.ts"
+    "emails:build": "tsx scripts/build-auth-email-templates.ts",
+    "demo:build": "tsx scripts/build-demo-content.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",

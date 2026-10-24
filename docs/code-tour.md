@@ -520,6 +520,28 @@ What the writing epic left in place. The epic report, `docs/epic-reports/S1-E3.m
 
 **One main journey through the whole epic:** adult_writer opens `/write/new` → `useNewStoryForm` checks the answers with `src/schemas/story.ts` and calls `create_story()` (the rating and labels checked again by `check_story_labels()`) and `create_chapter()` → the editor opens on chapter one → `useAutosave` sends `save_chapter_draft()` every 10 seconds and on blur → "Publish chapter" saves first, then `publish_chapter()` → `chapter_publish_now()` copies the draft, stamps the story and queues a `chapter_published` job → `get_story_page()` now shows the story to readers whose age `rating_allows()` → Manage chapters reorders with `move_chapter()` → a scheduled chapter goes live through `publish_due_chapters()`. `e2e/epic-s1-e3.spec.ts` walks it in the browser and `092-epic-s1-e3.test.sql` in the database.
 
+<!-- Lane B: demo content (23 Oct 2026). -->
+## Demo content for the investor demo (Lane B, 23 Oct 2026)
+
+Thirty-six synthetic stories (and, once their texts arrive, about 20 public-domain classics) live as Markdown files and reach staging as one generated top-up:
+
+```
+content/demo-stories/demo-NN.md        front matter (writer, rating, cover, tags, blurb) + "## " chapters
+content/classics/texts/classic-*.md    the same, plus author, author_died, source_edition
+        │  npm run demo:build  →  scripts/build-demo-content.ts
+        │     checks every rule (lengths, ratings, ș/ț, no HTML), fixed ids, refuses on any problem
+        ▼
+supabase/staging-topups/demo-content-2a.sql   pasted into staging's SQL editor; also runs locally
+        │  creates the 5 synthetic writers + the classics account (the agreed exception), the stories,
+        │  their tags (set_story_tags) and their chapters already published (check_chapter_text,
+        ▼  count_words), with fixed ids so a second run adds nothing
+public.stories, story_tags, chapters   read by Discover, the story page and the reader (Lane A)
+```
+
+- The rules the writers follow are in `content/demo-stories/README.md`; the five stories Robert reads whole are marked `sample: yes`.
+- Tests: `scripts/build-demo-content.test.ts` (the parser, every rule, the SQL shape, and that the committed SQL matches the files).
+- Likes, comments and follows between the writers come with part 2b, after S1-E6.
+
 ## Start here
 
 Read in this order; each file's header comment says what it is for and where things go next.
