@@ -22,7 +22,7 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 ## Commands
 - Install: npm ci
 - Dev: npx supabase start && npm run dev
-- Checks (run all before saying you're done): npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase test db && npm run test:e2e && npm run i18n:check
+- Checks (run all before saying you're done): npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase test db && npm run test:e2e && npm run i18n:check && npm run migrations:check
 - Regenerate database types after a migration: npm run types:gen
 - New migration: npx supabase migration new <name>
 

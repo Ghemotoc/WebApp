@@ -3,7 +3,7 @@
 The database side of the app: schema changes, database tests, seed data and (later) edge functions. Built by S1-E1-01 (folder) and S1-E1-02 (database baseline).
 
 - `config.toml`: local Supabase settings. Supabase's GitHub integration applies `migrations/` to the staging project when `main` changes; never push migrations from a session (CLAUDE.md).
-- `migrations/`: every schema change, oldest first (`npx supabase migration new <name>`). The only way the database changes (rule 3).
+- `migrations/`: every schema change, oldest first (`npx supabase migration new <name>`). The only way the database changes (rule 3). Every file's 14-digit version must be its own: Supabase keys migrations by it, so `npm run migrations:check` (in CI) fails when two files share one; pick an unused later time on the same day.
 - `tests/database/`: pgTAP tests, run with `npx supabase test db`.
 - `seed.sql`: the synthetic seed personas. Never real data.
 - `functions/`: edge functions (Deno), the only code that may hold secrets. None yet.

@@ -1,8 +1,8 @@
 # Continuous integration: the checks every pull request must pass before it can merge (story S1-E1-01).
 #
 # Who starts it: GitHub, on every pull request and on every push to main.
-# What it runs: lint, type check, unit tests, the i18n key check, the build and the bundle
-# secret scan (job "checks");
+# What it runs: lint, type check, unit tests, the i18n key check, the migration version check,
+# the build and the bundle secret scan (job "checks");
 # database tests with pgTAP and the generated-types check against a local Supabase (job "database");
 # Playwright tests with axe accessibility checks against a local Supabase, so signed-in journeys
 # run with the seed personas (job "e2e").
@@ -43,6 +43,8 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run i18n:check
+      # No two migrations may share a version number: Supabase keys them by it (24 Oct 2026).
+      - run: npm run migrations:check
       # The same build Cloudflare Pages runs; it must write to dist/.
       - run: npm run build
       - name: Check the build wrote dist/index.html and dist/_redirects
