@@ -6,7 +6,8 @@
  * a real browser.
  * - Journey 1 (S1-E11-17 × S1-E2-01 × S1-E11-01): the admin makes a one-use invite link → an
  *   invited adult joins with it in a private window → the link shows "Used up" with no email →
- *   the owner searches the audit log for "invite." and finds both rows on behalf of the admin →
+ *   the owner searches the audit log for "invite." and finds the admin's invite.created, the new
+ *   account's invite.redeemed (short user ID) and the system's invite.used_up (CTO, 24 Oct) →
  *   the moderator's menu is Moderation only; support's is empty; the content editor is refused.
  * The CMS stories (S1-E11-06, 10, 12), S1-E11-18 and S1-E11-02 are not built yet
  * (docs/epic-reports/S1-E11.md). The axe runs for every screen of the epic live in each story's
@@ -48,8 +49,10 @@ test.describe('epic S1-E11 journeys', () => {
   test.afterAll(() => {
     runSql(`
       delete from public.consents where user_id in (select id from auth.users where email = 'epic-${stamp}@example.com');
-      delete from public.profiles where id in (select id from auth.users where email = 'epic-${stamp}@example.com');
-      delete from auth.users where email = 'epic-${stamp}@example.com';
+      -- The account stays: the append-only audit log names it (invite.redeemed, S1-E11-17).
+      delete from public.profiles where id in (select id from auth.users where email = 'epic-${stamp}@example.com')
+        and id not in (select user_id from public.audit_log where user_id is not null);
+      delete from auth.users where email = 'epic-${stamp}@example.com' and id not in (select id from public.profiles);
       delete from public.invites where note = 'epic ${stamp}';
       update public.profiles set locale = 'ro' where handle in ('owner', 'admin', 'moderator', 'support', 'editor');`);
   });
@@ -85,15 +88,25 @@ test.describe('epic S1-E11 journeys', () => {
     await expect(row).toContainText('Used up');
     await expect(row).not.toContainText('example.com');
 
-    // Step 4: the owner finds both audit rows on behalf of the admin (S1-E11-01).
+    // Step 4: the owner finds the audit rows (S1-E11-01): the admin made the link, the new account
+    // used it (short user ID, never the email) and the system closed it (CTO, 24 Oct 2026).
     const owner = await openAs(browser, 'owner', '/staff/audit-log');
     const search = owner.getByRole('form', { name: 'Search the audit log' });
     await search.getByLabel('Action starts with').fill('invite.');
-    await search.getByLabel('Staff member').fill('admin');
     await search.getByRole('button', { name: 'Search' }).click();
     const rows = owner.getByRole('row');
-    await expect(rows.filter({ hasText: 'invite.used_up' }).first()).toContainText('@admin');
-    await expect(rows.filter({ hasText: 'invite.created' }).first()).toContainText(`epic ${stamp}`);
+    const newAccountId = runSql(
+      `select id from auth.users where email = 'epic-${stamp}@example.com'`,
+    );
+    await expect(
+      rows.filter({ hasText: `epic ${stamp}` }).filter({ hasText: 'invite.created' }),
+    ).toContainText('@admin');
+    await expect(
+      rows.filter({ hasText: `epic ${stamp}` }).filter({ hasText: 'invite.used_up' }),
+    ).toContainText('System');
+    await expect(rows.filter({ hasText: newAccountId.slice(0, 8) })).toContainText(
+      'invite.redeemed',
+    );
     await expect(owner.getByRole('table')).not.toContainText('example.com');
 
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a).
