@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "checks": "bash scripts/run-all-checks.sh",
     "types:gen": "supabase gen types typescript --local --schema public > src/lib/database.types.ts && prettier --write src/lib/database.types.ts",
     "types:check": "bash scripts/check-database-types.sh",
     "i18n:check": "tsx scripts/check-i18n-keys.ts",

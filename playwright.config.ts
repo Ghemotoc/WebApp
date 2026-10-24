@@ -57,6 +57,9 @@ process.env.VITE_SUPABASE_ANON_KEY = localSupabase.anonKey;
 
 export default defineConfig({
   testDir: './e2e',
+  // After every run, put the seed personas' language back to Romanian, so database tests run
+  // afterwards without a reset still find the seed's state (TOOL-1; e2e/support/global-teardown.ts).
+  globalTeardown: './e2e/support/global-teardown.ts',
   // CI stops a pull request if someone left `test.only` in a file.
   forbidOnly: process.env.CI !== undefined,
   // One test at a time: the tests share the seed personas in one local database, and some change
