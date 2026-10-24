@@ -125,6 +125,9 @@
   },
   "doodles": {
     "intro": "The hand-drawn doodles from design/assets, drawn inline so they take their colours from the --doodle-* tokens. Light mode shows them exactly as drawn on the canvas; at night the ink turns light and every fill turns dark. The script scripts/doodle-tokens.ts keeps the files this way and CI fails on any raw colour.",
-    "all": "All {{count}} doodles, in the page's current mode"
+    "all": "All {{count}} doodles, in the page's current mode",
+    "showAll": "Show all the doodles",
+    "loading": "Loading the doodles…",
+    "loadFailed": "The doodles could not be loaded. Reload the page and try again."
   }
 }
