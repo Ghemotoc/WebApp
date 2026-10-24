@@ -11,11 +11,13 @@
 --   is refused → the suspension is lifted → adult_writer writes again; every step is logged.
 -- Safety contacts (S1-E10-13a): Romania's contacts are there for everyone; a country with no row
 --   is counted for staff, never who asked.
+-- The CTO's reasons (24 Oct 2026): a "Threat to a minor" report opens a same-day safeguarding case
+--   the admin persona can't see and the moderator can (test 044 covers "Insults").
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(20);
+select plan(23);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000001'::uuid as adult_writer,
@@ -111,7 +113,32 @@ select results_eq(
   $$ values ('case.decided'), ('sanction.applied'), ('sanction.applied'), ('sanction.lifted') $$,
   'every staff step of the journey is in the audit log');
 
-/* ---------- 5. Safety contacts for everyone (S1-E10-13a) ---------- */
+/* ---------- 5. The two reasons the CTO added (S1-E10-01 × S1-E10-03a, 24 Oct 2026) ---------- */
+
+reset role;
+-- The seed's cases on teen_17 are cleared the same way, so these reports open fresh cases.
+create temp table cleared_teen as select id from public.cases where user_id = (select teen_17 from ids);
+delete from public.banned_email_hashes where sanction_id in (select id from public.sanctions where case_id in (select id from cleared_teen));
+delete from public.sanctions where case_id in (select id from cleared_teen);
+delete from public.moderated_items where case_id in (select id from cleared_teen);
+delete from public.case_actions where case_id in (select id from cleared_teen);
+delete from public.reports where case_id in (select id from cleared_teen);
+delete from public.cases where id in (select id from cleared_teen);
+set local role authenticated;
+select pg_temp.sign_in_as((select adult_writer from ids));
+select lives_ok($$ select * from public.report_item('profile', 'teen_17', 'threat_to_minor', 'Asks them to meet in secret') $$,
+  'adult_writer reports teen_17''s profile as a threat to a minor');
+select pg_temp.sign_in_as((select admin from ids));
+select is_empty(
+  $$ select id from public.admin_moderation_queue() where reported_handle = 'teen_17' $$,
+  'the admin persona, without the safeguarding permission, doesn''t see that case');
+select pg_temp.sign_in_as((select moderator from ids));
+select results_eq(
+  $$ select tier::text, top_reason::text from public.admin_moderation_queue() where reported_handle = 'teen_17' $$,
+  $$ values ('same_day', 'threat_to_minor') $$,
+  'the moderator with the permission sees it on the same-day tier');
+
+/* ---------- 6. Safety contacts for everyone (S1-E10-13a) ---------- */
 
 set local role anon;
 set local request.jwt.claims to '{"role": "anon"}';
