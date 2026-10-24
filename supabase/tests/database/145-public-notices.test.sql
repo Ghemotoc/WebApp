@@ -17,7 +17,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(33);
+select plan(34);
 
 -- The secret our server signs with, as Robert sets it by hand in Vault on staging.
 select vault.create_secret('test-notice-secret', 'public_notice_secret')
@@ -194,6 +194,14 @@ select is((select count(*)::integer from public.public_notices
            where case_id = (select case_id from public.public_notices where reference = (select notice_reference from sent))
              and decided_at is not null and closed_at is not null),
   2, 'deciding the case marks both notices decided, ready for the decision email');
+
+/* ---------- 7. Retention ---------- */
+
+reset role;
+update public.public_notices set closed_at = now() - interval '3 years 1 day'
+  where reference = (select notice_reference from sent);
+select is(public.purge_old_public_notices(), 1,
+  'a notice closed more than 3 years ago is deleted with the notifier''s details');
 
 select * from finish();
 rollback;

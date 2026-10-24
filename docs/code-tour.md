@@ -55,6 +55,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/reporting/` | The shared Report button and dialog (`<ReportButton>`), the one report form; see its README and architecture 1.7.11 | S1-E10-01 |
 | `src/features/moderation/` | The report queue and the case page of the admin site: tiers, deadlines, grouped reports and the decision; see its README | S1-E10-03a |
 | `src/features/contact/` | "Write to us": the Contact us form, through our own Pages Function and Brevo; see its README | S1-E14-04 |
+| `src/features/notices/` | "Report illegal content": the public report form and the authorities' removal-order contact point, through our own Pages Function; see its README | S1-E10-02 |
 | `src/features/safety/` | "Is someone in danger right now?": the helplines for the reader's country, on the report dialog and the contact page; see its README | S1-E10-13a |
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
@@ -375,6 +376,36 @@ Brevo's HTTP API (BREVO_API_KEY, by hand) on Cloudflare · Mailpit (http://127.0
 ```
 
 No table, no log: the message, the email and the IP address are never stored (ADR 0006). Abuse: the honeypot here and a Cloudflare rate-limit rule on `/api/contact`, set by hand (`docs/runbooks/contact-form.md`).
+
+## Reporting without an account and removal orders (S1-E10-02)
+
+```
+footer "Report content" · /legal/contact "Report illegal content" / "Authorities: send a removal order"
+  │  /report (router) → NoticePage → NoticeForm                            src/features/notices/
+  │     the kind (the report reasons, or a removal order), the link, why, name and email
+  │     (optional only for child sexual content), the good-faith box, the hidden honeypot;
+  │     lib/noticeDraft.ts checks it; src/schemas/notice.ts is the shared contract
+  │  useNoticeForm → api/notice.ts → POST /api/notice (JSON)
+  ▼
+functions/api/notice.ts (Cloudflare) · server/pages-functions-plugin.ts (locally)
+  │  server/notice.ts handleNotice(): the schema → a notice that looks like a bot (honeypot or
+  │  under 3 seconds) gets a made-up answer; an order never meets this check → signs the fields
+  │  with NOTICE_SECRET → rpc submit_public_notice(payload, signature)
+  ▼
+submit_public_notice() (…_s1_e10_02_public_notices.sql)
+  │  checks the signature against Vault's public_notice_secret → public_notices row with an
+  │  N-000123 or TCO-0001 reference → item_for_public_address() matches /s/…, /s/…/<code>, /u/…
+  │  → attach_notice_to_case(): opens or joins the item's case (an order: one hour from receipt)
+  │  → an order logs on_call_alerts at once (the phone alert is S1-E10-09)
+  ▼
+server/notice.ts emails the acknowledgement (reference and time of receipt) and, for an order,
+the support inbox. Staff: the case page's "From the public form" (admin_case_notices), the queue's
+orders and "Notices to check by hand" (admin_on_call_alerts, admin_unmatched_notices,
+admin_close_unmatched_notice). Deciding a case marks its notices decided for the decision email
+(S1-E10-04). purge_old_public_notices() deletes closed notices after 3 years.
+```
+
+Set-up by hand: `docs/runbooks/notice-form.md`.
 
 ## The helplines for the reader's country (S1-E10-13a)
 

@@ -2538,6 +2538,7 @@ export type Database = {
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
       rating_allows: {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;

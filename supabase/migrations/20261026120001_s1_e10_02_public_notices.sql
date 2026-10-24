@@ -606,3 +606,46 @@ $$;
 comment on function public.admin_on_call_alerts() is 'Staff: the latest logged on-call alerts (S1-E10-02; the phone alert is S1-E10-09).';
 revoke execute on function public.admin_on_call_alerts() from public, anon;
 grant execute on function public.admin_on_call_alerts() to authenticated;
+
+/* ---------- Retention ---------- */
+
+/**
+ * purge_old_public_notices: deletes public notices (with the notifier's name and email) and their
+ * on-call alerts 3 years after the notice was closed, as the form's "Your details" says
+ * (docs/retention.md; proposal, setting public_notices_keep_years). The case and its decision
+ * stay with the case's own retention.
+ * Returns: how many notices it deleted. Where it fits: pg_cron runs it every night (below); tests
+ *   call it directly.
+ */
+insert into public.settings (key, value, is_public, description) values
+  ('public_notices_keep_years', '3'::jsonb, false,
+   'Years a closed public notice (with the notifier''s name and email) is kept before deletion (S1-E10-02; proposal).')
+on conflict (key) do nothing;
+
+create or replace function public.purge_old_public_notices()
+returns integer
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  keep_years integer := coalesce((public.setting_value('public_notices_keep_years'))::integer, 3);
+  deleted_count integer;
+begin
+  -- Step 1: the alerts point at the notices, so they go first.
+  delete from public.on_call_alerts
+    where notice_id in (select id from public.public_notices
+                        where closed_at < now() - make_interval(years => keep_years));
+  -- Step 2: the notices themselves.
+  delete from public.public_notices where closed_at < now() - make_interval(years => keep_years);
+  get diagnostics deleted_count = row_count;
+  return deleted_count;
+end;
+$$;
+
+comment on function public.purge_old_public_notices() is
+  'Job: deletes public notices closed more than public_notices_keep_years (3) ago, with their alerts (S1-E10-02).';
+revoke execute on function public.purge_old_public_notices() from public, anon, authenticated;
+
+-- Naming the job makes this safe to run again: cron.schedule replaces a job of the same name.
+select cron.schedule('purge-old-public-notices', '29 3 * * *', 'select public.purge_old_public_notices();');
