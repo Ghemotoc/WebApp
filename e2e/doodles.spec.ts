@@ -61,6 +61,8 @@ for (const theme of ['light', 'night'] as const) {
 
 test('switching the page to night mode recolours the full doodle sheet', async ({ page }) => {
   await page.goto('/design');
+  // The sheet loads on request (DoodleSheet), so press its button first.
+  await page.getByRole('button', { name: 'Arată toate desenele' }).click();
   const firstPath = page.getByTestId('doodle-sheet').locator('svg path').first();
   const lightFill = await firstPath.evaluate((path) => getComputedStyle(path).fill);
 

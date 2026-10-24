@@ -11,7 +11,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { DoodleSection } from './DoodleSection';
@@ -68,7 +68,7 @@ const lightTokens = readDoodleTokens('light');
 const nightTokens = readDoodleTokens('night');
 
 describe('the doodles on /design', () => {
-  it('shows the three sample doodles in a light panel and a night panel, and the full sheet', () => {
+  it('shows the three sample doodles in a light panel and a night panel', () => {
     render(<DoodleSection />);
 
     expect(
@@ -77,7 +77,16 @@ describe('the doodles on /design', () => {
     expect(
       within(screen.getByTestId('doodle-samples-night')).getAllByRole('listitem'),
     ).toHaveLength(3);
-    expect(within(screen.getByTestId('doodle-sheet')).getAllByRole('listitem')).toHaveLength(98);
+  });
+
+  it('loads the full sheet of 98 doodles only when asked, without the cover backgrounds', async () => {
+    render(<DoodleSection />);
+    expect(screen.queryByTestId('doodle-sheet')).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'doodles.showAll' }));
+
+    const sheet = await screen.findByTestId('doodle-sheet');
+    expect(within(sheet).getAllByRole('listitem')).toHaveLength(98);
   });
 
   it('hides each drawing from screen readers and names it once, in the caption', () => {
