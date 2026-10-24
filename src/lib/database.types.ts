@@ -195,8 +195,9 @@ export type Database = {
           top_reason: Database['public']['Enums']['report_reason'] | null;
           updated_at: string;
           user_id: string;
+          add_copied_work_note: undefined | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'add_copied_work_note';
         Insert: {
           created_at?: string;
           deadline_at: string;
@@ -555,6 +556,56 @@ export type Database = {
           },
           {
             foreignKeyName: 'consents_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      copied_work_notes: {
+        Row: {
+          case_id: string;
+          created_at: string;
+          id: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          case_id: string;
+          created_at?: string;
+          id?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          case_id?: string;
+          created_at?: string;
+          id?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'copied_work_notes_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'copied_work_notes_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: true;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'copied_work_notes_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
@@ -1065,6 +1116,10 @@ export type Database = {
           case_id: string | null;
           closed_at: string | null;
           content_url: string;
+          copy_source_author: string | null;
+          copy_source_passage: string | null;
+          copy_source_reference: string | null;
+          copy_source_title: string | null;
           created_at: string;
           decided_at: string | null;
           decision_emailed_at: string | null;
@@ -1091,6 +1146,10 @@ export type Database = {
           case_id?: string | null;
           closed_at?: string | null;
           content_url: string;
+          copy_source_author?: string | null;
+          copy_source_passage?: string | null;
+          copy_source_reference?: string | null;
+          copy_source_title?: string | null;
           created_at?: string;
           decided_at?: string | null;
           decision_emailed_at?: string | null;
@@ -1115,6 +1174,10 @@ export type Database = {
           case_id?: string | null;
           closed_at?: string | null;
           content_url?: string;
+          copy_source_author?: string | null;
+          copy_source_passage?: string | null;
+          copy_source_reference?: string | null;
+          copy_source_title?: string | null;
           created_at?: string;
           decided_at?: string | null;
           decision_emailed_at?: string | null;
@@ -1145,6 +1208,75 @@ export type Database = {
           {
             foreignKeyName: 'public_notices_owner_user_id_fkey';
             columns: ['owner_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      report_detail_requests: {
+        Row: {
+          answer: string | null;
+          answered_at: string | null;
+          case_id: string;
+          created_at: string;
+          id: string;
+          question: string;
+          report_id: string;
+          requested_by_user_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          answer?: string | null;
+          answered_at?: string | null;
+          case_id: string;
+          created_at?: string;
+          id?: string;
+          question: string;
+          report_id: string;
+          requested_by_user_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          answer?: string | null;
+          answered_at?: string | null;
+          case_id?: string;
+          created_at?: string;
+          id?: string;
+          question?: string;
+          report_id?: string;
+          requested_by_user_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'report_detail_requests_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'report_detail_requests_report_id_fkey';
+            columns: ['report_id'];
+            isOneToOne: false;
+            referencedRelation: 'reports';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'report_detail_requests_requested_by_user_id_fkey';
+            columns: ['requested_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'report_detail_requests_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
@@ -1183,6 +1315,10 @@ export type Database = {
         Row: {
           case_id: string | null;
           closed_at: string | null;
+          copy_source_author: string | null;
+          copy_source_passage: string | null;
+          copy_source_reference: string | null;
+          copy_source_title: string | null;
           created_at: string;
           details: string | null;
           id: string;
@@ -1190,6 +1326,7 @@ export type Database = {
           item_type: Database['public']['Enums']['reportable_type'];
           reason: Database['public']['Enums']['report_reason'];
           reference: string;
+          reported_passage: string | null;
           reported_user_id: string;
           reporter_age_band: Database['public']['Enums']['age_band'];
           source: string;
@@ -1201,6 +1338,10 @@ export type Database = {
         Insert: {
           case_id?: string | null;
           closed_at?: string | null;
+          copy_source_author?: string | null;
+          copy_source_passage?: string | null;
+          copy_source_reference?: string | null;
+          copy_source_title?: string | null;
           created_at?: string;
           details?: string | null;
           id?: string;
@@ -1208,6 +1349,7 @@ export type Database = {
           item_type: Database['public']['Enums']['reportable_type'];
           reason: Database['public']['Enums']['report_reason'];
           reference: string;
+          reported_passage?: string | null;
           reported_user_id: string;
           reporter_age_band: Database['public']['Enums']['age_band'];
           source?: string;
@@ -1217,6 +1359,10 @@ export type Database = {
         Update: {
           case_id?: string | null;
           closed_at?: string | null;
+          copy_source_author?: string | null;
+          copy_source_passage?: string | null;
+          copy_source_reference?: string | null;
+          copy_source_title?: string | null;
           created_at?: string;
           details?: string | null;
           id?: string;
@@ -1224,6 +1370,7 @@ export type Database = {
           item_type?: Database['public']['Enums']['reportable_type'];
           reason?: Database['public']['Enums']['report_reason'];
           reference?: string;
+          reported_passage?: string | null;
           reported_user_id?: string;
           reporter_age_band?: Database['public']['Enums']['age_band'];
           source?: string;
@@ -1911,6 +2058,15 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      add_copied_work_note: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['cases']['Row'],
+            Database['public']['Tables']['cases']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       admin_account_sanctions: {
         Args: { target_user_id: string };
         Returns: {
@@ -1959,6 +2115,10 @@ export type Database = {
           alerted_at: string;
           authority_name: string;
           content_url: string;
+          copy_source_author: string;
+          copy_source_passage: string;
+          copy_source_reference: string;
+          copy_source_title: string;
           explanation: string;
           kind: string;
           language: string;
@@ -1974,10 +2134,18 @@ export type Database = {
       admin_case_reports: {
         Args: { target_case_id: string };
         Returns: {
+          copy_source_author: string;
+          copy_source_passage: string;
+          copy_source_reference: string;
+          copy_source_title: string;
           created_at: string;
+          detail_answer: string;
+          detail_asked_at: string;
+          detail_question: string;
           details: string;
           reason: Database['public']['Enums']['report_reason'];
           reference: string;
+          reported_passage: string;
           reporter_age_band: Database['public']['Enums']['age_band'];
           reporter_handle: string;
         }[];
@@ -2124,6 +2292,10 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_request_report_details: {
+        Args: { question: string; report_reference: string };
+        Returns: undefined;
+      };
       admin_restore_item: {
         Args: { reason_given: string; target_item_id: string };
         Returns: boolean;
@@ -2191,6 +2363,10 @@ export type Database = {
           on_date: string;
         };
         Returns: Database['public']['Enums']['age_band'];
+      };
+      answer_report_detail_request: {
+        Args: { answer_text: string; target_request_id: string };
+        Returns: undefined;
       };
       attach_notice_to_case: {
         Args: {
@@ -2463,6 +2639,16 @@ export type Database = {
         };
       };
       my_live_story_id: { Args: { story_slug: string }; Returns: string };
+      my_report_detail_requests: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          asked_at: string;
+          question: string;
+          reason: Database['public']['Enums']['report_reason'];
+          report_reference: string;
+          request_id: string;
+        }[];
+      };
       my_sanctions: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2601,6 +2787,7 @@ export type Database = {
       };
       report_item: {
         Args: {
+          copy_details?: Json;
           details?: string;
           item_reference: string;
           item_type: Database['public']['Enums']['reportable_type'];
@@ -2672,6 +2859,7 @@ export type Database = {
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
+      story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_slug_for: { Args: { title: string }; Returns: string };
@@ -2727,7 +2915,8 @@ export type Database = {
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
       moderated_state: 'hidden' | 'removed';
-      moderation_action: 'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban';
+      moderation_action:
+        'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban' | 'public_note';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -2928,7 +3117,16 @@ export const Constants = {
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
       moderated_state: ['hidden', 'removed'],
-      moderation_action: ['no_action', 'hide', 'remove', 'restrict', 'warn', 'suspend', 'ban'],
+      moderation_action: [
+        'no_action',
+        'hide',
+        'remove',
+        'restrict',
+        'warn',
+        'suspend',
+        'ban',
+        'public_note',
+      ],
       report_reason: [
         'illegal_content',
         'harassment',

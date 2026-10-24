@@ -49,6 +49,11 @@ create table public.public_notices (
   -- An order's issuing authority and its own reference.
   authority_name text,
   order_reference text,
+  -- "Copied from a published work" (S1-E10-08): the source, all optional; even a title helps.
+  copy_source_title text,
+  copy_source_author text,
+  copy_source_reference text,
+  copy_source_passage text,
   -- The language of the acknowledgement and the decision email.
   language text not null default 'ro',
   -- The reference the notifier quotes: N-000123 for a notice, TCO-0001 for an order.
@@ -80,12 +85,22 @@ create table public.public_notices (
     kind = 'notice' or (authority_name is not null and notifier_email is not null)),
   constraint public_notices_authority_length check (authority_name is null or char_length(authority_name) <= 200),
   constraint public_notices_order_reference_length check (order_reference is null or char_length(order_reference) <= 120),
+  -- The source fields belong to a copied-work notice only, each within its length (S1-E10-08).
+  constraint public_notices_copy_source_only_for_copies check (
+    reason = 'copied_published_work'
+    or (copy_source_title is null and copy_source_author is null
+        and copy_source_reference is null and copy_source_passage is null)),
+  constraint public_notices_copy_source_lengths check (
+    coalesce(char_length(copy_source_title), 0) <= 300
+    and coalesce(char_length(copy_source_author), 0) <= 200
+    and coalesce(char_length(copy_source_reference), 0) <= 2000
+    and coalesce(char_length(copy_source_passage), 0) <= 4000),
   constraint public_notices_item_fields_go_together check (
     (item_type is null) = (item_id is null) and (item_id is null) = (owner_user_id is null))
 );
 
 comment on table public.public_notices is
-  'kind: staff
+  'kind: platform
 Notices and authority removal orders sent through the public form /report, by anyone (S1-E10-02; DSA art. 16; Regulation (EU) 2021/784 art. 15). Kept 3 years after closing.';
 comment on column public.public_notices.owner_user_id is 'The account whose item the address points to; never shown publicly (rule 15).';
 comment on column public.public_notices.notifier_email is 'Personal data: only moderation staff read it; never logged (rule 12).';
@@ -112,7 +127,7 @@ create table public.on_call_alerts (
 );
 
 comment on table public.on_call_alerts is
-  'kind: staff
+  'kind: platform
 The on-call alert for an authority removal order, logged (S1-E10-02); the phone alert comes with S1-E10-09. No personal data.';
 
 create index on_call_alerts_created_at_idx on public.on_call_alerts (created_at desc);
@@ -372,6 +387,7 @@ begin
   -- Step 3: the row; the table's constraints refuse a notice missing what DSA art. 16 asks for.
   insert into public.public_notices (kind, reason, content_url, item_type, item_id, owner_user_id,
     explanation, notifier_name, notifier_email, good_faith_confirmed, authority_name, order_reference,
+    copy_source_title, copy_source_author, copy_source_reference, copy_source_passage,
     language, reference)
   values (
     notice_kind,
@@ -384,6 +400,10 @@ begin
     coalesce((fields ->> 'goodFaith')::boolean, false),
     nullif(btrim(fields ->> 'authorityName'), ''),
     nullif(btrim(fields ->> 'orderReference'), ''),
+    nullif(btrim(fields -> 'copySource' ->> 'title'), ''),
+    nullif(btrim(fields -> 'copySource' ->> 'author'), ''),
+    nullif(btrim(fields -> 'copySource' ->> 'reference'), ''),
+    nullif(btrim(fields -> 'copySource' ->> 'passage'), ''),
     coalesce(fields ->> 'language', 'ro'),
     public.next_notice_reference(notice_kind))
   returning * into new_notice;
@@ -454,6 +474,10 @@ returns table (
   notifier_email text,
   authority_name text,
   order_reference text,
+  copy_source_title text,
+  copy_source_author text,
+  copy_source_reference text,
+  copy_source_passage text,
   language text,
   received_at timestamptz,
   alerted_at timestamptz
@@ -473,6 +497,8 @@ begin
     select public_notices.id, public_notices.reference, public_notices.kind, public_notices.reason,
            public_notices.content_url, public_notices.explanation, public_notices.notifier_name,
            public_notices.notifier_email, public_notices.authority_name, public_notices.order_reference,
+           public_notices.copy_source_title, public_notices.copy_source_author,
+           public_notices.copy_source_reference, public_notices.copy_source_passage,
            public_notices.language, public_notices.received_at,
            (select min(on_call_alerts.created_at) from public.on_call_alerts where on_call_alerts.notice_id = public_notices.id)
     from public.public_notices
