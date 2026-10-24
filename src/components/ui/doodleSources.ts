@@ -10,6 +10,7 @@ import booksAndPlant from '@/assets/doodles/books-and-plant.svg';
 import croissant from '@/assets/doodles/croissant.svg';
 import deskLamp from '@/assets/doodles/desk-lamp.svg';
 import fountainPen from '@/assets/doodles/fountain-pen.svg';
+import heartBalloon from '@/assets/doodles/heart-balloon.svg';
 import ideasNotepad from '@/assets/doodles/ideas-notepad.svg';
 import mug from '@/assets/doodles/mug.svg';
 import mushroom from '@/assets/doodles/mushroom.svg';
@@ -32,6 +33,7 @@ export const doodleSources = {
   croissant,
   'desk-lamp': deskLamp,
   'fountain-pen': fountainPen,
+  'heart-balloon': heartBalloon,
   'ideas-notepad': ideasNotepad,
   mug,
   mushroom,
