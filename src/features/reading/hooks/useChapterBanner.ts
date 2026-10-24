@@ -3,7 +3,7 @@
  * criterion "the banner slot sits only below the chapter text, never inside it").
  *
  * Today it always answers null: banners are chosen by pick_banner(context) in S1-E12-01 (after
- * March), so staging, production and the investor demo show no banner and no placeholder.
+ * March), so staging, production and the demo show no banner and no placeholder.
  * S1-E12-01 replaces the body of this hook with a call to pick_banner(); the slot and its place
  * on the page are already fixed by ChapterBannerSlot (docs/mocks.md).
  * Who calls it: ChapterReaderPage.
