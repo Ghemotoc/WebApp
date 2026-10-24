@@ -9,7 +9,7 @@
  * Board (Reader): a plain text button "Report" beside Like, Comments and Share; no doodle.
  * Accessible name: "Report @inkwolf" (the item named), so a screen reader knows which Report.
  */
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
@@ -53,9 +53,13 @@ export function ReportButton({ itemType, itemReference, itemLabel }: ReportButto
   // automatically (S1-E10-08). Read on the press, before the dialog takes focus.
   const [selectedPassage, setSelectedPassage] = useState<string | null>(null);
 
+  // A mouse press can clear the selection before the click lands, so it is read on pointer down too.
+  const passageAtPointerDown = useRef<string | null>(null);
+
   /** Opens the dialog with whatever text is selected on the page. */
   function open() {
-    setSelectedPassage(readSelectedPassage());
+    setSelectedPassage(readSelectedPassage() ?? passageAtPointerDown.current);
+    passageAtPointerDown.current = null;
     setIsOpen(true);
   }
 
@@ -65,6 +69,9 @@ export function ReportButton({ itemType, itemReference, itemLabel }: ReportButto
         variant="text"
         aria-haspopup="dialog"
         aria-label={tReporting('button.label', { item: itemLabel })}
+        onPointerDown={() => {
+          passageAtPointerDown.current = readSelectedPassage();
+        }}
         onClick={open}
       >
         {t('actions.report')}

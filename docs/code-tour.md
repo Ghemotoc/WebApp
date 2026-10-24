@@ -407,6 +407,28 @@ admin_close_unmatched_notice). Deciding a case marks its notices decided for the
 
 Set-up by hand: `docs/runbooks/notice-form.md`.
 
+## Copied-work reports (S1-E10-08)
+
+```
+story page: the reader selects a passage, presses Report      src/features/reporting/
+  │  ReportButton reads the selection (on pointer down too, a mouse press can clear it)
+  │  ReportDialog → "Copied from a published work" → CopySourceFields: the selected passage
+  │  and the published work's title, author, ISBN or link and matching passage, all optional
+  │  api/reports.ts → rpc report_item(…, copy_details)            (the public form: /report sends
+  │                                                                copySource, S1-E10-02)
+  ▼
+reports.copy_source_* and reported_passage (…_s1_e10_08_copied_work.sql)
+  ▼
+case page: CaseReports → CopiedWorkComparison (the source, the two passages side by side)
+  │  AskForDetails → admin_request_report_details() → report_detail_requests
+  │     the reporter: Settings → ReportQuestionsSection → my_report_detail_requests(),
+  │     answer_report_detail_request()
+  │  DecisionForm "Add a public note" (stories and chapters only) → admin_decide_case()
+  │     → add_copied_work_note() → copied_work_notes
+  ▼
+story page: CopiedWorkNote ← story_has_copied_work_note()     src/features/reading/
+```
+
 ## The helplines for the reader's country (S1-E10-13a)
 
 ```
