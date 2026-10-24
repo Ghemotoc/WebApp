@@ -3,14 +3,14 @@
 -- Made by `npm run demo:build` from content/demo-stories/*.md and content/classics/texts/*.md;
 -- edit those files, not this one. What it adds: the five synthetic writers and the classics
 -- account (the one agreed exception to "top-ups never create accounts"), 36 synthetic
--- stories with 106 published chapters, and 12 public-domain classics.
+-- stories with 106 published chapters, and 16 public-domain classics.
 -- Synthetic text only, never real people's work or names. Robert reads every title and blurb
 -- plus these whole stories: demo-07 "Fântâna care trebuia să râdă"; demo-10 "Ultimul schimb de pe Stația Horia"; demo-19 "Tura de noapte"; demo-28 "The Quarry Lake in Winter"; demo-35 "Ghinda de la Trei Pruni".
 -- Rules (supabase/staging-topups/README.md): safe to run twice (every row has a fixed id and is
 -- skipped when it exists; tags are replaced with the same); never production (step 1 refuses a
 -- database without the 16 seed personas). Merge after S1-E3-03 and S1-E3-06.
 -- How to check it worked: the last query should show demo_stories 36, demo_chapters
--- 106, classic_chapters 23, classics 12, demo_writers 6.
+-- 106, classic_chapters 27, classics 16, demo_writers 6.
 begin;
 
 -- 1. Never production: the 16 seed personas exist only on local and staging databases.
@@ -16260,6 +16260,2070 @@ Totuși este trist în lume!
 (1873, 1 aprilie)$demo$), now() - interval '81 days'
 where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000700010000'::uuid);
 
+-- classic-09-lacul: "Lacul" by clasice
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
+  first_published_at, last_chapter_published_at, created_at)
+select '00000000-0000-4000-9300-000900000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'lacul-classic',
+  $demo$Lacul$demo$, $demo$Un lac albastru, nuferi galbeni și o barcă în care cineva așteaptă o iubită care nu mai vine.
+
+Ediția sursă: 1884. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=115784, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
+  (select id from public.categories where slug = 'poetry'),
+  'drawn', 'waves', 'sky', 'ink', 'all_ages', 'no_ai',
+  now() - interval '64 days', now() - interval '64 days', now() - interval '66 days'
+where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000900000000'::uuid);
+select public.set_story_tags('00000000-0000-4000-9300-000900000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
+select '00000000-0000-4000-9300-000900010000'::uuid, '00000000-0000-4000-9300-000900000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
+  'k009c001', 1, $demo$Lacul$demo$, public.check_chapter_text($demo$Lacul codrilor albastru  
+Nuferi galbeni îl încarcă;  
+Tresărind în cercuri albe  
+El cutremură o barcă.
+
+Și eu trec de-a lung de maluri,  
+Parc-ascult și parc-aștept  
+*Ea* din trestii să răsară  
+Și să-mi cadă lin pe piept;
+
+Să sărim în luntrea mică,  
+Îngânați de glas de ape,  
+Și să scap din mână cârma,  
+Și lopețile să-mi scape;
+
+Să plutim cuprinși de farmec  
+Sub lumina blândei lune -  
+Vântu-n trestii lin foșnească,  
+Undoioasa apă sune!
+
+Dar nu vine... Singuratic  
+În zadar suspin și sufăr  
+Lângă lacul cel albastru  
+Încărcat cu flori de nufăr.$demo$), 1,
+  now() - interval '64 days', $demo$Lacul$demo$, public.check_chapter_text($demo$Lacul codrilor albastru  
+Nuferi galbeni îl încarcă;  
+Tresărind în cercuri albe  
+El cutremură o barcă.
+
+Și eu trec de-a lung de maluri,  
+Parc-ascult și parc-aștept  
+*Ea* din trestii să răsară  
+Și să-mi cadă lin pe piept;
+
+Să sărim în luntrea mică,  
+Îngânați de glas de ape,  
+Și să scap din mână cârma,  
+Și lopețile să-mi scape;
+
+Să plutim cuprinși de farmec  
+Sub lumina blândei lune -  
+Vântu-n trestii lin foșnească,  
+Undoioasa apă sune!
+
+Dar nu vine... Singuratic  
+În zadar suspin și sufăr  
+Lângă lacul cel albastru  
+Încărcat cu flori de nufăr.$demo$), 'published',
+  now() - interval '64 days', now() - interval '64 days', public.count_words($demo$Lacul codrilor albastru  
+Nuferi galbeni îl încarcă;  
+Tresărind în cercuri albe  
+El cutremură o barcă.
+
+Și eu trec de-a lung de maluri,  
+Parc-ascult și parc-aștept  
+*Ea* din trestii să răsară  
+Și să-mi cadă lin pe piept;
+
+Să sărim în luntrea mică,  
+Îngânați de glas de ape,  
+Și să scap din mână cârma,  
+Și lopețile să-mi scape;
+
+Să plutim cuprinși de farmec  
+Sub lumina blândei lune -  
+Vântu-n trestii lin foșnească,  
+Undoioasa apă sune!
+
+Dar nu vine... Singuratic  
+În zadar suspin și sufăr  
+Lângă lacul cel albastru  
+Încărcat cu flori de nufăr.$demo$),
+  public.count_words($demo$Lacul codrilor albastru  
+Nuferi galbeni îl încarcă;  
+Tresărind în cercuri albe  
+El cutremură o barcă.
+
+Și eu trec de-a lung de maluri,  
+Parc-ascult și parc-aștept  
+*Ea* din trestii să răsară  
+Și să-mi cadă lin pe piept;
+
+Să sărim în luntrea mică,  
+Îngânați de glas de ape,  
+Și să scap din mână cârma,  
+Și lopețile să-mi scape;
+
+Să plutim cuprinși de farmec  
+Sub lumina blândei lune -  
+Vântu-n trestii lin foșnească,  
+Undoioasa apă sune!
+
+Dar nu vine... Singuratic  
+În zadar suspin și sufăr  
+Lângă lacul cel albastru  
+Încărcat cu flori de nufăr.$demo$), now() - interval '65 days'
+where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000900010000'::uuid);
+
+-- classic-10-d-l-goe: "D-l Goe..." by clasice
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
+  first_published_at, last_chapter_published_at, created_at)
+select '00000000-0000-4000-9300-001000000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'd-l-goe-classic',
+  $demo$D-l Goe...$demo$, $demo$Trei doamne și un băiat răsfățat iau trenul spre București. Ce poate să iasă din asta? Schița despre cel mai cunoscut copil obraznic din literatura română.
+
+Ediția sursă: 1900. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=115671, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
+  (select id from public.categories where slug = 'fiction'),
+  'automatic', null, null, null, 'all_ages', 'no_ai',
+  now() - interval '11 days', now() - interval '11 days', now() - interval '13 days'
+where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001000000000'::uuid);
+select public.set_story_tags('00000000-0000-4000-9300-001000000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'schiță', 'caragiale']);
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
+select '00000000-0000-4000-9300-001000010000'::uuid, '00000000-0000-4000-9300-001000000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
+  'k010c001', 1, $demo$D-l Goe...$demo$, public.check_chapter_text($demo$Ca să nu mai rămâie repetent și anul acesta, mam' mare, mamițica și tanti Mița au promis tânărului Goe să-l ducă-n București de 10 mai.
+
+Puțin ne importă dacă aceste trei dame se hotărăsc a părăsi locul lor spre a veni în Capitală numai de hatârul fiului și nepoțelului lor. Destul că foarte de dimineață, dumnealor, frumos gătite, împreună cu tânărul Goe, așteaptă cu multă nerăbdare, pe peronul din urbea X, trenul accelerat care trebuie să le ducă la București. Adevărul e că, dacă se hotărăște cineva să asiste la o sărbătoare națională așa de importantă, trebuie s-o ia de dimineața. Trenul în care se vor sui ajunge în Gara de Nord la opt fără zece a.m. D. Goe este foarte impacient și, cu un ton de comandă, zice încruntat:
+
+– Mam' mare! de ce nu mai vine?... Eu vreau să vie!
+
+– Vine, vine acuma, puișorul mamii! răspunde cucoana.
+
+Și sărută pe nepoțel; apoi îi potrivește pălăria.
+
+Tânărul Goe poartă un frumos costum de marinar, pălărie de paie, cu inscripția pe pamblică: *le Formidable,* și sub pamblică biletul de călătorie înfipt de tanti Mița, că "așa țin bărbații biletul".
+
+– Vezi ce bine-i șade lui - zice mam' mare - cu costumul de marinel?
+
+– Mamițo, nu ți-am spus că nu se zice marinel?
+
+– Da' cum?
+
+– Marinal...
+
+– Ei! ziceți voi cum știți; eu zic cum am apucat. Așa se zicea pe vremea mea, când a ieșit întâi moda asta la copii - marinel.
+
+– Vezi, că sunteți proaste amândouă? întrerupe tânărul Goe. Nu se zice nici marinal, nici marinel.
+
+– Da' cum, procopsitule? întreabă tanti Mița cu un zâmbet simpatic.
+
+– Mariner...
+
+– Apoi de! n-a învățat toata lumea carte ca d-ta! zice mam' mare, și iar sărută pe nepoțel și iar îi potrivește pălăria de mariner.
+
+Dar nu e vreme de discuții filologice: sosește trenul - și nu stă mult.
+
+Trenul este plin... Dar cu multă bunăvoință din partea unor tineri politicoși, cari merg până la o stație apropiată, se fac locuri pentru dame. Trenul a plecat... Mam' mare își face cruce, apoi aprinde o țigară... Goe nu vrea să intre în cupeu; vrea să șadă în coridorul vagonului cu bărbații.
+
+– Nu!... nu e voie să scoți capul pe fereastră, mititelule! zice unul dintre tineri lui d-l Goe, și-l trage puțin înapoi.
+
+– Ce treabă ai tu, urâtule? zice mititelul smucindu-se.
+
+Și după ce se strâmbă la urâtul, se spânzură iar cu amândouă mânile de vergeaua de alamă și scoate iar capul. Dar n-apucă să răspunză ceva urâtul, și mititelul își retrage îngrozit capul gol înăuntru și-ncepe să zbiere.
+
+– Mamițoo! mam' maree! tantii!
+
+– Ce e? Ce e? sar cocoanele.
+
+– Să oprească! zbiară și mai tare Goe, bătând din picioare. Mi-a zburat pălăria! să opreascăăă!!!
+
+Tot într-un timp, iacătă conductorul intră să vază cine s-a suit de la stația din urmă.
+
+– Biletele, domnilor!
+
+Cocoanele arată biletele dumnealor, explicând d-lui conductor de ce nu poate și Goe să facă același lucru: fiindcă biletul era în pamblica pălăriei, și, dacă a zburat pălăria, firește c-a zburat cu pamblică și cu bilet cu tot. Dar avea bilet...
+
+– Parol! chiar eu l-am cumpărat! zice tanti Mița.
+
+Conductorul însă nu înțelege, pretinde bilet; daca nu, la stația apropiată, trebuie să-l dea jos pe d-l Goe. Așa scrie regulamentul: daca un pasager n-are bilet și nu declară ca n-are bilet, i se ia o amendă de 7 lei și 50 de bani, și-l dă jos din tren la orice stație.
+
+– Dar noi n-am declaratără? strigă mamița.
+
+– Ce e vinovat băiatul, dacă i-a zburat pălăria? zice mam' mare.
+
+– De ce-a scos capul pe fereastră? eu i-am spus să nu scoată capul pe fereastră! zice cu pică urâtul.
+
+– Nu-i treaba dumitale! ce te-amesteci d-ta? zice tanti Mița urâtului...
+
+– Uite ce e, cucoană, zice conductorul, trebuie să plătiți un bilet...
+
+– Să mai plătim? n-am plătitără o dată?
+
+– Și pe d'asupra un leu și 25 de bani.
+
+– Și pe d'asupra?...
+
+– Vezi, daca nu te-astâmperi? zice mamița, și-l zguduie pe Goe de mână.
+
+– Ce faci, soro? ești nebună? nu știi ce simțitor e? zice mam' mare.
+
+Și, apucându-l de mâna cealaltă, îl smucește de la mamița lui, tocmai când trenul, clănțănind din roate, trece la un macaz. Din smucitura lu' mam' mare într-un sens, combinată cu clătinătura vagonului în alt sens, rezultă că Goe își pierde un moment centrul de gravitate și se reazimă în nas de clanța ușii de la cupeu. Goe începe să urle... în sfârșit, n-au ce să facă. Trebuie să se hotărască a plăti biletul, pe care are să-l taie conductorul din carnetul lui. Păcat însă de pălărie!... Ce-o să facă d. Goe la București cu capul gol? și toate prăvăliile închise!... s-ar întreba oricine, care nu știe câtă grije are mam' mare și câtă prevedere. Cum era să plece băiatul numai cu pălăria de paie? Daca se întâmplă să plouă, ori răcoare? Și mam' mare scoate din săculețul ei un beret tot din uniforma canonierii *le Formidable.*
+
+– Te mai doare nasul, puișorule? întreabă mam' mare.
+
+– Nu... răspunde Goe.
+
+– Să moară mam' mare?
+
+– Să moară!
+
+– Ad', să-l pupe mam' mare, că trece!
+
+Și-l pupă în vârful nasului; apoi, așezându-i frumos beretul:
+
+– Parcă-i șade mai bine cu beretul!... zice mam' mare scuipându-l să nu-l deoache, apoi îl sărută dulce.
+
+– Cu ce nu-i șade lui bine? adaogă tanti Mița, și-l scuipă și dumneaei și-l sărută.
+
+– Lasă-l încolo! că prea e nu știu cum!... Auzi d-ta! pălărie nouă și biletul! zice mamița, prefăcându-se foarte supărată.
+
+– Să fie el sănătos, să poarte mai bună! zice mam' mare.
+
+Dar mamița adaogă:
+
+– Da' pe mamițica n-o pupi?
+
+– Pe tine nu vreau! zice Goe cu humor.
+
+– Așa? zice mamița. Lasă!... și-și acopere ochii cu mâinile și se face că plânge.
+
+– Las' că știu eu că te prefaci! zice Goe.
+
+– Ți-ai găsit pe cine să-nșeli! zice mam' mare.
+
+Mamița începe să râză; scoate din săculeț ceva și zice:
+
+– Cine mă pupă... uite!... ciucalată!
+
+Mamița pupă pe Goe, Goe pe mamița și, luând bucata de ciucalată, iese iar în coridor.
+
+– Puișorule, nu mai scoate capul pe fereastră!... E lucru mare, cât e de deștept! zice mam' mare.
+
+– E ceva de speriat, parol! adaogă tanti Mița.
+
+Pe când Goe își mănâncă afară ciucalata, cocoanele se dau în vorbă de una, de alta... Trenul aleargă acuma de spre Crivina către Periș.
+
+– Ia mai vezi ce face băiatul afară, mamițo! zice mamița către mam' mare.
+
+Mam' mare se ridică bătrânește și se duce în coridor:
+
+– Goe! puișorule! Goe! Goe!
+
+Goe nicăieri.
+
+– Vai de mine! țipă cucoana! Nu-i băiatul! Unde e băiatul!... s-a prăpădit băiatul!
+
+Și toate cucoanele sar...
+
+– A căzut din tren băiatul! Țațo, mor!
+
+Dar deodată, cu tot zgomotul trenului, se aud bubuituri în ușa compartimentului unde nu intră decât o persoană.
+
+– Goe! maică! acolo ești?
+
+– Da.
+
+– Aide! zice mam' mare, ieși odată! ne-ai speriat.
+
+– Nu pot! zbiară Goe dinăuntru.
+
+– De ce?... te doare la inimă?
+
+– Nu! nu pot...
+
+– E încuiat! zice mam' mare, vrând să deschidă pe dinafară.
+
+– Nu pot deschide! zbiară Goe desperat.
+
+– Vai de mine! îi vine rău băiatului înăuntru!
+
+În sfârșit, iacătă conductorul cu biletul: primește paralele și liberează pe captiv, pe care toate trei cocoanele îl sărută dulce, ca și cum l-ar revedea după o îndelungată absență. Și mam' mare se hotărăște să stea în coridor, pe un geamantan străin, să păzească pe Goe, să nu se mai întâmple ceva puișorului. Puișorul vede o linie de metal în colțul coridorului, care are la capătul de sus o mașină cu mâner. Se suie-n picioare pe geamantan, pune mâna pe mânerul mașinii și începe să-l tragă.
+
+– Șezi binișor, puișorule! să nu strici ceva! zice mam' mare...
+
+Trenul își urmează drumul de la Periș cătră Buftea cu mare viteză. Dar pe la mijlocul kilometrului 24, deodată s-aude un șuier, apoi semnalul de alarmă, trei fluiere scurte, și trenul se oprește pe loc, producând o zguduitură puternică.
+
+–Ce e? ce e?... Toți pasagerii sar înspăimântați la ferestre, la uși, pe scări...
+
+– Goe! puișorule! Goe! strigă tanti Mița și se repede afară din compartiment.
+
+Goe este în coridor... De ce s-a oprit trenul?
+
+Cineva, nu se știe din ce vagon, a tras semnalul de alarmă. Din ce vagon?... Asta e ușor de constatat; manivela semnalului nu se poate trage decât rupându-se ața înnodată și cu nodul plumbuit. Personalul trenului umblă forfota, examinând roatele tamponate cu toată presiunea, așa de tamponate că-i trebuie vreo zece minute mecanicului să-și încarce iar pompa de aer comprimat și să poată urni trenul din loc. În toată vremea asta, conductorii și șeful trenului aleargă din vagon în vagon și cercetează aparatele semnalelor de alarmă.
+
+Cine poate ghici în ce vagon era ruptă ața plumbuită și răsturnată manivela? Ciudat! tocmai în vagonul de unde zburase mai adineauri pălăria marinerului! Cine? cine a tras manivela? Mam' mare doarme în fundul cupeului cu puișorul în brațe. Nu se poate ști cine a tras manivela.
+
+Trenul se pornește în sfârșit, și ajunge în București cu o întârziere de câteva minute. Toată lumea coboară. Mam' mare așază frumușel beretul lui Goe, îl scuipă pe puișor să nu-l deoache, îl întreabă dacă-l mai doare nasul și-l sărută dulce.
+
+Apoi cocoanele se suie cu puișorul în trăsură și pornesc în oraș:
+
+– La bulivar, birjar! la bulivar!...$demo$), 1,
+  now() - interval '11 days', $demo$D-l Goe...$demo$, public.check_chapter_text($demo$Ca să nu mai rămâie repetent și anul acesta, mam' mare, mamițica și tanti Mița au promis tânărului Goe să-l ducă-n București de 10 mai.
+
+Puțin ne importă dacă aceste trei dame se hotărăsc a părăsi locul lor spre a veni în Capitală numai de hatârul fiului și nepoțelului lor. Destul că foarte de dimineață, dumnealor, frumos gătite, împreună cu tânărul Goe, așteaptă cu multă nerăbdare, pe peronul din urbea X, trenul accelerat care trebuie să le ducă la București. Adevărul e că, dacă se hotărăște cineva să asiste la o sărbătoare națională așa de importantă, trebuie s-o ia de dimineața. Trenul în care se vor sui ajunge în Gara de Nord la opt fără zece a.m. D. Goe este foarte impacient și, cu un ton de comandă, zice încruntat:
+
+– Mam' mare! de ce nu mai vine?... Eu vreau să vie!
+
+– Vine, vine acuma, puișorul mamii! răspunde cucoana.
+
+Și sărută pe nepoțel; apoi îi potrivește pălăria.
+
+Tânărul Goe poartă un frumos costum de marinar, pălărie de paie, cu inscripția pe pamblică: *le Formidable,* și sub pamblică biletul de călătorie înfipt de tanti Mița, că "așa țin bărbații biletul".
+
+– Vezi ce bine-i șade lui - zice mam' mare - cu costumul de marinel?
+
+– Mamițo, nu ți-am spus că nu se zice marinel?
+
+– Da' cum?
+
+– Marinal...
+
+– Ei! ziceți voi cum știți; eu zic cum am apucat. Așa se zicea pe vremea mea, când a ieșit întâi moda asta la copii - marinel.
+
+– Vezi, că sunteți proaste amândouă? întrerupe tânărul Goe. Nu se zice nici marinal, nici marinel.
+
+– Da' cum, procopsitule? întreabă tanti Mița cu un zâmbet simpatic.
+
+– Mariner...
+
+– Apoi de! n-a învățat toata lumea carte ca d-ta! zice mam' mare, și iar sărută pe nepoțel și iar îi potrivește pălăria de mariner.
+
+Dar nu e vreme de discuții filologice: sosește trenul - și nu stă mult.
+
+Trenul este plin... Dar cu multă bunăvoință din partea unor tineri politicoși, cari merg până la o stație apropiată, se fac locuri pentru dame. Trenul a plecat... Mam' mare își face cruce, apoi aprinde o țigară... Goe nu vrea să intre în cupeu; vrea să șadă în coridorul vagonului cu bărbații.
+
+– Nu!... nu e voie să scoți capul pe fereastră, mititelule! zice unul dintre tineri lui d-l Goe, și-l trage puțin înapoi.
+
+– Ce treabă ai tu, urâtule? zice mititelul smucindu-se.
+
+Și după ce se strâmbă la urâtul, se spânzură iar cu amândouă mânile de vergeaua de alamă și scoate iar capul. Dar n-apucă să răspunză ceva urâtul, și mititelul își retrage îngrozit capul gol înăuntru și-ncepe să zbiere.
+
+– Mamițoo! mam' maree! tantii!
+
+– Ce e? Ce e? sar cocoanele.
+
+– Să oprească! zbiară și mai tare Goe, bătând din picioare. Mi-a zburat pălăria! să opreascăăă!!!
+
+Tot într-un timp, iacătă conductorul intră să vază cine s-a suit de la stația din urmă.
+
+– Biletele, domnilor!
+
+Cocoanele arată biletele dumnealor, explicând d-lui conductor de ce nu poate și Goe să facă același lucru: fiindcă biletul era în pamblica pălăriei, și, dacă a zburat pălăria, firește c-a zburat cu pamblică și cu bilet cu tot. Dar avea bilet...
+
+– Parol! chiar eu l-am cumpărat! zice tanti Mița.
+
+Conductorul însă nu înțelege, pretinde bilet; daca nu, la stația apropiată, trebuie să-l dea jos pe d-l Goe. Așa scrie regulamentul: daca un pasager n-are bilet și nu declară ca n-are bilet, i se ia o amendă de 7 lei și 50 de bani, și-l dă jos din tren la orice stație.
+
+– Dar noi n-am declaratără? strigă mamița.
+
+– Ce e vinovat băiatul, dacă i-a zburat pălăria? zice mam' mare.
+
+– De ce-a scos capul pe fereastră? eu i-am spus să nu scoată capul pe fereastră! zice cu pică urâtul.
+
+– Nu-i treaba dumitale! ce te-amesteci d-ta? zice tanti Mița urâtului...
+
+– Uite ce e, cucoană, zice conductorul, trebuie să plătiți un bilet...
+
+– Să mai plătim? n-am plătitără o dată?
+
+– Și pe d'asupra un leu și 25 de bani.
+
+– Și pe d'asupra?...
+
+– Vezi, daca nu te-astâmperi? zice mamița, și-l zguduie pe Goe de mână.
+
+– Ce faci, soro? ești nebună? nu știi ce simțitor e? zice mam' mare.
+
+Și, apucându-l de mâna cealaltă, îl smucește de la mamița lui, tocmai când trenul, clănțănind din roate, trece la un macaz. Din smucitura lu' mam' mare într-un sens, combinată cu clătinătura vagonului în alt sens, rezultă că Goe își pierde un moment centrul de gravitate și se reazimă în nas de clanța ușii de la cupeu. Goe începe să urle... în sfârșit, n-au ce să facă. Trebuie să se hotărască a plăti biletul, pe care are să-l taie conductorul din carnetul lui. Păcat însă de pălărie!... Ce-o să facă d. Goe la București cu capul gol? și toate prăvăliile închise!... s-ar întreba oricine, care nu știe câtă grije are mam' mare și câtă prevedere. Cum era să plece băiatul numai cu pălăria de paie? Daca se întâmplă să plouă, ori răcoare? Și mam' mare scoate din săculețul ei un beret tot din uniforma canonierii *le Formidable.*
+
+– Te mai doare nasul, puișorule? întreabă mam' mare.
+
+– Nu... răspunde Goe.
+
+– Să moară mam' mare?
+
+– Să moară!
+
+– Ad', să-l pupe mam' mare, că trece!
+
+Și-l pupă în vârful nasului; apoi, așezându-i frumos beretul:
+
+– Parcă-i șade mai bine cu beretul!... zice mam' mare scuipându-l să nu-l deoache, apoi îl sărută dulce.
+
+– Cu ce nu-i șade lui bine? adaogă tanti Mița, și-l scuipă și dumneaei și-l sărută.
+
+– Lasă-l încolo! că prea e nu știu cum!... Auzi d-ta! pălărie nouă și biletul! zice mamița, prefăcându-se foarte supărată.
+
+– Să fie el sănătos, să poarte mai bună! zice mam' mare.
+
+Dar mamița adaogă:
+
+– Da' pe mamițica n-o pupi?
+
+– Pe tine nu vreau! zice Goe cu humor.
+
+– Așa? zice mamița. Lasă!... și-și acopere ochii cu mâinile și se face că plânge.
+
+– Las' că știu eu că te prefaci! zice Goe.
+
+– Ți-ai găsit pe cine să-nșeli! zice mam' mare.
+
+Mamița începe să râză; scoate din săculeț ceva și zice:
+
+– Cine mă pupă... uite!... ciucalată!
+
+Mamița pupă pe Goe, Goe pe mamița și, luând bucata de ciucalată, iese iar în coridor.
+
+– Puișorule, nu mai scoate capul pe fereastră!... E lucru mare, cât e de deștept! zice mam' mare.
+
+– E ceva de speriat, parol! adaogă tanti Mița.
+
+Pe când Goe își mănâncă afară ciucalata, cocoanele se dau în vorbă de una, de alta... Trenul aleargă acuma de spre Crivina către Periș.
+
+– Ia mai vezi ce face băiatul afară, mamițo! zice mamița către mam' mare.
+
+Mam' mare se ridică bătrânește și se duce în coridor:
+
+– Goe! puișorule! Goe! Goe!
+
+Goe nicăieri.
+
+– Vai de mine! țipă cucoana! Nu-i băiatul! Unde e băiatul!... s-a prăpădit băiatul!
+
+Și toate cucoanele sar...
+
+– A căzut din tren băiatul! Țațo, mor!
+
+Dar deodată, cu tot zgomotul trenului, se aud bubuituri în ușa compartimentului unde nu intră decât o persoană.
+
+– Goe! maică! acolo ești?
+
+– Da.
+
+– Aide! zice mam' mare, ieși odată! ne-ai speriat.
+
+– Nu pot! zbiară Goe dinăuntru.
+
+– De ce?... te doare la inimă?
+
+– Nu! nu pot...
+
+– E încuiat! zice mam' mare, vrând să deschidă pe dinafară.
+
+– Nu pot deschide! zbiară Goe desperat.
+
+– Vai de mine! îi vine rău băiatului înăuntru!
+
+În sfârșit, iacătă conductorul cu biletul: primește paralele și liberează pe captiv, pe care toate trei cocoanele îl sărută dulce, ca și cum l-ar revedea după o îndelungată absență. Și mam' mare se hotărăște să stea în coridor, pe un geamantan străin, să păzească pe Goe, să nu se mai întâmple ceva puișorului. Puișorul vede o linie de metal în colțul coridorului, care are la capătul de sus o mașină cu mâner. Se suie-n picioare pe geamantan, pune mâna pe mânerul mașinii și începe să-l tragă.
+
+– Șezi binișor, puișorule! să nu strici ceva! zice mam' mare...
+
+Trenul își urmează drumul de la Periș cătră Buftea cu mare viteză. Dar pe la mijlocul kilometrului 24, deodată s-aude un șuier, apoi semnalul de alarmă, trei fluiere scurte, și trenul se oprește pe loc, producând o zguduitură puternică.
+
+–Ce e? ce e?... Toți pasagerii sar înspăimântați la ferestre, la uși, pe scări...
+
+– Goe! puișorule! Goe! strigă tanti Mița și se repede afară din compartiment.
+
+Goe este în coridor... De ce s-a oprit trenul?
+
+Cineva, nu se știe din ce vagon, a tras semnalul de alarmă. Din ce vagon?... Asta e ușor de constatat; manivela semnalului nu se poate trage decât rupându-se ața înnodată și cu nodul plumbuit. Personalul trenului umblă forfota, examinând roatele tamponate cu toată presiunea, așa de tamponate că-i trebuie vreo zece minute mecanicului să-și încarce iar pompa de aer comprimat și să poată urni trenul din loc. În toată vremea asta, conductorii și șeful trenului aleargă din vagon în vagon și cercetează aparatele semnalelor de alarmă.
+
+Cine poate ghici în ce vagon era ruptă ața plumbuită și răsturnată manivela? Ciudat! tocmai în vagonul de unde zburase mai adineauri pălăria marinerului! Cine? cine a tras manivela? Mam' mare doarme în fundul cupeului cu puișorul în brațe. Nu se poate ști cine a tras manivela.
+
+Trenul se pornește în sfârșit, și ajunge în București cu o întârziere de câteva minute. Toată lumea coboară. Mam' mare așază frumușel beretul lui Goe, îl scuipă pe puișor să nu-l deoache, îl întreabă dacă-l mai doare nasul și-l sărută dulce.
+
+Apoi cocoanele se suie cu puișorul în trăsură și pornesc în oraș:
+
+– La bulivar, birjar! la bulivar!...$demo$), 'published',
+  now() - interval '11 days', now() - interval '11 days', public.count_words($demo$Ca să nu mai rămâie repetent și anul acesta, mam' mare, mamițica și tanti Mița au promis tânărului Goe să-l ducă-n București de 10 mai.
+
+Puțin ne importă dacă aceste trei dame se hotărăsc a părăsi locul lor spre a veni în Capitală numai de hatârul fiului și nepoțelului lor. Destul că foarte de dimineață, dumnealor, frumos gătite, împreună cu tânărul Goe, așteaptă cu multă nerăbdare, pe peronul din urbea X, trenul accelerat care trebuie să le ducă la București. Adevărul e că, dacă se hotărăște cineva să asiste la o sărbătoare națională așa de importantă, trebuie s-o ia de dimineața. Trenul în care se vor sui ajunge în Gara de Nord la opt fără zece a.m. D. Goe este foarte impacient și, cu un ton de comandă, zice încruntat:
+
+– Mam' mare! de ce nu mai vine?... Eu vreau să vie!
+
+– Vine, vine acuma, puișorul mamii! răspunde cucoana.
+
+Și sărută pe nepoțel; apoi îi potrivește pălăria.
+
+Tânărul Goe poartă un frumos costum de marinar, pălărie de paie, cu inscripția pe pamblică: *le Formidable,* și sub pamblică biletul de călătorie înfipt de tanti Mița, că "așa țin bărbații biletul".
+
+– Vezi ce bine-i șade lui - zice mam' mare - cu costumul de marinel?
+
+– Mamițo, nu ți-am spus că nu se zice marinel?
+
+– Da' cum?
+
+– Marinal...
+
+– Ei! ziceți voi cum știți; eu zic cum am apucat. Așa se zicea pe vremea mea, când a ieșit întâi moda asta la copii - marinel.
+
+– Vezi, că sunteți proaste amândouă? întrerupe tânărul Goe. Nu se zice nici marinal, nici marinel.
+
+– Da' cum, procopsitule? întreabă tanti Mița cu un zâmbet simpatic.
+
+– Mariner...
+
+– Apoi de! n-a învățat toata lumea carte ca d-ta! zice mam' mare, și iar sărută pe nepoțel și iar îi potrivește pălăria de mariner.
+
+Dar nu e vreme de discuții filologice: sosește trenul - și nu stă mult.
+
+Trenul este plin... Dar cu multă bunăvoință din partea unor tineri politicoși, cari merg până la o stație apropiată, se fac locuri pentru dame. Trenul a plecat... Mam' mare își face cruce, apoi aprinde o țigară... Goe nu vrea să intre în cupeu; vrea să șadă în coridorul vagonului cu bărbații.
+
+– Nu!... nu e voie să scoți capul pe fereastră, mititelule! zice unul dintre tineri lui d-l Goe, și-l trage puțin înapoi.
+
+– Ce treabă ai tu, urâtule? zice mititelul smucindu-se.
+
+Și după ce se strâmbă la urâtul, se spânzură iar cu amândouă mânile de vergeaua de alamă și scoate iar capul. Dar n-apucă să răspunză ceva urâtul, și mititelul își retrage îngrozit capul gol înăuntru și-ncepe să zbiere.
+
+– Mamițoo! mam' maree! tantii!
+
+– Ce e? Ce e? sar cocoanele.
+
+– Să oprească! zbiară și mai tare Goe, bătând din picioare. Mi-a zburat pălăria! să opreascăăă!!!
+
+Tot într-un timp, iacătă conductorul intră să vază cine s-a suit de la stația din urmă.
+
+– Biletele, domnilor!
+
+Cocoanele arată biletele dumnealor, explicând d-lui conductor de ce nu poate și Goe să facă același lucru: fiindcă biletul era în pamblica pălăriei, și, dacă a zburat pălăria, firește c-a zburat cu pamblică și cu bilet cu tot. Dar avea bilet...
+
+– Parol! chiar eu l-am cumpărat! zice tanti Mița.
+
+Conductorul însă nu înțelege, pretinde bilet; daca nu, la stația apropiată, trebuie să-l dea jos pe d-l Goe. Așa scrie regulamentul: daca un pasager n-are bilet și nu declară ca n-are bilet, i se ia o amendă de 7 lei și 50 de bani, și-l dă jos din tren la orice stație.
+
+– Dar noi n-am declaratără? strigă mamița.
+
+– Ce e vinovat băiatul, dacă i-a zburat pălăria? zice mam' mare.
+
+– De ce-a scos capul pe fereastră? eu i-am spus să nu scoată capul pe fereastră! zice cu pică urâtul.
+
+– Nu-i treaba dumitale! ce te-amesteci d-ta? zice tanti Mița urâtului...
+
+– Uite ce e, cucoană, zice conductorul, trebuie să plătiți un bilet...
+
+– Să mai plătim? n-am plătitără o dată?
+
+– Și pe d'asupra un leu și 25 de bani.
+
+– Și pe d'asupra?...
+
+– Vezi, daca nu te-astâmperi? zice mamița, și-l zguduie pe Goe de mână.
+
+– Ce faci, soro? ești nebună? nu știi ce simțitor e? zice mam' mare.
+
+Și, apucându-l de mâna cealaltă, îl smucește de la mamița lui, tocmai când trenul, clănțănind din roate, trece la un macaz. Din smucitura lu' mam' mare într-un sens, combinată cu clătinătura vagonului în alt sens, rezultă că Goe își pierde un moment centrul de gravitate și se reazimă în nas de clanța ușii de la cupeu. Goe începe să urle... în sfârșit, n-au ce să facă. Trebuie să se hotărască a plăti biletul, pe care are să-l taie conductorul din carnetul lui. Păcat însă de pălărie!... Ce-o să facă d. Goe la București cu capul gol? și toate prăvăliile închise!... s-ar întreba oricine, care nu știe câtă grije are mam' mare și câtă prevedere. Cum era să plece băiatul numai cu pălăria de paie? Daca se întâmplă să plouă, ori răcoare? Și mam' mare scoate din săculețul ei un beret tot din uniforma canonierii *le Formidable.*
+
+– Te mai doare nasul, puișorule? întreabă mam' mare.
+
+– Nu... răspunde Goe.
+
+– Să moară mam' mare?
+
+– Să moară!
+
+– Ad', să-l pupe mam' mare, că trece!
+
+Și-l pupă în vârful nasului; apoi, așezându-i frumos beretul:
+
+– Parcă-i șade mai bine cu beretul!... zice mam' mare scuipându-l să nu-l deoache, apoi îl sărută dulce.
+
+– Cu ce nu-i șade lui bine? adaogă tanti Mița, și-l scuipă și dumneaei și-l sărută.
+
+– Lasă-l încolo! că prea e nu știu cum!... Auzi d-ta! pălărie nouă și biletul! zice mamița, prefăcându-se foarte supărată.
+
+– Să fie el sănătos, să poarte mai bună! zice mam' mare.
+
+Dar mamița adaogă:
+
+– Da' pe mamițica n-o pupi?
+
+– Pe tine nu vreau! zice Goe cu humor.
+
+– Așa? zice mamița. Lasă!... și-și acopere ochii cu mâinile și se face că plânge.
+
+– Las' că știu eu că te prefaci! zice Goe.
+
+– Ți-ai găsit pe cine să-nșeli! zice mam' mare.
+
+Mamița începe să râză; scoate din săculeț ceva și zice:
+
+– Cine mă pupă... uite!... ciucalată!
+
+Mamița pupă pe Goe, Goe pe mamița și, luând bucata de ciucalată, iese iar în coridor.
+
+– Puișorule, nu mai scoate capul pe fereastră!... E lucru mare, cât e de deștept! zice mam' mare.
+
+– E ceva de speriat, parol! adaogă tanti Mița.
+
+Pe când Goe își mănâncă afară ciucalata, cocoanele se dau în vorbă de una, de alta... Trenul aleargă acuma de spre Crivina către Periș.
+
+– Ia mai vezi ce face băiatul afară, mamițo! zice mamița către mam' mare.
+
+Mam' mare se ridică bătrânește și se duce în coridor:
+
+– Goe! puișorule! Goe! Goe!
+
+Goe nicăieri.
+
+– Vai de mine! țipă cucoana! Nu-i băiatul! Unde e băiatul!... s-a prăpădit băiatul!
+
+Și toate cucoanele sar...
+
+– A căzut din tren băiatul! Țațo, mor!
+
+Dar deodată, cu tot zgomotul trenului, se aud bubuituri în ușa compartimentului unde nu intră decât o persoană.
+
+– Goe! maică! acolo ești?
+
+– Da.
+
+– Aide! zice mam' mare, ieși odată! ne-ai speriat.
+
+– Nu pot! zbiară Goe dinăuntru.
+
+– De ce?... te doare la inimă?
+
+– Nu! nu pot...
+
+– E încuiat! zice mam' mare, vrând să deschidă pe dinafară.
+
+– Nu pot deschide! zbiară Goe desperat.
+
+– Vai de mine! îi vine rău băiatului înăuntru!
+
+În sfârșit, iacătă conductorul cu biletul: primește paralele și liberează pe captiv, pe care toate trei cocoanele îl sărută dulce, ca și cum l-ar revedea după o îndelungată absență. Și mam' mare se hotărăște să stea în coridor, pe un geamantan străin, să păzească pe Goe, să nu se mai întâmple ceva puișorului. Puișorul vede o linie de metal în colțul coridorului, care are la capătul de sus o mașină cu mâner. Se suie-n picioare pe geamantan, pune mâna pe mânerul mașinii și începe să-l tragă.
+
+– Șezi binișor, puișorule! să nu strici ceva! zice mam' mare...
+
+Trenul își urmează drumul de la Periș cătră Buftea cu mare viteză. Dar pe la mijlocul kilometrului 24, deodată s-aude un șuier, apoi semnalul de alarmă, trei fluiere scurte, și trenul se oprește pe loc, producând o zguduitură puternică.
+
+–Ce e? ce e?... Toți pasagerii sar înspăimântați la ferestre, la uși, pe scări...
+
+– Goe! puișorule! Goe! strigă tanti Mița și se repede afară din compartiment.
+
+Goe este în coridor... De ce s-a oprit trenul?
+
+Cineva, nu se știe din ce vagon, a tras semnalul de alarmă. Din ce vagon?... Asta e ușor de constatat; manivela semnalului nu se poate trage decât rupându-se ața înnodată și cu nodul plumbuit. Personalul trenului umblă forfota, examinând roatele tamponate cu toată presiunea, așa de tamponate că-i trebuie vreo zece minute mecanicului să-și încarce iar pompa de aer comprimat și să poată urni trenul din loc. În toată vremea asta, conductorii și șeful trenului aleargă din vagon în vagon și cercetează aparatele semnalelor de alarmă.
+
+Cine poate ghici în ce vagon era ruptă ața plumbuită și răsturnată manivela? Ciudat! tocmai în vagonul de unde zburase mai adineauri pălăria marinerului! Cine? cine a tras manivela? Mam' mare doarme în fundul cupeului cu puișorul în brațe. Nu se poate ști cine a tras manivela.
+
+Trenul se pornește în sfârșit, și ajunge în București cu o întârziere de câteva minute. Toată lumea coboară. Mam' mare așază frumușel beretul lui Goe, îl scuipă pe puișor să nu-l deoache, îl întreabă dacă-l mai doare nasul și-l sărută dulce.
+
+Apoi cocoanele se suie cu puișorul în trăsură și pornesc în oraș:
+
+– La bulivar, birjar! la bulivar!...$demo$),
+  public.count_words($demo$Ca să nu mai rămâie repetent și anul acesta, mam' mare, mamițica și tanti Mița au promis tânărului Goe să-l ducă-n București de 10 mai.
+
+Puțin ne importă dacă aceste trei dame se hotărăsc a părăsi locul lor spre a veni în Capitală numai de hatârul fiului și nepoțelului lor. Destul că foarte de dimineață, dumnealor, frumos gătite, împreună cu tânărul Goe, așteaptă cu multă nerăbdare, pe peronul din urbea X, trenul accelerat care trebuie să le ducă la București. Adevărul e că, dacă se hotărăște cineva să asiste la o sărbătoare națională așa de importantă, trebuie s-o ia de dimineața. Trenul în care se vor sui ajunge în Gara de Nord la opt fără zece a.m. D. Goe este foarte impacient și, cu un ton de comandă, zice încruntat:
+
+– Mam' mare! de ce nu mai vine?... Eu vreau să vie!
+
+– Vine, vine acuma, puișorul mamii! răspunde cucoana.
+
+Și sărută pe nepoțel; apoi îi potrivește pălăria.
+
+Tânărul Goe poartă un frumos costum de marinar, pălărie de paie, cu inscripția pe pamblică: *le Formidable,* și sub pamblică biletul de călătorie înfipt de tanti Mița, că "așa țin bărbații biletul".
+
+– Vezi ce bine-i șade lui - zice mam' mare - cu costumul de marinel?
+
+– Mamițo, nu ți-am spus că nu se zice marinel?
+
+– Da' cum?
+
+– Marinal...
+
+– Ei! ziceți voi cum știți; eu zic cum am apucat. Așa se zicea pe vremea mea, când a ieșit întâi moda asta la copii - marinel.
+
+– Vezi, că sunteți proaste amândouă? întrerupe tânărul Goe. Nu se zice nici marinal, nici marinel.
+
+– Da' cum, procopsitule? întreabă tanti Mița cu un zâmbet simpatic.
+
+– Mariner...
+
+– Apoi de! n-a învățat toata lumea carte ca d-ta! zice mam' mare, și iar sărută pe nepoțel și iar îi potrivește pălăria de mariner.
+
+Dar nu e vreme de discuții filologice: sosește trenul - și nu stă mult.
+
+Trenul este plin... Dar cu multă bunăvoință din partea unor tineri politicoși, cari merg până la o stație apropiată, se fac locuri pentru dame. Trenul a plecat... Mam' mare își face cruce, apoi aprinde o țigară... Goe nu vrea să intre în cupeu; vrea să șadă în coridorul vagonului cu bărbații.
+
+– Nu!... nu e voie să scoți capul pe fereastră, mititelule! zice unul dintre tineri lui d-l Goe, și-l trage puțin înapoi.
+
+– Ce treabă ai tu, urâtule? zice mititelul smucindu-se.
+
+Și după ce se strâmbă la urâtul, se spânzură iar cu amândouă mânile de vergeaua de alamă și scoate iar capul. Dar n-apucă să răspunză ceva urâtul, și mititelul își retrage îngrozit capul gol înăuntru și-ncepe să zbiere.
+
+– Mamițoo! mam' maree! tantii!
+
+– Ce e? Ce e? sar cocoanele.
+
+– Să oprească! zbiară și mai tare Goe, bătând din picioare. Mi-a zburat pălăria! să opreascăăă!!!
+
+Tot într-un timp, iacătă conductorul intră să vază cine s-a suit de la stația din urmă.
+
+– Biletele, domnilor!
+
+Cocoanele arată biletele dumnealor, explicând d-lui conductor de ce nu poate și Goe să facă același lucru: fiindcă biletul era în pamblica pălăriei, și, dacă a zburat pălăria, firește c-a zburat cu pamblică și cu bilet cu tot. Dar avea bilet...
+
+– Parol! chiar eu l-am cumpărat! zice tanti Mița.
+
+Conductorul însă nu înțelege, pretinde bilet; daca nu, la stația apropiată, trebuie să-l dea jos pe d-l Goe. Așa scrie regulamentul: daca un pasager n-are bilet și nu declară ca n-are bilet, i se ia o amendă de 7 lei și 50 de bani, și-l dă jos din tren la orice stație.
+
+– Dar noi n-am declaratără? strigă mamița.
+
+– Ce e vinovat băiatul, dacă i-a zburat pălăria? zice mam' mare.
+
+– De ce-a scos capul pe fereastră? eu i-am spus să nu scoată capul pe fereastră! zice cu pică urâtul.
+
+– Nu-i treaba dumitale! ce te-amesteci d-ta? zice tanti Mița urâtului...
+
+– Uite ce e, cucoană, zice conductorul, trebuie să plătiți un bilet...
+
+– Să mai plătim? n-am plătitără o dată?
+
+– Și pe d'asupra un leu și 25 de bani.
+
+– Și pe d'asupra?...
+
+– Vezi, daca nu te-astâmperi? zice mamița, și-l zguduie pe Goe de mână.
+
+– Ce faci, soro? ești nebună? nu știi ce simțitor e? zice mam' mare.
+
+Și, apucându-l de mâna cealaltă, îl smucește de la mamița lui, tocmai când trenul, clănțănind din roate, trece la un macaz. Din smucitura lu' mam' mare într-un sens, combinată cu clătinătura vagonului în alt sens, rezultă că Goe își pierde un moment centrul de gravitate și se reazimă în nas de clanța ușii de la cupeu. Goe începe să urle... în sfârșit, n-au ce să facă. Trebuie să se hotărască a plăti biletul, pe care are să-l taie conductorul din carnetul lui. Păcat însă de pălărie!... Ce-o să facă d. Goe la București cu capul gol? și toate prăvăliile închise!... s-ar întreba oricine, care nu știe câtă grije are mam' mare și câtă prevedere. Cum era să plece băiatul numai cu pălăria de paie? Daca se întâmplă să plouă, ori răcoare? Și mam' mare scoate din săculețul ei un beret tot din uniforma canonierii *le Formidable.*
+
+– Te mai doare nasul, puișorule? întreabă mam' mare.
+
+– Nu... răspunde Goe.
+
+– Să moară mam' mare?
+
+– Să moară!
+
+– Ad', să-l pupe mam' mare, că trece!
+
+Și-l pupă în vârful nasului; apoi, așezându-i frumos beretul:
+
+– Parcă-i șade mai bine cu beretul!... zice mam' mare scuipându-l să nu-l deoache, apoi îl sărută dulce.
+
+– Cu ce nu-i șade lui bine? adaogă tanti Mița, și-l scuipă și dumneaei și-l sărută.
+
+– Lasă-l încolo! că prea e nu știu cum!... Auzi d-ta! pălărie nouă și biletul! zice mamița, prefăcându-se foarte supărată.
+
+– Să fie el sănătos, să poarte mai bună! zice mam' mare.
+
+Dar mamița adaogă:
+
+– Da' pe mamițica n-o pupi?
+
+– Pe tine nu vreau! zice Goe cu humor.
+
+– Așa? zice mamița. Lasă!... și-și acopere ochii cu mâinile și se face că plânge.
+
+– Las' că știu eu că te prefaci! zice Goe.
+
+– Ți-ai găsit pe cine să-nșeli! zice mam' mare.
+
+Mamița începe să râză; scoate din săculeț ceva și zice:
+
+– Cine mă pupă... uite!... ciucalată!
+
+Mamița pupă pe Goe, Goe pe mamița și, luând bucata de ciucalată, iese iar în coridor.
+
+– Puișorule, nu mai scoate capul pe fereastră!... E lucru mare, cât e de deștept! zice mam' mare.
+
+– E ceva de speriat, parol! adaogă tanti Mița.
+
+Pe când Goe își mănâncă afară ciucalata, cocoanele se dau în vorbă de una, de alta... Trenul aleargă acuma de spre Crivina către Periș.
+
+– Ia mai vezi ce face băiatul afară, mamițo! zice mamița către mam' mare.
+
+Mam' mare se ridică bătrânește și se duce în coridor:
+
+– Goe! puișorule! Goe! Goe!
+
+Goe nicăieri.
+
+– Vai de mine! țipă cucoana! Nu-i băiatul! Unde e băiatul!... s-a prăpădit băiatul!
+
+Și toate cucoanele sar...
+
+– A căzut din tren băiatul! Țațo, mor!
+
+Dar deodată, cu tot zgomotul trenului, se aud bubuituri în ușa compartimentului unde nu intră decât o persoană.
+
+– Goe! maică! acolo ești?
+
+– Da.
+
+– Aide! zice mam' mare, ieși odată! ne-ai speriat.
+
+– Nu pot! zbiară Goe dinăuntru.
+
+– De ce?... te doare la inimă?
+
+– Nu! nu pot...
+
+– E încuiat! zice mam' mare, vrând să deschidă pe dinafară.
+
+– Nu pot deschide! zbiară Goe desperat.
+
+– Vai de mine! îi vine rău băiatului înăuntru!
+
+În sfârșit, iacătă conductorul cu biletul: primește paralele și liberează pe captiv, pe care toate trei cocoanele îl sărută dulce, ca și cum l-ar revedea după o îndelungată absență. Și mam' mare se hotărăște să stea în coridor, pe un geamantan străin, să păzească pe Goe, să nu se mai întâmple ceva puișorului. Puișorul vede o linie de metal în colțul coridorului, care are la capătul de sus o mașină cu mâner. Se suie-n picioare pe geamantan, pune mâna pe mânerul mașinii și începe să-l tragă.
+
+– Șezi binișor, puișorule! să nu strici ceva! zice mam' mare...
+
+Trenul își urmează drumul de la Periș cătră Buftea cu mare viteză. Dar pe la mijlocul kilometrului 24, deodată s-aude un șuier, apoi semnalul de alarmă, trei fluiere scurte, și trenul se oprește pe loc, producând o zguduitură puternică.
+
+–Ce e? ce e?... Toți pasagerii sar înspăimântați la ferestre, la uși, pe scări...
+
+– Goe! puișorule! Goe! strigă tanti Mița și se repede afară din compartiment.
+
+Goe este în coridor... De ce s-a oprit trenul?
+
+Cineva, nu se știe din ce vagon, a tras semnalul de alarmă. Din ce vagon?... Asta e ușor de constatat; manivela semnalului nu se poate trage decât rupându-se ața înnodată și cu nodul plumbuit. Personalul trenului umblă forfota, examinând roatele tamponate cu toată presiunea, așa de tamponate că-i trebuie vreo zece minute mecanicului să-și încarce iar pompa de aer comprimat și să poată urni trenul din loc. În toată vremea asta, conductorii și șeful trenului aleargă din vagon în vagon și cercetează aparatele semnalelor de alarmă.
+
+Cine poate ghici în ce vagon era ruptă ața plumbuită și răsturnată manivela? Ciudat! tocmai în vagonul de unde zburase mai adineauri pălăria marinerului! Cine? cine a tras manivela? Mam' mare doarme în fundul cupeului cu puișorul în brațe. Nu se poate ști cine a tras manivela.
+
+Trenul se pornește în sfârșit, și ajunge în București cu o întârziere de câteva minute. Toată lumea coboară. Mam' mare așază frumușel beretul lui Goe, îl scuipă pe puișor să nu-l deoache, îl întreabă dacă-l mai doare nasul și-l sărută dulce.
+
+Apoi cocoanele se suie cu puișorul în trăsură și pornesc în oraș:
+
+– La bulivar, birjar! la bulivar!...$demo$), now() - interval '12 days'
+where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-001000010000'::uuid);
+
+-- classic-11-bubico: "Bubico" by clasice
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
+  first_published_at, last_chapter_published_at, created_at)
+select '00000000-0000-4000-9300-001100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'bubico-classic',
+  $demo$Bubico$demo$, $demo$O călătorie cu trenul, o cucoană și cățelul ei care nu tace. Un călător răbdător până la un punct.
+
+Ediția sursă: 1901. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=129152, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
+  (select id from public.categories where slug = 'fiction'),
+  'drawn', 'grid', 'lilac', 'plum', 'all_ages', 'no_ai',
+  now() - interval '48 days', now() - interval '48 days', now() - interval '50 days'
+where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001100000000'::uuid);
+select public.set_story_tags('00000000-0000-4000-9300-001100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'schiță', 'caragiale']);
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
+select '00000000-0000-4000-9300-001100010000'::uuid, '00000000-0000-4000-9300-001100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
+  'k011c001', 1, $demo$Bubico$demo$, public.check_chapter_text($demo$Nouă ceasuri și nouă minute... Peste șase minute pleacă trenul. Un minut încă și se-nchide casa. Repede-mi iau biletul, ies pe peron, alerg la tren, sunt în vagon... Trec de colo până colo prin coridor, să văz în care compartiment aș găsi un loc mai comod... Aci. O damă singură, și-fumează, atât mai bine! Intru și salut, când auz o mârâitură și văz apărând dintr-un paneraș de lângă cocoana capul unui cățel lățos, plin de funde de panglici roșii și albastre, care-ncepe să mă latre ca pe un făcător de rele intrat noaptea în iatacul stăpânii-si.
+
+– Bubico! zice cocoana... șezi mumos, mamă!
+
+"Norocul meu, gândesc eu, să trăiesc bine!... Lua-te-ar dracul de javră!"
+
+Bubico se liniștește puțin; nu mai latră; își retrage capul în paneraș, unde i-l acopere iar cocoana cu un tărtănaș de lână roșie; dar tot mârâie înfundat... Eu, foarte plictisit, mă lungesc pe canapeaua din fața cocoanii și-nchiz ochii. Trenul a pornit... Prin coridor umblă pasajeri și vorbesc. Bubico mârâie arțăgos.
+
+– Biletele, domnilor! zice conductorul, intrând cu zgomot în compartimentul nostru.
+
+Acum Bubico scoate capul foarte sus și, vrând să sară afară de la locul lui, începe să latre și mai grozav ca adineaori. Eu întind biletul meu conductorului, care mi-l perforează. Conductorul face un pas către cocoana, care-și caută biletul ei în săculețul de mână, pe când Bubico latră și chelălăie desperat, smucindu-se să iasă din paner.
+
+– Bubico! zice cocoana, șezi mumos, mamițo!
+
+Și-ntinde biletul. Când mâna conductorului s-a atins de mâna cocoanei, Bubico parc-a-nnebunit. Dar conductorul șia terminat treaba și iese. Cocoana își învelește favoritul mângâindu-l "mumos"; eu mă lungesc la loc închizând ochii, pe când Bubico mârâie înfundat ca tunetul care se tot depărtează după trecerea unei grozave furtuni. Acum nu se mai aude de loc. Dar auz hârșâitul unui chibrit: cocoana își aprinde o țigaretă... Încă nu mi-e somn. De ce n-aș aprinde și eu una? A! de degrabă să nu pierz trenul, am uitat să-mi iau chibrituri. Dar nu face nimic... S-o rog pe mamița lui Bubico... Scot o țigaretă, mă ridic și dau să m-apropiu de cocoana. Dar n-apuc să fac bine o mișcare, și Bubico scoate capul lătrându-mă mai furios decât pe conductor; latră și chelălăie și tușește și...
+
+– Bubico - zice cocoana - șezi mumos, mamițico!
+
+"Lovi-te-ar jigodia, potaia dracului!" zic în gândul meu. N-am văzut de când sunt o javră mai antipatică și mai scârboasă... Dacă aș putea, i-aș rupe gâtul.
+
+În zbieretele desperate ale lui Bubico, mamițica îmi dă s-aprind. Îi mulțumesc și m-așez în locul cel mai depărtat din compartiment, de teamă că n-am să mai pot rezista pornirii și am să-i trag la cap când și l-o mai scoate din paner.
+
+– Frumușel cățel aveți, zic eu cocoanii, după câteva momente de tăcere; da' rău!
+
+– Aș! nu e rău, zice cocoana; până se-nvață cu omul; dar nu știți ce cuminte și fidel este, și deștept! Ei bine! e ca un om, frate! doar ca nu vorbește...
+
+Apoi către paner, cu multă dragoste:
+
+– Unde-i Bubico?... Nu e Bubico!...
+
+Din paner se aude un miorlăit sentimental.
+
+– Să-i dea mama băiețelului zăhărel?... Bubico! Bubi!!
+
+Băiețelul scoate capul cu panglicuțe... Mamița-l degajează din țoalele în cari dospește-nfășurat și-l scoate afară. Bubico se uită la mine și mârâie-n surdină. Eu, apucat de groază la ideea că nenorocitul ar încerca să mă provoace, zic cocoanei:
+
+– Madam! pentru Dumnezeu, țineți-l să nu se dea la mine! eu sunt nevricos, și nu știu ce-aș fi în stare... de frică...
+
+Dar cocoana, luând în brațe pe favorit și mângâindu-l cu toată duioșia:
+
+– Vai de mine! cum crezi d-ta?... Noi suntem băieți cuminți și binecrescuți... Noi nu suntem mojici ca Bismarck...
+
+– Ha? zic eu.
+
+– Bismarck al ofițerului Papadopolinii.
+
+Dându-mi această explicație, cocoana scoate din săculețul de mână o bucățică de zahăr:
+
+– Cui îi place zăhărelul?...
+
+Bubico (făcând pe bancă sluj frumos, cu toată cletinătura vagonului): Ham!
+
+– Să-i dea mamițica băiatului zăhărel?
+
+Bubico: Ham! Ham!
+
+Și apucă bucățica de zahăr și-ncepe s-o ronțăie... Cocoana scoate din alt săculeț o sticlă cu lapte, din care toarnă într-un pahar; apoi:
+
+– Cui îi place lăptic?
+
+Bubico (lingându-se pe bot): Ham!
+
+– Să-i dea mamițica lăptic băiatului?
+
+Bubico (impacient): Ham! Ham!
+
+"Ah! suspin eu în adânc; lua-te-ar hengherul, Bubico!"
+
+Dar cocoana apropie paharul aplecat de botul favoritului, care-ncepe să lăpăie, și lăpăie, și lăpăie, până când un pasajer se arată la ușa compartimentului nostru uitându-se-năuntru. Bubico se oprește din lăpăit și se pornește să latre ca o fiară, cu ochii holbați și mușcând în sec și clănțănind din dinți, și tușind și...
+
+"Vedea-te-aș la Babeș, jigăraie îndrăcită!" gândesc eu, și prin mintea mea începe să treacă fel de fel de idei, care de care mai crudă și mai infamă.
+
+Pasajerul s-a retras de la geam. Bubico s-a potolit. Cocoana toarnă iar lapte-n pahar și bea și dumneei. Eu simt cum mă năvălesc, din ce în ce mai irezistibile, ideile negre.
+
+\- *A propos *- zic eu - madam, vorbeați adineaori de Bismarck... al...
+
+– Al ofițerului Papadopolinii...
+
+– Ei! Ce e Bismarck?
+
+– Un dulău de curte... Era să mi-l omoare pe Bubico... Papadopolina are o cățelușă, Zambilica, foarte frumușică! șade alături de mine; suntem prietene; și dumnealui (arată pe Bubico), curte teribilă! (Către Bubico:) Craiule!... (Către mine:) Mizerabila de servitoare, o dobitoacă! i-am spus, când l-a dus afară de dimineață - că nu știi ce curat e! - zic: "Bagă de seamă să nu scape, să se ducă iar la Papadopolina, că-l rupe Bismarck..." dulăul ofițerului, care șade cu chirie la ea. (Tușește cu mult înțeles.) Eu nu știu ce făceam pân casă, când auz afară chelălăituri și țipete... Strig: "Bubico! Bubico! unde e băiatul?!" Alerg... Mi-l aducea dobitoaca pe brațe; d-abia-l scoseseră ea și Papadopolina și soldatul ofițerului din gura dulăului. Ce să-l vezi?... tăvălit, leșinat și moale ca o cârpă. Zic: "Vai de mine! moare băiatul!" Stropește-l cu apă! dă-i cu odicolon la nas!... Ce-am pătimit, numai eu știu... Două săptămâni a zăcut... Am adus și doftor. Da-n sfârșit, slavă Domnului! a scăpat... (Cătră Bubico:) Mai merge la Zambilica băiatul?
+
+Bubico: Ham!
+
+– Să te mănânce Bismarck... craiule!
+
+– Ham! ham!
+
+Și sare de pe bancă jos în vagon și apucă spre mine.
+
+– Cocoană! strig eu, ridicându-mi picioarele; eu sunt nevricos, să nu se dea la mine, că...
+
+– Nu, frate! zice cocoana, nu vezi că vrea să se-mprietinească? Așa e el: numaidecât simte pe cine-l iubește...
+
+– A! zic eu, având o inspirație infernală; a! simte pe cine-l iubește... vrea să ne-mprietenim!... Bravo!
+
+Și pe când cățelul se apropie să mă miroasă, iau un pachețel de bonboane, pe cari le duc în provincie, la un prietin; îl deschid, scot un bonbon și, întinzându-l în jos, cu multă blândețe:
+
+– Cuțu, cuțu! Bubico băiatul! Bubi!
+
+Bubico, dând din coadă, se apropie mai întâi cu oarecare sfială și îndoință, apoi, încurajat de blândețea mea, apucă frumos bombonul și-ncepe să-l clefăie.
+
+– Vezi că v-ați împrietinit! zice cocoana cu multă satisfacție de această apropiere.
+
+Apoi îmi spune genealogia favoritului... Bubico este copilul lui Garson și al Gigichii, care era soră cu Zambilica a Papadopolinii, ceea ce, care va să zică, însemnează că Zambilica este mătușa lui Bubico după mamă... În timp ce cocoana-mi povestește, eu, înfrânându-mi aversiunea și dezgustul în favoarea unui scop înalt, întrebuințez cele mai înjositoare mijloace spre a intra în bunele grații ale nepotului Zambilichii. Și-n adevăr, Bubico se tot apropie de mine, până se lasă să-l iau în brațe. Simt că mi se bate inima de teamă ca nu cumva, printr-o mișcare, ori privire, să trădez un plan mare ce l-am croit în adâncul conștiinței mele. Cocoana nu se poate mira îndestul de prietenia ce-mi arată Bubico, pe când eu cultiv cu stăruință această prietenie atât de scumpă mie, prin mângâieri și bonboane.
+
+– Ei vezi! cum v-ați împrietenit... Ce e, Bubico? ce e, mamă? iubești pe domnul? da?
+
+Și Bubico răspunde, gudurându-se-n brațele mele:
+
+– Ham!
+
+– Așa? ai trădat-o care va să zică pe mamițica?... craiule!
+
+Bubico: Ham! ham!
+
+– Trebuie să fii om bun! Nu trage el la fitecine...
+
+– Firește, coconiță; simte cânele; are instinct.
+
+Când zic acestea, iată că trenul se oprește în Crivina. Pe peron se aud lătrături și ceartă de câni. Bubico dă să se smucească din brațele mele; eu îl țiu bine; el începe să latre îndârjit cătră fereastra vagonului. Trenul pornește iar, și Bubico, întorcând capul către partea de unde s-aude depărtându-se cearta semenilor lui, latră mereu; eu îl mângâi, să-l potolesc; el, când nu se mai aude nimic, ridică botul spre tavan și începe, în brațele mele, să urle... în brațele mele!
+
+"Ah! Bubico - zic eu în sine-mi, mângâindu-l frumos - de capu-ți!... vedea-te-aș mănuși!"
+
+Dar Bubico urlă mereu.
+
+– Doamnă - zic eu - rău faceți că-l țineți așa de aproape pe Bubico și acoperit așa în căldură, poate să turbeze... Chiar așa, aici e prea cald.
+
+Și zicând acestea, mă scol cu Bubico-n brațe și m-apropiu de fereastra vagonului. Pun pe Bubico binișor jos lângă mamița lui, și cobor geamul, aplecându-mă să respir. Afară, noapte neagră ca și ideile mele.
+
+– Bine faci! să mai iasă fumul de țigară, zice cocoana.
+
+Intrăm pe podul Prahovii... Mă-ntorc, iau o bonboană, i-o arăt lui Bubico, care s-apropie de mine bâțâind frumușel din coadă.
+
+"Pe memoria lui Plutone și a fidelului său Cerber! zic eu în gând ; jur că au mințit acei cari au cântat instinctul cânilor! E o minciună! Nu există!"
+
+Bubico îmi ia bonboana; îl iau în brațe și mă dau lângă fereastră, ridicându-l în dreptul deschizăturii. Aerul răcoros, trecându-i pe la bot, face mare plăcere lui Bubico. Scoate limba și respiră din adânc.
+
+– Să nu-l scapi pe fereastră!... pentru Dumn...
+
+Dar n-apucă mamițica să rostească-ntreg sfântul nume al creatorului, și Bubico dispare ca un porumbel alb în neagra noapte, înapoi spre București, zburând - la Zambilica, probabil. Mă-ntorc cu fața spre cocoana și, prezentându-i mânile goale, strig exasperat:
+
+– Doamnă!
+
+Un răcnet!... A-nnebunit cocoana!
+
+– Repede, doamnă, semnalul de alarmă!
+
+O duc la semnal și o-nvăț cum să-l tragă. Pierdută de durere, execută mișcarea cu o supremă energie. Trenul, stop! pe loc. Cletinătură colosală. Emoție generală-ntre pasajeri.
+
+– Cine? cine a dat alarma?
+
+– Dumneaei zic eu către personalul trenului, arătând pe cocoana leșinată.
+
+Trenul se pune din nou în mișcare. La Ploiești, cocoana s-a deșteptat din leșin; zdrobită de nenorocire, trebuie să răspunză la procesul-verbal ce i se dresează pentru întrebuințarea semnalului. Pe când, în mijlocul pasajerilor grămădiți, cocoana se jelește, eu m-apropiu de urechea ei și, c-un rânjet diabolic, îi șoptesc răspicat:
+
+– Cocoană! eu l-am aruncat, mânca-i-ai coada!
+
+Ea leșină iar... Eu trec ca un demon prin mulțime și dispar în noaptea neagră...$demo$), 1,
+  now() - interval '48 days', $demo$Bubico$demo$, public.check_chapter_text($demo$Nouă ceasuri și nouă minute... Peste șase minute pleacă trenul. Un minut încă și se-nchide casa. Repede-mi iau biletul, ies pe peron, alerg la tren, sunt în vagon... Trec de colo până colo prin coridor, să văz în care compartiment aș găsi un loc mai comod... Aci. O damă singură, și-fumează, atât mai bine! Intru și salut, când auz o mârâitură și văz apărând dintr-un paneraș de lângă cocoana capul unui cățel lățos, plin de funde de panglici roșii și albastre, care-ncepe să mă latre ca pe un făcător de rele intrat noaptea în iatacul stăpânii-si.
+
+– Bubico! zice cocoana... șezi mumos, mamă!
+
+"Norocul meu, gândesc eu, să trăiesc bine!... Lua-te-ar dracul de javră!"
+
+Bubico se liniștește puțin; nu mai latră; își retrage capul în paneraș, unde i-l acopere iar cocoana cu un tărtănaș de lână roșie; dar tot mârâie înfundat... Eu, foarte plictisit, mă lungesc pe canapeaua din fața cocoanii și-nchiz ochii. Trenul a pornit... Prin coridor umblă pasajeri și vorbesc. Bubico mârâie arțăgos.
+
+– Biletele, domnilor! zice conductorul, intrând cu zgomot în compartimentul nostru.
+
+Acum Bubico scoate capul foarte sus și, vrând să sară afară de la locul lui, începe să latre și mai grozav ca adineaori. Eu întind biletul meu conductorului, care mi-l perforează. Conductorul face un pas către cocoana, care-și caută biletul ei în săculețul de mână, pe când Bubico latră și chelălăie desperat, smucindu-se să iasă din paner.
+
+– Bubico! zice cocoana, șezi mumos, mamițo!
+
+Și-ntinde biletul. Când mâna conductorului s-a atins de mâna cocoanei, Bubico parc-a-nnebunit. Dar conductorul șia terminat treaba și iese. Cocoana își învelește favoritul mângâindu-l "mumos"; eu mă lungesc la loc închizând ochii, pe când Bubico mârâie înfundat ca tunetul care se tot depărtează după trecerea unei grozave furtuni. Acum nu se mai aude de loc. Dar auz hârșâitul unui chibrit: cocoana își aprinde o țigaretă... Încă nu mi-e somn. De ce n-aș aprinde și eu una? A! de degrabă să nu pierz trenul, am uitat să-mi iau chibrituri. Dar nu face nimic... S-o rog pe mamița lui Bubico... Scot o țigaretă, mă ridic și dau să m-apropiu de cocoana. Dar n-apuc să fac bine o mișcare, și Bubico scoate capul lătrându-mă mai furios decât pe conductor; latră și chelălăie și tușește și...
+
+– Bubico - zice cocoana - șezi mumos, mamițico!
+
+"Lovi-te-ar jigodia, potaia dracului!" zic în gândul meu. N-am văzut de când sunt o javră mai antipatică și mai scârboasă... Dacă aș putea, i-aș rupe gâtul.
+
+În zbieretele desperate ale lui Bubico, mamițica îmi dă s-aprind. Îi mulțumesc și m-așez în locul cel mai depărtat din compartiment, de teamă că n-am să mai pot rezista pornirii și am să-i trag la cap când și l-o mai scoate din paner.
+
+– Frumușel cățel aveți, zic eu cocoanii, după câteva momente de tăcere; da' rău!
+
+– Aș! nu e rău, zice cocoana; până se-nvață cu omul; dar nu știți ce cuminte și fidel este, și deștept! Ei bine! e ca un om, frate! doar ca nu vorbește...
+
+Apoi către paner, cu multă dragoste:
+
+– Unde-i Bubico?... Nu e Bubico!...
+
+Din paner se aude un miorlăit sentimental.
+
+– Să-i dea mama băiețelului zăhărel?... Bubico! Bubi!!
+
+Băiețelul scoate capul cu panglicuțe... Mamița-l degajează din țoalele în cari dospește-nfășurat și-l scoate afară. Bubico se uită la mine și mârâie-n surdină. Eu, apucat de groază la ideea că nenorocitul ar încerca să mă provoace, zic cocoanei:
+
+– Madam! pentru Dumnezeu, țineți-l să nu se dea la mine! eu sunt nevricos, și nu știu ce-aș fi în stare... de frică...
+
+Dar cocoana, luând în brațe pe favorit și mângâindu-l cu toată duioșia:
+
+– Vai de mine! cum crezi d-ta?... Noi suntem băieți cuminți și binecrescuți... Noi nu suntem mojici ca Bismarck...
+
+– Ha? zic eu.
+
+– Bismarck al ofițerului Papadopolinii.
+
+Dându-mi această explicație, cocoana scoate din săculețul de mână o bucățică de zahăr:
+
+– Cui îi place zăhărelul?...
+
+Bubico (făcând pe bancă sluj frumos, cu toată cletinătura vagonului): Ham!
+
+– Să-i dea mamițica băiatului zăhărel?
+
+Bubico: Ham! Ham!
+
+Și apucă bucățica de zahăr și-ncepe s-o ronțăie... Cocoana scoate din alt săculeț o sticlă cu lapte, din care toarnă într-un pahar; apoi:
+
+– Cui îi place lăptic?
+
+Bubico (lingându-se pe bot): Ham!
+
+– Să-i dea mamițica lăptic băiatului?
+
+Bubico (impacient): Ham! Ham!
+
+"Ah! suspin eu în adânc; lua-te-ar hengherul, Bubico!"
+
+Dar cocoana apropie paharul aplecat de botul favoritului, care-ncepe să lăpăie, și lăpăie, și lăpăie, până când un pasajer se arată la ușa compartimentului nostru uitându-se-năuntru. Bubico se oprește din lăpăit și se pornește să latre ca o fiară, cu ochii holbați și mușcând în sec și clănțănind din dinți, și tușind și...
+
+"Vedea-te-aș la Babeș, jigăraie îndrăcită!" gândesc eu, și prin mintea mea începe să treacă fel de fel de idei, care de care mai crudă și mai infamă.
+
+Pasajerul s-a retras de la geam. Bubico s-a potolit. Cocoana toarnă iar lapte-n pahar și bea și dumneei. Eu simt cum mă năvălesc, din ce în ce mai irezistibile, ideile negre.
+
+\- *A propos *- zic eu - madam, vorbeați adineaori de Bismarck... al...
+
+– Al ofițerului Papadopolinii...
+
+– Ei! Ce e Bismarck?
+
+– Un dulău de curte... Era să mi-l omoare pe Bubico... Papadopolina are o cățelușă, Zambilica, foarte frumușică! șade alături de mine; suntem prietene; și dumnealui (arată pe Bubico), curte teribilă! (Către Bubico:) Craiule!... (Către mine:) Mizerabila de servitoare, o dobitoacă! i-am spus, când l-a dus afară de dimineață - că nu știi ce curat e! - zic: "Bagă de seamă să nu scape, să se ducă iar la Papadopolina, că-l rupe Bismarck..." dulăul ofițerului, care șade cu chirie la ea. (Tușește cu mult înțeles.) Eu nu știu ce făceam pân casă, când auz afară chelălăituri și țipete... Strig: "Bubico! Bubico! unde e băiatul?!" Alerg... Mi-l aducea dobitoaca pe brațe; d-abia-l scoseseră ea și Papadopolina și soldatul ofițerului din gura dulăului. Ce să-l vezi?... tăvălit, leșinat și moale ca o cârpă. Zic: "Vai de mine! moare băiatul!" Stropește-l cu apă! dă-i cu odicolon la nas!... Ce-am pătimit, numai eu știu... Două săptămâni a zăcut... Am adus și doftor. Da-n sfârșit, slavă Domnului! a scăpat... (Cătră Bubico:) Mai merge la Zambilica băiatul?
+
+Bubico: Ham!
+
+– Să te mănânce Bismarck... craiule!
+
+– Ham! ham!
+
+Și sare de pe bancă jos în vagon și apucă spre mine.
+
+– Cocoană! strig eu, ridicându-mi picioarele; eu sunt nevricos, să nu se dea la mine, că...
+
+– Nu, frate! zice cocoana, nu vezi că vrea să se-mprietinească? Așa e el: numaidecât simte pe cine-l iubește...
+
+– A! zic eu, având o inspirație infernală; a! simte pe cine-l iubește... vrea să ne-mprietenim!... Bravo!
+
+Și pe când cățelul se apropie să mă miroasă, iau un pachețel de bonboane, pe cari le duc în provincie, la un prietin; îl deschid, scot un bonbon și, întinzându-l în jos, cu multă blândețe:
+
+– Cuțu, cuțu! Bubico băiatul! Bubi!
+
+Bubico, dând din coadă, se apropie mai întâi cu oarecare sfială și îndoință, apoi, încurajat de blândețea mea, apucă frumos bombonul și-ncepe să-l clefăie.
+
+– Vezi că v-ați împrietinit! zice cocoana cu multă satisfacție de această apropiere.
+
+Apoi îmi spune genealogia favoritului... Bubico este copilul lui Garson și al Gigichii, care era soră cu Zambilica a Papadopolinii, ceea ce, care va să zică, însemnează că Zambilica este mătușa lui Bubico după mamă... În timp ce cocoana-mi povestește, eu, înfrânându-mi aversiunea și dezgustul în favoarea unui scop înalt, întrebuințez cele mai înjositoare mijloace spre a intra în bunele grații ale nepotului Zambilichii. Și-n adevăr, Bubico se tot apropie de mine, până se lasă să-l iau în brațe. Simt că mi se bate inima de teamă ca nu cumva, printr-o mișcare, ori privire, să trădez un plan mare ce l-am croit în adâncul conștiinței mele. Cocoana nu se poate mira îndestul de prietenia ce-mi arată Bubico, pe când eu cultiv cu stăruință această prietenie atât de scumpă mie, prin mângâieri și bonboane.
+
+– Ei vezi! cum v-ați împrietenit... Ce e, Bubico? ce e, mamă? iubești pe domnul? da?
+
+Și Bubico răspunde, gudurându-se-n brațele mele:
+
+– Ham!
+
+– Așa? ai trădat-o care va să zică pe mamițica?... craiule!
+
+Bubico: Ham! ham!
+
+– Trebuie să fii om bun! Nu trage el la fitecine...
+
+– Firește, coconiță; simte cânele; are instinct.
+
+Când zic acestea, iată că trenul se oprește în Crivina. Pe peron se aud lătrături și ceartă de câni. Bubico dă să se smucească din brațele mele; eu îl țiu bine; el începe să latre îndârjit cătră fereastra vagonului. Trenul pornește iar, și Bubico, întorcând capul către partea de unde s-aude depărtându-se cearta semenilor lui, latră mereu; eu îl mângâi, să-l potolesc; el, când nu se mai aude nimic, ridică botul spre tavan și începe, în brațele mele, să urle... în brațele mele!
+
+"Ah! Bubico - zic eu în sine-mi, mângâindu-l frumos - de capu-ți!... vedea-te-aș mănuși!"
+
+Dar Bubico urlă mereu.
+
+– Doamnă - zic eu - rău faceți că-l țineți așa de aproape pe Bubico și acoperit așa în căldură, poate să turbeze... Chiar așa, aici e prea cald.
+
+Și zicând acestea, mă scol cu Bubico-n brațe și m-apropiu de fereastra vagonului. Pun pe Bubico binișor jos lângă mamița lui, și cobor geamul, aplecându-mă să respir. Afară, noapte neagră ca și ideile mele.
+
+– Bine faci! să mai iasă fumul de țigară, zice cocoana.
+
+Intrăm pe podul Prahovii... Mă-ntorc, iau o bonboană, i-o arăt lui Bubico, care s-apropie de mine bâțâind frumușel din coadă.
+
+"Pe memoria lui Plutone și a fidelului său Cerber! zic eu în gând ; jur că au mințit acei cari au cântat instinctul cânilor! E o minciună! Nu există!"
+
+Bubico îmi ia bonboana; îl iau în brațe și mă dau lângă fereastră, ridicându-l în dreptul deschizăturii. Aerul răcoros, trecându-i pe la bot, face mare plăcere lui Bubico. Scoate limba și respiră din adânc.
+
+– Să nu-l scapi pe fereastră!... pentru Dumn...
+
+Dar n-apucă mamițica să rostească-ntreg sfântul nume al creatorului, și Bubico dispare ca un porumbel alb în neagra noapte, înapoi spre București, zburând - la Zambilica, probabil. Mă-ntorc cu fața spre cocoana și, prezentându-i mânile goale, strig exasperat:
+
+– Doamnă!
+
+Un răcnet!... A-nnebunit cocoana!
+
+– Repede, doamnă, semnalul de alarmă!
+
+O duc la semnal și o-nvăț cum să-l tragă. Pierdută de durere, execută mișcarea cu o supremă energie. Trenul, stop! pe loc. Cletinătură colosală. Emoție generală-ntre pasajeri.
+
+– Cine? cine a dat alarma?
+
+– Dumneaei zic eu către personalul trenului, arătând pe cocoana leșinată.
+
+Trenul se pune din nou în mișcare. La Ploiești, cocoana s-a deșteptat din leșin; zdrobită de nenorocire, trebuie să răspunză la procesul-verbal ce i se dresează pentru întrebuințarea semnalului. Pe când, în mijlocul pasajerilor grămădiți, cocoana se jelește, eu m-apropiu de urechea ei și, c-un rânjet diabolic, îi șoptesc răspicat:
+
+– Cocoană! eu l-am aruncat, mânca-i-ai coada!
+
+Ea leșină iar... Eu trec ca un demon prin mulțime și dispar în noaptea neagră...$demo$), 'published',
+  now() - interval '48 days', now() - interval '48 days', public.count_words($demo$Nouă ceasuri și nouă minute... Peste șase minute pleacă trenul. Un minut încă și se-nchide casa. Repede-mi iau biletul, ies pe peron, alerg la tren, sunt în vagon... Trec de colo până colo prin coridor, să văz în care compartiment aș găsi un loc mai comod... Aci. O damă singură, și-fumează, atât mai bine! Intru și salut, când auz o mârâitură și văz apărând dintr-un paneraș de lângă cocoana capul unui cățel lățos, plin de funde de panglici roșii și albastre, care-ncepe să mă latre ca pe un făcător de rele intrat noaptea în iatacul stăpânii-si.
+
+– Bubico! zice cocoana... șezi mumos, mamă!
+
+"Norocul meu, gândesc eu, să trăiesc bine!... Lua-te-ar dracul de javră!"
+
+Bubico se liniștește puțin; nu mai latră; își retrage capul în paneraș, unde i-l acopere iar cocoana cu un tărtănaș de lână roșie; dar tot mârâie înfundat... Eu, foarte plictisit, mă lungesc pe canapeaua din fața cocoanii și-nchiz ochii. Trenul a pornit... Prin coridor umblă pasajeri și vorbesc. Bubico mârâie arțăgos.
+
+– Biletele, domnilor! zice conductorul, intrând cu zgomot în compartimentul nostru.
+
+Acum Bubico scoate capul foarte sus și, vrând să sară afară de la locul lui, începe să latre și mai grozav ca adineaori. Eu întind biletul meu conductorului, care mi-l perforează. Conductorul face un pas către cocoana, care-și caută biletul ei în săculețul de mână, pe când Bubico latră și chelălăie desperat, smucindu-se să iasă din paner.
+
+– Bubico! zice cocoana, șezi mumos, mamițo!
+
+Și-ntinde biletul. Când mâna conductorului s-a atins de mâna cocoanei, Bubico parc-a-nnebunit. Dar conductorul șia terminat treaba și iese. Cocoana își învelește favoritul mângâindu-l "mumos"; eu mă lungesc la loc închizând ochii, pe când Bubico mârâie înfundat ca tunetul care se tot depărtează după trecerea unei grozave furtuni. Acum nu se mai aude de loc. Dar auz hârșâitul unui chibrit: cocoana își aprinde o țigaretă... Încă nu mi-e somn. De ce n-aș aprinde și eu una? A! de degrabă să nu pierz trenul, am uitat să-mi iau chibrituri. Dar nu face nimic... S-o rog pe mamița lui Bubico... Scot o țigaretă, mă ridic și dau să m-apropiu de cocoana. Dar n-apuc să fac bine o mișcare, și Bubico scoate capul lătrându-mă mai furios decât pe conductor; latră și chelălăie și tușește și...
+
+– Bubico - zice cocoana - șezi mumos, mamițico!
+
+"Lovi-te-ar jigodia, potaia dracului!" zic în gândul meu. N-am văzut de când sunt o javră mai antipatică și mai scârboasă... Dacă aș putea, i-aș rupe gâtul.
+
+În zbieretele desperate ale lui Bubico, mamițica îmi dă s-aprind. Îi mulțumesc și m-așez în locul cel mai depărtat din compartiment, de teamă că n-am să mai pot rezista pornirii și am să-i trag la cap când și l-o mai scoate din paner.
+
+– Frumușel cățel aveți, zic eu cocoanii, după câteva momente de tăcere; da' rău!
+
+– Aș! nu e rău, zice cocoana; până se-nvață cu omul; dar nu știți ce cuminte și fidel este, și deștept! Ei bine! e ca un om, frate! doar ca nu vorbește...
+
+Apoi către paner, cu multă dragoste:
+
+– Unde-i Bubico?... Nu e Bubico!...
+
+Din paner se aude un miorlăit sentimental.
+
+– Să-i dea mama băiețelului zăhărel?... Bubico! Bubi!!
+
+Băiețelul scoate capul cu panglicuțe... Mamița-l degajează din țoalele în cari dospește-nfășurat și-l scoate afară. Bubico se uită la mine și mârâie-n surdină. Eu, apucat de groază la ideea că nenorocitul ar încerca să mă provoace, zic cocoanei:
+
+– Madam! pentru Dumnezeu, țineți-l să nu se dea la mine! eu sunt nevricos, și nu știu ce-aș fi în stare... de frică...
+
+Dar cocoana, luând în brațe pe favorit și mângâindu-l cu toată duioșia:
+
+– Vai de mine! cum crezi d-ta?... Noi suntem băieți cuminți și binecrescuți... Noi nu suntem mojici ca Bismarck...
+
+– Ha? zic eu.
+
+– Bismarck al ofițerului Papadopolinii.
+
+Dându-mi această explicație, cocoana scoate din săculețul de mână o bucățică de zahăr:
+
+– Cui îi place zăhărelul?...
+
+Bubico (făcând pe bancă sluj frumos, cu toată cletinătura vagonului): Ham!
+
+– Să-i dea mamițica băiatului zăhărel?
+
+Bubico: Ham! Ham!
+
+Și apucă bucățica de zahăr și-ncepe s-o ronțăie... Cocoana scoate din alt săculeț o sticlă cu lapte, din care toarnă într-un pahar; apoi:
+
+– Cui îi place lăptic?
+
+Bubico (lingându-se pe bot): Ham!
+
+– Să-i dea mamițica lăptic băiatului?
+
+Bubico (impacient): Ham! Ham!
+
+"Ah! suspin eu în adânc; lua-te-ar hengherul, Bubico!"
+
+Dar cocoana apropie paharul aplecat de botul favoritului, care-ncepe să lăpăie, și lăpăie, și lăpăie, până când un pasajer se arată la ușa compartimentului nostru uitându-se-năuntru. Bubico se oprește din lăpăit și se pornește să latre ca o fiară, cu ochii holbați și mușcând în sec și clănțănind din dinți, și tușind și...
+
+"Vedea-te-aș la Babeș, jigăraie îndrăcită!" gândesc eu, și prin mintea mea începe să treacă fel de fel de idei, care de care mai crudă și mai infamă.
+
+Pasajerul s-a retras de la geam. Bubico s-a potolit. Cocoana toarnă iar lapte-n pahar și bea și dumneei. Eu simt cum mă năvălesc, din ce în ce mai irezistibile, ideile negre.
+
+\- *A propos *- zic eu - madam, vorbeați adineaori de Bismarck... al...
+
+– Al ofițerului Papadopolinii...
+
+– Ei! Ce e Bismarck?
+
+– Un dulău de curte... Era să mi-l omoare pe Bubico... Papadopolina are o cățelușă, Zambilica, foarte frumușică! șade alături de mine; suntem prietene; și dumnealui (arată pe Bubico), curte teribilă! (Către Bubico:) Craiule!... (Către mine:) Mizerabila de servitoare, o dobitoacă! i-am spus, când l-a dus afară de dimineață - că nu știi ce curat e! - zic: "Bagă de seamă să nu scape, să se ducă iar la Papadopolina, că-l rupe Bismarck..." dulăul ofițerului, care șade cu chirie la ea. (Tușește cu mult înțeles.) Eu nu știu ce făceam pân casă, când auz afară chelălăituri și țipete... Strig: "Bubico! Bubico! unde e băiatul?!" Alerg... Mi-l aducea dobitoaca pe brațe; d-abia-l scoseseră ea și Papadopolina și soldatul ofițerului din gura dulăului. Ce să-l vezi?... tăvălit, leșinat și moale ca o cârpă. Zic: "Vai de mine! moare băiatul!" Stropește-l cu apă! dă-i cu odicolon la nas!... Ce-am pătimit, numai eu știu... Două săptămâni a zăcut... Am adus și doftor. Da-n sfârșit, slavă Domnului! a scăpat... (Cătră Bubico:) Mai merge la Zambilica băiatul?
+
+Bubico: Ham!
+
+– Să te mănânce Bismarck... craiule!
+
+– Ham! ham!
+
+Și sare de pe bancă jos în vagon și apucă spre mine.
+
+– Cocoană! strig eu, ridicându-mi picioarele; eu sunt nevricos, să nu se dea la mine, că...
+
+– Nu, frate! zice cocoana, nu vezi că vrea să se-mprietinească? Așa e el: numaidecât simte pe cine-l iubește...
+
+– A! zic eu, având o inspirație infernală; a! simte pe cine-l iubește... vrea să ne-mprietenim!... Bravo!
+
+Și pe când cățelul se apropie să mă miroasă, iau un pachețel de bonboane, pe cari le duc în provincie, la un prietin; îl deschid, scot un bonbon și, întinzându-l în jos, cu multă blândețe:
+
+– Cuțu, cuțu! Bubico băiatul! Bubi!
+
+Bubico, dând din coadă, se apropie mai întâi cu oarecare sfială și îndoință, apoi, încurajat de blândețea mea, apucă frumos bombonul și-ncepe să-l clefăie.
+
+– Vezi că v-ați împrietinit! zice cocoana cu multă satisfacție de această apropiere.
+
+Apoi îmi spune genealogia favoritului... Bubico este copilul lui Garson și al Gigichii, care era soră cu Zambilica a Papadopolinii, ceea ce, care va să zică, însemnează că Zambilica este mătușa lui Bubico după mamă... În timp ce cocoana-mi povestește, eu, înfrânându-mi aversiunea și dezgustul în favoarea unui scop înalt, întrebuințez cele mai înjositoare mijloace spre a intra în bunele grații ale nepotului Zambilichii. Și-n adevăr, Bubico se tot apropie de mine, până se lasă să-l iau în brațe. Simt că mi se bate inima de teamă ca nu cumva, printr-o mișcare, ori privire, să trădez un plan mare ce l-am croit în adâncul conștiinței mele. Cocoana nu se poate mira îndestul de prietenia ce-mi arată Bubico, pe când eu cultiv cu stăruință această prietenie atât de scumpă mie, prin mângâieri și bonboane.
+
+– Ei vezi! cum v-ați împrietenit... Ce e, Bubico? ce e, mamă? iubești pe domnul? da?
+
+Și Bubico răspunde, gudurându-se-n brațele mele:
+
+– Ham!
+
+– Așa? ai trădat-o care va să zică pe mamițica?... craiule!
+
+Bubico: Ham! ham!
+
+– Trebuie să fii om bun! Nu trage el la fitecine...
+
+– Firește, coconiță; simte cânele; are instinct.
+
+Când zic acestea, iată că trenul se oprește în Crivina. Pe peron se aud lătrături și ceartă de câni. Bubico dă să se smucească din brațele mele; eu îl țiu bine; el începe să latre îndârjit cătră fereastra vagonului. Trenul pornește iar, și Bubico, întorcând capul către partea de unde s-aude depărtându-se cearta semenilor lui, latră mereu; eu îl mângâi, să-l potolesc; el, când nu se mai aude nimic, ridică botul spre tavan și începe, în brațele mele, să urle... în brațele mele!
+
+"Ah! Bubico - zic eu în sine-mi, mângâindu-l frumos - de capu-ți!... vedea-te-aș mănuși!"
+
+Dar Bubico urlă mereu.
+
+– Doamnă - zic eu - rău faceți că-l țineți așa de aproape pe Bubico și acoperit așa în căldură, poate să turbeze... Chiar așa, aici e prea cald.
+
+Și zicând acestea, mă scol cu Bubico-n brațe și m-apropiu de fereastra vagonului. Pun pe Bubico binișor jos lângă mamița lui, și cobor geamul, aplecându-mă să respir. Afară, noapte neagră ca și ideile mele.
+
+– Bine faci! să mai iasă fumul de țigară, zice cocoana.
+
+Intrăm pe podul Prahovii... Mă-ntorc, iau o bonboană, i-o arăt lui Bubico, care s-apropie de mine bâțâind frumușel din coadă.
+
+"Pe memoria lui Plutone și a fidelului său Cerber! zic eu în gând ; jur că au mințit acei cari au cântat instinctul cânilor! E o minciună! Nu există!"
+
+Bubico îmi ia bonboana; îl iau în brațe și mă dau lângă fereastră, ridicându-l în dreptul deschizăturii. Aerul răcoros, trecându-i pe la bot, face mare plăcere lui Bubico. Scoate limba și respiră din adânc.
+
+– Să nu-l scapi pe fereastră!... pentru Dumn...
+
+Dar n-apucă mamițica să rostească-ntreg sfântul nume al creatorului, și Bubico dispare ca un porumbel alb în neagra noapte, înapoi spre București, zburând - la Zambilica, probabil. Mă-ntorc cu fața spre cocoana și, prezentându-i mânile goale, strig exasperat:
+
+– Doamnă!
+
+Un răcnet!... A-nnebunit cocoana!
+
+– Repede, doamnă, semnalul de alarmă!
+
+O duc la semnal și o-nvăț cum să-l tragă. Pierdută de durere, execută mișcarea cu o supremă energie. Trenul, stop! pe loc. Cletinătură colosală. Emoție generală-ntre pasajeri.
+
+– Cine? cine a dat alarma?
+
+– Dumneaei zic eu către personalul trenului, arătând pe cocoana leșinată.
+
+Trenul se pune din nou în mișcare. La Ploiești, cocoana s-a deșteptat din leșin; zdrobită de nenorocire, trebuie să răspunză la procesul-verbal ce i se dresează pentru întrebuințarea semnalului. Pe când, în mijlocul pasajerilor grămădiți, cocoana se jelește, eu m-apropiu de urechea ei și, c-un rânjet diabolic, îi șoptesc răspicat:
+
+– Cocoană! eu l-am aruncat, mânca-i-ai coada!
+
+Ea leșină iar... Eu trec ca un demon prin mulțime și dispar în noaptea neagră...$demo$),
+  public.count_words($demo$Nouă ceasuri și nouă minute... Peste șase minute pleacă trenul. Un minut încă și se-nchide casa. Repede-mi iau biletul, ies pe peron, alerg la tren, sunt în vagon... Trec de colo până colo prin coridor, să văz în care compartiment aș găsi un loc mai comod... Aci. O damă singură, și-fumează, atât mai bine! Intru și salut, când auz o mârâitură și văz apărând dintr-un paneraș de lângă cocoana capul unui cățel lățos, plin de funde de panglici roșii și albastre, care-ncepe să mă latre ca pe un făcător de rele intrat noaptea în iatacul stăpânii-si.
+
+– Bubico! zice cocoana... șezi mumos, mamă!
+
+"Norocul meu, gândesc eu, să trăiesc bine!... Lua-te-ar dracul de javră!"
+
+Bubico se liniștește puțin; nu mai latră; își retrage capul în paneraș, unde i-l acopere iar cocoana cu un tărtănaș de lână roșie; dar tot mârâie înfundat... Eu, foarte plictisit, mă lungesc pe canapeaua din fața cocoanii și-nchiz ochii. Trenul a pornit... Prin coridor umblă pasajeri și vorbesc. Bubico mârâie arțăgos.
+
+– Biletele, domnilor! zice conductorul, intrând cu zgomot în compartimentul nostru.
+
+Acum Bubico scoate capul foarte sus și, vrând să sară afară de la locul lui, începe să latre și mai grozav ca adineaori. Eu întind biletul meu conductorului, care mi-l perforează. Conductorul face un pas către cocoana, care-și caută biletul ei în săculețul de mână, pe când Bubico latră și chelălăie desperat, smucindu-se să iasă din paner.
+
+– Bubico! zice cocoana, șezi mumos, mamițo!
+
+Și-ntinde biletul. Când mâna conductorului s-a atins de mâna cocoanei, Bubico parc-a-nnebunit. Dar conductorul șia terminat treaba și iese. Cocoana își învelește favoritul mângâindu-l "mumos"; eu mă lungesc la loc închizând ochii, pe când Bubico mârâie înfundat ca tunetul care se tot depărtează după trecerea unei grozave furtuni. Acum nu se mai aude de loc. Dar auz hârșâitul unui chibrit: cocoana își aprinde o țigaretă... Încă nu mi-e somn. De ce n-aș aprinde și eu una? A! de degrabă să nu pierz trenul, am uitat să-mi iau chibrituri. Dar nu face nimic... S-o rog pe mamița lui Bubico... Scot o țigaretă, mă ridic și dau să m-apropiu de cocoana. Dar n-apuc să fac bine o mișcare, și Bubico scoate capul lătrându-mă mai furios decât pe conductor; latră și chelălăie și tușește și...
+
+– Bubico - zice cocoana - șezi mumos, mamițico!
+
+"Lovi-te-ar jigodia, potaia dracului!" zic în gândul meu. N-am văzut de când sunt o javră mai antipatică și mai scârboasă... Dacă aș putea, i-aș rupe gâtul.
+
+În zbieretele desperate ale lui Bubico, mamițica îmi dă s-aprind. Îi mulțumesc și m-așez în locul cel mai depărtat din compartiment, de teamă că n-am să mai pot rezista pornirii și am să-i trag la cap când și l-o mai scoate din paner.
+
+– Frumușel cățel aveți, zic eu cocoanii, după câteva momente de tăcere; da' rău!
+
+– Aș! nu e rău, zice cocoana; până se-nvață cu omul; dar nu știți ce cuminte și fidel este, și deștept! Ei bine! e ca un om, frate! doar ca nu vorbește...
+
+Apoi către paner, cu multă dragoste:
+
+– Unde-i Bubico?... Nu e Bubico!...
+
+Din paner se aude un miorlăit sentimental.
+
+– Să-i dea mama băiețelului zăhărel?... Bubico! Bubi!!
+
+Băiețelul scoate capul cu panglicuțe... Mamița-l degajează din țoalele în cari dospește-nfășurat și-l scoate afară. Bubico se uită la mine și mârâie-n surdină. Eu, apucat de groază la ideea că nenorocitul ar încerca să mă provoace, zic cocoanei:
+
+– Madam! pentru Dumnezeu, țineți-l să nu se dea la mine! eu sunt nevricos, și nu știu ce-aș fi în stare... de frică...
+
+Dar cocoana, luând în brațe pe favorit și mângâindu-l cu toată duioșia:
+
+– Vai de mine! cum crezi d-ta?... Noi suntem băieți cuminți și binecrescuți... Noi nu suntem mojici ca Bismarck...
+
+– Ha? zic eu.
+
+– Bismarck al ofițerului Papadopolinii.
+
+Dându-mi această explicație, cocoana scoate din săculețul de mână o bucățică de zahăr:
+
+– Cui îi place zăhărelul?...
+
+Bubico (făcând pe bancă sluj frumos, cu toată cletinătura vagonului): Ham!
+
+– Să-i dea mamițica băiatului zăhărel?
+
+Bubico: Ham! Ham!
+
+Și apucă bucățica de zahăr și-ncepe s-o ronțăie... Cocoana scoate din alt săculeț o sticlă cu lapte, din care toarnă într-un pahar; apoi:
+
+– Cui îi place lăptic?
+
+Bubico (lingându-se pe bot): Ham!
+
+– Să-i dea mamițica lăptic băiatului?
+
+Bubico (impacient): Ham! Ham!
+
+"Ah! suspin eu în adânc; lua-te-ar hengherul, Bubico!"
+
+Dar cocoana apropie paharul aplecat de botul favoritului, care-ncepe să lăpăie, și lăpăie, și lăpăie, până când un pasajer se arată la ușa compartimentului nostru uitându-se-năuntru. Bubico se oprește din lăpăit și se pornește să latre ca o fiară, cu ochii holbați și mușcând în sec și clănțănind din dinți, și tușind și...
+
+"Vedea-te-aș la Babeș, jigăraie îndrăcită!" gândesc eu, și prin mintea mea începe să treacă fel de fel de idei, care de care mai crudă și mai infamă.
+
+Pasajerul s-a retras de la geam. Bubico s-a potolit. Cocoana toarnă iar lapte-n pahar și bea și dumneei. Eu simt cum mă năvălesc, din ce în ce mai irezistibile, ideile negre.
+
+\- *A propos *- zic eu - madam, vorbeați adineaori de Bismarck... al...
+
+– Al ofițerului Papadopolinii...
+
+– Ei! Ce e Bismarck?
+
+– Un dulău de curte... Era să mi-l omoare pe Bubico... Papadopolina are o cățelușă, Zambilica, foarte frumușică! șade alături de mine; suntem prietene; și dumnealui (arată pe Bubico), curte teribilă! (Către Bubico:) Craiule!... (Către mine:) Mizerabila de servitoare, o dobitoacă! i-am spus, când l-a dus afară de dimineață - că nu știi ce curat e! - zic: "Bagă de seamă să nu scape, să se ducă iar la Papadopolina, că-l rupe Bismarck..." dulăul ofițerului, care șade cu chirie la ea. (Tușește cu mult înțeles.) Eu nu știu ce făceam pân casă, când auz afară chelălăituri și țipete... Strig: "Bubico! Bubico! unde e băiatul?!" Alerg... Mi-l aducea dobitoaca pe brațe; d-abia-l scoseseră ea și Papadopolina și soldatul ofițerului din gura dulăului. Ce să-l vezi?... tăvălit, leșinat și moale ca o cârpă. Zic: "Vai de mine! moare băiatul!" Stropește-l cu apă! dă-i cu odicolon la nas!... Ce-am pătimit, numai eu știu... Două săptămâni a zăcut... Am adus și doftor. Da-n sfârșit, slavă Domnului! a scăpat... (Cătră Bubico:) Mai merge la Zambilica băiatul?
+
+Bubico: Ham!
+
+– Să te mănânce Bismarck... craiule!
+
+– Ham! ham!
+
+Și sare de pe bancă jos în vagon și apucă spre mine.
+
+– Cocoană! strig eu, ridicându-mi picioarele; eu sunt nevricos, să nu se dea la mine, că...
+
+– Nu, frate! zice cocoana, nu vezi că vrea să se-mprietinească? Așa e el: numaidecât simte pe cine-l iubește...
+
+– A! zic eu, având o inspirație infernală; a! simte pe cine-l iubește... vrea să ne-mprietenim!... Bravo!
+
+Și pe când cățelul se apropie să mă miroasă, iau un pachețel de bonboane, pe cari le duc în provincie, la un prietin; îl deschid, scot un bonbon și, întinzându-l în jos, cu multă blândețe:
+
+– Cuțu, cuțu! Bubico băiatul! Bubi!
+
+Bubico, dând din coadă, se apropie mai întâi cu oarecare sfială și îndoință, apoi, încurajat de blândețea mea, apucă frumos bombonul și-ncepe să-l clefăie.
+
+– Vezi că v-ați împrietinit! zice cocoana cu multă satisfacție de această apropiere.
+
+Apoi îmi spune genealogia favoritului... Bubico este copilul lui Garson și al Gigichii, care era soră cu Zambilica a Papadopolinii, ceea ce, care va să zică, însemnează că Zambilica este mătușa lui Bubico după mamă... În timp ce cocoana-mi povestește, eu, înfrânându-mi aversiunea și dezgustul în favoarea unui scop înalt, întrebuințez cele mai înjositoare mijloace spre a intra în bunele grații ale nepotului Zambilichii. Și-n adevăr, Bubico se tot apropie de mine, până se lasă să-l iau în brațe. Simt că mi se bate inima de teamă ca nu cumva, printr-o mișcare, ori privire, să trădez un plan mare ce l-am croit în adâncul conștiinței mele. Cocoana nu se poate mira îndestul de prietenia ce-mi arată Bubico, pe când eu cultiv cu stăruință această prietenie atât de scumpă mie, prin mângâieri și bonboane.
+
+– Ei vezi! cum v-ați împrietenit... Ce e, Bubico? ce e, mamă? iubești pe domnul? da?
+
+Și Bubico răspunde, gudurându-se-n brațele mele:
+
+– Ham!
+
+– Așa? ai trădat-o care va să zică pe mamițica?... craiule!
+
+Bubico: Ham! ham!
+
+– Trebuie să fii om bun! Nu trage el la fitecine...
+
+– Firește, coconiță; simte cânele; are instinct.
+
+Când zic acestea, iată că trenul se oprește în Crivina. Pe peron se aud lătrături și ceartă de câni. Bubico dă să se smucească din brațele mele; eu îl țiu bine; el începe să latre îndârjit cătră fereastra vagonului. Trenul pornește iar, și Bubico, întorcând capul către partea de unde s-aude depărtându-se cearta semenilor lui, latră mereu; eu îl mângâi, să-l potolesc; el, când nu se mai aude nimic, ridică botul spre tavan și începe, în brațele mele, să urle... în brațele mele!
+
+"Ah! Bubico - zic eu în sine-mi, mângâindu-l frumos - de capu-ți!... vedea-te-aș mănuși!"
+
+Dar Bubico urlă mereu.
+
+– Doamnă - zic eu - rău faceți că-l țineți așa de aproape pe Bubico și acoperit așa în căldură, poate să turbeze... Chiar așa, aici e prea cald.
+
+Și zicând acestea, mă scol cu Bubico-n brațe și m-apropiu de fereastra vagonului. Pun pe Bubico binișor jos lângă mamița lui, și cobor geamul, aplecându-mă să respir. Afară, noapte neagră ca și ideile mele.
+
+– Bine faci! să mai iasă fumul de țigară, zice cocoana.
+
+Intrăm pe podul Prahovii... Mă-ntorc, iau o bonboană, i-o arăt lui Bubico, care s-apropie de mine bâțâind frumușel din coadă.
+
+"Pe memoria lui Plutone și a fidelului său Cerber! zic eu în gând ; jur că au mințit acei cari au cântat instinctul cânilor! E o minciună! Nu există!"
+
+Bubico îmi ia bonboana; îl iau în brațe și mă dau lângă fereastră, ridicându-l în dreptul deschizăturii. Aerul răcoros, trecându-i pe la bot, face mare plăcere lui Bubico. Scoate limba și respiră din adânc.
+
+– Să nu-l scapi pe fereastră!... pentru Dumn...
+
+Dar n-apucă mamițica să rostească-ntreg sfântul nume al creatorului, și Bubico dispare ca un porumbel alb în neagra noapte, înapoi spre București, zburând - la Zambilica, probabil. Mă-ntorc cu fața spre cocoana și, prezentându-i mânile goale, strig exasperat:
+
+– Doamnă!
+
+Un răcnet!... A-nnebunit cocoana!
+
+– Repede, doamnă, semnalul de alarmă!
+
+O duc la semnal și o-nvăț cum să-l tragă. Pierdută de durere, execută mișcarea cu o supremă energie. Trenul, stop! pe loc. Cletinătură colosală. Emoție generală-ntre pasajeri.
+
+– Cine? cine a dat alarma?
+
+– Dumneaei zic eu către personalul trenului, arătând pe cocoana leșinată.
+
+Trenul se pune din nou în mișcare. La Ploiești, cocoana s-a deșteptat din leșin; zdrobită de nenorocire, trebuie să răspunză la procesul-verbal ce i se dresează pentru întrebuințarea semnalului. Pe când, în mijlocul pasajerilor grămădiți, cocoana se jelește, eu m-apropiu de urechea ei și, c-un rânjet diabolic, îi șoptesc răspicat:
+
+– Cocoană! eu l-am aruncat, mânca-i-ai coada!
+
+Ea leșină iar... Eu trec ca un demon prin mulțime și dispar în noaptea neagră...$demo$), now() - interval '49 days'
+where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-001100010000'::uuid);
+
+-- classic-12-iarna-pe-ulita: "Iarna pe uliță" by clasice
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
+  first_published_at, last_chapter_published_at, created_at)
+select '00000000-0000-4000-9300-001200000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'iarna-pe-ulita-classic',
+  $demo$Iarna pe uliță$demo$, $demo$Prima zăpadă, copii cu sănii pe uliță și un băiețel pierdut într-o haină și o căciulă mult prea mari. Gloata de copii se ține după el, apoi după baba care îi ia apărarea. Iarna satului, cu toată gălăgia ei.
+
+Ediția sursă: 1896. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=127242, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
+  (select id from public.categories where slug = 'poetry'),
+  'drawn', 'stripes', 'sky', 'paper', 'all_ages', 'no_ai',
+  now() - interval '85 days', now() - interval '85 days', now() - interval '87 days'
+where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001200000000'::uuid);
+select public.set_story_tags('00000000-0000-4000-9300-001200000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'iarnă']);
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
+select '00000000-0000-4000-9300-001200010000'::uuid, '00000000-0000-4000-9300-001200000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
+  'k012c001', 1, $demo$Iarna pe uliță$demo$, public.check_chapter_text($demo$A-nceput de ieri să cadă  
+Câte-un fulg, acum a stat,  
+Norii s-au mai răzbunat  
+Spre apus, dar stau grămadă  
+Peste sat.
+
+Nu e soare, dar e bine,  
+Și pe râu e numai fum.  
+Vântu-i liniștit acum,  
+Dar năvalnic vuiet vine  
+De pe drum.
+
+Sunt copii. Cu multe sănii,  
+De pe coastă vin țipând  
+Și se-mping și sar râzând;  
+Prin zăpadă fac mătănii;  
+Vrând-nevrând.
+
+Gură fac ca roata morii;  
+Și de-a valma se pornesc,  
+Cum prin gard se gâlcevesc  
+Vrăbii gureșe, când norii  
+Ploi vestesc.
+
+Cei mai mari acum, din sfadă,  
+Stau pe-ncăierate puși;  
+Cei mai mici, de foame-aduși,  
+Se scâncesc și plâng grămadă  
+Pe la uși.
+
+Colo-n colț acum răsare  
+Un copil, al nu știu cui,  
+Largi de-un cot sunt pașii lui,  
+Iar el mic, căci pe cărare  
+Parcă nu-i.
+
+Haina-i măturând pământul  
+Și-o târăște-abia, abia:  
+Cinci ca el încap în ea,  
+Să mai bată, soro, vântul  
+Dac-o vrea!
+
+El e sol precum se vede,  
+Mă-sa l-a trimis în sat,  
+Vezi de-aceea-i încruntat,  
+Și s-avântă, și se crede  
+Că-i bărbat;
+
+Cade-n brânci și se ridică  
+Dând pe ceafă puțintel  
+Toată lâna unui miel:  
+O căciulă mai voinică  
+Decât el.
+
+Și tot vine, tot înoată,  
+Dar deodată cu ochi vii,  
+Stă pe loc să mi te ții!  
+Colo, zgomotoasa gloată,  
+De copii!
+
+El degrabă-n jur chitește  
+Vrun ocol, căci e pierdut,  
+Dar copiii l-au văzut!  
+Toată ceata năvălește  
+Pe-ntrecut.
+
+Uite-i, mă, căciula, frate,  
+Mare cât o zi de post  
+Aoleu, ce urs mi-a fost!  
+Au sub dânsa șapte sate  
+Adăpost!
+
+Unii-l iau grăbit la vale,  
+Alții-n glumă parte-i țin  
+Uite-i, fără pic de vin  
+S-au jurat să-mbete-n cale  
+Pe creștin!
+
+Vine-o babă-ncet pe stradă  
+În cojocul rupt al ei  
+Și încins cu sfori de tei.  
+Stă pe loc acum să vadă  
+Și ea ce-i.
+
+S-oțărăște rău bătrâna  
+Pentru micul Barba-cot.  
+Ați înnebunit de tot  
+Puiul mamii, dă-mi tu mâna  
+Să te scot!
+
+Cică vrei să stingi cu paie  
+Focul când e-n clăi cu fân,  
+Și-apoi zici că ești român!  
+Biata bab-a-ntrat în laie  
+La stăpân.
+
+Ca pe-o bufniț-o-nconjoară  
+Și-o petrec cu chiu cu vai,  
+Și se țin de dânsa scai,  
+Plină-i strâmta ulicioară  
+De alai.
+
+Nu e chip să-i faci cu buna  
+Să-și păzească drumul lor!  
+Râd și sar într-un picior,  
+Se-nvârtesc și țipă-ntruna  
+Mai cu zor.
+
+Baba și-a uitat învățul:  
+Bate,-njură, dă din mâini:  
+Dracilor, sânteți păgâni?  
+Maica mea! Să stai cu bățul  
+Ca la câini!
+
+Și cu bățul se-nvârtește  
+Ca să-și facă-n jur ocol;  
+Dar abia e locul gol,  
+Și mulțimea năvălește  
+Iarăși stol.
+
+Astfel tabăra se duce  
+Lălăind în chip avan:  
+Baba-n mijloc, căpitan,  
+Scuipă-n sân și face cruce  
+De Satan.
+
+Ba se răscolesc și câinii  
+De prin curți, și sar la ei.  
+Pe la garduri ies femei,  
+Se urnesc mirați bătrânii  
+Din bordei.
+
+Ce-i pe drum atâta gură?  
+Nu-i nimic. Copii ștrengari.  
+Ei, auzi! Vedea-i-aș mari,  
+Parcă trece-adunătură  
+De tătari!$demo$), 1,
+  now() - interval '85 days', $demo$Iarna pe uliță$demo$, public.check_chapter_text($demo$A-nceput de ieri să cadă  
+Câte-un fulg, acum a stat,  
+Norii s-au mai răzbunat  
+Spre apus, dar stau grămadă  
+Peste sat.
+
+Nu e soare, dar e bine,  
+Și pe râu e numai fum.  
+Vântu-i liniștit acum,  
+Dar năvalnic vuiet vine  
+De pe drum.
+
+Sunt copii. Cu multe sănii,  
+De pe coastă vin țipând  
+Și se-mping și sar râzând;  
+Prin zăpadă fac mătănii;  
+Vrând-nevrând.
+
+Gură fac ca roata morii;  
+Și de-a valma se pornesc,  
+Cum prin gard se gâlcevesc  
+Vrăbii gureșe, când norii  
+Ploi vestesc.
+
+Cei mai mari acum, din sfadă,  
+Stau pe-ncăierate puși;  
+Cei mai mici, de foame-aduși,  
+Se scâncesc și plâng grămadă  
+Pe la uși.
+
+Colo-n colț acum răsare  
+Un copil, al nu știu cui,  
+Largi de-un cot sunt pașii lui,  
+Iar el mic, căci pe cărare  
+Parcă nu-i.
+
+Haina-i măturând pământul  
+Și-o târăște-abia, abia:  
+Cinci ca el încap în ea,  
+Să mai bată, soro, vântul  
+Dac-o vrea!
+
+El e sol precum se vede,  
+Mă-sa l-a trimis în sat,  
+Vezi de-aceea-i încruntat,  
+Și s-avântă, și se crede  
+Că-i bărbat;
+
+Cade-n brânci și se ridică  
+Dând pe ceafă puțintel  
+Toată lâna unui miel:  
+O căciulă mai voinică  
+Decât el.
+
+Și tot vine, tot înoată,  
+Dar deodată cu ochi vii,  
+Stă pe loc să mi te ții!  
+Colo, zgomotoasa gloată,  
+De copii!
+
+El degrabă-n jur chitește  
+Vrun ocol, căci e pierdut,  
+Dar copiii l-au văzut!  
+Toată ceata năvălește  
+Pe-ntrecut.
+
+Uite-i, mă, căciula, frate,  
+Mare cât o zi de post  
+Aoleu, ce urs mi-a fost!  
+Au sub dânsa șapte sate  
+Adăpost!
+
+Unii-l iau grăbit la vale,  
+Alții-n glumă parte-i țin  
+Uite-i, fără pic de vin  
+S-au jurat să-mbete-n cale  
+Pe creștin!
+
+Vine-o babă-ncet pe stradă  
+În cojocul rupt al ei  
+Și încins cu sfori de tei.  
+Stă pe loc acum să vadă  
+Și ea ce-i.
+
+S-oțărăște rău bătrâna  
+Pentru micul Barba-cot.  
+Ați înnebunit de tot  
+Puiul mamii, dă-mi tu mâna  
+Să te scot!
+
+Cică vrei să stingi cu paie  
+Focul când e-n clăi cu fân,  
+Și-apoi zici că ești român!  
+Biata bab-a-ntrat în laie  
+La stăpân.
+
+Ca pe-o bufniț-o-nconjoară  
+Și-o petrec cu chiu cu vai,  
+Și se țin de dânsa scai,  
+Plină-i strâmta ulicioară  
+De alai.
+
+Nu e chip să-i faci cu buna  
+Să-și păzească drumul lor!  
+Râd și sar într-un picior,  
+Se-nvârtesc și țipă-ntruna  
+Mai cu zor.
+
+Baba și-a uitat învățul:  
+Bate,-njură, dă din mâini:  
+Dracilor, sânteți păgâni?  
+Maica mea! Să stai cu bățul  
+Ca la câini!
+
+Și cu bățul se-nvârtește  
+Ca să-și facă-n jur ocol;  
+Dar abia e locul gol,  
+Și mulțimea năvălește  
+Iarăși stol.
+
+Astfel tabăra se duce  
+Lălăind în chip avan:  
+Baba-n mijloc, căpitan,  
+Scuipă-n sân și face cruce  
+De Satan.
+
+Ba se răscolesc și câinii  
+De prin curți, și sar la ei.  
+Pe la garduri ies femei,  
+Se urnesc mirați bătrânii  
+Din bordei.
+
+Ce-i pe drum atâta gură?  
+Nu-i nimic. Copii ștrengari.  
+Ei, auzi! Vedea-i-aș mari,  
+Parcă trece-adunătură  
+De tătari!$demo$), 'published',
+  now() - interval '85 days', now() - interval '85 days', public.count_words($demo$A-nceput de ieri să cadă  
+Câte-un fulg, acum a stat,  
+Norii s-au mai răzbunat  
+Spre apus, dar stau grămadă  
+Peste sat.
+
+Nu e soare, dar e bine,  
+Și pe râu e numai fum.  
+Vântu-i liniștit acum,  
+Dar năvalnic vuiet vine  
+De pe drum.
+
+Sunt copii. Cu multe sănii,  
+De pe coastă vin țipând  
+Și se-mping și sar râzând;  
+Prin zăpadă fac mătănii;  
+Vrând-nevrând.
+
+Gură fac ca roata morii;  
+Și de-a valma se pornesc,  
+Cum prin gard se gâlcevesc  
+Vrăbii gureșe, când norii  
+Ploi vestesc.
+
+Cei mai mari acum, din sfadă,  
+Stau pe-ncăierate puși;  
+Cei mai mici, de foame-aduși,  
+Se scâncesc și plâng grămadă  
+Pe la uși.
+
+Colo-n colț acum răsare  
+Un copil, al nu știu cui,  
+Largi de-un cot sunt pașii lui,  
+Iar el mic, căci pe cărare  
+Parcă nu-i.
+
+Haina-i măturând pământul  
+Și-o târăște-abia, abia:  
+Cinci ca el încap în ea,  
+Să mai bată, soro, vântul  
+Dac-o vrea!
+
+El e sol precum se vede,  
+Mă-sa l-a trimis în sat,  
+Vezi de-aceea-i încruntat,  
+Și s-avântă, și se crede  
+Că-i bărbat;
+
+Cade-n brânci și se ridică  
+Dând pe ceafă puțintel  
+Toată lâna unui miel:  
+O căciulă mai voinică  
+Decât el.
+
+Și tot vine, tot înoată,  
+Dar deodată cu ochi vii,  
+Stă pe loc să mi te ții!  
+Colo, zgomotoasa gloată,  
+De copii!
+
+El degrabă-n jur chitește  
+Vrun ocol, căci e pierdut,  
+Dar copiii l-au văzut!  
+Toată ceata năvălește  
+Pe-ntrecut.
+
+Uite-i, mă, căciula, frate,  
+Mare cât o zi de post  
+Aoleu, ce urs mi-a fost!  
+Au sub dânsa șapte sate  
+Adăpost!
+
+Unii-l iau grăbit la vale,  
+Alții-n glumă parte-i țin  
+Uite-i, fără pic de vin  
+S-au jurat să-mbete-n cale  
+Pe creștin!
+
+Vine-o babă-ncet pe stradă  
+În cojocul rupt al ei  
+Și încins cu sfori de tei.  
+Stă pe loc acum să vadă  
+Și ea ce-i.
+
+S-oțărăște rău bătrâna  
+Pentru micul Barba-cot.  
+Ați înnebunit de tot  
+Puiul mamii, dă-mi tu mâna  
+Să te scot!
+
+Cică vrei să stingi cu paie  
+Focul când e-n clăi cu fân,  
+Și-apoi zici că ești român!  
+Biata bab-a-ntrat în laie  
+La stăpân.
+
+Ca pe-o bufniț-o-nconjoară  
+Și-o petrec cu chiu cu vai,  
+Și se țin de dânsa scai,  
+Plină-i strâmta ulicioară  
+De alai.
+
+Nu e chip să-i faci cu buna  
+Să-și păzească drumul lor!  
+Râd și sar într-un picior,  
+Se-nvârtesc și țipă-ntruna  
+Mai cu zor.
+
+Baba și-a uitat învățul:  
+Bate,-njură, dă din mâini:  
+Dracilor, sânteți păgâni?  
+Maica mea! Să stai cu bățul  
+Ca la câini!
+
+Și cu bățul se-nvârtește  
+Ca să-și facă-n jur ocol;  
+Dar abia e locul gol,  
+Și mulțimea năvălește  
+Iarăși stol.
+
+Astfel tabăra se duce  
+Lălăind în chip avan:  
+Baba-n mijloc, căpitan,  
+Scuipă-n sân și face cruce  
+De Satan.
+
+Ba se răscolesc și câinii  
+De prin curți, și sar la ei.  
+Pe la garduri ies femei,  
+Se urnesc mirați bătrânii  
+Din bordei.
+
+Ce-i pe drum atâta gură?  
+Nu-i nimic. Copii ștrengari.  
+Ei, auzi! Vedea-i-aș mari,  
+Parcă trece-adunătură  
+De tătari!$demo$),
+  public.count_words($demo$A-nceput de ieri să cadă  
+Câte-un fulg, acum a stat,  
+Norii s-au mai răzbunat  
+Spre apus, dar stau grămadă  
+Peste sat.
+
+Nu e soare, dar e bine,  
+Și pe râu e numai fum.  
+Vântu-i liniștit acum,  
+Dar năvalnic vuiet vine  
+De pe drum.
+
+Sunt copii. Cu multe sănii,  
+De pe coastă vin țipând  
+Și se-mping și sar râzând;  
+Prin zăpadă fac mătănii;  
+Vrând-nevrând.
+
+Gură fac ca roata morii;  
+Și de-a valma se pornesc,  
+Cum prin gard se gâlcevesc  
+Vrăbii gureșe, când norii  
+Ploi vestesc.
+
+Cei mai mari acum, din sfadă,  
+Stau pe-ncăierate puși;  
+Cei mai mici, de foame-aduși,  
+Se scâncesc și plâng grămadă  
+Pe la uși.
+
+Colo-n colț acum răsare  
+Un copil, al nu știu cui,  
+Largi de-un cot sunt pașii lui,  
+Iar el mic, căci pe cărare  
+Parcă nu-i.
+
+Haina-i măturând pământul  
+Și-o târăște-abia, abia:  
+Cinci ca el încap în ea,  
+Să mai bată, soro, vântul  
+Dac-o vrea!
+
+El e sol precum se vede,  
+Mă-sa l-a trimis în sat,  
+Vezi de-aceea-i încruntat,  
+Și s-avântă, și se crede  
+Că-i bărbat;
+
+Cade-n brânci și se ridică  
+Dând pe ceafă puțintel  
+Toată lâna unui miel:  
+O căciulă mai voinică  
+Decât el.
+
+Și tot vine, tot înoată,  
+Dar deodată cu ochi vii,  
+Stă pe loc să mi te ții!  
+Colo, zgomotoasa gloată,  
+De copii!
+
+El degrabă-n jur chitește  
+Vrun ocol, căci e pierdut,  
+Dar copiii l-au văzut!  
+Toată ceata năvălește  
+Pe-ntrecut.
+
+Uite-i, mă, căciula, frate,  
+Mare cât o zi de post  
+Aoleu, ce urs mi-a fost!  
+Au sub dânsa șapte sate  
+Adăpost!
+
+Unii-l iau grăbit la vale,  
+Alții-n glumă parte-i țin  
+Uite-i, fără pic de vin  
+S-au jurat să-mbete-n cale  
+Pe creștin!
+
+Vine-o babă-ncet pe stradă  
+În cojocul rupt al ei  
+Și încins cu sfori de tei.  
+Stă pe loc acum să vadă  
+Și ea ce-i.
+
+S-oțărăște rău bătrâna  
+Pentru micul Barba-cot.  
+Ați înnebunit de tot  
+Puiul mamii, dă-mi tu mâna  
+Să te scot!
+
+Cică vrei să stingi cu paie  
+Focul când e-n clăi cu fân,  
+Și-apoi zici că ești român!  
+Biata bab-a-ntrat în laie  
+La stăpân.
+
+Ca pe-o bufniț-o-nconjoară  
+Și-o petrec cu chiu cu vai,  
+Și se țin de dânsa scai,  
+Plină-i strâmta ulicioară  
+De alai.
+
+Nu e chip să-i faci cu buna  
+Să-și păzească drumul lor!  
+Râd și sar într-un picior,  
+Se-nvârtesc și țipă-ntruna  
+Mai cu zor.
+
+Baba și-a uitat învățul:  
+Bate,-njură, dă din mâini:  
+Dracilor, sânteți păgâni?  
+Maica mea! Să stai cu bățul  
+Ca la câini!
+
+Și cu bățul se-nvârtește  
+Ca să-și facă-n jur ocol;  
+Dar abia e locul gol,  
+Și mulțimea năvălește  
+Iarăși stol.
+
+Astfel tabăra se duce  
+Lălăind în chip avan:  
+Baba-n mijloc, căpitan,  
+Scuipă-n sân și face cruce  
+De Satan.
+
+Ba se răscolesc și câinii  
+De prin curți, și sar la ei.  
+Pe la garduri ies femei,  
+Se urnesc mirați bătrânii  
+Din bordei.
+
+Ce-i pe drum atâta gură?  
+Nu-i nimic. Copii ștrengari.  
+Ei, auzi! Vedea-i-aș mari,  
+Parcă trece-adunătură  
+De tătari!$demo$), now() - interval '86 days'
+where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-001200010000'::uuid);
+
 -- classic-15-a-christmas-carol: "A Christmas Carol" by clasice
 insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
   cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
@@ -21993,7 +24057,7 @@ insert into public.stories (id, user_id, slug, title, blurb, language_code, cate
   cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
   first_published_at, last_chapter_published_at, created_at)
 select '00000000-0000-4000-9300-001600000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'the-raven-classic',
-  $demo$The Raven$demo$, $demo$At midnight a grieving student hears a tapping at his door. A raven walks in, and to every question answers with one word.
+  $demo$The Raven$demo$, $demo$At midnight a grieving scholar hears a tapping at his door. A raven walks in, and to every question answers with one word.
 
 Source edition: 1845.$demo$, 'en',
   (select id from public.categories where slug = 'poetry'),
