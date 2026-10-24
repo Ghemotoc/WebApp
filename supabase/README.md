@@ -156,6 +156,10 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **The shared contract** (architecture 1.7.11): `is_moderated_away(type, id)` is true for a live hidden or removed row; `moderated_state_of(type, id)` says which.
 - **Seed:** the decided cases of S1-E10-03a now apply their actions: suspended_user is suspended for 7 days, banned_user is banned (and its email hashed), kid_14_ok's profile is removed. The staging top-up `staging-topups/S1-E10-06.sql` applies the two sanctions when the S1-E10-03a top-up ran before this story merged.
 
+## The contact page, version 0.2 (S1-E14-04)
+
+`…_s1_e14_04_contact_v0_2.sql` (generated) replaces the draft's "Your support requests" list with the reference the emails carry (decided 23 Oct 2026, Q10g) and says "we reply within one month"; not an important change, so nobody accepts again. The form itself keeps nothing in the database: `server/contact.ts` and ADR 0004.
+
 ## Safety contacts (S1-E10-13a)
 
 - **Where the numbers come from:** `content/safety-contacts.json` (research G4, checked 17 Oct 2026) through `scripts/build-safety-contacts-migration.ts`, which writes the seed migration. Never a number typed from memory; every row keeps its official link, the check date and the research's confidence. Adult-only lines are left out (decided 23 Oct 2026, Q9a). To change a contact before the editing screen (S1-E10-13b): change the JSON, run `npx tsx scripts/build-safety-contacts-migration.ts supabase/migrations/<timestamp>_s1_e10_13a_safety_contacts_seed.sql` for a new migration (the old rows are replaced by a `delete` at its top: see the generated file).

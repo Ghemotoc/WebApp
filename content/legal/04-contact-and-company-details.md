@@ -17,7 +17,7 @@
 **In short** (as on the board)
 
 - Questions, problems or complaints: hello@themagiccoffin.com.
-- Logged in? Use Contact us in Settings. You can follow every request there, under “Your support requests”.
+- Logged in? Use Contact us in Settings, Help or the footer. Every message gets a reference number and an email to confirm we’ve got it.
 - Languages: Romanian and English.
 
 **Full text**
@@ -26,9 +26,9 @@ This is our contact point for everyone who uses Ghemotoc.
 
 Questions, problems or complaints: email hello@themagiccoffin.com. You don’t need an account.
 
-Logged in? Use Contact us in Settings, Help or the footer. Every message gets a reference number and an email to confirm we’ve got it. You can follow every request in Settings, under “Your support requests”.
+Logged in? Use Contact us in Settings, Help or the footer. Every message gets a reference number and an email to confirm we’ve got it. Keep the reference in case you write again about the same thing.
 
-A person answers. Messages are read and answered by our team, not only by an automatic system. We aim to reply within [number] working days.
+A person answers. Messages are read and answered by our team, not only by an automatic system. We reply within one month, usually much sooner.
 
 Reporting content? Please use the Report button or the public report form instead, so it reaches our moderators straight away.
 
