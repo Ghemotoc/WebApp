@@ -121,7 +121,9 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Making one:** `admin_create_invite(admits, valid_days, private_note)` (owner and admin): 1 to 50 people, 1 to 90 days, a note of at most 80 characters with no "@". It returns the code once; the table keeps only its SHA-256 hash, so nobody can read a code back. The screen builds the link from the brand config: `<site>/join/<code>`.
 - **The list:** `admin_list_invites()` gives the note, uses, expiry, status (active, used_up, expired, revoked) and the maker's username. An invite never records who used it.
 - **Revoking:** `admin_revoke_invite(id, reason)`; a second revoke changes nothing.
-- **The last place:** `use_platform_invite()` (S1-E2-01) is still one conditional UPDATE inside the sign-up transaction, so two sign-ups at the same moment can't both take it; when the last place goes it writes `invite.used_up` on behalf of the maker, without naming the new account. Make, revoke and used-up are the three audit actions of the story.
+- **The last place:** `use_platform_invite()` (S1-E2-01) is still one conditional UPDATE inside the sign-up transaction, so two sign-ups at the same moment can't both take it; it now takes the new account's user ID and writes `invite.redeemed` with that account as the actor (its user ID only, never its email) and the invite as the target; when that was the last place it adds `invite.used_up` with the system as the actor (CTO, 24 Oct 2026: never on behalf of the admin).
+- **System rows in the audit log:** `audit_log.actor` is `person` (user_id acted) or `system` (the platform acted on its own, user_id empty). The constraint `audit_log_actor_matches_user_id` allows an empty user_id only on system rows; test 002 checks it. The Audit log screen shows "System" for them, and a short user ID for an account without a username yet.
+- **Test clean-ups:** an account the audit log names can't be deleted (the log is append-only), so e2e clean-ups leave such accounts; test addresses are unique per run.
 - **Class spaces** (S1-E8-11a) reuse the same table and functions with `purpose = 'class_space'`.
 
 ## Logging in (S1-E2-05)
@@ -175,7 +177,7 @@ Full IDs are `00000000-0000-4000-8000-0000000000NN`. Tests sign a persona in by 
 
 ## Sign-up (S1-E2-01, ADR 0002)
 
-Supabase Auth inserts a row into `auth.users`; the trigger `handle_new_auth_user()` then, in the same transaction, takes a place on the invite (while `invite_only` is on), checks the year of birth and, only when the year leaves the age unclear at 13 or 16, the month (S1-E2-02: under 13 refused; under 18 refused while `adults_only` is on), creates the `profiles` row (its `id` is the user ID) and records the accepted terms and privacy notice in `consents`. Any refusal undoes the whole sign-up, so nothing is kept. Seed personas carry `"seed_persona": true` in their app metadata and make their own profiles.
+Supabase Auth inserts a row into `auth.users`; the trigger `handle_new_auth_user()` then, in the same transaction, checks the year of birth and, only when the year leaves the age unclear at 13 or 16, the month (S1-E2-02: under 13 refused; under 18 refused while `adults_only` is on), creates the `profiles` row (its `id` is the user ID), takes a place on the invite (while `invite_only` is on; after the profile since S1-E11-17, so the audit row can name the account) and records the accepted terms and privacy notice in `consents`. Any refusal undoes the whole sign-up, so nothing is kept. Seed personas carry `"seed_persona": true` in their app metadata and make their own profiles.
 
 **Test invite codes** (seeded by `seed.sql`, local and staging only, never production):
 
