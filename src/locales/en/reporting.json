@@ -15,6 +15,7 @@
     "detailsHint": "Tell us anything that helps us check. At most {{max}} characters.",
     "detailsTooLong": "That’s too long. Keep it under 2,000 characters.",
     "aPersonReads": "A person on our team reads every report. Nothing changes until we’ve checked it.",
+    "close": "Close",
     "cancel": "Cancel",
     "send": "Send report",
     "sending": "Sending…",
@@ -36,10 +37,15 @@
   "reasons": {
     "illegal_content": { "label": "Illegal content", "hint": "Breaks the law in another way." },
     "harassment": { "label": "Harassment", "hint": "Bullying, threats or targeting a person." },
+    "insults": { "label": "Insults", "hint": "Name-calling or insulting someone." },
     "self_harm": { "label": "Self-harm", "hint": "Encourages or shows self-harm or suicide." },
     "child_sexual_content": {
       "label": "Sexual content involving a minor",
       "hint": "Any sexual content involving someone under 18. We act on this first."
+    },
+    "threat_to_minor": {
+      "label": "Threat to a minor",
+      "hint": "Grooming, threats or pressure aimed at someone under 18. We act on this first."
     },
     "terrorism": { "label": "Terrorism", "hint": "Supports or promotes terrorism." },
     "hate": { "label": "Hate", "hint": "Attacks people for who they are." },

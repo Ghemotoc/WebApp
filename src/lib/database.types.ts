@@ -1136,8 +1136,10 @@ export type Database = {
       report_reason:
         | 'illegal_content'
         | 'harassment'
+        | 'insults'
         | 'self_harm'
         | 'child_sexual_content'
+        | 'threat_to_minor'
         | 'terrorism'
         | 'hate'
         | 'spam'
@@ -1292,8 +1294,10 @@ export const Constants = {
       report_reason: [
         'illegal_content',
         'harassment',
+        'insults',
         'self_harm',
         'child_sexual_content',
+        'threat_to_minor',
         'terrorism',
         'hate',
         'spam',
