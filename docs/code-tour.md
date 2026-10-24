@@ -89,6 +89,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `.claude/` | Claude Code settings and the SessionStart hook: on every start and resume it puts Node 24 first on PATH (through `CLAUDE_ENV_FILE`), starts Docker for the local Supabase stack if it is down, and installs packages when the lock file changes | S1-E1-01, Tooling (18 Oct 2026) |
 | `docs/` | Architecture, Definition of Done, decisions, stories, runbooks, this tour; `mocks.md` (mocks and stubs still on); `epic-reports/` (one report per epic check) | starter kit, then every story |
 | `design/` | Boards (source of truth for screens), renders and pictures | starter kit |
+| `design/assets/*.svg`, `scripts/doodle-tokens.ts` | The 98 doodles and 16 drawn cover backgrounds; the script that keeps every doodle colour a `--doodle-*` token (Lane B, below) | canvas; Lane B (23 Oct 2026) |
 
 **Where the app runs.** Locally: Vite's dev server plus the Supabase CLI in Docker. Staging: Cloudflare Pages project `ghemotoc` builds `main` (`npm run build`, output `dist`) and gives each pull request a preview link; Supabase's GitHub integration applies migrations to the staging project. Production: a tagged release, approved in GitHub (`.github/workflows/release-production.yml`, switched off until a production project exists).
 
@@ -541,6 +542,23 @@ public.stories, story_tags, chapters   read by Discover, the story page and the 
 - The rules the writers follow are in `content/demo-stories/README.md`; the five stories Robert reads whole are marked `sample: yes`.
 - Tests: `scripts/build-demo-content.test.ts` (the parser, every rule, the SQL shape, and that the committed SQL matches the files).
 - Likes, comments and follows between the writers come with part 2b, after S1-E6.
+
+<!-- Lane B: doodles through the tokens (23 Oct 2026). -->
+## Doodles through the tokens (Lane B, 23 Oct 2026)
+
+The hand-drawn doodles live in `design/assets/*.svg`, next to the 16 drawn cover backgrounds (viewBox `0 0 100 160`, which keep their colours in night mode, `src/lib/cover-colours.ts`). A doodle holds no fixed colour: every fill is written `style="fill:var(--doodle-ink, #2a0e33)"`, the token for a doodle drawn inline in a page, the light value as a fallback for a file opened on its own. The nine `--doodle-*` tokens are in `src/styles/tokens.css`, light and night.
+
+```
+canvas export (fixed hex)  →  npm run doodles:tokens  →  design/assets/<id>.svg (tokens + fallback)
+                               scripts/doodle-tokens.ts
+CI: npm run doodles:check  →  fails on any raw hex, a fallback that drifted or a token missing
+/design#doodles            →  src/features/design-system/doodleFiles.ts (bundles the SVG text)
+                               → DoodleSection → DoodleTile (inline, aria-hidden, captioned)
+```
+
+- When new doodles arrive from the canvas: drop the files in `design/assets/`, run `npm run doodles:tokens`. A colour with no token stops the script and names the file; add the token to both theme blocks in `tokens.css` and to the map in the script, then run it again.
+- Tests: `scripts/doodle-tokens.test.ts` (the rewrite and the check), `src/features/design-system/components/DoodleSection.test.tsx` (three samples resolve in both themes), `e2e/doodles.spec.ts` (the colours the browser really draws).
+- Night values are a proposal signed off on the /design sheet; change them in `tokens.css` only, never in the SVG files.
 
 ## Start here
 
