@@ -9,19 +9,24 @@
 #      session. The image puts /opt/node22/bin early on PATH, so without this `node` is 22.
 #   2. Starts the Docker daemon if it isn't running; the local Supabase stack needs it. Containers
 #      lose the daemon on every restart, so this runs on every start and resume, not just once.
+#      A pid file left behind by the old container is trusted only when the process it names is
+#      really dockerd ("Tooling: session-start hook checks the pid file points at dockerd",
+#      23 Oct 2026: after a restart the file named PID 192, which an unrelated process then had).
 #   3. Installs npm packages only when package-lock.json changed: after a successful install it
 #      stores the sha256 of package-lock.json in node_modules/.package-lock.sha256 and skips while
 #      it matches. Deleting node_modules always triggers a fresh install.
 # Safe to run any number of times. Errors: a missing Node 24 or a failed `npm ci` stops the hook
 # with a non-zero exit code and a plain message. Docker is only needed for the database checks,
 # so a Docker problem is a warning, and everything else still gets set up.
+# Tests: scripts/session-start-hook.test.ts sources this file (which runs nothing) and calls the
+# pid file functions with DOCKER_PID_FILE pointing at a file of its own.
 set -euo pipefail
-
-cd "${CLAUDE_PROJECT_DIR:-$(dirname "$0")/../..}"
 
 readonly NODE_MAJOR=24
 readonly NVM_DIR="${NVM_DIR:-/opt/nvm}"
 readonly DOCKER_LOG=/tmp/dockerd.log
+# Where dockerd writes its process number. Tests point this at a temporary file.
+readonly DOCKER_PID_FILE="${DOCKER_PID_FILE:-/var/run/docker.pid}"
 readonly DOCKER_WAIT_SECONDS=60
 
 log() { echo "session-start: $*"; }
@@ -72,8 +77,40 @@ use_node24() {
   log "using Node $(node --version) from $node24_bin."
 }
 
-# Step 2a: launches dockerd in the background. Returns 1 when Docker can't be started here (not
-# installed, or not root).
+# Says whether the Docker pid file names a dockerd process that is running right now.
+# A process number alone proves nothing after a container restart: numbers are handed out again,
+# so the old file can name an unrelated process that happens to be alive. Linux keeps each
+# process's program name in /proc/<pid>/comm, so we check that it reads "dockerd".
+# Returns 0 for a live dockerd; 1 when the file is missing, empty, not a number, or names a
+# process that is gone or isn't dockerd.
+docker_pid_file_is_live() {
+  local pid
+  [ -f "$DOCKER_PID_FILE" ] || return 1
+  # The file holds one number; drop the newline and any spaces around it.
+  pid="$(tr -d '[:space:]' <"$DOCKER_PID_FILE")"
+  # Anything other than digits (or nothing at all) can't be a process number.
+  case "$pid" in
+    '' | *[!0-9]*) return 1 ;;
+  esac
+  # No /proc entry means no process with that number is running.
+  [ -r "/proc/$pid/comm" ] || return 1
+  [ "$(cat "/proc/$pid/comm")" = "dockerd" ]
+}
+
+# Removes the Docker pid file when it doesn't name a running dockerd. dockerd refuses to start
+# while the file names a live process, so a stale file would keep Docker down for the session.
+# Leaves a file that names a live dockerd alone. Never fails: nothing to remove is fine.
+remove_stale_docker_pid_file() {
+  [ -f "$DOCKER_PID_FILE" ] || return 0
+  if docker_pid_file_is_live; then
+    return 0
+  fi
+  log "removing a stale $DOCKER_PID_FILE (PID $(tr -d '[:space:]' <"$DOCKER_PID_FILE") isn't dockerd)."
+  rm -f "$DOCKER_PID_FILE"
+}
+
+# Step 2a: launches dockerd in the background, or notices one that is still starting. Returns 1
+# when Docker can't be started here (not installed, or not root).
 start_docker() {
   if ! command -v dockerd >/dev/null 2>&1; then
     log "warning: dockerd isn't installed, so the local Supabase stack can't run."
@@ -83,11 +120,13 @@ start_docker() {
     log "warning: starting dockerd needs root; start Docker by hand."
     return 1
   fi
-  # A pid file left by an earlier container makes dockerd refuse to start; remove it only when
-  # the process it names is gone.
-  if [ -f /var/run/docker.pid ] && ! kill -0 "$(cat /var/run/docker.pid)" 2>/dev/null; then
-    rm -f /var/run/docker.pid
+  # A dockerd that is running but not answering yet is still starting: wait for it instead of
+  # launching a second one, which would refuse to start anyway.
+  if docker_pid_file_is_live; then
+    log "dockerd is already starting (PID $(tr -d '[:space:]' <"$DOCKER_PID_FILE")), waiting for it."
+    return 0
   fi
+  remove_stale_docker_pid_file
   # `service docker start` fails in these containers (it may not raise a ulimit), so dockerd is
   # started directly. All its output goes to a log: the hooks reference says a background process
   # that keeps the hook's stdout or stderr open blocks Claude Code.
@@ -130,15 +169,24 @@ install_packages_if_needed() {
   log "packages installed."
 }
 
-use_node24
-# Docker starts in the background while npm installs, then we wait for it.
-docker_launched=false
-if docker info >/dev/null 2>&1; then
-  log "Docker is already running."
-elif start_docker; then
-  docker_launched=true
-fi
-install_packages_if_needed
-if [ "$docker_launched" = true ]; then
-  wait_for_docker
+# Runs the three steps in order. Docker starts in the background while npm installs, then we
+# wait for it.
+main() {
+  cd "${CLAUDE_PROJECT_DIR:-$(dirname "$0")/../..}"
+  use_node24
+  local docker_launched=false
+  if docker info >/dev/null 2>&1; then
+    log "Docker is already running."
+  elif start_docker; then
+    docker_launched=true
+  fi
+  install_packages_if_needed
+  if [ "$docker_launched" = true ]; then
+    wait_for_docker
+  fi
+}
+
+# Run only when Claude Code executes the file; when a test sources it, just define the functions.
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+  main "$@"
 fi
