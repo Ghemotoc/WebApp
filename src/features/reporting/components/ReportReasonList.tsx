@@ -1,5 +1,5 @@
 /**
- * ReportReasonList: "What's wrong?", the eleven reasons as radio chips (story S1-E10-01).
+ * ReportReasonList: "What's wrong?", the thirteen reasons as radio chips (story S1-E10-01).
  *
  * Board (ReportDialog): a fieldset with a legend, one chip per reason (the pill system: 36 px in
  * a 44 px tap area, a visible edge, the chosen one tinted and bold), and one plain line under the
