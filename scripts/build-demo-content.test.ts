@@ -20,6 +20,7 @@ import {
   readStories,
   splitChapters,
   storyProblems,
+  storedBlurb,
   storySlug,
   topUpPath,
 } from './build-demo-content';
@@ -161,7 +162,77 @@ describe('the fixed ids', () => {
   it("come from the file name, so adding a file never shifts another story's ids", () => {
     expect(fileNumber('demo-07.md', 0)).toBe(7);
     expect(fileNumber('demo-36.md', 3)).toBe(36);
-    expect(fileNumber('classic-capra-cu-trei-iezi.md', 4)).toBe(5);
+    expect(fileNumber('classic-03-luceafarul.md', 0)).toBe(3);
+    expect(fileNumber('classic-without-number.md', 4)).toBe(5);
+  });
+});
+
+/** A public-domain classic as content/classics/texts/ holds it. */
+const classicFile = `---
+id: classic-03-luceafarul
+title: Luceafărul
+writer: clasice
+author: Mihai Eminescu
+author_died: 1889
+source_edition: 1883
+source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=148561, CC BY-SA 4.0; formatare adaptată.
+language: ro
+category: poetry
+rating: all_ages
+tags: domeniu public, clasic, poezie
+cover: drawn:starry/ink/gold
+blurb: Poemul despre o fată de împărat și luceafărul care o iubește.
+---
+
+## Luceafărul
+
+A fost odată ca-n povești,  
+A fost ca niciodată.
+`;
+
+describe('a public-domain classic', () => {
+  const classic = parseStory(classicFile, 3);
+
+  it("keeps the author's length and gets its credit line under the blurb", () => {
+    expect(storyProblems(classic)).toEqual([]);
+    expect(storedBlurb(classic)).toBe(
+      'Poemul despre o fată de împărat și luceafărul care o iubește.\n\nEdiția sursă: 1883. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=148561, CC BY-SA 4.0; formatare adaptată.',
+    );
+  });
+
+  it('credits an English text with its source edition only', () => {
+    const english = parseStory(
+      classicFile.replace('language: ro', 'language: en').replace(/source_note: .*\n/, ''),
+      3,
+    );
+
+    expect(storedBlurb(english).endsWith('\n\nSource edition: 1883.')).toBe(true);
+  });
+
+  it('refuses an author who died too recently, a missing edition year and the Gutenberg name', () => {
+    const broken = parseStory(
+      classicFile
+        .replace('author_died: 1889', 'author_died: 1990')
+        .replace('source_edition: 1883', 'source_edition: unknown')
+        .replace('A fost ca niciodată.', 'A fost ca niciodată. Project Gutenberg'),
+      3,
+    );
+
+    const problems = storyProblems(broken);
+
+    expect(problems.some((problem) => problem.startsWith('author_died must be'))).toBe(true);
+    expect(problems).toContain(
+      'source_edition must be the year of the edition the text was taken from',
+    );
+    expect(problems).toContain('names Gutenberg; strip its licence and name');
+  });
+
+  it('has its own ids, address and chapter codes, apart from the demo stories', () => {
+    const sql = buildTopUpSql([], [classic]);
+
+    expect(fixedId(classic)).toBe('00000000-0000-4000-9300-000300000000');
+    expect(storySlug(classic)).toBe('luceafarul-classic');
+    expect(sql).toContain("'k003c001'");
   });
 });
 

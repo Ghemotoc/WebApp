@@ -177,6 +177,8 @@ export interface DemoStory {
   author?: string;
   authorDied?: number;
   sourceEdition?: number;
+  /** Classics from Wikisource: the attribution CC BY-SA asks for (link and licence). */
+  sourceNote?: string;
   chapters: DemoChapter[];
 }
 
@@ -309,6 +311,7 @@ export function parseStory(markdown: string, number: number): DemoStory {
     story.author = fields.get('author');
     story.authorDied = Number(fields.get('author_died'));
     story.sourceEdition = Number(fields.get('source_edition'));
+    story.sourceNote = fields.get('source_note');
   }
   return story;
 }
@@ -322,7 +325,9 @@ export function parseStory(markdown: string, number: number): DemoStory {
 export function storyProblems(story: DemoStory): string[] {
   const problems: string[] = [];
   if (story.title.length > 120) problems.push('the title has more than 120 characters');
-  if (story.blurb.length > 500) problems.push('the blurb has more than 500 characters');
+  if (storedBlurb(story).length > 500) {
+    problems.push("the blurb (with a classic's credit line) has more than 500 characters");
+  }
   if (!(story.writer in demoWriters)) problems.push(`unknown writer "${story.writer}"`);
   if (!['ro', 'en'].includes(story.language))
     problems.push(`language must be ro or en, not "${story.language}"`);
@@ -332,6 +337,7 @@ export function storyProblems(story: DemoStory): string[] {
   problems.push(...tagProblems(story.tags));
   problems.push(...chapterProblems(story));
   problems.push(...textProblems(story));
+  problems.push(...classicProblems(story));
   return problems;
 }
 
@@ -380,6 +386,48 @@ function chapterProblems(story: DemoStory): string[] {
 }
 
 /**
+ * The rules only a public-domain classic has (S1-E5-06): the author died long enough ago, the
+ * edition year is given, and the text names no Gutenberg (decided 23 Oct 2026: the licence
+ * header is stripped, so the name may not be used).
+ *
+ * @param story - the story
+ * @returns the problems (none for a demo story)
+ */
+function classicProblems(story: DemoStory): string[] {
+  if (story.author === undefined) return [];
+  const problems: string[] = [];
+  // Law 8/1996 art. 28(1) and 34: life plus 70 years from 1 January after death, so in 2026
+  // authors who died in 1955 or earlier (S1-E5-06).
+  const lastFreeDeathYear = new Date().getFullYear() - 71;
+  if (!Number.isInteger(story.authorDied) || (story.authorDied ?? 0) > lastFreeDeathYear) {
+    problems.push(`author_died must be ${lastFreeDeathYear} or earlier to be public domain`);
+  }
+  if (!Number.isInteger(story.sourceEdition) || (story.sourceEdition ?? 0) < 1500) {
+    problems.push('source_edition must be the year of the edition the text was taken from');
+  }
+  const allText = [story.blurb, ...story.chapters.map((chapter) => chapter.body)].join('\n');
+  if (/gutenberg/i.test(allText)) problems.push('names Gutenberg; strip its licence and name');
+  return problems;
+}
+
+/**
+ * The blurb as stored. A classic gets its credit line under the blurb: the source edition year
+ * and, for a Wikisource text, the link and licence CC BY-SA asks for (decided 23 Oct 2026).
+ *
+ * @param story - the story
+ * @returns the text for stories.blurb
+ */
+export function storedBlurb(story: DemoStory): string {
+  if (story.author === undefined) return story.blurb;
+  const edition =
+    story.language === 'ro'
+      ? `Ediția sursă: ${story.sourceEdition}.`
+      : `Source edition: ${story.sourceEdition}.`;
+  const credit = story.sourceNote === undefined ? edition : `${edition} ${story.sourceNote}`;
+  return `${story.blurb}\n\n${credit}`;
+}
+
+/**
  * Text rules shared with the database: comma-below ș and ț only (CLAUDE.md rule 4), no HTML
  * tags and no script links (rule 8), and nothing that would end the SQL quoting.
  *
@@ -420,7 +468,8 @@ export function storySlug(story: DemoStory): string {
     .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
-  const suffix = story.id.replace(/[^a-z0-9]+/g, '-');
+  // Demo stories end in their id ("-demo-07"); classics in "-classic".
+  const suffix = story.author === undefined ? story.id.replace(/[^a-z0-9]+/g, '-') : 'classic';
   return `${plainTitle.slice(0, 80 - suffix.length - 1).replace(/-$/, '')}-${suffix}`;
 }
 
@@ -566,7 +615,7 @@ insert into public.stories (id, user_id, slug, title, blurb, language_code, cate
   cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
   first_published_at, last_chapter_published_at, created_at)
 select ${sqlValue(fixedId(story))}::uuid, ${sqlValue(writer.userId)}::uuid, ${sqlValue(storySlug(story))},
-  ${sqlText(story.title)}, ${sqlText(story.blurb)}, ${sqlValue(story.language)},
+  ${sqlText(story.title)}, ${sqlText(storedBlurb(story))}, ${sqlValue(story.language)},
   (select id from public.categories where slug = ${sqlValue(categorySlugs[story.category] ?? story.category)}),
   ${cover}, ${sqlValue(story.rating)}, 'no_ai',
   now() - interval '${daysAgo(story)} days', now() - interval '${lastChapterDaysAgo} days', now() - interval '${daysAgo(story) + 2} days'
@@ -591,7 +640,9 @@ function chapterSql(story: DemoStory, chapter: DemoChapter, position: number): s
   if (writer === undefined) throw new Error(`unknown writer "${story.writer}"`);
   const publishedDaysAgo = Math.max(1, daysAgo(story) - 3 * (position - 1));
   // An 8-character address of letters and digits, fixed from the story and position.
-  const code = `d${String(story.number).padStart(3, '0')}c${String(position).padStart(3, '0')}`;
+  // Demo chapters start with "d", classics with "k" (chapters.code is unique).
+  const prefix = story.author === undefined ? 'd' : 'k';
+  const code = `${prefix}${String(story.number).padStart(3, '0')}c${String(position).padStart(3, '0')}`;
   return `insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -627,7 +678,7 @@ export function buildTopUpSql(demoStories: DemoStory[], classics: DemoStory[]): 
 -- skipped when it exists; tags are replaced with the same); never production (step 1 refuses a
 -- database without the 16 seed personas). Merge after S1-E3-03 and S1-E3-06.
 -- How to check it worked: the last query should show demo_stories ${demoStories.length}, demo_chapters
--- ${demoStories.reduce((sum, story) => sum + story.chapters.length, 0)}, classics ${classics.length}, demo_writers ${Object.values(demoWriters).filter((writer) => writer.isNew).length}.
+-- ${demoStories.reduce((sum, story) => sum + story.chapters.length, 0)}, classic_chapters ${classics.reduce((sum, story) => sum + story.chapters.length, 0)}, classics ${classics.length}, demo_writers ${Object.values(demoWriters).filter((writer) => writer.isNew).length}.
 begin;
 
 -- 1. Never production: the 16 seed personas exist only on local and staging databases.
@@ -657,7 +708,8 @@ commit;
 select json_build_object(
   'demo_stories', (select count(*) from public.stories where slug like '%-demo-__'),
   'demo_chapters', (select count(*) from public.chapters where code like 'd___c___'),
-  'classics', (select count(*) from public.stories where slug like '%-classic-%'),
+  'classic_chapters', (select count(*) from public.chapters where code like 'k___c___'),
+  'classics', (select count(*) from public.stories where slug like '%-classic'),
   'demo_writers', (select count(*) from public.profiles where id::text like '00000000-0000-4000-8000-0000000001__')
 )::text as after_top_up;
 `;
@@ -665,16 +717,16 @@ select json_build_object(
 }
 
 /**
- * The number that drives a story's fixed ids. A demo file carries its own ("demo-07.md" is 7), so
- * adding or removing another file never changes an id that staging already holds; classics have
- * no number in their name and take their place in the folder.
+ * The number that drives a story's fixed ids. Every file carries its own ("demo-07.md" is 7,
+ * "classic-03-luceafarul.md" is 3), so adding or removing another file never changes an id that
+ * staging already holds. A name without a number falls back to its place in the folder.
  *
- * @param fileName - for example "demo-07.md"
+ * @param fileName - for example "demo-07.md" or "classic-03-luceafarul.md"
  * @param index - the file's 0-based place in the folder
  * @returns the number, from 1
  */
 export function fileNumber(fileName: string, index: number): number {
-  const match = /^demo-(\d+)\.md$/.exec(fileName);
+  const match = /^(?:demo|classic)-(\d+)[.-]/.exec(fileName);
   return match?.[1] === undefined ? index + 1 : Number(match[1]);
 }
 
