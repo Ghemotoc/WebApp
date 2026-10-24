@@ -13,3 +13,5 @@ Rules for each file:
 - The pull request lists it under **By hand**. Running it: `docs/runbooks/staging-reset-and-seed.md`, "Top-ups".
 
 `S1-E2.sql` brings a staging database seeded before epic S1-E2 up to date: consents, the four test invites, and the persona usernames and pen name.
+
+`S1-E3-01.sql` adds the three seed stories (two for adult_writer, one for teen_17) and their tags.

@@ -4,7 +4,7 @@
  * The rule: every cover where we draw the title shows the full title, with no ellipsis, line
  * clamp or clipping. Titles wrap on spaces and the size steps down with length: up to 18
  * characters the base size, 19 to 28 × 0.85, 29 to 40 × 0.72, longer × 0.62, never below 11 px.
- * Who calls it: StoryCard (src/components/ui/StoryCard.tsx); later the automatic covers (S1-E3-13).
+ * Who calls it: DrawnCover (src/components/covers/DrawnCover.tsx), which every cover goes through (S1-E3-01).
  */
 
 /** The smallest size a drawn cover title may use (DoD). */

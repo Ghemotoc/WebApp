@@ -56,6 +56,29 @@ const staffRolesRoute: RouteObject = {
 };
 
 /**
+ * Lane A: writing and reading (S1-E3, S1-E4). The writer screens are loaded only when someone
+ * opens them, so readers never download the form or (S1-E3-02a) the editor.
+ */
+const writeRoutes: RouteObject[] = [
+  {
+    path: '/write',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { YourWritingPage } = await import('@/features/writing/components/YourWritingPage');
+      return { Component: YourWritingPage };
+    },
+  },
+  {
+    path: '/write/new',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { NewStoryPage } = await import('@/features/writing/components/NewStoryPage');
+      return { Component: NewStoryPage };
+    },
+  },
+];
+
+/**
  * Every route in the app, in one list so a reader can see the whole map at a glance.
  * Exported separately from the router so tests can render a route in memory.
  */
@@ -101,6 +124,8 @@ function pageRoutes(): RouteObject[] {
     { path: '/setup', element: <SetupPage /> },
     { path: '/settings', element: <SettingsPage /> },
     staffRolesRoute,
+    // Lane A: writing and reading (S1-E3, S1-E4).
+    ...writeRoutes,
     ...(isDesignPageIncluded ? [designRoute] : []),
     // Any other address: "We can't find that page" in the reader's language (S1-E2-QA, board
     // 7.4). Its search button waits for Search (S1-E5-04).

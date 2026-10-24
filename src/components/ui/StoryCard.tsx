@@ -1,5 +1,6 @@
 /**
- * StoryCard: one story in a shelf, with a drawn cover (story S1-E1-03).
+ * StoryCard: one story in a shelf, with a drawn cover (story S1-E1-03; S1-E3-01 moved the
+ * drawing into DrawnCover so every cover in the app is drawn by one component).
  *
  * Board values (Discover shelf card): 196 px wide, a 264 px cover with 18 px padding and 16 px
  * radius, the title drawn at the bottom of the cover, then an optional pill, the title in
@@ -11,15 +12,15 @@
  */
 import type { ReactNode } from 'react';
 
-import { coverColours, type CoverTone } from '@/lib/cover-colours';
-import { coverTitleSize } from '@/lib/cover-title';
+import { DrawnCover } from '@/components/covers/DrawnCover';
+import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 
 /** What a StoryCard needs. */
 export interface StoryCardProps {
   title: string;
   /** For example "Ana Pop · 3.4k reads"; the caller formats it in the reader's language. */
   metaLine: string;
-  coverTone: CoverTone;
+  cover: DrawnCoverChoice;
   href: string;
   /** An optional InfoPill such as "Chapter 15". */
   pill?: ReactNode;
@@ -30,25 +31,11 @@ export interface StoryCardProps {
  *
  * @returns the card
  */
-export function StoryCard({ title, metaLine, coverTone, href, pill }: StoryCardProps) {
-  const colours = coverColours[coverTone];
-
+export function StoryCard({ title, metaLine, cover, href, pill }: StoryCardProps) {
   return (
     <a href={href} className="flex w-[196px] flex-col no-underline">
       {/* The drawn cover: decorative, because the title is repeated as text below. */}
-      <span
-        aria-hidden="true"
-        className="flex h-[264px] flex-col justify-end gap-2 rounded-cover p-[18px] outline outline-1 -outline-offset-1 outline-[rgba(38,20,46,0.14)]"
-        style={{ backgroundColor: colours.background, color: colours.title }}
-      >
-        <span
-          className="font-heading leading-[1.04] font-bold break-words"
-          style={{ fontSize: `${coverTitleSize(title, 21)}px` }}
-        >
-          {title}
-        </span>
-        <span className="h-[3px] w-10 rounded-sm" style={{ backgroundColor: colours.title }} />
-      </span>
+      <DrawnCover title={title} choice={cover} size="shelf" isDecorative className="h-[264px]" />
       {pill !== undefined && <span className="mt-3">{pill}</span>}
       <span
         className={`${pill === undefined ? 'mt-3' : 'mt-2'} font-heading text-base font-semibold text-ink`}

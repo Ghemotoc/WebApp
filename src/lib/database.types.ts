@@ -58,6 +58,31 @@ export type Database = {
           },
         ];
       };
+      categories: {
+        Row: {
+          created_at: string;
+          id: string;
+          position: number;
+          slug: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          position: number;
+          slug: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          position?: number;
+          slug?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       client_errors: {
         Row: {
           app_version: string;
@@ -626,6 +651,157 @@ export type Database = {
           },
         ];
       };
+      stories: {
+        Row: {
+          blurb: string;
+          category_id: string;
+          cover_accent: string | null;
+          cover_background: string | null;
+          cover_design: string | null;
+          cover_kind: Database['public']['Enums']['cover_kind'];
+          cover_square_path: string | null;
+          cover_tall_path: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          language_code: string;
+          last_chapter_published_at: string | null;
+          slug: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          blurb?: string;
+          category_id: string;
+          cover_accent?: string | null;
+          cover_background?: string | null;
+          cover_design?: string | null;
+          cover_kind?: Database['public']['Enums']['cover_kind'];
+          cover_square_path?: string | null;
+          cover_tall_path?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          first_published_at?: string | null;
+          id?: string;
+          language_code: string;
+          last_chapter_published_at?: string | null;
+          slug: string;
+          title: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          blurb?: string;
+          category_id?: string;
+          cover_accent?: string | null;
+          cover_background?: string | null;
+          cover_design?: string | null;
+          cover_kind?: Database['public']['Enums']['cover_kind'];
+          cover_square_path?: string | null;
+          cover_tall_path?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          first_published_at?: string | null;
+          id?: string;
+          language_code?: string;
+          last_chapter_published_at?: string | null;
+          slug?: string;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'stories_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'stories_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_tags: {
+        Row: {
+          created_at: string;
+          story_id: string;
+          tag_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          story_id: string;
+          tag_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          story_id?: string;
+          tag_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_tags_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_tags_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_tags_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      tags: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          normalised_name: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          normalised_name: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          normalised_name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       username_approvals: {
         Row: {
           approved_by_user_id: string;
@@ -800,7 +976,20 @@ export type Database = {
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
       check_pen_name: { Args: { candidate: string }; Returns: string };
+      check_story_cover: { Args: { cover: Json }; Returns: undefined };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
+      cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      create_story: {
+        Args: {
+          blurb: string;
+          category_slug: string;
+          cover: Json;
+          language_code: string;
+          tag_names: string[];
+          title: string;
+        };
+        Returns: Json;
+      };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
@@ -809,6 +998,10 @@ export type Database = {
       invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
+      is_moderated_away: {
+        Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: boolean;
+      };
       is_staff: {
         Args: { required_role?: Database['public']['Enums']['staff_role'] };
         Returns: boolean;
@@ -886,6 +1079,8 @@ export type Database = {
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
       normalise_invite_code: { Args: { code: string }; Returns: string };
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
+      normalise_tag: { Args: { tag_name: string }; Returns: string };
+      open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       record_sign_in_failure: { Args: { email_hash: string }; Returns: string };
       record_sign_up_consent: {
@@ -915,6 +1110,10 @@ export type Database = {
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
+      set_story_tags: {
+        Args: { owner_id: string; tag_names: string[]; target_story_id: string };
+        Returns: undefined;
+      };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       sign_in_pause_until: { Args: { email_hash: string }; Returns: string };
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
@@ -925,6 +1124,7 @@ export type Database = {
         Returns: string;
       };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
+      story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
@@ -945,7 +1145,8 @@ export type Database = {
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
-      reportable_type: 'profile';
+      cover_kind: 'automatic' | 'drawn' | 'upload';
+      reportable_type: 'profile' | 'story';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
     };
@@ -1074,7 +1275,8 @@ export const Constants = {
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
-      reportable_type: ['profile'],
+      cover_kind: ['automatic', 'drawn', 'upload'],
+      reportable_type: ['profile', 'story'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
     },

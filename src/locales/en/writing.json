@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "write": "Write"
+  },
+  "yourWriting": {
+    "documentTitle": "Your writing · {{productName}}",
+    "eyebrow": "Write · writer dashboard",
+    "heading": "Your writing",
+    "intro": "See how each story is doing, pick up your drafts and read what readers said.",
+    "newStory": "+ New story",
+    "storiesEyebrow": "Your stories",
+    "storiesHeading": "Story by story",
+    "signedOut": "Log in to see your stories.",
+    "empty": {
+      "title": "No stories yet",
+      "description": "Start a story and write chapter one. Only you can see it until you publish.",
+      "action": "Start a new story"
+    },
+    "onlyYou": "Only you can see this story until you publish its first chapter.",
+    "created": "Your story is saved. Only you can see it until you publish its first chapter."
+  },
+  "newStory": {
+    "documentTitle": "Start a new story · {{productName}}",
+    "back": "Writer dashboard",
+    "eyebrow": "Write · new story",
+    "heading": "Start a new story",
+    "intro": "Fill in the basics, then write chapter one. You can change all of this later in story settings.",
+    "basics": "The basics",
+    "title": "Title",
+    "blurb": "Blurb",
+    "blurbHint": "One or two sentences: who the story is about and what happens. {{count}} of {{max}} characters.",
+    "language": "Language of the story (required)",
+    "languageHint": "Choose the language your story is written in. More languages open once we have moderators who read them.",
+    "categoryAndTags": "Category and tags",
+    "category": "Category",
+    "tags": "Tags",
+    "tagsHint": "{{count}} of {{max}} tags. Capital letters and diacritics don’t matter, so “Fantezie” and “fantezie” are the same tag.",
+    "tagsFull": "{{max}} of {{max}} tags. Remove one to add another.",
+    "tagPlaceholder": "Add a tag",
+    "removeTag": "Remove tag {{tag}}",
+    "rights": "Your work stays yours. You keep the rights and can publish it anywhere. Only you can see this story until you publish its first chapter.",
+    "cancel": "Cancel",
+    "create": "Create and write chapter one",
+    "creating": "Creating…",
+    "notActive": "Your account can’t create stories yet. Confirm your email and choose a username, or wait for the test to open to your age group.",
+    "createFailed": "We couldn’t save your story. Check your connection and try again.",
+    "signedOut": "Log in to start a story."
+  },
+  "categories": {
+    "fiction": "Fiction",
+    "poetry": "Poetry",
+    "nonfiction_essays": "Essays"
+  },
+  "languages": {
+    "ro": "Română",
+    "en": "English"
+  },
+  "cover": {
+    "heading": "Cover",
+    "kindLabel": "Cover type",
+    "draw": "Draw a cover",
+    "upload": "Upload a picture",
+    "preview": "Preview",
+    "previewLabel": "Cover preview: {{design}}, {{background}} background with {{accent}} {{part}}. Title {{title}}, by {{penName}}.",
+    "partLine": "underline",
+    "partBand": "band",
+    "partPattern": "pattern",
+    "untitled": "Untitled story",
+    "pickBackground": "Pick a background. We add your title and pen name.",
+    "designs": "Backgrounds",
+    "tileTitle": "Title",
+    "changeColours": "Change the colours",
+    "background": "Background",
+    "accent": "Pattern or accent",
+    "backgroundChoice": "Background: {{colour}}",
+    "accentChoice": "Pattern or accent: {{colour}}",
+    "accentNotePlain": "On a plain background this colours the line under the title.",
+    "accentNoteTwotone": "On Two-tone this colours the bottom band with the title.",
+    "accentNotePattern": "This colours the pattern.",
+    "autoContrast": "We choose dark or light text for you, so your title is always easy to read.",
+    "drawnNote": "A drawn cover needs no picture rights and shows straight away.",
+    "automatic": {
+      "intro": "Skip this and we’ll give your story one of these covers automatically. You can change it any time.",
+      "current": "Right now: {{design}}, picked for you automatically.",
+      "chosen": "You chose your own cover.",
+      "use": "Use the automatic cover"
+    },
+    "designNames": {
+      "plum": "Plum",
+      "ink": "Ink",
+      "violet": "Violet",
+      "gold": "Gold",
+      "lilac": "Lilac",
+      "blush": "Blush",
+      "sky": "Sky",
+      "sage": "Sage",
+      "paper": "Paper",
+      "stripes": "Gold stripes",
+      "dots": "Polka dots",
+      "grid": "Grid paper",
+      "waves": "Waves",
+      "starry": "Starry night",
+      "doodles": "Doodles",
+      "twotone": "Two-tone"
+    },
+    "colourNames": {
+      "plum": "Plum",
+      "ink": "Ink",
+      "violet": "Violet",
+      "gold": "Gold",
+      "lilac": "Lilac",
+      "blush": "Blush",
+      "sky": "Sky",
+      "sage": "Sage",
+      "paper": "Paper"
+    }
+  },
+  "preview": {
+    "eyebrow": "How readers will see it",
+    "onlyYou": "Only you",
+    "automaticCover": "Automatic cover",
+    "noBlurb": "Your blurb shows here.",
+    "deleteLater": "You can also delete the story later in story settings. We ask twice, hide it straight away and delete it for good after 30 days. Until then you can undo it."
+  },
+  "errors": {
+    "titleMissing": "Give your story a title.",
+    "titleTooLong": "A title can have at most 120 characters.",
+    "blurbTooLong": "A blurb can have at most 500 characters.",
+    "languageMissing": "Choose the language your story is written in.",
+    "categoryMissing": "Choose a category.",
+    "tagTooLong": "A tag can have at most 40 characters.",
+    "tooManyTags": "A story can have at most 10 tags.",
+    "duplicateTag": "Two of these tags are the same once we ignore capitals and diacritics.",
+    "loadFailed": "We couldn’t load this page. Check your connection and try again."
+  }
+}

@@ -106,3 +106,9 @@
     display: none !important;
   }
 }
+
+/* A dark doodle icon on a dark button (the top bar's Write pen, S1-E3-01): inverted until Lane B's
+   tokenised doodle icons land, when the icon takes its colour from the tokens instead. */
+.tmc-icon-on-dark {
+  filter: brightness(0) invert(1);
+}

@@ -129,3 +129,34 @@ values
   ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('REVOKED-TEST-INVITE'),
    5, 0, '2100-01-01', '2026-10-17', 'Seed: revoked');
 
+
+-- Lane A: writing and reading (S1-E3-01 onwards). Two stories for adult_writer (one drawn cover,
+-- one automatic) and a draft for teen_17, so the demo and every test have something to open.
+-- Fixed IDs and addresses so tests can name them; later stories of the lane add chapters and
+-- publish some of them. Titles and blurbs are synthetic, never real users' text.
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent)
+values
+  ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-000000000001',
+   'statia-meteo-seed01', 'Stația meteo',
+   'Bunica mea notează vremea în fiecare dimineață din 1971. În ziua în care a ajuns la spital, am găsit restul săptămânii deja completat.',
+   'ro', (select id from public.categories where slug = 'fiction'),
+   'drawn', 'waves', 'sky', 'violet'),
+  ('00000000-0000-4000-9000-000000000002', '00000000-0000-4000-8000-000000000001',
+   'the-girl-who-fixed-radios-seed02', 'The Girl Who Fixed Radios',
+   'Ana spends her summer in her grandfather’s repair shop in Ploiești. One old radio keeps picking up a station that stopped broadcasting in 1989, and tonight it said her name.',
+   'en', (select id from public.categories where slug = 'fiction'),
+   'automatic', null, null, null),
+  ('00000000-0000-4000-9000-000000000003', '00000000-0000-4000-8000-000000000002',
+   'scrisori-din-cutia-postala-seed03', 'Scrisori din cutia poștală',
+   'Poeme scurte despre un bloc din Brașov și oamenii care trec prin el.',
+   'ro', (select id from public.categories where slug = 'poetry'),
+   'drawn', 'dots', 'lilac', 'violet');
+
+-- Their tags, through the same function the app uses, so look-alikes merge the same way.
+select public.set_story_tags('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-000000000001',
+  array['bunici', 'familie', 'set in Romania']);
+select public.set_story_tags('00000000-0000-4000-9000-000000000002', '00000000-0000-4000-8000-000000000001',
+  array['mystery', 'set in Romania', 'family']);
+select public.set_story_tags('00000000-0000-4000-9000-000000000003', '00000000-0000-4000-8000-000000000002',
+  array['oraș', 'vecini']);

@@ -66,6 +66,9 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `content/legal/`, `scripts/build-legal-migration.ts` | The legal drafts (English, and Romanian draft translations in `ro/`) and the script that turns a new version into a migration | S1-E14-01 |
 | `src/features/design-system/` | The /design page: every token and component on one page, with live contrast ratios | S1-E1-03 |
 | `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
+| `src/features/writing/` | The writer's side: `/write` (Your writing) and `/write/new` (the new story form), the tag rule, `create_story()`; see its README | S1-E3-01 |
+| `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size) and `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) | S1-E3-01 |
+| `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
 | `src/lib/` | Shared helpers: `i18n.ts` (translations), `utils.ts` (`cn` for class names), `database.types.ts` (generated, never edited by hand), `supabase.ts` (the one browser client, loaded on demand; null without settings), `language-preference.ts` (the language kept in this browser), `romanian-text.ts` (ş and ţ become ș and ț), `query-retry.ts` (a refused read, 401 or 403, isn't retried; api/ functions keep the response status as the error's cause), and later `platform/` adapters | S1-E1-01, S1-E1-02, S1-E1-04, S1-E2-QA |
 | `src/locales/ro/`, `src/locales/en/` | All interface text, one JSON file per namespace; same keys in both | S1-E1-01, S1-E1-04 |
@@ -283,6 +286,31 @@ profiles.handle (+ handle_slug, handle_skeleton by trigger), profiles.pen_name
 ```
 
 The word lists start in `content/username-word-lists/` and reach the database through `scripts/build-word-list-migration.ts`; the look-alike table through `scripts/build-confusables-migration.ts`. A moderator approves a false hit with `admin_approve_username()` (its button arrives with S1-E11-02).
+
+## Creating a story (S1-E3-01)
+
+```
+/write (YourWritingPage) → "+ New story" → /write/new (NewStoryPage)      src/features/writing/
+  │  the choices: useStoryFormOptions → api/stories.ts → open_story_languages(), categories
+  │  typing: StoryBasicsSection, CategoryTagsSection (TagInput merges look-alikes with
+  │     lib/tags.ts, the same rule as the database's normalise_tag()), CoverSection
+  │     (DrawnCoverPicker, CoverColourSwatches; StoryPreviewAside draws the card live)
+  │  saving: useNewStoryForm → src/schemas/story.ts (zod) → api/stories.ts → create_story()
+  ▼
+create_story(title, blurb, language_code, category_slug, tag_names, cover)   …_s1_e3_01_stories.sql
+  │  is_active_member() (the account gate: a read-only account gets {outcome: not_active})
+  │  open_story_languages() (the open markets' languages), categories, check_story_cover()
+  │  story_slug_for(): the public address, never the user ID
+  │  set_story_tags(): normalise_tag(), reuse or add a tags row, at most 10 (trigger)
+  ▼
+stories (user_id = auth.uid(), cover_kind and the drawn cover's design and colours), story_tags
+  │  the writer reads them back through stories_select_own and story_tags_select_own
+  ▼
+/write lists them (useMyStories); readers see nothing until publish_chapter() (S1-E3-03) sets
+first_published_at and get_story_page() (S1-E3-05) serves the public page (ADR 0004).
+```
+
+The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
