@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { dateLocaleFor } from '@/lib/romania-time';
 
 import { fetchMyChapter, type MyChapter } from '../api/chapters';
 import { markdownToPlainText } from '../lib/chapterMarkdown';
@@ -53,7 +54,7 @@ function VersionColumn(props: {
     props.side.savedAt === null
       ? t('compare.unsaved')
       : t('compare.savedAt', {
-          time: new Intl.DateTimeFormat(i18n.language, {
+          time: new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
             dateStyle: 'medium',
             timeStyle: 'short',
           }).format(new Date(props.side.savedAt)),

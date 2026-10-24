@@ -8,6 +8,7 @@ import {
   defaultScheduleFields,
   formatRomaniaDateTime,
   formatRomaniaShortDate,
+  withShortSeptember,
   romaniaTimeToInstant,
 } from './romania-time';
 
@@ -59,14 +60,20 @@ describe('the fields and the label', () => {
 
   it('shows a moment as Romania time in both languages', () => {
     const moment = new Date('2026-10-17T15:00:00Z');
-    expect(formatRomaniaDateTime(moment, 'en')).toBe('Saturday, October 17 at 18:00');
+    expect(formatRomaniaDateTime(moment, 'en')).toBe('Saturday 17 October at 18:00');
     expect(formatRomaniaDateTime(moment, 'ro')).toBe('sâmbătă, 17 octombrie la 18:00');
   });
 
   it('shows the short date in Romania, even when it is already the next day there', () => {
     // 22:30 UTC on 8 Oct is 01:30 on 9 Oct in Bucharest (summer time).
     const moment = new Date('2026-10-08T22:30:00Z');
-    expect(formatRomaniaShortDate(moment, 'en')).toBe('Oct 9, 2026');
+    expect(formatRomaniaShortDate(moment, 'en')).toBe('9 Oct 2026');
     expect(formatRomaniaShortDate(moment, 'ro')).toBe('9 oct. 2026');
+  });
+
+  it('writes English dates the British way, with September as "Sep" (CTO, 24 Oct 2026)', () => {
+    expect(formatRomaniaShortDate(new Date('2026-09-05T09:00:00Z'), 'en')).toBe('5 Sep 2026');
+    expect(withShortSeptember('5 Sept 2026')).toBe('5 Sep 2026');
+    expect(withShortSeptember('5 sept. 2026')).toBe('5 sept. 2026');
   });
 });

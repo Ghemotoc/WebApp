@@ -69,14 +69,14 @@ describe('chapterSummary', () => {
 describe('chapterMeta', () => {
   it('a published chapter shows when, and the "Edited on" readers see once it changed', () => {
     const published = chapter({ state: 'published', firstPublishedAt: '2026-09-05T10:00:00Z' });
-    expect(chapterMeta(english, published, 'en')).toBe('Published Sep 5');
+    expect(chapterMeta(english, published, 'en')).toBe('Published 5 Sep');
     expect(chapterMeta(english, { ...published, editedAt: '2026-10-12T10:00:00Z' }, 'en')).toBe(
-      'Published Sep 5 · readers see “Edited on Oct 12”',
+      'Published 5 Sep · readers see “Edited on 12 Oct”',
     );
   });
 
   it('a draft shows its words and when it was saved', () => {
-    expect(chapterMeta(english, chapter({}), 'en')).toBe('Draft · 228 words · saved Oct 23');
+    expect(chapterMeta(english, chapter({}), 'en')).toBe('Draft · 228 words · saved 23 Oct');
     expect(chapterMeta(romanian, chapter({ wordCount: 1 }), 'ro')).toMatch(
       /^Ciornă · 1 cuvânt · salvat pe 23 oct/,
     );
@@ -85,14 +85,14 @@ describe('chapterMeta', () => {
   it('a scheduled chapter shows when it goes live in Romania time', () => {
     const scheduled = chapter({ state: 'scheduled', scheduledFor: '2026-10-24T15:00:00Z' });
     expect(chapterMeta(english, scheduled, 'en')).toBe(
-      'Goes live Saturday, October 24 at 18:00, Romania time',
+      'Goes live Saturday 24 October at 18:00, Romania time',
     );
   });
 
   it('an unpublished chapter says readers can’t open it and comments are kept', () => {
     const unpublished = chapter({ state: 'unpublished', unpublishedAt: '2026-10-20T10:00:00Z' });
     expect(chapterMeta(english, unpublished, 'en')).toBe(
-      'Unpublished Oct 20 · readers can’t open it · comments hidden but kept',
+      'Unpublished 20 Oct · readers can’t open it · comments hidden but kept',
     );
   });
 });
@@ -100,7 +100,7 @@ describe('chapterMeta', () => {
 describe('deletedMeta', () => {
   it('shows the day it was deleted and the day it goes for good, 30 days later', () => {
     expect(deletedMeta(english, '2026-10-14T10:00:00Z', 'en')).toBe(
-      'Deleted Oct 14 · gone for good on November 13, 2026',
+      'Deleted 14 Oct · gone for good on 13 November 2026',
     );
   });
 });
