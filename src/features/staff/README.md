@@ -1,8 +1,11 @@
 # Staff
 
-Staff-only pages that come before the admin shell. Started by S1-E2-07a. Plain components, no doodles (CLAUDE.md, Designs). Loaded on their own, so staff code never ships in the reader's bundle (architecture 1.8.1).
+The admin site: everything under `/staff`. Started by S1-E2-07a (`/staff/roles`), given its frame by S1-E11-01. Plain components, no doodles (CLAUDE.md, Designs). Loaded only when someone opens it, so staff code never ships in the reader's bundle (architecture 1.8.1).
 
-- `components/StaffRolesPage.tsx`: `/staff/roles` (decided 17 Oct 2026, 19:43, Q14c): `GrantRoleForm`, then a `StaffMemberCard` per staff member with `PermissionChecks`. Only owner and admin see the list; S1-E11-01 moves it into the admin site.
-- `hooks/useStaffRoles.ts` and `api/staffRoles.ts`: `admin_list_staff()`, `admin_user_id_for_handle()`, `admin_grant_role()`, `admin_remove_role()`, `admin_set_permission()`. The database checks every rule and writes the audit log; the page only shows the choices the person has.
-- `registerStaffTranslations.ts`: the `staff` text namespace, added when the page loads.
-- The database side: `supabase/README.md`, "Staff roles".
+- `components/StaffLayout.tsx`: the frame (skip link, `StaffBar` with the areas the person may open, the page, `StaffFooter`); a member or a visitor gets `StaffAccessRefused` instead. `StaffHomePage.tsx` is `/staff`.
+- `staffAreas.ts`: which area (from `staff_role_areas`) opens which page. Each staff story adds its line.
+- `hooks/useMyStaffAccess.ts` and `api/staffAccess.ts`: `my_staff_areas()`, the person's own roles and username.
+- `components/AuditLogPage.tsx` (`/staff/audit-log`, S1-E11-01): `AuditLogFilters`, `AuditLogTable`; `hooks/useAuditLog.ts`, `api/auditLog.ts` (`admin_search_audit_log()`, `admin_export_audit_log()`), `lib/auditLogCsv.ts` (the CSV file).
+- `components/StaffRolesPage.tsx` (`/staff/roles`, S1-E2-07a): `GrantRoleForm`, then a `StaffMemberCard` per staff member with `PermissionChecks`; `hooks/useStaffRoles.ts`, `api/staffRoles.ts`. A role change needs a sign-in from the last 15 minutes (S1-E11-01).
+- `registerStaffTranslations.ts`: the `staff` text namespace, added when the shell loads.
+- The database side: `supabase/README.md`, "Staff roles" and "The admin shell". The server checks every rule and writes the audit log; the pages only show the choices the person has.

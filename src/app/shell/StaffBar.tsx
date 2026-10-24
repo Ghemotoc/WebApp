@@ -6,8 +6,10 @@
  * role, and Sign out. Staff screens use plain components and no doodles (CLAUDE.md, Designs).
  * Showing an area in this menu is a convenience, never the protection: the database checks the
  * role on every staff action (architecture 1.8.1).
- * Who uses it: the /design page now; the admin frame from S1-E11-01.
+ * Who uses it: the /design page, and StaffLayout (the admin frame, S1-E11-01), which passes only
+ * the areas the database allows the person and the language drop-down in the end slot.
  */
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 
@@ -22,6 +24,8 @@ export interface StaffBarProps {
   staffName: string;
   roleLabel: string;
   onSignOut: () => void;
+  /** Extra controls before the name, such as the language drop-down (S1-E11-01). */
+  endSlot?: ReactNode;
 }
 
 /** A staff link's classes: plum, bold and gold-underlined when it is the current area. */
@@ -37,7 +41,13 @@ function staffLinkClasses({ isActive }: { isActive: boolean }): string {
  *
  * @returns the header with the staff navigation
  */
-export function StaffBar({ navigationItems, staffName, roleLabel, onSignOut }: StaffBarProps) {
+export function StaffBar({
+  navigationItems,
+  staffName,
+  roleLabel,
+  onSignOut,
+  endSlot,
+}: StaffBarProps) {
   const { t } = useTranslation();
 
   return (
@@ -61,7 +71,9 @@ export function StaffBar({ navigationItems, staffName, roleLabel, onSignOut }: S
             </li>
           ))}
         </ul>
-        <div className="ml-auto flex items-center gap-2.5">
+        {/* Wraps on narrow phones, so nothing pushes the page sideways (CLAUDE.md rule 21). */}
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2.5">
+          {endSlot}
           <span className="flex flex-col items-end leading-tight">
             <span className="text-sm font-semibold text-ink">{staffName}</span>
             <span className="text-xs font-semibold text-(--success-text)">{roleLabel}</span>

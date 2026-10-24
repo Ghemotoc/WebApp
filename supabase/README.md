@@ -111,6 +111,14 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Staff accounts are read-only as members:** `account_state()` answers `staff_account` for anyone with a staff role (decided 17 Oct 2026, 19:43, Q14a). Staff keep a separate writer account if they write.
 - **The first owner:** only for production, or any database without the seed. After signing up there, run `select public.bootstrap_first_owner('<user id>');` in the SQL editor; it refuses once an owner exists. **Not on staging or locally:** the seed already gives the `owner` persona the owner role, so the function refuses there. **Personal staff accounts on staging:** Robert's own staging account, on the staff Google Workspace domain (`STAFF_EMAIL_DOMAIN`), gets the owner role from the `owner` persona at /staff/roles, the same way any staff role is granted there (Robert, 18 Oct 2026).
 
+## The admin shell (S1-E11-01)
+
+- **Sessions end after 12 hours** (a proposal, decided 23 Oct 2026): `is_staff_session()` now also reads the session's start from Supabase's own `auth.sessions` (through the token's `session_id`) and refuses once it is older than the setting `staff_session_hours`. Signing in again starts a new session. A token without a `session_id` (only the forged claims of the database tests) is not time-limited.
+- **A fresh sign-in for role changes** (decided 23 Oct 2026): `staff_signed_in_recently()` reads the newest sign-in time from the token's `amr` claim and compares it with `staff_fresh_sign_in_minutes` (15). `require_role_change_allowed()` refuses with SQLSTATE 28000 ("Sign in again") when it is older; the roles page shows the link. A refreshed token keeps the original sign-in time, so only a new sign-in counts. Database tests that change roles put a fresh `amr` in their claims.
+- **The menu:** `my_staff_areas()` returns the areas the caller's roles allow (architecture 1.8.3); the app shows only those that have a page. The server still refuses on its own.
+- **Sensitive reads:** `log_sensitive_read(kind, table, row, user)` with the kinds architecture 1.8.3 lists; later screens call it before showing the thing.
+- **Search and export:** `admin_search_audit_log()` (one page of up to 100, usernames and an 8-character target ID, never a full ID) and `admin_export_audit_log()` (up to 10,000 rows, logged as `audit_log.exported` with the filters), both owner and admin only.
+
 ## Logging in (S1-E2-05)
 
 - **The pause** works through our screens: the log-in form asks `sign_in_pause_until()` before trying and calls `record_sign_in_failure()` after Supabase says no. Direct, scripted calls to Supabase Auth are held back by Supabase's own per-address limits; a true per-account lock needs a paid-plan Auth hook (decided 17 Oct 2026, 19:43, Q12). Rows hold an email hash and a time only, and are removed after 24 hours by `record_sign_in_failure()` itself.

@@ -44,16 +44,46 @@ const designRoute: RouteObject = {
 };
 
 /**
- * The /staff/roles route (S1-E2-07a), loaded only when someone opens it, so staff code never ships
- * in the reader's bundle (architecture 1.8.1). S1-E11-01 moves it into the admin shell.
+ * The admin site, /staff and everything under it (S1-E11-01; architecture 1.8.1): one frame
+ * (StaffLayout, with the staff bar and the areas the database allows the person) around each
+ * staff page. Every part is loaded only when someone opens it, so staff code never ships in the
+ * reader's bundle. Each story that adds a staff page adds its child route here and its area to
+ * src/features/staff/staffAreas.ts.
  */
-const staffRolesRoute: RouteObject = {
-  path: '/staff/roles',
+const staffRoutes: RouteObject = {
+  path: '/staff',
   HydrateFallback: () => null,
+  // A staff page that fails shows the same error page as the public ones (S1-E1-05).
+  errorElement: <ErrorPage />,
   lazy: async () => {
-    const { StaffRolesPage } = await import('@/features/staff/components/StaffRolesPage');
-    return { Component: StaffRolesPage };
+    const { StaffLayout } = await import('@/features/staff/components/StaffLayout');
+    return { Component: StaffLayout };
   },
+  children: [
+    {
+      index: true,
+      lazy: async () => {
+        const { StaffHomePage } = await import('@/features/staff/components/StaffHomePage');
+        return { Component: StaffHomePage };
+      },
+    },
+    // Staff roles and permissions (S1-E2-07a), now inside the shell.
+    {
+      path: 'roles',
+      lazy: async () => {
+        const { StaffRolesPage } = await import('@/features/staff/components/StaffRolesPage');
+        return { Component: StaffRolesPage };
+      },
+    },
+    // The audit log: search and CSV export for owner and admin (S1-E11-01).
+    {
+      path: 'audit-log',
+      lazy: async () => {
+        const { AuditLogPage } = await import('@/features/staff/components/AuditLogPage');
+        return { Component: AuditLogPage };
+      },
+    },
+  ],
 };
 
 /**
@@ -140,6 +170,8 @@ const writeRoutes: RouteObject[] = [
  * Exported separately from the router so tests can render a route in memory.
  */
 export const appRoutes: RouteObject[] = [
+  // The admin site has its own frame (the staff bar), so it sits beside the public layout.
+  staffRoutes,
   {
     element: <AppLayout />,
     // If the frame itself fails, the error page shows on its own (S1-E1-05).
@@ -180,7 +212,6 @@ function pageRoutes(): RouteObject[] {
     // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
     { path: '/setup', element: <SetupPage /> },
     { path: '/settings', element: <SettingsPage /> },
-    staffRolesRoute,
     // Lane A: writing and reading (S1-E3, S1-E4).
     ...writeRoutes,
     ...(isDesignPageIncluded ? [designRoute] : []),
