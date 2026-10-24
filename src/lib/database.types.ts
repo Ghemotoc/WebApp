@@ -752,6 +752,83 @@ export type Database = {
         };
         Relationships: [];
       };
+      safety_contact_gaps: {
+        Row: {
+          country_code: string;
+          first_seen_at: string;
+          id: string;
+          last_seen_at: string;
+          times_seen: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          country_code: string;
+          first_seen_at?: string;
+          id?: string;
+          last_seen_at?: string;
+          times_seen?: number;
+        };
+        Update: {
+          country_code?: string;
+          first_seen_at?: string;
+          id?: string;
+          last_seen_at?: string;
+          times_seen?: number;
+        };
+        Relationships: [];
+      };
+      safety_contacts: {
+        Row: {
+          checked_by: string;
+          confidence: string;
+          country_code: string;
+          created_at: string;
+          id: string;
+          kind: Database['public']['Enums']['safety_contact_kind'];
+          label: string;
+          last_checked_on: string;
+          link: string | null;
+          note: string | null;
+          opening_hours: string | null;
+          phone_number: string | null;
+          position: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          checked_by?: string;
+          confidence: string;
+          country_code: string;
+          created_at?: string;
+          id?: string;
+          kind: Database['public']['Enums']['safety_contact_kind'];
+          label: string;
+          last_checked_on: string;
+          link?: string | null;
+          note?: string | null;
+          opening_hours?: string | null;
+          phone_number?: string | null;
+          position: number;
+          updated_at?: string;
+        };
+        Update: {
+          checked_by?: string;
+          confidence?: string;
+          country_code?: string;
+          created_at?: string;
+          id?: string;
+          kind?: Database['public']['Enums']['safety_contact_kind'];
+          label?: string;
+          last_checked_on?: string;
+          link?: string | null;
+          note?: string | null;
+          opening_hours?: string | null;
+          phone_number?: string | null;
+          position?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       settings: {
         Row: {
           created_at: string;
@@ -1570,6 +1647,7 @@ export type Database = {
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
+      note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
@@ -1745,6 +1823,13 @@ export type Database = {
         | 'other';
       reportable_type: 'profile' | 'story' | 'chapter';
       revision_reason: 'published' | 'edited' | 'restored';
+      safety_contact_kind:
+        | 'emergency'
+        | 'child_helpline'
+        | 'csam_hotline'
+        | 'crisis_youth'
+        | 'police_online_child'
+        | 'regulator';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
       story_rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
@@ -1910,6 +1995,14 @@ export const Constants = {
       ],
       reportable_type: ['profile', 'story', 'chapter'],
       revision_reason: ['published', 'edited', 'restored'],
+      safety_contact_kind: [
+        'emergency',
+        'child_helpline',
+        'csam_hotline',
+        'crisis_youth',
+        'police_online_child',
+        'regulator',
+      ],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
       story_rating: ['all_ages', '13_plus', '16_plus', '18_plus'],
