@@ -49,7 +49,21 @@ single file:      test_accounts 22, demo_writers 6, settings 2, stories 56, chap
 7 parts:          the same, and the same chapter, story and tag checksums
 parts run twice:  no change
 ```
-RESULTS_TOOL2
+On `fe3b826` (`claude/beautiful-rubin-amp8k6`):
+```
+npm ci                pass
+npm run lint          pass
+npm run typecheck     pass
+npm run types:check   pass
+npm test              pass
+npx supabase test db  pass
+npm run i18n:check    pass
+npm run doodles:check Checked 98 doodles (0 changed, 16 cover backgrounds left alone): 0 problem(s)
+npm run build && npm run scan:bundle   no service role key or secret API key in dist/
+npm run test:e2e #1   397 passed, 1 skipped, 5 failed, 35 did not run; 16.9 min
+npm run test:e2e #2   397 passed, 1 skipped, 5 failed (the same 5), 35 did not run; 17.1 min
+```
+The 5 failures are the tests that read email from Mailpit, which this cloud container can't download (the network policy blocks the registry). The 35 "did not run" are the later tests in the same serial files. CI has Mailpit. This branch doesn't include TOOL-1's flaky-test fixes; it gets them when it is rebased on main after TOOL-1 merges. Run the checks again then.
 
 ## Definition of Done
 - [ ] CI green
