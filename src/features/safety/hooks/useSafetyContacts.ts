@@ -37,8 +37,9 @@ export function useSafetyContacts(countryCode: string | null) {
   const hasNone = contacts.isSuccess && contacts.data.length === 0;
 
   // A country with no row is noted for staff, once per read (the story: "the gap is logged").
+  // ZZ, the international directories, is never a country, so it is never a gap.
   useEffect(() => {
-    if (!hasNone || countryCode === null) return;
+    if (!hasNone || countryCode === null || countryCode === 'ZZ') return;
     void getSupabaseClient().then((client) => {
       if (client !== null) return noteSafetyContactGap(client, countryCode);
       return undefined;
