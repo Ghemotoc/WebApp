@@ -89,6 +89,26 @@
   --pill-blush-border: #ddb0b8;
   --pill-blush-text: #8c2b3a;
 
+  /*
+   * Lane B: doodle colours (Design: doodles take their colours from the tokens, 23 Oct 2026).
+   * The nine colours the hand-drawn doodles in design/assets/ use, as drawn on the canvas. Each
+   * SVG says fill="var(--doodle-ink, #2a0e33)": the token when the doodle sits inline in a page,
+   * the light value as a fallback when the file is opened on its own. Light values never change
+   * (the drawings stay pixel-identical); scripts/doodle-tokens.ts checks the fallbacks match.
+   * They are their own family, not aliases of --primary or --gold, so retuning a button colour
+   * never recolours a drawing. The 16 drawn cover backgrounds in the same folder are not doodles:
+   * covers keep their colours in night mode (src/lib/cover-colours.ts).
+   */
+  --doodle-ink: #2a0e33;
+  --doodle-paper: #fffdf8;
+  --doodle-gold: #e6c24c;
+  --doodle-gold-soft: #f5e3a6;
+  --doodle-blush: #f2a7b8;
+  --doodle-blush-soft: #f6d3dc;
+  --doodle-plum-soft: #e9ddf0;
+  --doodle-sky-soft: #d7e6f2;
+  --doodle-sage-soft: #c9d8bf;
+
   /* Shadows (boards: nav island, cards, pop-overs) */
   --shadow-nav: 0 1px 2px rgba(38, 20, 46, 0.04), 0 8px 24px -12px rgba(38, 20, 46, 0.12);
   --shadow-card: 0 1px 2px rgba(38, 20, 46, 0.04), 0 18px 40px -28px rgba(38, 20, 46, 0.3);
@@ -159,6 +179,23 @@
   --pill-blush-bg: #3e1e26;
   --pill-blush-border: #8a4a57;
   --pill-blush-text: #f6c3cc;
+
+  /*
+   * Lane B: doodle colours at night. The ink lines turn light, so every fill has to turn dark
+   * too, or light lines on pastel fills would vanish. The fills reuse the night pill-system
+   * mid-tones (plum, gold, sage, blush, sky) so the drawings stay inside the DoD palette; the
+   * golds are darker than the pills' so the light lines still read on them. Proposal: Robert
+   * signs off on the 98-doodle sheet in light and night before this merges (23 Oct 2026).
+   */
+  --doodle-ink: #e9ddf0;
+  --doodle-paper: #2a1633;
+  --doodle-gold: #a8852a;
+  --doodle-gold-soft: #6e5a1f;
+  --doodle-blush: #a85a6c;
+  --doodle-blush-soft: #8a4a57;
+  --doodle-plum-soft: #6b4a7c;
+  --doodle-sky-soft: #4f6a99;
+  --doodle-sage-soft: #4f7a62;
 
   --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 40px -28px rgba(0, 0, 0, 0.7);

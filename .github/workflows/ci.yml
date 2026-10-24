@@ -90,6 +90,9 @@ jobs:
       - run: npm run i18n:check
       # No two migrations may share a version number: Supabase keys them by it (24 Oct 2026).
       - run: npm run migrations:check
+      # Lane B (23 Oct 2026): no doodle under design/assets may hold a raw hex colour; every colour
+      # is a token with its light value as the fallback (scripts/doodle-tokens.ts).
+      - run: npm run doodles:check
       # The same build Cloudflare Pages runs; it must write to dist/.
       - run: npm run build
       - name: Check the build wrote dist/index.html and dist/_redirects
