@@ -24,8 +24,11 @@
  */
 // The wording comes from the app's own locale files (CLAUDE.md rule 4). Nothing else from src/
 // is imported: this file is also loaded with vite.config.ts, where the app's "@" paths don't exist.
-import englishReading from '../src/locales/en/reading.json' with { type: 'json' };
-import romanianReading from '../src/locales/ro/reading.json' with { type: 'json' };
+// Plain JSON imports, without `with { type: 'json' }`: Cloudflare's Pages build bundles
+// functions/ with an older esbuild that can't read import attributes ("Expected ';' but found
+// 'with'"), and every bundler that loads this file (Wrangler, Vite, Vitest) inlines the JSON anyway.
+import englishReading from '../src/locales/en/reading.json';
+import romanianReading from '../src/locales/ro/reading.json';
 
 import { linkPreviewPalette } from './link-preview-palette.ts';
 
