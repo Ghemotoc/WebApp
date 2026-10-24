@@ -49,6 +49,26 @@ describe('repository setup', () => {
     expect(ciWorkflow).not.toMatch(/supabase db push|wrangler|pages deploy/);
   });
 
+  it('never filters the CI workflow by paths or branches on pull requests, which would leave required checks pending', () => {
+    // GitHub docs, "Skip workflow runs": a workflow skipped by path or branch filtering leaves its
+    // checks "Pending" and blocks the merge. Skip single jobs with `if:` instead (24 Oct 2026).
+    const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
+
+    expect(ciWorkflow).not.toMatch(/^\s*(paths|paths-ignore|branches-ignore):/m);
+    expect(ciWorkflow).not.toMatch(/^  pull_request:\n(?:\s+#.*\n)*\s+branches:/m);
+  });
+
+  it('runs the database and e2e jobs on main, and on pull requests once they are ready and change more than docs', () => {
+    // "Tooling: run the long CI jobs only when they matter" (24 Oct 2026).
+    const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
+    const gate =
+      "!cancelled()\n      && (github.event_name == 'push' || github.event.pull_request.draft == false)\n      && needs.changes.outputs.docs_only != 'true'";
+
+    expect(ciWorkflow).toContain('types: [opened, synchronize, reopened, ready_for_review]');
+    expect(ciWorkflow.split(gate)).toHaveLength(3);
+    expect(ciWorkflow).toContain('bash scripts/only-docs-changed.sh');
+  });
+
   it('has a code tour that covers where the app starts, how a click travels, where things live and where to start reading', () => {
     const codeTour = readRepositoryFile('docs/code-tour.md');
 
