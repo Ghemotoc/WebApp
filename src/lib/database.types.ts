@@ -86,6 +86,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      chapter_reads: {
+        Row: {
+          chapter_id: string;
+          read_on: string;
+          total: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          read_on: string;
+          total?: number;
+        };
+        Update: {
+          chapter_id?: string;
+          read_on?: string;
+          total?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_reads_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_revisions: {
         Row: {
           body: string;
@@ -1336,11 +1363,13 @@ export type Database = {
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
+      get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
+      is_blocked_with: { Args: { other_user_id: string }; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
       is_moderated_away: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
@@ -1486,6 +1515,45 @@ export type Database = {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;
       };
+      reader_visible_story: {
+        Args: { story_slug: string };
+        Returns: {
+          ai_disclosure: Database['public']['Enums']['ai_disclosure'];
+          ai_undisclosed_labelled_at: string | null;
+          blurb: string;
+          category_id: string;
+          comments_enabled: boolean;
+          completion_status: Database['public']['Enums']['completion_status'];
+          content_note: string;
+          cover_accent: string | null;
+          cover_background: string | null;
+          cover_design: string | null;
+          cover_kind: Database['public']['Enums']['cover_kind'];
+          cover_square_path: string | null;
+          cover_tall_path: string | null;
+          created_at: string;
+          deals_with_abuse_or_coercion: boolean;
+          deleted_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          is_fan_fiction: boolean;
+          is_parody: boolean;
+          language_code: string;
+          last_chapter_published_at: string | null;
+          rating: Database['public']['Enums']['story_rating'];
+          slug: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'stories';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      record_chapter_read: { Args: { chapter_code: string; story_slug: string }; Returns: boolean };
       record_sign_in_failure: { Args: { email_hash: string }; Returns: string };
       record_sign_up_consent: {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
