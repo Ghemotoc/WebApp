@@ -10,12 +10,11 @@
 --                            only by migrations until 13b. The next migration seeds it from
 --                            content/safety-contacts.json through
 --                            scripts/build-safety-contacts-migration.ts (never typed from memory).
---                            Country code 'ZZ' (ISO 3166's "unknown") is reserved for the
---                            international fallback links (Child Helpline International's and
---                            INHOPE's directories, decided 23 Oct 2026, Q9c); they are seeded by a
---                            later migration once Robert has checked them online, because they
---                            could not be fetched from the build session. Until then a country
---                            with no row shows "Call your local emergency number" only.
+--                            Country code 'ZZ' (ISO 3166's "unknown") holds the international
+--                            fallback links (Child Helpline International's and INHOPE's
+--                            directories, decided 23 Oct 2026, Q9c), checked online by the CTO on
+--                            24 Oct 2026 and seeded with the rest; a country with no row shows
+--                            "Call your local emergency number" and these two directories.
 --   safety_contact_gaps      which countries were asked for and had no row, so staff see the gap
 --                            (the story: "the gap is logged for staff"); no user is recorded
 --   note_safety_contact_gap()  the app calls it when it shows the fallback

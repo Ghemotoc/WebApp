@@ -755,5 +755,34 @@
       "112 (ERSS), Child Helpline 1098, cyber helpline 1930 and cybercrime.gov.in (blocked) on official pages",
       "Crisis line and regulator"
     ]
+  },
+  "ZZ": {
+    "status": "International fallback for a country with no checked contacts (decided 23 Oct 2026, Q9c); both links checked online by the CTO on 24 Oct 2026",
+    "emergency": [],
+    "child_helpline": [
+      {
+        "label": "Child Helpline International: find a child helpline",
+        "number": null,
+        "url": "https://childhelplineinternational.org/helplines/",
+        "hours": "Online directory",
+        "confidence": "High",
+        "note": "Checked by the CTO, 24 Oct 2026. The old /child-helplines/child-helpline-network/ address returns an error; don't use it"
+      }
+    ],
+    "csam_hotline": [
+      {
+        "label": "INHOPE: find your national hotline",
+        "number": null,
+        "url": "https://inhope.org",
+        "hours": "Online directory",
+        "confidence": "High",
+        "note": "Checked by the CTO, 24 Oct 2026; the directory is on the home page. A country with an INHOPE member hotline uses that member's own report page instead (Romania: Ora de Net, https://oradenet.ro/esc-abuz)"
+      }
+    ],
+    "police_online_child": [],
+    "crisis_youth": [],
+    "regulator": [],
+    "checked": "2026-10-24",
+    "unconfirmed": []
   }
 }

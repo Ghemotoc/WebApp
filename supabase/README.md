@@ -142,7 +142,7 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Where the numbers come from:** `content/safety-contacts.json` (research G4, checked 17 Oct 2026) through `scripts/build-safety-contacts-migration.ts`, which writes the seed migration. Never a number typed from memory; every row keeps its official link, the check date and the research's confidence. Adult-only lines are left out (decided 23 Oct 2026, Q9a). To change a contact before the editing screen (S1-E10-13b): change the JSON, run `npx tsx scripts/build-safety-contacts-migration.ts supabase/migrations/<timestamp>_s1_e10_13a_safety_contacts_seed.sql` for a new migration (the old rows are replaced by a `delete` at its top: see the generated file).
 - **Who reads:** everyone, signed out included (`safety_contacts_select_public`); nobody writes from the app.
 - **Gaps:** `note_safety_contact_gap(code)` counts a country asked for with no row; owner, admin and moderator read `safety_contact_gaps`. No user is recorded.
-- **International fallback:** country code `ZZ` is reserved for the Child Helpline International and INHOPE directory links (decided 23 Oct 2026, Q9c); seeded by a later migration once Robert has checked the two links online.
+- **International fallback:** country code `ZZ` is reserved for the Child Helpline International and INHOPE directory links (decided 23 Oct 2026, Q9c); the two links were checked online by the CTO on 24 Oct 2026 and are seeded with the rest from `content/safety-contacts.json`. A country with an INHOPE member hotline keeps that member's own report page (Romania: Ora de Net), never the generic directory.
 
 ## Logging in (S1-E2-05)
 

@@ -2,8 +2,8 @@
 -- What it proves:
 -- - the seed holds every country of content/safety-contacts.json with its check date and source
 --   link, Romania's 112, Telefonul Copilului and Ora de Net as the research has them, no
---   adult-only line; the international fallback rows (ZZ) wait for Robert's check of the two
---   directory links (they could not be fetched from the build session, 23 Oct 2026);
+--   adult-only line; the international fallback rows (ZZ) are the two directories the CTO
+--   checked on 24 Oct 2026 (Child Helpline International and INHOPE, Q9c);
 -- - policy safety_contacts_select_public: a visitor and a member read them (allowed); nobody
 --   writes from the app (denied: no insert, update or delete grant);
 -- - note_safety_contact_gap(): a visitor counts a gap, the count grows, rubbish is refused;
@@ -13,14 +13,19 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(17);
+select plan(18);
 
 /* ---------- 1. The seed ---------- */
 
 select set_eq(
-  $$ select distinct country_code from public.safety_contacts $$,
+  $$ select distinct country_code from public.safety_contacts where country_code <> 'ZZ' $$,
   $$ values ('RO'), ('GB'), ('IE'), ('US'), ('CA'), ('AU'), ('NZ'), ('SG'), ('ZA'), ('IN') $$,
   'every country of the research file is seeded');
+select results_eq(
+  $$ select kind::text, link, last_checked_on::text from public.safety_contacts where country_code = 'ZZ' order by kind $$,
+  $$ values ('child_helpline', 'https://childhelplineinternational.org/helplines/', '2026-10-24'),
+            ('csam_hotline', 'https://inhope.org', '2026-10-24') $$,
+  'the international fallback is the two directories the CTO checked on 24 Oct 2026 (Q9c)');
 select is((select min(last_checked_on)::text from public.safety_contacts where country_code <> 'ZZ'), '2026-10-17',
   'every seeded row carries the research''s check date');
 select is_empty($$ select 1 from public.safety_contacts where link is null and phone_number is null $$,

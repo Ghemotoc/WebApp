@@ -6,8 +6,9 @@
  *
  * Which country: the account's (from the connection at sign-up) when signed in, the connection's
  * when signed out (useVisitorCountry); "Not your country?" offers every covered country, Romania
- * first (decided 23 Oct 2026, Q9b). A country with no row shows "Call your local emergency number"
- * and the gap is noted for staff (useSafetyContacts). Numbers come only from the database, seeded
+ * first (decided 23 Oct 2026, Q9b). A country with no row shows "Call your local emergency number",
+ * the two international directories (country code ZZ: Child Helpline International and INHOPE,
+ * Q9c, checked by the CTO on 24 Oct 2026), and the gap is noted for staff (useSafetyContacts). Numbers come only from the database, seeded
  * from the researched file (the story's legal note). No doodles: it sits on reporting screens.
  * Who shows it: ReportDialog (S1-E10-01) and the contact page (/legal/contact, Q9d); later the
  * public report form (S1-E10-02) and the safeguarding panel (S1-E10-10).
@@ -56,7 +57,38 @@ function ContactsForCountry({ countryCode }: { countryCode: string | null }) {
       <p className="m-0 text-sm text-body">
         {hasNone || loadFailed ? t('block.fallbackNoRow') : t('block.fallbackUnknown')}
       </p>
+      <InternationalDirectories />
     </div>
+  );
+}
+
+/** The country code that holds the international fallback rows (ISO 3166's "unknown"). */
+const internationalCountryCode = 'ZZ';
+
+/**
+ * The two international directories, for a country with no contacts of its own: where to find a
+ * children's helpline and where to report child sexual abuse material (decided 23 Oct 2026, Q9c).
+ *
+ * @returns the list, or nothing while it loads or when the rows are missing
+ */
+function InternationalDirectories() {
+  const { t, i18n } = useTranslation('safety');
+  const { contacts } = useSafetyContacts(internationalCountryCode);
+  const firstContact = contacts[0];
+  if (firstContact === undefined) return null;
+  // The check date comes from the rows themselves, so it stays right when they are re-checked.
+  const checkedOn = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
+    new Date(`${firstContact.lastCheckedOn}T12:00:00`),
+  );
+  return (
+    <>
+      <p className="m-0 mt-3 text-sm text-meta">{t('block.international', { date: checkedOn })}</p>
+      <ul className="m-0 list-none p-0">
+        {contacts.map((contact) => (
+          <SafetyContactRow key={contact.id} contact={contact} />
+        ))}
+      </ul>
+    </>
   );
 }
 
