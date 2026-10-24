@@ -5,7 +5,9 @@
   "dialog": {
     "eyebrow": "Raportare",
     "title": {
-      "profile": "Raportează acest profil"
+      "profile": "Raportează acest profil",
+      "story": "Raportează această poveste",
+      "chapter": "Raportează acest capitol"
     },
     "anonymous": "{{item}}. Nu va vedea cine a raportat.",
     "whatIsWrong": "Ce nu e în regulă?",

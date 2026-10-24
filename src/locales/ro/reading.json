@@ -10,8 +10,6 @@
     "commentsLabel": "Comentarii",
     "commentsOn": "Pornite",
     "commentsOff": "Oprite",
-    "report": "Raportează această poveste",
-    "reportSubject": "Raportez o poveste: {{slug}}",
     "unavailableTitle": "Povestea nu este disponibilă",
     "unavailableBody": "Poate nu e publicată încă, poate e clasificată pentru cititori mai mari, poate a fost eliminată sau linkul e greșit.",
     "goHome": "Mergi la Acasă",

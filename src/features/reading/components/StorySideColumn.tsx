@@ -7,9 +7,9 @@
  * rating, labels, AI, status, comments; "Where to read" joins with S1-E3-08) and the "Report
  * this story" link. The content note sits in StoryHeader, under the blurb. The mug and the mushroom doodles sit on the card
  * corners as on the board.
- * Report button (CLAUDE.md rule 6): Lane C's <ReportButton> from src/features/reporting replaces
- * ReportStoryLink when S1-E10-01 lands; until then it opens an email to the support address with
- * the story's address in the subject (docs/mocks.md).
+ * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
+ * 1.7.11), which opens the one report dialog for this story. Not shown to the story's owner, who
+ * can't report their own story (the database refuses it too).
  * Who uses it: StoryPage.
  */
 import type { TFunction } from 'i18next';
@@ -18,28 +18,10 @@ import { useTranslation } from 'react-i18next';
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LabelRows } from '@/components/ui/LabelRows';
-import { brand } from '@/config/brand';
+import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { ratingMinimumAge } from '@/schemas/story';
 
 import type { StoryPageData } from '../api/storyPage';
-
-/**
- * The stub report link: an email to the support address (the hook for Lane C's ReportButton).
- *
- * @returns the link
- */
-function ReportStoryLink({ slug }: { slug: string }) {
-  const { t } = useTranslation('reading');
-  const subject = encodeURIComponent(t('storyPage.reportSubject', { slug }));
-  return (
-    <a
-      href={`mailto:${brand.contactEmail}?subject=${subject}`}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-body"
-    >
-      {t('storyPage.report')}
-    </a>
-  );
-}
 
 /**
  * The writer card: pen name or username and the handle (the bio, numbers, Follow and
@@ -134,16 +116,21 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
           ]}
         />
       </div>
-      <div className="relative flex items-center">
-        <ReportStoryLink slug={story.slug} />
-        <Doodle
-          name="mushroom"
-          kind="widget"
-          on="Report this story"
-          hideBelow="phone"
-          className="absolute right-3 -bottom-1 w-[60px] rotate-6"
-        />
-      </div>
+      {/* The Report row and its mushroom (a widget doodle on the Report button) show only to
+          readers: the owner can't report their own story, and an empty row would let the
+          doodle sit on the labels card. */}
+      {!story.isOwner && (
+        <div className="relative flex items-center">
+          <ReportButton itemType="story" itemReference={story.id} itemLabel={story.title} />
+          <Doodle
+            name="mushroom"
+            kind="widget"
+            on="Report this story"
+            hideBelow="phone"
+            className="absolute right-3 -bottom-1 w-[60px] rotate-6"
+          />
+        </div>
+      )}
     </aside>
   );
 }

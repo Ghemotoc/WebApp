@@ -383,8 +383,8 @@ delete_my_story(): deleted_at = now(); restore within content_purge_days (30);
   │  not is_moderated_away('story', id) (Lane C's contract) and rating_allows(rating) (S1-E3-06)
   ▼
 StoryHeader (cover from resolveCoverChoice(), pills, title, "by <pen name>", blurb, tags) and
-StorySideColumn (the writer, "Labels from the writer", "Report this story": an email until
-Lane C's ReportButton lands)
+StorySideColumn (the writer, "Labels from the writer", and for readers Lane C's shared
+<ReportButton itemType="story"> → report_item('story', id), S1-E10-01)
 ```
 
 Tests: `supabase/tests/database/103-story-settings.test.sql`, `e2e/story-settings.spec.ts`.

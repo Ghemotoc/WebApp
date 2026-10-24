@@ -146,7 +146,25 @@ begin
         select profiles.id, profiles.id from public.profiles
         where profiles.handle_skeleton = public.username_skeleton(btrim(item_reference, ' @'))
           and profiles.deleted_at is null;
-    -- Lane A adds: when 'story' then … ; when 'chapter' then … (S1-E3-01, S1-E3-02).
+    -- A story or a chapter by its row ID, and only once readers can see it: published and not
+    -- deleted, so a draft's existence never leaks (Lane A merged first, so Lane C adds these two
+    -- branches on rebase, architecture 1.7.11).
+    when 'story' then
+      return query
+        select stories.id, stories.user_id from public.stories
+        where item_reference ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          and stories.id = item_reference::uuid
+          and stories.first_published_at is not null
+          and stories.deleted_at is null;
+    when 'chapter' then
+      return query
+        select chapters.id, chapters.user_id from public.chapters
+        join public.stories on stories.id = chapters.story_id
+        where item_reference ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          and chapters.id = item_reference::uuid
+          and chapters.status = 'published'
+          and chapters.deleted_at is null
+          and stories.deleted_at is null;
     -- S1-E6-01 adds: when 'comment' then … .
   end case;
   if not found then
@@ -161,8 +179,8 @@ revoke execute on function public.reportable_item_owner(public.reportable_type, 
 
 /**
  * reportable_item_summary: "what was reported", in a few words, for the moderation queue.
- * Inputs: item_type; item_id. Returns: for a profile "@username"; other types add their own
- *   line (a story's title, a chapter's story and number, a comment's first words).
+ * Inputs: item_type; item_id. Returns: for a profile "@username", for a story its title, for a
+ *   chapter "Chapter 3 of <story title>"; later types add their own line (a comment's first words).
  * Shared contract (23 Oct 2026): one branch per reportable_type value; test 042 checks it.
  */
 create or replace function public.reportable_item_summary(
@@ -182,7 +200,12 @@ begin
     when 'profile' then
       select '@' || coalesce(profiles.handle, '…') into summary
       from public.profiles where profiles.id = item_id;
-    -- Lane A adds: when 'story' then … ; when 'chapter' then … .
+    when 'story' then
+      select stories.title into summary from public.stories where stories.id = item_id;
+    when 'chapter' then
+      select format('Chapter %s of %s', chapters.position, stories.title) into summary
+      from public.chapters join public.stories on stories.id = chapters.story_id
+      where chapters.id = item_id;
   end case;
   return coalesce(summary, '(gone)');
 end;
