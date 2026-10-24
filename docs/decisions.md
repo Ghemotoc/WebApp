@@ -2,6 +2,19 @@
 
 Every decision Robert has made, with its date and source. The live list is the master plan's "Decisions made" tab; it wins if this file is out of date. Proposals and OPEN items are not decisions.
 
+## Added 23 Oct 2026
+
+| Decision | Source |
+| --- | --- |
+| An investor demo is planned for January 2027 (month only, date to be set). It is an earlier show-and-tell build, not the March test: the March test with invited adults is unchanged, and so is the March MVP scope | Chat, 23 Oct 2026 |
+| No picture uploads for the January 2027 investor demo: drawn and automatic covers, and initials for avatars. The `picture_uploads` feature flag stays off; the flag itself is built by S1-E3-01 (Lane A), this entry only records the decision | Chat, 23 Oct 2026 |
+| Demo content for the January 2027 investor demo: the public-domain classics seeded as a staging top-up (`supabase/staging-topups/`), plus 30 to 40 synthetic Romanian stories | Chat, 23 Oct 2026 |
+| S1-E3-02 (chapter editor) and S1-E4-01 (chapter reader) are split into smaller stories before building; S1-E3-01 (create a story) too, if the cover picker grows past size M | Chat, 23 Oct 2026 |
+| Approved as proposals for the January 2027 investor demo (proposals, not final product decisions): the canvas's rating wording (the lawyer still has to confirm it), a 600-word teaser, a fixed comment limit, and simple Discover shelves (newest and most liked) instead of the ranking job | Chat, 23 Oct 2026 |
+| Scope of the January 2027 investor demo: the moderation queue is in; the teaser is in; notifications and the numbers page only if time allows | Chat, 23 Oct 2026 |
+| The Contact page keeps placeholders for the company details until the company exists; Contact us is an email-backed form; the helpdesk product stays OPEN | Chat, 23 Oct 2026 |
+| Several Claude Code sessions run in parallel, one epic or one self-contained chunk each. Migrations are named with the story ID and a timestamp so two sessions never clash, and every session rebases on main right before opening a pull request and again before it merges | Chat, 23 Oct 2026 |
+
 ## Added 17 Oct 2026 (after the snapshot below)
 
 | Decision | Source |

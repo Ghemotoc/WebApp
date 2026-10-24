@@ -149,7 +149,13 @@ test('a password reset by email logs other devices out and sends a "password cha
     // "Forgot your password?" sends the link, with the same words for any address.
     const page = await openSignIn(browser);
     await page.getByRole('link', { name: 'Forgot your password?' }).click();
-    await page.getByLabel('Email', { exact: true }).fill(account.email);
+    // The log-in form has an "Email" field too, so wait until the reset form has replaced it;
+    // otherwise the address lands in a field that is about to disappear and the reset form
+    // opens empty ("Type the email you joined with.").
+    await expect(page.getByRole('heading', { name: 'Reset your password' })).toBeVisible();
+    const emailField = page.getByLabel('Email', { exact: true });
+    await emailField.fill(account.email);
+    await expect(emailField).toHaveValue(account.email);
     await page.getByRole('button', { name: 'Send reset link' }).click();
     await expect(page.getByRole('heading', { name: 'Check your email' })).toBeVisible();
     await expect(page.getByText(`If there’s an account for ${account.email}`)).toBeVisible();
