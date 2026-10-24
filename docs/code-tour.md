@@ -173,7 +173,7 @@ SignUpForm → useSignUpForm                        src/features/auth/hooks/useS
   │  3. api/signUp.ts → supabase.auth.signUp (or signInWithOtp for "Email me a log-in link")
   ▼
 auth.users insert → trigger handle_new_auth_user()   …_s1_e2_01_sign_up_trigger.sql (ADR 0002)
-  │  use_platform_invite() → profiles row (id = user ID) → consents for terms and privacy
+  │  profiles row (id = user ID) → use_platform_invite() → consents for terms and privacy
   │  any refusal: the whole insert is undone, nothing kept
   ▼
 Supabase emails supabase/templates/confirmation.html (Mailpit locally)
@@ -270,7 +270,7 @@ The error page shows the first six characters of the stored row's ID as the code
 audit_log (append-only: no role, the owner included, can change or delete a row)
 ```
 
-Invite links (S1-E11-17): an admin makes a link at /staff/invites; sign-up at /join/<code> calls `use_platform_invite()` inside the sign-up transaction (one conditional UPDATE, so the last place goes once) and the audit log gets `invite.created`, `invite.revoked` and `invite.used_up`.
+Invite links (S1-E11-17): an admin makes a link at /staff/invites; sign-up at /join/<code> calls `use_platform_invite()` inside the sign-up transaction, once the new profile exists (one conditional UPDATE, so the last place goes once). The audit log gets `invite.created` and `invite.revoked` from the admin, `invite.redeemed` from the new account (its user ID only) and `invite.used_up` from the system (`audit_log.actor = 'system'`, no user ID), never on behalf of the admin (CTO, 24 Oct 2026).
 
 Every staff screen reads and writes only through policies and `admin_*` functions, each of which asks `staff_may()` → `is_staff_session()` (architecture 1.8.1). The menu is built from the same answer, but it is a convenience: the server refuses on its own.
 
@@ -345,7 +345,7 @@ What the Accounts epic left in place. The epic report, `docs/epic-reports/S1-E2.
 | Functions | the sign-up trigger `handle_new_auth_user()`, `account_state()` with its new steps, `check_handle()`, `set_my_handle()`, `set_my_pen_name()`, the log-in pause, `list_my_sessions()`, `staff_may()` and the `admin_*` role functions | each story |
 | Tests | `supabase/tests/database/015` to `028` and `091` (the epic), `e2e/epic-s1-e2.spec.ts` and each story's spec | each story, S1-E2-QA |
 
-**One main journey through the whole epic:** an invited adult opens `/join/<code>` → `SignUpPage` asks `check_invite()`, the current legal versions and `/api/signup-context` (the country, signed) → the form checks the year with `src/lib/age.ts` → `supabase.auth.signUp` → the trigger `handle_new_auth_user()` takes an invite place, checks the age and the country token, creates the profile and the consents → the confirmation email (Mailpit) → `/auth/confirm` → `/setup` → `set_my_handle()` → `account_state()` answers `active`. `e2e/epic-s1-e2.spec.ts` walks it, then logs out and in and resets the password.
+**One main journey through the whole epic:** an invited adult opens `/join/<code>` → `SignUpPage` asks `check_invite()`, the current legal versions and `/api/signup-context` (the country, signed) → the form checks the year with `src/lib/age.ts` → `supabase.auth.signUp` → the trigger `handle_new_auth_user()` checks the age and the country token, creates the profile, takes an invite place (S1-E11-17 moved it after the profile, so the log can name the new account) and records the consents → the confirmation email (Mailpit) → `/auth/confirm` → `/setup` → `set_my_handle()` → `account_state()` answers `active`. `e2e/epic-s1-e2.spec.ts` walks it, then logs out and in and resets the password.
 
 ## Start here
 

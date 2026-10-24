@@ -6,6 +6,7 @@ export type Database = {
       audit_log: {
         Row: {
           action: string;
+          actor: Database['public']['Enums']['audit_actor'];
           after_values: Json | null;
           before_values: Json | null;
           created_at: string;
@@ -14,11 +15,12 @@ export type Database = {
           target_id: string | null;
           target_type: string;
           target_user_id: string | null;
-          user_id: string;
+          user_id: string | null;
         };
         ComputedFields: never;
         Insert: {
           action: string;
+          actor?: Database['public']['Enums']['audit_actor'];
           after_values?: Json | null;
           before_values?: Json | null;
           created_at?: string;
@@ -27,10 +29,11 @@ export type Database = {
           target_id?: string | null;
           target_type: string;
           target_user_id?: string | null;
-          user_id: string;
+          user_id?: string | null;
         };
         Update: {
           action?: string;
+          actor?: Database['public']['Enums']['audit_actor'];
           after_values?: Json | null;
           before_values?: Json | null;
           created_at?: string;
@@ -39,7 +42,7 @@ export type Database = {
           target_id?: string | null;
           target_type?: string;
           target_user_id?: string | null;
-          user_id?: string;
+          user_id?: string | null;
         };
         Relationships: [
           {
@@ -1023,7 +1026,7 @@ export type Database = {
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
       strip_combining_marks: { Args: { name: string }; Returns: string };
-      use_platform_invite: { Args: { code: string }; Returns: undefined };
+      use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
     };
@@ -1042,6 +1045,7 @@ export type Database = {
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
+      audit_actor: 'person' | 'system';
       reportable_type: 'profile';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
@@ -1059,6 +1063,8 @@ export type Database = {
         reason: string | null;
         before_values: Json | null;
         after_values: Json | null;
+        actor: Database['public']['Enums']['audit_actor'] | null;
+        actor_user_id_short: string | null;
       };
     };
   };
@@ -1183,6 +1189,7 @@ export const Constants = {
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
+      audit_actor: ['person', 'system'],
       reportable_type: ['profile'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
