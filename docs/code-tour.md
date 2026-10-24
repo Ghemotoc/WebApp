@@ -260,10 +260,16 @@ The error page shows the first six characters of the stored row's ID as the code
   │  StaffLayout: skip link, StaffBar (the areas the person may open), the page, StaffFooter
   │     useMyStaffAccess → api/staffAccess.ts → my_staff_areas() + own staff_roles + own handle
   │     a member or a visitor gets StaffAccessRefused instead (the server refused already)
-  │  staffAreas.ts: area → page (roles, audit_log; each staff story adds its own)
+  │  staffAreas.ts: area → page (moderation, users, roles, audit_log; each staff story adds its own)
   ├─ /staff            StaffHomePage: one card per area the person may open
   ├─ /staff/roles      StaffRolesPage (S1-E2-07a, below)
-  ├─ /staff/invites    InvitesPage (S1-E11-17): MakeInviteForm → useInviteLinks → api/inviteLinks.ts
+  ├─ /staff/users      UsersPage (S1-E11-02): search → useUserLookup → admin_user_lookup()
+  ├─ /staff/users/:id  AccountPage: useAccount → admin_user_account(), admin_account_open_cases(),
+  │                      admin_account_sanctions(), admin_search_audit_log(), admin_reveal_email();
+  │                      AccountActions → useAccountActions → admin_apply_sanction(),
+  │                      admin_reset_pen_name(), admin_sign_out_everywhere(), admin_approve_username()
+  ├─ /staff/users/invites  InvitesPage (S1-E11-17), the Users area's second tab (/staff/invites
+  │                      redirects): MakeInviteForm → useInviteLinks → api/inviteLinks.ts
   │                      admin_create_invite() (the code once, hashed in invites) / admin_list_invites()
   │                      / admin_revoke_invite(); the link is brand.siteUrl + /join/<code> (S1-E2-01)
   └─ /staff/audit-log  AuditLogPage: AuditLogFilters → useAuditLog → api/auditLog.ts
@@ -281,7 +287,7 @@ The error page shows the first six characters of the stored row's ID as the code
 audit_log (append-only: no role, the owner included, can change or delete a row)
 ```
 
-Invite links (S1-E11-17): an admin makes a link at /staff/invites; sign-up at /join/<code> calls `use_platform_invite()` inside the sign-up transaction, once the new profile exists (one conditional UPDATE, so the last place goes once). The audit log gets `invite.created` and `invite.revoked` from the admin, `invite.redeemed` from the new account (its user ID only) and `invite.used_up` from the system (`audit_log.actor = 'system'`, no user ID), never on behalf of the admin (CTO, 24 Oct 2026).
+Invite links (S1-E11-17): an admin makes a link at /staff/users/invites; sign-up at /join/<code> calls `use_platform_invite()` inside the sign-up transaction, once the new profile exists (one conditional UPDATE, so the last place goes once). The audit log gets `invite.created` and `invite.revoked` from the admin, `invite.redeemed` from the new account (its user ID only) and `invite.used_up` from the system (`audit_log.actor = 'system'`, no user ID), never on behalf of the admin (CTO, 24 Oct 2026).
 
 Every staff screen reads and writes only through policies and `admin_*` functions, each of which asks `staff_may()` → `is_staff_session()` (architecture 1.8.1). The menu is built from the same answer, but it is a convenience: the server refuses on its own.
 

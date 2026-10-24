@@ -212,6 +212,7 @@
       "accounts": "Accounts",
       "invites": "Invites"
     },
+    "searchFormLabel": "Find an account",
     "searchLabel": "Username, pen name, email or user ID",
     "searchHint": "A whole email address, a full user ID or its first 8 characters. Finding an account by its email is logged.",
     "search": "Search",

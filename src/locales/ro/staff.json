@@ -212,6 +212,7 @@
       "accounts": "Conturi",
       "invites": "Invitații"
     },
+    "searchFormLabel": "Găsește un cont",
     "searchLabel": "Nume de utilizator, pseudonim, email sau ID",
     "searchHint": "O adresă de email întreagă, un ID complet sau primele lui 8 caractere. Căutarea după email intră în jurnal.",
     "search": "Caută",

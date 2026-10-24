@@ -46,7 +46,7 @@ function UserSearchForm({ lookup }: { lookup: Lookup }) {
   return (
     <form
       role="search"
-      aria-label={t('users.searchLabel')}
+      aria-label={t('users.searchFormLabel')}
       onSubmit={handleSubmit}
       className="flex flex-wrap items-end gap-3"
     >
