@@ -8,12 +8,15 @@
 --   the same reference; the hourly limit; details are limited to 2,000 characters;
 -- - the row holds the reporter's age group and the reported account;
 -- - policy reports_select_moderation: owner, admin and moderator read reports (allowed); the
---   reporter, support, the content editor and a visitor read none (denied); nobody inserts.
+--   reporter, support, the content editor and a visitor read none (denied); nobody inserts;
+-- - stories and chapters (Lane A's types, branches added on rebase, architecture 1.7.11): a
+--   published one can be reported and reads as its title or "Chapter N of <title>"; a draft
+--   can't, so its existence never leaks; nobody reports their own story.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(22);
+select plan(27);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000001'::uuid as adult_writer,
@@ -116,6 +119,36 @@ select is((select count(*)::integer from public.reports where created_at = now()
 select pg_temp.sign_in_as((select admin from ids));
 select isnt_empty($$ select id from public.reports $$,
   'allowed: reports_select_moderation: an admin reads reports too');
+
+/* ---------- 5. Stories and chapters (Lane A's types) ---------- */
+
+reset role;
+-- Section 3 lowered the hourly limit to prove it; back to the setting's own value here.
+update public.settings set value = '20'::jsonb where key = 'report_hourly_limit';
+update public.stories set first_published_at = now() where id = '00000000-0000-4000-9000-000000000001';
+insert into public.chapters (story_id, user_id, code, position, status, published_title, published_body)
+values ('00000000-0000-4000-9000-000000000001', (select adult_writer from ids), 'rpt042ch', 99,
+        'published', 'A chapter to report', 'Synthetic text.');
+create temp table report_chapter as select id from public.chapters where code = 'rpt042ch';
+grant select on report_chapter to authenticated;
+set local role authenticated;
+select pg_temp.sign_in_as((select teen_17 from ids));
+create temp table story_report as
+  select * from public.report_item('story', '00000000-0000-4000-9000-000000000001', 'spam');
+create temp table chapter_report as
+  select * from public.report_item('chapter', (select id::text from report_chapter), 'spam');
+select throws_ok($$ select * from public.report_item('story', '00000000-0000-4000-9000-000000000002', 'spam') $$,
+  '23514', null, 'a story that isn''t published can''t be reported: its existence never leaks');
+select pg_temp.sign_in_as((select adult_writer from ids));
+select throws_ok($$ select * from public.report_item('story', '00000000-0000-4000-9000-000000000001', 'spam') $$,
+  '23514', null, 'nobody reports their own story');
+reset role;
+select is((select reported_user_id from public.reports where reference = (select report_reference from story_report)),
+  (select adult_writer from ids), 'a published story is reported, against its writer');
+select is(public.reportable_item_summary('story', '00000000-0000-4000-9000-000000000001'), 'Stația meteo',
+  'the queue reads a story as its title');
+select is(public.reportable_item_summary('chapter', (select id from public.chapters where code = 'rpt042ch')),
+  'Chapter 99 of Stația meteo', 'and a chapter as "Chapter N of <story title>"');
 
 select * from finish();
 

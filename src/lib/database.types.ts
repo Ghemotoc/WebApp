@@ -657,6 +657,70 @@ export type Database = {
         };
         Relationships: [];
       };
+      reports: {
+        Row: {
+          closed_at: string | null;
+          created_at: string;
+          details: string | null;
+          id: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+          reference: string;
+          reported_user_id: string;
+          reporter_age_band: Database['public']['Enums']['age_band'];
+          source: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          closed_at?: string | null;
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+          reference: string;
+          reported_user_id: string;
+          reporter_age_band: Database['public']['Enums']['age_band'];
+          source?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          closed_at?: string | null;
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          item_id?: string;
+          item_type?: Database['public']['Enums']['reportable_type'];
+          reason?: Database['public']['Enums']['report_reason'];
+          reference?: string;
+          reported_user_id?: string;
+          reporter_age_band?: Database['public']['Enums']['age_band'];
+          source?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reports_reported_user_id_fkey';
+            columns: ['reported_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reports_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       reserved_names: {
         Row: {
           created_at: string;
@@ -1572,6 +1636,29 @@ export type Database = {
         };
         Returns: string;
       };
+      report_item: {
+        Args: {
+          details?: string;
+          item_reference: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+        };
+        Returns: {
+          received_at: string;
+          report_reference: string;
+        }[];
+      };
+      reportable_item_owner: {
+        Args: { item_reference: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: {
+          item_id: string;
+          owner_user_id: string;
+        }[];
+      };
+      reportable_item_summary: {
+        Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: string;
+      };
       require_role_change_allowed: {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
@@ -1642,6 +1729,20 @@ export type Database = {
       chapter_status: 'draft' | 'scheduled' | 'published';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
+      report_reason:
+        | 'illegal_content'
+        | 'harassment'
+        | 'insults'
+        | 'self_harm'
+        | 'child_sexual_content'
+        | 'threat_to_minor'
+        | 'terrorism'
+        | 'hate'
+        | 'spam'
+        | 'copyright'
+        | 'copied_published_work'
+        | 'undisclosed_ai'
+        | 'other';
       reportable_type: 'profile' | 'story' | 'chapter';
       revision_reason: 'published' | 'edited' | 'restored';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
@@ -1792,6 +1893,21 @@ export const Constants = {
       chapter_status: ['draft', 'scheduled', 'published'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
+      report_reason: [
+        'illegal_content',
+        'harassment',
+        'insults',
+        'self_harm',
+        'child_sexual_content',
+        'threat_to_minor',
+        'terrorism',
+        'hate',
+        'spam',
+        'copyright',
+        'copied_published_work',
+        'undisclosed_ai',
+        'other',
+      ],
       reportable_type: ['profile', 'story', 'chapter'],
       revision_reason: ['published', 'edited', 'restored'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
