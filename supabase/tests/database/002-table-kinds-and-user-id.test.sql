@@ -6,11 +6,14 @@
 -- Tables of kind user_content, user_action and staff must have `user_id uuid not null` with a
 -- foreign key to profiles(id). Tables of kind user_content must name a reportable_type value that
 -- exists. Tests 4 and 5 prove the check catches a table that breaks the rule.
+-- One exception: audit_log's user_id is empty on system rows (S1-E11-17, CTO 24 Oct 2026: the
+-- platform closing a used-up invite is nobody's action). Test 6 proves a check constraint allows
+-- that only when actor = 'system', so a person's row can never lose its user ID.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(5);
+select plan(6);
 
 -- The public tables with their declared kind and reportable value, read from the table comment.
 create function pg_temp.public_table_kinds()
@@ -43,7 +46,7 @@ as $$
           and table_columns.table_name = kinds.table_name
           and table_columns.column_name = 'user_id'
           and table_columns.data_type = 'uuid'
-          and table_columns.is_nullable = 'NO'
+          and (table_columns.is_nullable = 'NO' or kinds.table_name = 'audit_log')
       )
       -- ... with a foreign key to profiles.
       or not exists (
@@ -98,6 +101,13 @@ select set_has(
   $$ select table_name from pg_temp.public_table_kinds() where table_kind is null $$,
   $$ values ('example_without_kind') $$,
   'a table without a declared kind is caught'
+);
+
+-- 6. audit_log's empty user_id is for system rows only (the exception above).
+select throws_ok(
+  $$ insert into public.audit_log (user_id, actor, action, target_type) values (null, 'person', 'example.action', 'example') $$,
+  '23514', null,
+  'an audit row says who acted unless the system did: a person''s row without a user ID is refused'
 );
 
 select * from finish();

@@ -99,6 +99,7 @@
     "newer": "Newer",
     "older": "Older",
     "page": "Page {{number}}",
+    "system": "System",
     "columns": {
       "time": "When",
       "staff": "Who",
