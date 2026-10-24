@@ -1,4 +1,4 @@
-# ADR 0004: Contact us posts through our own Pages Function and Brevo, with no helpdesk script
+# ADR 0006: Contact us posts through our own Pages Function and Brevo, with no helpdesk script
 
 - **Date:** 23 October 2026
 - **Status:** Accepted (Robert, chat, 23 Oct 2026, Q10 of the Lane C plan)
