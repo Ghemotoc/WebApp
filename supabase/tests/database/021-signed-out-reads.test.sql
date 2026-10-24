@@ -49,6 +49,7 @@ select results_eq(
   $$ select * from (values
        ('audit_log', 0::bigint),
        ('banned_email_hashes', 0::bigint),
+       ('blocks', 0::bigint),
        ('case_actions', 0::bigint),
        ('cases', 0::bigint),
        ('categories', (select count(*) from public.categories)),
@@ -59,6 +60,8 @@ select results_eq(
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
+       ('follows_stories', 0::bigint),
+       ('follows_users', 0::bigint),
        ('invites', 0::bigint),
        ('jobs', 0::bigint),
        ('legal_document_versions',

@@ -2,8 +2,8 @@
  * StorySideColumn: the writer card, "Labels from the writer" and "Report this story" beside the
  * story (story S1-E3-05; board Story 3.4, the side column).
  *
- * Board values: the writer card (name, 22 px; the bio, numbers, Follow and "See profile" come
- * with S1-E5-05 and S1-E6-05), the label rows with a fine line between them (LabelRows: language,
+ * Board values: the writer card (name, 22 px, the bio, Follow and "See profile"; S1-E5-05 and
+ * S1-E6-05; the writer's numbers stay on the profile), the label rows with a fine line between them (LabelRows: language,
  * rating, labels, AI, status, comments; "Where to read" joins with S1-E3-08) and the "Report
  * this story" link. The content note sits in StoryHeader, under the blurb. The mug and the mushroom doodles sit on the card
  * corners as on the board.
@@ -14,23 +14,26 @@
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LabelRows } from '@/components/ui/LabelRows';
+import { FollowButton } from '@/features/people/components/FollowButton';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { ratingMinimumAge } from '@/schemas/story';
 
 import type { StoryPageData } from '../api/storyPage';
 
 /**
- * The writer card: pen name or username and the handle (the bio, numbers, Follow and
- * "See profile" come with S1-E5-05 and S1-E6-05), with the mug doodle on its corner.
+ * The writer card: pen name or username, the handle, the bio and "See profile" (S1-E5-05) and
+ * Follow (S1-E6-05; not on one's own story), with the mug doodle on its corner.
  *
  * @returns the card
  */
-function WriterCard({ writer }: { writer: StoryPageData['writer'] }) {
+function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOwner: boolean }) {
   const { t } = useTranslation('reading');
+  const profileHref = `/u/${encodeURIComponent(writer.handle)}`;
   return (
     <div className="relative flex flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card">
       {/* Kept to its own width, so the mug in the corner never shares a box with the text. */}
@@ -39,6 +42,23 @@ function WriterCard({ writer }: { writer: StoryPageData['writer'] }) {
       </div>
       <h2 className="m-0 font-heading text-[22px] font-bold text-heading">{writer.displayName}</h2>
       <p className="m-0 text-[13px] text-meta">@{writer.handle}</p>
+      {writer.bio !== '' && (
+        <p className="m-0 text-[15px] leading-normal break-words text-body">{writer.bio}</p>
+      )}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+        {!isOwner && (
+          <FollowButton
+            target={{ kind: 'writer', handle: writer.handle }}
+            targetLabel={writer.displayName}
+          />
+        )}
+        <Link
+          to={profileHref}
+          className="text-sm font-semibold text-link underline hover:text-link-hover"
+        >
+          {t('storyPage.seeProfile')}
+        </Link>
+      </div>
       <Doodle
         name="mug"
         kind="widget"
@@ -81,7 +101,7 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
   const { t } = useTranslation('reading');
   return (
     <aside className="flex flex-col gap-5">
-      <WriterCard writer={story.writer} />
+      <WriterCard writer={story.writer} isOwner={story.isOwner} />
       <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card">
         <h2 className="m-0 font-eyebrow text-sm font-normal text-eyebrow">
           {t('storyPage.labelsHeading')}

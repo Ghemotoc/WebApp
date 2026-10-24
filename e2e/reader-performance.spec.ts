@@ -60,13 +60,36 @@ async function coldReader(browser: Browser): Promise<BrowserContext> {
   return context;
 }
 
+/** Where the page notes when the first paragraph was painted (see markFirstParagraph). */
+type TimedWindow = Window & { firstParagraphPaintedAt?: number };
+
+/**
+ * Runs inside the page before any of its own scripts: watches for the first paragraph of chapter
+ * text and notes performance.now() on the next frame after it appears, which is when it is painted.
+ * Timing it inside the page leaves out the test's own polling and round trips, which on a busy
+ * machine with the CPU slowed 4 times added a few hundred milliseconds and made the result flaky
+ * (PEOPLE-1: it failed on main too).
+ */
+function markFirstParagraph() {
+  const timedWindow = window as TimedWindow;
+  const observer = new MutationObserver(() => {
+    if (document.querySelector('.tmc-chapter-text p') === null) return;
+    observer.disconnect();
+    requestAnimationFrame(() => {
+      timedWindow.firstParagraphPaintedAt = performance.now();
+    });
+  });
+  observer.observe(document, { childList: true, subtree: true });
+}
+
 /**
  * Opens the chapter on a throttled phone and times the first paragraph.
  *
- * @returns milliseconds from the start of the navigation to the first paragraph on screen
+ * @returns milliseconds from the start of the navigation to the first paragraph being painted
  */
 async function timeFirstParagraph(browser: Browser): Promise<number> {
   const context = await coldReader(browser);
+  await context.addInitScript(markFirstParagraph);
   const page = await context.newPage();
   const devTools = await context.newCDPSession(page);
   await devTools.send('Network.enable');
@@ -75,7 +98,8 @@ async function timeFirstParagraph(browser: Browser): Promise<number> {
   await page.goto(chapterAddress);
   await page.locator('.tmc-chapter-text p').first().waitFor({ state: 'visible' });
   // performance.now() counts from the start of this page's navigation.
-  const milliseconds = await page.evaluate(() => performance.now());
+  const handle = await page.waitForFunction(() => (window as TimedWindow).firstParagraphPaintedAt);
+  const milliseconds = (await handle.jsonValue()) ?? Number.POSITIVE_INFINITY;
   await context.close();
   return milliseconds;
 }

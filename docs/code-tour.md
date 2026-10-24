@@ -72,6 +72,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
 | `src/features/writing/` | The writer's side: `/write` (Your writing), `/write/new` (the new story form), `/write/s/:storySlug/settings` (story settings, delete and undo), `/write/s/:storySlug/c/:chapterCode` (the chapter editor and its autosave), the tag rule, the Markdown converters, `create_story()`, `update_my_story()`, `save_chapter_draft()`; see its README | S1-E3-01, S1-E3-05, S1-E3-02a |
 | `src/features/reading/` | The reader's side: `/s/:storySlug` (the story page) through `get_story_page()`, the label pills, the chapter reader and, for signed-out visitors, the teaser and the "No preview" notice; see its README | S1-E3-05, S1-E3-06, S1-E4-01a, S1-E4-04 |
+| `src/features/people/` | Writer profiles (`/u/:handle`) through `get_writer_profile()`, blocks (`set_block()`, the block dialog, Settings' "Blocked accounts"), the bio, and the shared `<FollowButton>` for writers and stories; see its README | S1-E5-05, S1-E6-05 |
 | `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets a design from the story's ID; `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
 | `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
@@ -628,6 +629,26 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
 ```
 
 Tests: `142-teaser.test.sql`, `server/link-preview.test.ts`, `e2e/teaser.spec.ts`.
+
+## A writer's profile, blocks and follows (S1-E5-05, S1-E6-05)
+
+`/u/<username>`, from "See profile" on a story page, a follower's name, or Settings' "See your profile":
+
+```
+WriterProfilePage → useWriterProfile → api/writerProfile.ts → get_writer_profile(handle)
+  │                  profile_for_handle(): live, look-alike letters match (username_skeleton())
+  │                  null when unknown, moderated away, or this person blocks the reader
+  │                  profile_story_cards(): published, not moderated, rating_allows()
+  │  ProfileHeader (ProfileAvatar: initials; name; "@handle · Joined"; bio; ProfileStats)
+  │     FollowButton → useFollow → writer_follow_state() / follow_writer(handle, should_follow)
+  │     ProfileStats' "See who follows you" (own profile) → FollowersDialog → my_followers()
+  │  ProfileStories (the shared Shelf of StoryCards, max 20, then "View more")
+  ▼  ProfileSafetyCard: ReportButton (profile, by username) · BlockDialog → set_block()
+```
+
+Blocks: `blocks` (the blocker's own rows only) and `is_blocked_with()`, which replaced Lane A's stub, so `get_chapter()`, `record_chapter_read()`, `get_story_page()`, the profile and the follow functions all respect a block in both directions. A block ends follows both ways; the blocked person sees "This profile isn't available", never "you are blocked". Follows: `follows_users` and `follows_stories`, written only through `follow_writer()` and `follow_story()` (account gate; a blocked pair silently stays "not following"); the count is public, the list is the writer's only (Q50). The story page shows `FollowButton` twice: on the writer card and as "Follow story" under the title. Settings › "About you" saves the bio with `set_my_bio()`; "Blocked accounts" lists `my_blocked_accounts()` with Unblock.
+
+Tests: `143-writer-profile-and-blocks.test.sql`, `144-follows.test.sql`, `lib/formatting.test.ts`, `e2e/writer-profile.spec.ts`, `e2e/follows.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 

@@ -295,3 +295,18 @@ begin
   from public.cases where cases.id = case_actions.case_id;
 end;
 $$;
+
+-- People (PEOPLE-1: S1-E5-05 profiles and blocks, S1-E6-05 follows). Synthetic bios for two
+-- personas so the profile page has something to show; blocker blocks blocked, so the "blocks
+-- everywhere" checks and hand tests have a pair; teen_17 follows adult_writer and their first
+-- story, so the follower count and "Following" have something to show.
+update public.profiles set bio = 'Scriu povești scurte despre orașe mici și oamenii care le țin minte.'
+  where id = '00000000-0000-4000-8000-000000000001';
+update public.profiles set bio = 'Poems on the night bus. Mostly about weather.'
+  where id = '00000000-0000-4000-8000-000000000015';
+insert into public.blocks (user_id, blocked_user_id)
+  values ('00000000-0000-4000-8000-000000000015', '00000000-0000-4000-8000-000000000016');
+insert into public.follows_users (user_id, followed_user_id)
+  values ('00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000001');
+insert into public.follows_stories (user_id, story_id)
+  values ('00000000-0000-4000-8000-000000000002', '00000000-0000-4000-9000-000000000001');

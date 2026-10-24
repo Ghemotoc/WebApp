@@ -2,8 +2,8 @@
  * SettingsPage: Settings, screen 6.3 (story S1-E2-04 starts it; design/boards/Settings.dc.html).
  *
  * Who shows it: the router, at /settings; the top bar links here while signed in.
- * What it shows today: "Signed in as …", the Account panel (username and pen name), Signed-in
- * devices (S1-E2-05) and the Legal panel. The board's other tabs (Privacy, Ways to log in,
+ * What it shows today: "Signed in as …", the Account panel (username and pen name), "About you"
+ * (the bio) and "Blocked accounts" (S1-E5-05), Signed-in devices (S1-E2-05) and the Legal panel. The board's other tabs (Privacy, Ways to log in,
  * Notifications, Messages, Language, My certificates) arrive with their stories (S1-E13-01,
  * S1-E2-09, S1-E7-02 and others), so only what works is shown (docs/board-fixes.md).
  * Signed out, it says to log in; without a username, it links to setup.
@@ -19,6 +19,8 @@ import { useMyNames } from '../hooks/useMyNames';
 import { displayName } from '../lib/nameRules';
 
 import { AccountNamesSection } from './AccountNamesSection';
+import { BioSettingsSection } from './BioSettingsSection';
+import { BlockedAccountsSection } from './BlockedAccountsSection';
 import { LegalLinksSection } from './LegalLinksSection';
 import { SignedInDevicesSection } from './SignedInDevicesSection';
 
@@ -54,6 +56,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
         </p>
       )}
       {names.handle !== null && <AccountNamesSection account={account} names={names} />}
+      {names.handle !== null && <BioSettingsSection handle={names.handle} />}
+      <BlockedAccountsSection />
       <SignedInDevicesSection />
       <LegalLinksSection />
     </>

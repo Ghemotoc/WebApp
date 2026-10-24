@@ -91,6 +91,46 @@ export type Database = {
           },
         ];
       };
+      blocks: {
+        Row: {
+          blocked_user_id: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          blocked_user_id: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          blocked_user_id?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'blocks_blocked_user_id_fkey';
+            columns: ['blocked_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'blocks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       case_actions: {
         Row: {
           action: Database['public']['Enums']['moderation_action'];
@@ -553,6 +593,86 @@ export type Database = {
         };
         Relationships: [];
       };
+      follows_stories: {
+        Row: {
+          created_at: string;
+          id: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'follows_stories_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'follows_stories_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      follows_users: {
+        Row: {
+          created_at: string;
+          followed_user_id: string;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          followed_user_id: string;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          followed_user_id?: string;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'follows_users_followed_user_id_fkey';
+            columns: ['followed_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'follows_users_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       invites: {
         Row: {
           code_hash: string;
@@ -834,6 +954,7 @@ export type Database = {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
+          bio: string;
           birth_month: number | null;
           birth_year: number;
           country_code: string | null;
@@ -847,6 +968,7 @@ export type Database = {
           locale: string;
           pen_name: string | null;
           pen_name_changed_at: string | null;
+          shows_online_status: boolean;
           updated_at: string;
         };
         ComputedFields: never;
@@ -854,6 +976,7 @@ export type Database = {
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
+          bio?: string;
           birth_month?: number | null;
           birth_year: number;
           country_code?: string | null;
@@ -867,12 +990,14 @@ export type Database = {
           locale?: string;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
+          shows_online_status?: boolean;
           updated_at?: string;
         };
         Update: {
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
+          bio?: string;
           birth_month?: number | null;
           birth_year?: number;
           country_code?: string | null;
@@ -886,6 +1011,7 @@ export type Database = {
           locale?: string;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
+          shows_online_status?: boolean;
           updated_at?: string;
         };
         Relationships: [];
@@ -1980,10 +2106,14 @@ export type Database = {
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
+      follow_story: { Args: { should_follow: boolean; story_slug: string }; Returns: Json };
+      follow_writer: { Args: { should_follow: boolean; target_handle: string }; Returns: Json };
+      follower_count_of: { Args: { writer_id: string }; Returns: number };
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
+      get_writer_profile: { Args: { wanted_handle: string }; Returns: Json };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
@@ -2076,6 +2206,22 @@ export type Database = {
         Returns: Database['public']['Enums']['moderated_state'];
       };
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
+      my_blocked_accounts: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          blocked_at: string;
+          display_name: string;
+          handle: string;
+        }[];
+      };
+      my_followers: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          display_name: string;
+          followed_at: string;
+          handle: string;
+        }[];
+      };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2152,6 +2298,37 @@ export type Database = {
       normalise_tag: { Args: { tag_name: string }; Returns: string };
       note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
+      profile_for_handle: {
+        Args: { wanted_handle: string };
+        Returns: {
+          age_check_method: Database['public']['Enums']['age_check_method'] | null;
+          age_check_result: Database['public']['Enums']['age_check_result'];
+          age_checked_at: string | null;
+          bio: string;
+          birth_month: number | null;
+          birth_year: number;
+          country_code: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          handle: string | null;
+          handle_changed_at: string | null;
+          handle_skeleton: string | null;
+          handle_slug: string | null;
+          id: string;
+          locale: string;
+          pen_name: string | null;
+          pen_name_changed_at: string | null;
+          shows_online_status: boolean;
+          updated_at: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'profiles';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
@@ -2265,7 +2442,9 @@ export type Database = {
       schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
+      set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
+      set_my_bio: { Args: { new_bio: string }; Returns: string };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
@@ -2286,6 +2465,8 @@ export type Database = {
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
+      story_follow_state: { Args: { story_slug: string }; Returns: Json };
+      story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_slug_for: { Args: { title: string }; Returns: string };
@@ -2306,6 +2487,7 @@ export type Database = {
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
+      writer_follow_state: { Args: { wanted_handle: string }; Returns: Json };
     };
     Enums: {
       account_status:
