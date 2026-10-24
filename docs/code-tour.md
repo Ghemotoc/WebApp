@@ -473,6 +473,23 @@ Stored format and why: ADR 0005. Tests: `supabase/tests/database/110-chapters.te
 
 The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 
+## Reading a chapter (S1-E4-01a)
+
+`/s/<story>/<chapter>`, from a chapter title on the story page, Previous and Next, or a shared link:
+
+```
+ChapterReaderPage → useChapter → api/chapter.ts → get_chapter(story_slug, chapter_code)
+  │                    reader_visible_story(): live, not moderated away, rating_allows(), not blocked
+  │                    chapter_is_readable(): published, not deleted, not moderated away
+  │  ChapterBar (Contents, Previous, Next, the progress line from useReadingProgress)
+  │  ChapterReaderHeader ("Chapter n of N", H1, "by … · date · n min read")
+  │  ChapterText (the Markdown as HTML, 19 px, in the story's language) → ChapterEnd
+  ▼
+useRecordRead → record_chapter_read(): +1 on today's chapter_reads total, once per tab
+```
+
+Tests: `140-get-chapter.test.sql`, `141-chapter-reads.test.sql`, `hooks/useRecordRead.test.tsx`, `hooks/useReadingProgress.test.ts`, `e2e/chapter-reader.spec.ts`.
+
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
 What the Foundations epic left in place, and where to find it. The epic report, `docs/epic-reports/S1-E1.md`, lists what works, the known gaps and the steps Robert does by hand.

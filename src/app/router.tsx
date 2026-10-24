@@ -144,6 +144,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: ChapterEditorPage };
     },
   },
+  // The chapter reader (S1-E4-01a): a chapter by the story's slug and the chapter's code; the
+  // same rules as the story page, through get_chapter() (ADR 0004).
+  {
+    path: '/s/:storySlug/:chapterCode',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ChapterReaderPage } = await import('@/features/reading/components/ChapterReaderPage');
+      return { Component: ChapterReaderPage };
+    },
+  },
   // The public story page (S1-E3-05): readers reach a story only through get_story_page()
   // (ADR 0004); the address carries the story's slug, never an ID.
   {
