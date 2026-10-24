@@ -709,6 +709,20 @@ What the reading epic left in place. The epic report, `docs/epic-reports/S1-E4.m
 
 **One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 600 words → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
 
+## Epic S1-E10 at a glance (checked by S1-E10-QA)
+
+What the Safety epic has in place so far. The epic report, `docs/epic-reports/S1-E10.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | the Report dialog (`src/features/reporting/`), the safety block (`src/features/safety/`), `/staff/moderation` and `/staff/moderation/cases/:id` (`src/features/moderation/`), the sanction notice (`src/features/account/`) | 10-01, 10-13a, 10-03a, 10-06 |
+| Hooks | `useReportItem`, `useSafetyContacts`, `useVisitorCountry`, `useModerationQueue`, `useCase`, `useSanctions`, `useMySanctions` | each story |
+| Tables | `reports`, `safety_contacts`, `safety_contact_gaps`, `report_reason_tiers`, `cases`, `case_actions`, `sanctions`, `banned_email_hashes`, `moderated_items` | each story |
+| Functions | `report_item()`, `reportable_item_owner()`, `reportable_item_summary()`, `attach_report_to_case()`, `admin_moderation_queue()`, `admin_decide_case()`, `admin_apply_sanction()`, `admin_lift_sanction()`, `admin_pause_reporting()`, `is_moderated_away()`, `account_state()` (suspended, banned), `note_safety_contact_gap()` | each story |
+| Tests | `supabase/tests/database/042` to `045` and `092` (the epic), `e2e/epic-s1-e10.spec.ts` and each story's spec | each story, S1-E10-QA |
+
+**One main journey through the whole epic:** a reader presses `<ReportButton>` → `ReportDialog` shows the helplines (`SafetyContactsBlock`) and the reasons → `report_item()` stores the report and `attach_report_to_case()` opens or joins the item's case with its tier and deadline → the moderator opens `/staff/moderation`, the case page, and sends a decision → `admin_decide_case()` closes the case and calls `admin_apply_sanction()` → `account_state()` answers `suspended` and every write policy refuses → the person sees `SanctionNotice`. `e2e/epic-s1-e10.spec.ts` walks it.
+
 ## Start here
 
 Read in this order; each file's header comment says what it is for and where things go next.
