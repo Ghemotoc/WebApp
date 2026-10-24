@@ -81,11 +81,11 @@ export function WriterProfilePage() {
       </title>
       <ProfileHeader profile={profile} />
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
-        <div className="min-w-0 flex-[999_1_620px]">
+        <div className="min-w-0 lg:flex-[999_1_620px]">
           {!profile.iBlocked && <ProfileStories profile={profile} />}
         </div>
         {showsSafetyCard && (
-          <div className="w-full flex-[1_1_300px] lg:max-w-[340px]">
+          <div className="w-full lg:max-w-[340px] lg:flex-[1_1_300px]">
             <ProfileSafetyCard profile={profile} />
           </div>
         )}
