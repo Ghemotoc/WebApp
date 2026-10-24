@@ -59,7 +59,32 @@
   },
   "publish": {
     "heading": "Publicare",
-    "comingSoon": "Publicarea vine în curând. Până atunci, capitolul este o ciornă pe care o vezi doar tu."
+    "whenLabel": "Când publici",
+    "now": "Publică acum",
+    "later": "Programează pentru mai târziu",
+    "date": "Data",
+    "time": "Ora",
+    "zoneNote": "Ora României (Europe/Bucharest). Apare în cel mult 5 minute după această oră.",
+    "preview": "Previzualizare",
+    "publishButton": "Publică capitolul",
+    "scheduleButton": "Programează capitolul",
+    "goLiveNote": "Când capitolul apare, povestea ta devine publică și urmăritorii tăi primesc o notificare.",
+    "scheduledFor": "Programat pentru {{when}}, ora României.",
+    "cancelSchedule": "Anulează programarea",
+    "published": "Publicat {{when}}.",
+    "updateButton": "Actualizează capitolul",
+    "updateNote": "Modificările se salvează ca ciornă. Cititorii le văd după ce apeși Actualizează capitolul.",
+    "unpublish": "Retrage capitolul",
+    "unpublishNotePublished": "Cititorii nu mai pot deschide acest capitol. Comentariile lui sunt ascunse, dar păstrate.",
+    "unpublishNoteDraft": "Disponibil după ce capitolul este publicat. Atunci cititorii nu îl mai pot deschide. Comentariile lui sunt ascunse, dar păstrate.",
+    "working": "Se lucrează…",
+    "problems": {
+      "notSaved": "Ultimele modificări nu sunt salvate încă. Așteaptă „Salvat”, apoi încearcă din nou.",
+      "empty": "Scrie ceva înainte să publici.",
+      "badTime": "Alege o dată și o oră din viitor, cel mult peste un an.",
+      "notActive": "Contul tău nu poate publica încă.",
+      "failed": "Nu am putut face asta. Verifică conexiunea și încearcă din nou."
+    }
   },
   "details": {
     "heading": "Detaliile poveștii",
@@ -100,5 +125,10 @@
     "cancel": "Renunță",
     "loading": "Se încarcă cealaltă versiune…",
     "loadFailed": "Nu am putut încărca cealaltă versiune. Verifică conexiunea și încearcă din nou."
+  },
+  "preview": {
+    "heading": "Previzualizare",
+    "note": "Așa vor vedea cititorii capitolul.",
+    "close": "Închide"
   }
 }

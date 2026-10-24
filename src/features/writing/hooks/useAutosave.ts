@@ -205,8 +205,8 @@ function useConflictExits(context: AutosaveContext, save: () => Promise<void>) {
 /**
  * Runs the autosave.
  *
- * @returns state; markChanged (on every edit); saveNow (on blur); keepMine and acceptOther
- *   (the two ways out of a conflict)
+ * @returns state; markChanged (on every edit); saveNow (on blur); isAllSaved (asked before
+ *   publishing); keepMine and acceptOther (the two ways out of a conflict)
  */
 export function useAutosave(options: AutosaveOptions) {
   const { chapterCode, isOnline = true } = options;
@@ -241,5 +241,13 @@ export function useAutosave(options: AutosaveOptions) {
 
   // Offline with unsaved words: the status says they are kept on this device.
   const shownState: SaveState = !isOnline && state.kind === 'unsaved' ? { kind: 'offline' } : state;
-  return { state: shownState, markChanged, saveNow: save, ...exits };
+  /** True when the server has everything on screen: no changes waiting, no conflict, no save
+   *  in flight. Publishing (S1-E3-03) asks this after saveNow(), so it publishes what was saved. */
+  const isAllSaved = useCallback(
+    () => !refs.hasChanges.current && !refs.isStopped.current && !refs.isSaving.current,
+    // The refs never change identity.
+    [],
+  );
+
+  return { state: shownState, markChanged, saveNow: save, isAllSaved, ...exits };
 }

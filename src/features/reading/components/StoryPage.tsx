@@ -23,6 +23,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useStoryPage } from '../hooks/useStoryPage';
 
+import { StoryChapterList } from './StoryChapterList';
 import { StoryHeader } from './StoryHeader';
 import { StorySideColumn } from './StorySideColumn';
 
@@ -75,14 +76,15 @@ export function StoryPage() {
   return (
     <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-7">
       <title>{t('storyPage.documentTitle', { title: story.title })}</title>
-      {story.isOwner && story.firstPublishedAt === null && (
-        <Notice tone="info">{t('storyPage.ownerPreview')}</Notice>
+      {story.isOwner && !story.isPublic && (
+        <Notice tone="info">{t('storyPage.notPublicYet')}</Notice>
       )}
       {/* Two columns only from 1024 px: at 768 px the side cards would be squeezed to about
           220 px and their label rows (140 px labels) would push the page sideways (rule 21). */}
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
         <div className="relative flex min-w-0 flex-[999_1_620px] flex-col gap-12">
           <StoryHeader story={story} />
+          <StoryChapterList chapters={story.chapters} isOwner={story.isOwner} />
           {/* Beside the cover, in the space to its right: below the cover the pills and the
               title move with the story's state, so a doodle there would end up over them. */}
           <Doodle

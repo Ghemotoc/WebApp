@@ -67,10 +67,14 @@ select is(public.get_story_page('statia-meteo-seed01'), null, 'teen_17 gets noth
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((public.get_story_page('statia-meteo-seed01')) ->> 'is_owner', 'true', 'the owner gets their own unpublished story (preview)');
 
--- 5. Once published (publish_chapter() sets this in S1-E3-03): public, with the pen name and no user ID.
+-- 5. Once a chapter is published (S1-E3-03): public, with the pen name and no user ID.
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+create temporary table published_chapter as
+  select (public.create_chapter('statia-meteo-seed01')) ->> 'code' as code;
+grant select on published_chapter to authenticated;
+select public.save_chapter_draft((select code from published_chapter), 'Unu', 'Primul capitol.', 1);
+select public.publish_chapter((select code from published_chapter));
 reset role;
-update public.stories set first_published_at = now(), last_chapter_published_at = now()
-  where id = '00000000-0000-4000-9000-000000000001';
 set local role anon;
 select is((public.get_story_page('statia-meteo-seed01')) ->> 'title', 'Stația meteo (ediția a doua)',
   'a signed-out visitor reads a published story''s page');

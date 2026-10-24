@@ -12,7 +12,6 @@
     "commentsOff": "Oprite",
     "report": "Raportează această poveste",
     "reportSubject": "Raportez o poveste: {{slug}}",
-    "ownerPreview": "Doar tu vezi această poveste până îi publici primul capitol. Așa o vor vedea cititorii.",
     "unavailableTitle": "Povestea nu este disponibilă",
     "unavailableBody": "Poate nu e publicată încă, poate e clasificată pentru cititori mai mari, poate a fost eliminată sau linkul e greșit.",
     "goHome": "Mergi la Acasă",
@@ -22,6 +21,15 @@
     "labelsLabel": "Etichete",
     "noLabels": "Niciuna",
     "aiLabel": "AI",
-    "contentNoteHeading": "Notă de conținut"
+    "contentNoteHeading": "Notă de conținut",
+    "chaptersHeading": "Capitole",
+    "chapterNumber": "Capitolul {{number}}",
+    "untitledChapter": "Fără titlu",
+    "publishedOn": "Publicat {{date}}",
+    "editedOn": "Modificat {{date}}",
+    "noChaptersOwner": "Niciun capitol încă. Scrie capitolul unu din Scrierile tale.",
+    "draftChapter": "Ciornă",
+    "scheduledChapter": "Programat",
+    "notPublicYet": "Doar tu vezi această poveste până publici un capitol. Așa o vor vedea cititorii."
   }
 }

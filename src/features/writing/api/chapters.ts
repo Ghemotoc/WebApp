@@ -10,6 +10,8 @@
  *   | not_found.
  * - Saving the draft: save_chapter_draft(code, title, body, expected_version) → {status: saved,
  *   version, saved_at, word_count} | conflict | not_active | not_found.
+ * - Publishing (S1-E3-03): publish_chapter, update_published_chapter, unpublish_chapter,
+ *   schedule_chapter(code, publish_at) and cancel_schedule, each answering {outcome: ok | …}.
  * Readers never read these rows: they go through get_chapter() (S1-E4-01a, ADR 0004).
  */
 import type { Database } from '@/lib/database.types';
@@ -31,6 +33,12 @@ export interface MyChapter {
   status: ChapterStatus;
   wordCount: number;
   story: { slug: string; title: string };
+  /** The published copy readers see (S1-E3-03); null until first published. */
+  publishedTitle: string | null;
+  publishedBody: string | null;
+  /** When it was last put live, and when it goes live if scheduled (S1-E3-03). */
+  lastPublishedAt: string | null;
+  scheduledFor: string | null;
 }
 
 /** What create_chapter() answers. */
@@ -61,7 +69,7 @@ export async function fetchMyChapter(
   const { data, error } = await client
     .from('chapters')
     .select(
-      'id, code, position, draft_title, draft_body, draft_version, draft_saved_at, status, word_count, stories!inner(slug, title)',
+      'id, code, position, draft_title, draft_body, draft_version, draft_saved_at, status, word_count, published_title, published_body, last_published_at, scheduled_for, stories!inner(slug, title)',
     )
     .eq('code', code)
     .is('deleted_at', null)
@@ -79,6 +87,10 @@ export async function fetchMyChapter(
     status: data.status,
     wordCount: data.word_count,
     story: { slug: data.stories.slug, title: data.stories.title },
+    publishedTitle: data.published_title,
+    publishedBody: data.published_body,
+    lastPublishedAt: data.last_published_at,
+    scheduledFor: data.scheduled_for,
   };
 }
 
@@ -188,4 +200,78 @@ function toSaveDraftResult(data: unknown): SaveDraftResult {
     default:
       throw unexpectedAnswer(answer);
   }
+}
+
+/** What the publishing functions answer (S1-E3-03). */
+export type ChapterActionOutcome =
+  'ok' | 'not_active' | 'not_found' | 'empty' | 'wrong_state' | 'bad_time';
+
+/** The publishing functions, each taking the chapter's code. */
+type ChapterAction =
+  'publish_chapter' | 'update_published_chapter' | 'unpublish_chapter' | 'cancel_schedule';
+
+/** The outcomes the screen knows; anything else is a fault. */
+const knownOutcomes: readonly string[] = [
+  'ok',
+  'not_active',
+  'not_found',
+  'empty',
+  'wrong_state',
+  'bad_time',
+];
+
+/**
+ * Reads a publishing function's answer.
+ *
+ * @param data - the JSON answer
+ * @returns the outcome
+ * Errors: throws on anything else.
+ */
+function toActionOutcome(data: unknown): ChapterActionOutcome {
+  const outcome = (data as { outcome?: string } | null)?.outcome;
+  if (outcome !== undefined && knownOutcomes.includes(outcome))
+    return outcome as ChapterActionOutcome;
+  throw new Error(`Unexpected answer from a chapter action: ${JSON.stringify(data)}`);
+}
+
+/**
+ * Runs one of the publishing actions on the writer's own chapter (S1-E3-03).
+ *
+ * @param client - the shared Supabase client
+ * @param action - publish, update the published copy, unpublish, or cancel the schedule
+ * @param code - the chapter's code
+ * @returns the outcome
+ * Errors: throws when the database can't be reached.
+ */
+export async function runChapterAction(
+  client: AppSupabaseClient,
+  action: ChapterAction,
+  code: string,
+): Promise<ChapterActionOutcome> {
+  const { data, error } = await client.rpc(action, { chapter_code: code });
+  if (error !== null) throw new Error(`Could not change the chapter: ${error.message}`);
+  return toActionOutcome(data);
+}
+
+/**
+ * Schedules the writer's own chapter for a moment (S1-E3-03; the screen turns the Romania date
+ * and time into the moment, Q7).
+ *
+ * @param client - the shared Supabase client
+ * @param code - the chapter's code
+ * @param publishAt - when it goes live
+ * @returns the outcome; 'bad_time' when it isn't in the future or is more than a year ahead
+ * Errors: throws when the database can't be reached.
+ */
+export async function scheduleChapter(
+  client: AppSupabaseClient,
+  code: string,
+  publishAt: Date,
+): Promise<ChapterActionOutcome> {
+  const { data, error } = await client.rpc('schedule_chapter', {
+    chapter_code: code,
+    publish_at: publishAt.toISOString(),
+  });
+  if (error !== null) throw new Error(`Could not schedule the chapter: ${error.message}`);
+  return toActionOutcome(data);
 }

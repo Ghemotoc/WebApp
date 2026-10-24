@@ -5,12 +5,24 @@
  * What it calls next: get_story_page(slug) (supabase/migrations/…_s1_e3_05_story_settings.sql),
  * the only way readers reach a story: it answers nothing for a story that isn't published, is
  * deleted or is hidden by a moderator (the owner always gets their own), and never the user ID.
- * It applies the rating rule (rating_allows(), S1-E3-06) and serves the labels; the chapter
- * list joins in S1-E3-03.
+ * It applies the rating rule (rating_allows(), S1-E3-06), serves the labels and the chapter list,
+ * and shows a story only while it has a published chapter (S1-E3-03).
  */
 import type { CoverColourKey, CoverDesignKey } from '@/components/covers/coverDesigns';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { AiDisclosure, StoryRating } from '@/schemas/story';
+
+/** One chapter in the story page's list (S1-E3-03). */
+export interface StoryPageChapter {
+  code: string;
+  /** Its number among the chapters shown (1, 2, 3…). */
+  number: number;
+  title: string;
+  status: 'draft' | 'scheduled' | 'published';
+  publishedAt: string | null;
+  editedAt: string | null;
+  wordCount: number | null;
+}
 
 /** What the story page shows. */
 export interface StoryPageData {
@@ -30,6 +42,10 @@ export interface StoryPageData {
   firstPublishedAt: string | null;
   lastChapterPublishedAt: string | null;
   isOwner: boolean;
+  /** True while a chapter is published, so readers can see the story (S1-E3-03). */
+  isPublic: boolean;
+  /** The chapters: the readable ones for readers; every live one for the owner (S1-E3-03). */
+  chapters: StoryPageChapter[];
   /** The labels (S1-E3-06); a stored story always has a rating and an AI answer. */
   labels: {
     rating: StoryRating;
@@ -63,6 +79,16 @@ interface StoryPageRow {
   first_published_at: string | null;
   last_chapter_published_at: string | null;
   is_owner: boolean;
+  is_public: boolean;
+  chapters: {
+    code: string;
+    number: number;
+    title: string;
+    status: 'draft' | 'scheduled' | 'published';
+    published_at: string | null;
+    edited_at: string | null;
+    word_count: number | null;
+  }[];
   labels: {
     rating: StoryRating;
     is_fan_fiction: boolean;
@@ -117,6 +143,16 @@ export async function fetchStoryPage(
     firstPublishedAt: row.first_published_at,
     lastChapterPublishedAt: row.last_chapter_published_at,
     isOwner: row.is_owner,
+    isPublic: row.is_public,
+    chapters: row.chapters.map((chapter) => ({
+      code: chapter.code,
+      number: chapter.number,
+      title: chapter.title,
+      status: chapter.status,
+      publishedAt: chapter.published_at,
+      editedAt: chapter.edited_at,
+      wordCount: chapter.word_count,
+    })),
     labels: {
       rating: row.labels.rating,
       isFanFiction: row.labels.is_fan_fiction,
