@@ -10,7 +10,7 @@
  * Who uses it: WriterProfilePage.
  */
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '../registerPeopleTranslations';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -24,7 +24,7 @@ import { BlockDialog } from './BlockDialog';
 
 /** The card when the reader blocks this person: what that means, and Unblock. */
 function BlockedCard({ profile }: { profile: WriterProfile }) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const block = useBlock();
   return (
     <Card className="flex flex-col gap-3 bg-tint">
@@ -52,7 +52,7 @@ function BlockedCard({ profile }: { profile: WriterProfile }) {
  * @returns the card, or the blocked notice with Unblock
  */
 export function ProfileSafetyCard({ profile }: { profile: WriterProfile }) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const [isBlockOpen, setIsBlockOpen] = useState(false);
   if (profile.iBlocked) return <BlockedCard profile={profile} />;
   return (

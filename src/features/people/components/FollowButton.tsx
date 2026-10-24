@@ -10,7 +10,7 @@
  * Who uses it: ProfileHeader, the story page's writer card and StoryHeader.
  * What it calls: useFollow → follow_writer() / follow_story().
  */
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link } from 'react-router';
 
 import { CheckIcon } from '@/components/icons/CheckIcon';
@@ -44,7 +44,7 @@ function buttonTextKey(target: FollowTarget, isFollowing: boolean): string {
  * @returns the control and, after a failed toggle, why it failed
  */
 export function FollowButton({ target, targetLabel }: FollowButtonProps) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const follow = useFollow(target);
   if (!follow.isSessionKnown || follow.state === null) return null;
   if (!follow.isSignedIn) {

@@ -7,7 +7,7 @@
  * Who shows it: SettingsPage. What it calls: useMyBlockedAccounts → my_blocked_accounts(),
  * useBlock → set_block().
  */
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '@/features/people/registerPeopleTranslations';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
@@ -17,7 +17,7 @@ import { useMyBlockedAccounts } from '@/features/people/hooks/useMyBlockedAccoun
 
 /** The list, its empty state or its error. */
 function BlockedList() {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const { accounts, isLoaded, loadFailed } = useMyBlockedAccounts();
   const block = useBlock();
   if (loadFailed) return <Notice tone="error">{t('settings.blockedLoadFailed')}</Notice>;
@@ -59,7 +59,7 @@ function BlockedList() {
  * @returns the section
  */
 export function BlockedAccountsSection() {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   return (
     <section
       aria-labelledby="settings-blocked-heading"

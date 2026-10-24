@@ -11,7 +11,7 @@
  * S1-E5-05; the database doesn't send them).
  * Who uses it: WriterProfilePage.
  */
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link } from 'react-router';
 
 import { Card } from '@/components/ui/Card';
@@ -26,7 +26,7 @@ import { ProfileStats } from './ProfileStats';
 
 /** The action on the right: Follow for others, "Edit your profile" on one's own. */
 function ProfileAction({ profile }: { profile: WriterProfile }) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   if (profile.isMe) {
     return (
       <Link
@@ -52,7 +52,7 @@ function ProfileAction({ profile }: { profile: WriterProfile }) {
  * @returns the header card
  */
 export function ProfileHeader({ profile }: { profile: WriterProfile }) {
-  const { t, i18n } = useTranslation('people');
+  const { t, i18n } = usePeopleTranslation();
   return (
     <Card className="flex flex-col gap-6 p-[clamp(20px,4vw,40px)] md:flex-row md:items-start">
       <ProfileAvatar name={profile.displayName} />

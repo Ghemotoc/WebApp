@@ -8,7 +8,6 @@
  */
 import { Navigate, type RouteObject } from 'react-router';
 
-import { SettingsPage } from '@/features/account/components/SettingsPage';
 import { SetupPage } from '@/features/account/components/SetupPage';
 import { ConfirmEmailPage } from '@/features/auth/components/ConfirmEmailPage';
 import { ForgotPasswordPage } from '@/features/auth/components/ForgotPasswordPage';
@@ -245,7 +244,17 @@ function pageRoutes(): RouteObject[] {
     { path: '/not-open', element: <NotOpenPage /> },
     // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
     { path: '/setup', element: <SetupPage /> },
-    { path: '/settings', element: <SettingsPage /> },
+    // Settings loads when opened (PEOPLE-1): its bio and blocked-accounts sections bring the
+    // people feature, which the first download of every page (the chapter reader's included)
+    // shouldn't carry.
+    {
+      path: '/settings',
+      HydrateFallback: () => null,
+      lazy: async () => {
+        const { SettingsPage } = await import('@/features/account/components/SettingsPage');
+        return { Component: SettingsPage };
+      },
+    },
     // Lane A: writing and reading (S1-E3, S1-E4).
     ...writeRoutes,
     // Contact us: the form for users and visitors (S1-E14-04; Lane C), loaded when opened.

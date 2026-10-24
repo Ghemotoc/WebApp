@@ -14,7 +14,7 @@
  * told from a missing profile.
  * What it calls: useWriterProfile → get_writer_profile() (ADR 0004: never the tables).
  */
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
@@ -29,7 +29,7 @@ import { ProfileStories } from './ProfileStories';
 
 /** "This profile isn't available", with the way home. */
 function ProfileUnavailable() {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   return (
     <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-10">
       <title>{t('profile.unavailableTitle')}</title>
@@ -53,7 +53,7 @@ function ProfileUnavailable() {
  * @returns the profile, a wait, or "not available"
  */
 export function WriterProfilePage() {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const { handle = '' } = useParams();
   const { userId } = useSession();
   const { profile, isLoaded, loadFailed } = useWriterProfile(handle);

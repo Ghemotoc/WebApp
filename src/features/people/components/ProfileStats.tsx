@@ -10,7 +10,7 @@
  * Follow button uses), so following updates it at once.
  */
 import { useState, type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '../registerPeopleTranslations';
 
 import type { WriterProfile } from '../api/writerProfile';
 import { useFollow } from '../hooks/useFollow';
@@ -31,7 +31,7 @@ function Stat({ value, label }: { value: string; label: ReactNode }) {
 
 /** The followers label, and on one's own profile the button that opens the list. */
 function FollowersLabel({ profile, count }: { profile: WriterProfile; count: number }) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const [isListOpen, setIsListOpen] = useState(false);
   const privacyNote = profile.isMe
     ? t('profile.followersPrivateMine')
@@ -63,7 +63,7 @@ function FollowersLabel({ profile, count }: { profile: WriterProfile; count: num
  * @returns the description list
  */
 export function ProfileStats({ profile }: { profile: WriterProfile }) {
-  const { t, i18n } = useTranslation('people');
+  const { t, i18n } = usePeopleTranslation();
   const follow = useFollow({ kind: 'writer', handle: profile.handle });
   const followerCount = follow.state?.followerCount ?? 0;
   const format = (count: number) => formatStatNumber(count, i18n.language);

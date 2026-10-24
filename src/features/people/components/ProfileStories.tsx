@@ -10,7 +10,7 @@
  * reader may not see (rating, blocks, moderation).
  * Who uses it: WriterProfilePage.
  */
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '../registerPeopleTranslations';
 
 import { designsForRow, resolveCoverChoice } from '@/components/covers/automaticCover';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -26,7 +26,7 @@ import type { WriterProfile } from '../api/writerProfile';
  * @returns the section
  */
 export function ProfileStories({ profile }: { profile: WriterProfile }) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   if (profile.stories.length === 0) {
     const description = profile.isMe
       ? t('profile.noStoriesMine')

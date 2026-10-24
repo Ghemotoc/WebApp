@@ -9,7 +9,7 @@
  * What it calls: useWriterProfile (to read the current bio) and useSaveBio → set_my_bio().
  */
 import { useState, type FormEvent } from 'react';
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '@/features/people/registerPeopleTranslations';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
@@ -29,7 +29,7 @@ interface BioFormProps {
 
 /** The form, once the current bio is known. */
 function BioForm({ handle, savedBio, saveBio }: BioFormProps) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const [bio, setBio] = useState(savedBio);
   const isTooLong = bio.trim().length > bioMaxLength;
 
@@ -92,7 +92,7 @@ function BioForm({ handle, savedBio, saveBio }: BioFormProps) {
  * @returns the section, once the current bio has loaded
  */
 export function BioSettingsSection({ handle }: { handle: string }) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const { profile } = useWriterProfile(handle);
   const saveBio = useSaveBio();
   return (

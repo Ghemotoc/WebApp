@@ -7,7 +7,7 @@
  * profile and says since when they follow.
  * Who uses it: ProfileStats. What it calls: useMyFollowers → my_followers().
  */
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
@@ -29,7 +29,7 @@ export interface FollowersDialogProps {
  * @returns the dialog's body
  */
 function FollowersList() {
-  const { t, i18n } = useTranslation('people');
+  const { t, i18n } = usePeopleTranslation();
   const { followers, isLoaded, loadFailed } = useMyFollowers(true);
   if (loadFailed) return <Notice tone="error">{t('followers.loadFailed')}</Notice>;
   if (!isLoaded) return null;
@@ -65,7 +65,7 @@ function FollowersList() {
  * @returns the dialog
  */
 export function FollowersDialog({ isOpen, onClose }: FollowersDialogProps) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   return (
     <PeopleDialog
       isOpen={isOpen}

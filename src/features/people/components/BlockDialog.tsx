@@ -7,7 +7,7 @@
  * screens).
  * Who uses it: ProfileSafetyCard. What it calls: useBlock → set_block().
  */
-import { useTranslation } from 'react-i18next';
+import { usePeopleTranslation } from '../registerPeopleTranslations';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -29,7 +29,7 @@ export interface BlockDialogProps {
  * @returns the dialog
  */
 export function BlockDialog({ isOpen, onClose, handle }: BlockDialogProps) {
-  const { t } = useTranslation('people');
+  const { t } = usePeopleTranslation();
   const block = useBlock();
 
   /** Closing forgets a failed attempt, so the next opening starts clean. */
