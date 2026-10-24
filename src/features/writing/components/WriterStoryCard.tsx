@@ -7,7 +7,7 @@
  * from S1-E3-06), the tags, the
  * lock line "Only you can see this story until you publish its first chapter" while nothing is
  * published, and the buttons: "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Story
- * settings" and "See story page" (S1-E3-05); "Manage chapters" joins with S1-E3-04.
+ * settings" and "See story page" (S1-E3-05); "Manage chapters" (S1-E3-04).
  * Who uses it: YourWritingPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -29,7 +29,7 @@ export interface WriterStoryCardProps {
   cover: DrawnCoverChoice;
 }
 
-/** "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Story settings" and "See story page" (S1-E3-05). */
+/** "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Manage chapters" once there is a chapter (S1-E3-04), "Story settings" and "See story page" (S1-E3-05). */
 function StoryCardLinks({ story }: { story: MyStory }) {
   const { t } = useTranslation('writing');
   const { slug } = story;
@@ -37,6 +37,14 @@ function StoryCardLinks({ story }: { story: MyStory }) {
   return (
     <div className="mt-1 flex flex-wrap items-center gap-3">
       <WriteChapterLink slug={slug} latestChapter={latestChapter} />
+      {latestChapter !== undefined && (
+        <Link
+          to={`/write/s/${slug}/chapters`}
+          className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+        >
+          {t('storyCard.manageChapters')}
+        </Link>
+      )}
       <Link
         to={`/write/s/${slug}/settings`}
         className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"

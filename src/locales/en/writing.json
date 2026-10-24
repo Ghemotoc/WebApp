@@ -147,7 +147,8 @@
     "continueChapter": "Continue chapter {{number}}",
     "chapterCount_one": "{{count}} chapter",
     "chapterCount_few": "{{count}} chapters",
-    "chapterCount_other": "{{count}} chapters"
+    "chapterCount_other": "{{count}} chapters",
+    "manageChapters": "Manage chapters"
   },
   "status": {
     "heading": "Status and comments",
@@ -247,5 +248,85 @@
   "pills": {
     "fanFiction": "Fan fiction",
     "parody": "Parody"
+  },
+  "manageChapters": {
+    "documentTitle": "Manage chapters",
+    "heading": "Manage chapters",
+    "intro": "Change the order, rename, unpublish or delete chapters. Readers see changes straight away.",
+    "newChapter": "New chapter",
+    "listEyebrow": "Chapters",
+    "noChapters": "No chapters yet",
+    "note": "Drag the handle to reorder, or use the up and down arrows.",
+    "listLabel": "Chapters in reading order",
+    "dragLabel": "Drag chapter {{number}} to reorder. You can also use the arrows.",
+    "moveUp": "Move chapter {{number}} up",
+    "moveDown": "Move chapter {{number}} down",
+    "edit": "Edit",
+    "rename": "Rename",
+    "renameLabel": "New title for chapter {{number}}",
+    "save": "Save",
+    "cancel": "Cancel",
+    "unpublish": "Unpublish",
+    "publishAgain": "Publish again",
+    "delete": "Delete",
+    "untitled": "Untitled chapter",
+    "summary": {
+      "published_one": "{{count}} published",
+      "published_few": "{{count}} published",
+      "published_other": "{{count}} published",
+      "draft_one": "{{count}} draft",
+      "draft_few": "{{count}} drafts",
+      "draft_other": "{{count}} drafts",
+      "scheduled_one": "{{count}} scheduled",
+      "scheduled_few": "{{count}} scheduled",
+      "scheduled_other": "{{count}} scheduled",
+      "unpublished_one": "{{count}} unpublished",
+      "unpublished_few": "{{count}} unpublished",
+      "unpublished_other": "{{count}} unpublished"
+    },
+    "state": {
+      "published": "Published",
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "unpublished": "Unpublished"
+    },
+    "meta": {
+      "published": "Published {{date}}",
+      "edited": "readers see “Edited on {{date}}”",
+      "draft": "Draft",
+      "words_one": "{{count}} word",
+      "words_few": "{{count}} words",
+      "words_other": "{{count}} words",
+      "saved": "saved {{date}}",
+      "scheduled": "Goes live {{when}}, Romania time",
+      "unpublished": "Unpublished {{date}}",
+      "unpublishedNote": "readers can’t open it · comments hidden but kept"
+    },
+    "deleteDialog": {
+      "title": "Delete “{{title}}”?",
+      "body": "We hide it from readers straight away and delete it for good after 30 days. Until then you can undo it under Recently deleted.",
+      "keep": "Keep chapter",
+      "confirm": "Delete chapter"
+    },
+    "deleted": {
+      "heading": "Recently deleted",
+      "intro": "Deleted chapters are hidden straight away and deleted for good after 30 days. Until then you can undo.",
+      "meta": "Deleted {{date}} · gone for good on {{purgeDate}}",
+      "undo": "Undo",
+      "empty": "Nothing deleted in the last 30 days."
+    },
+    "problems": {
+      "notActive": "Your account can’t change chapters yet. Confirm your email and choose a username first.",
+      "empty": "This chapter has no words yet, so it can’t be published. Open it and write something first.",
+      "outOfDate": "Something changed on another device or tab. The list is up to date now; please try again.",
+      "failed": "That didn’t work. Check your connection and try again."
+    },
+    "drag": {
+      "instructions": "To move a chapter, focus its handle and press Space. Use the up and down arrow keys to move it, Space again to drop it, or Escape to cancel.",
+      "pickedUp": "Picked up chapter {{position}}, {{title}}.",
+      "over": "{{title}} is now at position {{position}} of {{total}}.",
+      "dropped": "Dropped {{title}} at position {{position}} of {{total}}.",
+      "cancelled": "Move cancelled. {{title}} stays where it was."
+    }
   }
 }

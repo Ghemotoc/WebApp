@@ -147,7 +147,8 @@
     "continueChapter": "Continuă capitolul {{number}}",
     "chapterCount_one": "{{count}} capitol",
     "chapterCount_few": "{{count}} capitole",
-    "chapterCount_other": "{{count}} de capitole"
+    "chapterCount_other": "{{count}} de capitole",
+    "manageChapters": "Gestionează capitolele"
   },
   "status": {
     "heading": "Stare și comentarii",
@@ -247,5 +248,85 @@
   "pills": {
     "fanFiction": "Fan fiction",
     "parody": "Parodie"
+  },
+  "manageChapters": {
+    "documentTitle": "Gestionează capitolele",
+    "heading": "Gestionează capitolele",
+    "intro": "Schimbă ordinea, redenumește, retrage sau șterge capitole. Cititorii văd schimbările imediat.",
+    "newChapter": "Capitol nou",
+    "listEyebrow": "Capitole",
+    "noChapters": "Niciun capitol încă",
+    "note": "Trage de mâner ca să schimbi ordinea sau folosește săgețile sus și jos.",
+    "listLabel": "Capitolele în ordinea lecturii",
+    "dragLabel": "Trage capitolul {{number}} ca să-i schimbi locul. Poți folosi și săgețile.",
+    "moveUp": "Mută capitolul {{number}} mai sus",
+    "moveDown": "Mută capitolul {{number}} mai jos",
+    "edit": "Editează",
+    "rename": "Redenumește",
+    "renameLabel": "Titlul nou al capitolului {{number}}",
+    "save": "Salvează",
+    "cancel": "Renunță",
+    "unpublish": "Retrage",
+    "publishAgain": "Publică din nou",
+    "delete": "Șterge",
+    "untitled": "Capitol fără titlu",
+    "summary": {
+      "published_one": "{{count}} publicat",
+      "published_few": "{{count}} publicate",
+      "published_other": "{{count}} de publicate",
+      "draft_one": "{{count}} ciornă",
+      "draft_few": "{{count}} ciorne",
+      "draft_other": "{{count}} de ciorne",
+      "scheduled_one": "{{count}} programat",
+      "scheduled_few": "{{count}} programate",
+      "scheduled_other": "{{count}} de programate",
+      "unpublished_one": "{{count}} retras",
+      "unpublished_few": "{{count}} retrase",
+      "unpublished_other": "{{count}} de retrase"
+    },
+    "state": {
+      "published": "Publicat",
+      "draft": "Ciornă",
+      "scheduled": "Programat",
+      "unpublished": "Retras"
+    },
+    "meta": {
+      "published": "Publicat pe {{date}}",
+      "edited": "cititorii văd „Modificat pe {{date}}”",
+      "draft": "Ciornă",
+      "words_one": "{{count}} cuvânt",
+      "words_few": "{{count}} cuvinte",
+      "words_other": "{{count}} de cuvinte",
+      "saved": "salvat pe {{date}}",
+      "scheduled": "Apare {{when}}, ora României",
+      "unpublished": "Retras pe {{date}}",
+      "unpublishedNote": "cititorii nu-l pot deschide · comentariile sunt ascunse, dar păstrate"
+    },
+    "deleteDialog": {
+      "title": "Ștergi „{{title}}”?",
+      "body": "Îl ascundem imediat de cititori și îl ștergem definitiv după 30 de zile. Până atunci poți anula ștergerea la Șterse recent.",
+      "keep": "Păstrează capitolul",
+      "confirm": "Șterge capitolul"
+    },
+    "deleted": {
+      "heading": "Șterse recent",
+      "intro": "Capitolele șterse sunt ascunse imediat și șterse definitiv după 30 de zile. Până atunci poți anula.",
+      "meta": "Șters pe {{date}} · dispare definitiv pe {{purgeDate}}",
+      "undo": "Anulează",
+      "empty": "Nimic șters în ultimele 30 de zile."
+    },
+    "problems": {
+      "notActive": "Contul tău nu poate schimba capitole încă. Confirmă-ți adresa de e-mail și alege mai întâi un nume de utilizator.",
+      "empty": "Capitolul nu are încă niciun cuvânt, așa că nu poate fi publicat. Deschide-l și scrie ceva mai întâi.",
+      "outOfDate": "S-a schimbat ceva pe alt dispozitiv sau în altă filă. Lista e acum la zi; încearcă din nou.",
+      "failed": "Nu a mers. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "drag": {
+      "instructions": "Ca să muți un capitol, du-te pe mânerul lui și apasă Spațiu. Mută-l cu săgețile sus și jos, apasă din nou Spațiu ca să-l lași sau Escape ca să renunți.",
+      "pickedUp": "Ai ridicat capitolul {{position}}, {{title}}.",
+      "over": "{{title}} este acum pe locul {{position}} din {{total}}.",
+      "dropped": "Ai lăsat {{title}} pe locul {{position}} din {{total}}.",
+      "cancelled": "Mutare anulată. {{title}} rămâne unde era."
+    }
   }
 }
