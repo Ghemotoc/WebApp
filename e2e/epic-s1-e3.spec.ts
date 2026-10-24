@@ -15,9 +15,12 @@
  *   editor on a published chapter and Manage chapters; axe finds nothing serious, nothing scrolls
  *   sideways and no doodle meets a control or a line of text. The other screens' 12 views live in
  *   their own specs (docs/epic-reports/S1-E3.md lists them).
+ * - Journey 4, the editor's two dialogs in all 12 views: Preview (S1-E3-03) and Compare versions
+ *   after a save conflict (S1-E3-02b), which their own specs check at 390 and 1440 px only.
  * The database half is supabase/tests/database/092-epic-s1-e3.test.sql.
  * Test data: seed personas; the story made here and the seed story's chapters are removed after.
  */
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
@@ -86,6 +89,47 @@ async function readerTitles(browser: Browser, slug: string): Promise<string[]> {
   const titles = await chapters.locator('li > p.font-heading').allTextContents();
   await context.close();
   return titles;
+}
+
+/** axe on the page as it is now (an open dialog), against WCAG 2.2 A and AA. */
+async function expectNoSeriousAxeIssue(page: Page) {
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(
+    results.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical'),
+  ).toEqual([]);
+}
+
+/** Opens Preview, checks it and closes it. */
+async function checkPreviewDialog(page: Page) {
+  await page.getByRole('button', { name: /^(Preview|Previzualizare)$/ }).click();
+  const dialog = page.getByRole('dialog', { name: /^(Preview|Previzualizare)$/ });
+  await expect(dialog).toBeVisible();
+  await expectNoSeriousAxeIssue(page);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+}
+
+/** Makes a save conflict (another device saved first), opens Compare versions and checks it. */
+async function checkCompareDialog(page: Page, chapterCode: string) {
+  runSql(
+    `update public.chapters set draft_version = draft_version + 1 where code = '${chapterCode}';`,
+  );
+  const text = page.getByRole('textbox', { name: /^(Chapter text|Textul capitolului)$/ });
+  await text.click();
+  await page.keyboard.press('End');
+  await page.keyboard.type(' x');
+  await page.getByRole('textbox', { name: /^(Chapter title|Titlul capitolului)$/ }).click();
+  await page.getByRole('button', { name: /^(Compare versions|Compară versiunile)$/ }).click();
+  const dialog = page.getByRole('dialog', { name: /^(Compare versions|Compară versiunile)$/ });
+  await expect(
+    dialog.getByRole('button', { name: /^(Keep this one|Păstrează aceasta)$/ }),
+  ).toHaveCount(2);
+  await expectNoSeriousAxeIssue(page);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    page.viewportSize()?.width ?? 0,
+  );
 }
 
 test.describe('epic S1-E3 journeys', () => {
@@ -206,6 +250,24 @@ test.describe('epic S1-E3 journeys', () => {
         });
         await page.close();
       }
+    }
+  });
+
+  test('journey 4: Preview and Compare versions pass every view', async ({ browser }) => {
+    test.setTimeout(300_000);
+    const writer = await browser.newContext();
+    await useSessionInBrowser(writer, (await signInPersona('adult_writer')).session);
+    for (const view of everyView([`/write/s/${seedSlug}/c/epice3p1`])) {
+      runSql(
+        `update public.profiles set locale = '${view.language}' where id = '${personaIds.adult_writer}';`,
+      );
+      const page = await writer.newPage();
+      await test.step(`dialogs at ${view.width} px, ${view.theme}, ${view.language}`, async () => {
+        await checkScreen(page, view);
+        await checkPreviewDialog(page);
+        await checkCompareDialog(page, 'epice3p1');
+      });
+      await page.close();
     }
   });
 });
