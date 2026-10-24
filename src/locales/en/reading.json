@@ -31,5 +31,30 @@
     "draftChapter": "Draft",
     "scheduledChapter": "Scheduled",
     "notPublicYet": "Only you can see this story until you publish a chapter. This is how readers will see it."
+  },
+  "reader": {
+    "documentTitle": "{{chapter}} · {{story}}",
+    "chaptersNav": "Chapters",
+    "contents": "Contents",
+    "previous": "Previous",
+    "next": "Next chapter",
+    "progress": "Chapter progress",
+    "kicker": "Chapter {{number}} of {{total}}",
+    "by": "by",
+    "minutes_one": "{{count}} min read",
+    "minutes_few": "{{count}} min read",
+    "minutes_other": "{{count}} min read",
+    "edited": "edited {{date}}",
+    "untitled": "Untitled chapter",
+    "endOfChapter": "End of chapter {{number}}",
+    "readNext": "Read chapter {{number}}",
+    "latestChapter": "That’s the latest chapter so far.",
+    "backToStory": "Back to the story",
+    "signInTitle": "Log in to read this chapter",
+    "signInBody": "During the invited test, chapters are for members. Log in to keep reading.",
+    "signIn": "Log in",
+    "unavailableTitle": "This chapter isn’t available",
+    "unavailableBody": "It may not be published, it may be rated for older readers, it may have been removed, or the link may be wrong.",
+    "loadFailed": "We couldn’t load this chapter. Check your connection and try again."
   }
 }

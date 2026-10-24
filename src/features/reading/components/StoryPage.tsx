@@ -84,7 +84,11 @@ export function StoryPage() {
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
         <div className="relative flex min-w-0 flex-[999_1_620px] flex-col gap-12">
           <StoryHeader story={story} />
-          <StoryChapterList chapters={story.chapters} isOwner={story.isOwner} />
+          <StoryChapterList
+            chapters={story.chapters}
+            isOwner={story.isOwner}
+            storySlug={story.slug}
+          />
           {/* Beside the cover, in the space to its right: below the cover the pills and the
               title move with the story's state, so a doodle there would end up over them. */}
           <Doodle

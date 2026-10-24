@@ -179,3 +179,14 @@
 .tmc-chapter-text .ProseMirror p.is-empty::before {
   content: '';
 }
+
+/* The chapter reader's text (story S1-E4-01a; board 3.5): Inter 19 px with 1.7 line height and
+   24 px between paragraphs. The editor and its preview keep the smaller sizes above. */
+.tmc-chapter-text--reader {
+  font-size: 19px;
+  line-height: 1.7;
+}
+/* Two classes, so this also beats the quote and list margins above. */
+.tmc-chapter-text.tmc-chapter-text--reader > * + * {
+  margin-top: 24px;
+}

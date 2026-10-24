@@ -31,5 +31,30 @@
     "draftChapter": "Ciornă",
     "scheduledChapter": "Programat",
     "notPublicYet": "Doar tu vezi această poveste până publici un capitol. Așa o vor vedea cititorii."
+  },
+  "reader": {
+    "documentTitle": "{{chapter}} · {{story}}",
+    "chaptersNav": "Capitole",
+    "contents": "Cuprins",
+    "previous": "Înapoi",
+    "next": "Capitolul următor",
+    "progress": "Cât ai citit din capitol",
+    "kicker": "Capitolul {{number}} din {{total}}",
+    "by": "de",
+    "minutes_one": "{{count}} minut de citit",
+    "minutes_few": "{{count}} minute de citit",
+    "minutes_other": "{{count}} de minute de citit",
+    "edited": "modificat {{date}}",
+    "untitled": "Capitol fără titlu",
+    "endOfChapter": "Sfârșitul capitolului {{number}}",
+    "readNext": "Citește capitolul {{number}}",
+    "latestChapter": "Acesta e cel mai nou capitol de până acum.",
+    "backToStory": "Înapoi la poveste",
+    "signInTitle": "Conectează-te ca să citești capitolul",
+    "signInBody": "În timpul testului cu invitație, capitolele sunt pentru membri. Conectează-te ca să citești mai departe.",
+    "signIn": "Conectare",
+    "unavailableTitle": "Capitolul nu este disponibil",
+    "unavailableBody": "Poate nu e publicat, poate e clasificat pentru cititori mai mari, poate a fost eliminat sau linkul e greșit.",
+    "loadFailed": "Nu am putut încărca capitolul. Verifică-ți conexiunea și încearcă din nou."
   }
 }

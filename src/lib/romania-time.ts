@@ -129,3 +129,20 @@ export function formatRomaniaDate(instant: Date, language: string): string {
     year: 'numeric',
   }).format(instant);
 }
+
+/**
+ * Shows a date as Romania sees it, with the short month: "9 oct. 2026" or "Oct 9, 2026" (the
+ * reader's meta line, board 3.5, S1-E4-01a).
+ *
+ * @param instant - the moment
+ * @param language - the interface language
+ * @returns the text
+ */
+export function formatRomaniaShortDate(instant: Date, language: string): string {
+  return new Intl.DateTimeFormat(language, {
+    timeZone: ROMANIA_TIME_ZONE,
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(instant);
+}
