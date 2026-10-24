@@ -7,7 +7,8 @@
  * line), then the chapter as one calm column: ChapterReaderHeader, the text as real HTML
  * (ChapterText with the reader's 19 px size, about 680 px wide, in the story's language), and
  * ChapterEnd. No doodles (DoD design rules). A signed-out visitor gets the header and "Log in to
- * read" instead of the text until the teaser (S1-E4-04).
+ * read" instead of the text until the teaser (S1-E4-04). The banner slot comes after the
+ * <article>, never inside the text (S1-E4-01b); it is empty until S1-E12-01.
  * What it calls: useChapter → get_chapter() (ADR 0004); useRecordRead → record_chapter_read()
  * once the text is on screen; useReadingProgress for the progress line.
  */
@@ -20,9 +21,11 @@ import { PageContainer } from '@/components/ui/PageContainer';
 
 import type { ReaderChapter } from '../api/chapter';
 import { useChapter } from '../hooks/useChapter';
+import { useChapterBanner } from '../hooks/useChapterBanner';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useRecordRead } from '../hooks/useRecordRead';
 
+import { ChapterBannerSlot } from './ChapterBannerSlot';
 import { ChapterBar } from './ChapterBar';
 import { ChapterEnd } from './ChapterEnd';
 import { ChapterReaderHeader } from './ChapterReaderHeader';
@@ -84,6 +87,7 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
   const hasText = chapter.body !== null;
   const progress = useReadingProgress(textRef, hasText);
   useRecordRead(chapter.story.slug, chapter.code, hasText);
+  const { banner } = useChapterBanner(chapter.story.slug);
   return (
     <>
       <title>
@@ -105,6 +109,7 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
         )}
         {hasText && <ChapterEnd chapter={chapter} />}
       </article>
+      {hasText && <ChapterBannerSlot banner={banner} />}
     </>
   );
 }
