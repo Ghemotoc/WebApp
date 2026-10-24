@@ -119,7 +119,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     expect(download.suggestedFilename()).toMatch(/^audit-log-\d{4}-\d{2}-\d{2}\.csv$/);
     const csv = await (await download.createReadStream()).toArray();
     const text = Buffer.concat(csv).toString('utf8');
-    expect(text.startsWith('﻿time,staff,action')).toBe(true);
+    expect(text.startsWith('﻿time,staff,actor,actor_user_id_short,action')).toBe(true);
     expect(text).toContain('sensitive_read.email_revealed');
     await expect(page.getByText(/Exported \d+ rows/)).toBeVisible();
     expect(

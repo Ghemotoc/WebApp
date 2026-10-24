@@ -4,7 +4,8 @@
 --   directly and nothing screens text;
 -- - tiers (decided 23 Oct 2026, Q5): self-harm, child sexual content and terrorism the same day,
 --   illegal content, copyright and copied work 48 hours, the rest 7 days; the one-hour tier is for
---   authority orders only (the table refuses it for a reason);
+--   authority orders only (the table refuses it for a reason); every reason has a tier; a threat
+--   to a minor is same-day safeguarding and insults sit with harassment (CTO, 24 Oct 2026);
 -- - several reports of one item are one case (Q4): the count grows, the more urgent reason sets
 --   the tier, the deadline counts from the first report and the earliest wins, an under-18
 --   reporter flags the case, a safeguarding reason makes it a safeguarding case;
@@ -18,7 +19,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(31);
+select plan(33);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000001'::uuid as adult_writer,
@@ -69,6 +70,15 @@ select results_eq(
   $$ values ('copyright', 'two_days', false), ('self_harm', 'same_day', true),
             ('spam', 'seven_days', false), ('terrorism', 'same_day', false) $$,
   'the tiers follow the decision of 23 Oct 2026 (Q5)');
+select results_eq(
+  $$ select reason::text, tier::text, is_safeguarding from public.report_reason_tiers
+     where reason in ('threat_to_minor', 'insults', 'harassment') order by reason $$,
+  $$ values ('harassment', 'seven_days', false), ('insults', 'seven_days', false),
+            ('threat_to_minor', 'same_day', true) $$,
+  'a threat to a minor is a same-day safeguarding case; insults sit with harassment (CTO, 24 Oct 2026)');
+select is_empty(
+  $$ select unnest(enum_range(null::public.report_reason)) except select reason from public.report_reason_tiers $$,
+  'every report reason has a tier, so a new reason can''t open a case without one');
 
 /* ---------- 2. One case per item, grouped ---------- */
 

@@ -6,7 +6,9 @@
 -- - the code is returned once and stored only as its hash; the list never shows a code or who
 --   used a link, only the note, the uses, the expiry, the status and the maker;
 -- - the statuses active, used_up, expired and revoked;
--- - make, revoke and used-up each write one audit row; a second revoke changes nothing;
+-- - make and revoke each write one audit row as the admin; a second revoke changes nothing;
+-- - using a place writes invite.redeemed as the new account (its user ID, never its email), and
+--   the last place adds invite.used_up as the system, never on behalf of the admin (CTO, 24 Oct);
 -- - use_platform_invite() takes the last place once: the next try is refused and the link has
 --   ended (the one conditional UPDATE is what stops two people taking it at the same time; the
 --   browser test e2e/invite-links.spec.ts races two sign-ups to show it).
@@ -15,7 +17,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(29);
+select plan(30);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000001'::uuid as adult_writer,
@@ -102,17 +104,23 @@ select is(public.check_invite((select code from made where name = 'one_use')), '
 /* ---------- 4. The last place goes once ---------- */
 
 reset role;
-select lives_ok($$ select public.use_platform_invite((select code from made where name = 'one_use')) $$,
+-- adult_writer stands in for the new account: the sign-up trigger passes the new profile's ID.
+select lives_ok($$ select public.use_platform_invite((select code from made where name = 'one_use'), (select adult_writer from ids)) $$,
   'the first sign-up takes the last place');
-select throws_ok($$ select public.use_platform_invite((select code from made where name = 'one_use')) $$,
+select throws_ok($$ select public.use_platform_invite((select code from made where name = 'one_use'), (select adult_writer from ids)) $$,
   '23514', null, 'the second sign-up is refused: no place left');
 select is(public.check_invite((select code from made where name = 'one_use')), 'ended',
   'the link has ended');
 select results_eq(
-  $$ select user_id, action, after_values ->> 'note' from public.audit_log
+  $$ select user_id, actor::text, target_user_id, after_values ->> 'place' from public.audit_log
+     where action = 'invite.redeemed' and target_id = (select invite_id from made where name = 'one_use')::text $$,
+  $$ values ('00000000-0000-4000-8000-000000000001'::uuid, 'person', '00000000-0000-4000-8000-000000000009'::uuid, '1') $$,
+  'using a place is logged as the new account, on the admin''s invite');
+select results_eq(
+  $$ select user_id, actor::text, after_values ->> 'note' from public.audit_log
      where action = 'invite.used_up' and target_id = (select invite_id from made where name = 'one_use')::text $$,
-  $$ values ('00000000-0000-4000-8000-000000000009'::uuid, 'invite.used_up', 'Ana, beta tester') $$,
-  'the used-up link is in the audit log, on behalf of its maker, without naming the new account');
+  $$ values (null::uuid, 'system', 'Ana, beta tester') $$,
+  'the used-up link is logged with the system as actor, not on behalf of the admin');
 
 /* ---------- 5. Revoking ---------- */
 
@@ -129,8 +137,8 @@ select is((select status from public.admin_list_invites() where id = (select inv
 select results_eq(
   $$ select action, count(*)::integer from public.audit_log
      where created_at = now() and action like 'invite.%' group by action order by action $$,
-  $$ values ('invite.created', 2), ('invite.revoked', 1), ('invite.used_up', 1) $$,
-  'every make, revoke and used-up is in the audit log once');
+  $$ values ('invite.created', 2), ('invite.redeemed', 1), ('invite.revoked', 1), ('invite.used_up', 1) $$,
+  'every make, use, revoke and used-up is in the audit log once');
 
 select * from finish();
 

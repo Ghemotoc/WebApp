@@ -78,15 +78,19 @@ create trigger report_reason_tiers_set_updated_at
   before update on public.report_reason_tiers
   for each row execute function public.set_updated_at();
 
--- Decided 23 Oct 2026, Q5 (a proposal apart from the legal one-hour rule).
+-- Decided 23 Oct 2026, Q5 (a proposal apart from the legal one-hour rule). The CTO added two on
+-- 24 Oct 2026: a threat to a minor is a same-day safeguarding case (hidden from moderators without
+-- the permission), insults sit with harassment on the 7-day tier.
 insert into public.report_reason_tiers (reason, tier, is_safeguarding) values
   ('child_sexual_content', 'same_day', true),
+  ('threat_to_minor', 'same_day', true),
   ('self_harm', 'same_day', true),
   ('terrorism', 'same_day', false),
   ('illegal_content', 'two_days', false),
   ('copyright', 'two_days', false),
   ('copied_published_work', 'two_days', false),
   ('harassment', 'seven_days', false),
+  ('insults', 'seven_days', false),
   ('hate', 'seven_days', false),
   ('spam', 'seven_days', false),
   ('undisclosed_ai', 'seven_days', false),

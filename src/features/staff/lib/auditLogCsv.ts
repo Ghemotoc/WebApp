@@ -13,6 +13,8 @@ import type { AuditLogEntry } from '../api/auditLog';
 export const auditLogCsvColumns = [
   'time',
   'staff',
+  'actor',
+  'actor_user_id_short',
   'action',
   'target_type',
   'target_id',
@@ -37,7 +39,7 @@ export function csvCell(value: string | null): string {
 }
 
 /**
- * One entry as the ten cells of its row.
+ * One entry as the twelve cells of its row.
  *
  * @param entry - the audit entry
  * @returns the cells, in column order
@@ -46,6 +48,8 @@ function cellsOf(entry: AuditLogEntry): string[] {
   return [
     entry.createdAt,
     entry.staffHandle,
+    entry.actor,
+    entry.actorUserIdShort,
     entry.action,
     entry.targetType,
     entry.targetId,

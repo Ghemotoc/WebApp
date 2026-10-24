@@ -431,12 +431,7 @@ begin
     return new;
   end if;
 
-  -- Step 2: the March test is invite only (decided 17 Oct 2026, 12:44).
-  if public.is_feature_enabled('invite_only') then
-    perform public.use_platform_invite(sign_up_data ->> 'invite_code');
-  end if;
-
-  -- Step 2b: a banned account's email can't come back (S1-E10-06; DSA art. 23).
+  -- Step 2: a banned account's email can't come back (S1-E10-06; DSA art. 23).
   if public.is_email_banned(new.email) then
     raise exception 'This email address can''t be used to sign up.' using errcode = 'check_violation';
   end if;
@@ -466,7 +461,13 @@ begin
     country
   );
 
-  -- Step 6: which terms and privacy notice the person accepted, and when (Q15).
+  -- Step 6: the March test is invite only (decided 17 Oct 2026, 12:44). After the profile, so the
+  -- invite's audit row can name the new account (S1-E11-17); a refused invite still undoes it all.
+  if public.is_feature_enabled('invite_only') then
+    perform public.use_platform_invite(sign_up_data ->> 'invite_code', new.id);
+  end if;
+
+  -- Step 7: which terms and privacy notice the person accepted, and when (Q15).
   perform public.record_sign_up_consent(new.id, 'terms', sign_up_data ->> 'accepted_terms_version_id');
   perform public.record_sign_up_consent(new.id, 'privacy', sign_up_data ->> 'accepted_privacy_version_id');
 
@@ -475,7 +476,7 @@ end;
 $$;
 
 comment on function public.handle_new_auth_user() is
-  'Trigger on auth.users: checks a sign-up (invite, banned email, age, market) and creates the profile and consents, or refuses it all (S1-E2-01, S1-E2-10, S1-E10-06).';
+  'Trigger on auth.users: checks a sign-up (banned email, age, market, invite) and creates the profile and consents, or refuses it all (S1-E2-01, S1-E2-10, S1-E11-17, S1-E10-06).';
 
 /* ---------- Applying and lifting sanctions ---------- */
 

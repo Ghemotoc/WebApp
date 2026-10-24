@@ -6,12 +6,14 @@ import { describe, expect, it } from 'vitest';
 import { findReportProblem, reportDetailsMaxLength, reportReasons } from './report';
 
 describe('the report reasons', () => {
-  it('are exactly the story’s eleven, in its order, from the database enum', () => {
+  it('are the story’s eleven plus the board’s two (CTO, 24 Oct 2026), in order, from the database enum', () => {
     expect([...reportReasons]).toEqual([
       'illegal_content',
       'harassment',
+      'insults',
       'self_harm',
       'child_sexual_content',
+      'threat_to_minor',
       'terrorism',
       'hate',
       'spam',
