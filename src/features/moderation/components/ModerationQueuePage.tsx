@@ -21,6 +21,7 @@ import { useModerationQueue, useOpenCases } from '../hooks/useModerationQueue';
 import { registerModerationTranslations } from '../registerModerationTranslations';
 
 import { CaseList } from './CaseList';
+import { PublicNoticesPanel } from './PublicNoticesPanel';
 import { QueueFilters } from './QueueFilters';
 import { TierSummary } from './TierSummary';
 
@@ -42,6 +43,7 @@ function QueueBody({ queue }: { queue: ReturnType<typeof useModerationQueue> }) 
   return (
     <>
       <TierSummary openCases={openCases} />
+      <PublicNoticesPanel />
       <QueueFilters filters={queue.filters} onChange={queue.setFilters} />
       <CaseList cases={queue.cases} isLoading={queue.isLoading} />
     </>

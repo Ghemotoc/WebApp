@@ -13,17 +13,20 @@
  * - an authority's removal order needs no good-faith box and no waiting, gets a TCO- reference
  *   and the time of receipt, the authority and the support inbox are emailed, and the on-call
  *   alert is logged;
+ * - moderators see the order on the queue, its notice on the case page, and the unmatched notices
+ *   to check by hand, which they close with a note;
  * - the page passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
  * Test data: synthetic @example.com addresses and addresses we don't host, so no seed case
  * changes; the rows are removed at the end.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { brand } from '../src/config/brand';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { waitForEmail } from './support/mailpit';
+import { signInPersona, useSessionInBrowser } from './support/personas';
 
 /** A fresh mark per run, so Mailpit searches and the clean-up find this run's rows only. */
 const stamp = Date.now();
@@ -41,6 +44,17 @@ async function openReportForm(page: Page) {
   ).toBeVisible();
 }
 
+/** Opens a staff address in English as the moderator persona. */
+async function openAsModerator(browser: Browser, address: string): Promise<Page> {
+  const context = await browser.newContext();
+  await useSessionInBrowser(context, (await signInPersona('moderator')).session);
+  await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
+  runSql(`update public.profiles set locale = 'en' where handle = 'moderator';`);
+  const page = await context.newPage();
+  await page.goto(address);
+  return page;
+}
+
 test.describe('public report form (S1-E10-02)', () => {
   test.beforeAll(() => {
     // The secret the preview server signs with (playwright.config.ts), as Robert sets it in Vault.
@@ -53,8 +67,11 @@ test.describe('public report form (S1-E10-02)', () => {
   test.afterAll(() => {
     runSql(`
       delete from public.on_call_alerts where notice_id in
-        (select id from public.public_notices where content_url like '%elsewhere.example/${stamp}%');
-      delete from public.public_notices where content_url like '%elsewhere.example/${stamp}%';`);
+        (select id from public.public_notices where explanation like '%${stamp}%' or content_url like '%elsewhere.example/${stamp}%');
+      create temp table run_cases as select case_id from public.public_notices
+        where explanation like '%${stamp}%' and case_id is not null;
+      delete from public.public_notices where explanation like '%${stamp}%' or content_url like '%elsewhere.example/${stamp}%';
+      delete from public.cases where id in (select case_id from run_cases);`);
   });
 
   test('the footer reaches the form, and a visitor’s notice is refused until it is complete', async ({
@@ -156,6 +173,44 @@ test.describe('public report form (S1-E10-02)', () => {
       runSql(`select count(*) from public.on_call_alerts join public.public_notices
                 on public_notices.id = on_call_alerts.notice_id where public_notices.reference = '${reference}';`),
     ).toBe('1');
+  });
+
+  test('moderators see an order on the queue and its case, and close a notice we don’t host', async ({
+    browser,
+    request,
+  }) => {
+    // Two orders straight to the server: one about a profile we host, one about an address we don't.
+    const order = {
+      kind: 'removal_order',
+      explanation: `Order text ${stamp}`,
+      authorityName: 'Test authority',
+      notifierEmail: `orders-${stamp}@example.com`,
+      language: 'en',
+    };
+    const hosted = await request.post('/api/notice', {
+      data: { ...order, contentUrl: '/u/teacher' },
+    });
+    const hostedReference = ((await hosted.json()) as { reference: string }).reference;
+    await request.post('/api/notice', {
+      data: { ...order, contentUrl: `https://elsewhere.example/${stamp}/staff` },
+    });
+
+    const page = await openAsModerator(browser, '/staff/moderation');
+    const orders = page.getByRole('region', { name: /Removal orders received/ });
+    await orders.getByRole('link', { name: `Open case ${hostedReference}` }).click();
+    const fromForm = page.getByRole('region', { name: 'From the public form' });
+    await expect(fromForm.getByText(/Removal order from Test authority/)).toBeVisible();
+    await expect(fromForm.getByText('/u/teacher')).toBeVisible();
+
+    await page.goto('/staff/moderation');
+    const unmatched = page.getByRole('region', { name: 'Notices to check by hand' });
+    const card = unmatched
+      .getByRole('listitem')
+      .filter({ hasText: `elsewhere.example/${stamp}/staff` });
+    await card.getByRole('button', { name: /^Close notice/ }).click();
+    await card.getByLabel('What did you find?').fill('Not hosted by us; nothing to remove.');
+    await card.getByRole('button', { name: 'Close the notice' }).click();
+    await expect(card).toHaveCount(0);
   });
 
   for (const view of everyView(['/report'])) {

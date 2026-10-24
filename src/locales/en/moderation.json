@@ -191,5 +191,26 @@
     "reason": "Why is reporting paused?",
     "confirm": "Pause for {{days}} days",
     "done": "Reporting paused."
+  },
+  "notices": {
+    "caseHeading": "From the public form",
+    "orderFrom": "Removal order from {{authority}} ({{orderReference}})",
+    "noOrderReference": "no reference given",
+    "received": "{{reference}} · received {{when}} (Romania time) · written in {{language}}",
+    "address": "Address as sent",
+    "sentBy": "Sent by",
+    "anonymous": "No name or email given (allowed for child sexual content)",
+    "ordersHeading": "Removal orders received in the last 7 days",
+    "orderAlert": "{{reference}}, received {{when}} (Romania time). On call alerted.",
+    "orderUnmatched": "The address matched nothing we host: check it below.",
+    "openCase": "Open case {{reference}}",
+    "unmatchedHeading": "Notices to check by hand",
+    "unmatchedIntro": "The address in these notices matched nothing we host. Check each one, act on the content if you find it, then close the notice with what you found.",
+    "receivedAt": "Received {{when}} (Romania time)",
+    "actBy": "Act by {{when}} (Romania time)",
+    "close": "Close",
+    "closeLabel": "Close notice {{reference}}",
+    "closeNote": "What did you find?",
+    "closeConfirm": "Close the notice"
   }
 }

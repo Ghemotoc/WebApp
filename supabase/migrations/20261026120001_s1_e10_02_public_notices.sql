@@ -488,7 +488,8 @@ grant execute on function public.admin_case_notices(uuid) to authenticated;
 /**
  * admin_unmatched_notices: open notices whose address points to nothing we host, so a person
  * checks them by hand (an order first, with its one-hour deadline from receipt).
- * Returns: the notices, orders first and then oldest first. Child-safety notices only for staff
+ * Returns: the notices with the address and the explanation (what a person checks), orders first
+ *   and then oldest first. Child-safety notices only for staff
  *   with the safeguarding permission (the select policy).
  * Errors: insufficient_privilege for anyone outside moderation.
  */
@@ -499,6 +500,8 @@ returns table (
   kind text,
   reason public.report_reason,
   content_url text,
+  explanation text,
+  authority_name text,
   received_at timestamptz,
   deadline_at timestamptz
 )
@@ -511,12 +514,14 @@ begin
   if not public.staff_may('moderation', 'view') then
     raise exception 'Only moderation staff see notices.' using errcode = 'insufficient_privilege';
   end if;
-  -- Security invoker: the select policy decides which notices the caller sees.
+  -- Security invoker: the select policy decides which notices the caller sees. The order's hour is
+  -- written out (Regulation (EU) 2021/784 art. 3(3)): tier_hours() is internal, not for callers.
   return query
     select public_notices.id, public_notices.reference, public_notices.kind, public_notices.reason,
-           public_notices.content_url, public_notices.received_at,
+           public_notices.content_url, public_notices.explanation, public_notices.authority_name,
+           public_notices.received_at,
            case when public_notices.kind = 'removal_order'
-             then public_notices.received_at + make_interval(hours => public.tier_hours('one_hour')) end
+             then public_notices.received_at + interval '1 hour' end
     from public.public_notices
     where public_notices.case_id is null and public_notices.closed_at is null
     order by (public_notices.kind = 'removal_order') desc, public_notices.received_at;

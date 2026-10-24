@@ -2167,8 +2167,10 @@ export type Database = {
       admin_unmatched_notices: {
         Args: Record<PropertyKey, never>;
         Returns: {
+          authority_name: string;
           content_url: string;
           deadline_at: string;
+          explanation: string;
           kind: string;
           notice_id: string;
           reason: Database['public']['Enums']['report_reason'];

@@ -30,6 +30,7 @@ import { registerModerationTranslations } from '../registerModerationTranslation
 
 import { AccountSanctions } from './AccountSanctions';
 import { CaseDecisions } from './CaseDecisions';
+import { CaseNotices } from './CaseNotices';
 import { CaseReports } from './CaseReports';
 import { CaseSignals } from './CaseSignals';
 import { DeadlineLabel } from './DeadlineLabel';
@@ -126,6 +127,7 @@ function CaseBody({
       <div className="grid max-w-[1100px] grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
           <CaseReports reports={caseState.reports} sanctions={sanctions} />
+          <CaseNotices caseId={theCase.id} />
           <CaseDecisions actions={caseState.actions} />
           <AccountSanctions sanctions={sanctions} />
         </div>

@@ -17,7 +17,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(31);
+select plan(33);
 
 -- The secret our server signs with, as Robert sets it by hand in Vault on staging.
 select vault.create_secret('test-notice-secret', 'public_notice_secret')
@@ -163,6 +163,14 @@ select ok((select count(*) from public.on_call_alerts) >= 1,
 select is((select count(*)::integer from public.admin_case_notices(
              (select case_id from public.public_notices where reference = (select notice_reference from sent)))),
   2, 'the case page lists both notices in the case');
+select is((select count(*)::integer from public.admin_unmatched_notices()
+           where content_url = 'https://elsewhere.example/page'),
+  1, 'a moderator sees the notice we don''t host in the list to check by hand');
+select lives_ok(
+  $$ select public.admin_close_unmatched_notice(
+       (select id from public.public_notices where content_url = 'https://elsewhere.example/page'),
+       'Not hosted by us.') $$,
+  'and closes it with a note');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 select is((select count(*)::integer from public.public_notices where content_url like '%noticea1%'), 0,
   'denied: public_notices_select_moderation, an admin without the safeguarding permission doesn''t see a child-safety notice');
