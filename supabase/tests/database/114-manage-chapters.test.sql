@@ -8,13 +8,15 @@
 --   at once, without an "Edited on" date; it moves the draft version on;
 -- - delete_chapter() hides the chapter from readers at once, closes the gap, and takes a story
 --   private when it was the last published chapter; restore_chapter() brings it back at the end
---   within 30 days and refuses after; purge_deleted_chapters() deletes it only after 30 days and
---   never while it is held for moderation; pg_cron runs it nightly.
+--   within 30 days and refuses after, and while the story itself is deleted;
+--   purge_deleted_chapters() deletes it only after 30 days, leaves a deleted story's chapters to
+--   the story's own purge and asks content_is_held_for_moderation() first (a stub until S1-E10);
+--   pg_cron runs it nightly.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(29);
+select plan(32);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -114,6 +116,18 @@ select results_eq(
   $$ values ('29 3 * * *') $$,
   'pg_cron runs the purge nightly'
 );
+
+-- 7. A recent deletion is kept; a deleted story's chapters wait for the story's own purge.
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select public.delete_chapter(pg_temp.code_of('C'));
+reset role;
+select is(public.purge_deleted_chapters(), 0, 'a chapter deleted less than 30 days ago is kept');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select public.delete_my_story('statia-meteo-seed01');
+select is((public.restore_chapter(pg_temp.code_of('C'))) ->> 'outcome', 'not_found', 'no chapter undo while the story itself is deleted');
+reset role;
+update public.chapters set deleted_at = now() - interval '31 days' where code = pg_temp.code_of('C');
+select is(public.purge_deleted_chapters(), 0, 'a deleted story''s chapters are left to purge_deleted_stories()');
 
 select * from finish();
 
