@@ -19590,7 +19590,7 @@ select '00000000-0000-4000-9300-001400000000'::uuid, '00000000-0000-4000-8000-00
 
 Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=123622, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
   (select id from public.categories where slug = 'fiction'),
-  'drawn', 'doodles', 'gold', 'sage', '13_plus', 'no_ai',
+  'drawn', 'doodles', 'gold', 'sage', 'all_ages', 'no_ai',
   now() - interval '69 days', now() - interval '69 days', now() - interval '71 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001400000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001400000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'poveste']);

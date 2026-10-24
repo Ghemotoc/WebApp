@@ -1755,6 +1755,909 @@ Sorin avea tot șaptesprezece ani. S-a uitat la ea și a zâmbit, ca și cum s-a
 În spatele ei, ceasul de pe primărie a bătut trei și un sfert. Mara a ținut penița deasupra hârtiei și, pentru prima dată în șapte ani, n-a știut încotro să tragă linia.$demo$), now() - interval '68 days'
 where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9100-003600030000'::uuid);
 
+-- classic-01-capra-cu-trei-iezi: "Capra cu trei iezi" by clasice
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
+  first_published_at, last_chapter_published_at, created_at)
+select '00000000-0000-4000-9300-000100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'capra-cu-trei-iezi-classic',
+  $demo$Capra cu trei iezi$demo$, $demo$Capra pleacă după mâncare și le spune iezilor să nu deschidă nimănui. Lupul ascultă la ușă și învață cântecul. Povestea despre ascultare, vicleșug și o mamă care nu iartă.
+
+Ediția sursă: 1875. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=138620, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
+  (select id from public.categories where slug = 'fiction'),
+  'drawn', 'doodles', 'sage', 'plum', 'all_ages', 'no_ai',
+  now() - interval '38 days', now() - interval '38 days', now() - interval '40 days'
+where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000100000000'::uuid);
+select public.set_story_tags('00000000-0000-4000-9300-000100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'creangă']);
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
+select '00000000-0000-4000-9300-000100010000'::uuid, '00000000-0000-4000-9300-000100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
+  'k001c001', 1, $demo$Capra cu trei iezi$demo$, public.check_chapter_text($demo$Era odată o capră care avea trei iezi. Iedul cel mare și cu cel mijlociu dau prin băț de obraznici ce erau; iară cel mic era harnic și cuminte. Vorba ceea : "Sunt cinci degete la o mână și nu samănă toate unul cu altul".
+
+Într-o zi, capra cheamă iezii de pe-afară și le zice :
+
+– Dragii mamei copilași ! Eu mă duc în pădure ca să mai duc ceva de-a mâncării. Dar voi, încuieți ușa după mine, ascultați unul de altul, și să nu cumva să deschideți până ce nu-ți auzi glasul meu. Când voiu veni eu, am să vă dau de știre, ca să mă cunoașteți, și am să vă spun așa :
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+Auzit-ați ce-am spus eu ?
+
+– Da, mămucă, ziseră iezii.
+
+– Pot să am nădejde în voi ?
+
+– Să n-ai nici o grijă, mămucă, apucară cu gura înainte cei mai mari. Noi suntem odată băieți, și ce-am vorbit odată vorbit rămâne.
+
+– Dacă-i așa, apoi veniți să vă sărute mama ! Dumnezeu să vă apere de cele rele, și mai rămâneți cu bine!
+
+– Mergi sănătoasă, mămucă, zise cel mic, cu lacrimi în ochi, și Dumnezeu să-ți ajute ca să te întoarne cu bine și să ne-aduci demâncare.
+
+Apoi capra iese și se duce în treaba ei. Iar iezii închid ușa după dânsa și trag zăvorul. Dar vorba veche : "Păreții au urechi și fereștile ochi". Un dușman de lup - ș-apoi știți care ? - chiar cumătrul caprei, care de mult pândea vreme cu prilej ca să pape iezii, trăgea cu urechea la păretele din dosul casei, când vorbea capra cu dânșii.
+
+"Bun ! zise el în gândul său. Ia, acum mi-e timpul... De i-ar împinge păcatul să-mi deschidă ușa, halal să-mi fie ! Știu că i-aș cărnoși și i-aș jumuli !" Cum zice, și vine la ușă; și cum vine, și începe :
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+– Hai ! deschideți cu fuga, dragii mamei, cu fuga !
+
+– Ia ! Băieți, zise cel mai mare, săriți și deschideți ușa, că vine mama cu demâncare.
+
+– Săracuțul de mine ! zise cel mic. Să nu cumva să faceți pozna să deschideți, că-i vai de noi ! Asta nu-i mămuca. Eu o cunosc de pe glas; glasul ei nu-i așa de gros și de răgușit, că-i mai subțire și mai frumos !
+
+Lupul, auzind aceste, se duse la un ferar și puse să-i ascute limba și dinții, pentru a-și subția glasul, ș-apoi, întorcându-se, începu iar :
+
+Trei iezi cucuieți
+
+Ușa mamei descuieți !...
+
+– Ei, vedeți, zise iarăși cel mare; dacă mă potrivesc eu vouă ? Nu-i mămuca, nu-i mămuca !
+
+D-apoi cine-i dacă nu-i ea ? Că doar și eu am urechi ! Mă duc să-i deschid.
+
+– Bădică ! bădică ! zise iarăși cel mic. Ascultați-mă și pe mine ! Poate mai de-apoi a veni cineva ș-a zice:
+
+Deschideți ușa,  
+Că vine mătușa !
+
+ș-atunci voi trebuie numaidecât să deschideți ? D-apoi nu știți că mătușa-i moartă de când lupii albi și s-a făcut oale și ulcioare, sărmana ?
+
+– Apoi, da ! nu spun eu bine ? zise cel mare. Ia, de-atunci e rău în lume, de când a ajuns coada să fie cap... Dacă te-i potrivi tu acestora, îi ține mult și bine pe mămuca afară. Eu, unul, mă duc să deschid.
+
+Atunci mezinul se vâră iute în horn și, sprijinit cu picioarele de prichiciu și cu nasul de funingine, tace ca peștele și tremură ca varga de frică. Dar frica-i din raiu, sărmana ! Asemene cel mijlociu, tuștiu ! iute sub un cherșin; se-nghemuiește acolo cum poate, tace ca pământul și-i tremură carnea pe dânsul de frică : Fuga-i rușinoasă, da-i sănătoasă !
+
+... Însă cel mare se dă după ușă și - să tragă, să nu tragă ? - în sfârșit, trage zăvorul... Când iaca !... ce să vadă ? ș-apoi mai are când vede ?... căci lupului îi scăpărau ochii și-i sfârâia gâtlejul de flămând ce era. Și, nici una, nici două, haț ! pe ied de gât, îi răteză capul pe loc și-l mănâncă așa de iute și cu atâta poftă, de-ți părea că nici pe-o măsea nu are ce pune. Apoi se linge frumușel pe bot și începe a se învârti prin casă cu neastâmpăr, zicând :
+
+– Nu știu, părerea m-a amăgit, ori am auzit mai multe glasuri ? Dar ce Dumnezeu ?! Parc-au intrat în pământ... Unde să fie ? Se ițește el pe colo, se ițește pe dincolo, dar pace bună ! iezii nu-s nicăiri !
+
+– Mă !... că mare minune-i asta !... dar nici acasă n-am de coasă... ia să mai odihnesc oleaca aste bătrânețe !
+
+Apoi se îndoaie de șele cam cu greu, și se pune pe cherșin. și când s-a pus pe cherșin, nu știu cum s-au făcut, că ori cherșinul a crăpat, ori cumătrul a strănutat...
+
+Atunci iedul de sub cherșin, să nu tacă ? - Îl păștea păcatul și-l mânca spinarea, sărăcuțul !
+
+– Să-ți fie de bine, nănașule !
+
+– A !... ghidi ! ghidi ! ghiduși ce ești ! Aici mi-ai fost ? Ia vină-ncoace la nănășelul, să te pupe el ! Apoi ridică cherșinul binișor, înșfăcă iedul de urechi și-l flocăiește și-l jumulește și pe-acela de-i merg petecele !... Vorba ceea : "Că toată paserea pe limba ei piere".
+
+Pe urmă se mai învârte prin casă, doar a mai găsi ceva, dar nu găsește nimic, căci iedul cel cuminte tăcea molcum în horn, cum tace peștele în borș la foc. Dacă vede lupul și vede că nu mai găsește nimic, își pune în gând una : așază cele două capete cu dinții rânjiți în ferești, de ți se părea că râdeau; pe urmă unge toți păreții cu sânge, ca să facă și mai mult în ciuda caprei, ș-apoi iese și-și caută de drum. Cum a ieșit dușmanul din casă, iedul cel mic se dă iute jos din horn și încuie ușa bine. Apoi începe a se scărmăna de cap și a plânge cu amar după frățiorii săi.
+
+– Drăguții mei frățiori ! De nu s-ar fi înduplecat, lupul nu i-ar fi mâncat ! și biata mamă nu știe de astă mare urgie ce-a venit pe capul ei !
+
+Și bocește el și bocește până îl apucă leșin ! Dar ce era să le facă ? Vina nu era a lui, ce au căutat pe nas le-a dat.
+
+Când jălea el așa, iacă și capra venea cât putea, încărcată cu de-a mâncării și gâfuind. Și cum venea, cât de colo vede cele două capete, cu dinții rânjind, în ferești.
+
+– Dragii mămucuței, dragi ! Cum așteaptă ei cu bucurie și-mi râd înainte când mă văd !
+
+Băieții mamei, băieți,  
+Frumușei și cucuieți !
+
+Bucuria caprei nu era proastă. Dar când s-apropie bine, ce să vadă ? Un fior rece ca gheața îi trece prin vine, picioarele i se taie, un tremur o cuprinde în tot trupul, și ochii i se păinjinesc. și ce era nu era a bine !... Ea însă tot merge pân' la ușă, cum poate, crezând că părerea o înșală... și cum ajunge, și începe
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+Atunci iedul mezin - care acum era și cel dintâi și cel de pe urmă - sare iute și-i deschide ușa. Apoi s-aruncă în brațele mâne-sa și cu lacrimi de sânge începe a-i spune :
+
+– Mămucă, mămucă, uite ce am pățit noi ! Mare foc și potop au căzut pe capul nostru !
+
+Capra atunci, holbând ochii lung prin casă, o cuprinde spaima și rămâne încremenită !... Dar mai pe urmă, îmbărbătându-se, și-a mai venit puțin în fire ș-a întrebat :
+
+– Da' ce-a fost aici, copile ?
+
+– Ce să fie, mămucă ? Ia, cum te-ai dus dumneata de-acasă, n-a trecut tocmai mult și iacă cineva s-aude bătând la ușă și spunând :
+
+Trei iezi cucuieți,
+
+Mamei ușa descuieți...
+
+– Și ?...
+
+– Și frate-meu cel mare, nătâng și neastâmpărat cum îl știi, fuga la ușă să deschidă.
+
+– Ș-atunci ?...
+
+– Atunci, eu m-am vârât iute în horn, și frate-meu cel mijlociu în cherșin, iar cel mare, după cum îți spun, se dă cu nepăsare după ușă și trage zăvorul !...
+
+– Ș-atunci ?...
+
+– Atunci, grozăvie mare ! Nănașul nostru și prietenul dumitale, cumătrul lup, se și arată în prag !
+
+– Cine ? Cumătrul meu ? El ? Care s-a jurat pe părul său că nu mi-a spărie copilașii niciodată ?
+
+– Apoi da, mamă ! Cum vezi, i-a umplut de spărieți !
+
+– Ei las', că l-oiu învăța eu ! Dacă mă vede că-s o văduvă sărmană și c-o casă de copii, apoi trebuie să-și bată joc de casa mea ? Și pe voi să vă puie la pastramă ? Nici o faptă fără plată... Ticălosul și mangositul ! Încă se rânjea la mine câteodată și-mi făcea cu măseaua... Apoi doar eu nu-s de-acelea de care crede el : n-am sărit peste garduri niciodată de când sunt. Ei, taci, cumătre, că te-oiu dobzăla eu ! Cu mine ți-ai pus boii în plug ? Apoi, ține minte că ai să-i scoți fără coarne !
+
+– Of, mămucă, of ! Mai bine taci și lasă-l în plata lui Dumnezeu ! Că știi că este o vorbă : "Nici pe dracul să-l vezi, da' nici cruce să-ți faci !"
+
+– Ba nu, dragul mamei ! "Că până la Dumnezeu, sfinții îți ieu sufletul." ș-apoi ține tu minte, copile, ce-ți spun eu : că de i-a mai da lui nasul să mai miroase p-aici, apoi las' !... Numai tu, să nu cumva să te răsufli cuiva, ca să prindă el de veste.
+
+Și de-atunci căuta și ea vreme cu prilej ca să facă pe obraz cumătru-său. Se pune ea și stă în cumpene, cum să dreagă și ce să-i facă ?
+
+"Aha ! ia, acum i-am găsit leacul, zise ea în gândul său. Taci ! că i-oiu face eu cumătrului una de ș-a mușca labele !"
+
+Aproape de casa ei era o groapă adâncă; acolo-i nădejdea caprei.
+
+– La cadă cu dubală, cumătre lup, că nu-i de chip !... Ia, de-acu să-ncepe fapta : Hai la treabă, cumătriță, că lupul ți-a dat de lucru !"
+
+Și așa zicând, pune poalele-n brâu, își suflecă mânicele, ațâță focul și s-apucă de făcut bucate. Face ea sarmale, face plachie, face alivenci, face pască cu smântână și cu ouă și fel de fel de bucate. Apoi umple groapa cu jăratic și cu lemne putregăioase ca să ardă focul mocnit. După asta așază o leașă de nuiele numai întinată și niște frunzări peste dânsa : peste frunzări toarnă țărână și peste țărână așterne o rogojină. Apoi face un scăuieș de ceară anume pentru lup. Pe urmă lasă bucatele la foc să fearbă și se duce prin pădure să caute pe cumătru-său și să-l poftească la praznic. Merge ea cât merge prin codru, până ce dă pe-o prăpastie grozavă și întunecoasă și pe-o tihăraie dă peste lup.
+
+– Bună vreme, cumătro ! Da' ce vânt te-a abătut pe-aici ?
+
+– Bună să-ți fie inima, cumătre, cum ți-i căutătura... apoi da, nu știi dumneata că nevoia te duce pe unde nu ți-i voia ? Ia, nu știu cine-a fost pe la mine pe-acasă în lipsa mea, că știu că mi-a făcut-o bună !
+
+– Ca ce fel, cumătriță dragă ?
+
+– Ia, a găsit iezii singurei, i-a ucis și i-a crâmpoțit, de le-am plâns de milă ! Numai văduvă să nu mai fie cineva !
+
+– Da' nu mai spune, cumătră !
+
+– Apoi de-acum, ori să spun, ori să nu mai spun, că totuna mi-e. Ei, mititeii, s-au dus cătră Domnul, și datoria ne face să le căutam de suflet. De aceea am făcut și eu un praznic, după puterea mea, și am găsit de cuviință să te poftesc și pe d-ta, cumătre; ca să mă mai mângâi...
+
+– Bucuros, dragă cumătră, dar mai bucuros eram când m-ai fi chemat la nuntă.
+
+– Te cred, cumătre, d-apoi, da, nu-i cum vrem noi, ci-i cum vre Cel-de-sus.
+
+Apoi capra pornește înainte plângând, și lupul după dânsa, prefăcându-se că plânge.
+
+– Doamne, cumătre, Doamne ! zise capra suspinând. De ce ți-e mai drag în lume, de-aceea n-ai parte...
+
+– Apoi da, cumătră, când ar ști omul ce-ar păți, dinainte s-ar păzi. Nu-ți mai face și dumneata atâta inimă rea, că odată avem să mergem cu toții acolo.
+
+– Așa este, cumătre, nu-i vorba. Dar sărmanii găgălici, de cruzi s-au mai dus !
+
+– Apoi da, cumătră; se vede că și lui Dumnezeu îi plac tot puișori de cei mai tineri.
+
+– Apoi, dacă i-ar fi luat Dumnezeu, ce ți-ar fi ? D-apoi așa ?
+
+– Doamne, cumătră, Doamne ! Oiu face și eu ca prostul... Oare nu cumva nenea Martin a dat pe la dumneata pe acasă ? Că mi-aduc aminte ca acu că l-am întâlnit odată prin zmeuriș; și mi-a spus că dacă-i vrea dumneata să-i dai un băiet, să-l învețe cojocăria.
+
+Și din vorbă-n vorbă, din una-n alta, ajung pân-acasă la cumătră !
+
+– Ia poftim, cumătre, zise ea luând scăuieșul și punându-l deasupra groapei cu pricina, șezi cole și să ospătezi oleacă din ceea ce ne-a dat Dumnezeu !
+
+Răstoarnă apoi sarmalele în strachină și i le pune dinainte.
+
+Atunci lupul nostru începe a mânca hâlpav; și gogâlț, gogâlț, gogâlț, îi mergeau sarmalele întregi pe gât.
+
+– Dumnezeu să ierte pe cei răposați, cumătră, că bune sarmale ai mai făcut !
+
+– Și cum ospăta el, buf ! cade fără sine în groapa cu jăratic, căci scăuieșul de ceară s-a topit, și leașa de pe groapă nu era bine sprijinită : nici mai bine, nici mai rău, ca pentru cumătru.
+
+– Ei, ei ! Acum scoate, lupe, ce-ai mâncat ! Cu capra ți-ai pus în cârd ? Capra ți-a venit de hac !
+
+– Văleu, cumătră, tălpele mele ! Mă rog, scoate-mă că-mi arde inima-n mine !
+
+– Ba nu, cumătre; c-așa mi-a ars și mie inima după iezișorii mei ! Lui Dumnezeu îi plac pui de cei mai tineri; mie însă-mi plac și de iști mai bătrâni, numai să fie bine fripți; știi, cole, să treacă focul printr-înșii.
+
+– Cumătră, mă pârlesc, ard de tot, mor, nu mă lăsa !
+
+– Arzi, cumătre, mori, că nici viu nu ești bun ! De-abie i-a mai trece băietului istuia de spărieț, că mult păr îmi trebuia de la tine ca să-l afum. Ți-aduci aminte, dihanie răutăcioasă și spurcată, când mi te-ai jurat pe părul tău ? și bine mi-ai mâncat iezișorii !
+
+– Mă ustură inima-n mine, cumătră ! mă rog, scoate-mă, și nu-ți mai face atâta osândă cu mine !
+
+– Moarte pentru moarte, cumătre, arsură pentru arsură, că bine-o mai plesniși dînioare cu cuvinte din scriptură !
+
+După aceasta, capra și cu iedul au luat o căpiță de fân ș-au aruncat-o peste dânsul, în groapă, ca să se mai potolească focul. Apoi, la urma urmelor, năpădiră asupra lui și-i mai trântiră în cap cu bolovani și cu ce-au apucat, până-l omorâră de tot. Și așa s-a păgubit sărmana capră și de cei doi iezi, da' și de cumătru-său lupul păgubașă a rămas, și păgubașă să fie.
+
+Și auzind caprele din vecinătate de una ca aceasta, tare le-au mai părut bine ! Și s-au adunat cu toatele la priveghiu și unde nu s-au așternut pe mâncate și pe băute, veselindu-se împreună...
+
+Și eram și eu acolo de față, și-ndată după aceea am încălecat iute pe-o șea, ș-am venit de v-am spus povestea așa, ș-am mai încălecat pe-o roată și v-am spus jitia toată; și unde n-am mai încălecat pe-o capșună și v-am spus, oameni buni, o mare și gogonată minciună !$demo$), 1,
+  now() - interval '38 days', $demo$Capra cu trei iezi$demo$, public.check_chapter_text($demo$Era odată o capră care avea trei iezi. Iedul cel mare și cu cel mijlociu dau prin băț de obraznici ce erau; iară cel mic era harnic și cuminte. Vorba ceea : "Sunt cinci degete la o mână și nu samănă toate unul cu altul".
+
+Într-o zi, capra cheamă iezii de pe-afară și le zice :
+
+– Dragii mamei copilași ! Eu mă duc în pădure ca să mai duc ceva de-a mâncării. Dar voi, încuieți ușa după mine, ascultați unul de altul, și să nu cumva să deschideți până ce nu-ți auzi glasul meu. Când voiu veni eu, am să vă dau de știre, ca să mă cunoașteți, și am să vă spun așa :
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+Auzit-ați ce-am spus eu ?
+
+– Da, mămucă, ziseră iezii.
+
+– Pot să am nădejde în voi ?
+
+– Să n-ai nici o grijă, mămucă, apucară cu gura înainte cei mai mari. Noi suntem odată băieți, și ce-am vorbit odată vorbit rămâne.
+
+– Dacă-i așa, apoi veniți să vă sărute mama ! Dumnezeu să vă apere de cele rele, și mai rămâneți cu bine!
+
+– Mergi sănătoasă, mămucă, zise cel mic, cu lacrimi în ochi, și Dumnezeu să-ți ajute ca să te întoarne cu bine și să ne-aduci demâncare.
+
+Apoi capra iese și se duce în treaba ei. Iar iezii închid ușa după dânsa și trag zăvorul. Dar vorba veche : "Păreții au urechi și fereștile ochi". Un dușman de lup - ș-apoi știți care ? - chiar cumătrul caprei, care de mult pândea vreme cu prilej ca să pape iezii, trăgea cu urechea la păretele din dosul casei, când vorbea capra cu dânșii.
+
+"Bun ! zise el în gândul său. Ia, acum mi-e timpul... De i-ar împinge păcatul să-mi deschidă ușa, halal să-mi fie ! Știu că i-aș cărnoși și i-aș jumuli !" Cum zice, și vine la ușă; și cum vine, și începe :
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+– Hai ! deschideți cu fuga, dragii mamei, cu fuga !
+
+– Ia ! Băieți, zise cel mai mare, săriți și deschideți ușa, că vine mama cu demâncare.
+
+– Săracuțul de mine ! zise cel mic. Să nu cumva să faceți pozna să deschideți, că-i vai de noi ! Asta nu-i mămuca. Eu o cunosc de pe glas; glasul ei nu-i așa de gros și de răgușit, că-i mai subțire și mai frumos !
+
+Lupul, auzind aceste, se duse la un ferar și puse să-i ascute limba și dinții, pentru a-și subția glasul, ș-apoi, întorcându-se, începu iar :
+
+Trei iezi cucuieți
+
+Ușa mamei descuieți !...
+
+– Ei, vedeți, zise iarăși cel mare; dacă mă potrivesc eu vouă ? Nu-i mămuca, nu-i mămuca !
+
+D-apoi cine-i dacă nu-i ea ? Că doar și eu am urechi ! Mă duc să-i deschid.
+
+– Bădică ! bădică ! zise iarăși cel mic. Ascultați-mă și pe mine ! Poate mai de-apoi a veni cineva ș-a zice:
+
+Deschideți ușa,  
+Că vine mătușa !
+
+ș-atunci voi trebuie numaidecât să deschideți ? D-apoi nu știți că mătușa-i moartă de când lupii albi și s-a făcut oale și ulcioare, sărmana ?
+
+– Apoi, da ! nu spun eu bine ? zise cel mare. Ia, de-atunci e rău în lume, de când a ajuns coada să fie cap... Dacă te-i potrivi tu acestora, îi ține mult și bine pe mămuca afară. Eu, unul, mă duc să deschid.
+
+Atunci mezinul se vâră iute în horn și, sprijinit cu picioarele de prichiciu și cu nasul de funingine, tace ca peștele și tremură ca varga de frică. Dar frica-i din raiu, sărmana ! Asemene cel mijlociu, tuștiu ! iute sub un cherșin; se-nghemuiește acolo cum poate, tace ca pământul și-i tremură carnea pe dânsul de frică : Fuga-i rușinoasă, da-i sănătoasă !
+
+... Însă cel mare se dă după ușă și - să tragă, să nu tragă ? - în sfârșit, trage zăvorul... Când iaca !... ce să vadă ? ș-apoi mai are când vede ?... căci lupului îi scăpărau ochii și-i sfârâia gâtlejul de flămând ce era. Și, nici una, nici două, haț ! pe ied de gât, îi răteză capul pe loc și-l mănâncă așa de iute și cu atâta poftă, de-ți părea că nici pe-o măsea nu are ce pune. Apoi se linge frumușel pe bot și începe a se învârti prin casă cu neastâmpăr, zicând :
+
+– Nu știu, părerea m-a amăgit, ori am auzit mai multe glasuri ? Dar ce Dumnezeu ?! Parc-au intrat în pământ... Unde să fie ? Se ițește el pe colo, se ițește pe dincolo, dar pace bună ! iezii nu-s nicăiri !
+
+– Mă !... că mare minune-i asta !... dar nici acasă n-am de coasă... ia să mai odihnesc oleaca aste bătrânețe !
+
+Apoi se îndoaie de șele cam cu greu, și se pune pe cherșin. și când s-a pus pe cherșin, nu știu cum s-au făcut, că ori cherșinul a crăpat, ori cumătrul a strănutat...
+
+Atunci iedul de sub cherșin, să nu tacă ? - Îl păștea păcatul și-l mânca spinarea, sărăcuțul !
+
+– Să-ți fie de bine, nănașule !
+
+– A !... ghidi ! ghidi ! ghiduși ce ești ! Aici mi-ai fost ? Ia vină-ncoace la nănășelul, să te pupe el ! Apoi ridică cherșinul binișor, înșfăcă iedul de urechi și-l flocăiește și-l jumulește și pe-acela de-i merg petecele !... Vorba ceea : "Că toată paserea pe limba ei piere".
+
+Pe urmă se mai învârte prin casă, doar a mai găsi ceva, dar nu găsește nimic, căci iedul cel cuminte tăcea molcum în horn, cum tace peștele în borș la foc. Dacă vede lupul și vede că nu mai găsește nimic, își pune în gând una : așază cele două capete cu dinții rânjiți în ferești, de ți se părea că râdeau; pe urmă unge toți păreții cu sânge, ca să facă și mai mult în ciuda caprei, ș-apoi iese și-și caută de drum. Cum a ieșit dușmanul din casă, iedul cel mic se dă iute jos din horn și încuie ușa bine. Apoi începe a se scărmăna de cap și a plânge cu amar după frățiorii săi.
+
+– Drăguții mei frățiori ! De nu s-ar fi înduplecat, lupul nu i-ar fi mâncat ! și biata mamă nu știe de astă mare urgie ce-a venit pe capul ei !
+
+Și bocește el și bocește până îl apucă leșin ! Dar ce era să le facă ? Vina nu era a lui, ce au căutat pe nas le-a dat.
+
+Când jălea el așa, iacă și capra venea cât putea, încărcată cu de-a mâncării și gâfuind. Și cum venea, cât de colo vede cele două capete, cu dinții rânjind, în ferești.
+
+– Dragii mămucuței, dragi ! Cum așteaptă ei cu bucurie și-mi râd înainte când mă văd !
+
+Băieții mamei, băieți,  
+Frumușei și cucuieți !
+
+Bucuria caprei nu era proastă. Dar când s-apropie bine, ce să vadă ? Un fior rece ca gheața îi trece prin vine, picioarele i se taie, un tremur o cuprinde în tot trupul, și ochii i se păinjinesc. și ce era nu era a bine !... Ea însă tot merge pân' la ușă, cum poate, crezând că părerea o înșală... și cum ajunge, și începe
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+Atunci iedul mezin - care acum era și cel dintâi și cel de pe urmă - sare iute și-i deschide ușa. Apoi s-aruncă în brațele mâne-sa și cu lacrimi de sânge începe a-i spune :
+
+– Mămucă, mămucă, uite ce am pățit noi ! Mare foc și potop au căzut pe capul nostru !
+
+Capra atunci, holbând ochii lung prin casă, o cuprinde spaima și rămâne încremenită !... Dar mai pe urmă, îmbărbătându-se, și-a mai venit puțin în fire ș-a întrebat :
+
+– Da' ce-a fost aici, copile ?
+
+– Ce să fie, mămucă ? Ia, cum te-ai dus dumneata de-acasă, n-a trecut tocmai mult și iacă cineva s-aude bătând la ușă și spunând :
+
+Trei iezi cucuieți,
+
+Mamei ușa descuieți...
+
+– Și ?...
+
+– Și frate-meu cel mare, nătâng și neastâmpărat cum îl știi, fuga la ușă să deschidă.
+
+– Ș-atunci ?...
+
+– Atunci, eu m-am vârât iute în horn, și frate-meu cel mijlociu în cherșin, iar cel mare, după cum îți spun, se dă cu nepăsare după ușă și trage zăvorul !...
+
+– Ș-atunci ?...
+
+– Atunci, grozăvie mare ! Nănașul nostru și prietenul dumitale, cumătrul lup, se și arată în prag !
+
+– Cine ? Cumătrul meu ? El ? Care s-a jurat pe părul său că nu mi-a spărie copilașii niciodată ?
+
+– Apoi da, mamă ! Cum vezi, i-a umplut de spărieți !
+
+– Ei las', că l-oiu învăța eu ! Dacă mă vede că-s o văduvă sărmană și c-o casă de copii, apoi trebuie să-și bată joc de casa mea ? Și pe voi să vă puie la pastramă ? Nici o faptă fără plată... Ticălosul și mangositul ! Încă se rânjea la mine câteodată și-mi făcea cu măseaua... Apoi doar eu nu-s de-acelea de care crede el : n-am sărit peste garduri niciodată de când sunt. Ei, taci, cumătre, că te-oiu dobzăla eu ! Cu mine ți-ai pus boii în plug ? Apoi, ține minte că ai să-i scoți fără coarne !
+
+– Of, mămucă, of ! Mai bine taci și lasă-l în plata lui Dumnezeu ! Că știi că este o vorbă : "Nici pe dracul să-l vezi, da' nici cruce să-ți faci !"
+
+– Ba nu, dragul mamei ! "Că până la Dumnezeu, sfinții îți ieu sufletul." ș-apoi ține tu minte, copile, ce-ți spun eu : că de i-a mai da lui nasul să mai miroase p-aici, apoi las' !... Numai tu, să nu cumva să te răsufli cuiva, ca să prindă el de veste.
+
+Și de-atunci căuta și ea vreme cu prilej ca să facă pe obraz cumătru-său. Se pune ea și stă în cumpene, cum să dreagă și ce să-i facă ?
+
+"Aha ! ia, acum i-am găsit leacul, zise ea în gândul său. Taci ! că i-oiu face eu cumătrului una de ș-a mușca labele !"
+
+Aproape de casa ei era o groapă adâncă; acolo-i nădejdea caprei.
+
+– La cadă cu dubală, cumătre lup, că nu-i de chip !... Ia, de-acu să-ncepe fapta : Hai la treabă, cumătriță, că lupul ți-a dat de lucru !"
+
+Și așa zicând, pune poalele-n brâu, își suflecă mânicele, ațâță focul și s-apucă de făcut bucate. Face ea sarmale, face plachie, face alivenci, face pască cu smântână și cu ouă și fel de fel de bucate. Apoi umple groapa cu jăratic și cu lemne putregăioase ca să ardă focul mocnit. După asta așază o leașă de nuiele numai întinată și niște frunzări peste dânsa : peste frunzări toarnă țărână și peste țărână așterne o rogojină. Apoi face un scăuieș de ceară anume pentru lup. Pe urmă lasă bucatele la foc să fearbă și se duce prin pădure să caute pe cumătru-său și să-l poftească la praznic. Merge ea cât merge prin codru, până ce dă pe-o prăpastie grozavă și întunecoasă și pe-o tihăraie dă peste lup.
+
+– Bună vreme, cumătro ! Da' ce vânt te-a abătut pe-aici ?
+
+– Bună să-ți fie inima, cumătre, cum ți-i căutătura... apoi da, nu știi dumneata că nevoia te duce pe unde nu ți-i voia ? Ia, nu știu cine-a fost pe la mine pe-acasă în lipsa mea, că știu că mi-a făcut-o bună !
+
+– Ca ce fel, cumătriță dragă ?
+
+– Ia, a găsit iezii singurei, i-a ucis și i-a crâmpoțit, de le-am plâns de milă ! Numai văduvă să nu mai fie cineva !
+
+– Da' nu mai spune, cumătră !
+
+– Apoi de-acum, ori să spun, ori să nu mai spun, că totuna mi-e. Ei, mititeii, s-au dus cătră Domnul, și datoria ne face să le căutam de suflet. De aceea am făcut și eu un praznic, după puterea mea, și am găsit de cuviință să te poftesc și pe d-ta, cumătre; ca să mă mai mângâi...
+
+– Bucuros, dragă cumătră, dar mai bucuros eram când m-ai fi chemat la nuntă.
+
+– Te cred, cumătre, d-apoi, da, nu-i cum vrem noi, ci-i cum vre Cel-de-sus.
+
+Apoi capra pornește înainte plângând, și lupul după dânsa, prefăcându-se că plânge.
+
+– Doamne, cumătre, Doamne ! zise capra suspinând. De ce ți-e mai drag în lume, de-aceea n-ai parte...
+
+– Apoi da, cumătră, când ar ști omul ce-ar păți, dinainte s-ar păzi. Nu-ți mai face și dumneata atâta inimă rea, că odată avem să mergem cu toții acolo.
+
+– Așa este, cumătre, nu-i vorba. Dar sărmanii găgălici, de cruzi s-au mai dus !
+
+– Apoi da, cumătră; se vede că și lui Dumnezeu îi plac tot puișori de cei mai tineri.
+
+– Apoi, dacă i-ar fi luat Dumnezeu, ce ți-ar fi ? D-apoi așa ?
+
+– Doamne, cumătră, Doamne ! Oiu face și eu ca prostul... Oare nu cumva nenea Martin a dat pe la dumneata pe acasă ? Că mi-aduc aminte ca acu că l-am întâlnit odată prin zmeuriș; și mi-a spus că dacă-i vrea dumneata să-i dai un băiet, să-l învețe cojocăria.
+
+Și din vorbă-n vorbă, din una-n alta, ajung pân-acasă la cumătră !
+
+– Ia poftim, cumătre, zise ea luând scăuieșul și punându-l deasupra groapei cu pricina, șezi cole și să ospătezi oleacă din ceea ce ne-a dat Dumnezeu !
+
+Răstoarnă apoi sarmalele în strachină și i le pune dinainte.
+
+Atunci lupul nostru începe a mânca hâlpav; și gogâlț, gogâlț, gogâlț, îi mergeau sarmalele întregi pe gât.
+
+– Dumnezeu să ierte pe cei răposați, cumătră, că bune sarmale ai mai făcut !
+
+– Și cum ospăta el, buf ! cade fără sine în groapa cu jăratic, căci scăuieșul de ceară s-a topit, și leașa de pe groapă nu era bine sprijinită : nici mai bine, nici mai rău, ca pentru cumătru.
+
+– Ei, ei ! Acum scoate, lupe, ce-ai mâncat ! Cu capra ți-ai pus în cârd ? Capra ți-a venit de hac !
+
+– Văleu, cumătră, tălpele mele ! Mă rog, scoate-mă că-mi arde inima-n mine !
+
+– Ba nu, cumătre; c-așa mi-a ars și mie inima după iezișorii mei ! Lui Dumnezeu îi plac pui de cei mai tineri; mie însă-mi plac și de iști mai bătrâni, numai să fie bine fripți; știi, cole, să treacă focul printr-înșii.
+
+– Cumătră, mă pârlesc, ard de tot, mor, nu mă lăsa !
+
+– Arzi, cumătre, mori, că nici viu nu ești bun ! De-abie i-a mai trece băietului istuia de spărieț, că mult păr îmi trebuia de la tine ca să-l afum. Ți-aduci aminte, dihanie răutăcioasă și spurcată, când mi te-ai jurat pe părul tău ? și bine mi-ai mâncat iezișorii !
+
+– Mă ustură inima-n mine, cumătră ! mă rog, scoate-mă, și nu-ți mai face atâta osândă cu mine !
+
+– Moarte pentru moarte, cumătre, arsură pentru arsură, că bine-o mai plesniși dînioare cu cuvinte din scriptură !
+
+După aceasta, capra și cu iedul au luat o căpiță de fân ș-au aruncat-o peste dânsul, în groapă, ca să se mai potolească focul. Apoi, la urma urmelor, năpădiră asupra lui și-i mai trântiră în cap cu bolovani și cu ce-au apucat, până-l omorâră de tot. Și așa s-a păgubit sărmana capră și de cei doi iezi, da' și de cumătru-său lupul păgubașă a rămas, și păgubașă să fie.
+
+Și auzind caprele din vecinătate de una ca aceasta, tare le-au mai părut bine ! Și s-au adunat cu toatele la priveghiu și unde nu s-au așternut pe mâncate și pe băute, veselindu-se împreună...
+
+Și eram și eu acolo de față, și-ndată după aceea am încălecat iute pe-o șea, ș-am venit de v-am spus povestea așa, ș-am mai încălecat pe-o roată și v-am spus jitia toată; și unde n-am mai încălecat pe-o capșună și v-am spus, oameni buni, o mare și gogonată minciună !$demo$), 'published',
+  now() - interval '38 days', now() - interval '38 days', public.count_words($demo$Era odată o capră care avea trei iezi. Iedul cel mare și cu cel mijlociu dau prin băț de obraznici ce erau; iară cel mic era harnic și cuminte. Vorba ceea : "Sunt cinci degete la o mână și nu samănă toate unul cu altul".
+
+Într-o zi, capra cheamă iezii de pe-afară și le zice :
+
+– Dragii mamei copilași ! Eu mă duc în pădure ca să mai duc ceva de-a mâncării. Dar voi, încuieți ușa după mine, ascultați unul de altul, și să nu cumva să deschideți până ce nu-ți auzi glasul meu. Când voiu veni eu, am să vă dau de știre, ca să mă cunoașteți, și am să vă spun așa :
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+Auzit-ați ce-am spus eu ?
+
+– Da, mămucă, ziseră iezii.
+
+– Pot să am nădejde în voi ?
+
+– Să n-ai nici o grijă, mămucă, apucară cu gura înainte cei mai mari. Noi suntem odată băieți, și ce-am vorbit odată vorbit rămâne.
+
+– Dacă-i așa, apoi veniți să vă sărute mama ! Dumnezeu să vă apere de cele rele, și mai rămâneți cu bine!
+
+– Mergi sănătoasă, mămucă, zise cel mic, cu lacrimi în ochi, și Dumnezeu să-ți ajute ca să te întoarne cu bine și să ne-aduci demâncare.
+
+Apoi capra iese și se duce în treaba ei. Iar iezii închid ușa după dânsa și trag zăvorul. Dar vorba veche : "Păreții au urechi și fereștile ochi". Un dușman de lup - ș-apoi știți care ? - chiar cumătrul caprei, care de mult pândea vreme cu prilej ca să pape iezii, trăgea cu urechea la păretele din dosul casei, când vorbea capra cu dânșii.
+
+"Bun ! zise el în gândul său. Ia, acum mi-e timpul... De i-ar împinge păcatul să-mi deschidă ușa, halal să-mi fie ! Știu că i-aș cărnoși și i-aș jumuli !" Cum zice, și vine la ușă; și cum vine, și începe :
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+– Hai ! deschideți cu fuga, dragii mamei, cu fuga !
+
+– Ia ! Băieți, zise cel mai mare, săriți și deschideți ușa, că vine mama cu demâncare.
+
+– Săracuțul de mine ! zise cel mic. Să nu cumva să faceți pozna să deschideți, că-i vai de noi ! Asta nu-i mămuca. Eu o cunosc de pe glas; glasul ei nu-i așa de gros și de răgușit, că-i mai subțire și mai frumos !
+
+Lupul, auzind aceste, se duse la un ferar și puse să-i ascute limba și dinții, pentru a-și subția glasul, ș-apoi, întorcându-se, începu iar :
+
+Trei iezi cucuieți
+
+Ușa mamei descuieți !...
+
+– Ei, vedeți, zise iarăși cel mare; dacă mă potrivesc eu vouă ? Nu-i mămuca, nu-i mămuca !
+
+D-apoi cine-i dacă nu-i ea ? Că doar și eu am urechi ! Mă duc să-i deschid.
+
+– Bădică ! bădică ! zise iarăși cel mic. Ascultați-mă și pe mine ! Poate mai de-apoi a veni cineva ș-a zice:
+
+Deschideți ușa,  
+Că vine mătușa !
+
+ș-atunci voi trebuie numaidecât să deschideți ? D-apoi nu știți că mătușa-i moartă de când lupii albi și s-a făcut oale și ulcioare, sărmana ?
+
+– Apoi, da ! nu spun eu bine ? zise cel mare. Ia, de-atunci e rău în lume, de când a ajuns coada să fie cap... Dacă te-i potrivi tu acestora, îi ține mult și bine pe mămuca afară. Eu, unul, mă duc să deschid.
+
+Atunci mezinul se vâră iute în horn și, sprijinit cu picioarele de prichiciu și cu nasul de funingine, tace ca peștele și tremură ca varga de frică. Dar frica-i din raiu, sărmana ! Asemene cel mijlociu, tuștiu ! iute sub un cherșin; se-nghemuiește acolo cum poate, tace ca pământul și-i tremură carnea pe dânsul de frică : Fuga-i rușinoasă, da-i sănătoasă !
+
+... Însă cel mare se dă după ușă și - să tragă, să nu tragă ? - în sfârșit, trage zăvorul... Când iaca !... ce să vadă ? ș-apoi mai are când vede ?... căci lupului îi scăpărau ochii și-i sfârâia gâtlejul de flămând ce era. Și, nici una, nici două, haț ! pe ied de gât, îi răteză capul pe loc și-l mănâncă așa de iute și cu atâta poftă, de-ți părea că nici pe-o măsea nu are ce pune. Apoi se linge frumușel pe bot și începe a se învârti prin casă cu neastâmpăr, zicând :
+
+– Nu știu, părerea m-a amăgit, ori am auzit mai multe glasuri ? Dar ce Dumnezeu ?! Parc-au intrat în pământ... Unde să fie ? Se ițește el pe colo, se ițește pe dincolo, dar pace bună ! iezii nu-s nicăiri !
+
+– Mă !... că mare minune-i asta !... dar nici acasă n-am de coasă... ia să mai odihnesc oleaca aste bătrânețe !
+
+Apoi se îndoaie de șele cam cu greu, și se pune pe cherșin. și când s-a pus pe cherșin, nu știu cum s-au făcut, că ori cherșinul a crăpat, ori cumătrul a strănutat...
+
+Atunci iedul de sub cherșin, să nu tacă ? - Îl păștea păcatul și-l mânca spinarea, sărăcuțul !
+
+– Să-ți fie de bine, nănașule !
+
+– A !... ghidi ! ghidi ! ghiduși ce ești ! Aici mi-ai fost ? Ia vină-ncoace la nănășelul, să te pupe el ! Apoi ridică cherșinul binișor, înșfăcă iedul de urechi și-l flocăiește și-l jumulește și pe-acela de-i merg petecele !... Vorba ceea : "Că toată paserea pe limba ei piere".
+
+Pe urmă se mai învârte prin casă, doar a mai găsi ceva, dar nu găsește nimic, căci iedul cel cuminte tăcea molcum în horn, cum tace peștele în borș la foc. Dacă vede lupul și vede că nu mai găsește nimic, își pune în gând una : așază cele două capete cu dinții rânjiți în ferești, de ți se părea că râdeau; pe urmă unge toți păreții cu sânge, ca să facă și mai mult în ciuda caprei, ș-apoi iese și-și caută de drum. Cum a ieșit dușmanul din casă, iedul cel mic se dă iute jos din horn și încuie ușa bine. Apoi începe a se scărmăna de cap și a plânge cu amar după frățiorii săi.
+
+– Drăguții mei frățiori ! De nu s-ar fi înduplecat, lupul nu i-ar fi mâncat ! și biata mamă nu știe de astă mare urgie ce-a venit pe capul ei !
+
+Și bocește el și bocește până îl apucă leșin ! Dar ce era să le facă ? Vina nu era a lui, ce au căutat pe nas le-a dat.
+
+Când jălea el așa, iacă și capra venea cât putea, încărcată cu de-a mâncării și gâfuind. Și cum venea, cât de colo vede cele două capete, cu dinții rânjind, în ferești.
+
+– Dragii mămucuței, dragi ! Cum așteaptă ei cu bucurie și-mi râd înainte când mă văd !
+
+Băieții mamei, băieți,  
+Frumușei și cucuieți !
+
+Bucuria caprei nu era proastă. Dar când s-apropie bine, ce să vadă ? Un fior rece ca gheața îi trece prin vine, picioarele i se taie, un tremur o cuprinde în tot trupul, și ochii i se păinjinesc. și ce era nu era a bine !... Ea însă tot merge pân' la ușă, cum poate, crezând că părerea o înșală... și cum ajunge, și începe
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+Atunci iedul mezin - care acum era și cel dintâi și cel de pe urmă - sare iute și-i deschide ușa. Apoi s-aruncă în brațele mâne-sa și cu lacrimi de sânge începe a-i spune :
+
+– Mămucă, mămucă, uite ce am pățit noi ! Mare foc și potop au căzut pe capul nostru !
+
+Capra atunci, holbând ochii lung prin casă, o cuprinde spaima și rămâne încremenită !... Dar mai pe urmă, îmbărbătându-se, și-a mai venit puțin în fire ș-a întrebat :
+
+– Da' ce-a fost aici, copile ?
+
+– Ce să fie, mămucă ? Ia, cum te-ai dus dumneata de-acasă, n-a trecut tocmai mult și iacă cineva s-aude bătând la ușă și spunând :
+
+Trei iezi cucuieți,
+
+Mamei ușa descuieți...
+
+– Și ?...
+
+– Și frate-meu cel mare, nătâng și neastâmpărat cum îl știi, fuga la ușă să deschidă.
+
+– Ș-atunci ?...
+
+– Atunci, eu m-am vârât iute în horn, și frate-meu cel mijlociu în cherșin, iar cel mare, după cum îți spun, se dă cu nepăsare după ușă și trage zăvorul !...
+
+– Ș-atunci ?...
+
+– Atunci, grozăvie mare ! Nănașul nostru și prietenul dumitale, cumătrul lup, se și arată în prag !
+
+– Cine ? Cumătrul meu ? El ? Care s-a jurat pe părul său că nu mi-a spărie copilașii niciodată ?
+
+– Apoi da, mamă ! Cum vezi, i-a umplut de spărieți !
+
+– Ei las', că l-oiu învăța eu ! Dacă mă vede că-s o văduvă sărmană și c-o casă de copii, apoi trebuie să-și bată joc de casa mea ? Și pe voi să vă puie la pastramă ? Nici o faptă fără plată... Ticălosul și mangositul ! Încă se rânjea la mine câteodată și-mi făcea cu măseaua... Apoi doar eu nu-s de-acelea de care crede el : n-am sărit peste garduri niciodată de când sunt. Ei, taci, cumătre, că te-oiu dobzăla eu ! Cu mine ți-ai pus boii în plug ? Apoi, ține minte că ai să-i scoți fără coarne !
+
+– Of, mămucă, of ! Mai bine taci și lasă-l în plata lui Dumnezeu ! Că știi că este o vorbă : "Nici pe dracul să-l vezi, da' nici cruce să-ți faci !"
+
+– Ba nu, dragul mamei ! "Că până la Dumnezeu, sfinții îți ieu sufletul." ș-apoi ține tu minte, copile, ce-ți spun eu : că de i-a mai da lui nasul să mai miroase p-aici, apoi las' !... Numai tu, să nu cumva să te răsufli cuiva, ca să prindă el de veste.
+
+Și de-atunci căuta și ea vreme cu prilej ca să facă pe obraz cumătru-său. Se pune ea și stă în cumpene, cum să dreagă și ce să-i facă ?
+
+"Aha ! ia, acum i-am găsit leacul, zise ea în gândul său. Taci ! că i-oiu face eu cumătrului una de ș-a mușca labele !"
+
+Aproape de casa ei era o groapă adâncă; acolo-i nădejdea caprei.
+
+– La cadă cu dubală, cumătre lup, că nu-i de chip !... Ia, de-acu să-ncepe fapta : Hai la treabă, cumătriță, că lupul ți-a dat de lucru !"
+
+Și așa zicând, pune poalele-n brâu, își suflecă mânicele, ațâță focul și s-apucă de făcut bucate. Face ea sarmale, face plachie, face alivenci, face pască cu smântână și cu ouă și fel de fel de bucate. Apoi umple groapa cu jăratic și cu lemne putregăioase ca să ardă focul mocnit. După asta așază o leașă de nuiele numai întinată și niște frunzări peste dânsa : peste frunzări toarnă țărână și peste țărână așterne o rogojină. Apoi face un scăuieș de ceară anume pentru lup. Pe urmă lasă bucatele la foc să fearbă și se duce prin pădure să caute pe cumătru-său și să-l poftească la praznic. Merge ea cât merge prin codru, până ce dă pe-o prăpastie grozavă și întunecoasă și pe-o tihăraie dă peste lup.
+
+– Bună vreme, cumătro ! Da' ce vânt te-a abătut pe-aici ?
+
+– Bună să-ți fie inima, cumătre, cum ți-i căutătura... apoi da, nu știi dumneata că nevoia te duce pe unde nu ți-i voia ? Ia, nu știu cine-a fost pe la mine pe-acasă în lipsa mea, că știu că mi-a făcut-o bună !
+
+– Ca ce fel, cumătriță dragă ?
+
+– Ia, a găsit iezii singurei, i-a ucis și i-a crâmpoțit, de le-am plâns de milă ! Numai văduvă să nu mai fie cineva !
+
+– Da' nu mai spune, cumătră !
+
+– Apoi de-acum, ori să spun, ori să nu mai spun, că totuna mi-e. Ei, mititeii, s-au dus cătră Domnul, și datoria ne face să le căutam de suflet. De aceea am făcut și eu un praznic, după puterea mea, și am găsit de cuviință să te poftesc și pe d-ta, cumătre; ca să mă mai mângâi...
+
+– Bucuros, dragă cumătră, dar mai bucuros eram când m-ai fi chemat la nuntă.
+
+– Te cred, cumătre, d-apoi, da, nu-i cum vrem noi, ci-i cum vre Cel-de-sus.
+
+Apoi capra pornește înainte plângând, și lupul după dânsa, prefăcându-se că plânge.
+
+– Doamne, cumătre, Doamne ! zise capra suspinând. De ce ți-e mai drag în lume, de-aceea n-ai parte...
+
+– Apoi da, cumătră, când ar ști omul ce-ar păți, dinainte s-ar păzi. Nu-ți mai face și dumneata atâta inimă rea, că odată avem să mergem cu toții acolo.
+
+– Așa este, cumătre, nu-i vorba. Dar sărmanii găgălici, de cruzi s-au mai dus !
+
+– Apoi da, cumătră; se vede că și lui Dumnezeu îi plac tot puișori de cei mai tineri.
+
+– Apoi, dacă i-ar fi luat Dumnezeu, ce ți-ar fi ? D-apoi așa ?
+
+– Doamne, cumătră, Doamne ! Oiu face și eu ca prostul... Oare nu cumva nenea Martin a dat pe la dumneata pe acasă ? Că mi-aduc aminte ca acu că l-am întâlnit odată prin zmeuriș; și mi-a spus că dacă-i vrea dumneata să-i dai un băiet, să-l învețe cojocăria.
+
+Și din vorbă-n vorbă, din una-n alta, ajung pân-acasă la cumătră !
+
+– Ia poftim, cumătre, zise ea luând scăuieșul și punându-l deasupra groapei cu pricina, șezi cole și să ospătezi oleacă din ceea ce ne-a dat Dumnezeu !
+
+Răstoarnă apoi sarmalele în strachină și i le pune dinainte.
+
+Atunci lupul nostru începe a mânca hâlpav; și gogâlț, gogâlț, gogâlț, îi mergeau sarmalele întregi pe gât.
+
+– Dumnezeu să ierte pe cei răposați, cumătră, că bune sarmale ai mai făcut !
+
+– Și cum ospăta el, buf ! cade fără sine în groapa cu jăratic, căci scăuieșul de ceară s-a topit, și leașa de pe groapă nu era bine sprijinită : nici mai bine, nici mai rău, ca pentru cumătru.
+
+– Ei, ei ! Acum scoate, lupe, ce-ai mâncat ! Cu capra ți-ai pus în cârd ? Capra ți-a venit de hac !
+
+– Văleu, cumătră, tălpele mele ! Mă rog, scoate-mă că-mi arde inima-n mine !
+
+– Ba nu, cumătre; c-așa mi-a ars și mie inima după iezișorii mei ! Lui Dumnezeu îi plac pui de cei mai tineri; mie însă-mi plac și de iști mai bătrâni, numai să fie bine fripți; știi, cole, să treacă focul printr-înșii.
+
+– Cumătră, mă pârlesc, ard de tot, mor, nu mă lăsa !
+
+– Arzi, cumătre, mori, că nici viu nu ești bun ! De-abie i-a mai trece băietului istuia de spărieț, că mult păr îmi trebuia de la tine ca să-l afum. Ți-aduci aminte, dihanie răutăcioasă și spurcată, când mi te-ai jurat pe părul tău ? și bine mi-ai mâncat iezișorii !
+
+– Mă ustură inima-n mine, cumătră ! mă rog, scoate-mă, și nu-ți mai face atâta osândă cu mine !
+
+– Moarte pentru moarte, cumătre, arsură pentru arsură, că bine-o mai plesniși dînioare cu cuvinte din scriptură !
+
+După aceasta, capra și cu iedul au luat o căpiță de fân ș-au aruncat-o peste dânsul, în groapă, ca să se mai potolească focul. Apoi, la urma urmelor, năpădiră asupra lui și-i mai trântiră în cap cu bolovani și cu ce-au apucat, până-l omorâră de tot. Și așa s-a păgubit sărmana capră și de cei doi iezi, da' și de cumătru-său lupul păgubașă a rămas, și păgubașă să fie.
+
+Și auzind caprele din vecinătate de una ca aceasta, tare le-au mai părut bine ! Și s-au adunat cu toatele la priveghiu și unde nu s-au așternut pe mâncate și pe băute, veselindu-se împreună...
+
+Și eram și eu acolo de față, și-ndată după aceea am încălecat iute pe-o șea, ș-am venit de v-am spus povestea așa, ș-am mai încălecat pe-o roată și v-am spus jitia toată; și unde n-am mai încălecat pe-o capșună și v-am spus, oameni buni, o mare și gogonată minciună !$demo$),
+  public.count_words($demo$Era odată o capră care avea trei iezi. Iedul cel mare și cu cel mijlociu dau prin băț de obraznici ce erau; iară cel mic era harnic și cuminte. Vorba ceea : "Sunt cinci degete la o mână și nu samănă toate unul cu altul".
+
+Într-o zi, capra cheamă iezii de pe-afară și le zice :
+
+– Dragii mamei copilași ! Eu mă duc în pădure ca să mai duc ceva de-a mâncării. Dar voi, încuieți ușa după mine, ascultați unul de altul, și să nu cumva să deschideți până ce nu-ți auzi glasul meu. Când voiu veni eu, am să vă dau de știre, ca să mă cunoașteți, și am să vă spun așa :
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+Auzit-ați ce-am spus eu ?
+
+– Da, mămucă, ziseră iezii.
+
+– Pot să am nădejde în voi ?
+
+– Să n-ai nici o grijă, mămucă, apucară cu gura înainte cei mai mari. Noi suntem odată băieți, și ce-am vorbit odată vorbit rămâne.
+
+– Dacă-i așa, apoi veniți să vă sărute mama ! Dumnezeu să vă apere de cele rele, și mai rămâneți cu bine!
+
+– Mergi sănătoasă, mămucă, zise cel mic, cu lacrimi în ochi, și Dumnezeu să-ți ajute ca să te întoarne cu bine și să ne-aduci demâncare.
+
+Apoi capra iese și se duce în treaba ei. Iar iezii închid ușa după dânsa și trag zăvorul. Dar vorba veche : "Păreții au urechi și fereștile ochi". Un dușman de lup - ș-apoi știți care ? - chiar cumătrul caprei, care de mult pândea vreme cu prilej ca să pape iezii, trăgea cu urechea la păretele din dosul casei, când vorbea capra cu dânșii.
+
+"Bun ! zise el în gândul său. Ia, acum mi-e timpul... De i-ar împinge păcatul să-mi deschidă ușa, halal să-mi fie ! Știu că i-aș cărnoși și i-aș jumuli !" Cum zice, și vine la ușă; și cum vine, și începe :
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+– Hai ! deschideți cu fuga, dragii mamei, cu fuga !
+
+– Ia ! Băieți, zise cel mai mare, săriți și deschideți ușa, că vine mama cu demâncare.
+
+– Săracuțul de mine ! zise cel mic. Să nu cumva să faceți pozna să deschideți, că-i vai de noi ! Asta nu-i mămuca. Eu o cunosc de pe glas; glasul ei nu-i așa de gros și de răgușit, că-i mai subțire și mai frumos !
+
+Lupul, auzind aceste, se duse la un ferar și puse să-i ascute limba și dinții, pentru a-și subția glasul, ș-apoi, întorcându-se, începu iar :
+
+Trei iezi cucuieți
+
+Ușa mamei descuieți !...
+
+– Ei, vedeți, zise iarăși cel mare; dacă mă potrivesc eu vouă ? Nu-i mămuca, nu-i mămuca !
+
+D-apoi cine-i dacă nu-i ea ? Că doar și eu am urechi ! Mă duc să-i deschid.
+
+– Bădică ! bădică ! zise iarăși cel mic. Ascultați-mă și pe mine ! Poate mai de-apoi a veni cineva ș-a zice:
+
+Deschideți ușa,  
+Că vine mătușa !
+
+ș-atunci voi trebuie numaidecât să deschideți ? D-apoi nu știți că mătușa-i moartă de când lupii albi și s-a făcut oale și ulcioare, sărmana ?
+
+– Apoi, da ! nu spun eu bine ? zise cel mare. Ia, de-atunci e rău în lume, de când a ajuns coada să fie cap... Dacă te-i potrivi tu acestora, îi ține mult și bine pe mămuca afară. Eu, unul, mă duc să deschid.
+
+Atunci mezinul se vâră iute în horn și, sprijinit cu picioarele de prichiciu și cu nasul de funingine, tace ca peștele și tremură ca varga de frică. Dar frica-i din raiu, sărmana ! Asemene cel mijlociu, tuștiu ! iute sub un cherșin; se-nghemuiește acolo cum poate, tace ca pământul și-i tremură carnea pe dânsul de frică : Fuga-i rușinoasă, da-i sănătoasă !
+
+... Însă cel mare se dă după ușă și - să tragă, să nu tragă ? - în sfârșit, trage zăvorul... Când iaca !... ce să vadă ? ș-apoi mai are când vede ?... căci lupului îi scăpărau ochii și-i sfârâia gâtlejul de flămând ce era. Și, nici una, nici două, haț ! pe ied de gât, îi răteză capul pe loc și-l mănâncă așa de iute și cu atâta poftă, de-ți părea că nici pe-o măsea nu are ce pune. Apoi se linge frumușel pe bot și începe a se învârti prin casă cu neastâmpăr, zicând :
+
+– Nu știu, părerea m-a amăgit, ori am auzit mai multe glasuri ? Dar ce Dumnezeu ?! Parc-au intrat în pământ... Unde să fie ? Se ițește el pe colo, se ițește pe dincolo, dar pace bună ! iezii nu-s nicăiri !
+
+– Mă !... că mare minune-i asta !... dar nici acasă n-am de coasă... ia să mai odihnesc oleaca aste bătrânețe !
+
+Apoi se îndoaie de șele cam cu greu, și se pune pe cherșin. și când s-a pus pe cherșin, nu știu cum s-au făcut, că ori cherșinul a crăpat, ori cumătrul a strănutat...
+
+Atunci iedul de sub cherșin, să nu tacă ? - Îl păștea păcatul și-l mânca spinarea, sărăcuțul !
+
+– Să-ți fie de bine, nănașule !
+
+– A !... ghidi ! ghidi ! ghiduși ce ești ! Aici mi-ai fost ? Ia vină-ncoace la nănășelul, să te pupe el ! Apoi ridică cherșinul binișor, înșfăcă iedul de urechi și-l flocăiește și-l jumulește și pe-acela de-i merg petecele !... Vorba ceea : "Că toată paserea pe limba ei piere".
+
+Pe urmă se mai învârte prin casă, doar a mai găsi ceva, dar nu găsește nimic, căci iedul cel cuminte tăcea molcum în horn, cum tace peștele în borș la foc. Dacă vede lupul și vede că nu mai găsește nimic, își pune în gând una : așază cele două capete cu dinții rânjiți în ferești, de ți se părea că râdeau; pe urmă unge toți păreții cu sânge, ca să facă și mai mult în ciuda caprei, ș-apoi iese și-și caută de drum. Cum a ieșit dușmanul din casă, iedul cel mic se dă iute jos din horn și încuie ușa bine. Apoi începe a se scărmăna de cap și a plânge cu amar după frățiorii săi.
+
+– Drăguții mei frățiori ! De nu s-ar fi înduplecat, lupul nu i-ar fi mâncat ! și biata mamă nu știe de astă mare urgie ce-a venit pe capul ei !
+
+Și bocește el și bocește până îl apucă leșin ! Dar ce era să le facă ? Vina nu era a lui, ce au căutat pe nas le-a dat.
+
+Când jălea el așa, iacă și capra venea cât putea, încărcată cu de-a mâncării și gâfuind. Și cum venea, cât de colo vede cele două capete, cu dinții rânjind, în ferești.
+
+– Dragii mămucuței, dragi ! Cum așteaptă ei cu bucurie și-mi râd înainte când mă văd !
+
+Băieții mamei, băieți,  
+Frumușei și cucuieți !
+
+Bucuria caprei nu era proastă. Dar când s-apropie bine, ce să vadă ? Un fior rece ca gheața îi trece prin vine, picioarele i se taie, un tremur o cuprinde în tot trupul, și ochii i se păinjinesc. și ce era nu era a bine !... Ea însă tot merge pân' la ușă, cum poate, crezând că părerea o înșală... și cum ajunge, și începe
+
+Trei iezi cucuieți  
+Ușa mamei descuieți !  
+Că mama v-aduce vouă :  
+Frunze-n buze,  
+Lapte-n țâțe,  
+Drob de sare  
+În spinare,  
+Mălăieș  
+În călcăieș  
+Smoc de flori  
+Pe subsuori.
+
+Atunci iedul mezin - care acum era și cel dintâi și cel de pe urmă - sare iute și-i deschide ușa. Apoi s-aruncă în brațele mâne-sa și cu lacrimi de sânge începe a-i spune :
+
+– Mămucă, mămucă, uite ce am pățit noi ! Mare foc și potop au căzut pe capul nostru !
+
+Capra atunci, holbând ochii lung prin casă, o cuprinde spaima și rămâne încremenită !... Dar mai pe urmă, îmbărbătându-se, și-a mai venit puțin în fire ș-a întrebat :
+
+– Da' ce-a fost aici, copile ?
+
+– Ce să fie, mămucă ? Ia, cum te-ai dus dumneata de-acasă, n-a trecut tocmai mult și iacă cineva s-aude bătând la ușă și spunând :
+
+Trei iezi cucuieți,
+
+Mamei ușa descuieți...
+
+– Și ?...
+
+– Și frate-meu cel mare, nătâng și neastâmpărat cum îl știi, fuga la ușă să deschidă.
+
+– Ș-atunci ?...
+
+– Atunci, eu m-am vârât iute în horn, și frate-meu cel mijlociu în cherșin, iar cel mare, după cum îți spun, se dă cu nepăsare după ușă și trage zăvorul !...
+
+– Ș-atunci ?...
+
+– Atunci, grozăvie mare ! Nănașul nostru și prietenul dumitale, cumătrul lup, se și arată în prag !
+
+– Cine ? Cumătrul meu ? El ? Care s-a jurat pe părul său că nu mi-a spărie copilașii niciodată ?
+
+– Apoi da, mamă ! Cum vezi, i-a umplut de spărieți !
+
+– Ei las', că l-oiu învăța eu ! Dacă mă vede că-s o văduvă sărmană și c-o casă de copii, apoi trebuie să-și bată joc de casa mea ? Și pe voi să vă puie la pastramă ? Nici o faptă fără plată... Ticălosul și mangositul ! Încă se rânjea la mine câteodată și-mi făcea cu măseaua... Apoi doar eu nu-s de-acelea de care crede el : n-am sărit peste garduri niciodată de când sunt. Ei, taci, cumătre, că te-oiu dobzăla eu ! Cu mine ți-ai pus boii în plug ? Apoi, ține minte că ai să-i scoți fără coarne !
+
+– Of, mămucă, of ! Mai bine taci și lasă-l în plata lui Dumnezeu ! Că știi că este o vorbă : "Nici pe dracul să-l vezi, da' nici cruce să-ți faci !"
+
+– Ba nu, dragul mamei ! "Că până la Dumnezeu, sfinții îți ieu sufletul." ș-apoi ține tu minte, copile, ce-ți spun eu : că de i-a mai da lui nasul să mai miroase p-aici, apoi las' !... Numai tu, să nu cumva să te răsufli cuiva, ca să prindă el de veste.
+
+Și de-atunci căuta și ea vreme cu prilej ca să facă pe obraz cumătru-său. Se pune ea și stă în cumpene, cum să dreagă și ce să-i facă ?
+
+"Aha ! ia, acum i-am găsit leacul, zise ea în gândul său. Taci ! că i-oiu face eu cumătrului una de ș-a mușca labele !"
+
+Aproape de casa ei era o groapă adâncă; acolo-i nădejdea caprei.
+
+– La cadă cu dubală, cumătre lup, că nu-i de chip !... Ia, de-acu să-ncepe fapta : Hai la treabă, cumătriță, că lupul ți-a dat de lucru !"
+
+Și așa zicând, pune poalele-n brâu, își suflecă mânicele, ațâță focul și s-apucă de făcut bucate. Face ea sarmale, face plachie, face alivenci, face pască cu smântână și cu ouă și fel de fel de bucate. Apoi umple groapa cu jăratic și cu lemne putregăioase ca să ardă focul mocnit. După asta așază o leașă de nuiele numai întinată și niște frunzări peste dânsa : peste frunzări toarnă țărână și peste țărână așterne o rogojină. Apoi face un scăuieș de ceară anume pentru lup. Pe urmă lasă bucatele la foc să fearbă și se duce prin pădure să caute pe cumătru-său și să-l poftească la praznic. Merge ea cât merge prin codru, până ce dă pe-o prăpastie grozavă și întunecoasă și pe-o tihăraie dă peste lup.
+
+– Bună vreme, cumătro ! Da' ce vânt te-a abătut pe-aici ?
+
+– Bună să-ți fie inima, cumătre, cum ți-i căutătura... apoi da, nu știi dumneata că nevoia te duce pe unde nu ți-i voia ? Ia, nu știu cine-a fost pe la mine pe-acasă în lipsa mea, că știu că mi-a făcut-o bună !
+
+– Ca ce fel, cumătriță dragă ?
+
+– Ia, a găsit iezii singurei, i-a ucis și i-a crâmpoțit, de le-am plâns de milă ! Numai văduvă să nu mai fie cineva !
+
+– Da' nu mai spune, cumătră !
+
+– Apoi de-acum, ori să spun, ori să nu mai spun, că totuna mi-e. Ei, mititeii, s-au dus cătră Domnul, și datoria ne face să le căutam de suflet. De aceea am făcut și eu un praznic, după puterea mea, și am găsit de cuviință să te poftesc și pe d-ta, cumătre; ca să mă mai mângâi...
+
+– Bucuros, dragă cumătră, dar mai bucuros eram când m-ai fi chemat la nuntă.
+
+– Te cred, cumătre, d-apoi, da, nu-i cum vrem noi, ci-i cum vre Cel-de-sus.
+
+Apoi capra pornește înainte plângând, și lupul după dânsa, prefăcându-se că plânge.
+
+– Doamne, cumătre, Doamne ! zise capra suspinând. De ce ți-e mai drag în lume, de-aceea n-ai parte...
+
+– Apoi da, cumătră, când ar ști omul ce-ar păți, dinainte s-ar păzi. Nu-ți mai face și dumneata atâta inimă rea, că odată avem să mergem cu toții acolo.
+
+– Așa este, cumătre, nu-i vorba. Dar sărmanii găgălici, de cruzi s-au mai dus !
+
+– Apoi da, cumătră; se vede că și lui Dumnezeu îi plac tot puișori de cei mai tineri.
+
+– Apoi, dacă i-ar fi luat Dumnezeu, ce ți-ar fi ? D-apoi așa ?
+
+– Doamne, cumătră, Doamne ! Oiu face și eu ca prostul... Oare nu cumva nenea Martin a dat pe la dumneata pe acasă ? Că mi-aduc aminte ca acu că l-am întâlnit odată prin zmeuriș; și mi-a spus că dacă-i vrea dumneata să-i dai un băiet, să-l învețe cojocăria.
+
+Și din vorbă-n vorbă, din una-n alta, ajung pân-acasă la cumătră !
+
+– Ia poftim, cumătre, zise ea luând scăuieșul și punându-l deasupra groapei cu pricina, șezi cole și să ospătezi oleacă din ceea ce ne-a dat Dumnezeu !
+
+Răstoarnă apoi sarmalele în strachină și i le pune dinainte.
+
+Atunci lupul nostru începe a mânca hâlpav; și gogâlț, gogâlț, gogâlț, îi mergeau sarmalele întregi pe gât.
+
+– Dumnezeu să ierte pe cei răposați, cumătră, că bune sarmale ai mai făcut !
+
+– Și cum ospăta el, buf ! cade fără sine în groapa cu jăratic, căci scăuieșul de ceară s-a topit, și leașa de pe groapă nu era bine sprijinită : nici mai bine, nici mai rău, ca pentru cumătru.
+
+– Ei, ei ! Acum scoate, lupe, ce-ai mâncat ! Cu capra ți-ai pus în cârd ? Capra ți-a venit de hac !
+
+– Văleu, cumătră, tălpele mele ! Mă rog, scoate-mă că-mi arde inima-n mine !
+
+– Ba nu, cumătre; c-așa mi-a ars și mie inima după iezișorii mei ! Lui Dumnezeu îi plac pui de cei mai tineri; mie însă-mi plac și de iști mai bătrâni, numai să fie bine fripți; știi, cole, să treacă focul printr-înșii.
+
+– Cumătră, mă pârlesc, ard de tot, mor, nu mă lăsa !
+
+– Arzi, cumătre, mori, că nici viu nu ești bun ! De-abie i-a mai trece băietului istuia de spărieț, că mult păr îmi trebuia de la tine ca să-l afum. Ți-aduci aminte, dihanie răutăcioasă și spurcată, când mi te-ai jurat pe părul tău ? și bine mi-ai mâncat iezișorii !
+
+– Mă ustură inima-n mine, cumătră ! mă rog, scoate-mă, și nu-ți mai face atâta osândă cu mine !
+
+– Moarte pentru moarte, cumătre, arsură pentru arsură, că bine-o mai plesniși dînioare cu cuvinte din scriptură !
+
+După aceasta, capra și cu iedul au luat o căpiță de fân ș-au aruncat-o peste dânsul, în groapă, ca să se mai potolească focul. Apoi, la urma urmelor, năpădiră asupra lui și-i mai trântiră în cap cu bolovani și cu ce-au apucat, până-l omorâră de tot. Și așa s-a păgubit sărmana capră și de cei doi iezi, da' și de cumătru-său lupul păgubașă a rămas, și păgubașă să fie.
+
+Și auzind caprele din vecinătate de una ca aceasta, tare le-au mai părut bine ! Și s-au adunat cu toatele la priveghiu și unde nu s-au așternut pe mâncate și pe băute, veselindu-se împreună...
+
+Și eram și eu acolo de față, și-ndată după aceea am încălecat iute pe-o șea, ș-am venit de v-am spus povestea așa, ș-am mai încălecat pe-o roată și v-am spus jitia toată; și unde n-am mai încălecat pe-o capșună și v-am spus, oameni buni, o mare și gogonată minciună !$demo$), now() - interval '39 days'
+where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000100010000'::uuid);
+
 -- classic-02-punguta-cu-doi-bani: "Punguța cu doi bani" by clasice
 insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
   cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
@@ -3920,2465 +4823,4 @@ Ediția sursă: 1883. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '43 days', now() - interval '43 days', now() - interval '45 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000600000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000600000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
-insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
-  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
-  published_word_count, created_at)
-select '00000000-0000-4000-9300-000600010000'::uuid, '00000000-0000-4000-9300-000600000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
-  'k006c001', 1, $demo$Luceafărul$demo$, public.check_chapter_text($demo$A fost odată ca-n povești,  
-A fost ca niciodată,  
-Din rude mari împărătești,  
-O prea frumoasă fată.
-
-Și era una la părinți  
-Și mândră-n toate cele,  
-Cum e Fecioara între sfinți  
-Și luna între stele.
-
-Din umbra falnicelor bolți  
-Ea pasul și-l îndreaptă  
-Lângă fereastră, unde-n colț  
-Luceafărul așteaptă.
-
-Privea în zare cum pe mări  
-Răsare și străluce,  
-Pe mișcătoarele cărări  
-Corăbii negre duce.
-
-Îl vede azi, îl vede mâni,  
-Astfel dorința-i gata;  
-El iar, privind de săptămâni,  
-Îi cade dragă fata.
-
-Cum ea pe coate-și răzima  
-Visând ale ei tâmple  
-De dorul lui și inima  
-Și sufletu-i se împle.
-
-Și cât de viu s-aprinde el  
-În orișicare sară,  
-Spre umbra negrului castel  
-Când ea o să-i apară.
-
-*
-
-Și pas cu pas pe urma ei  
-Alunecă-n odaie,  
-Țesând cu recile-i scântei  
-O mreajă de văpaie.
-
-Și când în pat se-ntinde drept  
-Copila să se culce,  
-I-atinge mâinile pe piept,  
-I-nchide geana dulce;
-
-Și din oglindă luminiș  
-Pe trupu-i se revarsă,  
-Pe ochii mari, bătând închiși  
-Pe fața ei întoarsă.
-
-Ea îl privea cu un surâs,  
-El tremura-n oglindă,  
-Căci o urma adânc în vis  
-De suflet să se prindă.
-
-Iar ea vorbind cu el în somn,  
-Oftând din greu suspină  
-– „O, dulce-al nopții mele domn,  
-De ce nu vii tu? Vină!
-
-Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n casă și în gând  
-Și viața-mi luminează!”
-
-El asculta tremurător,  
-Se aprindea mai tare  
-Și s-arunca fulgerător,  
-Se cufunda în mare;
-
-Și apa unde-au fost căzut  
-În cercuri se rotește,  
-Și din adânc necunoscut  
-Un mândru tânăr crește.
-
-Ușor el trece ca pe prag  
-Pe marginea ferestei  
-Și ține-n mână un toiag  
-Încununat cu trestii.
-
-Părea un tânăr voevod  
-Cu păr de aur moale,  
-Un vânăt giulgi se-ncheie nod  
-Pe umerele goale.
-
-Iar umbra feței străvezii  
-E albă ca de ceară -  
-Un mort frumos cu ochii vii  
-Ce scânteie-n afară.
-
-– „Din sfera mea venii cu greu  
-Ca să-ți urmez chemarea,  
-Iar cerul este tatăl meu  
-Și mumă-mea e marea.
-
-Ca în cămara ta să vin,  
-Să te privesc de-aproape,  
-Am coborât cu-al meu senin  
-Și m-am născut din ape.
-
-O, vin'! odorul meu nespus,  
-Și lumea ta o lasă;  
-Eu sunt luceafărul de sus,  
-Iar tu să-mi fii mireasă.
-
-Colo-n palate de mărgean  
-Te-oi duce veacuri multe,  
-Și toată lumea-n ocean  
-De tine o s-asculte.”
-
-– „O, ești frumos, cum numa-n vis  
-Un înger se arată,  
-Dară pe calea ce-ai deschis  
-N-oi merge niciodată;
-
-Străin la vorbă și la port,  
-Lucești fără de viață,  
-Căci eu sunt vie, tu ești mort,  
-Și ochiul tău mă-ngheață.”
-
-*
-
-Trecu o zi, trecură trei  
-Și iarăși, noaptea, vine  
-Luceafărul deasupra ei  
-Cu razele-i senine.
-
-Ea trebui de el în somn  
-Aminte să-și aducă  
-Și dor de-al valurilor domn  
-De inim-o apucă
-
-– „Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n casă și în gând  
-Și viața-mi luminează!”
-
-Cum el din cer o auzi,  
-Se stinse cu durere,  
-Iar ceru-ncepe a roti  
-În locul unde piere;
-
-În aer rumene văpăi  
-Se-ntind pe lumea-ntreagă,  
-Și din a chaosului văi  
-Un mândru chip se-ncheagă;
-
-Pe negre vițele-i de păr  
-Coroana-i arde pare,  
-Venea plutind în adevăr  
-Scăldat în foc de soare.
-
-Din negru giulgi se desfășor  
-Marmoreele brațe,  
-El vine trist și gânditor  
-Și palid e la față;
-
-Dar ochii mari și minunați  
-Lucesc adânc himeric,  
-Ca două patimi fără saț  
-Și pline de-ntuneric.
-
-– „Din sfera mea venii cu greu  
-Ca să te-ascult ș-acuma,  
-Și soarele e tatăl meu,  
-Iar noaptea-mi este muma;
-
-O, vin', odorul meu nespus,  
-Și lumea ta o lasă;  
-Eu sunt luceafărul de sus,  
-Iar tu să-mi fii mireasă.
-
-O, vin', în părul tău bălai  
-S-anin cununi de stele,  
-Pe-a mele ceruri să răsai  
-Mai mândră decât ele.”
-
-– „O, ești frumos cum numa-n vis  
-Un demon se arată,  
-Dară pe calea ce-ai deschis  
-N-oi merge niciodată!
-
-Mă dor de crudul tău amor  
-A pieptului meu coarde,  
-Și ochii mari și grei mă dor,  
-Privirea ta mă arde.”
-
-– „Dar cum ai vrea să mă cobor?  
-Au nu-nțelegi tu oare,  
-Cum că eu sunt nemuritor,  
-Și tu ești muritoare?”
-
-– „Nu caut vorbe pe ales,  
-Nici știu cum aș începe ―  
-Deși vorbești pe înțeles,  
-Eu nu te pot pricepe;
-
-Dar dacă vrei cu crezământ  
-Să te-ndrăgesc pe tine,  
-Tu te coboară pe pământ,  
-Fii muritor ca mine.”
-
-– „Tu-mi ceri chiar nemurirea mea  
-În schimb pe-o sărutare,  
-Dar voi să știi asemenea  
-Cât te iubesc de tare;
-
-Da, mă voi naște din păcat,  
-Primind o altă lege;  
-Cu vecinicia sunt legat,  
-Ci voi să mă dezlege.”
-
-Și se tot duce... S-a tot dus.  
-De dragu-unei copile,  
-S-a rupt din locul lui de sus,  
-Pierind mai multe zile.
-
-*
-
-În vremea asta Cătălin,  
-Viclean copil de casă,  
-Ce împle cupele cu vin  
-Mesenilor la masă,
-
-Un paj ce poartă pas cu pas  
-A-mpărătesii rochii,  
-Băiat din flori și de pripas,  
-Dar îndrăzneț cu ochii,
-
-Cu obrăjei ca doi bujori  
-De rumeni, bată-i vina,  
-Se furișează pânditor  
-Privind la Cătălina.
-
-Dar ce frumoasă se făcu  
-Și mândră, arz-o focul;  
-Ei Cătălin, acu-i acu  
-Ca să-ți încerci norocul.
-
-Și-n treacăt o cuprinse lin  
-Într-un ungher degrabă.  
-– „Da' ce vrei, mări Cătălin?  
-Ia du-t' de-ți vezi de treabă.”
-
-– „Ce voi? Aș vrea să nu mai stai  
-Pe gânduri totdeuna,  
-Să râzi mai bine și să-mi dai  
-O gură, numai una.”
-
-– „Dar nici nu știu măcar ce-mi ceri,  
-Dă-mi pace, fugi departe ―  
-O, de luceafărul din cer  
-M-a prins un dor de moarte.”
-
-– „Dacă nu știi, ți-aș arăta  
-Din bob în bob amorul,  
-Ci numai nu te mânia,  
-Ci stai cu binișorul.
-
-Cum vânătoru-ntinde-n crâng  
-La păsărele lațul,  
-Când ți-oi întinde brațul stâng  
-Să mă cuprinzi cu brațul;
-
-Și ochii tăi nemișcători  
-Sub ochii mei rămâie...  
-De te înalț de subțiori  
-Te-nalță din călcâie;
-
-Când fața mea se pleacă-n jos,  
-În sus rămâi cu fața,  
-Să ne privim nesățios  
-Și dulce toată viața;
-
-Și ca să-ți fie pe deplin  
-Iubirea cunoscută,  
-Când sărutându-te mă-nclin,  
-Tu iarăși mă sărută.”
-
-Ea-l asculta pe copilaș  
-Uimită și distrasă,  
-Și rușinos și drăgălaș,  
-Mai nu vrea, mai se lasă.
-
-Și-i zise-ncet: ― "Încă de mic  
-Te cunoșteam pe tine,  
-Și guraliv și de nimic,  
-Te-ai potrivi cu mine...
-
-Dar un luceafăr, răsărit  
-Din liniștea uitării,  
-Dă orizon nemărginit  
-Singurătății mării;
-
-Și tainic genele le plec,  
-Căci mi le împle plânsul  
-Când ale apei valuri trec  
-Călătorind spre dânsul;
-
-Lucește c-un amor nespus  
-Durerea să-mi alunge,  
-Dar se înalță tot mai sus,  
-Ca să nu-l pot ajunge.
-
-Pătrunde trist cu raze reci  
-Din lumea ce-l desparte...  
-În veci îl voi iubi și-n veci  
-Va rămânea departe...
-
-De-aceea zilele îmi sunt  
-Pustii ca niște stepe,  
-Dar nopțile-s de-un farmec sfânt  
-Ce nu-l mai pot pricepe.”
-
-– „Tu ești copilă, asta e...  
-Hai ș-om fugi în lume,  
-Doar ni s-or pierde urmele  
-Și nu ne-or ști de nume,
-
-Căci amândoi vom fi cuminți,  
-Vom fi voioși și teferi,  
-Vei pierde dorul de părinți  
-Și visul de luceferi.”
-
-*
-
-Porni luceafărul. Creșteau  
-În cer a lui aripe,  
-Și căi de mii de ani treceau  
-În tot atâtea clipe.
-
-Un cer de stele dedesubt,  
-Deasupra-i cer de stele ―  
-Părea un fulger ne-ntrerupt  
-Rătăcitor prin ele.
-
-Și din a chaosului văi,  
-Jur împrejur de sine,  
-Vedea, ca-n ziua cea de-ntâi,  
-Cum izvorau lumine;
-
-Cum izvorând îl înconjor  
-Ca niște mări, de-a-notul...  
-El zboară, gând purtat de dor,  
-Pân' piere totul, totul;
-
-Căci unde-ajunge nu-i hotar,  
-Nici ochi spre a cunoaște,  
-Și vremea-ncearcă în zadar  
-Din goluri a se naște.
-
-Nu e nimic și totuși e  
-O sete care-l soarbe,  
-E un adânc asemene  
-Uitării celei oarbe.
-
-– „De greul negrei vecinicii,  
-Părinte, mă dezleagă  
-Și lăudat pe veci să fii  
-Pe-a lumii scară-ntreagă;
-
-O, cere-mi, Doamne, orice preț,  
-Dar dă-mi o altă soarte,  
-Căci tu izvor ești de vieți  
-Și dătător de moarte;
-
-Reia-mi al nemuririi nimb  
-Și focul din privire,  
-Și pentru toate dă-mi în schimb  
-O oră de iubire...
-
-Din chaos, Doamne-am apărut  
-Și m-aș întoarce-n chaos...  
-Și din repaos m-am născut.  
-Mi-e sete de repaos.”
-
-– „Hyperion, ce din genuni  
-Răsai c-o-ntreagă lume,  
-Nu cere semne și minuni  
-Care n-au chip și nume;
-
-Tu vrei un om să te socoți,  
-Cu ei să te asameni?  
-Dar piară oamenii cu toți,  
-S-ar naște iarăși oameni.
-
-Ei numai doar durează-n vânt  
-Deșerte idealuri ―  
-Când valuri află un mormânt,  
-Răsar în urmă valuri;
-
-Ei doar au stele cu noroc  
-Și prigoniri de soarte,  
-Noi nu avem nici timp, nici loc,  
-Și nu cunoaștem moarte.
-
-Din sânul vecinicului ieri  
-Trăiește azi ce moare,  
-Un soare de s-ar stinge-n cer  
-S-aprinde iarăși soare;
-
-Părând pe veci a răsări,  
-Din urmă moartea-l paște,  
-Căci toți se nasc spre a muri  
-Și mor spre a se naște.
-
-Iar tu, Hyperion, rămâi  
-Oriunde ai apune...  
-Cere-mi cuvântul meu de-ntâi,  
-Să-ți dau înțelepciune?
-
-Vrei să dau glas acelei guri,  
-Ca dup-a ei cântare  
-Să se ia munții cu păduri  
-Și insulele-n mare?
-
-Vrei poate-n faptă să arăți  
-Dreptate și tărie?  
-Ți-aș da pământul în bucăți  
-Să-l faci împărăție.
-
-Îți dau catarg lângă catarg,  
-Oștiri spre a străbate  
-Pământu-n lung și marea-n larg,  
-Dar moartea nu se poate...
-
-Și pentru cine vrei să mori?  
-Întoarce-te, te-ndreaptă  
-Spre-acel pământ rătăcitor  
-Și vezi ce te așteaptă.”
-
-*
-
-În locul lui menit din cer  
-Hyperion se-ntoarse  
-Și, ca și-n ziua cea de ieri,  
-Lumina și-o revarsă.
-
-Căci este sara-n asfințit  
-Și noaptea o să-nceapă;  
-Răsare luna liniștit  
-Și tremurând din apă.
-
-Și împle cu-ale ei scântei  
-Cărările din crânguri.  
-Sub șirul lung de mândri tei  
-Ședeau doi tineri singuri
-
-– „O, lasă-mi capul meu pe sân,  
-Iubito, să se culce  
-Sub raza ochiului senin  
-Și negrăit de dulce;
-
-Cu farmecul luminii reci  
-Gândirile străbate-mi,  
-Revarsă liniște de veci  
-Pe noaptea mea de patimi.
-
-Și de asupra mea rămâi  
-Durerea mea de-o curmă,  
-Căci ești iubirea mea de-ntâi  
-Și visul meu din urmă.”
-
-Hyperion vedea de sus  
-Uimirea-n a lor față;  
-Abia un braț pe gât i-a pus  
-Și ea l-a prins în brațe...
-
-Miroase florile-argintii  
-Și cad, o dulce ploaie,  
-Pe creștetele-a doi copii  
-Cu plete lungi, bălaie.
-
-Ea, îmbătată de amor,  
-Ridică ochii. Vede  
-Luceafărul. Și-ncetișor  
-Dorințele-i încrede:
-
-– „Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n codru și în gând,  
-Norocu-mi luminează!”
-
-El tremură ca alte dăți  
-În codri și pe dealuri,  
-Călăuzind singurătăți  
-De mișcătoare valuri;
-
-Dar nu mai cade ca-n trecut  
-În mări din tot înaltul  
-– „Ce-ți pasă ție, chip de lut,  
-Dac-oi fi eu sau altul?
-
-Trăind în cercul vostru strâmt  
-Norocul vă petrece,  
-Ci eu în lumea mea mă simt  
-Nemuritor și rece.”$demo$), 1,
-  now() - interval '43 days', $demo$Luceafărul$demo$, public.check_chapter_text($demo$A fost odată ca-n povești,  
-A fost ca niciodată,  
-Din rude mari împărătești,  
-O prea frumoasă fată.
-
-Și era una la părinți  
-Și mândră-n toate cele,  
-Cum e Fecioara între sfinți  
-Și luna între stele.
-
-Din umbra falnicelor bolți  
-Ea pasul și-l îndreaptă  
-Lângă fereastră, unde-n colț  
-Luceafărul așteaptă.
-
-Privea în zare cum pe mări  
-Răsare și străluce,  
-Pe mișcătoarele cărări  
-Corăbii negre duce.
-
-Îl vede azi, îl vede mâni,  
-Astfel dorința-i gata;  
-El iar, privind de săptămâni,  
-Îi cade dragă fata.
-
-Cum ea pe coate-și răzima  
-Visând ale ei tâmple  
-De dorul lui și inima  
-Și sufletu-i se împle.
-
-Și cât de viu s-aprinde el  
-În orișicare sară,  
-Spre umbra negrului castel  
-Când ea o să-i apară.
-
-*
-
-Și pas cu pas pe urma ei  
-Alunecă-n odaie,  
-Țesând cu recile-i scântei  
-O mreajă de văpaie.
-
-Și când în pat se-ntinde drept  
-Copila să se culce,  
-I-atinge mâinile pe piept,  
-I-nchide geana dulce;
-
-Și din oglindă luminiș  
-Pe trupu-i se revarsă,  
-Pe ochii mari, bătând închiși  
-Pe fața ei întoarsă.
-
-Ea îl privea cu un surâs,  
-El tremura-n oglindă,  
-Căci o urma adânc în vis  
-De suflet să se prindă.
-
-Iar ea vorbind cu el în somn,  
-Oftând din greu suspină  
-– „O, dulce-al nopții mele domn,  
-De ce nu vii tu? Vină!
-
-Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n casă și în gând  
-Și viața-mi luminează!”
-
-El asculta tremurător,  
-Se aprindea mai tare  
-Și s-arunca fulgerător,  
-Se cufunda în mare;
-
-Și apa unde-au fost căzut  
-În cercuri se rotește,  
-Și din adânc necunoscut  
-Un mândru tânăr crește.
-
-Ușor el trece ca pe prag  
-Pe marginea ferestei  
-Și ține-n mână un toiag  
-Încununat cu trestii.
-
-Părea un tânăr voevod  
-Cu păr de aur moale,  
-Un vânăt giulgi se-ncheie nod  
-Pe umerele goale.
-
-Iar umbra feței străvezii  
-E albă ca de ceară -  
-Un mort frumos cu ochii vii  
-Ce scânteie-n afară.
-
-– „Din sfera mea venii cu greu  
-Ca să-ți urmez chemarea,  
-Iar cerul este tatăl meu  
-Și mumă-mea e marea.
-
-Ca în cămara ta să vin,  
-Să te privesc de-aproape,  
-Am coborât cu-al meu senin  
-Și m-am născut din ape.
-
-O, vin'! odorul meu nespus,  
-Și lumea ta o lasă;  
-Eu sunt luceafărul de sus,  
-Iar tu să-mi fii mireasă.
-
-Colo-n palate de mărgean  
-Te-oi duce veacuri multe,  
-Și toată lumea-n ocean  
-De tine o s-asculte.”
-
-– „O, ești frumos, cum numa-n vis  
-Un înger se arată,  
-Dară pe calea ce-ai deschis  
-N-oi merge niciodată;
-
-Străin la vorbă și la port,  
-Lucești fără de viață,  
-Căci eu sunt vie, tu ești mort,  
-Și ochiul tău mă-ngheață.”
-
-*
-
-Trecu o zi, trecură trei  
-Și iarăși, noaptea, vine  
-Luceafărul deasupra ei  
-Cu razele-i senine.
-
-Ea trebui de el în somn  
-Aminte să-și aducă  
-Și dor de-al valurilor domn  
-De inim-o apucă
-
-– „Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n casă și în gând  
-Și viața-mi luminează!”
-
-Cum el din cer o auzi,  
-Se stinse cu durere,  
-Iar ceru-ncepe a roti  
-În locul unde piere;
-
-În aer rumene văpăi  
-Se-ntind pe lumea-ntreagă,  
-Și din a chaosului văi  
-Un mândru chip se-ncheagă;
-
-Pe negre vițele-i de păr  
-Coroana-i arde pare,  
-Venea plutind în adevăr  
-Scăldat în foc de soare.
-
-Din negru giulgi se desfășor  
-Marmoreele brațe,  
-El vine trist și gânditor  
-Și palid e la față;
-
-Dar ochii mari și minunați  
-Lucesc adânc himeric,  
-Ca două patimi fără saț  
-Și pline de-ntuneric.
-
-– „Din sfera mea venii cu greu  
-Ca să te-ascult ș-acuma,  
-Și soarele e tatăl meu,  
-Iar noaptea-mi este muma;
-
-O, vin', odorul meu nespus,  
-Și lumea ta o lasă;  
-Eu sunt luceafărul de sus,  
-Iar tu să-mi fii mireasă.
-
-O, vin', în părul tău bălai  
-S-anin cununi de stele,  
-Pe-a mele ceruri să răsai  
-Mai mândră decât ele.”
-
-– „O, ești frumos cum numa-n vis  
-Un demon se arată,  
-Dară pe calea ce-ai deschis  
-N-oi merge niciodată!
-
-Mă dor de crudul tău amor  
-A pieptului meu coarde,  
-Și ochii mari și grei mă dor,  
-Privirea ta mă arde.”
-
-– „Dar cum ai vrea să mă cobor?  
-Au nu-nțelegi tu oare,  
-Cum că eu sunt nemuritor,  
-Și tu ești muritoare?”
-
-– „Nu caut vorbe pe ales,  
-Nici știu cum aș începe ―  
-Deși vorbești pe înțeles,  
-Eu nu te pot pricepe;
-
-Dar dacă vrei cu crezământ  
-Să te-ndrăgesc pe tine,  
-Tu te coboară pe pământ,  
-Fii muritor ca mine.”
-
-– „Tu-mi ceri chiar nemurirea mea  
-În schimb pe-o sărutare,  
-Dar voi să știi asemenea  
-Cât te iubesc de tare;
-
-Da, mă voi naște din păcat,  
-Primind o altă lege;  
-Cu vecinicia sunt legat,  
-Ci voi să mă dezlege.”
-
-Și se tot duce... S-a tot dus.  
-De dragu-unei copile,  
-S-a rupt din locul lui de sus,  
-Pierind mai multe zile.
-
-*
-
-În vremea asta Cătălin,  
-Viclean copil de casă,  
-Ce împle cupele cu vin  
-Mesenilor la masă,
-
-Un paj ce poartă pas cu pas  
-A-mpărătesii rochii,  
-Băiat din flori și de pripas,  
-Dar îndrăzneț cu ochii,
-
-Cu obrăjei ca doi bujori  
-De rumeni, bată-i vina,  
-Se furișează pânditor  
-Privind la Cătălina.
-
-Dar ce frumoasă se făcu  
-Și mândră, arz-o focul;  
-Ei Cătălin, acu-i acu  
-Ca să-ți încerci norocul.
-
-Și-n treacăt o cuprinse lin  
-Într-un ungher degrabă.  
-– „Da' ce vrei, mări Cătălin?  
-Ia du-t' de-ți vezi de treabă.”
-
-– „Ce voi? Aș vrea să nu mai stai  
-Pe gânduri totdeuna,  
-Să râzi mai bine și să-mi dai  
-O gură, numai una.”
-
-– „Dar nici nu știu măcar ce-mi ceri,  
-Dă-mi pace, fugi departe ―  
-O, de luceafărul din cer  
-M-a prins un dor de moarte.”
-
-– „Dacă nu știi, ți-aș arăta  
-Din bob în bob amorul,  
-Ci numai nu te mânia,  
-Ci stai cu binișorul.
-
-Cum vânătoru-ntinde-n crâng  
-La păsărele lațul,  
-Când ți-oi întinde brațul stâng  
-Să mă cuprinzi cu brațul;
-
-Și ochii tăi nemișcători  
-Sub ochii mei rămâie...  
-De te înalț de subțiori  
-Te-nalță din călcâie;
-
-Când fața mea se pleacă-n jos,  
-În sus rămâi cu fața,  
-Să ne privim nesățios  
-Și dulce toată viața;
-
-Și ca să-ți fie pe deplin  
-Iubirea cunoscută,  
-Când sărutându-te mă-nclin,  
-Tu iarăși mă sărută.”
-
-Ea-l asculta pe copilaș  
-Uimită și distrasă,  
-Și rușinos și drăgălaș,  
-Mai nu vrea, mai se lasă.
-
-Și-i zise-ncet: ― "Încă de mic  
-Te cunoșteam pe tine,  
-Și guraliv și de nimic,  
-Te-ai potrivi cu mine...
-
-Dar un luceafăr, răsărit  
-Din liniștea uitării,  
-Dă orizon nemărginit  
-Singurătății mării;
-
-Și tainic genele le plec,  
-Căci mi le împle plânsul  
-Când ale apei valuri trec  
-Călătorind spre dânsul;
-
-Lucește c-un amor nespus  
-Durerea să-mi alunge,  
-Dar se înalță tot mai sus,  
-Ca să nu-l pot ajunge.
-
-Pătrunde trist cu raze reci  
-Din lumea ce-l desparte...  
-În veci îl voi iubi și-n veci  
-Va rămânea departe...
-
-De-aceea zilele îmi sunt  
-Pustii ca niște stepe,  
-Dar nopțile-s de-un farmec sfânt  
-Ce nu-l mai pot pricepe.”
-
-– „Tu ești copilă, asta e...  
-Hai ș-om fugi în lume,  
-Doar ni s-or pierde urmele  
-Și nu ne-or ști de nume,
-
-Căci amândoi vom fi cuminți,  
-Vom fi voioși și teferi,  
-Vei pierde dorul de părinți  
-Și visul de luceferi.”
-
-*
-
-Porni luceafărul. Creșteau  
-În cer a lui aripe,  
-Și căi de mii de ani treceau  
-În tot atâtea clipe.
-
-Un cer de stele dedesubt,  
-Deasupra-i cer de stele ―  
-Părea un fulger ne-ntrerupt  
-Rătăcitor prin ele.
-
-Și din a chaosului văi,  
-Jur împrejur de sine,  
-Vedea, ca-n ziua cea de-ntâi,  
-Cum izvorau lumine;
-
-Cum izvorând îl înconjor  
-Ca niște mări, de-a-notul...  
-El zboară, gând purtat de dor,  
-Pân' piere totul, totul;
-
-Căci unde-ajunge nu-i hotar,  
-Nici ochi spre a cunoaște,  
-Și vremea-ncearcă în zadar  
-Din goluri a se naște.
-
-Nu e nimic și totuși e  
-O sete care-l soarbe,  
-E un adânc asemene  
-Uitării celei oarbe.
-
-– „De greul negrei vecinicii,  
-Părinte, mă dezleagă  
-Și lăudat pe veci să fii  
-Pe-a lumii scară-ntreagă;
-
-O, cere-mi, Doamne, orice preț,  
-Dar dă-mi o altă soarte,  
-Căci tu izvor ești de vieți  
-Și dătător de moarte;
-
-Reia-mi al nemuririi nimb  
-Și focul din privire,  
-Și pentru toate dă-mi în schimb  
-O oră de iubire...
-
-Din chaos, Doamne-am apărut  
-Și m-aș întoarce-n chaos...  
-Și din repaos m-am născut.  
-Mi-e sete de repaos.”
-
-– „Hyperion, ce din genuni  
-Răsai c-o-ntreagă lume,  
-Nu cere semne și minuni  
-Care n-au chip și nume;
-
-Tu vrei un om să te socoți,  
-Cu ei să te asameni?  
-Dar piară oamenii cu toți,  
-S-ar naște iarăși oameni.
-
-Ei numai doar durează-n vânt  
-Deșerte idealuri ―  
-Când valuri află un mormânt,  
-Răsar în urmă valuri;
-
-Ei doar au stele cu noroc  
-Și prigoniri de soarte,  
-Noi nu avem nici timp, nici loc,  
-Și nu cunoaștem moarte.
-
-Din sânul vecinicului ieri  
-Trăiește azi ce moare,  
-Un soare de s-ar stinge-n cer  
-S-aprinde iarăși soare;
-
-Părând pe veci a răsări,  
-Din urmă moartea-l paște,  
-Căci toți se nasc spre a muri  
-Și mor spre a se naște.
-
-Iar tu, Hyperion, rămâi  
-Oriunde ai apune...  
-Cere-mi cuvântul meu de-ntâi,  
-Să-ți dau înțelepciune?
-
-Vrei să dau glas acelei guri,  
-Ca dup-a ei cântare  
-Să se ia munții cu păduri  
-Și insulele-n mare?
-
-Vrei poate-n faptă să arăți  
-Dreptate și tărie?  
-Ți-aș da pământul în bucăți  
-Să-l faci împărăție.
-
-Îți dau catarg lângă catarg,  
-Oștiri spre a străbate  
-Pământu-n lung și marea-n larg,  
-Dar moartea nu se poate...
-
-Și pentru cine vrei să mori?  
-Întoarce-te, te-ndreaptă  
-Spre-acel pământ rătăcitor  
-Și vezi ce te așteaptă.”
-
-*
-
-În locul lui menit din cer  
-Hyperion se-ntoarse  
-Și, ca și-n ziua cea de ieri,  
-Lumina și-o revarsă.
-
-Căci este sara-n asfințit  
-Și noaptea o să-nceapă;  
-Răsare luna liniștit  
-Și tremurând din apă.
-
-Și împle cu-ale ei scântei  
-Cărările din crânguri.  
-Sub șirul lung de mândri tei  
-Ședeau doi tineri singuri
-
-– „O, lasă-mi capul meu pe sân,  
-Iubito, să se culce  
-Sub raza ochiului senin  
-Și negrăit de dulce;
-
-Cu farmecul luminii reci  
-Gândirile străbate-mi,  
-Revarsă liniște de veci  
-Pe noaptea mea de patimi.
-
-Și de asupra mea rămâi  
-Durerea mea de-o curmă,  
-Căci ești iubirea mea de-ntâi  
-Și visul meu din urmă.”
-
-Hyperion vedea de sus  
-Uimirea-n a lor față;  
-Abia un braț pe gât i-a pus  
-Și ea l-a prins în brațe...
-
-Miroase florile-argintii  
-Și cad, o dulce ploaie,  
-Pe creștetele-a doi copii  
-Cu plete lungi, bălaie.
-
-Ea, îmbătată de amor,  
-Ridică ochii. Vede  
-Luceafărul. Și-ncetișor  
-Dorințele-i încrede:
-
-– „Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n codru și în gând,  
-Norocu-mi luminează!”
-
-El tremură ca alte dăți  
-În codri și pe dealuri,  
-Călăuzind singurătăți  
-De mișcătoare valuri;
-
-Dar nu mai cade ca-n trecut  
-În mări din tot înaltul  
-– „Ce-ți pasă ție, chip de lut,  
-Dac-oi fi eu sau altul?
-
-Trăind în cercul vostru strâmt  
-Norocul vă petrece,  
-Ci eu în lumea mea mă simt  
-Nemuritor și rece.”$demo$), 'published',
-  now() - interval '43 days', now() - interval '43 days', public.count_words($demo$A fost odată ca-n povești,  
-A fost ca niciodată,  
-Din rude mari împărătești,  
-O prea frumoasă fată.
-
-Și era una la părinți  
-Și mândră-n toate cele,  
-Cum e Fecioara între sfinți  
-Și luna între stele.
-
-Din umbra falnicelor bolți  
-Ea pasul și-l îndreaptă  
-Lângă fereastră, unde-n colț  
-Luceafărul așteaptă.
-
-Privea în zare cum pe mări  
-Răsare și străluce,  
-Pe mișcătoarele cărări  
-Corăbii negre duce.
-
-Îl vede azi, îl vede mâni,  
-Astfel dorința-i gata;  
-El iar, privind de săptămâni,  
-Îi cade dragă fata.
-
-Cum ea pe coate-și răzima  
-Visând ale ei tâmple  
-De dorul lui și inima  
-Și sufletu-i se împle.
-
-Și cât de viu s-aprinde el  
-În orișicare sară,  
-Spre umbra negrului castel  
-Când ea o să-i apară.
-
-*
-
-Și pas cu pas pe urma ei  
-Alunecă-n odaie,  
-Țesând cu recile-i scântei  
-O mreajă de văpaie.
-
-Și când în pat se-ntinde drept  
-Copila să se culce,  
-I-atinge mâinile pe piept,  
-I-nchide geana dulce;
-
-Și din oglindă luminiș  
-Pe trupu-i se revarsă,  
-Pe ochii mari, bătând închiși  
-Pe fața ei întoarsă.
-
-Ea îl privea cu un surâs,  
-El tremura-n oglindă,  
-Căci o urma adânc în vis  
-De suflet să se prindă.
-
-Iar ea vorbind cu el în somn,  
-Oftând din greu suspină  
-– „O, dulce-al nopții mele domn,  
-De ce nu vii tu? Vină!
-
-Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n casă și în gând  
-Și viața-mi luminează!”
-
-El asculta tremurător,  
-Se aprindea mai tare  
-Și s-arunca fulgerător,  
-Se cufunda în mare;
-
-Și apa unde-au fost căzut  
-În cercuri se rotește,  
-Și din adânc necunoscut  
-Un mândru tânăr crește.
-
-Ușor el trece ca pe prag  
-Pe marginea ferestei  
-Și ține-n mână un toiag  
-Încununat cu trestii.
-
-Părea un tânăr voevod  
-Cu păr de aur moale,  
-Un vânăt giulgi se-ncheie nod  
-Pe umerele goale.
-
-Iar umbra feței străvezii  
-E albă ca de ceară -  
-Un mort frumos cu ochii vii  
-Ce scânteie-n afară.
-
-– „Din sfera mea venii cu greu  
-Ca să-ți urmez chemarea,  
-Iar cerul este tatăl meu  
-Și mumă-mea e marea.
-
-Ca în cămara ta să vin,  
-Să te privesc de-aproape,  
-Am coborât cu-al meu senin  
-Și m-am născut din ape.
-
-O, vin'! odorul meu nespus,  
-Și lumea ta o lasă;  
-Eu sunt luceafărul de sus,  
-Iar tu să-mi fii mireasă.
-
-Colo-n palate de mărgean  
-Te-oi duce veacuri multe,  
-Și toată lumea-n ocean  
-De tine o s-asculte.”
-
-– „O, ești frumos, cum numa-n vis  
-Un înger se arată,  
-Dară pe calea ce-ai deschis  
-N-oi merge niciodată;
-
-Străin la vorbă și la port,  
-Lucești fără de viață,  
-Căci eu sunt vie, tu ești mort,  
-Și ochiul tău mă-ngheață.”
-
-*
-
-Trecu o zi, trecură trei  
-Și iarăși, noaptea, vine  
-Luceafărul deasupra ei  
-Cu razele-i senine.
-
-Ea trebui de el în somn  
-Aminte să-și aducă  
-Și dor de-al valurilor domn  
-De inim-o apucă
-
-– „Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n casă și în gând  
-Și viața-mi luminează!”
-
-Cum el din cer o auzi,  
-Se stinse cu durere,  
-Iar ceru-ncepe a roti  
-În locul unde piere;
-
-În aer rumene văpăi  
-Se-ntind pe lumea-ntreagă,  
-Și din a chaosului văi  
-Un mândru chip se-ncheagă;
-
-Pe negre vițele-i de păr  
-Coroana-i arde pare,  
-Venea plutind în adevăr  
-Scăldat în foc de soare.
-
-Din negru giulgi se desfășor  
-Marmoreele brațe,  
-El vine trist și gânditor  
-Și palid e la față;
-
-Dar ochii mari și minunați  
-Lucesc adânc himeric,  
-Ca două patimi fără saț  
-Și pline de-ntuneric.
-
-– „Din sfera mea venii cu greu  
-Ca să te-ascult ș-acuma,  
-Și soarele e tatăl meu,  
-Iar noaptea-mi este muma;
-
-O, vin', odorul meu nespus,  
-Și lumea ta o lasă;  
-Eu sunt luceafărul de sus,  
-Iar tu să-mi fii mireasă.
-
-O, vin', în părul tău bălai  
-S-anin cununi de stele,  
-Pe-a mele ceruri să răsai  
-Mai mândră decât ele.”
-
-– „O, ești frumos cum numa-n vis  
-Un demon se arată,  
-Dară pe calea ce-ai deschis  
-N-oi merge niciodată!
-
-Mă dor de crudul tău amor  
-A pieptului meu coarde,  
-Și ochii mari și grei mă dor,  
-Privirea ta mă arde.”
-
-– „Dar cum ai vrea să mă cobor?  
-Au nu-nțelegi tu oare,  
-Cum că eu sunt nemuritor,  
-Și tu ești muritoare?”
-
-– „Nu caut vorbe pe ales,  
-Nici știu cum aș începe ―  
-Deși vorbești pe înțeles,  
-Eu nu te pot pricepe;
-
-Dar dacă vrei cu crezământ  
-Să te-ndrăgesc pe tine,  
-Tu te coboară pe pământ,  
-Fii muritor ca mine.”
-
-– „Tu-mi ceri chiar nemurirea mea  
-În schimb pe-o sărutare,  
-Dar voi să știi asemenea  
-Cât te iubesc de tare;
-
-Da, mă voi naște din păcat,  
-Primind o altă lege;  
-Cu vecinicia sunt legat,  
-Ci voi să mă dezlege.”
-
-Și se tot duce... S-a tot dus.  
-De dragu-unei copile,  
-S-a rupt din locul lui de sus,  
-Pierind mai multe zile.
-
-*
-
-În vremea asta Cătălin,  
-Viclean copil de casă,  
-Ce împle cupele cu vin  
-Mesenilor la masă,
-
-Un paj ce poartă pas cu pas  
-A-mpărătesii rochii,  
-Băiat din flori și de pripas,  
-Dar îndrăzneț cu ochii,
-
-Cu obrăjei ca doi bujori  
-De rumeni, bată-i vina,  
-Se furișează pânditor  
-Privind la Cătălina.
-
-Dar ce frumoasă se făcu  
-Și mândră, arz-o focul;  
-Ei Cătălin, acu-i acu  
-Ca să-ți încerci norocul.
-
-Și-n treacăt o cuprinse lin  
-Într-un ungher degrabă.  
-– „Da' ce vrei, mări Cătălin?  
-Ia du-t' de-ți vezi de treabă.”
-
-– „Ce voi? Aș vrea să nu mai stai  
-Pe gânduri totdeuna,  
-Să râzi mai bine și să-mi dai  
-O gură, numai una.”
-
-– „Dar nici nu știu măcar ce-mi ceri,  
-Dă-mi pace, fugi departe ―  
-O, de luceafărul din cer  
-M-a prins un dor de moarte.”
-
-– „Dacă nu știi, ți-aș arăta  
-Din bob în bob amorul,  
-Ci numai nu te mânia,  
-Ci stai cu binișorul.
-
-Cum vânătoru-ntinde-n crâng  
-La păsărele lațul,  
-Când ți-oi întinde brațul stâng  
-Să mă cuprinzi cu brațul;
-
-Și ochii tăi nemișcători  
-Sub ochii mei rămâie...  
-De te înalț de subțiori  
-Te-nalță din călcâie;
-
-Când fața mea se pleacă-n jos,  
-În sus rămâi cu fața,  
-Să ne privim nesățios  
-Și dulce toată viața;
-
-Și ca să-ți fie pe deplin  
-Iubirea cunoscută,  
-Când sărutându-te mă-nclin,  
-Tu iarăși mă sărută.”
-
-Ea-l asculta pe copilaș  
-Uimită și distrasă,  
-Și rușinos și drăgălaș,  
-Mai nu vrea, mai se lasă.
-
-Și-i zise-ncet: ― "Încă de mic  
-Te cunoșteam pe tine,  
-Și guraliv și de nimic,  
-Te-ai potrivi cu mine...
-
-Dar un luceafăr, răsărit  
-Din liniștea uitării,  
-Dă orizon nemărginit  
-Singurătății mării;
-
-Și tainic genele le plec,  
-Căci mi le împle plânsul  
-Când ale apei valuri trec  
-Călătorind spre dânsul;
-
-Lucește c-un amor nespus  
-Durerea să-mi alunge,  
-Dar se înalță tot mai sus,  
-Ca să nu-l pot ajunge.
-
-Pătrunde trist cu raze reci  
-Din lumea ce-l desparte...  
-În veci îl voi iubi și-n veci  
-Va rămânea departe...
-
-De-aceea zilele îmi sunt  
-Pustii ca niște stepe,  
-Dar nopțile-s de-un farmec sfânt  
-Ce nu-l mai pot pricepe.”
-
-– „Tu ești copilă, asta e...  
-Hai ș-om fugi în lume,  
-Doar ni s-or pierde urmele  
-Și nu ne-or ști de nume,
-
-Căci amândoi vom fi cuminți,  
-Vom fi voioși și teferi,  
-Vei pierde dorul de părinți  
-Și visul de luceferi.”
-
-*
-
-Porni luceafărul. Creșteau  
-În cer a lui aripe,  
-Și căi de mii de ani treceau  
-În tot atâtea clipe.
-
-Un cer de stele dedesubt,  
-Deasupra-i cer de stele ―  
-Părea un fulger ne-ntrerupt  
-Rătăcitor prin ele.
-
-Și din a chaosului văi,  
-Jur împrejur de sine,  
-Vedea, ca-n ziua cea de-ntâi,  
-Cum izvorau lumine;
-
-Cum izvorând îl înconjor  
-Ca niște mări, de-a-notul...  
-El zboară, gând purtat de dor,  
-Pân' piere totul, totul;
-
-Căci unde-ajunge nu-i hotar,  
-Nici ochi spre a cunoaște,  
-Și vremea-ncearcă în zadar  
-Din goluri a se naște.
-
-Nu e nimic și totuși e  
-O sete care-l soarbe,  
-E un adânc asemene  
-Uitării celei oarbe.
-
-– „De greul negrei vecinicii,  
-Părinte, mă dezleagă  
-Și lăudat pe veci să fii  
-Pe-a lumii scară-ntreagă;
-
-O, cere-mi, Doamne, orice preț,  
-Dar dă-mi o altă soarte,  
-Căci tu izvor ești de vieți  
-Și dătător de moarte;
-
-Reia-mi al nemuririi nimb  
-Și focul din privire,  
-Și pentru toate dă-mi în schimb  
-O oră de iubire...
-
-Din chaos, Doamne-am apărut  
-Și m-aș întoarce-n chaos...  
-Și din repaos m-am născut.  
-Mi-e sete de repaos.”
-
-– „Hyperion, ce din genuni  
-Răsai c-o-ntreagă lume,  
-Nu cere semne și minuni  
-Care n-au chip și nume;
-
-Tu vrei un om să te socoți,  
-Cu ei să te asameni?  
-Dar piară oamenii cu toți,  
-S-ar naște iarăși oameni.
-
-Ei numai doar durează-n vânt  
-Deșerte idealuri ―  
-Când valuri află un mormânt,  
-Răsar în urmă valuri;
-
-Ei doar au stele cu noroc  
-Și prigoniri de soarte,  
-Noi nu avem nici timp, nici loc,  
-Și nu cunoaștem moarte.
-
-Din sânul vecinicului ieri  
-Trăiește azi ce moare,  
-Un soare de s-ar stinge-n cer  
-S-aprinde iarăși soare;
-
-Părând pe veci a răsări,  
-Din urmă moartea-l paște,  
-Căci toți se nasc spre a muri  
-Și mor spre a se naște.
-
-Iar tu, Hyperion, rămâi  
-Oriunde ai apune...  
-Cere-mi cuvântul meu de-ntâi,  
-Să-ți dau înțelepciune?
-
-Vrei să dau glas acelei guri,  
-Ca dup-a ei cântare  
-Să se ia munții cu păduri  
-Și insulele-n mare?
-
-Vrei poate-n faptă să arăți  
-Dreptate și tărie?  
-Ți-aș da pământul în bucăți  
-Să-l faci împărăție.
-
-Îți dau catarg lângă catarg,  
-Oștiri spre a străbate  
-Pământu-n lung și marea-n larg,  
-Dar moartea nu se poate...
-
-Și pentru cine vrei să mori?  
-Întoarce-te, te-ndreaptă  
-Spre-acel pământ rătăcitor  
-Și vezi ce te așteaptă.”
-
-*
-
-În locul lui menit din cer  
-Hyperion se-ntoarse  
-Și, ca și-n ziua cea de ieri,  
-Lumina și-o revarsă.
-
-Căci este sara-n asfințit  
-Și noaptea o să-nceapă;  
-Răsare luna liniștit  
-Și tremurând din apă.
-
-Și împle cu-ale ei scântei  
-Cărările din crânguri.  
-Sub șirul lung de mândri tei  
-Ședeau doi tineri singuri
-
-– „O, lasă-mi capul meu pe sân,  
-Iubito, să se culce  
-Sub raza ochiului senin  
-Și negrăit de dulce;
-
-Cu farmecul luminii reci  
-Gândirile străbate-mi,  
-Revarsă liniște de veci  
-Pe noaptea mea de patimi.
-
-Și de asupra mea rămâi  
-Durerea mea de-o curmă,  
-Căci ești iubirea mea de-ntâi  
-Și visul meu din urmă.”
-
-Hyperion vedea de sus  
-Uimirea-n a lor față;  
-Abia un braț pe gât i-a pus  
-Și ea l-a prins în brațe...
-
-Miroase florile-argintii  
-Și cad, o dulce ploaie,  
-Pe creștetele-a doi copii  
-Cu plete lungi, bălaie.
-
-Ea, îmbătată de amor,  
-Ridică ochii. Vede  
-Luceafărul. Și-ncetișor  
-Dorințele-i încrede:
-
-– „Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n codru și în gând,  
-Norocu-mi luminează!”
-
-El tremură ca alte dăți  
-În codri și pe dealuri,  
-Călăuzind singurătăți  
-De mișcătoare valuri;
-
-Dar nu mai cade ca-n trecut  
-În mări din tot înaltul  
-– „Ce-ți pasă ție, chip de lut,  
-Dac-oi fi eu sau altul?
-
-Trăind în cercul vostru strâmt  
-Norocul vă petrece,  
-Ci eu în lumea mea mă simt  
-Nemuritor și rece.”$demo$),
-  public.count_words($demo$A fost odată ca-n povești,  
-A fost ca niciodată,  
-Din rude mari împărătești,  
-O prea frumoasă fată.
-
-Și era una la părinți  
-Și mândră-n toate cele,  
-Cum e Fecioara între sfinți  
-Și luna între stele.
-
-Din umbra falnicelor bolți  
-Ea pasul și-l îndreaptă  
-Lângă fereastră, unde-n colț  
-Luceafărul așteaptă.
-
-Privea în zare cum pe mări  
-Răsare și străluce,  
-Pe mișcătoarele cărări  
-Corăbii negre duce.
-
-Îl vede azi, îl vede mâni,  
-Astfel dorința-i gata;  
-El iar, privind de săptămâni,  
-Îi cade dragă fata.
-
-Cum ea pe coate-și răzima  
-Visând ale ei tâmple  
-De dorul lui și inima  
-Și sufletu-i se împle.
-
-Și cât de viu s-aprinde el  
-În orișicare sară,  
-Spre umbra negrului castel  
-Când ea o să-i apară.
-
-*
-
-Și pas cu pas pe urma ei  
-Alunecă-n odaie,  
-Țesând cu recile-i scântei  
-O mreajă de văpaie.
-
-Și când în pat se-ntinde drept  
-Copila să se culce,  
-I-atinge mâinile pe piept,  
-I-nchide geana dulce;
-
-Și din oglindă luminiș  
-Pe trupu-i se revarsă,  
-Pe ochii mari, bătând închiși  
-Pe fața ei întoarsă.
-
-Ea îl privea cu un surâs,  
-El tremura-n oglindă,  
-Căci o urma adânc în vis  
-De suflet să se prindă.
-
-Iar ea vorbind cu el în somn,  
-Oftând din greu suspină  
-– „O, dulce-al nopții mele domn,  
-De ce nu vii tu? Vină!
-
-Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n casă și în gând  
-Și viața-mi luminează!”
-
-El asculta tremurător,  
-Se aprindea mai tare  
-Și s-arunca fulgerător,  
-Se cufunda în mare;
-
-Și apa unde-au fost căzut  
-În cercuri se rotește,  
-Și din adânc necunoscut  
-Un mândru tânăr crește.
-
-Ușor el trece ca pe prag  
-Pe marginea ferestei  
-Și ține-n mână un toiag  
-Încununat cu trestii.
-
-Părea un tânăr voevod  
-Cu păr de aur moale,  
-Un vânăt giulgi se-ncheie nod  
-Pe umerele goale.
-
-Iar umbra feței străvezii  
-E albă ca de ceară -  
-Un mort frumos cu ochii vii  
-Ce scânteie-n afară.
-
-– „Din sfera mea venii cu greu  
-Ca să-ți urmez chemarea,  
-Iar cerul este tatăl meu  
-Și mumă-mea e marea.
-
-Ca în cămara ta să vin,  
-Să te privesc de-aproape,  
-Am coborât cu-al meu senin  
-Și m-am născut din ape.
-
-O, vin'! odorul meu nespus,  
-Și lumea ta o lasă;  
-Eu sunt luceafărul de sus,  
-Iar tu să-mi fii mireasă.
-
-Colo-n palate de mărgean  
-Te-oi duce veacuri multe,  
-Și toată lumea-n ocean  
-De tine o s-asculte.”
-
-– „O, ești frumos, cum numa-n vis  
-Un înger se arată,  
-Dară pe calea ce-ai deschis  
-N-oi merge niciodată;
-
-Străin la vorbă și la port,  
-Lucești fără de viață,  
-Căci eu sunt vie, tu ești mort,  
-Și ochiul tău mă-ngheață.”
-
-*
-
-Trecu o zi, trecură trei  
-Și iarăși, noaptea, vine  
-Luceafărul deasupra ei  
-Cu razele-i senine.
-
-Ea trebui de el în somn  
-Aminte să-și aducă  
-Și dor de-al valurilor domn  
-De inim-o apucă
-
-– „Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n casă și în gând  
-Și viața-mi luminează!”
-
-Cum el din cer o auzi,  
-Se stinse cu durere,  
-Iar ceru-ncepe a roti  
-În locul unde piere;
-
-În aer rumene văpăi  
-Se-ntind pe lumea-ntreagă,  
-Și din a chaosului văi  
-Un mândru chip se-ncheagă;
-
-Pe negre vițele-i de păr  
-Coroana-i arde pare,  
-Venea plutind în adevăr  
-Scăldat în foc de soare.
-
-Din negru giulgi se desfășor  
-Marmoreele brațe,  
-El vine trist și gânditor  
-Și palid e la față;
-
-Dar ochii mari și minunați  
-Lucesc adânc himeric,  
-Ca două patimi fără saț  
-Și pline de-ntuneric.
-
-– „Din sfera mea venii cu greu  
-Ca să te-ascult ș-acuma,  
-Și soarele e tatăl meu,  
-Iar noaptea-mi este muma;
-
-O, vin', odorul meu nespus,  
-Și lumea ta o lasă;  
-Eu sunt luceafărul de sus,  
-Iar tu să-mi fii mireasă.
-
-O, vin', în părul tău bălai  
-S-anin cununi de stele,  
-Pe-a mele ceruri să răsai  
-Mai mândră decât ele.”
-
-– „O, ești frumos cum numa-n vis  
-Un demon se arată,  
-Dară pe calea ce-ai deschis  
-N-oi merge niciodată!
-
-Mă dor de crudul tău amor  
-A pieptului meu coarde,  
-Și ochii mari și grei mă dor,  
-Privirea ta mă arde.”
-
-– „Dar cum ai vrea să mă cobor?  
-Au nu-nțelegi tu oare,  
-Cum că eu sunt nemuritor,  
-Și tu ești muritoare?”
-
-– „Nu caut vorbe pe ales,  
-Nici știu cum aș începe ―  
-Deși vorbești pe înțeles,  
-Eu nu te pot pricepe;
-
-Dar dacă vrei cu crezământ  
-Să te-ndrăgesc pe tine,  
-Tu te coboară pe pământ,  
-Fii muritor ca mine.”
-
-– „Tu-mi ceri chiar nemurirea mea  
-În schimb pe-o sărutare,  
-Dar voi să știi asemenea  
-Cât te iubesc de tare;
-
-Da, mă voi naște din păcat,  
-Primind o altă lege;  
-Cu vecinicia sunt legat,  
-Ci voi să mă dezlege.”
-
-Și se tot duce... S-a tot dus.  
-De dragu-unei copile,  
-S-a rupt din locul lui de sus,  
-Pierind mai multe zile.
-
-*
-
-În vremea asta Cătălin,  
-Viclean copil de casă,  
-Ce împle cupele cu vin  
-Mesenilor la masă,
-
-Un paj ce poartă pas cu pas  
-A-mpărătesii rochii,  
-Băiat din flori și de pripas,  
-Dar îndrăzneț cu ochii,
-
-Cu obrăjei ca doi bujori  
-De rumeni, bată-i vina,  
-Se furișează pânditor  
-Privind la Cătălina.
-
-Dar ce frumoasă se făcu  
-Și mândră, arz-o focul;  
-Ei Cătălin, acu-i acu  
-Ca să-ți încerci norocul.
-
-Și-n treacăt o cuprinse lin  
-Într-un ungher degrabă.  
-– „Da' ce vrei, mări Cătălin?  
-Ia du-t' de-ți vezi de treabă.”
-
-– „Ce voi? Aș vrea să nu mai stai  
-Pe gânduri totdeuna,  
-Să râzi mai bine și să-mi dai  
-O gură, numai una.”
-
-– „Dar nici nu știu măcar ce-mi ceri,  
-Dă-mi pace, fugi departe ―  
-O, de luceafărul din cer  
-M-a prins un dor de moarte.”
-
-– „Dacă nu știi, ți-aș arăta  
-Din bob în bob amorul,  
-Ci numai nu te mânia,  
-Ci stai cu binișorul.
-
-Cum vânătoru-ntinde-n crâng  
-La păsărele lațul,  
-Când ți-oi întinde brațul stâng  
-Să mă cuprinzi cu brațul;
-
-Și ochii tăi nemișcători  
-Sub ochii mei rămâie...  
-De te înalț de subțiori  
-Te-nalță din călcâie;
-
-Când fața mea se pleacă-n jos,  
-În sus rămâi cu fața,  
-Să ne privim nesățios  
-Și dulce toată viața;
-
-Și ca să-ți fie pe deplin  
-Iubirea cunoscută,  
-Când sărutându-te mă-nclin,  
-Tu iarăși mă sărută.”
-
-Ea-l asculta pe copilaș  
-Uimită și distrasă,  
-Și rușinos și drăgălaș,  
-Mai nu vrea, mai se lasă.
-
-Și-i zise-ncet: ― "Încă de mic  
-Te cunoșteam pe tine,  
-Și guraliv și de nimic,  
-Te-ai potrivi cu mine...
-
-Dar un luceafăr, răsărit  
-Din liniștea uitării,  
-Dă orizon nemărginit  
-Singurătății mării;
-
-Și tainic genele le plec,  
-Căci mi le împle plânsul  
-Când ale apei valuri trec  
-Călătorind spre dânsul;
-
-Lucește c-un amor nespus  
-Durerea să-mi alunge,  
-Dar se înalță tot mai sus,  
-Ca să nu-l pot ajunge.
-
-Pătrunde trist cu raze reci  
-Din lumea ce-l desparte...  
-În veci îl voi iubi și-n veci  
-Va rămânea departe...
-
-De-aceea zilele îmi sunt  
-Pustii ca niște stepe,  
-Dar nopțile-s de-un farmec sfânt  
-Ce nu-l mai pot pricepe.”
-
-– „Tu ești copilă, asta e...  
-Hai ș-om fugi în lume,  
-Doar ni s-or pierde urmele  
-Și nu ne-or ști de nume,
-
-Căci amândoi vom fi cuminți,  
-Vom fi voioși și teferi,  
-Vei pierde dorul de părinți  
-Și visul de luceferi.”
-
-*
-
-Porni luceafărul. Creșteau  
-În cer a lui aripe,  
-Și căi de mii de ani treceau  
-În tot atâtea clipe.
-
-Un cer de stele dedesubt,  
-Deasupra-i cer de stele ―  
-Părea un fulger ne-ntrerupt  
-Rătăcitor prin ele.
-
-Și din a chaosului văi,  
-Jur împrejur de sine,  
-Vedea, ca-n ziua cea de-ntâi,  
-Cum izvorau lumine;
-
-Cum izvorând îl înconjor  
-Ca niște mări, de-a-notul...  
-El zboară, gând purtat de dor,  
-Pân' piere totul, totul;
-
-Căci unde-ajunge nu-i hotar,  
-Nici ochi spre a cunoaște,  
-Și vremea-ncearcă în zadar  
-Din goluri a se naște.
-
-Nu e nimic și totuși e  
-O sete care-l soarbe,  
-E un adânc asemene  
-Uitării celei oarbe.
-
-– „De greul negrei vecinicii,  
-Părinte, mă dezleagă  
-Și lăudat pe veci să fii  
-Pe-a lumii scară-ntreagă;
-
-O, cere-mi, Doamne, orice preț,  
-Dar dă-mi o altă soarte,  
-Căci tu izvor ești de vieți  
-Și dătător de moarte;
-
-Reia-mi al nemuririi nimb  
-Și focul din privire,  
-Și pentru toate dă-mi în schimb  
-O oră de iubire...
-
-Din chaos, Doamne-am apărut  
-Și m-aș întoarce-n chaos...  
-Și din repaos m-am născut.  
-Mi-e sete de repaos.”
-
-– „Hyperion, ce din genuni  
-Răsai c-o-ntreagă lume,  
-Nu cere semne și minuni  
-Care n-au chip și nume;
-
-Tu vrei un om să te socoți,  
-Cu ei să te asameni?  
-Dar piară oamenii cu toți,  
-S-ar naște iarăși oameni.
-
-Ei numai doar durează-n vânt  
-Deșerte idealuri ―  
-Când valuri află un mormânt,  
-Răsar în urmă valuri;
-
-Ei doar au stele cu noroc  
-Și prigoniri de soarte,  
-Noi nu avem nici timp, nici loc,  
-Și nu cunoaștem moarte.
-
-Din sânul vecinicului ieri  
-Trăiește azi ce moare,  
-Un soare de s-ar stinge-n cer  
-S-aprinde iarăși soare;
-
-Părând pe veci a răsări,  
-Din urmă moartea-l paște,  
-Căci toți se nasc spre a muri  
-Și mor spre a se naște.
-
-Iar tu, Hyperion, rămâi  
-Oriunde ai apune...  
-Cere-mi cuvântul meu de-ntâi,  
-Să-ți dau înțelepciune?
-
-Vrei să dau glas acelei guri,  
-Ca dup-a ei cântare  
-Să se ia munții cu păduri  
-Și insulele-n mare?
-
-Vrei poate-n faptă să arăți  
-Dreptate și tărie?  
-Ți-aș da pământul în bucăți  
-Să-l faci împărăție.
-
-Îți dau catarg lângă catarg,  
-Oștiri spre a străbate  
-Pământu-n lung și marea-n larg,  
-Dar moartea nu se poate...
-
-Și pentru cine vrei să mori?  
-Întoarce-te, te-ndreaptă  
-Spre-acel pământ rătăcitor  
-Și vezi ce te așteaptă.”
-
-*
-
-În locul lui menit din cer  
-Hyperion se-ntoarse  
-Și, ca și-n ziua cea de ieri,  
-Lumina și-o revarsă.
-
-Căci este sara-n asfințit  
-Și noaptea o să-nceapă;  
-Răsare luna liniștit  
-Și tremurând din apă.
-
-Și împle cu-ale ei scântei  
-Cărările din crânguri.  
-Sub șirul lung de mândri tei  
-Ședeau doi tineri singuri
-
-– „O, lasă-mi capul meu pe sân,  
-Iubito, să se culce  
-Sub raza ochiului senin  
-Și negrăit de dulce;
-
-Cu farmecul luminii reci  
-Gândirile străbate-mi,  
-Revarsă liniște de veci  
-Pe noaptea mea de patimi.
-
-Și de asupra mea rămâi  
-Durerea mea de-o curmă,  
-Căci ești iubirea mea de-ntâi  
-Și visul meu din urmă.”
-
-Hyperion vedea de sus  
-Uimirea-n a lor față;  
-Abia un braț pe gât i-a pus  
-Și ea l-a prins în brațe...
-
-Miroase florile-argintii  
-Și cad, o dulce ploaie,  
-Pe creștetele-a doi copii  
-Cu plete lungi, bălaie.
-
-Ea, îmbătată de amor,  
-Ridică ochii. Vede  
-Luceafărul. Și-ncetișor  
-Dorințele-i încrede:
-
-– „Cobori în jos, luceafăr blând,  
-Alunecând pe-o rază,  
-Pătrunde-n codru și în gând,  
-Norocu-mi luminează!”
-
-El tremură ca alte dăți  
-În codri și pe dealuri,  
-Călăuzind singurătăți  
-De mișcătoare valuri;
-
-Dar nu mai cade ca-n trecut  
-În mări din tot înaltul  
-– „Ce-ți pasă ție, chip de lut,  
-Dac-oi fi eu sau altul?
-
-Trăind în cercul vostru strâmt  
-Norocul vă petrece,  
-Ci eu în lumea mea mă simt  
-Nemuritor și rece.”$demo$), now() - interval '44 days'
-where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000600010000'::uuid);
-
--- classic-07-floare-albastra: "Floare albastră" by clasice
-insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
-  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
-  first_published_at, last_chapter_published_at, created_at)
-select '00000000-0000-4000-9300-000700000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'floare-albastra-classic',
-  $demo$Floare albastră$demo$, $demo$Ea îl cheamă din stele în pădure, la izvor, la o iubire pământească. El rămâne cu amintirea ei. Una dintre cele mai cunoscute poezii de dragoste din limba română.
-
-Ediția sursă: 1873. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=116644, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
-  (select id from public.categories where slug = 'poetry'),
-  'drawn', 'paper', 'sky', 'plum', 'all_ages', 'no_ai',
-  now() - interval '80 days', now() - interval '80 days', now() - interval '82 days'
-where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000700000000'::uuid);
-select public.set_story_tags('00000000-0000-4000-9300-000700000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
-insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
-  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
-  published_word_count, created_at)
-select '00000000-0000-4000-9300-000700010000'::uuid, '00000000-0000-4000-9300-000700000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
-  'k007c001', 1, $demo$Floare albastră$demo$, public.check_chapter_text($demo$\- «Iar te-ai cufundat în stele  
-Și în nori și-n ceruri nalte?  
-De nu m-ai uita încalte,  
-Sufletul vieții mele.
-
-În zadar râuri de soare  
-Grămădești-n a ta gândire  
-Și câmpiile Asire  
-Și întunecata mare;
-
-Piramidele-nvechite  
-Urcă-n cer vârful lor mare -  
-Nu căta în depărtare  
-Fericirea ta, iubite»!
-
-Astfel zise mititica,  
-Dulce netezindu-mi părul.  
-Ah! ea spuse adevărul;  
-Eu am râs, n-am zis nimica.
-
-\- «Hai în codrul cu verdeață,  
-Und-izvoare plâng în vale,  
-Stânca stă să se prăvale  
-În prăpastia măreață.
-
-Acolo-n ochi de pădure,  
-Lângă balta cea senină  
-Și sub trestia cea lină  
-Vom ședea în foi de mure.
-
-Și mi-i spune-atunci povești  
-Și minciuni cu-a ta guriță,  
-Eu pe-un fir de romaniță  
-Voi cerca de mă iubești.
-
-Și de-a soarelui căldură  
-Voi fi roșie ca mărul,  
-Mi-oi desface de-aur părul,  
-Să-ți astup cu dânsul gura.
-
-De mi-i da o sărutare,  
-Nime-n lume n-a s-o știe,  
-Căci va fi sub pălărie -  
-Ș-apoi cine treabă are!
-
-Când prin crengi s-a fi ivit  
-Luna-n noaptea cea de vară,  
-Mi-i ținea de subsuoară,  
-Te-oi ținea de după gât.
-
-Pe cărare-n bolți de frunze,  
-Apucând spre sat în vale,  
-Ne-om da sărutări pe cale,  
-Dulci ca florile ascunse.
-
-Și sosind l-al porții prag,  
-Vom vorbi-n întunecime:  
-Grija noastră n-aib-o nime,  
-Cui ce-i pasă că-mi ești drag»?
-
-Înc-o gură și dispare...  
-Ca un stâlp eu stam în lună!  
-Ce frumoasă, ce nebună  
-E albastra-mi, dulce floare!
-
-. . . . . . . . . . . . . .
-
-Și te-ai dus, dulce minune,  
-Ș-a murit iubirea noastră -  
-Floare-albastră! floare-albastră!...  
-Totuși este trist în lume!
-
-(1873, 1 aprilie)$demo$), 1,
-  now() - interval '80 days', $demo$Floare albastră$demo$, public.check_chapter_text($demo$\- «Iar te-ai cufundat în stele  
-Și în nori și-n ceruri nalte?  
-De nu m-ai uita încalte,  
-Sufletul vieții mele.
-
-În zadar râuri de soare  
-Grămădești-n a ta gândire  
-Și câmpiile Asire  
-Și întunecata mare;
-
-Piramidele-nvechite  
-Urcă-n cer vârful lor mare -  
-Nu căta în depărtare  
-Fericirea ta, iubite»!
-
-Astfel zise mititica,  
-Dulce netezindu-mi părul.  
-Ah! ea spuse adevărul;  
-Eu am râs, n-am zis nimica.
-
-\- «Hai în codrul cu verdeață,  
-Und-izvoare plâng în vale,  
-Stânca stă să se prăvale  
-În prăpastia măreață.
-
-Acolo-n ochi de pădure,  
-Lângă balta cea senină  
-Și sub trestia cea lină  
-Vom ședea în foi de mure.
-
-Și mi-i spune-atunci povești  
-Și minciuni cu-a ta guriță,  
-Eu pe-un fir de romaniță  
-Voi cerca de mă iubești.
-
-Și de-a soarelui căldură  
-Voi fi roșie ca mărul,  
-Mi-oi desface de-aur părul,  
-Să-ți astup cu dânsul gura.
-
-De mi-i da o sărutare,  
-Nime-n lume n-a s-o știe,  
-Căci va fi sub pălărie -  
-Ș-apoi cine treabă are!
-
-Când prin crengi s-a fi ivit  
-Luna-n noaptea cea de vară,  
-Mi-i ținea de subsuoară,  
-Te-oi ținea de după gât.
-
-Pe cărare-n bolți de frunze,  
-Apucând spre sat în vale,  
-Ne-om da sărutări pe cale,  
-Dulci ca florile ascunse.
-
-Și sosind l-al porții prag,  
-Vom vorbi-n întunecime:  
-Grija noastră n-aib-o nime,  
-Cui ce-i pasă că-mi ești drag»?
-
-Înc-o gură și dispare...  
-Ca un stâlp eu stam în lună!  
-Ce frumoasă, ce nebună  
-E albastra-mi, dulce floare!
-
-. . . . . . . . . . . . . .
-
-Și te-ai dus, dulce minune,  
-Ș-a murit iubirea noastră -  
-Floare-albastră! floare-albastră!...  
-Totuși este trist în lume!
-
-(1873, 1 aprilie)$demo$), 'published',
-  now() - interval '80 days', now() - interval '80 days', public.count_words($demo$\- «Iar te-ai cufundat în stele  
-Și în nori și-n ceruri nalte?  
-De nu m-ai uita încalte,  
-Sufletul vieții mele.
-
-În zadar râuri de soare  
-Grămădești-n a ta gândire  
-Și câmpiile Asire  
-Și întunecata mare;
-
-Piramidele-nvechite  
-Urcă-n cer vârful lor mare -  
-Nu căta în depărtare  
-Fericirea ta, iubite»!
-
-Astfel zise mititica,  
-Dulce netezindu-mi părul.  
-Ah! ea spuse adevărul;  
-Eu am râs, n-am zis nimica.
-
-\- «Hai în codrul cu verdeață,  
-Und-izvoare plâng în vale,  
-Stânca stă să se prăvale  
-În prăpastia măreață.
-
-Acolo-n ochi de pădure,  
-Lângă balta cea senină  
-Și sub trestia cea lină  
-Vom ședea în foi de mure.
-
-Și mi-i spune-atunci povești  
-Și minciuni cu-a ta guriță,  
-Eu pe-un fir de romaniță  
-Voi cerca de mă iubești.
-
-Și de-a soarelui căldură  
-Voi fi roșie ca mărul,  
-Mi-oi desface de-aur părul,  
-Să-ți astup cu dânsul gura.
-
-De mi-i da o sărutare,  
-Nime-n lume n-a s-o știe,  
-Căci va fi sub pălărie -  
-Ș-apoi cine treabă are!
-
-Când prin crengi s-a fi ivit  
-Luna-n noaptea cea de vară,  
-Mi-i ținea de subsuoară,  
-Te-oi ținea de după gât.
-
-Pe cărare-n bolți de frunze,  
-Apucând spre sat în vale,  
-Ne-om da sărutări pe cale,  
-Dulci ca florile ascunse.
-
-Și sosind l-al porții prag,  
-Vom vorbi-n întunecime:  
-Grija noastră n-aib-o nime,  
-Cui ce-i pasă că-mi ești drag»?
-
-Înc-o gură și dispare...  
-Ca un stâlp eu stam în lună!  
-Ce frumoasă, ce nebună  
-E albastra-mi, dulce floare!
-
-. . . . . . . . . . . . . .
-
-Și te-ai dus, dulce minune,  
-Ș-a murit iubirea noastră -  
-Floare-albastră! floare-albastră!...  
-Totuși este trist în lume!
-
-(1873, 1 aprilie)$demo$),
-  public.count_words($demo$\- «Iar te-ai cufundat în stele  
-Și în nori și-n ceruri nalte?  
-De nu m-ai uita încalte,  
-Sufletul vieții mele.
-
-În zadar râuri de soare  
-Grămădești-n a ta gândire  
-Și câmpiile Asire  
-Și întunecata mare;
-
-Piramidele-nvechite  
-Urcă-n cer vârful lor mare -  
-Nu căta în depărtare  
-Fericirea ta, iubite»!
-
-Astfel zise mititica,  
-Dulce netezindu-mi părul.  
-Ah! ea spuse adevărul;  
-Eu am râs, n-am zis nimica.
-
-\- «Hai în codrul cu verdeață,  
-Und-izvoare plâng în vale,  
-Stânca stă să se prăvale  
-În prăpastia măreață.
-
-Acolo-n ochi de pădure,  
-Lângă balta cea senină  
-Și sub trestia cea lină  
-Vom ședea în foi de mure.
-
-Și mi-i spune-atunci povești  
-Și minciuni cu-a ta guriță,  
-Eu pe-un fir de romaniță  
-Voi cerca de mă iubești.
-
-Și de-a soarelui căldură  
-Voi fi roșie ca mărul,  
-Mi-oi desface de-aur părul,  
-Să-ți astup cu dânsul gura.
-
-De mi-i da o sărutare,  
-Nime-n lume n-a s-o știe,  
-Căci va fi sub pălărie -  
-Ș-apoi cine treabă are!
-
-Când prin crengi s-a fi ivit  
-Luna-n noaptea cea de vară,  
-Mi-i ținea de subsuoară,  
-Te-oi ținea de după gât.
-
-Pe cărare-n bolți de frunze,  
-Apucând spre sat în vale,  
-Ne-om da sărutări pe cale,  
-Dulci ca florile ascunse.
-
-Și sosind l-al porții prag,  
-Vom vorbi-n întunecime:  
-Grija noastră n-aib-o nime,  
-Cui ce-i pasă că-mi ești drag»?
-
-Înc-o gură și dispare...  
-Ca un stâlp eu stam în lună!  
-Ce frumoasă, ce nebună  
-E albastra-mi, dulce floare!
-
-. . . . . . . . . . . . . .
-
-Și te-ai dus, dulce minune,  
-Ș-a murit iubirea noastră -  
-Floare-albastră! floare-albastră!...  
-Totuși este trist în lume!
-
-(1873, 1 aprilie)$demo$), now() - interval '81 days'
-where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000700010000'::uuid);
-
--- classic-08-sara-pe-deal: "Sara pe deal" by clasice
-insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
-  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
-  first_published_at, last_chapter_published_at, created_at)
-select '00000000-0000-4000-9300-000800000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'sara-pe-deal-classic',
-  $demo$Sara pe deal$demo$, $demo$Seara în sat: buciumul, turmele, clopotele și un salcâm sub care așteaptă cineva. Poezia unei întâlniri în liniștea satului.
-
-Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=119448, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
-  (select id from public.categories where slug = 'poetry'),
-  'automatic', null, null, null, 'all_ages', 'no_ai',
-  now() - interval '27 days', now() - interval '27 days', now() - interval '29 days'
-where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000800000000'::uuid);
-select public.set_story_tags('00000000-0000-4000-9300-000800000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
-insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
-  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
-  published_word_count, created_at)
-select '00000000-0000-4000-9300-000800010000'::uuid, '00000000-0000-4000-9300-000800000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid,
-  'k008c001', 1, $demo$Sara pe deal$demo$, public.check_chapter_text($demo$Sara pe deal buciumul sună cu jale,  
-Turmele-l urc, stele le scapără-n cale,  
-Apele plîng, clar izvorînd în fîntîne;  
-Sub un salcîm dragă, m-aștepți tu pe mine.
-
-Luna pe cer trece-așa sfîntă și clară,  
-Ochii tăi mari caută-n frunza cea rară,  
-Stelele nasc umezi pe bolta senină,  
-Pieptul de dor, fruntea de gînduri ți-e plină.
-
-Nourii curg, raze-a lor șiruri despică,  
-Streșine vechi casele-n lună ridică,  
-Scîrțîie-n vînt cumpăna de la fîntînă,  
-Valea-i în fum, fluiere murmură-n stînă.
-
-Și osteniți oameni cu coasa-n spinare  
-Vin de la cîmp; toaca răsună mai tare,  
-Clopotul vechi împle cu glasul lui sara,  
-Sufletul meu arde-n iubire ca para.
-
-Ah! în curînd satul în vale-amuțește;  
-Ah! în curînd pasu-mi spre tine grăbește:  
-Lîngă salcîm sta-vom noi noaptea întreagă,  
-Ore întregi spune-ți-voi cît îmi ești dragă.
-
-Ne-om răzima capetele-unul de altul,  
-Și surîzînd vom adormi sub înaltul,  
-Vechiul salcîm. — Astfel de noapte bogată,  
-Cine pe ea n-ar da viața lui toată?$demo$), 1,
-  now() - interval '27 days', $demo$Sara pe deal$demo$, public.check_chapter_text($demo$Sara pe deal buciumul sună cu jale,  
-Turmele-l urc, stele le scapără-n cale,  
-Apele plîng, clar izvorînd în fîntîne;  
-Sub un salcîm dragă, m-aștepți tu pe mine.
-
-Luna pe cer trece-așa sfîntă și clară,  
-Ochii tăi mari caută-n frunza cea rară,  
-Stelele nasc umezi pe bolta senină,  
-Pieptul de dor, fruntea de gînduri ți-e plină.
-
-Nourii curg, raze-a lor șiruri despică,  
-Streșine vechi casele-n lună ridică,  
-Scîrțîie-n vînt cumpăna de la fîntînă,  
-Valea-i în fum, fluiere murmură-n stînă.
-
-Și osteniți oameni cu coasa-n spinare  
-Vin de la cîmp; toaca răsună mai tare,  
-Clopotul vechi împle cu glasul lui sara,  
-Sufletul meu arde-n iubire ca para.
-
-Ah! în curînd satul în vale-amuțește;  
-Ah! în curînd pasu-mi spre tine grăbește:  
-Lîngă salcîm sta-vom noi noaptea întreagă,  
-Ore întregi spune-ți-voi cît îmi ești dragă.
-
-Ne-om răzima capetele-unul de altul,  
-Și surîzînd vom adormi sub înaltul,  
-Vechiul salcîm. — Astfel de noapte bogată,  
-Cine pe ea n-ar da viața lui toată?$demo$), 'published',
-  now() - interval '27 days', now() - interval '27 days', public.count_words($demo$Sara pe deal buciumul sună cu jale,  
-Turmele-l urc, stele le scapără-n cale,  
-Apele plîng, clar izvorînd în fîntîne;  
-Sub un salcîm dragă, m-aștepți tu pe mine.
-
-Luna pe cer trece-așa sfîntă și clară,  
-Ochii tăi mari caută-n frunza cea rară,  
-Stelele nasc umezi pe bolta senină,  
-Pieptul de dor, fruntea de gînduri ți-e plină.
-
-Nourii curg, raze-a lor șiruri despică,  
-Streșine vechi casele-n lună ridică,  
-Scîrțîie-n vînt cumpăna de la fîntînă,  
-Valea-i în fum, fluiere murmură-n stînă.
-
-Și osteniți oameni cu coasa-n spinare  
-Vin de la cîmp; toaca răsună mai tare,  
-Clopotul vechi împle cu glasul lui sara,  
-Sufletul meu arde-n iubire ca para.
-
-Ah! în curînd satul în vale-amuțește;  
-Ah! în curînd pasu-mi spre tine grăbește:  
-Lîngă salcîm sta-vom noi noaptea întreagă,  
-Ore întregi spune-ți-voi cît îmi ești dragă.
-
-Ne-om răzima capetele-unul de altul,  
-Și surîzînd vom adormi sub înaltul,  
-Vechiul salcîm. — Astfel de noapte bogată,  
-Cine pe ea n-ar da viața lui toată?$demo$),
-  public.count_words($demo$Sara pe deal buciumul sună cu jale,  
-Turmele-l urc, stele le scapără-n cale,  
-Apele plîng, clar izvorînd în fîntîne;  
-Sub un salcîm dragă, m-aștepți tu pe mine.
-
-Luna pe cer trece-așa sfîntă și clară,  
-Ochii tăi mari caută-n frunza cea rară,  
-Stelele nasc umezi pe bolta senină,  
-Pieptul de dor, fruntea de gînduri ți-e plină.
-
-Nourii curg, raze-a lor șiruri despică,  
-Streșine vechi casele-n lună ridică,  
-Scîrțîie-n vînt cumpăna de la fîntînă,  
-Valea-i în fum, fluiere murmură-n stînă.
-
-Și osteniți oameni cu coasa-n spinare  
-Vin de la cîmp; toaca răsună mai tare,  
-Clopotul vechi împle cu glasul lui sara,  
-Sufletul meu arde-n iubire ca para.
-
-Ah! în curînd satul în vale-amuțește;  
-Ah! în curînd pasu-mi spre tine grăbește:  
-Lîngă salcîm sta-vom noi noaptea întreagă,  
-Ore întregi spune-ți-voi cît îmi ești dragă.
-
-Ne-om răzima capetele-unul de altul,  
-Și surîzînd vom adormi sub înaltul,  
-Vechiul salcîm. — Astfel de noapte bogată,  
-Cine pe ea n-ar da viața lui toată?$demo$), now() - interval '28 days'
-where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000800010000'::uuid);
-
--- classic-09-lacul: "Lacul" by clasice
-insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
-  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
-  first_published_at, last_chapter_published_at, created_at)
-select '00000000-0000-4000-9300-000900000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'lacul-classic',
-  $demo$Lacul$demo$, $demo$Un lac albastru, nuferi galbeni și o barcă în care cineva așteaptă o iubită care nu mai vine.
-
-Ediția sursă: 1884. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=115784, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
-  (select id from public.categories where slug = 'poetry'),
-  'drawn', 'waves', 'sky', 'ink', 'all_ages', 'no_ai',
-  now() - interval '64 days', now() - interval '64 days', now() - interval '66 days'
-where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000900000000'::uuid);
-select public.set_story_tags('00000000-0000-4000-9300-000900000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
 commit;

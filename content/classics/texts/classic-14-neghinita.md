@@ -8,7 +8,7 @@ source_edition:
 source_note: Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=123622, CC BY-SA 4.0; formatare adaptată.
 language: ro
 category: fiction
-rating: 13_plus
+rating: all_ages
 tags: domeniu public, clasic, basm, poveste
 cover: drawn:doodles/gold/sage
 blurb: Doi bătrâni își doresc un copil și primesc unul cât un bob de neghină. Neghiniță se strecoară în urechile oamenilor, le aude gândurile și ajunge la urechea împăratului, căruia îi spune adevărul. Un basm amar despre ce pățește cine le spune adevărul celor puternici.
