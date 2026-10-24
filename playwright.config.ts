@@ -100,6 +100,9 @@ export default defineConfig({
       // The sign-up country token's secret for local tests only (S1-E2-10); e2e/country.spec.ts
       // puts the same value in the local database's Vault. Never a real secret.
       SIGNUP_CONTEXT_SECRET: 'local-e2e-signup-secret',
+      // The public report form's signing secret for local tests only (S1-E10-02); e2e/public-notice
+      // puts the same value in the local database's Vault. Never a real secret.
+      NOTICE_SECRET: 'local-e2e-notice-secret',
       VITE_SUPABASE_URL: localSupabase.url,
       VITE_SUPABASE_ANON_KEY: localSupabase.anonKey,
     },
