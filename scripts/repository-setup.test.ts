@@ -55,7 +55,7 @@ describe('repository setup', () => {
     const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
 
     expect(ciWorkflow).not.toMatch(/^\s*(paths|paths-ignore|branches-ignore):/m);
-    expect(ciWorkflow).not.toMatch(/^  pull_request:\n(?:\s+#.*\n)*\s+branches:/m);
+    expect(ciWorkflow).not.toMatch(/^ {2}pull_request:\n(?:\s+#.*\n)*\s+branches:/m);
   });
 
   it('runs the database and e2e jobs on main, and on pull requests once they are ready and change more than docs', () => {
