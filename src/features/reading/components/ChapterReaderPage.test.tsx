@@ -32,6 +32,8 @@ const chapter: ReaderChapter = {
   minutesToRead: 3,
   isOwner: false,
   needsSignIn: false,
+  isTeaser: false,
+  textContinues: false,
   body: 'Primul paragraf.\n\nAl doilea paragraf.',
 };
 

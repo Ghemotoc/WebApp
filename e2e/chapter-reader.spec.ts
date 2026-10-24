@@ -8,7 +8,8 @@
  *   Next chapter, Previous and Contents move between chapters and back to the story; a draft
  *   between them is skipped; the last chapter ends with "That's the latest chapter so far.";
  * - one read is counted per chapter per tab (a reload doesn't add one), never the writer's own;
- * - a signed-out visitor gets the title and "Log in to read this chapter", no text;
+ * - a signed-out visitor gets the teaser page instead of the reader (S1-E4-04; the teaser itself
+ *   is tested in teaser.spec.ts);
  * - kid_14_ok gets "This chapter isn't available" for a 16+ story; so does a draft's address;
  * - no doodles on the reader; axe in all 12 views (390, 768 and 1440 px, light and night,
  *   Romanian and English) finds nothing serious; nothing scrolls sideways, down to 320 px.
@@ -135,13 +136,14 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     expect(readsToday('readera1')).toBe('1');
   });
 
-  test('a signed-out visitor is asked to log in and gets no text', async ({ page }) => {
+  test('a signed-out visitor gets the teaser page, not the reader', async ({ page }) => {
     await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
     await page.goto(`/s/${slug}/readera1`);
-    await expect(page.getByRole('heading', { level: 1, name: 'Caietele bunicii' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Log in to read this chapter' })).toBeVisible();
-    await expect(page.locator('.tmc-chapter-text')).toHaveCount(0);
-    await expect(page.getByText('notează')).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 2, name: 'Caietele bunicii' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Log in to read on' })).toBeVisible();
+    // No reader bar, progress line or read counting for a visitor.
+    await expect(page.getByRole('navigation', { name: 'Chapters' })).toHaveCount(0);
+    await expect(page.getByRole('progressbar')).toHaveCount(0);
   });
 
   test('a draft, and a 16+ story for kid_14_ok, are not available', async ({ browser }) => {

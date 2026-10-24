@@ -50,12 +50,29 @@
     "readNext": "Citește capitolul {{number}}",
     "latestChapter": "Acesta e cel mai nou capitol de până acum.",
     "backToStory": "Înapoi la poveste",
-    "signInTitle": "Conectează-te ca să citești capitolul",
-    "signInBody": "În timpul testului cu invitație, capitolele sunt pentru membri. Conectează-te ca să citești mai departe.",
     "signIn": "Conectare",
     "unavailableTitle": "Capitolul nu este disponibil",
     "unavailableBody": "Poate nu e publicat, poate e clasificat pentru cititori mai mari, poate a fost eliminat sau linkul e greșit.",
     "loadFailed": "Nu am putut încărca capitolul. Verifică-ți conexiunea și încearcă din nou.",
     "copyNotice": "Pe web, clicul dreapta și copierea sunt oprite pentru capitole. Asta face copierea mai grea, dar nu poate opri capturile de ecran. {{penName}} păstrează toate drepturile asupra acestei povești."
+  },
+  "teaser": {
+    "shared": "Trimis ție · capitolul {{number}} din {{total}}",
+    "chapterEyebrow": "Capitolul {{number}}",
+    "firstPart": "Citești prima parte",
+    "moreChapters_one": "Încă un capitol",
+    "moreChapters_few": "Încă {{count}} capitole",
+    "moreChapters_other": "Încă {{count}} de capitole",
+    "promptTitle": "Conectează-te ca să citești mai departe",
+    "promptBody": "Cititul și scrisul pe {{productName}} sunt gratuite, fără reclame care te urmăresc. Deocamdată {{productName}} este un test pentru adulți invitați: dacă ai o invitație, conectează-te sau intră cu linkul din invitație.",
+    "appsNote": "Deocamdată {{productName}} este pe web. Aplicațiile pentru calculator și telefon vin după lansarea pe web.",
+    "noPreviewTitle": "Nicio previzualizare pentru această poveste",
+    "noPreviewBody_16_plus": "Autorul a clasificat-o 16+. Nu știm vârsta vizitatorilor care nu sunt conectați, așa că ei văd titlul, dar nimic din text.",
+    "noPreviewBody_18_plus": "Autorul a clasificat-o 18+. Nu știm vârsta vizitatorilor care nu sunt conectați, așa că ei văd titlul, dar nimic din text.",
+    "noPreviewLogIn": "Conectează-te ca să vezi dacă o poți citi"
+  },
+  "linkPreview": {
+    "byWriter": "de {{name}}",
+    "hiddenDescription": "Clasificată {{rating}}. Conectează-te ca să vezi dacă o poți citi."
   }
 }

@@ -1334,6 +1334,7 @@ export type Database = {
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
@@ -1582,12 +1583,14 @@ export type Database = {
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
+      teaser_of: { Args: { chapter_body: string; word_limit: number }; Returns: string };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
+      word_total: { Args: { any_text: string }; Returns: number };
     };
     Enums: {
       account_status:

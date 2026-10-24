@@ -5,7 +5,8 @@
  * What it calls next: get_chapter(story_slug, chapter_code), the only way a reader reaches a
  * chapter's text. It answers nothing when the reader may not see the chapter: unpublished,
  * deleted, hidden by a moderator, rated above the reader's age or by someone either side blocks.
- * It never carries the user ID. record_chapter_read(story_slug, chapter_code) adds one to
+ * It never carries the user ID. A signed-out visitor gets only the teaser: the first whole
+ * paragraphs up to 600 words, cut on the server (S1-E4-04). record_chapter_read(story_slug, chapter_code) adds one to
  * today's total, never who read (supabase/migrations/…_s1_e4_01a_reader.sql).
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -30,9 +31,13 @@ export interface ReaderChapter {
   editedAt: string | null;
   minutesToRead: number;
   isOwner: boolean;
-  /** True for a signed-out visitor, who gets no text (the teaser is S1-E4-04). */
+  /** True for a signed-out visitor. */
   needsSignIn: boolean;
-  /** The published text as the Markdown subset (ADR 0005); null for a signed-out visitor. */
+  /** True when body is only the teaser, for a signed-out visitor (S1-E4-04). */
+  isTeaser: boolean;
+  /** True when the chapter goes on after the teaser. */
+  textContinues: boolean;
+  /** The published text as the Markdown subset (ADR 0005), or only its teaser. */
   body: string | null;
 }
 
@@ -55,6 +60,8 @@ interface ChapterRow {
   minutes_to_read: number;
   is_owner: boolean;
   needs_sign_in: boolean;
+  is_teaser: boolean;
+  text_continues: boolean;
   body: string | null;
 }
 
@@ -97,6 +104,8 @@ export async function fetchChapter(
     minutesToRead: row.minutes_to_read,
     isOwner: row.is_owner,
     needsSignIn: row.needs_sign_in,
+    isTeaser: row.is_teaser,
+    textContinues: row.text_continues,
     body: row.body,
   };
 }

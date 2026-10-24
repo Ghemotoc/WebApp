@@ -2,8 +2,8 @@
 -- What it proves, for get_chapter(story_slug, chapter_code):
 -- - a signed-in reader gets the published text with "chapter n of N" counted among the readable
 --   chapters, the previous and next codes, the dates and the minutes to read; never the user ID;
--- - a signed-out visitor gets the title and places but no text (needs_sign_in), until the
---   teaser (S1-E4-04);
+-- - a signed-out visitor gets the title and places with needs_sign_in, and only the teaser
+--   (S1-E4-04; the cut itself is tested in 142-teaser);
 -- - a draft, an unpublished chapter, a code from another story, a deleted story and a story rated
 --   above the reader's age answer null; the owner reads their own story whatever its rating;
 -- - is_blocked_with() exists as the blocks stub and answers false (Q8).
@@ -59,10 +59,10 @@ select is(public.get_chapter('statia-meteo-seed01', 'rdtstd04'), null, 'an unpub
 select is(public.get_chapter('the-girl-who-fixed-radios-seed02', 'rdtsta01'), null,
   'a chapter code under another story''s address answers null');
 
--- 3. A signed-out visitor: the title and places, no text.
+-- 3. A signed-out visitor: the title and places, and only the teaser.
 select pg_temp.sign_out();
 select is(public.get_chapter('statia-meteo-seed01', 'rdtsta01') ->> 'needs_sign_in', 'true', 'a visitor is asked to log in');
-select is(public.get_chapter('statia-meteo-seed01', 'rdtsta01') ->> 'body', null, 'and gets no text (the teaser is S1-E4-04)');
+select is(public.get_chapter('statia-meteo-seed01', 'rdtsta01') ->> 'is_teaser', 'true', 'and gets the teaser, not the chapter (S1-E4-04)');
 
 -- 4. Ratings (rule 18): the story becomes 16+.
 reset role;
