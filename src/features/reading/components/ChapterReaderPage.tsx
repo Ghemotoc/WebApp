@@ -8,7 +8,8 @@
  * (ChapterText with the reader's 19 px size, about 680 px wide, in the story's language), and
  * ChapterEnd. No doodles (DoD design rules). A signed-out visitor gets the header and "Log in to
  * read" instead of the text until the teaser (S1-E4-04). The banner slot comes after the
- * <article>, never inside the text (S1-E4-01b); it is empty until S1-E12-01.
+ * <article>, never inside the text (S1-E4-01b); it is empty until S1-E12-01. The text has
+ * right-click and copy turned off, with the honest notice under the chapter (S1-E4-06a).
  * What it calls: useChapter → get_chapter() (ADR 0004); useRecordRead → record_chapter_read()
  * once the text is on screen; useReadingProgress for the progress line.
  */
@@ -29,7 +30,8 @@ import { ChapterBannerSlot } from './ChapterBannerSlot';
 import { ChapterBar } from './ChapterBar';
 import { ChapterEnd } from './ChapterEnd';
 import { ChapterReaderHeader } from './ChapterReaderHeader';
-import { ChapterText } from './ChapterText';
+import { CopyNotice } from './CopyNotice';
+import { ProtectedChapterText } from './ProtectedChapterText';
 
 /** "This chapter isn't available", with the way home. */
 function ChapterUnavailable() {
@@ -100,7 +102,7 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
           <SignInToRead storySlug={chapter.story.slug} />
         ) : (
           <div ref={textRef} className="lg:pr-20">
-            <ChapterText
+            <ProtectedChapterText
               markdown={chapter.body}
               language={chapter.story.languageCode}
               className="tmc-chapter-text--reader"
@@ -109,6 +111,7 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
         )}
         {hasText && <ChapterEnd chapter={chapter} />}
       </article>
+      {hasText && <CopyNotice penName={chapter.story.writer.displayName} />}
       {hasText && <ChapterBannerSlot banner={banner} />}
     </>
   );
