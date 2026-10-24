@@ -82,8 +82,10 @@
   "reasons": {
     "illegal_content": "Conținut ilegal",
     "harassment": "Hărțuire",
+    "insults": "Insulte",
     "self_harm": "Risc de autovătămare",
     "child_sexual_content": "Conținut sexual cu un minor",
+    "threat_to_minor": "Amenințare la adresa unui minor",
     "terrorism": "Conținut terorist",
     "hate": "Ură",
     "spam": "Spam",
