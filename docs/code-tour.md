@@ -733,7 +733,7 @@ What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-
 | Hooks | `useMyStaffAccess`, `useAuditLog`, `useInviteLinks`, `useStaffRoles` | each story |
 | Tables | `audit_log` (append-only), `invites`, `staff_roles`, `staff_permissions`, `staff_role_areas`, the settings `staff_session_hours` and `staff_fresh_sign_in_minutes` | 1-02, 2-01, 2-07a, 11-01, 11-17 |
 | Functions | `is_staff_session()` (12 hours), `staff_signed_in_recently()`, `my_staff_areas()`, `log_sensitive_read()`, `admin_search_audit_log()`, `admin_export_audit_log()`, `admin_create_invite()`, `admin_revoke_invite()`, `admin_list_invites()`, `use_platform_invite()` | each story |
-| Tests | `supabase/tests/database/040`, `041` and `093` (the epic), `e2e/epic-s1-e11.spec.ts` and each story's spec | each story, S1-E11-QA |
+| Tests | `supabase/tests/database/040`, `041` and `095` (the epic), `e2e/epic-s1-e11.spec.ts` and each story's spec | each story, S1-E11-QA |
 
 **One main journey through the whole epic:** the admin opens `/staff/invites` → `admin_create_invite()` returns the code once and logs `invite.created` → an adult opens `/join/<code>` → the sign-up trigger calls `use_platform_invite()`, which takes the last place and logs `invite.used_up` on behalf of the maker → the owner opens `/staff/audit-log` → `admin_search_audit_log()` finds both rows. `e2e/epic-s1-e11.spec.ts` walks it.
 
