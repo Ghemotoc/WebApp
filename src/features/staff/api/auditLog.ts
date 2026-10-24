@@ -8,7 +8,7 @@
  * themselves; the export also writes its own audit row. Rows carry usernames and an 8-character
  * target ID, never a full user ID (architecture 1.6).
  */
-import type { Json } from '@/lib/database.types';
+import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 /** What the person can filter by. All optional. */
@@ -37,7 +37,11 @@ export const emptyFilters: AuditLogFilters = {
 export interface AuditLogEntry {
   id: string;
   createdAt: string;
+  /** person: someone acted (staffHandle, or actorUserIdShort without a username yet); system: the platform did (S1-E11-17). */
+  actor: Enums<'audit_actor'>;
   staffHandle: string | null;
+  /** The first 8 characters of the actor's user ID, or null for the system. */
+  actorUserIdShort: string | null;
   action: string;
   targetType: string;
   targetId: string | null;
@@ -118,11 +122,15 @@ function entryFromRow(row: {
   reason: string | null;
   before_values: Json | null;
   after_values: Json | null;
+  actor: Enums<'audit_actor'> | null;
+  actor_user_id_short: string | null;
 }): AuditLogEntry {
   return {
     id: row.id ?? '',
     createdAt: row.created_at ?? '',
+    actor: row.actor ?? 'person',
     staffHandle: row.staff_handle,
+    actorUserIdShort: row.actor_user_id_short,
     action: row.action ?? '',
     targetType: row.target_type ?? '',
     targetId: row.target_id,

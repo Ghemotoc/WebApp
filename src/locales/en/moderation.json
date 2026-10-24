@@ -82,8 +82,10 @@
   "reasons": {
     "illegal_content": "Illegal content",
     "harassment": "Harassment",
+    "insults": "Insults",
     "self_harm": "Self-harm risk",
     "child_sexual_content": "Sexual content involving a minor",
+    "threat_to_minor": "Threat to a minor",
     "terrorism": "Terrorist content",
     "hate": "Hate",
     "spam": "Spam",

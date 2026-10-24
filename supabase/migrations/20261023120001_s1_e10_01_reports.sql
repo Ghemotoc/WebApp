@@ -1,7 +1,8 @@
 -- Reports: the Report button on everything (story S1-E10-01; architecture B04; CLAUDE.md rule 6).
 --
 -- What it adds:
---   report_reason                 the story's eleven reasons, exactly
+--   report_reason                 the story's eleven reasons, plus "Threat to a minor" and
+--                                 "Insults" from the Moderation board (CTO, 24 Oct 2026)
 --   reports                       one row per report: who reported what, why, and a reference
 --   reportable_item_owner()       whose item this is, one branch per reportable_type value
 --   reportable_item_summary()     "what was reported" in a few words, one branch per value
@@ -22,12 +23,18 @@
 
 /* ---------- Reasons ---------- */
 
-/** report_reason: the story's list, in its order (S1-E10-01). */
+/**
+ * report_reason: the story's list, in its order (S1-E10-01), with the board's two extra reasons
+ * next to their closest neighbours (CTO, 24 Oct 2026): threat_to_minor after child sexual content
+ * (same-day tier, safeguarding) and insults after harassment (7-day tier), tiers in S1-E10-03a.
+ */
 create type public.report_reason as enum (
   'illegal_content',
   'harassment',
+  'insults',
   'self_harm',
   'child_sexual_content',
+  'threat_to_minor',
   'terrorism',
   'hate',
   'spam',
@@ -38,7 +45,7 @@ create type public.report_reason as enum (
 );
 
 comment on type public.report_reason is
-  'Why something was reported: the eleven reasons of S1-E10-01, in the story''s order.';
+  'Why something was reported: the eleven reasons of S1-E10-01 plus threat_to_minor and insults (CTO, 24 Oct 2026).';
 
 insert into public.settings (key, value, is_public, description) values
   ('report_hourly_limit', '20'::jsonb, false,

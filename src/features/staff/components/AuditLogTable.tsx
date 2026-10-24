@@ -6,7 +6,8 @@
  * screen readers); on phones a list of label and value rows with a fine line between them
  * (Definition of Done, lists of labels and values). Plain components, no doodles.
  * The target account appears by username and the first 8 characters of its user ID, never the
- * full ID (architecture 1.6).
+ * full ID (architecture 1.6). "Who" is a username, a short user ID for an account without a
+ * username yet (a new account using an invite) or "System" when the platform acted (S1-E11-17).
  * Who shows it: AuditLogPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -45,6 +46,19 @@ function targetAsText(entry: AuditLogEntry): string {
 }
 
 /**
+ * Who acted, as "@username", "(1a2b3c4d)" or the word for the system.
+ *
+ * @param entry - the audit entry
+ * @param systemLabel - "System" in the page's language
+ * @returns the text for the Who cell
+ */
+function actorAsText(entry: AuditLogEntry, systemLabel: string): string {
+  if (entry.actor === 'system') return systemLabel;
+  if (entry.staffHandle !== null) return `@${entry.staffHandle}`;
+  return entry.actorUserIdShort === null ? '' : `(${entry.actorUserIdShort})`;
+}
+
+/**
  * A date and time in the page's language.
  *
  * @param isoTime - the time as the database gave it
@@ -78,7 +92,7 @@ export function AuditLogTable({ entries }: { entries: AuditLogEntry[] }) {
   ];
   const cellsOf = (entry: AuditLogEntry) => [
     timeAsText(entry.createdAt, i18n.language),
-    entry.staffHandle === null ? '' : `@${entry.staffHandle}`,
+    actorAsText(entry, t('auditLog.system')),
     entry.action,
     `${entry.targetType} ${targetAsText(entry)}`.trim(),
     entry.reason ?? '',
