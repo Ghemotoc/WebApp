@@ -34,14 +34,13 @@ export function findMigrationVersionProblems(fileNames: string[]): MigrationProb
   // Step 1: every .sql file needs a version; collect the files under each version.
   for (const fileName of [...fileNames].sort()) {
     if (!fileName.endsWith('.sql')) continue;
-    const match = migrationFileName.exec(fileName);
-    if (match === null) {
+    const version = migrationFileName.exec(fileName)?.[1];
+    if (version === undefined) {
       problems.push(
         `${fileName}: a migration's name must be <14-digit version>_<story_id>_<slug>.sql, for example 20261024120001_s1_e11_01b_pick_account.sql.`,
       );
       continue;
     }
-    const version = match[1];
     filesByVersion.set(version, [...(filesByVersion.get(version) ?? []), fileName]);
   }
 
