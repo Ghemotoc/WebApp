@@ -13,6 +13,7 @@ import {
   classicsTextsFolder,
   countWords,
   demoStoriesFolder,
+  fileNumber,
   fixedId,
   parseCover,
   parseStory,
@@ -147,11 +148,20 @@ describe('the SQL', () => {
     );
     expect(sql).toContain('public.check_chapter_text($demo$');
     expect(sql).toContain('public.count_words($demo$');
+    expect(sql).toContain('published_word_count');
     expect(sql).toContain(
       "select public.set_story_tags('00000000-0000-4000-9100-000700000000'::uuid, '00000000-0000-4000-8000-000000000101'::uuid, array['hărți', 'oraș', 'mister'])",
     );
     expect(sql).toContain("'classics_account_handle'");
     expect(sql.trim().endsWith('as after_top_up;')).toBe(true);
+  });
+});
+
+describe('the fixed ids', () => {
+  it("come from the file name, so adding a file never shifts another story's ids", () => {
+    expect(fileNumber('demo-07.md', 0)).toBe(7);
+    expect(fileNumber('demo-36.md', 3)).toBe(36);
+    expect(fileNumber('classic-capra-cu-trei-iezi.md', 4)).toBe(5);
   });
 });
 

@@ -161,7 +161,7 @@ export interface DemoChapter {
 export interface DemoStory {
   /** From the file, for example "demo-07" or "classic-capra-cu-trei-iezi". */
   id: string;
-  /** The file's position in its folder, 1-based; drives the fixed ids and the dates. */
+  /** From the file name ("demo-07.md" is 7; see fileNumber()); drives the fixed ids and dates. */
   number: number;
   title: string;
   writer: string;
@@ -577,8 +577,9 @@ ${story.chapters.map((chapter, index) => chapterSql(story, chapter, index + 1)).
 
 /**
  * The SQL for one chapter, already published: the draft and the published copy hold the same
- * text, as publish_chapter() (S1-E3-03) will leave them. The body goes through the database's
- * own check_chapter_text() and count_words(), so the rules can't drift from the app's.
+ * text and word count, as publish_chapter() (S1-E3-03, chapter_publish_now()) leaves them. The
+ * body goes through the database's own check_chapter_text() and count_words(), so the rules
+ * can't drift from the app's.
  *
  * @param story - the chapter's story
  * @param chapter - the chapter
@@ -592,12 +593,13 @@ function chapterSql(story: DemoStory, chapter: DemoChapter, position: number): s
   // An 8-character address of letters and digits, fixed from the story and position.
   const code = `d${String(story.number).padStart(3, '0')}c${String(position).padStart(3, '0')}`;
   return `insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
-  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count, created_at)
+  draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
+  published_word_count, created_at)
 select ${sqlValue(fixedId(story, position))}::uuid, ${sqlValue(fixedId(story))}::uuid, ${sqlValue(writer.userId)}::uuid,
   ${sqlValue(code)}, ${position}, ${sqlText(chapter.title)}, public.check_chapter_text(${sqlText(chapter.body)}), 1,
   now() - interval '${publishedDaysAgo} days', ${sqlText(chapter.title)}, public.check_chapter_text(${sqlText(chapter.body)}), 'published',
   now() - interval '${publishedDaysAgo} days', now() - interval '${publishedDaysAgo} days', public.count_words(${sqlText(chapter.body)}),
-  now() - interval '${publishedDaysAgo + 1} days'
+  public.count_words(${sqlText(chapter.body)}), now() - interval '${publishedDaysAgo + 1} days'
 where not exists (select 1 from public.chapters where chapters.id = ${sqlValue(fixedId(story, position))}::uuid);
 `;
 }
@@ -663,6 +665,20 @@ select json_build_object(
 }
 
 /**
+ * The number that drives a story's fixed ids. A demo file carries its own ("demo-07.md" is 7), so
+ * adding or removing another file never changes an id that staging already holds; classics have
+ * no number in their name and take their place in the folder.
+ *
+ * @param fileName - for example "demo-07.md"
+ * @param index - the file's 0-based place in the folder
+ * @returns the number, from 1
+ */
+export function fileNumber(fileName: string, index: number): number {
+  const match = /^demo-(\d+)\.md$/.exec(fileName);
+  return match?.[1] === undefined ? index + 1 : Number(match[1]);
+}
+
+/**
  * Reads and parses every story file in a folder, in name order.
  *
  * @param folder - the folder
@@ -681,7 +697,10 @@ export function readStories(
     .sort();
   fileNames.forEach((fileName, index) => {
     try {
-      const story = parseStory(readFileSync(join(folder, fileName), 'utf8'), index + 1);
+      const story = parseStory(
+        readFileSync(join(folder, fileName), 'utf8'),
+        fileNumber(fileName, index),
+      );
       problems.push(...storyProblems(story).map((problem) => `${fileName}: ${problem}`));
       stories.push(story);
     } catch (error) {
