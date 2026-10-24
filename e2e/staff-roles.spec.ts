@@ -88,6 +88,9 @@ test.describe('staff roles (S1-E2-07a)', () => {
     test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {
+      // The account's language wins over the browser's (S1-E1-04), and earlier tests here set it
+      // to English, so it is set to the view's language first (no race between the two).
+      runSql(`update public.profiles set locale = '${view.language}' where handle = 'admin';`);
       await useSessionInBrowser(page.context(), (await signInPersona('admin')).session);
       await checkScreen(page, view);
     });

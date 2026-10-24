@@ -23,11 +23,13 @@
     "failures": {
       "not_allowed": "You can’t make that change. Admins can give moderator, support and content editor; only an owner can give owner or admin; nobody can change their own role.",
       "refused": "That wasn’t saved. Check the username and the reason. The last owner can’t be removed, and permissions are only for staff.",
-      "unreachable": "We couldn’t reach our server. Check your connection and try again."
+      "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+      "sign_in_again": "Sign in again to change a staff role. Changing a role needs a sign-in from the last 15 minutes."
     },
     "reasonMissing": "Write a reason first.",
     "usernameMissing": "Write the username first.",
-    "staffAccountNote": "A staff account can’t publish, comment, post or message as a member. Use a separate writer account for that."
+    "staffAccountNote": "A staff account can’t publish, comment, post or message as a member. Use a separate writer account for that.",
+    "signInAgain": "Sign in again"
   },
   "roleNames": {
     "owner": "Owner",
@@ -40,5 +42,74 @@
     "safeguarding": "Safeguarding",
     "teacher_checks": "Teacher checks",
     "on_call": "On call for removal orders"
+  },
+  "nav": {
+    "roles": "Roles",
+    "auditLog": "Audit log"
+  },
+  "shell": {
+    "eyebrow": "Staff",
+    "noHandle": "(no username yet)",
+    "byCompany": "An app by {{companyName}}"
+  },
+  "refused": {
+    "documentTitle": "Staff only · {{productName}}",
+    "heading": "This part is for staff",
+    "signed_out": "Log in with a staff account to open the admin site.",
+    "not_staff": "Your account has no staff role, so the admin site stays closed. If you work on the team, ask an owner or admin to give your staff account a role.",
+    "signIn": "Log in",
+    "goHome": "Go to Home"
+  },
+  "home": {
+    "documentTitle": "Admin site · {{productName}}",
+    "heading": "Admin site",
+    "intro": "The areas your role can use. Every action and every sensitive read is written to the audit log; the server checks your role on each one, not just this menu.",
+    "noAreas": "No area is open to you right now. Your role may have no area yet, or your staff session may be older than 12 hours: sign out and log in again to start a new one.",
+    "comingAreas": "Moderation, Users, Invites and the other areas arrive with their own stories; the menu shows an area as soon as its page exists.",
+    "areas": {
+      "roles": "Who on the team holds which role and permission.",
+      "audit_log": "Every staff action and sensitive read, searchable and exportable."
+    }
+  },
+  "auditLog": {
+    "documentTitle": "Audit log · {{productName}}",
+    "eyebrow": "Staff · audit log",
+    "heading": "Audit log",
+    "intro": "Who did what, when and why, with the values before and after. Nobody can change or delete a row, not even an owner. Searching is free; exporting a file is itself logged.",
+    "searchForm": "Search the audit log",
+    "action": "Action starts with",
+    "actionHint": "For example staff. or sensitive_read.",
+    "staffMember": "Staff member",
+    "staffMemberHint": "Their username, with or without @.",
+    "targetUserId": "Account user ID",
+    "targetUserIdHint": "The full user ID of the account acted on.",
+    "fromDate": "From",
+    "toDate": "To",
+    "search": "Search",
+    "export": "Export CSV",
+    "exporting": "Exporting…",
+    "exportNote": "Everything the filters match, up to 10,000 rows. The export is logged.",
+    "exported": "Exported {{count}} rows. The file is in your downloads.",
+    "loading": "Loading…",
+    "noRows": "Nothing matches. Widen the dates or clear a filter.",
+    "notAllowed": "Only an owner or admin can see the audit log.",
+    "pages": "Pages of the audit log",
+    "newer": "Newer",
+    "older": "Older",
+    "page": "Page {{number}}",
+    "columns": {
+      "time": "When",
+      "staff": "Who",
+      "action": "Action",
+      "target": "What",
+      "reason": "Reason",
+      "before": "Before",
+      "after": "After"
+    },
+    "failures": {
+      "bad_filter": "Check the user ID and the dates: a user ID has 36 characters, a date is a day.",
+      "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+      "not_allowed": "Only an owner or admin can export the audit log."
+    }
   }
 }
