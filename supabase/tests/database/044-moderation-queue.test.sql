@@ -19,7 +19,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(33);
+select plan(35);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000001'::uuid as adult_writer,
@@ -158,6 +158,10 @@ select throws_ok($$ select public.admin_decide_case((select id from opened), 'wa
 select pg_temp.sign_in_as((select admin from ids));
 select throws_ok($$ select public.admin_decide_case((select id from opened), 'warn', 'Note') $$, '42501', null,
   'an admin without the safeguarding permission can''t decide a safeguarding case');
+reset role;
+select ok(public.content_is_held_for_moderation('profile', (select blocked from ids)),
+  'while the case is open the item is held from the purge (Lane A''s stand-in, filled in)');
+set local role authenticated;
 select pg_temp.sign_in_as((select moderator from ids));
 select throws_ok($$ select public.admin_decide_case((select id from opened), 'warn', '  ') $$, '23514', null,
   'a decision needs a note');
@@ -175,6 +179,11 @@ select results_eq(
   'allowed: case_actions_select_moderation: the decision shows on the case page with who made it');
 select throws_ok($$ select public.admin_decide_case((select id from opened), 'ban', 'Again') $$, '23514', null,
   'a decided case can''t be decided again (appeals are S1-E10-07)');
+reset role;
+select ok(not public.content_is_held_for_moderation('profile', (select blocked from ids)),
+  'once decided it is no longer held');
+set local role authenticated;
+select pg_temp.sign_in_as((select moderator from ids));
 -- The audit log is read by owner and admin only (S1-E11-01), so the check runs as the database owner.
 reset role;
 select results_eq(

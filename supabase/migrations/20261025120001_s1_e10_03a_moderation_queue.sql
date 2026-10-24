@@ -614,3 +614,33 @@ grant execute on function public.admin_moderation_queue(public.case_tier, public
 grant execute on function public.admin_case_reports(uuid) to authenticated;
 grant execute on function public.admin_case_actions(uuid) to authenticated;
 grant execute on function public.admin_decide_case(uuid, public.moderation_action, text) to authenticated;
+
+/* ---------- Keeping reported content for the moderators (Lane A's stand-in, filled in) ---------- */
+
+/**
+ * content_is_held_for_moderation: is this item under an open moderation case, so the nightly
+ *   purge must keep it for the moderators even past its purge date? (Lane A's stand-in from
+ *   S1-E3-05, which the S1-E10 stories fill in, docs/mocks.md; Lane A merged first, so Lane C
+ *   fills it in on rebase, architecture 1.7.11.)
+ * Inputs: item_type, item_id. Returns: true while a case about the item is open; false once it
+ *   is decided (S1-E10-04's appeals may widen this to "decided less than six months ago").
+ * Who calls it: Lane A's purge jobs for stories and chapters (S1-E3-05, S1-E3-04).
+ */
+create or replace function public.content_is_held_for_moderation(item_type public.reportable_type, item_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.cases
+    where cases.item_type = content_is_held_for_moderation.item_type
+      and cases.item_id = content_is_held_for_moderation.item_id
+      and cases.status = 'open'
+  );
+$$;
+
+comment on function public.content_is_held_for_moderation(public.reportable_type, uuid) is
+  'True while an open moderation case is about the item, so the purge keeps it (S1-E3-05 stand-in, filled in by S1-E10-03a).';
+revoke execute on function public.content_is_held_for_moderation(public.reportable_type, uuid) from public, anon, authenticated;
