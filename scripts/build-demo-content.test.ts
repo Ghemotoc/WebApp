@@ -222,9 +222,33 @@ describe('a public-domain classic', () => {
 
     expect(problems.some((problem) => problem.startsWith('author_died must be'))).toBe(true);
     expect(problems).toContain(
-      'source_edition must be the year of the edition the text was taken from',
+      'source_edition must be the year of the edition the text was taken from, or blank',
     );
     expect(problems).toContain('names Gutenberg; strip its licence and name');
+  });
+
+  it('leaves a year the source never names blank, and says only where the text came from', () => {
+    const noYear = parseStory(classicFile.replace('source_edition: 1883', 'source_edition:'), 3);
+
+    expect(storyProblems(noYear)).toEqual([]);
+    expect(
+      storedBlurb(noYear).endsWith(
+        '\n\nText: Wikisource, https://ro.wikisource.org/w/index.php?oldid=148561, CC BY-SA 4.0; formatare adaptată.',
+      ),
+    ).toBe(true);
+  });
+
+  it('refuses a blank year on a text with no other credit', () => {
+    const gutenbergStyle = parseStory(
+      classicFile
+        .replace('source_edition: 1883', 'source_edition:')
+        .replace(/source_note: .*\n/, ''),
+      3,
+    );
+
+    expect(storyProblems(gutenbergStyle)).toContain(
+      'source_edition is blank; only a Wikisource text (with its source_note) may leave it blank',
+    );
   });
 
   it('has its own ids, address and chapter codes, apart from the demo stories', () => {

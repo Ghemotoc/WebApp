@@ -310,7 +310,10 @@ export function parseStory(markdown: string, number: number): DemoStory {
   if (fields.has('author')) {
     story.author = fields.get('author');
     story.authorDied = Number(fields.get('author_died'));
-    story.sourceEdition = Number(fields.get('source_edition'));
+    // A blank year means the source names none and it could not be confirmed (CTO, 24 Oct 2026:
+    // leave it blank rather than guess).
+    const edition = fields.get('source_edition') ?? '';
+    story.sourceEdition = edition === '' ? undefined : Number(edition);
     story.sourceNote = fields.get('source_note');
   }
   return story;
@@ -402,29 +405,55 @@ function classicProblems(story: DemoStory): string[] {
   if (!Number.isInteger(story.authorDied) || (story.authorDied ?? 0) > lastFreeDeathYear) {
     problems.push(`author_died must be ${lastFreeDeathYear} or earlier to be public domain`);
   }
-  if (!Number.isInteger(story.sourceEdition) || (story.sourceEdition ?? 0) < 1500) {
-    problems.push('source_edition must be the year of the edition the text was taken from');
-  }
+  problems.push(...editionProblems(story));
   const allText = [story.blurb, ...story.chapters.map((chapter) => chapter.body)].join('\n');
   if (/gutenberg/i.test(allText)) problems.push('names Gutenberg; strip its licence and name');
   return problems;
 }
 
 /**
+ * The edition year's rule: a year when given; left blank only when the source names none, and
+ * then only for a Wikisource text, whose credit line still carries its link and licence. A
+ * Gutenberg text's credit is the year alone, so it must have one (decided 23 and 24 Oct 2026).
+ *
+ * @param story - a classic
+ * @returns the problems
+ */
+function editionProblems(story: DemoStory): string[] {
+  if (story.sourceEdition === undefined) {
+    return story.sourceNote === undefined
+      ? [
+          'source_edition is blank; only a Wikisource text (with its source_note) may leave it blank',
+        ]
+      : [];
+  }
+  if (!Number.isInteger(story.sourceEdition) || story.sourceEdition < 1500) {
+    return ['source_edition must be the year of the edition the text was taken from, or blank'];
+  }
+  return [];
+}
+
+/**
  * The blurb as stored. A classic gets its credit line under the blurb: the source edition year
- * and, for a Wikisource text, the link and licence CC BY-SA asks for (decided 23 Oct 2026).
+ * when known and, for a Wikisource text, the link and licence CC BY-SA asks for (decided 23 and
+ * 24 Oct 2026).
  *
  * @param story - the story
  * @returns the text for stories.blurb
  */
 export function storedBlurb(story: DemoStory): string {
   if (story.author === undefined) return story.blurb;
-  const edition =
-    story.language === 'ro'
-      ? `Ediția sursă: ${story.sourceEdition}.`
-      : `Source edition: ${story.sourceEdition}.`;
-  const credit = story.sourceNote === undefined ? edition : `${edition} ${story.sourceNote}`;
-  return `${story.blurb}\n\n${credit}`;
+  const parts: string[] = [];
+  // The year only when it is known; a blank year is left out, never guessed.
+  if (story.sourceEdition !== undefined) {
+    parts.push(
+      story.language === 'ro'
+        ? `Ediția sursă: ${story.sourceEdition}.`
+        : `Source edition: ${story.sourceEdition}.`,
+    );
+  }
+  if (story.sourceNote !== undefined) parts.push(story.sourceNote);
+  return `${story.blurb}\n\n${parts.join(' ')}`;
 }
 
 /**
