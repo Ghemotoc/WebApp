@@ -26,7 +26,8 @@
     "emails:build": "tsx scripts/build-auth-email-templates.ts",
     "demo:build": "tsx scripts/build-demo-content.ts",
     "doodles:tokens": "tsx scripts/doodle-tokens.ts",
-    "doodles:check": "tsx scripts/doodle-tokens.ts --check"
+    "doodles:check": "tsx scripts/doodle-tokens.ts --check",
+    "demo:compare-parts": "tsx scripts/compare-demo-parts.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",
