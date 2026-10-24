@@ -21,6 +21,20 @@ As staff, I want an admin site that only verified staff can reach so that powerf
   - Given the menu, when a staff member opens the admin site, then it shows only the areas their role allows (section 1.8.2); the server still checks every action.
 - **Legal and compliance:** GDPR Art 32 and accountability (Art 5(2)).
 
+##### S1-E11-01b Pick the account when granting a role
+
+As an owner or admin, I want to grant a role by picking an account that already exists so that I never have to know or type its username.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E11-01, S1-E2-07a
+- **Added:** 24 Oct 2026, Robert's request after testing /staff/roles on staging (he typed an email and got one combined error), written up by the CTO.
+- **Acceptance criteria:**
+  - Given /staff/roles, when the owner or an admin types in the search box, then it finds existing accounts by username, pen name or email; an email matches only whole (decided 24 Oct 2026, so the search can't fish for addresses) and shows masked (r***@gmail.com); revealing it stays a logged sensitive read.
+  - Given the results, when the staff member picks one, then they choose the role and write the reason, and the grant uses that account.
+  - Given a refused change, when the page explains it, then the message names the actual problem (no such account, reason missing, last owner, not a staff account, and the other rules) instead of one combined sentence.
+  - Given the owner-only and audit-log rules, when anything here runs, then they are unchanged.
+  - The last-owner guard has a database test that calls it directly with the last owner as target, because no screen can reach it (decided 24 Oct 2026).
+- **Legal and compliance:** data access on a need-to-know basis (GDPR Art 5(1)(f)); revealing an email is logged (section 1.8.3).
+
 ##### S1-E11-02 User management
 
 As a moderator, I want to look up accounts and act on them so that I can enforce the rules.

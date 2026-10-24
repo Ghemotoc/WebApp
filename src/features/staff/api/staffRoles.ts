@@ -3,9 +3,10 @@
  *
  * Who calls it: hooks/useStaffRoles.ts.
  * What it calls next: the audited database functions in …_s1_e2_07a_staff_roles.sql:
- * admin_list_staff(), admin_user_id_for_handle(), admin_grant_role(), admin_remove_role() and
- * admin_set_permission(). Each checks the caller's role and staff session itself and writes the
- * audit log; this file only passes the answers on.
+ * admin_list_staff(), admin_grant_role(), admin_remove_role() and admin_set_permission(). Each
+ * checks the caller's role and staff session itself and writes the audit log; this file only
+ * passes the answers on. The account to grant a role to is picked from admin_find_accounts()
+ * (api/accountSearch.ts, S1-E11-01b), so a grant carries a user ID, never a typed name.
  */
 import type { Enums } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -24,8 +25,25 @@ export interface StaffMember {
   permissions: StaffPermission[];
 }
 
-/** Why a change was refused, in words the page can explain. */
-export type StaffChangeFailure = 'not_allowed' | 'sign_in_again' | 'refused' | 'unreachable';
+/**
+ * Why a change was refused, in words the page can explain (S1-E11-01b: one reason each, from the
+ * HINT the database attaches to every refusal in …_s1_e11_01b_pick_account.sql).
+ */
+export const staffChangeFailures = [
+  'not_allowed',
+  'sign_in_again',
+  'own_role',
+  'owner_only_role',
+  'reason_missing',
+  'no_such_account',
+  'last_owner',
+  'not_staff',
+  'refused',
+  'unreachable',
+] as const;
+
+/** One reason a change was refused. */
+export type StaffChangeFailure = (typeof staffChangeFailures)[number];
 
 /** The error a refused change throws. */
 export class StaffChangeError extends Error {
@@ -34,18 +52,28 @@ export class StaffChangeError extends Error {
   }
 }
 
+/** What Postgres sends back about a refusal: its code and, from S1-E11-01b, a hint. */
+export interface DatabaseRefusal {
+  code?: string;
+  hint?: string;
+}
+
 /**
  * Turns a database error into a reason.
  *
- * @param code - Postgres's error code
- * @returns not_allowed (42501: not the caller's to change), sign_in_again (28000: the person's
- *   sign-in is older than staff_fresh_sign_in_minutes, S1-E11-01), refused (23514: a rule such as
- *   the reason or the last owner) or unreachable
+ * @param refusal - Postgres's error code and hint
+ * @returns the hint when it is one the page knows; otherwise, from the code: not_allowed (42501),
+ *   sign_in_again (28000: a sign-in older than staff_fresh_sign_in_minutes, S1-E11-01), refused
+ *   (23514, a rule with no hint) or unreachable
  */
-function failureFromCode(code: string | undefined): StaffChangeFailure {
-  if (code === '42501') return 'not_allowed';
-  if (code === '28000') return 'sign_in_again';
-  if (code === '23514') return 'refused';
+export function failureFromRefusal(refusal: DatabaseRefusal): StaffChangeFailure {
+  // Step 1: the hint names the exact problem (no such account, reason missing, last owner…).
+  const knownHint = staffChangeFailures.find((failure) => failure === refusal.hint);
+  if (knownHint !== undefined) return knownHint;
+  // Step 2: without a hint, the error code still tells the kind of problem.
+  if (refusal.code === '42501') return 'not_allowed';
+  if (refusal.code === '28000') return 'sign_in_again';
+  if (refusal.code === '23514') return 'refused';
   return 'unreachable';
 }
 
@@ -58,7 +86,7 @@ function failureFromCode(code: string | undefined): StaffChangeFailure {
  */
 export async function listStaff(client: AppSupabaseClient): Promise<StaffMember[]> {
   const { data, error } = await client.rpc('admin_list_staff');
-  if (error !== null) throw new StaffChangeError(failureFromCode(error.code));
+  if (error !== null) throw new StaffChangeError(failureFromRefusal(error));
   return data.map((member) => ({
     userId: member.user_id,
     handle: member.handle,
@@ -69,7 +97,7 @@ export async function listStaff(client: AppSupabaseClient): Promise<StaffMember[
 
 /** One change on the page. */
 export type StaffChange =
-  | { kind: 'grant_role'; handle: string; role: StaffRole; reason: string }
+  | { kind: 'grant_role'; userId: string; role: StaffRole; reason: string }
   | { kind: 'remove_role'; userId: string; role: StaffRole; reason: string }
   | {
       kind: 'set_permission';
@@ -78,21 +106,6 @@ export type StaffChange =
       shouldHold: boolean;
       reason: string;
     };
-
-/**
- * Finds the account for a username, for a new grant.
- *
- * @param client - the shared Supabase client
- * @param handle - the username, with or without "@"
- * @returns the user ID
- * Errors: throws StaffChangeError('refused') when no account has that username.
- */
-async function userIdForHandle(client: AppSupabaseClient, handle: string): Promise<string> {
-  const { data, error } = await client.rpc('admin_user_id_for_handle', { wanted_handle: handle });
-  if (error !== null) throw new StaffChangeError(failureFromCode(error.code));
-  if (data === null) throw new StaffChangeError('refused');
-  return data;
-}
 
 /**
  * Makes one change.
@@ -107,9 +120,8 @@ export async function applyStaffChange(
 ): Promise<void> {
   let result;
   if (change.kind === 'grant_role') {
-    const userId = await userIdForHandle(client, change.handle);
     result = await client.rpc('admin_grant_role', {
-      target_user_id: userId,
+      target_user_id: change.userId,
       granted_role: change.role,
       reason_given: change.reason,
     });
@@ -127,7 +139,7 @@ export async function applyStaffChange(
       reason_given: change.reason,
     });
   }
-  if (result.error !== null) throw new StaffChangeError(failureFromCode(result.error.code));
+  if (result.error !== null) throw new StaffChangeError(failureFromRefusal(result.error));
 }
 
 /**

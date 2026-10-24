@@ -10,6 +10,7 @@ Every decision Robert has made, with its date and source. The live list is the m
 | The invite log is never written on behalf of the admin: using a place writes `invite.redeemed` with the new account as actor (user ID only, no email) and the invite as target; when the last place closes the invite, a second row has the system as actor (`audit_log.actor = 'system'`) (S1-E11-17) | Chat, 24 Oct 2026 |
 | The report dialog has the board's corner "×", named "Închide" / "Close" (S1-E10-01) | Chat, 24 Oct 2026 |
 | The lawyer's list gains two points: the banned email kept as a keyed hash, and Brevo as processor for support emails (S1-E10-06, S1-E14-04) | Chat, 24 Oct 2026 |
+| Staff roles are granted by picking an existing account from a search (username, pen name or email), not by typing an identifier; email matches show masked and revealing one is a logged sensitive read; every refusal names its own problem (S1-E11-01b, added to Lane C after S1-E11-QA). Robert's request after testing /staff/roles on staging; email search matches only a complete address, to stop address fishing; the last-owner guard gets a database test that calls it directly | Chat, 24 Oct 2026 (Robert, through the CTO) |
 
 ## Added 23 Oct 2026 (Lane C: safety and admin; Robert, chat)
 

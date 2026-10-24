@@ -1,7 +1,8 @@
 /**
  * GrantRoleForm: "Give someone a role" on /staff/roles (story S1-E2-07a).
  *
- * The role list shows only what the signed-in person may give: an owner any role, an admin
+ * The account is picked from a search of existing accounts (AccountPicker, S1-E11-01b), never
+ * typed. The role list shows only what the signed-in person may give: an owner any role, an admin
  * moderator, support and content editor (architecture 1.8.3). The database checks it again, with
  * the reason and the rule that nobody changes their own role.
  * Who shows it: StaffRolesPage. What it calls: the change() it is given (useStaffRoles).
@@ -14,7 +15,10 @@ import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
 
+import type { AccountMatch } from '../api/accountSearch';
 import type { StaffChange, StaffRole } from '../api/staffRoles';
+
+import { AccountPicker } from './AccountPicker';
 
 /** The roles an admin may give; an owner may also give owner and admin. */
 const adminRoles: StaffRole[] = ['moderator', 'support', 'content_editor'];
@@ -35,21 +39,21 @@ interface GrantRoleFormProps {
 export function GrantRoleForm({ isOwner, isChanging, onChange }: GrantRoleFormProps) {
   const { t } = useTranslation('staff');
   const roles = isOwner ? ownerRoles : adminRoles;
-  const [handle, setHandle] = useState('');
+  const [account, setAccount] = useState<AccountMatch | null>(null);
   const [role, setRole] = useState<StaffRole>('moderator');
   const [reason, setReason] = useState('');
   const [problem, setProblem] = useState<string | null>(null);
 
-  /** Checks the two required fields, then asks the database. */
+  /** Checks the two required choices, then asks the database. */
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (handle.trim() === '') return setProblem(t('roles.usernameMissing'));
+    if (account === null) return setProblem(t('roles.accountMissing'));
     if (reason.trim() === '') return setProblem(t('roles.reasonMissing'));
     setProblem(null);
     // A refusal is shown by the page from useStaffRoles; nothing else to do here.
     await onChange({
       kind: 'grant_role',
-      handle: handle.trim(),
+      userId: account.userId,
       role,
       reason: reason.trim(),
     }).catch(() => undefined);
@@ -65,13 +69,7 @@ export function GrantRoleForm({ isOwner, isChanging, onChange }: GrantRoleFormPr
       <h2 id="grant-role-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
         {t('roles.grantHeading')}
       </h2>
-      <TextInput
-        id="grant-handle"
-        label={t('roles.username')}
-        value={handle}
-        autoCapitalize="none"
-        onChange={(event) => setHandle(event.target.value)}
-      />
+      <AccountPicker picked={account} onPick={setAccount} />
       <Select
         id="grant-role"
         label={t('roles.role')}

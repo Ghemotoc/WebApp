@@ -387,9 +387,13 @@ content/safety-contacts.json (research G4) → scripts/build-safety-contacts-mig
 
 ```
 /staff/roles (StaffRolesPage, inside StaffLayout since S1-E11-01)        src/features/staff/
+  │  GrantRoleForm → AccountPicker (S1-E11-01b): "Find the account" → useAccountSearch →
+  │     api/accountSearch.ts → admin_find_accounts(text) (username start, pen name, whole email;
+  │     the email masked; an email match logged) and admin_reveal_email(id) ("Show email", logged)
   │  useStaffRoles → api/staffRoles.ts
-  │     admin_list_staff(), admin_user_id_for_handle(),
-  │     admin_grant_role() / admin_remove_role() / admin_set_permission()
+  │     admin_list_staff(), admin_grant_role(user ID) / admin_remove_role() / admin_set_permission()
+  │     a refusal carries a HINT (no_such_account, reason_missing, last_owner, not_staff, own_role,
+  │     owner_only_role, not_allowed, sign_in_again) → failureFromRefusal() → its own sentence
   ▼
 …_s1_e2_07a_staff_roles.sql
   │  staff_may(area, access): the caller's role in staff_role_areas (architecture 1.8.3), plus the
