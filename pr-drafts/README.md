@@ -10,7 +10,8 @@ then ready for review once its local checks pass):
 | --- | --- | --- |
 | S1-E4-06a | `claude/s1-e4-06a-copy-off` | Ghemotoc/WebApp#191, Ghemotoc/WebApp#192 |
 | S1-E4-04 | `claude/s1-e4-04-teaser` | S1-E4-06a |
+| S1-E4-QA | `claude/s1-e4-qa` | S1-E4-04 |
 
 S1-E4-01a and S1-E4-01b were opened before the pause: Ghemotoc/WebApp#191 and Ghemotoc/WebApp#192.
 
-Hand-overs: `pr-drafts/handover/lane-c.md` (Lane C, safety and admin, 24 Oct 2026).
+Hand-over to the next thread: `handover/lane-a.md`. The superseded S1-E6 plan: `pr-drafts/plan-s1-e6.md`.
