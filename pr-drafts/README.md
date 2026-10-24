@@ -9,5 +9,6 @@ then ready for review once its local checks pass):
 | Story | Branch | Merges after |
 | --- | --- | --- |
 | S1-E4-06a | `claude/s1-e4-06a-copy-off` | Ghemotoc/WebApp#191, Ghemotoc/WebApp#192 |
+| S1-E4-04 | `claude/s1-e4-04-teaser` | S1-E4-06a |
 
 S1-E4-01a and S1-E4-01b were opened before the pause: Ghemotoc/WebApp#191 and Ghemotoc/WebApp#192.
