@@ -23,11 +23,11 @@ Only titles marked `yes` in `pd_romania_2026` in `content/classics/G5_romanian-c
 
 ## How they were fetched
 
-A one-off session on 24 Oct 2026, once the environment allowed `ro.wikisource.org`, `www.gutenberg.org` and `gutenberg.org`:
-- Wikisource through its API (`action=parse`), with a descriptive User-Agent and a few seconds between requests; the shared cloud address is often rate-limited (HTTP 429), so requests back off and retry. Only the text was kept: the page header, navigation, licence banner, images, captions, footnote markers and footnotes were dropped.
-- Gutenberg plain-text files (`/cache/epub/<n>/pg<n>.txt`), cut to what lies between the START and END markers.
+The rules for every source are in `content/classics/README.md`, "Sources and terms" (24 Oct 2026). This set was fetched by a one-off session on 24 Oct 2026:
+- **Wikisource**, through its API (`action=parse`), one request at a time with a few seconds between them. The shared cloud address is often rate-limited (HTTP 429), so requests back off and retry. The pages fetched after the terms check also send the contact User-Agent and `maxlag`. Only the text was kept: the page header and its notes, navigation, licence banner, images, captions, footnote markers and footnotes were dropped, so nothing Wikisource contributors wrote is included. None of the 14 is a translation.
+- **Project Gutenberg**: six plain-text files from `www.gutenberg.org/cache/epub/<n>/pg<n>.txt`, about 2 s apart. This was before the terms check; from now on use `/robot/harvest` or a mirror. Each file was cut to what lies between the START and END markers. All six authors died before 1956, so the works are public domain in the EU, not only the US.
 
-To add a work later, follow the same steps and the format below, then run `npm run demo:build`.
+To add a work later, follow the rules for its source, use the format below, then run `npm run demo:build`.
 
 ## File format
 
