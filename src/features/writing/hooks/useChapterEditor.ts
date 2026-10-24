@@ -3,7 +3,8 @@
  *
  * Who calls it: ChapterEditorPage. What it does: starts the editor with the chapter's stored
  * Markdown turned into a document (chapterMarkdown.ts), tells the autosave on every change,
- * and gives back the body as Markdown whenever a save needs it. The link dialog is opened by
+ * gives back the body as Markdown whenever a save needs it, and cleans pasted HTML first
+ * (lib/pasteCleaning.ts, S1-E3-02b). The link dialog is opened by
  * the toolbar's Link button and by Ctrl+K (editorExtensions.ts).
  */
 import { useEditor, type Editor } from '@tiptap/react';
@@ -15,6 +16,7 @@ import {
   type EditorNode,
 } from '../lib/chapterMarkdown';
 import { chapterEditorExtensions } from '../lib/editorExtensions';
+import { cleanPastedHtml } from '../lib/pasteCleaning';
 
 /** What the hook needs. */
 export interface ChapterEditorOptions {
@@ -48,6 +50,8 @@ export function useChapterEditor({ initialBody, label, onChange, onBlur }: Chapt
         role: 'textbox',
         class: 'mx-auto max-w-[680px]',
       },
+      // Word, Google Docs and web pages: only the allowed formatting survives (S1-E3-02b).
+      transformPastedHTML: cleanPastedHtml,
     },
     onUpdate: onChange,
     onBlur,

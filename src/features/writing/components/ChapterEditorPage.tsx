@@ -6,13 +6,14 @@
  * What it shows: the breadcrumb (Writer dashboard › the story › Chapter n, with the state pill),
  * the title field, the toolbar, the text, the paste note and the rights line, with the aside
  * (Saving, Publish, Story details, Your stories) beside them (below on phones).
- * What it calls: useChapterDraft (the chapter, owner only), useChapterEditor (TipTap),
- * useAutosave (every 10 seconds and on blur → save_chapter_draft()), useMyStories (the aside).
+ * What it calls: useChapterDraft (the chapter, owner only), useDeviceDraft (the copy kept on
+ * this device, S1-E3-02b), useChapterEditor (TipTap; pasted HTML cleaned), useAutosave (every
+ * 10 seconds and on blur → save_chapter_draft(); offline keeps; conflicts), useMyStories (the
+ * aside) and CompareVersionsDialog (after a conflict).
  * Errors: a chapter that isn't the writer's shows "We can't find this chapter among yours"; a
  * failed load shows the plain message; save problems show in the Saving box.
  * Left out on purpose: the board's Insert menu (pictures, drawings, music, video), which is
- * S1-E3-09 to 11 after March; offline keeping, paste cleaning and the conflict choices, which
- * are S1-E3-02b.
+ * S1-E3-09 to 11 after March.
  */
 import { EditorContent } from '@tiptap/react';
 import { useState } from 'react';
@@ -29,11 +30,17 @@ import { brand } from '@/config/brand';
 import { MAXIMUM_CHAPTER_TITLE_LENGTH } from '@/schemas/chapter';
 
 import type { MyChapter } from '../api/chapters';
+import { useOnlineStatus } from '@/features/offline/hooks/useOnlineStatus';
+
 import { useAutosave } from '../hooks/useAutosave';
 import { useChapterDraft } from '../hooks/useChapterDraft';
 import { useChapterEditor } from '../hooks/useChapterEditor';
+import { useDeviceDraft } from '../hooks/useDeviceDraft';
 import { useMyStories } from '../hooks/useMyStories';
+import { markdownToEditorDocument } from '../lib/chapterMarkdown';
+import type { DeviceDraft } from '../lib/draftStore';
 
+import { CompareVersionsDialog } from './CompareVersionsDialog';
 import { EditorAside } from './EditorAside';
 import { EditorToolbar } from './EditorToolbar';
 import { LinkDialog } from './LinkDialog';
@@ -110,18 +117,57 @@ function EditorFootnotes() {
   );
 }
 
+/** Where the editor starts: the server's draft, or the newer copy kept on this device. */
+interface EditorStart {
+  title: string;
+  body: string;
+  /** The server version that text is based on. */
+  version: number;
+  /** True when the text came from the device copy and still needs saving. */
+  hasUnsavedText: boolean;
+}
+
+/**
+ * Picks the starting text: a device copy wins, because it holds words the server never got
+ * (S1-E3-02b). Its version may be older than the server's; the first save then reports the
+ * conflict and the writer chooses.
+ *
+ * @param chapter - the server's draft
+ * @param deviceDraft - the device copy, or null
+ * @returns where to start
+ */
+function editorStartFor(chapter: MyChapter, deviceDraft: DeviceDraft | null): EditorStart {
+  if (deviceDraft === null) {
+    return {
+      title: chapter.draftTitle,
+      body: chapter.draftBody,
+      version: chapter.draftVersion,
+      hasUnsavedText: false,
+    };
+  }
+  return {
+    title: deviceDraft.title,
+    body: deviceDraft.body,
+    version: deviceDraft.baseVersion,
+    hasUnsavedText: true,
+  };
+}
+
 /** The loaded editor's state: the title, the word count, the TipTap editor and the autosave. */
-function useLoadedEditor(chapter: MyChapter) {
+function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
   const { t } = useTranslation('editor');
-  const [title, setTitle] = useState(chapter.draftTitle);
+  const { isOnline } = useOnlineStatus();
+  const [title, setTitle] = useState(start.title);
   const [wordCount, setWordCount] = useState(chapter.wordCount);
   const autosave = useAutosave({
     chapterCode: chapter.code,
-    initialVersion: chapter.draftVersion,
+    initialVersion: start.version,
+    startsWithChanges: start.hasUnsavedText,
     readDraft: () => ({ title, body: editing.readBody() }),
+    isOnline,
   });
   const editing = useChapterEditor({
-    initialBody: chapter.draftBody,
+    initialBody: start.body,
     label: t('bodyLabel'),
     onChange: () => {
       autosave.markChanged();
@@ -135,14 +181,77 @@ function useLoadedEditor(chapter: MyChapter) {
     setTitle(value);
     autosave.markChanged();
   }
-  return { title, changeTitle, wordCount, autosave, editing };
+  /** "Keep the other version": its title and text replace what is on screen. */
+  function loadOther(other: MyChapter) {
+    setTitle(other.draftTitle);
+    editing.editor?.commands.setContent(markdownToEditorDocument(other.draftBody), {
+      emitUpdate: false,
+    });
+    setWordCount(other.wordCount);
+    autosave.acceptOther(other.draftVersion);
+  }
+  return { title, changeTitle, wordCount, autosave, editing, loadOther };
+}
+
+/** The conflict's two choices and the compare dialog's open state (S1-E3-02b). */
+function useConflictChoices(loaded: ReturnType<typeof useLoadedEditor>) {
+  const [isComparing, setComparing] = useState(false);
+  const serverVersion =
+    loaded.autosave.state.kind === 'conflict' ? loaded.autosave.state.serverVersion : null;
+  return {
+    isComparing,
+    openCompare: () => setComparing(true),
+    closeCompare: () => setComparing(false),
+    keepMine: () => {
+      setComparing(false);
+      if (serverVersion !== null) void loaded.autosave.keepMine(serverVersion);
+    },
+    keepOther: (other: MyChapter) => {
+      setComparing(false);
+      loaded.loadOther(other);
+    },
+  };
+}
+
+/** The link dialog and the compare dialog, which sit outside the page's flow. */
+function EditorDialogs(props: {
+  chapterCode: string;
+  loaded: ReturnType<typeof useLoadedEditor>;
+  conflict: ReturnType<typeof useConflictChoices>;
+}) {
+  const { editing, title } = props.loaded;
+  return (
+    <>
+      {editing.editor !== null && (
+        <LinkDialog
+          editor={editing.editor}
+          isOpen={editing.isLinkDialogOpen}
+          onClose={editing.closeLinkDialog}
+        />
+      )}
+      <CompareVersionsDialog
+        isOpen={props.conflict.isComparing}
+        chapterCode={props.chapterCode}
+        thisDevice={{
+          title,
+          text: editing.editor?.getText({ blockSeparator: '\n\n' }) ?? '',
+          savedAt: null,
+        }}
+        onKeepThisDevice={props.conflict.keepMine}
+        onKeepOther={props.conflict.keepOther}
+        onClose={props.conflict.closeCompare}
+      />
+    </>
+  );
 }
 
 /** The editor itself, once the chapter is loaded: the title, the toolbar, the text and the aside. */
-function LoadedEditor({ chapter }: { chapter: MyChapter }) {
+function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorStart }) {
   const { t } = useTranslation('editor');
   const writing = useMyStories();
-  const { title, changeTitle, wordCount, autosave, editing } = useLoadedEditor(chapter);
+  const loaded = useLoadedEditor(chapter, start);
+  const { title, changeTitle, wordCount, autosave, editing } = loaded;
+  const conflict = useConflictChoices(loaded);
   const story = writing.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
   const documentTitle = title === '' ? t('chapterNumber', { number: chapter.position }) : title;
 
@@ -172,17 +281,13 @@ function LoadedEditor({ chapter }: { chapter: MyChapter }) {
           <EditorContent editor={editing.editor} />
         </div>
         <EditorFootnotes />
-        {editing.editor !== null && (
-          <LinkDialog
-            editor={editing.editor}
-            isOpen={editing.isLinkDialogOpen}
-            onClose={editing.closeLinkDialog}
-          />
-        )}
+        <EditorDialogs chapterCode={chapter.code} loaded={loaded} conflict={conflict} />
       </main>
       <div className="w-full flex-[1_1_300px] lg:max-w-[340px]">
         <EditorAside
           saveState={autosave.state}
+          onKeepMine={conflict.keepMine}
+          onCompare={conflict.openCompare}
           story={story}
           stories={writing.stories.filter((candidate) => candidate.deletedAt === null)}
           currentSlug={chapter.story.slug}
@@ -192,48 +297,79 @@ function LoadedEditor({ chapter }: { chapter: MyChapter }) {
   );
 }
 
-/**
- * Renders the page.
- *
- * @returns the editor screen, or a plain message while loading, signed out or not found
- */
-export function ChapterEditorPage() {
-  const { t } = useTranslation('editor');
-  const { storySlug = '', chapterCode = '' } = useParams();
-  const draft = useChapterDraft(chapterCode);
-  const chapter =
-    draft.chapter !== null && draft.chapter.story.slug === storySlug ? draft.chapter : null;
+/** The screens shown instead of the editor. */
+type PageMessageKind = 'signedOut' | 'loadFailed' | 'loading' | 'notFound';
 
-  if (draft.isKnown && !draft.isSignedIn) {
+/**
+ * Which message to show instead of the editor, if any.
+ *
+ * @returns the message, or null when the editor can start
+ */
+function pageMessage(
+  draft: ReturnType<typeof useChapterDraft>,
+  isDeviceRead: boolean,
+  chapter: MyChapter | null,
+): PageMessageKind | null {
+  if (draft.isKnown && !draft.isSignedIn) return 'signedOut';
+  if (draft.loadFailed) return 'loadFailed';
+  if (!draft.isKnown || !isDeviceRead) return 'loading';
+  if (chapter === null) return 'notFound';
+  return null;
+}
+
+/** The page while the editor can't show: signed out, a failed load, loading or not found. */
+function EditorPageMessage({ kind }: { kind: PageMessageKind }) {
+  const { t } = useTranslation('editor');
+  if (kind === 'loading') return <PageContainer className="pt-12 pb-7" />;
+  if (kind === 'signedOut') {
     return (
       <PageContainer className="tmc-rise pt-12 pb-7">
         <p className="m-0 text-body">{t('signedOut')}</p>
       </PageContainer>
     );
   }
-  if (draft.loadFailed) {
+  if (kind === 'loadFailed') {
     return (
       <PageContainer className="tmc-rise pt-12 pb-7">
         <Notice tone="error">{t('errors.loadFailed')}</Notice>
       </PageContainer>
     );
   }
-  if (!draft.isKnown) return <PageContainer className="pt-12 pb-7" />;
-  if (chapter === null) {
-    return (
-      <PageContainer className="tmc-rise flex flex-col gap-3 pt-12 pb-7">
-        <Eyebrow>{t('back')}</Eyebrow>
-        <p className="m-0 text-body">{t('notFound')}</p>
-        <Link to="/write" className="font-semibold">
-          {t('back')}
-        </Link>
-      </PageContainer>
-    );
-  }
+  return (
+    <PageContainer className="tmc-rise flex flex-col gap-3 pt-12 pb-7">
+      <Eyebrow>{t('back')}</Eyebrow>
+      <p className="m-0 text-body">{t('notFound')}</p>
+      <Link to="/write" className="font-semibold">
+        {t('back')}
+      </Link>
+    </PageContainer>
+  );
+}
+
+/**
+ * Renders the page.
+ *
+ * @returns the editor screen, or a plain message while loading, signed out or not found
+ */
+export function ChapterEditorPage() {
+  const { storySlug = '', chapterCode = '' } = useParams();
+  const draft = useChapterDraft(chapterCode);
+  // The device copy (S1-E3-02b) is read before the editor starts, so unsaved words show at once.
+  const device = useDeviceDraft(chapterCode);
+  const chapter =
+    draft.chapter !== null && draft.chapter.story.slug === storySlug ? draft.chapter : null;
+
+  const message = pageMessage(draft, device.isRead, chapter);
+  if (message !== null || chapter === null)
+    return <EditorPageMessage kind={message ?? 'loading'} />;
   return (
     <PageContainer className="tmc-rise flex flex-col gap-3 pt-8 pb-7">
       <EditorBreadcrumb chapter={chapter} />
-      <LoadedEditor key={chapter.code} chapter={chapter} />
+      <LoadedEditor
+        key={chapter.code}
+        chapter={chapter}
+        start={editorStartFor(chapter, device.deviceDraft)}
+      />
     </PageContainer>
   );
 }

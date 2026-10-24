@@ -43,9 +43,10 @@
     "saving": "Se salvează…",
     "savedJustNow": "Salvat chiar acum.",
     "savedAt": "Salvat la {{time}}.",
-    "conflict": "Acest capitol a fost modificat pe alt dispozitiv. Salvarea s-a oprit ca să nu se suprascrie nimic. Copiază textul tău cel mai nou undeva în siguranță, apoi reîncarcă pagina ca să vezi cealaltă versiune.",
+    "conflict": "Acest capitol a fost modificat pe alt dispozitiv. Salvarea s-a oprit ca să nu se suprascrie nimic. Alege ce versiune păstrezi.",
     "failed": "Nu am putut salva. Verifică conexiunea; încercăm din nou în 10 secunde.",
-    "notActive": "Contul tău nu poate salva capitole încă."
+    "notActive": "Contul tău nu poate salva capitole încă.",
+    "offline": "Nu ești conectat. Modificările rămân pe acest dispozitiv și se salvează când revii online."
   },
   "link": {
     "heading": "Adaugă un link",
@@ -83,5 +84,21 @@
     "saveFailed": "Nu am putut salva capitolul.",
     "loadFailed": "Nu am putut încărca acest capitol. Verifică conexiunea și încearcă din nou.",
     "createFailed": "Nu am putut adăuga un capitol. Verifică conexiunea și încearcă din nou."
+  },
+  "conflict": {
+    "keepMine": "Păstrează această versiune",
+    "compare": "Compară versiunile"
+  },
+  "compare": {
+    "heading": "Compară versiunile",
+    "intro": "Alege versiunea pe care o păstrezi. Cealaltă este înlocuită.",
+    "thisDevice": "Acest dispozitiv",
+    "otherDevice": "Celălalt dispozitiv",
+    "savedAt": "Salvat {{time}}",
+    "unsaved": "Nesalvat încă",
+    "keepThis": "Păstrează aceasta",
+    "cancel": "Renunță",
+    "loading": "Se încarcă cealaltă versiune…",
+    "loadFailed": "Nu am putut încărca cealaltă versiune. Verifică conexiunea și încearcă din nou."
   }
 }

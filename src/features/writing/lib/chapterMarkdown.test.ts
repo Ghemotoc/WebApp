@@ -9,6 +9,7 @@ import {
   escapeMarkdownText,
   isAllowedLink,
   markdownToEditorDocument,
+  markdownToPlainText,
 } from './chapterMarkdown';
 
 /** Markdown → document → Markdown, which must give the same Markdown back. */
@@ -107,5 +108,13 @@ describe('isAllowedLink', () => {
     expect(isAllowedLink('javascript:alert(1)')).toBe(false);
     expect(isAllowedLink('data:text/html,x')).toBe(false);
     expect(isAllowedLink('example.org')).toBe(false);
+  });
+});
+
+describe('markdownToPlainText', () => {
+  it('gives the words without the marks, paragraphs apart', () => {
+    expect(markdownToPlainText('## Marți\n\n**Bunica** *notează*.\n\n- unu\n- doi\n\n* * *')).toBe(
+      'Marți\n\nBunica notează.\n\nunu\n\ndoi\n\n* * *',
+    );
   });
 });

@@ -13,6 +13,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { Button } from '@/components/ui/Button';
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LabelRows } from '@/components/ui/LabelRows';
@@ -112,9 +113,31 @@ function YourStoriesPanel({ stories, currentSlug }: { stories: MyStory[]; curren
   );
 }
 
+/** "Keep this version" and "Compare versions", under the status after a conflict (S1-E3-02b). */
+function ConflictActions({
+  onKeepMine,
+  onCompare,
+}: {
+  onKeepMine: () => void;
+  onCompare: () => void;
+}) {
+  const { t } = useTranslation('editor');
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button onClick={onKeepMine}>{t('conflict.keepMine')}</Button>
+      <Button variant="secondary" onClick={onCompare}>
+        {t('conflict.compare')}
+      </Button>
+    </div>
+  );
+}
+
 /** What the aside needs. */
 export interface EditorAsideProps {
   saveState: SaveState;
+  /** The two ways out of a conflict (S1-E3-02b). */
+  onKeepMine: () => void;
+  onCompare: () => void;
   story: MyStory | null;
   stories: MyStory[];
   currentSlug: string;
@@ -125,7 +148,8 @@ export interface EditorAsideProps {
  *
  * @returns the column of panels
  */
-export function EditorAside({ saveState, story, stories, currentSlug }: EditorAsideProps) {
+export function EditorAside(props: EditorAsideProps) {
+  const { saveState, story, stories, currentSlug } = props;
   const { t } = useTranslation('editor');
   return (
     <aside className="flex flex-col gap-5">
@@ -134,6 +158,9 @@ export function EditorAside({ saveState, story, stories, currentSlug }: EditorAs
           <Eyebrow>{t('saving.heading')}</Eyebrow>
         </div>
         <SaveStatus state={saveState} />
+        {saveState.kind === 'conflict' && (
+          <ConflictActions onKeepMine={props.onKeepMine} onCompare={props.onCompare} />
+        )}
         <p className="m-0 text-[13px] leading-normal text-meta">{t('saving.explain')}</p>
         <Doodle
           name="desk-lamp"
