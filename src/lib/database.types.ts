@@ -1709,6 +1709,17 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      admin_find_accounts: {
+        Args: { search_text: string };
+        Returns: {
+          email_masked: string;
+          handle: string;
+          matched_by: string;
+          pen_name: string;
+          staff_roles: Database['public']['Enums']['staff_role'][];
+          user_id: string;
+        }[];
+      };
       admin_grant_role: {
         Args: {
           granted_role: Database['public']['Enums']['staff_role'];
@@ -1796,6 +1807,7 @@ export type Database = {
         Args: { reason_given: string; target_item_id: string };
         Returns: boolean;
       };
+      admin_reveal_email: { Args: { target_user_id: string }; Returns: string };
       admin_revoke_invite: {
         Args: { reason_given: string; target_invite_id: string };
         Returns: boolean;
@@ -2016,6 +2028,7 @@ export type Database = {
         };
         Returns: string;
       };
+      mask_email: { Args: { address: string }; Returns: string };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
       moderate_item: {
         Args: {
@@ -2157,6 +2170,10 @@ export type Database = {
       reportable_item_summary: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: string;
+      };
+      require_not_last_owner: {
+        Args: { removed_role: Database['public']['Enums']['staff_role']; target_user_id: string };
+        Returns: undefined;
       };
       require_role_change_allowed: {
         Args: { reason_given: string; target_user_id: string };
