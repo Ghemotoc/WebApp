@@ -27,9 +27,15 @@ const slug = 'statia-meteo-seed01';
 const writerId = '00000000-0000-4000-8000-000000000001';
 const address = `/write/s/${slug}/chapters`;
 
-/** Removes this spec's chapters and puts the story and the writer's language back. */
+/**
+ * Removes this spec's chapters and the jobs "Publish again" queued (the publish tests count
+ * them), and puts the story and the writer's language back.
+ */
 function cleanUp() {
   runSql(`delete from public.chapters where story_id = '${storyId}';`);
+  runSql(
+    `delete from public.jobs where kind = 'chapter_published' and payload ->> 'story_id' = '${storyId}';`,
+  );
   runSql(
     `update public.stories set first_published_at = null, last_chapter_published_at = null where id = '${storyId}';`,
   );
@@ -248,15 +254,19 @@ test.describe('Manage chapters (S1-E3-04)', () => {
   test('dragging by keyboard: Space picks up, arrows move, Space drops', async ({ browser }) => {
     const page = await openManageChapters(browser);
     await page.getByRole('button', { name: /^Drag chapter 3 to reorder/ }).focus();
+    // Each step waits for what a screen reader would say, as a person would before the next key
+    // (dnd-kit measures the rows again after every move).
+    const spoken = page.locator('[role="status"][aria-live="assertive"]');
     await page.keyboard.press('Space');
+    await expect(spoken).toContainText('Picked up chapter 3, Sâmbătă la atelier.');
     await page.keyboard.press('ArrowUp');
+    await expect(spoken).toContainText('Sâmbătă la atelier is now at position 2 of 5.');
     await page.keyboard.press('ArrowUp');
+    await expect(spoken).toContainText('Sâmbătă la atelier is now at position 1 of 5.');
     await page.keyboard.press('Space');
     await expect.poll(chapterOrder).toBe('mgdraft1,mgpub001,mgpub002,mgsched1,mgunpub1');
     // The move is read out in plain words.
-    await expect(page.locator('[role="status"][aria-live="assertive"]')).toContainText(
-      'Dropped Sâmbătă la atelier at position 1 of 5.',
-    );
+    await expect(spoken).toContainText('Dropped Sâmbătă la atelier at position 1 of 5.');
   });
 
   test('Rename: a published chapter’s new title reaches readers at once', async ({ browser }) => {

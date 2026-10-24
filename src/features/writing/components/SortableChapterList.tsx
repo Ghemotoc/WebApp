@@ -27,6 +27,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import type { TFunction } from 'i18next';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { ManagedChapter } from '../api/manageChapters';
@@ -43,33 +44,48 @@ export interface SortableChapterListProps {
   onAskDelete: (chapter: ManagedChapter) => void;
 }
 
+/** Where the dragged chapter was last said to be, so a move is announced only when it changes. */
+interface LastSpokenPlace {
+  overId: UniqueIdentifier | null;
+}
+
 /**
  * The screen reader's words for each step of a drag, with the chapter's title and place.
+ * dnd-kit reports "over" straight after the pick-up (over its own place); saying that would
+ * replace "Picked up…" before it is heard, so a place is announced only when it changes.
  *
  * @param t - the writing namespace's t()
  * @param chapters - the list as it is now
+ * @param lastSpoken - the place last announced, kept across renders by the component
  * @returns dnd-kit's announcements
  */
-function dragAnnouncements(t: TFunction, chapters: ManagedChapter[]): Announcements {
+function dragAnnouncements(
+  t: TFunction,
+  chapters: ManagedChapter[],
+  lastSpoken: LastSpokenPlace,
+): Announcements {
   const codes = chapters.map((chapter) => chapter.code);
   const total = chapters.length;
   const titleOf = (id: UniqueIdentifier) =>
     chapters.find((chapter) => chapter.code === id)?.title ?? '';
   const positionOf = (id: UniqueIdentifier) => codes.indexOf(String(id)) + 1;
   return {
-    onDragStart: ({ active }) =>
-      t('manageChapters.drag.pickedUp', {
+    onDragStart: ({ active }) => {
+      lastSpoken.overId = active.id;
+      return t('manageChapters.drag.pickedUp', {
         title: titleOf(active.id),
         position: positionOf(active.id),
-      }),
-    onDragOver: ({ active, over }) =>
-      over === null
-        ? undefined
-        : t('manageChapters.drag.over', {
-            title: titleOf(active.id),
-            position: positionOf(over.id),
-            total,
-          }),
+      });
+    },
+    onDragOver: ({ active, over }) => {
+      if (over === null || over.id === lastSpoken.overId) return undefined;
+      lastSpoken.overId = over.id;
+      return t('manageChapters.drag.over', {
+        title: titleOf(active.id),
+        position: positionOf(over.id),
+        total,
+      });
+    },
     onDragEnd: ({ active, over }) =>
       over === null
         ? t('manageChapters.drag.cancelled', { title: titleOf(active.id) })
@@ -91,6 +107,8 @@ export function SortableChapterList(props: SortableChapterListProps) {
   const { t } = useTranslation('writing');
   const { chapters } = props;
   const codes = chapters.map((chapter) => chapter.code);
+  // One object for the whole life of the list: the drag's announcements write to it.
+  const [lastSpoken] = useState<LastSpokenPlace>(() => ({ overId: null }));
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -113,7 +131,7 @@ export function SortableChapterList(props: SortableChapterListProps) {
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
       accessibility={{
-        announcements: dragAnnouncements(t, chapters),
+        announcements: dragAnnouncements(t, chapters, lastSpoken),
         screenReaderInstructions: { draggable: t('manageChapters.drag.instructions') },
       }}
     >
