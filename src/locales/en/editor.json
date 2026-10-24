@@ -59,7 +59,32 @@
   },
   "publish": {
     "heading": "Publish",
-    "comingSoon": "Publishing comes soon. Until then this chapter is a draft only you can see."
+    "whenLabel": "When to publish",
+    "now": "Publish now",
+    "later": "Schedule for later",
+    "date": "Date",
+    "time": "Time",
+    "zoneNote": "Romania time (Europe/Bucharest). It goes live within 5 minutes of this time.",
+    "preview": "Preview",
+    "publishButton": "Publish chapter",
+    "scheduleButton": "Schedule chapter",
+    "goLiveNote": "When this chapter goes live, your story becomes public and your followers get a notification.",
+    "scheduledFor": "Scheduled for {{when}}, Romania time.",
+    "cancelSchedule": "Cancel schedule",
+    "published": "Published {{when}}.",
+    "updateButton": "Update chapter",
+    "updateNote": "Your changes save as a draft. Readers see them after you press Update chapter.",
+    "unpublish": "Unpublish chapter",
+    "unpublishNotePublished": "Readers can’t open this chapter any more. Its comments are hidden but kept.",
+    "unpublishNoteDraft": "Available once the chapter is published. Readers then can’t open it. Its comments are hidden but kept.",
+    "working": "Working…",
+    "problems": {
+      "notSaved": "Your latest changes aren’t saved yet. Wait for “Saved”, then try again.",
+      "empty": "Write something before you publish.",
+      "badTime": "Pick a date and time in the future, at most a year ahead.",
+      "notActive": "Your account can’t publish yet.",
+      "failed": "We couldn’t do that. Check your connection and try again."
+    }
   },
   "details": {
     "heading": "Story details",
@@ -100,5 +125,10 @@
     "cancel": "Cancel",
     "loading": "Loading the other version…",
     "loadFailed": "We couldn’t load the other version. Check your connection and try again."
+  },
+  "preview": {
+    "heading": "Preview",
+    "note": "This is how readers will see the chapter.",
+    "close": "Close"
   }
 }

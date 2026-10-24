@@ -402,7 +402,26 @@ paste → TipTap's transformPastedHTML → lib/pasteCleaning.ts (Word lists, Doc
   headings snapped, scripts and pictures out) → the editor's schema → Markdown on save
 ```
 
-Stored format and why: ADR 0005. Tests: `supabase/tests/database/110-chapters.test.sql`, `111-save-chapter-draft.test.sql`, `src/features/writing/lib/chapterMarkdown.test.ts`, `src/schemas/chapter.test.ts`, `src/features/writing/hooks/useAutosave.test.tsx`, `lib/draftStore.test.ts`, `lib/pasteCleaning.test.ts` (Word, Google Docs and hostile fixtures in `src/test/fixtures/paste/`), `e2e/chapter-editor.spec.ts`, `e2e/chapter-editor-offline.spec.ts`.
+Publishing (S1-E3-03):
+
+```
+PublishPanel (in EditorAside) ← useChapterPublishing (keeps the status after each action)
+  │  "Publish chapter" / "Schedule chapter" / "Update chapter": the autosave saves first
+  │    (saveNow, isAllSaved) so what goes live is what is on screen (Q10)
+  │  the date and time are Romania time → src/lib/romania-time.ts → an instant (Q7)
+  │  Preview → ChapterPreviewDialog → ChapterText (src/features/reading/, the reader's renderer)
+  ▼
+publish_chapter() / schedule_chapter() / cancel_schedule() / update_published_chapter() /
+unpublish_chapter()                                           …_s1_e3_03_publish.sql
+  chapter_publish_now(): draft → published copy, dates, story stamps, a revision,
+  a 'chapter_published' job (IDs only; S1-E7-01 reads it)
+publish_due_chapters(): pg_cron every minute (docs/runbooks/scheduled-jobs.md)
+chapter_is_readable(id): published, not deleted, not moderated away (S1-E4-01a, S1-E6-01)
+get_story_page(): public while story_has_readable_chapter(); 'chapters' from story_page_chapters()
+  → StoryChapterList on /s/<slug>
+```
+
+Stored format and why: ADR 0005. Tests: `supabase/tests/database/110-chapters.test.sql`, `111-save-chapter-draft.test.sql`, `src/features/writing/lib/chapterMarkdown.test.ts`, `src/schemas/chapter.test.ts`, `src/features/writing/hooks/useAutosave.test.tsx`, `lib/draftStore.test.ts`, `lib/pasteCleaning.test.ts` (Word, Google Docs and hostile fixtures in `src/test/fixtures/paste/`), `e2e/chapter-editor.spec.ts`, `e2e/chapter-editor-offline.spec.ts`; publishing: `112-publish.test.sql`, `113-schedule.test.sql`, `src/lib/romania-time.test.ts`, `ChapterText.test.tsx`, `e2e/publish.spec.ts`.
 
 The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 

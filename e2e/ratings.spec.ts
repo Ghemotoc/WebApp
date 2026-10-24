@@ -6,7 +6,7 @@
  * - the new story form refuses to save without a rating and an AI answer, and a story about
  *   abuse or coercion without 16+ or 18+ and a content note; with them it saves, and the
  *   preview and the card show the pills;
- * - once published (set in SQL, as publish_chapter() will from S1-E3-03), a 16+ story shows its
+ * - once its chapter is published (in SQL, as the Publish button does since S1-E3-03), a 16+ story shows its
  *   rating row and content note to teen_17 and is "not available" to kid_14_ok and to a
  *   signed-out visitor (who counts as under 16);
  * - the writer changes the rating in story settings and the story page follows.
@@ -110,7 +110,10 @@ test.describe('ratings and labels (S1-E3-06)', () => {
     page,
   }) => {
     // Published as publish_chapter() will mark it (S1-E3-03).
-    runSql(`update public.stories set first_published_at = now() where title = '${storyTitle}';`);
+    // One published chapter, as the editor's Publish button makes it (S1-E3-03).
+    runSql(`update public.chapters set status = 'published', draft_body = 'Text.',
+      published_title = 'Unu', published_body = 'Text.', first_published_at = now(), last_published_at = now()
+      where story_id = (select id from public.stories where title = '${storyTitle}');`);
     const slug = storySlug();
 
     const teenPage = await openAsPersona(browser, 'teen_17', `/s/${slug}`);

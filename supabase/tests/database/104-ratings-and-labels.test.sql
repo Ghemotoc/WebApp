@@ -64,9 +64,13 @@ select results_eq(
   'labels left out of the change keep their value'
 );
 
--- Publish the four, as publish_chapter() will (S1-E3-03).
+-- Publish the four: one published chapter each, made the way the app makes them (S1-E3-03).
 reset role;
-update public.stories set first_published_at = now() where id in (
+insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body, status,
+  published_title, published_body, first_published_at, last_published_at)
+select stories.id, stories.user_id, substr(md5(stories.id::text), 1, 8), 1, 'Unu', 'Text.', 'published',
+  'Unu', 'Text.', now(), now()
+from public.stories where stories.id in (
   '00000000-0000-4000-9000-00000000a000', '00000000-0000-4000-9000-00000000a013',
   '00000000-0000-4000-9000-00000000a016', '00000000-0000-4000-9000-00000000a018');
 -- The slug of one of the four stories. Security definer, because a reader can't read the

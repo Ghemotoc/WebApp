@@ -15,6 +15,8 @@
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { Nodes as MarkdownNode, PhrasingContent, RootContent } from 'mdast';
 
+import { isAllowedLink } from '@/lib/safe-links';
+
 /** A mark on a run of text: bold, italic or a link. */
 export interface EditorMark {
   type: 'bold' | 'italic' | 'link';
@@ -30,22 +32,9 @@ export interface EditorNode {
   text?: string;
 }
 
-/** The link protocols a chapter may use (rule 8). */
-const allowedLinkProtocols = ['http:', 'https:', 'mailto:'];
-
-/**
- * True when a link address is one the chapter may carry.
- *
- * @param href - the address as typed or pasted
- * @returns false for javascript:, data: and anything that isn't http, https or mailto
- */
-export function isAllowedLink(href: string): boolean {
-  try {
-    return allowedLinkProtocols.includes(new URL(href).protocol);
-  } catch {
-    return false;
-  }
-}
+// The link rule lives in src/lib/safe-links.ts so the reader shares it; re-exported here for
+// the editor's code and tests.
+export { isAllowedLink } from '@/lib/safe-links';
 
 /* ---------- Markdown → document ---------- */
 

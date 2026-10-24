@@ -9,7 +9,8 @@
  * What it calls: useChapterDraft (the chapter, owner only), useDeviceDraft (the copy kept on
  * this device, S1-E3-02b), useChapterEditor (TipTap; pasted HTML cleaned), useAutosave (every
  * 10 seconds and on blur → save_chapter_draft(); offline keeps; conflicts), useMyStories (the
- * aside) and CompareVersionsDialog (after a conflict).
+ * aside), CompareVersionsDialog (after a conflict), useChapterPublishing with PublishPanel and
+ * ChapterPreviewDialog (S1-E3-03).
  * Errors: a chapter that isn't the writer's shows "We can't find this chapter among yours"; a
  * failed load shows the plain message; save problems show in the Saving box.
  * Left out on purpose: the board's Insert menu (pictures, drawings, music, video), which is
@@ -29,27 +30,31 @@ import { TextInput } from '@/components/ui/TextInput';
 import { brand } from '@/config/brand';
 import { MAXIMUM_CHAPTER_TITLE_LENGTH } from '@/schemas/chapter';
 
-import type { MyChapter } from '../api/chapters';
+import type { ChapterStatus, MyChapter } from '../api/chapters';
+import type { MyStory } from '../api/stories';
 import { useOnlineStatus } from '@/features/offline/hooks/useOnlineStatus';
 
 import { useAutosave } from '../hooks/useAutosave';
 import { useChapterDraft } from '../hooks/useChapterDraft';
 import { useChapterEditor } from '../hooks/useChapterEditor';
+import { useChapterPublishing } from '../hooks/useChapterPublishing';
 import { useDeviceDraft } from '../hooks/useDeviceDraft';
 import { useMyStories } from '../hooks/useMyStories';
 import { markdownToEditorDocument } from '../lib/chapterMarkdown';
 import type { DeviceDraft } from '../lib/draftStore';
 
+import { ChapterPreviewDialog } from './ChapterPreviewDialog';
 import { CompareVersionsDialog } from './CompareVersionsDialog';
 import { EditorAside } from './EditorAside';
 import { EditorToolbar } from './EditorToolbar';
 import { LinkDialog } from './LinkDialog';
+import { PublishPanel } from './PublishPanel';
 
 /** The state pill's tone: a draft is neutral, scheduled gold, published sage. */
 const stateTone = { draft: 'neutral', scheduled: 'gold', published: 'sage' } as const;
 
 /** The breadcrumb: Writer dashboard › the story › Chapter n, then the state pill. */
-function EditorBreadcrumb({ chapter }: { chapter: MyChapter }) {
+function EditorBreadcrumb({ chapter, status }: { chapter: MyChapter; status: ChapterStatus }) {
   const { t } = useTranslation('editor');
   return (
     <nav aria-label={t('back')} className="flex flex-wrap items-center gap-2 text-sm text-body">
@@ -70,7 +75,7 @@ function EditorBreadcrumb({ chapter }: { chapter: MyChapter }) {
       <span aria-current="page" className="text-ink">
         {t('chapterNumber', { number: chapter.position })}
       </span>
-      <InfoPill tone={stateTone[chapter.status]}>{t(`state.${chapter.status}`)}</InfoPill>
+      <InfoPill tone={stateTone[status]}>{t(`state.${status}`)}</InfoPill>
     </nav>
   );
 }
@@ -245,6 +250,34 @@ function EditorDialogs(props: {
   );
 }
 
+/** The aside column: Saving (with the conflict choices), Publish, Story details, Your stories. */
+function EditorSideColumn(props: {
+  chapter: MyChapter;
+  loaded: ReturnType<typeof useLoadedEditor>;
+  conflict: ReturnType<typeof useConflictChoices>;
+  publishing: ReturnType<typeof useChapterPublishing>;
+  stories: MyStory[];
+  onPreview: () => void;
+}) {
+  const { chapter, publishing } = props;
+  const story = props.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
+  return (
+    <div className="w-full flex-[1_1_300px] lg:max-w-[340px]">
+      <EditorAside
+        saveState={props.loaded.autosave.state}
+        publishControls={
+          <PublishPanel {...publishing} onAction={publishing.run} onPreview={props.onPreview} />
+        }
+        onKeepMine={props.conflict.keepMine}
+        onCompare={props.conflict.openCompare}
+        story={story}
+        stories={props.stories.filter((candidate) => candidate.deletedAt === null)}
+        currentSlug={chapter.story.slug}
+      />
+    </div>
+  );
+}
+
 /** The editor itself, once the chapter is loaded: the title, the toolbar, the text and the aside. */
 function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorStart }) {
   const { t } = useTranslation('editor');
@@ -252,48 +285,58 @@ function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorSta
   const loaded = useLoadedEditor(chapter, start);
   const { title, changeTitle, wordCount, autosave, editing } = loaded;
   const conflict = useConflictChoices(loaded);
+  const publishing = useChapterPublishing(chapter, autosave);
+  const [isPreviewOpen, setPreviewOpen] = useState(false);
   const story = writing.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
   const documentTitle = title === '' ? t('chapterNumber', { number: chapter.position }) : title;
 
   return (
-    <div className="flex flex-col gap-7 lg:flex-row lg:items-start">
-      <title>
-        {t('documentTitle', {
-          chapter: documentTitle,
-          story: chapter.story.title,
-          productName: brand.productName,
-        })}
-      </title>
-      <main className="flex min-w-0 flex-[999_1_560px] flex-col gap-3.5">
-        <ChapterTitleField
-          value={title}
-          onChange={changeTitle}
-          onBlur={() => void autosave.saveNow()}
-        />
-        {editing.editor !== null && (
-          <EditorToolbar
-            editor={editing.editor}
-            wordCount={wordCount}
-            onLink={editing.openLinkDialog}
+    <>
+      <EditorBreadcrumb chapter={chapter} status={publishing.state.status} />
+      <div className="flex flex-col gap-7 lg:flex-row lg:items-start">
+        <title>
+          {t('documentTitle', {
+            chapter: documentTitle,
+            story: chapter.story.title,
+            productName: brand.productName,
+          })}
+        </title>
+        <main className="flex min-w-0 flex-[999_1_560px] flex-col gap-3.5">
+          <ChapterTitleField
+            value={title}
+            onChange={changeTitle}
+            onBlur={() => void autosave.saveNow()}
           />
-        )}
-        <div className="tmc-chapter-text rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card">
-          <EditorContent editor={editing.editor} />
-        </div>
-        <EditorFootnotes />
-        <EditorDialogs chapterCode={chapter.code} loaded={loaded} conflict={conflict} />
-      </main>
-      <div className="w-full flex-[1_1_300px] lg:max-w-[340px]">
-        <EditorAside
-          saveState={autosave.state}
-          onKeepMine={conflict.keepMine}
-          onCompare={conflict.openCompare}
-          story={story}
-          stories={writing.stories.filter((candidate) => candidate.deletedAt === null)}
-          currentSlug={chapter.story.slug}
+          {editing.editor !== null && (
+            <EditorToolbar
+              editor={editing.editor}
+              wordCount={wordCount}
+              onLink={editing.openLinkDialog}
+            />
+          )}
+          <div className="tmc-chapter-text rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card">
+            <EditorContent editor={editing.editor} />
+          </div>
+          <EditorFootnotes />
+          <EditorDialogs chapterCode={chapter.code} loaded={loaded} conflict={conflict} />
+          <ChapterPreviewDialog
+            isOpen={isPreviewOpen}
+            title={title}
+            markdown={isPreviewOpen ? editing.readBody() : ''}
+            language={story?.languageCode ?? 'ro'}
+            onClose={() => setPreviewOpen(false)}
+          />
+        </main>
+        <EditorSideColumn
+          chapter={chapter}
+          loaded={loaded}
+          conflict={conflict}
+          publishing={publishing}
+          stories={writing.stories}
+          onPreview={() => setPreviewOpen(true)}
         />
       </div>
-    </div>
+    </>
   );
 }
 
@@ -364,7 +407,6 @@ export function ChapterEditorPage() {
     return <EditorPageMessage kind={message ?? 'loading'} />;
   return (
     <PageContainer className="tmc-rise flex flex-col gap-3 pt-8 pb-7">
-      <EditorBreadcrumb chapter={chapter} />
       <LoadedEditor
         key={chapter.code}
         chapter={chapter}

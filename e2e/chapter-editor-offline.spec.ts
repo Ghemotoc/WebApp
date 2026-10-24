@@ -133,6 +133,9 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
     // The dialog is accessible at phone and desktop widths.
     for (const width of [390, 1440]) {
       await phonePage.setViewportSize({ width, height: 900 });
+      await phonePage.waitForFunction(() =>
+        document.getAnimations().every((animation) => animation.playState !== 'running'),
+      );
       const results = await new AxeBuilder({ page: phonePage })
         .include('dialog')
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])

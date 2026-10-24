@@ -155,14 +155,18 @@ export type Database = {
           position: number;
           published_body: string | null;
           published_title: string | null;
+          published_word_count: number | null;
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          unpublished_at: string | null;
           updated_at: string;
           user_id: string;
           word_count: number;
+          chapter_gate_outcome: string | null;
+          chapter_publish_now: undefined | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'chapter_gate_outcome' | 'chapter_publish_now';
         Insert: {
           code: string;
           created_at?: string;
@@ -178,9 +182,11 @@ export type Database = {
           position: number;
           published_body?: string | null;
           published_title?: string | null;
+          published_word_count?: number | null;
           scheduled_for?: string | null;
           status?: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          unpublished_at?: string | null;
           updated_at?: string;
           user_id: string;
           word_count?: number;
@@ -200,9 +206,11 @@ export type Database = {
           position?: number;
           published_body?: string | null;
           published_title?: string | null;
+          published_word_count?: number | null;
           scheduled_for?: string | null;
           status?: Database['public']['Enums']['chapter_status'];
           story_id?: string;
+          unpublished_at?: string | null;
           updated_at?: string;
           user_id?: string;
           word_count?: number;
@@ -1180,11 +1188,31 @@ export type Database = {
       };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
+      cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
       change_is_too_soon: {
         Args: { last_changed_at: string; setting_key: string };
         Returns: boolean;
       };
       chapter_code: { Args: Record<PropertyKey, never>; Returns: string };
+      chapter_gate_outcome: {
+        Args: {
+          chapter: Omit<
+            Database['public']['Tables']['chapters']['Row'],
+            Database['public']['Tables']['chapters']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      chapter_is_readable: { Args: { chapter_id: string }; Returns: boolean };
+      chapter_publish_now: {
+        Args: {
+          chapter: Omit<
+            Database['public']['Tables']['chapters']['Row'],
+            Database['public']['Tables']['chapters']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       check_chapter_text: { Args: { body: string }; Returns: string };
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
@@ -1297,6 +1325,39 @@ export type Database = {
           version_label: string;
         }[];
       };
+      my_live_chapter: {
+        Args: { chapter_code: string };
+        Returns: {
+          code: string;
+          created_at: string;
+          deleted_at: string | null;
+          draft_body: string;
+          draft_saved_at: string | null;
+          draft_title: string;
+          draft_version: number;
+          edited_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          last_published_at: string | null;
+          position: number;
+          published_body: string | null;
+          published_title: string | null;
+          published_word_count: number | null;
+          scheduled_for: string | null;
+          status: Database['public']['Enums']['chapter_status'];
+          story_id: string;
+          unpublished_at: string | null;
+          updated_at: string;
+          user_id: string;
+          word_count: number;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'chapters';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       my_live_story_id: { Args: { story_slug: string }; Returns: string };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
@@ -1316,6 +1377,8 @@ export type Database = {
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
+      publish_chapter: { Args: { chapter_code: string }; Returns: Json };
+      publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       rating_allows: {
@@ -1350,6 +1413,7 @@ export type Database = {
         Args: { body: string; chapter_code: string; expected_version: number; title: string };
         Returns: Json;
       };
+      schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
@@ -1369,9 +1433,13 @@ export type Database = {
         Returns: string;
       };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
+      story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
+      story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
+      unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
+      update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
       use_platform_invite: { Args: { code: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };

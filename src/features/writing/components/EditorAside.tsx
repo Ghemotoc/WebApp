@@ -3,8 +3,7 @@
  *
  * Board values, top to bottom: "Saving" (the status box and "We save every 10 seconds…", with
  * the desk-lamp doodle; the three widget doodles show only from 1000 px, because below that the
- * aside stacks under the text and a doodle above a panel would sit on the paragraph before it), "Publish" (the rocket doodle; the real controls are S1-E3-03, so for
- * now one line says publishing comes soon), "Story details" (category, rating, tags, with
+ * aside stacks under the text and a doodle above a panel would sit on the paragraph before it), "Publish" (the rocket doodle; the controls are PublishPanel, S1-E3-03), "Story details" (category, rating, tags, with
  * "Change in story settings": a read-only summary, because ratings and labels have one place
  * to be set, docs/board-fixes.md) and "Your stories" (the tote-bag doodle; each story opens its
  * latest chapter, or its settings while it has none).
@@ -135,6 +134,8 @@ function ConflictActions({
 /** What the aside needs. */
 export interface EditorAsideProps {
   saveState: SaveState;
+  /** The Publish panel's controls (S1-E3-03). */
+  publishControls: React.ReactNode;
   /** The two ways out of a conflict (S1-E3-02b). */
   onKeepMine: () => void;
   onCompare: () => void;
@@ -174,8 +175,8 @@ export function EditorAside(props: EditorAsideProps) {
         <div className="w-fit">
           <Eyebrow>{t('publish.heading')}</Eyebrow>
         </div>
-        {/* The real Publish controls are S1-E3-03; this line keeps the board's place for them. */}
-        <p className="m-0 text-sm leading-normal text-body">{t('publish.comingSoon')}</p>
+        {/* The controls (PublishPanel, S1-E3-03) come from the page, which owns their state. */}
+        {props.publishControls}
         <Doodle
           name="rocket"
           kind="widget"
