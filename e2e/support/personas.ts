@@ -23,10 +23,19 @@ export type PersonaName = 'adult_writer' | 'teen_17' | 'kid_14_ok' | 'kid_14_wai
 
 /**
  * Every seed persona a test may sign in as (teacher is changed only by e2e/usernames.spec.ts;
- * support and editor joined for the admin shell, S1-E11-01).
+ * support and editor joined for the admin shell, S1-E11-01; blocker and blocked for blocks,
+ * S1-E5-05).
  */
 export type SignInPersonaName =
-  PersonaName | 'teacher' | 'owner' | 'admin' | 'moderator' | 'support' | 'editor';
+  | PersonaName
+  | 'teacher'
+  | 'owner'
+  | 'admin'
+  | 'moderator'
+  | 'support'
+  | 'editor'
+  | 'blocker'
+  | 'blocked';
 
 /**
  * Makes a Supabase client for the test itself (not the browser), using the local stack's values.

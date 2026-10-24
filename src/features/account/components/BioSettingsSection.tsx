@@ -19,11 +19,18 @@ import { bioMaxLength } from '@/features/people/api/writerProfile';
 import { useSaveBio } from '@/features/people/hooks/useSaveBio';
 import { useWriterProfile } from '@/features/people/hooks/useWriterProfile';
 
+/** What the form needs. */
+interface BioFormProps {
+  handle: string;
+  savedBio: string;
+  /** Kept by the section, so "Saved." survives the form starting again with the new bio. */
+  saveBio: ReturnType<typeof useSaveBio>;
+}
+
 /** The form, once the current bio is known. */
-function BioForm({ handle, savedBio }: { handle: string; savedBio: string }) {
+function BioForm({ handle, savedBio, saveBio }: BioFormProps) {
   const { t } = useTranslation('people');
   const [bio, setBio] = useState(savedBio);
-  const saveBio = useSaveBio();
   const isTooLong = bio.trim().length > bioMaxLength;
 
   /** Saves the bio, unless it is too long (the field already says so). */
@@ -87,6 +94,7 @@ function BioForm({ handle, savedBio }: { handle: string; savedBio: string }) {
 export function BioSettingsSection({ handle }: { handle: string }) {
   const { t } = useTranslation('people');
   const { profile } = useWriterProfile(handle);
+  const saveBio = useSaveBio();
   return (
     <section
       aria-labelledby="settings-bio-heading"
@@ -95,7 +103,9 @@ export function BioSettingsSection({ handle }: { handle: string }) {
       <h2 id="settings-bio-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
         {t('settings.bioHeading')}
       </h2>
-      {profile !== null && <BioForm key={profile.bio} handle={handle} savedBio={profile.bio} />}
+      {profile !== null && (
+        <BioForm key={profile.bio} handle={handle} savedBio={profile.bio} saveBio={saveBio} />
+      )}
     </section>
   );
 }

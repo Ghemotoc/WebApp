@@ -68,10 +68,7 @@ export function ProfileStats({ profile }: { profile: WriterProfile }) {
   const followerCount = follow.state?.followerCount ?? 0;
   const format = (count: number) => formatStatNumber(count, i18n.language);
   return (
-    <dl
-      aria-label={t('profile.statsLabel', { name: profile.displayName })}
-      className="m-0 flex flex-wrap gap-x-8 gap-y-4"
-    >
+    <dl className="m-0 flex flex-wrap gap-x-8 gap-y-4">
       <Stat
         value={format(profile.counts.stories)}
         label={t('profile.stories', { count: profile.counts.stories })}
