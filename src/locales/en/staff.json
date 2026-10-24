@@ -8,7 +8,6 @@
     "signedOut": "Log in with a staff account to see this page.",
     "loadFailed": "We couldn’t load the staff list. Check your connection and try again.",
     "grantHeading": "Give someone a role",
-    "username": "Username",
     "role": "Role",
     "reason": "Reason for this change",
     "reasonHint": "Required. It goes to the audit log.",
@@ -21,15 +20,32 @@
     "changing": "Saving…",
     "changed": "Saved. It’s in the audit log.",
     "failures": {
-      "not_allowed": "You can’t make that change. Admins can give moderator, support and content editor; only an owner can give owner or admin; nobody can change their own role.",
-      "refused": "That wasn’t saved. Check the username and the reason. The last owner can’t be removed, and permissions are only for staff.",
-      "unreachable": "We couldn’t reach our server. Check your connection and try again.",
-      "sign_in_again": "Sign in again to change a staff role. Changing a role needs a sign-in from the last 15 minutes."
+      "not_allowed": "Only an owner or admin can change staff roles.",
+      "sign_in_again": "Sign in again to change a staff role. Changing a role needs a sign-in from the last 15 minutes.",
+      "own_role": "Nobody can change their own role, owners included.",
+      "owner_only_role": "Only an owner can give or remove the owner and admin roles.",
+      "reason_missing": "Write a reason for this change. It goes to the audit log.",
+      "no_such_account": "There is no such account any more. Search again and pick it from the results.",
+      "last_owner": "The last owner can’t be removed. Give the owner role to someone else first.",
+      "not_staff": "Permissions are only for staff. Give this account a role first.",
+      "refused": "That wasn’t saved. Check the account and the reason, then try again.",
+      "unreachable": "We couldn’t reach our server. Check your connection and try again."
     },
     "reasonMissing": "Write a reason first.",
-    "usernameMissing": "Write the username first.",
     "staffAccountNote": "A staff account can’t publish, comment, post or message as a member. Use a separate writer account for that.",
-    "signInAgain": "Sign in again"
+    "signInAgain": "Sign in again",
+    "findAccount": "Find the account",
+    "findAccountHint": "A username, a pen name, or the whole email address (part of an address finds nothing).",
+    "search": "Search",
+    "searching": "Searching…",
+    "searchTooShort": "Type at least 2 characters.",
+    "noAccounts": "No account matches. Check the spelling, or use the whole email address.",
+    "accountsFound": "Accounts found: {{count}}",
+    "pickAccount": "Pick the account",
+    "alreadyStaff": "already: {{roles}}",
+    "showEmail": "Show email",
+    "showEmailFor": "Show the email of {{name}}",
+    "accountMissing": "Find and pick the account first."
   },
   "roleNames": {
     "owner": "Owner",
@@ -44,6 +60,7 @@
     "on_call": "On call for removal orders"
   },
   "nav": {
+    "moderation": "Moderation",
     "roles": "Roles",
     "auditLog": "Audit log",
     "invites": "Invites"

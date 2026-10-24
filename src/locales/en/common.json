@@ -27,7 +27,8 @@
     "account": "Your account",
     "logOut": "Log out",
     "logOutFailed": "We couldn’t log you out. Check your connection and try again.",
-    "contact": "Contact"
+    "contact": "Contact",
+    "contactUs": "Contact us"
   },
   "theme": {
     "label": "Theme",
@@ -97,5 +98,8 @@
   "offline": {
     "offline": "You’re offline. Pages that need the internet won’t load until you’re back online.",
     "backOnline": "You’re back online."
+  },
+  "actions": {
+    "report": "Report"
   }
 }

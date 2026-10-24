@@ -2,6 +2,17 @@
 
 Every decision Robert has made, with its date and source. The live list is the master plan's "Decisions made" tab; it wins if this file is out of date. Proposals and OPEN items are not decisions.
 
+## Added 24 Oct 2026 (Lane C: safety and admin; the CTO, to whom Robert handed technical calls, chat)
+
+| Decision | Source |
+| --- | --- |
+| The international fallback for safety contacts (S1-E10-13a, Q9c), checked online by the CTO on 24 Oct 2026: Child Helpline International's directory https://childhelplineinternational.org/helplines/ (the old /child-helplines/child-helpline-network/ address returns an error) and INHOPE's at https://inhope.org (the directory is on the home page). A country with an INHOPE member hotline keeps that member's own report page instead (Romania: Ora de Net, https://oradenet.ro/esc-abuz) | Chat, 24 Oct 2026 |
+| Two more report reasons from the Moderation board: "Threat to a minor" is same day and a safeguarding case (hidden from moderators without the permission); "Insults" sits with harassment on the 7-day tier (S1-E10-01, S1-E10-03a) | Chat, 24 Oct 2026 |
+| The invite log is never written on behalf of the admin: using a place writes `invite.redeemed` with the new account as actor (user ID only, no email) and the invite as target; when the last place closes the invite, a second row has the system as actor (`audit_log.actor = 'system'`) (S1-E11-17) | Chat, 24 Oct 2026 |
+| The report dialog has the board's corner "×", named "Închide" / "Close" (S1-E10-01) | Chat, 24 Oct 2026 |
+| The lawyer's list gains two points: the banned email kept as a keyed hash, and Brevo as processor for support emails (S1-E10-06, S1-E14-04) | Chat, 24 Oct 2026 |
+| Staff roles are granted by picking an existing account from a search (username, pen name or email), not by typing an identifier; email matches show masked and revealing one is a logged sensitive read; every refusal names its own problem (S1-E11-01b, added to Lane C after S1-E11-QA). Robert's request after testing /staff/roles on staging; email search matches only a complete address, to stop address fishing; the last-owner guard gets a database test that calls it directly | Chat, 24 Oct 2026 (Robert, through the CTO) |
+
 ## Added 23 Oct 2026
 
 | Decision | Source |
@@ -23,6 +34,14 @@ Every decision Robert has made, with its date and source. The live list is the m
 | A staff session ends after 12 hours, enforced in the database (`staff_session_hours`); the person signs in again. Proposal from S1-E11-01, accepted | Chat, 23 Oct 2026 (Q11) |
 | Changing a staff role needs a sign-in from the last 15 minutes (`staff_fresh_sign_in_minutes`); exports for someone else, "Emergency disable" and removing part of a writer's text ask the same when their stories land. Proposal, accepted | Chat, 23 Oct 2026 (Q11) |
 | Invite links admit 1 to 50 people and last 1 to 90 days (the screen offers 1, 7, 14 or 30 days); the private note goes into the audit log's before and after values, so it is a first name or a role, never an email | Chat, 23 Oct 2026 (Q12) |
+| Safety contacts (S1-E10-13a): the block shows the emergency number, the children's helpline, where to report child sexual abuse material and, where one exists, a youth crisis line; no adult-only line (Romania's ARPS line is left out); "Not your country?" lists all ten researched countries, Romania first; the international fallback is Child Helpline International's and INHOPE's directories, checked online before seeding with the check date; the block also shows on /legal/contact for signed-out visitors | Chat, 23 Oct 2026 (Q9) |
+| Moderation cases (S1-E10-03a): reports about one item are grouped into one open case (Q4); claiming and timers wait for S1-E10-03b | Chat, 23 Oct 2026 (Q4) |
+| Tiers (S1-E10-03a): same day means 24 hours from the first report; self-harm, sexual content involving a minor and terrorist content reported by a member are same day; other illegal content, copyright and copied work 48 hours; the rest 7 days; the one-hour tier is only for removal orders from an authority (TCO art. 3(3)) | Chat, 23 Oct 2026 (Q5) |
+| Safeguarding cases are hidden from moderators without the safeguarding permission from S1-E10-03a on; the owner and moderator personas hold the permission in the seed | Chat, 23 Oct 2026 (Q6) |
+| Moderation actions (S1-E10-06): hide = the writer and staff still see the item; remove = staff only, with a "[Removed by the moderation team]" marker; restrict waits for S1-E11-08 | Chat, 23 Oct 2026 (Q3) |
+| Sanctions (S1-E10-06, proposals accepted): a suspension lasts 1, 7 or 30 days; a reporting pause 30 days; a ban uses Supabase's own ban and signs the person out everywhere | Chat, 23 Oct 2026 (Q7) |
+| Banned emails are kept as a keyed hash (HMAC) with a secret in Supabase Vault, set by hand on each environment, never in a migration | Chat, 23 Oct 2026 (Q8) |
+| Contact us (S1-E14-04): the form posts to our own Cloudflare Pages Function, which sends through Brevo's HTTP API (`BREVO_API_KEY` by hand); the reference is made by the function and not stored; abuse is kept down by a honeypot field and a Cloudflare rate-limit rule set by hand; a signed-in person's account email is the reply-to; the acknowledgement says "we reply within one month"; no list of past requests; the report line points to the Report button and /legal/contact | Chat, 23 Oct 2026 (Q10) |
 | Lane C's pull requests go on `claude/funny-einstein-pkv35k-<story-id>` branches, one per story, each cut from the one before; screenshots are sent in chat, never committed | Chat, 23 Oct 2026 (Q13, Q14) |
 
 ## Added 17 Oct 2026 (after the snapshot below)

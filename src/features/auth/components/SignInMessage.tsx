@@ -58,6 +58,7 @@ const simpleMessages: Record<string, { key: string; tone: 'error' | 'success' }>
   password_missing: { key: 'signIn.passwordMissing', tone: 'error' },
   email_not_confirmed: { key: 'signIn.notConfirmed', tone: 'error' },
   too_many_attempts: { key: 'signIn.tooManyAttempts', tone: 'error' },
+  banned: { key: 'signIn.banned', tone: 'error' },
   unreachable: { key: 'signIn.unreachable', tone: 'error' },
 };
 

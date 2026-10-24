@@ -3,7 +3,7 @@
 The database side of the app: schema changes, database tests, seed data and (later) edge functions. Built by S1-E1-01 (folder) and S1-E1-02 (database baseline).
 
 - `config.toml`: local Supabase settings. Supabase's GitHub integration applies `migrations/` to the staging project when `main` changes; never push migrations from a session (CLAUDE.md).
-- `migrations/`: every schema change, oldest first (`npx supabase migration new <name>`). The only way the database changes (rule 3).
+- `migrations/`: every schema change, oldest first (`npx supabase migration new <name>`). The only way the database changes (rule 3). Every file's 14-digit version must be its own: Supabase keys migrations by it, so `npm run migrations:check` (in CI) fails when two files share one; pick an unused later time on the same day.
 - `tests/database/`: pgTAP tests, run with `npx supabase test db`.
 - `seed.sql`: the synthetic seed personas. Never real data.
 - `functions/`: edge functions (Deno), the only code that may hold secrets. None yet.
@@ -42,7 +42,8 @@ The database side of the app: schema changes, database tests, seed data and (lat
 | `list_my_sessions()`, `end_my_session(target_session_id)` | the caller's own devices from Supabase's `auth.sessions` (browser, start, last active, this device; never the IP), and logging one out | any signed-in person, own sessions only | S1-E2-05 |
 | `staff_may(area, access)` | may the caller use this admin area (`view` or `act`): role and permission from `staff_role_areas` (architecture 1.8.3) AND `is_staff_session()`. Every staff policy and `admin_*` function uses it | any signed-in person (answers about themselves) | S1-E2-07a |
 | `admin_grant_role()`, `admin_remove_role()`, `admin_set_permission()` | change someone else's staff role or permission, with a reason; logged. Owner: any role; admin: moderator, support, content editor; never your own; never the last owner | owner and admin in a staff session | S1-E2-07a |
-| `admin_list_staff()`, `admin_user_id_for_handle(handle)` | the staff list with roles and permissions; an account's user ID by username | owner and admin in a staff session | S1-E2-07a |
+| `admin_list_staff()`, `admin_user_id_for_handle(handle)` | the staff list with roles and permissions; an account's user ID by username (no longer used by the screen since S1-E11-01b) | owner and admin in a staff session | S1-E2-07a |
+| `admin_find_accounts(text)`, `admin_reveal_email(user_id)` | existing accounts by username start, pen name or whole email (email masked; an email match logged as `sensitive_read.account_found_by_email`); one account's whole email, logged as `sensitive_read.email_revealed` | owner and admin in a staff session | S1-E11-01b |
 | `bootstrap_first_owner(user_id)` | makes the first owner, once, on a database without the seed (production) | only from the SQL editor, never through the API | S1-E2-07a |
 | `sign_up_market_outcome(country_code, birth_year, birth_month)` | what sign-up says about a country and age: `ok`, `market_closed` or `under_market_age`; always `ok` while `invite_only` and `adults_only` are both on (Q6) | anyone, signed out included (the sign-up form) | S1-E2-10 |
 | `my_legal_documents_to_accept()` | the caller's own legal documents waiting for acceptance after an important change | any signed-in person | S1-E14-01 |
@@ -130,6 +131,43 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Test clean-ups:** an account the audit log names can't be deleted (the log is append-only), so e2e clean-ups leave such accounts; test addresses are unique per run.
 - **Class spaces** (S1-E8-11a) reuse the same table and functions with `purpose = 'class_space'`.
 
+## Reports (S1-E10-01)
+
+- **One way in:** `report_item(item_type, item_reference, reason, details)`, for any signed-in account whatever its state (reporting is the one action the account gate always allows, architecture 1.7.8). It refuses one's own item, a missing item and details over 2,000 characters; past `report_hourly_limit` (20 an hour, proposal) it answers `54000`; the same item reported again within 24 hours gives the first reference back.
+- **Who reads:** moderation staff only (`reports_select_moderation`). A reporter never reads rows: for a profile the item is a user ID (rule 15). "My reports" (board 6.5) will be a view without IDs.
+- **The shared contract** (architecture 1.7.11): `reportable_item_owner()` and `reportable_item_summary()` have one branch per `reportable_type` value; test `042` fails when one is missing.
+- **Kept:** reports stay 3 years after they close (canvas comment, 17 Oct 2026); the purge job is S1-E13-04. The details text is never logged.
+
+## The moderation queue (S1-E10-03a)
+
+- **One case per item:** `report_item()` ends by calling `attach_report_to_case()`: a new report opens a case referenced like the report (R-000123) or joins the item's open case (decided 23 Oct 2026, Q4). The case keeps the report count, whether any reporter was under 18, the most urgent reason and the earliest deadline, counted from the first report. Nobody inserts a case directly; an authority order (S1-E10-09, `TCO-0001`) and a picture check (S1-E10-05, `P-0001`) will insert theirs with their `source`.
+- **Tiers** (`report_reason_tiers`, decided 23 Oct 2026, Q5): same day (24 h) for self-harm, sexual content involving a minor, a threat to a minor (all three safeguarding; the threat added by the CTO on 24 Oct 2026) and terrorist content from a member; 48 h for other illegal content, copyright and copied work; 7 days for the rest, insults included (with harassment, CTO 24 Oct 2026). Database test 044 fails when a reason has no tier. The one-hour tier is for authority orders only (TCO regulation (EU) 2021/784, art. 3(3)); a constraint refuses it for a reason. The hours are settings (`moderation_hours_*`); the one-hour value is the law's.
+- **Who sees a case:** `may_see_case()`: owner, admin and moderator; a safeguarding case needs the safeguarding permission as well (Q6). The seed gives it to the owner and moderator personas, not to admin, so both sides can be tested. `reports_select_moderation` now follows the case's rule too.
+- **The decision:** `admin_decide_case(case, action, note)` needs an action (`moderation_action`: no_action, remove, restrict, warn, suspend, ban) and a note; it writes `case_actions`, closes the case and its reports and logs `case.decided` with the values before and after. A decided case can't be decided again (appeals are S1-E10-07). Carrying the action out is S1-E10-06, the statement of reasons S1-E10-04; both hook in at the function's end.
+- **Reading:** `admin_moderation_queue(tier, status, under_18, source, case_id)` (usernames and age groups, never a birth year), `admin_case_reports(case)` (with what each reporter wrote), `admin_case_actions(case)`.
+- **Seed:** 20 cases across the tiers (14 open, 6 decided; `supabase/seed.sql`, end of file), made through `report_item()` as each reporter; the staging top-up `staging-topups/S1-E10-03a.sql` adds the same.
+
+## Sanctions (S1-E10-06)
+
+- **What a decision does:** `admin_decide_case(case, action, note, suspension_days)` closes the case (S1-E10-03a) and then carries the action out: `warn` a warning row, `suspend` a suspension of 1, 7 or 30 days (`suspension_day_choices`; null means `suspension_default_days`, 7), `ban` a ban, `hide` or `remove` a `moderated_items` row (decided 23 Oct 2026, Q3). `restrict` is refused (`0A000`) until S1-E11-08.
+- **A suspension** makes `account_state()` answer `suspended`, so `is_active_member()` is false and every write policy refuses; signing in, reading and downloading data still work. **A ban** answers `banned`, sets Supabase's own `auth.users.banned_until` (sign-in refused with `user_banned`), ends every session and keeps the email's keyed hash in `banned_email_hashes`; `handle_new_auth_user()` refuses a sign-up with that email (Q8). **A reporting pause** (30 days, `reporting_pause_days`) makes `report_item()` refuse the reporter with `55000`.
+- **The keyed hash:** `banned_email_hash()` is HMAC-SHA256 with the Vault secret `banned_email_secret`. Set it by hand on each environment: `select vault.create_secret('<a long random value>', 'banned_email_secret');` in the SQL editor (never in a migration). The local seed sets a local-only value. Without the secret a ban still works, but the email isn't blocked.
+- **Staff functions:** `admin_apply_sanction(user, kind, days, case, note)`, `admin_lift_sanction(id, reason)` (a lifted ban clears Supabase's ban and the hash), `admin_pause_reporting(handle, case, note)`, `admin_account_sanctions(user)`, `admin_restore_item(id, reason)`; owner, admin and moderator (`user_sanctions` and `moderation` areas). A staff account can't be sanctioned. Every action is logged (`sanction.applied`, `sanction.lifted`, `item.hidden`, `item.removed`, `item.restored`).
+- **Members:** `my_sanctions()` gives the caller's own live sanctions (kind and dates, never the note).
+- **The shared contract** (architecture 1.7.11): `is_moderated_away(type, id)` is true for a live hidden or removed row; `moderated_state_of(type, id)` says which.
+- **Seed:** the decided cases of S1-E10-03a now apply their actions: suspended_user is suspended for 7 days, banned_user is banned (and its email hashed), kid_14_ok's profile is removed. The staging top-up `staging-topups/S1-E10-06.sql` applies the two sanctions when the S1-E10-03a top-up ran before this story merged.
+
+## The contact page, version 0.2 (S1-E14-04)
+
+`…_s1_e14_04_contact_v0_2.sql` (generated) replaces the draft's "Your support requests" list with the reference the emails carry (decided 23 Oct 2026, Q10g) and says "we reply within one month"; not an important change, so nobody accepts again. The form itself keeps nothing in the database: `server/contact.ts` and ADR 0004.
+
+## Safety contacts (S1-E10-13a)
+
+- **Where the numbers come from:** `content/safety-contacts.json` (research G4, checked 17 Oct 2026) through `scripts/build-safety-contacts-migration.ts`, which writes the seed migration. Never a number typed from memory; every row keeps its official link, the check date and the research's confidence. Adult-only lines are left out (decided 23 Oct 2026, Q9a). To change a contact before the editing screen (S1-E10-13b): change the JSON, run `npx tsx scripts/build-safety-contacts-migration.ts supabase/migrations/<timestamp>_s1_e10_13a_safety_contacts_seed.sql` for a new migration (the old rows are replaced by a `delete` at its top: see the generated file).
+- **Who reads:** everyone, signed out included (`safety_contacts_select_public`); nobody writes from the app.
+- **Gaps:** `note_safety_contact_gap(code)` counts a country asked for with no row; owner, admin and moderator read `safety_contact_gaps`. No user is recorded.
+- **International fallback:** country code `ZZ` is reserved for the Child Helpline International and INHOPE directory links (decided 23 Oct 2026, Q9c); the two links were checked online by the CTO on 24 Oct 2026 and are seeded with the rest from `content/safety-contacts.json`. A country with an INHOPE member hotline keeps that member's own report page (Romania: Ora de Net), never the generic directory.
+
 ## Logging in (S1-E2-05)
 
 - **The pause** works through our screens: the log-in form asks `sign_in_pause_until()` before trying and calls `record_sign_in_failure()` after Supabase says no. Direct, scripted calls to Supabase Auth are held back by Supabase's own per-address limits; a true per-account lock needs a paid-plan Auth hook (decided 17 Oct 2026, 19:43, Q12). Rows hold an email hash and a time only, and are removed after 24 hours by `record_sign_in_failure()` itself.
@@ -176,7 +214,7 @@ Every persona signs in with `<persona>@personas.test` and the shared test passwo
 | …0006 | failed_check | 18 plus | read-only, age check failed | manual check: S1-E2-08b |
 | …0007 | teacher | 18 plus | active | Teacher badge: S1-E2-11 |
 | …0008 to …0012 | owner, admin, moderator, support, editor | 18 plus | active, with their staff role | Google sessions: S1-E2-07b |
-| …0013, …0014 | suspended_user, banned_user | 18 plus | active | sanctions: S1-E10-06 |
+| …0013, …0014 | suspended_user, banned_user | 18 plus | suspended (7 days), banned | from the decided seed cases (S1-E10-06) |
 | …0015, …0016 | blocker, blocked | 18 plus, 16 to 17 | active, not admitted | the block: S1-E5-05 |
 
 Full IDs are `00000000-0000-4000-8000-0000000000NN`. Tests sign a persona in by setting the role and the JWT claims, as in `tests/database/010-profiles.test.sql`.

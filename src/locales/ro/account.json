@@ -59,7 +59,8 @@
     "legalLink": "Deschide Centrul legal",
     "signedOut": "Conectează-te ca să îți vezi setările.",
     "noHandle": "Alege mai întâi un nume de utilizator.",
-    "contactLink": "Contact și datele companiei"
+    "contactLink": "Contact și datele companiei",
+    "contactUsLink": "Contactează-ne"
   },
   "notice": {
     "heading": "Alege un nume de utilizator",
@@ -92,5 +93,15 @@
     "unknown": "Necunoscută",
     "note": "O aflăm din conexiunea ta când te înscrii și nu o cerem niciodată. Crezi că e greșită?",
     "contact": "Scrie-ne"
+  },
+  "sanction": {
+    "suspension": {
+      "title": "Contul tău este suspendat până la {{until}}.",
+      "body": "Poți citi și îți poți descărca datele, dar nu poți publica, comenta sau trimite mesaje până atunci."
+    },
+    "reporting_pause": {
+      "title": "Raportarea ta este suspendată până la {{until}}.",
+      "body": "Raportările tale au fost găsite nefondate de mai multe ori, așa că raportarea este suspendată o vreme. Poți citi și scrie în continuare."
+    }
   }
 }

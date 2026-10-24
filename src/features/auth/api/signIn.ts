@@ -19,7 +19,9 @@ export type SignInResult =
   | { kind: 'wrong_details' }
   | { kind: 'paused'; until: Date }
   | { kind: 'email_not_confirmed' }
-  | { kind: 'too_many_attempts' };
+  | { kind: 'too_many_attempts' }
+  // Supabase's own ban, set by a moderator (S1-E10-06).
+  | { kind: 'banned' };
 
 /** Supabase Auth's codes for "slow down". */
 const rateLimitCodes = new Set(['over_request_rate_limit', 'over_email_send_rate_limit']);
@@ -69,6 +71,7 @@ async function recordWrongTry(client: AppSupabaseClient, emailHash: string): Pro
  */
 function refusalFromCode(code: string | undefined, message: string): SignInResult {
   if (code === 'email_not_confirmed') return { kind: 'email_not_confirmed' };
+  if (code === 'user_banned') return { kind: 'banned' };
   if (rateLimitCodes.has(code ?? '')) return { kind: 'too_many_attempts' };
   throw new Error(`Could not log in: ${code ?? message}`);
 }

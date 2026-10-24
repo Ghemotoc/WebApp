@@ -27,7 +27,8 @@
     "account": "Contul tău",
     "logOut": "Deconectare",
     "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
-    "contact": "Contact"
+    "contact": "Contact",
+    "contactUs": "Contactează-ne"
   },
   "theme": {
     "label": "Temă",
@@ -97,5 +98,8 @@
   "offline": {
     "offline": "Nu ești conectat la internet. Paginile care au nevoie de internet nu se încarcă până revii online.",
     "backOnline": "Ești din nou online."
+  },
+  "actions": {
+    "report": "Raportează"
   }
 }

@@ -33,6 +33,13 @@ export function LegalLinksSection() {
       >
         {t('settings.legalLink')}
       </Link>
+      {/* Contact us, the form, one tap from Settings (S1-E14-04). */}
+      <Link
+        to="/contact"
+        className="inline-flex min-h-11 items-center self-start text-link underline"
+      >
+        {t('settings.contactUsLink')}
+      </Link>
       {/* The contact points one tap from Settings (S1-E14-02; DSA art. 11 and 12). */}
       <Link
         to="/legal/contact"

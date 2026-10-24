@@ -61,6 +61,161 @@ export type Database = {
           },
         ];
       };
+      banned_email_hashes: {
+        Row: {
+          created_at: string;
+          email_hash: string;
+          id: string;
+          sanction_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          email_hash: string;
+          id?: string;
+          sanction_id: string;
+        };
+        Update: {
+          created_at?: string;
+          email_hash?: string;
+          id?: string;
+          sanction_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'banned_email_hashes_sanction_id_fkey';
+            columns: ['sanction_id'];
+            isOneToOne: false;
+            referencedRelation: 'sanctions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      case_actions: {
+        Row: {
+          action: Database['public']['Enums']['moderation_action'];
+          case_id: string;
+          created_at: string;
+          id: string;
+          note: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          action: Database['public']['Enums']['moderation_action'];
+          case_id: string;
+          created_at?: string;
+          id?: string;
+          note: string;
+          user_id: string;
+        };
+        Update: {
+          action?: Database['public']['Enums']['moderation_action'];
+          case_id?: string;
+          created_at?: string;
+          id?: string;
+          note?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'case_actions_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'case_actions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      cases: {
+        Row: {
+          created_at: string;
+          deadline_at: string;
+          decided_at: string | null;
+          decided_by_user_id: string | null;
+          decision: Database['public']['Enums']['moderation_action'] | null;
+          id: string;
+          is_safeguarding: boolean;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          received_at: string;
+          reference: string;
+          report_count: number;
+          reporter_under_18: boolean;
+          source: Database['public']['Enums']['case_source'];
+          status: Database['public']['Enums']['case_status'];
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason: Database['public']['Enums']['report_reason'] | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deadline_at: string;
+          decided_at?: string | null;
+          decided_by_user_id?: string | null;
+          decision?: Database['public']['Enums']['moderation_action'] | null;
+          id?: string;
+          is_safeguarding?: boolean;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          received_at?: string;
+          reference: string;
+          report_count?: number;
+          reporter_under_18?: boolean;
+          source: Database['public']['Enums']['case_source'];
+          status?: Database['public']['Enums']['case_status'];
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason?: Database['public']['Enums']['report_reason'] | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deadline_at?: string;
+          decided_at?: string | null;
+          decided_by_user_id?: string | null;
+          decision?: Database['public']['Enums']['moderation_action'] | null;
+          id?: string;
+          is_safeguarding?: boolean;
+          item_id?: string;
+          item_type?: Database['public']['Enums']['reportable_type'];
+          received_at?: string;
+          reference?: string;
+          report_count?: number;
+          reporter_under_18?: boolean;
+          source?: Database['public']['Enums']['case_source'];
+          status?: Database['public']['Enums']['case_status'];
+          tier?: Database['public']['Enums']['case_tier'];
+          top_reason?: Database['public']['Enums']['report_reason'] | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'cases_decided_by_user_id_fkey';
+            columns: ['decided_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'cases_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       categories: {
         Row: {
           created_at: string;
@@ -596,6 +751,84 @@ export type Database = {
         };
         Relationships: [];
       };
+      moderated_items: {
+        Row: {
+          case_id: string | null;
+          created_at: string;
+          id: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          moderated_by_user_id: string;
+          note: string;
+          restore_reason: string | null;
+          restored_at: string | null;
+          restored_by_user_id: string | null;
+          state: Database['public']['Enums']['moderated_state'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          case_id?: string | null;
+          created_at?: string;
+          id?: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          moderated_by_user_id: string;
+          note: string;
+          restore_reason?: string | null;
+          restored_at?: string | null;
+          restored_by_user_id?: string | null;
+          state: Database['public']['Enums']['moderated_state'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          case_id?: string | null;
+          created_at?: string;
+          id?: string;
+          item_id?: string;
+          item_type?: Database['public']['Enums']['reportable_type'];
+          moderated_by_user_id?: string;
+          note?: string;
+          restore_reason?: string | null;
+          restored_at?: string | null;
+          restored_by_user_id?: string | null;
+          state?: Database['public']['Enums']['moderated_state'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'moderated_items_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderated_items_moderated_by_user_id_fkey';
+            columns: ['moderated_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderated_items_restored_by_user_id_fkey';
+            columns: ['restored_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderated_items_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
@@ -657,6 +890,109 @@ export type Database = {
         };
         Relationships: [];
       };
+      report_reason_tiers: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_safeguarding: boolean;
+          reason: Database['public']['Enums']['report_reason'];
+          tier: Database['public']['Enums']['case_tier'];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          is_safeguarding?: boolean;
+          reason: Database['public']['Enums']['report_reason'];
+          tier: Database['public']['Enums']['case_tier'];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_safeguarding?: boolean;
+          reason?: Database['public']['Enums']['report_reason'];
+          tier?: Database['public']['Enums']['case_tier'];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      reports: {
+        Row: {
+          case_id: string | null;
+          closed_at: string | null;
+          created_at: string;
+          details: string | null;
+          id: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+          reference: string;
+          reported_user_id: string;
+          reporter_age_band: Database['public']['Enums']['age_band'];
+          source: string;
+          updated_at: string;
+          user_id: string;
+          attach_report_to_case: string | null;
+        };
+        ComputedFields: 'attach_report_to_case';
+        Insert: {
+          case_id?: string | null;
+          closed_at?: string | null;
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+          reference: string;
+          reported_user_id: string;
+          reporter_age_band: Database['public']['Enums']['age_band'];
+          source?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          case_id?: string | null;
+          closed_at?: string | null;
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          item_id?: string;
+          item_type?: Database['public']['Enums']['reportable_type'];
+          reason?: Database['public']['Enums']['report_reason'];
+          reference?: string;
+          reported_user_id?: string;
+          reporter_age_band?: Database['public']['Enums']['age_band'];
+          source?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reports_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reports_reported_user_id_fkey';
+            columns: ['reported_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reports_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       reserved_names: {
         Row: {
           created_at: string;
@@ -687,6 +1023,161 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      safety_contact_gaps: {
+        Row: {
+          country_code: string;
+          first_seen_at: string;
+          id: string;
+          last_seen_at: string;
+          times_seen: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          country_code: string;
+          first_seen_at?: string;
+          id?: string;
+          last_seen_at?: string;
+          times_seen?: number;
+        };
+        Update: {
+          country_code?: string;
+          first_seen_at?: string;
+          id?: string;
+          last_seen_at?: string;
+          times_seen?: number;
+        };
+        Relationships: [];
+      };
+      safety_contacts: {
+        Row: {
+          checked_by: string;
+          confidence: string;
+          country_code: string;
+          created_at: string;
+          id: string;
+          kind: Database['public']['Enums']['safety_contact_kind'];
+          label: string;
+          last_checked_on: string;
+          link: string | null;
+          note: string | null;
+          opening_hours: string | null;
+          phone_number: string | null;
+          position: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          checked_by?: string;
+          confidence: string;
+          country_code: string;
+          created_at?: string;
+          id?: string;
+          kind: Database['public']['Enums']['safety_contact_kind'];
+          label: string;
+          last_checked_on: string;
+          link?: string | null;
+          note?: string | null;
+          opening_hours?: string | null;
+          phone_number?: string | null;
+          position: number;
+          updated_at?: string;
+        };
+        Update: {
+          checked_by?: string;
+          confidence?: string;
+          country_code?: string;
+          created_at?: string;
+          id?: string;
+          kind?: Database['public']['Enums']['safety_contact_kind'];
+          label?: string;
+          last_checked_on?: string;
+          link?: string | null;
+          note?: string | null;
+          opening_hours?: string | null;
+          phone_number?: string | null;
+          position?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      sanctions: {
+        Row: {
+          applied_by_user_id: string;
+          case_id: string | null;
+          created_at: string;
+          ends_at: string | null;
+          id: string;
+          kind: Database['public']['Enums']['sanction_kind'];
+          lift_reason: string | null;
+          lifted_at: string | null;
+          lifted_by_user_id: string | null;
+          note: string;
+          starts_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          applied_by_user_id: string;
+          case_id?: string | null;
+          created_at?: string;
+          ends_at?: string | null;
+          id?: string;
+          kind: Database['public']['Enums']['sanction_kind'];
+          lift_reason?: string | null;
+          lifted_at?: string | null;
+          lifted_by_user_id?: string | null;
+          note: string;
+          starts_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          applied_by_user_id?: string;
+          case_id?: string | null;
+          created_at?: string;
+          ends_at?: string | null;
+          id?: string;
+          kind?: Database['public']['Enums']['sanction_kind'];
+          lift_reason?: string | null;
+          lifted_at?: string | null;
+          lifted_by_user_id?: string | null;
+          note?: string;
+          starts_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'sanctions_applied_by_user_id_fkey';
+            columns: ['applied_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sanctions_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sanctions_lifted_by_user_id_fkey';
+            columns: ['lifted_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sanctions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       settings: {
         Row: {
@@ -1135,6 +1626,54 @@ export type Database = {
         Args: { target_user_id: string };
         Returns: Database['public']['Enums']['account_status'];
       };
+      active_sanction: {
+        Args: { target_user_id: string; wanted_kind: Database['public']['Enums']['sanction_kind'] };
+        Returns: {
+          applied_by_user_id: string;
+          case_id: string | null;
+          created_at: string;
+          ends_at: string | null;
+          id: string;
+          kind: Database['public']['Enums']['sanction_kind'];
+          lift_reason: string | null;
+          lifted_at: string | null;
+          lifted_by_user_id: string | null;
+          note: string;
+          starts_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'sanctions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_account_sanctions: {
+        Args: { target_user_id: string };
+        Returns: {
+          applied_by_handle: string;
+          case_reference: string;
+          ends_at: string;
+          id: string;
+          is_live: boolean;
+          kind: Database['public']['Enums']['sanction_kind'];
+          lifted_at: string;
+          note: string;
+          starts_at: string;
+        }[];
+      };
+      admin_apply_sanction: {
+        Args: {
+          days?: number;
+          note_text?: string;
+          source_case_id?: string;
+          target_user_id: string;
+          wanted_kind: Database['public']['Enums']['sanction_kind'];
+        };
+        Returns: string;
+      };
       admin_approve_username: {
         Args: {
           approved_name: string;
@@ -1144,6 +1683,26 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_case_actions: {
+        Args: { target_case_id: string };
+        Returns: {
+          action: Database['public']['Enums']['moderation_action'];
+          created_at: string;
+          note: string;
+          staff_handle: string;
+        }[];
+      };
+      admin_case_reports: {
+        Args: { target_case_id: string };
+        Returns: {
+          created_at: string;
+          details: string;
+          reason: Database['public']['Enums']['report_reason'];
+          reference: string;
+          reporter_age_band: Database['public']['Enums']['age_band'];
+          reporter_handle: string;
+        }[];
+      };
       admin_create_invite: {
         Args: { admits?: number; private_note?: string; valid_days?: number };
         Returns: {
@@ -1151,6 +1710,15 @@ export type Database = {
           expires_at: string;
           invite_id: string;
         }[];
+      };
+      admin_decide_case: {
+        Args: {
+          chosen_action: Database['public']['Enums']['moderation_action'];
+          note_text: string;
+          suspension_days?: number;
+          target_case_id: string;
+        };
+        Returns: boolean;
       };
       admin_export_audit_log: {
         Args: {
@@ -1168,12 +1736,27 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      admin_find_accounts: {
+        Args: { search_text: string };
+        Returns: {
+          email_masked: string;
+          handle: string;
+          matched_by: string;
+          pen_name: string;
+          staff_roles: Database['public']['Enums']['staff_role'][];
+          user_id: string;
+        }[];
+      };
       admin_grant_role: {
         Args: {
           granted_role: Database['public']['Enums']['staff_role'];
           reason_given: string;
           target_user_id: string;
         };
+        Returns: boolean;
+      };
+      admin_lift_sanction: {
+        Args: { reason_given: string; target_sanction_id: string };
         Returns: boolean;
       };
       admin_list_client_errors: {
@@ -1211,6 +1794,26 @@ export type Database = {
           user_id: string;
         }[];
       };
+      admin_moderation_queue: {
+        Args: {
+          case_id?: string;
+          source_filter?: Database['public']['Enums']['case_source'];
+          status_filter?: Database['public']['Enums']['case_status'];
+          tier_filter?: Database['public']['Enums']['case_tier'];
+          under_18_filter?: boolean;
+        };
+        Returns: Database['public']['CompositeTypes']['moderation_queue_row'][];
+        SetofOptions: {
+          from: '*';
+          to: 'moderation_queue_row';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      admin_pause_reporting: {
+        Args: { note_text?: string; reporter_handle: string; source_case_id?: string };
+        Returns: string;
+      };
       admin_raise_story_rating: {
         Args: {
           new_rating: Database['public']['Enums']['story_rating'];
@@ -1227,6 +1830,11 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_restore_item: {
+        Args: { reason_given: string; target_item_id: string };
+        Returns: boolean;
+      };
+      admin_reveal_email: { Args: { target_user_id: string }; Returns: string };
       admin_revoke_invite: {
         Args: { reason_given: string; target_invite_id: string };
         Returns: boolean;
@@ -1276,6 +1884,15 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['age_band'];
       };
+      attach_report_to_case: {
+        Args: {
+          new_report: Omit<
+            Database['public']['Tables']['reports']['Row'],
+            Database['public']['Tables']['reports']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       audit_log_rows: {
         Args: {
           action_prefix: string;
@@ -1294,6 +1911,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      banned_email_hash: { Args: { email: string }; Returns: string };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
       cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
@@ -1371,6 +1989,7 @@ export type Database = {
       invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_blocked_with: { Args: { other_user_id: string }; Returns: boolean };
+      is_email_banned: { Args: { email: string }; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
       is_moderated_away: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
@@ -1439,6 +2058,23 @@ export type Database = {
         };
         Returns: string;
       };
+      mask_email: { Args: { address: string }; Returns: string };
+      may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
+      moderate_item: {
+        Args: {
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          note_text: string;
+          owner_user_id: string;
+          source_case_id: string;
+          wanted_state: Database['public']['Enums']['moderated_state'];
+        };
+        Returns: string;
+      };
+      moderated_state_of: {
+        Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: Database['public']['Enums']['moderated_state'];
+      };
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
@@ -1482,6 +2118,14 @@ export type Database = {
         };
       };
       my_live_story_id: { Args: { story_slug: string }; Returns: string };
+      my_sanctions: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          ends_at: string;
+          kind: Database['public']['Enums']['sanction_kind'];
+          starts_at: string;
+        }[];
+      };
       my_staff_areas: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -1506,6 +2150,7 @@ export type Database = {
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
+      note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
@@ -1572,6 +2217,33 @@ export type Database = {
         };
         Returns: string;
       };
+      report_item: {
+        Args: {
+          details?: string;
+          item_reference: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          reason: Database['public']['Enums']['report_reason'];
+        };
+        Returns: {
+          received_at: string;
+          report_reference: string;
+        }[];
+      };
+      reportable_item_owner: {
+        Args: { item_reference: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: {
+          item_id: string;
+          owner_user_id: string;
+        }[];
+      };
+      reportable_item_summary: {
+        Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
+        Returns: string;
+      };
+      require_not_last_owner: {
+        Args: { removed_role: Database['public']['Enums']['staff_role']; target_user_id: string };
+        Returns: undefined;
+      };
       require_role_change_allowed: {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
@@ -1582,6 +2254,10 @@ export type Database = {
       };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
+      sanction_end: {
+        Args: { days: number; wanted_kind: Database['public']['Enums']['sanction_kind'] };
+        Returns: string;
+      };
       save_chapter_draft: {
         Args: { body: string; chapter_code: string; expected_version: number; title: string };
         Returns: Json;
@@ -1599,6 +2275,7 @@ export type Database = {
       };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       sign_in_pause_until: { Args: { email_hash: string }; Returns: string };
+      sign_out_everywhere: { Args: { target_user_id: string }; Returns: undefined };
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
       sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
@@ -1614,6 +2291,14 @@ export type Database = {
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       teaser_of: { Args: { chapter_body: string; word_limit: number }; Returns: string };
+      tier_hours: {
+        Args: { target_tier: Database['public']['Enums']['case_tier'] };
+        Returns: number;
+      };
+      tier_rank: {
+        Args: { target_tier: Database['public']['Enums']['case_tier'] };
+        Returns: number;
+      };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
@@ -1633,17 +2318,46 @@ export type Database = {
         | 'minor_not_admitted'
         | 'handle_missing'
         | 'staff_account'
-        | 'legal_acceptance_required';
+        | 'legal_acceptance_required'
+        | 'suspended'
+        | 'banned';
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
       audit_actor: 'person' | 'system';
+      case_source: 'report' | 'authority_order' | 'picture_check';
+      case_status: 'open' | 'decided';
+      case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
       chapter_status: 'draft' | 'scheduled' | 'published';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
+      moderated_state: 'hidden' | 'removed';
+      moderation_action: 'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban';
+      report_reason:
+        | 'illegal_content'
+        | 'harassment'
+        | 'insults'
+        | 'self_harm'
+        | 'child_sexual_content'
+        | 'threat_to_minor'
+        | 'terrorism'
+        | 'hate'
+        | 'spam'
+        | 'copyright'
+        | 'copied_published_work'
+        | 'undisclosed_ai'
+        | 'other';
       reportable_type: 'profile' | 'story' | 'chapter';
       revision_reason: 'published' | 'edited' | 'restored';
+      safety_contact_kind:
+        | 'emergency'
+        | 'child_helpline'
+        | 'csam_hotline'
+        | 'crisis_youth'
+        | 'police_online_child'
+        | 'regulator';
+      sanction_kind: 'warning' | 'suspension' | 'ban' | 'reporting_pause';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
       story_rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
@@ -1663,6 +2377,28 @@ export type Database = {
         after_values: Json | null;
         actor: Database['public']['Enums']['audit_actor'] | null;
         actor_user_id_short: string | null;
+      };
+      moderation_queue_row: {
+        id: string | null;
+        reference: string | null;
+        source: Database['public']['Enums']['case_source'] | null;
+        tier: Database['public']['Enums']['case_tier'] | null;
+        status: Database['public']['Enums']['case_status'] | null;
+        item_type: Database['public']['Enums']['reportable_type'] | null;
+        item_id: string | null;
+        item_summary: string | null;
+        reported_handle: string | null;
+        reported_age_band: Database['public']['Enums']['age_band'] | null;
+        top_reason: Database['public']['Enums']['report_reason'] | null;
+        report_count: number | null;
+        reporter_under_18: boolean | null;
+        is_safeguarding: boolean | null;
+        received_at: string | null;
+        deadline_at: string | null;
+        decision: Database['public']['Enums']['moderation_action'] | null;
+        decided_at: string | null;
+        decided_by_handle: string | null;
+        reported_user_id: string | null;
       };
     };
   };
@@ -1783,17 +2519,48 @@ export const Constants = {
         'handle_missing',
         'staff_account',
         'legal_acceptance_required',
+        'suspended',
+        'banned',
       ],
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
       audit_actor: ['person', 'system'],
+      case_source: ['report', 'authority_order', 'picture_check'],
+      case_status: ['open', 'decided'],
+      case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
       chapter_status: ['draft', 'scheduled', 'published'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
+      moderated_state: ['hidden', 'removed'],
+      moderation_action: ['no_action', 'hide', 'remove', 'restrict', 'warn', 'suspend', 'ban'],
+      report_reason: [
+        'illegal_content',
+        'harassment',
+        'insults',
+        'self_harm',
+        'child_sexual_content',
+        'threat_to_minor',
+        'terrorism',
+        'hate',
+        'spam',
+        'copyright',
+        'copied_published_work',
+        'undisclosed_ai',
+        'other',
+      ],
       reportable_type: ['profile', 'story', 'chapter'],
       revision_reason: ['published', 'edited', 'restored'],
+      safety_contact_kind: [
+        'emergency',
+        'child_helpline',
+        'csam_hotline',
+        'crisis_youth',
+        'police_online_child',
+        'regulator',
+      ],
+      sanction_kind: ['warning', 'suspension', 'ban', 'reporting_pause'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
       story_rating: ['all_ages', '13_plus', '16_plus', '18_plus'],

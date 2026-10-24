@@ -1,0 +1,195 @@
+{
+  "queue": {
+    "documentTitle": "Report queue · {{productName}}",
+    "eyebrow": "Staff · moderation",
+    "heading": "Report queue",
+    "intro": "Most urgent first. Our own moderators act on reports. The only automatic check is on pictures: it holds a flagged picture for a moderator and never decides on its own.",
+    "grouped": "Reports about the same item are grouped into one case.",
+    "notAllowed": "Only moderation staff can see the queue.",
+    "loading": "Loading the queue…",
+    "none": "No case matches these filters.",
+    "listHeading": "Cases",
+    "open": "Open case {{reference}}",
+    "filtersLabel": "Narrow the queue",
+    "columns": {
+      "case": "Case",
+      "what": "What was reported",
+      "signals": "Signals",
+      "user": "Account",
+      "deadline": "Deadline",
+      "decision": "Decision"
+    },
+    "filters": {
+      "tier": "Tier",
+      "allTiers": "All tiers",
+      "status": "Status",
+      "allStatuses": "Open and decided",
+      "under18": "Reporter under 18",
+      "under18All": "All",
+      "under18Yes": "Yes",
+      "under18No": "No",
+      "source": "Found by",
+      "allSources": "Reports, orders and picture checks"
+    },
+    "showing": "Cases shown: {{count}}, most urgent first."
+  },
+  "tiers": {
+    "one_hour": "1 hour",
+    "same_day": "Same day",
+    "two_days": "48 hours",
+    "seven_days": "7 days"
+  },
+  "tierSummary": {
+    "heading": "Open cases by tier",
+    "one_hour": "Removal orders from an authority (EU law gives us one hour)",
+    "same_day": "Child abuse material, a threat to a minor, a self-harm risk or terrorist content",
+    "two_days": "Other illegal content, such as copied work",
+    "seven_days": "Everything else: insults, spam, off-topic posts",
+    "open": "Open: {{count}}"
+  },
+  "sources": {
+    "report": "Report",
+    "authority_order": "Removal order",
+    "picture_check": "Picture check"
+  },
+  "statuses": {
+    "open": "Open",
+    "decided": "Decided"
+  },
+  "signals": {
+    "noReports": "No reports",
+    "reporterUnder18": "Reporter under 18",
+    "adultReporters": "Adult reporters",
+    "safeguarding": "Safeguarding",
+    "authorityOrder": "Authority order",
+    "pictureHeld": "Picture held",
+    "reports": "Reports: {{count}}"
+  },
+  "deadline": {
+    "hoursLeft": "{{hours}} h {{minutes}} min left",
+    "daysLeft": "{{days}} d {{hours}} h left",
+    "hoursOverdue": "{{hours}} h {{minutes}} min overdue",
+    "daysOverdue": "{{days}} d {{hours}} h overdue",
+    "decidedOn": "Decided {{when}}"
+  },
+  "ageBands": {
+    "under_13": "under 13",
+    "13_to_15": "13 to 15",
+    "16_to_17": "16 to 17",
+    "18_plus": "adult",
+    "unknown": "age unknown"
+  },
+  "reasons": {
+    "illegal_content": "Illegal content",
+    "harassment": "Harassment",
+    "insults": "Insults",
+    "self_harm": "Self-harm risk",
+    "child_sexual_content": "Sexual content involving a minor",
+    "threat_to_minor": "Threat to a minor",
+    "terrorism": "Terrorist content",
+    "hate": "Hate",
+    "spam": "Spam",
+    "copyright": "Copyright",
+    "copied_published_work": "Copied from a published work",
+    "undisclosed_ai": "Missing AI label",
+    "other": "Other",
+    "none": "No reason recorded"
+  },
+  "actions": {
+    "no_action": "No action",
+    "remove": "Remove",
+    "restrict": "Restrict",
+    "warn": "Warn",
+    "suspend": "Suspend",
+    "ban": "Ban",
+    "hide": "Hide"
+  },
+  "case": {
+    "documentTitle": "Case {{reference}} · {{productName}}",
+    "eyebrow": "Staff · moderation · case",
+    "heading": "Case {{reference}}",
+    "back": "Back to the queue",
+    "loading": "Loading the case…",
+    "notFound": "There is no case here, or it is not one you can see.",
+    "notAllowed": "Only moderation staff can open a case.",
+    "summaryOrder": "{{what}}. A removal order from an authority, received {{when}}. The one-hour clock started on receipt.",
+    "summaryPicture": "{{what}}. Held by the picture check {{when}}; nobody else has seen it.",
+    "reported": "Reported account",
+    "reportedAccount": "@{{handle}}, {{ageBand}}",
+    "noHandle": "(no username yet)",
+    "reportsHeading": "Reports",
+    "noReports": "No reports: this case came from an order or a picture check.",
+    "reportBy": "{{reference}} · @{{handle}}, {{ageBand}} · {{when}}",
+    "noDetails": "The reporter wrote nothing more.",
+    "anonymous": "Reporters are never named to the reported account.",
+    "decisionsHeading": "Decisions",
+    "noDecisions": "No decision yet.",
+    "decisionBy": "{{action}} · @{{handle}} · {{when}}",
+    "decidedNotice": "This case is decided: {{action}}. Appeals come with S1-E10-07.",
+    "form": {
+      "heading": "Decision",
+      "legend": "What do you decide?",
+      "actionMissing": "Choose an action first.",
+      "note": "Note for the case log (required)",
+      "noteHint": "What you checked and why you chose this action. Only staff can read it.",
+      "noteMissing": "Write a note to send the decision.",
+      "send": "Send decision",
+      "sending": "Sending…",
+      "sent": "Decision saved. The case is closed and its reports with it.",
+      "nextSteps": "The action is carried out at once: a warning, a suspension, a ban, hiding or removing. The statement of reasons to the account comes with S1-E10-04.",
+      "suspensionDays": "For how long?",
+      "days_1": "1 day",
+      "days_7": "7 days",
+      "days_30": "30 days",
+      "daysMissing": "Choose how long the suspension lasts.",
+      "daysChoose": "Choose…"
+    },
+    "summary": "{{what}}. Reports: {{count}}, the first received {{when}}. Reports about the same item are grouped here."
+  },
+  "failures": {
+    "not_allowed": "You can’t do this. Only moderation staff can, and safeguarding cases need the safeguarding permission.",
+    "refused": "The database refused it: the note may be empty, or the case is already decided.",
+    "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+    "not_built": "Restricting an item comes with S1-E11-08."
+  },
+  "reason": {
+    "hint": "Goes into the audit log. Only staff can read it.",
+    "missing": "Say why first.",
+    "cancel": "Cancel"
+  },
+  "sanctions": {
+    "heading": "Reported account: sanctions",
+    "none": "No sanctions on this account.",
+    "live": "Live",
+    "lifted": "Lifted",
+    "noEnd": "No end date.",
+    "until": "Until {{when}}.",
+    "noCase": "no case",
+    "appliedBy": "By @{{handle}}, {{when}}, case {{reference}}.",
+    "lift": "Lift",
+    "liftReason": "Why is it lifted?",
+    "liftConfirm": "Lift the sanction",
+    "kinds": {
+      "warning": "Warning",
+      "suspension": "Suspension",
+      "ban": "Ban",
+      "reporting_pause": "Reporting paused"
+    }
+  },
+  "moderatedItem": {
+    "hidden": "The item is hidden: the writer and staff still see it.",
+    "removed": "The item is removed: only staff see it; everyone else sees “[Removed by the moderation team]”.",
+    "explain": "Staff never edit a writer’s words. Restoring brings the item back as it was.",
+    "restore": "Restore",
+    "restoreReason": "Why is it restored?",
+    "restoreConfirm": "Restore the item",
+    "restored": "The item was restored."
+  },
+  "pause": {
+    "open": "Pause reporting",
+    "openLabel": "Pause reporting for @{{handle}}",
+    "reason": "Why is reporting paused?",
+    "confirm": "Pause for {{days}} days",
+    "done": "Reporting paused."
+  }
+}

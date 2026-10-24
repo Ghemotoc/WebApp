@@ -1,0 +1,73 @@
+{
+  "button": {
+    "label": "Report {{item}}"
+  },
+  "dialog": {
+    "eyebrow": "Report",
+    "title": {
+      "profile": "Report this profile",
+      "story": "Report this story",
+      "chapter": "Report this chapter"
+    },
+    "anonymous": "{{item}}. They won’t see who reported it.",
+    "whatIsWrong": "What’s wrong?",
+    "pickOne": "Pick the reason that fits best.",
+    "reasonMissing": "Choose a reason first.",
+    "details": "Anything else? (optional)",
+    "detailsHint": "Tell us anything that helps us check. At most {{max}} characters.",
+    "detailsTooLong": "That’s too long. Keep it under 2,000 characters.",
+    "aPersonReads": "A person on our team reads every report. Nothing changes until we’ve checked it.",
+    "close": "Close",
+    "cancel": "Cancel",
+    "send": "Send report",
+    "sending": "Sending…",
+    "signedOut": "Log in to report this. If you don’t have an account, the public report form is coming soon.",
+    "logIn": "Log in"
+  },
+  "sent": {
+    "heading": "Report sent",
+    "body": "Thanks. A person on our team will read it and tell you what we decide.",
+    "reference": "Your reference: {{reference}}, received {{receivedAt}}.",
+    "back": "Back"
+  },
+  "failures": {
+    "signed_out": "Log in to report this.",
+    "refused": "We couldn’t take this report. You can’t report your own things, and the item may no longer exist.",
+    "too_many": "You’ve sent a lot of reports in the last hour. Please try again later.",
+    "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+    "paused": "Your reporting is paused for now. You can still read and write."
+  },
+  "reasons": {
+    "illegal_content": { "label": "Illegal content", "hint": "Breaks the law in another way." },
+    "harassment": { "label": "Harassment", "hint": "Bullying, threats or targeting a person." },
+    "insults": { "label": "Insults", "hint": "Name-calling or insulting someone." },
+    "self_harm": { "label": "Self-harm", "hint": "Encourages or shows self-harm or suicide." },
+    "child_sexual_content": {
+      "label": "Sexual content involving a minor",
+      "hint": "Any sexual content involving someone under 18. We act on this first."
+    },
+    "threat_to_minor": {
+      "label": "Threat to a minor",
+      "hint": "Grooming, threats or pressure aimed at someone under 18. We act on this first."
+    },
+    "terrorism": { "label": "Terrorism", "hint": "Supports or promotes terrorism." },
+    "hate": { "label": "Hate", "hint": "Attacks people for who they are." },
+    "spam": { "label": "Spam", "hint": "Ads, scams or the same post over and over." },
+    "copyright": {
+      "label": "Copyright",
+      "hint": "Uses your own work, or someone else’s, without permission."
+    },
+    "copied_published_work": {
+      "label": "Copied from a published work",
+      "hint": "Text taken from a book or article that is already published."
+    },
+    "undisclosed_ai": {
+      "label": "Missing AI label",
+      "hint": "Written with AI but not labelled as AI-assisted."
+    },
+    "other": {
+      "label": "Other",
+      "hint": "Something else. Tell us below."
+    }
+  }
+}

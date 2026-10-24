@@ -73,5 +73,9 @@
     "accept": "Accept și continui",
     "accepting": "Se salvează…",
     "failed": "Nu a mers. Verifică-ți conexiunea și încearcă din nou."
+  },
+  "contactUs": {
+    "text": "Ai o întrebare sau o problemă cu contul tău?",
+    "link": "Scrie-ne"
   }
 }

@@ -59,7 +59,8 @@
     "legalLink": "Open the Legal centre",
     "signedOut": "Log in to see your settings.",
     "noHandle": "Choose a username first.",
-    "contactLink": "Contact and company details"
+    "contactLink": "Contact and company details",
+    "contactUsLink": "Contact us"
   },
   "notice": {
     "heading": "Choose a username",
@@ -92,5 +93,15 @@
     "unknown": "Not known",
     "note": "We take it from your connection when you join, and never ask. Think it’s wrong?",
     "contact": "Contact us"
+  },
+  "sanction": {
+    "suspension": {
+      "title": "Your account is suspended until {{until}}.",
+      "body": "You can read and download your data, but you can’t publish, comment or message until then."
+    },
+    "reporting_pause": {
+      "title": "Your reporting is paused until {{until}}.",
+      "body": "Reports you sent were found unfounded again and again, so reporting is paused for a while. You can still read and write."
+    }
   }
 }

@@ -52,6 +52,10 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/components/ui/`, `src/components/icons/` | Shared components (buttons, drop-down, fields, pills, chips, cards, shelves, notices, ad slots) and the few plain icons; see its README | S1-E1-03 |
 | `src/features/theme/` | Light and night mode: the footer drop-down and the hook that applies it | S1-E1-03 |
 | `src/features/language/` | The English / Română drop-downs, the hooks that switch and save the language, and the Supabase calls for `profiles.locale` | S1-E1-04 |
+| `src/features/reporting/` | The shared Report button and dialog (`<ReportButton>`), the one report form; see its README and architecture 1.7.11 | S1-E10-01 |
+| `src/features/moderation/` | The report queue and the case page of the admin site: tiers, deadlines, grouped reports and the decision; see its README | S1-E10-03a |
+| `src/features/contact/` | "Write to us": the Contact us form, through our own Pages Function and Brevo; see its README | S1-E14-04 |
+| `src/features/safety/` | "Is someone in danger right now?": the helplines for the reader's country, on the report dialog and the contact page; see its README | S1-E10-13a |
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
 | `src/features/flags/` | The public feature flags for screens that change with them (`useFeatureFlags`) | S1-E2-01 |
@@ -278,13 +282,123 @@ Invite links (S1-E11-17): an admin makes a link at /staff/invites; sign-up at /j
 
 Every staff screen reads and writes only through policies and `admin_*` functions, each of which asks `staff_may()` → `is_staff_session()` (architecture 1.8.1). The menu is built from the same answer, but it is a convenience: the server refuses on its own.
 
+## Reporting something (S1-E10-01)
+
+```
+any screen with user content: <ReportButton itemType itemReference itemLabel />   src/features/reporting/
+  │  ReportDialog (the browser's <dialog>): ReportReasonList (the enum, src/schemas/report.ts),
+  │  details, Send → useReportItem → api/reports.ts → rpc report_item()
+  ▼
+…_s1_e10_01_reports.sql
+  │  report_item(): signed in (any state, architecture 1.7.8) → reportable_item_owner() finds the
+  │  item and its owner (one branch per reportable_type; test 042) → not one's own → the same
+  │  report within 24 h gives the same reference → the hourly limit → insert into reports
+  ▼
+reports (user_id = the reporter; read by moderation staff only) → ReportSent shows "R-000123"
+```
+
+S1-E10-03a opens a moderation case from the new row; S1-E10-06 adds the reporting pause; S1-E10-02 reuses the dialog on the public form.
+
+## The moderation queue (S1-E10-03a)
+
+```
+/staff/moderation (router: staffRoutes)                                src/features/moderation/
+  │  ModerationQueuePage: TierSummary (open counts per tier) → QueueFilters → CaseList → CaseRow
+  │     useModerationQueue → api/moderationQueue.ts → rpc admin_moderation_queue(filters)
+  │     (read again every minute, so "5 h 50 min left" keeps moving: lib/deadline.ts, useNow)
+  ├─ /staff/moderation/cases/:caseId
+  │     CasePage: CaseReports (admin_case_reports) · CaseDecisions (admin_case_actions)
+  │     · DecisionForm → useCase.decide() → rpc admin_decide_case(case, action, note)
+  ▼
+…_s1_e10_03a_moderation_queue.sql
+  │  report_item() (S1-E10-01) now ends with attach_report_to_case(): one open case per item;
+  │  the tier from report_reason_tiers (Q5), the deadline from the FIRST report, the more urgent
+  │  reason wins, an under-18 reporter and a safeguarding reason are flagged on the case
+  │  may_see_case(): moderation staff; a safeguarding case needs the safeguarding permission (Q6)
+  │  admin_decide_case(): a note is required → case_actions row → the case and its reports close
+  │  → log_staff_action('case.decided', …) in the same transaction
+  │  hooks for later stories sit at its end: S1-E10-06 carries the action out, S1-E10-04 sends
+  │  the statement of reasons
+  ▼
+cases (user_id = the reported account), case_actions (user_id = the staff member), reports.case_id
+```
+
+An authority order (S1-E10-09) and a picture check (S1-E10-05) will insert their own cases with `source` set; the seed holds one of each so the queue shows every tier.
+
+## Sanctions, and what a decision does (S1-E10-06)
+
+```
+CasePage → DecisionForm (warn, suspend 1/7/30 days, ban, hide, remove; restrict waits for S1-E11-08)
+  │  useCase.decide() → rpc admin_decide_case(case, action, note, suspension_days)
+  ▼
+…_s1_e10_06_sanctions.sql
+  │  admin_decide_case(): closes the case (S1-E10-03a) then carries the action out:
+  │    warn/suspend/ban → admin_apply_sanction(): a sanctions row; a ban also sets Supabase's own
+  │      auth.users.banned_until, ends every session (sign_out_everywhere) and keeps the email's
+  │      keyed hash (banned_email_hashes, HMAC with the Vault secret banned_email_secret, Q8)
+  │    hide/remove → moderate_item(): a moderated_items row (hidden: writer and staff still see
+  │      it; removed: staff only, "[Removed by the moderation team]" for the rest, Q3)
+  │  account_state(): banned, then suspended, right after the email check → is_active_member()
+  │  false, so every write policy refuses; reading and downloading data still work
+  │  handle_new_auth_user(): refuses a sign-up whose email is on the banned list
+  │  report_item(): refuses a reporter with a live reporting_pause (SQLSTATE 55000)
+  ▼
+CasePage: AccountSanctions (admin_account_sanctions(), Lift → admin_lift_sanction()),
+  CaseReports › Pause reporting (admin_pause_reporting(handle)), ModeratedItemNotice › Restore
+  (admin_restore_item()); every action asks for a reason and goes to the audit log
+AppLayout → SanctionNotice (my_sanctions(): kind and dates only) "Your account is suspended until …"
+Sign-in: Supabase answers user_banned → "This account is banned"; the report dialog: "Your
+  reporting is paused"
+```
+
+Lane A's public read policies add `and not public.is_moderated_away('<type>', id)` (architecture 1.7.11); `moderated_state_of()` tells a screen whether to draw the removed marker.
+
+## Writing to us (S1-E14-04)
+
+```
+footer "Contact us" · Settings › Legal · /legal/contact "Write to us" · "Ask a moderator to check it"
+  │  /contact (router) → ContactPage → ContactForm                        src/features/contact/
+  │     topic chips, the message, the email (a visitor) or the account's email (signed in),
+  │     the hidden honeypot field; checked with src/schemas/contact.ts
+  │  useContactForm → api/contact.ts → POST /api/contact (JSON)
+  ▼
+functions/api/contact.ts (Cloudflare) · server/pages-functions-plugin.ts (locally)
+  │  server/contact.ts handleContact(): the same zod schema → a filled honeypot gets a reference
+  │  and nothing is sent → reference C-<year>-<4 digits> (never stored) → two plain-text emails:
+  │    staff: "[C-2026-0482] Account problem", the message, "@handle (user ID …)" or "not signed in",
+  │           reply-to the sender
+  │    sender: "We've received your message (C-2026-0482)", "we reply within one month"
+  ▼
+Brevo's HTTP API (BREVO_API_KEY, by hand) on Cloudflare · Mailpit (http://127.0.0.1:54324) locally
+```
+
+No table, no log: the message, the email and the IP address are never stored (ADR 0006). Abuse: the honeypot here and a Cloudflare rate-limit rule on `/api/contact`, set by hand (`docs/runbooks/contact-form.md`).
+
+## The helplines for the reader's country (S1-E10-13a)
+
+```
+ReportDialog or /legal/contact → <SafetyContactsBlock />                 src/features/safety/
+  │  useVisitorCountry: profiles.country_code (signed in) or /api/signup-context (signed out)
+  │  useSafetyContacts(country) → api/safetyContacts.ts → safety_contacts (read by everyone)
+  │     no row → "Call your local emergency number", the ZZ directories (Child Helpline International,
+  │     INHOPE) + rpc note_safety_contact_gap() for staff
+  │  CountryPicker: "Not your country?", the ten covered countries, Romania first
+  ▼
+content/safety-contacts.json (research G4) → scripts/build-safety-contacts-migration.ts
+  → …_s1_e10_13a_safety_contacts_seed.sql (generated; never a number typed from memory)
+```
+
 ## Staff roles (S1-E2-07a)
 
 ```
 /staff/roles (StaffRolesPage, inside StaffLayout since S1-E11-01)        src/features/staff/
+  │  GrantRoleForm → AccountPicker (S1-E11-01b): "Find the account" → useAccountSearch →
+  │     api/accountSearch.ts → admin_find_accounts(text) (username start, pen name, whole email;
+  │     the email masked; an email match logged) and admin_reveal_email(id) ("Show email", logged)
   │  useStaffRoles → api/staffRoles.ts
-  │     admin_list_staff(), admin_user_id_for_handle(),
-  │     admin_grant_role() / admin_remove_role() / admin_set_permission()
+  │     admin_list_staff(), admin_grant_role(user ID) / admin_remove_role() / admin_set_permission()
+  │     a refusal carries a HINT (no_such_account, reason_missing, last_owner, not_staff, own_role,
+  │     owner_only_role, not_allowed, sign_in_again) → failureFromRefusal() → its own sentence
   ▼
 …_s1_e2_07a_staff_roles.sql
   │  staff_may(area, access): the caller's role in staff_role_areas (architecture 1.8.3), plus the
@@ -365,8 +479,8 @@ delete_my_story(): deleted_at = now(); restore within content_purge_days (30);
   │  not is_moderated_away('story', id) (Lane C's contract) and rating_allows(rating) (S1-E3-06)
   ▼
 StoryHeader (cover from resolveCoverChoice(), pills, title, "by <pen name>", blurb, tags) and
-StorySideColumn (the writer, "Labels from the writer", "Report this story": an email until
-Lane C's ReportButton lands)
+StorySideColumn (the writer, "Labels from the writer", and for readers Lane C's shared
+<ReportButton itemType="story"> → report_item('story', id), S1-E10-01)
 ```
 
 Tests: `supabase/tests/database/103-story-settings.test.sql`, `e2e/story-settings.spec.ts`.
@@ -598,6 +712,34 @@ What the reading epic left in place. The epic report, `docs/epic-reports/S1-E4.m
 | Tests | `supabase/tests/database/140` to `142` and `093` (the epic), `server/link-preview.test.ts`, `e2e/epic-s1-e4.spec.ts` and each story's spec (`chapter-reader`, `reader-performance`, `copy-protection`, `teaser`) | each story, S1-E4-QA |
 
 **One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 600 words → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
+
+## Epic S1-E10 at a glance (checked by S1-E10-QA)
+
+What the Safety epic has in place so far. The epic report, `docs/epic-reports/S1-E10.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | the Report dialog (`src/features/reporting/`), the safety block (`src/features/safety/`), `/staff/moderation` and `/staff/moderation/cases/:id` (`src/features/moderation/`), the sanction notice (`src/features/account/`) | 10-01, 10-13a, 10-03a, 10-06 |
+| Hooks | `useReportItem`, `useSafetyContacts`, `useVisitorCountry`, `useModerationQueue`, `useCase`, `useSanctions`, `useMySanctions` | each story |
+| Tables | `reports`, `safety_contacts`, `safety_contact_gaps`, `report_reason_tiers`, `cases`, `case_actions`, `sanctions`, `banned_email_hashes`, `moderated_items` | each story |
+| Functions | `report_item()`, `reportable_item_owner()`, `reportable_item_summary()`, `attach_report_to_case()`, `admin_moderation_queue()`, `admin_decide_case()`, `admin_apply_sanction()`, `admin_lift_sanction()`, `admin_pause_reporting()`, `is_moderated_away()`, `account_state()` (suspended, banned), `note_safety_contact_gap()` | each story |
+| Tests | `supabase/tests/database/042` to `045` and `094` (the epic), `e2e/epic-s1-e10.spec.ts` and each story's spec | each story, S1-E10-QA |
+
+**One main journey through the whole epic:** a reader presses `<ReportButton>` → `ReportDialog` shows the helplines (`SafetyContactsBlock`) and the reasons → `report_item()` stores the report and `attach_report_to_case()` opens or joins the item's case with its tier and deadline → the moderator opens `/staff/moderation`, the case page, and sends a decision → `admin_decide_case()` closes the case and calls `admin_apply_sanction()` → `account_state()` answers `suspended` and every write policy refuses → the person sees `SanctionNotice`. `e2e/epic-s1-e10.spec.ts` walks it.
+
+## Epic S1-E11 at a glance (checked by S1-E11-QA)
+
+What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`) | 11-01, 11-17, 2-07a |
+| Hooks | `useMyStaffAccess`, `useAuditLog`, `useInviteLinks`, `useStaffRoles` | each story |
+| Tables | `audit_log` (append-only), `invites`, `staff_roles`, `staff_permissions`, `staff_role_areas`, the settings `staff_session_hours` and `staff_fresh_sign_in_minutes` | 1-02, 2-01, 2-07a, 11-01, 11-17 |
+| Functions | `is_staff_session()` (12 hours), `staff_signed_in_recently()`, `my_staff_areas()`, `log_sensitive_read()`, `admin_search_audit_log()`, `admin_export_audit_log()`, `admin_create_invite()`, `admin_revoke_invite()`, `admin_list_invites()`, `use_platform_invite()` | each story |
+| Tests | `supabase/tests/database/040`, `041` and `095` (the epic), `e2e/epic-s1-e11.spec.ts` and each story's spec | each story, S1-E11-QA |
+
+**One main journey through the whole epic:** the admin opens `/staff/invites` → `admin_create_invite()` returns the code once and logs `invite.created` → an adult opens `/join/<code>` → the sign-up trigger calls `use_platform_invite()`, which takes the last place and logs `invite.used_up` on behalf of the maker → the owner opens `/staff/audit-log` → `admin_search_audit_log()` finds both rows. `e2e/epic-s1-e11.spec.ts` walks it.
 
 ## Start here
 
