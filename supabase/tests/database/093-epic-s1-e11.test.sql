@@ -5,15 +5,15 @@
 -- (docs/epic-reports/S1-E11.md).
 -- Journey (S1-E11-17 × S1-E2-01 × S1-E11-01):
 --   the admin makes a one-use invite link → an invited adult signs up with the code → the link is
---   used up and both steps are in the audit log, on behalf of the admin, without naming the new
---   account → the owner finds them by searching "invite." and exports them (the export logged
+--   used up; the log has the admin's invite.created, the new account's invite.redeemed (user ID
+--   only, never the email) and the system's invite.used_up (CTO, 24 Oct 2026) → the owner finds them by searching "invite." and exports them (the export logged
 --   too) → the moderator can't search the audit log → each persona's menu is what its role
 --   allows (the moderator gets Moderation; support gets only areas without a page yet).
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(13);
+select plan(14);
 
 create temp table ids as select
   '00000000-0000-4000-8000-000000000008'::uuid as owner,
@@ -52,11 +52,17 @@ values ('00000000-0000-0000-0000-000000000000', gen_random_uuid(), 'authenticate
   now(), now(), '', '', '', '');
 select is((select use_count from public.invites where id = (select invite_id from made)), 1, 'the link is used up');
 select results_eq(
-  $$ select action, user_id from public.audit_log where target_id = (select invite_id::text from made) order by action $$,
-  $$ select action, (select admin from ids) from (values ('invite.created'), ('invite.used_up')) as rows (action) $$,
-  'both steps are in the audit log on behalf of the admin');
+  $$ select action, actor::text, user_id from public.audit_log where target_id = (select invite_id::text from made) order by action $$,
+  $$ values ('invite.created', 'person', (select admin from ids)),
+            ('invite.redeemed', 'person', (select id from auth.users where email = 'epic-s1-e11@example.com')),
+            ('invite.used_up', 'system', null::uuid) $$,
+  'the admin made it, the new account used it and the system closed it: nothing on behalf of the admin');
 select is((select count(*)::integer from public.audit_log where target_id = (select invite_id::text from made)
-  and (before_values::text || after_values::text) like '%example.com%'), 0, 'without naming the new account');
+  and (coalesce(before_values::text, '') || coalesce(after_values::text, '') || coalesce(reason, '')) like '%example.com%'), 0,
+  'the new account appears by user ID only, never by email');
+select is((select count(*)::integer from public.audit_log where user_id = (select admin from ids)
+  and target_id = (select invite_id::text from made) and action <> 'invite.created'), 0,
+  'the admin is the actor of nothing but making the link');
 
 /* ---------- 3. The owner searches and exports; the moderator can't (S1-E11-01) ---------- */
 
@@ -65,8 +71,8 @@ select pg_temp.sign_in_as((select owner from ids));
 select results_eq(
   $$ select action from public.admin_search_audit_log(action_prefix => 'invite.', from_date => current_date)
      where target_id = (select invite_id::text from made) order by action $$,
-  $$ values ('invite.created'), ('invite.used_up') $$,
-  'the owner finds both rows by searching "invite."');
+  $$ values ('invite.created'), ('invite.redeemed'), ('invite.used_up') $$,
+  'the owner finds all three rows by searching "invite."');
 select lives_ok($$ select * from public.admin_export_audit_log(action_prefix => 'invite.', from_date => current_date) $$,
   'and exports them');
 reset role;
