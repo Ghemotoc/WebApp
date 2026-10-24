@@ -1,4 +1,6 @@
-# Pull request drafts (Lane A)
+# Pull request drafts (Lane A, then the "Reading and talking" thread)
+
+**24 Oct 2026: bundle plan.** The three S1-E4 drafts below are folded into one bundle PR, `pr-drafts/READ-1.md`, on branch `claude/affectionate-galileo-wfsc0h` (S1-E4-01a, 01b, 06a, 04 and QA in order, rebased on `main`). It opens on 1 Nov after TOOL-1 merges. The per-story drafts stay as the detailed write-ups it points to.
 
 Pull request descriptions written ahead of time while GitHub Actions minutes are paused (CTO,
 24 Oct 2026). This branch never merges and has no pull request, so it uses no minutes.
