@@ -13,7 +13,9 @@ Part of #98
 Part of #116
 
 (S1-E10-13a, 03a and the two epic checks are parts of their stories, so their issues stay open.
-S1-E11-01b has no issue of its own: it comes from the 24 Oct 2026 decision in `docs/decisions.md`.)
+S1-E11-01b's story entry is in `docs/stories/s1-e11-admin-site.md` on this branch (commit
+`36ee176`); it gets its issue when "Sync story issues" runs after the merge, see By hand. That
+issue then closes by hand, because it is created after this PR merges.)
 
 Replaces Ghemotoc/WebApp#171, #172, #174, #175, #182, #185, #186 and #193: each gets closed with
 "Included in <this PR>".
@@ -65,7 +67,9 @@ same TAP harness. Re-run as `npx supabase test db` on 1 Nov.
 3. Contact us (`docs/runbooks/contact-form.md`): set the `BREVO_API_KEY` Cloudflare secret, make the
    support address a verified Brevo sender, redeploy; add the WAF rate-limit rule (`/api/contact`,
    POST, 5 requests per 10 min per IP, block 10 min).
-4. Check the two international directory links in the safety block (Child Helpline International,
+4. Actions › "Sync story issues" › Run workflow (untick "Only list") to create the S1-E11-01b
+   issue; the workflow runs only by hand. Then close that issue as done by this PR.
+5. Check the two international directory links in the safety block (Child Helpline International,
    INHOPE).
 
 ## Needs the lawyer's review before launch
@@ -94,7 +98,6 @@ screens: plain components, no doodles.
 - Deferred legs: "See my reports" (S1-E10-04), the report confirmation notification (S1-E7-01),
   the "copied from a published work" fields (S1-E10-08). S1-E10-02, 04, 05, 08, 09, 10 and
   S1-E11-02 each add their leg to the epic specs and 094/095.
-- S1-E11-01b has no GitHub issue; open one if Robert wants it tracked.
 - Whether the content editor role stays (OPEN since 17 Oct 2026).
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
