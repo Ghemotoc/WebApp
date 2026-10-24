@@ -7,6 +7,10 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Decision | Source |
 | --- | --- |
 | The international fallback for safety contacts (S1-E10-13a, Q9c), checked online by the CTO on 24 Oct 2026: Child Helpline International's directory https://childhelplineinternational.org/helplines/ (the old /child-helplines/child-helpline-network/ address returns an error) and INHOPE's at https://inhope.org (the directory is on the home page). A country with an INHOPE member hotline keeps that member's own report page instead (Romania: Ora de Net, https://oradenet.ro/esc-abuz) | Chat, 24 Oct 2026 |
+| Two more report reasons from the Moderation board: "Threat to a minor" is same day and a safeguarding case (hidden from moderators without the permission); "Insults" sits with harassment on the 7-day tier (S1-E10-01, S1-E10-03a) | Chat, 24 Oct 2026 |
+| The invite log is never written on behalf of the admin: using a place writes `invite.redeemed` with the new account as actor (user ID only, no email) and the invite as target; when the last place closes the invite, a second row has the system as actor (`audit_log.actor = 'system'`) (S1-E11-17) | Chat, 24 Oct 2026 |
+| The report dialog has the board's corner "×", named "Închide" / "Close" (S1-E10-01) | Chat, 24 Oct 2026 |
+| The lawyer's list gains two points: the banned email kept as a keyed hash, and Brevo as processor for support emails (S1-E10-06, S1-E14-04) | Chat, 24 Oct 2026 |
 
 ## Added 23 Oct 2026
 
