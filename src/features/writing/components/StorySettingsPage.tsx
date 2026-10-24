@@ -31,6 +31,7 @@ import { CategoryTagsSection } from './CategoryTagsSection';
 import { CoverSection } from './CoverSection';
 import { DeleteStoryControl } from './DeleteStoryControl';
 import { StoryBasicsSection } from './StoryBasicsSection';
+import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryStatusSection } from './StoryStatusSection';
 
 /** The message under the save button for each outcome. */
@@ -75,6 +76,7 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
         cover={form.answers.cover}
         onChange={(cover) => form.set('cover', cover)}
       />
+      <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
       <StoryStatusSection answers={form.answers} set={form.set} />
       <div className="flex flex-col gap-3 rounded-card bg-tint p-5">
         <SaveOutcome outcome={form.outcome} />

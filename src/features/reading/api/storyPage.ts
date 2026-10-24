@@ -5,10 +5,12 @@
  * What it calls next: get_story_page(slug) (supabase/migrations/…_s1_e3_05_story_settings.sql),
  * the only way readers reach a story: it answers nothing for a story that isn't published, is
  * deleted or is hidden by a moderator (the owner always gets their own), and never the user ID.
- * The rating rule joins it in S1-E3-06 and the chapter list in S1-E3-03.
+ * It applies the rating rule (rating_allows(), S1-E3-06) and serves the labels; the chapter
+ * list joins in S1-E3-03.
  */
 import type { CoverColourKey, CoverDesignKey } from '@/components/covers/coverDesigns';
 import type { AppSupabaseClient } from '@/lib/supabase';
+import type { AiDisclosure, StoryRating } from '@/schemas/story';
 
 /** What the story page shows. */
 export interface StoryPageData {
@@ -28,6 +30,16 @@ export interface StoryPageData {
   firstPublishedAt: string | null;
   lastChapterPublishedAt: string | null;
   isOwner: boolean;
+  /** The labels (S1-E3-06); a stored story always has a rating and an AI answer. */
+  labels: {
+    rating: StoryRating;
+    isFanFiction: boolean;
+    isParody: boolean;
+    dealsWithAbuseOrCoercion: boolean;
+    contentNote: string;
+    aiDisclosure: AiDisclosure;
+    aiUndisclosedLabelled: boolean;
+  };
 }
 
 /** The shape get_story_page() answers, as JSON. */
@@ -51,6 +63,15 @@ interface StoryPageRow {
   first_published_at: string | null;
   last_chapter_published_at: string | null;
   is_owner: boolean;
+  labels: {
+    rating: StoryRating;
+    is_fan_fiction: boolean;
+    is_parody: boolean;
+    deals_with_abuse_or_coercion: boolean;
+    content_note: string;
+    ai_disclosure: AiDisclosure;
+    ai_undisclosed_labelled: boolean;
+  };
 }
 
 /**
@@ -96,5 +117,14 @@ export async function fetchStoryPage(
     firstPublishedAt: row.first_published_at,
     lastChapterPublishedAt: row.last_chapter_published_at,
     isOwner: row.is_owner,
+    labels: {
+      rating: row.labels.rating,
+      isFanFiction: row.labels.is_fan_fiction,
+      isParody: row.labels.is_parody,
+      dealsWithAbuseOrCoercion: row.labels.deals_with_abuse_or_coercion,
+      contentNote: row.labels.content_note,
+      aiDisclosure: row.labels.ai_disclosure,
+      aiUndisclosedLabelled: row.labels.ai_undisclosed_labelled,
+    },
   };
 }

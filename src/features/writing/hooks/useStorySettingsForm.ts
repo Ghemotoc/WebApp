@@ -38,6 +38,12 @@ function answersFrom(story: MyStory): StoryAnswers {
       story.drawnCover === null ? { kind: 'automatic' } : { kind: 'drawn', ...story.drawnCover },
     completionStatus: story.completionStatus,
     commentsEnabled: story.commentsEnabled,
+    rating: story.rating,
+    isFanFiction: story.isFanFiction,
+    isParody: story.isParody,
+    dealsWithAbuseOrCoercion: story.dealsWithAbuseOrCoercion,
+    contentNote: story.contentNote,
+    aiDisclosure: story.aiDisclosure,
   };
 }
 

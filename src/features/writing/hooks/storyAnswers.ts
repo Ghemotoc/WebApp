@@ -1,13 +1,13 @@
 /**
  * The answers a story form keeps while the writer types, shared by the new story form
- * (S1-E3-01) and story settings (S1-E3-05).
+ * (S1-E3-01) and story settings (S1-E3-05), with the labels (S1-E3-06).
  *
  * Who uses it: useNewStoryForm, useStorySettingsForm and every form section in
  * src/features/writing/components/ (they read `answers` and call `set`).
  * Why one type: the sections are the same on both screens (the basics, category and tags, the
  * cover), so they take one shape and don't care which screen they are on.
  */
-import type { StoryCoverChoice } from '@/schemas/story';
+import type { AiDisclosure, StoryCoverChoice, StoryRating } from '@/schemas/story';
 
 /** Every answer a story form can hold. */
 export interface StoryAnswers {
@@ -23,6 +23,16 @@ export interface StoryAnswers {
   completionStatus: 'ongoing' | 'completed';
   /** Whether readers may comment (S1-E3-05; enforced by S1-E6-01); on for a new story. */
   commentsEnabled: boolean;
+  /** All ages, 13+, 16+ or 18+ (S1-E3-06); null until the writer picks one (required). */
+  rating: StoryRating | null;
+  isFanFiction: boolean;
+  isParody: boolean;
+  /** Abuse or coercion as a theme: then 16+ or 18+ and a content note (17 Oct 2026). */
+  dealsWithAbuseOrCoercion: boolean;
+  /** A short warning readers see before they open the story; up to 300 characters. */
+  contentNote: string;
+  /** The AI answer (Q24); null until the writer picks one (required). */
+  aiDisclosure: AiDisclosure | null;
 }
 
 /** Changes one answer. */

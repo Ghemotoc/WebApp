@@ -132,7 +132,12 @@
     "tooManyTags": "O poveste poate avea cel mult 10 etichete.",
     "duplicateTag": "Două dintre aceste etichete sunt la fel dacă ignorăm majusculele și diacriticele.",
     "loadFailed": "Nu am putut încărca pagina. Verifică-ți conexiunea și încearcă din nou.",
-    "storyIdInvalid": "Povestea nu a putut primi un identificator. Reîncarcă pagina și încearcă din nou."
+    "storyIdInvalid": "Povestea nu a putut primi un identificator. Reîncarcă pagina și încearcă din nou.",
+    "ratingRequired": "Alege o clasificare.",
+    "aiRequired": "Spune dacă ai folosit AI.",
+    "abuseNeedsRating": "O poveste despre abuz sau constrângere trebuie clasificată 16+ sau 18+.",
+    "abuseNeedsNote": "Adaugă o notă de conținut pentru o poveste despre abuz sau constrângere.",
+    "contentNoteTooLong": "O notă de conținut poate avea cel mult {{max}} caractere."
   },
   "storyCard": {
     "settings": "Setările poveștii",
@@ -182,5 +187,59 @@
     "heading": "Șterse recent",
     "intro": "Poveștile șterse sunt ascunse imediat și șterse definitiv după 30 de zile. Până atunci poți reveni.",
     "goneOn": "Dispare definitiv pe {{date}}"
+  },
+  "labels": {
+    "heading": "Etichete",
+    "intro": "Etichetele apar pe cardul poveștii și pe pagina ei. Dacă povestea e fan fiction sau parodie, trebuie să bifezi.",
+    "fanFiction": "Fan fiction",
+    "fanFictionHint": "Folosește personaje sau o lume din cartea, filmul, jocul sau serialul altcuiva.",
+    "parody": "Parodie",
+    "parodyHint": "Copiază intenționat o altă operă ca să râdă de ea sau să o comenteze.",
+    "abuse": "Vorbește despre abuz sau constrângere",
+    "abuseHint": "Abuzul, constrângerea sau ademenirea sunt o temă a poveștii. Atunci are nevoie de clasificarea 16+ sau 18+ și de o notă de conținut.",
+    "contentNote": "Notă de conținut",
+    "contentNoteHint": "Un avertisment scurt pe care cititorii îl văd înainte să deschidă povestea. {{count}} din {{max}} caractere.",
+    "rating": "Clasificare",
+    "required": "(obligatoriu)",
+    "ratingNoteAllAges": "Oricine o poate găsi și citi. Alege 13+, 16+ sau 18+ dacă povestea nu e potrivită pentru cititorii mai mici; atunci e ascunsă de oricine e mai mic.",
+    "ratingNoteHidden": "Ascunsă de oricine are sub {{age}} ani, în căutare, pe Descoperă și pe profilul tău. Cititorii văd clasificarea înainte să deschidă povestea.",
+    "guide": {
+      "all_ages": {
+        "who": "Pentru orice cititor, inclusiv copii",
+        "what": "Sentimente și prietenii, cel mult un prim sărut. Nimic înfricoșător arătat în detaliu, fără înjurături."
+      },
+      "13_plus": {
+        "who": "Pentru cititori de 13 ani și peste",
+        "what": "Îndrăgosteli, relații și săruturi între personaje de orice vârstă, inclusiv de 16 și 17 ani, fără conținut sexual. Înjurături ușoare, bătăi și momente înfricoșătoare."
+      },
+      "16_plus": {
+        "who": "Pentru cititori de 16 ani și peste",
+        "what": "Teme mai întunecate, precum abuzul, autovătămarea sau războiul, povestite cu grijă și cu o notă de conținut. Sexul între personaje adulte poate fi menționat, niciodată descris."
+      },
+      "18_plus": {
+        "who": "Doar pentru adulți",
+        "what": "Violență puternică, limbaj dur și conținut sexual între personaje adulte."
+      }
+    },
+    "guideRule": "La orice clasificare: fără conținut sexual cu persoane sub 18 ani, reale sau fictive. Nu ești sigur? Alege clasificarea mai mare; echipa noastră o poate schimba dacă un cititor o raportează.",
+    "ai": "Ai folosit AI?",
+    "aiHint": "Apare ca etichetă pe povestea ta. Dacă cineva raportează o etichetă lipsă, decide o persoană din echipa noastră. Nu folosim niciodată detectoare de AI ca să judecăm ce scrii.",
+    "previewBanner": "{{rating}}: ascunsă de cititorii sub {{age}} ani"
+  },
+  "rating": {
+    "all_ages": "Toate vârstele",
+    "13_plus": "13+",
+    "16_plus": "16+",
+    "18_plus": "18+"
+  },
+  "aiDisclosure": {
+    "no_ai": "Fără AI",
+    "ai_brainstorming": "AI pentru idei sau schiță",
+    "partly_ai_written": "Scrisă parțial cu AI",
+    "undisclosed": "Scrisă cu AI, nedeclarat"
+  },
+  "pills": {
+    "fanFiction": "Fan fiction",
+    "parody": "Parodie"
   }
 }

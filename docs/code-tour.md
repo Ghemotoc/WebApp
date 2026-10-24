@@ -67,7 +67,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/design-system/` | The /design page: every token and component on one page, with live contrast ratios | S1-E1-03 |
 | `src/config/brand.ts` | Product name, site, email addresses, social handle and company name (front end only) | S1-E1-01, S1-E1-03 |
 | `src/features/writing/` | The writer's side: `/write` (Your writing), `/write/new` (the new story form), `/write/s/:storySlug/settings` (story settings, delete and undo), the tag rule, `create_story()`, `update_my_story()`; see its README | S1-E3-01, S1-E3-05 |
-| `src/features/reading/` | The reader's side: `/s/:storySlug` (the story page) through `get_story_page()`; later the chapter reader and the teaser; see its README | S1-E3-05 |
+| `src/features/reading/` | The reader's side: `/s/:storySlug` (the story page) through `get_story_page()`, the label pills; later the chapter reader and the teaser; see its README | S1-E3-05, S1-E3-06 |
 | `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets a design from the story's ID; `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
 | `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
@@ -330,7 +330,7 @@ delete_my_story(): deleted_at = now(); restore within content_purge_days (30);
   ▼
 /s/<slug> (StoryPage, src/features/reading/) → useStoryPage → get_story_page(slug)
   │  null unless: not deleted, first_published_at set (or the caller owns it) and
-  │  not is_moderated_away('story', id) (Lane C's contract); rating_allows() joins in S1-E3-06
+  │  not is_moderated_away('story', id) (Lane C's contract) and rating_allows(rating) (S1-E3-06)
   ▼
 StoryHeader (cover from resolveCoverChoice(), pills, title, "by <pen name>", blurb, tags) and
 StorySideColumn (the writer, "Labels from the writer", "Report this story": an email until
@@ -338,6 +338,33 @@ Lane C's ReportButton lands)
 ```
 
 Tests: `supabase/tests/database/103-story-settings.test.sql`, `e2e/story-settings.spec.ts`.
+
+## Ratings and labels (S1-E3-06)
+
+```
+/write/new and /write/s/<slug>/settings → StoryLabelsSection                  src/features/writing/
+  │  LabelCheckbox (Fan fiction, Parody, Deals with abuse or coercion), the content note,
+  │  the Rating chips with RatingGuide, "Did you use AI?"
+  │  checked by storyLabelsSchema (src/schemas/story.ts): a rating and an AI answer are required;
+  │  abuse or coercion needs 16+ or 18+ and a content note (17 Oct 2026)
+  ▼
+create_story(…, labels) / update_my_story(slug, {labels}) → check_story_labels()
+                                                        …_s1_e3_06_ratings_and_labels.sql
+  stories.rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note,
+  ai_disclosure, ai_undisclosed_labelled_at (staff only)
+  ▼
+get_story_page(slug): readers get null unless rating_allows(rating) (the owner is exempt)
+  rating_allows(): age_band() from the year of birth; 18+ also needs the Yoti "18 or over"
+  result once adults_only is off (proposal, 23 Oct 2026); a visitor counts as under 16 (L14)
+  ▼
+StoryLabelPills (src/features/reading/) on the preview, the writer's card and the story page;
+StorySideColumn adds the Rating, Labels and AI rows; StoryHeader shows the content note
+Staff: admin_raise_story_rating() (never lowers; audit_log; a 'statement_of_reasons_needed'
+  job for S1-E10-04) and admin_set_ai_undisclosed_label() (after confirmed reports, Q24);
+  the staff screen is S1-E11-08. The jobs table (platform) is the queue other stories read.
+```
+
+Tests: `supabase/tests/database/104-ratings-and-labels.test.sql`, `e2e/ratings.spec.ts`.
 
 The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 

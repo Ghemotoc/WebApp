@@ -3,9 +3,9 @@
  *
  * Who shows it: the router, at /write/new; the "+ New story" button on /write leads here.
  * What it shows: the back link, the eyebrow, the heading and intro, then the form sections
- * (the basics, category and tags, cover) and the action bar, with the live preview beside them
- * (below them on phones). The board's "Status and comments", "Where can people read this
- * story?" and "Labels" sections come with S1-E3-05, S1-E3-08 (after March) and S1-E3-06.
+ * (the basics, category and tags, cover, labels) and the action bar, with the live preview
+ * beside them (below them on phones). The board's "Status and comments" section lives in story
+ * settings (S1-E3-05) and "Where can people read this story?" is S1-E3-08 (after March).
  * What it calls: useNewStoryForm (the answers, checks and create_story()), useStoryFormOptions
  * (languages and categories), useMyNames (the pen name for the preview).
  * Errors: a read-only account or a failed save shows a plain message above the buttons.
@@ -28,6 +28,7 @@ import { useStoryFormOptions } from '../hooks/useStoryFormOptions';
 import { CategoryTagsSection } from './CategoryTagsSection';
 import { CoverSection } from './CoverSection';
 import { StoryBasicsSection } from './StoryBasicsSection';
+import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryPreviewAside } from './StoryPreviewAside';
 
 /** The page header: back link, eyebrow, heading, intro and its two doodles. */
@@ -150,6 +151,7 @@ export function NewStoryPage() {
             cover={form.answers.cover}
             onChange={(cover) => form.set('cover', cover)}
           />
+          <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
           <NewStoryActionBar
             formError={form.formError}
             isSubmitting={form.isSubmitting}

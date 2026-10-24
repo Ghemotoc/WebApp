@@ -8,4 +8,4 @@ Created by S1-E1-04. The March numbers come from our own database (S1-E15-02); t
 | --- | --- | --- | --- |
 | (none yet) | | | |
 
-Candidates noted for when the tool exists, not built: `language_changed` with the new language code only (S1-E1-04); `sign_up_completed` with no properties and `sign_up_refused` with the reason only (`no_invite`, `password_too_short`, `password_leaked`) (S1-E2-01). The March sign-up numbers come from the database instead (S1-E15-02). `story_created` with the category only (S1-E3-01); `story_completed` and `story_deleted` with no properties (S1-E3-05).
+Candidates noted for when the tool exists, not built: `language_changed` with the new language code only (S1-E1-04); `sign_up_completed` with no properties and `sign_up_refused` with the reason only (`no_invite`, `password_too_short`, `password_leaked`) (S1-E2-01). The March sign-up numbers come from the database instead (S1-E15-02). `story_created` with the category only (S1-E3-01); `story_completed` and `story_deleted` with no properties (S1-E3-05); `story_rating_raised` with the new rating only (S1-E3-06, fired by the staff screen when it exists).
