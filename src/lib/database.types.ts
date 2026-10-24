@@ -61,6 +61,131 @@ export type Database = {
           },
         ];
       };
+      case_actions: {
+        Row: {
+          action: Database['public']['Enums']['moderation_action'];
+          case_id: string;
+          created_at: string;
+          id: string;
+          note: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          action: Database['public']['Enums']['moderation_action'];
+          case_id: string;
+          created_at?: string;
+          id?: string;
+          note: string;
+          user_id: string;
+        };
+        Update: {
+          action?: Database['public']['Enums']['moderation_action'];
+          case_id?: string;
+          created_at?: string;
+          id?: string;
+          note?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'case_actions_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'case_actions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      cases: {
+        Row: {
+          created_at: string;
+          deadline_at: string;
+          decided_at: string | null;
+          decided_by_user_id: string | null;
+          decision: Database['public']['Enums']['moderation_action'] | null;
+          id: string;
+          is_safeguarding: boolean;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          received_at: string;
+          reference: string;
+          report_count: number;
+          reporter_under_18: boolean;
+          source: Database['public']['Enums']['case_source'];
+          status: Database['public']['Enums']['case_status'];
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason: Database['public']['Enums']['report_reason'] | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deadline_at: string;
+          decided_at?: string | null;
+          decided_by_user_id?: string | null;
+          decision?: Database['public']['Enums']['moderation_action'] | null;
+          id?: string;
+          is_safeguarding?: boolean;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          received_at?: string;
+          reference: string;
+          report_count?: number;
+          reporter_under_18?: boolean;
+          source: Database['public']['Enums']['case_source'];
+          status?: Database['public']['Enums']['case_status'];
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason?: Database['public']['Enums']['report_reason'] | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deadline_at?: string;
+          decided_at?: string | null;
+          decided_by_user_id?: string | null;
+          decision?: Database['public']['Enums']['moderation_action'] | null;
+          id?: string;
+          is_safeguarding?: boolean;
+          item_id?: string;
+          item_type?: Database['public']['Enums']['reportable_type'];
+          received_at?: string;
+          reference?: string;
+          report_count?: number;
+          reporter_under_18?: boolean;
+          source?: Database['public']['Enums']['case_source'];
+          status?: Database['public']['Enums']['case_status'];
+          tier?: Database['public']['Enums']['case_tier'];
+          top_reason?: Database['public']['Enums']['report_reason'] | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'cases_decided_by_user_id_fkey';
+            columns: ['decided_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'cases_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       categories: {
         Row: {
           created_at: string;
@@ -630,8 +755,37 @@ export type Database = {
         };
         Relationships: [];
       };
+      report_reason_tiers: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_safeguarding: boolean;
+          reason: Database['public']['Enums']['report_reason'];
+          tier: Database['public']['Enums']['case_tier'];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          is_safeguarding?: boolean;
+          reason: Database['public']['Enums']['report_reason'];
+          tier: Database['public']['Enums']['case_tier'];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_safeguarding?: boolean;
+          reason?: Database['public']['Enums']['report_reason'];
+          tier?: Database['public']['Enums']['case_tier'];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       reports: {
         Row: {
+          case_id: string | null;
           closed_at: string | null;
           created_at: string;
           details: string | null;
@@ -645,9 +799,11 @@ export type Database = {
           source: string;
           updated_at: string;
           user_id: string;
+          attach_report_to_case: string | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'attach_report_to_case';
         Insert: {
+          case_id?: string | null;
           closed_at?: string | null;
           created_at?: string;
           details?: string | null;
@@ -663,6 +819,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          case_id?: string | null;
           closed_at?: string | null;
           created_at?: string;
           details?: string | null;
@@ -678,6 +835,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'reports_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'reports_reported_user_id_fkey';
             columns: ['reported_user_id'];
@@ -1258,6 +1422,26 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_case_actions: {
+        Args: { target_case_id: string };
+        Returns: {
+          action: Database['public']['Enums']['moderation_action'];
+          created_at: string;
+          note: string;
+          staff_handle: string;
+        }[];
+      };
+      admin_case_reports: {
+        Args: { target_case_id: string };
+        Returns: {
+          created_at: string;
+          details: string;
+          reason: Database['public']['Enums']['report_reason'];
+          reference: string;
+          reporter_age_band: Database['public']['Enums']['age_band'];
+          reporter_handle: string;
+        }[];
+      };
       admin_create_invite: {
         Args: { admits?: number; private_note?: string; valid_days?: number };
         Returns: {
@@ -1265,6 +1449,14 @@ export type Database = {
           expires_at: string;
           invite_id: string;
         }[];
+      };
+      admin_decide_case: {
+        Args: {
+          chosen_action: Database['public']['Enums']['moderation_action'];
+          note_text: string;
+          target_case_id: string;
+        };
+        Returns: boolean;
       };
       admin_export_audit_log: {
         Args: {
@@ -1324,6 +1516,22 @@ export type Database = {
           roles: Database['public']['Enums']['staff_role'][];
           user_id: string;
         }[];
+      };
+      admin_moderation_queue: {
+        Args: {
+          case_id?: string;
+          source_filter?: Database['public']['Enums']['case_source'];
+          status_filter?: Database['public']['Enums']['case_status'];
+          tier_filter?: Database['public']['Enums']['case_tier'];
+          under_18_filter?: boolean;
+        };
+        Returns: Database['public']['CompositeTypes']['moderation_queue_row'][];
+        SetofOptions: {
+          from: '*';
+          to: 'moderation_queue_row';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       admin_raise_story_rating: {
         Args: {
@@ -1389,6 +1597,15 @@ export type Database = {
           on_date: string;
         };
         Returns: Database['public']['Enums']['age_band'];
+      };
+      attach_report_to_case: {
+        Args: {
+          new_report: Omit<
+            Database['public']['Tables']['reports']['Row'],
+            Database['public']['Tables']['reports']['ComputedFields']
+          >;
+        };
+        Returns: string;
       };
       audit_log_rows: {
         Args: {
@@ -1550,6 +1767,7 @@ export type Database = {
         };
         Returns: string;
       };
+      may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
@@ -1709,6 +1927,14 @@ export type Database = {
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
+      tier_hours: {
+        Args: { target_tier: Database['public']['Enums']['case_tier'] };
+        Returns: number;
+      };
+      tier_rank: {
+        Args: { target_tier: Database['public']['Enums']['case_tier'] };
+        Returns: number;
+      };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
@@ -1733,9 +1959,13 @@ export type Database = {
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
       audit_actor: 'person' | 'system';
+      case_source: 'report' | 'authority_order' | 'picture_check';
+      case_status: 'open' | 'decided';
+      case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
       chapter_status: 'draft' | 'scheduled' | 'published';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
+      moderation_action: 'no_action' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -1778,6 +2008,27 @@ export type Database = {
         after_values: Json | null;
         actor: Database['public']['Enums']['audit_actor'] | null;
         actor_user_id_short: string | null;
+      };
+      moderation_queue_row: {
+        id: string | null;
+        reference: string | null;
+        source: Database['public']['Enums']['case_source'] | null;
+        tier: Database['public']['Enums']['case_tier'] | null;
+        status: Database['public']['Enums']['case_status'] | null;
+        item_type: Database['public']['Enums']['reportable_type'] | null;
+        item_id: string | null;
+        item_summary: string | null;
+        reported_handle: string | null;
+        reported_age_band: Database['public']['Enums']['age_band'] | null;
+        top_reason: Database['public']['Enums']['report_reason'] | null;
+        report_count: number | null;
+        reporter_under_18: boolean | null;
+        is_safeguarding: boolean | null;
+        received_at: string | null;
+        deadline_at: string | null;
+        decision: Database['public']['Enums']['moderation_action'] | null;
+        decided_at: string | null;
+        decided_by_handle: string | null;
       };
     };
   };
@@ -1904,9 +2155,13 @@ export const Constants = {
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
       audit_actor: ['person', 'system'],
+      case_source: ['report', 'authority_order', 'picture_check'],
+      case_status: ['open', 'decided'],
+      case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
       chapter_status: ['draft', 'scheduled', 'published'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
+      moderation_action: ['no_action', 'remove', 'restrict', 'warn', 'suspend', 'ban'],
       report_reason: [
         'illegal_content',
         'harassment',
