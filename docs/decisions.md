@@ -17,12 +17,12 @@ Every decision Robert has made, with its date and source. The live list is the m
 
 | Decision | Source |
 | --- | --- |
-| An investor demo is planned for January 2027 (month only, date to be set). It is an earlier show-and-tell build, not the March test: the March test with invited adults is unchanged, and so is the March MVP scope | Chat, 23 Oct 2026 |
-| No picture uploads for the January 2027 investor demo: drawn and automatic covers, and initials for avatars. The `picture_uploads` feature flag stays off; the flag itself is built by S1-E3-01 (Lane A), this entry only records the decision | Chat, 23 Oct 2026 |
-| Demo content for the January 2027 investor demo: the public-domain classics seeded as a staging top-up (`supabase/staging-topups/`), plus 30 to 40 synthetic Romanian stories | Chat, 23 Oct 2026 |
+| A demo is planned for January 2027 (month only, date to be set). It is an earlier show-and-tell build, not the March test: the March test with invited adults is unchanged, and so is the March MVP scope | Chat, 23 Oct 2026 |
+| No picture uploads for the January 2027 demo: drawn and automatic covers, and initials for avatars. The `picture_uploads` feature flag stays off; the flag itself is built by S1-E3-01 (Lane A), this entry only records the decision | Chat, 23 Oct 2026 |
+| Demo content for the January 2027 demo: the public-domain classics seeded as a staging top-up (`supabase/staging-topups/`), plus 30 to 40 synthetic Romanian stories | Chat, 23 Oct 2026 |
 | S1-E3-02 (chapter editor) and S1-E4-01 (chapter reader) are split into smaller stories before building; S1-E3-01 (create a story) too, if the cover picker grows past size M | Chat, 23 Oct 2026 |
-| Approved as proposals for the January 2027 investor demo (proposals, not final product decisions): the canvas's rating wording (the lawyer still has to confirm it), a 600-word teaser, a fixed comment limit, and simple Discover shelves (newest and most liked) instead of the ranking job | Chat, 23 Oct 2026 |
-| Scope of the January 2027 investor demo: the moderation queue is in; the teaser is in; notifications and the numbers page only if time allows | Chat, 23 Oct 2026 |
+| Approved as proposals for the January 2027 demo (proposals, not final product decisions): the canvas's rating wording (the lawyer still has to confirm it), a 600-word teaser, a fixed comment limit, and simple Discover shelves (newest and most liked) instead of the ranking job | Chat, 23 Oct 2026 |
+| Scope of the January 2027 demo: the moderation queue is in; the teaser is in; notifications and the numbers page only if time allows | Chat, 23 Oct 2026 |
 | The Contact page keeps placeholders for the company details until the company exists; Contact us is an email-backed form; the helpdesk product stays OPEN | Chat, 23 Oct 2026 |
 | Several Claude Code sessions run in parallel, one epic or one self-contained chunk each. Migrations are named with the story ID and a timestamp so two sessions never clash, and every session rebases on main right before opening a pull request and again before it merges | Chat, 23 Oct 2026 |
 
@@ -30,7 +30,7 @@ Every decision Robert has made, with its date and source. The live list is the m
 
 | Decision | Source |
 | --- | --- |
-| The investor demo is planned for January 2027 (month only); it needs the report button, a moderation queue with deadlines, and invite links Robert makes himself | Chat, 23 Oct 2026 |
+| The demo is planned for January 2027 (month only); it needs the report button, a moderation queue with deadlines, and invite links Robert makes himself | Chat, 23 Oct 2026 |
 | A staff session ends after 12 hours, enforced in the database (`staff_session_hours`); the person signs in again. Proposal from S1-E11-01, accepted | Chat, 23 Oct 2026 (Q11) |
 | Changing a staff role needs a sign-in from the last 15 minutes (`staff_fresh_sign_in_minutes`); exports for someone else, "Emergency disable" and removing part of a writer's text ask the same when their stories land. Proposal, accepted | Chat, 23 Oct 2026 (Q11) |
 | Invite links admit 1 to 50 people and last 1 to 90 days (the screen offers 1, 7, 14 or 30 days); the private note goes into the audit log's before and after values, so it is a first name or a role, never an email | Chat, 23 Oct 2026 (Q12) |
@@ -110,7 +110,7 @@ Every decision Robert has made, with its date and source. The live list is the m
 | Email links carry a one-time token hash and land on `/auth/confirm`, so a confirmation or log-in link works on any device | Claude Code session (S1-E2-01), 17 Oct 2026 |
 | Forms use zod rules with plain React state; react-hook-form (architecture 1.5) isn't added while the forms stay this small, because the shared fields don't pass refs | Claude Code session (S1-E2-01), 17 Oct 2026 |
 | While the age check isn't part of sign-up (`adults_only` on), the sign-up screen leaves out the "Age check" step and the Yoti and parent lines, and its handwritten tag says the test is for invited writers | Claude Code session (S1-E2-01), 17 Oct 2026 |
-| No picture uploads in the investor demo (January 2027): S1-E3-01 ships drawn covers and the automatic cover (S1-E3-13 pulled into the epic); the upload path is the contract only (the `picture_uploads` flag, off; the covers bucket and its rules; the columns) and the upload screen is its own story once S1-E10-05 exists | Chat, 23 Oct 2026 (Lane A) |
+| No picture uploads in the demo (January 2027): S1-E3-01 ships drawn covers and the automatic cover (S1-E3-13 pulled into the epic); the upload path is the contract only (the `picture_uploads` flag, off; the covers bucket and its rules; the columns) and the upload screen is its own story once S1-E10-05 exists | Chat, 23 Oct 2026 (Lane A) |
 | S1-E3-02 is built as 02a (editor, autosave, toolbar) and 02b (offline keep, paste cleaning, conflict warning); S1-E4-01 as 01a (reader, navigation, phone width) and 01b (performance budget, 200% zoom, banner slot below the text); one pull request per half | Chat, 23 Oct 2026 (Lane A) |
 | Readers reach stories and chapters only through `get_story_page()` and `get_chapter()`, which apply `rating_allows()` with `age_band()` in the database; no direct table access for readers (ADR 0004) | Chat, 23 Oct 2026 (Lane A, Q2) |
 | The rating wording on canvas 4.2 is used as written, with a code comment and this line saying it is a proposal pending the lawyer (L14) | Chat, 23 Oct 2026 (Lane A) |

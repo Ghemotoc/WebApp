@@ -1,7 +1,7 @@
 /**
  * Builds the demo content top-up (Lane B, "Staging top-up: demo content", decided 23 Oct 2026).
  *
- * The investor demo needs 30 to 40 real-looking stories. They are written as Markdown files in
+ * The demo needs 30 to 40 real-looking stories. They are written as Markdown files in
  * content/demo-stories/ (synthetic, never real people's work) and, once their texts arrive, the
  * public-domain classics in content/classics/texts/. This script reads those files, checks every
  * rule (lengths, ratings, ș and ț, no HTML) and writes one SQL file,

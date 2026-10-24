@@ -677,7 +677,7 @@ What the writing epic left in place. The epic report, `docs/epic-reports/S1-E3.m
 **One main journey through the whole epic:** adult_writer opens `/write/new` → `useNewStoryForm` checks the answers with `src/schemas/story.ts` and calls `create_story()` (the rating and labels checked again by `check_story_labels()`) and `create_chapter()` → the editor opens on chapter one → `useAutosave` sends `save_chapter_draft()` every 10 seconds and on blur → "Publish chapter" saves first, then `publish_chapter()` → `chapter_publish_now()` copies the draft, stamps the story and queues a `chapter_published` job → `get_story_page()` now shows the story to readers whose age `rating_allows()` → Manage chapters reorders with `move_chapter()` → a scheduled chapter goes live through `publish_due_chapters()`. `e2e/epic-s1-e3.spec.ts` walks it in the browser and `092-epic-s1-e3.test.sql` in the database.
 
 <!-- Lane B: demo content (23 Oct 2026). -->
-## Demo content for the investor demo (Lane B, 23 Oct 2026)
+## Demo content (Lane B, 23 Oct 2026)
 
 Thirty-six synthetic stories (and, once their texts arrive, about 20 public-domain classics) live as Markdown files and reach staging as one generated top-up:
 
