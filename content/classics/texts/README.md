@@ -1,6 +1,6 @@
 # Classics texts for the demo top-up
 
-The full texts of 19 short public-domain works (13 Romanian, 6 English; *Capra cu trei iezi* follows in a separate pull request, because Wikisource's API kept refusing this session's address), one file each, read by `scripts/build-demo-content.ts` and published on staging under the official classics account (`clasice`, its names read from `settings`) with the "domeniu public" tag (decided 23 Oct 2026; S1-E5-06 and S1-E11-16 bring the real "Public domain" label and the staff screen after March).
+The full texts of 20 short public-domain works (14 Romanian, 6 English; *Capra cu trei iezi* was added in a follow-up, after Wikisource's API had refused this session's address for about two hours), one file each, read by `scripts/build-demo-content.ts` and published on staging under the official classics account (`clasice`, its names read from `settings`) with the "domeniu public" tag (decided 23 Oct 2026; S1-E5-06 and S1-E11-16 bring the real "Public domain" label and the staff screen after March).
 
 ## Which works
 
