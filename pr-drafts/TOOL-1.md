@@ -35,9 +35,14 @@ Each one failed now and then in a full run and passed on its own.
 | `manage-chapters.spec.ts`, "dragging by keyboard" | It failed 1 run in about 50, never on its own. What I could see: a probe showed the rows still sliding (about 250 ms) when the test pressed the next key, and at the default 720 px rows 4 and 5 sit below the window edge, where dnd-kit scrolls. An interim fix of mine resized the window mid-test; that run failed with dnd-kit saying "Move cancelled" right after the pick-up (dnd-kit cancels a keyboard drag on resize). A drag cancelled part-way fits Lane B's report: the final Space then starts a new pick-up, so the order never changes (about 7 s). What cancelled the original runs wasn't caught on a trace. | The test opens at 1440 by 1600 from the start, so nothing resizes and no row sits at the edge (the mouse test already uses a tall window). It waits for the network and animations to settle before picking up, and for the rows to stop sliding after each key. New helper: `e2e/support/animations.ts` (`waitForAnimationsToFinish`). Afterwards the file passed 15 repeats (120 tests) and the two full runs. |
 | `story-settings.spec.ts` | **Not reproduced.** It passed 36 times: 6 repeats of the file and the full runs, with `manage-chapters` and `publish`, which share its seed story. Its signed-in axe views already save the language first. | No change: nothing found worth fixing without evidence. If it fails in CI, the retained trace will show the cause. |
 
-Only test code changed: no app screen, no migration, no `seed.sql`.
+Only test code and tooling changed: no app screen, no migration, no `seed.sql`.
 
-### 3. Two workers: measured, not switched on
+### 3. Database tests no longer depend on what ran before (CTO, 24 Oct 2026, 16:00)
+The Reading thread found that `014-profile-locale` ("every account starts with Romanian") failed when the database tests ran right after e2e without a reset: e2e had left some accounts on English.
+- **At the source:** `e2e/support/global-teardown.ts`, registered as `globalTeardown` in `playwright.config.ts`, puts every seed persona's language back to Romanian after each e2e run, whether it passed or failed. Each spec still restores its own changes; this is the safety net for a spec that forgets, or a run stopped part-way. Checked: two accounts switched to English, then one spec run, and both were back to Romanian, with 014 passing and no reset.
+- **In the local check list:** `npm run checks` (`scripts/run-all-checks.sh`) runs the whole CLAUDE.md list and resets the local database right before the database tests. CLAUDE.md's Checks line and the code tour point to it. CI already runs database before e2e, so it isn't affected.
+
+### 4. Two workers: measured, not switched on
 The brief said to switch to 2 workers only once isolation is in place. I measured first (24 Oct, local, one worker):
 - **Total:** 990 s of test time across 26 spec files.
 - **Can run in parallel:** about 210 s are in files that share no persona, seed story or site-wide flag (`sign-in`, `sign-up`, `epic-s1-e2`, `design-page`, `year-of-birth`, `home`). Even these share an invite code and the mail catcher.
@@ -79,24 +84,27 @@ A typical code pull request has 3 pushes as a draft, then ready, then 1 rebase, 
 | Database and e2e skip drafts and docs-only changes, wait for checks, and run on main | `scripts/repository-setup.test.ts`, `scripts/only-docs-changed.test.ts`; hand-test steps 1 to 4 |
 | No workflow-level filters | `scripts/repository-setup.test.ts` guard |
 | The workflow is valid | actionlint 1.7.7 on all three workflows |
+| Database tests pass after e2e without a reset | final pass above; `e2e/support/global-teardown.ts`; `npm run checks` |
 | The three flaky tests are fixed or explained | `usernames` 8 repeats and `manage-chapters` 15 repeats, all green; two full green runs below |
 | 2 workers only once isolation is in place | Measured above; kept at 1, with the seed change it would need |
 
 ## Checks (clean start on 24 Oct: packages reinstalled, Supabase stopped and started, Node 24)
-On `9d7d07b` (`claude/beautiful-rubin-amp8k6-tool-1`):
+Final pass on `64ecbdc` (`claude/beautiful-rubin-amp8k6-tool-1`), from a clean start (packages reinstalled, Supabase stopped and started), with `npm run checks`:
 ```
-npm ci                pass
 npm run lint          pass
 npm run typecheck     pass
 npm run types:check   pass
-npm test              pass (64 files, 389 tests)
-npx supabase test db  pass
+npm test              62 files, 369 tests passed
+npx supabase db reset done
+npx supabase test db  Result: PASS
+npm run test:e2e      394 passed, 1 skipped, 5 failed (Mailpit, see below), 35 did not run; 16.7 min
 npm run i18n:check    pass
-actionlint 1.7.7      no findings on ci.yml, release-production.yml, sync-story-issues.yml (shellcheck not installed in the container)
-npm run test:e2e #1   394 passed, 1 skipped, 5 failed (Mailpit, see below), 35 did not run; 16.9 min
-npm run test:e2e #2   394 passed, 1 skipped, 5 failed (Mailpit, the same 5), 35 did not run; 17.5 min
+npx supabase test db  again straight after e2e, no reset: Result: PASS (the order no longer matters)
+actionlint 1.7.7      no findings on all three workflows (shellcheck not installed in the container)
 ```
-No flaky failure in either run. The 35 "did not run" are the later tests in the same serial files as the 5 Mailpit failures. Before the fixes (main plus Lane D's commits, same container), the baseline was 17.4 minutes with the same 5 and 35. **e2e time before and after: 17.4 min against 16.9 and 17.5 min.** Unchanged, as expected with 1 worker; the minute saving comes from the CI rules in section 1.
+Two earlier full runs on `9d7d07b` (before section 3 was added): 394 passed, 1 skipped, the same 5 Mailpit failures, 35 did not run; 16.9 and 17.5 minutes. None of the three runs had a flaky failure. The 35 "did not run" are the later tests in the same serial files as the Mailpit failures.
+
+**e2e time before and after:** 17.4 minutes before the fixes (main plus Lane D's commits, same container), and 16.7, 16.9 and 17.5 minutes after. That's unchanged, as expected with 1 worker; the minute saving comes from the CI rules in section 1.
 
 **About the mail catcher:** this cloud container can't download the Mailpit image (the network policy blocks the registry), so local Supabase runs without it. The 5 tests that read email from Mailpit fail here for that reason alone:
 - `country`: an invited adult from Romania signs up
@@ -114,7 +122,7 @@ CI has Mailpit, and Lane D's run of this branch on 24 Oct passed all of them (37
 - [x] axe clean and keyboard checked (n/a: no screen changed)
 - [x] No personal data in logs or analytics
 - [x] Reportable and blockable (n/a)
-- [x] Docs updated: CLAUDE.md, the code tour, the `ci.yml` header, the `playwright.config.ts` comment
+- [x] Docs updated: CLAUDE.md (draft rule, `npm ci` rule, `npm run checks`), the code tour, the `ci.yml` header, the `playwright.config.ts` comment
 - [x] Tested on staging by a person (n/a: CI only; hand-test steps above)
 
 ## Follow-ups
