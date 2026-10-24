@@ -71,7 +71,9 @@ jobs:
   e2e:
     name: End-to-end and accessibility smoke test
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # The suite runs on one worker (playwright.config.ts) and grows with every screen: about
+    # 19 minutes with the chapter editor (S1-E3-02a), so 20 cut it off. 40 leaves room.
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
