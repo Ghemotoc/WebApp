@@ -61,6 +61,10 @@ export default defineConfig({
   forbidOnly: process.env.CI !== undefined,
   // One test at a time: the tests share the seed personas in one local database, and some change
   // a persona's saved language, so two at once could see each other's changes (S1-E1-QA).
+  // Measured 24 Oct 2026 (TOOL-1): of about 16.5 minutes of tests, only about 3.5 are in files
+  // that share no persona, seed story or site-wide flag (maintenance mode, invite-only, legal
+  // versions), so 2 workers would save about 1.5 minutes. A real gain needs a test persona and
+  // story per worker first.
   workers: 1,
   // One retry in CI, so a slow runner is told apart from a real failure in the report.
   retries: process.env.CI === undefined ? 0 : 1,
