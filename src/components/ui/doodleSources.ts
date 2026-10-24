@@ -5,6 +5,8 @@
  * src/assets/doodles/ with a readable name, when a screen needs another doodle. Kept apart from
  * the component so that file exports only a component (React's fast refresh asks for it).
  */
+import autumnLeaf from '@/assets/doodles/autumn-leaf.svg';
+import booksAndPlant from '@/assets/doodles/books-and-plant.svg';
 import croissant from '@/assets/doodles/croissant.svg';
 import deskLamp from '@/assets/doodles/desk-lamp.svg';
 import fountainPen from '@/assets/doodles/fountain-pen.svg';
@@ -14,6 +16,7 @@ import mushroom from '@/assets/doodles/mushroom.svg';
 import musicNotes from '@/assets/doodles/music-notes.svg';
 import onceUponATime from '@/assets/doodles/once-upon-a-time.svg';
 import openBook from '@/assets/doodles/open-book.svg';
+import openSpiralNotebook from '@/assets/doodles/open-spiral-notebook.svg';
 import owlReadingGlasses from '@/assets/doodles/owl-reading-glasses.svg';
 import pencilCup from '@/assets/doodles/pencil-cup.svg';
 import rainCloud from '@/assets/doodles/rain-cloud.svg';
@@ -24,6 +27,8 @@ import typewriter from '@/assets/doodles/typewriter.svg';
 
 /** Each doodle's name and the file it comes from. */
 export const doodleSources = {
+  'autumn-leaf': autumnLeaf,
+  'books-and-plant': booksAndPlant,
   croissant,
   'desk-lamp': deskLamp,
   'fountain-pen': fountainPen,
@@ -33,6 +38,7 @@ export const doodleSources = {
   'music-notes': musicNotes,
   'once-upon-a-time': onceUponATime,
   'open-book': openBook,
+  'open-spiral-notebook': openSpiralNotebook,
   'owl-reading-glasses': owlReadingGlasses,
   'pencil-cup': pencilCup,
   'rain-cloud': rainCloud,

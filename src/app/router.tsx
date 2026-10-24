@@ -86,6 +86,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: StorySettingsPage };
     },
   },
+  // Manage chapters (S1-E3-04): reorder, rename, unpublish, delete and undo one story's chapters.
+  {
+    path: '/write/s/:storySlug/chapters',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ManageChaptersPage } =
+        await import('@/features/writing/components/ManageChaptersPage');
+      return { Component: ManageChaptersPage };
+    },
+  },
   // The chapter editor (S1-E3-02a): the writer's own chapter, by the story's slug and the
   // chapter's 8-character code (never a position, so reordering keeps links alive).
   {

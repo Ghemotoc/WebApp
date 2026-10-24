@@ -53,7 +53,7 @@ import { PublishPanel } from './PublishPanel';
 /** The state pill's tone: a draft is neutral, scheduled gold, published sage. */
 const stateTone = { draft: 'neutral', scheduled: 'gold', published: 'sage' } as const;
 
-/** The breadcrumb: Writer dashboard › the story › Chapter n, then the state pill. */
+/** The breadcrumb: Writer dashboard › the story (its Manage chapters page, S1-E3-04) › Chapter n, then the state pill. */
 function EditorBreadcrumb({ chapter, status }: { chapter: MyChapter; status: ChapterStatus }) {
   const { t } = useTranslation('editor');
   return (
@@ -66,7 +66,7 @@ function EditorBreadcrumb({ chapter, status }: { chapter: MyChapter; status: Cha
       </Link>
       <ChevronRightIcon />
       <Link
-        to={`/write/s/${chapter.story.slug}/settings`}
+        to={`/write/s/${chapter.story.slug}/chapters`}
         className="inline-flex min-h-11 items-center font-semibold no-underline hover:underline"
       >
         {chapter.story.title}

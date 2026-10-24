@@ -1249,6 +1249,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      delete_chapter: { Args: { chapter_code: string }; Returns: Json };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
@@ -1317,6 +1318,7 @@ export type Database = {
         };
         Returns: string;
       };
+      move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -1379,6 +1381,7 @@ export type Database = {
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       rating_allows: {
@@ -1390,6 +1393,8 @@ export type Database = {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
       };
+      rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
+      renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
       report_client_error: {
         Args: {
           app_version: string;
@@ -1408,6 +1413,7 @@ export type Database = {
         Args: { changed_role: Database['public']['Enums']['staff_role'] };
         Returns: undefined;
       };
+      restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
       save_chapter_draft: {
         Args: { body: string; chapter_code: string; expected_version: number; title: string };
@@ -1416,6 +1422,7 @@ export type Database = {
       schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
+      set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };

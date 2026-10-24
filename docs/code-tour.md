@@ -421,7 +421,23 @@ get_story_page(): public while story_has_readable_chapter(); 'chapters' from sto
   → StoryChapterList on /s/<slug>
 ```
 
-Stored format and why: ADR 0005. Tests: `supabase/tests/database/110-chapters.test.sql`, `111-save-chapter-draft.test.sql`, `src/features/writing/lib/chapterMarkdown.test.ts`, `src/schemas/chapter.test.ts`, `src/features/writing/hooks/useAutosave.test.tsx`, `lib/draftStore.test.ts`, `lib/pasteCleaning.test.ts` (Word, Google Docs and hostile fixtures in `src/test/fixtures/paste/`), `e2e/chapter-editor.spec.ts`, `e2e/chapter-editor-offline.spec.ts`; publishing: `112-publish.test.sql`, `113-schedule.test.sql`, `src/lib/romania-time.test.ts`, `ChapterText.test.tsx`, `e2e/publish.spec.ts`.
+Managing chapters (S1-E3-04), at `/write/s/<slug>/chapters` ("Manage chapters" on a story card, or the story in the editor's breadcrumb):
+
+```
+ManageChaptersPage → ChapterListCard → SortableChapterList (dnd-kit: mouse, touch, keyboard)
+  │                     → ManagedChapterRow (handle, pill, meta from lib/chapterListText.ts)
+  │                       → ChapterRowActions (arrows, Edit, Rename, Unpublish, Delete)
+  │  → RecentlyDeletedChapters (Undo), DeleteChapterDialog (asks first)
+  ▼
+useManageChapters (the list from api/manageChapters.ts; a new order shows at once)
+  ▼
+move_chapter() / set_chapter_order() / rename_chapter() / delete_chapter() /
+restore_chapter() (+ publish_chapter(), unpublish_chapter())  …_s1_e3_04_manage_chapters.sql
+  renumber_story_chapters(): 1, 2, 3… with no gaps
+purge_deleted_chapters(): pg_cron 03:29, 30 days after a delete (docs/runbooks/scheduled-jobs.md)
+```
+
+Stored format and why: ADR 0005. Tests: `supabase/tests/database/110-chapters.test.sql`, `111-save-chapter-draft.test.sql`, `src/features/writing/lib/chapterMarkdown.test.ts`, `src/schemas/chapter.test.ts`, `src/features/writing/hooks/useAutosave.test.tsx`, `lib/draftStore.test.ts`, `lib/pasteCleaning.test.ts` (Word, Google Docs and hostile fixtures in `src/test/fixtures/paste/`), `e2e/chapter-editor.spec.ts`, `e2e/chapter-editor-offline.spec.ts`; publishing: `112-publish.test.sql`, `113-schedule.test.sql`, `src/lib/romania-time.test.ts`, `ChapterText.test.tsx`, `e2e/publish.spec.ts`; managing: `114-manage-chapters.test.sql`, `src/features/writing/lib/chapterListText.test.ts`, `e2e/manage-chapters.spec.ts`.
 
 The covers bucket and the `picture_uploads` flag (off) are the contract for uploaded covers (`…_s1_e3_01_covers_bucket.sql`); the upload screen is its own story once the picture check (S1-E10-05) exists. `is_moderated_away()` is a stub for Lane C's moderation (shared contract). Tests: `supabase/tests/database/100` to `102`, `e2e/create-story.spec.ts`.
 
