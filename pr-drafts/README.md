@@ -12,3 +12,5 @@ then ready for review once its local checks pass):
 | S1-E4-04 | `claude/s1-e4-04-teaser` | S1-E4-06a |
 
 S1-E4-01a and S1-E4-01b were opened before the pause: Ghemotoc/WebApp#191 and Ghemotoc/WebApp#192.
+
+Hand-overs: `pr-drafts/handover/lane-c.md` (Lane C, safety and admin, 24 Oct 2026).
