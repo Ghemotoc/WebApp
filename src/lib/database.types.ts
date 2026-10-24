@@ -6,6 +6,7 @@ export type Database = {
       audit_log: {
         Row: {
           action: string;
+          actor: Database['public']['Enums']['audit_actor'];
           after_values: Json | null;
           before_values: Json | null;
           created_at: string;
@@ -14,11 +15,12 @@ export type Database = {
           target_id: string | null;
           target_type: string;
           target_user_id: string | null;
-          user_id: string;
+          user_id: string | null;
         };
         ComputedFields: never;
         Insert: {
           action: string;
+          actor?: Database['public']['Enums']['audit_actor'];
           after_values?: Json | null;
           before_values?: Json | null;
           created_at?: string;
@@ -27,10 +29,11 @@ export type Database = {
           target_id?: string | null;
           target_type: string;
           target_user_id?: string | null;
-          user_id: string;
+          user_id?: string | null;
         };
         Update: {
           action?: string;
+          actor?: Database['public']['Enums']['audit_actor'];
           after_values?: Json | null;
           before_values?: Json | null;
           created_at?: string;
@@ -39,7 +42,7 @@ export type Database = {
           target_id?: string | null;
           target_type?: string;
           target_user_id?: string | null;
-          user_id?: string;
+          user_id?: string | null;
         };
         Relationships: [
           {
@@ -1114,6 +1117,14 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_create_invite: {
+        Args: { admits?: number; private_note?: string; valid_days?: number };
+        Returns: {
+          code: string;
+          expires_at: string;
+          invite_id: string;
+        }[];
+      };
       admin_export_audit_log: {
         Args: {
           action_prefix?: string;
@@ -1150,6 +1161,20 @@ export type Database = {
           route_path: string;
         }[];
       };
+      admin_list_invites: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          created_at: string;
+          expires_at: string;
+          id: string;
+          made_by_handle: string;
+          max_uses: number;
+          note: string;
+          revoked_at: string;
+          status: string;
+          use_count: number;
+        }[];
+      };
       admin_list_staff: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -1173,6 +1198,10 @@ export type Database = {
           removed_role: Database['public']['Enums']['staff_role'];
           target_user_id: string;
         };
+        Returns: boolean;
+      };
+      admin_revoke_invite: {
+        Args: { reason_given: string; target_invite_id: string };
         Returns: boolean;
       };
       admin_search_audit_log: {
@@ -1306,6 +1335,7 @@ export type Database = {
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
+      generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
@@ -1517,7 +1547,7 @@ export type Database = {
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
-      use_platform_invite: { Args: { code: string }; Returns: undefined };
+      use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
     };
@@ -1537,6 +1567,7 @@ export type Database = {
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
+      audit_actor: 'person' | 'system';
       chapter_status: 'draft' | 'scheduled' | 'published';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
@@ -1559,6 +1590,8 @@ export type Database = {
         reason: string | null;
         before_values: Json | null;
         after_values: Json | null;
+        actor: Database['public']['Enums']['audit_actor'] | null;
+        actor_user_id_short: string | null;
       };
     };
   };
@@ -1684,6 +1717,7 @@ export const Constants = {
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
+      audit_actor: ['person', 'system'],
       chapter_status: ['draft', 'scheduled', 'published'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],

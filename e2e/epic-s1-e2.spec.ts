@@ -122,8 +122,10 @@ test.describe('epic S1-E2 journeys', () => {
     } finally {
       runSql(`
         delete from public.consents where user_id in (select id from auth.users where email = '${address}');
-        delete from public.profiles where id in (select id from auth.users where email = '${address}');
-        delete from auth.users where email = '${address}';
+        -- Accounts the append-only audit log names (invite.redeemed, S1-E11-17) stay; addresses are unique per run.
+        delete from public.profiles where id in (select id from auth.users where email = '${address}')
+      and id not in (select user_id from public.audit_log where user_id is not null);
+        delete from auth.users where email = '${address}' and id not in (select id from public.profiles);
         update public.invites set use_count = 0 where code_hash = public.invite_code_hash('${workingInvite}');`);
     }
   });

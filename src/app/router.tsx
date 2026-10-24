@@ -74,6 +74,14 @@ const staffRoutes: RouteObject = {
         return { Component: StaffRolesPage };
       },
     },
+    // Invite links for the March test, owner and admin (S1-E11-17).
+    {
+      path: 'invites',
+      lazy: async () => {
+        const { InvitesPage } = await import('@/features/staff/components/invites/InvitesPage');
+        return { Component: InvitesPage };
+      },
+    },
     // The audit log: search and CSV export for owner and admin (S1-E11-01).
     {
       path: 'audit-log',

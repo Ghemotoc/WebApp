@@ -45,7 +45,8 @@
   },
   "nav": {
     "roles": "Roluri",
-    "auditLog": "Jurnal de audit"
+    "auditLog": "Jurnal de audit",
+    "invites": "Invitații"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -68,7 +69,8 @@
     "comingAreas": "Moderarea, Utilizatorii, Invitațiile și celelalte zone vin cu propriile lor povești; meniul arată o zonă imediat ce pagina ei există.",
     "areas": {
       "roles": "Cine din echipă are ce rol și ce permisiuni.",
-      "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export."
+      "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export.",
+      "invites": "Linkuri de invitație pentru testul din martie: fă, copiază și revocă."
     }
   },
   "auditLog": {
@@ -97,6 +99,7 @@
     "newer": "Mai noi",
     "older": "Mai vechi",
     "page": "Pagina {{number}}",
+    "system": "Sistemul",
     "columns": {
       "time": "Când",
       "staff": "Cine",
@@ -110,6 +113,74 @@
       "bad_filter": "Verifică ID-ul de utilizator și datele: un ID are 36 de caractere, o dată este o zi.",
       "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
       "not_allowed": "Doar un proprietar sau un administrator poate exporta jurnalul de audit."
+    }
+  },
+  "invites": {
+    "documentTitle": "Linkuri de invitație · {{productName}}",
+    "eyebrow": "Echipă · invitații",
+    "heading": "Linkuri de invitație",
+    "intro": "Fiecare link lasă un număr stabilit de persoane să își facă un cont, până expiră sau îl revoci. Crearea și revocarea linkurilor ajung în jurnalul de audit. Un link nu reține niciodată cine l-a folosit.",
+    "open": "Fă un link de invitație",
+    "notAllowed": "Doar un proprietar sau un administrator poate face linkuri de invitație.",
+    "listHeading": "Linkuri făcute",
+    "loading": "Se încarcă…",
+    "none": "Încă niciun link.",
+    "noNote": "(fără notiță)",
+    "usesOf": "{{used}} din {{total}}",
+    "columns": {
+      "note": "Notiță",
+      "uses": "Folosiri",
+      "expires": "Expiră",
+      "status": "Stare",
+      "madeBy": "Făcut de"
+    },
+    "status": {
+      "active": "Activ",
+      "used_up": "Epuizat",
+      "expired": "Expirat",
+      "revoked": "Revocat"
+    },
+    "form": {
+      "label": "Link de invitație nou",
+      "admits": "Câte persoane",
+      "admitsHint": "De la 1 la 50.",
+      "admitsOutOfRange": "Un link primește între 1 și 50 de persoane.",
+      "expires": "Expiră în",
+      "days": {
+        "1": "1 zi",
+        "7": "7 zile",
+        "14": "14 zile",
+        "30": "30 de zile"
+      },
+      "note": "Notiță privată (opțional)",
+      "noteHint": "O vede doar echipa. Un prenume sau un rol, niciodată un email sau un nume complet. Ajunge în jurnalul de audit.",
+      "noteHasEmail": "Nu pune o adresă de email în notiță.",
+      "make": "Fă linkul",
+      "making": "Se face…",
+      "cancel": "Renunță"
+    },
+    "made": {
+      "heading": "Link de invitație făcut. Expiră pe {{expires}}.",
+      "linkLabel": "Link de invitație",
+      "copy": "Copiază",
+      "copied": "Copiat",
+      "copyFailed": "Nu am putut copia. Selectează linkul și copiază-l tu.",
+      "copyNow": "Copiază-l acum.",
+      "notAgain": "Nu vom mai arăta acest link.",
+      "dismiss": "L-am copiat"
+    },
+    "revoke": {
+      "open": "Revocă",
+      "openLabel": "Revocă linkul „{{note}}”",
+      "reason": "Motiv",
+      "reasonHint": "Obligatoriu. Ajunge în jurnalul de audit.",
+      "reasonMissing": "Scrie mai întâi un motiv.",
+      "confirm": "Revocă „{{note}}”"
+    },
+    "failures": {
+      "not_allowed": "Doar un proprietar sau un administrator poate face sau revoca linkuri de invitație.",
+      "refused": "Nu s-a salvat. Un link primește între 1 și 50 de persoane, ține între 1 și 90 de zile, iar notița are cel mult 80 de caractere, fără adresă de email.",
+      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
     }
   }
 }

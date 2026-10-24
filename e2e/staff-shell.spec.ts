@@ -6,7 +6,7 @@
  * - a member at /staff sees "This part is for staff" and no staff menu, and a visitor is sent to
  *   log in; the database gives neither anything (the pgTAP test 040 proves the server side);
  * - each staff persona sees only the areas its role allows (architecture 1.8.3): owner and admin
- *   get Roles and Audit log, moderator and support get neither yet (their areas have no page
+ *   get Roles, Invites (S1-E11-17) and Audit log, moderator and support get neither yet (their areas have no page
  *   until S1-E10-03a and S1-E11-02), the content editor gets none;
  * - the owner searches the audit log, exports a CSV file, and the export is itself logged;
  * - every staff screen passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
@@ -63,12 +63,12 @@ test.describe('admin shell (S1-E11-01)', () => {
 
   test('each staff persona sees only the areas its role allows', async ({ browser }) => {
     const ownerPage = await openAs(browser, 'owner', '/staff');
-    expect(await menuLinks(ownerPage)).toEqual(['Roles', 'Audit log']);
+    expect(await menuLinks(ownerPage)).toEqual(['Roles', 'Invites', 'Audit log']);
     await expect(ownerPage.getByText('@owner')).toBeVisible();
     await expect(ownerPage.getByText('Owner', { exact: true })).toBeVisible();
 
     const adminPage = await openAs(browser, 'admin', '/staff');
-    expect(await menuLinks(adminPage)).toEqual(['Roles', 'Audit log']);
+    expect(await menuLinks(adminPage)).toEqual(['Roles', 'Invites', 'Audit log']);
 
     // Moderation and Users have no page yet, so a moderator's menu is empty for now.
     const moderatorPage = await openAs(browser, 'moderator', '/staff');
@@ -114,7 +114,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     expect(download.suggestedFilename()).toMatch(/^audit-log-\d{4}-\d{2}-\d{2}\.csv$/);
     const csv = await (await download.createReadStream()).toArray();
     const text = Buffer.concat(csv).toString('utf8');
-    expect(text.startsWith('﻿time,staff,action')).toBe(true);
+    expect(text.startsWith('﻿time,staff,actor,actor_user_id_short,action')).toBe(true);
     expect(text).toContain('sensitive_read.email_revealed');
     await expect(page.getByText(/Exported \d+ rows/)).toBeVisible();
     expect(

@@ -22,7 +22,6 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | Markets | seeded by migration; no screen yet | S1-E11-05 | same |
 | Maintenance mode switch | the `maintenance_mode` flag is switched in the SQL editor (supabase/README.md, "Error log and maintenance mode") | S1-E11-03 (settings screen) | same |
 | Reading the error log | owner and admin run `admin_list_client_errors()` or read `client_errors` in the SQL editor; no screen yet | S1-E11-01 (admin site) | same |
-| Invites | four test codes seeded by `supabase/seed.sql`; no screen makes new ones yet | S1-E11-17 (admin screen and `admin_create_invite()`) | loaded with the seed (`docs/runbooks/staging-reset-and-seed.md`) |
 | Signing in for tests | e2e tests still sign personas in from code (`e2e/support/personas.ts`) where the log-in screen isn't what is tested; `e2e/sign-in.spec.ts` uses the real screen | stays for tests only | the log-in screen works on staging (S1-E2-05) |
 | The log-in pause | works through our screens only; Supabase's per-address limits cover direct calls | a per-account Auth hook, if the paid plan allows it (Q12) | same |
 | Changing the password while logged in | use "Forgot your password?" | S1-E2-09 (Ways to log in) | same |
@@ -56,4 +55,5 @@ These are not mocks of an outside service: they are the safe, simple version of 
 | Stub | What it does today | Story that finishes it | On staging |
 | --- | --- | --- | --- |
 | The fresh sign-in (15 minutes) | asked only before a role change (`require_role_change_allowed()`); exports for someone else, "Emergency disable" and removing part of a writer's text ask the same question when their stories land (S1-E11-01) | S1-E11-09a, S1-E10-09, S1-E11-08 | same |
-| The admin menu | shows Roles and Audit log only; every other area appears when its page is built (`src/features/staff/staffAreas.ts`) | each staff story (S1-E10-03a next) | same |
+| Invites under Users | Invites has its own menu entry until the Users area exists (S1-E11-17) | S1-E11-02 (the Invites tab on 8.5) | same |
+| The admin menu | shows Roles, Invites and Audit log only; every other area appears when its page is built (`src/features/staff/staffAreas.ts`) | each staff story (S1-E10-03a next) | same |
