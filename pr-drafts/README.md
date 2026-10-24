@@ -14,4 +14,4 @@ then ready for review once its local checks pass):
 
 S1-E4-01a and S1-E4-01b were opened before the pause: Ghemotoc/WebApp#191 and Ghemotoc/WebApp#192.
 
-Hand-over to the next thread: `handover/lane-a.md`. The superseded S1-E6 plan: `pr-drafts/plan-s1-e6.md`.
+Hand-over to the next thread: `pr-drafts/handover/lane-a.md`. The superseded S1-E6 plan: `pr-drafts/plan-s1-e6.md`.
