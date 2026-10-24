@@ -583,6 +583,22 @@ public.stories, story_tags, chapters   read by Discover, the story page and the 
 - Tests: `scripts/build-demo-content.test.ts` (the parser, every rule, the SQL shape, and that the committed SQL matches the files).
 - Likes, comments and follows between the writers come with part 2b, after S1-E6.
 
+## Epic S1-E4 at a glance (checked by S1-E4-QA)
+
+What the reading epic left in place. The epic report, `docs/epic-reports/S1-E4.md`, lists what works, the known gaps, the stubs still on and Lane A's by-hand list for staging.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | the reader `/s/<story>/<chapter>` (`ChapterReaderPage`), the teaser and "No preview for this story" on the same address for signed-out visitors (`TeaserPage`, `NoPreviewNotice`), all in `src/features/reading/` | 4-01a, 4-04 |
+| Shared pieces | `ProtectedChapterText` and `CopyNotice` (copy off, Q9), `ChapterBannerSlot` (empty until S1-E12-01), `formatRomaniaShortDate()` and `dateLocaleFor()` in `src/lib/romania-time.ts` (British dates in English) | 4-06a, 4-01b, 4-01a |
+| Hooks | `useChapter` (with `api/chapterPrefetch.ts`), `useRecordRead`, `useReadingProgress`, `useChapterBanner`, `useStoryPreview` | 4-01a, 4-01b, 4-04 |
+| Server code | `functions/s/[[path]].ts` → `server/link-preview.ts` (Open Graph tags, JSON-LD, noindex); `public/link-previews/` from `scripts/make-link-preview-images.ts` | 4-04 |
+| Tables | `chapter_reads` (daily totals per chapter, never who read) | 4-01a |
+| Functions | `get_chapter()` (the teaser for visitors), `record_chapter_read()`, `get_link_preview()`, `is_blocked_with()` (a stub until S1-E5-05); internal `reader_visible_story()`, `teaser_of()`, `word_total()`; the setting `teaser_length` (600) | 4-01a, 4-04 |
+| Tests | `supabase/tests/database/140` to `142` and `093` (the epic), `server/link-preview.test.ts`, `e2e/epic-s1-e4.spec.ts` and each story's spec (`chapter-reader`, `reader-performance`, `copy-protection`, `teaser`) | each story, S1-E4-QA |
+
+**One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 600 words → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
+
 ## Start here
 
 Read in this order; each file's header comment says what it is for and where things go next.
