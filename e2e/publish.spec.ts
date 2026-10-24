@@ -177,7 +177,7 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     await panel.getByLabel('Time').fill('09:30');
     await panel.getByRole('button', { name: 'Schedule chapter' }).click();
     await expect(
-      panel.getByText(/^Scheduled for .*January 1.*09:30, Romania time\.$/),
+      panel.getByText(/^Scheduled for .*1 January.*09:30, Romania time\.$/),
     ).toBeVisible();
     expect(
       runSql(

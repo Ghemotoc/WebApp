@@ -92,7 +92,7 @@ test.describe('chapter reader (S1-E4-01a)', () => {
     // The header: the place, the title as H1, the meta line.
     await expect(page.getByText('Chapter 1 of 2')).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: 'Caietele bunicii' })).toBeVisible();
-    await expect(page.getByText('by Lia Scrie · Oct 9, 2026 · 3 min read')).toBeVisible();
+    await expect(page.getByText('by Lia Scrie · 9 Oct 2026 · 3 min read')).toBeVisible();
 
     // The text is real HTML, in the story's language.
     const text = page.locator('.tmc-chapter-text');
