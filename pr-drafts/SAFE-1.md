@@ -1,8 +1,4 @@
-# SAFE-1: Safety and admin (S1-E10-01, 13a, 03a, 06, S1-E14-04, S1-E11-01b, epic checks)
-
-Branch: `claude/peaceful-ritchie-cte5ho` (Lane C's rebased chain from
-`claude/funny-einstein-pkv35k-chain-rebased-local`, plus the tooling from Ghemotoc/WebApp#193).
-Base: `main`. Opens on 1 Nov, after READ-1 merges and one catch-up rebase.
+# SAFE-1: opened as Ghemotoc/WebApp#197 (24 Oct 2026); the body below is what was posted
 
 Closes #85
 Closes #90
@@ -14,11 +10,12 @@ Part of #116
 
 (S1-E10-13a, 03a and the two epic checks are parts of their stories, so their issues stay open.
 S1-E11-01b's story entry is in `docs/stories/s1-e11-admin-site.md` on this branch (commit
-`36ee176`); it gets its issue when "Sync story issues" runs after the merge, see By hand. That
+`b57f61a`); it gets its issue when "Sync story issues" runs after the merge, see By hand. That
 issue then closes by hand, because it is created after this PR merges.)
 
-Replaces Ghemotoc/WebApp#171, #172, #174, #175, #182, #185, #186 and #193: each gets closed with
-"Included in <this PR>".
+Includes the work of Ghemotoc/WebApp#171, #172, #174, #175, #182, #185, #186 and #193 (Lane C's
+chain and the migration check), rebased on `main` after TOOL-1 (#195) and READ-1 (#196). Those
+PRs stay open until the CTO decides with Robert.
 
 ## What changed
 
@@ -31,30 +28,51 @@ Replaces Ghemotoc/WebApp#171, #172, #174, #175, #182, #185, #186 and #193: each 
 | S1-E14-04 Contact us | `/contact` form through a Pages Function and Brevo (two emails, nothing stored or logged), honeypot, Cloudflare rate-limit rule; legal contact page v0.2; ADR 0006 | `20261025140001` | (e2e) |
 | S1-E11-01b Pick the account when granting a role | Roles are granted by picking an account from a search by username, pen name or a complete email; emails masked, revealing one is a logged sensitive read; each refusal names its own problem; last-owner guard tested directly | `20261025150001` | 046 |
 | S1-E10-QA, S1-E11-QA Epic checks | `e2e/epic-s1-e10.spec.ts`, `e2e/epic-s1-e11.spec.ts`, `docs/epic-reports/S1-E10.md` and `S1-E11.md`; fixes an account-language race in the axe specs | none | 094, 095 |
-| Tooling (was #193) | `npm run migrations:check` fails on two migrations sharing a version or a bad file name; runs in the CI "checks" job; CLAUDE.md check list and `supabase/README.md` updated | none | (Vitest) |
+| Tooling (was #193) | `npm run migrations:check` fails on two migrations sharing a version or a bad file name; runs in the CI "checks" job and in `npm run checks` (TOOL-1's one-command list); CLAUDE.md check list and `supabase/README.md` updated | none | (Vitest) |
 
 Numbering moved on the rebase (the old PRs said otherwise): migrations on 25 Oct versions after
-Lane A's, epic checks 094 and 095 (not 092, 093), contact-form ADR 0006 (not 0004).
+Lane A's (READ-1 ends at `20261025090001`), epic checks 094 and 095 (not 092, 093), contact-form ADR
+0006 (not 0004).
 
-## How it was tested
+Rebase on READ-1: `docs/mocks.md` keeps READ-1's rows and drops the "Report this story" e-mail
+stand-in this bundle replaces; `docs/code-tour.md` keeps both epic sections; the dev-server
+plugin serves both `/s/…` (link previews) and `/api/contact`; `e2e/usernames.spec.ts` keeps
+TOOL-1's language fix; the generated types were regenerated once from every migration.
 
-Local, from a clean start (`npm ci`, `supabase stop --no-backup`, `supabase start`), tip
-`dc943f8`, 24 Oct 2026:
+## Local check run (the merge gate; GitHub Actions minutes are used up for October)
+
+Commit `7ca7997` (branch `claude/peaceful-ritchie-cte5ho`), rebased on `main` at `7505053` (after
+#195 and #196), 24 Oct 2026. Clean start: `npm ci`, `supabase stop --no-backup`, `supabase start`,
+`supabase db reset` before the database tests.
 
 | Check | Result |
 | --- | --- |
 | `npm run lint` (ESLint and Prettier) | pass |
 | `npm run typecheck` | pass |
-| `npm run types:check` | pass |
-| `npm test` (Vitest) | 68 files, 390 tests, pass |
-| `npm run migrations:check` | pass, no duplicate versions |
-| Database (pgTAP) | 44 files, 880 tests, pass |
-| `npm run test:e2e` (Playwright and axe) | 527 passed, 1 skipped (the screenshot helper, skipped by design), 0 failed |
+| `npm run types:check` | pass (regenerated once after the rebase, commit `0392a4a`) |
+| `npm test` (Vitest) | 77 files, 461 tests, pass |
+| Database tests (pgTAP) | 48 files, 972 tests, pass |
 | `npm run i18n:check` | pass |
+| `npm run migrations:check` | pass, no duplicate versions |
+| `npm run build` | pass |
+| `npx wrangler pages functions build --outdir /tmp/pages-fn` | "Compiled Worker successfully" |
+| `npm run test:e2e`, run 1 | 523 passed, 1 failed, 23 not run (the rest of that serial group), 1 skipped |
+| `npm run test:e2e`, run 2 | 543 passed, 1 failed, 3 not run, 1 skipped |
+| `e2e/story-settings.spec.ts` alone, 3 runs | 28 of 28 passed each time |
 
-The database tests ran through `prove` with psql against the local database, because Docker Hub
-rate-limited the `pg_prove` image that `supabase test db` pulls; it runs the same files with the
-same TAP harness. Re-run as `npx supabase test db` on 1 Nov.
+**The one e2e failure is the same both times and is not this bundle's:** an axe colour-contrast
+check in `e2e/story-settings.spec.ts` (S1-E3-05, Lane A), on `/write/s/…/settings` in run 1 and
+`/s/…` in run 2. axe read in-between colours (eyebrow `#94763b`, between the light `#815e18` and
+the night `#e6c24c`; surface `#fefefd`), so it caught the page during the theme transition. Lane A
+saw the same failure on READ-1 ("an S1-E3-05 axe view, passes 28/28 alone"). Every test that did not
+run in the full runs is in that spec, which passes in full on its own. Fix proposed as a follow-up
+for the shared e2e support code (wait for the theme's transitions before axe), outside this bundle.
+
+The database tests ran through `prove` with psql against the local database: Docker Hub
+rate-limited the `pg_prove` image that `npx supabase test db` pulls. Same files, same TAP harness.
+
+Screenshots: not taken for this bundle (built before 24 Oct's quality-pass rule; each story's
+specs check 390, 768 and 1440 px with axe).
 
 ## By hand on staging after merge (in this order)
 
@@ -99,6 +117,12 @@ screens: plain components, no doodles.
   the "copied from a published work" fields (S1-E10-08). S1-E10-02, 04, 05, 08, 09, 10 and
   S1-E11-02 each add their leg to the epic specs and 094/095.
 - Whether the content editor role stays (OPEN since 17 Oct 2026).
+- The theme-transition flake in the axe checks above (shared e2e support, outside this bundle).
+- Rule 7: the old name for "the demo" still appears in files already on `main` from other lanes
+  (`docs/decisions.md`, `docs/code-tour.md`, `docs/epic-reports/S1-E3.md`,
+  `docs/stories/s1-e04-reading.md`, `supabase/staging-topups/README.md`, the S1-E3-01 covers
+  migration's comment, `scripts/build-demo-content.ts`, `content/`); this bundle reworded only its
+  own three.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
