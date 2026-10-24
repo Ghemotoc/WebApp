@@ -1,12 +1,28 @@
 # Continuous integration: the checks every pull request must pass before it can merge (story S1-E1-01).
 #
-# Who starts it: GitHub, on every pull request and on every push to main.
+# Who starts it: GitHub, when a pull request is opened, reopened, pushed to or marked ready for
+# review, and on every push to main.
 # What it runs: lint, type check, unit tests, the i18n key check, the build and the bundle
 # secret scan (job "checks");
 # database tests with pgTAP and the generated-types check against a local Supabase (job "database");
 # Playwright tests with axe accessibility checks against a local Supabase, so signed-in journeys
 # run with the seed personas (job "e2e").
-# Blocking the merge: a branch ruleset on main lists these three jobs as required status checks.
+# Saving Actions minutes ("Tooling: run the long CI jobs only when they matter", 24 Oct 2026:
+# 1,800 of the free plan's 2,000 minutes gone, e2e about 19 minutes a run):
+#   - "database" and "e2e" skip while a pull request is a draft. Open pull requests as drafts, run
+#     the full suite locally, then mark them ready for review (CLAUDE.md): CI runs them once then.
+#   - They also skip when a pull request changes only documentation (docs/, prompts/, *.md); the
+#     small "changes" job decides that with scripts/only-docs-changed.sh.
+#   - On a push to main nothing skips: the full suite runs after every merge.
+#   - On a pull request they also wait for "checks" and skip when it fails: a lint or unit-test
+#     failure costs about 3 minutes instead of 25. On main they wait for it but always run.
+#   - If "changes" fails, the long jobs run anyway, so a broken check never skips the tests.
+# Blocking the merge: a branch ruleset on main lists "checks", "database" and "e2e" as required
+# status checks. A job skipped by its `if:` reports "Success" and still satisfies a required check
+# (GitHub docs, "Control jobs with conditions"). Never add workflow-level `paths`,
+# `paths-ignore` or branch filters, and never use "[skip ci]": a workflow that doesn't run at all
+# leaves its required checks "Pending" and the pull request can't merge (GitHub docs, "Skip
+# workflow runs").
 # What it never does: deploy or push migrations. Cloudflare Pages builds main and pull request
 # previews through its own GitHub app (decided 17 Oct 2026, 12:57), and Supabase's GitHub
 # integration applies supabase/migrations to staging when main changes (decided 17 Oct 2026).
@@ -14,6 +30,8 @@ name: CI
 
 on:
   pull_request:
+    # ready_for_review is the one that matters: marking a draft ready starts the long jobs.
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [main]
 
@@ -27,6 +45,33 @@ permissions:
   contents: read
 
 jobs:
+  # Decides whether a pull request changes only documentation. Runs only for pull requests
+  # (skipped on main, where nothing is skipped); its answer gates "database" and "e2e".
+  changes:
+    name: Find out whether only documentation changed
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      docs_only: ${{ steps.classify.outputs.docs_only }}
+    steps:
+      # A pull request checks out its merge commit. Depth 2 also fetches that commit's parents, so
+      # HEAD^1 is the base it was merged onto, without downloading the whole history.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+      - name: Compare the pull request with its base
+        id: classify
+        run: |
+          # Every file the pull request changes, compared with the base it merges onto.
+          changed_files="$(git diff --name-only HEAD^1 HEAD)"
+          echo "Changed files:"
+          echo "$changed_files"
+          # "true" only when every changed file is documentation (scripts/only-docs-changed.sh).
+          docs_only="$(printf '%s\n' "$changed_files" | bash scripts/only-docs-changed.sh)"
+          echo "Only documentation changed: $docs_only"
+          echo "docs_only=$docs_only" >> "$GITHUB_OUTPUT"
+
   checks:
     name: Lint, types, unit tests, i18n and build
     runs-on: ubuntu-latest
@@ -52,6 +97,18 @@ jobs:
 
   database:
     name: Database tests and generated types
+    needs: [changes, checks]
+    # Runs on every push to main, after "checks", even if "checks" failed there (main always gets
+    # the full suite). On a pull request, only once it is out of draft, only when "checks" passed
+    # (a lint or unit-test failure no longer pays for a 19-minute e2e run; CTO, 24 Oct 2026) and
+    # only when it changes more than documentation. `!cancelled()` replaces the default "every
+    # needed job succeeded", so the job also runs when "changes" is skipped (push to main) or
+    # fails (its answer is then empty, which is not 'true').
+    if: >-
+      !cancelled()
+      && (github.event_name == 'push'
+        || (github.event.pull_request.draft == false && needs.checks.result == 'success'))
+      && needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -70,6 +127,18 @@ jobs:
 
   e2e:
     name: End-to-end and accessibility smoke test
+    needs: [changes, checks]
+    # Runs on every push to main, after "checks", even if "checks" failed there (main always gets
+    # the full suite). On a pull request, only once it is out of draft, only when "checks" passed
+    # (a lint or unit-test failure no longer pays for a 19-minute e2e run; CTO, 24 Oct 2026) and
+    # only when it changes more than documentation. `!cancelled()` replaces the default "every
+    # needed job succeeded", so the job also runs when "changes" is skipped (push to main) or
+    # fails (its answer is then empty, which is not 'true').
+    if: >-
+      !cancelled()
+      && (github.event_name == 'push'
+        || (github.event.pull_request.draft == false && needs.checks.result == 'success'))
+      && needs.changes.outputs.docs_only != 'true'
     runs-on: ubuntu-latest
     # The suite runs on one worker (playwright.config.ts) and grows with every screen: about
     # 19 minutes with the chapter editor (S1-E3-02a), so 20 cut it off. 40 leaves room.

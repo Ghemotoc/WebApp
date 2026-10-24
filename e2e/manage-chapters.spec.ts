@@ -18,6 +18,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
+import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
 import { findDoodleOverlaps } from './support/doodles';
 import { signInPersona, useSessionInBrowser } from './support/personas';
@@ -123,10 +124,20 @@ function chapterOrder(): string {
   );
 }
 
-/** Opens Manage chapters as adult_writer, in English. */
-async function openManageChapters(browser: Browser): Promise<Page> {
+/**
+ * Opens Manage chapters as adult_writer, in English.
+ *
+ * @param browser - the test's browser
+ * @param viewport - the window size to open with (Playwright's default 1280 by 720 if left out);
+ *   set here rather than resized later, because a resize cancels a keyboard drag in dnd-kit
+ * @returns the open page
+ */
+async function openManageChapters(
+  browser: Browser,
+  viewport?: { width: number; height: number },
+): Promise<Page> {
   runSql(`update public.profiles set locale = 'en' where id = '${writerId}';`);
-  const context = await browser.newContext();
+  const context = await browser.newContext(viewport === undefined ? {} : { viewport });
   await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   const page = await context.newPage();
@@ -252,17 +263,30 @@ test.describe('Manage chapters (S1-E3-04)', () => {
   });
 
   test('dragging by keyboard: Space picks up, arrows move, Space drops', async ({ browser }) => {
-    const page = await openManageChapters(browser);
+    // A tall window keeps every row away from the edges, where dnd-kit scrolls the page (at the
+    // default 720 px, rows 4 and 5 sit below the edge). It is set when the page opens: a resize
+    // during the drag cancels it.
+    const page = await openManageChapters(browser, { width: 1440, height: 1600 });
+    // Start only once the page has finished loading and moving. A drag cancelled part-way (dnd-kit
+    // says "Move cancelled") turned the final Space into a new pick-up, so the order never changed
+    // (TOOL-1, 24 Oct 2026).
+    await page.waitForLoadState('networkidle');
+    await waitForAnimationsToFinish(page);
     await page.getByRole('button', { name: /^Drag chapter 3 to reorder/ }).focus();
-    // Each step waits for what a screen reader would say, as a person would before the next key
-    // (dnd-kit measures the rows again after every move).
+    // Each step waits for what a screen reader would say, then for the rows to stop sliding, as a
+    // person would before the next key. The announcement comes at once but dnd-kit slides the
+    // rows for about 250 ms; a key pressed mid-slide sometimes dropped the chapter in the wrong
+    // place (TOOL-1, 24 Oct 2026).
     const spoken = page.locator('[role="status"][aria-live="assertive"]');
     await page.keyboard.press('Space');
     await expect(spoken).toContainText('Picked up chapter 3, Sâmbătă la atelier.');
+    await waitForAnimationsToFinish(page);
     await page.keyboard.press('ArrowUp');
     await expect(spoken).toContainText('Sâmbătă la atelier is now at position 2 of 5.');
+    await waitForAnimationsToFinish(page);
     await page.keyboard.press('ArrowUp');
     await expect(spoken).toContainText('Sâmbătă la atelier is now at position 1 of 5.');
+    await waitForAnimationsToFinish(page);
     await page.keyboard.press('Space');
     await expect.poll(chapterOrder).toBe('mgdraft1,mgpub001,mgpub002,mgsched1,mgunpub1');
     // The move is read out in plain words.

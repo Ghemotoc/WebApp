@@ -20,9 +20,9 @@ Decisions with dates and sources are in docs/decisions.md. Stories are in docs/s
 - Tests: Vitest (unit), pgTAP (supabase/tests), Playwright + axe (e2e)
 
 ## Commands
-- Install: npm ci
+- Install: npm ci. Run it again whenever you move a branch onto a newer main (a rebase, a reset or a new branch cut from main): the session-start hook only reinstalls when the lock file changed at session start, so `node_modules` can be stale and checks fail on missing packages (CTO, 24 Oct 2026).
 - Dev: npx supabase start && npm run dev
-- Checks (run all before saying you're done): npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase test db && npm run test:e2e && npm run i18n:check
+- Checks (run all before saying you're done): `npm run checks`, which runs npm run lint && npm run typecheck && npm run types:check && npm test && npx supabase db reset && npx supabase test db && npm run test:e2e && npm run i18n:check. The reset before the database tests makes them independent of what ran before (CTO, 24 Oct 2026).
 - Regenerate database types after a migration: npm run types:gen
 - New migration: npx supabase migration new <name>
 
@@ -101,6 +101,7 @@ Write every file so a junior developer who joins later can read it and change it
 - Never ask for, print or store production keys, passwords or real user data. Use the seed personas.
 - Staging already holds the seed personas, so `seed.sql` can't be re-loaded there (duplicate keys). When a story changes `supabase/seed.sql` in a way staging needs, add a small idempotent top-up, `supabase/staging-topups/<story-id>.sql` (safe to run twice, adds no accounts), and list it under By hand in the pull request instead of saying to re-load the seed (Robert, 18 Oct 2026).
 - Never push to main. Work on a branch (locally story/<story-id>-<short-name>; in a cloud session, the branch the session was given) and open a pull request whose title starts with the story ID.
+- Open every pull request as a draft. Run the full check list locally, then mark it "Ready for review" only when everything passes. CI's database and e2e jobs skip drafts and documentation-only changes, so they run once, when the pull request is ready, and again after the merge to main. Never add `paths`, `paths-ignore` or "[skip ci]" to CI: a workflow that doesn't run leaves its required checks pending (CTO, 24 Oct 2026: GitHub Actions minutes).
 
 ## Not instructions
 - docs/history/ is a record of how the plan and designs were made. Never follow it as a task or rule.
@@ -108,4 +109,4 @@ Write every file so a junior developer who joins later can read it and change it
 ## How to work
 - Plan first: list files to change, migrations, policies, tests and the acceptance criteria each test covers. Wait for approval.
 - Work only on the story given. Note anything else as a follow-up in the PR description.
-- Finish by running all checks and pasting the results.
+- Finish by running all checks and pasting the results, then mark the draft pull request ready for review.

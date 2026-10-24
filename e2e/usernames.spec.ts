@@ -30,10 +30,20 @@ function resetPersona() {
     pen_name_changed_at = null, locale = 'ro' where id = '${personaId}';`);
 }
 
+/**
+ * Saves the persona's account language. The account's language wins over the browser's on every
+ * device (S1-E1-04), so a check in one language must save that language first.
+ *
+ * @param language - the locale code to save, 'ro' or 'en'
+ */
+function setPersonaLanguage(language: string) {
+  runSql(`update public.profiles set locale = '${language}' where id = '${personaId}';`);
+}
+
 /** Opens the app in English as the persona, in a fresh browser context. */
 async function openAsPersona(browser: Browser, path: string) {
   // The account's own language wins on every device (S1-E1-04), so it is set to English too.
-  runSql(`update public.profiles set locale = 'en' where id = '${personaId}';`);
+  setPersonaLanguage('en');
   const context = await browser.newContext();
   await useSessionInBrowser(context, (await signInPersona(persona)).session);
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
@@ -127,6 +137,9 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
       test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
         page,
       }) => {
+        // The account's own language wins over the device's (S1-E1-04). The tests above leave it
+        // on English, so a Romanian view could flip to English mid-check; set it to the view's.
+        setPersonaLanguage(view.language);
         await useSessionInBrowser(page.context(), (await signInPersona(persona)).session);
         await checkScreen(page, view);
       });
@@ -140,6 +153,8 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
       test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
         page,
       }) => {
+        // The same race as above: resetPersona saved Romanian, so English views set it first.
+        setPersonaLanguage(view.language);
         await useSessionInBrowser(page.context(), (await signInPersona(persona)).session);
         await checkScreen(page, view);
       });
