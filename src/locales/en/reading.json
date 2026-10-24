@@ -31,5 +31,48 @@
     "draftChapter": "Draft",
     "scheduledChapter": "Scheduled",
     "notPublicYet": "Only you can see this story until you publish a chapter. This is how readers will see it."
+  },
+  "reader": {
+    "documentTitle": "{{chapter}} · {{story}}",
+    "chaptersNav": "Chapters",
+    "contents": "Contents",
+    "previous": "Previous",
+    "next": "Next chapter",
+    "progress": "Chapter progress",
+    "kicker": "Chapter {{number}} of {{total}}",
+    "by": "by",
+    "minutes_one": "{{count}} min read",
+    "minutes_few": "{{count}} min read",
+    "minutes_other": "{{count}} min read",
+    "edited": "edited {{date}}",
+    "untitled": "Untitled chapter",
+    "endOfChapter": "End of chapter {{number}}",
+    "readNext": "Read chapter {{number}}",
+    "latestChapter": "That’s the latest chapter so far.",
+    "backToStory": "Back to the story",
+    "signIn": "Log in",
+    "unavailableTitle": "This chapter isn’t available",
+    "unavailableBody": "It may not be published, it may be rated for older readers, it may have been removed, or the link may be wrong.",
+    "loadFailed": "We couldn’t load this chapter. Check your connection and try again.",
+    "copyNotice": "On the web, right-click and copying are turned off for chapters. That makes copying harder, but it can’t stop screenshots. {{penName}} keeps all the rights to this story."
+  },
+  "teaser": {
+    "shared": "Shared with you · chapter {{number}} of {{total}}",
+    "chapterEyebrow": "Chapter {{number}}",
+    "firstPart": "You’re reading the first part",
+    "moreChapters_one": "{{count}} more chapter",
+    "moreChapters_few": "{{count}} more chapters",
+    "moreChapters_other": "{{count}} more chapters",
+    "promptTitle": "Log in to read on",
+    "promptBody": "Reading and writing on {{productName}} are free, with no tracking ads. For now {{productName}} is a test for invited adults: if you have an invitation, log in, or join with the link in your invitation.",
+    "appsNote": "{{productName}} is on the web for now. The desktop and phone apps come after the web launch.",
+    "noPreviewTitle": "No preview for this story",
+    "noPreviewBody_16_plus": "The writer rated it 16+. We don’t know the age of visitors who aren’t logged in, so they see the title but none of the text.",
+    "noPreviewBody_18_plus": "The writer rated it 18+. We don’t know the age of visitors who aren’t logged in, so they see the title but none of the text.",
+    "noPreviewLogIn": "Log in to check if you can read it"
+  },
+  "linkPreview": {
+    "byWriter": "by {{name}}",
+    "hiddenDescription": "Rated {{rating}}. Log in to check if you can read it."
   }
 }

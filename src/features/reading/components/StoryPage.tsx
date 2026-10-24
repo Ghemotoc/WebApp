@@ -12,7 +12,10 @@
  * numbers and "See profile" (S1-E5-05), the breadcrumb (S1-E5-01), the ad slot (S1-E12-01),
  * "Web and app" (S1-E3-08). Doodles: the music notes by the header and the mug and mushroom by
  * the side column, as on the board; the chapter card's book and puppy come with the list.
- * What it calls: useStoryPage → get_story_page() (ADR 0004: never the tables).
+ * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
+ * available" (S1-E4-04; they count as under 16, Q6).
+ * What it calls: useStoryPage → get_story_page() (ADR 0004: never the tables); useStoryPreview →
+ * get_link_preview() only when that answered nothing.
  */
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
@@ -22,7 +25,9 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useStoryPage } from '../hooks/useStoryPage';
+import { useStoryPreview } from '../hooks/useStoryPreview';
 
+import { NoPreviewNotice } from './NoPreviewNotice';
 import { StoryChapterList } from './StoryChapterList';
 import { StoryHeader } from './StoryHeader';
 import { StorySideColumn } from './StorySideColumn';
@@ -43,6 +48,20 @@ function StoryUnavailable() {
         {t('storyPage.goHome')}
       </Link>
     </div>
+  );
+}
+
+/** When the story can't be shown: for a signed-out visitor on a 16+ or 18+ story, why. */
+function StoryMissing({ storySlug }: { storySlug: string }) {
+  const { t } = useTranslation('reading');
+  const { hidden, isSettled } = useStoryPreview(storySlug, null, true);
+  if (!isSettled) return null;
+  if (hidden !== null) return <NoPreviewNotice preview={hidden} />;
+  return (
+    <>
+      <title>{t('storyPage.unavailableTitle')}</title>
+      <StoryUnavailable />
+    </>
   );
 }
 
@@ -67,8 +86,7 @@ export function StoryPage() {
   if (story === null) {
     return (
       <PageContainer className="tmc-rise pt-12 pb-7">
-        <title>{t('storyPage.unavailableTitle')}</title>
-        <StoryUnavailable />
+        <StoryMissing storySlug={storySlug} />
       </PageContainer>
     );
   }
@@ -84,7 +102,11 @@ export function StoryPage() {
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
         <div className="relative flex min-w-0 flex-[999_1_620px] flex-col gap-12">
           <StoryHeader story={story} />
-          <StoryChapterList chapters={story.chapters} isOwner={story.isOwner} />
+          <StoryChapterList
+            chapters={story.chapters}
+            isOwner={story.isOwner}
+            storySlug={story.slug}
+          />
           {/* Beside the cover, in the space to its right: below the cover the pills and the
               title move with the story's state, so a doodle there would end up over them. */}
           <Doodle

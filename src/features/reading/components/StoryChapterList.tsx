@@ -5,11 +5,12 @@
  * Board values: a card with the eyebrow "Chapters" and one row per chapter, a fine line between
  * rows: "Chapter n", the title in Bricolage, and the published date (with "Edited …" when the
  * writer updated it). Readers see only published chapters; the owner's preview also lists drafts
- * and scheduled chapters with a pill. Each row links to the chapter reader once it exists
- * (S1-E4-01a); until then the rows are plain text (docs/mocks.md).
+ * and scheduled chapters with a pill. A published chapter's title links to the chapter reader
+ * (S1-E4-01a); a draft or scheduled one stays plain text, because readers can't open it.
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
 import { InfoPill } from '@/components/ui/InfoPill';
 import { formatRomaniaDate } from '@/lib/romania-time';
@@ -38,8 +39,25 @@ function ChapterDates({ chapter }: { chapter: StoryPageChapter }) {
   return <p className="m-0 text-[13px] text-meta">{parts.join(' · ')}</p>;
 }
 
+/** The title: a link to the reader when the chapter is published, plain text otherwise. */
+function ChapterTitle({ chapter, storySlug }: { chapter: StoryPageChapter; storySlug: string }) {
+  const { t } = useTranslation('reading');
+  const title = chapter.title === '' ? t('storyPage.untitledChapter') : chapter.title;
+  return (
+    <p className="m-0 font-heading text-lg font-bold break-words text-heading">
+      {chapter.status === 'published' ? (
+        <Link to={`/s/${storySlug}/${chapter.code}`} className="text-heading hover:underline">
+          {title}
+        </Link>
+      ) : (
+        title
+      )}
+    </p>
+  );
+}
+
 /** One row: the number, the title, a pill for the owner's unpublished chapters, the dates. */
-function ChapterRow({ chapter }: { chapter: StoryPageChapter }) {
+function ChapterRow({ chapter, storySlug }: { chapter: StoryPageChapter; storySlug: string }) {
   const { t } = useTranslation('reading');
   return (
     <li className="flex flex-col gap-1 border-t border-border py-3.5 first:border-t-0 first:pt-0">
@@ -54,9 +72,7 @@ function ChapterRow({ chapter }: { chapter: StoryPageChapter }) {
           <InfoPill tone="gold">{t('storyPage.scheduledChapter')}</InfoPill>
         )}
       </div>
-      <p className="m-0 font-heading text-lg font-bold text-heading break-words">
-        {chapter.title === '' ? t('storyPage.untitledChapter') : chapter.title}
-      </p>
+      <ChapterTitle chapter={chapter} storySlug={storySlug} />
       <ChapterDates chapter={chapter} />
     </li>
   );
@@ -70,9 +86,12 @@ function ChapterRow({ chapter }: { chapter: StoryPageChapter }) {
 export function StoryChapterList({
   chapters,
   isOwner,
+  storySlug,
 }: {
   chapters: StoryPageChapter[];
   isOwner: boolean;
+  /** The story's address, for each chapter's link to the reader. */
+  storySlug: string;
 }) {
   const { t } = useTranslation('reading');
   return (
@@ -91,7 +110,7 @@ export function StoryChapterList({
       )}
       <ol className="m-0 list-none p-0">
         {chapters.map((chapter) => (
-          <ChapterRow key={chapter.code} chapter={chapter} />
+          <ChapterRow key={chapter.code} chapter={chapter} storySlug={storySlug} />
         ))}
       </ol>
     </section>

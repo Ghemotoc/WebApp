@@ -120,6 +120,8 @@ function DraftControls({
         </Button>
       </div>
       <p className="m-0 text-[13px] leading-normal text-meta">{t('publish.goLiveNote')}</p>
+      {/* Readers are on the web until the apps exist (S1-E4-06a; Q9: "makes copying harder"). */}
+      <p className="m-0 text-[13px] leading-normal text-meta">{t('publish.webReadingNote')}</p>
     </div>
   );
 }

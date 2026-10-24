@@ -19,6 +19,7 @@ import { SignUpPage } from '@/features/auth/components/SignUpPage';
 import { ErrorPage } from '@/features/errors/components/ErrorPage';
 import { HomePage } from '@/features/home/components/HomePage';
 import { LegalCentrePage } from '@/features/legal/components/LegalCentrePage';
+import { prefetchChapter } from '@/features/reading/api/chapterPrefetch';
 
 import { AppLayout } from './shell/AppLayout';
 import { NotFoundPage } from './shell/NotFoundPage';
@@ -142,6 +143,22 @@ const writeRoutes: RouteObject[] = [
     lazy: async () => {
       const { ChapterEditorPage } = await import('@/features/writing/components/ChapterEditorPage');
       return { Component: ChapterEditorPage };
+    },
+  },
+  // The chapter reader (S1-E4-01a): a chapter by the story's slug and the chapter's code; the
+  // same rules as the story page, through get_chapter() (ADR 0004).
+  {
+    path: '/s/:storySlug/:chapterCode',
+    HydrateFallback: () => null,
+    // Starts reading the chapter while the reader's code downloads (S1-E4-01b, the 2-second
+    // budget); it returns at once, so it never holds the page back.
+    loader: ({ params }) => {
+      prefetchChapter(params.storySlug ?? '', params.chapterCode ?? '');
+      return null;
+    },
+    lazy: async () => {
+      const { ChapterReaderPage } = await import('@/features/reading/components/ChapterReaderPage');
+      return { Component: ChapterReaderPage };
     },
   },
   // The public story page (S1-E3-05): readers reach a story only through get_story_page()

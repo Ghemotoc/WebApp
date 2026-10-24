@@ -11,6 +11,7 @@ import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import { CheckIcon } from '@/components/icons/CheckIcon';
+import { dateLocaleFor } from '@/lib/romania-time';
 import { MAXIMUM_CHAPTER_CHARACTERS, MAXIMUM_CHAPTER_TITLE_LENGTH } from '@/schemas/chapter';
 
 import type { SaveState } from '../hooks/useAutosave';
@@ -38,9 +39,11 @@ const toneClasses: Record<SaveState['kind'], string> = {
  */
 function statusText(state: SaveState, t: TFunction<'editor'>, language: string): string {
   if (state.kind === 'saved') {
-    const time = new Intl.DateTimeFormat(language, { hour: '2-digit', minute: '2-digit' }).format(
-      state.at,
-    );
+    // British English for the English interface (CTO, 24 Oct 2026): "14:05", not "02:05 PM".
+    const time = new Intl.DateTimeFormat(dateLocaleFor(language), {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(state.at);
     return t('saving.savedAt', { time });
   }
   if (state.kind === 'invalid') {
