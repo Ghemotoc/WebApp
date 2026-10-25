@@ -24,6 +24,7 @@ function commentWith(changes: Partial<ChapterComment>): ChapterComment {
     body: 'Am pus telefonul jos.',
     canDelete: false,
     reactions: { counts: {}, mine: null },
+    isDownvotedByMe: false,
     replies: [],
     ...changes,
   };

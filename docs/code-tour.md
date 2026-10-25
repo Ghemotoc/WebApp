@@ -710,7 +710,7 @@ Blocks: `blocks` (the blocker's own rows only) and `is_blocked_with()`, which re
 
 Tests: `143-writer-profile-and-blocks.test.sql`, `144-follows.test.sql`, `lib/formatting.test.ts`, `e2e/writer-profile.spec.ts`, `e2e/follows.spec.ts`.
 
-## Likes, comments and reactions on a chapter (S1-E6-03, S1-E6-01, S1-E6-02)
+## Likes, comments, reactions and downvotes on a chapter (S1-E6-03, S1-E6-01, S1-E6-02, S1-E6-04)
 
 Under the chapter text, on `/s/<story>/<chapter>`:
 
@@ -748,7 +748,16 @@ CommentReactions → useReactToComment → api/reactions.ts → react_to_comment
 
 Deleted comments go for good after 30 days (`purge_deleted_comments()`, nightly); a deleted or removed comment keeps its place as a marker only while replies stand under it.
 
-Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `150-comment-reactions.test.sql`, `lib/timeAgo.test.ts`, `CommentReactions.test.tsx`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`.
+Private downvotes (S1-E6-04) sit in the same row, on other people's live comments:
+
+```
+DownvoteButton → useDownvoteComment → api/downvotes.ts → downvote_comment(comment_id, should_downvote)
+  │  readable comment, never one's own; adding one: the account gate; under 24 hours old: kept, not counted
+  │  comment_downvotes (the voter and moderation staff read it; nobody gets a count)
+  ▼  open_downvote_case(): at downvote_case_threshold counted accounts, a 'downvotes' case at seven_days
+```
+
+Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `150-comment-reactions.test.sql`, `153-comment-downvotes.test.sql`, `lib/timeAgo.test.ts`, `CommentReactions.test.tsx`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`, `e2e/comment-downvotes.spec.ts`.
 
 ## Discover and the story lists (S1-E5-01, S1-E5-09, S1-E5-02)
 

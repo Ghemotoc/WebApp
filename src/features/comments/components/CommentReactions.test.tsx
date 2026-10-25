@@ -32,6 +32,7 @@ const comment: ChapterComment = {
   body: 'Ce final!',
   canDelete: false,
   reactions: { counts: { heart: 4, wow: 1 }, mine: 'heart' },
+  isDownvotedByMe: false,
   replies: [],
 };
 

@@ -532,6 +532,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      comment_downvotes: {
+        Row: {
+          comment_id: string;
+          created_at: string;
+          id: string;
+          is_counted: boolean;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          comment_id: string;
+          created_at?: string;
+          id?: string;
+          is_counted: boolean;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          comment_id?: string;
+          created_at?: string;
+          id?: string;
+          is_counted?: boolean;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'comment_downvotes_comment_id_fkey';
+            columns: ['comment_id'];
+            isOneToOne: false;
+            referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comment_downvotes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       comment_reactions: {
         Row: {
           comment_id: string;
@@ -589,8 +632,10 @@ export type Database = {
           user_id: string;
           comment_is_shown_to_caller: boolean | null;
           comment_state_for_caller: string | null;
+          open_downvote_case: undefined | null;
         };
-        ComputedFields: 'comment_is_shown_to_caller' | 'comment_state_for_caller';
+        ComputedFields:
+          'comment_is_shown_to_caller' | 'comment_state_for_caller' | 'open_downvote_case';
         Insert: {
           body: string;
           chapter_id: string;
@@ -2733,6 +2778,10 @@ export type Database = {
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
+      downvote_comment: {
+        Args: { comment_id: string; should_downvote: boolean };
+        Returns: boolean;
+      };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
       follow_story: { Args: { should_follow: boolean; story_slug: string }; Returns: Json };
@@ -3005,6 +3054,15 @@ export type Database = {
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
       note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
+      open_downvote_case: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
       post_comment: {
         Args: {
@@ -3294,7 +3352,7 @@ export type Database = {
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
       audit_actor: 'person' | 'system';
-      case_source: 'report' | 'authority_order' | 'picture_check';
+      case_source: 'report' | 'authority_order' | 'picture_check' | 'downvotes';
       case_status: 'open' | 'decided';
       case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
       chapter_status: 'draft' | 'scheduled' | 'published';
@@ -3498,7 +3556,7 @@ export const Constants = {
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
       audit_actor: ['person', 'system'],
-      case_source: ['report', 'authority_order', 'picture_check'],
+      case_source: ['report', 'authority_order', 'picture_check', 'downvotes'],
       case_status: ['open', 'decided'],
       case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
       chapter_status: ['draft', 'scheduled', 'published'],

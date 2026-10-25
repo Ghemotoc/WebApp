@@ -1,7 +1,7 @@
 /**
  * CaseSignals: the small facts beside a case: how many reports, whether a reporter is under 18,
- * safeguarding, an authority order or a held picture (story S1-E10-03a; board 8.2's Signals
- * column).
+ * safeguarding, an authority order, a held picture or private downvotes (story S1-E10-03a;
+ * S1-E6-04; board 8.2's Signals column).
  *
  * Who shows it: CaseRow and CasePage. Pills carry words, never colour alone (Definition of Done).
  */
@@ -29,6 +29,9 @@ export function CaseSignals({ theCase }: { theCase: QueueCase }) {
       <div className="flex flex-wrap gap-1.5">
         {theCase.source === 'authority_order' && (
           <InfoPill tone="blush">{t('signals.authorityOrder')}</InfoPill>
+        )}
+        {theCase.source === 'downvotes' && (
+          <InfoPill tone="neutral">{t('signals.downvotes')}</InfoPill>
         )}
         {theCase.source === 'picture_check' && (
           <InfoPill tone="sky">{t('signals.pictureHeld')}</InfoPill>
