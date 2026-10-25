@@ -9,4 +9,4 @@ Discover and the story lists. Built by PEOPLE-2: S1-E5-01 (Discover, category an
 - `api/storyLists.ts`: the one call, `browse_stories()`.
 - `lib/listAddresses.ts`: every list's address and the list behind an address; `lib/sortMemory.ts`: the sort kept for this tab; `lib/categoryAccents.ts`: each category's colour.
 - `registerDiscoveryTranslations.ts`: the `discovery` text namespace, added when a discovery component first renders.
-- The database side: `supabase/migrations/…_s1_e5_01_browse_stories.sql` (and `…_s1_e5_02_sort_options.sql`); tests `151` (and `152`).
+- The database side: `supabase/migrations/…_s1_e5_01_browse_stories.sql` and `…_s1_e5_02_sort_options.sql`; tests `151` and `152`.

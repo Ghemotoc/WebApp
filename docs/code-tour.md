@@ -768,7 +768,9 @@ both → api/storyLists.ts → browse_stories(list_kind, list_key, filters, sort
 
 There is no new table: everything is read through the functions. A shelf asks for 21 so it knows there are more than 20 (rule 20) and passes the total to "View more". A follow or a block refreshes every list (the `story-list` query key).
 
-Tests: `151-browse-stories.test.sql`, `lib/listAddresses.test.ts`, `lib/sortMemory.test.ts`, `e2e/discover.spec.ts`.
+The six sorts (S1-E5-02) are lines of `browse_stories()`'s order, titles and writer names in the ICU Romanian collation (`"ro-x-icu"`); a picked sort goes into the address and into `sessionStorage` (`lib/sortMemory.ts`) for the next list in this tab.
+
+Tests: `151-browse-stories.test.sql`, `152-story-list-sorts.test.sql`, `lib/listAddresses.test.ts`, `lib/sortMemory.test.ts`, `e2e/discover.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 

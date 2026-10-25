@@ -6,7 +6,8 @@
  * /discover/c/:categorySlug (a category page), /discover/t/:tag (a tag on the story page) and
  * /u/:handle/stories (a writer's profile). The address decides the list (listFromParams()).
  * What it shows: StoryListHeader, the filters, the rating note, then the stories as a grid with
- * "Load more" (StoryGrid). Filters live in the address, so a filtered list can be shared.
+ * "Load more" (StoryGrid). Filters and the sort live in the address, so a list can be shared;
+ * the sort is also kept for the rest of the visit (S1-E5-02).
  * Nothing on the page depends on what the reader has read (S1-E5-09's legal note); the database
  * leaves out what this reader may not see (ratings, blocks, drafts, moderation).
  * What it calls: useStoryList → browse_stories().
@@ -20,10 +21,11 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { useSession } from '@/features/auth/hooks/useSession';
 
-import type { ListRequest } from '../api/storyLists';
+import type { ListRequest, SortOrder } from '../api/storyLists';
 import { useListTitle } from '../hooks/useListTitle';
 import { useStoryList } from '../hooks/useStoryList';
 import { listAddress, listFromParams, requestFromAddress } from '../lib/listAddresses';
+import { rememberedSort, rememberSort } from '../lib/sortMemory';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 import { StoryGrid } from './StoryGrid';
@@ -52,6 +54,19 @@ function hasFilters(request: ListRequest): boolean {
   return (
     request.categorySlug !== null || request.completion !== null || request.languageCode !== null
   );
+}
+
+/**
+ * The sort a list opens with (S1-E5-02): the address's, else the one the reader picked earlier
+ * in this tab (fourth criterion), else the list's own (newest for New stories, recently updated
+ * for the rest; popular joins with S1-E5-03).
+ *
+ * @param request - the list as the address gives it
+ * @returns the sort to use
+ */
+function sortInUse(request: ListRequest): SortOrder {
+  const listOwnSort: SortOrder = request.kind === 'new' ? 'newest' : 'updated';
+  return request.sortOrder ?? rememberedSort() ?? listOwnSort;
 }
 
 /**
@@ -112,12 +127,16 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
   const { t } = useDiscoveryTranslation();
   const { userId, isKnown } = useSession();
   const [search, setSearch] = useSearchParams();
-  // Step 1: the list and its filters come from the address.
-  const request = requestFromAddress(kind, listKey, search);
+  // Step 1: the list and its filters come from the address; the sort may come from this tab.
+  const addressRequest = requestFromAddress(kind, listKey, search);
+  const sortOrder = sortInUse(addressRequest);
+  const request = { ...addressRequest, sortOrder };
   const list = useStoryList(request);
   const heading = useListTitle(request, list.stories);
   // Step 2: a filter change rewrites the address in place (no new history entry per click).
+  // A new sort is kept for the next list in this tab (S1-E5-02, fourth criterion).
   function changeRequest(next: ListRequest) {
+    if (next.sortOrder !== sortOrder) rememberSort(next.sortOrder);
     setSearch(new URL(listAddress(next), window.location.origin).searchParams, { replace: true });
   }
   if (heading.isUnknown) return <UnknownList />;
@@ -135,7 +154,7 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
         </Notice>
       ) : (
         <>
-          <StoryListFilters request={request} onChange={changeRequest} />
+          <StoryListFilters request={request} sortOrder={sortOrder} onChange={changeRequest} />
           <p className="m-0 text-sm text-meta">{t('seeAll.ratingNote')}</p>
           <ListResults
             request={request}

@@ -2,7 +2,8 @@
  * StoryListFilters: the filters on a See all, category or tag page (story S1-E5-09; board 3.10).
  *
  * Category and status are chips (one choice each, "Any" first); language is a drop-down of the
- * open story languages, each written in its own language. A filter the page already is (the
+ * open story languages, each written in its own language; "Sort by" is a drop-down of the six
+ * sorts (S1-E5-02). A filter the page already is (the
  * category on a category page, the status on Completed) isn't offered. Every change goes into the
  * address, so the filtered list can be shared (S1-E5-09, fourth criterion).
  * Who uses it: StoryListPage. What it calls: useStoryFormOptions (categories and languages).
@@ -11,13 +12,16 @@ import { ChoiceChips, type ChoiceOption } from '@/components/ui/ChoiceChips';
 import { Select } from '@/components/ui/Select';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
-import type { CompletionStatus, ListRequest } from '../api/storyLists';
+import type { CompletionStatus, ListRequest, SortOrder } from '../api/storyLists';
 import { categoryAccent } from '../lib/categoryAccents';
+import { sortOrders } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 /** What the filters need. */
 export interface StoryListFiltersProps {
   request: ListRequest;
+  /** The sort in use: the address's, the one kept for this tab, or the list's own. */
+  sortOrder: SortOrder;
   /** Called with the request after one filter changed. */
   onChange: (request: ListRequest) => void;
 }
@@ -45,19 +49,13 @@ function useCategoryOptions(): ChoiceOption[] {
 }
 
 /**
- * Renders the filters.
+ * The language and sort drop-downs, side by side.
  *
- * @returns the group of filters
+ * @returns the two drop-downs
  */
-export function StoryListFilters({ request, onChange }: StoryListFiltersProps) {
+function ListDropDowns({ request, sortOrder, onChange }: StoryListFiltersProps) {
   const { t } = useDiscoveryTranslation();
   const { languages } = useStoryFormOptions();
-  const categoryOptions = useCategoryOptions();
-  const statusOptions: ChoiceOption[] = [
-    { value: anyValue, label: t('seeAll.anyStatus') },
-    { value: 'ongoing', label: t('seeAll.ongoing') },
-    { value: 'completed', label: t('seeAll.completed') },
-  ];
   const languageOptions = [
     { value: anyValue, label: t('seeAll.anyLanguage') },
     ...languages.map((code) => ({
@@ -65,6 +63,44 @@ export function StoryListFilters({ request, onChange }: StoryListFiltersProps) {
       label: t(`languages.${code}`, { ns: 'writing' }),
       lang: code,
     })),
+  ];
+  const sortOptions = sortOrders.map((order) => ({ value: order, label: t(`sort.${order}`) }));
+  return (
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+      <Select
+        id="story-list-language"
+        label={t('seeAll.language')}
+        isLabelVisible
+        options={languageOptions}
+        value={request.languageCode ?? anyValue}
+        onChange={(value) =>
+          onChange({ ...request, languageCode: value === anyValue ? null : value })
+        }
+      />
+      <Select
+        id="story-list-sort"
+        label={t('seeAll.sortBy')}
+        isLabelVisible
+        options={sortOptions}
+        value={sortOrder}
+        onChange={(value) => onChange({ ...request, sortOrder: value as SortOrder })}
+      />
+    </div>
+  );
+}
+
+/**
+ * Renders the filters.
+ *
+ * @returns the group of filters
+ */
+export function StoryListFilters({ request, sortOrder, onChange }: StoryListFiltersProps) {
+  const { t } = useDiscoveryTranslation();
+  const categoryOptions = useCategoryOptions();
+  const statusOptions: ChoiceOption[] = [
+    { value: anyValue, label: t('seeAll.anyStatus') },
+    { value: 'ongoing', label: t('seeAll.ongoing') },
+    { value: 'completed', label: t('seeAll.completed') },
   ];
   return (
     <div role="group" aria-label={t('seeAll.filtersLabel')} className="flex flex-col gap-4">
@@ -93,18 +129,7 @@ export function StoryListFilters({ request, onChange }: StoryListFiltersProps) {
           }
         />
       )}
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-        <Select
-          id="story-list-language"
-          label={t('seeAll.language')}
-          isLabelVisible
-          options={languageOptions}
-          value={request.languageCode ?? anyValue}
-          onChange={(value) =>
-            onChange({ ...request, languageCode: value === anyValue ? null : value })
-          }
-        />
-      </div>
+      <ListDropDowns request={request} sortOrder={sortOrder} onChange={onChange} />
     </div>
   );
 }

@@ -8,6 +8,7 @@
  * - a tag on the story page opens the tag page, whose filters go into the address and survive a
  *   reload (S1-E5-09, fourth criterion);
  * - an adult sees the 16+ story on the same page;
+ * - the reader sorts by title both ways, and the sort is kept on the next list (S1-E5-02);
  * - an address for a list that doesn't exist says so;
  * - Discover and a category page pass axe and don't scroll sideways at 390, 768 and 1440 px,
  *   light and night, Romanian and English.
@@ -114,6 +115,21 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     const page = await context.newPage();
     await page.goto(`/discover/t/${tag}`);
     await expect(page.getByRole('link', { name: /Noaptea lungă/ })).toBeVisible();
+  });
+
+  test('the reader sorts a list, and the sort is kept for the next list (S1-E5-02)', async ({
+    browser,
+  }) => {
+    const page = await openAsVisitor(browser, `/discover/t/${tag}`);
+    const cards = page.getByRole('link', { name: /Tide Tables|Farul de la Sulina/ });
+    await page.getByLabel('Sort by').selectOption({ label: 'Title, Z to A' });
+    await expect(page).toHaveURL(/sort=title_za/);
+    await expect(cards.first()).toHaveAccessibleName(/Tide Tables/);
+    await page.getByLabel('Sort by').selectOption({ label: 'Title, A to Z' });
+    await expect(cards.first()).toHaveAccessibleName(/Farul de la Sulina/);
+    // Another list in the same tab opens with the same sort.
+    await page.goto('/discover/all/updated');
+    await expect(page.getByLabel('Sort by')).toHaveValue('title_az');
   });
 
   test('a list that does not exist says so', async ({ browser }) => {
