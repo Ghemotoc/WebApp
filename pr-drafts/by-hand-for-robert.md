@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- **READ-3 (#203, merged):** nothing to set up. Optional check: Supabase dashboard > staging project > SQL Editor > `select jobname, schedule from cron.job;` should list `run-notification-jobs` (every minute) and `purge-old-notifications` (03:41). Read the new Romanian lines in the PR's details block (notifications and downvotes).
 - **PEOPLE-2 (#202, merged):** nothing by hand: no secrets and no staging top-up. Discover is now in the top bar.
 - **READ-2 (#201, merged):** nothing by hand: no secrets and no staging top-up.
 - **Sign-up, invite and password emails through Brevo (skip if done):** without this, Supabase's built-in sender only mails the project team, a few an hour. (1) Brevo > SMTP & API > SMTP tab: copy the SMTP server (`smtp-relay.brevo.com`), port 587, the login, and Generate a new SMTP key named `ghemotoc staging auth`. (2) Brevo > Senders, domains & dedicated IPs > Senders: make sure hello@themagiccoffin.com is verified. (3) Supabase dashboard > staging project > Authentication > Emails > SMTP Settings > Enable custom SMTP: sender email hello@themagiccoffin.com, sender name Ghemotoc, host, port 587, username the Brevo login, password the SMTP key > Save. (4) Authentication > Rate limits: raise "emails sent" from 2 to about 30 an hour > Save. The Contact us and report forms already use Brevo through `BREVO_API_KEY` (SAFE-1).
