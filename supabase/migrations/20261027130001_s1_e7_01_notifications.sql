@@ -363,7 +363,7 @@ create trigger cases_notify_decided
 
 /**
  * notification_is_shown: whether the caller should see one of their notifications now.
- * Rules: their own row; no actor either side now blocks; for a chapter, the caller may still
+ * Rules: their own row; at least one of its people isn't blocked either way; for a chapter, the caller may still
  *   open it (readable_chapter(): published, rating, blocks, moderation); for a comment, it is
  *   still up for the caller. A moderation decision is always shown.
  * Internal: my_notifications() and my_unread_notification_count().
@@ -385,7 +385,10 @@ begin
   if target.kind = 'moderation_decision' then
     return true;
   end if;
-  if exists (select 1 from unnest(target.actor_user_ids) as actor(id) where public.is_blocked_with(actor.id)) then
+  -- A row is left out only when everyone in it is now blocked either way; in a grouped row the
+  -- others stay, and notification_json() leaves the blocked person out.
+  if cardinality(target.actor_user_ids) > 0 and not exists (
+      select 1 from unnest(target.actor_user_ids) as actor(id) where not public.is_blocked_with(actor.id)) then
     return false;
   end if;
   if target.chapter_id is not null then
@@ -459,7 +462,8 @@ revoke execute on function public.notification_item_json(uuid) from public, anon
 
 /**
  * notification_json: one notification as the screen draws it.
- * Returns: {id, kind, category, actors: [{handle, display_name}] (the newest two), actor_count,
+ * Returns: {id, kind, category, actors: [{handle, display_name}] (the newest two the caller
+ *   hasn't blocked, and who haven't blocked them), actor_count (without those blocked),
  *   story {slug, title}, chapter {code, title, position}, comment_excerpt (the first 140
  *   characters of a live comment), decision, item {item_type, reference, address}, is_required,
  *   is_read, at}. Never a user ID.
@@ -479,9 +483,13 @@ as $$
     'actors', coalesce((
       select jsonb_agg(jsonb_build_object('handle', profiles.handle,
           'display_name', public.display_name(profiles.handle, profiles.pen_name)) order by actor.position)
-      from unnest(target.actor_user_ids[1:2]) with ordinality as actor(id, position)
+      from (select listed.id, listed.position
+            from unnest(target.actor_user_ids) with ordinality as listed(id, position)
+            where not public.is_blocked_with(listed.id)
+            order by listed.position limit 2) as actor
       join public.profiles on profiles.id = actor.id), '[]'::jsonb),
-    'actor_count', target.actor_count,
+    'actor_count', target.actor_count - (select count(*)::integer from unnest(target.actor_user_ids) as listed(id)
+      where public.is_blocked_with(listed.id)),
     'story', (select jsonb_build_object('slug', stories.slug, 'title', stories.title)
               from public.stories where stories.id = target.story_id),
     'chapter', (select jsonb_build_object('code', chapters.code, 'title', chapters.published_title,

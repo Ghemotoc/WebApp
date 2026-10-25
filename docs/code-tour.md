@@ -889,6 +889,34 @@ What the reading epic left in place. The epic report, `docs/epic-reports/S1-E4.m
 
 **One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 600 words → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
 
+## Epic S1-E6 at a glance (checked by S1-E6-QA)
+
+What the comments, reactions and follows epic left in place. The epic report, `docs/epic-reports/S1-E6.md`, lists what works, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | the like button and the comments under the chapter (`src/features/reading/components/LikeButton.tsx`, `src/features/comments/`), Follow on the writer's profile and the story page (`src/features/people/components/FollowButton.tsx`) | 6-03, 6-01, 6-02, 6-04, 6-05 |
+| Tables | `chapter_likes`, `comments`, `comment_reactions`, `comment_downvotes`, `follows_users`, `follows_stories` | each story |
+| Functions | `like_chapter()`, `chapter_comments()`, `post_comment()`, `delete_comment()`, `react_to_comment()`, `downvote_comment()` (with `open_downvote_case()`), `follow_writer()`, `follow_story()`; every one asks `readable_chapter()` or the profile's rules first | each story |
+| Jobs | `purge-deleted-comments` nightly; `post_comment()` queues `comment_posted` for notifications | 6-01 |
+| Tests | `148`, `149`, `150`, `153`, `144` and `096` (the epic); `e2e/epic-s1-e6.spec.ts` and each story's spec | each story, S1-E6-QA |
+
+**One main journey through the whole epic:** teacher opens `/s/<story>/<chapter>` → `ChapterComments` loads `CommentsSection` after the text → "Post comment" calls `post_comment()`, which asks `readable_chapter()` (rating, blocks, moderation) and `is_active_member()` before saving → the list reads again through `chapter_comments()`, each comment shaped by `comment_json()` with its reactions and `downvoted_by_me` → a heart goes through `react_to_comment()`, a downvote through `downvote_comment()`, which may open a `D-` case in the moderation queue. `e2e/epic-s1-e6.spec.ts` walks it in the browser and `096-epic-s1-e6.test.sql` in the database.
+
+## Epic S1-E7 at a glance (checked by S1-E7-QA)
+
+What the notifications epic left in place for March. The epic report is `docs/epic-reports/S1-E7.md`.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | the bell in the top bar (`NotificationBell`) and `/notifications` (`NotificationsPage`), in `src/features/notifications/` | 7-01 |
+| Tables | `notifications` (the person told reads their own) | 7-01 |
+| Functions | `notify()`, `run_notification_jobs()`, the triggers on `follows_users`, `comment_reactions` and `cases`; `my_notifications()`, `my_unread_notification_count()`, `mark_notifications_read()`; `notification_is_shown()` applies the reader's rules when they look | 7-01 |
+| Jobs | `run-notification-jobs` every minute, `purge-old-notifications` nightly | 7-01 |
+| Tests | `154` and `097` (the epic); `e2e/notifications.spec.ts`, `e2e/epic-s1-e7.spec.ts` | 7-01, S1-E7-QA |
+
+**One main journey:** adult_writer presses Publish → `publish_chapter()` queues `chapter_published` → within a minute `run_notification_jobs()` gives each follower of the writer or the story one row → teacher's bell asks `my_unread_notification_count()` and shows 1 → the page lists "Lia Scrie published Chapter 2 of …" through `my_notifications()`, which leaves out anything teacher may not open → "Read now" opens the chapter and marks the row read.
+
 ## Epic S1-E10 at a glance (checked by S1-E10-QA)
 
 What the Safety epic has in place so far. The epic report, `docs/epic-reports/S1-E10.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
