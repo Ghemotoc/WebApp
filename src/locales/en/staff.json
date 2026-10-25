@@ -64,7 +64,8 @@
     "roles": "Roles",
     "auditLog": "Audit log",
     "invites": "Invites",
-    "users": "Users"
+    "users": "Users",
+    "metrics": "Metrics"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -89,7 +90,8 @@
       "roles": "Who on the team holds which role and permission.",
       "audit_log": "Every staff action and sensitive read, searchable and exportable.",
       "invites": "Invite links for the March test: make, copy and revoke.",
-      "users": "Find an account, see its status and sanctions, and act on it. Invite links are a tab here."
+      "users": "Find an account, see its status and sanctions, and act on it. Invite links are a tab here.",
+      "metrics": "The March test numbers against their targets, counted each night."
     }
   },
   "auditLog": {
@@ -357,5 +359,35 @@
       "refused": "That wasn’t saved. The account may already have this sanction, or a field is missing.",
       "unreachable": "We couldn’t reach our server. Check your connection and try again."
     }
+  },
+  "metrics": {
+    "documentTitle": "Metrics · {{productName}}",
+    "eyebrow": "Metrics and logs",
+    "heading": "The March test numbers",
+    "intro": "Totals counted once a night from the database. Nothing here names a person.",
+    "targetsLabel": "The March targets",
+    "writers": "Writers who published",
+    "writersDescription": "Accounts with at least one published chapter.",
+    "readers": "Signed-up readers",
+    "readersDescription": "Confirmed accounts that aren’t staff.",
+    "returnRate": "Return rate",
+    "returnRateDescription": "Reads of the next chapter in its first 7 days, as a share of reads of the chapter before it.",
+    "approximation": "Approximation",
+    "targetsNote": "The targets are settings; staff can change them without a new release.",
+    "target": "Target {{target}} · {{progress}}% of the way",
+    "progressLabel": "Progress towards the target",
+    "notYet": "Not counted yet",
+    "marketsEyebrow": "By market",
+    "marketsHeading": "Writers who published, by country",
+    "otherMarkets": "Other countries",
+    "readsEyebrow": "Reading",
+    "readsHeading": "Chapter reads per day",
+    "noneYet": "Nothing counted yet.",
+    "notAllowed": "The March numbers are for the owner and admins. Your queue numbers are on the moderation page.",
+    "queueLink": "Open the moderation queue",
+    "unreachable": "We couldn’t load the numbers. Check your connection and try again.",
+    "loading": "Loading the numbers…",
+    "notCountedYet": "The numbers haven’t been counted yet. The count runs early each morning.",
+    "countedOn": "Counted on {{date}}"
   }
 }

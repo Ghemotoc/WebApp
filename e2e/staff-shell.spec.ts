@@ -64,16 +64,28 @@ test.describe('admin shell (S1-E11-01)', () => {
 
   test('each staff persona sees only the areas its role allows', async ({ browser }) => {
     const ownerPage = await openAs(browser, 'owner', '/staff');
-    expect(await menuLinks(ownerPage)).toEqual(['Moderation', 'Users', 'Roles', 'Audit log']);
+    expect(await menuLinks(ownerPage)).toEqual([
+      'Moderation',
+      'Users',
+      'Roles',
+      'Metrics',
+      'Audit log',
+    ]);
     await expect(ownerPage.getByText('@owner')).toBeVisible();
     await expect(ownerPage.getByText('Owner', { exact: true })).toBeVisible();
 
     const adminPage = await openAs(browser, 'admin', '/staff');
-    expect(await menuLinks(adminPage)).toEqual(['Moderation', 'Users', 'Roles', 'Audit log']);
+    expect(await menuLinks(adminPage)).toEqual([
+      'Moderation',
+      'Users',
+      'Roles',
+      'Metrics',
+      'Audit log',
+    ]);
 
     // A moderator gets the queue (S1-E10-03a) and Users (S1-E11-02).
     const moderatorPage = await openAs(browser, 'moderator', '/staff');
-    expect(await menuLinks(moderatorPage)).toEqual(['Moderation', 'Users']);
+    expect(await menuLinks(moderatorPage)).toEqual(['Moderation', 'Users', 'Metrics']);
 
     // Support's one area is Users (S1-E11-02).
     const supportPage = await openAs(browser, 'support', '/staff');

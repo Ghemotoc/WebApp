@@ -804,6 +804,22 @@ The six sorts (S1-E5-02) are lines of `browse_stories()`'s order, titles and wri
 
 Tests: `151-browse-stories.test.sql`, `152-story-list-sorts.test.sql`, `lib/listAddresses.test.ts`, `lib/sortMemory.test.ts`, `e2e/discover.spec.ts`.
 
+## The March test numbers (S1-E15-02)
+
+`/staff/metrics` for the owner and admins (board AdminMetrics, screen 8.7):
+
+```
+pg_cron count-daily-metrics (04:07 UTC) → run_daily_metrics() → compute_daily_metrics(day)
+  writers_published_by_market() · signed_up_reader_count() · return_rate_on() · chapter_reads totals
+  ▼  daily_metrics (one total per day, metric and market; no user ID; 3 years)
+MarchNumbersPage → hooks/useMarchNumbers → api/marchNumbers.ts → admin_march_numbers(days)
+  (owner and admin only: may_see_march_numbers(); the targets are settings march_target_*)
+```
+
+The return rate is an approximation from daily totals (architecture 1.7.9): reads of chapter N+1 in its first 7 days over reads of chapter N before N+1 came out. Nothing can follow one reader.
+
+Tests: `156-daily-metrics.test.sql`, `lib/marchNumbers.test.ts`, `e2e/staff-metrics.spec.ts`.
+
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
 What the Foundations epic left in place, and where to find it. The epic report, `docs/epic-reports/S1-E1.md`, lists what works, the known gaps and the steps Robert does by hand.

@@ -110,9 +110,15 @@ test.describe('epic S1-E11 journeys', () => {
     await expect(owner.getByRole('table')).not.toContainText('example.com');
 
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a).
-    expect(await menuLinks(owner)).toEqual(['Moderation', 'Users', 'Roles', 'Audit log']);
+    expect(await menuLinks(owner)).toEqual([
+      'Moderation',
+      'Users',
+      'Roles',
+      'Metrics',
+      'Audit log',
+    ]);
     const moderator = await openAs(browser, 'moderator', '/staff');
-    expect(await menuLinks(moderator)).toEqual(['Moderation', 'Users']);
+    expect(await menuLinks(moderator)).toEqual(['Moderation', 'Users', 'Metrics']);
     const support = await openAs(browser, 'support', '/staff');
     expect(await menuLinks(support)).toEqual(['Users']);
     const editor = await openAs(browser, 'editor', '/staff/users/invites');

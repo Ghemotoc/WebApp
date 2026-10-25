@@ -64,7 +64,8 @@
     "roles": "Roluri",
     "auditLog": "Jurnal de audit",
     "invites": "Invitații",
-    "users": "Utilizatori"
+    "users": "Utilizatori",
+    "metrics": "Cifre"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -89,7 +90,8 @@
       "roles": "Cine din echipă are ce rol și ce permisiuni.",
       "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export.",
       "invites": "Linkuri de invitație pentru testul din martie: fă, copiază și revocă.",
-      "users": "Găsește un cont, vezi starea și sancțiunile lui și acționează. Linkurile de invitație sunt o filă aici."
+      "users": "Găsește un cont, vezi starea și sancțiunile lui și acționează. Linkurile de invitație sunt o filă aici.",
+      "metrics": "Cifrele testului din martie față de ținte, numărate în fiecare noapte."
     }
   },
   "auditLog": {
@@ -357,5 +359,35 @@
       "refused": "N-am salvat. Contul poate avea deja această sancțiune sau lipsește un câmp.",
       "unreachable": "Nu am putut ajunge la server. Verifică conexiunea și încearcă din nou."
     }
+  },
+  "metrics": {
+    "documentTitle": "Cifre · {{productName}}",
+    "eyebrow": "Cifre și jurnale",
+    "heading": "Cifrele testului din martie",
+    "intro": "Totaluri numărate o dată pe noapte din baza de date. Nimic de aici nu numește o persoană.",
+    "targetsLabel": "Țintele din martie",
+    "writers": "Scriitori care au publicat",
+    "writersDescription": "Conturi cu cel puțin un capitol publicat.",
+    "readers": "Cititori înscriși",
+    "readersDescription": "Conturi confirmate care nu sunt ale echipei.",
+    "returnRate": "Rata de întoarcere",
+    "returnRateDescription": "Citirile capitolului următor în primele lui 7 zile, ca parte din citirile capitolului dinainte.",
+    "approximation": "Aproximare",
+    "targetsNote": "Țintele sunt setări; echipa le poate schimba fără o versiune nouă.",
+    "target": "Ținta {{target}} · {{progress}}% din drum",
+    "progressLabel": "Cât s-a apropiat de țintă",
+    "notYet": "Încă nenumărat",
+    "marketsEyebrow": "Pe piețe",
+    "marketsHeading": "Scriitori care au publicat, pe țări",
+    "otherMarkets": "Alte țări",
+    "readsEyebrow": "Lectură",
+    "readsHeading": "Citiri de capitole pe zi",
+    "noneYet": "Încă nu s-a numărat nimic.",
+    "notAllowed": "Cifrele din martie sunt pentru proprietar și administratori. Cifrele cozii tale sunt pe pagina de moderare.",
+    "queueLink": "Deschide coada de moderare",
+    "unreachable": "Nu am putut încărca cifrele. Verifică conexiunea și încearcă din nou.",
+    "loading": "Se încarcă cifrele…",
+    "notCountedYet": "Cifrele nu au fost numărate încă. Numărătoarea rulează devreme, în fiecare dimineață.",
+    "countedOn": "Numărate pe {{date}}"
   }
 }

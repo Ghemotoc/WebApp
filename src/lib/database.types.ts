@@ -805,6 +805,37 @@ export type Database = {
           },
         ];
       };
+      daily_metrics: {
+        Row: {
+          created_at: string;
+          id: string;
+          market: string;
+          metric: string;
+          metric_date: string;
+          updated_at: string;
+          value: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          market?: string;
+          metric: string;
+          metric_date: string;
+          updated_at?: string;
+          value: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          market?: string;
+          metric?: string;
+          metric_date?: string;
+          updated_at?: string;
+          value?: number;
+        };
+        Relationships: [];
+      };
       feature_flags: {
         Row: {
           created_at: string;
@@ -2151,6 +2182,39 @@ export type Database = {
           },
         ];
       };
+      story_scores: {
+        Row: {
+          computed_at: string;
+          created_at: string;
+          score: number;
+          story_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          computed_at?: string;
+          created_at?: string;
+          score?: number;
+          story_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          computed_at?: string;
+          created_at?: string;
+          score?: number;
+          story_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_scores_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: true;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_tags: {
         Row: {
           created_at: string;
@@ -2541,6 +2605,7 @@ export type Database = {
           user_id: string;
         }[];
       };
+      admin_march_numbers: { Args: { days?: number }; Returns: Json };
       admin_moderation_queue: {
         Args: {
           case_id?: string;
@@ -2847,6 +2912,8 @@ export type Database = {
         Returns: string;
       };
       comment_wait_minutes: { Args: { author_id: string }; Returns: number };
+      compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
+      compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
       content_is_held_for_moderation: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
@@ -2932,6 +2999,7 @@ export type Database = {
         Returns: Json;
       };
       like_state_of: { Args: { target_chapter_id: string }; Returns: Json };
+      list_default_sort: { Args: { list_kind: string }; Returns: string };
       list_holds_story: {
         Args: {
           list_key: string;
@@ -3030,6 +3098,11 @@ export type Database = {
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
       mask_email: { Args: { address: string }; Returns: string };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
+      may_see_march_numbers: { Args: Record<PropertyKey, never>; Returns: boolean };
+      metric_on: {
+        Args: { for_day: string; wanted_market?: string; wanted_metric: string };
+        Returns: number;
+      };
       moderate_item: {
         Args: {
           item_id: string;
@@ -3249,6 +3322,7 @@ export type Database = {
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
+      ranking_setting: { Args: { fallback: number; setting_key: string }; Returns: number };
       rating_allows: {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;
@@ -3398,6 +3472,8 @@ export type Database = {
       };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
+      return_rate_on: { Args: { for_day: string }; Returns: number };
+      run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       sanction_end: {
         Args: { days: number; wanted_kind: Database['public']['Enums']['sanction_kind'] };
@@ -3430,16 +3506,28 @@ export type Database = {
         Args: { birth_month?: number; birth_year: number; country_code: string };
         Returns: string;
       };
+      signed_up_reader_count: { Args: { for_day: string }; Returns: number };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
       story_card_json: { Args: { target_story_id: string }; Returns: Json };
+      story_comment_total: { Args: { target_story_id: string }; Returns: number };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
+      story_signals: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          comments: number;
+          likes: number;
+          read_through: number;
+          reads: number;
+          story_id: string;
+        }[];
+      };
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       submit_public_notice: {
@@ -3466,6 +3554,13 @@ export type Database = {
       verified_signup_country: { Args: { token: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
       writer_follow_state: { Args: { wanted_handle: string }; Returns: Json };
+      writers_published_by_market: {
+        Args: { for_day: string };
+        Returns: {
+          market: string;
+          writer_count: number;
+        }[];
+      };
     };
     Enums: {
       account_status:
