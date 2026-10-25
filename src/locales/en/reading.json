@@ -30,7 +30,18 @@
     "scheduledChapter": "Scheduled",
     "notPublicYet": "Only you can see this story until you publish a chapter. This is how readers will see it.",
     "seeProfile": "See profile",
-    "copiedWorkNote": "Moderators found that parts of this story copy a published work."
+    "copiedWorkNote": "Moderators found that parts of this story copy a published work.",
+    "statsLabel": "Story numbers",
+    "likes_one": "{{value}} like",
+    "likes_other": "{{value}} likes",
+    "comments_one": "{{value}} comment",
+    "comments_other": "{{value}} comments",
+    "chapterCount_one": "{{count}} chapter",
+    "chapterCount_other": "{{count}} chapters",
+    "updated": "Updated {{date}}",
+    "likes_few": "{{value}} likes",
+    "comments_few": "{{value}} comments",
+    "chapterCount_few": "{{count}} chapters"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

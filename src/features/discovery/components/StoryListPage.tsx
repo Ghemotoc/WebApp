@@ -24,7 +24,12 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import type { ListRequest, SortOrder } from '../api/storyLists';
 import { useListTitle } from '../hooks/useListTitle';
 import { useStoryList } from '../hooks/useStoryList';
-import { listAddress, listFromParams, requestFromAddress } from '../lib/listAddresses';
+import {
+  listAddress,
+  listDefaultSort,
+  listFromParams,
+  requestFromAddress,
+} from '../lib/listAddresses';
 import { rememberedSort, rememberSort } from '../lib/sortMemory';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
@@ -58,15 +63,14 @@ function hasFilters(request: ListRequest): boolean {
 
 /**
  * The sort a list opens with (S1-E5-02): the address's, else the one the reader picked earlier
- * in this tab (fourth criterion), else the list's own (newest for New stories, recently updated
- * for the rest; popular joins with S1-E5-03).
+ * in this tab (fourth criterion), else the list's own (listDefaultSort(): popular for most lists
+ * since S1-E5-03).
  *
  * @param request - the list as the address gives it
  * @returns the sort to use
  */
 function sortInUse(request: ListRequest): SortOrder {
-  const listOwnSort: SortOrder = request.kind === 'new' ? 'newest' : 'updated';
-  return request.sortOrder ?? rememberedSort() ?? listOwnSort;
+  return request.sortOrder ?? rememberedSort() ?? listDefaultSort(request.kind);
 }
 
 /**

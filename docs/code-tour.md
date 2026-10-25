@@ -789,7 +789,7 @@ Tests: `154-notifications.test.sql`, `lib/notificationText.test.ts`, `lib/dayGro
 ```
 DiscoverPage
   │  CategoryLinks (links to /discover/c/<slug>, the categories table)
-  ▼  DiscoverShelf × (following, updated, new, completed, one per category) → useStoryShelf (21 rows)
+  ▼  DiscoverShelf × (the order of the setting discover_shelves) → useStoryShelf (21 rows)
 StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
   │  StoryListHeader (breadcrumb, eyebrow, title, "n stories") · StoryListFilters (chips, language)
   ▼  StoryGrid ("Load more", 24 a page) → useStoryList
@@ -803,6 +803,21 @@ There is no new table: everything is read through the functions. A shelf asks fo
 The six sorts (S1-E5-02) are lines of `browse_stories()`'s order, titles and writer names in the ICU Romanian collation (`"ro-x-icu"`); a picked sort goes into the address and into `sessionStorage` (`lib/sortMemory.ts`) for the next list in this tab.
 
 Tests: `151-browse-stories.test.sql`, `152-story-list-sorts.test.sql`, `lib/listAddresses.test.ts`, `lib/sortMemory.test.ts`, `e2e/discover.spec.ts`.
+
+### Popularity (S1-E5-03)
+
+```
+pg_cron compute-story-scores (every hour) → compute_story_scores()
+  story_signals(): reads (chapter_reads totals), likes and comments (never the writer's own),
+  read-through; each halved every ranking_half_life_days; weights ranking_weight_*; never downvotes
+  ▼  story_scores (one number per story; staff may read it, readers only see the order)
+browse_stories('popular' | 'rising', …, sort_order 'popular') orders by it; list_default_sort()
+get_story_page() → 'stats' {likes, comments} → StoryStats on the story page
+```
+
+Popular is every list's default except New stories (newest), Recently updated and the follows shelf (last chapter). New and rising holds writers whose first story came out within `rising_writer_days`. Discover's shelf order is the public setting `discover_shelves`, read through `usePublicSettings().wordsOf()`. "How ranking works" links to the terms, section 5 (DSA art. 27), which `LegalSectionCard` gives the id `section-5`.
+
+Tests: `155-story-scores.test.sql`, `e2e/ranking.spec.ts`.
 
 ## The March test numbers (S1-E15-02)
 

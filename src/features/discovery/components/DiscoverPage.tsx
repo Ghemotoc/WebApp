@@ -2,15 +2,19 @@
  * DiscoverPage: Discover, screen 3.1 (story S1-E5-01; design/boards/Discover.dc.html).
  *
  * Who shows it: the router, at /discover; the top bar's "Discover" link.
- * What it shows: the eyebrow and heading, "Browse by category", then the shelves: New from
- * writers you follow (signed in), Recently updated, New stories, Completed and one per category.
+ * What it shows: the eyebrow and heading with "How ranking works" (a link to the terms' ranking
+ * section, DSA art. 27; S1-E5-03), "Browse by category", then the shelves in the order of the
+ * public setting discover_shelves (S1-E5-03, Q46: changed without a release): New from writers
+ * you follow (signed in), Popular, New and rising, New stories, Completed, Recently updated and
+ * one per category.
  * Every shelf is one line of at most 20 with "View more" (CLAUDE.md rule 20), and the database
  * leaves out what this reader may not see: ratings above their age (rule 18), writers either side
  * blocks, drafts and moderated stories. Nothing is chosen from what the reader has read (no
  * personalised feed in Stage 1; S1-E5-09's legal note).
+ * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
  * The board's featured story, greeting, continue reading, draft card, ad slot, "Popular in your
- * area" and "Writers to follow" come with their own stories (S1-E5-03, S1-E4-03, S1-E12-01) or
- * after March, so they aren't drawn. Search (S1-E5-04) is after March.
+ * area" and "Writers to follow" come with their own stories (S1-E4-03, S1-E12-01) or after
+ * March, so they aren't drawn. Search (S1-E5-04) is after March.
  * What it calls: DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
  */
 import { Link } from 'react-router';
@@ -21,17 +25,40 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
+import type { ListKind } from '../api/storyLists';
 import { useStoryShelf } from '../hooks/useStoryShelf';
-import { plainList } from '../lib/listAddresses';
+import { discoverListKinds, plainList } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 import { CategoryLinks } from './CategoryLinks';
 import { DiscoverShelf } from './DiscoverShelf';
 
-/** The shelves every reader gets, in order (the lists from browse_stories()). */
-const everyoneShelves = ['updated', 'new', 'completed'] as const;
+/**
+ * The decided shelf order, used until the setting arrives or if it can't be read (S1-E5-03).
+ * "categories" stands for one shelf per category.
+ */
+const defaultShelfOrder = [
+  'following',
+  'popular',
+  'rising',
+  'new',
+  'completed',
+  'updated',
+  'categories',
+] as const;
+
+/**
+ * Turns one word of the setting into a list, if it names one.
+ *
+ * @param word - from discover_shelves
+ * @returns the list, or null for "categories" and unknown words
+ */
+function shelfKindFrom(word: string): ListKind | null {
+  return discoverListKinds.find((kind) => kind === word) ?? null;
+}
 
 /**
  * The heading block: eyebrow, heading and the line under it.
@@ -47,9 +74,46 @@ function DiscoverHeader() {
         {t('discover.heading')}
       </h1>
       <p className="m-0 max-w-[620px] text-base leading-relaxed text-body">
-        {t('discover.intro', { productName: brand.productName })}
+        {t('discover.intro', { productName: brand.productName })}{' '}
+        <Link to="/legal/terms#section-5" className="font-semibold underline underline-offset-2">
+          {t('discover.howRanking')}
+        </Link>
       </p>
     </header>
+  );
+}
+
+/**
+ * One shelf of the setting: a list, or one shelf per category.
+ *
+ * @param props.word - one word of discover_shelves
+ * @param props.isSignedIn - the follows shelf is only for someone signed in
+ * @returns the shelf or shelves, or nothing
+ */
+function ShelfFromSetting({ word, isSignedIn }: { word: string; isSignedIn: boolean }) {
+  const { t } = useDiscoveryTranslation();
+  const { categories } = useStoryFormOptions();
+  // Step 1: "categories" is one shelf per category, in the categories table's order.
+  if (word === 'categories') {
+    return categories.map((category) => (
+      <DiscoverShelf
+        key={category.slug}
+        eyebrow={t('lists.categoryEyebrow')}
+        title={t(`categories.${category.slug}`, { ns: 'writing' })}
+        request={plainList('category', category.slug)}
+      />
+    ));
+  }
+  // Step 2: any other word is a list; an unknown word (a typo in the setting) shows nothing.
+  const kind = shelfKindFrom(word);
+  if (kind === null) return null;
+  if (kind === 'following' && !isSignedIn) return null;
+  return (
+    <DiscoverShelf
+      eyebrow={t(`lists.${kind}Eyebrow`)}
+      title={t(`lists.${kind}`)}
+      request={plainList(kind)}
+    />
   );
 }
 
@@ -61,7 +125,7 @@ function DiscoverHeader() {
 function DiscoverShelves() {
   const { t } = useDiscoveryTranslation();
   const { userId } = useSession();
-  const { categories } = useStoryFormOptions();
+  const { wordsOf } = usePublicSettings();
   // Recently updated holds every story a reader may see, so it tells whether there is anything.
   const { shelf, loadFailed } = useStoryShelf(plainList('updated'));
   if (loadFailed) return <Notice tone="error">{t('discover.loadFailed')}</Notice>;
@@ -75,30 +139,12 @@ function DiscoverShelves() {
       />
     );
   }
+  // The order staff set (discover_shelves); a word listed twice shows once.
+  const words = [...new Set(wordsOf('discover_shelves', defaultShelfOrder))];
   return (
     <div className="flex flex-col gap-14">
-      {userId !== null && (
-        <DiscoverShelf
-          eyebrow={t('lists.followingEyebrow')}
-          title={t('lists.following')}
-          request={plainList('following')}
-        />
-      )}
-      {everyoneShelves.map((kind) => (
-        <DiscoverShelf
-          key={kind}
-          eyebrow={t(`lists.${kind}Eyebrow`)}
-          title={t(`lists.${kind}`)}
-          request={plainList(kind)}
-        />
-      ))}
-      {categories.map((category) => (
-        <DiscoverShelf
-          key={category.slug}
-          eyebrow={t('lists.categoryEyebrow')}
-          title={t(`categories.${category.slug}`, { ns: 'writing' })}
-          request={plainList('category', category.slug)}
-        />
+      {words.map((word) => (
+        <ShelfFromSetting key={word} word={word} isSignedIn={userId !== null} />
       ))}
     </div>
   );

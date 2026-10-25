@@ -3,7 +3,7 @@
  *
  * Every See all page has its own address with its filters and sort in the query string, so a list
  * can be shared and opens the same for the next person (S1-E5-09, fourth criterion):
- *   /discover/all/<updated|new|completed|following>   the Discover shelves
+ *   /discover/all/<popular|rising|updated|new|completed|following>   the Discover shelves
  *   /discover/c/<category>                            a category page
  *   /discover/t/<tag>                                 a tag page
  *   /u/<username>/stories                             a writer's stories (from the profile)
@@ -14,10 +14,21 @@
 import type { CompletionStatus, ListKind, ListRequest, SortOrder } from '../api/storyLists';
 
 /** The lists Discover links to under /discover/all/. */
-export const discoverListKinds: readonly ListKind[] = ['updated', 'new', 'completed', 'following'];
+export const discoverListKinds: readonly ListKind[] = [
+  'popular',
+  'rising',
+  'updated',
+  'new',
+  'completed',
+  'following',
+];
 
-/** The sort choices, in the order the drop-down shows them (S1-E5-02, first criterion). */
+/**
+ * The sort choices, in the order the drop-down shows them (S1-E5-02, first criterion): Popular
+ * first, because it is the default (S1-E5-03).
+ */
 export const sortOrders: readonly SortOrder[] = [
+  'popular',
   'updated',
   'newest',
   'oldest',
@@ -36,6 +47,8 @@ export function listAddress(request: ListRequest): string {
   // Step 1: the path names the list.
   const key = encodeURIComponent(request.key ?? '');
   const paths: Record<ListKind, string> = {
+    popular: '/discover/all/popular',
+    rising: '/discover/all/rising',
     updated: '/discover/all/updated',
     new: '/discover/all/new',
     completed: '/discover/all/completed',
@@ -52,6 +65,20 @@ export function listAddress(request: ListRequest): string {
   if (request.sortOrder !== null) query.set('sort', request.sortOrder);
   const search = query.toString();
   return search === '' ? paths[request.kind] : `${paths[request.kind]}?${search}`;
+}
+
+/**
+ * The order a list has when the reader hasn't picked one: the same rule as the database's
+ * list_default_sort() (S1-E5-03; S1-E5-02, first criterion). New stories are newest first,
+ * Recently updated and the follows shelf by their last chapter; every other list is popular.
+ *
+ * @param kind - which list
+ * @returns the list's own sort
+ */
+export function listDefaultSort(kind: ListKind): SortOrder {
+  if (kind === 'new') return 'newest';
+  if (kind === 'updated' || kind === 'following') return 'updated';
+  return 'popular';
 }
 
 /**

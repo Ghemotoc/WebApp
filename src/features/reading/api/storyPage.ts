@@ -47,6 +47,11 @@ export interface StoryPageData {
   isPublic: boolean;
   /** The chapters: the readable ones for readers; every live one for the owner (S1-E3-03). */
   chapters: StoryPageChapter[];
+  /**
+   * The stats row's totals (S1-E5-03): likes on its chapters and live comments. Read totals stay
+   * private to the writer (S1-E3-07), so they aren't here.
+   */
+  stats: { likes: number; comments: number };
   /** The labels (S1-E3-06); a stored story always has a rating and an AI answer. */
   labels: {
     rating: StoryRating;
@@ -90,6 +95,8 @@ interface StoryPageRow {
     edited_at: string | null;
     word_count: number | null;
   }[];
+  /** Missing only from an answer older than S1-E5-03. */
+  stats?: { likes: number; comments: number };
   labels: {
     rating: StoryRating;
     is_fan_fiction: boolean;
@@ -98,6 +105,22 @@ interface StoryPageRow {
     content_note: string;
     ai_disclosure: AiDisclosure;
     ai_undisclosed_labelled: boolean;
+  };
+}
+
+/**
+ * The writer's drawn cover choice, when the story has one.
+ *
+ * @param cover - the answer's cover part
+ * @returns the design and colours, or null for an automatic or uploaded cover
+ */
+function drawnCoverFrom(cover: StoryPageRow['cover']): StoryPageData['drawnCover'] {
+  if (cover.kind !== 'drawn') return null;
+  if (cover.design === null || cover.background === null || cover.accent === null) return null;
+  return {
+    design: cover.design as CoverDesignKey,
+    background: cover.background as CoverColourKey,
+    accent: cover.accent as CoverColourKey,
   };
 }
 
@@ -129,17 +152,7 @@ export async function fetchStoryPage(
     completionStatus: row.completion_status,
     commentsEnabled: row.comments_enabled,
     coverKind: cover.kind,
-    drawnCover:
-      cover.kind === 'drawn' &&
-      cover.design !== null &&
-      cover.background !== null &&
-      cover.accent !== null
-        ? {
-            design: cover.design as CoverDesignKey,
-            background: cover.background as CoverColourKey,
-            accent: cover.accent as CoverColourKey,
-          }
-        : null,
+    drawnCover: drawnCoverFrom(cover),
     writer: {
       displayName: row.writer.display_name,
       handle: row.writer.handle,
@@ -149,6 +162,7 @@ export async function fetchStoryPage(
     lastChapterPublishedAt: row.last_chapter_published_at,
     isOwner: row.is_owner,
     isPublic: row.is_public,
+    stats: { likes: row.stats?.likes ?? 0, comments: row.stats?.comments ?? 0 },
     chapters: row.chapters.map((chapter) => ({
       code: chapter.code,
       number: chapter.number,

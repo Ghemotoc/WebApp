@@ -7,7 +7,8 @@
     "categoriesLabel": "Browse by category",
     "loadFailed": "We couldn’t load the stories. Check your connection and try again.",
     "empty": "No stories are published yet. Be the first: start writing.",
-    "writeLink": "Start writing"
+    "writeLink": "Start writing",
+    "howRanking": "How ranking works"
   },
   "lists": {
     "following": "New from writers you follow",
@@ -22,7 +23,11 @@
     "tag": "Tagged “{{tag}}”",
     "tagEyebrow": "Tag",
     "writer": "Stories by {{name}}",
-    "writerEyebrow": "Writer"
+    "writerEyebrow": "Writer",
+    "popular": "Popular",
+    "popularEyebrow": "Most read and liked",
+    "rising": "New and rising",
+    "risingEyebrow": "New writers"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} chapter",
@@ -58,6 +63,7 @@
     "unknownList": "There is no such list."
   },
   "sort": {
+    "popular": "Popular",
     "updated": "Recently updated",
     "newest": "Newest",
     "oldest": "Oldest",

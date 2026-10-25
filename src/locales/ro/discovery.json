@@ -7,7 +7,8 @@
     "categoriesLabel": "Răsfoiește pe categorii",
     "loadFailed": "Nu am putut încărca poveștile. Verifică conexiunea și încearcă din nou.",
     "empty": "Încă nu e publicată nicio poveste. Fii primul: începe să scrii.",
-    "writeLink": "Începe să scrii"
+    "writeLink": "Începe să scrii",
+    "howRanking": "Cum facem clasamentul"
   },
   "lists": {
     "following": "Noutăți de la scriitorii pe care îi urmărești",
@@ -22,7 +23,11 @@
     "tag": "Etichetate „{{tag}}”",
     "tagEyebrow": "Etichetă",
     "writer": "Povești de {{name}}",
-    "writerEyebrow": "Scriitor"
+    "writerEyebrow": "Scriitor",
+    "popular": "Populare",
+    "popularEyebrow": "Cele mai citite și apreciate",
+    "rising": "Noi și în ascensiune",
+    "risingEyebrow": "Scriitori noi"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} capitol",
@@ -58,6 +63,7 @@
     "unknownList": "Nu există o astfel de listă."
   },
   "sort": {
+    "popular": "Populare",
     "updated": "Actualizate recent",
     "newest": "Cele mai noi",
     "oldest": "Cele mai vechi",

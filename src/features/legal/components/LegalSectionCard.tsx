@@ -5,11 +5,15 @@
  * title, the eyebrow "In short" with the short bullets, then a dashed box "Full text · draft for
  * lawyer review" holding the full text in a scrollable region of at most 260 px. The region can be
  * focused, so it scrolls with the keyboard too (axe "scrollable-region-focusable").
+ * Each numbered card has the address part #section-<number>, so a link can open one section, for
+ * example Discover's "How ranking works" (/legal/terms#section-5, S1-E5-03; DSA art. 27). The
+ * text arrives after the page, so the card scrolls itself into view when the address names it.
  * Who uses it: LegalDocumentView, once per section. A note without the two parts (the
  * "Proposed additional sections" introduction) is shown as a plain paragraph across the grid.
  */
-import { useId } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
@@ -76,6 +80,22 @@ function LegalFullTextBox({ section, isLawyerReviewed, textLanguage }: LegalSect
 }
 
 /**
+ * Scrolls a section's card into view when the address's #part names it (S1-E5-03).
+ *
+ * @param anchor - the card's id, for example "section-5", or null for an unnumbered section
+ * @returns the ref to put on the card
+ */
+function useScrollWhenNamed(anchor: string | null) {
+  const cardRef = useRef<HTMLElement>(null);
+  const { hash } = useLocation();
+  useEffect(() => {
+    // The browser looks for the id before the text has loaded, so the card does it once it exists.
+    if (anchor !== null && hash === `#${anchor}`) cardRef.current?.scrollIntoView();
+  }, [anchor, hash]);
+  return cardRef;
+}
+
+/**
  * Renders one section.
  *
  * @returns an <article> card, or the note for a section without parts
@@ -87,11 +107,15 @@ export function LegalSectionCard({
 }: LegalSectionCardProps) {
   const { t } = useTranslation('legal');
   const titleId = useId();
+  const anchor = section.number === null ? null : `section-${section.number}`;
+  const cardRef = useScrollWhenNamed(anchor);
   if (section.shortMarkdown === '')
     return <LegalSectionNote section={section} textLanguage={textLanguage} />;
 
   return (
     <article
+      ref={cardRef}
+      id={anchor ?? undefined}
       aria-labelledby={titleId}
       className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >

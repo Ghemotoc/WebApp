@@ -30,7 +30,18 @@
     "scheduledChapter": "Programat",
     "notPublicYet": "Doar tu vezi această poveste până publici un capitol. Așa o vor vedea cititorii.",
     "seeProfile": "Vezi profilul",
-    "copiedWorkNote": "Moderatorii au constatat că unele părți ale acestei povești copiază o operă publicată."
+    "copiedWorkNote": "Moderatorii au constatat că unele părți ale acestei povești copiază o operă publicată.",
+    "statsLabel": "Cifrele poveștii",
+    "likes_one": "{{value}} apreciere",
+    "likes_few": "{{value}} aprecieri",
+    "likes_other": "{{value}} de aprecieri",
+    "comments_one": "{{value}} comentariu",
+    "comments_few": "{{value}} comentarii",
+    "comments_other": "{{value}} de comentarii",
+    "chapterCount_one": "{{count}} capitol",
+    "chapterCount_few": "{{count}} capitole",
+    "chapterCount_other": "{{count}} de capitole",
+    "updated": "Actualizată pe {{date}}"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
