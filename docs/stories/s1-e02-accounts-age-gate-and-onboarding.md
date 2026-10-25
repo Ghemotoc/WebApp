@@ -116,6 +116,9 @@ As a user, I want to sign in, reset my password and see where I'm signed in so t
   - Given five failed attempts in a row (canvas 2.2; the 15-minute window is a proposal), when a sixth is made, then sign-in for that account is paused for 15 minutes (canvas 2.2).
   - Given account settings, when the user opens "Sessions", then they see active devices and can sign out of all of them.
   - Given a password reset, when it completes, then all other sessions are signed out and the user gets an email.
+  - Given Settings › Email address, when any signed-in user (minors included) opens it, then they see their own address (only they ever see it) and can change it at any time (Robert, 25 Oct 2026, 07:04).
+  - Given a new address, when the user presses "Change email", then a 6-digit code goes to the current address and another to the new one, and the panel shows two boxes, "Code from your current address" and "Code from your new address"; the address changes only once both codes are right, so the person proves they can read both inboxes without leaving Settings (Robert, 25 Oct 2026, 09:15; replaces the two emailed links shipped in PEOPLE-3). Supabase Auth makes, checks and expires the codes (`verifyOtp` with type `email_change`, once per address; `double_confirm_changes` on); we never make or store a code ourselves.
+  - Given a wrong or expired code, when it is typed, then the box says so in plain words and offers "Send new codes"; nothing changes until both are right.
 - **Legal and compliance:** GDPR Art 32. CTO note: Supabase Auth doesn't give users a list of their signed-in devices (check before relying on it), so "Sessions" needs our own `user_sessions` table (a device name and a last-seen date, no IP address) written at sign-in; "Sign out of all" uses Supabase's global sign-out.
 
 ##### S1-E2-06 Onboarding
@@ -205,6 +208,31 @@ As an adult who teaches, I want to show that I'm a teacher when I set up my acco
   - An avocat should check the whole teacher check before launch, including whether a school email or a letter is enough for someone who will moderate a class of mostly under-18s.
   - The badge is not a background check. Teachers still follow the adult and minor messaging rules (S1-E9-03): no messages with under-16s, ever.
   - OPEN: how long the email link works, how staff confirm a non-.edu.ro school domain and when a badge is reviewed again.
+
+##### S1-E2-12 Optional birthday greeting
+
+As a user, I want to add my birthday (day and month only) so that the app wishes me a happy birthday.
+
+- **Priority:** Could · **Size:** S · **Depends on:** S1-E2-05, S1-E11-02, S1-E14-01
+- **Added:** 25 Oct 2026, 07:08 to 07:11 (Robert, chat). Built when the builder resumes on 29 Oct 2026, before SAFE-3.
+- **Data:** `profiles.birthday_month` (1 to 12) and `profiles.birthday_day` (1 to 31, only with a month), both optional and never stored with a year. Readable only by the owner (not in any public view); staff see them only when correcting them.
+- **Acceptance criteria:**
+  - Given Settings, when a user adds only a month, then all that month the signed-in greeting says "Happy birthday month, <name>".
+  - Given a day and a month, when it is that month, then the greeting says "Happy birthday month" all month and "Happy birthday, <name>" on the day (Romanian date).
+  - Given the user saved a wrong birthday, when they ask support, then staff correct it with an `admin_*` function that writes the audit log; the user can also clear it themselves.
+  - Given the year of birth set at sign-up (S1-E2-02), when anyone (staff included) tries to change it, then it is refused: someone who entered it wrongly deletes the account, waits for the deletion to finish and signs up again (Robert, 25 Oct 2026, 07:10 to 07:11).
+- **Legal and compliance:** CLAUDE.md rule 5 bans full dates of birth; a day and month without the year is not one, but the privacy notice needs a line for it (optional, used only for the greeting) and it goes on the lawyer's list.
+
+##### S1-E2-13 Joining anniversary greeting
+
+As a user, I want the app to mark the month I joined so that coming back feels personal.
+
+- **Priority:** Could · **Size:** S · **Depends on:** S1-E2-01
+- **Added:** 25 Oct 2026, 07:07 (Robert, chat). Built when the builder resumes on 29 Oct 2026, with S1-E2-12 (they share the greeting line).
+- **Acceptance criteria:**
+  - Given a signed-in user in the month they joined (from `profiles.created_at`, Romanian date), from the first anniversary on, when they open the app, then the greeting line says "Happy {{productName}} anniversary, <name>".
+  - Given a birthday greeting on the same day, when both apply, then the birthday wins (proposal).
+  - Given there is no greeting line yet, when this story lands, then it adds a small greeting line at the top of Discover for signed-in users; its wording is interface text that admins can edit (S1-E11-18).
 
 ##### S1-E2-QA Epic check: Accounts, age gate and onboarding
 
