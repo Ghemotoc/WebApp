@@ -948,6 +948,36 @@ What the notifications epic left in place for March. The epic report is `docs/ep
 
 **One main journey:** adult_writer presses Publish → `publish_chapter()` queues `chapter_published` → within a minute `run_notification_jobs()` gives each follower of the writer or the story one row → teacher's bell asks `my_unread_notification_count()` and shows 1 → the page lists "Lia Scrie published Chapter 2 of …" through `my_notifications()`, which leaves out anything teacher may not open → "Read now" opens the chapter and marks the row read.
 
+## Epic S1-E5 at a glance (checked by S1-E5-QA, part one)
+
+What the discovery epic has in place so far. S1-E5-08, the public home page, comes in CMS-1 with the rest of the check. The epic report is `docs/epic-reports/S1-E5.md`.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | `/discover` (`DiscoverPage`), the See all, category, tag and writer list pages (`StoryListPage`) in `src/features/discovery/`; the writer profile `/u/:handle` in `src/features/people/`; the stats row on the story page (`StoryStats`) | 5-01, 5-09, 5-02, 5-03, 5-05 |
+| Tables | `story_scores` (staff may read it); `blocks` (S1-E5-05); the lists add no table of their own | 5-03, 5-05 |
+| Functions | `browse_stories()` with `listed_stories()`, `list_holds_story()`, `list_default_sort()`; `compute_story_scores()` and `story_signals()`; `get_writer_profile()`, `set_block()`; `get_story_page()`'s `stats` | 5-01, 5-02, 5-03, 5-05 |
+| Settings | `discover_shelves` and `rising_writer_days` (public), `ranking_weight_*`, `ranking_half_life_days`, `ranking_window_days` | 5-03 |
+| Jobs | `compute-story-scores`, 13 minutes past every hour | 5-03 |
+| Tests | `151`, `152`, `155` and `098` (the epic); `e2e/discover.spec.ts`, `e2e/ranking.spec.ts`, `e2e/writer-profile.spec.ts`, `e2e/epic-s1-e5.spec.ts` | 5-01 to 5-09, S1-E5-QA |
+
+**One main journey:** teacher likes a chapter in the reader (`like_chapter()`) → on the hour `compute_story_scores()` adds the like, halved for every 7 days of age, to the story's score → a visitor opens `/discover/c/fiction` → `StoryListPage` asks `browse_stories('category', 'fiction')` with no sort → `list_default_sort()` says popular → the story comes first, as long as `rating_allows()`, the blocks and the moderation checks let this reader see it.
+
+## Epic S1-E15 at a glance (checked by S1-E15-QA)
+
+What the March numbers epic left in place for March. The epic report is `docs/epic-reports/S1-E15.md`.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | `/staff/metrics` (`MarchNumbersPage`, `MarchTargetCard`, `MarchNumberLists`) in `src/features/staff/components/metrics/` | 15-02 |
+| Tables | `daily_metrics` (owner and admins read it); fed by `chapter_reads` (S1-E4-01a) | 15-02 |
+| Functions | `compute_daily_metrics()`, `run_daily_metrics()`, `writers_published_by_market()`, `signed_up_reader_count()`, `return_rate_on()`, `admin_march_numbers()` | 15-02 |
+| Settings | `march_target_writers`, `march_target_readers`, `march_target_return_rate`, `daily_metrics_keep_years` | 15-02 |
+| Jobs | `count-daily-metrics`, 04:07 UTC every day | 15-02 |
+| Tests | `156` and `099` (the epic); `lib/marchNumbers.test.ts`; `e2e/staff-metrics.spec.ts`, `e2e/epic-s1-e15.spec.ts` | 15-02, S1-E15-QA |
+
+**One main journey:** teen_17 opens a chapter → `record_chapter_read()` adds one to the day's total in `chapter_reads`, keeping nothing about teen_17 → at 04:07 UTC `run_daily_metrics()` stores yesterday's totals in `daily_metrics` → the owner opens `/staff/metrics` → `useMarchNumbers` calls `admin_march_numbers()`, which checks `may_see_march_numbers()` and answers totals only.
+
 ## Epic S1-E10 at a glance (checked by S1-E10-QA)
 
 What the Safety epic has in place so far. The epic report, `docs/epic-reports/S1-E10.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
