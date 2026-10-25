@@ -871,7 +871,7 @@ public.stories, story_tags, chapters   read by Discover, the story page and the 
 
 - The rules the writers follow are in `content/demo-stories/README.md`; the five stories Robert reads whole are marked `sample: yes`.
 - Tests: `scripts/build-demo-content.test.ts` (the parser, every rule, the SQL shape, and that the committed SQL matches the files).
-- Likes, comments and follows between the writers come with part 2b, after S1-E6.
+- Part 2b, `supabase/staging-topups/demo-content-2b.sql` (TOOL-3), is hand-written and runs after 2a: follows, chapter likes, comments with some writer replies, emoji reactions and 30 days of read totals, made only by the active adult test accounts and never across a block. Every choice comes from an md5 of the story, chapter and person (`pg_temp.demo_number()`), so a second run makes the same choices and adds nothing. Each story gets a fixed popularity from its slug, so shelves and the ranking differ. Tests: `scripts/demo-content-2b.test.ts` (the file's shape) and `npm run demo:check-2b` (runs 2a and then 2b twice on the local database and checks the rules).
 
 ## Epic S1-E4 at a glance (checked by S1-E4-QA)
 
