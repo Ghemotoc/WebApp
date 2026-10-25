@@ -710,7 +710,7 @@ Blocks: `blocks` (the blocker's own rows only) and `is_blocked_with()`, which re
 
 Tests: `143-writer-profile-and-blocks.test.sql`, `144-follows.test.sql`, `lib/formatting.test.ts`, `e2e/writer-profile.spec.ts`, `e2e/follows.spec.ts`.
 
-## Likes, comments and reactions on a chapter (S1-E6-03, S1-E6-01, S1-E6-02)
+## Likes, comments, reactions and downvotes on a chapter (S1-E6-03, S1-E6-01, S1-E6-02, S1-E6-04)
 
 Under the chapter text, on `/s/<story>/<chapter>`:
 
@@ -748,7 +748,39 @@ CommentReactions → useReactToComment → api/reactions.ts → react_to_comment
 
 Deleted comments go for good after 30 days (`purge_deleted_comments()`, nightly); a deleted or removed comment keeps its place as a marker only while replies stand under it.
 
-Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `150-comment-reactions.test.sql`, `lib/timeAgo.test.ts`, `CommentReactions.test.tsx`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`.
+Private downvotes (S1-E6-04) sit in the same row, on other people's live comments:
+
+```
+DownvoteButton → useDownvoteComment → api/downvotes.ts → downvote_comment(comment_id, should_downvote)
+  │  readable comment, never one's own; adding one: the account gate; under 24 hours old: kept, not counted
+  │  comment_downvotes (the voter and moderation staff read it; nobody gets a count)
+  ▼  open_downvote_case(): at downvote_case_threshold counted accounts, a 'downvotes' case at seven_days
+```
+
+Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `150-comment-reactions.test.sql`, `153-comment-downvotes.test.sql`, `lib/timeAgo.test.ts`, `CommentReactions.test.tsx`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`, `e2e/comment-downvotes.spec.ts`.
+
+## Notifications (S1-E7-01)
+
+The bell in the top bar (`NotificationBell`, while signed in) shows the unread count and opens `/notifications`:
+
+```
+chapter_publish_now() ─┐ queues chapter_published        follows_users ─ trigger follows_users_notify
+post_comment() ────────┘ queues comment_posted            comment_reactions ─ trigger comment_reactions_notify
+          │                                               cases (status → decided) ─ trigger cases_notify_decided
+          ▼  run_notification_jobs(), every minute (pg_cron)         │
+             notify_chapter_published() · notify_comment_posted()   │
+                              └──────────────┬──────────────────────┘
+                                             ▼  notify(): never one's own action, never across a block;
+                                                grouped rows (reactions an hour, followers a day) count people
+                                             notifications (the person told reads only their own rows)
+NotificationsPage → hooks/useNotifications → api/notifications.ts → my_notifications()
+NotificationBell → hooks/useUnreadNotificationCount (every 60 s and on focus) → my_unread_notification_count()
+"Mark all as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
+```
+
+Reading applies the reader's rules again (`notification_is_shown()`): a chapter they can no longer open (rating, block, moderation) or someone either side now blocks is left out, so the badge and the list always agree. A moderation decision is always shown and `is_required` (DSA art. 17). Answers carry usernames and display names, never a user ID. The words for each kind are picked in `lib/notificationText.ts`; the day headings in `lib/dayGroups.ts` (Romanian time).
+
+Tests: `154-notifications.test.sql`, `lib/notificationText.test.ts`, `lib/dayGroups.test.ts`, `e2e/notifications.spec.ts`.
 
 ## Discover and the story lists (S1-E5-01, S1-E5-09, S1-E5-02)
 
@@ -856,6 +888,34 @@ What the reading epic left in place. The epic report, `docs/epic-reports/S1-E4.m
 | Tests | `supabase/tests/database/140` to `142` and `093` (the epic), `server/link-preview.test.ts`, `e2e/epic-s1-e4.spec.ts` and each story's spec (`chapter-reader`, `reader-performance`, `copy-protection`, `teaser`) | each story, S1-E4-QA |
 
 **One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 600 words → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
+
+## Epic S1-E6 at a glance (checked by S1-E6-QA)
+
+What the comments, reactions and follows epic left in place. The epic report, `docs/epic-reports/S1-E6.md`, lists what works, the known gaps and the stubs still on.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | the like button and the comments under the chapter (`src/features/reading/components/LikeButton.tsx`, `src/features/comments/`), Follow on the writer's profile and the story page (`src/features/people/components/FollowButton.tsx`) | 6-03, 6-01, 6-02, 6-04, 6-05 |
+| Tables | `chapter_likes`, `comments`, `comment_reactions`, `comment_downvotes`, `follows_users`, `follows_stories` | each story |
+| Functions | `like_chapter()`, `chapter_comments()`, `post_comment()`, `delete_comment()`, `react_to_comment()`, `downvote_comment()` (with `open_downvote_case()`), `follow_writer()`, `follow_story()`; every one asks `readable_chapter()` or the profile's rules first | each story |
+| Jobs | `purge-deleted-comments` nightly; `post_comment()` queues `comment_posted` for notifications | 6-01 |
+| Tests | `148`, `149`, `150`, `153`, `144` and `096` (the epic); `e2e/epic-s1-e6.spec.ts` and each story's spec | each story, S1-E6-QA |
+
+**One main journey through the whole epic:** teacher opens `/s/<story>/<chapter>` → `ChapterComments` loads `CommentsSection` after the text → "Post comment" calls `post_comment()`, which asks `readable_chapter()` (rating, blocks, moderation) and `is_active_member()` before saving → the list reads again through `chapter_comments()`, each comment shaped by `comment_json()` with its reactions and `downvoted_by_me` → a heart goes through `react_to_comment()`, a downvote through `downvote_comment()`, which may open a `D-` case in the moderation queue. `e2e/epic-s1-e6.spec.ts` walks it in the browser and `096-epic-s1-e6.test.sql` in the database.
+
+## Epic S1-E7 at a glance (checked by S1-E7-QA)
+
+What the notifications epic left in place for March. The epic report is `docs/epic-reports/S1-E7.md`.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | the bell in the top bar (`NotificationBell`) and `/notifications` (`NotificationsPage`), in `src/features/notifications/` | 7-01 |
+| Tables | `notifications` (the person told reads their own) | 7-01 |
+| Functions | `notify()`, `run_notification_jobs()`, the triggers on `follows_users`, `comment_reactions` and `cases`; `my_notifications()`, `my_unread_notification_count()`, `mark_notifications_read()`; `notification_is_shown()` applies the reader's rules when they look | 7-01 |
+| Jobs | `run-notification-jobs` every minute, `purge-old-notifications` nightly | 7-01 |
+| Tests | `154` and `097` (the epic); `e2e/notifications.spec.ts`, `e2e/epic-s1-e7.spec.ts` | 7-01, S1-E7-QA |
+
+**One main journey:** adult_writer presses Publish → `publish_chapter()` queues `chapter_published` → within a minute `run_notification_jobs()` gives each follower of the writer or the story one row → teacher's bell asks `my_unread_notification_count()` and shows 1 → the page lists "Lia Scrie published Chapter 2 of …" through `my_notifications()`, which leaves out anything teacher may not open → "Read now" opens the chapter and marks the row read.
 
 ## Epic S1-E10 at a glance (checked by S1-E10-QA)
 

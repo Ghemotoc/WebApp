@@ -50,7 +50,8 @@
   "sources": {
     "report": "Report",
     "authority_order": "Removal order",
-    "picture_check": "Picture check"
+    "picture_check": "Picture check",
+    "downvotes": "Private downvotes"
   },
   "statuses": {
     "open": "Open",
@@ -63,7 +64,8 @@
     "safeguarding": "Safeguarding",
     "authorityOrder": "Authority order",
     "pictureHeld": "Picture held",
-    "reports": "Reports: {{count}}"
+    "reports": "Reports: {{count}}",
+    "downvotes": "Downvoted by several accounts"
   },
   "deadline": {
     "hoursLeft": "{{hours}} h {{minutes}} min left",

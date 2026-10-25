@@ -29,7 +29,11 @@
     "logOutFailed": "Nu te-am putut deconecta. Verifică-ți conexiunea și încearcă din nou.",
     "contact": "Contact",
     "contactUs": "Contactează-ne",
-    "reportContent": "Raportează conținut"
+    "reportContent": "Raportează conținut",
+    "notifications": "Notificări",
+    "notificationsUnread_one": "Notificări, {{count}} nouă",
+    "notificationsUnread_few": "Notificări, {{count}} noi",
+    "notificationsUnread_other": "Notificări, {{count}} de noi"
   },
   "theme": {
     "label": "Temă",

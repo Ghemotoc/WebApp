@@ -1,6 +1,7 @@
 /**
  * Comments on a chapter: reading a page, posting, replying and deleting (story S1-E6-01).
- * Each comment also carries its reactions (S1-E6-02, api/reactions.ts).
+ * Each comment also carries its reactions (S1-E6-02, api/reactions.ts) and whether the reader
+ * downvoted it (S1-E6-04, api/downvotes.ts).
  *
  * Who calls it: hooks/useChapterComments.ts and hooks/useCommentActions.ts.
  * What it calls next: chapter_comments(), post_comment() and delete_comment()
@@ -32,6 +33,8 @@ export interface ChapterComment {
   canDelete: boolean;
   /** The reaction counts and the reader's own (S1-E6-02); empty on a marker. */
   reactions: CommentReactions;
+  /** Whether the reader downvoted it (S1-E6-04). Only their own vote: nobody gets a count. */
+  isDownvotedByMe: boolean;
   /** Replies, oldest first; always empty on a reply (one level deep). */
   replies: ChapterComment[];
 }
@@ -71,6 +74,7 @@ interface CommentRow {
   body: string | null;
   can_delete: boolean;
   reactions?: ReactionsRow;
+  downvoted_by_me?: boolean;
   replies?: CommentRow[];
 }
 
@@ -100,6 +104,7 @@ export function commentFrom(row: CommentRow): ChapterComment {
     body: row.body,
     canDelete: row.can_delete,
     reactions: row.reactions ?? { counts: {}, mine: null },
+    isDownvotedByMe: row.downvoted_by_me ?? false,
     replies: (row.replies ?? []).map(commentFrom),
   };
 }

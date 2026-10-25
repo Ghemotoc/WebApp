@@ -16,6 +16,7 @@
  * MaintenanceGate swaps the notices and the page for the maintenance page while maintenance mode is
  * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
  * for error reports, as a pattern such as "/join/:code", never the address itself.
+ * Notifications (S1-E7-01): the bell with the unread count sits before "Write" while signed in.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
@@ -28,6 +29,7 @@ import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePatte
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
 import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice';
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
+import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
 import { WriteLink } from '@/features/writing/components/WriteLink';
 
@@ -58,6 +60,8 @@ export function AppLayout() {
         endSlot={
           <>
             <LanguageSelect id="language-select-top" />
+            {/* The bell with the unread count, while signed in (S1-E7-01). */}
+            <NotificationBell />
             {/* "Write", while signed in (S1-E3-01). */}
             <WriteLink />
             {/* "Join for free" while signed out (S1-E2-01). */}

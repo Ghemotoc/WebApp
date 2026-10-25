@@ -68,5 +68,13 @@
       "read_only": "Your account can’t react yet.",
       "other": "We couldn’t save your reaction. Check your connection and try again."
     }
+  },
+  "downvote": {
+    "label": "Downvote",
+    "sent": "Downvote sent. It’s private: nobody sees a count, not even the writer. Only moderators look at it.",
+    "failures": {
+      "read_only": "Your account can’t downvote yet.",
+      "other": "We couldn’t save your downvote. Check your connection and try again."
+    }
   }
 }

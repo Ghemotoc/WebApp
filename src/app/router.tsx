@@ -294,6 +294,16 @@ function pageRoutes(): RouteObject[] {
         return { Component: SettingsPage };
       },
     },
+    // Notifications (S1-E7-01): loaded when opened; the bell in the top bar links here.
+    {
+      path: '/notifications',
+      HydrateFallback: () => null,
+      lazy: async () => {
+        const { NotificationsPage } =
+          await import('@/features/notifications/components/NotificationsPage');
+        return { Component: NotificationsPage };
+      },
+    },
     // Lane A: writing and reading (S1-E3, S1-E4).
     ...writeRoutes,
     // Contact us: the form for users and visitors (S1-E14-04; Lane C), loaded when opened.

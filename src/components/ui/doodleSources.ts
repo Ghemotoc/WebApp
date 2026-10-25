@@ -23,6 +23,7 @@ import pencilCup from '@/assets/doodles/pencil-cup.svg';
 import rainCloud from '@/assets/doodles/rain-cloud.svg';
 import rainbow from '@/assets/doodles/rainbow.svg';
 import rocket from '@/assets/doodles/rocket.svg';
+import sleepingCat from '@/assets/doodles/sleeping-cat.svg';
 import toteBagOfBooks from '@/assets/doodles/tote-bag-of-books.svg';
 import typewriter from '@/assets/doodles/typewriter.svg';
 
@@ -46,6 +47,7 @@ export const doodleSources = {
   'rain-cloud': rainCloud,
   rainbow,
   rocket,
+  'sleeping-cat': sleepingCat,
   'tote-bag-of-books': toteBagOfBooks,
   typewriter,
 } as const;

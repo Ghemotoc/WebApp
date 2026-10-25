@@ -50,7 +50,8 @@
   "sources": {
     "report": "Raportare",
     "authority_order": "Ordin de eliminare",
-    "picture_check": "Verificare de imagine"
+    "picture_check": "Verificare de imagine",
+    "downvotes": "Voturi negative private"
   },
   "statuses": {
     "open": "Deschis",
@@ -63,7 +64,8 @@
     "safeguarding": "Protecția copilului",
     "authorityOrder": "Ordin al unei autorități",
     "pictureHeld": "Imagine reținută",
-    "reports": "Raportări: {{count}}"
+    "reports": "Raportări: {{count}}",
+    "downvotes": "Vot negativ de la mai multe conturi"
   },
   "deadline": {
     "hoursLeft": "{{hours}} h {{minutes}} min rămase",

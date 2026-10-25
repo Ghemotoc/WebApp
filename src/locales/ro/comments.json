@@ -68,5 +68,13 @@
       "read_only": "Contul tău nu poate reacționa încă.",
       "other": "Nu am putut salva reacția. Verifică conexiunea și încearcă din nou."
     }
+  },
+  "downvote": {
+    "label": "Vot negativ",
+    "sent": "Vot negativ trimis. E privat: nimeni nu vede un număr, nici măcar scriitorul. Doar moderatorii se uită la el.",
+    "failures": {
+      "read_only": "Contul tău nu poate da încă vot negativ.",
+      "other": "Nu am putut salva votul negativ. Verifică conexiunea și încearcă din nou."
+    }
   }
 }
