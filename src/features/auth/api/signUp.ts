@@ -6,7 +6,8 @@
  * instead" uses signInWithOtp(), which makes the account on first use. Both send the same sign-up
  * data, which the sign-up trigger (…_s1_e2_01_sign_up_trigger.sql, updated by …_s1_e2_02_birth_checks.sql)
  * checks before the account exists: the invite, the year (and month) of birth, the accepted legal
- * versions, the language and the signed country (S1-E2-10).
+ * versions, the language, the signed country (S1-E2-10) and the username (S1-E2-04, chosen on the
+ * form since 25 Oct 2026).
  * Either way Supabase emails a link (supabase/templates/), and the account can read but not write
  * until the email is confirmed.
  * Privacy: nothing here is logged (CLAUDE.md rule 12); errors carry Supabase's error code only.
@@ -79,6 +80,8 @@ export async function signUp(
     accepted_terms_version_id: context.termsVersionId,
     accepted_privacy_version_id: context.privacyVersionId,
     locale: context.locale,
+    // The username from the form; the trigger checks it with check_handle() (S1-E2-04).
+    handle: answers.handle,
     // The country, signed by our Pages Function; the trigger checks it (S1-E2-10).
     signup_context: context.signupToken,
   };

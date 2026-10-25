@@ -180,19 +180,22 @@ The contact and company details page (S1-E14-02) is a fourth legal document, `co
 SignUpForm → useSignUpForm                        src/features/auth/hooks/useSignUpForm.ts
   │  0. src/lib/age.ts: the month only when the year needs it; under 13 (or under 18 in March)
   │     refused on the spot, answers cleared, nothing sent (S1-E2-02; the database repeats it)
-  │  1. src/schemas/signUp.ts (zod): email, 10+ characters, both passwords the same, year, terms box
+  │  1. src/schemas/signUp.ts (zod): email, username, 10+ characters, both passwords the same,
+  │     year, terms box. HandleField checks the username as it is typed (check_handle(), open to
+  │     visitors since 25 Oct 2026, S1-E2-04) and again just before sending
   │  2. lib/passwordLeak.ts → POST /api/password-check (5 characters of a hash, ADR 0003)
   │  3. api/signUp.ts → supabase.auth.signUp (or signInWithOtp for "Email me a log-in link")
   ▼
 auth.users insert → trigger handle_new_auth_user()   …_s1_e2_01_sign_up_trigger.sql (ADR 0002)
-  │  profiles row (id = user ID) → use_platform_invite() → consents for terms and privacy
+  │  sign_up_handle() checks the username again (taken, look-alike, reserved: whole sign-up refused)
+  │  profiles row (id = user ID, handle) → use_platform_invite() → consents for terms and privacy
   │  any refusal: the whole insert is undone, nothing kept
   ▼
 Supabase emails supabase/templates/confirmation.html (Mailpit locally)
   ▼
-/auth/confirm?token_hash=…  → ConfirmEmailPage → verifyOtp → signed in; account_state() is handle_missing
+/auth/confirm?token_hash=…  → ConfirmEmailPage → verifyOtp → signed in; account_state() is active
   ▼  "Continue"
-/setup → choosing a username (next section) → account_state() is active
+/ (home). /setup stays for an account made before 25 Oct 2026 without a username (next section)
 ```
 
 ## The country from the connection (S1-E2-10)
@@ -234,6 +237,23 @@ the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesS
 /reset-password?token_hash=… → verifyOtp(recovery) → NewPasswordForm → updateUser
   → signOut({ scope: 'others' }) → Supabase sends supabase/templates/password_changed.html
 ```
+
+## Seeing and changing one's own email address (S1-E2-05, added 25 Oct 2026)
+
+```
+/settings → EmailSettingsSection → useMyEmail           src/features/account/
+  │  api/emailAddress.ts fetchMyEmail(): supabase.auth.getUser(), the owner's own record only
+  │     (the address lives only in Supabase Auth; profiles and public views never hold it)
+  │  "Change email" → requestEmailChange() → supabase.auth.updateUser({ email })
+  ▼
+Supabase emails supabase/templates/email_change.html to the old AND the new address
+  (double_confirm_changes in supabase/config.toml)
+  ▼
+/auth/confirm?token_hash=…&type=email_change → ConfirmEmailPage → confirmEmailChange()
+  first link: "One more link to open"; second link: "Your email address is changed"
+```
+
+Tests: `e2e/email-change.spec.ts`, `src/features/account/api/emailAddress.test.ts`.
 
 ## When something goes wrong: errors, offline and maintenance (S1-E1-05)
 

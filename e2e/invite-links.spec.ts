@@ -42,6 +42,10 @@ async function openAs(browser: Browser, persona: SignInPersonaName, address: str
 async function signUpWith(page: Page, link: string, email: string) {
   await page.goto(link);
   await page.getByLabel('Email', { exact: true }).fill(email);
+  // A username made from the unique address (S1-E2-04): letters, digits and dots only.
+  await page
+    .getByRole('textbox', { name: 'Username' })
+    .fill(email.replace(/@.*/, '').replace(/[^a-z0-9]+/g, '.'));
   await page.getByLabel('Password', { exact: true }).fill('a long enough passphrase');
   await page.getByLabel('Confirm password').fill('a long enough passphrase');
   await page.getByRole('combobox', { name: 'Year of birth' }).selectOption('1990');

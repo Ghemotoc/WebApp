@@ -1,11 +1,13 @@
 /**
- * Tests for the sign-up screen (story S1-E2-01). The data hooks get fixed answers; Supabase Auth
- * and the sign-up trigger are tested in supabase/tests/database/023 and e2e/sign-up.spec.ts.
+ * Tests for the sign-up screen (story S1-E2-01, with the username from S1-E2-04). The data hooks
+ * get fixed answers; Supabase Auth and the sign-up trigger are tested in
+ * supabase/tests/database/023 and 157 and in e2e/sign-up.spec.ts.
  */
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { checkHandle } from '@/features/account/api/accountNames';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 import { useLegalVersions } from '@/features/legal/hooks/useLegalVersions';
 import { renderWithProviders } from '@/test/renderWithProviders';
@@ -16,6 +18,7 @@ import { checkPasswordLeak } from '../lib/passwordLeak';
 
 import { SignUpPage } from './SignUpPage';
 
+vi.mock('@/features/account/api/accountNames', () => ({ checkHandle: vi.fn() }));
 vi.mock('@/features/flags/hooks/useFeatureFlags', () => ({ useFeatureFlags: vi.fn() }));
 vi.mock('@/features/legal/hooks/useLegalVersions', () => ({ useLegalVersions: vi.fn() }));
 vi.mock('../hooks/useInviteCheck', () => ({ useInviteCheck: vi.fn() }));
@@ -58,6 +61,7 @@ function openSignUp(path: string) {
 /** Fills the whole form correctly. */
 function fillForm() {
   fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'new.writer@example.com' } });
+  fireEvent.change(screen.getByLabelText('Username'), { target: { value: 'new.writer' } });
   fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'a long passphrase' } });
   fireEvent.change(screen.getByLabelText('Confirm password'), {
     target: { value: 'a long passphrase' },
@@ -84,6 +88,7 @@ beforeEach(() => {
       }) as unknown as ReturnType<typeof useLegalVersions>,
   );
   vi.mocked(checkPasswordLeak).mockResolvedValue('not_leaked');
+  vi.mocked(checkHandle).mockResolvedValue('ok');
 });
 
 describe('SignUpPage while the test is invite only', () => {
@@ -108,11 +113,12 @@ describe('SignUpPage while the test is invite only', () => {
     const form = screen.getByRole('form', { name: 'Join with email' });
     expect(form).toBeInTheDocument();
     expect(screen.getByLabelText('Email')).toBeInTheDocument();
+    expect(screen.getByLabelText('Username')).toBeInTheDocument();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
     expect(screen.getByLabelText('Confirm password')).toBeInTheDocument();
     expect(screen.getByLabelText('Year of birth')).toBeInTheDocument();
     expect(screen.getByRole('checkbox')).not.toBeChecked();
-    expect(screen.queryByLabelText(/username|pen name/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/pen name/i)).not.toBeInTheDocument();
   });
 
   it('leaves out the age check step while the test is for adults only', () => {
@@ -174,6 +180,23 @@ describe('the sign-up form', () => {
       marketMinimumAge: 13,
     });
     expect(await screen.findByText(/We sent a link to new.writer@example.com/)).toBeInTheDocument();
+  });
+
+  it('sends the chosen username with the account (S1-E2-04)', async () => {
+    openSignUp('/join/GOOD');
+    fillForm();
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    await waitFor(() => expect(signUp).toHaveBeenCalled());
+    expect(vi.mocked(signUp).mock.calls[0]?.[1]).toMatchObject({ handle: 'new.writer' });
+  });
+
+  it('refuses a username someone already has and sends nothing', async () => {
+    vi.mocked(checkHandle).mockResolvedValue('taken');
+    openSignUp('/join/GOOD');
+    fillForm();
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(await screen.findAllByText(/Someone already has this username/)).not.toHaveLength(0);
+    expect(signUp).not.toHaveBeenCalled();
   });
 
   it('offers an emailed log-in link instead of a password', () => {

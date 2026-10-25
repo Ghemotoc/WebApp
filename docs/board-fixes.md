@@ -107,3 +107,5 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | AdminMetrics (8.7) | Chapter reads drawn as a bar chart | A list of days and totals with a line between rows (S1-E15-02), so every number is real text; a chart can come later |
 | AdminMetrics (8.7) | The page for moderators | Moderators hold the metrics area for queue numbers only (architecture 1.8.3), so the page tells them so and links to the queue |
 | Story (3.4) | The stats row's reads | Likes, comments, chapters and the last update only (S1-E5-03): read totals stay with the writer (S1-E3-07) |
+| SignUp (2.1), Onboarding (2.5) | The username chosen in onboarding, after the email is confirmed | Chosen on the sign-up form with the password, checked as it is typed (Robert, 25 Oct 2026); onboarding's step 1 is then only for older accounts without one, and the pen name moves to Settings |
+| Settings (6.3) | No email address on the Account tab | An Email address panel for every account, minors included: the owner's own address, never public, and a change confirmed by links to both addresses (Robert, 25 Oct 2026) |

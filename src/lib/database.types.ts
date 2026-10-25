@@ -3502,6 +3502,7 @@ export type Database = {
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
       sign_up_birth_month: { Args: { birth_year: number; sign_up_data: Json }; Returns: number };
       sign_up_birth_year: { Args: { sign_up_data: Json }; Returns: number };
+      sign_up_handle: { Args: { sign_up_data: Json }; Returns: string };
       sign_up_market_outcome: {
         Args: { birth_month?: number; birth_year: number; country_code: string };
         Returns: string;

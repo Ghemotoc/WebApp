@@ -2,8 +2,8 @@
 
 The signed-in person's own account: their username and pen name, setup after sign-up, and Settings. Started by S1-E2-04.
 
-- `components/SetupPage.tsx` and `SetupForm.tsx`: `/setup`, "Set up your profile" (board 2.5, step 1): the username (required) and the pen name (optional). Someone who already has a username is sent home.
-- `components/SettingsPage.tsx`: `/settings` (board 6.3): "Signed in as …", `AccountNamesSection` (with `HandleSettingsForm` and `PenNameSettingsForm`), `SignedInDevicesSection` with `DeviceRow` (S1-E2-05, `hooks/useMySessions.ts`) and `LegalLinksSection`. Later stories add the other panels.
+- `components/SetupPage.tsx` and `SetupForm.tsx`: `/setup`, "Set up your profile" (board 2.5, step 1): the username (required) and the pen name (optional). Since 25 Oct 2026 the username is chosen on the sign-up form (`HandleField` there too), so setup is only for older accounts without one; someone who already has a username is sent home.
+- `components/SettingsPage.tsx`: `/settings` (board 6.3): "Signed in as …", `AccountNamesSection` (with `HandleSettingsForm` and `PenNameSettingsForm`), `EmailSettingsSection` (the owner's own email and changing it, S1-E2-05, `hooks/useMyEmail.ts`, `api/emailAddress.ts`), `SignedInDevicesSection` with `DeviceRow` (S1-E2-05, `hooks/useMySessions.ts`) and `LegalLinksSection`. Later stories add the other panels.
 - `components/HandleField.tsx`, `PenNameField.tsx`: the two name fields; `AskForReviewLink.tsx` offers a moderator's review of a false hit.
 - `components/SetupProfileNotice.tsx`: "Choose a username" on every page for a signed-in person without one (the database keeps them read-only, `handle_missing`).
 - `components/SanctionNotice.tsx`, `hooks/useMySanctions.ts` (S1-E10-06): "Your account is suspended until …" or "Your reporting is paused until …" on every page, from `my_sanctions()` (kind and dates only, never the staff note).
