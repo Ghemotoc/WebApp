@@ -27,6 +27,10 @@ async function openForm(page: Page) {
 /** Fills everything but the year. */
 async function fillTheRest(page: Page, address: string) {
   await page.getByLabel('Email', { exact: true }).fill(address);
+  // A username made from the unique address (S1-E2-04): letters, digits and dots only.
+  await page
+    .getByRole('textbox', { name: 'Username' })
+    .fill(address.replace(/@.*/, '').replace(/[^a-z0-9]+/g, '.'));
   await page.getByLabel('Password', { exact: true }).fill('a long and private passphrase');
   await page.getByLabel('Confirm password').fill('a long and private passphrase');
   await page.getByRole('checkbox').check();

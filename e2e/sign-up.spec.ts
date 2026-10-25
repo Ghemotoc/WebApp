@@ -6,7 +6,7 @@
  * - without an invite code, sign-up explains the test is by invitation and stores nothing;
  * - with the seeded invite link, an adult signs up, gets the confirmation email (Mailpit), opens
  *   it and is confirmed; the profile, the consents and the invite place are in the database; then
- *   it chooses a username in setup (S1-E2-04) and becomes active;
+ *   the username chosen on the form (S1-E2-04) is saved with it, so it is active at once;
  * - a 9-character password is refused and a mismatched confirmation is shown before sending;
  * - pasting into the password fields works (WCAG 2.2, 3.3.8);
  * - the sign-up screens pass axe and don't scroll sideways at 390, 768 and 1440 px.
@@ -24,6 +24,11 @@ const workingInvite = 'PERSONAS-TEST-INVITE';
 /** A fresh synthetic address for one test. */
 function newAddress(): string {
   return `sign-up-${Date.now()}@example.com`;
+}
+
+/** The username a test account chooses: made from its unique address. */
+function usernameFor(address: string): string {
+  return address.replace(/@.*/, '').replace('sign-up-', 'new.writer.');
 }
 
 /**
@@ -50,6 +55,7 @@ function removeAccount(address: string) {
  */
 async function fillSignUp(page: Page, address: string, password: string) {
   await page.getByLabel('Email', { exact: true }).fill(address);
+  await page.getByRole('textbox', { name: 'Username' }).fill(usernameFor(address));
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByLabel('Confirm password').fill(password);
   await page.getByRole('combobox', { name: 'Year of birth' }).selectOption('1990');
@@ -118,25 +124,20 @@ test('an invited adult signs up, confirms the email from Mailpit and is confirme
     expect(email.HTML).toContain('Confirm your email address');
     await page.goto(appPathFromEmail(email.HTML));
     await expect(page.getByRole('heading', { name: 'Your email is confirmed' })).toBeVisible();
-    // Confirmed, but still read-only until a username is chosen (S1-E2-04).
-    expect(runSql(`select account_state(id) from auth.users where email = '${address}'`)).toBe(
-      'handle_missing',
-    );
-
-    // "Continue" leads to setup; choosing a username makes the account active.
-    await page.getByRole('link', { name: 'Continue' }).click();
-    await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
-    const handle = `new.writer.${Date.now()}`;
-    // The "Choose a username" notice is labelled with the word too, so ask for the text box by role.
-    const usernameField = page.getByRole('textbox', { name: 'Username' });
-    await usernameField.fill(handle);
-    await expect(usernameField).toHaveValue(handle);
-    await expect(page.getByText(`@${handle} is free.`)).toBeVisible();
-    await page.getByRole('button', { name: 'Save and continue' }).click();
-    await expect(page).toHaveURL(/\/$/);
+    // The username came with the form (S1-E2-04), so the confirmed account is active at once.
+    expect(
+      runSql(
+        `select handle from public.profiles join auth.users using (id) where email = '${address}'`,
+      ),
+    ).toBe(usernameFor(address));
     expect(runSql(`select account_state(id) from auth.users where email = '${address}'`)).toBe(
       'active',
     );
+
+    // "Continue" goes to the home page, with no "Choose a username" notice.
+    await page.getByRole('link', { name: 'Continue' }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole('heading', { name: 'Choose a username' })).toHaveCount(0);
   } finally {
     removeAccount(address);
   }

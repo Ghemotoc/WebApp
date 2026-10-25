@@ -16,7 +16,7 @@ import { fetchPublicSettings, type PublicSettings } from '../api/publicSettings'
 /**
  * Loads the settings.
  *
- * @returns numberOf(settingKey, fallback)
+ * @returns numberOf(settingKey, fallback) and wordsOf(settingKey, fallback)
  */
 export function usePublicSettings() {
   const settings = useQuery<PublicSettings>({
@@ -40,6 +40,18 @@ export function usePublicSettings() {
     numberOf: (settingKey: string, fallback: number) => {
       const value = settings.data?.[settingKey];
       return typeof value === 'number' ? value : fallback;
+    },
+    /**
+     * A setting that is a list of words, for example Discover's shelf order (S1-E5-03).
+     *
+     * @param settingKey - for example 'discover_shelves'
+     * @param fallback - the decided list, used while loading or when it can't be read
+     * @returns the words, leaving out anything that isn't one
+     */
+    wordsOf: (settingKey: string, fallback: readonly string[]): readonly string[] => {
+      const value = settings.data?.[settingKey];
+      if (!Array.isArray(value)) return fallback;
+      return value.filter((item): item is string => typeof item === 'string');
     },
   };
 }

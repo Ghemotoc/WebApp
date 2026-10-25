@@ -100,7 +100,8 @@ select lives_ok($$ select public.set_block('adult_writer', false) $$, 'and unblo
 select is(pg_temp.slugs(public.browse_stories('category', 'poetry')), 'scrisori-din-cutia-postala-seed03',
   'a category lists its stories');
 select is(pg_temp.slugs(public.browse_stories('tag', 'Set in Romania')),
-  'the-girl-who-fixed-radios-seed02,statia-meteo-seed01', 'a tag lists every visible story with it, whatever its case');
+  'statia-meteo-seed01,the-girl-who-fixed-radios-seed02',
+  'a tag lists every visible story with it, whatever its case (popular order: no scores yet, so the newer first)');
 select is(pg_temp.slugs(public.browse_stories('completed')), 'the-girl-who-fixed-radios-seed02',
   'Completed lists only completed stories');
 select is(pg_temp.slugs(public.browse_stories('new')),
@@ -109,7 +110,7 @@ select is(pg_temp.slugs(public.browse_stories('new')),
 select is(pg_temp.slugs(public.browse_stories('updated', null, 'fiction', 'ongoing', 'ro')),
   'statia-meteo-seed01,pe-banca-seed99', 'the category, status and language filters narrow a list');
 select is(pg_temp.slugs(public.browse_stories('writer', '@adult_writer')),
-  'the-girl-who-fixed-radios-seed02,statia-meteo-seed01', 'a writer''s list holds their stories');
+  'statia-meteo-seed01,the-girl-who-fixed-radios-seed02', 'a writer''s list holds their stories');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');  -- teen_17 follows adult_writer
 select is(pg_temp.slugs(public.browse_stories('following')), 'the-girl-who-fixed-radios-seed02,statia-meteo-seed01',
   'Following lists the stories of writers the reader follows');

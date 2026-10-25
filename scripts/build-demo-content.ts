@@ -32,6 +32,10 @@ export const classicsTextsFolder = fileURLToPath(
 export const topUpPath = fileURLToPath(
   new URL('../supabase/staging-topups/demo-content-2a.sql', import.meta.url),
 );
+/** The classics' real authors on their own, for staging after part 2a (S1-E5-06). */
+export const classicAuthorsPath = fileURLToPath(
+  new URL('../supabase/staging-topups/classic-authors.sql', import.meta.url),
+);
 /** The same top-up in parts the SQL Editor accepts (scripts/demo-content-parts.ts). */
 export const topUpPartsFolder = fileURLToPath(
   new URL('../supabase/staging-topups/demo-content-2a', import.meta.url),
@@ -720,6 +724,56 @@ select ${sqlValue(fixedId(story))}::uuid, ${sqlValue(writer.userId)}::uuid, ${sq
   now() - interval '${daysAgo(story)} days', now() - interval '${lastChapterDaysAgo} days', now() - interval '${daysAgo(story) + 2} days'
 where not exists (select 1 from public.stories where stories.id = ${sqlValue(fixedId(story))}::uuid);
 select public.set_story_tags(${sqlValue(fixedId(story))}::uuid, ${sqlValue(writer.userId)}::uuid, array[${tags}]);
+${classicAuthorSql(story)}`;
+}
+
+/**
+ * The SQL that names a classic's real author (S1-E5-06; Robert, 25 Oct 2026: classics show
+ * "the real writers"): adds the author once, then sets the story's classic_author_id. Empty for
+ * a demo story. Safe to run twice: the author is unique by name, and the update only changes a
+ * story whose author is still missing or different.
+ *
+ * @param story - the story
+ * @returns SQL, ending with a newline, or ''
+ */
+export function classicAuthorSql(story: DemoStory): string {
+  if (story.author === undefined) return '';
+  const author = sqlText(story.author);
+  return `insert into public.classic_authors (name, died_year) values (${author}, ${story.authorDied})
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = ${author})
+where stories.id = ${sqlValue(fixedId(story))}::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = ${author});
+`;
+}
+
+/**
+ * The small top-up for a staging database that already has part 2a: only the classics' real
+ * authors (S1-E5-06, 25 Oct 2026), so nothing else has to run again.
+ *
+ * @param classics - the classics
+ * @returns the SQL file's contents
+ */
+export function buildClassicAuthorsSql(classics: DemoStory[]): string {
+  const authorCount = new Set(classics.map((story) => story.author)).size;
+  return `-- Staging top-up: the classics' real authors (part of S1-E5-06; Robert, 25 Oct 2026). GENERATED FILE.
+--
+-- Made by \`npm run demo:build\` from content/classics/texts/*.md; edit those files, not this one.
+-- What it does: adds the ${authorCount} real authors to classic_authors and names each of the ${classics.length}
+-- classics' author, so every byline shows "Ion Creangă" and not the classics account. Needs the
+-- migration 20261028130001_s1_e5_06_classic_authors.sql and part 2a. Adds no accounts.
+-- Rules (supabase/staging-topups/README.md): safe to run twice; never production (step 1).
+-- How to check it worked: the last query shows classics_with_author ${classics.length}, authors ${authorCount}.
+begin;
+
+${guardSql}
+${classics.map(classicAuthorSql).join('')}commit;
+
+select json_build_object(
+  'classics_with_author', (select count(*) from public.stories where slug like '%-classic' and classic_author_id is not null),
+  'authors', (select count(*) from public.classic_authors)
+)::text as after_classic_authors;
 `;
 }
 
@@ -879,6 +933,8 @@ function main(): void {
     return;
   }
   writeFileSync(topUpPath, buildTopUpSql(demo.stories, classics.stories));
+  // Only the classics' authors, for a staging database that already ran part 2a (S1-E5-06).
+  writeFileSync(classicAuthorsPath, buildClassicAuthorsSql(classics.stories));
   // The same top-up in parts under 500 KB, for the SQL Editor (CTO, 24 Oct 2026).
   const parts = splitIntoParts(topUpPieces(demo.stories, classics.stories));
   writeParts(topUpPartsFolder, parts);

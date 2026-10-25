@@ -180,19 +180,22 @@ The contact and company details page (S1-E14-02) is a fourth legal document, `co
 SignUpForm → useSignUpForm                        src/features/auth/hooks/useSignUpForm.ts
   │  0. src/lib/age.ts: the month only when the year needs it; under 13 (or under 18 in March)
   │     refused on the spot, answers cleared, nothing sent (S1-E2-02; the database repeats it)
-  │  1. src/schemas/signUp.ts (zod): email, 10+ characters, both passwords the same, year, terms box
+  │  1. src/schemas/signUp.ts (zod): email, username, 10+ characters, both passwords the same,
+  │     year, terms box. HandleField checks the username as it is typed (check_handle(), open to
+  │     visitors since 25 Oct 2026, S1-E2-04) and again just before sending
   │  2. lib/passwordLeak.ts → POST /api/password-check (5 characters of a hash, ADR 0003)
   │  3. api/signUp.ts → supabase.auth.signUp (or signInWithOtp for "Email me a log-in link")
   ▼
 auth.users insert → trigger handle_new_auth_user()   …_s1_e2_01_sign_up_trigger.sql (ADR 0002)
-  │  profiles row (id = user ID) → use_platform_invite() → consents for terms and privacy
+  │  sign_up_handle() checks the username again (taken, look-alike, reserved: whole sign-up refused)
+  │  profiles row (id = user ID, handle) → use_platform_invite() → consents for terms and privacy
   │  any refusal: the whole insert is undone, nothing kept
   ▼
 Supabase emails supabase/templates/confirmation.html (Mailpit locally)
   ▼
-/auth/confirm?token_hash=…  → ConfirmEmailPage → verifyOtp → signed in; account_state() is handle_missing
+/auth/confirm?token_hash=…  → ConfirmEmailPage → verifyOtp → signed in; account_state() is active
   ▼  "Continue"
-/setup → choosing a username (next section) → account_state() is active
+/ (home). /setup stays for an account made before 25 Oct 2026 without a username (next section)
 ```
 
 ## The country from the connection (S1-E2-10)
@@ -234,6 +237,23 @@ the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesS
 /reset-password?token_hash=… → verifyOtp(recovery) → NewPasswordForm → updateUser
   → signOut({ scope: 'others' }) → Supabase sends supabase/templates/password_changed.html
 ```
+
+## Seeing and changing one's own email address (S1-E2-05, added 25 Oct 2026)
+
+```
+/settings → EmailSettingsSection → useMyEmail           src/features/account/
+  │  api/emailAddress.ts fetchMyEmail(): supabase.auth.getUser(), the owner's own record only
+  │     (the address lives only in Supabase Auth; profiles and public views never hold it)
+  │  "Change email" → requestEmailChange() → supabase.auth.updateUser({ email })
+  ▼
+Supabase emails supabase/templates/email_change.html to the old AND the new address
+  (double_confirm_changes in supabase/config.toml)
+  ▼
+/auth/confirm?token_hash=…&type=email_change → ConfirmEmailPage → confirmEmailChange()
+  first link: "One more link to open"; second link: "Your email address is changed"
+```
+
+Tests: `e2e/email-change.spec.ts`, `src/features/account/api/emailAddress.test.ts`.
 
 ## When something goes wrong: errors, offline and maintenance (S1-E1-05)
 
@@ -789,7 +809,7 @@ Tests: `154-notifications.test.sql`, `lib/notificationText.test.ts`, `lib/dayGro
 ```
 DiscoverPage
   │  CategoryLinks (links to /discover/c/<slug>, the categories table)
-  ▼  DiscoverShelf × (following, updated, new, completed, one per category) → useStoryShelf (21 rows)
+  ▼  DiscoverShelf × (the order of the setting discover_shelves) → useStoryShelf (21 rows)
 StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
   │  StoryListHeader (breadcrumb, eyebrow, title, "n stories") · StoryListFilters (chips, language)
   ▼  StoryGrid ("Load more", 24 a page) → useStoryList
@@ -803,6 +823,37 @@ There is no new table: everything is read through the functions. A shelf asks fo
 The six sorts (S1-E5-02) are lines of `browse_stories()`'s order, titles and writer names in the ICU Romanian collation (`"ro-x-icu"`); a picked sort goes into the address and into `sessionStorage` (`lib/sortMemory.ts`) for the next list in this tab.
 
 Tests: `151-browse-stories.test.sql`, `152-story-list-sorts.test.sql`, `lib/listAddresses.test.ts`, `lib/sortMemory.test.ts`, `e2e/discover.spec.ts`.
+
+### Popularity (S1-E5-03)
+
+```
+pg_cron compute-story-scores (every hour) → compute_story_scores()
+  story_signals(): reads (chapter_reads totals), likes and comments (never the writer's own),
+  read-through; each halved every ranking_half_life_days; weights ranking_weight_*; never downvotes
+  ▼  story_scores (one number per story; staff may read it, readers only see the order)
+browse_stories('popular' | 'rising', …, sort_order 'popular') orders by it; list_default_sort()
+get_story_page() → 'stats' {likes, comments} → StoryStats on the story page
+```
+
+Popular is every list's default except New stories (newest), Recently updated and the follows shelf (last chapter). New and rising holds writers whose first story came out within `rising_writer_days`. Discover's shelf order is the public setting `discover_shelves`, read through `usePublicSettings().wordsOf()`. "How ranking works" links to the terms, section 5 (DSA art. 27), which `LegalSectionCard` gives the id `section-5`.
+
+Tests: `155-story-scores.test.sql`, `e2e/ranking.spec.ts`.
+
+## The March test numbers (S1-E15-02)
+
+`/staff/metrics` for the owner and admins (board AdminMetrics, screen 8.7):
+
+```
+pg_cron count-daily-metrics (04:07 UTC) → run_daily_metrics() → compute_daily_metrics(day)
+  writers_published_by_market() · signed_up_reader_count() · return_rate_on() · chapter_reads totals
+  ▼  daily_metrics (one total per day, metric and market; no user ID; 3 years)
+MarchNumbersPage → hooks/useMarchNumbers → api/marchNumbers.ts → admin_march_numbers(days)
+  (owner and admin only: may_see_march_numbers(); the targets are settings march_target_*)
+```
+
+The return rate is an approximation from daily totals (architecture 1.7.9): reads of chapter N+1 in its first 7 days over reads of chapter N before N+1 came out. Nothing can follow one reader.
+
+Tests: `156-daily-metrics.test.sql`, `lib/marchNumbers.test.ts`, `e2e/staff-metrics.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
@@ -871,6 +922,7 @@ public.stories, story_tags, chapters   read by Discover, the story page and the 
 
 - The rules the writers follow are in `content/demo-stories/README.md`; the five stories Robert reads whole are marked `sample: yes`.
 - Tests: `scripts/build-demo-content.test.ts` (the parser, every rule, the SQL shape, and that the committed SQL matches the files).
+- Classics show their real author (S1-E5-06, 25 Oct 2026): the classics stay owned by the classics account, and `stories.classic_author_id` points at `classic_authors` (name, year of death; public, no accounts). `story_writer_name()` puts the author on every byline (`story_card_json()`, `get_story_page()`, `get_chapter()`, `get_link_preview()`), and the story page shows `ClassicAuthorCard` instead of the writer card, with no Follow or profile. The build writes each classic's author into part 2a and on its own into `supabase/staging-topups/classic-authors.sql`, for a staging database that already ran 2a. Staff add classics later with "Add a classic work" (S1-E11-16). Tests: `supabase/tests/database/158-classic-authors.test.sql`, `e2e/classic-authors.spec.ts`.
 - Part 2b, `supabase/staging-topups/demo-content-2b.sql` (TOOL-3), is hand-written and runs after 2a: follows, chapter likes, comments with some writer replies, emoji reactions and 30 days of read totals, made only by the active adult test accounts and never across a block. Every choice comes from an md5 of the story, chapter and person (`pg_temp.demo_number()`), so a second run makes the same choices and adds nothing. Each story gets a fixed popularity from its slug, so shelves and the ranking differ. Tests: `scripts/demo-content-2b.test.ts` (the file's shape) and `npm run demo:check-2b` (runs 2a and then 2b twice on the local database and checks the rules).
 
 ## Epic S1-E4 at a glance (checked by S1-E4-QA)
@@ -916,6 +968,36 @@ What the notifications epic left in place for March. The epic report is `docs/ep
 | Tests | `154` and `097` (the epic); `e2e/notifications.spec.ts`, `e2e/epic-s1-e7.spec.ts` | 7-01, S1-E7-QA |
 
 **One main journey:** adult_writer presses Publish → `publish_chapter()` queues `chapter_published` → within a minute `run_notification_jobs()` gives each follower of the writer or the story one row → teacher's bell asks `my_unread_notification_count()` and shows 1 → the page lists "Lia Scrie published Chapter 2 of …" through `my_notifications()`, which leaves out anything teacher may not open → "Read now" opens the chapter and marks the row read.
+
+## Epic S1-E5 at a glance (checked by S1-E5-QA, part one)
+
+What the discovery epic has in place so far. S1-E5-08, the public home page, comes in CMS-1 with the rest of the check. The epic report is `docs/epic-reports/S1-E5.md`.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | `/discover` (`DiscoverPage`), the See all, category, tag and writer list pages (`StoryListPage`) in `src/features/discovery/`; the writer profile `/u/:handle` in `src/features/people/`; the stats row on the story page (`StoryStats`) | 5-01, 5-09, 5-02, 5-03, 5-05 |
+| Tables | `story_scores` (staff may read it); `blocks` (S1-E5-05); the lists add no table of their own | 5-03, 5-05 |
+| Functions | `browse_stories()` with `listed_stories()`, `list_holds_story()`, `list_default_sort()`; `compute_story_scores()` and `story_signals()`; `get_writer_profile()`, `set_block()`; `get_story_page()`'s `stats` | 5-01, 5-02, 5-03, 5-05 |
+| Settings | `discover_shelves` and `rising_writer_days` (public), `ranking_weight_*`, `ranking_half_life_days`, `ranking_window_days` | 5-03 |
+| Jobs | `compute-story-scores`, 13 minutes past every hour | 5-03 |
+| Tests | `151`, `152`, `155` and `098` (the epic); `e2e/discover.spec.ts`, `e2e/ranking.spec.ts`, `e2e/writer-profile.spec.ts`, `e2e/epic-s1-e5.spec.ts` | 5-01 to 5-09, S1-E5-QA |
+
+**One main journey:** teacher likes a chapter in the reader (`like_chapter()`) → on the hour `compute_story_scores()` adds the like, halved for every 7 days of age, to the story's score → a visitor opens `/discover/c/fiction` → `StoryListPage` asks `browse_stories('category', 'fiction')` with no sort → `list_default_sort()` says popular → the story comes first, as long as `rating_allows()`, the blocks and the moderation checks let this reader see it.
+
+## Epic S1-E15 at a glance (checked by S1-E15-QA)
+
+What the March numbers epic left in place for March. The epic report is `docs/epic-reports/S1-E15.md`.
+
+| Kind | Where | Story |
+| --- | --- | --- |
+| Screens | `/staff/metrics` (`MarchNumbersPage`, `MarchTargetCard`, `MarchNumberLists`) in `src/features/staff/components/metrics/` | 15-02 |
+| Tables | `daily_metrics` (owner and admins read it); fed by `chapter_reads` (S1-E4-01a) | 15-02 |
+| Functions | `compute_daily_metrics()`, `run_daily_metrics()`, `writers_published_by_market()`, `signed_up_reader_count()`, `return_rate_on()`, `admin_march_numbers()` | 15-02 |
+| Settings | `march_target_writers`, `march_target_readers`, `march_target_return_rate`, `daily_metrics_keep_years` | 15-02 |
+| Jobs | `count-daily-metrics`, 04:07 UTC every day | 15-02 |
+| Tests | `156` and `099` (the epic); `lib/marchNumbers.test.ts`; `e2e/staff-metrics.spec.ts`, `e2e/epic-s1-e15.spec.ts` | 15-02, S1-E15-QA |
+
+**One main journey:** teen_17 opens a chapter → `record_chapter_read()` adds one to the day's total in `chapter_reads`, keeping nothing about teen_17 → at 04:07 UTC `run_daily_metrics()` stores yesterday's totals in `daily_metrics` → the owner opens `/staff/metrics` → `useMarchNumbers` calls `admin_march_numbers()`, which checks `may_see_march_numbers()` and answers totals only.
 
 ## Epic S1-E10 at a glance (checked by S1-E10-QA)
 

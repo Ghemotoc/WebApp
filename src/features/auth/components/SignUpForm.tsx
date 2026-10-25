@@ -3,7 +3,9 @@
  *
  * Fields (S1-E2-01 criterion 1): email; a password typed twice, or "Email me a log-in link
  * instead"; year of birth, and the month only when needed (S1-E2-02, BirthFields); and acceptance of the current terms with consent to the privacy notice.
- * The username and pen name come in setup afterwards (S1-E2-04). The Google, Apple and Microsoft
+ * The username sits under the email, with the same live "is it free?" check as setup (Robert,
+ * 25 Oct 2026: chosen with the password, so the account has a name from the start); the pen name
+ * stays optional and comes in setup or Settings (S1-E2-04). The Google, Apple and Microsoft
  * buttons belong to S1-E2-09 and stay hidden while the social_login flag is off.
  * What it calls: useSignUpForm (checks, the leaked-password check, Supabase Auth). Once the link
  * is sent, the parent shows CheckYourEmail instead.
@@ -15,6 +17,8 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
+import { HandleField } from '@/features/account/components/HandleField';
+import type { HandleOutcome } from '@/features/account/lib/nameRules';
 
 import type { SignUpFailure } from '../api/signUp';
 import type { useSignUpForm } from '../hooks/useSignUpForm';
@@ -70,6 +74,15 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
         errorMessage={problemText(problems.email)}
         value={answers.email}
         onChange={(event) => setField('email', event.target.value)}
+      />
+      <HandleField
+        id="sign-up-handle"
+        value={answers.handle}
+        onChange={(value) => setField('handle', value)}
+        currentHandle={null}
+        savedOutcome={(problems.handle as HandleOutcome | undefined) ?? null}
+        waitingDays={0}
+        hint={t('signUp.handleHint')}
       />
       <PasswordFields
         method={answers.method}

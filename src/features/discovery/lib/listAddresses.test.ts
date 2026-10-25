@@ -1,11 +1,12 @@
 /**
- * Tests for the story list addresses (stories S1-E5-01, S1-E5-09): every list and filter has an
- * address that opens the same list again.
+ * Tests for the story list addresses (stories S1-E5-01, S1-E5-09, S1-E5-03): every list and
+ * filter has an address that opens the same list again, and each list knows its own sort.
  */
 import { describe, expect, it } from 'vitest';
 
 import {
   listAddress,
+  listDefaultSort,
   listFromParams,
   plainList,
   requestFromAddress,
@@ -79,9 +80,32 @@ describe('listFromParams', () => {
 });
 
 describe('sortFrom', () => {
-  it('knows the six sorts and nothing else', () => {
+  it('knows the seven sorts and nothing else', () => {
     expect(sortFrom('writer')).toBe('writer');
-    expect(sortFrom('popular')).toBeNull();
+    expect(sortFrom('popular')).toBe('popular');
+    expect(sortFrom('loudest')).toBeNull();
     expect(sortFrom(null)).toBeNull();
+  });
+});
+
+describe('listDefaultSort', () => {
+  it('opens most lists in popular order, like the database (S1-E5-03)', () => {
+    expect(listDefaultSort('category')).toBe('popular');
+    expect(listDefaultSort('tag')).toBe('popular');
+    expect(listDefaultSort('popular')).toBe('popular');
+    expect(listDefaultSort('rising')).toBe('popular');
+  });
+
+  it('keeps New stories newest first and Recently updated by the last chapter', () => {
+    expect(listDefaultSort('new')).toBe('newest');
+    expect(listDefaultSort('updated')).toBe('updated');
+    expect(listDefaultSort('following')).toBe('updated');
+  });
+});
+
+describe('the Popular and New and rising lists', () => {
+  it('have their own See all addresses', () => {
+    expect(listAddress(plainList('popular'))).toBe('/discover/all/popular');
+    expect(listFromParams({ listKind: 'rising' })).toEqual({ kind: 'rising', key: null });
   });
 });

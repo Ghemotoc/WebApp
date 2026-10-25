@@ -64,6 +64,8 @@ test.describe('epic S1-E2 journeys', () => {
       // Sign up with the invite link (S1-E2-01, S1-E2-02, S1-E14-01, S1-E2-10).
       await page.goto(`/join/${workingInvite}`);
       await page.getByLabel('Email', { exact: true }).fill(address);
+      await page.getByRole('textbox', { name: 'Username' }).fill(`epic.${stamp}`);
+      await expect(page.getByText(`@epic.${stamp} is free.`)).toBeVisible();
       await page.getByLabel('Password', { exact: true }).fill(firstPassword);
       await page.getByLabel('Confirm password').fill(firstPassword);
       await page.getByRole('combobox', { name: 'Year of birth' }).selectOption('1990');
@@ -71,22 +73,19 @@ test.describe('epic S1-E2 journeys', () => {
       await page.getByRole('button', { name: 'Create account' }).click();
       await expect(page.getByRole('status').getByText(/We sent a link/)).toBeVisible();
 
-      // Confirm, then choose a username and pen name (S1-E2-04).
+      // Confirm: the username came with the form, so the account is active at once (S1-E2-04).
       await page.goto(appPathFromEmail((await waitForEmail(address)).HTML));
       await page.getByRole('link', { name: 'Continue' }).click();
-      // The "Choose a username" notice is labelled with the word too, so ask for the text box by
-      // role, and only once the setup form is on the page.
-      await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
-      const usernameField = page.getByRole('textbox', { name: 'Username' });
-      await usernameField.fill(`epic.${stamp}`);
-      await expect(usernameField).toHaveValue(`epic.${stamp}`);
-      await expect(page.getByText(`@epic.${stamp} is free.`)).toBeVisible();
-      await page.getByLabel('Pen name (optional)').fill('Epic Writer');
-      await page.getByRole('button', { name: 'Save and continue' }).click();
       await expect(page).toHaveURL(/\/$/);
       expect(runSql(`select account_state(id) from auth.users where email = '${address}'`)).toBe(
         'active',
       );
+      // The pen name is added later, in Settings.
+      await page.goto('/settings');
+      await page.getByLabel('Pen name (optional)').fill('Epic Writer');
+      // The pen name form's Save is the second one on the page, after the username's.
+      await page.getByRole('button', { name: 'Save' }).nth(1).click();
+      await expect(page.getByText('Saved.')).toBeVisible();
 
       // Log out, then back in through the log-in screen (S1-E2-05).
       await page.getByRole('button', { name: 'Your account' }).click();

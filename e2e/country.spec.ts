@@ -39,6 +39,10 @@ async function openSignUpFrom(page: Page, country: string, path = `/join/${worki
 /** Fills the sign-up form. */
 async function fillSignUp(page: Page, address: string, birthYear: string) {
   await page.getByLabel('Email', { exact: true }).fill(address);
+  // A username from the unique address (S1-E2-04): letters, digits and dots only.
+  await page
+    .getByRole('textbox', { name: 'Username' })
+    .fill(address.replace(/@.*/, '').replace(/[^a-z0-9]+/g, '.'));
   await page.getByLabel('Password', { exact: true }).fill('a long and private passphrase');
   await page.getByLabel('Confirm password').fill('a long and private passphrase');
   await page.getByRole('combobox', { name: 'Year of birth' }).selectOption(birthYear);
@@ -86,17 +90,9 @@ test.describe('country from the connection (S1-E2-10)', () => {
         ),
       ).toBe('RO');
 
-      // Confirm, choose a username, then Settings shows the country.
+      // Confirm, then Settings shows the country.
       await page.goto(appPathFromEmail((await waitForEmail(address)).HTML));
       await page.getByRole('link', { name: 'Continue' }).click();
-      // The "Choose a username" notice is labelled with the word too, so ask for the text box by
-      // role, and only once the setup form is on the page.
-      await expect(page.getByRole('heading', { name: 'Set up your profile' })).toBeVisible();
-      const handle = `from.ro.${Date.now()}`;
-      const usernameField = page.getByRole('textbox', { name: 'Username' });
-      await usernameField.fill(handle);
-      await expect(usernameField).toHaveValue(handle);
-      await page.getByRole('button', { name: 'Save and continue' }).click();
       await expect(page).toHaveURL(/\/$/);
       await page.goto('/settings');
       await expect(page.getByText('Romania · From your connection')).toBeVisible();

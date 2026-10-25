@@ -46,6 +46,13 @@ export const authEmails: AuthEmail[] = [
     textGroup: 'recovery',
     linkTemplate: '{{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}&type=recovery',
   },
+  // S1-E2-05: changing the email in Settings sends this to the old and the new address
+  // (double_confirm_changes); the link opens /auth/confirm, which says what is left to do.
+  {
+    fileName: 'email_change.html',
+    textGroup: 'emailChange',
+    linkTemplate: '{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change',
+  },
   // S1-E2-05: "the user gets an email" after a new password; its button starts a reset in case
   // it wasn't them.
   {

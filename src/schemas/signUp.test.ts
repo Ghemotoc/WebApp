@@ -1,5 +1,5 @@
 /**
- * Tests for the sign-up form's rules (story S1-E2-01).
+ * Tests for the sign-up form's rules (story S1-E2-01, with the username from S1-E2-04).
  */
 import { describe, expect, it } from 'vitest';
 
@@ -9,6 +9,7 @@ import { findSignUpProblems } from './signUp';
 const goodAnswers = {
   method: 'password',
   email: 'new.writer@example.com',
+  handle: 'new.writer',
   password: 'a long passphrase',
   confirmPassword: 'a long passphrase',
   birthYear: '1990',
@@ -25,6 +26,10 @@ describe('the sign-up rules', () => {
     expect(
       findSignUpProblems({ ...goodAnswers, password: '123456789', confirmPassword: '123456789' }),
     ).toEqual({ password: 'signUp.errors.passwordTooShort' });
+  });
+
+  it('asks for a username of at least 3 characters (S1-E2-04)', () => {
+    expect(Object.keys(findSignUpProblems({ ...goodAnswers, handle: 'ab' }))).toEqual(['handle']);
   });
 
   it('asks for the same password twice', () => {

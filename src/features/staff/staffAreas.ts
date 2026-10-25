@@ -30,6 +30,8 @@ export const staffAreaPages: StaffAreaPage[] = [
   { area: 'users', href: '/staff/users', labelKey: 'nav.users' },
   // S1-E2-07a built /staff/roles outside the shell; S1-E11-01 moves it in.
   { area: 'roles', href: '/staff/roles', labelKey: 'nav.roles' },
+  // The March test numbers (S1-E15-02), just before the audit log (architecture 1.8.2).
+  { area: 'metrics', href: '/staff/metrics', labelKey: 'nav.metrics' },
   { area: 'audit_log', href: '/staff/audit-log', labelKey: 'nav.auditLog' },
 ];
 

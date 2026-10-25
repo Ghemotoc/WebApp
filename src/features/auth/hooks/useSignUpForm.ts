@@ -21,7 +21,9 @@ import {
   signUpAgeOutcome,
   type SignUpAgeOutcome,
 } from '@/lib/age';
-import { getSupabaseClient } from '@/lib/supabase';
+import { checkHandle } from '@/features/account/api/accountNames';
+import type { HandleOutcome } from '@/features/account/lib/nameRules';
+import { getSupabaseClient, type AppSupabaseClient } from '@/lib/supabase';
 import { findSignUpProblems, type SignUpAnswers, type SignUpProblems } from '@/schemas/signUp';
 
 import { signUp, SignUpError, type SignUpContext, type SignUpFailure } from '../api/signUp';
@@ -34,6 +36,7 @@ export type SignUpDraft = Omit<SignUpAnswers, 'acceptsTerms'> & { acceptsTerms: 
 const emptyDraft: SignUpDraft = {
   method: 'password',
   email: '',
+  handle: '',
   password: '',
   confirmPassword: '',
   birthYear: '',
@@ -84,6 +87,25 @@ function ageOutcomeOf(answers: SignUpDraft, isAdultsOnly: boolean): SignUpAgeOut
 }
 
 /**
+ * Asks check_handle() about the username before sending. If the check can't be reached, the
+ * sign-up goes on: the trigger checks again and refuses a username it doesn't allow.
+ *
+ * @param client - the shared Supabase client
+ * @param handle - the username as typed
+ * @returns 'ok', or the database's reason
+ */
+async function handleOutcomeBeforeSending(
+  client: AppSupabaseClient,
+  handle: string,
+): Promise<HandleOutcome> {
+  try {
+    return await checkHandle(client, handle);
+  } catch {
+    return 'ok';
+  }
+}
+
+/**
  * Sends the answers once they pass every check in the browser.
  *
  * @param draft - the form's answers
@@ -101,9 +123,13 @@ async function sendSignUp(
   if (draft.method === 'password' && (await checkPasswordLeak(draft.password)) === 'leaked') {
     return { password: 'signUp.errors.passwordLeaked' };
   }
-  // Step 3: Supabase Auth and the sign-up trigger.
+  // Step 3: the username's full check (taken, look-alikes, listed words), so a refusal shows
+  // under the field instead of as a failed sign-up.
   const client = await getSupabaseClient();
   if (client === null) throw new SignUpError('unreachable');
+  const handleOutcome = await handleOutcomeBeforeSending(client, draft.handle);
+  if (handleOutcome !== 'ok') return { handle: handleOutcome };
+  // Step 4: Supabase Auth and the sign-up trigger, which checks the username again.
   await signUp(client, draft as SignUpAnswers, context);
   return null;
 }

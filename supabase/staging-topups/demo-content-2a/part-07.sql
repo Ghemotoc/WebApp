@@ -1129,6 +1129,12 @@ Source edition: 1913.$demo$, 'en',
   now() - interval '21 days', now() - interval '21 days', now() - interval '23 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-002000000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-002000000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'poetry', 'fairy tale']);
+insert into public.classic_authors (name, died_year) values ($demo$Christina Rossetti$demo$, 1894)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Christina Rossetti$demo$)
+where stories.id = '00000000-0000-4000-9300-002000000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Christina Rossetti$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)

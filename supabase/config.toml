@@ -272,6 +272,11 @@ content_path = "./supabase/templates/magic_link.html"
 subject = "Resetează parola · Reset your password"
 content_path = "./supabase/templates/recovery.html"
 
+# S1-E2-05: changing the email in Settings; sent to the old and the new address.
+[auth.email.template.email_change]
+subject = "Confirmă schimbarea adresei de email · Confirm the change of email address"
+content_path = "./supabase/templates/email_change.html"
+
 # S1-E2-05: "Given a password reset, when it completes, then ... the user gets an email."
 # Careful: this path is relative to the supabase/ folder, NOT the project root like the
 # [auth.email.template.*] paths above. The CLI's Go config loader (also used by Supabase's GitHub

@@ -38,8 +38,16 @@ export interface StoryPageData {
   commentsEnabled: boolean;
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
-  /** The writer's public name, username and bio (S1-E5-05). */
-  writer: { displayName: string; handle: string; bio: string };
+  /**
+   * The writer's public name, username and bio (S1-E5-05). For a public-domain classic the name
+   * is its real author and classicAuthor says who (S1-E5-06, 25 Oct 2026); null otherwise.
+   */
+  writer: {
+    displayName: string;
+    handle: string;
+    bio: string;
+    classicAuthor: { name: string; diedYear: number } | null;
+  };
   firstPublishedAt: string | null;
   lastChapterPublishedAt: string | null;
   isOwner: boolean;
@@ -47,6 +55,11 @@ export interface StoryPageData {
   isPublic: boolean;
   /** The chapters: the readable ones for readers; every live one for the owner (S1-E3-03). */
   chapters: StoryPageChapter[];
+  /**
+   * The stats row's totals (S1-E5-03): likes on its chapters and live comments. Read totals stay
+   * private to the writer (S1-E3-07), so they aren't here.
+   */
+  stats: { likes: number; comments: number };
   /** The labels (S1-E3-06); a stored story always has a rating and an AI answer. */
   labels: {
     rating: StoryRating;
@@ -76,7 +89,12 @@ interface StoryPageRow {
     background: string | null;
     accent: string | null;
   };
-  writer: { display_name: string; handle: string; bio: string };
+  writer: {
+    display_name: string;
+    handle: string;
+    bio: string;
+    classic_author: { name: string; died_year: number } | null;
+  };
   first_published_at: string | null;
   last_chapter_published_at: string | null;
   is_owner: boolean;
@@ -90,6 +108,8 @@ interface StoryPageRow {
     edited_at: string | null;
     word_count: number | null;
   }[];
+  /** Missing only from an answer older than S1-E5-03. */
+  stats?: { likes: number; comments: number };
   labels: {
     rating: StoryRating;
     is_fan_fiction: boolean;
@@ -98,6 +118,35 @@ interface StoryPageRow {
     content_note: string;
     ai_disclosure: AiDisclosure;
     ai_undisclosed_labelled: boolean;
+  };
+}
+
+/**
+ * A classic's real author in the app's shape (S1-E5-06).
+ *
+ * @param author - the database's classic_author, or null for a writer's own story
+ * @returns { name, diedYear }, or null
+ */
+function classicAuthorFrom(
+  author: { name: string; died_year: number } | null | undefined,
+): { name: string; diedYear: number } | null {
+  if (author === null || author === undefined) return null;
+  return { name: author.name, diedYear: author.died_year };
+}
+
+/**
+ * The writer's drawn cover choice, when the story has one.
+ *
+ * @param cover - the answer's cover part
+ * @returns the design and colours, or null for an automatic or uploaded cover
+ */
+function drawnCoverFrom(cover: StoryPageRow['cover']): StoryPageData['drawnCover'] {
+  if (cover.kind !== 'drawn') return null;
+  if (cover.design === null || cover.background === null || cover.accent === null) return null;
+  return {
+    design: cover.design as CoverDesignKey,
+    background: cover.background as CoverColourKey,
+    accent: cover.accent as CoverColourKey,
   };
 }
 
@@ -129,26 +178,18 @@ export async function fetchStoryPage(
     completionStatus: row.completion_status,
     commentsEnabled: row.comments_enabled,
     coverKind: cover.kind,
-    drawnCover:
-      cover.kind === 'drawn' &&
-      cover.design !== null &&
-      cover.background !== null &&
-      cover.accent !== null
-        ? {
-            design: cover.design as CoverDesignKey,
-            background: cover.background as CoverColourKey,
-            accent: cover.accent as CoverColourKey,
-          }
-        : null,
+    drawnCover: drawnCoverFrom(cover),
     writer: {
       displayName: row.writer.display_name,
       handle: row.writer.handle,
       bio: row.writer.bio,
+      classicAuthor: classicAuthorFrom(row.writer.classic_author),
     },
     firstPublishedAt: row.first_published_at,
     lastChapterPublishedAt: row.last_chapter_published_at,
     isOwner: row.is_owner,
     isPublic: row.is_public,
+    stats: { likes: row.stats?.likes ?? 0, comments: row.stats?.comments ?? 0 },
     chapters: row.chapters.map((chapter) => ({
       code: chapter.code,
       number: chapter.number,

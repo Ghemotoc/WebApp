@@ -17,10 +17,19 @@ import type { StoryRating } from '@/schemas/story';
 
 /** The lists the database knows (browse_stories()'s list_kind). */
 export type ListKind =
-  'updated' | 'new' | 'completed' | 'category' | 'tag' | 'following' | 'writer';
+  | 'updated'
+  | 'new'
+  | 'completed'
+  | 'category'
+  | 'tag'
+  | 'following'
+  | 'writer'
+  | 'popular'
+  | 'rising';
 
-/** The reader's sort choices (S1-E5-02); null keeps the list's own order. */
-export type SortOrder = 'updated' | 'newest' | 'oldest' | 'title_az' | 'title_za' | 'writer';
+/** The reader's sort choices (S1-E5-02; popular from S1-E5-03); null keeps the list's own order. */
+export type SortOrder =
+  'popular' | 'updated' | 'newest' | 'oldest' | 'title_az' | 'title_za' | 'writer';
 
 /** Ongoing or completed: the status filter. */
 export type CompletionStatus = 'ongoing' | 'completed';

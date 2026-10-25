@@ -10,6 +10,7 @@
  * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
  * 1.7.11), which opens the one report dialog for this story. Not shown to the story's owner, who
  * can't report their own story (the database refuses it too).
+ * A public-domain classic shows its real author instead of the writer card (S1-E5-06).
  * Who uses it: StoryPage.
  */
 import type { TFunction } from 'i18next';
@@ -24,6 +25,25 @@ import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { ratingMinimumAge } from '@/schemas/story';
 
 import type { StoryPageData } from '../api/storyPage';
+
+/**
+ * The card for a public-domain classic: the real author and the year they died, with no Follow
+ * and no profile, because the author has no account (S1-E5-06, 25 Oct 2026).
+ *
+ * @returns the card
+ */
+function ClassicAuthorCard({ author }: { author: { name: string; diedYear: number } }) {
+  const { t } = useTranslation('reading');
+  return (
+    <div className="flex flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card">
+      <Eyebrow>{t('storyPage.authorEyebrow')}</Eyebrow>
+      <h2 className="m-0 font-heading text-[22px] font-bold text-heading">{author.name}</h2>
+      <p className="m-0 text-[15px] leading-normal text-body">
+        {t('storyPage.classicAuthorNote', { year: author.diedYear })}
+      </p>
+    </div>
+  );
+}
 
 /**
  * The writer card: pen name or username, the handle, the bio and "See profile" (S1-E5-05) and
@@ -101,7 +121,11 @@ export function StorySideColumn({ story }: { story: StoryPageData }) {
   const { t } = useTranslation('reading');
   return (
     <aside className="flex flex-col gap-5">
-      <WriterCard writer={story.writer} isOwner={story.isOwner} />
+      {story.writer.classicAuthor === null ? (
+        <WriterCard writer={story.writer} isOwner={story.isOwner} />
+      ) : (
+        <ClassicAuthorCard author={story.writer.classicAuthor} />
+      )}
       <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card">
         <h2 className="m-0 font-eyebrow text-sm font-normal text-eyebrow">
           {t('storyPage.labelsHeading')}

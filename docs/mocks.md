@@ -8,6 +8,12 @@ A story is not Done while its mock is still on for staging (CLAUDE.md rule 17).
 | Emails go to Mailpit (the local mail catcher) | the email provider, Brevo (decided 17 Oct 2026, 19:43) | Robert's SMTP set-up (S1-E2-01 by-hand list); on staging until then, Supabase's built-in sender, which only mails the project team | none |
 | `PASSWORD_CHECK_STUB=1` in the end-to-end tests: the leaked-password check answers from a fixed list (`server/pages-functions-plugin.ts`) | Have I Been Pwned's range service | stays for tests only; staging and production use the real service through `functions/api/password-check.ts` | none |
 
+## Signals not counted yet
+
+| Signal | Today | Story that adds it |
+| --- | --- | --- |
+| Shares in the popularity score (`ranking_weight_shares`, S1-E5-03) | counted as 0, because nothing records a share yet; the weight is ready | S1-E4-05 (share and quote card, after March) |
+
 ## Stubs and stand-ins still in place (epic S1-E1, checked by S1-E1-QA)
 
 These are not mocks of an outside service: they are the safe, simple version of a piece that a later story finishes. Each one fails safe (it refuses rather than allows).

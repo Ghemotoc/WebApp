@@ -23,6 +23,10 @@ export const signUpSchema = z
   .object({
     method: z.enum(['password', 'link']),
     email: z.email('signUp.errors.emailInvalid'),
+    // The username, chosen here since 25 Oct 2026 (Robert): 3 to 30 characters, checked in full
+    // by check_handle() before sending and again by the sign-up trigger. Its problem is a
+    // check_handle() answer ("too_short"), which the username field turns into words.
+    handle: z.string().refine((value) => [...value].length >= 3, 'too_short'),
     password: z.string(),
     confirmPassword: z.string(),
     birthYear: z.string().regex(/^\d{4}$/, 'signUp.errors.birthYearMissing'),

@@ -4,7 +4,7 @@
 -- - titles and writers sort in Romanian alphabetical order: a, ă, b … s, ș … (criterion 2);
 -- - ties go to the newer story, and a sorted list pages without overlap (criterion 3);
 -- - a sort never shows what the reader may not see (rule 18);
--- - no sort means the list's own order, and an unknown sort is refused.
+-- - no sort means the list's own order (popular since S1-E5-03), and an unknown sort is refused.
 begin;
 
 create extension if not exists pgtap with schema extensions;
@@ -69,7 +69,8 @@ select is(pg_temp.sorted('title_az'), 's2,s3,s5,s4,s1',
 select is(pg_temp.sorted('title_za'), 's1,s4,s5,s3,s2', 'Title Z to A is the same order backwards');
 select is(pg_temp.sorted('writer'), 's1,s5,s3,s4,s2',
   'Writer A to Z: Ana, Sorin, Ștefan; one writer''s stories newest first');
-select is(pg_temp.sorted(null), 's1,s5,s4,s3,s2', 'no sort keeps the list''s own order (recently updated)');
+select is(pg_temp.sorted(null), 's5,s4,s3,s2,s1',
+  'no sort means popular (S1-E5-03); with no scores yet, the newer story first');
 
 /* ---------- 2. Paging a sorted list ---------- */
 
@@ -88,8 +89,8 @@ select ok(pg_temp.sorted('writer') not like '%s6%', 'a 14-year-old never sees it
 /* ---------- 4. Refusals ---------- */
 
 select pg_temp.sign_out();
-select throws_ok($$ select public.browse_stories('updated', sort_order => 'popular') $$, '22023', 'Unknown sort.',
-  'a sort that doesn''t exist yet is refused');
+select throws_ok($$ select public.browse_stories('updated', sort_order => 'loudest') $$, '22023', 'Unknown sort.',
+  'a sort that doesn''t exist is refused');
 select is(public.browse_stories('new', sort_order => null) ->> 'total', public.browse_stories('new') ->> 'total',
   'the new list without a sort is the same list');
 

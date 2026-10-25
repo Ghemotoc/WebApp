@@ -75,6 +75,7 @@ test.describe('epic S1-E11 journeys', () => {
     const visitorPage = await visitor.newPage();
     await visitorPage.goto(localLink);
     await visitorPage.getByLabel('Email', { exact: true }).fill(`epic-${stamp}@example.com`);
+    await visitorPage.getByRole('textbox', { name: 'Username' }).fill(`epic.e11.${stamp}`);
     await visitorPage.getByLabel('Password', { exact: true }).fill('a long enough passphrase');
     await visitorPage.getByLabel('Confirm password').fill('a long enough passphrase');
     await visitorPage.getByRole('combobox', { name: 'Year of birth' }).selectOption('1990');
@@ -95,24 +96,26 @@ test.describe('epic S1-E11 journeys', () => {
     await search.getByLabel('Action starts with').fill('invite.');
     await search.getByRole('button', { name: 'Search' }).click();
     const rows = owner.getByRole('row');
-    const newAccountId = runSql(
-      `select id from auth.users where email = 'epic-${stamp}@example.com'`,
-    );
     await expect(
       rows.filter({ hasText: `epic ${stamp}` }).filter({ hasText: 'invite.created' }),
     ).toContainText('@admin');
     await expect(
       rows.filter({ hasText: `epic ${stamp}` }).filter({ hasText: 'invite.used_up' }),
     ).toContainText('System');
-    await expect(rows.filter({ hasText: newAccountId.slice(0, 8) })).toContainText(
-      'invite.redeemed',
-    );
+    // The new account chose its username on the form (S1-E2-04), so the log names it by that.
+    await expect(rows.filter({ hasText: `@epic.e11.${stamp}` })).toContainText('invite.redeemed');
     await expect(owner.getByRole('table')).not.toContainText('example.com');
 
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a).
-    expect(await menuLinks(owner)).toEqual(['Moderation', 'Users', 'Roles', 'Audit log']);
+    expect(await menuLinks(owner)).toEqual([
+      'Moderation',
+      'Users',
+      'Roles',
+      'Metrics',
+      'Audit log',
+    ]);
     const moderator = await openAs(browser, 'moderator', '/staff');
-    expect(await menuLinks(moderator)).toEqual(['Moderation', 'Users']);
+    expect(await menuLinks(moderator)).toEqual(['Moderation', 'Users', 'Metrics']);
     const support = await openAs(browser, 'support', '/staff');
     expect(await menuLinks(support)).toEqual(['Users']);
     const editor = await openAs(browser, 'editor', '/staff/users/invites');

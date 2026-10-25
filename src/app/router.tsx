@@ -114,6 +114,15 @@ const staffRoutes: RouteObject = {
       },
     },
     { path: 'invites', element: <Navigate to="/staff/users/invites" replace /> },
+    // The March test numbers (S1-E15-02): owner and admin; moderators see a pointer to the queue.
+    {
+      path: 'metrics',
+      lazy: async () => {
+        const { MarchNumbersPage } =
+          await import('@/features/staff/components/metrics/MarchNumbersPage');
+        return { Component: MarchNumbersPage };
+      },
+    },
     // The audit log: search and CSV export for owner and admin (S1-E11-01).
     {
       path: 'audit-log',
