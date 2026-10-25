@@ -1,0 +1,87 @@
+{
+  "page": {
+    "eyebrow": "Notificări",
+    "title": "Ce e nou",
+    "newSince_one": "{{count}} notificare nouă de când te-ai uitat ultima dată.",
+    "newSince_few": "{{count}} notificări noi de când te-ai uitat ultima dată.",
+    "newSince_other": "{{count}} de notificări noi de când te-ai uitat ultima dată.",
+    "caughtUp": "Le-ai văzut pe toate.",
+    "markAllRead": "Marchează toate ca citite",
+    "markFailed": "Nu le-am putut marca drept citite. Verifică conexiunea și încearcă din nou.",
+    "loadFailed": "Nu am putut încărca notificările. Verifică conexiunea și încearcă din nou.",
+    "showOlder": "Arată notificări mai vechi",
+    "aboutLabel": "Despre notificări",
+    "signedOut": "Intră în cont ca să-ți vezi notificările.",
+    "logIn": "Intră în cont"
+  },
+  "filters": {
+    "label": "Arată",
+    "all": "Toate",
+    "replies": "Răspunsuri",
+    "follows": "Urmăriri",
+    "stories": "Povești",
+    "staff": "Echipa"
+  },
+  "days": {
+    "today": "Azi",
+    "yesterday": "Ieri",
+    "thisWeek": "Mai devreme săptămâna asta",
+    "older": "Mai vechi"
+  },
+  "who": {
+    "someone": "Cineva",
+    "two": "{{first}} și {{second}}",
+    "many_one": "{{first}}, {{second}} și încă {{count}} persoană",
+    "many_few": "{{first}}, {{second}} și încă {{count}} persoane",
+    "many_other": "{{first}}, {{second}} și încă {{count}} de persoane",
+    "moderationTeam": "Echipa de moderare:"
+  },
+  "chapterOfStory": "capitolul {{position}} din {{story}}",
+  "what": {
+    "newChapter": "a publicat {{where}}.",
+    "commentOnChapter": "a comentat la {{where}}.",
+    "commentReply": "ți-a răspuns la comentariul de la {{where}}.",
+    "commentReactions": "a reacționat la comentariul tău de la {{where}}.",
+    "newFollower": "a început să te urmărească."
+  },
+  "grouped": {
+    "reactions_one": "{{count}} reacție",
+    "reactions_few": "{{count}} reacții",
+    "reactions_other": "{{count}} de reacții"
+  },
+  "items": {
+    "story": "povestea ta",
+    "chapter": "capitolul tău",
+    "comment": "comentariul tău",
+    "profile": "profilul tău",
+    "other": "postarea ta"
+  },
+  "decisions": {
+    "no_action": "un moderator a verificat o raportare despre {{item}} și nu a luat nicio măsură, așa că nu se schimbă nimic.",
+    "hide": "un moderator a ascuns {{item}} de ceilalți.",
+    "remove": "un moderator a șters {{item}}, pentru că încalcă regulile.",
+    "restrict": "un moderator a limitat cine poate vedea {{item}}.",
+    "warn": "un moderator ți-a trimis un avertisment despre {{item}}.",
+    "suspend": "un moderator ți-a suspendat contul pentru o vreme. Decizia privește {{item}}.",
+    "ban": "un moderator ți-a închis contul. Decizia privește {{item}}.",
+    "public_note": "un moderator a adăugat o notă la {{item}}."
+  },
+  "actions": {
+    "readNow": "Citește acum",
+    "openChapter": "Deschide capitolul",
+    "reply": "Răspunde",
+    "seeWho": "Vezi cine",
+    "seeProfile": "Vezi profilul",
+    "seeIt": "Vezi"
+  },
+  "alwaysOn": "Mereu pornite",
+  "unread": "Necitită",
+  "empty": {
+    "title": "Le-ai văzut pe toate",
+    "body": "Capitolele noi, răspunsurile și urmăririle vor apărea aici."
+  },
+  "decisionsCard": {
+    "heading": "Decizii despre ce ai postat",
+    "body": "Când un moderator ia o decizie despre ceva ce ai postat, afli mereu aici. Nu le poți opri."
+  }
+}

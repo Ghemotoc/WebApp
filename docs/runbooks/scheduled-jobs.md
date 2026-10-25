@@ -9,6 +9,8 @@ The database runs a few jobs on a timer with `pg_cron`. Each is a named job, cre
 | `purge-deleted-chapters` | 03:29 every day | `purge_deleted_chapters()` | deletes chapters deleted more than 30 days ago (the story's own purge takes the chapters of a deleted story), except content held for moderation | S1-E3-04 |
 | `purge-deleted-comments` | 03:35 every day | `purge_deleted_comments()` | deletes comments deleted more than 30 days ago, except those held for moderation or with replies still under them | S1-E6-01 |
 | `publish-due-chapters` | every minute | `publish_due_chapters()` | publishes scheduled chapters whose time has come; skips deleted stories and writers who are no longer active | S1-E3-03 |
+| `run-notification-jobs` | every minute | `run_notification_jobs()` | turns queued `chapter_published` and `comment_posted` jobs into notifications for followers, writers and comment authors, and marks the jobs done | S1-E7-01 |
+| `purge-old-notifications` | 03:41 every day | `purge_old_notifications()` | deletes notifications older than 90 days (`notifications_keep_days`), moderation decisions after a year | S1-E7-01 |
 
 ## See what ran
 

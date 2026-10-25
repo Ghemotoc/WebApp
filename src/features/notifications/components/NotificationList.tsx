@@ -1,0 +1,67 @@
+/**
+ * NotificationList: the notifications under their day headings, Today, Yesterday, Earlier this
+ * week and Older (story S1-E7-01; board 6.2), or the empty state.
+ *
+ * Board values: each day is a section with a Cutive heading and a white card of rows (24 px
+ * radius, 1 px border, the card shadow). Who uses it: NotificationsPage. What it calls:
+ * lib/dayGroups.ts and NotificationRow.
+ */
+import type { AppNotification } from '../api/notifications';
+import { dayGroupOf, dayGroups } from '../lib/dayGroups';
+import { useNotificationsTranslation } from '../registerNotificationsTranslations';
+
+import { NotificationRow } from './NotificationRow';
+import { NotificationsEmpty } from './NotificationsEmpty';
+
+/** What the list needs. */
+export interface NotificationListProps {
+  notifications: AppNotification[];
+  ownHandle: string | null;
+  onOpen: (notificationId: string) => void;
+}
+
+/**
+ * Renders the day sections.
+ *
+ * @returns the sections, or the empty state when there is nothing to show
+ */
+export function NotificationList({ notifications, ownHandle, onOpen }: NotificationListProps) {
+  const { t } = useNotificationsTranslation();
+  if (notifications.length === 0) return <NotificationsEmpty />;
+  // Step 1: one section per heading that has rows, newest first (the list already is).
+  const now = new Date();
+  const sections = dayGroups
+    .map((group) => ({
+      group,
+      items: notifications.filter((item) => dayGroupOf(item.at, now) === group),
+    }))
+    .filter((section) => section.items.length > 0);
+  return (
+    <>
+      {sections.map(({ group, items }) => (
+        <section
+          key={group}
+          aria-labelledby={`notifications-${group}`}
+          className="flex flex-col gap-2.5"
+        >
+          <h2
+            id={`notifications-${group}`}
+            className="m-0 font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow"
+          >
+            {t(`days.${group}`)}
+          </h2>
+          <ul className="m-0 list-none overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">
+            {items.map((item) => (
+              <NotificationRow
+                key={item.id}
+                notification={item}
+                ownHandle={ownHandle}
+                onOpen={onOpen}
+              />
+            ))}
+          </ul>
+        </section>
+      ))}
+    </>
+  );
+}

@@ -759,6 +759,29 @@ DownvoteButton → useDownvoteComment → api/downvotes.ts → downvote_comment(
 
 Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `150-comment-reactions.test.sql`, `153-comment-downvotes.test.sql`, `lib/timeAgo.test.ts`, `CommentReactions.test.tsx`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`, `e2e/comment-downvotes.spec.ts`.
 
+## Notifications (S1-E7-01)
+
+The bell in the top bar (`NotificationBell`, while signed in) shows the unread count and opens `/notifications`:
+
+```
+chapter_publish_now() ─┐ queues chapter_published        follows_users ─ trigger follows_users_notify
+post_comment() ────────┘ queues comment_posted            comment_reactions ─ trigger comment_reactions_notify
+          │                                               cases (status → decided) ─ trigger cases_notify_decided
+          ▼  run_notification_jobs(), every minute (pg_cron)         │
+             notify_chapter_published() · notify_comment_posted()   │
+                              └──────────────┬──────────────────────┘
+                                             ▼  notify(): never one's own action, never across a block;
+                                                grouped rows (reactions an hour, followers a day) count people
+                                             notifications (the person told reads only their own rows)
+NotificationsPage → hooks/useNotifications → api/notifications.ts → my_notifications()
+NotificationBell → hooks/useUnreadNotificationCount (every 60 s and on focus) → my_unread_notification_count()
+"Mark all as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
+```
+
+Reading applies the reader's rules again (`notification_is_shown()`): a chapter they can no longer open (rating, block, moderation) or someone either side now blocks is left out, so the badge and the list always agree. A moderation decision is always shown and `is_required` (DSA art. 17). Answers carry usernames and display names, never a user ID. The words for each kind are picked in `lib/notificationText.ts`; the day headings in `lib/dayGroups.ts` (Romanian time).
+
+Tests: `154-notifications.test.sql`, `lib/notificationText.test.ts`, `lib/dayGroups.test.ts`, `e2e/notifications.spec.ts`.
+
 ## Discover and the story lists (S1-E5-01, S1-E5-09, S1-E5-02)
 
 `/discover` from the top bar; a shelf's "View more", a tag on the story page or "View more" on a profile open a list page:

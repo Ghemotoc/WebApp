@@ -98,3 +98,8 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | WriterDashboard (4.1) | Draft pills in the old solid-gold style | The pill system's gold information pill |
 | Every signed-in board | The "Write" pill's pen icon is the dark pen on the dark button | The icon is inverted with a CSS filter until Lane B's tokenised doodle icons land |
 | Every signed-in board | Top bar links Home, Discover, Library, Forums, Messages and the bell | Still only the links to pages that exist (src/app/navigation.ts); "Write" joins them in S1-E3-01 |
+| Notifications (6.2) | The bell marks unread with a dot | A gold bubble with the count, as the story asks (S1-E7-01, criterion 3); the bell's name says the number too |
+| Notifications (6.2) | The Settings link, the "Your choices" card and "Unread only" | Left out until S1-E7-02 (notification settings, after March); every kind is on for March |
+| Notifications (6.2) | Data download, certificate and mention rows; "with the reasons and how to appeal" and "My reports and decisions" on the decisions card | Their stories come later (S1-E13-02, S1-E8-12, S1-E8; S1-E10-04 and S1-E10-07 for the reasons, the appeal and the page) |
+| Notifications (6.2) | Comment rows say "See comment" | "Open the chapter": a link can't jump to one comment yet, because the comments load after the chapter (follow-up) |
+| Notifications (6.2) | Two background doodles in the header | Left out: at 768 px they would meet the heading or "Mark all as read"; the sleeping cat on the empty state stays |
