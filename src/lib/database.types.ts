@@ -282,6 +282,46 @@ export type Database = {
         };
         Relationships: [];
       };
+      chapter_likes: {
+        Row: {
+          chapter_id: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          chapter_id?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_likes_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapter_likes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_reads: {
         Row: {
           chapter_id: string;
@@ -491,6 +531,113 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      comment_reactions: {
+        Row: {
+          comment_id: string;
+          created_at: string;
+          id: string;
+          kind: Database['public']['Enums']['reaction_kind'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          comment_id: string;
+          created_at?: string;
+          id?: string;
+          kind: Database['public']['Enums']['reaction_kind'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          comment_id?: string;
+          created_at?: string;
+          id?: string;
+          kind?: Database['public']['Enums']['reaction_kind'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'comment_reactions_comment_id_fkey';
+            columns: ['comment_id'];
+            isOneToOne: false;
+            referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comment_reactions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      comments: {
+        Row: {
+          body: string;
+          chapter_id: string;
+          created_at: string;
+          deleted_at: string | null;
+          deleted_by: Database['public']['Enums']['comment_deleted_by'] | null;
+          id: string;
+          is_spoiler: boolean;
+          parent_comment_id: string | null;
+          updated_at: string;
+          user_id: string;
+          comment_is_shown_to_caller: boolean | null;
+          comment_state_for_caller: string | null;
+        };
+        ComputedFields: 'comment_is_shown_to_caller' | 'comment_state_for_caller';
+        Insert: {
+          body: string;
+          chapter_id: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          deleted_by?: Database['public']['Enums']['comment_deleted_by'] | null;
+          id?: string;
+          is_spoiler?: boolean;
+          parent_comment_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          chapter_id?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          deleted_by?: Database['public']['Enums']['comment_deleted_by'] | null;
+          id?: string;
+          is_spoiler?: boolean;
+          parent_comment_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'comments_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comments_parent_comment_id_fkey';
+            columns: ['parent_comment_id'];
+            isOneToOne: false;
+            referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comments_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       confusable_characters: {
         Row: {
@@ -2467,6 +2614,10 @@ export type Database = {
         Returns: boolean;
       };
       chapter_code: { Args: Record<PropertyKey, never>; Returns: string };
+      chapter_comments: {
+        Args: { chapter_code: string; older_than?: string; story_slug: string };
+        Returns: Json;
+      };
       chapter_gate_outcome: {
         Args: {
           chapter: Omit<
@@ -2477,6 +2628,17 @@ export type Database = {
         Returns: string;
       };
       chapter_is_readable: { Args: { chapter_id: string }; Returns: boolean };
+      chapter_like_count_of: { Args: { target_chapter_id: string }; Returns: number };
+      chapter_like_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      chapter_like_totals: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          chapter_id: string;
+          like_count: number;
+          likes_last_7_days: number;
+          story_id: string;
+        }[];
+      };
       chapter_publish_now: {
         Args: {
           chapter: Omit<
@@ -2487,6 +2649,7 @@ export type Database = {
         Returns: undefined;
       };
       check_chapter_text: { Args: { body: string }; Returns: string };
+      check_comment_text: { Args: { body: string }; Returns: string };
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
       check_pen_name: { Args: { candidate: string }; Returns: string };
@@ -2502,6 +2665,37 @@ export type Database = {
       check_story_cover: { Args: { cover: Json }; Returns: undefined };
       check_story_labels: { Args: { labels: Json }; Returns: undefined };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
+      comment_is_shown_to_caller: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      comment_json: {
+        Args: {
+          story_writer_id: string;
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      comment_reactions_json: { Args: { target_comment_id: string }; Returns: Json };
+      comment_replies_json: { Args: { parent_id: string; story_writer_id: string }; Returns: Json };
+      comment_state_for_caller: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      comment_wait_minutes: { Args: { author_id: string }; Returns: number };
       content_is_held_for_moderation: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
@@ -2523,6 +2717,7 @@ export type Database = {
         Returns: Json;
       };
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
+      delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
@@ -2577,6 +2772,11 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      like_chapter: {
+        Args: { chapter_code: string; should_like: boolean; story_slug: string };
+        Returns: Json;
+      };
+      like_state_of: { Args: { target_chapter_id: string }; Returns: Json };
       list_my_sessions: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2738,6 +2938,16 @@ export type Database = {
       normalise_tag: { Args: { tag_name: string }; Returns: string };
       note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
+      post_comment: {
+        Args: {
+          body: string;
+          chapter_code: string;
+          is_spoiler?: boolean;
+          reply_to?: string;
+          story_slug: string;
+        };
+        Returns: Json;
+      };
       profile_for_handle: {
         Args: { wanted_handle: string };
         Returns: {
@@ -2776,12 +2986,50 @@ export type Database = {
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
       rating_allows: {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;
+      };
+      react_to_comment: {
+        Args: { comment_id: string; wanted_kind: Database['public']['Enums']['reaction_kind'] };
+        Returns: Json;
+      };
+      readable_chapter: {
+        Args: { chapter_code: string; story_slug: string };
+        Returns: {
+          code: string;
+          created_at: string;
+          deleted_at: string | null;
+          draft_body: string;
+          draft_saved_at: string | null;
+          draft_title: string;
+          draft_version: number;
+          edited_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          last_published_at: string | null;
+          position: number;
+          published_body: string | null;
+          published_title: string | null;
+          published_word_count: number | null;
+          scheduled_for: string | null;
+          status: Database['public']['Enums']['chapter_status'];
+          story_id: string;
+          unpublished_at: string | null;
+          updated_at: string;
+          user_id: string;
+          word_count: number;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'chapters';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       reader_visible_story: {
         Args: { story_slug: string };
@@ -2867,6 +3115,16 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
       };
+      require_comment_allowed: {
+        Args: {
+          caller_id: string;
+          story: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       require_not_last_owner: {
         Args: { removed_role: Database['public']['Enums']['staff_role']; target_user_id: string };
         Returns: undefined;
@@ -2919,6 +3177,7 @@ export type Database = {
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
+      story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_slug_for: { Args: { title: string }; Returns: string };
       strip_combining_marks: { Args: { name: string }; Returns: string };
@@ -2970,11 +3229,13 @@ export type Database = {
       case_status: 'open' | 'decided';
       case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
       chapter_status: 'draft' | 'scheduled' | 'published';
+      comment_deleted_by: 'author' | 'writer';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
       moderated_state: 'hidden' | 'removed';
       moderation_action:
         'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban' | 'public_note';
+      reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -2989,7 +3250,7 @@ export type Database = {
         | 'copied_published_work'
         | 'undisclosed_ai'
         | 'other';
-      reportable_type: 'profile' | 'story' | 'chapter';
+      reportable_type: 'profile' | 'story' | 'chapter' | 'comment';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -3172,6 +3433,7 @@ export const Constants = {
       case_status: ['open', 'decided'],
       case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
       chapter_status: ['draft', 'scheduled', 'published'],
+      comment_deleted_by: ['author', 'writer'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
       moderated_state: ['hidden', 'removed'],
@@ -3185,6 +3447,7 @@ export const Constants = {
         'ban',
         'public_note',
       ],
+      reaction_kind: ['heart', 'fire', 'laugh', 'wow', 'sad', 'star'],
       report_reason: [
         'illegal_content',
         'harassment',
@@ -3200,7 +3463,7 @@ export const Constants = {
         'undisclosed_ai',
         'other',
       ],
-      reportable_type: ['profile', 'story', 'chapter'],
+      reportable_type: ['profile', 'story', 'chapter', 'comment'],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [
         'emergency',

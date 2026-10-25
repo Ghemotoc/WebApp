@@ -12,5 +12,5 @@ The reader's side: the story page, the chapter reader and the teaser. Started by
 - `hooks/useStoryPage.ts`: the page, cached per address and per person.
 - `api/chapter.ts` (S1-E4-01a): `get_chapter()` and `record_chapter_read()`.
 - `api/storyPage.ts`: `get_story_page()`, the only way readers reach a story (ADR 0004): nothing for an unpublished, deleted or moderated-away story, or one rated above the reader's age (`rating_allows()`, S1-E3-06); never the user ID.
-- The report link is a stub (an email to the support address) until Lane C's `<ReportButton>` lands (S1-E10-01).
+- `components/LikeButton.tsx`, `hooks/useChapterLike.ts`, `api/likes.ts` (S1-E6-03): "Like this chapter" / "Liked" with the public count, first in `ChapterEnd`'s row (`chapter_like_state()`, `like_chapter()`). The row ends with the shared `ReportButton` ("Report chapter", by the chapter's row ID from `get_chapter()`).
 - The database side: `supabase/README.md`, "Stories".

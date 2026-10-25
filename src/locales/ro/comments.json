@@ -1,0 +1,72 @@
+{
+  "section": {
+    "eyebrow": "Comentarii",
+    "heading_one": "{{count}} comentariu",
+    "heading_few": "{{count}} comentarii",
+    "heading_other": "{{count}} de comentarii",
+    "newestFirst": "Cele mai noi primele",
+    "empty": "Niciun comentariu încă. Spune primul ce ți s-a părut.",
+    "off": "Scriitorul a oprit comentariile la această poveste.",
+    "showMore": "Arată mai multe comentarii",
+    "loadFailed": "Nu am putut încărca comentariile. Verifică conexiunea și încearcă din nou.",
+    "logIn": "Intră în cont ca să comentezi"
+  },
+  "composer": {
+    "label": "Adaugă un comentariu",
+    "replyLabel": "Răspunde-i lui {{name}}",
+    "placeholder": "Ce ți s-a părut capitolul?",
+    "spoiler": "Ascunde ca spoiler",
+    "counter": "{{count}} / {{limit}}",
+    "counterLabel": "{{count}} din {{limit}} de caractere",
+    "post": "Publică comentariul",
+    "postReply": "Publică răspunsul",
+    "cancel": "Renunță",
+    "kind": "Fii blând. Fiecare raportare e citită de un om.",
+    "posted": "Comentariul tău a apărut."
+  },
+  "failures": {
+    "read_only": "Contul tău nu poate comenta încă.",
+    "too_many_one": "Ai publicat multe comentarii. Așteaptă {{count}} minut până la următorul.",
+    "too_many_few": "Ai publicat multe comentarii. Așteaptă {{count}} minute până la următorul.",
+    "too_many_other": "Ai publicat multe comentarii. Așteaptă {{count}} de minute până la următorul.",
+    "too_many_unknown": "Ai publicat multe comentarii. Așteaptă puțin până la următorul.",
+    "comments_off": "Scriitorul a oprit comentariile la această poveste.",
+    "refused": "Nu se poate publica. Un comentariu are nevoie de câteva cuvinte, cel mult 2.000 de caractere și fără HTML.",
+    "gone": "Comentariul acela nu mai există.",
+    "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou."
+  },
+  "comment": {
+    "writer": "Scriitor",
+    "spoiler": "Spoiler",
+    "spoilerNote": "Comentariul acesta e marcat ca spoiler.",
+    "showSpoiler": "Arată spoilerul",
+    "reply": "Răspunde",
+    "delete": "Șterge",
+    "deleteConfirm": "Ștergi comentariul?",
+    "deleteYes": "Da, șterge-l",
+    "keep": "Păstrează-l",
+    "deleted": "Comentariu șters.",
+    "removed": "[Eliminat de echipa de moderare]",
+    "hiddenNote": "Ascuns de echipa de moderare. Doar tu îl vezi.",
+    "reportLabel": "comentariul lui {{name}}",
+    "replies": "Răspunsuri pentru {{name}}"
+  },
+  "reactions": {
+    "add": "Adaugă o reacție",
+    "pick": "Alege o reacție",
+    "chip": "{{name}}, {{count}}",
+    "chipMine": "{{name}}, {{count}}, reacția ta",
+    "names": {
+      "heart": "Inimă",
+      "fire": "Foc",
+      "laugh": "Râs",
+      "wow": "Uau",
+      "sad": "Trist",
+      "star": "Stea"
+    },
+    "failures": {
+      "read_only": "Contul tău nu poate reacționa încă.",
+      "other": "Nu am putut salva reacția. Verifică conexiunea și încearcă din nou."
+    }
+  }
+}

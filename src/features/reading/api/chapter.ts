@@ -20,6 +20,8 @@ export interface ReaderChapter {
     languageCode: string;
     writer: { displayName: string; handle: string };
   };
+  /** The chapter's row ID, which the Report button sends (S1-E10-01); never a user ID. */
+  id: string;
   code: string;
   title: string;
   /** Its number among the chapters readers can open (1, 2, 3…), and how many there are. */
@@ -49,6 +51,7 @@ interface ChapterRow {
     language_code: string;
     writer: { display_name: string; handle: string };
   };
+  id: string;
   code: string;
   title: string;
   number: number;
@@ -93,6 +96,7 @@ export async function fetchChapter(
       languageCode: row.story.language_code,
       writer: { displayName: row.story.writer.display_name, handle: row.story.writer.handle },
     },
+    id: row.id,
     code: row.code,
     title: row.title,
     number: row.number,

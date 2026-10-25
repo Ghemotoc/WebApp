@@ -2,7 +2,7 @@
  * The reader's icons, drawn as inline SVG from board 3.5 (story S1-E4-01a). Plain icons, not
  * doodles: the reader has no doodles at all (DoD design rules), and arrows are plain icons
  * anyway. Each is hidden from screen readers; the link around it carries the name.
- * Who uses it: ChapterBar and ChapterEnd.
+ * Who uses it: ChapterBar, ChapterEnd and LikeButton.
  */
 import type { SVGProps } from 'react';
 
@@ -53,6 +53,15 @@ export function ForwardIcon() {
   return (
     <Frame>
       <path d="m9 18 6-6-6-6" />
+    </Frame>
+  );
+}
+
+/** A heart: the Like button (S1-E6-03). Filled once the reader likes the chapter. */
+export function HeartIcon({ isFilled }: { isFilled: boolean }) {
+  return (
+    <Frame strokeWidth="1.9" fill={isFilled ? 'currentColor' : 'none'}>
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
     </Frame>
   );
 }

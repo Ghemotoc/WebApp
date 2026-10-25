@@ -709,6 +709,46 @@ Blocks: `blocks` (the blocker's own rows only) and `is_blocked_with()`, which re
 
 Tests: `143-writer-profile-and-blocks.test.sql`, `144-follows.test.sql`, `lib/formatting.test.ts`, `e2e/writer-profile.spec.ts`, `e2e/follows.spec.ts`.
 
+## Likes, comments and reactions on a chapter (S1-E6-03, S1-E6-01, S1-E6-02)
+
+Under the chapter text, on `/s/<story>/<chapter>`:
+
+```
+ChapterEnd
+  │  LikeButton → useChapterLike → api/likes.ts → chapter_like_state() / like_chapter(story, chapter, should_like)
+  │     readable_chapter(): the same rules as get_chapter() (rating, blocks, moderation)
+  │     chapter_likes (one row per reader and chapter; the count is public, who liked isn't)
+  ▼  ReportButton ("Report chapter", the chapter's row ID; the dialog's file loads on the first press)
+```
+
+The popularity job (S1-E5-03) reads `chapter_like_totals()`, which leaves out the writer's own like.
+
+Comments (S1-E6-01) sit under the banner slot, in their own file, fetched when the reader nears the end of the chapter:
+
+```
+ChapterComments (reading) ─lazy→ CommentsSection (src/features/comments/)
+  │  useChapterComments → chapter_comments(story, chapter, older_than): 20 top-level comments a page,
+  │     newest first, each with its replies; readable_chapter(), blocks, moderated_items, comments_enabled
+  │  CommentComposer → usePostComment → post_comment(): the account gate, the limit (5 an hour on the
+  │     first day, 60 after: wait_minutes in the error's hint), check_comment_text(), a 'comment_posted' job
+  ▼  CommentItem → CommentBody (spoiler cover, markers) · CommentActions: CommentReactions · Reply
+                   · Delete → delete_comment()
+                   · ReportButton (itemType "comment"; reportable_item_owner() and _summary() have the branch)
+```
+
+Reactions (S1-E6-02) start each comment's action row: a chip per kind someone picked, and "Add a reaction" for the six (heart, fire, laugh, wow, sad, star, drawn as SVG in `ReactionIcon.tsx`):
+
+```
+CommentReactions → useReactToComment → api/reactions.ts → react_to_comment(comment_id, wanted_kind)
+  │  readable_chapter() and comment_state_for_caller() = 'live'; the same kind again (or null) takes it away
+  │  adding or changing one: the account gate; comment_reactions (one row per person and comment)
+  ▼  chapter_comments() answers each comment's counts and the reader's own (comment_reactions_json())
+```
+
+Deleted comments go for good after 30 days (`purge_deleted_comments()`, nightly); a deleted or removed comment keeps its place as a marker only while replies stand under it.
+
+Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `150-comment-reactions.test.sql`, `lib/timeAgo.test.ts`, `CommentReactions.test.tsx`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`.
+
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
 What the Foundations epic left in place, and where to find it. The epic report, `docs/epic-reports/S1-E1.md`, lists what works, the known gaps and the steps Robert does by hand.

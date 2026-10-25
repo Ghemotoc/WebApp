@@ -101,6 +101,7 @@
     "backOnline": "You’re back online."
   },
   "actions": {
-    "report": "Report"
+    "report": "Report",
+    "reportItem": "Report {{item}}"
   }
 }

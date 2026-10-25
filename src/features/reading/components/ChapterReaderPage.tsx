@@ -10,7 +10,8 @@
  * first part of the chapter and a prompt to log in (S1-E4-04, board 3.8); on a 16+ or 18+ story,
  * which visitors can't open, NoPreviewNotice explains why. The banner slot comes after the
  * <article>, never inside the text (S1-E4-01b); it is empty until S1-E12-01. The text has
- * right-click and copy turned off, with the honest notice under the chapter (S1-E4-06a).
+ * right-click and copy turned off, with the honest notice under the chapter (S1-E4-06a). Under
+ * the banner slot: the comments (S1-E6-01), fetched after the text (ChapterComments).
  * What it calls: useChapter → get_chapter() (ADR 0004); useRecordRead → record_chapter_read()
  * once the text is on screen; useReadingProgress for the progress line; useStoryPreview →
  * get_link_preview() only when a signed-out visitor's chapter answered nothing.
@@ -31,6 +32,7 @@ import { useStoryPreview } from '../hooks/useStoryPreview';
 
 import { ChapterBannerSlot } from './ChapterBannerSlot';
 import { ChapterBar } from './ChapterBar';
+import { ChapterComments } from './ChapterComments';
 import { ChapterEnd } from './ChapterEnd';
 import { ChapterReaderHeader } from './ChapterReaderHeader';
 import { CopyNotice } from './CopyNotice';
@@ -104,6 +106,11 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
       </article>
       {hasText && <CopyNotice penName={chapter.story.writer.displayName} />}
       {hasText && <ChapterBannerSlot banner={banner} />}
+      {hasText && (
+        <div className="mx-auto w-full max-w-[760px]">
+          <ChapterComments address={{ storySlug: chapter.story.slug, chapterCode: chapter.code }} />
+        </div>
+      )}
     </>
   );
 }

@@ -1,13 +1,11 @@
 {
-  "button": {
-    "label": "Report {{item}}"
-  },
   "dialog": {
     "eyebrow": "Report",
     "title": {
       "profile": "Report this profile",
       "story": "Report this story",
-      "chapter": "Report this chapter"
+      "chapter": "Report this chapter",
+      "comment": "Report this comment"
     },
     "anonymous": "{{item}}. They won’t see who reported it.",
     "whatIsWrong": "What’s wrong?",
