@@ -731,13 +731,23 @@ ChapterComments (reading) ─lazy→ CommentsSection (src/features/comments/)
   │     newest first, each with its replies; readable_chapter(), blocks, moderated_items, comments_enabled
   │  CommentComposer → usePostComment → post_comment(): the account gate, the limit (5 an hour on the
   │     first day, 60 after: wait_minutes in the error's hint), check_comment_text(), a 'comment_posted' job
-  ▼  CommentItem → CommentBody (spoiler cover, markers) · CommentActions: Reply · Delete → delete_comment()
+  ▼  CommentItem → CommentBody (spoiler cover, markers) · CommentActions: CommentReactions · Reply
+                   · Delete → delete_comment()
                    · ReportButton (itemType "comment"; reportable_item_owner() and _summary() have the branch)
+```
+
+Reactions (S1-E6-02) start each comment's action row: a chip per kind someone picked, and "Add a reaction" for the six (heart, fire, laugh, wow, sad, star, drawn as SVG in `ReactionIcon.tsx`):
+
+```
+CommentReactions → useReactToComment → api/reactions.ts → react_to_comment(comment_id, wanted_kind)
+  │  readable_chapter() and comment_state_for_caller() = 'live'; the same kind again (or null) takes it away
+  │  adding or changing one: the account gate; comment_reactions (one row per person and comment)
+  ▼  chapter_comments() answers each comment's counts and the reader's own (comment_reactions_json())
 ```
 
 Deleted comments go for good after 30 days (`purge_deleted_comments()`, nightly); a deleted or removed comment keeps its place as a marker only while replies stand under it.
 
-Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `lib/timeAgo.test.ts`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`.
+Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `150-comment-reactions.test.sql`, `lib/timeAgo.test.ts`, `CommentReactions.test.tsx`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 

@@ -23,6 +23,7 @@ function commentWith(changes: Partial<ChapterComment>): ChapterComment {
     state: 'live',
     body: 'Am pus telefonul jos.',
     canDelete: false,
+    reactions: { counts: {}, mine: null },
     replies: [],
     ...changes,
   };

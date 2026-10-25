@@ -8,6 +8,7 @@ Comments on a chapter, with replies one level deep (S1-E6-01), and the reactions
 - `components/CommentBody.tsx`: the words, the spoiler cover with "Show spoiler", or a marker ("Comment deleted.", "[Removed by the moderation team]").
 - `components/CommentText.tsx`: the safe Markdown renderer for comments (paragraphs, bold, italic, links with `rel="nofollow ugc noopener"`; no HTML).
 - `components/CommentActions.tsx`: Reply, Delete (asks first) and the shared `ReportButton` (`itemType="comment"`).
+- `components/CommentReactions.tsx` and `ReactionIcon.tsx`: the reaction chips (the reader's own with a tick and `aria-pressed`) and "Add a reaction" with the six kinds as SVG icons; `api/reactions.ts`, `hooks/useReactToComment.ts`: `react_to_comment()`.
 - `api/comments.ts`, `hooks/useChapterComments.ts`, `hooks/useCommentActions.ts`: `chapter_comments()`, `post_comment()`, `delete_comment()`.
 - `registerCommentsTranslations.ts`: the `comments` text namespace, added when the comments first render.
-- The database side: `supabase/migrations/…_s1_e6_01_comments.sql`; tests `149-comments.test.sql`, `e2e/comments.spec.ts`.
+- The database side: `supabase/migrations/…_s1_e6_01_comments.sql` and `…_s1_e6_02_reactions.sql`; tests `149-comments.test.sql`, `150-comment-reactions.test.sql`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`.

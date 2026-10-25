@@ -1,5 +1,6 @@
 /**
  * Comments on a chapter: reading a page, posting, replying and deleting (story S1-E6-01).
+ * Each comment also carries its reactions (S1-E6-02, api/reactions.ts).
  *
  * Who calls it: hooks/useChapterComments.ts and hooks/useCommentActions.ts.
  * What it calls next: chapter_comments(), post_comment() and delete_comment()
@@ -10,6 +11,8 @@
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import type { ChapterAddress } from '@/features/reading/api/likes';
+
+import type { CommentReactions, ReactionsRow } from './reactions';
 
 /** What the reader sees in a comment's place (comment_state_for_caller()). */
 export type CommentState = 'live' | 'hidden' | 'removed' | 'deleted';
@@ -27,6 +30,8 @@ export interface ChapterComment {
   /** The words, only for a live comment or the author's own hidden one. */
   body: string | null;
   canDelete: boolean;
+  /** The reaction counts and the reader's own (S1-E6-02); empty on a marker. */
+  reactions: CommentReactions;
   /** Replies, oldest first; always empty on a reply (one level deep). */
   replies: ChapterComment[];
 }
@@ -65,6 +70,7 @@ interface CommentRow {
   state: CommentState;
   body: string | null;
   can_delete: boolean;
+  reactions?: ReactionsRow;
   replies?: CommentRow[];
 }
 
@@ -93,6 +99,7 @@ export function commentFrom(row: CommentRow): ChapterComment {
     state: row.state,
     body: row.body,
     canDelete: row.can_delete,
+    reactions: row.reactions ?? { counts: {}, mine: null },
     replies: (row.replies ?? []).map(commentFrom),
   };
 }

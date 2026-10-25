@@ -50,5 +50,23 @@
     "hiddenNote": "Ascuns de echipa de moderare. Doar tu îl vezi.",
     "reportLabel": "comentariul lui {{name}}",
     "replies": "Răspunsuri pentru {{name}}"
+  },
+  "reactions": {
+    "add": "Adaugă o reacție",
+    "pick": "Alege o reacție",
+    "chip": "{{name}}, {{count}}",
+    "chipMine": "{{name}}, {{count}}, reacția ta",
+    "names": {
+      "heart": "Inimă",
+      "fire": "Foc",
+      "laugh": "Râs",
+      "wow": "Uau",
+      "sad": "Trist",
+      "star": "Stea"
+    },
+    "failures": {
+      "read_only": "Contul tău nu poate reacționa încă.",
+      "other": "Nu am putut salva reacția. Verifică conexiunea și încearcă din nou."
+    }
   }
 }

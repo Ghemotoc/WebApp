@@ -7,7 +7,8 @@
  * in. Each part is a real <article> with the author named, so a screen reader can move from
  * comment to comment.
  * Who uses it: CommentsSection (and itself, for replies). What it calls: CommentBody,
- * CommentActions, CommentComposer (the reply box).
+ * CommentActions (with CommentReactions at the start of its row, S1-E6-02), CommentComposer (the
+ * reply box).
  */
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -23,6 +24,7 @@ import { useCommentsTranslation } from '../registerCommentsTranslations';
 import { CommentActions } from './CommentActions';
 import { CommentBody } from './CommentBody';
 import { CommentComposer } from './CommentComposer';
+import { CommentReactions } from './CommentReactions';
 
 /** What one comment needs. */
 export interface CommentItemProps {
@@ -96,6 +98,7 @@ export function CommentItem({ address, comment, isReply = false }: CommentItemPr
           address={address}
           comment={comment}
           onReply={isReply ? null : () => setIsReplying(true)}
+          before={<CommentReactions address={address} comment={comment} />}
         />
         {isReplying && (
           <div className="mt-3">

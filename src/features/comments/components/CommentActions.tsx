@@ -6,7 +6,7 @@
  *   in place before it deletes.
  * - Report is the shared ReportButton (S1-E10-01; CLAUDE.md rule 6, DSA art. 16), on everyone
  *   else's comments, pushed to the right as on the board.
- * S1-E6-02 adds the reactions at the start of the row (the `before` slot).
+ * The reactions (S1-E6-02, CommentReactions) come first in the row, through the `before` slot.
  * Who uses it: CommentItem. What it calls: useDeleteComment → delete_comment(); ReportButton.
  */
 import { useState, type ReactNode } from 'react';

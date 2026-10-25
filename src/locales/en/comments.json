@@ -50,5 +50,23 @@
     "hiddenNote": "Hidden by the moderation team. Only you can see it.",
     "reportLabel": "the comment by {{name}}",
     "replies": "Replies to {{name}}"
+  },
+  "reactions": {
+    "add": "Add a reaction",
+    "pick": "Pick a reaction",
+    "chip": "{{name}}, {{count}}",
+    "chipMine": "{{name}}, {{count}}, your reaction",
+    "names": {
+      "heart": "Heart",
+      "fire": "Fire",
+      "laugh": "Laugh",
+      "wow": "Wow",
+      "sad": "Sad",
+      "star": "Star"
+    },
+    "failures": {
+      "read_only": "Your account can’t react yet.",
+      "other": "We couldn’t save your reaction. Check your connection and try again."
+    }
   }
 }

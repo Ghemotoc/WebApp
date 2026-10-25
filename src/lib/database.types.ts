@@ -532,6 +532,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      comment_reactions: {
+        Row: {
+          comment_id: string;
+          created_at: string;
+          id: string;
+          kind: Database['public']['Enums']['reaction_kind'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          comment_id: string;
+          created_at?: string;
+          id?: string;
+          kind: Database['public']['Enums']['reaction_kind'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          comment_id?: string;
+          created_at?: string;
+          id?: string;
+          kind?: Database['public']['Enums']['reaction_kind'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'comment_reactions_comment_id_fkey';
+            columns: ['comment_id'];
+            isOneToOne: false;
+            referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comment_reactions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       comments: {
         Row: {
           body: string;
@@ -2641,6 +2684,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      comment_reactions_json: { Args: { target_comment_id: string }; Returns: Json };
       comment_replies_json: { Args: { parent_id: string; story_writer_id: string }; Returns: Json };
       comment_state_for_caller: {
         Args: {
@@ -2950,6 +2994,10 @@ export type Database = {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;
       };
+      react_to_comment: {
+        Args: { comment_id: string; wanted_kind: Database['public']['Enums']['reaction_kind'] };
+        Returns: Json;
+      };
       readable_chapter: {
         Args: { chapter_code: string; story_slug: string };
         Returns: {
@@ -3187,6 +3235,7 @@ export type Database = {
       moderated_state: 'hidden' | 'removed';
       moderation_action:
         'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban' | 'public_note';
+      reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -3398,6 +3447,7 @@ export const Constants = {
         'ban',
         'public_note',
       ],
+      reaction_kind: ['heart', 'fire', 'laugh', 'wow', 'sad', 'star'],
       report_reason: [
         'illegal_content',
         'harassment',
