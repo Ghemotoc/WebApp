@@ -1,0 +1,40 @@
+/**
+ * Adds the Discover and story list texts (the "discovery" namespace) to the translations when a
+ * discovery page first renders (stories S1-E5-01, S1-E5-09, S1-E5-02).
+ *
+ * Why not with the rest: the pages are loaded in their own files when the reader opens them, so
+ * their texts travel with them and the first page stays small. Same pattern as the people,
+ * comments and reporting texts.
+ * Who calls it: every component in src/features/discovery/components, through
+ * useDiscoveryTranslation().
+ */
+import type { i18n as I18nInstance } from 'i18next';
+import { useTranslation } from 'react-i18next';
+
+import englishDiscovery from '@/locales/en/discovery.json';
+import romanianDiscovery from '@/locales/ro/discovery.json';
+
+/**
+ * Registers the discovery texts once; calling it again does nothing.
+ *
+ * @param i18n - the app's translation instance (from useTranslation())
+ */
+export function registerDiscoveryTranslations(i18n: I18nInstance): void {
+  if (i18n.hasResourceBundle('ro', 'discovery')) return;
+  i18n.addResourceBundle('ro', 'discovery', romanianDiscovery);
+  i18n.addResourceBundle('en', 'discovery', englishDiscovery);
+}
+
+/**
+ * useTranslation('discovery'), after making sure the discovery texts are registered.
+ *
+ * @returns what useTranslation('discovery') returns: t and the i18n instance
+ */
+export function useDiscoveryTranslation() {
+  // Step 1: the instance this component renders with (the app's, or a test's).
+  const { i18n } = useTranslation();
+  // Step 2: add the discovery texts to it the first time any discovery component renders.
+  registerDiscoveryTranslations(i18n);
+  // Step 3: hand back the usual translation helpers for the "discovery" namespace.
+  return useTranslation('discovery');
+}

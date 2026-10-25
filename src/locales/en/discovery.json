@@ -1,0 +1,68 @@
+{
+  "discover": {
+    "documentTitle": "Discover · {{productName}}",
+    "eyebrow": "Discover",
+    "heading": "Find your next story",
+    "intro": "New chapters from writers on {{productName}}, by category and tag. Nothing here is picked from what you read.",
+    "categoriesLabel": "Browse by category",
+    "loadFailed": "We couldn’t load the stories. Check your connection and try again.",
+    "empty": "No stories are published yet. Be the first: start writing.",
+    "writeLink": "Start writing"
+  },
+  "lists": {
+    "following": "New from writers you follow",
+    "followingEyebrow": "Following",
+    "updated": "Recently updated",
+    "updatedEyebrow": "New chapters",
+    "new": "New stories",
+    "newEyebrow": "Just started",
+    "completed": "Completed",
+    "completedEyebrow": "Read to the end",
+    "categoryEyebrow": "Category",
+    "tag": "Tagged “{{tag}}”",
+    "tagEyebrow": "Tag",
+    "writer": "Stories by {{name}}",
+    "writerEyebrow": "Writer"
+  },
+  "card": {
+    "meta_one": "{{writer}} · {{count}} chapter",
+    "meta_few": "{{writer}} · {{count}} chapters",
+    "meta_other": "{{writer}} · {{count}} chapters"
+  },
+  "seeAll": {
+    "documentTitle": "{{title}} · {{productName}}",
+    "eyebrow": "See all",
+    "breadcrumb": "Where you are",
+    "discover": "Discover",
+    "count_one": "{{count}} story",
+    "count_few": "{{count}} stories",
+    "count_other": "{{count}} stories",
+    "filtersLabel": "Filters",
+    "category": "Category",
+    "anyCategory": "Any category",
+    "status": "Status",
+    "anyStatus": "Any",
+    "ongoing": "Ongoing",
+    "completed": "Completed",
+    "language": "Language",
+    "anyLanguage": "Any language",
+    "sortBy": "Sort by",
+    "loadMore": "Load more stories",
+    "loadingMore": "Loading…",
+    "empty": "No stories here yet.",
+    "emptyFiltered": "No stories match these filters. Try fewer filters.",
+    "clearFilters": "Clear filters",
+    "followingSignedOut": "Log in to see new stories from writers you follow.",
+    "logIn": "Log in",
+    "ratingNote": "Ratings work like film ratings: a 16+ or 18+ story is hidden from anyone younger.",
+    "unknownList": "There is no such list."
+  },
+  "sort": {
+    "updated": "Recently updated",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "title_az": "Title, A to Z",
+    "title_za": "Title, Z to A",
+    "writer": "Writer, A to Z"
+  }
+}

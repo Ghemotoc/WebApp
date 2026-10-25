@@ -6,20 +6,48 @@
  * from S1-E3-06; "Web and app" joins with S1-E3-08), the H1 in Bricolage 800 at
  * clamp(36px, 4.4vw, 64px), "by <name>" at 16 px, the blurb at 17 px / 1.6 up to 640 px wide,
  * the content note box when the writer left one (S1-E3-06: readers see it before they open the
- * story), the tag chips and "Follow story" (S1-E6-05). The stats row and the other action buttons
+ * story), the tag chips, each a link to its tag page (S1-E5-01), and "Follow story" (S1-E6-05). The stats row and the other action buttons
  * arrive with likes and the library (S1-E6-03, S1-E4-03).
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
 import { InfoPill } from '@/components/ui/InfoPill';
+import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 import { FollowButton } from '@/features/people/components/FollowButton';
 
 import type { StoryPageData } from '../api/storyPage';
 
 import { StoryLabelPills } from './StoryLabelPills';
+
+/**
+ * The story's tags, each a link to the page of stories with that tag (S1-E5-01). They are links
+ * that look like chips, because each opens a page (DoD pill system).
+ *
+ * @param tags - the story's tags, as the writer typed them
+ * @returns the list, or nothing when the story has no tags
+ */
+function StoryTagLinks({ tags }: { tags: string[] }) {
+  const { t } = useTranslation('reading');
+  if (tags.length === 0) return null;
+  return (
+    <ul aria-label={t('storyPage.tags')} className="m-0 flex list-none flex-wrap gap-2 p-0">
+      {tags.map((tag) => (
+        <li key={tag}>
+          <Link
+            to={listAddress(plainList('tag', tag))}
+            className="relative inline-flex h-9 items-center rounded-full border border-control-border bg-surface px-3.5 text-sm leading-none font-semibold text-heading no-underline after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] hover:bg-tint"
+          >
+            {tag}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 /**
  * Renders the header.
@@ -73,15 +101,7 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
           <p className="m-0 text-[15px] leading-normal text-body">{story.labels.contentNote}</p>
         </div>
       )}
-      {story.tags.length > 0 && (
-        <ul aria-label={t('storyPage.tags')} className="m-0 flex list-none flex-wrap gap-2 p-0">
-          {story.tags.map((tag) => (
-            <li key={tag}>
-              <InfoPill tone="neutral">{tag}</InfoPill>
-            </li>
-          ))}
-        </ul>
-      )}
+      <StoryTagLinks tags={story.tags} />
     </header>
   );
 }

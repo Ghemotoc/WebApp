@@ -35,6 +35,11 @@ export interface ShelfProps {
   items: ShelfItem[];
   /** The See all page for this shelf (S1-E5-09). */
   seeAllHref: string;
+  /**
+   * How many the whole list holds, when the caller has only its first page (S1-E5-01's shelves
+   * load 21); defaults to the number of items.
+   */
+  totalCount?: number;
 }
 
 /** The CSS mask that fades one edge: 140 px wide, fully transparent at the edge (boards). */
@@ -49,7 +54,7 @@ function fadeMask(fadeSide: ShelfScrollState['fadeSide']): string | undefined {
  *
  * @returns the shelf section
  */
-export function Shelf({ title, eyebrow, items, seeAllHref }: ShelfProps) {
+export function Shelf({ title, eyebrow, items, seeAllHref, totalCount }: ShelfProps) {
   const { t } = useTranslation();
   const headingId = useId();
   const rowRef = useRef<HTMLDivElement>(null);
@@ -58,7 +63,8 @@ export function Shelf({ title, eyebrow, items, seeAllHref }: ShelfProps) {
 
   // Show the first 20; the rest are reached through the "View more" card.
   const visibleItems = items.slice(0, MAXIMUM_SHELF_ITEMS);
-  const hasMore = items.length > MAXIMUM_SHELF_ITEMS;
+  const listSize = totalCount ?? items.length;
+  const hasMore = listSize > MAXIMUM_SHELF_ITEMS;
 
   return (
     <section aria-labelledby={headingId}>
@@ -92,7 +98,7 @@ export function Shelf({ title, eyebrow, items, seeAllHref }: ShelfProps) {
         ))}
         {hasMore && (
           <div className="flex-none snap-start">
-            <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={items.length} />
+            <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
           </div>
         )}
       </div>

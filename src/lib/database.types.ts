@@ -2608,6 +2608,19 @@ export type Database = {
       banned_email_hash: { Args: { email: string }; Returns: string };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
+      browse_stories: {
+        Args: {
+          category_slug?: string;
+          completion?: Database['public']['Enums']['completion_status'];
+          language?: string;
+          list_key?: string;
+          list_kind: string;
+          page_offset?: number;
+          page_size?: number;
+          sort_order?: string;
+        };
+        Returns: Json;
+      };
       cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
       change_is_too_soon: {
         Args: { last_changed_at: string; setting_key: string };
@@ -2777,6 +2790,17 @@ export type Database = {
         Returns: Json;
       };
       like_state_of: { Args: { target_chapter_id: string }; Returns: Json };
+      list_holds_story: {
+        Args: {
+          list_key: string;
+          list_kind: string;
+          target: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       list_my_sessions: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2786,6 +2810,50 @@ export type Database = {
           started_at: string;
           user_agent: string;
         }[];
+      };
+      listed_stories: {
+        Args: {
+          category_slug: string;
+          completion: Database['public']['Enums']['completion_status'];
+          language: string;
+          list_key: string;
+          list_kind: string;
+        };
+        Returns: {
+          ai_disclosure: Database['public']['Enums']['ai_disclosure'];
+          ai_undisclosed_labelled_at: string | null;
+          blurb: string;
+          category_id: string;
+          comments_enabled: boolean;
+          completion_status: Database['public']['Enums']['completion_status'];
+          content_note: string;
+          cover_accent: string | null;
+          cover_background: string | null;
+          cover_design: string | null;
+          cover_kind: Database['public']['Enums']['cover_kind'];
+          cover_square_path: string | null;
+          cover_tall_path: string | null;
+          created_at: string;
+          deals_with_abuse_or_coercion: boolean;
+          deleted_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          is_fan_fiction: boolean;
+          is_parody: boolean;
+          language_code: string;
+          last_chapter_published_at: string | null;
+          rating: Database['public']['Enums']['story_rating'];
+          slug: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'stories';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       log_account_change: {
         Args: {
@@ -3173,6 +3241,7 @@ export type Database = {
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
+      story_card_json: { Args: { target_story_id: string }; Returns: Json };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
