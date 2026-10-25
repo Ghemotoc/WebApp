@@ -93,9 +93,13 @@ test.describe('copied-work reports (S1-E10-08)', () => {
 
     const dialog = page.getByRole('dialog', { name: 'Report this story' });
     await expect(dialog).toBeVisible();
-    await dialog
-      .getByRole('radio', { name: 'Copied from a published work' })
-      .check({ force: true });
+    // Click the chip's label as a reader would. Under a full parallel run the dialog's file can
+    // still be settling on the first click, so the click is retried until the radio is checked.
+    const copiedReason = dialog.getByRole('radio', { name: 'Copied from a published work' });
+    await expect(async () => {
+      await dialog.locator('label', { hasText: 'Copied from a published work' }).click();
+      await expect(copiedReason).toBeChecked({ timeout: 1000 });
+    }).toPass();
     const source = dialog.getByRole('group', { name: 'Where was it copied from? (all optional)' });
     await expect(source.getByText(storyTitle, { exact: true })).toBeVisible();
     await source.getByLabel('Title of the published work (optional)').fill('Ion');

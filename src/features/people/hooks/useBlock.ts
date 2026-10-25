@@ -3,7 +3,7 @@
  *
  * Who calls it: BlockDialog and the profile's Unblock button, and Settings' "Blocked accounts".
  * What it calls: api/blocks.ts → set_block(). Afterwards every cached profile, story page,
- * chapter, follow state and the blocked list are refreshed, because a block changes what each
+ * chapter, story list, follow state and the blocked list are refreshed, because a block changes what each
  * of them shows (rule 6: blocks respected everywhere).
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -20,6 +20,8 @@ const keysChangedByABlock = [
   'follow-state',
   'my-blocked-accounts',
   'my-followers',
+  // Every story list on Discover and the See all pages (S1-E5-01).
+  'story-list',
 ];
 
 /**

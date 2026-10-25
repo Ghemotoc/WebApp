@@ -67,7 +67,11 @@ export function useFollow(target: FollowTarget) {
   const change = useMutation({
     mutationFn: async (shouldFollow: boolean) =>
       setFollow(await requireClient(), target, shouldFollow),
-    onSuccess: (newState) => queryClient.setQueryData(queryKey, newState),
+    onSuccess: async (newState) => {
+      queryClient.setQueryData(queryKey, newState);
+      // Discover's "New from writers you follow" shelf changes with every follow (S1-E5-01).
+      await queryClient.invalidateQueries({ queryKey: ['story-list'] });
+    },
   });
   const failure = failureOf(change.isError, change.error);
   return {

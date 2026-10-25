@@ -15,10 +15,12 @@ export interface NavigationItem {
 }
 
 /**
- * Top bar links that exist today. Coming: Home and Discover (S1-E5-01), Library (S1-E4-03),
- * Forums (S1-E8-01), Messages (S1-E9-01).
+ * Top bar links that exist today: Discover (S1-E5-01). Coming: Home (S1-E5-08), Library
+ * (S1-E4-03), Forums (S1-E8-01), Messages (S1-E9-01).
  */
-export const primaryNavigation: NavigationItem[] = [];
+export const primaryNavigation: NavigationItem[] = [
+  { href: '/discover', labelKey: 'nav.discover' },
+];
 
 /**
  * Footer links that exist today: the Legal centre's documents (S1-E14-01), in the order of the

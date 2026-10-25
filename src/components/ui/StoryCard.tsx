@@ -24,6 +24,11 @@ export interface StoryCardProps {
   href: string;
   /** An optional InfoPill such as "Chapter 15". */
   pill?: ReactNode;
+  /**
+   * Fill the column instead of the board's fixed 196 px, keeping the cover's 5:8 shape:
+   * the See all grid (S1-E5-09) uses it, so two cards fit side by side on a 390 px phone.
+   */
+  isFluid?: boolean;
 }
 
 /**
@@ -31,11 +36,17 @@ export interface StoryCardProps {
  *
  * @returns the card
  */
-export function StoryCard({ title, metaLine, cover, href, pill }: StoryCardProps) {
+export function StoryCard({ title, metaLine, cover, href, pill, isFluid = false }: StoryCardProps) {
   return (
-    <a href={href} className="flex w-[196px] flex-col no-underline">
+    <a href={href} className={`flex ${isFluid ? 'w-full' : 'w-[196px]'} flex-col no-underline`}>
       {/* The drawn cover: decorative, because the title is repeated as text below. */}
-      <DrawnCover title={title} choice={cover} size="shelf" isDecorative className="h-[264px]" />
+      <DrawnCover
+        title={title}
+        choice={cover}
+        size="shelf"
+        isDecorative
+        className={isFluid ? 'w-full' : 'h-[264px]'}
+      />
       {pill !== undefined && <span className="mt-3">{pill}</span>}
       <span
         className={`${pill === undefined ? 'mt-3' : 'mt-2'} font-heading text-base font-semibold text-ink`}

@@ -74,6 +74,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/writing/` | The writer's side: `/write` (Your writing), `/write/new` (the new story form), `/write/s/:storySlug/settings` (story settings, delete and undo), `/write/s/:storySlug/c/:chapterCode` (the chapter editor and its autosave), the tag rule, the Markdown converters, `create_story()`, `update_my_story()`, `save_chapter_draft()`; see its README | S1-E3-01, S1-E3-05, S1-E3-02a |
 | `src/features/reading/` | The reader's side: `/s/:storySlug` (the story page) through `get_story_page()`, the label pills, the chapter reader and, for signed-out visitors, the teaser and the "No preview" notice; see its README | S1-E3-05, S1-E3-06, S1-E4-01a, S1-E4-04 |
 | `src/features/people/` | Writer profiles (`/u/:handle`) through `get_writer_profile()`, blocks (`set_block()`, the block dialog, Settings' "Blocked accounts"), the bio, and the shared `<FollowButton>` for writers and stories; see its README | S1-E5-05, S1-E6-05 |
+| `src/features/discovery/` | Discover (`/discover`), and one list page for every See all, category, tag and writer list (`/discover/all/:listKind`, `/discover/c/:categorySlug`, `/discover/t/:tag`, `/u/:handle/stories`), all through `browse_stories()`; filters and sort live in the address; see its README | S1-E5-01, S1-E5-09, S1-E5-02 |
 | `src/components/covers/` | `DrawnCover` (every cover we draw: the 16 designs, the 9-colour palette, the full title at every size), `coverDesigns.ts` (the designs, colours and pattern artwork from the NewStory board) and `automaticCover.ts` (a skipped cover gets a design from the story's ID; `designsForRow()` keeps two neighbours in a row apart) | S1-E3-01, S1-E3-13 |
 | `src/components/ui/Doodle.tsx`, `src/assets/doodles/` | The decorative doodles (`data-doodle="background"` or `"widget"`, hidden under 1000 or 600 px), copied from design/assets with readable names; `e2e/support/doodles.ts` fails a screen when a doodle meets text or a control | S1-E3-01 |
 | `src/features/<feature>/` | One folder per feature: `components/` (screens), `hooks/` (data hooks), `api/` (Supabase calls) and a `README.md` | each feature story; `home/` by S1-E1-01 |
@@ -748,6 +749,28 @@ CommentReactions → useReactToComment → api/reactions.ts → react_to_comment
 Deleted comments go for good after 30 days (`purge_deleted_comments()`, nightly); a deleted or removed comment keeps its place as a marker only while replies stand under it.
 
 Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `150-comment-reactions.test.sql`, `lib/timeAgo.test.ts`, `CommentReactions.test.tsx`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`, `e2e/comment-reactions.spec.ts`.
+
+## Discover and the story lists (S1-E5-01, S1-E5-09, S1-E5-02)
+
+`/discover` from the top bar; a shelf's "View more", a tag on the story page or "View more" on a profile open a list page:
+
+```
+DiscoverPage
+  │  CategoryLinks (links to /discover/c/<slug>, the categories table)
+  ▼  DiscoverShelf × (following, updated, new, completed, one per category) → useStoryShelf (21 rows)
+StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
+  │  StoryListHeader (breadcrumb, eyebrow, title, "n stories") · StoryListFilters (chips, language)
+  ▼  StoryGrid ("Load more", 24 a page) → useStoryList
+both → api/storyLists.ts → browse_stories(list_kind, list_key, filters, sort_order, page_size, page_offset)
+         listed_stories(): published, readable chapter, not moderated, rating_allows(), not is_blocked_with()
+         list_holds_story(): which list; story_card_json(): one card, never a user ID
+```
+
+There is no new table: everything is read through the functions. A shelf asks for 21 so it knows there are more than 20 (rule 20) and passes the total to "View more". A follow or a block refreshes every list (the `story-list` query key).
+
+The six sorts (S1-E5-02) are lines of `browse_stories()`'s order, titles and writer names in the ICU Romanian collation (`"ro-x-icu"`); a picked sort goes into the address and into `sessionStorage` (`lib/sortMemory.ts`) for the next list in this tab.
+
+Tests: `151-browse-stories.test.sql`, `152-story-list-sorts.test.sql`, `lib/listAddresses.test.ts`, `lib/sortMemory.test.ts`, `e2e/discover.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 

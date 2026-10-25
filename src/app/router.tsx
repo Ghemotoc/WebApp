@@ -192,6 +192,29 @@ const writeRoutes: RouteObject[] = [
       return { Component: ChapterReaderPage };
     },
   },
+  // Discover (S1-E5-01) and every list's See all page (S1-E5-09): the Discover shelves, a
+  // category, a tag and a writer's stories share one page; the address decides the list.
+  {
+    path: '/discover',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { DiscoverPage } = await import('@/features/discovery/components/DiscoverPage');
+      return { Component: DiscoverPage };
+    },
+  },
+  ...[
+    '/discover/all/:listKind',
+    '/discover/c/:categorySlug',
+    '/discover/t/:tag',
+    '/u/:handle/stories',
+  ].map((path): RouteObject => ({
+    path,
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { StoryListPage } = await import('@/features/discovery/components/StoryListPage');
+      return { Component: StoryListPage };
+    },
+  })),
   // A writer's public profile (S1-E5-05): by username, never the user ID (architecture 1.6);
   // the page reaches the profile only through get_writer_profile() (ADR 0004).
   {
