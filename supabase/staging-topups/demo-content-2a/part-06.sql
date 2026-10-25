@@ -596,6 +596,12 @@ Source edition: 1845.$demo$, 'en',
   now() - interval '53 days', now() - interval '53 days', now() - interval '55 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001600000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001600000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'poetry', 'gothic']);
+insert into public.classic_authors (name, died_year) values ($demo$Edgar Allan Poe$demo$, 1849)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$)
+where stories.id = '00000000-0000-4000-9300-001600000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -1115,6 +1121,12 @@ Source edition: 1839.$demo$, 'en',
   now() - interval '90 days', now() - interval '90 days', now() - interval '92 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001700000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001700000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'gothic', 'horror']);
+insert into public.classic_authors (name, died_year) values ($demo$Edgar Allan Poe$demo$, 1849)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$)
+where stories.id = '00000000-0000-4000-9300-001700000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Edgar Allan Poe$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -1766,6 +1778,12 @@ Source edition: 1892.$demo$, 'en',
   now() - interval '37 days', now() - interval '37 days', now() - interval '39 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001800000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001800000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'short story', 'gothic']);
+insert into public.classic_authors (name, died_year) values ($demo$Charlotte Perkins Gilman$demo$, 1935)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Charlotte Perkins Gilman$demo$)
+where stories.id = '00000000-0000-4000-9300-001800000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Charlotte Perkins Gilman$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -3917,6 +3935,12 @@ Source edition: 1798.$demo$, 'en',
   now() - interval '74 days', now() - interval '56 days', now() - interval '76 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-001900000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-001900000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'classic', 'poetry', 'the sea']);
+insert into public.classic_authors (name, died_year) values ($demo$Samuel Taylor Coleridge$demo$, 1834)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Samuel Taylor Coleridge$demo$)
+where stories.id = '00000000-0000-4000-9300-001900000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Samuel Taylor Coleridge$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)

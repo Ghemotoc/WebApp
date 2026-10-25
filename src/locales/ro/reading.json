@@ -4,6 +4,8 @@
     "by": "de",
     "tags": "Etichete",
     "writerEyebrow": "Autorul",
+    "authorEyebrow": "Autorul",
+    "classicAuthorNote": "Un clasic din domeniul public. Autorul a murit în {{year}}.",
     "labelsHeading": "Etichete de la autor",
     "languageLabel": "Limbă",
     "statusLabel": "Stare",

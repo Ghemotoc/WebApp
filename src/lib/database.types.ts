@@ -498,6 +498,31 @@ export type Database = {
           },
         ];
       };
+      classic_authors: {
+        Row: {
+          created_at: string;
+          died_year: number;
+          id: string;
+          name: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          died_year: number;
+          id?: string;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          died_year?: number;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       client_errors: {
         Row: {
           app_version: string;
@@ -2082,6 +2107,7 @@ export type Database = {
           ai_undisclosed_labelled_at: string | null;
           blurb: string;
           category_id: string;
+          classic_author_id: string | null;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
@@ -2112,6 +2138,7 @@ export type Database = {
           ai_undisclosed_labelled_at?: string | null;
           blurb?: string;
           category_id: string;
+          classic_author_id?: string | null;
           comments_enabled?: boolean;
           completion_status?: Database['public']['Enums']['completion_status'];
           content_note?: string;
@@ -2141,6 +2168,7 @@ export type Database = {
           ai_undisclosed_labelled_at?: string | null;
           blurb?: string;
           category_id?: string;
+          classic_author_id?: string | null;
           comments_enabled?: boolean;
           completion_status?: Database['public']['Enums']['completion_status'];
           content_note?: string;
@@ -2171,6 +2199,13 @@ export type Database = {
             columns: ['category_id'];
             isOneToOne: false;
             referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'stories_classic_author_id_fkey';
+            columns: ['classic_author_id'];
+            isOneToOne: false;
+            referencedRelation: 'classic_authors';
             referencedColumns: ['id'];
           },
           {
@@ -3034,6 +3069,7 @@ export type Database = {
           ai_undisclosed_labelled_at: string | null;
           blurb: string;
           category_id: string;
+          classic_author_id: string | null;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
@@ -3371,6 +3407,7 @@ export type Database = {
           ai_undisclosed_labelled_at: string | null;
           blurb: string;
           category_id: string;
+          classic_author_id: string | null;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
           content_note: string;
@@ -3512,6 +3549,7 @@ export type Database = {
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
       story_card_json: { Args: { target_story_id: string }; Returns: Json };
+      story_classic_author: { Args: { target_story_id: string }; Returns: Json };
       story_comment_total: { Args: { target_story_id: string }; Returns: number };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
@@ -3530,6 +3568,10 @@ export type Database = {
         }[];
       };
       story_slug_for: { Args: { title: string }; Returns: string };
+      story_writer_name: {
+        Args: { target_story_id: string; writer_handle: string; writer_pen_name: string };
+        Returns: string;
+      };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       submit_public_notice: {
         Args: { payload: string; signature: string };

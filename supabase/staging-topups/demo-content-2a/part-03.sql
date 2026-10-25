@@ -1768,6 +1768,12 @@ Ediția sursă: 1875. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '38 days', now() - interval '38 days', now() - interval '40 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000100000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000100000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'creangă']);
+insert into public.classic_authors (name, died_year) values ($demo$Ion Creangă$demo$, 1889)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
+where stories.id = '00000000-0000-4000-9300-000100000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -2671,6 +2677,12 @@ Ediția sursă: 1876. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '75 days', now() - interval '75 days', now() - interval '77 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000200000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000200000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'creangă']);
+insert into public.classic_authors (name, died_year) values ($demo$Ion Creangă$demo$, 1889)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
+where stories.id = '00000000-0000-4000-9300-000200000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -2974,6 +2986,12 @@ Ediția sursă: 1880. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '22 days', now() - interval '22 days', now() - interval '24 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000300000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000300000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poveste', 'creangă']);
+insert into public.classic_authors (name, died_year) values ($demo$Ion Creangă$demo$, 1889)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
+where stories.id = '00000000-0000-4000-9300-000300000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -3201,6 +3219,12 @@ Ediția sursă: 1877. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '59 days', now() - interval '59 days', now() - interval '61 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000400000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000400000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'basm', 'creangă']);
+insert into public.classic_authors (name, died_year) values ($demo$Ion Creangă$demo$, 1889)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
+where stories.id = '00000000-0000-4000-9300-000400000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -3480,6 +3504,12 @@ Ediția sursă: 1876. Text: Wikisource, https://ro.wikisource.org/w/index.php?ol
   now() - interval '6 days', now() - interval '6 days', now() - interval '8 days'
 where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000500000000'::uuid);
 select public.set_story_tags('00000000-0000-4000-9300-000500000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poveste', 'creangă']);
+insert into public.classic_authors (name, died_year) values ($demo$Ion Creangă$demo$, 1889)
+on conflict (name) do nothing;
+update public.stories
+set classic_author_id = (select id from public.classic_authors where name = $demo$Ion Creangă$demo$)
+where stories.id = '00000000-0000-4000-9300-000500000000'::uuid
+  and stories.classic_author_id is distinct from (select id from public.classic_authors where name = $demo$Ion Creangă$demo$);
 insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, draft_version,
   draft_saved_at, published_title, published_body, status, first_published_at, last_published_at, word_count,
   published_word_count, created_at)
@@ -4809,18 +4839,4 @@ Atunci lasă pe copii, că și dracul fuge de dânșii. Au tăbărât cu toții 
 
 Iară Dănilă Prepeleac, nemaifiind supărat de nimene și scăpând deasupra nevoii, a mâncat și a băut și s-a desfătat până la adânci bătrânețe, văzându-și pe fiii fiilor săi împrejurul mesei sale.$demo$), now() - interval '7 days'
 where not exists (select 1 from public.chapters where chapters.id = '00000000-0000-4000-9300-000500010000'::uuid);
-
--- classic-06-luceafarul: "Luceafărul" by clasice
-insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
-  cover_kind, cover_design, cover_background, cover_accent, rating, ai_disclosure,
-  first_published_at, last_chapter_published_at, created_at)
-select '00000000-0000-4000-9300-000600000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, 'luceafarul-classic',
-  $demo$Luceafărul$demo$, $demo$O fată de împărat și luceafărul care coboară din cer pentru ea. Poemul despre iubirea dintre o ființă nemuritoare și una trecătoare, și despre ce înseamnă să rămâi rece și singur.
-
-Ediția sursă: 1883. Text: Wikisource, https://ro.wikisource.org/w/index.php?oldid=148561, CC BY-SA 4.0; formatare adaptată.$demo$, 'ro',
-  (select id from public.categories where slug = 'poetry'),
-  'drawn', 'starry', 'ink', 'gold', 'all_ages', 'no_ai',
-  now() - interval '43 days', now() - interval '43 days', now() - interval '45 days'
-where not exists (select 1 from public.stories where stories.id = '00000000-0000-4000-9300-000600000000'::uuid);
-select public.set_story_tags('00000000-0000-4000-9300-000600000000'::uuid, '00000000-0000-4000-8000-000000000100'::uuid, array['domeniu public', 'clasic', 'poezie', 'eminescu']);
 commit;

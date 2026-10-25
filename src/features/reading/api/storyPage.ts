@@ -38,8 +38,16 @@ export interface StoryPageData {
   commentsEnabled: boolean;
   coverKind: 'automatic' | 'drawn' | 'upload';
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
-  /** The writer's public name, username and bio (S1-E5-05). */
-  writer: { displayName: string; handle: string; bio: string };
+  /**
+   * The writer's public name, username and bio (S1-E5-05). For a public-domain classic the name
+   * is its real author and classicAuthor says who (S1-E5-06, 25 Oct 2026); null otherwise.
+   */
+  writer: {
+    displayName: string;
+    handle: string;
+    bio: string;
+    classicAuthor: { name: string; diedYear: number } | null;
+  };
   firstPublishedAt: string | null;
   lastChapterPublishedAt: string | null;
   isOwner: boolean;
@@ -81,7 +89,12 @@ interface StoryPageRow {
     background: string | null;
     accent: string | null;
   };
-  writer: { display_name: string; handle: string; bio: string };
+  writer: {
+    display_name: string;
+    handle: string;
+    bio: string;
+    classic_author: { name: string; died_year: number } | null;
+  };
   first_published_at: string | null;
   last_chapter_published_at: string | null;
   is_owner: boolean;
@@ -106,6 +119,19 @@ interface StoryPageRow {
     ai_disclosure: AiDisclosure;
     ai_undisclosed_labelled: boolean;
   };
+}
+
+/**
+ * A classic's real author in the app's shape (S1-E5-06).
+ *
+ * @param author - the database's classic_author, or null for a writer's own story
+ * @returns { name, diedYear }, or null
+ */
+function classicAuthorFrom(
+  author: { name: string; died_year: number } | null | undefined,
+): { name: string; diedYear: number } | null {
+  if (author === null || author === undefined) return null;
+  return { name: author.name, diedYear: author.died_year };
 }
 
 /**
@@ -157,6 +183,7 @@ export async function fetchStoryPage(
       displayName: row.writer.display_name,
       handle: row.writer.handle,
       bio: row.writer.bio,
+      classicAuthor: classicAuthorFrom(row.writer.classic_author),
     },
     firstPublishedAt: row.first_published_at,
     lastChapterPublishedAt: row.last_chapter_published_at,

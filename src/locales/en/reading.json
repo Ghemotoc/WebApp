@@ -4,6 +4,8 @@
     "by": "by",
     "tags": "Tags",
     "writerEyebrow": "The writer",
+    "authorEyebrow": "The author",
+    "classicAuthorNote": "A classic in the public domain. Its author died in {{year}}.",
     "labelsHeading": "Labels from the writer",
     "languageLabel": "Language",
     "statusLabel": "Status",
