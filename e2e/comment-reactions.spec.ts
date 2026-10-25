@@ -28,7 +28,7 @@ function cleanUp() {
   runSql(`delete from public.comments where chapter_id in (select id from public.chapters where code like 'reace%');
     delete from public.chapters where code like 'reace%';
     update public.stories set first_published_at = null, last_chapter_published_at = null where id = '${storyId}';
-    update public.profiles set locale = 'ro' where handle in ('blocker', 'kid_14_ok');`);
+    update public.profiles set locale = 'ro' where handle in ('blocker', 'failed_check');`);
 }
 
 /** One published chapter, teacher's comment on it and adult_writer's Wow on that comment. */
@@ -107,7 +107,7 @@ test.describe('reactions on comments (S1-E6-02)', () => {
   });
 
   test('a read-only account is told it can’t react yet', async ({ browser }) => {
-    const page = await openAs(browser, 'kid_14_ok');
+    const page = await openAs(browser, 'failed_check');
     await page.getByRole('button', { name: 'Add a reaction' }).click();
     await page.getByRole('button', { name: 'Heart' }).click();
     await expect(page.getByRole('alert')).toHaveText('Your account can’t react yet.');
@@ -119,8 +119,13 @@ test.describe('reactions on comments (S1-E6-02)', () => {
     test(`the reactions pass axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       browser,
     }) => {
+      // A persona no other spec switches the language of, set to this view's language: the
+      // account's language wins over the browser's, so a shared persona made this flaky.
+      runSql(
+        `update public.profiles set locale = '${view.language}' where handle = 'failed_check';`,
+      );
       const context = await browser.newContext();
-      await useSessionInBrowser(context, (await signInPersona('blocker')).session);
+      await useSessionInBrowser(context, (await signInPersona('failed_check')).session);
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.locator('#comments-heading')).toBeVisible();

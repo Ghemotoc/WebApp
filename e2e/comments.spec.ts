@@ -35,7 +35,7 @@ function cleanUp() {
     delete from public.chapters where code like 'comme%';
     update public.stories set first_published_at = null, last_chapter_published_at = null where id = '${storyId}';
     update public.settings set value = '5'::jsonb where key = 'comment_hourly_limit_new_account';
-    update public.profiles set locale = 'ro' where handle in ('teacher', 'adult_writer', 'blocker', 'kid_14_ok');`);
+    update public.profiles set locale = 'ro' where handle in ('teacher', 'adult_writer', 'blocker', 'kid_14_ok', 'pending_check');`);
 }
 
 /** One published chapter to comment on. */
@@ -158,8 +158,13 @@ test.describe('comments on a chapter (S1-E6-01)', () => {
     test(`the comments pass axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       browser,
     }) => {
+      // A persona no other spec switches the language of, set to this view's language: the
+      // account's language wins over the browser's, so a shared persona made this flaky.
+      runSql(
+        `update public.profiles set locale = '${view.language}' where handle = 'pending_check';`,
+      );
       const context = await browser.newContext();
-      await useSessionInBrowser(context, (await signInPersona('blocker')).session);
+      await useSessionInBrowser(context, (await signInPersona('pending_check')).session);
       const page = await context.newPage();
       await checkScreen(page, view);
       await expect(page.locator('#comments-heading')).toBeVisible();
