@@ -30,6 +30,17 @@ describe('Shelf', () => {
     );
   });
 
+  it("names the whole list's total when it is given, not just the stories it was handed", () => {
+    renderWithProviders(
+      <Shelf title="Trending" items={items(21)} totalCount={54} seeAllHref="/see-all" />,
+      'en',
+    );
+
+    expect(
+      screen.getByRole('link', { name: /View more\s*All 54 in Trending/ }),
+    ).toBeInTheDocument();
+  });
+
   it('has no "View more" card when 20 or fewer stories fit the limit', () => {
     renderWithProviders(<Shelf title="Classics" items={items(3)} seeAllHref="/see-all" />, 'en');
 
