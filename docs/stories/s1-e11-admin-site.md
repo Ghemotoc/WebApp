@@ -371,11 +371,29 @@ As an admin, I want to change the app's interface text (buttons, errors, labels)
   - Given the brand name check (S1-E1-01), when an override is saved, then it may use the `{{productName}}` placeholder but never the literal product name, so a rename stays a change in one place (decided 17 Oct 2026, 12:47).
 - **Legal and compliance:** claims in interface text must stay true (Law 363/2007). Wording that repeats a legal duty must stay accurate: reporting and statement-of-reasons wording (DSA, Regulation (EU) 2022/2065, art. 16 and 17) and consent and privacy wording (GDPR art. 7 and 12: clear and plain language, consent as easy to withdraw as to give). Accessibility: the overridden text keeps the right `lang` attribute (WCAG 2.2, 3.1.1 and 3.1.2), and a control's accessible name keeps containing its visible label (2.5.3, Label in Name). Romanian text is checked by a native speaker before it goes live (Definition of Done).
 
+##### S1-E11-19 Edit email templates
+
+As an admin, I want to change the wording of every email the platform sends (sign-up, log-in link, change email, password reset and every later one) from the admin site so that no email needs an engineer or a dashboard paste.
+
+- **Priority:** Must · **Size:** M · **Depends on:** S1-E11-18 (the same editor, versions and audit log), S1-E2-01, S1-E2-05; back end: B09 and B34 in section 1.7
+- **Added:** 25 Oct 2026, 09:18 to 09:21 (Robert, chat): "admin to edit any sort of template, sign up, change email, password reset, anything whatsoever". Built in the CMS-1 bundle, straight after S1-E11-18.
+- **How it works:** Supabase Auth hands every email to a Send Email hook (an edge function, verified with the hook secret) instead of sending it from its own template. The function picks the template for the email type and the person's language, lays the published admin overrides over the default text in `src/locales/<lang>/email.json`, fills the locked placeholders and sends it through Brevo's HTTP API (the provider decided on 17 Oct 2026, 19:43). Notification emails (S1-E7-02) and every later email use the same sender. Locally it sends to Mailpit.
+- **Acceptance criteria:**
+  - Given Website › Email templates, when an admin opens it, then every email type is listed with its subject, heading, body, button and footer in each language, the default text beside it and a preview of the finished email.
+  - Given a template, when it is edited, then its placeholders ({code}, {link}, {productName}, {name}) show as locked chips: an admin can move them in the text but not delete or change them, and a template missing a required placeholder can't be published.
+  - Given the codes in an email (sign-up, log-in, change email), when it is sent, then the code is the one Supabase Auth made: random, single use and expiring (one hour by default, a setting); we never make or store a code ourselves.
+  - Given a "show from" date, Earlier versions, Restore and "Reset to default", when an admin uses them, then they behave as in S1-E11-18, and every change is in the audit log with the before and after text.
+  - Given anyone without the admin role (the owner excepted), when they try to save, publish, restore or reset, then the server refuses.
+  - Given the hook or Brevo fails, when an email is due, then Auth gets an error back (so the screen says the email couldn't be sent and offers to try again) and the failure is logged without the address, the code or the text (CLAUDE.md rule 12).
+  - Given a new feature that needs an email or any other template, when it is built, then it ships with draft ro and en text in the locale files and is editable here from the first day (Robert, 25 Oct 2026, 09:16 to 09:17).
+- **By hand:** `BREVO_API_KEY` and the hook secret as Edge Function secrets on staging, and turning on the Send Email hook in the Supabase dashboard (Authentication › Hooks). After that no template is pasted by hand again.
+- **Legal and compliance:** Brevo is already on the processor list with a data processing agreement (decided 17 Oct 2026, 19:43). Emails carry no tracking pixels or tracked links (CLAUDE.md rule 7; Brevo's tracking switched off). Wording with legal weight follows the S1-E11-18 rules.
+
 ##### S1-E11-QA Epic check: Admin site
 
 As the founder, I want every story in this epic tested together end to end so that the pieces work with each other, not just alone.
 
-- **Priority:** Must · **Size:** S · **Depends on:** S1-E11-01, S1-E11-02, S1-E11-06, S1-E11-10, S1-E11-12, S1-E11-17, S1-E11-18
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E11-01, S1-E11-02, S1-E11-06, S1-E11-10, S1-E11-12, S1-E11-17, S1-E11-18, S1-E11-19
 - **Added:** 17 Oct 2026, 12:36 (Robert, chat): every epic ends with a quality-check story, and every prompt has a quality check built in. It covers the epic's March MVP stories (S1-E11-09a moved after March, 12:44) and comes last among them in the build order. The epic's after-March stories (S1-E11-03, S1-E11-04, S1-E11-05, S1-E11-07, S1-E11-08, S1-E11-11, S1-E11-13, S1-E11-14, S1-E11-15, S1-E11-16) get the same check when they land (proposal). Updated 17 Oct 2026, 19:14 to 19:19: the website CMS stories (S1-E11-06, 10, 12) and S1-E11-18 joined the March MVP, so this check covers them.
 - **Main journeys:** an admin makes an invite link and an invited adult joins with it; staff sign in to the admin shell, find a user and act on the account, with every step in the audit log; an admin edits the Romanian market's home page in Română with a future "show from" date, adds a notice and a home page question, and a signed-out visitor sees them go live, while a visitor from a country with no page of its own sees the Romanian market's English page; an admin overrides a button label, sees it in the app, then resets it to the file text; a moderator and a content editor without the admin role are refused on every CMS and interface text action. (Data requests moved after March, 12:44.)
 - **Acceptance criteria:**
