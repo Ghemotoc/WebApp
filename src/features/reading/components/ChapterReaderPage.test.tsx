@@ -46,6 +46,7 @@ vi.mock('../hooks/useChapterBanner', () => ({ useChapterBanner: () => ({ banner 
 vi.mock('../hooks/useRecordRead', () => ({ useRecordRead: () => undefined }));
 // The Like button and the comments read the database; this test is about the banner slot only.
 vi.mock('./LikeButton', () => ({ LikeButton: () => null }));
+vi.mock('./ChapterComments', () => ({ ChapterComments: () => null }));
 
 /** Draws the reader at a chapter's address, in English. */
 function renderReader() {

@@ -723,7 +723,21 @@ ChapterEnd
 
 The popularity job (S1-E5-03) reads `chapter_like_totals()`, which leaves out the writer's own like.
 
-Tests: `148-chapter-likes.test.sql`, `e2e/chapter-likes.spec.ts`.
+Comments (S1-E6-01) sit under the banner slot, in their own file, fetched when the reader nears the end of the chapter:
+
+```
+ChapterComments (reading) ─lazy→ CommentsSection (src/features/comments/)
+  │  useChapterComments → chapter_comments(story, chapter, older_than): 20 top-level comments a page,
+  │     newest first, each with its replies; readable_chapter(), blocks, moderated_items, comments_enabled
+  │  CommentComposer → usePostComment → post_comment(): the account gate, the limit (5 an hour on the
+  │     first day, 60 after: wait_minutes in the error's hint), check_comment_text(), a 'comment_posted' job
+  ▼  CommentItem → CommentBody (spoiler cover, markers) · CommentActions: Reply · Delete → delete_comment()
+                   · ReportButton (itemType "comment"; reportable_item_owner() and _summary() have the branch)
+```
+
+Deleted comments go for good after 30 days (`purge_deleted_comments()`, nightly); a deleted or removed comment keeps its place as a marker only while replies stand under it.
+
+Tests: `148-chapter-likes.test.sql`, `149-comments.test.sql`, `lib/timeAgo.test.ts`, `e2e/chapter-likes.spec.ts`, `e2e/comments.spec.ts`.
 
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 

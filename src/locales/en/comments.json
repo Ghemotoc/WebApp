@@ -1,0 +1,54 @@
+{
+  "section": {
+    "eyebrow": "Comments",
+    "heading_one": "{{count}} comment",
+    "heading_few": "{{count}} comments",
+    "heading_other": "{{count}} comments",
+    "newestFirst": "Newest first",
+    "empty": "No comments yet. Be the first to say what you thought.",
+    "off": "The writer has turned comments off for this story.",
+    "showMore": "Show more comments",
+    "loadFailed": "We couldn’t load the comments. Check your connection and try again.",
+    "logIn": "Log in to comment"
+  },
+  "composer": {
+    "label": "Add a comment",
+    "replyLabel": "Reply to {{name}}",
+    "placeholder": "What did you think of this chapter?",
+    "spoiler": "Hide as a spoiler",
+    "counter": "{{count}} / {{limit}}",
+    "counterLabel": "{{count}} of {{limit}} characters",
+    "post": "Post comment",
+    "postReply": "Post reply",
+    "cancel": "Cancel",
+    "kind": "Be kind. Every report is read by a person.",
+    "posted": "Your comment is up."
+  },
+  "failures": {
+    "read_only": "Your account can’t comment yet.",
+    "too_many_one": "You’ve posted a lot of comments. Wait {{count}} minute before the next one.",
+    "too_many_few": "You’ve posted a lot of comments. Wait {{count}} minutes before the next one.",
+    "too_many_other": "You’ve posted a lot of comments. Wait {{count}} minutes before the next one.",
+    "too_many_unknown": "You’ve posted a lot of comments. Wait a little before the next one.",
+    "comments_off": "The writer has turned comments off for this story.",
+    "refused": "That can’t be posted. A comment needs some words, at most 2,000 characters and no HTML.",
+    "gone": "That comment isn’t there any more.",
+    "unreachable": "We couldn’t save that. Check your connection and try again."
+  },
+  "comment": {
+    "writer": "Writer",
+    "spoiler": "Spoiler",
+    "spoilerNote": "This comment is marked as a spoiler.",
+    "showSpoiler": "Show spoiler",
+    "reply": "Reply",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this comment?",
+    "deleteYes": "Yes, delete it",
+    "keep": "Keep it",
+    "deleted": "Comment deleted.",
+    "removed": "[Removed by the moderation team]",
+    "hiddenNote": "Hidden by the moderation team. Only you can see it.",
+    "reportLabel": "the comment by {{name}}",
+    "replies": "Replies to {{name}}"
+  }
+}

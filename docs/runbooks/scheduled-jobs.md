@@ -7,6 +7,7 @@ The database runs a few jobs on a timer with `pg_cron`. Each is a named job, cre
 | `purge-old-client-errors` | 03:17 every day | `purge_old_client_errors()` | deletes client error reports past their retention | S1-E1-05 |
 | `purge-deleted-stories` | 03:23 every day | `purge_deleted_stories()` | deletes stories (and their chapters) deleted more than 30 days ago, except content held for moderation | S1-E3-05 |
 | `purge-deleted-chapters` | 03:29 every day | `purge_deleted_chapters()` | deletes chapters deleted more than 30 days ago (the story's own purge takes the chapters of a deleted story), except content held for moderation | S1-E3-04 |
+| `purge-deleted-comments` | 03:35 every day | `purge_deleted_comments()` | deletes comments deleted more than 30 days ago, except those held for moderation or with replies still under them | S1-E6-01 |
 | `publish-due-chapters` | every minute | `publish_due_chapters()` | publishes scheduled chapters whose time has come; skips deleted stories and writers who are no longer active | S1-E3-03 |
 
 ## See what ran

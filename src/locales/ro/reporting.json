@@ -4,7 +4,8 @@
     "title": {
       "profile": "Raportează acest profil",
       "story": "Raportează această poveste",
-      "chapter": "Raportează acest capitol"
+      "chapter": "Raportează acest capitol",
+      "comment": "Raportează acest comentariu"
     },
     "anonymous": "{{item}}. Nu va vedea cine a raportat.",
     "whatIsWrong": "Ce nu e în regulă?",
