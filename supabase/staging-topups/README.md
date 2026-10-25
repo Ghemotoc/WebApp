@@ -24,3 +24,13 @@ Rules for each file:
 The SQL Editor refuses the single file as too large, so the build also writes the same top-up as parts in `demo-content-2a/` (`part-01.sql` and on, each under 500 KB, split at statement boundaries by the generator). In the SQL Editor, run the parts in order; each is safe to run twice. Part 01 holds the settings and accounts, the last part ends with the check query. `npm run demo:compare-parts` proves on a fresh local database that the parts and the single file give the same rows.
 
 **The one exception to "never creates accounts"** (Robert, 23 Oct 2026, for this top-up only): it creates the five synthetic writers and the official classics account, exactly as `seed.sql` creates the personas (`@personas.test` addresses, fixed IDs `…-0000000001xx`, the shared test password), because the demo needs writers the personas can't stand in for. Every other rule holds: fixed ids, safe to run twice, never production (it refuses a database without the 16 personas). Merge after S1-E3-03 and S1-E3-06.
+
+## Demo content part 2b (TOOL-3, 25 Oct 2026)
+
+`demo-content-2b.sql` makes the demo stories look read: follows, chapter likes, comments with some writer replies, emoji reactions on the comments and daily read totals for the last 30 days (up to yesterday, so live reads are never touched). It is hand-written, not generated, and small enough for the SQL Editor as one file. Run it **after** part 2a; it refuses a database without the personas or without 2a's 36 stories.
+
+- Only the active adult test accounts act (adult_writer, teacher, blocker and the five demo writers): no minor, staff or sanctioned persona, and no new accounts.
+- Nobody likes their own chapter, nobody acts across a block, and comments go only where comments are on, on the demo stories (the classics get likes and reads only).
+- Safe to run twice: comments have fixed ids from their chapter and writer, everything else is one row per pair or per day.
+- The notification triggers fire for the new follows and reactions, so the demo writers' bells show activity.
+- Check it on your machine: `npm run demo:check-2b` (local database only; it resets it before and after).

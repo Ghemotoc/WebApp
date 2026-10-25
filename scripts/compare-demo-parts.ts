@@ -49,7 +49,7 @@ select json_build_object(
  * @returns the connection string
  * Errors: throws when the local stack isn't running or the address isn't local.
  */
-function localDatabaseUrl(): string {
+export function localDatabaseUrl(): string {
   const status = JSON.parse(
     execFileSync('npx', ['supabase', 'status', '-o', 'json'], { encoding: 'utf8' }),
   ) as {
@@ -63,7 +63,7 @@ function localDatabaseUrl(): string {
 }
 
 /** Resets the local database to its migrations and seed. */
-function resetLocalDatabase(): void {
+export function resetLocalDatabase(): void {
   execFileSync('npx', ['supabase', 'db', 'reset'], { stdio: 'ignore' });
 }
 
@@ -73,7 +73,7 @@ function resetLocalDatabase(): void {
  * @param databaseUrl - the local database
  * @param filePath - the file to run
  */
-function runSqlFile(databaseUrl: string, filePath: string): void {
+export function runSqlFile(databaseUrl: string, filePath: string): void {
   execFileSync('psql', [databaseUrl, '-v', 'ON_ERROR_STOP=1', '-q', '-f', filePath], {
     stdio: 'ignore',
   });
@@ -97,7 +97,7 @@ function snapshot(databaseUrl: string): Record<string, unknown> {
  *
  * @returns their paths
  */
-function partFiles(): string[] {
+export function partFiles(): string[] {
   return readdirSync(topUpPartsFolder)
     .filter((name) => /^part-\d+\.sql$/.test(name))
     .sort()
