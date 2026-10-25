@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- **TOOL-3 (#204, merged):** one SQL run on staging, after part 2a. Supabase dashboard > staging project > SQL Editor > New query > paste `supabase/staging-topups/demo-content-2b.sql` from main > Run, and expect one row `after_top_up_2b` (about 517 likes, 181 comments, 69 replies, 408 reactions). If it says "Run part 2a first", run `supabase/staging-topups/demo-content-2a/part-01.sql` to `part-07.sql` in order first. Optional: read the new Romanian comment lines in the PR's details block.
 - **READ-3 (#203, merged):** nothing to set up. Optional check: Supabase dashboard > staging project > SQL Editor > `select jobname, schedule from cron.job;` should list `run-notification-jobs` (every minute) and `purge-old-notifications` (03:41). Read the new Romanian lines in the PR's details block (notifications and downvotes).
 - **PEOPLE-2 (#202, merged):** nothing by hand: no secrets and no staging top-up. Discover is now in the top bar.
 - **READ-2 (#201, merged):** nothing by hand: no secrets and no staging top-up.
