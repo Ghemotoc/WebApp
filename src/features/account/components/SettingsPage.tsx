@@ -3,9 +3,11 @@
  *
  * Who shows it: the router, at /settings; the top bar links here while signed in.
  * What it shows today: "Signed in as …", the Account panel (username and pen name), "About you"
- * (the bio) and "Blocked accounts" (S1-E5-05), Signed-in devices (S1-E2-05) and the Legal panel. The board's other tabs (Privacy, Ways to log in,
- * Notifications, Messages, Language, My certificates) arrive with their stories (S1-E13-01,
- * S1-E2-09, S1-E7-02 and others), so only what works is shown (docs/board-fixes.md).
+ * (the bio), the Email address panel (S1-E2-05, added 25 Oct 2026: only the owner sees it),
+ * "Blocked accounts" (S1-E5-05), Signed-in devices (S1-E2-05) and the Legal panel. The board's
+ * other tabs (Privacy, Ways to log in, Notifications, Messages, Language, My certificates) arrive
+ * with their stories (S1-E13-01, S1-E2-09, S1-E7-02 and others), so only what works is shown
+ * (docs/board-fixes.md).
  * Signed out, it says to log in; without a username, it links to setup.
  */
 import { useTranslation } from 'react-i18next';
@@ -23,6 +25,7 @@ import { displayName } from '../lib/nameRules';
 import { AccountNamesSection } from './AccountNamesSection';
 import { BioSettingsSection } from './BioSettingsSection';
 import { BlockedAccountsSection } from './BlockedAccountsSection';
+import { EmailSettingsSection } from './EmailSettingsSection';
 import { LegalLinksSection } from './LegalLinksSection';
 import { SignedInDevicesSection } from './SignedInDevicesSection';
 
@@ -59,6 +62,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       )}
       {names.handle !== null && <AccountNamesSection account={account} names={names} />}
       {names.handle !== null && <BioSettingsSection handle={names.handle} />}
+      {/* Every signed-in account sees and can change its own address, minors included. */}
+      <EmailSettingsSection />
       {/* A moderator's question about one of the person's reports (S1-E10-08). */}
       <ReportQuestionsSection />
       <BlockedAccountsSection />

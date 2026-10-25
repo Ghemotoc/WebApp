@@ -25,5 +25,11 @@
     "body": "Parola contului tău {{productName}} tocmai a fost schimbată și te-am deconectat de pe toate celelalte dispozitive. Dacă nu ai fost tu, resetează parola acum.",
     "button": "Resetează parola",
     "linkNote": "Vezi în Setări dispozitivele conectate."
+  },
+  "emailChange": {
+    "heading": "Confirmă schimbarea adresei de email",
+    "body": "Cineva a cerut ca adresa de email a unui cont {{productName}} să fie înlocuită cu una nouă. Trimitem acest link atât la adresa veche, cât și la cea nouă, iar schimbarea se face doar după ce sunt deschise ambele linkuri. Până atunci, adresa veche merge în continuare.",
+    "button": "Confirm schimbarea",
+    "linkNote": "Linkul merge o singură dată și expiră după o oră."
   }
 }

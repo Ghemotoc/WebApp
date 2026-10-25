@@ -103,5 +103,21 @@
       "title": "Raportarea ta este suspendată până la {{until}}.",
       "body": "Raportările tale au fost găsite nefondate de mai multe ori, așa că raportarea este suspendată o vreme. Poți citi și scrie în continuare."
     }
+  },
+  "email": {
+    "heading": "Adresa de email",
+    "current": "Emailul tău:",
+    "private": "Doar tu o vezi. Nu apare niciodată pe profilul tău și nu le este arătată altor oameni.",
+    "pending": "Se așteaptă schimbarea la {{email}}. Deschide linkurile trimise la ambele adrese ca să termini.",
+    "newLabel": "Adresa de email nouă",
+    "newHint": "Trimitem un link la adresa ta de acum și unul la cea nouă. Schimbarea se face după ce le deschizi pe amândouă.",
+    "change": "Schimbă emailul",
+    "sending": "Se trimite…",
+    "sent": "Verifică ambele căsuțe: am trimis un link la {{email}} și unul la adresa ta de acum. Până le deschizi pe amândouă, adresa de acum merge în continuare.",
+    "sameAddress": "Aceasta este deja adresa ta de email.",
+    "invalidAddress": "Nu pare o adresă de email. Verific-o și încearcă din nou.",
+    "addressInUse": "Un alt cont folosește deja această adresă.",
+    "tooManyAttempts": "Prea multe încercări. Așteaptă câteva minute, apoi încearcă din nou.",
+    "changeFailed": "Nu am putut trimite linkurile. Verifică-ți conexiunea și încearcă din nou."
   }
 }
