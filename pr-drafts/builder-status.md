@@ -6,9 +6,10 @@ Newest state at the top. Read this first on "continue".
 
 - **Paused** until Thursday 29 Oct 2026, 16:00, at Robert's request (his limits reset then). Main is at 2aff571.
 - **First on Thursday**, before SAFE-3 (see team memory `builder-pause-oct-2026`):
+  0. Email change by two 6-digit codes (S1-E2-05, updated in plan PR #206): replace the two links; template shows the code.
   1. S1-E11-16 (#114): the staff "Add a classic work" form (writer's name from `classic_authors`, source and credit, then chapters).
-  2. The joining-anniversary greeting (a small greeting line, "Happy <product> anniversary, <name>" in the month they joined).
-  3. The optional birthday (day and month only, never the year; staff correct it on request; the year of birth is never changed), with a privacy-notice line flagged for the lawyer.
+  2. S1-E2-13, the joining-anniversary greeting (a small greeting line, "Happy <product> anniversary, <name>" in the month they joined).
+  3. S1-E2-12, the optional birthday (day and month only, never the year; staff correct it on request; the year of birth is never changed), with a privacy-notice line flagged for the lawyer.
 - After a container restart, start Docker with `nohup dockerd > /tmp/dockerd.log 2>&1 &` before the quality run.
 - Robert allowed merging my own PRs (24 Oct 2026, 22:15), so each bundle merges once its gate passes.
 - e2e tip: specs that sign in as a persona and change its language race each other in parallel runs; accessibility loops use a persona no other spec touches (pending_check, failed_check), or a visitor. Specs that need published stories make their own (as `e2e/discover.spec.ts` does) instead of publishing the shared seed stories. Sign-up specs now fill the Username field.
@@ -27,7 +28,7 @@ Newest state at the top. Read this first on "continue".
 
 ## Next
 
-Thursday's three items above, then SAFE-3, SAFE-4, CMS-1 (now includes S1-E5-08, #53, and S1-E5-QA part two), CHECK.
+Thursday's three items above, then SAFE-3, SAFE-4, CMS-1 (now includes S1-E5-08, #53, S1-E5-QA part two and S1-E11-19: every email, Auth emails included, sent through a Send Email hook and Brevo with admin-editable text), CHECK.
 
 ## Stubbed or carried
 
