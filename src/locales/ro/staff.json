@@ -373,7 +373,7 @@
     "returnRate": "Rata de întoarcere",
     "returnRateDescription": "Citirile capitolului următor în primele lui 7 zile, ca parte din citirile capitolului dinainte.",
     "approximation": "Aproximare",
-    "targetsNote": "Țintele sunt setări; echipa le poate schimba fără o versiune nouă.",
+    "targetsNote": "Țintele sunt setări din baza de date, nu sunt fixate în cod.",
     "target": "Ținta {{target}} · {{progress}}% din drum",
     "progressLabel": "Cât s-a apropiat de țintă",
     "notYet": "Încă nenumărat",

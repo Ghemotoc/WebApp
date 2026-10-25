@@ -373,7 +373,7 @@
     "returnRate": "Return rate",
     "returnRateDescription": "Reads of the next chapter in its first 7 days, as a share of reads of the chapter before it.",
     "approximation": "Approximation",
-    "targetsNote": "The targets are settings; staff can change them without a new release.",
+    "targetsNote": "The targets are settings in the database, not fixed in the code.",
     "target": "Target {{target}} · {{progress}}% of the way",
     "progressLabel": "Progress towards the target",
     "notYet": "Not counted yet",
