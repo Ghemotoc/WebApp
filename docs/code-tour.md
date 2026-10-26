@@ -244,16 +244,64 @@ the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesS
 /settings → EmailSettingsSection → useMyEmail           src/features/account/
   │  api/emailAddress.ts fetchMyEmail(): supabase.auth.getUser(), the owner's own record only
   │     (the address lives only in Supabase Auth; profiles and public views never hold it)
-  │  "Change email" → requestEmailChange() → supabase.auth.updateUser({ email })
+  │  NewEmailForm "Change email" → requestEmailChange() → supabase.auth.updateUser({ email })
   ▼
-Supabase emails supabase/templates/email_change.html to the old AND the new address
-  (double_confirm_changes in supabase/config.toml)
+Supabase emails supabase/templates/email_change.html, with its own 6-digit code ({{ .Token }}),
+  to the old AND the new address (double_confirm_changes in supabase/config.toml)
   ▼
-/auth/confirm?token_hash=…&type=email_change → ConfirmEmailPage → confirmEmailChange()
-  first link: "One more link to open"; second link: "Your email address is changed"
+EmailCodesForm (two EmailCodeField boxes) → useEmailChangeCodes → checkEmailChangeCode()
+  → supabase.auth.verifyOtp({ email, token, type: 'email_change' }), once per address
+  a right code is locked; once both are right the address has changed (Robert, 25 Oct 2026, 09:15)
 ```
 
 Tests: `e2e/email-change.spec.ts`, `src/features/account/api/emailAddress.test.ts`.
+
+## An optional birthday (S1-E2-12, added 26 Oct 2026)
+
+```
+/settings → BirthdaySettingsSection → BirthdayForm → BirthdayPicker   src/features/account/
+  │  useMyBirthday → api/birthday.ts fetchMyBirthday(): profiles.birthday_month and birthday_day
+  │     (profiles_select_own: only the owner reads them; no public view carries them)
+  │  Save → saveMyBirthday() → set_my_birthday(month, day): a day only with a month, never a year
+  ▼
+staff: /staff/users/<id> → AccountActions "Correct birthday" → admin_set_birthday()
+  owner, admin and moderator only, with a reason; before and after go to the audit log
+the year of birth from sign-up never changes (trigger profiles_birth_year_never_changes)
+```
+
+Discover's greeting line (S1-E2-13):
+
+```
+/discover → GreetingLine                                src/features/discovery/components/
+  │  useMyNames (pen name, else username) and useMyGreeting → api/greeting.ts → my_greeting()
+  │  my_greeting() → greeting_for(month, day, joined, Romanian date): 'birthday' on the day,
+  │     'birthday_month' all that month, 'anniversary' in the joining month from year one, else null
+  ▼
+lib/greeting.ts greetingKeyFor(): the special words, or good morning, afternoon or evening by the
+  reader's own clock (discovery.json "greeting")
+```
+
+Tests: `supabase/tests/database/159-birthday-and-anniversary.test.sql`, `src/features/account/api/birthday.test.ts`, `src/features/account/api/greeting.test.ts`, `src/features/discovery/lib/greeting.test.ts`, `e2e/birthday.spec.ts`.
+
+## Adding a public-domain classic (S1-E11-16, part 16a, added 26 Oct 2026)
+
+```
+/staff/classics → ClassicsPage → useClassics → api/classics.ts    src/features/staff/
+  │  "Add a classic work" → ClassicWorkForm (ClassicAuthorFields, ClassicStoryFields,
+  │     ClassicSourceFields; FreeMarketsList with lib/publicDomain.ts as staff type)
+  │     → admin_add_classic_author() for a new author, then admin_save_classic_work()
+  │        → a draft story owned by the classics account (setting classics_account_handle),
+  │          its real author as the byline (classic_authors), details in classic_works
+  │  ClassicCard → ClassicTextForm: paste or open a file → lib/splitClassicText.ts (a chapter
+  │     at every # heading) → preview, fix titles → admin_set_classic_chapters()
+  │  Publish → admin_publish_classic(): only when classic_free_markets() says free in Romania
+  │  Unpublish (with a reason) → admin_unpublish_classic()
+  ▼
+every admin_* function checks staff_may('classics') (owner, admin) and writes the audit log
+readers: get_story_page() → story_classic_author() → "Text from: <source edition>" (StorySideColumn)
+```
+
+Tests: `supabase/tests/database/160-classic-works.test.sql`, `src/features/staff/lib/splitClassicText.test.ts`, `src/features/staff/lib/publicDomain.test.ts`, `e2e/classics.spec.ts`.
 
 ## When something goes wrong: errors, offline and maintenance (S1-E1-05)
 

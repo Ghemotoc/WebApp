@@ -7,6 +7,7 @@ Rows marked **proposal** wait for Robert and the lawyer (docs/for-the-lawyer.md)
 | Data | Where | Kept for | Removed by | Source |
 | --- | --- | --- | --- | --- |
 | Year of birth, and the month only when the year leaves the age unclear at 13 or 16 | `profiles.birth_year`, `profiles.birth_month` | the life of the account | account deletion (S1-E13-05); the 14-day clean-up when no age check passes (S1-E2-08) | architecture 1.10; S1-E2-02 |
+| Birthday, optional: the month, and the day if the person adds it, never the year | `profiles.birthday_month`, `profiles.birthday_day` | until the person removes it in Settings, or the life of the account | the person (Settings › Birthday); account deletion (S1-E13-05) | S1-E2-12; Robert, 25 Oct 2026, 07:08 to 07:11 |
 | Age check result, date and method | `profiles.age_check_result`, `age_checked_at`, `age_check_method` | the life of the account | account deletion (S1-E13-05) | architecture 1.10; S1-E2-08 |
 | Username and pen name, and when each last changed | `profiles.handle`, `handle_slug`, `handle_skeleton`, `handle_changed_at`, `pen_name`, `pen_name_changed_at` | the life of the account; a deleted account's username stays reserved (only its folded forms) so nobody can take it to fake the person (**proposal**) | account deletion (S1-E13-05) | S1-E2-04 |
 | Bio (up to 300 characters, public on the profile) and the online-status opt-in (off) | `profiles.bio`, `profiles.shows_online_status` | the life of the account; the person can empty the bio at any time | account deletion (S1-E13-05) | S1-E5-05 |

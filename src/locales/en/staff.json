@@ -65,7 +65,8 @@
     "auditLog": "Audit log",
     "invites": "Invites",
     "users": "Users",
-    "metrics": "Metrics"
+    "metrics": "Metrics",
+    "classics": "Classics"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -295,7 +296,8 @@
         "ban": "Ban",
         "reset_pen_name": "Reset pen name",
         "sign_out_everywhere": "Sign out everywhere",
-        "approve_username": "Approve a name"
+        "approve_username": "Approve a name",
+        "correct_birthday": "Correct birthday"
       },
       "explain": {
         "warning": "A warning is a record on the account. It doesn’t stop the person doing anything.",
@@ -303,7 +305,8 @@
         "ban": "The person can’t sign in again, every session ends, and their email can’t be used to sign up again.",
         "reset_pen_name": "The pen name is removed and the username shows instead. The person can choose a new pen name straight away; the old one stays in the audit log.",
         "sign_out_everywhere": "Every device signed in to this account is signed out. A page already open keeps working for up to an hour.",
-        "approve_username": "Use this when the word checks refused a harmless name by mistake. The person then saves the name themselves."
+        "approve_username": "Use this when the word checks refused a harmless name by mistake. The person then saves the name themselves.",
+        "correct_birthday": "Use this only when the person asked for it. Pick the birthday they gave you; \"Not set\" removes it. The year of birth never changes."
       },
       "howLong": "How long",
       "days_1": "24 hours",
@@ -322,7 +325,8 @@
         "ban": "Ban",
         "reset_pen_name": "Reset the pen name",
         "sign_out_everywhere": "Sign out everywhere",
-        "approve_username": "Approve the name"
+        "approve_username": "Approve the name",
+        "correct_birthday": "Save the birthday"
       },
       "done": {
         "warning": "Done. The warning is on the account.",
@@ -330,7 +334,8 @@
         "ban": "Done. The account is banned.",
         "reset_pen_name": "Done. The pen name was reset.",
         "sign_out_everywhere": "Done. Every session ended.",
-        "approve_username": "Done. The person can now save that name."
+        "approve_username": "Done. The person can now save that name.",
+        "correct_birthday": "Done. The birthday is saved."
       },
       "dataRequests": "Data export and deletion: during the invited test, people ask by email and we answer by hand. The Data requests area comes later."
     },
@@ -389,5 +394,112 @@
     "loading": "Loading the numbers…",
     "notCountedYet": "The numbers haven’t been counted yet. The count runs early each morning.",
     "countedOn": "Counted on {{date}}"
+  },
+  "classics": {
+    "documentTitle": "Classics · Staff",
+    "eyebrow": "Stories",
+    "heading": "Classics",
+    "intro": "Add public-domain books, stories, poems and plays. A work is published under the official classics account, with its real author as the byline, and only where it is free.",
+    "add": "Add a classic work",
+    "empty": "No classics yet. Add the first one.",
+    "notAllowed": "Only the admin role manages Classics.",
+    "failures": {
+      "not_allowed": "Your role can’t do this.",
+      "classics_account_missing": "The official classics account doesn’t exist yet. Ask the owner to create it.",
+      "details_invalid": "Pick an author, a category and a rating.",
+      "author_died_year_differs": "This author is already listed with another year of death. Pick them from the list, or check the year.",
+      "not_a_classic": "That work can’t be found. Reload the page.",
+      "already_published": "This work has been published, so its text can’t be replaced.",
+      "no_chapters": "Add the text first.",
+      "not_free_in_romania": "This work isn’t in the public domain in Romania yet, so it can’t be published.",
+      "reason_missing": "Write a reason first. It goes to the audit log.",
+      "refused": "That wasn’t saved. Check the fields: the link must start with https://, and the text can’t contain HTML.",
+      "unreachable": "We couldn’t reach our server. Check your connection and try again."
+    },
+    "done": {
+      "save": "Saved as a draft.",
+      "text": "The chapters are saved. Check them, then publish.",
+      "publish": "Published.",
+      "unpublish": "Unpublished. Readers no longer see it."
+    },
+    "check": {
+      "heading": "Where it is in the public domain",
+      "needsYear": "Pick the author, or add their year of death, to see where the work is free.",
+      "free": "Free",
+      "notYet": "Not yet",
+      "unknown": "Unknown",
+      "markets": {
+        "RO": "Romania",
+        "EU": "European Union",
+        "UK": "United Kingdom",
+        "US": "United States"
+      }
+    },
+    "form": {
+      "authorLegend": "Author",
+      "author": "Author",
+      "pickAuthor": "Pick an author",
+      "authorOption": "{{name}} (died {{year}})",
+      "newAuthor": "Add a new author…",
+      "newAuthorName": "Author’s name, as the byline shows it",
+      "newAuthorDied": "Year they died",
+      "storyLegend": "The story",
+      "title": "Title",
+      "blurb": "Short description (optional)",
+      "language": "Language of this text",
+      "category": "Category",
+      "rating": "Rating",
+      "contentNote": "Content note (optional)",
+      "contentNoteHint": "For example for violence in a 16+ work. Readers see it before they start.",
+      "sourceLegend": "Public domain",
+      "kind": "Kind",
+      "originalLanguage": "Original language",
+      "sourceTitle": "Source edition",
+      "sourceUrl": "Link to the source (https://)",
+      "translatorHint": "If this text is a translation, give the translator and the year they died: a translation stays protected for 70 years after its translator’s death.",
+      "translatorName": "Translator (if any)",
+      "translatorDiedYear": "Year the translator died",
+      "firstPublishedYear": "Year first published (for the US)",
+      "save": "Save as draft",
+      "saving": "Saving…",
+      "cancel": "Cancel"
+    },
+    "kinds": {
+      "novel": "Novel",
+      "short_story": "Short story",
+      "fairy_tale": "Fairy tale",
+      "poem": "Poem",
+      "play": "Play",
+      "essay": "Essay"
+    },
+    "text": {
+      "label": "The text",
+      "hint": "Paste it from the source edition, or open a file. Lines starting with # start a new chapter. Leave out modern introductions and notes unless they are free too.",
+      "file": "Or open a plain text or Markdown file",
+      "fileFailed": "That file couldn’t be read. Try a plain text (.txt) or Markdown (.md) file.",
+      "split": "Show the chapters",
+      "empty": "There is no text yet.",
+      "previewHeading": "Chapters",
+      "chapterTitle": "Chapter {{number}} title",
+      "chapterWords_one": "{{count}} word: “{{start}}…”",
+      "chapterWords_few": "{{count}} words: “{{start}}…”",
+      "chapterWords_other": "{{count}} words: “{{start}}…”",
+      "save_one": "Save {{count}} chapter",
+      "save_few": "Save {{count}} chapters",
+      "save_other": "Save {{count}} chapters"
+    },
+    "card": {
+      "editDetails": "Edit details",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "unpublishReason": "Why it comes off the site",
+      "unpublishConfirm": "Unpublish",
+      "live": "Published",
+      "draft": "Draft",
+      "open": "Open the story",
+      "byline_one": "By {{name}} (died {{year}}) · {{count}} chapter",
+      "byline_few": "By {{name}} (died {{year}}) · {{count}} chapters",
+      "byline_other": "By {{name}} (died {{year}}) · {{count}} chapters"
+    }
   }
 }

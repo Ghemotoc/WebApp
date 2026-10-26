@@ -12,10 +12,11 @@
  * blocks, drafts and moderated stories. Nothing is chosen from what the reader has read (no
  * personalised feed in Stage 1; S1-E5-09's legal note).
  * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
- * The board's featured story, greeting, continue reading, draft card, ad slot, "Popular in your
+ * A signed-in reader first sees GreetingLine (S1-E2-13: good morning, or their birthday or joining
+ * anniversary). The board's featured story, continue reading, draft card, ad slot, "Popular in your
  * area" and "Writers to follow" come with their own stories (S1-E4-03, S1-E12-01) or after
  * March, so they aren't drawn. Search (S1-E5-04) is after March.
- * What it calls: DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
+ * What it calls: GreetingLine, DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
  */
 import { Link } from 'react-router';
 
@@ -35,6 +36,7 @@ import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 import { CategoryLinks } from './CategoryLinks';
 import { DiscoverShelf } from './DiscoverShelf';
+import { GreetingLine } from './GreetingLine';
 
 /**
  * The decided shelf order, used until the setting arrives or if it can't be read (S1-E5-03).
@@ -160,7 +162,10 @@ export function DiscoverPage() {
   return (
     <PageContainer className="tmc-rise flex flex-col gap-10 pt-10 pb-14">
       <title>{t('discover.documentTitle', { productName: brand.productName })}</title>
-      <DiscoverHeader />
+      <div className="flex flex-col gap-4">
+        <GreetingLine />
+        <DiscoverHeader />
+      </div>
       <CategoryLinks />
       <DiscoverShelves />
     </PageContainer>

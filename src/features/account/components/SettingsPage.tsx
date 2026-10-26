@@ -24,6 +24,7 @@ import { displayName } from '../lib/nameRules';
 
 import { AccountNamesSection } from './AccountNamesSection';
 import { BioSettingsSection } from './BioSettingsSection';
+import { BirthdaySettingsSection } from './BirthdaySettingsSection';
 import { BlockedAccountsSection } from './BlockedAccountsSection';
 import { EmailSettingsSection } from './EmailSettingsSection';
 import { LegalLinksSection } from './LegalLinksSection';
@@ -64,6 +65,7 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       {names.handle !== null && <BioSettingsSection handle={names.handle} />}
       {/* Every signed-in account sees and can change its own address, minors included. */}
       <EmailSettingsSection />
+      <BirthdaySettingsSection />
       {/* A moderator's question about one of the person's reports (S1-E10-08). */}
       <ReportQuestionsSection />
       <BlockedAccountsSection />

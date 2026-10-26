@@ -70,5 +70,13 @@
     "title_az": "Title, A to Z",
     "title_za": "Title, Z to A",
     "writer": "Writer, A to Z"
+  },
+  "greeting": {
+    "morning": "Good morning, {{name}}.",
+    "afternoon": "Good afternoon, {{name}}.",
+    "evening": "Good evening, {{name}}.",
+    "birthday": "Happy birthday, {{name}}!",
+    "birthdayMonth": "Happy birthday month, {{name}}!",
+    "anniversary": "Happy {{productName}} anniversary, {{name}}!"
   }
 }

@@ -15,13 +15,33 @@ import { defaultLanguage, isSupportedLanguage, type SupportedLanguage } from '@/
 import { saveDeviceLanguage } from '@/lib/language-preference';
 import { getSupabaseClient } from '@/lib/supabase';
 
-import { hasSignedInSession, saveAccountLanguage } from '../api/profileLocale';
+import { hasSignedInSession, saveAccountLanguage, startLanguageChoice } from '../api/profileLocale';
 
 /**
  * What happened to the last choice: nothing yet (or signed out, kept in this browser),
  * saved to the account, or kept in this browser only because the account save failed.
  */
 export type LanguageSaveStatus = 'idle' | 'savedToAccount' | 'keptOnDevice';
+
+/**
+ * Saves a language to the signed-in account. On failure the screen keeps the new language and
+ * the drop-down says it's kept on this device only.
+ *
+ * @param nextLanguage - the language just picked
+ * @returns the drop-down's status: idle when signed out, savedToAccount or keptOnDevice
+ */
+async function saveToAccount(nextLanguage: SupportedLanguage): Promise<LanguageSaveStatus> {
+  try {
+    const client = await getSupabaseClient();
+    // Signed out (or no Supabase settings): this browser is the only place to keep it.
+    if (client === null || !(await hasSignedInSession(client))) return 'idle';
+    await saveAccountLanguage(client, nextLanguage);
+    return 'savedToAccount';
+  } catch (error) {
+    console.warn(error instanceof Error ? error.message : 'Could not save the account language.');
+    return 'keptOnDevice';
+  }
+}
 
 /**
  * Gives the current language and a way to change it.
@@ -40,26 +60,17 @@ export function useInterfaceLanguage() {
 
   const changeLanguage = useCallback(
     async (nextLanguage: SupportedLanguage) => {
-      // Steps 1 and 2: switch the screen and remember the choice in this browser.
-      await i18n.changeLanguage(nextLanguage);
-      saveDeviceLanguage(nextLanguage);
-
-      // Step 3: when someone is signed in, save it to the account. On failure the screen keeps
-      // the new language and the drop-down says it's kept on this device only.
+      // Step 0: note the choice at once, so a slow read of the account's language can't switch
+      // it back while this one is being saved (profileLocale.ts).
+      const finishChoice = startLanguageChoice();
       try {
-        const client = await getSupabaseClient();
-        // Signed out (or no Supabase settings): this browser is the only place to keep it.
-        if (client === null || !(await hasSignedInSession(client))) {
-          setSaveStatus('idle');
-          return;
-        }
-        await saveAccountLanguage(client, nextLanguage);
-        setSaveStatus('savedToAccount');
-      } catch (error) {
-        console.warn(
-          error instanceof Error ? error.message : 'Could not save the account language.',
-        );
-        setSaveStatus('keptOnDevice');
+        // Steps 1 and 2: switch the screen and remember the choice in this browser.
+        await i18n.changeLanguage(nextLanguage);
+        saveDeviceLanguage(nextLanguage);
+        // Step 3: when someone is signed in, save it to the account.
+        setSaveStatus(await saveToAccount(nextLanguage));
+      } finally {
+        finishChoice();
       }
     },
     [i18n],

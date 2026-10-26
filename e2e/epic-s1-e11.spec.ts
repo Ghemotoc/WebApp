@@ -110,6 +110,7 @@ test.describe('epic S1-E11 journeys', () => {
     expect(await menuLinks(owner)).toEqual([
       'Moderation',
       'Users',
+      'Classics',
       'Roles',
       'Metrics',
       'Audit log',

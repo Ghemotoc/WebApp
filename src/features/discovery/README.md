@@ -10,3 +10,4 @@ Discover and the story lists. Built by PEOPLE-2: S1-E5-01 (Discover, category an
 - `lib/listAddresses.ts`: every list's address, the list behind an address and each list's own sort (`listDefaultSort()`, the same rule as the database's `list_default_sort()`); `lib/sortMemory.ts`: the sort kept for this tab; `lib/categoryAccents.ts`: each category's colour.
 - `registerDiscoveryTranslations.ts`: the `discovery` text namespace, added when a discovery component first renders.
 - The database side: `supabase/migrations/…_s1_e5_01_browse_stories.sql` `…_s1_e5_02_sort_options.sql` and `…_s1_e5_03_popularity_ranking.sql` (the hourly `compute_story_scores()` job and `story_scores`); tests `151`, `152` and `155`.
+- `components/GreetingLine.tsx` and `lib/greeting.ts` (S1-E2-13, with S1-E2-12): the greeting at the top of Discover for someone signed in: good morning, afternoon or evening, or their birthday, birthday month or joining anniversary.

@@ -55,6 +55,7 @@ Ce ne dai tu:
 
 - Contul tău: adresa de email, parola (o păstrăm într-o formă amestecată pe care nu o poate citi nimeni, nici măcar noi), anul nașterii și luna nașterii doar dacă ne trebuie ca să aflăm dacă ai sub sau peste 13 ori 16 ani. Nu îți cerem niciodată data completă a nașterii sau numele legal.
 - Profilul tău: numele de utilizator, pseudonimul dacă adaugi unul, descrierea și imaginea dacă le adaugi, limba interfeței, județul sau regiunea pe care o alegi (opțional) și categoriile și etichetele care îți plac.
+- Ziua ta de naștere, dacă o adaugi: luna și, dacă vrei, ziua, niciodată anul. Doar tu o vezi și o folosim doar ca să-ți urăm „La mulți ani”. O poți șterge oricând din Setări.
 - Ce creezi: povești, capitole, ciorne, comentarii, postări pe forum, mesaje private, imagini și desene. Și clasificările și etichetele pe care le dai poveștilor tale.
 - Ce faci: aprecieri, urmăriri, biblioteca ta și unde ai ajuns într-o poveste, plus voturile negative private (doar echipa noastră le poate vedea). Citirile sunt numărate pe zi, ca totaluri, nu ca o listă cu cine ce a citit.
 - Când ne contactezi: mesajele către suport, raportările pe care le faci, contestațiile și cererile despre date.

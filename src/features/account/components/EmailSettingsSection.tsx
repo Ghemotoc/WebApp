@@ -3,51 +3,22 @@
  * minors included, can see their own email in Settings and change it whenever they want"; Robert).
  *
  * It shows the account's own address with a line saying only the owner sees it, then a form for
- * a new address. Supabase sends a link to the old and the new address, and the change happens
- * once both are opened (double_confirm_changes), so a stolen session alone can't move the account
- * to someone else's inbox. Every account can change it, with no waiting time and no account gate.
- * Who shows it: SettingsPage, for anyone signed in. What it calls: hooks/useMyEmail.ts.
+ * a new address. Supabase sends a 6-digit code to the old and the new address, and the change
+ * happens once both are typed in (double_confirm_changes; Robert, 25 Oct 2026, 09:15), so a
+ * stolen session alone can't move the account to someone else's inbox. Every account can change
+ * it, with no waiting time and no account gate.
+ * Who shows it: SettingsPage, for anyone signed in. What it calls: hooks/useMyEmail.ts,
+ * NewEmailForm (asking for the change) and EmailCodesForm (the two code boxes).
  */
-import { useState, type FormEvent } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { TextInput } from '@/components/ui/TextInput';
 
-import type { EmailChangeOutcome } from '../api/emailAddress';
 import { useMyEmail } from '../hooks/useMyEmail';
 
-/** The locale key of each refusal; 'sent' has its own success notice. */
-const refusalKeys: Record<Exclude<EmailChangeOutcome, 'sent'>, string> = {
-  same_address: 'email.sameAddress',
-  invalid_address: 'email.invalidAddress',
-  address_in_use: 'email.addressInUse',
-  too_many_attempts: 'email.tooManyAttempts',
-};
-
-/**
- * The line under the form: sent, refused, failed, or nothing yet.
- *
- * @param props.email - useMyEmail's result
- * @param props.typedEmail - the address the person asked for
- * @returns a notice, or null
- */
-function ChangeNotice({
-  email,
-  typedEmail,
-}: {
-  email: ReturnType<typeof useMyEmail>;
-  typedEmail: string;
-}) {
-  const { t } = useTranslation('account');
-  if (email.changeFailed) return <Notice tone="error">{t('email.changeFailed')}</Notice>;
-  if (email.outcome === null) return null;
-  if (email.outcome === 'sent') {
-    return <Notice tone="success">{t('email.sent', { email: typedEmail.trim() })}</Notice>;
-  }
-  return <Notice tone="error">{t(refusalKeys[email.outcome])}</Notice>;
-}
+import { EmailCodesForm } from './EmailCodesForm';
+import { NewEmailForm } from './NewEmailForm';
 
 /**
  * Renders the panel.
@@ -58,12 +29,12 @@ export function EmailSettingsSection() {
   const { t } = useTranslation('account');
   const email = useMyEmail();
   const [typedEmail, setTypedEmail] = useState('');
-
-  /** Asks for the change, unless the field is empty. */
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    if (typedEmail.trim() !== '') email.change(typedEmail);
-  }
+  const [changedTo, setChangedTo] = useState<string | null>(null);
+  // Stable, so the codes form's effect runs once.
+  const handleChanged = useCallback((newEmail: string) => {
+    setChangedTo(newEmail);
+    setTypedEmail('');
+  }, []);
 
   return (
     <section
@@ -83,33 +54,26 @@ export function EmailSettingsSection() {
         </p>
       )}
       <p className="m-0 text-[13px] text-meta">{t('email.private')}</p>
-      {email.pendingEmail !== null && (
-        <Notice tone="info">{t('email.pending', { email: email.pendingEmail })}</Notice>
+      {changedTo !== null && (
+        <Notice tone="success">{t('email.changed', { email: changedTo })}</Notice>
       )}
-      <form noValidate className="flex flex-col gap-3" onSubmit={handleSubmit}>
-        <TextInput
-          id="settings-new-email"
-          type="email"
-          autoComplete="email"
-          label={t('email.newLabel')}
-          hint={t('email.newHint')}
-          value={typedEmail}
-          onChange={(event) => {
-            email.resetChange();
-            setTypedEmail(event.target.value);
-          }}
+      {email.pendingEmail !== null && email.email !== null && (
+        <EmailCodesForm
+          currentEmail={email.email}
+          newEmail={email.pendingEmail}
+          onSendNewCodes={() => email.change(email.pendingEmail ?? '')}
+          onChanged={handleChanged}
         />
-        <ChangeNotice email={email} typedEmail={typedEmail} />
-        <div>
-          <Button
-            type="submit"
-            variant="secondary"
-            disabled={email.isChanging || typedEmail.trim() === ''}
-          >
-            {email.isChanging ? t('email.sending') : t('email.change')}
-          </Button>
-        </div>
-      </form>
+      )}
+      <NewEmailForm
+        email={email}
+        typedEmail={typedEmail}
+        showNotice={changedTo === null}
+        onTyped={(value) => {
+          setChangedTo(null);
+          setTypedEmail(value);
+        }}
+      />
     </section>
   );
 }

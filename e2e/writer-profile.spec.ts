@@ -163,6 +163,8 @@ test.describe('writer profile and blocks (S1-E5-05)', () => {
   });
 
   test('the profile passes axe in all 12 views and never scrolls sideways', async ({ browser }) => {
+    // Twelve full axe scans in one test: about 2.5 s each on the build machine.
+    test.setTimeout(90_000);
     const context = await browser.newContext();
     await useSessionInBrowser(context, (await signInPersona('teacher')).session);
     for (const view of everyView(['/u/adult_writer'])) {

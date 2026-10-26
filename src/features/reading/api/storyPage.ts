@@ -46,7 +46,7 @@ export interface StoryPageData {
     displayName: string;
     handle: string;
     bio: string;
-    classicAuthor: { name: string; diedYear: number } | null;
+    classicAuthor: ClassicAuthor | null;
   };
   firstPublishedAt: string | null;
   lastChapterPublishedAt: string | null;
@@ -93,7 +93,7 @@ interface StoryPageRow {
     display_name: string;
     handle: string;
     bio: string;
-    classic_author: { name: string; died_year: number } | null;
+    classic_author: ClassicAuthorRow | null;
   };
   first_published_at: string | null;
   last_chapter_published_at: string | null;
@@ -121,17 +121,41 @@ interface StoryPageRow {
   };
 }
 
+/** A classic's real author and, since S1-E11-16, the edition its text comes from. */
+export interface ClassicAuthor {
+  name: string;
+  diedYear: number;
+  /** The source edition and its link; null for classics added before S1-E11-16. */
+  sourceTitle: string | null;
+  sourceUrl: string | null;
+  /** The translator, when the text is a translation. */
+  translatorName: string | null;
+}
+
+/** The database's classic_author (story_classic_author()). */
+interface ClassicAuthorRow {
+  name: string;
+  died_year: number;
+  source_title?: string | null;
+  source_url?: string | null;
+  translator_name?: string | null;
+}
+
 /**
- * A classic's real author in the app's shape (S1-E5-06).
+ * A classic's real author in the app's shape (S1-E5-06, S1-E11-16).
  *
  * @param author - the database's classic_author, or null for a writer's own story
- * @returns { name, diedYear }, or null
+ * @returns the author with the source, or null
  */
-function classicAuthorFrom(
-  author: { name: string; died_year: number } | null | undefined,
-): { name: string; diedYear: number } | null {
+function classicAuthorFrom(author: ClassicAuthorRow | null | undefined): ClassicAuthor | null {
   if (author === null || author === undefined) return null;
-  return { name: author.name, diedYear: author.died_year };
+  return {
+    name: author.name,
+    diedYear: author.died_year,
+    sourceTitle: author.source_title ?? null,
+    sourceUrl: author.source_url ?? null,
+    translatorName: author.translator_name ?? null,
+  };
 }
 
 /**

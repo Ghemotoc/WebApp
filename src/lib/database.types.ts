@@ -523,6 +523,64 @@ export type Database = {
         };
         Relationships: [];
       };
+      classic_works: {
+        Row: {
+          added_by_user_id: string;
+          created_at: string;
+          first_published_year: number | null;
+          kind: Database['public']['Enums']['classic_kind'];
+          original_language: string;
+          source_title: string;
+          source_url: string;
+          story_id: string;
+          translator_died_year: number | null;
+          translator_name: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          added_by_user_id: string;
+          created_at?: string;
+          first_published_year?: number | null;
+          kind: Database['public']['Enums']['classic_kind'];
+          original_language: string;
+          source_title: string;
+          source_url: string;
+          story_id: string;
+          translator_died_year?: number | null;
+          translator_name?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          added_by_user_id?: string;
+          created_at?: string;
+          first_published_year?: number | null;
+          kind?: Database['public']['Enums']['classic_kind'];
+          original_language?: string;
+          source_title?: string;
+          source_url?: string;
+          story_id?: string;
+          translator_died_year?: number | null;
+          translator_name?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'classic_works_added_by_user_id_fkey';
+            columns: ['added_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'classic_works_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: true;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       client_errors: {
         Row: {
           app_version: string;
@@ -1392,6 +1450,8 @@ export type Database = {
           bio: string;
           birth_month: number | null;
           birth_year: number;
+          birthday_day: number | null;
+          birthday_month: number | null;
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -1414,6 +1474,8 @@ export type Database = {
           bio?: string;
           birth_month?: number | null;
           birth_year: number;
+          birthday_day?: number | null;
+          birthday_month?: number | null;
           country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -1435,6 +1497,8 @@ export type Database = {
           bio?: string;
           birth_month?: number | null;
           birth_year?: number;
+          birthday_day?: number | null;
+          birthday_month?: number | null;
           country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -2476,6 +2540,7 @@ export type Database = {
           starts_at: string;
         }[];
       };
+      admin_add_classic_author: { Args: { author_name: string; died: number }; Returns: string };
       admin_apply_sanction: {
         Args: {
           days?: number;
@@ -2605,6 +2670,15 @@ export type Database = {
         Args: { reason_given: string; target_sanction_id: string };
         Returns: boolean;
       };
+      admin_list_classic_authors: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          died_year: number;
+          id: string;
+          name: string;
+        }[];
+      };
+      admin_list_classics: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_list_client_errors: {
         Args: { max_rows?: number; since?: string };
         Returns: {
@@ -2672,6 +2746,7 @@ export type Database = {
         Args: { note_text?: string; reporter_handle: string; source_case_id?: string };
         Returns: string;
       };
+      admin_publish_classic: { Args: { target_story_id: string }; Returns: Json };
       admin_raise_story_rating: {
         Args: {
           new_rating: Database['public']['Enums']['story_rating'];
@@ -2705,6 +2780,7 @@ export type Database = {
         Args: { reason_given: string; target_invite_id: string };
         Returns: boolean;
       };
+      admin_save_classic_work: { Args: { details: Json; target_story_id?: string }; Returns: Json };
       admin_search_audit_log: {
         Args: {
           action_prefix?: string;
@@ -2726,6 +2802,19 @@ export type Database = {
       admin_set_ai_undisclosed_label: {
         Args: { reason_given: string; target_story_id: string };
         Returns: string;
+      };
+      admin_set_birthday: {
+        Args: {
+          reason_given: string;
+          target_user_id: string;
+          wanted_day?: number;
+          wanted_month?: number;
+        };
+        Returns: boolean;
+      };
+      admin_set_classic_chapters: {
+        Args: { chapter_list: Json; target_story_id: string };
+        Returns: Json;
       };
       admin_set_permission: {
         Args: {
@@ -2753,6 +2842,10 @@ export type Database = {
           received_at: string;
           reference: string;
         }[];
+      };
+      admin_unpublish_classic: {
+        Args: { reason_given: string; target_story_id: string };
+        Returns: Json;
       };
       admin_user_account: {
         Args: { target_user_id: string };
@@ -2899,6 +2992,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
       check_comment_text: { Args: { body: string }; Returns: string };
       check_handle: { Args: { candidate: string }; Returns: string };
@@ -2915,6 +3009,22 @@ export type Database = {
       };
       check_story_cover: { Args: { cover: Json }; Returns: undefined };
       check_story_labels: { Args: { labels: Json }; Returns: undefined };
+      classic_free_markets: {
+        Args: {
+          author_died_year: number;
+          first_published_year: number;
+          on_day: string;
+          translator_died_year: number;
+        };
+        Returns: Json;
+      };
+      classic_story_category: { Args: { details: Json }; Returns: string };
+      classic_upsert_story: {
+        Args: { details: Json; target_story_id: string; wanted_category_id: string };
+        Returns: string;
+      };
+      classic_work_json: { Args: { target_story_id: string }; Returns: Json };
+      classics_account_id: { Args: Record<PropertyKey, never>; Returns: string };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
       comment_is_shown_to_caller: {
         Args: {
@@ -2987,6 +3097,15 @@ export type Database = {
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       get_writer_profile: { Args: { wanted_handle: string }; Returns: Json };
+      greeting_for: {
+        Args: {
+          birthday_day: number;
+          birthday_month: number;
+          greeting_day: string;
+          joined_at: string;
+        };
+        Returns: string;
+      };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
@@ -3171,6 +3290,7 @@ export type Database = {
           handle: string;
         }[];
       };
+      my_greeting: { Args: Record<PropertyKey, never>; Returns: Json };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -3324,6 +3444,8 @@ export type Database = {
           bio: string;
           birth_month: number | null;
           birth_year: number;
+          birthday_day: number | null;
+          birthday_month: number | null;
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -3485,6 +3607,7 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
       };
+      require_classics_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_comment_allowed: {
         Args: {
           caller_id: string;
@@ -3526,6 +3649,7 @@ export type Database = {
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
+      set_my_birthday: { Args: { wanted_day?: number; wanted_month?: number }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
@@ -3628,6 +3752,7 @@ export type Database = {
       case_status: 'open' | 'decided';
       case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
       chapter_status: 'draft' | 'scheduled' | 'published';
+      classic_kind: 'novel' | 'short_story' | 'fairy_tale' | 'poem' | 'play' | 'essay';
       comment_deleted_by: 'author' | 'writer';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
@@ -3839,6 +3964,7 @@ export const Constants = {
       case_status: ['open', 'decided'],
       case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
       chapter_status: ['draft', 'scheduled', 'published'],
+      classic_kind: ['novel', 'short_story', 'fairy_tale', 'poem', 'play', 'essay'],
       comment_deleted_by: ['author', 'writer'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],

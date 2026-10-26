@@ -1,6 +1,7 @@
 /**
  * AccountActions: the account page's Actions panel (story S1-E11-02; board AdminUsers 8.5): warn,
- * suspend, ban, reset pen name, sign out everywhere and approve a username, each with a reason.
+ * suspend, ban, reset pen name, sign out everywhere, approve a username and correct a birthday
+ * (S1-E2-12), each with a reason.
  *
  * Who shows it: AccountPage, only for roles that may act (owner, admin, moderator; architecture
  * 1.8.3). What it calls: useAccountActions.act(); the database checks the role again and writes
@@ -34,7 +35,7 @@ function offeredActions(summary: AccountSummary): AccountActionKind[] {
   const isStaff = summary.staffRoles.length > 0;
   const offered: AccountActionKind[] = isStaff ? [] : ['warning', 'suspension', 'ban'];
   if (summary.penName !== null) offered.push('reset_pen_name');
-  offered.push('sign_out_everywhere', 'approve_username');
+  offered.push('sign_out_everywhere', 'approve_username', 'correct_birthday');
   return offered;
 }
 

@@ -11,6 +11,50 @@ import { isSupportedLanguage, type SupportedLanguage } from '@/lib/i18n';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 /**
+ * Language choices the person made on this page: how many so far, and how many are still being
+ * saved. The account's language is applied only when no choice is on its way and none was made
+ * while it was being read, so a slow read never switches back a language the person has just
+ * picked (found by the S1-E1-QA epic check, 26 Oct 2026: the read could start after the click but
+ * before its save reached the account).
+ */
+const languageChoices = { made: 0, saving: 0 };
+
+/**
+ * Notes that the person picked a language. Call it before anything else in the switch.
+ *
+ * @returns a function to call once the choice is saved (or has failed)
+ */
+export function startLanguageChoice(): () => void {
+  languageChoices.made += 1;
+  languageChoices.saving += 1;
+  let isDone = false;
+  return () => {
+    if (isDone) return;
+    isDone = true;
+    languageChoices.saving -= 1;
+  };
+}
+
+/**
+ * How many choices the person has made so far, to compare before and after a read.
+ *
+ * @returns the count
+ */
+export function languageChoiceCount(): number {
+  return languageChoices.made;
+}
+
+/**
+ * Says whether the account's language may still be applied after a read.
+ *
+ * @param countBeforeRead - languageChoiceCount() when the read started
+ * @returns true when no choice was made during the read and none is still being saved
+ */
+export function mayApplyAccountLanguage(countBeforeRead: number): boolean {
+  return languageChoices.saving === 0 && languageChoices.made === countBeforeRead;
+}
+
+/**
  * Says whether someone is signed in in this browser. Reads the stored session only; no network.
  *
  * @param client - the shared Supabase client

@@ -19,16 +19,29 @@ describe('the Supabase Auth email templates', () => {
     expect(committed).toBe(buildAuthEmail(email, localesFolder));
   });
 
-  it.each(authEmails)('$fileName holds Romanian and English and its link', (email) => {
+  it.each(authEmails)('$fileName holds Romanian and English and its link or code', (email) => {
     const html = buildAuthEmail(email, localesFolder);
     expect(html).toContain('lang="ro"');
     expect(html).toContain('lang="en"');
-    expect(html).toContain(email.linkTemplate);
+    expect(html).toContain(
+      email.showsCode === true ? '{{ .Token }}' : (email.linkTemplate ?? 'missing'),
+    );
   });
 
   it('every email that opens an account action links with a one-time token', () => {
-    // The "password changed" notice only links to "Forgot your password?" (S1-E2-05).
-    const actionEmails = authEmails.filter((email) => email.fileName !== 'password_changed.html');
+    // The "password changed" notice only links to "Forgot your password?" (S1-E2-05), and the
+    // email change sends a code instead (Robert, 25 Oct 2026, 09:15).
+    const actionEmails = authEmails.filter(
+      (email) => email.fileName !== 'password_changed.html' && email.showsCode !== true,
+    );
     for (const email of actionEmails) expect(email.linkTemplate).toContain('{{ .TokenHash }}');
+  });
+
+  it('the email change shows Supabase’s code and no link', () => {
+    const emailChange = authEmails.find((email) => email.fileName === 'email_change.html');
+    if (emailChange === undefined) throw new Error('email_change.html is missing from authEmails.');
+    const html = buildAuthEmail(emailChange, localesFolder);
+    expect(html).toContain('{{ .Token }}');
+    expect(html).not.toContain('href=');
   });
 });
