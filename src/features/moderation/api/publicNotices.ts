@@ -51,6 +51,10 @@ export interface OnCallAlert {
   caseReference: string | null;
   noticeReference: string | null;
   createdAt: string;
+  /** Who was on call when it came in (S1-E10-09); null when nobody was, and it escalated at once. */
+  onCallHandle: string | null;
+  acknowledgedAt: string | null;
+  escalatedAt: string | null;
 }
 
 /**
@@ -163,6 +167,9 @@ export async function listOnCallAlerts(client: AppSupabaseClient): Promise<OnCal
     caseReference: row.case_reference,
     noticeReference: row.notice_reference,
     createdAt: row.created_at,
+    onCallHandle: row.on_call_handle,
+    acknowledgedAt: row.acknowledged_at,
+    escalatedAt: row.escalated_at,
   }));
 }
 

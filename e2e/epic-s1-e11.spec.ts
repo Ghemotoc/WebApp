@@ -109,6 +109,7 @@ test.describe('epic S1-E11 journeys', () => {
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a).
     expect(await menuLinks(owner)).toEqual([
       'Moderation',
+      'On call',
       'Users',
       'Classics',
       'Roles',
@@ -116,9 +117,9 @@ test.describe('epic S1-E11 journeys', () => {
       'Audit log',
     ]);
     const moderator = await openAs(browser, 'moderator', '/staff');
-    expect(await menuLinks(moderator)).toEqual(['Moderation', 'Users', 'Metrics']);
+    expect(await menuLinks(moderator)).toEqual(['Moderation', 'On call', 'Users', 'Metrics']);
     const support = await openAs(browser, 'support', '/staff');
-    expect(await menuLinks(support)).toEqual(['Users']);
+    expect(await menuLinks(support)).toEqual(['On call', 'Users']);
     const editor = await openAs(browser, 'editor', '/staff/users/invites');
     await expect(editor.getByText('Only an owner or admin can make invite links.')).toBeVisible();
   });

@@ -92,6 +92,15 @@ const staffRoutes: RouteObject = {
     },
     // Users: the Accounts tab, one account, and the Invites tab (S1-E11-02; Invites from
     // S1-E11-17, owner and admin). The old /staff/invites address still works.
+    // The on-call rota for removal orders (S1-E10-09): owner and admin edit, moderators and
+    // support see who is on call.
+    {
+      path: 'on-call',
+      lazy: async () => {
+        const { OnCallRotaPage } = await import('@/features/moderation/components/OnCallRotaPage');
+        return { Component: OnCallRotaPage };
+      },
+    },
     {
       path: 'users',
       lazy: async () => {
@@ -319,6 +328,16 @@ function pageRoutes(): RouteObject[] {
         const { NotificationsPage } =
           await import('@/features/notifications/components/NotificationsPage');
         return { Component: NotificationsPage };
+      },
+    },
+    // My reports and decisions (S1-E10-04): statements of reasons and the reports a person sent;
+    // a decision's notification links here. Loaded when opened.
+    {
+      path: '/my-reports',
+      HydrateFallback: () => null,
+      lazy: async () => {
+        const { MyReportsPage } = await import('@/features/statements/components/MyReportsPage');
+        return { Component: MyReportsPage };
       },
     },
     // Lane A: writing and reading (S1-E3, S1-E4).
