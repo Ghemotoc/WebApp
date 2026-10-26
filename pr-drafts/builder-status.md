@@ -2,10 +2,10 @@
 
 Newest state at the top. Read this first on "continue".
 
-## Now (26 Oct 2026, 08:10 UTC)
+## Now (26 Oct 2026, 10:40 UTC)
 
 - Robert asked (26 Oct, 05:53) for PEOPLE-4 then SAFE-3, and to stop before SAFE-4.
-- PEOPLE-4 merged as #207 (main 1bfff4c). SAFE-3 (S1-E10-04, S1-E10-09, S1-E10-10) is on `claude/safe-3-reasons-orders-safeguarding`, rebased on 1bfff4c, all 1,561 database tests pass; the quality pass is running.
+- PEOPLE-4 merged as #207, SAFE-3 merged as #208 (main 1a57988). **Stopped before SAFE-4**, as Robert asked: wait for him.
 - Use Node 24 (`source scratchpad/env.sh`): the shell's default Node 22 fails `formatStatNumber` ("19K").
 - After a container restart, start Docker with `nohup dockerd > /tmp/dockerd.log 2>&1 &` before the quality run.
 - Robert allowed merging my own PRs (24 Oct 2026, 22:15), so each bundle merges once its gate passes.
@@ -22,17 +22,18 @@ Newest state at the top. Read this first on "continue".
 | READ-3 | #203 (merged 25 Oct 2026) | S1-E6-04, S1-E7-01, S1-E6-QA, S1-E7-QA |
 | TOOL-3 | #204 (merged 25 Oct 2026) | demo content part 2b (staging top-up, no story) |
 | PEOPLE-2 | #202 (merged 25 Oct 2026) | S1-E5-01, S1-E5-09, S1-E5-02 |
+| SAFE-3 | #208 (merged 26 Oct 2026) | S1-E10-04, S1-E10-09, S1-E10-10 |
 | PEOPLE-4 | #207 (merged 26 Oct 2026) | S1-E2-05 follow-up (email change by codes), S1-E2-12, S1-E2-13, S1-E11-16a, S1-E1-04 fix |
 | PEOPLE-3 | #205 (merged 25 Oct 2026) | S1-E15-02, S1-E5-03 (with the popular sort), S1-E15-QA, S1-E5-QA part one; plus Robert's additions: the username on the sign-up form, the email in Settings, classics by their real authors (part of S1-E5-06) |
 
 ## Next
 
-SAFE-3 (in progress), then SAFE-4 (only when Robert asks), CMS-1 (now includes S1-E5-08, #53, S1-E5-QA part two and S1-E11-19: every email, Auth emails included, sent through a Send Email hook and Brevo with admin-editable text), CHECK.
+SAFE-4 (only when Robert asks), CMS-1 (now includes S1-E5-08, #53, S1-E5-QA part two and S1-E11-19: every email, Auth emails included, sent through a Send Email hook and Brevo with admin-editable text), CHECK.
 
 ## Stubbed or carried
 
 - Avatars are initials until SAFE-4 (`picture_uploads` off).
 - Privacy notice: name blocks in the next legal version.
 - Public report form: needs `public_notice_secret` and `NOTICE_SECRET` set by hand before it saves on staging (by-hand list).
-- Notifications: the bell polls every minute; decisions need the statement of reasons and appeal link, and reporters need the outcome (SAFE-3). The story page now shows likes and comments (PEOPLE-3).
+- Notifications: the bell polls every minute; decisions link to their statement of reasons and reporters get the outcome (SAFE-3); appeals go through Contact us until S1-E10-07. The story page now shows likes and comments (PEOPLE-3).
 - GitHub Actions jobs don't start (billing) until 1 Nov; the local run is the gate.
