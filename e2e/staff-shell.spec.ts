@@ -67,6 +67,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     expect(await menuLinks(ownerPage)).toEqual([
       'Moderation',
       'Users',
+      'Classics',
       'Roles',
       'Metrics',
       'Audit log',
@@ -78,6 +79,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     expect(await menuLinks(adminPage)).toEqual([
       'Moderation',
       'Users',
+      'Classics',
       'Roles',
       'Metrics',
       'Audit log',

@@ -17,7 +17,11 @@ import { I18nContext } from 'react-i18next';
 import { saveDeviceLanguage } from '@/lib/language-preference';
 import { getSupabaseClient, type AppSupabaseClient } from '@/lib/supabase';
 
-import { readAccountLanguage } from '../api/profileLocale';
+import {
+  languageChoiceCount,
+  mayApplyAccountLanguage,
+  readAccountLanguage,
+} from '../api/profileLocale';
 
 /** The Auth events after which the account's language should be applied. */
 const eventsThatBringAnAccount = new Set(['INITIAL_SESSION', 'SIGNED_IN']);
@@ -51,13 +55,17 @@ export function useAccountLanguage(): void {
 
     /**
      * Reads the account's language and shows it, if it differs from what is on screen. If the
-     * person picks a language while the read is on its way, their choice wins.
+     * person picks a language while the read is on its way, or one they picked is still being
+     * saved, their choice wins.
      */
     async function applyAccountLanguage(client: AppSupabaseClient) {
       const languageBeforeRead = i18n.language;
+      const choicesBeforeRead = languageChoiceCount();
       const accountLanguage = await readAccountLanguage(client);
       if (!isMounted || accountLanguage === null) return;
-      if (i18n.language !== languageBeforeRead) return;
+      // The person's own choice wins: one made during the read, or one still being saved.
+      if (i18n.language !== languageBeforeRead || !mayApplyAccountLanguage(choicesBeforeRead))
+        return;
       saveDeviceLanguage(accountLanguage);
       if (i18n.language !== accountLanguage) await i18n.changeLanguage(accountLanguage);
     }
