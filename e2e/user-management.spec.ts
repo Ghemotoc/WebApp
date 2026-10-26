@@ -154,7 +154,7 @@ test.describe('user management (S1-E11-02)', () => {
   }) => {
     const owner = await openAs(browser, 'owner', `/staff/users/${teacherId}`);
     await expect(owner.getByRole('heading', { name: 'Staff actions on @teacher' })).toBeVisible();
-    await expect(owner.getByText(/@moderator · sanction\.applied/)).toBeVisible();
+    await expect(owner.getByText(/@moderator · sanction\.applied/).first()).toBeVisible();
 
     await owner.goto('/staff/invites');
     await expect(owner).toHaveURL(/\/staff\/users\/invites$/);

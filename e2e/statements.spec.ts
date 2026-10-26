@@ -88,7 +88,7 @@ test.describe('statements of reasons (S1-E10-04)', () => {
     await expect(decision).toContainText('Your bio advertises a paid service.');
     await expect(decision).toContainText('Our community guidelines: spam');
     await expect(decision).toContainText('No automated tools made this decision.');
-    await expect(decision.getByRole('link', { name: /Challenge decision S-/ })).toBeVisible();
+    await expect(decision.getByRole('link', { name: /Challenge this decision, S-/ })).toBeVisible();
 
     // Step 4: the reporter sees the outcome only.
     const reporterPage = await openAs(browser, 'adult_writer', '/my-reports');

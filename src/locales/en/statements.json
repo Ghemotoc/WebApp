@@ -74,7 +74,7 @@
     "challengeLength": "(six months).",
     "challengeHow": "Write to the moderation team and say why the decision is wrong. A different moderator will look at it where possible.",
     "challengeLink": "Challenge this decision",
-    "challengeLinkLabel": "Challenge decision {{reference}}",
+    "challengeLinkLabel": "Challenge this decision, {{reference}}",
     "challengeMessage": "I'd like to challenge decision {{reference}}. Why it's wrong: ",
     "challengeEnded": "The time to challenge this ended on {{date}}."
   },

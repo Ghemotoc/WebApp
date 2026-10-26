@@ -120,7 +120,7 @@ test.describe('removal orders (S1-E10-09)', () => {
     await expect(shifts.getByRole('listitem')).toHaveCount(2);
     await shifts.getByRole('button', { name: 'Remove the shift for @owner' }).last().click();
     await shifts.getByLabel('Why is the shift removed?').fill('Plans changed.');
-    await shifts.getByRole('button', { name: 'Remove the shift' }).click();
+    await shifts.getByRole('button', { name: 'Remove the shift', exact: true }).click();
     await expect(shifts.getByRole('listitem')).toHaveCount(1);
 
     const moderatorPage = await openAs(browser, 'moderator', '/staff/on-call');

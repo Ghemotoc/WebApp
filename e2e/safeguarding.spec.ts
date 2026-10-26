@@ -35,9 +35,15 @@ async function openAs(
   return page;
 }
 
-/** Reports the teacher's profile as adult_writer and returns the open case's ID. */
-async function reportTeacher(reason: 'self_harm' | 'harassment'): Promise<string> {
-  const { client } = await signInPersona('adult_writer');
+/**
+ * Reports the teacher's profile and returns the open case's ID. Each test reports as a different
+ * person, because the same person's second report within a day only returns the first one.
+ */
+async function reportTeacher(
+  reason: 'self_harm' | 'harassment',
+  reporter: SignInPersonaName,
+): Promise<string> {
+  const { client } = await signInPersona(reporter);
   const reported = await client.rpc('report_item', {
     item_type: 'profile',
     item_reference: 'teacher',
@@ -64,7 +70,7 @@ test.describe('safeguarding (S1-E10-10)', () => {
   test('the safeguarding moderator sees the helplines, downloads the pack and logs a referral', async ({
     browser,
   }) => {
-    const caseId = await reportTeacher('self_harm');
+    const caseId = await reportTeacher('self_harm', 'adult_writer');
     const page = await openAs(browser, 'moderator', `/staff/moderation/cases/${caseId}`);
     const panel = page.getByRole('region', { name: 'Safeguarding' });
     await expect(panel.getByText(/If a life is at risk, call 112 first/)).toBeVisible();
@@ -82,14 +88,15 @@ test.describe('safeguarding (S1-E10-10)', () => {
     await expect(panel.getByText(/Poliția Română \(DOS-123\)/)).toBeVisible();
     // The case stays open for the next test's own report, so it is closed here by hand.
     runSql(
-      `update public.cases set status = 'decided', decision = 'no_action', decided_at = now() where id = '${caseId}'`,
+      `update public.cases set status = 'decided', decision = 'no_action', decided_at = now(),
+        decided_by_user_id = '00000000-0000-4000-8000-000000000010' where id = '${caseId}'`,
     );
   });
 
   test('the admin moves a case into safeguarding and then no longer sees it', async ({
     browser,
   }) => {
-    const caseId = await reportTeacher('harassment');
+    const caseId = await reportTeacher('harassment', 'blocker');
     const page = await openAs(browser, 'admin', `/staff/moderation/cases/${caseId}`);
     await page.getByRole('button', { name: 'Move to safeguarding' }).click();
     await page

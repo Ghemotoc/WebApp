@@ -232,7 +232,7 @@
     "question": "What do you need to know?",
     "send": "Send the question",
     "ask": "Ask for more details",
-    "askLabel": "Ask the reporter of {{reference}} for more details"
+    "askLabel": "Ask for more details from the reporter of {{reference}}"
   },
   "orders": {
     "heading": "Removal order",
