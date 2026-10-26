@@ -79,6 +79,9 @@ test.describe('sanctions (S1-E10-06)', () => {
     await form.getByRole('radio', { name: 'Suspend' }).check({ force: true });
     await form.getByLabel('For how long?').selectOption('7');
     await form.getByLabel('Note for the case log (required)').fill('Second upheld case; 7 days.');
+    await form
+      .getByLabel('What we tell the person (required)')
+      .fill('You kept posting spam after our warning.');
     await form.getByRole('button', { name: 'Send decision' }).click();
     await expect(page.getByRole('status').getByText('Decision saved')).toBeVisible();
     expect(runSql(`select public.account_state('00000000-0000-4000-8000-000000000007')`)).toBe(
@@ -143,6 +146,7 @@ test.describe('sanctions (S1-E10-06)', () => {
     const form = page.getByRole('form', { name: 'Decision' });
     await form.getByRole('radio', { name: 'Remove' }).check({ force: true });
     await form.getByLabel('Note for the case log (required)').fill('Slurs in the bio.');
+    await form.getByLabel('What we tell the person (required)').fill('Your bio used slurs.');
     await form.getByRole('button', { name: 'Send decision' }).click();
     await expect(page.getByText(/The item is removed/)).toBeVisible();
     expect(

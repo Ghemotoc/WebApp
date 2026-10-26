@@ -72,7 +72,9 @@
     "reply": "Răspunde",
     "seeWho": "Vezi cine",
     "seeProfile": "Vezi profilul",
-    "seeIt": "Vezi"
+    "seeIt": "Vezi",
+    "readWhy": "Vezi de ce",
+    "seeMyReports": "Vezi raportările mele"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",
@@ -82,6 +84,24 @@
   },
   "decisionsCard": {
     "heading": "Decizii despre ce ai postat",
-    "body": "Când un moderator ia o decizie despre ceva ce ai postat, afli mereu aici. Nu le poți opri."
+    "body": "Când un moderator ia o decizie despre ceva ce ai postat, afli mereu aici, cu motivele și cum o poți contesta. Nu poți opri aceste notificări.",
+    "link": "Raportările și deciziile mele"
+  },
+  "statementDecisions": {
+    "hide": "un moderator a ascuns ceva ce ai postat.",
+    "remove": "un moderator a eliminat ceva ce ai postat.",
+    "restrict": "un moderator a limitat cine vede ceva ce ai postat.",
+    "warn": "un moderator ți-a trimis un avertisment.",
+    "suspend": "un moderator ți-a suspendat contul pentru o vreme.",
+    "ban": "un moderator ți-a închis contul.",
+    "public_note": "un moderator a adăugat o notă la povestea ta.",
+    "reporting_pause": "un moderator ți-a oprit raportările pentru o vreme.",
+    "rating_raised": "un moderator a ridicat clasificarea poveștii tale.",
+    "ai_label_added": "un moderator a etichetat povestea ta ca scrisă cu AI."
+  },
+  "reportOutcomes": {
+    "removed": "am verificat raportarea ta {{reference}} și am eliminat ce ai raportat.",
+    "acted": "am verificat raportarea ta {{reference}} și am luat măsuri.",
+    "no_action": "am verificat raportarea ta {{reference}}. Nu încalcă regulile noastre sau legea, așa că am lăsat-o."
   }
 }

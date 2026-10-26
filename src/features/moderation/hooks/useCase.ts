@@ -4,7 +4,8 @@
  *
  * Who calls it: CasePage. What it calls: api/moderationQueue.ts → admin_moderation_queue(case_id),
  * admin_case_reports(), admin_case_actions() and admin_decide_case(). After a decision everything
- * is read again, so the page shows what the database holds.
+ * is read again, so the page shows what the database holds, and the decision emails to anyone
+ * who used the public form are sent at once (S1-E10-04; api/caseStatements.ts).
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -16,9 +17,9 @@ import {
   listCaseActions,
   listCaseReports,
   type Decision,
-  type ModerationAction,
 } from '../api/moderationQueue';
 
+import { sendDueEmails } from './useCaseStatements';
 import { moderationFailureOf } from './useModerationQueue';
 
 /**
@@ -48,7 +49,10 @@ export function useCase(caseId: string) {
     mutationFn: async (decision: Decision) => decideCase(await requireClient(), caseId, decision),
     // The case, its decisions and the queue all change with a decision: every key starts with
     // 'moderation', so one call refreshes them all.
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['moderation'] }),
+    onSuccess: async () => {
+      await sendDueEmails();
+      await queryClient.invalidateQueries({ queryKey: ['moderation'] });
+    },
   });
 
   return {
@@ -57,8 +61,7 @@ export function useCase(caseId: string) {
     loadFailure: moderationFailureOf(theCase.isError, theCase.error),
     reports: reports.data ?? [],
     actions: actions.data ?? [],
-    decide: (action: ModerationAction, note: string, suspensionDays?: number) =>
-      decide.mutateAsync({ action, note, suspensionDays }),
+    decide: (decision: Decision) => decide.mutateAsync(decision),
     isDeciding: decide.isPending,
     decideFailure: moderationFailureOf(decide.isError, decide.error),
     hasDecided: decide.isSuccess,

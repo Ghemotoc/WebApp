@@ -1,6 +1,8 @@
 /**
  * What each notification says and where it leads (story S1-E7-01; board 6.2): grouped people
  * read "a, b and 10 others", a decision says what was decided, and every row links to its item.
+ * Since S1-E10-04 a decision with a statement links to the reasons, and a reporter hears the
+ * outcome without anyone's sanction.
  */
 import { describe, expect, it } from 'vitest';
 
@@ -30,6 +32,9 @@ const newChapter: AppNotification = {
   commentExcerpt: null,
   decision: null,
   item: null,
+  statement: null,
+  outcome: null,
+  reportReference: null,
   isRequired: false,
   isRead: false,
   at: '2026-10-25T07:00:00Z',
@@ -101,5 +106,56 @@ describe('notificationText', () => {
       'a moderator checked a report about your comment and took no action, so nothing changes.',
     );
     expect(text.href).toBe('/s/salt-mine-choir/abc123');
+  });
+
+  it('a decision with a statement of reasons links to the reasons', () => {
+    const decision: AppNotification = {
+      ...newChapter,
+      kind: 'moderation_decision',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      decision: 'remove',
+      item: { itemType: 'comment', reference: 'R-000001', address: '/s/salt-mine-choir/abc123' },
+      statement: { reference: 'S-000007', action: 'remove' },
+      isRequired: true,
+    };
+    const text = notificationText(englishT(), decision, null);
+    expect(text.actionLabel).toBe('Read why');
+    expect(text.href).toBe('/my-reports#S-000007');
+  });
+
+  it('a sanction from the account page says what was done from its statement', () => {
+    const decision: AppNotification = {
+      ...newChapter,
+      kind: 'moderation_decision',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      statement: { reference: 'S-000008', action: 'suspend' },
+      isRequired: true,
+    };
+    expect(notificationText(englishT(), decision, null).what).toBe(
+      'a moderator paused your account for a while.',
+    );
+  });
+
+  it('a reporter hears what came of the report, never a sanction', () => {
+    const outcome: AppNotification = {
+      ...newChapter,
+      kind: 'report_outcome',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      outcome: 'acted',
+      reportReference: 'R-000042',
+    };
+    const text = notificationText(englishT(), outcome, null);
+    expect(text.what).toBe('we checked your report R-000042 and took action.');
+    expect(text.href).toBe('/my-reports');
   });
 });

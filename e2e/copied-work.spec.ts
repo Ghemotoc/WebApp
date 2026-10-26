@@ -159,6 +159,9 @@ test.describe('copied-work reports (S1-E10-08)', () => {
     await form
       .getByLabel('Note for the case log (required)')
       .fill('The opening copies the novel word for word; a note, not a removal.');
+    await form
+      .getByLabel('What we tell the person (required)')
+      .fill('Parts of your story copy a published novel, so readers now see a note.');
     await form.getByRole('button', { name: 'Send decision' }).click();
     await expect(page.getByRole('status').getByText('Decision saved')).toBeVisible();
 

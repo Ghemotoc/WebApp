@@ -5,6 +5,7 @@
  * Who uses it: vite.config.ts. It never runs in production: Cloudflare runs functions/ itself.
  * Routes: POST /api/password-check (server/password-check.ts), GET /api/signup-context
  * (server/signup-context.ts, S1-E2-10), POST /api/contact (server/contact.ts, S1-E14-04),
+ * POST /api/decision-emails (server/decision-emails.ts, S1-E10-04),
  * POST /api/notice (server/notice.ts, S1-E10-02: signed with NOTICE_SECRET, the same value the
  * tests put in the local Vault; its emails go to Mailpit too) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
@@ -30,6 +31,7 @@ import { loadEnv, type Connect, type Plugin } from 'vite';
 import { brandDefaults } from '../src/config/brand.ts';
 
 import { handleContact, sendWithMailpit } from './contact.ts';
+import { handleDecisionEmails } from './decision-emails.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
 import { handleNotice } from './notice.ts';
 import { handleSignupContext } from './signup-context.ts';
@@ -148,6 +150,17 @@ function handlerFor(
         supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
         anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
         secret: process.env.NOTICE_SECRET,
+        supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
+        productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
+        sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
+      });
+  }
+  if (url === '/api/decision-emails') {
+    // The decision emails after a case is decided (S1-E10-04): the local Supabase, Mailpit.
+    return (request) =>
+      handleDecisionEmails(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
         supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
         productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
         sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),

@@ -107,6 +107,12 @@ test.describe('moderation queue (S1-E10-03a)', () => {
     await form
       .getByLabel('Note for the case log (required)')
       .fill('Looked at the bio: an advert for a paid service. First warning.');
+    // Any action but "No action" also needs what the person is told (S1-E10-04).
+    await form.getByRole('button', { name: 'Send decision' }).click();
+    await expect(form.getByText(/Write what we tell the person/)).toBeVisible();
+    await form
+      .getByLabel('What we tell the person (required)')
+      .fill('Your bio advertises a paid essay service, which our rules don’t allow.');
     await form.getByRole('button', { name: 'Send decision' }).click();
     await expect(page.getByRole('status').getByText('Decision saved')).toBeVisible();
     await expect(page.getByText(/This case is decided: Warn/)).toBeVisible();

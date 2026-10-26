@@ -3,10 +3,12 @@
  * always arrive here and can't be switched off (story S1-E7-01, criterion 4; board 6.2; DSA
  * art. 17).
  *
- * Board values: a warm panel, a 24 px radius, the shield icon beside a 20 px heading. The board's
- * "My reports and decisions" link and the reasons and appeal wording wait for S1-E10-04 and
- * S1-E10-07 (docs/board-fixes.md). Who uses it: NotificationsPage.
+ * Board values: a warm panel, a 24 px radius, the shield icon beside a 20 px heading, and the
+ * "My reports and decisions" link (S1-E10-04). Appeals in the app wait for S1-E10-07
+ * (docs/board-fixes.md). Who uses it: NotificationsPage.
  */
+import { Link } from 'react-router';
+
 import shieldIcon from '@/assets/icons/shield.svg';
 
 import { useNotificationsTranslation } from '../registerNotificationsTranslations';
@@ -38,6 +40,9 @@ export function DecisionsCard() {
         {t('decisionsCard.heading')}
       </h2>
       <p className="m-0 text-[15px] leading-relaxed text-body">{t('decisionsCard.body')}</p>
+      <Link to="/my-reports" className="w-fit text-[15px] font-semibold text-link underline">
+        {t('decisionsCard.link')}
+      </Link>
     </section>
   );
 }
