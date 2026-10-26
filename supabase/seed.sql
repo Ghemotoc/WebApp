@@ -188,6 +188,16 @@ values
   ('00000000-0000-4000-8000-000000000008', 'safeguarding', '00000000-0000-4000-8000-000000000008'),
   ('00000000-0000-4000-8000-000000000010', 'safeguarding', '00000000-0000-4000-8000-000000000008');
 
+-- The owner is on call for removal orders for the next 30 days (S1-E10-09), so the seeded order
+-- below alerts someone by name and the On call page has a shift to show. The other staff
+-- personas have no on-call permission, so the test of "only people with it take a shift" has
+-- someone to refuse.
+insert into public.staff_permissions (user_id, permission, granted_by_user_id)
+values ('00000000-0000-4000-8000-000000000008', 'on_call', '00000000-0000-4000-8000-000000000008');
+insert into public.on_call_rota (user_id, starts_at, ends_at, created_by_user_id)
+values ('00000000-0000-4000-8000-000000000008', now() - interval '1 hour', now() + interval '30 days',
+        '00000000-0000-4000-8000-000000000008');
+
 -- Twenty moderation cases across the tiers (S1-E10-03a, Robert, 23 Oct 2026): 14 open (one
 -- authority order on the one-hour clock, four same-day cases, three 48-hour cases and six 7-day
 -- cases) and 6 decided. Report cases are made the real way, through report_item() as each

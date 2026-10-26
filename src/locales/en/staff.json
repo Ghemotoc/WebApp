@@ -66,7 +66,8 @@
     "invites": "Invites",
     "users": "Users",
     "metrics": "Metrics",
-    "classics": "Classics"
+    "classics": "Classics",
+    "onCall": "On call"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -92,7 +93,8 @@
       "audit_log": "Every staff action and sensitive read, searchable and exportable.",
       "invites": "Invite links for the March test: make, copy and revoke.",
       "users": "Find an account, see its status and sanctions, and act on it. Invite links are a tab here.",
-      "metrics": "The March test numbers against their targets, counted each night."
+      "metrics": "The March test numbers against their targets, counted each night.",
+      "on_call_rota": "Who is on call for removal orders, the shifts ahead and the gaps."
     }
   },
   "auditLog": {
@@ -337,7 +339,9 @@
         "approve_username": "Done. The person can now save that name.",
         "correct_birthday": "Done. The birthday is saved."
       },
-      "dataRequests": "Data export and deletion: during the invited test, people ask by email and we answer by hand. The Data requests area comes later."
+      "dataRequests": "Data export and deletion: during the invited test, people ask by email and we answer by hand. The Data requests area comes later.",
+      "message": "What we tell the person",
+      "messageHint": "Their statement of reasons: what happened and why, in plain words. If you leave it empty, they read that the moderator added no more details."
     },
     "cases": {
       "heading": "Open cases",

@@ -4,11 +4,11 @@
  * actions (story S1-E10-03a; architecture 1.8.4, screen 8.3).
  *
  * Board (ModCase): "Case R-2318", the tier and deadline pills, the reason, the summary line, the
- * reported content and the reporter's note, the Decision panel. Not in part a: the reported
- * content itself (a profile has none to show yet), the records panel, the account and reporter
- * panels, the statement of reasons preview, moderator mail, the sanction ladder and the
- * safeguarding checklist (S1-E10-03b, S1-E10-04, S1-E10-06, S1-E10-10, S1-E11-13). Plain
- * components, no doodles.
+ * reported content and the reporter's note, the Decision panel; the statement of reasons sent
+ * (S1-E10-04), the removal-order timeline and Emergency disable (S1-E10-09), and the safeguarding
+ * checklist, contacts, evidence pack and referrals, or "Move to safeguarding" (S1-E10-10). Not
+ * yet: the reported content itself (a profile has none to show yet), the records panel, the
+ * reporter panel and moderator mail (S1-E10-03b, S1-E11-13). Plain components, no doodles.
  * Who shows it: the router, inside StaffLayout. The database refuses anyone outside moderation
  * staff, and hides a safeguarding case from staff without the permission (Q6): to them the page
  * says there is no case here.
@@ -33,9 +33,13 @@ import { CaseDecisions } from './CaseDecisions';
 import { CaseNotices } from './CaseNotices';
 import { CaseReports } from './CaseReports';
 import { CaseSignals } from './CaseSignals';
+import { CaseStatements } from './CaseStatements';
 import { DeadlineLabel } from './DeadlineLabel';
 import { DecisionForm } from './DecisionForm';
 import { ModeratedItemNotice } from './ModeratedItemNotice';
+import { MoveToSafeguarding } from './MoveToSafeguarding';
+import { RemovalOrderPanel } from './RemovalOrderPanel';
+import { SafeguardingPanel } from './SafeguardingPanel';
 import { TierPill } from './TierPill';
 
 /**
@@ -99,8 +103,54 @@ function CaseHeader({ theCase }: { theCase: QueueCase }) {
 }
 
 /**
- * What goes on the page once the case is known: the header, the reports, the decisions, the
- * account's sanctions, and the form (or the decided notice and what happened to the item).
+ * The right-hand column: the removal order or safeguarding panel when the case is one, the
+ * Decision form (or the decided notice), and what happened to the item.
+ *
+ * @returns the column
+ */
+function CaseActionsColumn({
+  theCase,
+  caseState,
+  sanctions,
+}: {
+  theCase: QueueCase;
+  caseState: ReturnType<typeof useCase>;
+  sanctions: ReturnType<typeof useSanctions>;
+}) {
+  const { t } = useTranslation('moderation');
+  const isOpen = theCase.status === 'open';
+  return (
+    <div className="flex flex-col gap-4">
+      {caseState.hasDecided && <Notice tone="success">{t('case.form.sent')}</Notice>}
+      {theCase.source === 'authority_order' && (
+        <RemovalOrderPanel caseId={theCase.id} isOpen={isOpen} />
+      )}
+      {theCase.isSafeguarding && (
+        <SafeguardingPanel caseId={theCase.id} reference={theCase.reference} />
+      )}
+      {isOpen ? (
+        <DecisionForm
+          itemType={theCase.itemType}
+          onDecide={caseState.decide}
+          isDeciding={caseState.isDeciding}
+          failure={caseState.decideFailure}
+        />
+      ) : (
+        <Notice tone="info">
+          {t('case.decidedNotice', {
+            action: theCase.decision === null ? '' : t(`actions.${theCase.decision}`),
+          })}
+        </Notice>
+      )}
+      {isOpen && !theCase.isSafeguarding && <MoveToSafeguarding caseId={theCase.id} />}
+      <ModeratedItemNotice sanctions={sanctions} />
+    </div>
+  );
+}
+
+/**
+ * What goes on the page once the case is known: the header, the reports, the decisions and the
+ * statement, the account's sanctions, and the actions column.
  *
  * @returns the page's body
  */
@@ -133,26 +183,10 @@ function CaseBody({
           />
           <CaseNotices caseId={theCase.id} />
           <CaseDecisions actions={caseState.actions} />
+          <CaseStatements caseId={theCase.id} isDecided={theCase.status === 'decided'} />
           <AccountSanctions sanctions={sanctions} />
         </div>
-        <div className="flex flex-col gap-4">
-          {caseState.hasDecided && <Notice tone="success">{t('case.form.sent')}</Notice>}
-          {theCase.status === 'open' ? (
-            <DecisionForm
-              itemType={theCase.itemType}
-              onDecide={caseState.decide}
-              isDeciding={caseState.isDeciding}
-              failure={caseState.decideFailure}
-            />
-          ) : (
-            <Notice tone="info">
-              {t('case.decidedNotice', {
-                action: theCase.decision === null ? '' : t(`actions.${theCase.decision}`),
-              })}
-            </Notice>
-          )}
-          <ModeratedItemNotice sanctions={sanctions} />
-        </div>
+        <CaseActionsColumn theCase={theCase} caseState={caseState} sanctions={sanctions} />
       </div>
     </>
   );

@@ -431,6 +431,46 @@ Sign-in: Supabase answers user_banned → "This account is banned"; the report d
 
 Lane A's public read policies add `and not public.is_moderated_away('<type>', id)` (architecture 1.7.11); `moderated_state_of()` tells a screen whether to draw the removed marker.
 
+## Statements of reasons, removal orders and safeguarding (SAFE-3: S1-E10-04, S1-E10-09, S1-E10-10)
+
+```
+CasePage → DecisionForm: the action, the note (staff only) and "What we tell the person"
+  │  useCase.decide() → rpc admin_decide_case(case, action, note, days, message_to_person)
+  │  then sendDueEmails() → POST /api/decision-emails (server/decision-emails.ts, as the moderator)
+  ▼
+…_s1_e10_04_statements_of_reasons.sql
+  │  decide_case() (internal): case_actions → carry the action out (S1-E10-06) →
+  │    issue_statement_of_reasons() (not for no_action) → the case closes → audit log
+  │  statement_ground_for_case(): the law for illegal reasons and orders, our terms otherwise
+  │  notify_case_decided(): the person gets moderation_decision linked to the statement;
+  │    each reporter gets report_outcome (removed, acted or no_action, never the sanction)
+  │  admin_apply_sanction() from the account page sends its own statement; a queued
+  │    statement_of_reasons_needed job (S1-E3-06) becomes one at once (statement_from_job)
+  │  admin_due_decision_emails(): notices from the public form waiting for their email
+  ▼
+statements_of_reasons (user_id = the person; read by them and moderation staff; nobody writes it
+directly) · notifications.statement_id
+/my-reports (src/features/statements/): my_statements() and my_reports(): the person's own only
+
+Queue → PublicNoticesPanel: each order's alert, who was on call, Acknowledge
+  │  …_s1_e10_09_removal_orders.sql: send_on_call_alert() names on_call_now(); the pg_cron job
+  │  escalate-on-call-alerts widens it after 15 minutes; admin_acknowledge_on_call_alert()
+CasePage → RemovalOrderPanel: admin_order_timeline() · Emergency disable → admin_emergency_disable()
+  │  → decide_case(remove) → mark_order_item_disabled(): disabled_at and preserve_until (6 months);
+  │  content_is_held_for_moderation() keeps it from every purge until then
+/staff/on-call → OnCallRotaPage: admin_on_call_rota(), admin_set_on_call_shift() (owner, admin;
+  only people with the on_call permission; shifts never overlap), admin_remove_on_call_shift()
+
+CasePage → SafeguardingPanel (safeguarding cases) or MoveToSafeguarding (any other open case)
+  │  …_s1_e10_10_safeguarding.sql: admin_mark_safeguarding(), admin_case_support_contacts()
+  │  (the person's country, Romania's as the fallback), admin_build_evidence_pack() (logged as a
+  │  sensitive read; never stored), admin_log_referral() → safeguarding_referrals
+```
+
+Runbooks: `docs/runbooks/removal-orders.md` and `docs/runbooks/safeguarding.md`. Tests:
+`supabase/tests/database/161` to `163`, `server/decision-emails.test.ts`, `e2e/statements.spec.ts`,
+`e2e/removal-orders.spec.ts`, `e2e/safeguarding.spec.ts`.
+
 ## Writing to us (S1-E14-04)
 
 ```
