@@ -27,9 +27,9 @@
     "linkNote": "You can see where you’re logged in under Settings."
   },
   "emailChange": {
-    "heading": "Confirm the change of email address",
-    "body": "Someone asked to change the email address of a {{productName}} account to a new one. We send this link to both the old and the new address, and the change happens only once both links are opened. Until then, the old address keeps working.",
-    "button": "Confirm the change",
-    "linkNote": "The link works once and expires after an hour."
+    "heading": "Your code to change your email address",
+    "body": "Someone asked to change the email address of a {{productName}} account. We send one code to the current address and another to the new one. Type both in Settings, and the change happens only once both are right. Until then, the current address keeps working.",
+    "codeLabel": "Your code for this address:",
+    "linkNote": "The code works once and expires after an hour."
   }
 }

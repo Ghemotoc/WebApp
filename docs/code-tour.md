@@ -244,13 +244,14 @@ the top bar's AccountMenu (Settings, Log out) → /settings → SignedInDevicesS
 /settings → EmailSettingsSection → useMyEmail           src/features/account/
   │  api/emailAddress.ts fetchMyEmail(): supabase.auth.getUser(), the owner's own record only
   │     (the address lives only in Supabase Auth; profiles and public views never hold it)
-  │  "Change email" → requestEmailChange() → supabase.auth.updateUser({ email })
+  │  NewEmailForm "Change email" → requestEmailChange() → supabase.auth.updateUser({ email })
   ▼
-Supabase emails supabase/templates/email_change.html to the old AND the new address
-  (double_confirm_changes in supabase/config.toml)
+Supabase emails supabase/templates/email_change.html, with its own 6-digit code ({{ .Token }}),
+  to the old AND the new address (double_confirm_changes in supabase/config.toml)
   ▼
-/auth/confirm?token_hash=…&type=email_change → ConfirmEmailPage → confirmEmailChange()
-  first link: "One more link to open"; second link: "Your email address is changed"
+EmailCodesForm (two EmailCodeField boxes) → useEmailChangeCodes → checkEmailChangeCode()
+  → supabase.auth.verifyOtp({ email, token, type: 'email_change' }), once per address
+  a right code is locked; once both are right the address has changed (Robert, 25 Oct 2026, 09:15)
 ```
 
 Tests: `e2e/email-change.spec.ts`, `src/features/account/api/emailAddress.test.ts`.

@@ -18,12 +18,14 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { brandDefaults } from '../src/config/brand';
 
-/** One email: its file name, its text group in email.json and its button's link. */
+/** One email: its file name, its text group in email.json and its button's link or its code. */
 export interface AuthEmail {
   fileName: string;
   textGroup: string;
   /** The Go template that Supabase fills with the link; never a fixed address. */
-  linkTemplate: string;
+  linkTemplate?: string;
+  /** True when the email shows Supabase's 6-digit code ({{ .Token }}) instead of a button. */
+  showsCode?: boolean;
   /** False for a notice of something already done ("password changed"): there is nothing to ignore. */
   includesIgnoreLine?: boolean;
 }
@@ -47,11 +49,12 @@ export const authEmails: AuthEmail[] = [
     linkTemplate: '{{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}&type=recovery',
   },
   // S1-E2-05: changing the email in Settings sends this to the old and the new address
-  // (double_confirm_changes); the link opens /auth/confirm, which says what is left to do.
+  // (double_confirm_changes) with its own 6-digit code, typed into Settings (Robert, 25 Oct 2026,
+  // 09:15: codes, not links). Supabase fills {{ .Token }} with the code for that address.
   {
     fileName: 'email_change.html',
     textGroup: 'emailChange',
-    linkTemplate: '{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change',
+    showsCode: true,
   },
   // S1-E2-05: "the user gets an email" after a new password; its button starts a reset in case
   // it wasn't them.
@@ -82,6 +85,21 @@ function fillAndEscape(text: string): string {
 }
 
 /**
+ * The email's one action: the code in large digits, or the button with its link.
+ *
+ * @param email - which email
+ * @param group - that email's words in one language
+ * @returns an HTML paragraph
+ */
+function actionLine(email: AuthEmail, group: Record<string, string>): string {
+  if (email.showsCode === true) {
+    // The code is Supabase's own; spaced digits are easy to read and to type.
+    return `<p style="margin:0 0 24px"><span style="font-size:14px;color:#5C4965">${fillAndEscape(group.codeLabel ?? '')}</span><br><strong style="display:inline-block;margin-top:8px;font-size:32px;letter-spacing:8px;color:#2A0E33">{{ .Token }}</strong></p>`;
+  }
+  return `<p style="margin:0 0 24px"><a href="${email.linkTemplate ?? ''}" style="display:inline-block;background:#2A0E33;color:#FBF7EC;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600">${fillAndEscape(group.button ?? '')}</a></p>`;
+}
+
+/**
  * The body of one email in one language.
  *
  * @param texts - that language's email.json
@@ -94,7 +112,7 @@ function emailBody(texts: EmailTexts, email: AuthEmail): string {
   return [
     `<h1 style="font-size:24px;color:#481C5F;margin:0 0 16px">${fillAndEscape(group.heading ?? '')}</h1>`,
     `<p style="margin:0 0 24px">${fillAndEscape(group.body ?? '')}</p>`,
-    `<p style="margin:0 0 24px"><a href="${email.linkTemplate}" style="display:inline-block;background:#2A0E33;color:#FBF7EC;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600">${fillAndEscape(group.button ?? '')}</a></p>`,
+    actionLine(email, group),
     `<p style="margin:0 0 8px;font-size:14px;color:#5C4965">${fillAndEscape(group.linkNote ?? '')}</p>`,
     email.includesIgnoreLine === false
       ? ''

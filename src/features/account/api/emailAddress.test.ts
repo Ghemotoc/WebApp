@@ -1,13 +1,13 @@
 /**
  * Tests for reading and changing one's own email address (story S1-E2-05, added 25 Oct 2026).
- * Supabase Auth is a small fake here; the real flow with both emailed links is in
+ * Supabase Auth is a small fake here; the real flow with both emailed codes is in
  * e2e/email-change.spec.ts.
  */
 import { describe, expect, it, vi } from 'vitest';
 
 import type { AppSupabaseClient } from '@/lib/supabase';
 
-import { confirmEmailChange, fetchMyEmail, requestEmailChange } from './emailAddress';
+import { checkEmailChangeCode, fetchMyEmail, requestEmailChange } from './emailAddress';
 
 /** A fake client whose Auth answers are given per test. */
 function fakeClient(auth: Record<string, unknown>): AppSupabaseClient {
@@ -15,7 +15,7 @@ function fakeClient(auth: Record<string, unknown>): AppSupabaseClient {
 }
 
 describe('fetchMyEmail', () => {
-  it('reads the address and the one waiting for its links', async () => {
+  it('reads the address and the one waiting for its codes', async () => {
     const client = fakeClient({
       getUser: vi.fn().mockResolvedValue({
         data: { user: { email: 'old@example.com', new_email: 'new@example.com' } },
@@ -48,7 +48,7 @@ describe('requestEmailChange', () => {
     expect(updateUser).not.toHaveBeenCalled();
   });
 
-  it('sends a clean new address and says the links are sent', async () => {
+  it('sends a clean new address and says the codes are sent', async () => {
     const updateUser = vi.fn().mockResolvedValue({ data: {}, error: null });
     const outcome = await requestEmailChange(
       fakeClient({ updateUser }),
@@ -78,24 +78,42 @@ describe('requestEmailChange', () => {
   });
 });
 
-describe('confirmEmailChange', () => {
-  /** A fake client whose verifyOtp answers once. */
-  const answering = (answer: unknown) =>
-    fakeClient({ verifyOtp: vi.fn().mockResolvedValue(answer) });
-
-  it('after the first link, says to open the other one', async () => {
+describe('checkEmailChangeCode', () => {
+  it('hands the digits and the address to Supabase and says the code is right', async () => {
+    const verifyOtp = vi.fn().mockResolvedValue({ data: {}, error: null });
     await expect(
-      confirmEmailChange(answering({ data: { user: null }, error: null }), 'token'),
-    ).resolves.toBe('open_the_other_link');
+      checkEmailChangeCode(fakeClient({ verifyOtp }), ' New@Example.com ', '123 456'),
+    ).resolves.toBe('confirmed');
+    expect(verifyOtp).toHaveBeenCalledWith({
+      email: 'new@example.com',
+      token: '123456',
+      type: 'email_change',
+    });
   });
 
-  it('after the second link, says the address is changed', async () => {
-    const changed = { data: { user: { email: 'new@example.com', new_email: '' } }, error: null };
-    await expect(confirmEmailChange(answering(changed), 'token')).resolves.toBe('changed');
+  it('calls a code without six digits wrong without asking Supabase', async () => {
+    const verifyOtp = vi.fn();
+    await expect(
+      checkEmailChangeCode(fakeClient({ verifyOtp }), 'me@example.com', '12345'),
+    ).resolves.toBe('wrong_code');
+    expect(verifyOtp).not.toHaveBeenCalled();
   });
 
-  it('says a used or expired link no longer works', async () => {
-    const expired = { data: { user: null }, error: { code: 'otp_expired' } };
-    await expect(confirmEmailChange(answering(expired), 'token')).resolves.toBe('link_not_working');
+  it('calls a code Supabase refuses wrong, so the box can say so', async () => {
+    const verifyOtp = vi
+      .fn()
+      .mockResolvedValue({ data: {}, error: { status: 403, code: 'otp_expired' } });
+    await expect(
+      checkEmailChangeCode(fakeClient({ verifyOtp }), 'me@example.com', '123456'),
+    ).resolves.toBe('wrong_code');
+  });
+
+  it('throws when Supabase can’t be reached, so the form shows the connection message', async () => {
+    const verifyOtp = vi
+      .fn()
+      .mockResolvedValue({ data: {}, error: { status: 0, code: 'fetch_failed' } });
+    await expect(
+      checkEmailChangeCode(fakeClient({ verifyOtp }), 'me@example.com', '123456'),
+    ).rejects.toThrow('fetch_failed');
   });
 });

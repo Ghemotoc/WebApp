@@ -7,11 +7,12 @@
  * What it proves:
  * - Settings shows the signed-in account its own address, with the line that only it sees it;
  * - the address never appears on the person's public profile;
- * - asking for the same address is refused in words, and a new one sends a link to both
- *   addresses (Mailpit), with the change waiting until both are opened;
- * - the first link says to open the other one; the second changes the address, and the account
- *   then logs in with the new one;
- * - the Email panel and the confirm page pass axe and don't scroll sideways at 390, 768 and 1440 px.
+ * - asking for the same address is refused in words, and a new one sends a 6-digit code to both
+ *   addresses (Mailpit), with the change waiting until both are typed (Robert, 25 Oct 2026, 09:15);
+ * - a wrong code is refused in words while the right one is kept; once both are right the address
+ *   changes, and the account then logs in with the new one;
+ * - the Email panel, with and without the code boxes, passes axe and doesn't scroll sideways at
+ *   390, 768 and 1440 px.
  * Test data: a synthetic @example.com account made through the sign-up form with the seeded
  * invite, removed afterwards (seed personas untouched).
  */
@@ -30,6 +31,40 @@ const oldAddress = `email-old-${stamp}@example.com`;
 const newAddress = `email-new-${stamp}@example.com`;
 const username = `email.change.${stamp}`;
 const password = 'a long and private passphrase';
+
+/**
+ * Reads the 6-digit code out of an email-change email (supabase/templates/email_change.html).
+ *
+ * @param html - the email's HTML
+ * @returns the code
+ */
+function codeFromEmail(html: string): string {
+  const match = /letter-spacing:8px[^>]*>(\d{6})</.exec(html);
+  if (match?.[1] === undefined) throw new Error('No code in the email.');
+  return match[1];
+}
+
+/**
+ * A code that is certainly wrong: the right one with its last digit changed.
+ *
+ * @param code - the right code
+ * @returns six digits that differ from it
+ */
+function wrongCode(code: string): string {
+  const lastDigit = Number(code.slice(-1));
+  return code.slice(0, 5) + String((lastDigit + 1) % 10);
+}
+
+/**
+ * Saves a language to the test account, because a signed-in account's own language wins over the
+ * browser's (S1-E1-04), so each view is shown in the language it checks.
+ *
+ * @param language - 'ro' or 'en'
+ */
+function saveAccountLanguage(language: string) {
+  runSql(`update public.profiles set locale = '${language}'
+    where id in (select id from auth.users where email in ('${oldAddress}', '${newAddress}'));`);
+}
 
 /** Removes the test account (by either address) and gives its invite place back. */
 function removeAccount() {
@@ -72,9 +107,11 @@ test.describe('email address in Settings (S1-E2-05)', () => {
   test.describe.configure({ mode: 'serial' });
   test.afterAll(removeAccount);
 
-  test('the owner sees the address, changes it through both links and logs in with it', async ({
+  test('the owner sees the address, changes it with both codes and logs in with it', async ({
     page,
   }) => {
+    // Sign-up, two emails and twelve accessibility views take longer than the default 30 seconds.
+    test.setTimeout(180_000);
     await signUpAndConfirm(page);
 
     // Settings shows the account its own address, and says only it can see it.
@@ -88,7 +125,7 @@ test.describe('email address in Settings (S1-E2-05)', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.getByText(oldAddress)).toHaveCount(0);
 
-    // The same address is refused in words; a new one sends a link to both addresses.
+    // The same address is refused in words; a new one sends a code to both addresses.
     await page.goto('/settings');
     await panel.getByLabel('New email address').fill(oldAddress);
     await panel.getByRole('button', { name: 'Change email' }).click();
@@ -100,18 +137,28 @@ test.describe('email address in Settings (S1-E2-05)', () => {
       panel.getByText(`Waiting to change to ${newAddress}`, { exact: false }),
     ).toBeVisible();
 
-    // The first link only records itself: the address is still the old one.
-    const oldLink = appPathFromEmail((await waitForEmail(oldAddress, 15_000, 'change')).HTML);
-    const newLink = appPathFromEmail((await waitForEmail(newAddress, 15_000, 'change')).HTML);
-    await page.goto(oldLink);
-    await expect(page.getByRole('heading', { name: 'One more link to open' })).toBeVisible();
+    // The two code boxes pass axe at every width, theme and language while the change waits.
+    for (const view of everyView(['/settings'])) {
+      saveAccountLanguage(view.language);
+      await checkScreen(page, view);
+    }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/settings');
+
+    // A wrong code is refused in words and nothing changes.
+    const oldCode = codeFromEmail((await waitForEmail(oldAddress, 15_000, 'code')).HTML);
+    const newCode = codeFromEmail((await waitForEmail(newAddress, 15_000, 'code')).HTML);
+    await panel.getByLabel('Code from your current address').fill(oldCode);
+    await panel.getByLabel('Code from your new address').fill(wrongCode(newCode));
+    await panel.getByRole('button', { name: 'Confirm the change' }).click();
+    await expect(panel.getByText('This code is right.')).toBeVisible();
+    await expect(panel.getByText(/This code is wrong or has expired/)).toBeVisible();
     expect(runSql(`select count(*) from auth.users where email = '${oldAddress}'`)).toBe('1');
 
-    // The second link makes the change.
-    await page.goto(newLink);
-    await expect(
-      page.getByRole('heading', { name: 'Your email address is changed' }),
-    ).toBeVisible();
+    // The right second code makes the change.
+    await panel.getByLabel('Code from your new address').fill(newCode);
+    await panel.getByRole('button', { name: 'Confirm the change' }).click();
+    await expect(panel.getByText(`Done. Your email address is now ${newAddress}.`)).toBeVisible();
     expect(runSql(`select count(*) from auth.users where email = '${newAddress}'`)).toBe('1');
 
     // Settings shows the new address, and the account logs in with it.
@@ -127,6 +174,7 @@ test.describe('email address in Settings (S1-E2-05)', () => {
     await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
     await logIn(page, newAddress);
     for (const view of everyView(['/settings'])) {
+      saveAccountLanguage(view.language);
       await checkScreen(page, view);
     }
   });

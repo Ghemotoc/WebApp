@@ -27,9 +27,9 @@
     "linkNote": "Vezi în Setări dispozitivele conectate."
   },
   "emailChange": {
-    "heading": "Confirmă schimbarea adresei de email",
-    "body": "Cineva a cerut ca adresa de email a unui cont {{productName}} să fie înlocuită cu una nouă. Trimitem acest link atât la adresa veche, cât și la cea nouă, iar schimbarea se face doar după ce sunt deschise ambele linkuri. Până atunci, adresa veche merge în continuare.",
-    "button": "Confirm schimbarea",
-    "linkNote": "Linkul merge o singură dată și expiră după o oră."
+    "heading": "Codul tău pentru schimbarea adresei de email",
+    "body": "Cineva a cerut schimbarea adresei de email a unui cont {{productName}}. Trimitem un cod la adresa actuală și altul la cea nouă. Scrie-le pe amândouă în Setări, iar schimbarea se face doar după ce sunt corecte amândouă. Până atunci, adresa actuală merge în continuare.",
+    "codeLabel": "Codul tău pentru această adresă:",
+    "linkNote": "Codul merge o singură dată și expiră după o oră."
   }
 }
