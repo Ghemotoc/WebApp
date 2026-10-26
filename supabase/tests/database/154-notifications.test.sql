@@ -42,6 +42,9 @@ values ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-0000000
   'x', 3, 'published', 'Unu', 'Primul capitol aici.', 3, now());
 update public.stories set first_published_at = now(), last_chapter_published_at = now()
 where id = '00000000-0000-4000-9000-000000000001';
+-- The seed's decided cases already told their reporters the outcome (S1-E10-04); those rows are
+-- cleared so the counts below are only what this test makes.
+delete from public.notifications where kind = 'report_outcome';
 
 /* ---------- 1. A new chapter reaches the followers ---------- */
 

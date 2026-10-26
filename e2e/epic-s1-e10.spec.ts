@@ -91,6 +91,9 @@ test.describe('epic S1-E10 journeys', () => {
     await form.getByRole('radio', { name: 'Suspend' }).check({ force: true });
     await form.getByLabel('For how long?').selectOption('7');
     await form.getByLabel('Note for the case log (required)').fill('Repeated mocking; 7 days.');
+    await form
+      .getByLabel('What we tell the person (required)')
+      .fill('You kept mocking another writer in replies.');
     await form.getByRole('button', { name: 'Send decision' }).click();
     await expect(modPage.getByRole('status').getByText('Decision saved')).toBeVisible();
 

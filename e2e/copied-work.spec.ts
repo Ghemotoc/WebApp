@@ -126,7 +126,7 @@ test.describe('copied-work reports (S1-E10-08)', () => {
     await expect(page.getByText('Drumul pleacă din Armadia.')).toBeVisible();
 
     await page
-      .getByRole('button', { name: /^Ask the reporter of R-\d{6} for more details$/ })
+      .getByRole('button', { name: /^Ask for more details from the reporter of R-\d{6}$/ })
       .click();
     await page.getByLabel('What do you need to know?').fill('Which page of the novel is it on?');
     await page.getByRole('button', { name: 'Send the question' }).click();
@@ -159,6 +159,9 @@ test.describe('copied-work reports (S1-E10-08)', () => {
     await form
       .getByLabel('Note for the case log (required)')
       .fill('The opening copies the novel word for word; a note, not a removal.');
+    await form
+      .getByLabel('What we tell the person (required)')
+      .fill('Parts of your story copy a published novel, so readers now see a note.');
     await form.getByRole('button', { name: 'Send decision' }).click();
     await expect(page.getByRole('status').getByText('Decision saved')).toBeVisible();
 

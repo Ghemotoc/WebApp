@@ -8,7 +8,9 @@
  * the setting suspension_day_choices). The database refuses a decision without a note and a second
  * decision on a decided case; the form says the same in plain words before asking.
  * What a decision does (S1-E10-06): it closes the case and its reports, goes to the audit log and
- * carries the action out at once; the statement of reasons comes with S1-E10-04.
+ * carries the action out at once. Any action but "No action" also sends the person a statement of
+ * reasons (S1-E10-04; DSA art. 17): "What we tell the person" holds the facts in plain words, so
+ * the form asks for it before sending; the note stays for staff only.
  * Who shows it: CasePage. What it calls: the decide() it is given (useCase).
  */
 import { useState, type FormEvent } from 'react';
@@ -21,19 +23,19 @@ import { Textarea } from '@/components/ui/Textarea';
 import { Constants } from '@/lib/database.types';
 import { cn } from '@/lib/utils';
 
-import type { ModerationAction, ModerationFailure } from '../api/moderationQueue';
+import type { Decision, ModerationAction, ModerationFailure } from '../api/moderationQueue';
 
 /** What the form needs. */
 export interface DecisionFormProps {
   /** What the case is about: a public note goes on a story or a chapter only (S1-E10-08). */
   itemType: string;
-  onDecide: (action: ModerationAction, note: string, suspensionDays?: number) => Promise<unknown>;
+  onDecide: (decision: Decision) => Promise<unknown>;
   isDeciding: boolean;
   failure: ModerationFailure | null;
 }
 
 /** What is still missing when Send is pressed. */
-type Problem = 'action_missing' | 'days_missing' | 'note_missing' | null;
+type Problem = 'action_missing' | 'days_missing' | 'note_missing' | 'message_missing' | null;
 
 /**
  * The actions a moderator may pick on a case: every value but restrict (S1-E11-08), and "Add a
@@ -157,11 +159,90 @@ function SuspensionDays({
  *
  * @returns the first problem, or null when everything is there
  */
-function findProblem(action: ModerationAction | null, days: string, note: string): Problem {
+function findProblem(
+  action: ModerationAction | null,
+  days: string,
+  note: string,
+  message: string,
+): Problem {
   if (action === null) return 'action_missing';
   if (action === 'suspend' && days === '') return 'days_missing';
   if (note.trim() === '') return 'note_missing';
+  // DSA art. 17(3)(b): the statement gives the facts; "No action" sends none.
+  if (action !== 'no_action' && message.trim() === '') return 'message_missing';
   return null;
+}
+
+/**
+ * "What we tell the person": the facts in their statement of reasons (S1-E10-04), shown for any
+ * action but "No action".
+ *
+ * @returns the field and its error line
+ */
+function MessageField({
+  message,
+  onChange,
+  problem,
+}: {
+  message: string;
+  onChange: (message: string) => void;
+  problem: Problem;
+}) {
+  const { t } = useTranslation('moderation');
+  return (
+    <div className="flex flex-col gap-2">
+      <Textarea
+        id="decision-message"
+        label={t('case.form.message')}
+        hint={t('case.form.messageHint')}
+        rows={4}
+        maxLength={4000}
+        value={message}
+        aria-invalid={problem === 'message_missing' ? true : undefined}
+        onChange={(event) => onChange(event.target.value)}
+      />
+      {problem === 'message_missing' && (
+        <p role="alert" className="m-0 text-sm text-destructive">
+          {t('case.form.messageMissing')}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The note for the case log, with its error line.
+ *
+ * @returns the field
+ */
+function NoteField({
+  note,
+  onChange,
+  problem,
+}: {
+  note: string;
+  onChange: (note: string) => void;
+  problem: Problem;
+}) {
+  const { t } = useTranslation('moderation');
+  return (
+    <div className="flex flex-col gap-2">
+      <Textarea
+        id="decision-note"
+        label={t('case.form.note')}
+        hint={t('case.form.noteHint')}
+        rows={4}
+        value={note}
+        aria-invalid={problem === 'note_missing' ? true : undefined}
+        onChange={(event) => onChange(event.target.value)}
+      />
+      {problem === 'note_missing' && (
+        <p role="alert" className="m-0 text-sm text-destructive">
+          {t('case.form.noteMissing')}
+        </p>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -174,16 +255,23 @@ export function DecisionForm({ itemType, onDecide, isDeciding, failure }: Decisi
   const [action, setAction] = useState<ModerationAction | null>(null);
   const [days, setDays] = useState('');
   const [note, setNote] = useState('');
+  const [message, setMessage] = useState('');
   const [problem, setProblem] = useState<Problem>(null);
 
-  /** Checks for an action, the length and a note, then asks the database. */
+  /** Checks for an action, the length, a note and the message, then asks the database. */
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    const found = findProblem(action, days, note);
+    const found = findProblem(action, days, note, message);
     setProblem(found);
     if (found !== null || action === null) return;
-    const suspensionDays = action === 'suspend' ? Number(days) : undefined;
-    await onDecide(action, note.trim(), suspensionDays).catch(() => undefined);
+    const decision: Decision = {
+      action,
+      note: note.trim(),
+      suspensionDays: action === 'suspend' ? Number(days) : undefined,
+      messageToPerson: action === 'no_action' ? undefined : message.trim(),
+    };
+    // The failure is shown from the hook's state (failure below), so nothing is lost here.
+    await onDecide(decision).catch(() => undefined);
   }
 
   return (
@@ -203,19 +291,9 @@ export function DecisionForm({ itemType, onDecide, isDeciding, failure }: Decisi
         problem={problem}
       />
       {action === 'suspend' && <SuspensionDays days={days} onChange={setDays} problem={problem} />}
-      <Textarea
-        id="decision-note"
-        label={t('case.form.note')}
-        hint={t('case.form.noteHint')}
-        rows={4}
-        value={note}
-        aria-invalid={problem === 'note_missing' ? true : undefined}
-        onChange={(event) => setNote(event.target.value)}
-      />
-      {problem === 'note_missing' && (
-        <p role="alert" className="m-0 text-sm text-destructive">
-          {t('case.form.noteMissing')}
-        </p>
+      <NoteField note={note} onChange={setNote} problem={problem} />
+      {action !== null && action !== 'no_action' && (
+        <MessageField message={message} onChange={setMessage} problem={problem} />
       )}
       {failure !== null && <Notice tone="error">{t(`failures.${failure}`)}</Notice>}
       <div>

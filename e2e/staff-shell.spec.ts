@@ -66,6 +66,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     const ownerPage = await openAs(browser, 'owner', '/staff');
     expect(await menuLinks(ownerPage)).toEqual([
       'Moderation',
+      'On call',
       'Users',
       'Classics',
       'Roles',
@@ -78,6 +79,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     const adminPage = await openAs(browser, 'admin', '/staff');
     expect(await menuLinks(adminPage)).toEqual([
       'Moderation',
+      'On call',
       'Users',
       'Classics',
       'Roles',
@@ -87,11 +89,11 @@ test.describe('admin shell (S1-E11-01)', () => {
 
     // A moderator gets the queue (S1-E10-03a) and Users (S1-E11-02).
     const moderatorPage = await openAs(browser, 'moderator', '/staff');
-    expect(await menuLinks(moderatorPage)).toEqual(['Moderation', 'Users', 'Metrics']);
+    expect(await menuLinks(moderatorPage)).toEqual(['Moderation', 'On call', 'Users', 'Metrics']);
 
-    // Support's one area is Users (S1-E11-02).
+    // Support has Users (S1-E11-02) and sees the on-call rota (S1-E10-09).
     const supportPage = await openAs(browser, 'support', '/staff');
-    expect(await menuLinks(supportPage)).toEqual(['Users']);
+    expect(await menuLinks(supportPage)).toEqual(['On call', 'Users']);
 
     const editorPage = await openAs(browser, 'editor', '/staff/audit-log');
     expect(await menuLinks(editorPage)).toEqual([]);

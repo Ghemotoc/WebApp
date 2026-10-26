@@ -62,22 +62,71 @@ function chapterOfStory(t: TFunction, notification: AppNotification): string {
 }
 
 /**
+ * What was decided, in words: the statement's action for a decision outside a case, otherwise the
+ * case's decision about its kind of item.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a moderation_decision row
+ * @returns the sentence
+ */
+function decisionWhat(t: TFunction, notification: AppNotification): string {
+  if (notification.decision === null && notification.statement !== null) {
+    return t(`statementDecisions.${notification.statement.action}`);
+  }
+  const itemName = t(`items.${notification.item?.itemType ?? 'other'}`);
+  return t(`decisions.${notification.decision ?? 'no_action'}`, { item: itemName });
+}
+
+/**
  * A moderation decision's words: what was decided about which kind of item (DSA art. 17: the
- * person hears about every decision; S1-E10-04 adds the statement of reasons and the appeal).
+ * person hears about every decision), and "Read why", which opens the statement of reasons on My
+ * reports and decisions (S1-E10-04). A decision outside a case (a sanction from the account page,
+ * a raised rating) has no item, so its words come from the statement's action.
  *
  * @param t - the notifications translation function
  * @param notification - a moderation_decision row
  * @returns the row's words
  */
 function decisionText(t: TFunction, notification: AppNotification): NotificationText {
-  const itemName = t(`items.${notification.item?.itemType ?? 'other'}`);
+  const what = decisionWhat(t, notification);
+  if (notification.statement !== null) {
+    return {
+      who: t('who.moderationTeam'),
+      what,
+      quote: null,
+      grouped: null,
+      actionLabel: t('actions.readWhy'),
+      href: `/my-reports#${notification.statement.reference}`,
+    };
+  }
   return {
     who: t('who.moderationTeam'),
-    what: t(`decisions.${notification.decision ?? 'no_action'}`, { item: itemName }),
+    what,
     quote: null,
     grouped: null,
     actionLabel: notification.item?.address ? t('actions.seeIt') : null,
     href: notification.item?.address ?? null,
+  };
+}
+
+/**
+ * A report's outcome, for the person who sent it (S1-E10-04 criterion 2; DSA art. 16(5)): what
+ * came of it in plain words, never which sanction someone else got.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a report_outcome row
+ * @returns the row's words
+ */
+function reportOutcomeText(t: TFunction, notification: AppNotification): NotificationText {
+  return {
+    who: t('who.moderationTeam'),
+    what: t(`reportOutcomes.${notification.outcome ?? 'acted'}`, {
+      reference: notification.reportReference ?? '',
+    }),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.seeMyReports'),
+    href: '/my-reports',
   };
 }
 
@@ -94,8 +143,9 @@ export function notificationText(
   notification: AppNotification,
   ownHandle: string | null,
 ): NotificationText {
-  // Step 1: a moderation decision has its own words and no people.
+  // Step 1: a moderation decision and a report's outcome have their own words and no people.
   if (notification.kind === 'moderation_decision') return decisionText(t, notification);
+  if (notification.kind === 'report_outcome') return reportOutcomeText(t, notification);
   // Step 2: every other kind starts with who did it.
   const base = {
     who: whoDidIt(t, notification),

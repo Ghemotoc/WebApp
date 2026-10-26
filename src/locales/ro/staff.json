@@ -66,7 +66,8 @@
     "invites": "Invitații",
     "users": "Utilizatori",
     "metrics": "Cifre",
-    "classics": "Clasice"
+    "classics": "Clasice",
+    "onCall": "De gardă"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -92,7 +93,8 @@
       "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export.",
       "invites": "Linkuri de invitație pentru testul din martie: fă, copiază și revocă.",
       "users": "Găsește un cont, vezi starea și sancțiunile lui și acționează. Linkurile de invitație sunt o filă aici.",
-      "metrics": "Cifrele testului din martie față de ținte, numărate în fiecare noapte."
+      "metrics": "Cifrele testului din martie față de ținte, numărate în fiecare noapte.",
+      "on_call_rota": "Cine este de gardă pentru ordinele de eliminare, turele următoare și golurile."
     }
   },
   "auditLog": {
@@ -337,7 +339,9 @@
         "approve_username": "Gata. Persoana poate salva acum numele.",
         "correct_birthday": "Gata. Ziua de naștere e salvată."
       },
-      "dataRequests": "Exportul și ștergerea datelor: în timpul testului pe bază de invitație, oamenii cer prin email și răspundem de mână. Zona Cereri de date vine mai târziu."
+      "dataRequests": "Exportul și ștergerea datelor: în timpul testului pe bază de invitație, oamenii cer prin email și răspundem de mână. Zona Cereri de date vine mai târziu.",
+      "message": "Ce îi spunem persoanei",
+      "messageHint": "Motivarea deciziei: ce s-a întâmplat și de ce, în cuvinte simple. Dacă lași gol, persoana citește că moderatorul nu a adăugat alte detalii."
     },
     "cases": {
       "heading": "Cazuri deschise",

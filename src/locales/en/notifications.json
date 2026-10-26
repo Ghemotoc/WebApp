@@ -72,7 +72,9 @@
     "reply": "Reply",
     "seeWho": "See who",
     "seeProfile": "See their profile",
-    "seeIt": "See it"
+    "seeIt": "See it",
+    "readWhy": "Read why",
+    "seeMyReports": "See my reports"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",
@@ -82,6 +84,24 @@
   },
   "decisionsCard": {
     "heading": "Decisions about your posts",
-    "body": "When a moderator makes a decision about something you posted, you always hear about it here. You can’t switch these off."
+    "body": "When a moderator makes a decision about something you posted, you always hear about it here, with the reasons and how to challenge it. You can’t switch these off.",
+    "link": "My reports and decisions"
+  },
+  "statementDecisions": {
+    "hide": "a moderator hid something you posted.",
+    "remove": "a moderator removed something you posted.",
+    "restrict": "a moderator limited who can see something you posted.",
+    "warn": "a moderator sent you a warning.",
+    "suspend": "a moderator paused your account for a while.",
+    "ban": "a moderator closed your account.",
+    "public_note": "a moderator added a note to your story.",
+    "reporting_pause": "a moderator paused your reports for a while.",
+    "rating_raised": "a moderator raised your story’s rating.",
+    "ai_label_added": "a moderator labelled your story as AI-written."
+  },
+  "reportOutcomes": {
+    "removed": "we checked your report {{reference}} and removed what you reported.",
+    "acted": "we checked your report {{reference}} and took action.",
+    "no_action": "we checked your report {{reference}}. It doesn’t break our rules or the law, so we left it up."
   }
 }

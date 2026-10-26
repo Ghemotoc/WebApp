@@ -188,8 +188,8 @@ export async function fetchOpenCases(
 
 /** An action on an account, as the page asks for it. Every one carries a reason or note. */
 export type AccountAction =
-  | { kind: 'warning' | 'ban'; reason: string }
-  | { kind: 'suspension'; days: number; reason: string }
+  | { kind: 'warning' | 'ban'; reason: string; messageToPerson?: string }
+  | { kind: 'suspension'; days: number; reason: string; messageToPerson?: string }
   | { kind: 'reset_pen_name'; reason: string }
   | { kind: 'sign_out_everywhere'; reason: string }
   | { kind: 'approve_username'; nameKind: 'handle' | 'pen_name'; name: string; reason: string }
@@ -238,12 +238,14 @@ async function callForAction(client: AppSupabaseClient, userId: string, action: 
     });
     return answer.error;
   }
-  // Warn, suspend and ban are sanctions (S1-E10-06), applied outside any case.
+  // Warn, suspend and ban are sanctions (S1-E10-06), applied outside any case; each sends the
+  // person a statement of reasons with the message as its facts (S1-E10-04; DSA art. 17).
   const answer = await client.rpc('admin_apply_sanction', {
     target_user_id: userId,
     wanted_kind: action.kind,
     days: action.kind === 'suspension' ? action.days : undefined,
     note_text: action.reason,
+    message_to_person: action.messageToPerson,
   });
   return answer.error;
 }

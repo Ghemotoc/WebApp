@@ -74,12 +74,9 @@ async function openAsVisitor(browser: Browser, address: string): Promise<Page> {
 
 /** The shelf headings on Discover, in page order. */
 async function shelfHeadings(page: Page): Promise<string[]> {
-  await expect(
-    page
-      .getByRole('heading', { level: 2, name: 'Popular' })
-      .or(page.getByRole('heading', { level: 2, name: 'Recently updated' }))
-      .first(),
-  ).toBeVisible();
+  // Shelves load one by one, so wait for both shelves every test reads before taking the order.
+  await expect(page.getByRole('heading', { level: 2, name: 'Popular' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 2, name: 'Recently updated' })).toBeVisible();
   return page.getByRole('heading', { level: 2 }).allInnerTexts();
 }
 

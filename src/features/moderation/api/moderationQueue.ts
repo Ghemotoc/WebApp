@@ -109,11 +109,12 @@ export class ModerationError extends Error {
  *
  * @param code - Postgres's error code
  * @returns not_allowed (42501), refused (23514: the note, an already decided case or a sanction
- *   rule), not_built (0A000: restrict waits for S1-E11-08) or unreachable
+ *   rule; 23P01: an on-call shift that overlaps another, S1-E10-09), not_built (0A000: restrict
+ *   waits for S1-E11-08) or unreachable
  */
-function failureFromCode(code: string | undefined): ModerationFailure {
+export function failureFromCode(code: string | undefined): ModerationFailure {
   if (code === '42501') return 'not_allowed';
-  if (code === '23514') return 'refused';
+  if (code === '23514' || code === '23P01') return 'refused';
   if (code === '0A000') return 'not_built';
   return 'unreachable';
 }
@@ -291,10 +292,12 @@ export async function listCaseActions(
 /** What a moderator decided. */
 export interface Decision {
   action: ModerationAction;
-  /** The required note for the case log. */
+  /** The required note for the case log (staff only). */
   note: string;
   /** For suspend: 1, 7 or 30 (S1-E10-06); ignored otherwise. */
   suspensionDays?: number;
+  /** What the person reads in their statement of reasons (S1-E10-04); none for no_action. */
+  messageToPerson?: string;
 }
 
 /**
@@ -302,7 +305,7 @@ export interface Decision {
  *
  * @param client - the shared Supabase client
  * @param caseId - the case
- * @param decision - the action, the note and, for suspend, the days
+ * @param decision - the action, the note, for suspend the days, and the message to the person
  * Errors: throws ModerationError: not_allowed (role, session or safeguarding), refused (a blank
  *   note, a case already decided or a sanction rule), not_built (restrict) or unreachable.
  */
@@ -316,6 +319,7 @@ export async function decideCase(
     chosen_action: decision.action,
     note_text: decision.note,
     suspension_days: decision.suspensionDays,
+    message_to_person: decision.messageToPerson,
   });
   if (error !== null) throw new ModerationError(failureFromCode(error.code));
 }

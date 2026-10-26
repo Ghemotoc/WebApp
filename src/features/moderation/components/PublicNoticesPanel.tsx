@@ -1,12 +1,13 @@
 /**
  * PublicNoticesPanel: on the queue page, the removal orders received in the last seven days (the
- * logged on-call alert; the phone alert comes with S1-E10-09) and the public notices whose
+ * on-call alert, who was on call, and Acknowledge, which stops the escalation to the rest of the
+ * team after on_call_escalation_minutes; S1-E10-09) and the public notices whose
  * address matched nothing we host, for a person to check and close with a note (story S1-E10-02;
  * Regulation (EU) 2021/784 art. 3(3): act within one hour). Needs the lawyer's review before
  * launch.
  *
  * Shows nothing when both lists are empty, and an error when either can't be read. Plain staff components, no doodles.
- * Who shows it: ModerationQueuePage. What it calls: useQueueNotices.
+ * Who shows it: ModerationQueuePage. What it calls: useQueueNotices and useAcknowledgeAlert.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +19,7 @@ import { Notice } from '@/components/ui/Notice';
 import type { OnCallAlert, UnmatchedNotice } from '../api/publicNotices';
 import { useNow } from '../hooks/useNow';
 import { useQueueNotices } from '../hooks/usePublicNotices';
+import { useAcknowledgeAlert } from '../hooks/useRemovalOrder';
 
 import { ReasonForm } from './ReasonForm';
 
@@ -43,6 +45,49 @@ function useRomaniaTime() {
 }
 
 /**
+ * Who was alerted, and whether someone acknowledged it or it went to the whole team; an
+ * Acknowledge button while nobody has.
+ *
+ * @returns the line and the button
+ */
+function AlertState({ alert }: { alert: OnCallAlert }) {
+  const { t } = useTranslation('moderation');
+  const timeOf = useRomaniaTime();
+  const { acknowledge, isAcknowledging, acknowledgeFailure } = useAcknowledgeAlert();
+  const who =
+    alert.onCallHandle === null
+      ? t('orders.nobodyOnCall')
+      : t('orders.onCall', { handle: alert.onCallHandle });
+  if (alert.acknowledgedAt !== null) {
+    return (
+      <span className="text-sm text-meta">
+        {who} {t('orders.acknowledged', { when: timeOf(alert.acknowledgedAt) })}
+      </span>
+    );
+  }
+  return (
+    <span className="flex flex-wrap items-center gap-2 text-sm text-meta">
+      {who}
+      {alert.escalatedAt !== null &&
+        ` ${t('orders.escalated', { when: timeOf(alert.escalatedAt) })}`}
+      <Button
+        variant="secondary"
+        disabled={isAcknowledging}
+        aria-label={t('orders.acknowledgeLabel', { reference: alert.noticeReference ?? '' })}
+        onClick={() => void acknowledge(alert.id).catch(() => undefined)}
+      >
+        {t('orders.acknowledge')}
+      </Button>
+      {acknowledgeFailure !== null && (
+        <span role="alert" className="text-destructive">
+          {t(`failures.${acknowledgeFailure}`)}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/**
  * The orders received in the last seven days, each linking to its case.
  *
  * @returns the list, or nothing when there are none
@@ -61,18 +106,24 @@ function RecentOrders({ alerts }: { alerts: OnCallAlert[] }) {
       </h2>
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {recent.map((alert) => (
-          <li key={alert.id} className="text-body">
-            {t('notices.orderAlert', {
-              reference: alert.noticeReference ?? '',
-              when: timeOf(alert.createdAt),
-            })}{' '}
-            {alert.caseId === null ? (
-              t('notices.orderUnmatched')
-            ) : (
-              <Link to={`/staff/moderation/cases/${alert.caseId}`} className="text-link underline">
-                {t('notices.openCase', { reference: alert.caseReference ?? '' })}
-              </Link>
-            )}
+          <li key={alert.id} className="flex flex-col gap-1 text-body">
+            <span>
+              {t('notices.orderAlert', {
+                reference: alert.noticeReference ?? '',
+                when: timeOf(alert.createdAt),
+              })}{' '}
+              {alert.caseId === null ? (
+                t('notices.orderUnmatched')
+              ) : (
+                <Link
+                  to={`/staff/moderation/cases/${alert.caseId}`}
+                  className="text-link underline"
+                >
+                  {t('notices.openCase', { reference: alert.caseReference ?? '' })}
+                </Link>
+              )}
+            </span>
+            <AlertState alert={alert} />
           </li>
         ))}
       </ul>

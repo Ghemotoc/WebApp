@@ -150,8 +150,10 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
 select is((select count(*)::integer from public.jobs where kind = 'statement_of_reasons_needed'
   and payload ->> 'story_id' = '00000000-0000-4000-9000-00000000a013' and payload ->> 'action' = 'rating_raised'),
   1, 'a statement of reasons is queued for S1-E10-04');
-select is((select count(*)::integer from public.jobs), (select count(*)::integer from public.jobs where processed_at is null),
-  'allowed: jobs_select_staff: the moderator reads the queue');
+-- S1-E10-04 turns the job into a statement at once, so the moderator finds it already done.
+select is((select count(*)::integer from public.jobs where kind = 'statement_of_reasons_needed'
+  and payload ->> 'story_id' = '00000000-0000-4000-9000-00000000a013' and processed_at is not null),
+  1, 'allowed: jobs_select_staff: the moderator reads the queue, with the statement already sent');
 
 -- 9. Support (view only) and the writer can't.
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');

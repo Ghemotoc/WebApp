@@ -16,7 +16,8 @@ export type NotificationKind =
   | 'comment_reply'
   | 'comment_reactions'
   | 'new_follower'
-  | 'moderation_decision';
+  | 'moderation_decision'
+  | 'report_outcome';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
@@ -24,6 +25,9 @@ export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
 /** A moderation decision (the database's moderation_action). */
 export type ModerationDecision =
   'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban' | 'public_note';
+
+/** What a report came to, as the reporter hears it: never someone else's sanction (S1-E10-04). */
+export type ReportOutcome = 'removed' | 'acted' | 'no_action';
 
 /** One notification as the page draws it. */
 export interface AppNotification {
@@ -41,6 +45,11 @@ export interface AppNotification {
   decision: ModerationDecision | null;
   /** What a decision was about and where it is. */
   item: { itemType: string; reference: string; address: string | null } | null;
+  /** A decision's statement of reasons (S1-E10-04): its reference and what was done. */
+  statement: { reference: string; action: string } | null;
+  /** A report's outcome and the report's reference, for report_outcome (S1-E10-04). */
+  outcome: ReportOutcome | null;
+  reportReference: string | null;
   /** A moderation decision can't be switched off (criterion 4). */
   isRequired: boolean;
   isRead: boolean;
@@ -68,6 +77,9 @@ interface NotificationRow {
   comment_excerpt: string | null;
   decision: ModerationDecision | null;
   item: { item_type: string; reference: string; address: string | null } | null;
+  statement: { reference: string; action: string } | null;
+  outcome: ReportOutcome | null;
+  report_reference: string | null;
   is_required: boolean;
   is_read: boolean;
   at: string;
@@ -98,6 +110,9 @@ function toNotification(row: NotificationRow): AppNotification {
             reference: row.item.reference,
             address: row.item.address,
           },
+    statement: row.statement ?? null,
+    outcome: row.outcome ?? null,
+    reportReference: row.report_reference ?? null,
     isRequired: row.is_required,
     isRead: row.is_read,
     at: row.at,
