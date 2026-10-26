@@ -70,5 +70,13 @@
     "title_az": "Titlu, de la A la Z",
     "title_za": "Titlu, de la Z la A",
     "writer": "Scriitor, de la A la Z"
+  },
+  "greeting": {
+    "morning": "Bună dimineața, {{name}}.",
+    "afternoon": "Bună ziua, {{name}}.",
+    "evening": "Bună seara, {{name}}.",
+    "birthday": "La mulți ani, {{name}}!",
+    "birthdayMonth": "Lună de naștere fericită, {{name}}!",
+    "anniversary": "La mulți ani pe {{productName}}, {{name}}!"
   }
 }

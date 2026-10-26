@@ -269,7 +269,19 @@ staff: /staff/users/<id> → AccountActions "Correct birthday" → admin_set_bir
 the year of birth from sign-up never changes (trigger profiles_birth_year_never_changes)
 ```
 
-Tests: `supabase/tests/database/159-birthday-and-anniversary.test.sql`, `src/features/account/api/birthday.test.ts`.
+Discover's greeting line (S1-E2-13):
+
+```
+/discover → GreetingLine                                src/features/discovery/components/
+  │  useMyNames (pen name, else username) and useMyGreeting → api/greeting.ts → my_greeting()
+  │  my_greeting() → greeting_for(month, day, joined, Romanian date): 'birthday' on the day,
+  │     'birthday_month' all that month, 'anniversary' in the joining month from year one, else null
+  ▼
+lib/greeting.ts greetingKeyFor(): the special words, or good morning, afternoon or evening by the
+  reader's own clock (discovery.json "greeting")
+```
+
+Tests: `supabase/tests/database/159-birthday-and-anniversary.test.sql`, `src/features/account/api/birthday.test.ts`, `src/features/account/api/greeting.test.ts`, `src/features/discovery/lib/greeting.test.ts`, `e2e/birthday.spec.ts`.
 
 ## When something goes wrong: errors, offline and maintenance (S1-E1-05)
 
