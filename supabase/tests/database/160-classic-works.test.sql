@@ -62,7 +62,7 @@ select is((select profiles.handle from public.stories join public.profiles on pr
   'the work belongs to the classics account');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 select isnt_empty($$ select 1 from public.classic_works where story_id = (select story_id from saved) $$,
-  'the admin reads the work''s details (classic_works_select_staff, allowed)');
+  'allowed: classic_works_select_staff, the admin reads the work''s details');
 select is(jsonb_array_length(public.admin_set_classic_chapters((select story_id from saved),
   '[{"title": "I", "body": "Stau câteodată și-mi aduc aminte."}, {"title": "II", "body": "Nică a lui Ștefan."}]'::jsonb)
   -> 'chapters'), 2, 'the admin sets the chapters from the preview');
@@ -77,7 +77,7 @@ select throws_ok($$ select public.admin_publish_classic((select story_id from sa
 select throws_ok($$ select public.admin_list_classics() $$, '42501', null,
   'a moderator can''t list the classics');
 select is_empty($$ select 1 from public.classic_works $$,
-  'a moderator reads no classic details (classic_works_select_staff, denied)');
+  'denied: classic_works_select_staff, a moderator reads no classic details');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select throws_ok($$ select public.admin_add_classic_author('Someone', 1900) $$, '42501', null,
   'a member can''t add an author');
