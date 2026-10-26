@@ -1392,6 +1392,8 @@ export type Database = {
           bio: string;
           birth_month: number | null;
           birth_year: number;
+          birthday_day: number | null;
+          birthday_month: number | null;
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -1414,6 +1416,8 @@ export type Database = {
           bio?: string;
           birth_month?: number | null;
           birth_year: number;
+          birthday_day?: number | null;
+          birthday_month?: number | null;
           country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -1435,6 +1439,8 @@ export type Database = {
           bio?: string;
           birth_month?: number | null;
           birth_year?: number;
+          birthday_day?: number | null;
+          birthday_month?: number | null;
           country_code?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -2727,6 +2733,15 @@ export type Database = {
         Args: { reason_given: string; target_story_id: string };
         Returns: string;
       };
+      admin_set_birthday: {
+        Args: {
+          reason_given: string;
+          target_user_id: string;
+          wanted_day?: number;
+          wanted_month?: number;
+        };
+        Returns: boolean;
+      };
       admin_set_permission: {
         Args: {
           changed_permission: Database['public']['Enums']['staff_permission'];
@@ -2899,6 +2914,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
       check_comment_text: { Args: { body: string }; Returns: string };
       check_handle: { Args: { candidate: string }; Returns: string };
@@ -2987,6 +3003,15 @@ export type Database = {
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       get_writer_profile: { Args: { wanted_handle: string }; Returns: Json };
+      greeting_for: {
+        Args: {
+          birthday_day: number;
+          birthday_month: number;
+          greeting_day: string;
+          joined_at: string;
+        };
+        Returns: string;
+      };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       invite_code_hash: { Args: { code: string }; Returns: string };
@@ -3171,6 +3196,7 @@ export type Database = {
           handle: string;
         }[];
       };
+      my_greeting: { Args: Record<PropertyKey, never>; Returns: Json };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -3324,6 +3350,8 @@ export type Database = {
           bio: string;
           birth_month: number | null;
           birth_year: number;
+          birthday_day: number | null;
+          birthday_month: number | null;
           country_code: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -3526,6 +3554,7 @@ export type Database = {
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
+      set_my_birthday: { Args: { wanted_day?: number; wanted_month?: number }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };

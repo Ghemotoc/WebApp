@@ -295,7 +295,8 @@
         "ban": "Interzice",
         "reset_pen_name": "Resetează pseudonimul",
         "sign_out_everywhere": "Deconectează peste tot",
-        "approve_username": "Aprobă un nume"
+        "approve_username": "Aprobă un nume",
+        "correct_birthday": "Corectează ziua de naștere"
       },
       "explain": {
         "warning": "Avertismentul rămâne în istoricul contului. Nu oprește persoana să facă ceva.",
@@ -303,7 +304,8 @@
         "ban": "Persoana nu se mai poate conecta, toate sesiunile se închid, iar emailul ei nu mai poate fi folosit la înscriere.",
         "reset_pen_name": "Pseudonimul e șters și se vede numele de utilizator. Persoana poate alege imediat alt pseudonim; cel vechi rămâne în jurnalul de audit.",
         "sign_out_everywhere": "Toate dispozitivele conectate la acest cont sunt deconectate. O pagină deja deschisă mai merge până la o oră.",
-        "approve_username": "Folosește asta când verificarea cuvintelor a refuzat din greșeală un nume nevinovat. Persoana salvează apoi singură numele."
+        "approve_username": "Folosește asta când verificarea cuvintelor a refuzat din greșeală un nume nevinovat. Persoana salvează apoi singură numele.",
+        "correct_birthday": "Folosește asta doar când persoana a cerut-o. Alege ziua de naștere pe care ți-a dat-o; „Nesetată” o șterge. Anul nașterii nu se schimbă niciodată."
       },
       "howLong": "Cât timp",
       "days_1": "24 de ore",
@@ -322,7 +324,8 @@
         "ban": "Interzice",
         "reset_pen_name": "Resetează pseudonimul",
         "sign_out_everywhere": "Deconectează peste tot",
-        "approve_username": "Aprobă numele"
+        "approve_username": "Aprobă numele",
+        "correct_birthday": "Salvează ziua de naștere"
       },
       "done": {
         "warning": "Gata. Avertismentul e pe cont.",
@@ -330,7 +333,8 @@
         "ban": "Gata. Contul e interzis.",
         "reset_pen_name": "Gata. Pseudonimul a fost resetat.",
         "sign_out_everywhere": "Gata. Toate sesiunile s-au închis.",
-        "approve_username": "Gata. Persoana poate salva acum numele."
+        "approve_username": "Gata. Persoana poate salva acum numele.",
+        "correct_birthday": "Gata. Ziua de naștere e salvată."
       },
       "dataRequests": "Exportul și ștergerea datelor: în timpul testului pe bază de invitație, oamenii cer prin email și răspundem de mână. Zona Cereri de date vine mai târziu."
     },

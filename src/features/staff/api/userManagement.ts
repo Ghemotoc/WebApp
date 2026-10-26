@@ -192,7 +192,9 @@ export type AccountAction =
   | { kind: 'suspension'; days: number; reason: string }
   | { kind: 'reset_pen_name'; reason: string }
   | { kind: 'sign_out_everywhere'; reason: string }
-  | { kind: 'approve_username'; nameKind: 'handle' | 'pen_name'; name: string; reason: string };
+  | { kind: 'approve_username'; nameKind: 'handle' | 'pen_name'; name: string; reason: string }
+  // S1-E2-12: the person asked staff to fix their birthday; null month clears it.
+  | { kind: 'correct_birthday'; month: number | null; day: number | null; reason: string };
 
 /**
  * Asks the database for the right function for an action.
@@ -223,6 +225,16 @@ async function callForAction(client: AppSupabaseClient, userId: string, action: 
       name_kind: action.nameKind,
       approved_name: action.name,
       reason_given: action.reason,
+    });
+    return answer.error;
+  }
+  if (action.kind === 'correct_birthday') {
+    // admin_set_birthday() checks the role and writes the before and after to the audit log.
+    const answer = await client.rpc('admin_set_birthday', {
+      target_user_id: userId,
+      reason_given: action.reason,
+      wanted_month: action.month ?? undefined,
+      wanted_day: action.day ?? undefined,
     });
     return answer.error;
   }

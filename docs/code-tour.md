@@ -256,6 +256,21 @@ EmailCodesForm (two EmailCodeField boxes) → useEmailChangeCodes → checkEmail
 
 Tests: `e2e/email-change.spec.ts`, `src/features/account/api/emailAddress.test.ts`.
 
+## An optional birthday (S1-E2-12, added 26 Oct 2026)
+
+```
+/settings → BirthdaySettingsSection → BirthdayForm → BirthdayPicker   src/features/account/
+  │  useMyBirthday → api/birthday.ts fetchMyBirthday(): profiles.birthday_month and birthday_day
+  │     (profiles_select_own: only the owner reads them; no public view carries them)
+  │  Save → saveMyBirthday() → set_my_birthday(month, day): a day only with a month, never a year
+  ▼
+staff: /staff/users/<id> → AccountActions "Correct birthday" → admin_set_birthday()
+  owner, admin and moderator only, with a reason; before and after go to the audit log
+the year of birth from sign-up never changes (trigger profiles_birth_year_never_changes)
+```
+
+Tests: `supabase/tests/database/159-birthday-and-anniversary.test.sql`, `src/features/account/api/birthday.test.ts`.
+
 ## When something goes wrong: errors, offline and maintenance (S1-E1-05)
 
 ```

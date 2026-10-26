@@ -295,7 +295,8 @@
         "ban": "Ban",
         "reset_pen_name": "Reset pen name",
         "sign_out_everywhere": "Sign out everywhere",
-        "approve_username": "Approve a name"
+        "approve_username": "Approve a name",
+        "correct_birthday": "Correct birthday"
       },
       "explain": {
         "warning": "A warning is a record on the account. It doesn’t stop the person doing anything.",
@@ -303,7 +304,8 @@
         "ban": "The person can’t sign in again, every session ends, and their email can’t be used to sign up again.",
         "reset_pen_name": "The pen name is removed and the username shows instead. The person can choose a new pen name straight away; the old one stays in the audit log.",
         "sign_out_everywhere": "Every device signed in to this account is signed out. A page already open keeps working for up to an hour.",
-        "approve_username": "Use this when the word checks refused a harmless name by mistake. The person then saves the name themselves."
+        "approve_username": "Use this when the word checks refused a harmless name by mistake. The person then saves the name themselves.",
+        "correct_birthday": "Use this only when the person asked for it. Pick the birthday they gave you; \"Not set\" removes it. The year of birth never changes."
       },
       "howLong": "How long",
       "days_1": "24 hours",
@@ -322,7 +324,8 @@
         "ban": "Ban",
         "reset_pen_name": "Reset the pen name",
         "sign_out_everywhere": "Sign out everywhere",
-        "approve_username": "Approve the name"
+        "approve_username": "Approve the name",
+        "correct_birthday": "Save the birthday"
       },
       "done": {
         "warning": "Done. The warning is on the account.",
@@ -330,7 +333,8 @@
         "ban": "Done. The account is banned.",
         "reset_pen_name": "Done. The pen name was reset.",
         "sign_out_everywhere": "Done. Every session ended.",
-        "approve_username": "Done. The person can now save that name."
+        "approve_username": "Done. The person can now save that name.",
+        "correct_birthday": "Done. The birthday is saved."
       },
       "dataRequests": "Data export and deletion: during the invited test, people ask by email and we answer by hand. The Data requests area comes later."
     },

@@ -130,5 +130,18 @@
     "sendNewCodes": "Trimite coduri noi",
     "codesCheckFailed": "Nu am putut verifica codurile. Verifică-ți conexiunea și încearcă din nou.",
     "changed": "Gata. Adresa ta de email este acum {{email}}."
+  },
+  "birthday": {
+    "heading": "Ziua de naștere",
+    "intro": "Adaugă-ți ziua de naștere dacă vrei să te felicităm: îți urăm la mulți ani toată luna și la mulți ani în ziua ta. Luna e de ajuns; ziua o adaugi dacă vrei.",
+    "private": "O vezi doar tu și nu are niciodată un an. Anul nașterii de la înscriere rămâne cum e și nu poate fi schimbat.",
+    "month": "Luna",
+    "day": "Ziua (opțional)",
+    "noMonth": "Nesetată",
+    "noDay": "Fără zi",
+    "save": "Salvează ziua de naștere",
+    "saving": "Se salvează…",
+    "saved": "Salvat.",
+    "saveFailed": "Nu am putut salva ziua de naștere. Verifică-ți conexiunea și încearcă din nou."
   }
 }
