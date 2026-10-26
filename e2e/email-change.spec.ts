@@ -170,6 +170,8 @@ test.describe('email address in Settings (S1-E2-05)', () => {
   });
 
   test('axe: the Email panel at every width', async ({ page }) => {
+    // Twelve axe scans plus a log-in take about 30 seconds on a busy machine.
+    test.setTimeout(90_000);
     // The account from the first test logs in with its new address.
     await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
     await logIn(page, newAddress);
