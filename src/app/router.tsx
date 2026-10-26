@@ -114,6 +114,14 @@ const staffRoutes: RouteObject = {
       },
     },
     { path: 'invites', element: <Navigate to="/staff/users/invites" replace /> },
+    // Classics: add, check and publish public-domain works (S1-E11-16): owner and admin.
+    {
+      path: 'classics',
+      lazy: async () => {
+        const { ClassicsPage } = await import('@/features/staff/components/classics/ClassicsPage');
+        return { Component: ClassicsPage };
+      },
+    },
     // The March test numbers (S1-E15-02): owner and admin; moderators see a pointer to the queue.
     {
       path: 'metrics',

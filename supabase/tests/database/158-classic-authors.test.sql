@@ -45,8 +45,10 @@ where id = '00000000-0000-4000-9000-000000000002';
 
 /* ---------- 1. The authors table ---------- */
 
-select throws_ok($$ insert into public.classic_authors (name, died_year) values ('Too Recent', 1990) $$,
-  '23514', null, 'an author who died after 1955 is refused (Law 8/1996 art. 28(1) and 34)');
+-- Since S1-E11-16 any real year of death is allowed: classic_free_markets() decides by date
+-- whether a work may be published (test 160), so authors who become free next 1 January fit.
+select throws_ok($$ insert into public.classic_authors (name, died_year) values ('Not Born Yet', 2200) $$,
+  '23514', null, 'an impossible year of death is refused');
 
 select pg_temp.as_visitor();
 select is((select name from public.classic_authors where died_year = 1889), 'Ion Creangă',
@@ -68,7 +70,9 @@ select pg_temp.as_visitor();
 select is(pg_temp.card_of(public.browse_stories('new'), 'statia-meteo-seed01') -> 'writer' ->> 'display_name',
   'Ion Creangă', 'a classic''s card names its real author');
 select is(pg_temp.card_of(public.browse_stories('new'), 'statia-meteo-seed01') -> 'writer' -> 'classic_author',
-  jsonb_build_object('name', 'Ion Creangă', 'died_year', 1889), 'and says it is a classic, with the year of death');
+  jsonb_build_object('name', 'Ion Creangă', 'died_year', 1889, 'source_title', null,
+    'source_url', null, 'translator_name', null),
+  'and says it is a classic, with the year of death (the source comes with S1-E11-16)');
 select is(pg_temp.card_of(public.browse_stories('new'), 'the-girl-who-fixed-radios-seed02') -> 'writer' -> 'classic_author',
   'null'::jsonb, 'a writer''s own story is no classic');
 select isnt(pg_temp.card_of(public.browse_stories('new'), 'the-girl-who-fixed-radios-seed02') -> 'writer' ->> 'display_name',

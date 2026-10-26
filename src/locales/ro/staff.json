@@ -65,7 +65,8 @@
     "auditLog": "Jurnal de audit",
     "invites": "Invitații",
     "users": "Utilizatori",
-    "metrics": "Cifre"
+    "metrics": "Cifre",
+    "classics": "Clasice"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -393,5 +394,112 @@
     "loading": "Se încarcă cifrele…",
     "notCountedYet": "Cifrele nu au fost numărate încă. Numărătoarea rulează devreme, în fiecare dimineață.",
     "countedOn": "Numărate pe {{date}}"
+  },
+  "classics": {
+    "documentTitle": "Clasice · Echipa",
+    "eyebrow": "Povești",
+    "heading": "Clasice",
+    "intro": "Adaugă cărți, povestiri, poezii și piese de teatru din domeniul public. O operă apare pe contul oficial de clasice, cu autorul ei real, și doar acolo unde e liberă.",
+    "add": "Adaugă o operă clasică",
+    "empty": "Încă nu există clasice. Adaug-o pe prima.",
+    "notAllowed": "Doar rolul de administrator se ocupă de Clasice.",
+    "failures": {
+      "not_allowed": "Rolul tău nu poate face asta.",
+      "classics_account_missing": "Contul oficial de clasice nu există încă. Roagă proprietarul să-l creeze.",
+      "details_invalid": "Alege un autor, o categorie și o clasificare.",
+      "author_died_year_differs": "Autorul e deja în listă cu alt an al morții. Alege-l din listă sau verifică anul.",
+      "not_a_classic": "Opera nu mai poate fi găsită. Reîncarcă pagina.",
+      "already_published": "Opera a fost publicată, așa că textul ei nu mai poate fi înlocuit.",
+      "no_chapters": "Adaugă întâi textul.",
+      "not_free_in_romania": "Opera nu e încă în domeniul public în România, așa că nu poate fi publicată.",
+      "reason_missing": "Scrie întâi un motiv. Ajunge în jurnalul de audit.",
+      "refused": "Nu s-a salvat. Verifică câmpurile: linkul trebuie să înceapă cu https://, iar textul nu poate conține HTML.",
+      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "done": {
+      "save": "Salvată ca ciornă.",
+      "text": "Capitolele sunt salvate. Verifică-le, apoi publică.",
+      "publish": "Publicată.",
+      "unpublish": "Retrasă. Cititorii nu o mai văd."
+    },
+    "check": {
+      "heading": "Unde e în domeniul public",
+      "needsYear": "Alege autorul sau adaugă anul morții lui ca să vezi unde e liberă opera.",
+      "free": "Liberă",
+      "notYet": "Încă nu",
+      "unknown": "Necunoscut",
+      "markets": {
+        "RO": "România",
+        "EU": "Uniunea Europeană",
+        "UK": "Regatul Unit",
+        "US": "Statele Unite"
+      }
+    },
+    "form": {
+      "authorLegend": "Autor",
+      "author": "Autor",
+      "pickAuthor": "Alege un autor",
+      "authorOption": "{{name}} (m. {{year}})",
+      "newAuthor": "Adaugă un autor nou…",
+      "newAuthorName": "Numele autorului, așa cum apare pe operă",
+      "newAuthorDied": "Anul morții",
+      "storyLegend": "Povestea",
+      "title": "Titlu",
+      "blurb": "Scurtă descriere (opțional)",
+      "language": "Limba acestui text",
+      "category": "Categorie",
+      "rating": "Clasificare",
+      "contentNote": "Notă despre conținut (opțional)",
+      "contentNoteHint": "De exemplu pentru violență într-o operă 16+. Cititorii o văd înainte să înceapă.",
+      "sourceLegend": "Domeniul public",
+      "kind": "Tip",
+      "originalLanguage": "Limba originală",
+      "sourceTitle": "Ediția sursă",
+      "sourceUrl": "Linkul către sursă (https://)",
+      "translatorHint": "Dacă textul e o traducere, scrie traducătorul și anul morții lui: o traducere rămâne protejată 70 de ani după moartea traducătorului.",
+      "translatorName": "Traducător (dacă există)",
+      "translatorDiedYear": "Anul morții traducătorului",
+      "firstPublishedYear": "Anul primei publicări (pentru SUA)",
+      "save": "Salvează ca ciornă",
+      "saving": "Se salvează…",
+      "cancel": "Renunță"
+    },
+    "kinds": {
+      "novel": "Roman",
+      "short_story": "Povestire",
+      "fairy_tale": "Basm",
+      "poem": "Poezie",
+      "play": "Piesă de teatru",
+      "essay": "Eseu"
+    },
+    "text": {
+      "label": "Textul",
+      "hint": "Lipește-l din ediția sursă sau deschide un fișier. Rândurile care încep cu # pornesc un capitol nou. Lasă deoparte introducerile și notele moderne, dacă nu sunt și ele libere.",
+      "file": "Sau deschide un fișier text simplu sau Markdown",
+      "fileFailed": "Fișierul nu a putut fi citit. Încearcă un fișier text simplu (.txt) sau Markdown (.md).",
+      "split": "Arată capitolele",
+      "empty": "Încă nu există text.",
+      "previewHeading": "Capitole",
+      "chapterTitle": "Titlul capitolului {{number}}",
+      "chapterWords_one": "{{count}} cuvânt: „{{start}}…”",
+      "chapterWords_few": "{{count}} cuvinte: „{{start}}…”",
+      "chapterWords_other": "{{count}} de cuvinte: „{{start}}…”",
+      "save_one": "Salvează {{count}} capitol",
+      "save_few": "Salvează {{count}} capitole",
+      "save_other": "Salvează {{count}} de capitole"
+    },
+    "card": {
+      "editDetails": "Modifică detaliile",
+      "publish": "Publică",
+      "unpublish": "Retrage",
+      "unpublishReason": "De ce o retragi de pe site",
+      "unpublishConfirm": "Retrage",
+      "live": "Publicată",
+      "draft": "Ciornă",
+      "open": "Deschide povestea",
+      "byline_one": "De {{name}} (m. {{year}}) · {{count}} capitol",
+      "byline_few": "De {{name}} (m. {{year}}) · {{count}} capitole",
+      "byline_other": "De {{name}} (m. {{year}}) · {{count}} de capitole"
+    }
   }
 }

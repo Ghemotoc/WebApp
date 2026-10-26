@@ -28,6 +28,8 @@ export const staffAreaPages: StaffAreaPage[] = [
   // Users (S1-E11-02): look-up and accounts, with Invites (S1-E11-17) as its second tab. Owner
   // and admin, the only roles with the invites area, also hold users, so they reach it there.
   { area: 'users', href: '/staff/users', labelKey: 'nav.users' },
+  // Stories › Classics (S1-E11-16): owner and admin; the Stories list itself is S1-E11-07.
+  { area: 'classics', href: '/staff/classics', labelKey: 'nav.classics' },
   // S1-E2-07a built /staff/roles outside the shell; S1-E11-01 moves it in.
   { area: 'roles', href: '/staff/roles', labelKey: 'nav.roles' },
   // The March test numbers (S1-E15-02), just before the audit log (architecture 1.8.2).

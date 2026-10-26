@@ -24,15 +24,48 @@ import { FollowButton } from '@/features/people/components/FollowButton';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { ratingMinimumAge } from '@/schemas/story';
 
-import type { StoryPageData } from '../api/storyPage';
+import type { ClassicAuthor, StoryPageData } from '../api/storyPage';
+
+/**
+ * Where a classic's text comes from: the source edition as a link, and the translator (S1-E11-16
+ * AC 5). Classics added before the staff form have no source, so the lines are left out.
+ *
+ * @returns the lines, or nothing
+ */
+function ClassicSource({ author }: { author: ClassicAuthor }) {
+  const { t } = useTranslation('reading');
+  return (
+    <>
+      {author.translatorName !== null && (
+        <p className="m-0 text-[15px] leading-normal text-body">
+          {t('storyPage.classicTranslator', { name: author.translatorName })}
+        </p>
+      )}
+      {author.sourceTitle !== null && author.sourceUrl !== null && (
+        <p className="m-0 text-[15px] leading-normal text-body">
+          {t('storyPage.classicSource')}{' '}
+          <a
+            href={author.sourceUrl}
+            rel="nofollow ugc noopener"
+            target="_blank"
+            className="font-semibold underline underline-offset-2"
+          >
+            {author.sourceTitle}
+          </a>
+        </p>
+      )}
+    </>
+  );
+}
 
 /**
  * The card for a public-domain classic: the real author and the year they died, with no Follow
- * and no profile, because the author has no account (S1-E5-06, 25 Oct 2026).
+ * and no profile, because the author has no account (S1-E5-06, 25 Oct 2026), and since S1-E11-16
+ * the source edition and the translator.
  *
  * @returns the card
  */
-function ClassicAuthorCard({ author }: { author: { name: string; diedYear: number } }) {
+function ClassicAuthorCard({ author }: { author: ClassicAuthor }) {
   const { t } = useTranslation('reading');
   return (
     <div className="flex flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card">
@@ -41,6 +74,7 @@ function ClassicAuthorCard({ author }: { author: { name: string; diedYear: numbe
       <p className="m-0 text-[15px] leading-normal text-body">
         {t('storyPage.classicAuthorNote', { year: author.diedYear })}
       </p>
+      <ClassicSource author={author} />
     </div>
   );
 }

@@ -43,7 +43,9 @@
     "updated": "Updated {{date}}",
     "likes_few": "{{value}} likes",
     "comments_few": "{{value}} comments",
-    "chapterCount_few": "{{count}} chapters"
+    "chapterCount_few": "{{count}} chapters",
+    "classicSource": "Text from:",
+    "classicTranslator": "Translated by {{name}}."
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

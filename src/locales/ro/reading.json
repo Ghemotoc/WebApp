@@ -43,7 +43,9 @@
     "chapterCount_one": "{{count}} capitol",
     "chapterCount_few": "{{count}} capitole",
     "chapterCount_other": "{{count}} de capitole",
-    "updated": "Actualizată pe {{date}}"
+    "updated": "Actualizată pe {{date}}",
+    "classicSource": "Textul după:",
+    "classicTranslator": "Traducere de {{name}}."
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

@@ -283,6 +283,26 @@ lib/greeting.ts greetingKeyFor(): the special words, or good morning, afternoon 
 
 Tests: `supabase/tests/database/159-birthday-and-anniversary.test.sql`, `src/features/account/api/birthday.test.ts`, `src/features/account/api/greeting.test.ts`, `src/features/discovery/lib/greeting.test.ts`, `e2e/birthday.spec.ts`.
 
+## Adding a public-domain classic (S1-E11-16, part 16a, added 26 Oct 2026)
+
+```
+/staff/classics → ClassicsPage → useClassics → api/classics.ts    src/features/staff/
+  │  "Add a classic work" → ClassicWorkForm (ClassicAuthorFields, ClassicStoryFields,
+  │     ClassicSourceFields; FreeMarketsList with lib/publicDomain.ts as staff type)
+  │     → admin_add_classic_author() for a new author, then admin_save_classic_work()
+  │        → a draft story owned by the classics account (setting classics_account_handle),
+  │          its real author as the byline (classic_authors), details in classic_works
+  │  ClassicCard → ClassicTextForm: paste or open a file → lib/splitClassicText.ts (a chapter
+  │     at every # heading) → preview, fix titles → admin_set_classic_chapters()
+  │  Publish → admin_publish_classic(): only when classic_free_markets() says free in Romania
+  │  Unpublish (with a reason) → admin_unpublish_classic()
+  ▼
+every admin_* function checks staff_may('classics') (owner, admin) and writes the audit log
+readers: get_story_page() → story_classic_author() → "Text from: <source edition>" (StorySideColumn)
+```
+
+Tests: `supabase/tests/database/160-classic-works.test.sql`, `src/features/staff/lib/splitClassicText.test.ts`, `src/features/staff/lib/publicDomain.test.ts`, `e2e/classics.spec.ts`.
+
 ## When something goes wrong: errors, offline and maintenance (S1-E1-05)
 
 ```

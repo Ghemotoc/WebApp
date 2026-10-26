@@ -59,6 +59,9 @@ select results_eq(
        ('chapters', 0::bigint),
        -- The real authors of public-domain classics, public on every byline (S1-E5-06).
        ('classic_authors', (select count(*) from public.classic_authors)),
+       -- Classics' public-domain details are staff-only (S1-E11-16); readers get the source
+       -- through the story page.
+       ('classic_works', 0::bigint),
        ('client_errors', 0::bigint),
        ('comment_downvotes', 0::bigint),
        ('comment_reactions', 0::bigint),
