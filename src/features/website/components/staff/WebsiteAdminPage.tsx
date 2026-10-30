@@ -5,8 +5,9 @@
  *
  * Tabs (links, so each has its own address): Home page (/staff/website), Notice banners
  * (/staff/website/notices), Help and questions (/staff/website/help), Interface text
- * (/staff/website/interface-text, S1-E11-18) and Email templates (/staff/website/emails,
- * S1-E11-19). The website tabs start with the market and language picker. Plain components, no doodles (staff screens). Staff without the
+ * (/staff/website/interface-text, S1-E11-18), Email templates (/staff/website/emails,
+ * S1-E11-19) and Seasonal doodles (/staff/website/seasonal, S1-E11-11). The website tabs start
+ * with the market and language picker. Plain components, no doodles (staff screens). Staff without the
  * website area see why; the database refuses their changes anyway (decided 17 Oct 2026, 19:19).
  * Who shows it: the router, inside StaffLayout. What it calls: the three editors.
  */
@@ -21,6 +22,7 @@ import { useMyStaffAccess } from '@/features/staff/hooks/useMyStaffAccess';
 import { cn } from '@/lib/utils';
 
 import { InterfaceTextTab } from '@/features/interface-text/components/InterfaceTextTab';
+import { SeasonalTab } from '@/features/seasonal/components/staff/SeasonalTab';
 
 import { registerWebsiteAdminTranslations } from '../../registerWebsiteAdminTranslations';
 
@@ -37,6 +39,8 @@ const tabs = [
   // S1-E11-18 and S1-E11-19: the app's own text, one version per language, not per market.
   { area: 'interface-text', href: '/staff/website/interface-text', labelKey: 'tabs.interfaceText' },
   { area: 'emails', href: '/staff/website/emails', labelKey: 'tabs.emails' },
+  // S1-E11-11: the seasonal doodle schedule, the same in every market for now.
+  { area: 'seasonal', href: '/staff/website/seasonal', labelKey: 'tabs.seasonal' },
 ] as const;
 
 /** The email templates are the keys of the email namespace (S1-E11-19). */
@@ -80,6 +84,7 @@ function WebsiteEditors({ area }: { area: string | undefined }) {
   const { t } = useTranslation('websiteAdmin');
   // The app's own text has no market: one version per language (decided 17 Oct 2026, 19:19).
   if (area === 'interface-text') return <InterfaceTextTab />;
+  if (area === 'seasonal') return <SeasonalTab />;
   if (area === 'emails') {
     return (
       <div className="flex flex-col gap-4">
