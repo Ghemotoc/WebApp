@@ -53,7 +53,7 @@ insert into public.chapters (story_id, user_id, code, position, draft_title, dra
   status, published_title, published_body, published_word_count, first_published_at)
 select id, user_id, 'sort000' || right(slug, 1), 1, 'Unu', 'x', 1, 'published', 'Unu', 'Text.', 1, now()
 from public.stories where id::text like '00000000-0000-4000-9152-%';
-insert into public.tags (name, normalised_name) values ('sorttest', 'sorttest');
+insert into public.tags (name, normalised_name, status) values ('sorttest', 'sorttest', 'approved');
 insert into public.story_tags (story_id, tag_id, user_id)
 select stories.id, tags.id, stories.user_id from public.stories, public.tags
 where stories.id::text like '00000000-0000-4000-9152-%' and tags.normalised_name = 'sorttest';

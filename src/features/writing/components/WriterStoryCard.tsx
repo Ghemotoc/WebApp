@@ -18,6 +18,7 @@ import { DrawnCover } from '@/components/covers/DrawnCover';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
+import { TagNames } from '@/features/tags/components/TagNames';
 
 import type { MyStory } from '../api/stories';
 
@@ -131,7 +132,9 @@ export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
           />
         </div>
         {story.tags.length > 0 && (
-          <p className="m-0 text-[13px] text-meta">{story.tags.join(' · ')}</p>
+          <p className="m-0 text-[13px] text-meta">
+            <TagNames tags={story.tags} />
+          </p>
         )}
         {story.firstPublishedAt === null && (
           <p className="m-0 text-[13px] text-meta">{t('yourWriting.onlyYou')}</p>

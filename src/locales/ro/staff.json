@@ -70,6 +70,7 @@
     "onCall": "De gardă",
     "appeals": "Contestații",
     "moderatorMail": "Mesaje moderatori",
+    "tags": "Etichete",
     "safetyContacts": "Contacte de siguranță",
     "settings": "Setări",
     "website": "Site"
@@ -101,6 +102,7 @@
       "on_call_rota": "Cine este de gardă pentru ordinele de eliminare, turele următoare și golurile.",
       "moderation": "Coada de raportări pe niveluri și termene, și fiecare caz cu decizia lui.",
       "moderator_mail": "Mesajele membrilor către echipa de moderare, într-o singură căsuță comună.",
+      "tags": "Etichetele noi adăugate de autori, care așteaptă aprobarea, și etichetele fără nume într-o limbă.",
       "appeals": "Contestațiile la deciziile de moderare, decise de alt moderator unde se poate.",
       "safety_contacts": "Liniile de ajutor și numerele de urgență din ecranele de raportare și verificarea lor lunară.",
       "classics": "Adaugă și verifică clasicii din domeniul public pentru contul oficial.",

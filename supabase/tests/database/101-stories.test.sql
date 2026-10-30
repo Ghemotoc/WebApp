@@ -34,7 +34,7 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 
 select is(
   (public.create_story('  Fata care repara   radiouri ', 'O vară în atelierul bunicului.', 'ro', 'fiction',
-    array['Fantezie', 'fantezie', ' fantézie ', 'set in Romania'], pg_temp.drawn_cover(), null, pg_temp.labels())) ->> 'outcome',
+    array['Mlaștină', 'mlaștină', ' mlastină ', 'set in Romania'], pg_temp.drawn_cover(), null, pg_temp.labels())) ->> 'outcome',
   'ok',
   'an active adult creates a story'
 );
@@ -51,11 +51,11 @@ select is((select first_published_at from made), null, 'a new story has no publi
 select results_eq(
   $$ select tags.normalised_name from public.story_tags join public.tags on tags.id = story_tags.tag_id
      where story_tags.story_id = (select id from made) order by 1 $$,
-  $$ values ('fantezie'), ('set in romania') $$,
-  'Fantezie, fantezie and fantézie are one tag; tags are lower-cased, trimmed and diacritic-normalised'
+  $$ values ('mlastina'), ('set in romania') $$,
+  'Mlaștină, mlaștină and mlastină are one tag; tags are lower-cased, trimmed and diacritic-normalised'
 );
 select is(
-  (select tags.name from public.tags where tags.normalised_name = 'fantezie'), 'Fantezie',
+  (select tags.name from public.tags where tags.normalised_name = 'mlastina'), 'Mlaștină',
   'a new tag keeps the spelling the first writer typed'
 );
 select results_eq(

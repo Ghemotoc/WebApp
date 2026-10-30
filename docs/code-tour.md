@@ -1172,6 +1172,15 @@ A small drawing beside Discover's heading changes with the season and on special
 - **The year view:** `OccasionYearView` uses `occasionCovers()`, the same rule as the database's `occasion_covers()`, to list each month's occasions and count any day with no doodle.
 - **Tests:** `supabase/tests/database/174-seasonal-occasions.test.sql`, `e2e/seasonal-doodles.spec.ts`, `src/features/seasonal/lib/seasonalCalendar.test.ts`.
 
+## Tags: approval and names in each language (CMS-1e)
+
+A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.
+
+- **Where it starts (writers):** the tag box, `TagInput` (`src/features/writing/components/`), reads `useTagCatalogue()` (`src/features/tags/`). A name typed in another language becomes the interface language's name, the recommended tags sit under the box (`TagSuggestions`), and a tag staff haven't approved says "(waiting for approval)". Saving calls `create_story()` or `update_my_story()` → `set_story_tags()`, which finds each name's tag in any language with `tag_for_name()` or makes a new waiting tag.
+- **Where it starts (readers):** `get_story_page()` sends approved tags only; `StoryHeader` shows each in the reader's language and links to the tag page, where `list_holds_story()` finds the tag by any of its names.
+- **Where it starts (staff):** `/staff/tags` (`TagsAdminPage`), for owner, admin and moderator. Approve or Save the names → `admin_name_tag()` (a name in every interface language, none taken by another tag; logged `tag.approved` or `tag.named`). Reject → `admin_reject_tag()` (the tag leaves every story, each writer gets a `tag_rejected` notification, logged `tag.rejected` with the reason). `/staff/tags/missing` lists approved tags without a name in a newly opened language.
+- **Tests:** `supabase/tests/database/175-tags.test.sql`, `e2e/tags.spec.ts`, `src/features/tags/lib/tagCatalogue.test.ts`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.

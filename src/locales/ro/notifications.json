@@ -43,7 +43,8 @@
     "commentReply": "ți-a răspuns la comentariul de la {{where}}.",
     "commentReactions": "a reacționat la comentariul tău de la {{where}}.",
     "newFollower": "a început să te urmărească.",
-    "mailReply": "ți-a răspuns la mesaj."
+    "mailReply": "ți-a răspuns la mesaj.",
+    "tagRejected": "a scos o etichetă nouă de la povestea ta „{{title}}”: nu a fost aprobată."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -76,7 +77,8 @@
     "seeIt": "Vezi",
     "readWhy": "Vezi de ce",
     "seeMyReports": "Vezi raportările mele",
-    "readReply": "Citește răspunsul"
+    "readReply": "Citește răspunsul",
+    "editTags": "Modifică etichetele"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

@@ -18,6 +18,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
 import { ratingMinimumAge } from '@/schemas/story';
+import { TagNames } from '@/features/tags/components/TagNames';
 
 import type { StoryAnswers } from '../hooks/storyAnswers';
 
@@ -84,7 +85,9 @@ export function StoryPreviewAside({ answers, penName }: StoryPreviewAsideProps) 
           {answers.blurb.trim() === '' ? t('preview.noBlurb') : answers.blurb}
         </p>
         {answers.tags.length > 0 && (
-          <p className="m-0 text-[13px] text-meta">{answers.tags.join(' · ')}</p>
+          <p className="m-0 text-[13px] text-meta">
+            <TagNames tags={answers.tags} />
+          </p>
         )}
       </div>
       <p className="m-0 text-[13px] leading-normal text-meta">{t('preview.deleteLater')}</p>

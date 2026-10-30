@@ -67,6 +67,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     expect(await menuLinks(ownerPage)).toEqual([
       'Moderation',
       'Moderator mail',
+      'Tags',
       'Appeals',
       'Safety contacts',
       'On call',
@@ -85,6 +86,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     expect(await menuLinks(adminPage)).toEqual([
       'Moderation',
       'Moderator mail',
+      'Tags',
       'Appeals',
       'Safety contacts',
       'On call',
@@ -103,6 +105,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     expect(await menuLinks(moderatorPage)).toEqual([
       'Moderation',
       'Moderator mail',
+      'Tags',
       'Appeals',
       'Safety contacts',
       'On call',

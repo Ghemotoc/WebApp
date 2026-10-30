@@ -139,6 +139,7 @@ test.describe('epic S1-E11 journeys', () => {
     expect(await menuLinks(owner)).toEqual([
       'Moderation',
       'Moderator mail',
+      'Tags',
       'Appeals',
       'Safety contacts',
       'On call',
@@ -154,6 +155,7 @@ test.describe('epic S1-E11 journeys', () => {
     expect(await menuLinks(moderator)).toEqual([
       'Moderation',
       'Moderator mail',
+      'Tags',
       'Appeals',
       'Safety contacts',
       'On call',

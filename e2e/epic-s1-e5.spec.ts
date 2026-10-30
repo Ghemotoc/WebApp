@@ -63,7 +63,7 @@ function seedStories() {
       word_count, status, published_title, published_body, published_word_count, first_published_at)
     select id, user_id, 'ep5e2e' || substr(md5(slug), 1, 2), 1, 'One', 'x', 1, 'published', 'One',
       'Text.', 1, first_published_at from public.stories where slug like 'epic5-e2e-%';
-    insert into public.tags (name, normalised_name) values ('${tag}', '${tag}');
+    insert into public.tags (name, normalised_name, status) values ('${tag}', '${tag}', 'approved');
     insert into public.story_tags (story_id, tag_id, user_id)
     select stories.id, tags.id, stories.user_id from public.stories, public.tags
     where stories.slug like 'epic5-e2e-%' and tags.normalised_name = '${tag}';
@@ -145,6 +145,7 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
       .getByRole('navigation', { name: 'Browse by category' })
       .getByRole('link', { name: /Fiction/ })
       .click();
+    await expect(page).toHaveURL(/\/discover\/c\/fiction$/);
     await card(page, 'Quiet orchard').click();
     await expect(page.getByRole('heading', { level: 1, name: 'Quiet orchard' })).toBeVisible();
   });

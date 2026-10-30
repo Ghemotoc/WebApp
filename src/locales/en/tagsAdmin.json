@@ -1,0 +1,49 @@
+{
+  "documentTitle": "Tags · Staff",
+  "eyebrow": "Staff · tags",
+  "heading": "Tags",
+  "intro": "A tag a writer types for the first time waits here. Readers see it only after you approve it. Give it a name in every interface language, so each reader sees it in theirs. Reject a tag that breaks the rules or repeats another: it leaves every story and the writers are told. Every decision is in the audit log.",
+  "views": {
+    "label": "Which tags",
+    "waiting": "Waiting for approval",
+    "missing": "Missing a name"
+  },
+  "empty": {
+    "waiting": "No tag is waiting. New tags appear here as writers add them.",
+    "missing": "Every tag has a name in every interface language."
+  },
+  "storyCount_one": "Used on {{count}} story",
+  "storyCount_few": "Used on {{count}} stories",
+  "storyCount_other": "Used on {{count}} stories",
+  "typedAs": "Typed as “{{name}}”",
+  "nameIn": "Name in {{language}}",
+  "languages": {
+    "ro": "Romanian",
+    "en": "English"
+  },
+  "approve": "Approve",
+  "saveNames": "Save the names",
+  "reject": "Reject",
+  "rejectLabel": "Reject {{name}}",
+  "approveLabel": "Approve {{name}}",
+  "reason": "Why it is rejected",
+  "reasonHint": "For the audit log. Writers are told the tag was not approved, never the reason.",
+  "confirmReject": "Reject the tag",
+  "cancel": "Cancel",
+  "problems": {
+    "empty": "Give it a name.",
+    "too_long": "Keep it to 40 characters.",
+    "taken": "Another tag already has this name in this language.",
+    "unknown_language": "This language isn't open."
+  },
+  "outcomes": {
+    "approved": "Approved. Readers see it now.",
+    "rejected": "Rejected. It left every story and the writers were told."
+  },
+  "failures": {
+    "not_allowed": "Only the moderation team can decide on tags.",
+    "unreachable": "We couldn't reach the server. Try again.",
+    "not_found": "This tag was already decided. The list is up to date now.",
+    "invalid": "Fix the fields shown and try again."
+  }
+}

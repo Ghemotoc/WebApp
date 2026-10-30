@@ -43,7 +43,8 @@
     "commentReply": "replied to your comment on {{where}}.",
     "commentReactions": "reacted to your comment on {{where}}.",
     "newFollower": "started following you.",
-    "mailReply": "answered your message."
+    "mailReply": "answered your message.",
+    "tagRejected": "took a new tag off your story “{{title}}”: it wasn’t approved."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -76,7 +77,8 @@
     "seeIt": "See it",
     "readWhy": "Read why",
     "seeMyReports": "See my reports",
-    "readReply": "Read the reply"
+    "readReply": "Read the reply",
+    "editTags": "Edit the tags"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

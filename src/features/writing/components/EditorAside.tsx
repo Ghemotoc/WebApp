@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/Button';
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { LabelRows } from '@/components/ui/LabelRows';
+import { useTagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
 
 import type { MyStory } from '../api/stories';
 import type { SaveState } from '../hooks/useAutosave';
@@ -40,6 +41,7 @@ function Panel({ label, children }: { label: string; children: React.ReactNode }
 function StoryDetailsPanel({ story }: { story: MyStory }) {
   const { t } = useTranslation('editor');
   const { t: tWriting } = useTranslation('writing');
+  const { showTag } = useTagCatalogue();
   return (
     <Panel label={t('details.heading')}>
       <div className="flex w-fit flex-col gap-1">
@@ -57,7 +59,8 @@ function StoryDetailsPanel({ story }: { story: MyStory }) {
           { label: t('details.rating'), value: tWriting(`rating.${story.rating}`) },
           {
             label: t('details.tags'),
-            value: story.tags.length === 0 ? t('details.noTags') : story.tags.join(' · '),
+            value:
+              story.tags.length === 0 ? t('details.noTags') : story.tags.map(showTag).join(' · '),
           },
         ]}
       />
