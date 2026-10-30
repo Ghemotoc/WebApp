@@ -29,7 +29,9 @@
     "rising": "New and rising",
     "risingEyebrow": "New writers",
     "searchEyebrow": "Search",
-    "search": "Stories for “{{term}}”"
+    "search": "Stories for “{{term}}”",
+    "classics": "Public-domain classics",
+    "classicsEyebrow": "Free to read, for good"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} chapter",

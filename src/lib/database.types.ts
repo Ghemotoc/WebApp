@@ -634,6 +634,7 @@ export type Database = {
         Row: {
           added_by_user_id: string;
           created_at: string;
+          details_checked: boolean;
           first_published_year: number | null;
           kind: Database['public']['Enums']['classic_kind'];
           original_language: string;
@@ -648,6 +649,7 @@ export type Database = {
         Insert: {
           added_by_user_id: string;
           created_at?: string;
+          details_checked?: boolean;
           first_published_year?: number | null;
           kind: Database['public']['Enums']['classic_kind'];
           original_language: string;
@@ -661,6 +663,7 @@ export type Database = {
         Update: {
           added_by_user_id?: string;
           created_at?: string;
+          details_checked?: boolean;
           first_published_year?: number | null;
           kind?: Database['public']['Enums']['classic_kind'];
           original_language?: string;
@@ -3655,6 +3658,8 @@ export type Database = {
       admin_case_statements: { Args: { target_case_id: string }; Returns: Json };
       admin_case_support_contacts: { Args: { target_case_id: string }; Returns: Json };
       admin_claim_case: { Args: { target_case_id: string }; Returns: boolean };
+      admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
+      admin_classic_suggestions: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_close_unmatched_notice: {
         Args: { note: string; target_notice_id: string };
         Returns: undefined;
@@ -3735,6 +3740,10 @@ export type Database = {
           user_id: string;
         }[];
       };
+      admin_fix_classic_typo: {
+        Args: { corrected_body: string; reason_given: string; target_chapter_code: string };
+        Returns: Json;
+      };
       admin_grant_role: {
         Args: {
           granted_role: Database['public']['Enums']['staff_role'];
@@ -3743,6 +3752,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_import_classics: { Args: { list_rows: Json }; Returns: Json };
       admin_lift_sanction: {
         Args: { reason_given: string; target_sanction_id: string };
         Returns: boolean;
@@ -4286,6 +4296,11 @@ export type Database = {
       };
       check_story_cover: { Args: { cover: Json }; Returns: undefined };
       check_story_labels: { Args: { labels: Json }; Returns: undefined };
+      classic_authors_dying_in: { Args: { died: number }; Returns: Json };
+      classic_fix_is_small: {
+        Args: { corrected_text: string; live_text: string };
+        Returns: boolean;
+      };
       classic_free_markets: {
         Args: {
           author_died_year: number;
@@ -4295,6 +4310,12 @@ export type Database = {
         };
         Returns: Json;
       };
+      classic_import_row: { Args: { list_row: Json }; Returns: string };
+      classic_kind_from_list: {
+        Args: { list_type: string };
+        Returns: Database['public']['Enums']['classic_kind'];
+      };
+      classic_source_title: { Args: { source_link: string }; Returns: string };
       classic_story_category: { Args: { details: Json }; Returns: string };
       classic_upsert_story: {
         Args: { details: Json; target_story_id: string; wanted_category_id: string };
@@ -4524,6 +4545,7 @@ export type Database = {
         Returns: boolean;
       };
       is_staff_session: { Args: Record<PropertyKey, never>; Returns: boolean };
+      is_story_list_kind: { Args: { list_kind: string }; Returns: boolean };
       issue_statement_of_reasons: {
         Args: {
           about: Json;

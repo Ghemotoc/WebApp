@@ -431,7 +431,11 @@
       "not_free_in_romania": "Opera nu e încă în domeniul public în România, așa că nu poate fi publicată.",
       "reason_missing": "Scrie întâi un motiv. Ajunge în jurnalul de audit.",
       "refused": "Nu s-a salvat. Verifică câmpurile: linkul trebuie să înceapă cu https://, iar textul nu poate conține HTML.",
-      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
+      "details_unchecked": "Opera vine dintr-o listă de cercetare. Verifică detaliile (clasificarea, categoria și sursa) și salvează-le înainte de publicare.",
+      "no_change": "Nu s-a schimbat nimic. Corectează întâi greșeala din text.",
+      "too_big": "Asta e mai mult decât o greșeală de tipar, așa că nu s-a salvat. Echipa corectează greșelile din ediția-sursă; nu rescrie și nu scurtează niciodată o operă.",
+      "too_many_rows": "Lista e prea lungă. Importă cel mult 500 de rânduri odată."
     },
     "done": {
       "save": "Salvată ca ciornă.",
@@ -516,7 +520,52 @@
       "open": "Deschide povestea",
       "byline_one": "De {{name}} (m. {{year}}) · {{count}} capitol",
       "byline_few": "De {{name}} (m. {{year}}) · {{count}} capitole",
-      "byline_other": "De {{name}} (m. {{year}}) · {{count}} de capitole"
+      "byline_other": "De {{name}} (m. {{year}}) · {{count}} de capitole",
+      "checkDetails": "Verifică detaliile înainte de publicare",
+      "fixTypo": "Corectează o greșeală"
+    },
+    "import": {
+      "heading": "Importă o listă de cercetare",
+      "intro": "Deschide una dintre listele CSV din cercetare (content/classics). Fiecare rând devine o ciornă cu autorul, tipul, limba și sursa completate. Apoi adaugă textul fiecărei opere, verifică-i detaliile și public-o acolo unde e liberă de drepturi.",
+      "file": "Deschide o listă CSV",
+      "busy": "Se importă…",
+      "summary_one": "Am adăugat {{count}} ciornă. Erau deja în listă: {{already}}. Neimportate: {{refused}}.",
+      "summary_few": "Am adăugat {{count}} ciorne. Erau deja în listă: {{already}}. Neimportate: {{refused}}.",
+      "summary_other": "Am adăugat {{count}} de ciorne. Erau deja în listă: {{already}}. Neimportate: {{refused}}.",
+      "refusedHeading": "Rânduri neimportate",
+      "refusedRow": "Rândul {{line}}, „{{title}}”: {{reason}}",
+      "unreadable": "Fișierul nu a putut fi citit. Deschide un fișier .csv salvat dintr-un tabel.",
+      "missingColumns": "Listei îi lipsesc coloanele: {{columns}}. Folosește coloanele listelor de cercetare.",
+      "reasons": {
+        "row_incomplete": "lipsește titlul, autorul, anul morții sau linkul https://",
+        "unknown_kind": "tipul nu e unul pe care îl cunoaștem (roman, povestire, basm, poezie, piesă, eseu)",
+        "unknown_language": "limba nu e una pe care o avem",
+        "author_died_year_differs": "autorul e deja în listă cu alt an al morții",
+        "row_invalid": "o valoare nu a putut fi salvată"
+      }
+    },
+    "suggestions": {
+      "heading": "Intrate de curând în domeniul public",
+      "intro": "Operele devin libere de drepturi la 1 ianuarie, la 70 de ani după anul morții autorului. Aici sunt autorii din listă, cu operele lor și dacă fiecare e publicată.",
+      "thisYear": "Libere din 1 ianuarie {{year}}",
+      "nextYear": "Libere de la 1 ianuarie {{year}}",
+      "none": "Niciun autor din listă.",
+      "author": "{{name}} (a murit în {{year}})",
+      "noWorks": "Încă nicio operă în listă.",
+      "failed": "Sugestiile nu au putut fi încărcate."
+    },
+    "typo": {
+      "chapter": "Capitol",
+      "chapterOption": "{{number}}. {{title}}",
+      "text": "Textul „{{title}}”",
+      "textHint": "Corectează doar o greșeală de tipar din ediția-sursă. Cititorii văd corectura imediat, iar textul de dinainte rămâne ca versiune.",
+      "reason": "Motiv",
+      "reasonHint": "De exemplu: „ediția-sursă are «sî», nu «și»”. Ajunge în jurnalul de audit.",
+      "save": "Salvează corectura",
+      "done": "Corectat. Cititorii văd acum textul corectat.",
+      "fixes_one": "{{count}} corectură anterioară",
+      "fixes_few": "{{count}} corecturi anterioare",
+      "fixes_other": "{{count}} de corecturi anterioare"
     }
   },
   "languages": {

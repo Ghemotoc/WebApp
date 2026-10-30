@@ -4,7 +4,9 @@
  * Unpublish.
  *
  * Who shows it: ClassicsPage. What it calls: ClassicWorkForm, ClassicTextForm, ReasonForm
- * (unpublishing needs a reason for the audit log) and the page's onChange / onSave.
+ * (unpublishing needs a reason for the audit log), ClassicTypoFix (16b: a typo fix in a published
+ * work) and the page's onChange / onSave. A work imported from a research list says its details
+ * need checking until staff save them (16b).
  * Plain components, no doodles (staff screens).
  */
 import { useState } from 'react';
@@ -20,6 +22,7 @@ import type { ClassicChange } from '../../hooks/useClassics';
 
 import type { NewAuthor } from './ClassicAuthorFields';
 import { ClassicTextForm } from './ClassicTextForm';
+import { ClassicTypoFix } from './ClassicTypoFix';
 import { ClassicWorkForm } from './ClassicWorkForm';
 import { FreeMarketsList } from './FreeMarketsList';
 
@@ -37,7 +40,7 @@ export interface ClassicCardProps {
 }
 
 /** Which panel of the card is open. */
-type OpenPanel = 'none' | 'details' | 'unpublish';
+type OpenPanel = 'none' | 'details' | 'unpublish' | 'typo';
 
 /**
  * The card's buttons, as the work's state allows.
@@ -66,6 +69,11 @@ function CardButtons({
       {canPublish && (
         <Button disabled={isChanging} onClick={onPublish}>
           {t('classics.card.publish')}
+        </Button>
+      )}
+      {publishedCount > 0 && (
+        <Button variant="secondary" onClick={() => onOpen('typo')}>
+          {t('classics.card.fixTypo')}
         </Button>
       )}
       {publishedCount > 0 && (
@@ -103,6 +111,7 @@ function CardPanel({
           onCancel={() => onClose()}
         />
       )}
+      {openPanel === 'typo' && <ClassicTypoFix work={work} />}
       {openPanel === 'unpublish' && (
         <ReasonForm
           id={`classic-unpublish-${work.storyId}`}
@@ -142,6 +151,7 @@ export function ClassicCard({ work, authors, isChanging, onChange, onSave }: Cla
         <InfoPill tone={isLive ? 'sage' : 'neutral'}>
           {t(isLive ? 'classics.card.live' : 'classics.card.draft')}
         </InfoPill>
+        {!work.detailsChecked && <InfoPill tone="gold">{t('classics.card.checkDetails')}</InfoPill>}
       </div>
       <p className="m-0 text-body">
         {t('classics.card.byline', {

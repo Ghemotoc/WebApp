@@ -26,6 +26,7 @@ export type ListKind =
   | 'writer'
   | 'popular'
   | 'rising'
+  | 'classics'
   | 'search';
 
 /**

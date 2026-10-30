@@ -303,6 +303,14 @@ readers: get_story_page() → story_classic_author() → "Text from: <source edi
 
 Tests: `supabase/tests/database/160-classic-works.test.sql`, `src/features/staff/lib/splitClassicText.test.ts`, `src/features/staff/lib/publicDomain.test.ts`, `e2e/classics.spec.ts`.
 
+### The classics shelf, research lists, 1 January and typo fixes (S1-E5-06, S1-E11-16 part 16b)
+
+- **Readers:** Discover's "Public-domain classics" shelf is the story list kind `classics` (`list_holds_story()`: stories with a `classic_author_id`). It goes through `listed_stories()` like every list, so ratings, blocks and moderation apply, and "View more" opens `/discover/all/classics`. The shelf is the word `classics` in the `discover_shelves` setting (Staff › Settings › Discover mix); `is_story_list_kind()` is the one list of kinds `browse_stories()` accepts.
+- **Import a research list:** `ClassicsImport` reads a CSV from `content/classics` (`lib/parseClassicsCsv.ts`) → `useClassicsImport()` → `admin_import_classics()`. Each row goes through `classic_import_row()` in its own sub-transaction: it finds or adds the author, skips a work already listed (same title and author) and makes a draft with its kind (`classic_kind_from_list()`), category, language and source (`classic_source_title()`), rated All ages. `classic_works.details_checked` is false until staff save the details, and `admin_publish_classic()` refuses (`details_unchecked`) until then.
+- **1 January:** `ClassicSuggestionsPanel` → `admin_classic_suggestions()`: the listed authors who died 71 years before this year (free since 1 January) and 70 years before (free next 1 January), with their works (`classic_authors_dying_in()`).
+- **Typo fixes:** a published card's "Fix a typo" → `ClassicTypoFix` → `useClassicTypoFix()` → `admin_classic_chapter()` and `admin_fix_classic_typo()`. The fix goes live, a `chapter_revisions` row (reason `edited`) keeps it as a version and the audit log keeps the reason; `classic_fix_is_small()` refuses more than 3 words or 2% of the length.
+- **Tests:** `supabase/tests/database/178-classics-shelf-and-import.test.sql`, `e2e/classics-shelf.spec.ts`, `src/features/staff/lib/parseClassicsCsv.test.ts`.
+
 ## When something goes wrong: errors, offline and maintenance (S1-E1-05)
 
 ```

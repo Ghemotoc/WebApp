@@ -7,7 +7,8 @@
  * database refuses everyone else (admin_list_classics()), and the page says so.
  * What it calls: useClassics → api/classics.ts; ClassicWorkForm for a new work and ClassicCard
  * for each one. A work is published under the official classics account with its real author
- * as the byline (S1-E5-06). Importing the research lists and typo versions come with 16b.
+ * as the byline (S1-E5-06). Part 16b adds ClassicsImport (the research lists as drafts) and
+ * ClassicSuggestionsPanel (who became free on 1 January); typo fixes sit on each published card.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +23,8 @@ import { useClassics } from '../../hooks/useClassics';
 
 import type { NewAuthor } from './ClassicAuthorFields';
 import { ClassicCard } from './ClassicCard';
+import { ClassicsImport } from './ClassicsImport';
+import { ClassicSuggestionsPanel } from './ClassicSuggestionsPanel';
 import { ClassicWorkForm } from './ClassicWorkForm';
 
 /** useClassics's result, passed down once. */
@@ -91,6 +94,8 @@ function ClassicsBody({ classics }: { classics: Classics }) {
         </div>
       )}
       <ChangeNotice classics={classics} />
+      <ClassicSuggestionsPanel />
+      <ClassicsImport />
       {!classics.isLoading && classics.works.length === 0 && (
         <p className="m-0 text-body">{t('classics.empty')}</p>
       )}
