@@ -52,6 +52,7 @@ const defaultShelfOrder = [
   'new',
   'completed',
   'updated',
+  'classics',
   'categories',
 ] as const;
 

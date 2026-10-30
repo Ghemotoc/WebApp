@@ -431,7 +431,11 @@
       "not_free_in_romania": "This work isn’t in the public domain in Romania yet, so it can’t be published.",
       "reason_missing": "Write a reason first. It goes to the audit log.",
       "refused": "That wasn’t saved. Check the fields: the link must start with https://, and the text can’t contain HTML.",
-      "unreachable": "We couldn’t reach our server. Check your connection and try again."
+      "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+      "details_unchecked": "This work came from a research list. Check its details (rating, category and source) and save them before publishing.",
+      "no_change": "Nothing changed. Correct the typo in the text first.",
+      "too_big": "That is more than a typo fix, so it wasn’t saved. Staff correct typos from the source edition; they never rewrite or shorten a work.",
+      "too_many_rows": "That list is too long. Import at most 500 rows at a time."
     },
     "done": {
       "save": "Saved as a draft.",
@@ -516,7 +520,52 @@
       "open": "Open the story",
       "byline_one": "By {{name}} (died {{year}}) · {{count}} chapter",
       "byline_few": "By {{name}} (died {{year}}) · {{count}} chapters",
-      "byline_other": "By {{name}} (died {{year}}) · {{count}} chapters"
+      "byline_other": "By {{name}} (died {{year}}) · {{count}} chapters",
+      "checkDetails": "Check the details before publishing",
+      "fixTypo": "Fix a typo"
+    },
+    "import": {
+      "heading": "Import a research list",
+      "intro": "Open one of the CSV lists from the research (content/classics). Every row becomes a draft with its author, kind, language and source filled in. Then add each work’s text, check its details and publish it where it is free.",
+      "file": "Open a CSV list",
+      "busy": "Importing…",
+      "summary_one": "Added {{count}} draft. Already listed: {{already}}. Not imported: {{refused}}.",
+      "summary_few": "Added {{count}} drafts. Already listed: {{already}}. Not imported: {{refused}}.",
+      "summary_other": "Added {{count}} drafts. Already listed: {{already}}. Not imported: {{refused}}.",
+      "refusedHeading": "Rows not imported",
+      "refusedRow": "Line {{line}}, “{{title}}”: {{reason}}",
+      "unreadable": "That file couldn’t be read. Open a .csv file saved from a spreadsheet.",
+      "missingColumns": "This list lacks the columns: {{columns}}. Use the columns of the research lists.",
+      "reasons": {
+        "row_incomplete": "a title, author, year of death or https:// link is missing",
+        "unknown_kind": "its type isn’t a kind we know (novel, short story, fairy tale, poetry, play, essay)",
+        "unknown_language": "its language isn’t one we have",
+        "author_died_year_differs": "this author is already listed with another year of death",
+        "row_invalid": "a value couldn’t be saved"
+      }
+    },
+    "suggestions": {
+      "heading": "Newly in the public domain",
+      "intro": "Works become free on 1 January, 70 years after the year their author died. These are the listed authors, with their works and whether each is published.",
+      "thisYear": "Free since 1 January {{year}}",
+      "nextYear": "Free from 1 January {{year}}",
+      "none": "No listed author.",
+      "author": "{{name}} (died {{year}})",
+      "noWorks": "No works listed yet.",
+      "failed": "The suggestions couldn’t be loaded."
+    },
+    "typo": {
+      "chapter": "Chapter",
+      "chapterOption": "{{number}}. {{title}}",
+      "text": "Text of “{{title}}”",
+      "textHint": "Correct only a typo from the source edition. Readers see the fix at once, and the earlier text stays as a version.",
+      "reason": "Reason",
+      "reasonHint": "For example: “the source edition has «sî», not «și»”. It goes to the audit log.",
+      "save": "Save the fix",
+      "done": "Fixed. Readers now see the corrected text.",
+      "fixes_one": "{{count}} earlier fix",
+      "fixes_few": "{{count}} earlier fixes",
+      "fixes_other": "{{count}} earlier fixes"
     }
   },
   "languages": {

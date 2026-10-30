@@ -24,6 +24,8 @@ export interface FreeMarkets {
 
 /** One chapter as the staff page lists it (no text). */
 export interface ClassicChapterSummary {
+  /** The chapter's code, for a typo fix once it is live (16b). */
+  code: string;
   title: string;
   wordCount: number;
   status: Enums<'chapter_status'>;
@@ -75,6 +77,8 @@ export interface ClassicWork extends ClassicDetails {
   chapters: ClassicChapterSummary[];
   /** True once any chapter has been live: the text can then no longer be replaced. */
   wasPublished: boolean;
+  /** False for a work imported from a research list until staff save its details (16b). */
+  detailsChecked: boolean;
   updatedAt: string;
 }
 
@@ -98,7 +102,11 @@ export const classicsFailures = [
   'already_published',
   'no_chapters',
   'not_free_in_romania',
+  'details_unchecked',
   'reason_missing',
+  'no_change',
+  'too_big',
+  'too_many_rows',
   'refused',
   'unreachable',
 ] as const;
@@ -144,8 +152,9 @@ interface ClassicWorkRow {
   translator_died_year: number | null;
   first_published_year: number | null;
   free_markets: FreeMarkets;
-  chapters: { title: string; word_count: number; status: Enums<'chapter_status'> }[];
+  chapters: { code: string; title: string; word_count: number; status: Enums<'chapter_status'> }[];
   was_published: boolean;
+  details_checked: boolean;
   updated_at: string;
 }
 
@@ -177,23 +186,26 @@ function workFrom(row: ClassicWorkRow): ClassicWork {
     firstPublishedYear: row.first_published_year === null ? '' : String(row.first_published_year),
     freeMarkets: row.free_markets,
     chapters: row.chapters.map((chapter) => ({
+      code: chapter.code,
       title: chapter.title,
       wordCount: chapter.word_count,
       status: chapter.status,
     })),
     wasPublished: row.was_published,
+    detailsChecked: row.details_checked,
     updatedAt: row.updated_at,
   };
 }
 
 /**
  * Calls one admin function and hands back its answer, or throws the reason it was refused.
+ * Also used by api/classicsImport.ts (16b).
  *
  * @param call - the Supabase rpc call
  * @returns the data
  * Errors: throws ClassicsError.
  */
-async function answerOf<Data>(
+export async function answerOf<Data>(
   call: PromiseLike<{ data: Data | null; error: { code?: string; hint?: string } | null }>,
 ): Promise<Data> {
   const { data, error } = await call;

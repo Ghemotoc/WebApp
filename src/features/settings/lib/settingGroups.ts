@@ -118,5 +118,6 @@ export const discoverShelfWords = [
   'new',
   'completed',
   'updated',
+  'classics',
   'categories',
 ] as const;
