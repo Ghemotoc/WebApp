@@ -5,14 +5,16 @@
  * "Chapters" with Contents (outlined, to the story page's chapter list), Previous (outlined) and
  * "Next chapter ›" (solid); under them the gold progress line. 44 px targets, 24 px radius card.
  * Previous and Next are left out at the first and last chapter, so no control does nothing.
- * The reading settings button joins with S1-E4-02.
- * Who uses it: ChapterReaderPage. What it calls: nothing; links only.
+ * After the story link comes "Reading settings" for a signed-in reader (S1-E4-02,
+ * ReadingSettingsControl), as on the board.
+ * Who uses it: ChapterReaderPage. What it calls: ReadingSettingsControl; the rest are links.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import type { ReaderChapter } from '../api/chapter';
 
+import { ReadingSettingsControl } from './ReadingSettingsControl';
 import { BackIcon, ContentsIcon, ForwardIcon } from './ReaderIcons';
 
 /** The classes shared by the outlined links. */
@@ -24,6 +26,8 @@ export interface ChapterBarProps {
   chapter: ReaderChapter;
   /** How far through the text the reader is, 0 to 100. */
   progress: number;
+  /** The text size that follows the device, or null to leave out Reading settings (visitors). */
+  deviceSize: number | null;
 }
 
 /** Contents, Previous and Next chapter. */
@@ -60,7 +64,7 @@ function ChapterNavigation({ chapter }: { chapter: ReaderChapter }) {
  *
  * @returns the card with the links and the progress line
  */
-export function ChapterBar({ chapter, progress }: ChapterBarProps) {
+export function ChapterBar({ chapter, progress, deviceSize }: ChapterBarProps) {
   const { t } = useTranslation('reading');
   return (
     <div className="relative z-[2] rounded-card border border-border bg-surface px-3 pt-3 shadow-card">
@@ -73,6 +77,7 @@ export function ChapterBar({ chapter, progress }: ChapterBarProps) {
           {/* The story's own language, so a screen reader pronounces the title right (WCAG 3.1.2). */}
           <span lang={chapter.story.languageCode}>{chapter.story.title}</span>
         </Link>
+        {deviceSize !== null && <ReadingSettingsControl deviceSize={deviceSize} />}
         <ChapterNavigation chapter={chapter} />
       </div>
       <div

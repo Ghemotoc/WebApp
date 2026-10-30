@@ -107,5 +107,41 @@
     "count_other": "{{count}} de aprecieri",
     "readOnly": "Contul tău nu poate aprecia capitole încă.",
     "failed": "Nu am putut salva aprecierea. Încearcă din nou."
+  },
+  "settings": {
+    "button": "Setări de citire",
+    "title": "Setări de citire",
+    "close": "Închide setările de citire",
+    "font": "Font",
+    "fonts": {
+      "sans": "Inter",
+      "serif": "Serif",
+      "dyslexia_friendly": "Pentru dislexie"
+    },
+    "fontHint": "Un set mic care merge în orice browser, inclusiv unul pe care mulți cititori cu dislexie îl găsesc mai ușor.",
+    "textSize": "Mărimea textului",
+    "textSizeValue": "{{size}} px",
+    "textSizeFromDevice": "{{size}} px, de pe dispozitivul tău",
+    "followDevice": "Folosește mărimea dispozitivului",
+    "lineSpacing": "Spațiul dintre rânduri",
+    "spacings": {
+      "compact": "Strâns",
+      "normal": "Normal",
+      "wide": "Larg"
+    },
+    "lineWidth": "Lățimea rândului",
+    "widths": {
+      "narrow": "Îngust",
+      "medium": "Mediu",
+      "wide": "Lat"
+    },
+    "theme": "Temă",
+    "themes": {
+      "light": "Luminos",
+      "sepia": "Sepia",
+      "night": "Noapte"
+    },
+    "saved": "Salvate în contul tău, deci se aplică pe toate dispozitivele tale. Mărimea textului pornește de la setarea dispozitivului tău.",
+    "saveFailed": "Nu am putut salva setările de citire. Se aplică în continuare aici; verifică-ți conexiunea și schimbă din nou o setare ca să încercăm iar."
   }
 }

@@ -182,9 +182,38 @@
 
 /* The chapter reader's text (story S1-E4-01a; board 3.5): Inter 19 px with 1.7 line height and
    24 px between paragraphs. The editor and its preview keep the smaller sizes above. */
+/* The reader's own settings (S1-E4-02) arrive as variables from useReadingLook; without them the
+   board's 19 px Inter at 1.7 stays. */
 .tmc-chapter-text--reader {
-  font-size: 19px;
-  line-height: 1.7;
+  font-family: var(--reading-font-family, var(--font-body));
+  font-size: var(--reading-font-size, 19px);
+  line-height: var(--reading-line-height, 1.7);
+  letter-spacing: var(--reading-letter-spacing, 0);
+}
+/* The Sepia and Night themes for the chapter text only (S1-E4-02; board 3.5): a rounded page
+   behind the text. Night reuses the night tokens (data-theme="night" on the same box); Sepia sets
+   its own, every text colour at least 7:1 on #F3E7D3. Light keeps the app's colours. */
+.tmc-reading-page {
+  padding: 24px 18px;
+  border-radius: 24px;
+  background: var(--paper);
+  color: var(--ink);
+}
+@media (min-width: 600px) {
+  .tmc-reading-page {
+    padding: 32px 24px 32px 32px;
+  }
+}
+.tmc-reading-page--sepia {
+  color-scheme: light;
+  --paper: #f3e7d3;
+  --ink: #3b2a1a;
+  --heading: #3b2a1a;
+  --body: #4a3826;
+  --meta: #5c4632;
+  --link: #5e2378;
+  --border: #c9b392;
+  --hairline: #e3d3b8;
 }
 /* Two classes, so this also beats the quote and list margins above. */
 .tmc-chapter-text.tmc-chapter-text--reader > * + * {

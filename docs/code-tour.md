@@ -1213,6 +1213,13 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - The story page's "Start reading" / "Continue chapter n" and the Library drop-down are `StoryReadingActions` → `story_library_state()` and `set_library_shelf()`.
 - Both tables are readable by their owner only; nobody else ever sees what someone reads. Tests: `supabase/tests/database/179-library.test.sql`, `e2e/library.spec.ts`.
 
+## Reading settings (S1-E4-02; READ-4b)
+
+- On screen 3.5 a signed-in reader gets "Reading settings" in the chapter bar (`ReadingSettingsControl` → `ReadingSettingsPanel`): font (Inter, Serif, Dyslexia-friendly), text size (14 to 28 px), line spacing, line width and theme (Light, Sepia, Night).
+- How a change travels: the panel calls `change()` in `useReadingSettings`, which replaces the cached settings at once (so the text changes straight away) and saves the whole set 600 ms later → `save_reading_settings()` → `reading_settings` (one row per reader). Another device reads the row when the chapter opens.
+- How the text gets its look: `useReadingLook` joins the settings with the device's own text size (the page's root font size, read once; 19 px at the normal 16) and puts CSS variables (`--reading-font-size` and so on) on the box around the text; `src/styles/index.css` reads them in `.tmc-chapter-text--reader`. Sepia and Night wrap the text in `.tmc-reading-page` (Night with `data-theme="night"`, so it reuses the night tokens).
+- The row is readable by its owner only. Tests: `supabase/tests/database/180-reading-settings.test.sql`, `src/features/reading/lib/readingStyle.test.ts`, `e2e/reading-settings.spec.ts`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
