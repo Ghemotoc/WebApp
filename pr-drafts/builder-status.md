@@ -44,6 +44,8 @@ Rank badges and tag languages (Robert, 30 Oct 10:44 and 10:48): a cover shows th
 
 ## Next
 
+APPS-1 and APPS-2 are skipped for now (Robert, 30 Oct 2026, 11:41: "I will need a proper engineer for them"); CHECK runs straight after SPONSORS.
+
 The rest of the 17 bundles of `full-app-bundles.md`, in order: CMS-1, DISCOVER-2, READ-4, WRITE-2, ACCOUNTS-2, MESSAGES, PRIVACY, FORUMS-1, FORUMS-2, CLASSES, ADMIN-2, CONTESTS, SPONSORS, APPS-1, APPS-2, CHECK; then GO-LIVE with Robert.
 
 ## Stubbed or carried
