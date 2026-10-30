@@ -1,6 +1,6 @@
 /**
- * Epic check for S1-E5, discovery and profiles (story S1-E5-QA, part one: the journey from the
- * public home page waits for S1-E5-08 in CMS-1).
+ * Epic check for S1-E5, discovery and profiles (story S1-E5-QA; part two, journey 6, added the
+ * public home page and the seasonal doodle in CMS-1d).
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * It adds no feature: it walks the epic's main journeys in a real browser.
@@ -13,6 +13,8 @@
  *   never on kid_14_ok's or kid_14_waiting's.
  * - Journey 4, blocks (S1-E5-05 × S1-E5-03): blocker, who blocks `blocked` in the seed, never
  *   gets blocked's story on Popular; teacher does.
+ * - Journey 6, from the website (S1-E5-08 × S1-E5-07 × S1-E5-01): the public home page →
+ *   "Start reading" → Discover with today's seasonal doodle → a category → a story.
  * - Journey 5, axe on the See all and profile pages at 390, 768 and 1440 px, at night, in
  *   Romanian (the stories' own specs cover the other views).
  * The database half is supabase/tests/database/098-epic-s1-e5.test.sql.
@@ -122,6 +124,29 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
     await expect(card(page, 'Quiet orchard')).toBeVisible();
     // A visitor never gets the 16+ story, on any list (CLAUDE.md rule 18).
     await expect(card(page, 'Loud fairground')).toHaveCount(0);
+  });
+
+  test('journey 6: a visitor goes from the home page to a story, past the seasonal doodle', async ({
+    browser,
+  }) => {
+    // Step 1: the website's home page, its text from the CMS (S1-E5-08).
+    const page = await openAs(browser, null, '/');
+    await page.getByRole('link', { name: 'Start reading' }).click();
+    await expect(page).toHaveURL(/\/discover$/);
+    // Step 2: Discover shows the doodle the schedule gives today, decorative (S1-E5-07).
+    const todaysDoodle = runSql(
+      "select doodle from public.current_seasonal_doodle(current_date, 'discover');",
+    ).replaceAll('_', '-');
+    const doodle = page.locator('img[data-doodle-on="discover-heading"]');
+    await expect(doodle).toHaveAttribute('src', new RegExp(todaysDoodle));
+    await expect(doodle).toHaveAttribute('aria-hidden', 'true');
+    // Step 3: a category, then a story.
+    await page
+      .getByRole('navigation', { name: 'Browse by category' })
+      .getByRole('link', { name: /Fiction/ })
+      .click();
+    await card(page, 'Quiet orchard').click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Quiet orchard' })).toBeVisible();
   });
 
   test('journey 2: a like in the reader lifts a story on the next scoring run', async ({
