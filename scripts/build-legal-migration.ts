@@ -29,6 +29,7 @@ export const legalDraftFiles: Record<string, string> = {
   privacy: '02-privacy-notice.md',
   guidelines: '03-community-guidelines.md',
   contact: '04-contact-and-company-details.md',
+  accessibility: '05-accessibility-statement.md',
 };
 
 /** Where each language's drafts live, relative to content/legal/. */

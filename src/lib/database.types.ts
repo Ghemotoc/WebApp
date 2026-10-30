@@ -3,6 +3,84 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      appeals: {
+        Row: {
+          created_at: string;
+          decided_at: string | null;
+          decided_by_user_id: string | null;
+          decision_note: string | null;
+          explanation: string;
+          id: string;
+          message_to_person: string | null;
+          original_decider_user_id: string | null;
+          reference: string;
+          statement_id: string;
+          status: Database['public']['Enums']['appeal_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          decided_at?: string | null;
+          decided_by_user_id?: string | null;
+          decision_note?: string | null;
+          explanation: string;
+          id?: string;
+          message_to_person?: string | null;
+          original_decider_user_id?: string | null;
+          reference: string;
+          statement_id: string;
+          status?: Database['public']['Enums']['appeal_status'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          decided_at?: string | null;
+          decided_by_user_id?: string | null;
+          decision_note?: string | null;
+          explanation?: string;
+          id?: string;
+          message_to_person?: string | null;
+          original_decider_user_id?: string | null;
+          reference?: string;
+          statement_id?: string;
+          status?: Database['public']['Enums']['appeal_status'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'appeals_decided_by_user_id_fkey';
+            columns: ['decided_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'appeals_original_decider_user_id_fkey';
+            columns: ['original_decider_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'appeals_statement_id_fkey';
+            columns: ['statement_id'];
+            isOneToOne: false;
+            referencedRelation: 'statements_of_reasons';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'appeals_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       audit_log: {
         Row: {
           action: string;
@@ -176,6 +254,8 @@ export type Database = {
       };
       cases: {
         Row: {
+          claimed_at: string | null;
+          claimed_by_user_id: string | null;
           created_at: string;
           deadline_at: string;
           decided_at: string | null;
@@ -211,6 +291,8 @@ export type Database = {
           | 'order_timeline_json'
           | 'statement_ground_for_case';
         Insert: {
+          claimed_at?: string | null;
+          claimed_by_user_id?: string | null;
           created_at?: string;
           deadline_at: string;
           decided_at?: string | null;
@@ -234,6 +316,8 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          claimed_at?: string | null;
+          claimed_by_user_id?: string | null;
           created_at?: string;
           deadline_at?: string;
           decided_at?: string | null;
@@ -257,6 +341,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'cases_claimed_by_user_id_fkey';
+            columns: ['claimed_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'cases_decided_by_user_id_fkey';
             columns: ['decided_by_user_id'];
@@ -1322,10 +1413,122 @@ export type Database = {
           },
         ];
       };
+      moderator_mail_messages: {
+        Row: {
+          body: string;
+          created_at: string;
+          from_team: boolean;
+          id: string;
+          is_internal_note: boolean;
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          created_at?: string;
+          from_team?: boolean;
+          id?: string;
+          is_internal_note?: boolean;
+          thread_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          from_team?: boolean;
+          id?: string;
+          is_internal_note?: boolean;
+          thread_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'moderator_mail_messages_thread_id_fkey';
+            columns: ['thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'moderator_mail_threads';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderator_mail_messages_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      moderator_mail_threads: {
+        Row: {
+          assigned_to_user_id: string | null;
+          created_at: string;
+          id: string;
+          last_message_at: string;
+          reference: string;
+          statement_id: string | null;
+          status: string;
+          subject: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          assigned_to_user_id?: string | null;
+          created_at?: string;
+          id?: string;
+          last_message_at?: string;
+          reference: string;
+          statement_id?: string | null;
+          status?: string;
+          subject: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          assigned_to_user_id?: string | null;
+          created_at?: string;
+          id?: string;
+          last_message_at?: string;
+          reference?: string;
+          statement_id?: string | null;
+          status?: string;
+          subject?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'moderator_mail_threads_assigned_to_user_id_fkey';
+            columns: ['assigned_to_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderator_mail_threads_statement_id_fkey';
+            columns: ['statement_id'];
+            isOneToOne: false;
+            referencedRelation: 'statements_of_reasons';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderator_mail_threads_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       notifications: {
         Row: {
           actor_count: number;
           actor_user_ids: string[];
+          appeal_id: string | null;
           case_id: string | null;
           chapter_id: string | null;
           comment_id: string | null;
@@ -1335,6 +1538,7 @@ export type Database = {
           id: string;
           is_required: boolean;
           kind: Database['public']['Enums']['notification_kind'];
+          mail_thread_id: string | null;
           read_at: string | null;
           statement_id: string | null;
           story_id: string | null;
@@ -1347,6 +1551,7 @@ export type Database = {
         Insert: {
           actor_count?: number;
           actor_user_ids?: string[];
+          appeal_id?: string | null;
           case_id?: string | null;
           chapter_id?: string | null;
           comment_id?: string | null;
@@ -1356,6 +1561,7 @@ export type Database = {
           id?: string;
           is_required?: boolean;
           kind: Database['public']['Enums']['notification_kind'];
+          mail_thread_id?: string | null;
           read_at?: string | null;
           statement_id?: string | null;
           story_id?: string | null;
@@ -1365,6 +1571,7 @@ export type Database = {
         Update: {
           actor_count?: number;
           actor_user_ids?: string[];
+          appeal_id?: string | null;
           case_id?: string | null;
           chapter_id?: string | null;
           comment_id?: string | null;
@@ -1374,6 +1581,7 @@ export type Database = {
           id?: string;
           is_required?: boolean;
           kind?: Database['public']['Enums']['notification_kind'];
+          mail_thread_id?: string | null;
           read_at?: string | null;
           statement_id?: string | null;
           story_id?: string | null;
@@ -1381,6 +1589,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'notifications_appeal_id_fkey';
+            columns: ['appeal_id'];
+            isOneToOne: false;
+            referencedRelation: 'appeals';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'notifications_case_id_fkey';
             columns: ['case_id'];
@@ -1400,6 +1615,13 @@ export type Database = {
             columns: ['comment_id'];
             isOneToOne: false;
             referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_mail_thread_id_fkey';
+            columns: ['mail_thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'moderator_mail_threads';
             referencedColumns: ['id'];
           },
           {
@@ -1540,11 +1762,94 @@ export type Database = {
           },
         ];
       };
+      picture_checks: {
+        Row: {
+          attempts: number;
+          bucket: string;
+          case_id: string | null;
+          checked_at: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          flags: NonNullable<Json>;
+          id: string;
+          kind: Database['public']['Enums']['picture_kind'];
+          path: string;
+          preserve_until: string | null;
+          provider: string | null;
+          status: Database['public']['Enums']['picture_status'];
+          story_id: string | null;
+          updated_at: string;
+          user_id: string;
+          picture_state_json: Json | null;
+          show_passed_avatar: undefined | null;
+        };
+        ComputedFields: 'picture_state_json' | 'show_passed_avatar';
+        Insert: {
+          attempts?: number;
+          bucket: string;
+          case_id?: string | null;
+          checked_at?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          flags?: NonNullable<Json>;
+          id?: string;
+          kind: Database['public']['Enums']['picture_kind'];
+          path: string;
+          preserve_until?: string | null;
+          provider?: string | null;
+          status?: Database['public']['Enums']['picture_status'];
+          story_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          attempts?: number;
+          bucket?: string;
+          case_id?: string | null;
+          checked_at?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          flags?: NonNullable<Json>;
+          id?: string;
+          kind?: Database['public']['Enums']['picture_kind'];
+          path?: string;
+          preserve_until?: string | null;
+          provider?: string | null;
+          status?: Database['public']['Enums']['picture_status'];
+          story_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'picture_checks_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'picture_checks_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'picture_checks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
+          avatar_picture_id: string | null;
           bio: string;
           birth_month: number | null;
           birth_year: number;
@@ -1569,6 +1874,7 @@ export type Database = {
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
+          avatar_picture_id?: string | null;
           bio?: string;
           birth_month?: number | null;
           birth_year: number;
@@ -1592,6 +1898,7 @@ export type Database = {
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
+          avatar_picture_id?: string | null;
           bio?: string;
           birth_month?: number | null;
           birth_year?: number;
@@ -1611,7 +1918,15 @@ export type Database = {
           shows_online_status?: boolean;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_avatar_picture_id_fkey';
+            columns: ['avatar_picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       public_notices: {
         Row: {
@@ -1711,6 +2026,39 @@ export type Database = {
           {
             foreignKeyName: 'public_notices_owner_user_id_fkey';
             columns: ['owner_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      rate_limit_events: {
+        Row: {
+          action: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          action: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          action?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'rate_limit_events_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
@@ -1987,6 +2335,45 @@ export type Database = {
           },
         ];
       };
+      safety_contact_checks: {
+        Row: {
+          check_month: string;
+          closed_at: string | null;
+          closed_by_user_id: string | null;
+          country_code: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          check_month: string;
+          closed_at?: string | null;
+          closed_by_user_id?: string | null;
+          country_code: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          check_month?: string;
+          closed_at?: string | null;
+          closed_by_user_id?: string | null;
+          country_code?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'safety_contact_checks_closed_by_user_id_fkey';
+            columns: ['closed_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       safety_contact_gaps: {
         Row: {
           country_code: string;
@@ -2021,15 +2408,18 @@ export type Database = {
           id: string;
           kind: Database['public']['Enums']['safety_contact_kind'];
           label: string;
+          last_checked_by_user_id: string | null;
           last_checked_on: string;
           link: string | null;
           note: string | null;
           opening_hours: string | null;
+          opening_hours_ro: string | null;
           phone_number: string | null;
           position: number;
           updated_at: string;
+          safety_contact_values: Json | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'safety_contact_values';
         Insert: {
           checked_by?: string;
           confidence: string;
@@ -2038,10 +2428,12 @@ export type Database = {
           id?: string;
           kind: Database['public']['Enums']['safety_contact_kind'];
           label: string;
+          last_checked_by_user_id?: string | null;
           last_checked_on: string;
           link?: string | null;
           note?: string | null;
           opening_hours?: string | null;
+          opening_hours_ro?: string | null;
           phone_number?: string | null;
           position: number;
           updated_at?: string;
@@ -2054,15 +2446,25 @@ export type Database = {
           id?: string;
           kind?: Database['public']['Enums']['safety_contact_kind'];
           label?: string;
+          last_checked_by_user_id?: string | null;
           last_checked_on?: string;
           link?: string | null;
           note?: string | null;
           opening_hours?: string | null;
+          opening_hours_ro?: string | null;
           phone_number?: string | null;
           position?: number;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'safety_contacts_last_checked_by_user_id_fkey';
+            columns: ['last_checked_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       sanctions: {
         Row: {
@@ -2337,9 +2739,10 @@ export type Database = {
           story_id: string | null;
           updated_at: string;
           user_id: string;
+          decider_of_statement: string | null;
           statement_json: Json | null;
         };
-        ComputedFields: 'statement_json';
+        ComputedFields: 'decider_of_statement' | 'statement_json';
         Insert: {
           action: Database['public']['Enums']['statement_action'];
           appeal_until: string;
@@ -2728,6 +3131,7 @@ export type Database = {
         Args: { document_slugs: string[]; reading_language?: string };
         Returns: number;
       };
+      account_is_new: { Args: { target_user_id: string }; Returns: boolean };
       account_state: {
         Args: { target_user_id: string };
         Returns: Database['public']['Enums']['account_status'];
@@ -2792,6 +3196,27 @@ export type Database = {
       };
       admin_acknowledge_on_call_alert: { Args: { alert_id: string }; Returns: boolean };
       admin_add_classic_author: { Args: { author_name: string; died: number }; Returns: string };
+      admin_appeals_queue: {
+        Args: { status_filter?: Database['public']['Enums']['appeal_status'] };
+        Returns: {
+          appellant_handle: string;
+          case_reference: string;
+          created_at: string;
+          decided_at: string;
+          decided_by_handle: string;
+          decision_note: string;
+          explanation: string;
+          id: string;
+          item_summary: string;
+          may_decide: boolean;
+          message_to_person: string;
+          original_decider_handle: string;
+          reference: string;
+          statement_action: Database['public']['Enums']['statement_action'];
+          statement_reference: string;
+          status: Database['public']['Enums']['appeal_status'];
+        }[];
+      };
       admin_apply_sanction: {
         Args: {
           days?: number;
@@ -2811,6 +3236,10 @@ export type Database = {
           target_user_id: string;
         };
         Returns: string;
+      };
+      admin_assign_mail: {
+        Args: { assignee_handle: string; thread_reference: string };
+        Returns: boolean;
       };
       admin_build_evidence_pack: {
         Args: { reason_given: string; target_case_id: string };
@@ -2847,6 +3276,7 @@ export type Database = {
           reference: string;
         }[];
       };
+      admin_case_picture: { Args: { target_case_id: string }; Returns: Json };
       admin_case_referrals: { Args: { target_case_id: string }; Returns: Json };
       admin_case_reports: {
         Args: { target_case_id: string };
@@ -2869,10 +3299,12 @@ export type Database = {
       };
       admin_case_statements: { Args: { target_case_id: string }; Returns: Json };
       admin_case_support_contacts: { Args: { target_case_id: string }; Returns: Json };
+      admin_claim_case: { Args: { target_case_id: string }; Returns: boolean };
       admin_close_unmatched_notice: {
         Args: { note: string; target_notice_id: string };
         Returns: undefined;
       };
+      admin_confirm_safety_contact: { Args: { target_contact_id: string }; Returns: boolean };
       admin_create_invite: {
         Args: { admits?: number; private_note?: string; valid_days?: number };
         Returns: {
@@ -2880,6 +3312,15 @@ export type Database = {
           expires_at: string;
           invite_id: string;
         }[];
+      };
+      admin_decide_appeal: {
+        Args: {
+          message_to_person: string;
+          note_text: string;
+          outcome: Database['public']['Enums']['appeal_status'];
+          target_appeal_id: string;
+        };
+        Returns: boolean;
       };
       admin_decide_case: {
         Args: {
@@ -3013,6 +3454,9 @@ export type Database = {
       admin_moderation_queue: {
         Args: {
           case_id?: string;
+          claimed_filter?: string;
+          reason_filter?: Database['public']['Enums']['report_reason'];
+          search_text?: string;
           source_filter?: Database['public']['Enums']['case_source'];
           status_filter?: Database['public']['Enums']['case_status'];
           tier_filter?: Database['public']['Enums']['case_tier'];
@@ -3026,6 +3470,20 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      admin_moderator_mail_inbox: {
+        Args: { assigned_filter?: string; status_filter?: string };
+        Returns: {
+          assigned_handle: string;
+          assigned_to_me: boolean;
+          last_message_at: string;
+          member_handle: string;
+          message_count: number;
+          reference: string;
+          status: string;
+          subject: string;
+        }[];
+      };
+      admin_moderator_mail_thread: { Args: { thread_reference: string }; Returns: Json };
       admin_on_call_alerts: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -3055,6 +3513,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_release_case: { Args: { target_case_id: string }; Returns: boolean };
       admin_remove_on_call_shift: {
         Args: { reason_given: string; shift_id: string };
         Returns: boolean;
@@ -3065,6 +3524,14 @@ export type Database = {
           removed_role: Database['public']['Enums']['staff_role'];
           target_user_id: string;
         };
+        Returns: boolean;
+      };
+      admin_remove_safety_contact: {
+        Args: { reason_given: string; target_contact_id: string };
+        Returns: boolean;
+      };
+      admin_reply_mail: {
+        Args: { body: string; is_note?: boolean; thread_reference: string };
         Returns: boolean;
       };
       admin_request_report_details: {
@@ -3084,7 +3551,29 @@ export type Database = {
         Args: { reason_given: string; target_invite_id: string };
         Returns: boolean;
       };
+      admin_safety_contact_checks: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          check_month: string;
+          closed_at: string;
+          closed_by_handle: string;
+          contact_count: number;
+          country_code: string;
+          still_to_confirm: number;
+        }[];
+      };
+      admin_safety_contact_warnings: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          country_code: string;
+          days_since: number;
+          id: string;
+          label: string;
+          last_checked_on: string;
+        }[];
+      };
       admin_save_classic_work: { Args: { details: Json; target_story_id?: string }; Returns: Json };
+      admin_save_safety_contact: { Args: { contact: Json }; Returns: string };
       admin_search_audit_log: {
         Args: {
           action_prefix?: string;
@@ -3119,6 +3608,10 @@ export type Database = {
       admin_set_classic_chapters: {
         Args: { chapter_list: Json; target_story_id: string };
         Returns: Json;
+      };
+      admin_set_mail_status: {
+        Args: { new_status: string; thread_reference: string };
+        Returns: boolean;
       };
       admin_set_on_call_shift: {
         Args: {
@@ -3210,6 +3703,7 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['age_band'];
       };
+      another_appeals_decider_exists: { Args: Record<PropertyKey, never>; Returns: boolean };
       answer_report_detail_request: {
         Args: { answer_text: string; target_request_id: string };
         Returns: undefined;
@@ -3250,6 +3744,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      avatar_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       banned_email_hash: { Args: { email: string }; Returns: string };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
@@ -3275,6 +3770,19 @@ export type Database = {
           >;
         };
         Returns: Json;
+      };
+      case_matches_queue_filters: {
+        Args: {
+          claimed_filter: string;
+          reason_filter: Database['public']['Enums']['report_reason'];
+          reported_handle: string;
+          search_text: string;
+          target: Omit<
+            Database['public']['Tables']['cases']['Row'],
+            Database['public']['Tables']['cases']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
       };
       change_is_too_soon: {
         Args: { last_changed_at: string; setting_key: string };
@@ -3348,7 +3856,9 @@ export type Database = {
       };
       classic_work_json: { Args: { target_story_id: string }; Returns: Json };
       classics_account_id: { Args: Record<PropertyKey, never>; Returns: string };
+      clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
+      close_finished_safety_checks: { Args: { target_country: string }; Returns: undefined };
       comment_is_shown_to_caller: {
         Args: {
           target: Omit<
@@ -3386,9 +3896,11 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
       };
+      count_links: { Args: { body: string }; Returns: number };
       count_words: { Args: { body: string }; Returns: number };
       cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       create_chapter: { Args: { story_slug: string }; Returns: Json };
+      create_monthly_safety_checks: { Args: Record<PropertyKey, never>; Returns: number };
       create_story: {
         Args: {
           blurb: string;
@@ -3415,6 +3927,15 @@ export type Database = {
           >;
         };
         Returns: undefined;
+      };
+      decider_of_statement: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['statements_of_reasons']['Row'],
+            Database['public']['Tables']['statements_of_reasons']['ComputedFields']
+          >;
+        };
+        Returns: string;
       };
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
@@ -3682,7 +4203,27 @@ export type Database = {
         };
       };
       my_live_story_id: { Args: { story_slug: string }; Returns: string };
+      my_moderator_mail: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          last_message_at: string;
+          reference: string;
+          statement_reference: string;
+          status: string;
+          subject: string;
+          team_replied_last: boolean;
+        }[];
+      };
+      my_moderator_mail_thread: { Args: { thread_reference: string }; Returns: Json };
       my_notifications: { Args: { older_than?: string; page_size?: number }; Returns: Json };
+      my_pending_pictures: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          attempts: number;
+          kind: Database['public']['Enums']['picture_kind'];
+          picture_id: string;
+        }[];
+      };
       my_report_detail_requests: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -3777,12 +4318,34 @@ export type Database = {
         };
         Returns: undefined;
       };
+      open_picture_case: {
+        Args: {
+          is_match: boolean;
+          picture: Omit<
+            Database['public']['Tables']['picture_checks']['Row'],
+            Database['public']['Tables']['picture_checks']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
       order_timeline_json: {
         Args: {
           target: Omit<
             Database['public']['Tables']['cases']['Row'],
             Database['public']['Tables']['cases']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      picture_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
+      picture_is_visible: { Args: { bucket: string; path: string }; Returns: boolean };
+      picture_reader_may_see: { Args: { bucket: string; path: string }; Returns: boolean };
+      picture_state_json: {
+        Args: {
+          picture: Omit<
+            Database['public']['Tables']['picture_checks']['Row'],
+            Database['public']['Tables']['picture_checks']['ComputedFields']
           >;
         };
         Returns: Json;
@@ -3797,12 +4360,14 @@ export type Database = {
         };
         Returns: Json;
       };
+      profile_avatar_picture: { Args: { profile_handle: string }; Returns: Json };
       profile_for_handle: {
         Args: { wanted_handle: string };
         Returns: {
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
+          avatar_picture_id: string | null;
           bio: string;
           birth_month: number | null;
           birth_year: number;
@@ -3842,6 +4407,7 @@ export type Database = {
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
       ranking_setting: { Args: { fallback: number; setting_key: string }; Returns: number };
       rating_allows: {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
@@ -3924,13 +4490,26 @@ export type Database = {
         };
       };
       record_chapter_read: { Args: { chapter_code: string; story_slug: string }; Returns: boolean };
+      record_picture_check: {
+        Args: { payload: string; signature: string };
+        Returns: Database['public']['Enums']['picture_status'];
+      };
       record_sign_in_failure: { Args: { email_hash: string }; Returns: string };
       record_sign_up_consent: {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
       };
+      register_picture: {
+        Args: {
+          picture_kind: Database['public']['Enums']['picture_kind'];
+          target_bucket: string;
+          target_path: string;
+        };
+        Returns: string;
+      };
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
+      reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
       report_client_error: {
         Args: {
           app_version: string;
@@ -3973,6 +4552,40 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
       };
+      require_case_for_acting: {
+        Args: { target_case_id: string };
+        Returns: {
+          claimed_at: string | null;
+          claimed_by_user_id: string | null;
+          created_at: string;
+          deadline_at: string;
+          decided_at: string | null;
+          decided_by_user_id: string | null;
+          decision: Database['public']['Enums']['moderation_action'] | null;
+          disabled_at: string | null;
+          id: string;
+          is_safeguarding: boolean;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          preserve_until: string | null;
+          received_at: string;
+          reference: string;
+          report_count: number;
+          reporter_under_18: boolean;
+          source: Database['public']['Enums']['case_source'];
+          status: Database['public']['Enums']['case_status'];
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason: Database['public']['Enums']['report_reason'] | null;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'cases';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       require_classics_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_comment_allowed: {
         Args: {
@@ -3983,6 +4596,27 @@ export type Database = {
           >;
         };
         Returns: undefined;
+      };
+      require_mail_thread_for_staff: {
+        Args: { thread_reference: string };
+        Returns: {
+          assigned_to_user_id: string | null;
+          created_at: string;
+          id: string;
+          last_message_at: string;
+          reference: string;
+          statement_id: string | null;
+          status: string;
+          subject: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'moderator_mail_threads';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       require_not_last_owner: {
         Args: { removed_role: Database['public']['Enums']['staff_role']; target_user_id: string };
@@ -3996,11 +4630,21 @@ export type Database = {
         Args: { changed_role: Database['public']['Enums']['staff_role'] };
         Returns: undefined;
       };
+      require_safety_contacts_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
       return_rate_on: { Args: { for_day: string }; Returns: number };
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };
+      safety_contact_values: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['safety_contacts']['Row'],
+            Database['public']['Tables']['safety_contacts']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       sanction_end: {
         Args: { days: number; wanted_kind: Database['public']['Enums']['sanction_kind'] };
         Returns: string;
@@ -4012,6 +4656,10 @@ export type Database = {
       schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
+      send_moderator_mail: {
+        Args: { body: string; statement_reference?: string; subject: string };
+        Returns: Json;
+      };
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
@@ -4024,6 +4672,15 @@ export type Database = {
         Returns: undefined;
       };
       setting_value: { Args: { setting_key: string }; Returns: Json };
+      show_passed_avatar: {
+        Args: {
+          picture: Omit<
+            Database['public']['Tables']['picture_checks']['Row'],
+            Database['public']['Tables']['picture_checks']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       sign_in_pause_until: { Args: { email_hash: string }; Returns: string };
       sign_out_everywhere: { Args: { target_user_id: string }; Returns: undefined };
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
@@ -4062,6 +4719,7 @@ export type Database = {
       story_card_json: { Args: { target_story_id: string }; Returns: Json };
       story_classic_author: { Args: { target_story_id: string }; Returns: Json };
       story_comment_total: { Args: { target_story_id: string }; Returns: number };
+      story_cover_picture: { Args: { story_slug: string }; Returns: Json };
       story_follow_state: { Args: { story_slug: string }; Returns: Json };
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
@@ -4084,6 +4742,7 @@ export type Database = {
         Returns: string;
       };
       strip_combining_marks: { Args: { name: string }; Returns: string };
+      submit_appeal: { Args: { explanation: string; statement_reference: string }; Returns: Json };
       submit_public_notice: {
         Args: { payload: string; signature: string };
         Returns: {
@@ -4091,6 +4750,7 @@ export type Database = {
           received_at: string;
         }[];
       };
+      take_rate_limit: { Args: { action: string }; Returns: undefined };
       teaser_of: { Args: { chapter_body: string; word_limit: number }; Returns: string };
       tier_hours: {
         Args: { target_tier: Database['public']['Enums']['case_tier'] };
@@ -4100,12 +4760,23 @@ export type Database = {
         Args: { target_tier: Database['public']['Enums']['case_tier'] };
         Returns: number;
       };
+      undo_decision_for_appeal: {
+        Args: {
+          appeal_reference: string;
+          statement: Omit<
+            Database['public']['Tables']['statements_of_reasons']['Row'],
+            Database['public']['Tables']['statements_of_reasons']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
+      wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
       word_total: { Args: { any_text: string }; Returns: number };
       writer_follow_state: { Args: { wanted_handle: string }; Returns: Json };
       writers_published_by_market: {
@@ -4134,6 +4805,7 @@ export type Database = {
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
+      appeal_status: 'open' | 'upheld' | 'overturned';
       audit_actor: 'person' | 'system';
       case_source: 'report' | 'authority_order' | 'picture_check' | 'downvotes';
       case_status: 'open' | 'decided';
@@ -4153,7 +4825,12 @@ export type Database = {
         | 'comment_reactions'
         | 'new_follower'
         | 'moderation_decision'
-        | 'report_outcome';
+        | 'report_outcome'
+        | 'appeal_decided'
+        | 'moderator_mail_reply';
+      picture_kind:
+        'cover' | 'avatar' | 'chapter_picture' | 'drawing' | 'quote_card' | 'space_banner';
+      picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
       report_reason:
         | 'illegal_content'
@@ -4169,7 +4846,7 @@ export type Database = {
         | 'copied_published_work'
         | 'undisclosed_ai'
         | 'other';
-      reportable_type: 'profile' | 'story' | 'chapter' | 'comment';
+      reportable_type: 'profile' | 'story' | 'chapter' | 'comment' | 'picture';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -4232,6 +4909,9 @@ export type Database = {
         decided_at: string | null;
         decided_by_handle: string | null;
         reported_user_id: string | null;
+        claimed_by_handle: string | null;
+        claimed_at: string | null;
+        claimed_by_me: boolean | null;
       };
     };
   };
@@ -4359,6 +5039,7 @@ export const Constants = {
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
+      appeal_status: ['open', 'upheld', 'overturned'],
       audit_actor: ['person', 'system'],
       case_source: ['report', 'authority_order', 'picture_check', 'downvotes'],
       case_status: ['open', 'decided'],
@@ -4387,7 +5068,11 @@ export const Constants = {
         'new_follower',
         'moderation_decision',
         'report_outcome',
+        'appeal_decided',
+        'moderator_mail_reply',
       ],
+      picture_kind: ['cover', 'avatar', 'chapter_picture', 'drawing', 'quote_card', 'space_banner'],
+      picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       reaction_kind: ['heart', 'fire', 'laugh', 'wow', 'sad', 'star'],
       report_reason: [
         'illegal_content',
@@ -4404,7 +5089,7 @@ export const Constants = {
         'undisclosed_ai',
         'other',
       ],
-      reportable_type: ['profile', 'story', 'chapter', 'comment'],
+      reportable_type: ['profile', 'story', 'chapter', 'comment', 'picture'],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [
         'emergency',
