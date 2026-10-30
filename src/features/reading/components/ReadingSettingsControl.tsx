@@ -7,15 +7,21 @@
  * Escape or the close button shuts it and puts focus back on the button, so keyboard and screen
  * reader users never lose their place. Only signed-in readers see it, because the settings are
  * saved to the account (signed-out visitors get the teaser, which has no settings).
- * Who uses it: ChapterBar. What it calls: ReadingSettingsPanel.
+ * Who uses it: ChapterBar. What it calls: ReadingSettingsPanel, loaded when first opened.
  */
-import { useEffect, useId, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/utils';
 
-import { ReadingSettingsPanel } from './ReadingSettingsPanel';
 import { TextSettingsIcon } from './ReaderIcons';
+
+// The panel loads only when it is first opened, so the reader keeps within its 40 KB script
+// budget (S1-E4-01b, e2e/reader-performance.spec.ts).
+const ReadingSettingsPanel = lazy(async () => {
+  const panelModule = await import('./ReadingSettingsPanel');
+  return { default: panelModule.ReadingSettingsPanel };
+});
 
 /**
  * Renders the button and, while open, the panel.
@@ -28,16 +34,12 @@ export function ReadingSettingsControl({ deviceSize }: { deviceSize: number }) {
   const panelId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  // Step 1: once open, focus moves to the panel's heading so the next Tab is inside it.
-  useEffect(() => {
-    if (isOpen) document.getElementById(`${panelId}-title`)?.focus();
-  }, [isOpen, panelId]);
-  // Step 2: closing puts focus back on the button.
+  // Step 1: closing puts focus back on the button.
   const close = () => {
     setIsOpen(false);
     buttonRef.current?.focus();
   };
-  // Step 3: Escape closes the open panel.
+  // Step 2: Escape closes the open panel.
   useEffect(() => {
     if (!isOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -65,7 +67,11 @@ export function ReadingSettingsControl({ deviceSize }: { deviceSize: number }) {
         <TextSettingsIcon />
         {t('settings.button')}
       </button>
-      {isOpen && <ReadingSettingsPanel id={panelId} deviceSize={deviceSize} onClose={close} />}
+      {isOpen && (
+        <Suspense fallback={null}>
+          <ReadingSettingsPanel id={panelId} deviceSize={deviceSize} onClose={close} />
+        </Suspense>
+      )}
     </div>
   );
 }

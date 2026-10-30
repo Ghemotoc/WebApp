@@ -10,6 +10,7 @@
  * Who uses it: ReadingSettingsControl. What it calls: useReadingSettings (the reader's
  * settings), which saves to the account.
  */
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { CheckIcon } from '@/components/icons/CheckIcon';
@@ -140,6 +141,10 @@ function SaveNote({ saveFailed }: { saveFailed: boolean }) {
 export function ReadingSettingsPanel({ id, deviceSize, onClose }: ReadingSettingsPanelProps) {
   const { t } = useTranslation('reading');
   const { settings, change, saveFailed } = useReadingSettings();
+  // Opening moves focus to the heading, so the next Tab is inside the panel.
+  useEffect(() => {
+    document.getElementById(`${id}-title`)?.focus();
+  }, [id]);
   return (
     <section
       id={id}
