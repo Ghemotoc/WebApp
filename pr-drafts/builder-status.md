@@ -18,6 +18,8 @@ Newest state at the top. Read this first on "continue".
 ## Robert's added task (30 Oct 2026, 10:43): tags with staff approval
 
 Built as part (e) of CMS-1, after (d). Robert: "There should be always some option to add tags. The tags are separated by comma. Please add some recommended tags in advance. Users can add additional tags, however, they need to be approved by a member of staff."
+
+Rank badges and tag languages (Robert, 30 Oct 10:44 and 10:48): a cover shows the story's top 3 ranks in its tags ("#4 in Fantasy"), using the Discover ranking formula; the writer may pick a different 3; ranks are counted only among stories the reader may see (per age band). A tag is one idea with a name per language (Fantasy, Fantezie, Fantaisie), shown in the interface language; typing another language's name is recognised and swapped to the interface language. Staff name new tags in each open language when approving.
 - The comma tag box already exists on New story and Story settings (S1-E3-01, `TagInput`); keep it everywhere a story's tags are edited.
 - Seed recommended tags (about 40, ro and en names) and show them as tappable suggestions under the box.
 - A tag that isn't approved yet stays on the writer's story but is hidden from readers, Discover and search until staff approve it; the writer sees "waiting for approval".
