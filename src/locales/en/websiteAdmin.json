@@ -17,7 +17,8 @@
     "notices": "Notice banners",
     "help": "Help and questions",
     "interfaceText": "Interface text",
-    "emails": "Email templates"
+    "emails": "Email templates",
+    "seasonal": "Seasonal doodles"
   },
   "picker": {
     "market": "Market",
@@ -42,7 +43,9 @@
     "bad_address": "Use lower-case letters, numbers and hyphens only, up to 60.",
     "before_show_from": "Pick a day after it goes live.",
     "placeholders_changed": "Keep the same placeholders (the chips in the preview) as the default text.",
-    "brand_name": "Don’t type the product or company name: use the same placeholder as the default text, so a rename changes it everywhere."
+    "brand_name": "Don’t type the product or company name: use the same placeholder as the default text, so a rename changes it everywhere.",
+    "before_start": "Pick a last day on or after the first day.",
+    "longer_than_a_year": "Something that comes back every year can last a year at most."
   },
   "failures": {
     "not_allowed": "Only the owner and admins can edit the website.",
@@ -61,7 +64,9 @@
     "publish": "Published. It goes live on {{date}}.",
     "restore": "The earlier version is back as a draft. Publish it to put it live.",
     "remove": "Taken down. It no longer shows on the website.",
-    "reset": "Back to the default text from today."
+    "reset": "Back to the default text from today.",
+    "occasionSaved": "Saved. Readers see the change within a minute.",
+    "occasionRemoved": "Removed from the schedule. Readers see the change within a minute."
   },
   "history": {
     "heading": "Versions",
@@ -185,5 +190,57 @@
     "searchHint": "Search by the words on screen, in either language, or by key.",
     "count": "Showing {{shown}} of {{total}}",
     "more": "Show 50 more"
+  },
+  "seasonal": {
+    "intro": "Plan which doodle shows beside the Discover heading and Search's popular tags on which days. Readers see a change within a minute. When two occasions overlap, the shorter one wins, and a season's default doodle covers the days with no occasion. New doodles arrive as files in a release, never as uploads.",
+    "add": "Add an occasion",
+    "edit": "Change",
+    "editNamed": "Change {{name}}",
+    "remove": "Remove",
+    "removeNamed": "Remove {{name}}",
+    "save": "Save",
+    "cancel": "Cancel",
+    "formLabel": "Occasion",
+    "fields": {
+      "nameRo": "Name in Romanian",
+      "nameEn": "Name in English",
+      "startsOn": "First day",
+      "endsOn": "Last day",
+      "endsOnHint": "For a range over New Year, pick the last day in the next year.",
+      "everyYear": "Every year",
+      "showsOn": "Shows on",
+      "isSeasonDefault": "Season default (shows on days with no occasion)",
+      "doodle": "Doodle"
+    },
+    "places": {
+      "both": "Discover and Search",
+      "discover": "Discover only",
+      "search": "Search only"
+    },
+    "doodles": {
+      "autumn_leaf": "Autumn leaf",
+      "bee": "Bee",
+      "butterfly": "Butterfly",
+      "candle": "Candle",
+      "cherry_blossom": "Cherry blossom",
+      "daisy": "Daisy",
+      "friendly_ghost": "Friendly ghost",
+      "hot_air_balloon": "Hot air balloon",
+      "hot_chocolate": "Hot chocolate",
+      "jack_o_lantern": "Jack-o'-lantern",
+      "kite": "Kite",
+      "mushroom": "Mushroom",
+      "rain_cloud": "Rain cloud",
+      "sunny_face": "Smiling sun"
+    },
+    "listDates": "{{from}} to {{to}}",
+    "everyYearShort": "every year",
+    "defaultLabel": "season default",
+    "year": "Year",
+    "yearHeading": "The year {{year}}",
+    "dayRange": "(days {{first}} to {{last}})",
+    "gapDays_one": "{{count}} day with no doodle",
+    "gapDays_few": "{{count}} days with no doodle",
+    "gapDays_other": "{{count}} days with no doodle"
   }
 }

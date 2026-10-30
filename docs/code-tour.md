@@ -1089,9 +1089,9 @@ What the notifications epic left in place for March. The epic report is `docs/ep
 
 **One main journey:** adult_writer presses Publish → `publish_chapter()` queues `chapter_published` → within a minute `run_notification_jobs()` gives each follower of the writer or the story one row → teacher's bell asks `my_unread_notification_count()` and shows 1 → the page lists "Lia Scrie published Chapter 2 of …" through `my_notifications()`, which leaves out anything teacher may not open → "Read now" opens the chapter and marks the row read.
 
-## Epic S1-E5 at a glance (checked by S1-E5-QA, part one)
+## Epic S1-E5 at a glance (checked by S1-E5-QA)
 
-What the discovery epic has in place so far. S1-E5-08, the public home page, comes in CMS-1 with the rest of the check. The epic report is `docs/epic-reports/S1-E5.md`.
+What the discovery epic has in place. S1-E5-08, the public home page, and S1-E5-07, the seasonal doodle, came in CMS-1; journey 6 of the check walks from the home page to a story. The epic report is `docs/epic-reports/S1-E5.md`.
 
 | Kind | Where | Story |
 | --- | --- | --- |
@@ -1163,13 +1163,22 @@ Admins change the app's own words, and the Auth emails', from Staff › Website 
 - **Emails:** `functions/api/send-email.ts` → `server/send-email.ts` is the Supabase Auth Send Email hook: it checks the Standard Webhooks signature, picks the email and language, lays the `email:` overrides over `email.json` and sends through Brevo. It is switched on by hand (GO-LIVE); until then Auth uses `supabase/templates/`.
 - **Tests:** `supabase/tests/database/173-interface-text.test.sql`, `e2e/interface-text.spec.ts`, `server/send-email.test.ts` and the unit tests next to each file.
 
+## Seasonal doodles (S1-E11-11, S1-E5-07; CMS-1d)
+
+A small drawing beside Discover's heading changes with the season and on special days. The owner and admins plan it; the app's database keeps the schedule (B30).
+
+- **Where it starts (readers):** `DiscoverPage` shows `<SeasonalDoodle place="discover">` (`src/features/seasonal/`). `useSeasonalDoodle()` asks `current_seasonal_doodle(today, 'discover')` once a minute; the shortest occasion that covers today wins, so Halloween beats Autumn. If the read fails, no doodle shows. The doodle is decorative: `alt=""`, `aria-hidden`, beside the heading, never over it.
+- **Where it starts (staff):** `/staff/website/seasonal` (`SeasonalTab`). Add or Change opens `OccasionForm`; Save → `admin_save_occasion()` (checks the website area, refuses a last day before the first or a yearly range of a year or more, logs `seasonal.saved` with before and after) → the schedule and the doodle are read again. Remove → `admin_remove_occasion()` (soft delete, `seasonal.removed`).
+- **The year view:** `OccasionYearView` uses `occasionCovers()`, the same rule as the database's `occasion_covers()`, to list each month's occasions and count any day with no doodle.
+- **Tests:** `supabase/tests/database/174-seasonal-occasions.test.sql`, `e2e/seasonal-doodles.spec.ts`, `src/features/seasonal/lib/seasonalCalendar.test.ts`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
 
 | Kind | Where | Story |
 | --- | --- | --- |
-| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`), `/staff/settings` (`src/features/settings/`) | 11-01, 11-17, 2-07a, 11-03, 11-05 |
+| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`), `/staff/settings` (`src/features/settings/`), `/staff/website` and its tabs (`src/features/website/`, `src/features/interface-text/`, `src/features/seasonal/`) | 11-01, 11-17, 2-07a, 11-03, 11-05, 11-06, 11-10, 11-12, 11-18, 11-19, 11-11 |
 | Hooks | `useMyStaffAccess`, `useAuditLog`, `useInviteLinks`, `useStaffRoles` | each story |
 | Tables | `audit_log` (append-only), `invites`, `staff_roles`, `staff_permissions`, `staff_role_areas`, the settings `staff_session_hours` and `staff_fresh_sign_in_minutes` | 1-02, 2-01, 2-07a, 11-01, 11-17 |
 | Functions | `is_staff_session()` (12 hours), `staff_signed_in_recently()`, `my_staff_areas()`, `log_sensitive_read()`, `admin_search_audit_log()`, `admin_export_audit_log()`, `admin_create_invite()`, `admin_revoke_invite()`, `admin_list_invites()`, `use_platform_invite()` | each story |

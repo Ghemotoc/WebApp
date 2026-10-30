@@ -16,7 +16,7 @@
  * anniversary). The board's featured story, continue reading, draft card, ad slot, "Popular in your
  * area" and "Writers to follow" come with their own stories (S1-E4-03, S1-E12-01) or after
  * March, so they aren't drawn. Search (S1-E5-04) is after March.
- * What it calls: GreetingLine, DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
+ * What it calls: GreetingLine, SeasonalDoodle (S1-E5-07), DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
  */
 import { Link } from 'react-router';
 
@@ -27,6 +27,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
+import { SeasonalDoodle } from '@/features/seasonal/components/SeasonalDoodle';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 import type { ListKind } from '../api/storyLists';
@@ -72,9 +73,17 @@ function DiscoverHeader() {
   return (
     <header className="flex flex-col gap-3">
       <Eyebrow>{t('discover.eyebrow')}</Eyebrow>
-      <h1 className="m-0 font-heading text-[clamp(36px,6vw,64px)] leading-[1.05] font-extrabold tracking-[-0.02em] text-heading">
-        {t('discover.heading')}
-      </h1>
+      {/* The seasonal doodle sits beside the heading, never over it (S1-E5-07; board 3.1). */}
+      <div className="flex items-center gap-[clamp(10px,1.4vw,20px)]">
+        <h1 className="m-0 min-w-0 font-heading text-[clamp(36px,6vw,64px)] leading-[1.05] font-extrabold tracking-[-0.02em] text-heading">
+          {t('discover.heading')}
+        </h1>
+        <SeasonalDoodle
+          place="discover"
+          on="discover-heading"
+          className="size-[clamp(56px,5.4vw,76px)] flex-none rotate-6"
+        />
+      </div>
       <p className="m-0 max-w-[620px] text-base leading-relaxed text-body">
         {t('discover.intro', { productName: brand.productName })}{' '}
         <Link to="/legal/terms#section-5" className="font-semibold underline underline-offset-2">

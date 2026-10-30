@@ -2712,6 +2712,63 @@ export type Database = {
           },
         ];
       };
+      seasonal_occasions: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          doodle: Database['public']['Enums']['seasonal_doodle'];
+          ends_on: string;
+          every_year: boolean;
+          id: string;
+          is_season_default: boolean;
+          name_en: string;
+          name_ro: string;
+          shows_on: string;
+          starts_on: string;
+          updated_at: string;
+          user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          doodle: Database['public']['Enums']['seasonal_doodle'];
+          ends_on: string;
+          every_year?: boolean;
+          id?: string;
+          is_season_default?: boolean;
+          name_en: string;
+          name_ro: string;
+          shows_on?: string;
+          starts_on: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          doodle?: Database['public']['Enums']['seasonal_doodle'];
+          ends_on?: string;
+          every_year?: boolean;
+          id?: string;
+          is_season_default?: boolean;
+          name_en?: string;
+          name_ro?: string;
+          shows_on?: string;
+          starts_on?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'seasonal_occasions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       settings: {
         Row: {
           created_at: string;
@@ -3743,6 +3800,7 @@ export type Database = {
         Returns: undefined;
       };
       admin_remove_name_word: { Args: { target_word_id: string }; Returns: boolean };
+      admin_remove_occasion: { Args: { occasion_id: string }; Returns: undefined };
       admin_remove_on_call_shift: {
         Args: { reason_given: string; shift_id: string };
         Returns: boolean;
@@ -3829,6 +3887,20 @@ export type Database = {
           new_show_from?: string;
           new_text: string;
           text_key: string;
+        };
+        Returns: string;
+      };
+      admin_save_occasion: {
+        Args: {
+          doodle: Database['public']['Enums']['seasonal_doodle'];
+          ends_on: string;
+          every_year: boolean;
+          is_season_default: boolean;
+          name_en: string;
+          name_ro: string;
+          occasion_id?: string;
+          shows_on: string;
+          starts_on: string;
         };
         Returns: string;
       };
@@ -4251,6 +4323,12 @@ export type Database = {
           title: string;
         };
         Returns: Json;
+      };
+      current_seasonal_doodle: {
+        Args: { on_date: string; place: string };
+        Returns: {
+          doodle: Database['public']['Enums']['seasonal_doodle'];
+        }[];
       };
       decide_case: {
         Args: {
@@ -4695,6 +4773,10 @@ export type Database = {
       };
       notify_chapter_published: { Args: { payload: Json }; Returns: undefined };
       notify_comment_posted: { Args: { payload: Json }; Returns: undefined };
+      occasion_covers: {
+        Args: { ends_on: string; every_year: boolean; on_date: string; starts_on: string };
+        Returns: boolean;
+      };
       on_call_gaps: { Args: { from_time: string; to_time: string }; Returns: Json };
       on_call_now: { Args: { at_time?: string }; Returns: string };
       open_downvote_case: {
@@ -5054,6 +5136,17 @@ export type Database = {
       schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
+      seasonal_occasion_problems: {
+        Args: {
+          ends_on: string;
+          every_year: boolean;
+          name_en: string;
+          name_ro: string;
+          shows_on: string;
+          starts_on: string;
+        };
+        Returns: string[];
+      };
       send_moderator_mail: {
         Args: { body: string; statement_reference?: string; subject: string };
         Returns: Json;
@@ -5278,6 +5371,21 @@ export type Database = {
         | 'police_online_child'
         | 'regulator';
       sanction_kind: 'warning' | 'suspension' | 'ban' | 'reporting_pause';
+      seasonal_doodle:
+        | 'autumn_leaf'
+        | 'bee'
+        | 'butterfly'
+        | 'candle'
+        | 'cherry_blossom'
+        | 'daisy'
+        | 'friendly_ghost'
+        | 'hot_air_balloon'
+        | 'hot_chocolate'
+        | 'jack_o_lantern'
+        | 'kite'
+        | 'mushroom'
+        | 'rain_cloud'
+        | 'sunny_face';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
       statement_action:
@@ -5525,6 +5633,22 @@ export const Constants = {
         'regulator',
       ],
       sanction_kind: ['warning', 'suspension', 'ban', 'reporting_pause'],
+      seasonal_doodle: [
+        'autumn_leaf',
+        'bee',
+        'butterfly',
+        'candle',
+        'cherry_blossom',
+        'daisy',
+        'friendly_ghost',
+        'hot_air_balloon',
+        'hot_chocolate',
+        'jack_o_lantern',
+        'kite',
+        'mushroom',
+        'rain_cloud',
+        'sunny_face',
+      ],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
       statement_action: [
