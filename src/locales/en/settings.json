@@ -133,7 +133,8 @@
       "daily_metrics_keep_years": "Daily totals are kept for (years)",
       "march_target_writers": "Writers publishing",
       "march_target_readers": "Readers",
-      "march_target_return_rate": "Return rate (%)"
+      "march_target_return_rate": "Return rate (%)",
+      "rank_badge_min_stories": "Rank badges: fewest stories a tag needs before a cover shows a rank in it"
     }
   },
   "discover": {

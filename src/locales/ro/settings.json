@@ -133,7 +133,8 @@
       "daily_metrics_keep_years": "Totalurile zilnice se păstrează (ani)",
       "march_target_writers": "Scriitori care publică",
       "march_target_readers": "Cititori",
-      "march_target_return_rate": "Rata de revenire (%)"
+      "march_target_return_rate": "Rata de revenire (%)",
+      "rank_badge_min_stories": "Insigne de clasament: câte povești trebuie să aibă o etichetă ca o copertă să arate locul în ea"
     }
   },
   "discover": {
