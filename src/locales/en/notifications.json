@@ -42,7 +42,8 @@
     "commentOnChapter": "commented on {{where}}.",
     "commentReply": "replied to your comment on {{where}}.",
     "commentReactions": "reacted to your comment on {{where}}.",
-    "newFollower": "started following you."
+    "newFollower": "started following you.",
+    "mailReply": "answered your message."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -74,7 +75,8 @@
     "seeProfile": "See their profile",
     "seeIt": "See it",
     "readWhy": "Read why",
-    "seeMyReports": "See my reports"
+    "seeMyReports": "See my reports",
+    "readReply": "Read the reply"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",
@@ -103,5 +105,10 @@
     "removed": "we checked your report {{reference}} and removed what you reported.",
     "acted": "we checked your report {{reference}} and took action.",
     "no_action": "we checked your report {{reference}}. It doesn’t break our rules or the law, so we left it up."
+  },
+  "appealOutcomes": {
+    "open": "your appeal {{reference}} is waiting for a moderator.",
+    "upheld": "a different moderator looked at your appeal {{reference}} again. The decision stands.",
+    "overturned": "a different moderator looked at your appeal {{reference}} again and changed the decision."
   }
 }

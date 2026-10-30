@@ -35,6 +35,8 @@ const newChapter: AppNotification = {
   statement: null,
   outcome: null,
   reportReference: null,
+  appeal: null,
+  mail: null,
   isRequired: false,
   isRead: false,
   at: '2026-10-25T07:00:00Z',
@@ -157,5 +159,38 @@ describe('notificationText', () => {
     const text = notificationText(englishT(), outcome, null);
     expect(text.what).toBe('we checked your report R-000042 and took action.');
     expect(text.href).toBe('/my-reports');
+  });
+
+  it('an appeal outcome says the decision stands and opens the statement', () => {
+    const appealRow: AppNotification = {
+      ...newChapter,
+      kind: 'appeal_decided',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      appeal: { reference: 'A-000003', outcome: 'upheld', statementReference: 'S-000007' },
+    };
+    const text = notificationText(englishT(), appealRow, null);
+    expect(text.what).toContain('The decision stands.');
+    expect(text.href).toBe('/my-reports#S-000007');
+  });
+
+  it('a reply from the moderators links to the thread and never names who wrote', () => {
+    const mailRow: AppNotification = {
+      ...newChapter,
+      kind: 'moderator_mail_reply',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      mail: { reference: 'M-000012', subject: 'My story vanished' },
+    };
+    const text = notificationText(englishT(), mailRow, null);
+    expect(text.who).toBe('Moderation team:');
+    expect(text.quote).toBe('My story vanished');
+    expect(text.href).toBe('/moderator-mail/M-000012');
   });
 });
