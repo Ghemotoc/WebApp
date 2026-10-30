@@ -3,7 +3,8 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - adult_writer creates a story with tags "Fantezie" and "fantezie" (one tag), a drawn cover
+ * - adult_writer creates a story with tags "Fantezie" and "fantezie": one tag, shown as
+ *   "Fantasy" in the English interface (CMS-1e), a drawn cover
  *   with a long title at phone width, recoloured within the palette, and sees it on Your writing;
  * - the upload tab is not offered while picture_uploads is off (no uploads in the demo);
  * - teen_17 (read-only while the test is adults only) can't create a story and never sees
@@ -71,7 +72,8 @@ test.describe('create a story (S1-E3-01)', () => {
     await page.getByRole('radio', { name: 'Română' }).click();
     await page.getByRole('radio', { name: 'Fiction' }).click();
 
-    // Tags: Fantezie and fantezie are one tag; the counter says so.
+    // Tags: Fantezie and fantezie are one tag, the recommended Fantasy, named in the interface
+    // language (CMS-1e); the counter says so.
     const tagField = page.getByPlaceholder('Add a tag');
     await tagField.fill('Fantezie');
     await tagField.press('Enter');
@@ -80,10 +82,10 @@ test.describe('create a story (S1-E3-01)', () => {
     await tagField.fill('set in Romania');
     await tagField.press('Enter');
     await expect(
-      page.getByRole('button', { name: 'Remove tag Fantezie', exact: true }),
+      page.getByRole('button', { name: 'Remove tag Fantasy', exact: true }),
     ).toBeVisible();
     await expect(
-      page.getByRole('button', { name: 'Remove tag fantezie', exact: true }),
+      page.getByRole('button', { name: 'Remove tag Fantezie', exact: true }),
     ).toHaveCount(0);
     await expect(page.getByText('2 of 10 tags.', { exact: false })).toBeVisible();
 
@@ -118,7 +120,7 @@ test.describe('create a story (S1-E3-01)', () => {
     await page.goto('/write');
     const card = page.getByRole('article', { name: longTitle });
     await expect(card).toBeVisible();
-    await expect(card.getByText('Fantezie · set in Romania')).toBeVisible();
+    await expect(card.getByText('Fantasy · Set in Romania')).toBeVisible();
     await expect(
       card.getByText('Only you can see this story until you publish its first chapter.'),
     ).toBeVisible();

@@ -145,6 +145,7 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
       .getByRole('navigation', { name: 'Browse by category' })
       .getByRole('link', { name: /Fiction/ })
       .click();
+    await expect(page).toHaveURL(/\/discover\/c\/fiction$/);
     await card(page, 'Quiet orchard').click();
     await expect(page.getByRole('heading', { level: 1, name: 'Quiet orchard' })).toBeVisible();
   });
