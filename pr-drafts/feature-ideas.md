@@ -1,9 +1,9 @@
 # Feature ideas for Robert (running list)
 
-Ideas I notice while building. Each morning before 9:00 (Romanian time) the new ones go to Robert as one
+Ideas I notice while building. Each morning at 9:00 CET the new ones go to Robert as one
 document; he picks what joins the backlog. Nothing here is built unless Robert says so.
 
-Format: idea, why it helps, rough size (S about 3 h, M about 12 h), and which bundle it fits.
+Format when sent: a user story (As a, I want, so that), Given/When/Then criteria, size (S about 3 h, M about 12 h), bundle and why it is good.
 
 ## Not yet sent
 
