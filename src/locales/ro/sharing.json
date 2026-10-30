@@ -1,0 +1,71 @@
+{
+  "button": {
+    "button": "Distribuie",
+    "buttonLabel": "Distribuie capitolul {{number}}",
+    "quoteButton": "Distribuie citatul",
+    "quoteCount": "{{count}} din 280 de caractere",
+    "quoteTooLong": "Selectează cel mult 280 de caractere ca să distribui un citat. Ai selectat {{count}}."
+  },
+  "dialog": {
+    "eyebrow": "Distribuie",
+    "title": "Distribuie acest capitol",
+    "subtitle": "{{story}} · Capitolul {{number}}: {{chapter}}",
+    "linkLabel": "Link",
+    "copy": "Copiază linkul",
+    "copied": "Linkul a fost copiat.",
+    "copyFailed": "Browserul nu ne-a lăsat să copiem linkul. Selectează-l și copiază-l tu.",
+    "privacy": "Linkul nu conține numele tău și niciun cod de urmărire. Numărăm doar totalul distribuirilor pentru fiecare capitol, ca poveștile populare să fie găsite mai ușor.",
+    "otherWays": "Alte variante",
+    "quoteHint": "Ca să distribui un citat, selectează până la 280 de caractere din capitol, apoi apasă Distribuie citatul.",
+    "deviceNote": "Pe calculator, Distribuie copiază linkul. Pe telefon, deschide meniul de distribuire al telefonului, ca să alegi WhatsApp, Instagram, TikTok sau orice altă aplicație.",
+    "previewHeading": "Cum arată linkul într-o conversație",
+    "previewTitle": "{{story}} · de {{writer}}",
+    "previewChapter": "Capitolul {{number}}: {{chapter}}",
+    "friendNote": "Prietenul tău vede începutul capitolului în browser și își poate face cont gratuit ca să citească mai departe.",
+    "done": "Gata",
+    "close": "Închide"
+  },
+  "quote": {
+    "eyebrow": "Distribuie un citat",
+    "title": "Cardul tău cu citat",
+    "made": "Făcut din textul selectat. {{count}} din 280 de caractere.",
+    "background": "Fundal",
+    "purple": "Mov",
+    "ourColours": "Sau una dintre culorile noastre:",
+    "colours": {
+      "plum": "Prună",
+      "violet": "Violet",
+      "gold": "Auriu",
+      "ink": "Cerneală",
+      "lilac": "Liliachiu",
+      "blush": "Roz pal",
+      "sky": "Cer",
+      "sage": "Salvie",
+      "paper": "Hârtie"
+    },
+    "altLabel": "Text alternativ pentru imagine",
+    "altHint": "L-am scris noi pentru tine. Cititoarele de ecran îl citesc cu voce tare, ca toată lumea să știe ce spune imaginea. Lipește-l ca descriere a imaginii când o postezi.",
+    "altText": "Card cu un citat din {{story}} de {{writer}}: „{{passage}}”",
+    "byline": "de {{writer}} · {{link}}",
+    "limitShort": "Un singur card cu citat pe capitol.",
+    "copyImage": "Copiază imaginea",
+    "saveImage": "Salvează imaginea",
+    "working": "Facem cardul…",
+    "copiedImage": "Imaginea a fost copiată. Lipește-o unde vrei s-o distribui.",
+    "copyImageFailed": "Browserul tău nu poate copia imagini. Salvează imaginea în schimb.",
+    "savedImage": "Imaginea a fost salvată.",
+    "fileName": "card-citat",
+    "switchedOff": "Scriitorul a oprit cardurile cu citate pentru această poveste. Poți distribui în continuare linkul.",
+    "notFound": "Acest capitol nu mai poate fi citat.",
+    "rateLimited": "Ai făcut multe carduri cu citate în ultima oră. Încearcă din nou mai târziu.",
+    "failed": "Cardul nu a putut fi făcut. Verifică conexiunea și încearcă din nou.",
+    "close": "Închide"
+  },
+  "limit": {
+    "title": "Un singur card cu citat pe capitol",
+    "body": "Ai făcut deja un card cu citat din acest capitol. Limita este unul pe capitol, ca un capitol să nu poată fi distribuit bucată cu bucată. Poți distribui în continuare linkul.",
+    "close": "Închide",
+    "copyLink": "Copiază linkul în schimb",
+    "copied": "Linkul a fost copiat."
+  }
+}

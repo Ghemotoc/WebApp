@@ -68,7 +68,9 @@ export function ReadingSettingsControl({ deviceSize }: { deviceSize: number }) {
         {t('settings.button')}
       </button>
       {isOpen && (
-        <Suspense fallback={null}>
+        // While the panel's file loads, an empty stand-in carries its id, so aria-controls
+        // never points at nothing (axe: aria-valid-attr-value).
+        <Suspense fallback={<div id={panelId} hidden />}>
           <ReadingSettingsPanel id={panelId} deviceSize={deviceSize} onClose={close} />
         </Suspense>
       )}

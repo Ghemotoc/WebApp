@@ -5,15 +5,19 @@
  * as the solid 48 px button. After the latest chapter: "That's the latest chapter so far." and
  * a way back to the story. The row starts with Like (S1-E6-03) and ends with "Report chapter":
  * the shared `<ReportButton>` (S1-E10-01; reportable type "chapter", with the chapter's row ID),
- * pushed to the right as on the board. Share joins with S1-E4-05 (after March).
- * Who uses it: ChapterReaderPage. What it calls: LikeButton and ReportButton.
+ * pushed to the right as on the board. Share comes after Like (S1-E4-05): the system share sheet
+ * on a phone, or the copied link and "Share this chapter" on a computer; it is fetched when
+ * the row nears the screen (ShareButtonWhenNear).
+ * Who uses it: ChapterReaderPage. What it calls: LikeButton, ShareButtonWhenNear and ReportButton.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { ReportButton } from '@/features/reporting/components/ReportButton';
+import { ShareButtonWhenNear } from '@/features/sharing/components/ShareButtonWhenNear';
 
 import type { ReaderChapter } from '../api/chapter';
+import { toSharedChapter } from '../lib/toSharedChapter';
 
 import { LikeButton } from './LikeButton';
 import { ForwardIcon } from './ReaderIcons';
@@ -35,6 +39,7 @@ export function ChapterEnd({ chapter }: { chapter: ReaderChapter }) {
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-2.5 lg:mr-20">
         <LikeButton address={{ storySlug: chapter.story.slug, chapterCode: chapter.code }} />
+        <ShareButtonWhenNear chapter={toSharedChapter(chapter)} />
         {chapter.nextCode !== null ? (
           <Link
             to={`${storyAddress}/${chapter.nextCode}`}

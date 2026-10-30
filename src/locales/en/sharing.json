@@ -1,0 +1,71 @@
+{
+  "button": {
+    "button": "Share",
+    "buttonLabel": "Share chapter {{number}}",
+    "quoteButton": "Share quote",
+    "quoteCount": "{{count}} of 280 characters",
+    "quoteTooLong": "Select 280 characters or fewer to share a quote. You have {{count}}."
+  },
+  "dialog": {
+    "eyebrow": "Share",
+    "title": "Share this chapter",
+    "subtitle": "{{story}} · Chapter {{number}}: {{chapter}}",
+    "linkLabel": "Link",
+    "copy": "Copy link",
+    "copied": "Link copied.",
+    "copyFailed": "Your browser didn’t let us copy the link. Select it and copy it yourself.",
+    "privacy": "The link doesn’t include your name or any tracking code. We only count the total number of shares for each chapter, to help popular stories get found.",
+    "otherWays": "Other ways",
+    "quoteHint": "To share a quote, select up to 280 characters in the chapter, then press Share quote.",
+    "deviceNote": "On a computer, Share copies the link. On a phone, it opens your phone’s own share menu, so you can pick WhatsApp, Instagram, TikTok or any other app.",
+    "previewHeading": "How the link looks in a chat",
+    "previewTitle": "{{story}} · by {{writer}}",
+    "previewChapter": "Chapter {{number}}: {{chapter}}",
+    "friendNote": "Your friend sees the start of this chapter in their browser and can join for free to read the rest.",
+    "done": "Done",
+    "close": "Close"
+  },
+  "quote": {
+    "eyebrow": "Share a quote",
+    "title": "Your quote card",
+    "made": "Made from the text you selected. {{count}} of 280 characters.",
+    "background": "Background",
+    "purple": "Purple",
+    "ourColours": "Or one of our colours:",
+    "colours": {
+      "plum": "Plum",
+      "violet": "Violet",
+      "gold": "Gold",
+      "ink": "Ink",
+      "lilac": "Lilac",
+      "blush": "Blush",
+      "sky": "Sky",
+      "sage": "Sage",
+      "paper": "Paper"
+    },
+    "altLabel": "Alt text for the image",
+    "altHint": "We wrote this for you. Screen readers read it out, so everyone knows what the image says. Paste it as the picture’s description when you post it.",
+    "altText": "A quote card from {{story}} by {{writer}}: “{{passage}}”",
+    "byline": "by {{writer}} · {{link}}",
+    "limitShort": "One quote card per chapter.",
+    "copyImage": "Copy image",
+    "saveImage": "Save image",
+    "working": "Making the card…",
+    "copiedImage": "Image copied. Paste it where you want to share it.",
+    "copyImageFailed": "Your browser can’t copy pictures. Save the image instead.",
+    "savedImage": "Image saved.",
+    "fileName": "quote-card",
+    "switchedOff": "The writer has switched quote cards off for this story. You can still share the link.",
+    "notFound": "This chapter can’t be quoted any more.",
+    "rateLimited": "You’ve made a lot of quote cards in the last hour. Try again later.",
+    "failed": "The card couldn’t be made. Check your connection and try again.",
+    "close": "Close"
+  },
+  "limit": {
+    "title": "One quote card per chapter",
+    "body": "You’ve already made a quote card from this chapter. The limit is one per chapter, so a chapter can’t be shared bit by bit. You can still share the link.",
+    "close": "Close",
+    "copyLink": "Copy the link instead",
+    "copied": "Link copied."
+  }
+}

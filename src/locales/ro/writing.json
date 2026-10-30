@@ -173,6 +173,11 @@
     "on": "Pornite. Cititorii pot comenta la fiecare capitol.",
     "off": "Oprite. Comentariile existente sunt ascunse și nimeni nu poate adăuga altele."
   },
+  "quoteCards": {
+    "label": "Carduri cu citate",
+    "on": "Pornit. Cititorii pot face dintr-un pasaj scurt o imagine de distribuit, una pe capitol.",
+    "off": "Oprit. Cititorii pot distribui în continuare linkul unui capitol, dar nu un card cu citat."
+  },
   "settings": {
     "documentTitle": "Setările poveștii · {{productName}}",
     "eyebrow": "Scrie · setările poveștii",

@@ -57,6 +57,7 @@ select results_eq(
        ('chapter_likes', 0::bigint),
        ('chapter_reads', 0::bigint),
        ('chapter_revisions', 0::bigint),
+       ('chapter_shares', 0::bigint),
        ('chapters', 0::bigint),
        -- The real authors of public-domain classics, public on every byline (S1-E5-06).
        ('classic_authors', (select count(*) from public.classic_authors)),
@@ -94,6 +95,7 @@ select results_eq(
        ('picture_checks', 0::bigint),
        ('profiles', 0::bigint),
        ('public_notices', 0::bigint),
+       ('quote_cards', 0::bigint),
        ('reading_positions', 0::bigint),
        -- How someone likes to read is theirs only (S1-E4-02).
        ('reading_settings', 0::bigint),

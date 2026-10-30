@@ -512,6 +512,33 @@ export type Database = {
           },
         ];
       };
+      chapter_shares: {
+        Row: {
+          chapter_id: string;
+          shared_on: string;
+          total: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          shared_on: string;
+          total?: number;
+        };
+        Update: {
+          chapter_id?: string;
+          shared_on?: string;
+          total?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_shares_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapters: {
         Row: {
           code: string;
@@ -2246,6 +2273,46 @@ export type Database = {
           },
         ];
       };
+      quote_cards: {
+        Row: {
+          chapter_id: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          chapter_id?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'quote_cards_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'quote_cards_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       rate_limit_events: {
         Row: {
           action: string;
@@ -3255,6 +3322,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           slug: string;
@@ -3287,6 +3355,7 @@ export type Database = {
           is_parody?: boolean;
           language_code: string;
           last_chapter_published_at?: string | null;
+          quote_cards_enabled?: boolean;
           rank_badge_tag_ids?: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           slug: string;
@@ -3318,6 +3387,7 @@ export type Database = {
           is_parody?: boolean;
           language_code?: string;
           last_chapter_published_at?: string | null;
+          quote_cards_enabled?: boolean;
           rank_badge_tag_ids?: string[] | null;
           rating?: Database['public']['Enums']['story_rating'];
           slug?: string;
@@ -3654,6 +3724,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      add_chapter_share: { Args: { target_chapter_id: string }; Returns: undefined };
       add_copied_work_note: {
         Args: {
           target: Omit<
@@ -4813,6 +4884,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           slug: string;
@@ -4857,6 +4929,7 @@ export type Database = {
         };
         Returns: string;
       };
+      make_quote_card: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
       market_change_problem: {
         Args: {
@@ -5170,6 +5243,7 @@ export type Database = {
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
       purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
+      quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       ranking_setting: { Args: { fallback: number; setting_key: string }; Returns: number };
       rating_allows: {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
@@ -5271,6 +5345,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           slug: string;
@@ -5286,6 +5361,10 @@ export type Database = {
         };
       };
       record_chapter_read: { Args: { chapter_code: string; story_slug: string }; Returns: boolean };
+      record_chapter_share: {
+        Args: { chapter_code: string; story_slug: string };
+        Returns: boolean;
+      };
       record_picture_check: {
         Args: { payload: string; signature: string };
         Returns: Database['public']['Enums']['picture_status'];
@@ -5519,6 +5598,14 @@ export type Database = {
       };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
+      shareable_chapter: {
+        Args: { chapter_code: string; story_slug: string };
+        Returns: {
+          chapter_id: string;
+          quote_cards_enabled: boolean;
+          writer_id: string;
+        }[];
+      };
       show_passed_avatar: {
         Args: {
           picture: Omit<
@@ -5610,6 +5697,13 @@ export type Database = {
         Returns: number;
       };
       story_search_text: { Args: { target_story_id: string }; Returns: string };
+      story_share_points: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          points: number;
+          story_id: string;
+        }[];
+      };
       story_signals: {
         Args: Record<PropertyKey, never>;
         Returns: {

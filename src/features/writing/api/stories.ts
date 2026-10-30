@@ -62,6 +62,8 @@ export interface MyStory {
   /** Ongoing or Completed (S1-E3-05). */
   completionStatus: 'ongoing' | 'completed';
   commentsEnabled: boolean;
+  /** Whether readers may make quote cards from its chapters (S1-E4-07). */
+  quoteCardsEnabled: boolean;
   /** When the writer deleted it; null for a live story. Undo is possible for 30 days (S1-E3-05). */
   deletedAt: string | null;
   /** The labels (S1-E3-06). */
@@ -190,7 +192,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, comments_enabled, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, comments_enabled, quote_cards_enabled, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // Only live chapters, in order; the deleted ones wait for the purge (S1-E3-04 shows undo).
     .is('chapters.deleted_at', null)
@@ -222,6 +224,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     createdAt: row.created_at,
     completionStatus: row.completion_status,
     commentsEnabled: row.comments_enabled,
+    quoteCardsEnabled: row.quote_cards_enabled,
     deletedAt: row.deleted_at,
     rating: row.rating,
     isFanFiction: row.is_fan_fiction,
@@ -276,6 +279,7 @@ export async function updateMyStory(
       cover: coverJsonFor(settings.cover),
       completion_status: settings.completionStatus,
       comments_enabled: settings.commentsEnabled,
+      quote_cards_enabled: settings.quoteCardsEnabled,
       labels: toLabelsJson(settings),
     },
   });

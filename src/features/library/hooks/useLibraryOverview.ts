@@ -16,9 +16,7 @@ import {
   type LibraryOverview,
   type MyFollows,
 } from '../api/library';
-
-/** The first part of the library's cache keys, so a change of shelf refreshes them all. */
-export const libraryQueryKey = 'library';
+import { libraryQueryKey } from '../libraryQueryKey';
 
 /**
  * Reads the shelf counts, the stories to continue and the places.

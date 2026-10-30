@@ -5,7 +5,8 @@
  * Board values: Status as a segmented Ongoing | Completed with "Shown on your story card.
  * Readers can filter by it."; Comments as a switch (role="switch", 60 × 34 px) with "On. Readers
  * can comment on every chapter." or "Off. Existing comments are hidden and nobody can add new
- * ones." The switch is stored now and enforced by S1-E6-01.
+ * ones." The switch is stored now and enforced by S1-E6-01. A second switch, Quote cards
+ * (S1-E4-07, third criterion), hides "Share quote" on every chapter when it is off.
  * Who uses it: StorySettingsPage (the new story form keeps the defaults; docs/board-fixes.md).
  */
 import { useTranslation } from 'react-i18next';
@@ -22,6 +23,57 @@ export interface StoryStatusSectionProps {
   set: SetStoryAnswer;
 }
 
+/** What one switch needs. */
+interface StorySwitchProps {
+  /** Starts the ids of the label and the note, which must be unique on the page. */
+  idPrefix: string;
+  label: string;
+  isOn: boolean;
+  /** The line beside the switch saying what on or off means now. */
+  note: string;
+  onToggle: () => void;
+}
+
+/**
+ * One on/off switch as the board draws it: role="switch", 60 x 34 px, with its note beside it.
+ *
+ * @returns the label, the switch and the note
+ */
+function StorySwitch({ idPrefix, label, isOn, note, onToggle }: StorySwitchProps) {
+  const labelId = `${idPrefix}-label`;
+  const noteId = `${idPrefix}-note`;
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span id={labelId} className="text-sm font-semibold text-ink">
+        {label}
+      </span>
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isOn}
+          aria-labelledby={labelId}
+          aria-describedby={noteId}
+          onClick={onToggle}
+          className={`relative inline-flex h-[34px] w-[60px] shrink-0 items-center rounded-full border transition-colors ${
+            isOn ? 'border-chip-on bg-chip-on' : 'border-dashed-border bg-panel'
+          }`}
+        >
+          <span
+            aria-hidden="true"
+            className={`absolute top-[3px] size-[26px] rounded-full bg-surface shadow-card transition-[left] ${
+              isOn ? 'left-[29px]' : 'left-[3px]'
+            }`}
+          />
+        </button>
+        <p id={noteId} className="m-0 text-sm text-body">
+          {note}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /**
  * Renders the section.
  *
@@ -29,7 +81,6 @@ export interface StoryStatusSectionProps {
  */
 export function StoryStatusSection({ answers, set }: StoryStatusSectionProps) {
   const { t } = useTranslation('writing');
-  const commentsNoteId = 'story-comments-note';
   return (
     <FormSection legend={t('status.heading')}>
       <ChoiceChips
@@ -46,36 +97,20 @@ export function StoryStatusSection({ answers, set }: StoryStatusSectionProps) {
         descriptionId="story-status-hint"
         description={t('status.hint')}
       />
-      <div className="flex flex-col gap-1.5">
-        <span id="story-comments-label" className="text-sm font-semibold text-ink">
-          {t('comments.label')}
-        </span>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            role="switch"
-            aria-checked={answers.commentsEnabled}
-            aria-labelledby="story-comments-label"
-            aria-describedby={commentsNoteId}
-            onClick={() => set('commentsEnabled', !answers.commentsEnabled)}
-            className={`relative inline-flex h-[34px] w-[60px] shrink-0 items-center rounded-full border transition-colors ${
-              answers.commentsEnabled
-                ? 'border-chip-on bg-chip-on'
-                : 'border-dashed-border bg-panel'
-            }`}
-          >
-            <span
-              aria-hidden="true"
-              className={`absolute top-[3px] size-[26px] rounded-full bg-surface shadow-card transition-[left] ${
-                answers.commentsEnabled ? 'left-[29px]' : 'left-[3px]'
-              }`}
-            />
-          </button>
-          <p id={commentsNoteId} className="m-0 text-sm text-body">
-            {answers.commentsEnabled ? t('comments.on') : t('comments.off')}
-          </p>
-        </div>
-      </div>
+      <StorySwitch
+        idPrefix="story-comments"
+        label={t('comments.label')}
+        isOn={answers.commentsEnabled}
+        note={answers.commentsEnabled ? t('comments.on') : t('comments.off')}
+        onToggle={() => set('commentsEnabled', !answers.commentsEnabled)}
+      />
+      <StorySwitch
+        idPrefix="story-quote-cards"
+        label={t('quoteCards.label')}
+        isOn={answers.quoteCardsEnabled}
+        note={answers.quoteCardsEnabled ? t('quoteCards.on') : t('quoteCards.off')}
+        onToggle={() => set('quoteCardsEnabled', !answers.quoteCardsEnabled)}
+      />
     </FormSection>
   );
 }

@@ -55,6 +55,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     cover: coverAnswerFor(story),
     completionStatus: story.completionStatus,
     commentsEnabled: story.commentsEnabled,
+    quoteCardsEnabled: story.quoteCardsEnabled,
     rating: story.rating,
     isFanFiction: story.isFanFiction,
     isParody: story.isParody,
