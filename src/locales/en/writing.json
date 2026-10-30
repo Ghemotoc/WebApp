@@ -337,5 +337,21 @@
       "dropped": "Dropped {{title}} at position {{position}} of {{total}}.",
       "cancelled": "Move cancelled. {{title}} stays where it was."
     }
+  },
+  "rankBadges": {
+    "legend": "Rank badges on the cover",
+    "intro": "Your cover shows where the story stands in its tags, like “#4 in Fantasy”, counted the same way as the tag pages. It shows the 3 best ranks unless you pick up to 3 tags here. A tag shows a rank once the story has readers and the tag holds a few stories.",
+    "pickLabel": "Tags to show as badges",
+    "rankOf": "{{tag}} · #{{rank}} of {{count}}",
+    "noRank": "{{tag}} · no rank yet",
+    "automatic": "Showing your 3 best ranks.",
+    "picked_one": "Showing the {{count}} tag you picked.",
+    "picked_few": "Showing the {{count}} tags you picked.",
+    "picked_other": "Showing the {{count}} tags you picked.",
+    "useBest": "Show my 3 best ranks instead",
+    "full": "You've picked 3. Switch one off to pick another.",
+    "noTags": "Approved tags appear here once you save the story with tags.",
+    "saved": "Saved. Readers see the new badges within a few minutes.",
+    "saveFailed": "The badges couldn't be saved. Try again in a moment."
   }
 }

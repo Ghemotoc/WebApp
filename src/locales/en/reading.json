@@ -45,7 +45,12 @@
     "comments_few": "{{value}} comments",
     "chapterCount_few": "{{count}} chapters",
     "classicSource": "Text from:",
-    "classicTranslator": "Translated by {{name}}."
+    "classicTranslator": "Translated by {{name}}.",
+    "rankBadges": "Where this story ranks in its tags",
+    "rankBadge": "#{{rank}} in {{tag}}",
+    "rankBadgeOutOf_one": "out of {{count}} story",
+    "rankBadgeOutOf_few": "out of {{count}} stories",
+    "rankBadgeOutOf_other": "out of {{count}} stories"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

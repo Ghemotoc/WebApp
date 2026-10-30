@@ -2,7 +2,7 @@
 
 Tags as one idea with a name in each language, the recommended tags, and the staff queue where
 the moderation team approves, renames or rejects the tags writers add (CMS-1e; Robert's tag task,
-30 Oct 2026). The tag box itself stays in `src/features/writing/components/TagInput.tsx`.
+30 Oct 2026), and the rank badges a story's cover shows for its tags (CMS-1g). The tag box itself stays in `src/features/writing/components/TagInput.tsx`.
 
 - `lib/tagCatalogue.ts`: shows a tag in the interface language and recognises a name typed in
   another language ("fantezie" is Fantasy in English), with the same rule as the database's
@@ -11,6 +11,9 @@ the moderation team approves, renames or rejects the tags writers add (CMS-1e; R
   `admin_name_tag()` and `admin_reject_tag()` for staff.
 - `hooks/useTagCatalogue.ts` (every screen that shows tags) and `hooks/useTagQueue.ts` (staff).
 - `components/TagNames.tsx`: a story's tags as one line in the interface language.
+- Rank badges (CMS-1g): `api/tagRanks.ts` (`story_tag_ranks()`, `set_rank_badge_tags()`),
+  `hooks/useTagRanks.ts`, `lib/rankPick.ts` (at most 3 picks), `components/RankBadges.tsx` (under
+  the cover on the story page) and `components/RankBadgePicker.tsx` (Story settings).
 - `components/staff/`: `TagsAdminPage.tsx` (/staff/tags and /staff/tags/missing),
   `TagDecisionRow.tsx` (a name per language, Approve or Save the names, Reject) and
   `RejectTagForm.tsx`.
