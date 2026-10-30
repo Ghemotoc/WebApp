@@ -5,10 +5,12 @@
  * Who calls it: AuditLogPage. What it calls: api/auditLog.ts, then lib/auditLogCsv.ts to make the
  * file, which the browser downloads as audit-log-<date>.csv.
  * Typed filters are kept apart from the searched ones: the page changes only when the person
- * presses Search, so typing doesn't fire a query per keystroke.
+ * presses Search, so typing doesn't fire a query per keystroke. A link may start the page on one
+ * kind of action with ?action=<prefix> (Staff › Settings links to "settings.", S1-E11-03).
  */
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 
@@ -57,8 +59,10 @@ function downloadCsv(csv: string, fileName: string) {
  * @returns the typed and searched filters, the page, the entries and the export
  */
 export function useAuditLog() {
-  const [typedFilters, setTypedFilters] = useState<AuditLogFilters>(emptyFilters);
-  const [searchedFilters, setSearchedFilters] = useState<AuditLogFilters>(emptyFilters);
+  const [searchParams] = useSearchParams();
+  const startingFilters = { ...emptyFilters, actionPrefix: searchParams.get('action') ?? '' };
+  const [typedFilters, setTypedFilters] = useState<AuditLogFilters>(startingFilters);
+  const [searchedFilters, setSearchedFilters] = useState<AuditLogFilters>(startingFilters);
   const [pageNumber, setPageNumber] = useState(1);
 
   // Step 1: one page of rows for the searched filters.

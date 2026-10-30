@@ -1133,13 +1133,23 @@ What the Safety epic has in place so far. The epic report, `docs/epic-reports/S1
 
 **One main journey through the whole epic:** a reader presses `<ReportButton>` → `ReportDialog` shows the helplines (`SafetyContactsBlock`) and the reasons → `report_item()` stores the report and `attach_report_to_case()` opens or joins the item's case with its tier and deadline → the moderator opens `/staff/moderation`, the case page, and sends a decision → `admin_decide_case()` closes the case and calls `admin_apply_sanction()` → `account_state()` answers `suspended` and every write policy refuses → the person sees `SanctionNotice`. `e2e/epic-s1-e10.spec.ts` walks it.
 
+## Content settings, markets and languages (S1-E11-03, S1-E11-05; CMS-1a)
+
+The owner and admins change how the platform works from `/staff/settings` (`src/features/settings/`), with no migration and no release.
+
+- **Where it starts:** `SettingsPage` checks the person holds the `settings` area (`useMyStaffAccess`), then shows the sections: flags (`FlagsSection`), every named setting grouped by `lib/settingGroups.ts` (`ValueSettingsSection`), the Discover mix (`DiscoverMixEditor`), rate limits (`RateLimitsEditor`), categories, reserved names, the username word lists, and markets and languages (`MarketsSection`).
+- **How one click travels:** an admin switches a flag → `useSettingsAdmin().change()` → `api/settingsAdmin.ts` → `admin_set_flag()` checks `staff_may('settings', 'act')`, updates `feature_flags` and writes `settings.flag` to `audit_log` with the before and after state, all in one transaction → the hook reads the flags again, and every other visitor's app re-reads public flags and settings within a minute (`useFeatureFlags`, `usePublicSettings`).
+- **Keeping a value's shape:** `admin_set_setting()` asks `setting_value_problem()` first, so a number stays a number, nothing goes below zero, a list doesn't repeat an item and an object keeps its parts. The reason word comes back as the error's hint and `SettingsFailureNotice` words it.
+- **Markets and languages:** `languages` (one row per BCP 47 code, with its status) and `staff_languages` (who reads what, set on Staff › Roles by `StaffLanguages`). `admin_set_language_status()` refuses to open a language no moderator reads; `admin_set_market()` refuses Ready or Open without the legal check, Open without an open language, and lets only the owner open a market. `markets.is_open` follows `markets.status` by trigger, so sign-up (S1-E2-10) is unchanged. The new story form now lists every language and shows the closed ones as "coming" (`story_language_choices()`).
+- **Tests:** `supabase/tests/database/170-settings-admin.test.sql`, `171-markets-and-languages.test.sql` and `e2e/settings-admin.spec.ts`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
 
 | Kind | Where | Story |
 | --- | --- | --- |
-| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`) | 11-01, 11-17, 2-07a |
+| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`), `/staff/settings` (`src/features/settings/`) | 11-01, 11-17, 2-07a, 11-03, 11-05 |
 | Hooks | `useMyStaffAccess`, `useAuditLog`, `useInviteLinks`, `useStaffRoles` | each story |
 | Tables | `audit_log` (append-only), `invites`, `staff_roles`, `staff_permissions`, `staff_role_areas`, the settings `staff_session_hours` and `staff_fresh_sign_in_minutes` | 1-02, 2-01, 2-07a, 11-01, 11-17 |
 | Functions | `is_staff_session()` (12 hours), `staff_signed_in_recently()`, `my_staff_areas()`, `log_sensitive_read()`, `admin_search_audit_log()`, `admin_export_audit_log()`, `admin_create_invite()`, `admin_revoke_invite()`, `admin_list_invites()`, `use_platform_invite()` | each story |

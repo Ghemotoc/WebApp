@@ -107,6 +107,10 @@ begin
     if persona.staff_role is not null then
       insert into public.staff_roles (user_id, role)
       values (persona.user_id, persona.staff_role::public.staff_role);
+      -- Every staff persona reads Română and English, so both languages have moderators on the
+      -- rota and stay open (S1-E11-05).
+      insert into public.staff_languages (user_id, language_code)
+      values (persona.user_id, 'ro'), (persona.user_id, 'en');
     end if;
 
     -- 5. Every persona accepted version 0.1 of the terms and the privacy notice at sign-up, in

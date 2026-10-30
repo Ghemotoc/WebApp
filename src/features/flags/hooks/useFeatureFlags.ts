@@ -1,10 +1,10 @@
 /**
- * useFeatureFlags: the public feature flags, cached for the whole visit (story S1-E2-01).
+ * useFeatureFlags: the public feature flags, read again every minute (story S1-E2-01; S1-E11-03:
+ * a change on Staff › Settings applies within a minute).
  *
  * Who calls it: screens that change with a flag, for example the sign-up page (invite_only,
  * adults_only, social_login).
- * What it calls: api/featureFlags.ts. Flags change by migration until S1-E11-03, so one read per
- * visit is enough.
+ * What it calls: api/featureFlags.ts. Staff change flags on Staff › Settings (S1-E11-03).
  * Safe default: until the flags arrive, or if they can't be read, isOn() answers with the March
  * value given by the caller, so the screen never shows a door the database would refuse.
  */
@@ -14,6 +14,9 @@ import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchPublicFlags, type FeatureFlags } from '../api/featureFlags';
 
+/** How long a read stays fresh: a change on Staff › Settings reaches the app within a minute. */
+const settingFreshMilliseconds = 60 * 1000;
+
 /**
  * Loads the flags.
  *
@@ -22,7 +25,8 @@ import { fetchPublicFlags, type FeatureFlags } from '../api/featureFlags';
 export function useFeatureFlags() {
   const flags = useQuery<FeatureFlags>({
     queryKey: ['feature-flags'],
-    staleTime: Infinity,
+    staleTime: settingFreshMilliseconds,
+    refetchInterval: settingFreshMilliseconds,
     queryFn: async () => {
       const client = await getSupabaseClient();
       if (client === null) throw new Error('The app is not connected to its database.');

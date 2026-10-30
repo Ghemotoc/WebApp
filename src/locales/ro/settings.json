@@ -1,0 +1,238 @@
+{
+  "documentTitle": "Setări · Echipă",
+  "eyebrow": "Echipă · setări",
+  "heading": "Setările conținutului",
+  "intro": "Schimbă felul în care funcționează platforma fără o versiune nouă. Schimbările se aplică în cel mult un minut și fiecare e înregistrată cu cine, ce, când și valorile de dinainte și de după.",
+  "auditLink": "Vezi toate schimbările de setări în jurnalul de audit",
+  "loading": "Se încarcă setările…",
+  "jumpTo": "Pe această pagină",
+  "saved": "Salvat. Se aplică în cel mult un minut.",
+  "failures": {
+    "not_allowed": "Doar proprietarul și administratorii pot schimba setările.",
+    "invalid": "Asta nu se poate salva.",
+    "not_found": "Setarea nu mai există. Reîncarcă pagina.",
+    "already_there": "E deja pe listă.",
+    "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
+  },
+  "reasons": {
+    "wrong_kind": "Valoarea nouă trebuie să fie de același fel ca cea veche (un număr rămâne număr).",
+    "below_zero": "Numerele nu pot fi sub zero.",
+    "bad_item": "Fiecare element trebuie să fie un cuvânt sau un număr de cel puțin zero.",
+    "repeated_item": "Fiecare element poate apărea o singură dată.",
+    "changed_parts": "Valoarea trebuie să își păstreze toate părțile.",
+    "typed_invalid": "Scrie un număr de cel puțin zero sau o listă despărțită prin virgulă și spațiu.",
+    "no_moderator": "Încă nu e de serviciu niciun moderator care citește această limbă. Notează întâi limbile pe care le citește echipa în Echipă › Roluri.",
+    "interface_language": "Interfața e în această limbă, așa că rămâne deschisă.",
+    "legal_check_not_done": "Verificarea juridică a acestei piețe nu e gata.",
+    "owner_only": "Doar proprietarul deschide o piață.",
+    "no_open_language": "Încă nu e deschisă nicio limbă a acestei piețe."
+  },
+  "sections": {
+    "flags": "Comutatoare",
+    "values": "Valori și limite",
+    "discover": "Ce apare în Descoperă",
+    "rateLimits": "Limite de ritm",
+    "categories": "Categorii",
+    "names": "Nume rezervate",
+    "words": "Liste de cuvinte pentru nume",
+    "markets": "Piețe și limbi"
+  },
+  "flags": {
+    "intro": "Comutatoarele ne lasă să pornim ceva mai târziu, fără cod nou. Fiecare comutator se salvează imediat.",
+    "keyLabel": "Comutator",
+    "on": "Pornit",
+    "off": "Oprit",
+    "nowOn": "{{name}} e acum pornit.",
+    "nowOff": "{{name}} e acum oprit.",
+    "names": {
+      "invite_only": {
+        "label": "Înscriere doar cu invitație",
+        "description": "Oamenii se pot înscrie doar cu un link de invitație (testul din martie)."
+      },
+      "adults_only": {
+        "label": "Doar adulți",
+        "description": "Se pot înscrie doar persoanele de 18 ani sau mai mult, active fără verificarea vârstei (testul din martie)."
+      },
+      "social_login": {
+        "label": "Conectare cu Google, Apple sau Microsoft",
+        "description": "Arată cele trei butoane de conectare. Lasă-l oprit până când e configurat fiecare furnizor."
+      },
+      "maintenance_mode": {
+        "label": "Mod de mentenanță",
+        "description": "Când e pornit, toată lumea în afară de echipă vede pagina de mentenanță."
+      },
+      "picture_uploads": {
+        "label": "Încărcarea pozelor",
+        "description": "Coperți și poze de profil. Fiecare poză trece întâi prin verificarea pozelor. Lasă-l oprit până când sunt conectate serviciile de verificare."
+      }
+    }
+  },
+  "values": {
+    "intro": "Numere, limite, ore și ponderi pe care platforma le citește de fiecare dată când are nevoie de ele.",
+    "keyLabel": "Setare",
+    "save": "Salvează",
+    "saveLabel": "Salvează {{name}}",
+    "listHint": "Desparte elementele prin virgulă și spațiu.",
+    "groups": {
+      "content": "Conținut",
+      "ranking": "Clasamentul din Populare",
+      "abuse": "Spam și abuz",
+      "moderation": "Moderare și echipă",
+      "notifications": "Notificări",
+      "retention": "Cât timp păstrăm datele",
+      "march": "Țintele testului din martie",
+      "other": "Altele"
+    },
+    "names": {
+      "teaser_length": "Lungimea fragmentului pentru vizitatorii neconectați (cuvinte)",
+      "chapter_max_characters": "Cel mai lung capitol (caractere)",
+      "comment_max_characters": "Cel mai lung comentariu (caractere)",
+      "comment_page_size": "Comentarii pe pagină",
+      "ai_label_confirmed_reports": "Raportări confirmate de text AI înainte de etichetă",
+      "handle_change_days": "Zile între schimbările numelui de utilizator",
+      "pen_name_change_days": "Zile între schimbările pseudonimului",
+      "classics_account_handle": "Numele de utilizator al contului de clasici",
+      "ranking_weight_reads": "Ponderea unei citiri",
+      "ranking_weight_likes": "Ponderea unei aprecieri",
+      "ranking_weight_comments": "Ponderea unui comentariu",
+      "ranking_weight_shares": "Ponderea unei distribuiri",
+      "ranking_weight_read_through": "Ponderea citirii până la capăt",
+      "ranking_half_life_days": "Zile până când un semnal contează pe jumătate",
+      "ranking_window_days": "Zile de semnale numărate",
+      "rising_writer_days": "Un scriitor e „în ascensiune” timp de (zile)",
+      "new_account_hours": "Un cont e nou timp de (ore)",
+      "comment_hourly_limit": "Comentarii pe oră",
+      "comment_hourly_limit_new_account": "Comentarii pe oră pentru un cont nou",
+      "comment_new_account_hours": "Ore în care comentariile unui cont nou sunt limitate",
+      "new_account_max_links": "Linkuri într-un comentariu de la un cont nou",
+      "report_hourly_limit": "Raportări pe oră",
+      "reporting_pause_days": "Zile de pauză la raportare după folosire abuzivă",
+      "downvote_new_account_hours": "Ore până când un cont nou poate vota negativ",
+      "downvote_case_threshold": "Voturi negative până când se uită un moderator",
+      "sign_in_pause_tries": "Încercări greșite de conectare înainte de pauză",
+      "sign_in_pause_minutes": "Pauza la conectare (minute)",
+      "client_errors_per_minute": "Rapoarte de erori acceptate pe minut",
+      "moderation_hours_one_hour": "Ordine de eliminare: ore pentru a acționa",
+      "moderation_hours_same_day": "Cazuri în aceeași zi: ore pentru a acționa",
+      "moderation_hours_two_days": "Cazuri în două zile: ore pentru a acționa",
+      "moderation_hours_seven_days": "Cazuri în șapte zile: ore pentru a acționa",
+      "case_claim_minutes": "Un caz preluat se eliberează după (minute)",
+      "suspension_default_days": "Suspendarea obișnuită (zile)",
+      "suspension_day_choices": "Duratele de suspendare oferite (zile)",
+      "on_call_escalation_minutes": "Minute până când o alertă de serviciu trece la următoarea persoană",
+      "safety_contact_warning_days": "Zile până când un contact de siguranță neverificat arată un avertisment",
+      "staff_session_hours": "Durata sesiunii pentru echipă (ore)",
+      "staff_fresh_sign_in_minutes": "Minute în care o conectare proaspătă a echipei contează",
+      "notification_follower_group_hours": "Grupează urmăritorii noi pe (ore)",
+      "notification_reaction_group_minutes": "Grupează reacțiile pe (minute)",
+      "content_purge_days": "Conținutul șters se elimină definitiv după (zile)",
+      "notifications_keep_days": "Notificările se păstrează (zile)",
+      "client_errors_keep_days": "Rapoartele de erori se păstrează (zile)",
+      "public_notices_keep_years": "Raportările publice se păstrează (ani)",
+      "removal_order_preserve_months": "Conținutul eliminat printr-un ordin se păstrează (luni)",
+      "daily_metrics_keep_years": "Totalurile zilnice se păstrează (ani)",
+      "march_target_writers": "Scriitori care publică",
+      "march_target_readers": "Cititori",
+      "march_target_return_rate": "Rata de revenire (%)"
+    }
+  },
+  "discover": {
+    "intro": "Rafturile din Descoperă și ordinea lor. Sponsorii nu pot schimba asta.",
+    "shown": "Afișate, în această ordine",
+    "hidden": "Neafișate",
+    "noneHidden": "Toate rafturile sunt afișate.",
+    "moveUp": "Mută {{name}} mai sus",
+    "moveDown": "Mută {{name}} mai jos",
+    "hide": "Ascunde",
+    "hideLabel": "Ascunde {{name}}",
+    "show": "Afișează",
+    "showLabel": "Afișează {{name}}",
+    "save": "Salvează rafturile din Descoperă",
+    "atLeastOne": "Păstrează cel puțin un raft.",
+    "shelves": {
+      "following": "De la scriitorii pe care îi urmărești",
+      "popular": "Populare",
+      "rising": "Scriitori noi și în ascensiune",
+      "new": "Povești noi",
+      "completed": "Terminate",
+      "updated": "Actualizate recent",
+      "categories": "Câte un raft pentru fiecare categorie"
+    }
+  },
+  "rateLimits": {
+    "intro": "De câte ori pe oră poate face un cont fiecare acțiune. Conturile noi au limite mai strânse în primele ore (vezi „Un cont e nou timp de” mai sus). Comentariile și raportările au limitele lor, mai sus.",
+    "action": "Acțiune",
+    "newAccount": "Cont nou, pe oră",
+    "olderAccount": "După aceea, pe oră",
+    "save": "Salvează limitele de ritm",
+    "actions": {
+      "appeal": "Contestații",
+      "moderator_mail": "Mesaje către moderatori",
+      "picture_upload": "Încărcări de poze"
+    }
+  },
+  "categories": {
+    "intro": "Ordinea pe care o văd cititorii în formularul de poveste nouă și în Descoperă. O categorie nouă vine într-o versiune nouă, cu numele în ambele limbi.",
+    "listLabel": "Categoriile, în ordine",
+    "position": "{{position}} din {{total}}",
+    "moveUp": "Mută {{name}} mai sus",
+    "moveDown": "Mută {{name}} mai jos"
+  },
+  "names": {
+    "intro": "Nimeni nu le poate lua ca nume de utilizator sau pseudonim. Sunt blocate și variantele asemănătoare, de exemplu „adm1n”. Numele pe care le folosește platforma rămân rezervate.",
+    "listLabel": "Nume rezervate",
+    "system": "Nume al platformei",
+    "addLabel": "Numele de rezervat",
+    "matchLabel": "Îl blochează",
+    "add": "Rezervă",
+    "remove": "Eliberează {{name}}",
+    "rules": {
+      "anywhere": "Oriunde într-un nume",
+      "whole_word": "Ca cuvânt întreg",
+      "whole_name": "Doar ca nume întreg"
+    }
+  },
+  "words": {
+    "intro": "Cuvinte pe care nu le poate conține un nume de utilizator sau un pseudonim, în fiecare limbă.",
+    "language": "Lista",
+    "search": "Caută un cuvânt",
+    "showing": "Se arată {{shown}} din {{total}}.",
+    "empty": "Niciun cuvânt de pe această listă nu se potrivește.",
+    "listLabel": "Cuvinte de pe listă",
+    "addLabel": "Cuvântul de adăugat",
+    "add": "Adaugă",
+    "remove": "Elimină {{word}}",
+    "languages": {
+      "ro": "Română",
+      "en": "English"
+    }
+  },
+  "markets": {
+    "intro": "România se deschide prima. Alte țări se deschid mai târziu, una câte una, fiecare după verificarea ei juridică. O limbă se deschide doar când sunt de serviciu moderatori care o citesc.",
+    "languagesHeading": "Limbi",
+    "languagesNote": "Scriitorii aleg limba poveștii dintre cele deschise; celelalte apar ca „vine când avem moderatori care o citesc”. Interfața rămâne în engleză și română.",
+    "marketsHeading": "Piețe",
+    "marketsNote": "O piață se deschide doar după ce verificarea ei juridică e gata și cel puțin una dintre limbile ei e deschisă. Doar proprietarul deschide o piață. Piața vine din țara conexiunii, păstrată doar ca cod de țară, niciodată ca adresă IP.",
+    "statusLabel": "Starea pentru {{name}}",
+    "legalLabel": "Verificarea juridică pentru {{name}}",
+    "statuses": {
+      "open": "Deschisă",
+      "ready": "Gata de deschis",
+      "closed": "Închisă"
+    },
+    "legalChecks": {
+      "not_started": "Neîncepută",
+      "in_progress": "În lucru",
+      "done": "Gata"
+    },
+    "moderators_one": "O citește {{count}} moderator",
+    "moderators_few": "O citesc {{count}} moderatori",
+    "moderators_other": "O citesc {{count}} de moderatori",
+    "noModerators": "Încă nu o citește niciun moderator",
+    "interface": "Limbă a interfeței",
+    "storiesOnly": "Doar pentru povești",
+    "marketLanguages": "Limbi: {{list}}",
+    "minimumAge": "Deschisă persoanelor de {{age}} ani și peste",
+    "saveLegal": "Salvează verificarea juridică"
+  }
+}

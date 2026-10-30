@@ -45,7 +45,8 @@
     "creating": "Creating…",
     "notActive": "Your account can’t create stories yet. Confirm your email and choose a username, or wait for the test to open to your age group.",
     "createFailed": "We couldn’t save your story. Check your connection and try again.",
-    "signedOut": "Log in to start a story."
+    "signedOut": "Log in to start a story.",
+    "languageComing": "{{language}}: coming when we have moderators for it"
   },
   "categories": {
     "fiction": "Fiction",

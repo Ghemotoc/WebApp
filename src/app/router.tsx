@@ -116,6 +116,14 @@ const staffRoutes: RouteObject = {
         return { Component: SafetyContactsAdminPage };
       },
     },
+    // Content settings, markets and languages (S1-E11-03, S1-E11-05): owner and admin.
+    {
+      path: 'settings',
+      lazy: async () => {
+        const { SettingsPage } = await import('@/features/settings/components/SettingsPage');
+        return { Component: SettingsPage };
+      },
+    },
     // Staff roles and permissions (S1-E2-07a), now inside the shell.
     {
       path: 'roles',

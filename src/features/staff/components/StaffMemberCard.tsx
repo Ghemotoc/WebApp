@@ -17,6 +17,7 @@ import { TextInput } from '@/components/ui/TextInput';
 import type { StaffChange, StaffMember } from '../api/staffRoles';
 
 import { PermissionChecks } from './PermissionChecks';
+import { StaffLanguages } from './StaffLanguages';
 
 /** What a card needs. */
 interface StaffMemberCardProps {
@@ -87,6 +88,7 @@ export function StaffMemberCard({ member, isChanging, onChange }: StaffMemberCar
           })
         }
       />
+      <StaffLanguages userId={member.userId} handle={handle} />
     </li>
   );
 }

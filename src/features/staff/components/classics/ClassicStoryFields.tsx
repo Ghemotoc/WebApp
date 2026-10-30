@@ -40,10 +40,12 @@ function ClassicStorySelects({ details, onChange }: ClassicFieldsProps) {
         placement="form"
         value={details.languageCode}
         onChange={(value) => onChange('languageCode', value)}
-        options={languages.map((code) => ({
-          value: code,
-          label: t(`languages.${code}`, { ns: 'writing' }),
-        }))}
+        options={languages
+          .filter((language) => language.isOpen)
+          .map(({ code }) => ({
+            value: code,
+            label: t(`languages.${code}`, { ns: 'writing', defaultValue: code }),
+          }))}
       />
       <Select
         id="classic-category"

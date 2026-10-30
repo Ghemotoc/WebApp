@@ -1,0 +1,238 @@
+{
+  "documentTitle": "Settings · Staff",
+  "eyebrow": "Staff · settings",
+  "heading": "Content settings",
+  "intro": "Change how the platform works without a new release. Changes apply within a minute, and each one is logged with who, what, when and the before and after values.",
+  "auditLink": "See every settings change in the audit log",
+  "loading": "Loading the settings…",
+  "jumpTo": "On this page",
+  "saved": "Saved. It applies within a minute.",
+  "failures": {
+    "not_allowed": "Only the owner and admins can change settings.",
+    "invalid": "That can't be saved.",
+    "not_found": "That setting no longer exists. Reload the page.",
+    "already_there": "That's already on the list.",
+    "unreachable": "We couldn't reach the database. Check your connection and try again."
+  },
+  "reasons": {
+    "wrong_kind": "The new value must be the same kind as the old one (a number stays a number).",
+    "below_zero": "Numbers can't go below zero.",
+    "bad_item": "Each item must be a word or a number of zero or more.",
+    "repeated_item": "Each item may appear only once.",
+    "changed_parts": "The value must keep all its parts.",
+    "typed_invalid": "Type a number of zero or more, or a list separated by a comma and a space.",
+    "no_moderator": "No moderator who reads this language is on the rota yet. Record the languages staff read on Staff › Roles first.",
+    "interface_language": "The interface is in this language, so it stays open.",
+    "legal_check_not_done": "This market's legal check isn't done yet.",
+    "owner_only": "Only the owner opens a market.",
+    "no_open_language": "None of this market's languages is open yet."
+  },
+  "sections": {
+    "flags": "Feature flags",
+    "values": "Values and limits",
+    "discover": "Discover mix",
+    "rateLimits": "Rate limits",
+    "categories": "Categories",
+    "names": "Reserved names",
+    "words": "Username word lists",
+    "markets": "Markets and languages"
+  },
+  "flags": {
+    "intro": "Flags let us switch something on later without new code. Each switch saves at once.",
+    "keyLabel": "Flag",
+    "on": "On",
+    "off": "Off",
+    "nowOn": "{{name}} is now on.",
+    "nowOff": "{{name}} is now off.",
+    "names": {
+      "invite_only": {
+        "label": "Sign-up by invitation only",
+        "description": "People can only join with an invite link (the March test)."
+      },
+      "adults_only": {
+        "label": "Adults only",
+        "description": "Only people 18 or over can join, and they are active without the age check (the March test)."
+      },
+      "social_login": {
+        "label": "Sign in with Google, Apple or Microsoft",
+        "description": "Shows the three sign-in buttons. Leave it off until each provider is set up."
+      },
+      "maintenance_mode": {
+        "label": "Maintenance mode",
+        "description": "When on, everyone except staff sees the maintenance page."
+      },
+      "picture_uploads": {
+        "label": "Picture uploads",
+        "description": "Covers and profile pictures. Every picture goes through the picture check first. Leave it off until the picture check's services are connected."
+      }
+    }
+  },
+  "values": {
+    "intro": "Counts, limits, hours and weights the platform reads each time it needs them.",
+    "keyLabel": "Setting",
+    "save": "Save",
+    "saveLabel": "Save {{name}}",
+    "listHint": "Separate items with a comma and a space.",
+    "groups": {
+      "content": "Content",
+      "ranking": "Ranking in Popular",
+      "abuse": "Spam and abuse",
+      "moderation": "Moderation and staff",
+      "notifications": "Notifications",
+      "retention": "How long we keep things",
+      "march": "March test targets",
+      "other": "Other"
+    },
+    "names": {
+      "teaser_length": "Teaser length for signed-out visitors (words)",
+      "chapter_max_characters": "Longest chapter (characters)",
+      "comment_max_characters": "Longest comment (characters)",
+      "comment_page_size": "Comments per page",
+      "ai_label_confirmed_reports": "Confirmed AI reports before a label",
+      "handle_change_days": "Days between username changes",
+      "pen_name_change_days": "Days between pen name changes",
+      "classics_account_handle": "Username of the classics account",
+      "ranking_weight_reads": "Weight of a read",
+      "ranking_weight_likes": "Weight of a like",
+      "ranking_weight_comments": "Weight of a comment",
+      "ranking_weight_shares": "Weight of a share",
+      "ranking_weight_read_through": "Weight of reading to the end",
+      "ranking_half_life_days": "Days until a signal counts half",
+      "ranking_window_days": "Days of signals counted",
+      "rising_writer_days": "A writer counts as rising for (days)",
+      "new_account_hours": "An account counts as new for (hours)",
+      "comment_hourly_limit": "Comments an hour",
+      "comment_hourly_limit_new_account": "Comments an hour for a new account",
+      "comment_new_account_hours": "Hours a new account's comments are limited",
+      "new_account_max_links": "Links in one comment from a new account",
+      "report_hourly_limit": "Reports an hour",
+      "reporting_pause_days": "Days reporting is paused after misuse",
+      "downvote_new_account_hours": "Hours before a new account can downvote",
+      "downvote_case_threshold": "Downvotes before a moderator looks",
+      "sign_in_pause_tries": "Wrong log-in tries before a pause",
+      "sign_in_pause_minutes": "Log-in pause (minutes)",
+      "client_errors_per_minute": "Error reports accepted a minute",
+      "moderation_hours_one_hour": "Removal orders: hours to act",
+      "moderation_hours_same_day": "Same-day cases: hours to act",
+      "moderation_hours_two_days": "Two-day cases: hours to act",
+      "moderation_hours_seven_days": "Seven-day cases: hours to act",
+      "case_claim_minutes": "A claimed case is released after (minutes)",
+      "suspension_default_days": "Usual suspension (days)",
+      "suspension_day_choices": "Suspension lengths offered (days)",
+      "on_call_escalation_minutes": "Minutes before an on-call alert goes to the next person",
+      "safety_contact_warning_days": "Days before an unchecked safety contact shows a warning",
+      "staff_session_hours": "Staff session length (hours)",
+      "staff_fresh_sign_in_minutes": "Minutes a fresh staff sign-in counts",
+      "notification_follower_group_hours": "Group new followers over (hours)",
+      "notification_reaction_group_minutes": "Group reactions over (minutes)",
+      "content_purge_days": "Deleted content is purged after (days)",
+      "notifications_keep_days": "Notifications are kept for (days)",
+      "client_errors_keep_days": "Error reports are kept for (days)",
+      "public_notices_keep_years": "Public reports are kept for (years)",
+      "removal_order_preserve_months": "Content removed by an order is preserved for (months)",
+      "daily_metrics_keep_years": "Daily totals are kept for (years)",
+      "march_target_writers": "Writers publishing",
+      "march_target_readers": "Readers",
+      "march_target_return_rate": "Return rate (%)"
+    }
+  },
+  "discover": {
+    "intro": "The shelves on Discover and their order. Sponsors can't change this.",
+    "shown": "Shown, in this order",
+    "hidden": "Not shown",
+    "noneHidden": "Every shelf is shown.",
+    "moveUp": "Move {{name}} up",
+    "moveDown": "Move {{name}} down",
+    "hide": "Hide",
+    "hideLabel": "Hide {{name}}",
+    "show": "Show",
+    "showLabel": "Show {{name}}",
+    "save": "Save the Discover mix",
+    "atLeastOne": "Keep at least one shelf.",
+    "shelves": {
+      "following": "From writers you follow",
+      "popular": "Popular",
+      "rising": "New and rising writers",
+      "new": "New stories",
+      "completed": "Completed",
+      "updated": "Recently updated",
+      "categories": "One shelf for each category"
+    }
+  },
+  "rateLimits": {
+    "intro": "How many times an hour an account may do each action. New accounts get tighter limits for their first hours (see \"An account counts as new for\" above). Comments and reports have their own limits above.",
+    "action": "Action",
+    "newAccount": "New account, an hour",
+    "olderAccount": "After that, an hour",
+    "save": "Save the rate limits",
+    "actions": {
+      "appeal": "Appeals",
+      "moderator_mail": "Messages to the moderators",
+      "picture_upload": "Picture uploads"
+    }
+  },
+  "categories": {
+    "intro": "The order readers see on the new story form and on Discover. A new category arrives in a release, with its name in both languages.",
+    "listLabel": "Categories in order",
+    "position": "{{position}} of {{total}}",
+    "moveUp": "Move {{name}} up",
+    "moveDown": "Move {{name}} down"
+  },
+  "names": {
+    "intro": "Nobody can take these as a username or pen name. Look-alikes such as \"adm1n\" are blocked too. Names the platform itself uses stay reserved.",
+    "listLabel": "Reserved names",
+    "system": "Platform name",
+    "addLabel": "Name to reserve",
+    "matchLabel": "Blocks it",
+    "add": "Reserve",
+    "remove": "Free {{name}}",
+    "rules": {
+      "anywhere": "Anywhere in a name",
+      "whole_word": "As a whole word",
+      "whole_name": "Only as the whole name"
+    }
+  },
+  "words": {
+    "intro": "Words a username or pen name may not contain, in each language.",
+    "language": "List",
+    "search": "Find a word",
+    "showing": "Showing {{shown}} of {{total}}.",
+    "empty": "No word on this list matches.",
+    "listLabel": "Words on the list",
+    "addLabel": "Word to add",
+    "add": "Add",
+    "remove": "Remove {{word}}",
+    "languages": {
+      "ro": "Română",
+      "en": "English"
+    }
+  },
+  "markets": {
+    "intro": "Romania opens first. Other countries open later, one by one, each after its legal check. A language opens only when moderators who read it are on the rota.",
+    "languagesHeading": "Languages",
+    "languagesNote": "Writers pick a story's language from the open ones; the others show as \"coming when we have moderators for it\". The interface stays in English and Română.",
+    "marketsHeading": "Markets",
+    "marketsNote": "A market opens only when its legal check is done and at least one of its languages is open. Only the owner opens a market. The market comes from the country of the connection, kept as a country code only, never the IP address.",
+    "statusLabel": "Status of {{name}}",
+    "legalLabel": "Legal check for {{name}}",
+    "statuses": {
+      "open": "Open",
+      "ready": "Ready to open",
+      "closed": "Closed"
+    },
+    "legalChecks": {
+      "not_started": "Not started",
+      "in_progress": "In progress",
+      "done": "Done"
+    },
+    "moderators_one": "{{count}} moderator reads it",
+    "moderators_other": "{{count}} moderators read it",
+    "noModerators": "No moderator reads it yet",
+    "interface": "Interface language",
+    "storiesOnly": "Stories only",
+    "marketLanguages": "Languages: {{list}}",
+    "minimumAge": "Open to people {{age}} and over",
+    "saveLegal": "Save the legal check",
+    "moderators_few": "{{count}} moderators read it"
+  }
+}

@@ -1,16 +1,24 @@
 /**
- * useStoryFormOptions: the choices the new story form offers: open languages and categories
- * (story S1-E3-01).
+ * useStoryFormOptions: the choices the new story form offers: languages (open or coming) and
+ * categories (story S1-E3-01).
  *
- * Who calls it: NewStoryPage. What it calls: api/stories.ts (open_story_languages() and the
- * categories table). Both change only by migration until S1-E11-05 and S1-E11-03, so one read
- * per visit is enough.
+ * Who calls it: NewStoryPage and StorySettingsPage. What it calls: api/stories.ts
+ * (story_language_choices() and the categories table). Staff change both on Staff › Settings
+ * (S1-E11-03, S1-E11-05), so they are read again after five minutes.
  */
 import { useQuery } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 
-import { fetchCategories, fetchOpenLanguages, type StoryCategory } from '../api/stories';
+import {
+  fetchCategories,
+  fetchStoryLanguages,
+  type StoryCategory,
+  type StoryLanguageChoice,
+} from '../api/stories';
+
+/** How long the choices stay fresh: staff rarely change them. */
+const choicesFreshMilliseconds = 5 * 60 * 1000;
 
 /**
  * Loads the languages and categories.
@@ -18,14 +26,14 @@ import { fetchCategories, fetchOpenLanguages, type StoryCategory } from '../api/
  * @returns languages, categories, whether both have loaded, and whether a read failed
  */
 export function useStoryFormOptions() {
-  const languages = useQuery<string[]>({
-    queryKey: ['open-story-languages'],
-    staleTime: Infinity,
-    queryFn: async () => fetchOpenLanguages(await requireClient()),
+  const languages = useQuery<StoryLanguageChoice[]>({
+    queryKey: ['story-languages'],
+    staleTime: choicesFreshMilliseconds,
+    queryFn: async () => fetchStoryLanguages(await requireClient()),
   });
   const categories = useQuery<StoryCategory[]>({
     queryKey: ['story-categories'],
-    staleTime: Infinity,
+    staleTime: choicesFreshMilliseconds,
     queryFn: async () => fetchCategories(await requireClient()),
   });
   return {
