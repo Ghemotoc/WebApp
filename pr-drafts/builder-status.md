@@ -15,6 +15,14 @@ Newest state at the top. Read this first on "continue".
 - e2e tip: specs that sign in as a persona and change its language race each other in parallel runs; accessibility loops use a persona no other spec touches (pending_check, failed_check), or a visitor. Specs that need published stories make their own instead of publishing the shared seed stories. A second report by the same person on the same item within a day returns the first, so specs that report twice use different reporters.
 - Known on main: the reader's 2-second cold-load test runs about 2.3 s on this machine.
 
+## Robert's added task (30 Oct 2026, 10:43): tags with staff approval
+
+Built as part (e) of CMS-1, after (d). Robert: "There should be always some option to add tags. The tags are separated by comma. Please add some recommended tags in advance. Users can add additional tags, however, they need to be approved by a member of staff."
+- The comma tag box already exists on New story and Story settings (S1-E3-01, `TagInput`); keep it everywhere a story's tags are edited.
+- Seed recommended tags (about 40, ro and en names) and show them as tappable suggestions under the box.
+- A tag that isn't approved yet stays on the writer's story but is hidden from readers, Discover and search until staff approve it; the writer sees "waiting for approval".
+- Staff approve, rename or reject new tags from a queue (owner, admin, moderator); every decision is in the audit log. A rejected tag drops off the stories that used it and the writer is told.
+
 ## Merged bundles
 
 | Bundle | PR | Stories |
