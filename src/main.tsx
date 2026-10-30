@@ -2,7 +2,8 @@
  * Where the app starts in the browser (story S1-E1-01).
  *
  * Who calls it: index.html loads this file with <script type="module" src="/src/main.tsx">.
- * What it calls next: the translations (src/lib/i18n.ts), the shared providers
+ * What it calls next: the translations (src/lib/i18n.ts) with the admins' overrides
+ * (src/lib/interface-text-overrides.ts), the shared providers
  * (src/app/AppProviders.tsx) and the router (src/app/router.tsx), which picks the page for the
  * current address. See docs/code-tour.md for the whole journey.
  */
@@ -14,6 +15,7 @@ import { AppProviders } from '@/app/AppProviders';
 import { appRoutes } from '@/app/router';
 import { installGlobalErrorHandlers } from '@/features/errors/lib/installGlobalErrorHandlers';
 import { createI18n, syncDocumentLanguage } from '@/lib/i18n';
+import { installInterfaceTextOverrides } from '@/lib/interface-text-overrides';
 import { readDeviceLanguage } from '@/lib/language-preference';
 import '@/styles/index.css';
 
@@ -33,6 +35,9 @@ installGlobalErrorHandlers();
 // A signed-in account's language is applied a moment later by useAccountLanguage in AppLayout.
 const i18n = createI18n(readDeviceLanguage());
 syncDocumentLanguage(i18n);
+// Then, in the background, lay the admins' published text over the files (S1-E11-18). The first
+// screen never waits for it, and if the read fails the file text stays.
+installInterfaceTextOverrides(i18n);
 
 // Step 4: build the router from the route list; it reads the address bar to pick the page.
 const router = createBrowserRouter(appRoutes);

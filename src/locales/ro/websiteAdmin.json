@@ -15,7 +15,9 @@
     "label": "Secțiunile site-ului",
     "home": "Pagina principală",
     "notices": "Anunțuri",
-    "help": "Ajutor și întrebări"
+    "help": "Ajutor și întrebări",
+    "interfaceText": "Textele aplicației",
+    "emails": "Șabloane de email"
   },
   "picker": {
     "market": "Piața",
@@ -38,7 +40,9 @@
     "not_in_headline": "Alege un cuvânt din titlu.",
     "invalid": "Nu se poate salva așa.",
     "bad_address": "Folosește doar litere mici, cifre și cratime, cel mult 60.",
-    "before_show_from": "Alege o zi după cea în care apare."
+    "before_show_from": "Alege o zi după cea în care apare.",
+    "placeholders_changed": "Păstrează aceleași variabile (bulinele din previzualizare) ca textul implicit.",
+    "brand_name": "Nu scrie numele produsului sau al companiei: folosește aceeași variabilă ca textul implicit, ca o redenumire să-l schimbe peste tot."
   },
   "failures": {
     "not_allowed": "Doar proprietarul și administratorii pot edita site-ul.",
@@ -49,13 +53,15 @@
     "unknown_kind": "Acest tip de conținut nu există.",
     "unknown_market": "Piața nu există.",
     "unknown_language": "Limba nu e una dintre limbile acestei piețe.",
-    "home_page_stays": "Pagina principală poate fi înlocuită, dar nu scoasă."
+    "home_page_stays": "Pagina principală poate fi înlocuită, dar nu scoasă.",
+    "bad_key": "Aceasta nu e o cheie de text."
   },
   "outcomes": {
     "save": "Ciorna e salvată. Pe site nu s-a schimbat nimic.",
     "publish": "Publicat. Apare pe {{date}}.",
     "restore": "Versiunea mai veche e din nou ciornă. Public-o ca să apară pe site.",
-    "remove": "Scos. Nu mai apare pe site."
+    "remove": "Scos. Nu mai apare pe site.",
+    "reset": "De azi apare din nou textul implicit."
   },
   "history": {
     "heading": "Versiuni",
@@ -164,5 +170,20 @@
   "legal": {
     "label": "Text cu greutate juridică (vârstă, acord, confidențialitate, raportări, mesaje sau bani)",
     "reminder": "Textul trebuie să spună același lucru ca documentele juridice. Dacă nu se potrivesc, documentele juridice au întâietate, iar pagina se corectează în aceeași zi."
+  },
+  "emails": {
+    "intro": "Fiecare email trimis de platformă, în română și engleză. Variabilele (bulinele din previzualizare, de exemplu linkul sau codul) sunt blocate: le poți muta în text, dar nu le poți șterge sau schimba, altfel emailul nu poate fi trimis. Modificările ajung în emailuri după ce expeditorul de emailuri e pornit pentru acest site."
+  },
+  "interfaceText": {
+    "default": "Textul implicit (din fișierul de limbă)",
+    "textIn": "Textul în {{language}}",
+    "preview": "Previzualizare",
+    "reset": "Revino la textul implicit",
+    "showsDefault": "Apare textul implicit.",
+    "back": "Înapoi la listă",
+    "search": "Caută un text",
+    "searchHint": "Caută după cuvintele de pe ecran, în oricare limbă, sau după cheie.",
+    "count": "Se văd {{shown}} din {{total}}",
+    "more": "Arată încă 50"
   }
 }

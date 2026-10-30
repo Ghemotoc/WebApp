@@ -1153,6 +1153,16 @@ Website pages get their text only from the CMS, never from the locale files (dec
 - **One table:** `cms_versions` holds every version of every kind (home page, notice, help page, question): one draft per entry, published versions with their "show from" date, and removals. Version 1 (the 16 Oct 2026 copy) is seeded by `…_s1_e11_06_website_content_v1.sql` with no `user_id`.
 - **Tests:** `supabase/tests/database/172-website-cms.test.sql`, `e2e/website-cms.spec.ts` and the unit tests in `src/features/website/lib/`.
 
+## Interface text and email templates (S1-E11-18, S1-E11-19; CMS-1c)
+
+Admins change the app's own words, and the Auth emails', from Staff › Website without a release. The locale files stay the default and what `npm run i18n:check` checks; overrides live in `interface_text_overrides`, one version per key and BCP 47 locale.
+
+- **Where it starts (the app):** `src/main.tsx` calls `installInterfaceTextOverrides()` (`src/lib/interface-text-overrides.ts`) right after the translations start. In the background it reads `published_interface_text(locale)` once per language and writes each override over the file text; a namespace that loads later gets its overrides when it is added. If the read fails, the file text stays.
+- **Where it starts (staff):** `/staff/website/interface-text` and `/staff/website/emails` (`src/features/interface-text/`). The key list comes from the bundled locale files (`lib/localeCatalogue.ts`), so the admin site can't invent a key.
+- **How one click travels:** Publish → `useInterfaceTextEditor().act()` → `admin_save_interface_text()` (checks the role, refuses an empty text, changed placeholders or the literal product name, fixes ş and ţ) → `admin_publish_interface_text()` (logs `interface_text.published` with the before and after text) → every visitor's app shows it on its next load.
+- **Emails:** `functions/api/send-email.ts` → `server/send-email.ts` is the Supabase Auth Send Email hook: it checks the Standard Webhooks signature, picks the email and language, lays the `email:` overrides over `email.json` and sends through Brevo. It is switched on by hand (GO-LIVE); until then Auth uses `supabase/templates/`.
+- **Tests:** `supabase/tests/database/173-interface-text.test.sql`, `e2e/interface-text.spec.ts`, `server/send-email.test.ts` and the unit tests next to each file.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.

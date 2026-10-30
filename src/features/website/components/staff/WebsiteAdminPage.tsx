@@ -4,8 +4,9 @@
  * architecture 1.8.6; boards AdminSettings and AdminPages).
  *
  * Tabs (links, so each has its own address): Home page (/staff/website), Notice banners
- * (/staff/website/notices) and Help and questions (/staff/website/help). Each starts with the
- * market and language picker. Plain components, no doodles (staff screens). Staff without the
+ * (/staff/website/notices), Help and questions (/staff/website/help), Interface text
+ * (/staff/website/interface-text, S1-E11-18) and Email templates (/staff/website/emails,
+ * S1-E11-19). The website tabs start with the market and language picker. Plain components, no doodles (staff screens). Staff without the
  * website area see why; the database refuses their changes anyway (decided 17 Oct 2026, 19:19).
  * Who shows it: the router, inside StaffLayout. What it calls: the three editors.
  */
@@ -19,6 +20,8 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyStaffAccess } from '@/features/staff/hooks/useMyStaffAccess';
 import { cn } from '@/lib/utils';
 
+import { InterfaceTextTab } from '@/features/interface-text/components/InterfaceTextTab';
+
 import { registerWebsiteAdminTranslations } from '../../registerWebsiteAdminTranslations';
 
 import { HelpEditor } from './HelpEditor';
@@ -31,7 +34,13 @@ const tabs = [
   { area: undefined, href: '/staff/website', labelKey: 'tabs.home' },
   { area: 'notices', href: '/staff/website/notices', labelKey: 'tabs.notices' },
   { area: 'help', href: '/staff/website/help', labelKey: 'tabs.help' },
+  // S1-E11-18 and S1-E11-19: the app's own text, one version per language, not per market.
+  { area: 'interface-text', href: '/staff/website/interface-text', labelKey: 'tabs.interfaceText' },
+  { area: 'emails', href: '/staff/website/emails', labelKey: 'tabs.emails' },
 ] as const;
+
+/** The email templates are the keys of the email namespace (S1-E11-19). */
+const emailNamespaces = ['email'];
 
 /**
  * The tab links.
@@ -63,11 +72,31 @@ function WebsiteTabs({ current }: { current: string | undefined }) {
 }
 
 /**
- * The picker and the editor for the open tab.
+ * The editor for the open tab.
  *
  * @returns the editing area
  */
 function WebsiteEditors({ area }: { area: string | undefined }) {
+  const { t } = useTranslation('websiteAdmin');
+  // The app's own text has no market: one version per language (decided 17 Oct 2026, 19:19).
+  if (area === 'interface-text') return <InterfaceTextTab />;
+  if (area === 'emails') {
+    return (
+      <div className="flex flex-col gap-4">
+        <p className="m-0 max-w-[760px] text-body">{t('emails.intro')}</p>
+        <InterfaceTextTab namespaces={emailNamespaces} />
+      </div>
+    );
+  }
+  return <MarketEditors area={area} />;
+}
+
+/**
+ * The market and language picker and the editor for a website tab.
+ *
+ * @returns the editing area
+ */
+function MarketEditors({ area }: { area: string | undefined }) {
   const [place, setPlace] = useState({
     marketCode: 'RO',
     language: 'ro',

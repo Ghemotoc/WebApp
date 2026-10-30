@@ -15,7 +15,9 @@
     "label": "Website areas",
     "home": "Home page",
     "notices": "Notice banners",
-    "help": "Help and questions"
+    "help": "Help and questions",
+    "interfaceText": "Interface text",
+    "emails": "Email templates"
   },
   "picker": {
     "market": "Market",
@@ -38,7 +40,9 @@
     "not_in_headline": "Pick a word that is in the headline.",
     "invalid": "This can't be saved like this.",
     "bad_address": "Use lower-case letters, numbers and hyphens only, up to 60.",
-    "before_show_from": "Pick a day after it goes live."
+    "before_show_from": "Pick a day after it goes live.",
+    "placeholders_changed": "Keep the same placeholders (the chips in the preview) as the default text.",
+    "brand_name": "Don’t type the product or company name: use the same placeholder as the default text, so a rename changes it everywhere."
   },
   "failures": {
     "not_allowed": "Only the owner and admins can edit the website.",
@@ -49,13 +53,15 @@
     "unknown_kind": "This kind of content doesn't exist.",
     "unknown_market": "That market doesn't exist.",
     "unknown_language": "That language isn't one of this market's languages.",
-    "home_page_stays": "The home page can be replaced but not removed."
+    "home_page_stays": "The home page can be replaced but not removed.",
+    "bad_key": "That isn’t a text key."
   },
   "outcomes": {
-    "save": "Draft saved. Nothing on the website has changed.",
+    "save": "Draft saved. Nothing has changed for visitors yet.",
     "publish": "Published. It goes live on {{date}}.",
     "restore": "The earlier version is back as a draft. Publish it to put it live.",
-    "remove": "Taken down. It no longer shows on the website."
+    "remove": "Taken down. It no longer shows on the website.",
+    "reset": "Back to the default text from today."
   },
   "history": {
     "heading": "Versions",
@@ -164,5 +170,20 @@
   "legal": {
     "label": "Legal wording (age, consent, privacy, reporting, messaging or money)",
     "reminder": "This must say the same as the legal documents. If they disagree, the legal documents win and this page is fixed the same day."
+  },
+  "emails": {
+    "intro": "Every email the platform sends, in Romanian and English. Placeholders (shown as chips in the preview, such as the link or the code) are locked: you can move them in the text but not remove or change them, or the email can’t be sent. Edits reach the emails once the email sender is switched on for this site."
+  },
+  "interfaceText": {
+    "default": "Default (from the language file)",
+    "textIn": "Text in {{language}}",
+    "preview": "Preview",
+    "reset": "Reset to default",
+    "showsDefault": "The default text shows.",
+    "back": "Back to the list",
+    "search": "Find a text",
+    "searchHint": "Search by the words on screen, in either language, or by key.",
+    "count": "Showing {{shown}} of {{total}}",
+    "more": "Show 50 more"
   }
 }
