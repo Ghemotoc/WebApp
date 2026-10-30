@@ -32,6 +32,8 @@ export const footerNavigation: NavigationItem[] = [
   { href: '/legal/guidelines', labelKey: 'nav.guidelines' },
   { href: '/legal/terms', labelKey: 'nav.terms' },
   { href: '/legal/privacy', labelKey: 'nav.privacy' },
+  // Help: the CMS help pages and questions (S1-E11-12).
+  { href: '/help', labelKey: 'nav.help' },
   // Contact us, the form (S1-E14-04), before the legal contact page.
   { href: '/contact', labelKey: 'nav.contactUs' },
   { href: '/legal/contact', labelKey: 'nav.contact' },

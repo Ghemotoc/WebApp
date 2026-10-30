@@ -16,7 +16,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
-import { brand } from '../src/config/brand';
 import { THEME_STORAGE_KEY } from '../src/lib/theme';
 
 import {
@@ -47,8 +46,8 @@ const paperColour = { light: 'rgb(250, 248, 245)', night: 'rgb(30, 15, 36)' };
 
 /** The home heading in each language. */
 const homeHeading = {
-  ro: `Bun venit la ${brand.productName}`,
-  en: `Welcome to ${brand.productName}`,
+  ro: 'Scrie povești. Fii citit.',
+  en: 'Write stories. Get read.',
 };
 
 /** Waits until every entrance animation has finished, so checks see the final colours. */

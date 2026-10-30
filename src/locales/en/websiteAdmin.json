@@ -1,0 +1,168 @@
+{
+  "documentTitle": "Website · Staff",
+  "eyebrow": "Staff · website",
+  "heading": "Website",
+  "intro": "Edit the website's home page, notice banners, help pages and questions for each market and language. Pick the market and language first. A version goes live at 00:00 Romanian time on its show-from date, and every publish is in the audit log.",
+  "auditLink": "See every website change in the audit log",
+  "loading": "Loading…",
+  "counter": "{{used}} of {{limit}} characters",
+  "markdownHint": "Use **bold**, *italics*, ## headings, lists and [links](/help). Links to our own pages start with /.",
+  "edit": "Edit",
+  "editLabel": "Edit {{name}}",
+  "remove": "Remove",
+  "removeLabel": "Remove {{name}}",
+  "tabs": {
+    "label": "Website areas",
+    "home": "Home page",
+    "notices": "Notice banners",
+    "help": "Help and questions"
+  },
+  "picker": {
+    "market": "Market",
+    "language": "Language"
+  },
+  "languages": {
+    "ro": "Română",
+    "en": "English"
+  },
+  "showFrom": "Show from",
+  "showFromHint": "Today goes live within a minute. A later date goes live at 00:00 Romanian time that day, and the current version stays up until then. Save draft changes nothing on the website.",
+  "saveDraft": "Save draft",
+  "publish": "Publish",
+  "schedule": "Schedule",
+  "fixFields": "Fix these fields before publishing",
+  "problems": {
+    "empty": "Fill this in.",
+    "too_long": "This is over the limit.",
+    "broken_link": "This link goes nowhere: {{address}}",
+    "not_in_headline": "Pick a word that is in the headline.",
+    "invalid": "This can't be saved like this.",
+    "bad_address": "Use lower-case letters, numbers and hyphens only, up to 60.",
+    "before_show_from": "Pick a day after it goes live."
+  },
+  "failures": {
+    "not_allowed": "Only the owner and admins can edit the website.",
+    "invalid": "This can't be saved like this.",
+    "not_found": "That version no longer exists. Reload the page.",
+    "unreachable": "We couldn't reach the database. Check your connection and try again.",
+    "bad_address": "Use lower-case letters, numbers and hyphens only, up to 60.",
+    "unknown_kind": "This kind of content doesn't exist.",
+    "unknown_market": "That market doesn't exist.",
+    "unknown_language": "That language isn't one of this market's languages.",
+    "home_page_stays": "The home page can be replaced but not removed."
+  },
+  "outcomes": {
+    "save": "Draft saved. Nothing on the website has changed.",
+    "publish": "Published. It goes live on {{date}}.",
+    "restore": "The earlier version is back as a draft. Publish it to put it live.",
+    "remove": "Taken down. It no longer shows on the website."
+  },
+  "history": {
+    "heading": "Versions",
+    "live": "Live now",
+    "scheduled": "Scheduled",
+    "nothingLive": "Nothing is live.",
+    "none": "None",
+    "since": "Since {{date}}",
+    "goesLive": "Goes live on {{date}}",
+    "earlier": "Shown from {{date}}, published {{published}}",
+    "restore": "Restore",
+    "restoreLabel": "Restore the version shown from {{date}}"
+  },
+  "states": {
+    "live": "Live",
+    "scheduled": "Scheduled",
+    "draft": "Draft",
+    "ended": "Ended"
+  },
+  "home": {
+    "preview": "Preview",
+    "heroLegend": "Hero",
+    "sectionsLegend": "Why write here, safety and questions",
+    "fields": {
+      "eyebrow": "Line above the headline",
+      "headlineFirst": "Headline, first line",
+      "headlineSecond": "Headline, second line",
+      "underlinedWord": "Word with the gold underline",
+      "lede": "Line under the headline",
+      "primaryButton": "First button",
+      "secondaryButton": "Second button",
+      "points": "Short point {{number}}",
+      "whyHeading": "Why write here: heading",
+      "whyCards": {
+        "title": "Card {{number}}: title",
+        "body": "Card {{number}}: text"
+      },
+      "safetyHeading": "Safety: heading",
+      "safetyLines": "Safety line {{number}}",
+      "questionsHeading": "Questions: heading"
+    }
+  },
+  "notices": {
+    "new": "New notice",
+    "none": "No notices in this market yet.",
+    "back": "Back to all notices",
+    "end": "End now",
+    "endLabel": "End the notice “{{text}}” now",
+    "editLabel": "Edit the notice “{{text}}”",
+    "type": "Type",
+    "types": {
+      "news": "News",
+      "contest": "Contest",
+      "important": "Important"
+    },
+    "showOn": "Shows on",
+    "places": {
+      "all": "Every page",
+      "home": "The home page only"
+    },
+    "textIn": "Text in {{language}}",
+    "link": "Link (optional)",
+    "linkHint": "One of our own pages, starting with /, for example /discover.",
+    "showUntil": "Show until (optional)",
+    "showUntilHint": "It comes down at 00:00 Romanian time that day.",
+    "fields": {
+      "texts": {
+        "ro": "Text in Română",
+        "en": "Text in English"
+      },
+      "link": "Link",
+      "noticeType": "Type",
+      "showOn": "Shows on",
+      "showUntil": "Show until"
+    }
+  },
+  "help": {
+    "heading": "Help pages",
+    "new": "New help page",
+    "back": "Back to help and questions",
+    "preview": "Preview",
+    "addressHint": "Lower-case letters, numbers and hyphens. It can't change later.",
+    "fields": {
+      "address": "Web address (/help/…)",
+      "title": "Title",
+      "section": "Section",
+      "body": "Page"
+    }
+  },
+  "questions": {
+    "heading": "Questions",
+    "new": "New question",
+    "places": {
+      "home": "The home page",
+      "help": "The help centre",
+      "both": "Both"
+    },
+    "fields": {
+      "key": "Key",
+      "question": "Question",
+      "answer": "Answer",
+      "position": "Order",
+      "showOn": "Shows on"
+    }
+  },
+  "legal": {
+    "label": "Legal wording (age, consent, privacy, reporting, messaging or money)",
+    "reminder": "This must say the same as the legal documents. If they disagree, the legal documents win and this page is fixed the same day."
+  }
+}

@@ -34,7 +34,8 @@
     "notificationsUnread_one": "Notifications, {{count}} new",
     "notificationsUnread_other": "Notifications, {{count}} new",
     "notificationsUnread_few": "Notifications, {{count}} new",
-    "accessibility": "Accessibility"
+    "accessibility": "Accessibility",
+    "help": "Help"
   },
   "theme": {
     "label": "Theme",
@@ -131,5 +132,27 @@
     "avatarLabel": "Upload a profile picture",
     "avatarHint": "JPEG, PNG or WebP, up to 2 MB. Others see it once it passes our picture check.",
     "avatarHeading": "Profile picture"
+  },
+  "website": {
+    "whyEyebrow": "Why write here",
+    "trending": "Trending this week",
+    "trendingEyebrow": "Trending",
+    "completed": "Completed stories",
+    "completedEyebrow": "Finished",
+    "readFailed": "We couldn't load this page's text. Check your connection and try again.",
+    "noticeLabel": "Notice",
+    "noticeMore": "Find out more",
+    "noticeClose": "Close this notice",
+    "help": {
+      "documentTitle": "Help · {{productName}}",
+      "eyebrow": "Help",
+      "heading": "How can we help?",
+      "intro": "Short guides to writing, reading and staying safe here, and answers to the questions people ask most.",
+      "questions": "Questions",
+      "back": "All help pages",
+      "pageTitle": "{{title}} · Help",
+      "notFoundHeading": "We can't find that help page",
+      "notFound": "It may have moved or been taken down. All help pages are on the Help page."
+    }
   }
 }

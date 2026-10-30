@@ -71,7 +71,8 @@
     "appeals": "Appeals",
     "moderatorMail": "Moderator mail",
     "safetyContacts": "Safety contacts",
-    "settings": "Settings"
+    "settings": "Settings",
+    "website": "Website"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -103,7 +104,8 @@
       "appeals": "Appeals against moderation decisions, decided by a different moderator where possible.",
       "safety_contacts": "The helplines and emergency numbers shown on reporting screens, and their monthly check.",
       "classics": "Add and check public-domain classics for the official account.",
-      "settings": "Feature flags, values and limits, the Discover mix, categories, reserved names, and markets and languages."
+      "settings": "Feature flags, values and limits, the Discover mix, categories, reserved names, and markets and languages.",
+      "website_cms": "The home page, notice banners, help pages and questions, for each market and language."
     }
   },
   "auditLog": {

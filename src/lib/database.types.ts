@@ -722,6 +722,82 @@ export type Database = {
         };
         Relationships: [];
       };
+      cms_versions: {
+        Row: {
+          content: NonNullable<Json>;
+          content_kind: string;
+          created_at: string;
+          entry_key: string;
+          id: string;
+          is_removal: boolean;
+          language_code: string | null;
+          market_code: string;
+          published_at: string | null;
+          show_from: string | null;
+          show_until: string | null;
+          status: string;
+          updated_at: string;
+          user_id: string | null;
+          cms_content_problems: string[] | null;
+          cms_live_content_of: Json | null;
+        };
+        ComputedFields: 'cms_content_problems' | 'cms_live_content_of';
+        Insert: {
+          content?: NonNullable<Json>;
+          content_kind: string;
+          created_at?: string;
+          entry_key: string;
+          id?: string;
+          is_removal?: boolean;
+          language_code?: string | null;
+          market_code: string;
+          published_at?: string | null;
+          show_from?: string | null;
+          show_until?: string | null;
+          status?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          content?: NonNullable<Json>;
+          content_kind?: string;
+          created_at?: string;
+          entry_key?: string;
+          id?: string;
+          is_removal?: boolean;
+          language_code?: string | null;
+          market_code?: string;
+          published_at?: string | null;
+          show_from?: string | null;
+          show_until?: string | null;
+          status?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'cms_versions_language_code_fkey';
+            columns: ['language_code'];
+            isOneToOne: false;
+            referencedRelation: 'languages';
+            referencedColumns: ['code'];
+          },
+          {
+            foreignKeyName: 'cms_versions_market_code_fkey';
+            columns: ['market_code'];
+            isOneToOne: false;
+            referencedRelation: 'markets';
+            referencedColumns: ['country_code'];
+          },
+          {
+            foreignKeyName: 'cms_versions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       comment_downvotes: {
         Row: {
           comment_id: string;
@@ -3588,6 +3664,7 @@ export type Database = {
         Returns: string;
       };
       admin_publish_classic: { Args: { target_story_id: string }; Returns: Json };
+      admin_publish_cms_version: { Args: { version_id: string }; Returns: string };
       admin_raise_story_rating: {
         Args: {
           new_rating: Database['public']['Enums']['story_rating'];
@@ -3597,6 +3674,15 @@ export type Database = {
         Returns: string;
       };
       admin_release_case: { Args: { target_case_id: string }; Returns: boolean };
+      admin_remove_cms_entry: {
+        Args: {
+          content_kind: string;
+          entry_key: string;
+          language_code: string;
+          market_code: string;
+        };
+        Returns: undefined;
+      };
       admin_remove_name_word: { Args: { target_word_id: string }; Returns: boolean };
       admin_remove_on_call_shift: {
         Args: { reason_given: string; shift_id: string };
@@ -3627,6 +3713,7 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
       };
+      admin_restore_cms_version: { Args: { version_id: string }; Returns: string };
       admin_restore_item: {
         Args: { reason_given: string; target_item_id: string };
         Returns: boolean;
@@ -3658,6 +3745,18 @@ export type Database = {
         }[];
       };
       admin_save_classic_work: { Args: { details: Json; target_story_id?: string }; Returns: Json };
+      admin_save_cms_draft: {
+        Args: {
+          content_kind: string;
+          entry_key: string;
+          language_code: string;
+          market_code: string;
+          new_content: Json;
+          new_show_from?: string;
+          new_show_until?: string;
+        };
+        Returns: string;
+      };
       admin_save_safety_contact: { Args: { contact: Json }; Returns: string };
       admin_search_audit_log: {
         Args: {
@@ -3962,6 +4061,67 @@ export type Database = {
       clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
       close_finished_safety_checks: { Args: { target_country: string }; Returns: undefined };
+      cms_content_problems: {
+        Args: {
+          version_row: Omit<
+            Database['public']['Tables']['cms_versions']['Row'],
+            Database['public']['Tables']['cms_versions']['ComputedFields']
+          >;
+        };
+        Returns: string[];
+      };
+      cms_entry_problem: {
+        Args: {
+          wanted_key: string;
+          wanted_kind: string;
+          wanted_language: string;
+          wanted_market: string;
+        };
+        Returns: string;
+      };
+      cms_home_page_problems: { Args: { page: Json }; Returns: string[] };
+      cms_link_problems: {
+        Args: { field_name: string; markdown: string; market: string };
+        Returns: string[];
+      };
+      cms_live_content_of: {
+        Args: {
+          version_row: Omit<
+            Database['public']['Tables']['cms_versions']['Row'],
+            Database['public']['Tables']['cms_versions']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      cms_live_versions: {
+        Args: { wanted_kind: string };
+        Returns: {
+          content: NonNullable<Json>;
+          content_kind: string;
+          created_at: string;
+          entry_key: string;
+          id: string;
+          is_removal: boolean;
+          language_code: string | null;
+          market_code: string;
+          published_at: string | null;
+          show_from: string | null;
+          show_until: string | null;
+          status: string;
+          updated_at: string;
+          user_id: string | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'cms_versions';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      cms_text_problem: {
+        Args: { field_name: string; field_value: string; longest: number };
+        Returns: string;
+      };
       comment_is_shown_to_caller: {
         Args: {
           target: Omit<
@@ -4755,9 +4915,11 @@ export type Database = {
       };
       require_safety_contacts_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_settings_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_website_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
       return_rate_on: { Args: { for_day: string }; Returns: number };
+      romania_today: { Args: Record<PropertyKey, never>; Returns: string };
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       safety_contact_values: {
@@ -4909,6 +5071,17 @@ export type Database = {
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
+      website_content: {
+        Args: { visitor_country?: string; wanted_kind: string; wanted_language?: string };
+        Returns: {
+          content: Json;
+          entry_key: string;
+          language_code: string;
+          market_code: string;
+          show_from: string;
+          show_until: string;
+        }[];
+      };
       word_total: { Args: { any_text: string }; Returns: number };
       writer_follow_state: { Args: { wanted_handle: string }; Returns: Json };
       writers_published_by_market: {

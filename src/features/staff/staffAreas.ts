@@ -82,6 +82,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.roles',
     descriptionKey: 'home.areas.roles',
   },
+  // The website CMS: home page, notice banners, help and questions (S1-E11-06, 10, 12), owner
+  // and admin only (decided 17 Oct 2026, 19:19); the menu item is "Website" (architecture 1.8.2).
+  {
+    area: 'website_cms',
+    href: '/staff/website',
+    labelKey: 'nav.website',
+    descriptionKey: 'home.areas.website_cms',
+  },
   // Content settings, markets and languages (S1-E11-03, S1-E11-05), after the areas staff use
   // every day and before the numbers (architecture 1.8.2).
   {

@@ -2,7 +2,8 @@
  * Smoke test of the home page in a real browser, with axe accessibility checks (story S1-E1-01).
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (the "e2e" job).
- * What it proves: the built app opens in Romanian with the product name from the brand config, and
+ * What it proves: the built app opens in Romanian on the public home page, whose headline comes from
+ * the website CMS (S1-E5-08, S1-E11-06; seeded version 1), with the product name in the tab, and
  * axe finds no serious or critical WCAG 2.2 AA issue at the three widths every screen is checked at
  * (390, 768 and 1440 px; CLAUDE.md rule 21).
  */
@@ -18,15 +19,13 @@ const screenSizes = [
   { name: 'desktop', width: 1440, height: 900 },
 ];
 
-test('the home page opens in Romanian and shows the product name from the brand config', async ({
+test('the home page opens in Romanian with the CMS headline and the product name in the tab', async ({
   page,
 }) => {
   await page.goto('/');
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'ro');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    `Bun venit la ${brand.productName}`,
-  );
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Scrie povești. Fii citit.');
   await expect(page).toHaveTitle(brand.productName);
 });
 
