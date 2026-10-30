@@ -50,13 +50,7 @@ export interface CommentsPage {
 
 /** Why posting or deleting failed, in words the screen can explain. */
 export type CommentFailure =
-  | 'read_only'
-  | 'too_many'
-  | 'too_many_links'
-  | 'comments_off'
-  | 'refused'
-  | 'gone'
-  | 'unreachable';
+  'read_only' | 'too_many' | 'too_many_links' | 'comments_off' | 'refused' | 'gone' | 'unreachable';
 
 /** The error a refused comment throws; waitMinutes is set for too_many. */
 export class CommentError extends Error {

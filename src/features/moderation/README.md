@@ -1,6 +1,6 @@
 # Moderation
 
-The report queue and the case page of the admin site: one case per reported item, sorted by tier and deadline, with the reports grouped on it and the moderator's decision. Started by S1-E10-03a (part a: tiers, grouping, deadlines, the decision); claiming, timers and the side panel are S1-E10-03b. Staff screens: plain components, no doodles (Definition of Done).
+The report queue and the case page of the admin site: one case per reported item, sorted by tier and deadline, with the reports grouped on it and the moderator's decision. Started by S1-E10-03a (part a: tiers, grouping, deadlines, the decision); S1-E10-03b added claiming, the reason and claimed filters and the search. Staff screens: plain components, no doodles (Definition of Done).
 
 - `components/ModerationQueuePage.tsx` (`/staff/moderation`): `TierSummary` (the four tier cards with their open counts), `QueueFilters` (tier, status, reporter under 18, how the case was found) and `CaseList` → `CaseRow` (reference, what was reported, `CaseSignals`, the account by username and age group, `TierPill` and `DeadlineLabel`).
 - `components/CasePage.tsx` (`/staff/moderation/cases/:caseId`): the header, `CaseReports` (every report with the reporter's note), `CaseDecisions` and `DecisionForm` (the six actions as radio chips, the required note, Send decision).
@@ -10,6 +10,8 @@ The report queue and the case page of the admin site: one case per reported item
 - `api/caseStatements.ts`, `hooks/useCaseStatements.ts` (S1-E10-04): `CaseStatements` shows the statement of reasons as the person reads it (the `StatementCard` from `src/features/statements/`); `DecisionForm` asks for "What we tell the person"; after a decision `sendDueEmails()` emails anyone who used the public form, and `DecisionEmailsPanel` on the queue sends any that failed.
 - `api/removalOrders.ts`, `hooks/useRemovalOrder.ts`, `hooks/useOnCallRota.ts` (S1-E10-09): `RemovalOrderPanel` (the order's timeline and Emergency disable), Acknowledge on the queue's order alerts (`PublicNoticesPanel`) and `/staff/on-call` (`OnCallRotaPage`, `OnCallShiftList`, `AddShiftForm`).
 - `api/safeguarding.ts`, `hooks/useSafeguarding.ts` (S1-E10-10): `SafeguardingPanel` (the steps, `SupportContactsList`, the evidence pack and `ReferralLog`) and `MoveToSafeguarding`.
+- `api/caseClaims.ts`, `hooks/useCaseClaim.ts` (S1-E10-03b, S1-E10-05): `ClaimControl` on the case page (claim and release; a claim says who is on it and never locks others out) and `CasePicturePanel` (an uploaded picture's check, blurred until "Show the picture"; a known abuse match is never shown).
+- `api/appeals.ts`, `hooks/useAppeals.ts` (S1-E10-07): `/staff/appeals` (`AppealsPage`, `AppealCard`, `AppealDecisionForm`): keep or change a decision, with a note for the team and the words the person reads. A moderator never decides an appeal against their own decision.
 - `lib/deadline.ts`: "5 h 50 min left", "6 d 23 h left", "2 h 15 min overdue" as numbers; the label turns them into words.
 - `registerModerationTranslations.ts`: the `moderation` text namespace, added when a page loads.
 - The tiers (decided 23 Oct 2026, Q5) and the database side: `supabase/README.md`, "The moderation queue".

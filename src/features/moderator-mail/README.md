@@ -1,0 +1,9 @@
+# Moderator mail
+
+Members write to the moderation team from the app, and staff answer from one shared inbox. Built by S1-E10-11 (SAFE-4); DSA art. 12 asks for a single point of contact for users. Messages go to the whole team, never to one moderator, and the member only ever sees "The moderation team".
+
+- Member side: `/moderator-mail` (`MyMailPage`, their threads), `/moderator-mail/new` (`NewMailPage`; `?decision=S-123456` links a decision of their own, which the statement card's "Ask the moderators a question" fills in) and `/moderator-mail/:reference` (`MailThreadPage` with `MailMessages` and `MailReplyForm`).
+- Staff side: `/staff/moderator-mail` (`StaffMailInboxPage`, filters by status and assignee) and `/staff/moderator-mail/:reference` (`StaffMailThreadPage`: assign, change the status, reply as the team or add an internal note only staff see).
+- `api/moderatorMail.ts` (member: `send_moderator_mail()`, `reply_moderator_mail()`, `my_moderator_mail()`, `my_moderator_mail_thread()`) and `api/staffModeratorMail.ts` (staff: `admin_moderator_mail_inbox()`, `admin_moderator_mail_thread()`, `admin_assign_mail()`, `admin_reply_mail()`, `admin_set_mail_status()`); `hooks/useMyMail.ts` and `hooks/useStaffMail.ts`.
+- Sending is rate-limited per hour (S1-E10-12); the form says how many minutes to wait. A reply from the team notifies the member (`moderator_mail_reply`).
+- Text: `src/locales/{ro,en}/mail.json`, loaded with the pages (`registerMailTranslations.ts`). The database side: `…_s1_e10_11_moderator_mail.sql`.

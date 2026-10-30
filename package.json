@@ -22,6 +22,7 @@
     "i18n:check": "tsx scripts/check-i18n-keys.ts",
     "migrations:check": "tsx scripts/check-migration-versions.ts",
     "scan:bundle": "tsx scripts/scan-bundle-for-secrets.ts",
+    "third-party:check": "tsx scripts/check-third-party.ts",
     "issues:sync": "tsx scripts/sync-story-issues.ts",
     "emails:build": "tsx scripts/build-auth-email-templates.ts",
     "demo:build": "tsx scripts/build-demo-content.ts",

@@ -94,10 +94,14 @@
     "areas": {
       "roles": "Cine din echipă are ce rol și ce permisiuni.",
       "audit_log": "Fiecare acțiune a echipei și fiecare citire sensibilă, cu căutare și export.",
-      "invites": "Linkuri de invitație pentru testul din martie: fă, copiază și revocă.",
       "users": "Găsește un cont, vezi starea și sancțiunile lui și acționează. Linkurile de invitație sunt o filă aici.",
       "metrics": "Cifrele testului din martie față de ținte, numărate în fiecare noapte.",
-      "on_call_rota": "Cine este de gardă pentru ordinele de eliminare, turele următoare și golurile."
+      "on_call_rota": "Cine este de gardă pentru ordinele de eliminare, turele următoare și golurile.",
+      "moderation": "Coada de raportări pe niveluri și termene, și fiecare caz cu decizia lui.",
+      "moderator_mail": "Mesajele membrilor către echipa de moderare, într-o singură căsuță comună.",
+      "appeals": "Contestațiile la deciziile de moderare, decise de alt moderator unde se poate.",
+      "safety_contacts": "Liniile de ajutor și numerele de urgență din ecranele de raportare și verificarea lor lunară.",
+      "classics": "Adaugă și verifică clasicii din domeniul public pentru contul oficial."
     }
   },
   "auditLog": {
