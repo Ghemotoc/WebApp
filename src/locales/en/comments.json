@@ -33,7 +33,8 @@
     "comments_off": "The writer has turned comments off for this story.",
     "refused": "That can’t be posted. A comment needs some words, at most 2,000 characters and no HTML.",
     "gone": "That comment isn’t there any more.",
-    "unreachable": "We couldn’t save that. Check your connection and try again."
+    "unreachable": "We couldn’t save that. Check your connection and try again.",
+    "too_many_links": "New accounts can put one link in a comment for their first day. Take a link out and post again."
   },
   "comment": {
     "writer": "Writer",

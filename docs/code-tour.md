@@ -401,7 +401,7 @@ S1-E10-03a opens a moderation case from the new row; S1-E10-06 adds the reportin
 cases (user_id = the reported account), case_actions (user_id = the staff member), reports.case_id
 ```
 
-An authority order (S1-E10-09) and a picture check (S1-E10-05) will insert their own cases with `source` set; the seed holds one of each so the queue shows every tier.
+An authority order (S1-E10-09) and a flagged picture (S1-E10-05) insert their own cases with `source` set; the seed also holds one of each so the queue shows every tier. S1-E10-03b added claiming (`admin_claim_case()`, `admin_release_case()`: advisory, never a lock), the reason and claimed filters and the search to `admin_moderation_queue()`.
 
 ## Sanctions, and what a decision does (S1-E10-06)
 
@@ -470,6 +470,38 @@ CasePage → SafeguardingPanel (safeguarding cases) or MoveToSafeguarding (any o
 Runbooks: `docs/runbooks/removal-orders.md` and `docs/runbooks/safeguarding.md`. Tests:
 `supabase/tests/database/161` to `163`, `server/decision-emails.test.ts`, `e2e/statements.spec.ts`,
 `e2e/removal-orders.spec.ts`, `e2e/safeguarding.spec.ts`.
+
+## Safety round two: pictures, appeals, moderator mail and limits (SAFE-4)
+
+**Uploading a picture (S1-E10-05).** Nobody else sees a picture until it passes the check (CLAUDE.md rule 19):
+
+```
+Story settings › Cover / Settings › Profile picture (only while the picture_uploads flag is on)
+  PictureUploadField → hooks/usePictureUpload → api/pictures.ts
+    1. storage.upload() into the private covers or avatars bucket (owner-only rules)
+    2. rpc register_picture() → picture_checks row, status pending (rate-limited, S1-E10-12)
+    3. POST /api/picture-check with the person's own token
+         functions/api/picture-check.ts → server/picture-check.ts
+           reads the file with that token, asks server/picture-check/ (stub, or Sightengine and
+           Arachnid Shield when PICTURE_CHECK=real), then rpc record_picture_check() signed with
+           PICTURE_CHECK_SECRET
+    4. passed → the cover or avatar shows (StoryCoverArt, AvatarImage, signed short-lived URLs)
+       held → a moderation case with the picture blurred (CasePicturePanel); a known abuse
+              match is never shown, opens a safeguarding case and is kept 6 months
+       pending (a service down) → usePendingPictureRetry tries again, at most 5 times
+```
+
+**Appeals (S1-E10-07).** On `/my-reports` each statement shows until when it can be appealed (six months, DSA art. 20(1)); `AppealSection` → `submit_appeal()`. Staff decide on `/staff/appeals` (`AppealsPage` → `admin_appeals_queue()`, `admin_decide_appeal()`); a moderator never decides an appeal on their own decision. Changing a decision restores the item and lifts the sanction; the person is notified (`appeal_decided`) either way.
+
+**Moderator mail (S1-E10-11).** `/moderator-mail` for members and `/staff/moderator-mail` for staff, `src/features/moderator-mail/`. One shared inbox; replies go out as "The moderation team"; internal notes stay with staff; a reply notifies the member (`moderator_mail_reply`).
+
+**Rate limits (S1-E10-12).** `take_rate_limit(action)` counts `rate_limit_events` per account over the last hour, with a lower limit for an account under 24 hours old (setting `rate_limits`), and raises 54000 with the hint `wait_minutes:<n>`; every form that can hit a limit says how many minutes to wait. A new account's comment may hold one link (`refuse_new_account_links()`, hint `too_many_links`).
+
+**Safety contacts, staff side (S1-E10-13b).** `/staff/safety-contacts` (`src/features/safety/`): support, admins and the owner confirm, change, add or remove contacts, each logged with before and after values; `create_monthly_safety_checks()` (pg_cron, the 1st of each month) opens a check per market that closes once every contact is confirmed; `SafetyContactWarningBanner` warns on every staff page while a contact is 45 days unchecked.
+
+**The accessibility statement and the no-cookie check (S1-E14-03).** `/legal/accessibility` is the fifth Legal centre document, linked from the footer. `scripts/check-third-party.ts` (`npm run third-party:check`, after the build) fails on any web address in the bundle on a host nobody reviewed; `e2e/accessibility-statement.spec.ts` fails on any cookie or unreviewed storage key.
+
+Tests: `164` to `169` in `supabase/tests/database/`, `server/picture-check/*.test.ts`, `e2e/picture-check.spec.ts`, `e2e/appeals-and-mail.spec.ts`, `e2e/safety-contacts-admin.spec.ts`, `e2e/accessibility-statement.spec.ts`.
 
 ## Writing to us (S1-E14-04)
 

@@ -99,6 +99,8 @@ jobs:
         run: test -f dist/index.html && test -f dist/_redirects
       # No service role key or secret API key may reach the browser bundle (CLAUDE.md rule 2).
       - run: npm run scan:bundle
+      # Nothing in the build may point at a site nobody reviewed (CLAUDE.md rule 7; S1-E14-03).
+      - run: npm run third-party:check
 
   database:
     name: Database tests and generated types

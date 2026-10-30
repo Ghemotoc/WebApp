@@ -129,6 +129,9 @@ const brandTokens: { value: string; token: string }[] = [
   // S1-E14-02: the authorities' contact point (Q16: the contact address until the company exists).
   { value: '[authorities email]', token: '{{authoritiesEmail}}' },
   { value: '[emailul pentru autorități]', token: '{{authoritiesEmail}}' },
+  // S1-E14-03: barriers go to the contact address until an accessibility address exists (rule 8).
+  { value: '[accessibility email]', token: '{{contactEmail}}' },
+  { value: '[emailul pentru accesibilitate]', token: '{{contactEmail}}' },
   { value: brandDefaults.companyName, token: '{{companyName}}' },
   { value: brandDefaults.productName, token: '{{productName}}' },
 ];

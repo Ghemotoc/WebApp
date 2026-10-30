@@ -29,6 +29,8 @@ export interface SafetyContact {
   phoneNumber: string | null;
   link: string | null;
   openingHours: string | null;
+  /** The opening hours in Romanian (S1-E10-13b); null falls back to openingHours. */
+  openingHoursRo: string | null;
   lastCheckedOn: string;
 }
 
@@ -46,7 +48,9 @@ export async function fetchSafetyContacts(
 ): Promise<SafetyContact[]> {
   const { data, error } = await client
     .from('safety_contacts')
-    .select('id, kind, label, phone_number, link, opening_hours, last_checked_on, position')
+    .select(
+      'id, kind, label, phone_number, link, opening_hours, opening_hours_ro, last_checked_on, position',
+    )
     .eq('country_code', countryCode)
     .in('kind', shownKinds)
     .order('position');
@@ -58,6 +62,7 @@ export async function fetchSafetyContacts(
     phoneNumber: row.phone_number,
     link: row.link,
     openingHours: row.opening_hours,
+    openingHoursRo: row.opening_hours_ro,
     lastCheckedOn: row.last_checked_on,
   }));
   // The block's order is by kind, then by the file's position inside the kind.

@@ -1,0 +1,56 @@
+/**
+ * Cloudflare Pages Function at /api/picture-check: checks an uploaded picture before anyone else
+ * sees it (story S1-E10-05; CLAUDE.md rule 19).
+ *
+ * The logic lives in server/picture-check.ts, shared with local development and the tests; this
+ * file hands it what only Cloudflare has, all set by hand in Cloudflare → Workers & Pages → the
+ * Pages project → Settings → Variables and Secrets (GO-LIVE list in by-hand-for-robert.md):
+ * - PICTURE_CHECK: "real" to use the services; unset or "stub" uses the stand-in;
+ * - PICTURE_CHECK_SECRET: signs each verdict; the same value is in Supabase Vault as
+ *   picture_check_secret;
+ * - SIGHTENGINE_API_USER and SIGHTENGINE_API_SECRET; ARACHNID_SHIELD_USERNAME and
+ *   ARACHNID_SHIELD_PASSWORD: the two services;
+ * - VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY: the database, as the front end reads it.
+ * The caller's own sign-in token does the reading and saving; there is no service key here.
+ */
+import { handlePictureCheck } from '../../server/picture-check';
+import { pictureChecker } from '../../server/picture-check/index';
+
+/** What Cloudflare passes to a Pages Function; only these parts are used. */
+interface PagesContext {
+  request: Request;
+  env: {
+    PICTURE_CHECK?: string;
+    PICTURE_CHECK_SECRET?: string;
+    SIGHTENGINE_API_USER?: string;
+    SIGHTENGINE_API_SECRET?: string;
+    ARACHNID_SHIELD_USERNAME?: string;
+    ARACHNID_SHIELD_PASSWORD?: string;
+    VITE_SUPABASE_URL?: string;
+    VITE_SUPABASE_ANON_KEY?: string;
+  };
+}
+
+/**
+ * Answers POST /api/picture-check.
+ *
+ * @param context - Cloudflare's request context
+ * @returns { status } as JSON, or an error status (see handlePictureCheck)
+ */
+export const onRequestPost = (context: PagesContext): Promise<Response> =>
+  handlePictureCheck(context.request, {
+    supabaseUrl: context.env.VITE_SUPABASE_URL ?? '',
+    anonKey: context.env.VITE_SUPABASE_ANON_KEY ?? '',
+    secret: context.env.PICTURE_CHECK_SECRET,
+    checkPicture: pictureChecker({
+      mode: context.env.PICTURE_CHECK,
+      sightengine: {
+        apiUser: context.env.SIGHTENGINE_API_USER ?? '',
+        apiSecret: context.env.SIGHTENGINE_API_SECRET ?? '',
+      },
+      arachnid: {
+        username: context.env.ARACHNID_SHIELD_USERNAME ?? '',
+        password: context.env.ARACHNID_SHIELD_PASSWORD ?? '',
+      },
+    }),
+  });

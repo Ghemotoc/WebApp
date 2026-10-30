@@ -17,6 +17,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { Shelf } from '@/components/ui/Shelf';
 import { StoryCard } from '@/components/ui/StoryCard';
+import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 
 import type { WriterProfile } from '../api/writerProfile';
 
@@ -47,6 +48,9 @@ export function ProfileStories({ profile }: { profile: WriterProfile }) {
             metaLine={t('profile.storyMeta', { count: story.chapterCount })}
             cover={covers[index] ?? resolveCoverChoice(story)}
             href={`/s/${story.slug}`}
+            wrapCover={(drawn) => (
+              <StoryCoverArt story={story} drawn={drawn} className="w-[165px]" />
+            )}
             pill={
               <InfoPill tone={story.completionStatus === 'completed' ? 'gold' : 'sage'}>
                 {t(`status.${story.completionStatus}`, { ns: 'writing' })}

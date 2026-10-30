@@ -131,6 +131,58 @@ function reportOutcomeText(t: TFunction, notification: AppNotification): Notific
 }
 
 /**
+ * An appeal's outcome (S1-E10-07; DSA art. 20(5)): whether the decision stands or was changed,
+ * with "Read why", which opens the statement on My reports and decisions.
+ *
+ * @param t - the notifications translation function
+ * @param notification - an appeal_decided row
+ * @returns the row's words
+ */
+function appealText(t: TFunction, notification: AppNotification): NotificationText {
+  const appeal = notification.appeal;
+  return {
+    who: t('who.moderationTeam'),
+    what: t(`appealOutcomes.${appeal?.outcome ?? 'upheld'}`, {
+      reference: appeal?.reference ?? '',
+    }),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.readWhy'),
+    href: appeal === null ? '/my-reports' : `/my-reports#${appeal.statementReference}`,
+  };
+}
+
+/**
+ * The moderation team answered the person's message (S1-E10-11): the subject as the quote and a
+ * link to the thread. It never says who on the team wrote.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a moderator_mail_reply row
+ * @returns the row's words
+ */
+function mailReplyText(t: TFunction, notification: AppNotification): NotificationText {
+  const mail = notification.mail;
+  return {
+    who: t('who.moderationTeam'),
+    what: t('what.mailReply'),
+    quote: mail?.subject ?? null,
+    grouped: null,
+    actionLabel: t('actions.readReply'),
+    href: mail === null ? '/moderator-mail' : `/moderator-mail/${mail.reference}`,
+  };
+}
+
+/** The moderation team's kinds and the function that words each one. */
+const teamTextFor: Partial<
+  Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
+> = {
+  moderation_decision: decisionText,
+  report_outcome: reportOutcomeText,
+  appeal_decided: appealText,
+  moderator_mail_reply: mailReplyText,
+};
+
+/**
  * The row's words and link, by kind.
  *
  * @param t - the notifications translation function
@@ -143,9 +195,10 @@ export function notificationText(
   notification: AppNotification,
   ownHandle: string | null,
 ): NotificationText {
-  // Step 1: a moderation decision and a report's outcome have their own words and no people.
-  if (notification.kind === 'moderation_decision') return decisionText(t, notification);
-  if (notification.kind === 'report_outcome') return reportOutcomeText(t, notification);
+  // Step 1: the moderation team's rows (decisions, report outcomes, appeals and mail replies) have
+  // their own words and no people.
+  const teamText = teamTextFor[notification.kind];
+  if (teamText !== undefined) return teamText(t, notification);
   // Step 2: every other kind starts with who did it.
   const base = {
     who: whoDidIt(t, notification),
@@ -187,9 +240,9 @@ export function notificationText(
         actionLabel: t('actions.openChapter'),
         href: chapterAddress(notification),
       };
-    case 'new_follower':
-      return followerText(t, notification, ownHandle, base);
   }
+  // Step 4: what is left is a new follower (the team's kinds were answered in step 1).
+  return followerText(t, notification, ownHandle, base);
 }
 
 /**

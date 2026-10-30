@@ -6,7 +6,7 @@
  * order the authority asked us to keep quiet about sends none either (Regulation (EU) 2021/784
  * art. 11(3)); the section then says so.
  * Who shows it: CasePage. What it calls: useCaseStatements; StatementCard from the statements
- * feature draws each one, without the person's challenge link.
+ * feature draws each one, without the person's appeal section.
  */
 import { useTranslation } from 'react-i18next';
 

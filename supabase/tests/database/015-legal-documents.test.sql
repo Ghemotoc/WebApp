@@ -24,9 +24,9 @@ select results_eq(
      join public.legal_documents as documents on documents.id = versions.document_id
      where versions.version_label = '0.1'
      group by documents.slug order by documents.slug $$,
-  $$ values ('contact', array['en', 'ro']), ('guidelines', array['en', 'ro']),
+  $$ values ('accessibility', array['en', 'ro']), ('contact', array['en', 'ro']), ('guidelines', array['en', 'ro']),
             ('privacy', array['en', 'ro']), ('terms', array['en', 'ro']) $$,
-  'version 0.1 of the terms, privacy notice, guidelines and contact page (S1-E14-02) exists in English and Romanian'
+  'version 0.1 of the terms, privacy notice, guidelines, contact page (S1-E14-02) and accessibility statement (S1-E14-03) exists in English and Romanian'
 );
 
 select is_empty(
@@ -47,13 +47,13 @@ set local role anon;
 
 select is(
   (select count(*)::integer from public.legal_documents),
-  4,
+  5,
   'allowed: legal_documents_select_public: a signed-out visitor reads the list of documents'
 );
 
 select is(
   (select count(*)::integer from public.legal_document_versions where version_label = '0.1'),
-  8,
+  10,
   'allowed: legal_document_versions_select_published: a signed-out visitor reads every live version'
 );
 

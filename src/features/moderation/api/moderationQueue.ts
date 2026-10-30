@@ -43,6 +43,10 @@ export interface QueueCase {
   decision: ModerationAction | null;
   decidedAt: string | null;
   decidedByHandle: string | null;
+  /** Who is working on it (S1-E10-03b): their username, when; null when nobody is. */
+  claimedByHandle: string | null;
+  claimedAt: string | null;
+  claimedByMe: boolean;
 }
 
 /** One report on a case, for the case page. */
@@ -78,12 +82,20 @@ export interface CaseAction {
   createdAt: string;
 }
 
+/** Who has claimed a case, as the queue's filter reads it (S1-E10-03b). */
+export type ClaimedFilter = 'mine' | 'anyone' | 'nobody' | '';
+
 /** What the queue can be narrowed by. Empty strings mean "all". */
 export interface QueueFilters {
   tier: CaseTier | '';
   status: CaseStatus | '';
   reporterUnder18: 'yes' | 'no' | '';
   source: CaseSource | '';
+  /** The top reason of the case's reports (S1-E10-03b). */
+  reason: ReportReason | '';
+  claimed: ClaimedFilter;
+  /** A case reference or a username, as typed (S1-E10-03b). */
+  search: string;
 }
 
 /** The queue as it opens: every open case, most urgent first. */
@@ -92,6 +104,9 @@ export const defaultQueueFilters: QueueFilters = {
   status: 'open',
   reporterUnder18: '',
   source: '',
+  reason: '',
+  claimed: '',
+  search: '',
 };
 
 /** Why a call was refused, in words the page can explain. */
@@ -163,6 +178,9 @@ function caseProgressFromRow(row: QueueRow) {
     decision: row.decision,
     decidedAt: row.decided_at,
     decidedByHandle: row.decided_by_handle,
+    claimedByHandle: row.claimed_by_handle,
+    claimedAt: row.claimed_at,
+    claimedByMe: row.claimed_by_me ?? false,
   };
 }
 
@@ -193,6 +211,9 @@ export async function listCases(
     status_filter: filters.status === '' ? undefined : filters.status,
     under_18_filter: filters.reporterUnder18 === '' ? undefined : filters.reporterUnder18 === 'yes',
     source_filter: filters.source === '' ? undefined : filters.source,
+    reason_filter: filters.reason === '' ? undefined : filters.reason,
+    claimed_filter: filters.claimed === '' ? undefined : filters.claimed,
+    search_text: filters.search.trim() === '' ? undefined : filters.search.trim(),
   });
   if (error !== null) throw new ModerationError(failureFromCode(error.code));
   return data.map(caseFromRow);

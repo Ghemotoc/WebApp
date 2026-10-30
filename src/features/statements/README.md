@@ -10,4 +10,4 @@ Built by S1-E10-04 (SAFE-3). DSA art. 17 (the statement of reasons) and art. 16(
 - `components/`: `MyReportsPage`, `StatementCard` (also on the staff case page), `MyReportRow`.
 - Text: `src/locales/{ro,en}/statements.json`, loaded with the page (`registerStatementsTranslations.ts`).
 
-Appeals in the app are S1-E10-07 (after March). Until then each statement links to Contact us with its reference filled in.
+Appeals (S1-E10-07): `AppealSection` on each statement shows until when it can be appealed, the appeal form (`submitAppeal()`, `hooks/useAppeal.ts`) and then its outcome; "Ask the moderators a question" opens moderator mail (`src/features/moderator-mail/`) with the decision linked.

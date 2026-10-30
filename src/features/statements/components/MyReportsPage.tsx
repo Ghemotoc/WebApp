@@ -87,7 +87,7 @@ function ContactCard() {
         {t('page.contactHeading')}
       </h2>
       <p className="m-0 text-body">{t('page.contactBody')}</p>
-      <Link to="/contact?topic=other" className="w-fit font-semibold text-link underline">
+      <Link to="/moderator-mail" className="w-fit font-semibold text-link underline">
         {t('page.contactLink')}
       </Link>
     </aside>

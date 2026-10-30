@@ -19,24 +19,82 @@ export interface StaffAreaPage {
   href: string;
   /** The key of the menu text in the "staff" namespace. */
   labelKey: string;
+  /** The key of the one-line description on the admin home page, in the "staff" namespace. */
+  descriptionKey: string;
 }
 
 /** The areas that have a page today, in menu order. */
 export const staffAreaPages: StaffAreaPage[] = [
   // The moderation queue and case pages (S1-E10-03a), first in the menu (architecture 1.8.2).
-  { area: 'moderation', href: '/staff/moderation', labelKey: 'nav.moderation' },
+  {
+    area: 'moderation',
+    href: '/staff/moderation',
+    labelKey: 'nav.moderation',
+    descriptionKey: 'home.areas.moderation',
+  },
+  // Moderator mail (S1-E10-11): the team's shared inbox, for everyone who acts on moderation.
+  {
+    area: 'moderation',
+    href: '/staff/moderator-mail',
+    labelKey: 'nav.moderatorMail',
+    descriptionKey: 'home.areas.moderator_mail',
+  },
+  // Appeals against decisions (S1-E10-07), next to the queue (architecture 1.8.2).
+  {
+    area: 'appeals',
+    href: '/staff/appeals',
+    labelKey: 'nav.appeals',
+    descriptionKey: 'home.areas.appeals',
+  },
+  // Support, admin and owner keep the safety contacts right; moderators read them (S1-E10-13b).
+  {
+    area: 'safety_contacts',
+    href: '/staff/safety-contacts',
+    labelKey: 'nav.safetyContacts',
+    descriptionKey: 'home.areas.safety_contacts',
+  },
   // Who is on call for removal orders (S1-E10-09), next to the queue those orders land in.
-  { area: 'on_call_rota', href: '/staff/on-call', labelKey: 'nav.onCall' },
+  {
+    area: 'on_call_rota',
+    href: '/staff/on-call',
+    labelKey: 'nav.onCall',
+    descriptionKey: 'home.areas.on_call_rota',
+  },
   // Users (S1-E11-02): look-up and accounts, with Invites (S1-E11-17) as its second tab. Owner
   // and admin, the only roles with the invites area, also hold users, so they reach it there.
-  { area: 'users', href: '/staff/users', labelKey: 'nav.users' },
+  {
+    area: 'users',
+    href: '/staff/users',
+    labelKey: 'nav.users',
+    descriptionKey: 'home.areas.users',
+  },
   // Stories › Classics (S1-E11-16): owner and admin; the Stories list itself is S1-E11-07.
-  { area: 'classics', href: '/staff/classics', labelKey: 'nav.classics' },
+  {
+    area: 'classics',
+    href: '/staff/classics',
+    labelKey: 'nav.classics',
+    descriptionKey: 'home.areas.classics',
+  },
   // S1-E2-07a built /staff/roles outside the shell; S1-E11-01 moves it in.
-  { area: 'roles', href: '/staff/roles', labelKey: 'nav.roles' },
+  {
+    area: 'roles',
+    href: '/staff/roles',
+    labelKey: 'nav.roles',
+    descriptionKey: 'home.areas.roles',
+  },
   // The March test numbers (S1-E15-02), just before the audit log (architecture 1.8.2).
-  { area: 'metrics', href: '/staff/metrics', labelKey: 'nav.metrics' },
-  { area: 'audit_log', href: '/staff/audit-log', labelKey: 'nav.auditLog' },
+  {
+    area: 'metrics',
+    href: '/staff/metrics',
+    labelKey: 'nav.metrics',
+    descriptionKey: 'home.areas.metrics',
+  },
+  {
+    area: 'audit_log',
+    href: '/staff/audit-log',
+    labelKey: 'nav.auditLog',
+    descriptionKey: 'home.areas.audit_log',
+  },
 ];
 
 /**

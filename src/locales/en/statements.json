@@ -69,14 +69,7 @@
     },
     "howFound": "How we found it",
     "foundByPerson": "Someone reported it, or our team saw it. A moderator read it and decided. No automated tools made this decision.",
-    "foundAutomatically": "Our automatic picture check flagged it. A moderator looked at it and decided. No automated tools made this decision.",
-    "challengeUntil": "You can challenge this until",
-    "challengeLength": "(six months).",
-    "challengeHow": "Write to the moderation team and say why the decision is wrong. A different moderator will look at it where possible.",
-    "challengeLink": "Challenge this decision",
-    "challengeLinkLabel": "Challenge this decision, {{reference}}",
-    "challengeMessage": "I'd like to challenge decision {{reference}}. Why it's wrong: ",
-    "challengeEnded": "The time to challenge this ended on {{date}}."
+    "foundAutomatically": "Our automatic picture check flagged it. A moderator looked at it and decided. No automated tools made this decision."
   },
   "reports": {
     "heading": "Reports you sent",
@@ -110,6 +103,29 @@
       "copied_published_work": "Copied from a published work",
       "undisclosed_ai": "Missing AI label",
       "other": "Other"
+    }
+  },
+  "appeals": {
+    "until": "You can appeal this decision until {{date}} (six months). Appealing is free.",
+    "how": "Tell us why the decision is wrong. A different moderator looks at it where possible, and we write to you with the outcome.",
+    "open_form": "Appeal this decision",
+    "label": "Why is this decision wrong?",
+    "hint": "Say what we got wrong. You can add anything that helps, such as context we didn't have.",
+    "send": "Send the appeal",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "open": "Your appeal {{reference}} was sent on {{date}}. A moderator is looking at it; we'll write to you with the outcome.",
+    "outcomes": {
+      "upheld": "We looked again ({{reference}}): the decision stands.",
+      "overturned": "We looked again ({{reference}}) and changed the decision."
+    },
+    "ended": "The time to appeal this ended on {{date}}.",
+    "askModerators": "Ask the moderators a question",
+    "failures": {
+      "refused": "This decision can't be appealed right now: an appeal is already open, or the six months have ended.",
+      "too_many": "You've sent a lot of appeals in the last hour. Try again in {{minutes}} minutes.",
+      "not_found": "We couldn't find this decision on your account.",
+      "unreachable": "We couldn't send your appeal. Check your connection and try again."
     }
   }
 }

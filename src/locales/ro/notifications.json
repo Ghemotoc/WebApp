@@ -42,7 +42,8 @@
     "commentOnChapter": "a comentat la {{where}}.",
     "commentReply": "ți-a răspuns la comentariul de la {{where}}.",
     "commentReactions": "a reacționat la comentariul tău de la {{where}}.",
-    "newFollower": "a început să te urmărească."
+    "newFollower": "a început să te urmărească.",
+    "mailReply": "ți-a răspuns la mesaj."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -74,7 +75,8 @@
     "seeProfile": "Vezi profilul",
     "seeIt": "Vezi",
     "readWhy": "Vezi de ce",
-    "seeMyReports": "Vezi raportările mele"
+    "seeMyReports": "Vezi raportările mele",
+    "readReply": "Citește răspunsul"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",
@@ -103,5 +105,10 @@
     "removed": "am verificat raportarea ta {{reference}} și am eliminat ce ai raportat.",
     "acted": "am verificat raportarea ta {{reference}} și am luat măsuri.",
     "no_action": "am verificat raportarea ta {{reference}}. Nu încalcă regulile noastre sau legea, așa că am lăsat-o."
+  },
+  "appealOutcomes": {
+    "open": "contestația ta {{reference}} așteaptă un moderator.",
+    "upheld": "un alt moderator s-a uitat din nou la contestația ta {{reference}}. Decizia rămâne.",
+    "overturned": "un alt moderator s-a uitat din nou la contestația ta {{reference}} și a schimbat decizia."
   }
 }

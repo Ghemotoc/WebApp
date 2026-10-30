@@ -24,6 +24,11 @@
       "tab": "Contact",
       "name": "Contact și datele companiei",
       "intro": "Cum ne poți contacta: ca utilizator, ca autoritate sau pentru ordine de eliminare, și cine administrează {{productName}}."
+    },
+    "accessibility": {
+      "tab": "Accesibilitate",
+      "name": "Declarație de accesibilitate",
+      "intro": "Cum respectă {{productName}} WCAG 2.2 AA, ce nu funcționează încă și cum ne poți spune despre o barieră."
     }
   },
   "status": {

@@ -33,7 +33,8 @@
     "notifications": "Notificări",
     "notificationsUnread_one": "Notificări, {{count}} nouă",
     "notificationsUnread_few": "Notificări, {{count}} noi",
-    "notificationsUnread_other": "Notificări, {{count}} de noi"
+    "notificationsUnread_other": "Notificări, {{count}} de noi",
+    "accessibility": "Accesibilitate"
   },
   "theme": {
     "label": "Temă",
@@ -107,5 +108,28 @@
   "actions": {
     "report": "Raportează",
     "reportItem": "Raportează {{item}}"
+  },
+  "pictures": {
+    "beingChecked": "Imagine în verificare",
+    "waitingForCheck": "Așteaptă verificarea",
+    "waitingForPerson": "Așteaptă un om din echipă",
+    "uploading": "Îți încărcăm și verificăm imaginea…",
+    "passed": "Imaginea ta a trecut verificarea.",
+    "held": "O persoană din echipa de moderare se va uita la imagine înainte ca alții s-o vadă. Te anunțăm.",
+    "pending": "Imaginea e încărcată. O verificăm cât mai repede; până atunci o vezi doar tu.",
+    "failed": {
+      "wrong_type": "Fișierul nu e o imagine JPEG, PNG sau WebP.",
+      "too_big": "Imaginea e prea mare. Alege una mai mică.",
+      "too_many": "Ai încărcat multe imagini în ultima oră. Încearcă din nou peste {{minutes}} minute.",
+      "not_allowed": "Nu poți încărca această imagine acum.",
+      "unreachable": "Nu am putut încărca imaginea. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "coverLabel": "Încarcă o imagine",
+    "coverHint": "JPEG, PNG sau WebP, până la 5 MB. Se potrivește cel mai bine o imagine înaltă (5 pe 8). Cititorii o văd după ce trece verificarea imaginilor.",
+    "coverPreview": "Coperta ta încărcată",
+    "coverRights": "Încarcă doar o imagine făcută de tine sau pe care ai dreptul s-o folosești.",
+    "avatarLabel": "Încarcă o poză de profil",
+    "avatarHint": "JPEG, PNG sau WebP, până la 2 MB. Ceilalți o văd după ce trece verificarea imaginilor.",
+    "avatarHeading": "Poza de profil"
   }
 }

@@ -1,0 +1,49 @@
+/**
+ * usePictureUpload: uploads one picture and keeps what the field should say about it (story
+ * S1-E10-05).
+ *
+ * Who calls it: CoverUploadField (Story settings) and AvatarSettingsSection (Settings › Profile).
+ * What it calls: ../api/pictures.ts uploadPicture(), then refreshes the pictures on screen.
+ */
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { requireClient } from '@/features/account/hooks/useMyNames';
+
+import { PictureUploadError, uploadPicture, type PictureBucket } from '../api/pictures';
+
+/** What the field says after an upload. */
+export type UploadOutcome =
+  | { kind: 'uploaded'; path: string; status: string }
+  | { kind: 'failed'; failure: PictureUploadError['failure']; waitMinutes: number | null };
+
+/**
+ * Keeps one upload at a time.
+ *
+ * @param target - the bucket, the folder (the story's ID for a cover) and the kind
+ * @returns upload(file), the outcome and whether an upload is running
+ */
+export function usePictureUpload(target: {
+  bucket: PictureBucket;
+  folder: string | null;
+  kind: 'cover' | 'avatar';
+}) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async (file: File) => uploadPicture(await requireClient(), { ...target, file }),
+    onSuccess: () => {
+      // The new picture's state shows wherever the person's pictures are drawn.
+      void queryClient.invalidateQueries({ queryKey: ['avatar-picture'] });
+      void queryClient.invalidateQueries({ queryKey: ['story-cover-picture'] });
+    },
+  });
+  let outcome: UploadOutcome | null = null;
+  if (mutation.data !== undefined) outcome = { kind: 'uploaded', ...mutation.data };
+  if (mutation.error !== null) {
+    const error = mutation.error;
+    outcome =
+      error instanceof PictureUploadError
+        ? { kind: 'failed', failure: error.failure, waitMinutes: error.waitMinutes }
+        : { kind: 'failed', failure: 'unreachable', waitMinutes: null };
+  }
+  return { upload: mutation.mutate, outcome, isUploading: mutation.isPending };
+}

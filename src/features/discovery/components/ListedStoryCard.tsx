@@ -4,12 +4,14 @@
  * It is the shared StoryCard (the drawn or automatic cover with the full title, the title as text
  * and a meta line) with the writer's name, the chapter count and an Ongoing or Completed pill.
  * The cover is chosen by the list (designsForRow()), so two neighbours never share an automatic
- * design (S1-E3-13).
+ * design (S1-E3-13). An uploaded cover shows through StoryCoverArt once it passes its check
+ * (S1-E10-05).
  * Who uses it: DiscoverShelf and StoryGrid.
  */
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { StoryCard } from '@/components/ui/StoryCard';
+import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 
 import type { ListedStory } from '../api/storyLists';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
@@ -37,6 +39,9 @@ export function ListedStoryCard(props: {
       cover={cover}
       href={`/s/${story.slug}`}
       isFluid={isFluid}
+      wrapCover={(drawn) => (
+        <StoryCoverArt story={story} drawn={drawn} className={isFluid ? 'w-full' : 'w-[165px]'} />
+      )}
       pill={
         <InfoPill tone={story.completionStatus === 'completed' ? 'gold' : 'sage'}>
           {t(`status.${story.completionStatus}`, { ns: 'writing' })}

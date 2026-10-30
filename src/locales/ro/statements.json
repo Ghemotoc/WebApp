@@ -69,14 +69,7 @@
     },
     "howFound": "Cum am aflat",
     "foundByPerson": "Cineva a raportat-o sau a văzut-o echipa noastră. Un moderator a citit-o și a decis. Niciun instrument automat nu a luat această decizie.",
-    "foundAutomatically": "Verificarea automată a imaginilor a semnalat-o. Un moderator s-a uitat și a decis. Niciun instrument automat nu a luat această decizie.",
-    "challengeUntil": "Poți contesta decizia până pe",
-    "challengeLength": "(șase luni).",
-    "challengeHow": "Scrie echipei de moderare și spune de ce decizia e greșită. Un alt moderator se va uita, unde se poate.",
-    "challengeLink": "Contestă decizia",
-    "challengeLinkLabel": "Contestă decizia {{reference}}",
-    "challengeMessage": "Vreau să contest decizia {{reference}}. De ce e greșită: ",
-    "challengeEnded": "Termenul de contestare s-a încheiat pe {{date}}."
+    "foundAutomatically": "Verificarea automată a imaginilor a semnalat-o. Un moderator s-a uitat și a decis. Niciun instrument automat nu a luat această decizie."
   },
   "reports": {
     "heading": "Raportările trimise de tine",
@@ -110,6 +103,29 @@
       "copied_published_work": "Copiat dintr-o lucrare publicată",
       "undisclosed_ai": "Lipsește eticheta AI",
       "other": "Altceva"
+    }
+  },
+  "appeals": {
+    "until": "Poți contesta această decizie până pe {{date}} (șase luni). Contestația e gratuită.",
+    "how": "Spune-ne de ce decizia e greșită. Un alt moderator o analizează, când se poate, și îți scriem cu rezultatul.",
+    "open_form": "Contestă decizia",
+    "label": "De ce e greșită decizia?",
+    "hint": "Spune ce am greșit. Poți adăuga orice ajută, de exemplu context pe care nu l-am avut.",
+    "send": "Trimite contestația",
+    "sending": "Se trimite…",
+    "cancel": "Renunță",
+    "open": "Contestația ta {{reference}} a fost trimisă pe {{date}}. Un moderator o analizează; îți scriem cu rezultatul.",
+    "outcomes": {
+      "upheld": "Am analizat din nou ({{reference}}): decizia rămâne.",
+      "overturned": "Am analizat din nou ({{reference}}) și am schimbat decizia."
+    },
+    "ended": "Termenul de contestare s-a încheiat pe {{date}}.",
+    "askModerators": "Pune o întrebare moderatorilor",
+    "failures": {
+      "refused": "Decizia nu poate fi contestată acum: există deja o contestație deschisă sau au trecut cele șase luni.",
+      "too_many": "Ai trimis multe contestații în ultima oră. Încearcă din nou peste {{minutes}} minute.",
+      "not_found": "Nu am găsit această decizie în contul tău.",
+      "unreachable": "Nu am putut trimite contestația. Verifică-ți conexiunea și încearcă din nou."
     }
   }
 }

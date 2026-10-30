@@ -3,8 +3,8 @@
  * screen 8.2; the tiers decided 23 Oct 2026, Q5).
  *
  * Board (Moderation): "Report queue", the intro, the four tier cards, the filters and the list,
- * most urgent first. Not in part a: search, the reason and claimed filters, claiming, the side
- * panel, the picture-check panel and the removal-order banner (S1-E10-03b, S1-E10-05, S1-E10-09).
+ * most urgent first. S1-E10-03b added the reason and claimed filters, the search and who claimed
+ * each case; the picture and the claim itself are on the case page (S1-E10-05, S1-E10-03b).
  * Plain components, no doodles (staff screens).
  * Who shows it: the router, inside StaffLayout. The database refuses anyone outside moderation
  * staff (admin_moderation_queue()), and the page says so; a safeguarding case is left out for

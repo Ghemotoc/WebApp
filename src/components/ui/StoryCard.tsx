@@ -29,6 +29,11 @@ export interface StoryCardProps {
    * the See all grid (S1-E5-09) uses it, so two cards fit side by side on a 390 px phone.
    */
   isFluid?: boolean;
+  /**
+   * Draws the cover in place of the drawn one, given the drawn one as its fall-back: an uploaded
+   * cover passes StoryCoverArt here (S1-E10-05), so this shared card stays free of features.
+   */
+  wrapCover?: (drawnCover: ReactNode) => ReactNode;
 }
 
 /**
@@ -36,17 +41,28 @@ export interface StoryCardProps {
  *
  * @returns the card
  */
-export function StoryCard({ title, metaLine, cover, href, pill, isFluid = false }: StoryCardProps) {
+export function StoryCard({
+  title,
+  metaLine,
+  cover,
+  href,
+  pill,
+  isFluid = false,
+  wrapCover,
+}: StoryCardProps) {
+  // The drawn cover: decorative, because the title is repeated as text below.
+  const drawnCover = (
+    <DrawnCover
+      title={title}
+      choice={cover}
+      size="shelf"
+      isDecorative
+      className={isFluid ? 'w-full' : 'h-[264px]'}
+    />
+  );
   return (
     <a href={href} className={`flex ${isFluid ? 'w-full' : 'w-[196px]'} flex-col no-underline`}>
-      {/* The drawn cover: decorative, because the title is repeated as text below. */}
-      <DrawnCover
-        title={title}
-        choice={cover}
-        size="shelf"
-        isDecorative
-        className={isFluid ? 'w-full' : 'h-[264px]'}
-      />
+      {wrapCover === undefined ? drawnCover : wrapCover(drawnCover)}
       {pill !== undefined && <span className="mt-3">{pill}</span>}
       <span
         className={`${pill === undefined ? 'mt-3' : 'mt-2'} font-heading text-base font-semibold text-ink`}

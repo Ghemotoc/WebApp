@@ -16,6 +16,7 @@ import { Link } from 'react-router';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
+import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 import { FollowButton } from '@/features/people/components/FollowButton';
@@ -61,13 +62,19 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
   const cover = resolveCoverChoice(story);
   return (
     <header className="flex flex-col gap-5">
-      <DrawnCover
-        title={story.title}
-        penName={story.writer.displayName}
-        choice={cover}
-        size="card"
-        isDecorative
+      <StoryCoverArt
+        story={story}
         className="w-[220px]"
+        drawn={
+          <DrawnCover
+            title={story.title}
+            penName={story.writer.displayName}
+            choice={cover}
+            size="card"
+            isDecorative
+            className="w-[220px]"
+          />
+        }
       />
       <div className="flex flex-wrap gap-1.5">
         <InfoPill tone="plum">

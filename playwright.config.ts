@@ -103,6 +103,9 @@ export default defineConfig({
       // The public report form's signing secret for local tests only (S1-E10-02); e2e/public-notice
       // puts the same value in the local database's Vault. Never a real secret.
       NOTICE_SECRET: 'local-e2e-notice-secret',
+      // The picture check's signing secret for local tests only (S1-E10-05); e2e/picture-check
+      // puts the same value in the local database's Vault. Never a real secret.
+      PICTURE_CHECK_SECRET: 'local-e2e-picture-secret',
       VITE_SUPABASE_URL: localSupabase.url,
       VITE_SUPABASE_ANON_KEY: localSupabase.anonKey,
     },

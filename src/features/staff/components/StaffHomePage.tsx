@@ -47,7 +47,7 @@ export function StaffHomePage() {
                 <span className="font-heading text-xl font-bold text-heading">
                   {t(page.labelKey)}
                 </span>
-                <span className="text-sm text-meta">{t(`home.areas.${page.area}`)}</span>
+                <span className="text-sm text-meta">{t(page.descriptionKey)}</span>
               </Link>
             </li>
           ))}

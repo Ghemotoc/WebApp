@@ -20,7 +20,13 @@
 import type { CoverColourKey, CoverDesignKey } from '@/components/covers/coverDesigns';
 import type { Database } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
-import type { AiDisclosure, NewStoryInput, StoryRating, StorySettingsInput } from '@/schemas/story';
+import {
+  coverJsonFor,
+  type AiDisclosure,
+  type NewStoryInput,
+  type StoryRating,
+  type StorySettingsInput,
+} from '@/schemas/story';
 
 /** A category as the form shows it: its key (translated by the screen) and its order. */
 export interface StoryCategory {
@@ -47,6 +53,8 @@ export interface MyStory {
   categorySlug: string;
   tags: string[];
   coverKind: StoredCoverKind;
+  /** An uploaded cover's path in the covers bucket; null for the other kinds (S1-E10-05). */
+  coverTallPath: string | null;
   /** The drawn cover's design and colours; null for the other kinds. */
   drawnCover: { design: CoverDesignKey; background: CoverColourKey; accent: CoverColourKey } | null;
   firstPublishedAt: string | null;
@@ -148,7 +156,7 @@ export async function createStory(
     language_code: input.languageCode,
     category_slug: input.categorySlug,
     tag_names: input.tags,
-    cover: input.cover,
+    cover: coverJsonFor(input.cover),
     story_id: input.storyId,
     labels: toLabelsJson(input),
   });
@@ -174,7 +182,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, first_published_at, created_at, completion_status, comments_enabled, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, comments_enabled, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // Only live chapters, in order; the deleted ones wait for the purge (S1-E3-04 shows undo).
     .is('chapters.deleted_at', null)
@@ -190,6 +198,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     categorySlug: row.categories.slug,
     tags: row.story_tags.map((link) => link.tags.name),
     coverKind: row.cover_kind,
+    coverTallPath: row.cover_kind === 'upload' ? row.cover_tall_path : null,
     drawnCover:
       row.cover_kind === 'drawn' &&
       row.cover_design !== null &&
@@ -256,7 +265,7 @@ export async function updateMyStory(
       language_code: settings.languageCode,
       category_slug: settings.categorySlug,
       tag_names: settings.tags,
-      cover: settings.cover,
+      cover: coverJsonFor(settings.cover),
       completion_status: settings.completionStatus,
       comments_enabled: settings.commentsEnabled,
       labels: toLabelsJson(settings),

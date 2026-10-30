@@ -75,6 +75,7 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
         penName={penName}
         cover={form.answers.cover}
         onChange={(cover) => form.set('cover', cover)}
+        canUpload
       />
       <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
       <StoryStatusSection answers={form.answers} set={form.set} />

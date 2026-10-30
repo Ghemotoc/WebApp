@@ -19,6 +19,7 @@ import { StaffBar } from '@/app/shell/StaffBar';
 import { signOutHere } from '@/features/auth/api/signIn';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
+import { SafetyContactWarningBanner } from '@/features/safety/components/SafetyContactWarningBanner';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { useMyStaffAccess } from '../hooks/useMyStaffAccess';
@@ -88,6 +89,9 @@ export function StaffLayout() {
         roleLabel={roleLabel(access.roles, tStaff)}
         onSignOut={() => void signOut()}
         endSlot={<LanguageSelect id="language-select-staff-top" />}
+      />
+      <SafetyContactWarningBanner
+        canSee={access.areas.some((area) => area.area === 'safety_contacts')}
       />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         <Outlet />

@@ -17,7 +17,9 @@ export type NotificationKind =
   | 'comment_reactions'
   | 'new_follower'
   | 'moderation_decision'
-  | 'report_outcome';
+  | 'report_outcome'
+  | 'appeal_decided'
+  | 'moderator_mail_reply';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
@@ -28,6 +30,20 @@ export type ModerationDecision =
 
 /** What a report came to, as the reporter hears it: never someone else's sanction (S1-E10-04). */
 export type ReportOutcome = 'removed' | 'acted' | 'no_action';
+
+/** An appeal's outcome (S1-E10-07): upheld means the decision stands. */
+export interface NotificationAppeal {
+  reference: string;
+  outcome: 'open' | 'upheld' | 'overturned';
+  /** The statement of reasons the appeal was about, for the link to My reports. */
+  statementReference: string;
+}
+
+/** A moderator mail thread the team answered (S1-E10-11). */
+export interface NotificationMail {
+  reference: string;
+  subject: string;
+}
 
 /** One notification as the page draws it. */
 export interface AppNotification {
@@ -50,6 +66,10 @@ export interface AppNotification {
   /** A report's outcome and the report's reference, for report_outcome (S1-E10-04). */
   outcome: ReportOutcome | null;
   reportReference: string | null;
+  /** An appeal's outcome, for appeal_decided (S1-E10-07). */
+  appeal: NotificationAppeal | null;
+  /** The thread the team answered, for moderator_mail_reply (S1-E10-11). */
+  mail: NotificationMail | null;
   /** A moderation decision can't be switched off (criterion 4). */
   isRequired: boolean;
   isRead: boolean;
@@ -80,9 +100,30 @@ interface NotificationRow {
   statement: { reference: string; action: string } | null;
   outcome: ReportOutcome | null;
   report_reference: string | null;
+  appeal?: {
+    reference: string;
+    outcome: NotificationAppeal['outcome'];
+    statement_reference: string;
+  } | null;
+  mail?: { reference: string; subject: string } | null;
   is_required: boolean;
   is_read: boolean;
   at: string;
+}
+
+/**
+ * An appeal's outcome in the page's shape.
+ *
+ * @param row - the notification as the database answered it
+ * @returns the appeal, or null when the row isn't about one
+ */
+function appealOf(row: NotificationRow): NotificationAppeal | null {
+  if (row.appeal === undefined || row.appeal === null) return null;
+  return {
+    reference: row.appeal.reference,
+    outcome: row.appeal.outcome,
+    statementReference: row.appeal.statement_reference,
+  };
 }
 
 /**
@@ -113,6 +154,8 @@ function toNotification(row: NotificationRow): AppNotification {
     statement: row.statement ?? null,
     outcome: row.outcome ?? null,
     reportReference: row.report_reference ?? null,
+    appeal: appealOf(row),
+    mail: row.mail ?? null,
     isRequired: row.is_required,
     isRead: row.is_read,
     at: row.at,

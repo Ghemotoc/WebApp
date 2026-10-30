@@ -13,12 +13,30 @@ import { useState } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
-import { storySettingsSchema, type StorySettingsInput } from '@/schemas/story';
+import {
+  storySettingsSchema,
+  type StoryCoverChoice,
+  type StorySettingsInput,
+} from '@/schemas/story';
 
 import { updateMyStory, type MyStory, type SettingsOutcome } from '../api/stories';
 
 import { toStoryFieldErrors, type StoryAnswers, type StoryFieldErrors } from './storyAnswers';
 import { myStoriesKey } from './useMyStories';
+
+/**
+ * The story's stored cover as the form keeps it: the upload, the drawn choice or automatic.
+ *
+ * @param story - the writer's story
+ * @returns the cover answer
+ */
+function coverAnswerFor(story: MyStory): StoryCoverChoice {
+  if (story.coverKind === 'upload' && story.coverTallPath !== null) {
+    return { kind: 'upload', tallPath: story.coverTallPath };
+  }
+  if (story.drawnCover !== null) return { kind: 'drawn', ...story.drawnCover };
+  return { kind: 'automatic' };
+}
 
 /**
  * The answers as the story is saved today.
@@ -34,8 +52,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     languageCode: story.languageCode,
     categorySlug: story.categorySlug,
     tags: story.tags,
-    cover:
-      story.drawnCover === null ? { kind: 'automatic' } : { kind: 'drawn', ...story.drawnCover },
+    cover: coverAnswerFor(story),
     completionStatus: story.completionStatus,
     commentsEnabled: story.commentsEnabled,
     rating: story.rating,

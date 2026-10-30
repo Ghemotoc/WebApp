@@ -8,6 +8,8 @@
  * POST /api/decision-emails (server/decision-emails.ts, S1-E10-04),
  * POST /api/notice (server/notice.ts, S1-E10-02: signed with NOTICE_SECRET, the same value the
  * tests put in the local Vault; its emails go to Mailpit too) and
+ * POST /api/picture-check (server/picture-check.ts, S1-E10-05: always the stub locally, signed
+ * with PICTURE_CHECK_SECRET, the same value the tests put in the local Vault) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * Stand-ins:
@@ -34,6 +36,8 @@ import { handleContact, sendWithMailpit } from './contact.ts';
 import { handleDecisionEmails } from './decision-emails.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
 import { handleNotice } from './notice.ts';
+import { handlePictureCheck } from './picture-check.ts';
+import { pictureChecker } from './picture-check/index.ts';
 import { handleSignupContext } from './signup-context.ts';
 import {
   fetchFromHaveIBeenPwned,
@@ -113,6 +117,60 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
     });
 }
 
+/** A handler that answers one function's address. */
+type FunctionHandler = (request: Request) => Promise<Response>;
+
+/**
+ * Picks the handler for the functions that read or write the local database.
+ *
+ * @param url - the request's address
+ * @param environment - the VITE_ values: the local Supabase's address and anon key
+ * @returns the function that answers it, or null for every other address
+ */
+function databaseHandlerFor(
+  url: string | undefined,
+  environment: Record<string, string>,
+): FunctionHandler | null {
+  if (url === '/api/notice') {
+    // The public report form (S1-E10-02): the local Supabase, the local secret, Mailpit.
+    return (request) =>
+      handleNotice(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+        secret: process.env.NOTICE_SECRET,
+        supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
+        productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
+        sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
+      });
+  }
+  if (url === '/api/picture-check') {
+    // The picture check (S1-E10-05): the local Supabase and the stub, never the real services.
+    return (request) =>
+      handlePictureCheck(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+        secret: process.env.PICTURE_CHECK_SECRET,
+        checkPicture: pictureChecker({
+          mode: 'stub',
+          sightengine: { apiUser: '', apiSecret: '' },
+          arachnid: { username: '', password: '' },
+        }),
+      });
+  }
+  if (url === '/api/decision-emails') {
+    // The decision emails after a case is decided (S1-E10-04): the local Supabase, Mailpit.
+    return (request) =>
+      handleDecisionEmails(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+        supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
+        productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
+        sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
+      });
+  }
+  return null;
+}
+
 /**
  * Picks the handler for an address, or none.
  *
@@ -143,29 +201,8 @@ function handlerFor(
         sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
       });
   }
-  if (url === '/api/notice') {
-    // The public report form (S1-E10-02): the local Supabase, the local secret, Mailpit.
-    return (request) =>
-      handleNotice(request, {
-        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
-        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
-        secret: process.env.NOTICE_SECRET,
-        supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
-        productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
-        sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
-      });
-  }
-  if (url === '/api/decision-emails') {
-    // The decision emails after a case is decided (S1-E10-04): the local Supabase, Mailpit.
-    return (request) =>
-      handleDecisionEmails(request, {
-        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
-        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
-        supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
-        productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
-        sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
-      });
-  }
+  const databaseHandler = databaseHandlerFor(url, environment);
+  if (databaseHandler !== null) return databaseHandler;
   if (url === '/api/signup-context') {
     // A test can ask for another country with the X-Fake-Country header; this file never runs on
     // Cloudflare, where only the real connection counts.
