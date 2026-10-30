@@ -7,6 +7,7 @@
  *   /discover/c/<category>                            a category page
  *   /discover/t/<tag>                                 a tag page
  *   /u/<username>/stories                             a writer's stories (from the profile)
+ *   /search/stories?q=<term>                          the stories a search finds (S1-E5-04)
  * and ?category=…&status=…&language=…&sort=… for the filters.
  * Who uses it: DiscoverPage (each shelf's "View more"), StoryListPage, CategoryChips, the story
  * page's tags.
@@ -38,6 +39,17 @@ export const sortOrders: readonly SortOrder[] = [
 ];
 
 /**
+ * The sorts a list's drop-down offers: search adds "Best match" first (S1-E5-04), which the
+ * database refuses on any other list.
+ *
+ * @param kind - which list
+ * @returns the sorts, in the drop-down's order
+ */
+export function sortChoicesFor(kind: ListKind): readonly SortOrder[] {
+  return kind === 'search' ? ['relevance', ...sortOrders] : sortOrders;
+}
+
+/**
  * The page that lists every story of a list (its See all page).
  *
  * @param request - the list and its filters
@@ -56,9 +68,11 @@ export function listAddress(request: ListRequest): string {
     category: `/discover/c/${key}`,
     tag: `/discover/t/${key}`,
     writer: `/u/${key}/stories`,
+    search: '/search/stories',
   };
-  // Step 2: the query string carries the filters and the sort.
+  // Step 2: the query string carries the search term, the filters and the sort.
   const query = new URLSearchParams();
+  if (request.kind === 'search') query.set('q', request.key ?? '');
   if (request.categorySlug !== null) query.set('category', request.categorySlug);
   if (request.completion !== null) query.set('status', request.completion);
   if (request.languageCode !== null) query.set('language', request.languageCode);
@@ -78,6 +92,7 @@ export function listAddress(request: ListRequest): string {
 export function listDefaultSort(kind: ListKind): SortOrder {
   if (kind === 'new') return 'newest';
   if (kind === 'updated' || kind === 'following') return 'updated';
+  if (kind === 'search') return 'relevance';
   return 'popular';
 }
 
@@ -109,7 +124,7 @@ function completionFrom(value: string | null): CompletionStatus | null {
  * @returns a known sort or null
  */
 export function sortFrom(value: string | null): SortOrder | null {
-  return sortOrders.find((order) => order === value) ?? null;
+  return sortChoicesFor('search').find((order) => order === value) ?? null;
 }
 
 /**
@@ -126,6 +141,7 @@ export function requestFromAddress(
   search: URLSearchParams,
 ): ListRequest {
   const language = search.get('language');
+  const sortOrder = sortFrom(search.get('sort'));
   return {
     kind,
     key,
@@ -133,7 +149,8 @@ export function requestFromAddress(
     categorySlug: kind === 'category' ? null : search.get('category'),
     completion: completionFrom(search.get('status')),
     languageCode: language !== null && /^[a-z]{2}(-[A-Z]{2})?$/.test(language) ? language : null,
-    sortOrder: sortFrom(search.get('sort')),
+    // "Best match" belongs to search only (S1-E5-04).
+    sortOrder: sortOrder === 'relevance' && kind !== 'search' ? null : sortOrder,
   };
 }
 
@@ -143,6 +160,8 @@ export interface ListRouteParams {
   categorySlug?: string;
   tag?: string;
   handle?: string;
+  /** The search term (?q=) on /search/stories (S1-E5-04). */
+  searchTerm?: string;
 }
 
 /**
@@ -158,6 +177,7 @@ export function listFromParams(
   if (params.categorySlug !== undefined) return { kind: 'category', key: params.categorySlug };
   if (params.tag !== undefined) return { kind: 'tag', key: params.tag };
   if (params.handle !== undefined) return { kind: 'writer', key: params.handle };
+  if (params.searchTerm !== undefined) return { kind: 'search', key: params.searchTerm };
   const kind = discoverListKinds.find((known) => known === params.listKind);
   return kind === undefined ? null : { kind, key: null };
 }

@@ -1,0 +1,60 @@
+{
+  "page": {
+    "documentTitle": "Căutare · {{productName}}",
+    "eyebrow": "Căutare",
+    "heading": "Căutare",
+    "resultsFor": "Rezultate pentru „{{term}}”",
+    "count_one": "Un rezultat printre povești, scriitori și etichete.",
+    "count_few": "{{count}} rezultate printre povești, scriitori și etichete.",
+    "count_other": "{{count}} de rezultate printre povești, scriitori și etichete.",
+    "start": "Găsește o poveste după titlu, după o etichetă sau după numele scriitorului.",
+    "tooShort": "Scrie cel puțin 2 litere ca să cauți.",
+    "loadFailed": "Căutarea nu merge acum. Încearcă din nou peste puțin timp."
+  },
+  "form": {
+    "label": "Caută povești, scriitori și etichete",
+    "placeholder": "Caută povești, scriitori și etichete",
+    "submit": "Caută",
+    "clear": "Șterge",
+    "hintLead": "Nu e nevoie de diacritice.",
+    "hint": "„povesti” găsește și „povești”. Se potrivesc și terminațiile cuvintelor în română și engleză, așa că „poveste” și „povestea” contează ca același cuvânt."
+  },
+  "groups": {
+    "label": "Arată rezultatele pentru",
+    "stories": "Povești",
+    "writers": "Scriitori",
+    "tags": "Etichete",
+    "storiesTitle_one": "O poveste",
+    "storiesTitle_few": "{{count}} povești",
+    "storiesTitle_other": "{{count}} de povești",
+    "writersTitle_one": "Un scriitor",
+    "writersTitle_few": "{{count}} scriitori",
+    "writersTitle_other": "{{count}} de scriitori",
+    "tagsTitle_one": "O etichetă",
+    "tagsTitle_few": "{{count}} etichete",
+    "tagsTitle_other": "{{count}} de etichete",
+    "safetyNote": "Căutarea nu arată niciodată o poveste pentru 13+, 16+ sau 18+ cuiva mai tânăr. Ascunde și persoanele pe care le-ai blocat și tot ce au eliminat moderatorii."
+  },
+  "results": {
+    "stories_one": "o poveste",
+    "stories_few": "{{count}} povești",
+    "stories_other": "{{count}} de povești",
+    "writerHandle": "@{{handle}}"
+  },
+  "empty": {
+    "title": "Niciun rezultat pentru „{{term}}”",
+    "description": "Verifică ortografia, folosește mai puține cuvinte sau caută o etichetă, de exemplu „fantezie”.",
+    "browse": "Mergi la Descoperă"
+  },
+  "seeAll": {
+    "writersEyebrow": "Căutare",
+    "writersTitle": "Scriitori pentru „{{term}}”",
+    "tagsEyebrow": "Căutare",
+    "tagsTitle": "Etichete pentru „{{term}}”",
+    "backToSearch": "Înapoi la căutare",
+    "loadMore": "Încarcă mai multe",
+    "loadingMore": "Se încarcă…",
+    "none": "Nu s-a găsit nimic.",
+    "count": "Rezultate: {{count}}"
+  }
+}

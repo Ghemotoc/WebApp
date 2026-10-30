@@ -5236,6 +5236,17 @@ export type Database = {
       schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
+      search_fold: { Args: { raw_text: string }; Returns: string };
+      search_like_pattern: { Args: { term: string }; Returns: string };
+      search_query: { Args: { term: string }; Returns: unknown };
+      search_tags: {
+        Args: { page_offset?: number; page_size?: number; term: string };
+        Returns: Json;
+      };
+      search_writers: {
+        Args: { page_offset?: number; page_size?: number; term: string };
+        Returns: Json;
+      };
       seasonal_occasion_problems: {
         Args: {
           ends_on: string;
@@ -5325,6 +5336,16 @@ export type Database = {
         }[];
       };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
+      story_matches_search: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+          term: string;
+        };
+        Returns: boolean;
+      };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_rank_in_tag: {
         Args: { tag_name: string; target_story_id: string };
@@ -5333,6 +5354,18 @@ export type Database = {
           tag_rank: number;
         }[];
       };
+      story_search_document: { Args: { target_story_id: string }; Returns: unknown };
+      story_search_rank: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+          term: string;
+        };
+        Returns: number;
+      };
+      story_search_text: { Args: { target_story_id: string }; Returns: string };
       story_signals: {
         Args: Record<PropertyKey, never>;
         Returns: {

@@ -25,11 +25,15 @@ export type ListKind =
   | 'following'
   | 'writer'
   | 'popular'
-  | 'rising';
+  | 'rising'
+  | 'search';
 
-/** The reader's sort choices (S1-E5-02; popular from S1-E5-03); null keeps the list's own order. */
+/**
+ * The reader's sort choices (S1-E5-02; popular from S1-E5-03; relevance, only for search, from
+ * S1-E5-04); null keeps the list's own order.
+ */
 export type SortOrder =
-  'popular' | 'updated' | 'newest' | 'oldest' | 'title_az' | 'title_za' | 'writer';
+  'relevance' | 'popular' | 'updated' | 'newest' | 'oldest' | 'title_az' | 'title_za' | 'writer';
 
 /** Ongoing or completed: the status filter. */
 export type CompletionStatus = 'ongoing' | 'completed';
@@ -37,7 +41,7 @@ export type CompletionStatus = 'ongoing' | 'completed';
 /** Which list to read, with its filters. */
 export interface ListRequest {
   kind: ListKind;
-  /** The category slug, the tag or the username, for those kinds. */
+  /** The category slug, the tag, the username or the search term, for those kinds. */
   key: string | null;
   categorySlug: string | null;
   completion: CompletionStatus | null;

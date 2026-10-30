@@ -16,7 +16,7 @@
  * anniversary). The board's featured story, continue reading, draft card, ad slot, "Popular in your
  * area" and "Writers to follow" come with their own stories (S1-E4-03, S1-E12-01) or after
  * March, so they aren't drawn. Search (S1-E5-04) is after March.
- * What it calls: GreetingLine, SeasonalDoodle (S1-E5-07), DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
+ * What it calls: GreetingLine, SeasonalDoodle (S1-E5-07), SearchForm (S1-E5-04), DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
  */
 import { Link } from 'react-router';
 
@@ -34,6 +34,8 @@ import type { ListKind } from '../api/storyLists';
 import { useStoryShelf } from '../hooks/useStoryShelf';
 import { discoverListKinds, plainList } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
+
+import { SearchForm } from '@/features/search/components/SearchForm';
 
 import { CategoryLinks } from './CategoryLinks';
 import { DiscoverShelf } from './DiscoverShelf';
@@ -175,6 +177,8 @@ export function DiscoverPage() {
         <GreetingLine />
         <DiscoverHeader />
       </div>
+      {/* Search stories, writers and tags (S1-E5-04; board 3.1's search field). */}
+      <SearchForm />
       <CategoryLinks />
       <DiscoverShelves />
     </PageContainer>

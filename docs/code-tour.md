@@ -1189,6 +1189,15 @@ Under a story's cover the story page shows where it stands in its tags ("#3 in O
 - **Writers:** Story settings → `RankBadgePicker` (one chip per approved tag with its rank) → `useSaveRankBadgePick()` → `set_rank_badge_tags()`, which saves up to 3 tag IDs in `stories.rank_badge_tag_ids` (null means automatic). It saves on its own, apart from the form's Save button.
 - **Tests:** `supabase/tests/database/176-tag-rank-badges.test.sql`, `e2e/tag-rank-badges.spec.ts`, `src/features/tags/lib/rankPick.test.ts`.
 
+## Search (S1-E5-04)
+
+One search field finds stories, writers and tags, in Romanian and English, with or without diacritics.
+
+- **Where it starts:** `SearchForm` (`src/features/search/`) on Discover and on `/search` → `SearchPage` → `useSearchResults()`. Stories come from `useStoryShelf()` with the list kind `search`, so `browse_stories('search', term)` → `listed_stories()` → `list_holds_story()` → `story_matches_search()`. That keeps the age rating, blocks, moderation and drafts in one place, the same as every other list.
+- **How a story matches:** `story_search_text()` folds the title, blurb, the writer's username and pen name, a classic's author and every language's name of its approved tags (lower case, no marks, ş and ţ corrected, as `normalise_tag()`). `story_matches_search()` takes a Romanian or English word match (`search_query()`, stemmed, so "povestea" finds "Povești") or a plain "contains" match for a word typed in part. `story_search_rank()` puts title matches first; the See all page (`/search/stories`, the shared `StoryListPage`) sorts by `relevance` ("Best match"), a sort only search accepts.
+- **Writers and tags:** `search_writers()` lists only writers with a story this reader may see, so a search never turns up a minor's account, and never answers a user ID. `search_tags()` finds approved tags by any of their names. Their See all pages are `/search/writers` and `/search/tags` (`SearchGroupPage`).
+- **Tests:** `supabase/tests/database/177-search.test.sql`, `e2e/search.spec.ts`, `src/features/search/lib/searchAddresses.test.ts`, `src/features/discovery/lib/listAddresses.test.ts`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
