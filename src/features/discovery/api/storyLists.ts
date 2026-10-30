@@ -27,7 +27,9 @@ export type ListKind =
   | 'popular'
   | 'rising'
   | 'classics'
-  | 'search';
+  | 'search'
+  // S1-E4-03: one shelf of the reader's own library (the key is the shelf).
+  | 'library';
 
 /**
  * The reader's sort choices (S1-E5-02; popular from S1-E5-03; relevance, only for search, from
@@ -76,7 +78,7 @@ export interface StoryListPage {
 }
 
 /** One story as browse_stories() answers it. */
-interface ListedStoryRow {
+export interface ListedStoryRow {
   id: string;
   slug: string;
   title: string;
@@ -118,7 +120,7 @@ function drawnCoverOf(cover: ListedStoryRow['cover']): DrawnCoverChoice | null {
  * @param row - the story as the database answered it
  * @returns the card's story
  */
-function toListedStory(row: ListedStoryRow): ListedStory {
+export function toListedStory(row: ListedStoryRow): ListedStory {
   return {
     id: row.id,
     slug: row.slug,

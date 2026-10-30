@@ -8,6 +8,7 @@
  *   /discover/t/<tag>                                 a tag page
  *   /u/<username>/stories                             a writer's stories (from the profile)
  *   /search/stories?q=<term>                          the stories a search finds (S1-E5-04)
+ *   /library/<reading|saved|finished>                 one shelf of the reader's library (S1-E4-03)
  * and ?category=…&status=…&language=…&sort=… for the filters.
  * Who uses it: DiscoverPage (each shelf's "View more"), StoryListPage, CategoryChips, the story
  * page's tags.
@@ -71,6 +72,7 @@ export function listAddress(request: ListRequest): string {
     tag: `/discover/t/${key}`,
     writer: `/u/${key}/stories`,
     search: '/search/stories',
+    library: `/library/${key}`,
   };
   // Step 2: the query string carries the search term, the filters and the sort.
   const query = new URLSearchParams();
@@ -86,14 +88,15 @@ export function listAddress(request: ListRequest): string {
 /**
  * The order a list has when the reader hasn't picked one: the same rule as the database's
  * list_default_sort() (S1-E5-03; S1-E5-02, first criterion). New stories are newest first,
- * Recently updated and the follows shelf by their last chapter; every other list is popular.
+ * Recently updated, the follows shelf and the library's shelves (S1-E4-03) by their last chapter;
+ * every other list is popular.
  *
  * @param kind - which list
  * @returns the list's own sort
  */
 export function listDefaultSort(kind: ListKind): SortOrder {
   if (kind === 'new') return 'newest';
-  if (kind === 'updated' || kind === 'following') return 'updated';
+  if (kind === 'updated' || kind === 'following' || kind === 'library') return 'updated';
   if (kind === 'search') return 'relevance';
   return 'popular';
 }
@@ -164,6 +167,8 @@ export interface ListRouteParams {
   handle?: string;
   /** The search term (?q=) on /search/stories (S1-E5-04). */
   searchTerm?: string;
+  /** The shelf on /library/:shelf (S1-E4-03). */
+  shelf?: string;
 }
 
 /**
@@ -180,6 +185,11 @@ export function listFromParams(
   if (params.tag !== undefined) return { kind: 'tag', key: params.tag };
   if (params.handle !== undefined) return { kind: 'writer', key: params.handle };
   if (params.searchTerm !== undefined) return { kind: 'search', key: params.searchTerm };
+  // S1-E4-03: a library shelf; any other word is no list.
+  if (params.shelf !== undefined) {
+    const isShelf = ['reading', 'saved', 'finished'].includes(params.shelf);
+    return isShelf ? { kind: 'library', key: params.shelf } : null;
+  }
   const kind = discoverListKinds.find((known) => known === params.listKind);
   return kind === undefined ? null : { kind, key: null };
 }

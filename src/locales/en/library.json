@@ -1,0 +1,74 @@
+{
+  "documentTitle": "Your library",
+  "eyebrow": "Library",
+  "title": "Your library",
+  "intro": "Carry on from where you stopped. Your place in every chapter is saved on every device you log in on.",
+  "private": {
+    "lead": "Private.",
+    "body": "Only you can see your library."
+  },
+  "signedOut": {
+    "title": "Keep a library",
+    "body": "Log in to save stories for later and carry on from where you stopped, on any device.",
+    "logIn": "Log in"
+  },
+  "loadFailed": "Your library couldn't be loaded. Check your connection and try again.",
+  "continue": {
+    "heading": "Continue reading",
+    "by": "by",
+    "where": "Chapter {{number}} of {{total}}",
+    "progress": "{{percent}}% through chapter {{number}}",
+    "stopped": "You stopped {{position}} chapter {{number}} on your {{device}}, {{when}}.",
+    "positions": {
+      "start": "near the start of",
+      "middle": "halfway through",
+      "end": "near the end of"
+    },
+    "devices": {
+      "phone": "phone",
+      "tablet": "tablet",
+      "computer": "computer"
+    },
+    "nextOut": "Chapter {{number}} is out",
+    "completed": "Completed story",
+    "button": "Continue",
+    "buttonLabel": "Continue {{title}}",
+    "empty": "Stories you start reading show here, with your place in them."
+  },
+  "shelves": {
+    "eyebrow": "Your shelves",
+    "heading": "Stories in your library",
+    "choose": "Shelf",
+    "option": "{{name}} ({{count}})",
+    "reading": "Reading",
+    "saved": "Saved for later",
+    "finished": "Finished",
+    "chapterOf": "Chapter {{number}} of {{total}}",
+    "notStarted": "Not started",
+    "empty": {
+      "reading": "Nothing here yet. Open any chapter and the story joins this shelf.",
+      "saved": "Nothing saved for later. Use “Library” on a story's page to save it.",
+      "finished": "Stories you read to the end land here."
+    }
+  },
+  "following": {
+    "eyebrow": "Following",
+    "heading": "What you follow",
+    "intro": "You get a notification when they publish something new.",
+    "writers": "Writers ({{count}})",
+    "stories": "Stories ({{count}})",
+    "lastUpdate": "Last update {{when}}",
+    "nothingYet": "Nothing published yet",
+    "noWriters": "You don't follow any writers yet. Use “Follow” on a writer's profile.",
+    "noStories": "You don't follow any stories yet. Use “Follow story” on a story's page.",
+    "new": "New"
+  },
+  "button": {
+    "label": "Library",
+    "none": "Not in your library",
+    "saveFailed": "That didn't save. Try again.",
+    "logIn": "Log in to save it"
+  },
+  "startReading": "Start reading",
+  "continueChapter": "Continue chapter {{number}}"
+}

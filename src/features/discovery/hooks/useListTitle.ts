@@ -5,9 +5,11 @@
  * (unknown until the categories load, and "no such list" for a slug that isn't one); a writer's
  * list uses the writer's display name from the first card, or the username before it loads.
  */
+import type { TFunction } from 'i18next';
+
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
-import type { ListedStory, ListRequest } from '../api/storyLists';
+import type { ListedStory, ListKind, ListRequest } from '../api/storyLists';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 /** The words above the list. */
@@ -16,6 +18,26 @@ export interface ListTitle {
   title: string;
   /** True for a category slug that isn't a category. */
   isUnknown: boolean;
+}
+
+/**
+ * The eyebrow and title of a list named by its kind alone (Discover's shelves), or of a library
+ * shelf (S1-E4-03), whose key is the shelf.
+ *
+ * @param kind - the list
+ * @param key - the shelf, for a library list
+ * @param t - the discovery translations
+ * @returns the eyebrow and title
+ */
+function namedListTitle(kind: ListKind, key: string, t: TFunction<'discovery'>): ListTitle {
+  if (kind === 'library') {
+    return {
+      eyebrow: t('lists.libraryEyebrow'),
+      title: t(`lists.libraryShelves.${key}`, { defaultValue: '' }),
+      isUnknown: false,
+    };
+  }
+  return { eyebrow: t(`lists.${kind}Eyebrow`), title: t(`lists.${kind}`), isUnknown: false };
 }
 
 /**
@@ -62,10 +84,6 @@ export function useListTitle(request: ListRequest, stories: ListedStory[]): List
         isUnknown: false,
       };
     default:
-      return {
-        eyebrow: t(`lists.${request.kind}Eyebrow`),
-        title: t(`lists.${request.kind}`),
-        isUnknown: false,
-      };
+      return namedListTitle(request.kind, key, t);
   }
 }

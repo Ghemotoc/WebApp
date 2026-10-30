@@ -1,0 +1,13 @@
+# Library
+
+The reader's library and their place in every chapter. Built by READ-4a: S1-E4-03 (library and continue reading).
+
+- `components/LibraryPage.tsx`: screen 3.7 at `/library` (header with the "Private" note, ContinueReading, LibraryShelves, FollowingSection). Board: `design/boards/Library.dc.html`.
+- `components/ContinueReadingCard.tsx`: one story to carry on with: the place, the kind of screen, "Chapter 15 is out" and Continue.
+- `components/LibraryShelves.tsx`: the Reading, Saved for later and Finished chips and the chosen shelf as the shared Shelf (See all at `/library/<shelf>`, the discovery feature's StoryListPage).
+- `components/FollowingSection.tsx`: the writers and stories the reader follows, with the shared FollowButton.
+- `components/StoryReadingActions.tsx`: "Start reading" / "Continue chapter n" and the Library drop-down on the story page.
+- `hooks/`, `api/library.ts`: `my_library()`, `my_follows()`, `story_library_state()`, `set_library_shelf()`, `my_place_in_chapter()`, `save_reading_position()`.
+- `lib/places.ts` (where Continue leads, "Chapter 15 is out"), `lib/deviceKind.ts` (phone, tablet or computer from the window width).
+- The reader screen's side lives in `src/features/reading/`: `hooks/useSavedPlace.ts` and `components/SavedPlaceOffer.tsx`.
+- The database side: `supabase/migrations/…_s1_e4_03_library.sql`; test `179`.

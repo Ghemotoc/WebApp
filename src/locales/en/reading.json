@@ -75,7 +75,9 @@
     "unavailableBody": "It may not be published, it may be rated for older readers, it may have been removed, or the link may be wrong.",
     "loadFailed": "We couldn’t load this chapter. Check your connection and try again.",
     "copyNotice": "On the web, right-click and copying are turned off for chapters. That makes copying harder, but it can’t stop screenshots. {{penName}} keeps all the rights to this story.",
-    "reportLabel": "chapter {{number}} of {{story}}"
+    "reportLabel": "chapter {{number}} of {{story}}",
+    "savedPlace": "You stopped {{percent}}% of the way through this chapter.",
+    "goToSavedPlace": "Go back there"
   },
   "teaser": {
     "shared": "Shared with you · chapter {{number}} of {{total}}",
