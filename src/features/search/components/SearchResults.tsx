@@ -58,7 +58,9 @@ function GroupChips({
       {groups.map((group) => (
         <Chip key={group} isPressed={group === chosen} onPressedChange={() => onChoose(group)}>
           {t(`groups.${group}`)}
-          <span className="rounded-full bg-tint px-1.5 text-xs text-heading">{groupTotal(group, results)}</span>
+          <span className="rounded-full bg-tint px-1.5 text-xs text-heading">
+            {groupTotal(group, results)}
+          </span>
         </Chip>
       ))}
     </div>
