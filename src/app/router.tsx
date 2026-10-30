@@ -101,6 +101,15 @@ const staffRoutes: RouteObject = {
         return { Component: StaffMailThreadPage };
       },
     },
+    // Tags writers add, waiting for approval, and tags missing a name (CMS-1e): owner, admin and
+    // moderator.
+    {
+      path: 'tags/:view?',
+      lazy: async () => {
+        const { TagsAdminPage } = await import('@/features/tags/components/staff/TagsAdminPage');
+        return { Component: TagsAdminPage };
+      },
+    },
     // Appeals against moderation decisions (S1-E10-07): owner, admin and moderator.
     {
       path: 'appeals',

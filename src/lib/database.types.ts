@@ -3279,30 +3279,109 @@ export type Database = {
           },
         ];
       };
-      tags: {
+      tag_names: {
         Row: {
           created_at: string;
           id: string;
+          language_code: string;
           name: string;
+          named_by_user_id: string | null;
           normalised_name: string;
+          tag_id: string;
           updated_at: string;
         };
         ComputedFields: never;
         Insert: {
           created_at?: string;
           id?: string;
+          language_code: string;
           name: string;
+          named_by_user_id?: string | null;
           normalised_name: string;
+          tag_id: string;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
           id?: string;
+          language_code?: string;
           name?: string;
+          named_by_user_id?: string | null;
           normalised_name?: string;
+          tag_id?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'tag_names_language_code_fkey';
+            columns: ['language_code'];
+            isOneToOne: false;
+            referencedRelation: 'languages';
+            referencedColumns: ['code'];
+          },
+          {
+            foreignKeyName: 'tag_names_named_by_user_id_fkey';
+            columns: ['named_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'tag_names_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      tags: {
+        Row: {
+          created_at: string;
+          decided_at: string | null;
+          decided_by_user_id: string | null;
+          decision_reason: string | null;
+          id: string;
+          is_recommended: boolean;
+          name: string;
+          normalised_name: string;
+          status: Database['public']['Enums']['tag_status'];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          decided_at?: string | null;
+          decided_by_user_id?: string | null;
+          decision_reason?: string | null;
+          id?: string;
+          is_recommended?: boolean;
+          name: string;
+          normalised_name: string;
+          status?: Database['public']['Enums']['tag_status'];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          decided_at?: string | null;
+          decided_by_user_id?: string | null;
+          decision_reason?: string | null;
+          id?: string;
+          is_recommended?: boolean;
+          name?: string;
+          normalised_name?: string;
+          status?: Database['public']['Enums']['tag_status'];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'tags_decided_by_user_id_fkey';
+            columns: ['decided_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       username_approvals: {
         Row: {
@@ -3709,6 +3788,19 @@ export type Database = {
           user_id: string;
         }[];
       };
+      admin_list_tags: {
+        Args: { which_tags: string };
+        Returns: {
+          created_at: string;
+          is_recommended: boolean;
+          missing_languages: string[];
+          name: string;
+          names: Json;
+          status: Database['public']['Enums']['tag_status'];
+          story_count: number;
+          tag_id: string;
+        }[];
+      };
       admin_log_referral: {
         Args: {
           authority_name: string;
@@ -3758,6 +3850,7 @@ export type Database = {
       };
       admin_moderator_mail_thread: { Args: { thread_reference: string }; Returns: Json };
       admin_move_category: { Args: { category_slug: string; move_by: number }; Returns: number };
+      admin_name_tag: { Args: { names: Json; tag_id: string }; Returns: undefined };
       admin_on_call_alerts: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -3789,6 +3882,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_reject_tag: { Args: { reason: string; tag_id: string }; Returns: number };
       admin_release_case: { Args: { target_case_id: string }; Returns: boolean };
       admin_remove_cms_entry: {
         Args: {
@@ -5109,6 +5203,7 @@ export type Database = {
       };
       require_safety_contacts_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_settings_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_tag_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_website_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
@@ -5249,6 +5344,11 @@ export type Database = {
           received_at: string;
         }[];
       };
+      tag_for_name: {
+        Args: { include_waiting?: boolean; preferred_language?: string; typed_name: string };
+        Returns: string;
+      };
+      tag_name_problems: { Args: { names: Json; target_tag_id: string }; Returns: string[] };
       take_rate_limit: { Args: { action: string }; Returns: undefined };
       teaser_of: { Args: { chapter_body: string; word_limit: number }; Returns: string };
       text_placeholders: { Args: { value: string }; Returns: string[] };
@@ -5342,7 +5442,8 @@ export type Database = {
         | 'moderation_decision'
         | 'report_outcome'
         | 'appeal_decided'
-        | 'moderator_mail_reply';
+        | 'moderator_mail_reply'
+        | 'tag_rejected';
       picture_kind:
         'cover' | 'avatar' | 'chapter_picture' | 'drawing' | 'quote_card' | 'space_banner';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
@@ -5401,6 +5502,7 @@ export type Database = {
         | 'ai_label_added';
       statement_ground: 'terms' | 'law';
       story_rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
+      tag_status: 'waiting' | 'approved' | 'rejected';
     };
     CompositeTypes: {
       audit_log_row: {
@@ -5603,6 +5705,7 @@ export const Constants = {
         'report_outcome',
         'appeal_decided',
         'moderator_mail_reply',
+        'tag_rejected',
       ],
       picture_kind: ['cover', 'avatar', 'chapter_picture', 'drawing', 'quote_card', 'space_banner'],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
@@ -5665,6 +5768,7 @@ export const Constants = {
       ],
       statement_ground: ['terms', 'law'],
       story_rating: ['all_ages', '13_plus', '16_plus', '18_plus'],
+      tag_status: ['waiting', 'approved', 'rejected'],
     },
   },
 } as const;

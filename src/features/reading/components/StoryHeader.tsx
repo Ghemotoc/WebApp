@@ -20,6 +20,7 @@ import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 import { FollowButton } from '@/features/people/components/FollowButton';
+import { useTagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
 
 import type { StoryPageData } from '../api/storyPage';
 
@@ -35,6 +36,9 @@ import { StoryStats } from './StoryStats';
  */
 function StoryTagLinks({ tags }: { tags: string[] }) {
   const { t } = useTranslation('reading');
+  // CMS-1e: each tag in the interface language; the link keeps the stored name, which the tag
+  // page finds in any language.
+  const { showTag } = useTagCatalogue();
   if (tags.length === 0) return null;
   return (
     <ul aria-label={t('storyPage.tags')} className="m-0 flex list-none flex-wrap gap-2 p-0">
@@ -44,7 +48,7 @@ function StoryTagLinks({ tags }: { tags: string[] }) {
             to={listAddress(plainList('tag', tag))}
             className="relative inline-flex h-9 items-center rounded-full border border-control-border bg-surface px-3.5 text-sm leading-none font-semibold text-heading no-underline after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] hover:bg-tint"
           >
-            {tag}
+            {showTag(tag)}
           </Link>
         </li>
       ))}

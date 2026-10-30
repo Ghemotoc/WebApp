@@ -1,0 +1,49 @@
+{
+  "documentTitle": "Etichete · Echipă",
+  "eyebrow": "Echipă · etichete",
+  "heading": "Etichete",
+  "intro": "O etichetă scrisă pentru prima dată de un autor așteaptă aici. Cititorii o văd doar după ce o aprobi. Dă-i un nume în fiecare limbă a interfeței, ca fiecare cititor să o vadă în limba lui. Respinge o etichetă care încalcă regulile sau o repetă pe alta: dispare de la toate poveștile, iar autorii sunt anunțați. Fiecare decizie apare în jurnalul de audit.",
+  "views": {
+    "label": "Ce etichete",
+    "waiting": "Așteaptă aprobarea",
+    "missing": "Fără nume într-o limbă"
+  },
+  "empty": {
+    "waiting": "Nicio etichetă nu așteaptă. Etichetele noi apar aici pe măsură ce autorii le adaugă.",
+    "missing": "Fiecare etichetă are nume în toate limbile interfeței."
+  },
+  "storyCount_one": "Folosită la {{count}} poveste",
+  "storyCount_few": "Folosită la {{count}} povești",
+  "storyCount_other": "Folosită la {{count}} de povești",
+  "typedAs": "Scrisă ca „{{name}}”",
+  "nameIn": "Numele în {{language}}",
+  "languages": {
+    "ro": "română",
+    "en": "engleză"
+  },
+  "approve": "Aprobă",
+  "saveNames": "Salvează numele",
+  "reject": "Respinge",
+  "rejectLabel": "Respinge {{name}}",
+  "approveLabel": "Aprobă {{name}}",
+  "reason": "De ce o respingi",
+  "reasonHint": "Pentru jurnalul de audit. Autorii află că eticheta nu a fost aprobată, nu și motivul.",
+  "confirmReject": "Respinge eticheta",
+  "cancel": "Renunță",
+  "problems": {
+    "empty": "Dă-i un nume.",
+    "too_long": "Cel mult 40 de caractere.",
+    "taken": "Altă etichetă are deja acest nume în această limbă.",
+    "unknown_language": "Această limbă nu este deschisă."
+  },
+  "outcomes": {
+    "approved": "Aprobată. Cititorii o văd acum.",
+    "rejected": "Respinsă. A dispărut de la toate poveștile, iar autorii au fost anunțați."
+  },
+  "failures": {
+    "not_allowed": "Doar echipa de moderare decide asupra etichetelor.",
+    "unreachable": "Nu am putut ajunge la server. Încearcă din nou.",
+    "not_found": "Pentru această etichetă s-a decis deja. Lista e acum la zi.",
+    "invalid": "Corectează câmpurile arătate și încearcă din nou."
+  }
+}

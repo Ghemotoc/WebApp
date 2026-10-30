@@ -113,7 +113,8 @@ select results_eq(
        ('stories', 0::bigint),
        ('story_scores', 0::bigint),
        ('story_tags', 0::bigint),
-       ('tags', (select count(*) from public.tags)),
+       ('tag_names', (select count(*) from public.tag_names)),
+       ('tags', (select count(*) from public.tags where status = 'approved')),
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,

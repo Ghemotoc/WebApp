@@ -39,6 +39,13 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.moderatorMail',
     descriptionKey: 'home.areas.moderator_mail',
   },
+  // Tags (CMS-1e): new tags writers add wait here for the moderation team (Robert, 30 Oct 2026).
+  {
+    area: 'moderation',
+    href: '/staff/tags',
+    labelKey: 'nav.tags',
+    descriptionKey: 'home.areas.tags',
+  },
   // Appeals against decisions (S1-E10-07), next to the queue (architecture 1.8.2).
   {
     area: 'appeals',

@@ -19,7 +19,8 @@ export type NotificationKind =
   | 'moderation_decision'
   | 'report_outcome'
   | 'appeal_decided'
-  | 'moderator_mail_reply';
+  | 'moderator_mail_reply'
+  | 'tag_rejected';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

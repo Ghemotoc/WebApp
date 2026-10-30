@@ -35,7 +35,7 @@
     "categoryAndTags": "Category and tags",
     "category": "Category",
     "tags": "Tags",
-    "tagsHint": "{{count}} of {{max}} tags. Capital letters and diacritics don’t matter, so “Fantezie” and “fantezie” are the same tag.",
+    "tagsHint": "{{count}} of {{max}} tags. Separate them with commas. Capital letters and diacritics don’t matter, and a tag typed in another language becomes its name in yours. A new tag shows to readers once our team approves it.",
     "tagsFull": "{{max}} of {{max}} tags. Remove one to add another.",
     "tagPlaceholder": "Add a tag",
     "removeTag": "Remove tag {{tag}}",
@@ -46,7 +46,14 @@
     "notActive": "Your account can’t create stories yet. Confirm your email and choose a username, or wait for the test to open to your age group.",
     "createFailed": "We couldn’t save your story. Check your connection and try again.",
     "signedOut": "Log in to start a story.",
-    "languageComing": "{{language}}: coming when we have moderators for it"
+    "languageComing": "{{language}}: coming when we have moderators for it",
+    "tagWaiting": "(waiting for approval)",
+    "suggestedTags": "Suggested tags",
+    "addSuggestedTag": "Add the tag {{tag}}",
+    "allSuggestions_one": "Show all {{count}} suggestion",
+    "allSuggestions_few": "Show all {{count}} suggestions",
+    "allSuggestions_other": "Show all {{count}} suggestions",
+    "fewerSuggestions": "Show fewer suggestions"
   },
   "categories": {
     "fiction": "Fiction",

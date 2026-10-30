@@ -7,14 +7,21 @@
  * "3 of 10 tags. Capital letters and diacritics don’t matter…". Enter or a comma adds the typed
  * tag; Backspace in an empty field removes the last one. Look-alikes are merged by
  * src/features/writing/lib/tags.ts, the same rule as the database's normalise_tag().
- * Who uses it: CategoryTagsSection.
+ * CMS-1e (Robert, 30 Oct 2026): each chip shows its tag in the interface language, a name typed
+ * in another language becomes the interface language's name ("fantezie" → "Fantasy" in English),
+ * a tag staff haven't approved yet says "waiting for approval", and the recommended tags sit
+ * under the box (TagSuggestions).
+ * Who uses it: CategoryTagsSection. What it calls: useTagCatalogue().
  */
 import { useId, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useTagCatalogue, type TagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
 import { normaliseTypedText } from '@/lib/romanian-text';
 
-import { addTag, MAXIMUM_TAG_LENGTH, MAXIMUM_TAGS } from '../lib/tags';
+import { addTag, MAXIMUM_TAG_LENGTH, MAXIMUM_TAGS, normaliseTag } from '../lib/tags';
+
+import { TagSuggestions } from './TagSuggestions';
 
 /** What a TagInput needs. */
 export interface TagInputProps {
@@ -23,12 +30,21 @@ export interface TagInputProps {
   errorMessage?: string;
 }
 
-/** One tag with its remove button. */
-function TagChip({ tag, onRemove }: { tag: string; onRemove: () => void }) {
+/** One tag with its remove button; a tag staff haven't approved says so. */
+function TagChip({
+  tag,
+  isWaiting,
+  onRemove,
+}: {
+  tag: string;
+  isWaiting: boolean;
+  onRemove: () => void;
+}) {
   const { t } = useTranslation('writing');
   return (
     <span className="inline-flex h-10 items-center gap-0.5 rounded-full border border-(--pill-plum-border) bg-(--pill-plum-bg) pl-3.5 text-sm leading-none font-semibold text-(--pill-plum-text)">
       {tag}
+      {isWaiting && <span className="ml-1.5 font-normal">{t('newStory.tagWaiting')}</span>}
       <button
         type="button"
         aria-label={t('newStory.removeTag', { tag })}
@@ -58,18 +74,35 @@ function TagChip({ tag, onRemove }: { tag: string; onRemove: () => void }) {
  * How typing turns into tags: Enter or a comma adds the typed tag, Backspace on an empty field
  * removes the last one.
  *
- * @returns addTyped (also used on blur) and the key handler
+ * @param props - the tags, onChange and the tag catalogue
+ * @returns the typed text and its setter, addName (the suggestions), addTyped (also used on
+ *   blur) and the key handler
  */
-function useTagTyping(
-  tags: string[],
-  typed: string,
-  setTyped: (value: string) => void,
-  onChange: (tags: string[]) => void,
-) {
+function useTagTyping({
+  tags,
+  onChange,
+  catalogue,
+}: {
+  tags: string[];
+  onChange: (tags: string[]) => void;
+  catalogue: TagCatalogue;
+}) {
+  const [typed, setTyped] = useState('');
+
+  /** Adds a tag, by the interface language's name when it is a known tag in any language. */
+  function addName(name: string) {
+    const shown = catalogue.showTag(name);
+    // A name for a tag the story already has, in another language, adds nothing.
+    const isAlreadyThere = tags.some(
+      (existing) => normaliseTag(catalogue.showTag(existing)) === normaliseTag(shown),
+    );
+    const next = isAlreadyThere ? tags : addTag(tags, shown);
+    if (next !== tags) onChange(next);
+  }
+
   /** Adds what was typed, if it is a new tag, and clears the field. */
   function addTyped() {
-    const next = addTag(tags, typed);
-    if (next !== tags) onChange(next);
+    addName(typed);
     setTyped('');
   }
 
@@ -83,7 +116,35 @@ function useTagTyping(
     }
   }
 
-  return { addTyped, handleKeyDown };
+  return { typed, setTyped, addName, addTyped, handleKeyDown };
+}
+
+/**
+ * The hint under the box ("3 of 10 tags…") and the error, when there is one.
+ *
+ * @returns the two paragraphs
+ */
+function TagBoxMessages({
+  id,
+  hint,
+  errorMessage,
+}: {
+  id: string;
+  hint: string;
+  errorMessage: string | undefined;
+}) {
+  return (
+    <>
+      <p id={`${id}-hint`} className="m-0 text-[13px] text-meta">
+        {hint}
+      </p>
+      {errorMessage !== undefined && (
+        <p id={`${id}-error`} className="m-0 text-sm text-destructive">
+          {errorMessage}
+        </p>
+      )}
+    </>
+  );
 }
 
 /**
@@ -94,10 +155,9 @@ function useTagTyping(
 export function TagInput({ tags, onChange, errorMessage }: TagInputProps) {
   const { t } = useTranslation('writing');
   const id = useId();
-  const [typed, setTyped] = useState('');
+  const catalogue = useTagCatalogue();
   const isFull = tags.length >= MAXIMUM_TAGS;
-
-  const { addTyped, handleKeyDown } = useTagTyping(tags, typed, setTyped, onChange);
+  const typing = useTagTyping({ tags, onChange, catalogue });
 
   const hint = isFull
     ? t('newStory.tagsFull', { max: MAXIMUM_TAGS })
@@ -113,14 +173,15 @@ export function TagInput({ tags, onChange, errorMessage }: TagInputProps) {
         {tags.map((tag) => (
           <TagChip
             key={tag}
-            tag={tag}
+            tag={catalogue.showTag(tag)}
+            isWaiting={catalogue.isLoaded && !catalogue.isApproved(tag)}
             onRemove={() => onChange(tags.filter((existing) => existing !== tag))}
           />
         ))}
         <input
           id={id}
           type="text"
-          value={typed}
+          value={typing.typed}
           disabled={isFull}
           placeholder={t('newStory.tagPlaceholder')}
           aria-describedby={describedBy}
@@ -128,21 +189,20 @@ export function TagInput({ tags, onChange, errorMessage }: TagInputProps) {
           maxLength={MAXIMUM_TAG_LENGTH}
           onChange={(event) => {
             normaliseTypedText(event.target);
-            setTyped(event.target.value);
+            typing.setTyped(event.target.value);
           }}
-          onKeyDown={handleKeyDown}
-          onBlur={addTyped}
+          onKeyDown={typing.handleKeyDown}
+          onBlur={typing.addTyped}
           className="h-10 min-w-[160px] flex-1 border-0 bg-transparent px-3 font-body text-[15px] text-ink outline-none placeholder:text-meta"
         />
       </div>
-      <p id={`${id}-hint`} className="m-0 text-[13px] text-meta">
-        {hint}
-      </p>
-      {errorMessage !== undefined && (
-        <p id={`${id}-error`} className="m-0 text-sm text-destructive">
-          {errorMessage}
-        </p>
-      )}
+      <TagBoxMessages id={id} hint={hint} errorMessage={errorMessage} />
+      <TagSuggestions
+        recommended={catalogue.recommended}
+        chosen={tags.map(catalogue.showTag)}
+        onAdd={typing.addName}
+        isFull={isFull}
+      />
     </div>
   );
 }

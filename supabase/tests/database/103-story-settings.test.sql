@@ -42,8 +42,8 @@ select is((public.update_my_story('statia-meteo-seed01', '{"tag_names": ["Bunici
 select results_eq(
   $$ select tags.normalised_name from public.story_tags join public.tags on tags.id = story_tags.tag_id
      where story_tags.story_id = '00000000-0000-4000-9000-000000000001' order by 1 $$,
-  $$ values ('bunici'), ('iarna') $$,
-  'the new tags replace the old ones, normalised'
+  $$ values ('grandparents'), ('iarna') $$,
+  'the new tags replace the old ones; "Bunici" is the recommended tag Grandparents (CMS-1e)'
 );
 select throws_ok($$ select public.update_my_story('statia-meteo-seed01', '{"cover": {"kind": "drawn", "design": "waves", "background": "sky", "accent": "#6E93BF"}}') $$,
   '23514', null, 'a cover colour outside the palette is refused on update too');

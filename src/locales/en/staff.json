@@ -70,6 +70,7 @@
     "onCall": "On call",
     "appeals": "Appeals",
     "moderatorMail": "Moderator mail",
+    "tags": "Tags",
     "safetyContacts": "Safety contacts",
     "settings": "Settings",
     "website": "Website"
@@ -101,6 +102,7 @@
       "on_call_rota": "Who is on call for removal orders, the shifts ahead and the gaps.",
       "moderation": "The report queue by tier and deadline, and each case with its decision.",
       "moderator_mail": "Messages from members to the moderation team, in one shared inbox.",
+      "tags": "New tags writers add, waiting for approval, and tags missing a name in a language.",
       "appeals": "Appeals against moderation decisions, decided by a different moderator where possible.",
       "safety_contacts": "The helplines and emergency numbers shown on reporting screens, and their monthly check.",
       "classics": "Add and check public-domain classics for the official account.",

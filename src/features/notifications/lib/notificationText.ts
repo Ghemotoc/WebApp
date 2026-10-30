@@ -172,6 +172,27 @@ function mailReplyText(t: TFunction, notification: AppNotification): Notificatio
   };
 }
 
+/**
+ * Staff took a new tag off the writer's story because they didn't approve it (CMS-1e; Robert,
+ * 30 Oct 2026: "the writer is told"). It names the story, never the member of staff, and links to
+ * the story's settings so the writer can pick another tag.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a tag_rejected row
+ * @returns the row's words
+ */
+function tagRejectedText(t: TFunction, notification: AppNotification): NotificationText {
+  const story = notification.story;
+  return {
+    who: t('who.moderationTeam'),
+    what: t('what.tagRejected', { title: story?.title ?? '' }),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.editTags'),
+    href: story === null ? '/write' : `/write/s/${story.slug}/settings`,
+  };
+}
+
 /** The moderation team's kinds and the function that words each one. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -180,6 +201,7 @@ const teamTextFor: Partial<
   report_outcome: reportOutcomeText,
   appeal_decided: appealText,
   moderator_mail_reply: mailReplyText,
+  tag_rejected: tagRejectedText,
 };
 
 /**

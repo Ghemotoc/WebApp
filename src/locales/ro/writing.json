@@ -35,7 +35,7 @@
     "categoryAndTags": "Categorie și etichete",
     "category": "Categorie",
     "tags": "Etichete",
-    "tagsHint": "{{count}} din {{max}} etichete. Majusculele și diacriticele nu contează, așa că „Fantezie” și „fantezie” sunt aceeași etichetă.",
+    "tagsHint": "{{count}} din {{max}} etichete. Desparte-le cu virgulă. Majusculele și diacriticele nu contează, iar o etichetă scrisă în altă limbă primește numele ei în limba ta. O etichetă nouă apare cititorilor după ce o aprobă echipa noastră.",
     "tagsFull": "{{max}} din {{max}} etichete. Scoate una ca să adaugi alta.",
     "tagPlaceholder": "Adaugă o etichetă",
     "removeTag": "Scoate eticheta {{tag}}",
@@ -46,7 +46,14 @@
     "notActive": "Contul tău nu poate crea povești încă. Confirmă-ți adresa de e-mail și alege un nume de utilizator, sau așteaptă să se deschidă testul pentru vârsta ta.",
     "createFailed": "Nu am putut salva povestea. Verifică-ți conexiunea și încearcă din nou.",
     "signedOut": "Conectează-te ca să începi o poveste.",
-    "languageComing": "{{language}}: vine când avem moderatori care o citesc"
+    "languageComing": "{{language}}: vine când avem moderatori care o citesc",
+    "tagWaiting": "(așteaptă aprobarea)",
+    "suggestedTags": "Etichete sugerate",
+    "addSuggestedTag": "Adaugă eticheta {{tag}}",
+    "allSuggestions_one": "Arată {{count}} sugestie",
+    "allSuggestions_few": "Arată toate cele {{count}} sugestii",
+    "allSuggestions_other": "Arată toate cele {{count}} de sugestii",
+    "fewerSuggestions": "Arată mai puține sugestii"
   },
   "categories": {
     "fiction": "Ficțiune",
