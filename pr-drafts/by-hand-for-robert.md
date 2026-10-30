@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- **CMS-1c (#212, merged):** nothing on staging now. New: Staff > Website > Interface text and Email templates (owner and admin): change any button, label or email wording, schedule it, restore or reset it. Email wording reaches Auth emails once the Send Email hook is switched on (GO-LIVE below).
 - **CMS-1b (#211, merged):** nothing on staging: version 1 of the home page, help and questions arrives with the migration. New: Staff > Website (owner and admin) edits the home page, notice banners, help pages and questions per market and language; the home page at `/` now reads its text from there. Optional: read the new Romanian lines in the PR's details block.
 - **CMS-1a (#210, merged):** on staging, run `supabase/staging-topups/CMS-1a.sql` once in the SQL editor (it is safe to run twice). New: Staff > Settings now edits flags, settings, the Discover mix, rate limits, categories, reserved names, username words, and markets and languages; Staff > Roles sets which languages each moderator reads.
 - **SAFE-4 (#209, merged):** nothing on staging: no SQL top-up and no new secrets. Picture uploads stay off until the picture-check steps in GO-LIVE below are done. New: Staff > Safety contacts (edit the helplines, with a warning once one goes 45 days unchecked) and the accessibility statement in the footer. Optional: read the new Romanian lines in the PR's details block.

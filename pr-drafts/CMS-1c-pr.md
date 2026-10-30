@@ -95,7 +95,19 @@ This is part (c) of the CMS-1 bundle in Robert's full-app plan (30 Oct 2026). It
 
 ## Local check run
 
-RESULTS
+I ran the full `npm run checks` on `e71205d`. Partway through the end-to-end run, the machine's disk briefly filled, the local database restarted, and three files failed while it was in recovery. I re-ran those three files on their own.
+
+| Check | Result |
+| --- | --- |
+| lint, typecheck, types:check | pass |
+| Vitest | 683 passed |
+| `supabase db reset` and pgTAP | 83 files, 1,783 tests, PASS |
+| Playwright (full run) | 977 passed. 4 failed: 3 while the database was in recovery and the reader-performance timing test (below). 45 didn't run, because they come after a failure in a serial file. |
+| Re-run of `manage-chapters`, `moderation-queue`, `notifications` | 49 passed |
+| `interface-text.spec.ts` | 27 passed |
+| `reader-performance` | the 2 s throttled-load test fails here, and on `main` too, because of this machine's speed (see #210 and #211) |
+| i18n:check, migrations:check | pass |
+| Functions build (wrangler) | compiled |
 
 ## Screenshots
 
