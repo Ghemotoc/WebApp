@@ -72,15 +72,26 @@ Legal wording (age, consent, privacy, reporting, messaging) has a reminder box o
 
 ## Local check run
 
-RESULTS
+Run on `58277e9`'s parent `5687111` with the full `npm run checks`, then the failing files again after the fix commit `58277e9`:
+
+| Check | Result |
+| --- | --- |
+| lint, typecheck, types:check | pass |
+| Vitest | 664 passed |
+| `supabase db reset` and pgTAP | 82 files, 1,761 tests, PASS |
+| Playwright (full run) | 955 passed, 5 failed, 1 skipped, 39 not run (serial tests after a failure) |
+| After `58277e9`: `accessibility-statement`, `staff-shell`, `epic-s1-e11` | 55 passed (the 4 failures were tests that didn't yet know the new Website menu item and the website's storage keys) |
+| `reader-performance` | the 2 s throttled-load test fails here and on `main` too (machine speed, see #210); the other two pass |
+| i18n:check, migrations:check | pass |
+| Functions build (wrangler) | compiled |
 
 ## Screenshots
 
-Taken at 390, 768 and 1440 px but not attached, because the session can't upload images.
+Taken at 390, 768 and 1440 px as the admin persona, but not attached, because the session can't upload images.
 
-- `/` as a visitor: the hero "Scrie povești. Fii citit." with the gold underline, the three points, the four "Why write here" cards, the safety lines, the two shelves and the questions.
-- `/help` and `/help/getting-started`.
-- `/staff/website` as the owner: the market and language picker, the hero fields with counters beside the live preview, the section fields, Publish and the earlier versions.
+- `/` in English: the hero "Write stories. Get read." with the gold underline, the three points, the four "Why write here" cards, the safety lines and the questions. The shelves draw nothing until their list loads, so they aren't in the capture.
+- `/help`.
+- `/staff/website`: the market and language picker, the hero fields with counters beside the live preview, the section fields, Publish and the earlier versions.
 
 ## Decisions taken
 
@@ -105,6 +116,9 @@ The rest are in `src/locales/ro/websiteAdmin.json` and `common.json` › `websit
 - Nothing on staging: version 1 of the content arrives with the migration.
 
 ## Follow-ups
+
+- The footer shows both "Contact us" and "Contact"; one of them should go (outside this story).
+- The reader's 2 s throttled-load test is too tight for this machine, on `main` too.
 
 - The website's own database (set-up OPEN): a second `WebsiteContentStore` when it exists.
 - Landing pages (S1-E11-14) can reuse the same table and editor.
