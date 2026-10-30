@@ -2,15 +2,18 @@
 
 Newest state at the top. Read this first on "continue".
 
-## Now (26 Oct 2026, 10:40 UTC)
+## Now (30 Oct 2026, 05:30 UTC)
 
-- Robert asked (26 Oct, 05:53) for PEOPLE-4 then SAFE-3, and to stop before SAFE-4.
-- PEOPLE-4 merged as #207, SAFE-3 merged as #208 (main 1a57988). **Stopped before SAFE-4**, as Robert asked: wait for him.
+- **Robert's new plan (30 Oct 2026, 05:22): build the full Stage 1 app, all 17 bundles in `full-app-bundles.md`, one at a time, without waiting for him.** It replaces the March-only order and the "Not March" list. Everything else in the builder brief still applies.
+- Outside services: adapter with a `stub` and a `real` provider, misleading features behind a flag that is off, the missing key or account added to GO-LIVE in `by-hand-for-robert.md`. Never stop for them.
+- Before each bundle: check main, skip what is built, finish what is partly built.
+- If the usage limit hits: stop cleanly, carry on at "continue".
+- Now: bundle 1, SAFE-4.
 - Use Node 24 (`source scratchpad/env.sh`): the shell's default Node 22 fails `formatStatNumber` ("19K").
 - After a container restart, start Docker with `nohup dockerd > /tmp/dockerd.log 2>&1 &` before the quality run.
 - Robert allowed merging my own PRs (24 Oct 2026, 22:15), so each bundle merges once its gate passes.
-- e2e tip: specs that sign in as a persona and change its language race each other in parallel runs; accessibility loops use a persona no other spec touches (pending_check, failed_check), or a visitor. Specs that need published stories make their own (as `e2e/discover.spec.ts` does) instead of publishing the shared seed stories. Sign-up specs now fill the Username field.
-- Known on main: the reader's 2-second cold-load test runs about 2.3 s on this machine; it fails on main too.
+- e2e tip: specs that sign in as a persona and change its language race each other in parallel runs; accessibility loops use a persona no other spec touches (pending_check, failed_check), or a visitor. Specs that need published stories make their own instead of publishing the shared seed stories. A second report by the same person on the same item within a day returns the first, so specs that report twice use different reporters.
+- Known on main: the reader's 2-second cold-load test runs about 2.3 s on this machine.
 
 ## Merged bundles
 
@@ -28,7 +31,7 @@ Newest state at the top. Read this first on "continue".
 
 ## Next
 
-SAFE-4 (only when Robert asks), CMS-1 (now includes S1-E5-08, #53, S1-E5-QA part two and S1-E11-19: every email, Auth emails included, sent through a Send Email hook and Brevo with admin-editable text), CHECK.
+The 17 bundles of `full-app-bundles.md`, in order: SAFE-4, CMS-1, DISCOVER-2, READ-4, WRITE-2, ACCOUNTS-2, MESSAGES, PRIVACY, FORUMS-1, FORUMS-2, CLASSES, ADMIN-2, CONTESTS, SPONSORS, APPS-1, APPS-2, CHECK; then GO-LIVE with Robert.
 
 ## Stubbed or carried
 
