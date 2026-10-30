@@ -5,13 +5,15 @@
  * One card per case at every width (a six-column table doesn't fit a phone, and cards read well
  * everywhere): the reference is the link to the case page, then what was reported, the signals,
  * the account by username and age group (never the year of birth, architecture 1.8.3) and the
- * deadline. A decided case shows its decision instead of a countdown.
+ * deadline. A decided case shows its decision instead of a countdown. A claimed case says who
+ * has it (S1-E10-03b).
  * Who shows it: CaseList.
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { InfoPill } from '@/components/ui/InfoPill';
 import { LabelRows } from '@/components/ui/LabelRows';
 
 import type { QueueCase } from '../api/moderationQueue';
@@ -60,6 +62,13 @@ export function CaseRow({ theCase }: { theCase: QueueCase }) {
         <div className="flex flex-wrap items-center gap-2">
           <TierPill tier={theCase.tier} />
           <DeadlineLabel theCase={theCase} />
+          {theCase.claimedByHandle !== null && (
+            <InfoPill tone="sky">
+              {theCase.claimedByMe
+                ? t('claims.pillMine')
+                : t('claims.pill', { handle: theCase.claimedByHandle })}
+            </InfoPill>
+          )}
         </div>
       </div>
       <LabelRows

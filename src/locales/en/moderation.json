@@ -29,7 +29,16 @@
       "under18Yes": "Yes",
       "under18No": "No",
       "source": "Found by",
-      "allSources": "Reports, orders and picture checks"
+      "allSources": "Reports, orders and picture checks",
+      "reason": "Reason",
+      "allReasons": "All reasons",
+      "claimed": "Claimed",
+      "claimedAll": "All",
+      "claimedMine": "By me",
+      "claimedAnyone": "By anyone",
+      "claimedNobody": "Not claimed",
+      "search": "Search cases",
+      "searchPlaceholder": "Case reference or username"
     },
     "showing": "Cases shown: {{count}}, most urgent first."
   },
@@ -350,5 +359,44 @@
       "unreachable": "We couldn’t reach our server. Check your connection and try again.",
       "not_built": "This isn’t built yet."
     }
+  },
+  "claims": {
+    "heading": "Who is on it",
+    "nobody": "Nobody has claimed this case.",
+    "mine": "You have claimed this case. Others see it is yours for the next hour.",
+    "someone": "@{{handle}} is working on this case.",
+    "claim": "Claim this case",
+    "takeOver": "Take over",
+    "release": "Release",
+    "refused": "Someone else claimed this case less than an hour ago. Ask them, or try again later.",
+    "pill": "Claimed by @{{handle}}",
+    "pillMine": "Claimed by you"
+  },
+  "picture": {
+    "heading": "The picture",
+    "alt": "The uploaded picture this case is about",
+    "show": "Show the picture",
+    "hide": "Blur the picture",
+    "matchHidden": "This picture matched known child sexual abuse material. It is never shown here: follow the safeguarding steps. The file is kept as evidence.",
+    "unreadable": "We couldn't open the picture. Try again in a moment.",
+    "kind": "Kind",
+    "kinds": {
+      "cover": "Story cover",
+      "avatar": "Profile picture"
+    },
+    "status": "Status",
+    "statuses": {
+      "pending": "Waiting for the check",
+      "passed": "Passed",
+      "held": "Held for a person",
+      "approved": "Approved by a moderator",
+      "removed": "Removed"
+    },
+    "flags": "What was flagged",
+    "noFlags": "Nothing",
+    "provider": "Checked by",
+    "noProvider": "Not checked yet",
+    "story": "Story",
+    "decisionHint": "No action approves the picture and shows it. Any other decision removes it, and the uploader gets a statement of reasons."
   }
 }
