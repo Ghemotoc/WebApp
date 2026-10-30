@@ -24,6 +24,11 @@
       "tab": "Contact",
       "name": "Contact and company details",
       "intro": "How to reach us: for users, for authorities and for removal orders, and who runs {{productName}}."
+    },
+    "accessibility": {
+      "tab": "Accessibility",
+      "name": "Accessibility statement",
+      "intro": "How {{productName}} meets WCAG 2.2 AA, what doesn’t work yet and how to tell us about a barrier."
     }
   },
   "status": {

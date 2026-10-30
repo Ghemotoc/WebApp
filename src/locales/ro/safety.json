@@ -20,5 +20,70 @@
     "crisis_youth": "Linie de criză pentru tineri",
     "police_online_child": "Poliție",
     "regulator": "Autoritate"
+  },
+  "admin": {
+    "documentTitle": "Contacte de siguranță | Personal",
+    "eyebrow": "Siguranță",
+    "heading": "Contacte de siguranță",
+    "intro": "Aceste numere și linkuri apar în fiecare formular de raportare și în paginile de ajutor. Verifică-le lunar la sursa oficială, apoi confirmă-le sau schimbă-le.",
+    "introReadOnly": "Aceste numere și linkuri apar în fiecare formular de raportare și în paginile de ajutor. Echipa de suport le ține la zi; aici le poți citi.",
+    "loading": "Se încarcă contactele de siguranță…",
+    "country": "Țara",
+    "international": "Liste internaționale",
+    "add": "Adaugă un contact",
+    "noContacts": "Țara aceasta nu are încă contacte de siguranță.",
+    "listLabel": "Contactele de siguranță ale țării",
+    "none": "Niciunul",
+    "lastChecked": "Ultima verificare",
+    "checkedOnBy": "{{date}}, de {{who}}",
+    "confirm": "E încă bun",
+    "confirmLabel": "{{label}} e încă bun",
+    "edit": "Schimbă",
+    "remove": "Șterge",
+    "removeReason": "De ce ștergi {{label}}?",
+    "removeConfirm": "Șterge contactul",
+    "warning_one": "Un contact de siguranță nu a fost verificat de {{days}} de zile.",
+    "warning_few": "{{count}} contacte de siguranță nu au fost verificate de până la {{days}} de zile.",
+    "warning_other": "{{count}} de contacte de siguranță nu au fost verificate de până la {{days}} de zile.",
+    "warningLink": "Verifică-le acum",
+    "confidence": {
+      "High": "Mare",
+      "Medium": "Medie",
+      "Low": "Mică"
+    },
+    "form": {
+      "addLabel": "Adaugă un contact de siguranță",
+      "editLabel": "Schimbă un contact de siguranță",
+      "kind": "La ce folosește",
+      "confidence": "Cât de sigură e sursa",
+      "label": "Numele oficial",
+      "labelHint": "Scrie numele așa cum îl scrie serviciul. E același în ambele limbi.",
+      "phone": "Număr de telefon",
+      "link": "Link oficial",
+      "linkHint": "Trebuie să înceapă cu https://",
+      "hours": "Program în engleză",
+      "hoursRo": "Program în română",
+      "note": "Notă pentru echipă",
+      "needsWay": "Adaugă un număr de telefon sau un link.",
+      "save": "Salvează și marchează ca verificat",
+      "cancel": "Renunță"
+    },
+    "checks": {
+      "heading": "Verificările lunii",
+      "intro": "În fiecare lună, fiecare țară primește o verificare. Se închide când toate contactele sunt confirmate sau schimbate.",
+      "none": "Încă nu există verificări. Prima se deschide pe 1 luna viitoare.",
+      "line": "{{country}}, {{month}}",
+      "toConfirm_one": "{{count}} din {{total}} de confirmat",
+      "toConfirm_few": "{{count}} din {{total}} de confirmat",
+      "toConfirm_other": "{{count}} din {{total}} de confirmat",
+      "closed": "Gata, închisă de {{who}}",
+      "someone": "echipă"
+    },
+    "failures": {
+      "not_allowed": "Rolul tău nu poate schimba contactele de siguranță.",
+      "invalid": "Verifică contactul: are nevoie de numele oficial, un număr de telefon sau un link https și de un motiv ca să fie șters.",
+      "not_found": "Contactul nu mai există. Reîncarcă pagina.",
+      "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
+    }
   }
 }

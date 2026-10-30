@@ -20,5 +20,70 @@
     "crisis_youth": "Crisis line for young people",
     "police_online_child": "Police",
     "regulator": "Regulator"
+  },
+  "admin": {
+    "documentTitle": "Safety contacts | Staff",
+    "eyebrow": "Safety",
+    "heading": "Safety contacts",
+    "intro": "These numbers and links show in every report form and on the help pages. Check each one against its official source every month, then confirm it or change it.",
+    "introReadOnly": "These numbers and links show in every report form and on the help pages. Support keeps them up to date; you can read them here.",
+    "loading": "Loading the safety contacts…",
+    "country": "Country",
+    "international": "International directories",
+    "add": "Add a contact",
+    "noContacts": "This country has no safety contacts yet.",
+    "listLabel": "Safety contacts for this country",
+    "none": "None",
+    "lastChecked": "Last checked",
+    "checkedOnBy": "{{date}} by {{who}}",
+    "confirm": "Still right",
+    "confirmLabel": "{{label}} is still right",
+    "edit": "Change",
+    "remove": "Remove",
+    "removeReason": "Why remove {{label}}?",
+    "removeConfirm": "Remove the contact",
+    "warning_one": "{{count}} safety contact hasn’t been checked for {{days}} days.",
+    "warning_few": "{{count}} safety contacts haven’t been checked for up to {{days}} days.",
+    "warning_other": "{{count}} safety contacts haven’t been checked for up to {{days}} days.",
+    "warningLink": "Check them now",
+    "confidence": {
+      "High": "High",
+      "Medium": "Medium",
+      "Low": "Low"
+    },
+    "form": {
+      "addLabel": "Add a safety contact",
+      "editLabel": "Change a safety contact",
+      "kind": "What it is for",
+      "confidence": "How sure the source is",
+      "label": "Official name",
+      "labelHint": "Write the name as the service writes it. It is the same in both languages.",
+      "phone": "Phone number",
+      "link": "Official link",
+      "linkHint": "Must start with https://",
+      "hours": "Opening hours in English",
+      "hoursRo": "Opening hours in Romanian",
+      "note": "Note for staff",
+      "needsWay": "Add a phone number or a link.",
+      "save": "Save and mark as checked",
+      "cancel": "Cancel"
+    },
+    "checks": {
+      "heading": "This month’s checks",
+      "intro": "Each month every country gets a check. It closes once every contact is confirmed or changed.",
+      "none": "No checks yet. The first opens on the 1st of next month.",
+      "line": "{{country}}, {{month}}",
+      "toConfirm_one": "{{count}} of {{total}} to confirm",
+      "toConfirm_few": "{{count}} of {{total}} to confirm",
+      "toConfirm_other": "{{count}} of {{total}} to confirm",
+      "closed": "Done, closed by {{who}}",
+      "someone": "staff"
+    },
+    "failures": {
+      "not_allowed": "Your role can’t change safety contacts.",
+      "invalid": "Check the contact: it needs an official name, a phone number or an https link, and a reason to remove it.",
+      "not_found": "That contact no longer exists. Reload the page.",
+      "unreachable": "We couldn’t reach the database. Check your connection and try again."
+    }
   }
 }

@@ -10,9 +10,16 @@
 
 /**
  * The documents, in the order of the board's tabs (design/boards/Legal.dc.html); "contact" is the
- * contact and company details page (S1-E14-02).
+ * contact and company details page (S1-E14-02) and "accessibility" the accessibility statement
+ * (S1-E14-03; the European Accessibility Act and WCAG 2.2 AA, architecture principle 8).
  */
-export const legalDocumentSlugs = ['terms', 'privacy', 'guidelines', 'contact'] as const;
+export const legalDocumentSlugs = [
+  'terms',
+  'privacy',
+  'guidelines',
+  'contact',
+  'accessibility',
+] as const;
 
 /** One of the documents above. */
 export type LegalDocumentSlug = (typeof legalDocumentSlugs)[number];

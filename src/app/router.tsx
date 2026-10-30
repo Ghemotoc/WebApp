@@ -107,6 +107,15 @@ const staffRoutes: RouteObject = {
         return { Component: AppealsPage };
       },
     },
+    // Safety contacts and their monthly check (S1-E10-13b): support, admin and owner act.
+    {
+      path: 'safety-contacts',
+      lazy: async () => {
+        const { SafetyContactsAdminPage } =
+          await import('@/features/safety/components/SafetyContactsAdminPage');
+        return { Component: SafetyContactsAdminPage };
+      },
+    },
     // Staff roles and permissions (S1-E2-07a), now inside the shell.
     {
       path: 'roles',

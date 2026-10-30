@@ -41,7 +41,12 @@ function PhoneNumber({ phoneNumber, label }: { phoneNumber: string; label: strin
  * @returns a list item
  */
 export function SafetyContactRow({ contact }: { contact: SafetyContact }) {
-  const { t } = useTranslation('safety');
+  const { t, i18n } = useTranslation('safety');
+  // The Romanian page shows the Romanian opening hours when staff wrote them (S1-E10-13b).
+  const openingHours =
+    i18n.language.startsWith('ro') && contact.openingHoursRo !== null
+      ? contact.openingHoursRo
+      : contact.openingHours;
   return (
     <li className="flex flex-col gap-1 border-t border-border py-3 first:border-t-0 first:pt-0">
       <span className="text-[13px] font-semibold text-meta">{t(`kinds.${contact.kind}`)}</span>
@@ -49,9 +54,7 @@ export function SafetyContactRow({ contact }: { contact: SafetyContact }) {
       {contact.phoneNumber !== null && (
         <PhoneNumber phoneNumber={contact.phoneNumber} label={contact.label} />
       )}
-      {contact.openingHours !== null && (
-        <span className="text-sm text-meta">{contact.openingHours}</span>
-      )}
+      {openingHours !== null && <span className="text-sm text-meta">{openingHours}</span>}
       {contact.link !== null && (
         <a
           href={contact.link}

@@ -26,7 +26,7 @@ export const primaryNavigation: NavigationItem[] = [
  * Footer links that exist today: the Legal centre's documents (S1-E14-01), in the order of the
  * signed-in board footer, and the contact and company details (S1-E14-02), which stand in for
  * "Contact us" until S1-E14-04 builds it, and "Report content", the public report form for anyone
- * (S1-E10-02). Coming: Help (S1-E11-12), Accessibility (S1-E14-03).
+ * (S1-E10-02), and the accessibility statement (S1-E14-03). Coming: Help (S1-E11-12).
  */
 export const footerNavigation: NavigationItem[] = [
   { href: '/legal/guidelines', labelKey: 'nav.guidelines' },
@@ -37,6 +37,8 @@ export const footerNavigation: NavigationItem[] = [
   { href: '/legal/contact', labelKey: 'nav.contact' },
   // Report without an account (S1-E10-02): DSA art. 16 asks for it to be easy to find.
   { href: '/report', labelKey: 'nav.reportContent' },
+  // The accessibility statement (S1-E14-03): linked from every page, as statements usually are.
+  { href: '/legal/accessibility', labelKey: 'nav.accessibility' },
 ];
 
 /** The full top bar from the boards, for the /design page only. */

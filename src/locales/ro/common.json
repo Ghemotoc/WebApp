@@ -33,7 +33,8 @@
     "notifications": "Notificări",
     "notificationsUnread_one": "Notificări, {{count}} nouă",
     "notificationsUnread_few": "Notificări, {{count}} noi",
-    "notificationsUnread_other": "Notificări, {{count}} de noi"
+    "notificationsUnread_other": "Notificări, {{count}} de noi",
+    "accessibility": "Accesibilitate"
   },
   "theme": {
     "label": "Temă",

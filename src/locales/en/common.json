@@ -33,7 +33,8 @@
     "notifications": "Notifications",
     "notificationsUnread_one": "Notifications, {{count}} new",
     "notificationsUnread_other": "Notifications, {{count}} new",
-    "notificationsUnread_few": "Notifications, {{count}} new"
+    "notificationsUnread_few": "Notifications, {{count}} new",
+    "accessibility": "Accessibility"
   },
   "theme": {
     "label": "Theme",
