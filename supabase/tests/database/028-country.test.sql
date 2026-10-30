@@ -78,7 +78,7 @@ select throws_ok($$ select pg_temp.sign_up('closed@example.com', pg_temp.sign_up
   '23514', null, 'once public, a closed market is refused');
 select throws_ok($$ select pg_temp.sign_up('unknown.public@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), null)) $$,
   '23514', null, 'once public, an unknown country counts as closed');
-update public.markets set is_open = true where country_code = 'AU';
+update public.markets set status = 'open', legal_check = 'done' where country_code = 'AU';  -- is_open follows the status (S1-E11-05)
 select is(public.sign_up_market_outcome('AU', pg_temp.years_ago(15)::integer), 'under_market_age',
   'once public and open, Australia refuses an under-16 (Q19)');
 select is_empty($$ select id from auth.users where email in ('closed@example.com', 'unknown.public@example.com') $$,

@@ -76,6 +76,7 @@ select results_eq(
        ('follows_users', 0::bigint),
        ('invites', 0::bigint),
        ('jobs', 0::bigint),
+       ('languages', (select count(*) from public.languages)),
        ('legal_document_versions',
         (select count(*) from public.legal_document_versions where published_at <= now())),
        ('legal_documents', (select count(*) from public.legal_documents)),
@@ -101,6 +102,7 @@ select results_eq(
        ('sanctions', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
        ('sign_in_failures', 0::bigint),
+       ('staff_languages', 0::bigint),
        ('staff_permissions', 0::bigint),
        ('staff_role_areas', 0::bigint),
        ('staff_roles', 0::bigint),
@@ -112,7 +114,7 @@ select results_eq(
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
-  'a signed-out visitor sees only public flags, settings, markets, published legal documents, categories and tags, nothing else'
+  'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories and tags, nothing else'
 );
 
 select * from finish();
