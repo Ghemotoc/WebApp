@@ -82,6 +82,14 @@ const staffRoutes: RouteObject = {
         return { Component: CasePage };
       },
     },
+    // Appeals against moderation decisions (S1-E10-07): owner, admin and moderator.
+    {
+      path: 'appeals',
+      lazy: async () => {
+        const { AppealsPage } = await import('@/features/moderation/components/AppealsPage');
+        return { Component: AppealsPage };
+      },
+    },
     // Staff roles and permissions (S1-E2-07a), now inside the shell.
     {
       path: 'roles',

@@ -398,5 +398,57 @@
     "noProvider": "Not checked yet",
     "story": "Story",
     "decisionHint": "No action approves the picture and shows it. Any other decision removes it, and the uploader gets a statement of reasons."
+  },
+  "appeals": {
+    "documentTitle": "Appeals · {{productName}}",
+    "heading": "Appeals",
+    "intro": "People can appeal a decision for six months. A different moderator decides where possible. Changing a decision restores what was hidden or removed and lifts a sanction; the person is told either way.",
+    "notAllowed": "Only staff who decide appeals can see this page.",
+    "loading": "Loading the appeals…",
+    "none": "No appeal matches this filter.",
+    "listLabel": "Appeals",
+    "statusFilter": "Show",
+    "statuses": {
+      "open": "Open",
+      "upheld": "Decision kept",
+      "overturned": "Decision changed",
+      "all": "All"
+    },
+    "cardHeading": "Appeal {{reference}}",
+    "decisionAbout": "Decision",
+    "case": "Case",
+    "item": "About",
+    "noItem": "The account",
+    "appellant": "Appealed by",
+    "noHandle": "No username",
+    "sent": "Sent",
+    "why": "Why they think it is wrong",
+    "originalDecider": "Original decision by",
+    "decidedBy": "Appeal decided by",
+    "notYours": "You made the original decision, so another moderator decides this appeal.",
+    "formLabel": "Decide appeal {{reference}}",
+    "outcome": "Outcome",
+    "outcomes": {
+      "upheld": "Keep the decision",
+      "overturned": "Change the decision"
+    },
+    "note": "Note for the team",
+    "noteHint": "Why you decided this. Only staff see it.",
+    "message": "What we tell the person",
+    "messageHint": "Required: the person must be told the reasons. Plain words, no staff names.",
+    "decide": "Send the decision",
+    "deciding": "Sending…",
+    "actions": {
+      "hide": "Hidden",
+      "remove": "Removed",
+      "restrict": "Restricted",
+      "warn": "Warning",
+      "suspend": "Suspension",
+      "ban": "Account closed",
+      "public_note": "Public note",
+      "reporting_pause": "Reports paused",
+      "rating_raised": "Rating raised",
+      "ai_label_added": "AI label added"
+    }
   }
 }

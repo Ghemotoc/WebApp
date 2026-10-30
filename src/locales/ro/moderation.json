@@ -398,5 +398,57 @@
     "noProvider": "Încă neverificată",
     "story": "Povestea",
     "decisionHint": "Fără acțiune aprobă imaginea și o arată. Orice altă decizie o elimină, iar cel care a încărcat-o primește o motivare a deciziei."
+  },
+  "appeals": {
+    "documentTitle": "Contestații · {{productName}}",
+    "heading": "Contestații",
+    "intro": "Oamenii pot contesta o decizie timp de șase luni. Decide un alt moderator, când se poate. Schimbarea deciziei readuce ce a fost ascuns sau eliminat și ridică sancțiunea; persoana e anunțată în ambele cazuri.",
+    "notAllowed": "Doar echipa care decide contestațiile poate vedea pagina.",
+    "loading": "Se încarcă contestațiile…",
+    "none": "Nicio contestație nu se potrivește filtrului.",
+    "listLabel": "Contestații",
+    "statusFilter": "Arată",
+    "statuses": {
+      "open": "Deschise",
+      "upheld": "Decizie menținută",
+      "overturned": "Decizie schimbată",
+      "all": "Toate"
+    },
+    "cardHeading": "Contestația {{reference}}",
+    "decisionAbout": "Decizia",
+    "case": "Cazul",
+    "item": "Despre",
+    "noItem": "Contul",
+    "appellant": "Contestată de",
+    "noHandle": "Fără nume de utilizator",
+    "sent": "Trimisă",
+    "why": "De ce crede că e greșită",
+    "originalDecider": "Decizia inițială a luat-o",
+    "decidedBy": "Contestația a decis-o",
+    "notYours": "Tu ai luat decizia inițială, așa că altcineva decide contestația.",
+    "formLabel": "Decide contestația {{reference}}",
+    "outcome": "Rezultat",
+    "outcomes": {
+      "upheld": "Menține decizia",
+      "overturned": "Schimbă decizia"
+    },
+    "note": "Notă pentru echipă",
+    "noteHint": "De ce ai decis așa. O vede doar echipa.",
+    "message": "Ce îi spunem persoanei",
+    "messageHint": "Obligatoriu: persoana trebuie să afle motivele. Cuvinte simple, fără nume din echipă.",
+    "decide": "Trimite decizia",
+    "deciding": "Se trimite…",
+    "actions": {
+      "hide": "Ascuns",
+      "remove": "Eliminat",
+      "restrict": "Restricționat",
+      "warn": "Avertisment",
+      "suspend": "Suspendare",
+      "ban": "Cont închis",
+      "public_note": "Notă publică",
+      "reporting_pause": "Raportări oprite",
+      "rating_raised": "Clasificare ridicată",
+      "ai_label_added": "Etichetă IA adăugată"
+    }
   }
 }

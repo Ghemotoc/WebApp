@@ -27,8 +27,22 @@ export interface StatementOfReasons {
   restrictionEndsAt: string | null;
   appealUntil: string;
   canChallenge: boolean;
+  /** True while the six months last and no appeal is open (S1-E10-07). */
+  canAppeal: boolean;
+  /** The latest appeal against this decision, if any (S1-E10-07). */
+  appeal: StatementAppeal | null;
   issuedAt: string;
   caseReference: string | null;
+}
+
+/** An appeal against a decision, as the person sees it (S1-E10-07; DSA art. 20). */
+export interface StatementAppeal {
+  reference: string;
+  status: Enums<'appeal_status'>;
+  createdAt: string;
+  decidedAt: string | null;
+  /** The moderator's words to the person once decided (art. 20(5)). */
+  message: string | null;
 }
 
 /** Why the statement couldn't be read. */
@@ -54,6 +68,25 @@ function textOf(record: Record<string, Json | undefined>, key: string): string |
 }
 
 /**
+ * Reads the appeal part of statement_json().
+ *
+ * @param json - the "appeal" field
+ * @returns the appeal, or null when there is none
+ */
+function appealFromJson(json: Json | undefined): StatementAppeal | null {
+  if (json === null || json === undefined || typeof json !== 'object' || Array.isArray(json))
+    return null;
+  const statuses: Enums<'appeal_status'>[] = ['open', 'upheld', 'overturned'];
+  return {
+    reference: textOf(json, 'reference') ?? '',
+    status: statuses.find((status) => status === json.status) ?? 'open',
+    createdAt: textOf(json, 'created_at') ?? '',
+    decidedAt: textOf(json, 'decided_at'),
+    message: textOf(json, 'message'),
+  };
+}
+
+/**
  * Reads statement_json() into the shape the screens use.
  *
  * @param json - as the database returns it
@@ -74,6 +107,8 @@ export function statementFromJson(json: Json | null): StatementOfReasons | null 
     restrictionEndsAt: textOf(json, 'restriction_ends_at'),
     appealUntil: textOf(json, 'appeal_until') ?? '',
     canChallenge: json.can_challenge === true,
+    canAppeal: json.can_appeal === true,
+    appeal: appealFromJson(json.appeal),
     issuedAt: textOf(json, 'issued_at') ?? '',
     caseReference: textOf(json, 'case_reference'),
   };
@@ -153,4 +188,53 @@ export async function fetchMyReports(client: AppSupabaseClient): Promise<MyRepor
   if (error !== null)
     throw new StatementError(error.code === '42501' ? 'signed_out' : 'unreachable');
   return objectsOf(data).map(reportFromJson);
+}
+
+/** Why an appeal wasn't sent (S1-E10-07). */
+export type AppealFailure = 'refused' | 'too_many' | 'not_found' | 'unreachable';
+
+/** The error a refused appeal throws; waitMinutes is set for too_many. */
+export class AppealError extends Error {
+  constructor(
+    public readonly failure: AppealFailure,
+    public readonly waitMinutes: number | null = null,
+  ) {
+    super(`Appeal failed: ${failure}`);
+  }
+}
+
+/** The longest explanation an appeal takes (the database's limit). */
+export const appealExplanationLimit = 4000;
+
+/**
+ * Appeals a decision on the caller's own statement of reasons (DSA art. 20: free, electronic,
+ * within six months).
+ *
+ * @param client - the shared Supabase client
+ * @param statementReference - the statement's reference, for example "S-000012"
+ * @param explanation - why the person thinks the decision is wrong
+ * @returns the appeal's reference
+ * @throws AppealError: refused (23514: expired, already open or empty), too_many (54000, with
+ *   the minutes to wait), not_found (P0002: not their statement) or unreachable
+ */
+export async function submitAppeal(
+  client: AppSupabaseClient,
+  statementReference: string,
+  explanation: string,
+): Promise<string> {
+  const { data, error } = await client.rpc('submit_appeal', {
+    statement_reference: statementReference,
+    explanation,
+  });
+  if (error !== null) {
+    if (error.code === '54000') {
+      const minutes = /wait_minutes:(\d+)/.exec(error.hint ?? '')?.[1];
+      throw new AppealError('too_many', minutes === undefined ? null : Number(minutes));
+    }
+    if (error.code === '23514') throw new AppealError('refused');
+    if (error.code === 'P0002') throw new AppealError('not_found');
+    throw new AppealError('unreachable');
+  }
+  const answer = data as { reference?: string } | null;
+  return answer?.reference ?? '';
 }

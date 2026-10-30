@@ -67,7 +67,8 @@
     "users": "Users",
     "metrics": "Metrics",
     "classics": "Classics",
-    "onCall": "On call"
+    "onCall": "On call",
+    "appeals": "Appeals"
   },
   "shell": {
     "eyebrow": "Staff",

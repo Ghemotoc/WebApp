@@ -3,58 +3,24 @@
  * 17(3); board 6.5, MyReports: "Decisions about your posts").
  *
  * Board: the title, "Decided … · Case …", then label rows: What we did, Why, The rule, How we
- * found it, and "You can appeal until …". The board's Appeal button and form are S1-E10-07 (after
- * March); until then the card links to Contact us with the decision's reference filled in, and
- * says a different moderator looks at it where possible (docs/board-fixes.md).
- * Who shows it: MyReportsPage, and the staff case page (isStaffView: no challenge link).
+ * found it, and "You can appeal until …" with the Appeal button and form (AppealSection,
+ * S1-E10-07).
+ * Who shows it: MyReportsPage, and the staff case page (isStaffView: no appeal section).
  * What it calls: lib/statementText.ts for the words.
  */
-import { Link } from 'react-router';
-
 import { LabelRows } from '@/components/ui/LabelRows';
 
 import type { StatementOfReasons } from '../api/statements';
 import { howFoundText, readableDate, ruleText, whatWeDidText } from '../lib/statementText';
 import { useStatementsTranslation } from '../registerStatementsTranslations';
 
-/**
- * How to challenge the decision, while the six months last; then when they ended.
- *
- * @returns the paragraph and the link
- */
-function ChallengeLine({ statement }: { statement: StatementOfReasons }) {
-  const { t, i18n } = useStatementsTranslation();
-  const until = readableDate(statement.appealUntil, i18n.language);
-  if (!statement.canChallenge) {
-    return (
-      <p className="m-0 text-sm text-meta">{t('decisions.challengeEnded', { date: until })}</p>
-    );
-  }
-  const message = t('decisions.challengeMessage', { reference: statement.reference });
-  const address = `/contact?topic=other&message=${encodeURIComponent(message)}`;
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="m-0 text-body">
-        {t('decisions.challengeUntil')} <strong className="text-ink">{until}</strong>{' '}
-        {t('decisions.challengeLength')}
-      </p>
-      <p className="m-0 text-sm text-body">{t('decisions.challengeHow')}</p>
-      <Link
-        to={address}
-        aria-label={t('decisions.challengeLinkLabel', { reference: statement.reference })}
-        className="w-fit text-sm font-semibold text-link underline"
-      >
-        {t('decisions.challengeLink')}
-      </Link>
-    </div>
-  );
-}
+import { AppealSection } from './AppealSection';
 
 /**
  * Renders one statement.
  *
  * @param props.statement - the statement
- * @param props.isStaffView - true on the staff case page: the person's challenge link is left out
+ * @param props.isStaffView - true on the staff case page: the appeal section is left out
  * @returns the article
  */
 export function StatementCard({
@@ -92,7 +58,7 @@ export function StatementCard({
         </p>
       </div>
       <LabelRows rows={rows} />
-      {!isStaffView && <ChallengeLine statement={statement} />}
+      {!isStaffView && <AppealSection statement={statement} />}
     </article>
   );
 }
