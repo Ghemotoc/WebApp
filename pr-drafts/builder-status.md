@@ -2,13 +2,13 @@
 
 Newest state at the top. Read this first on "continue".
 
-## Now (30 Oct 2026, after CMS-1d)
+## Now (30 Oct 2026, after CMS-1e)
 
 - **Robert's new plan (30 Oct 2026, 05:22): build the full Stage 1 app, all 17 bundles in `full-app-bundles.md`, one at a time, without waiting for him.** It replaces the March-only order and the "Not March" list. Everything else in the builder brief still applies.
 - Outside services: adapter with a `stub` and a `real` provider, misleading features behind a flag that is off, the missing key or account added to GO-LIVE in `by-hand-for-robert.md`. Never stop for them.
 - Before each bundle: check main, skip what is built, finish what is partly built.
 - If the usage limit hits: stop cleanly, carry on at "continue".
-- Now: bundle 2, CMS-1: a #210, b #211, c #212, d #213 merged. Next e to g (tags with approval, tag names per language, rank badges). Checklist uses lettered parts per bundle (Robert, 30 Oct 11:42).
+- Now: bundle 2, CMS-1: a #210, b #211, c #212, d #213 merged; e and f (tags with approval, tag names per language) merged together as #214. Next g: rank badges on covers (top 3 tag ranks with the Discover formula, writer may pick 3, counted among the stories the reader may see). Checklist uses lettered parts per bundle (Robert, 30 Oct 11:42).
 - Use Node 24 and the pre-installed Chromium (`source scratchpad/env.sh`, which sets PLAYWRIGHT_CHROMIUM_PATH; without it Playwright looks for a browser that isn't there): the shell's default Node 22 fails `formatStatNumber` ("19K").
 - After a container restart, start Docker with `nohup dockerd > /tmp/dockerd.log 2>&1 &` before the quality run.
 - Robert allowed merging my own PRs (24 Oct 2026, 22:15), so each bundle merges once its gate passes.
