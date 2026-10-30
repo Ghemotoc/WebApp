@@ -15,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(24);
+select plan(26);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -69,6 +69,8 @@ select is((select count(*)::integer from public.tags where name = 'Lumea bunicii
   'denied: tags_select_public hides a waiting tag from another member');
 select is((select count(*)::integer from public.tags where name = 'Fantasy'), 1,
   'allowed: tags_select_public shows an approved tag to a member');
+select is((select count(*)::integer from public.tags where status = 'waiting'), 0,
+  'denied: tags_select_on_own_story shows nobody else''s waiting tags');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(pg_temp.page_tags('statia-meteo-seed01'), '["Fantasy"]'::jsonb,
   'the story page shows only the approved tag, even to its writer');
@@ -122,6 +124,11 @@ select is((select count(*)::integer from public.notifications
   'the writer is told');
 select ok(exists (select 1 from public.audit_log where action = 'tag.rejected' and reason = 'Too close to Family'),
   'the rejection is in the audit log with its reason');
+set local role anon;
+select is((select count(*)::integer from public.tag_names
+           where tag_id = (select id from public.tags where name = 'Lumea bunicii epic175')), 0,
+  'denied: tag_names_select_public hides the names of a rejected tag');
+reset role;
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select public.update_my_story('statia-meteo-seed01', '{"tag_names": ["Fantasy", "Lumea bunicii epic175"]}');
 reset role;
