@@ -50,7 +50,13 @@ export interface CommentsPage {
 
 /** Why posting or deleting failed, in words the screen can explain. */
 export type CommentFailure =
-  'read_only' | 'too_many' | 'comments_off' | 'refused' | 'gone' | 'unreachable';
+  | 'read_only'
+  | 'too_many'
+  | 'too_many_links'
+  | 'comments_off'
+  | 'refused'
+  | 'gone'
+  | 'unreachable';
 
 /** The error a refused comment throws; waitMinutes is set for too_many. */
 export class CommentError extends Error {
@@ -140,11 +146,25 @@ export async function fetchCommentsPage(
 }
 
 /**
+ * Which refusal a check_violation (23514) was.
+ *
+ * @param hint - the error's hint
+ * @returns too_many_links when a new account put more than one link in a comment for its first
+ *   day (S1-E10-12), otherwise refused (the text)
+ */
+function refusedErrorFrom(hint: string | null | undefined): CommentError {
+  if (hint === 'too_many_links') return new CommentError('too_many_links');
+  return new CommentError('refused');
+}
+
+/**
  * Turns a database error into a CommentError.
  *
  * @param error - Postgres's code and hint
  * @returns the error: read_only (42501), too_many with the minutes (54000, hint
- *   "wait_minutes:n"), comments_off (55000), refused (23514: the text), gone (P0002), or
+ *   "wait_minutes:n"), comments_off (55000), too_many_links (23514 with the hint
+ *   "too_many_links": a new account's comment with more than one link, S1-E10-12), refused (23514:
+ *   the text), gone (P0002), or
  *   unreachable
  */
 export function commentErrorFrom(error: { code?: string; hint?: string | null }): CommentError {
@@ -154,7 +174,7 @@ export function commentErrorFrom(error: { code?: string; hint?: string | null })
     return new CommentError('too_many', Number.isFinite(minutes) && minutes > 0 ? minutes : null);
   }
   if (error.code === '55000') return new CommentError('comments_off');
-  if (error.code === '23514') return new CommentError('refused');
+  if (error.code === '23514') return refusedErrorFrom(error.hint);
   if (error.code === 'P0002') return new CommentError('gone');
   return new CommentError('unreachable');
 }

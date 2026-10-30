@@ -33,7 +33,8 @@
     "comments_off": "Scriitorul a oprit comentariile la această poveste.",
     "refused": "Nu se poate publica. Un comentariu are nevoie de câteva cuvinte, cel mult 2.000 de caractere și fără HTML.",
     "gone": "Comentariul acela nu mai există.",
-    "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou."
+    "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou.",
+    "too_many_links": "Conturile noi pot pune un singur link într-un comentariu în prima zi. Scoate un link și publică din nou."
   },
   "comment": {
     "writer": "Scriitor",
