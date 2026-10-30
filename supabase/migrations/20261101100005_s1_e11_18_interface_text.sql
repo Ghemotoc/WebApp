@@ -41,6 +41,7 @@ create table public.interface_text_overrides (
   show_from date,
   -- The admin who saved it (S1-E11-18 data).
   user_id uuid not null references public.profiles (id),
+  -- clock_timestamp(), not now(): two publishes in one transaction still keep their order.
   published_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -328,7 +329,7 @@ begin
     jsonb_build_object('text', public.interface_text_live_text(draft.text_key, draft.locale)),
     jsonb_build_object('key', draft.text_key, 'locale', draft.locale, 'show_from', goes_live, 'text', draft.text));
   update public.interface_text_overrides
-  set status = 'published', show_from = goes_live, published_at = now(), user_id = (select auth.uid())
+  set status = 'published', show_from = goes_live, published_at = clock_timestamp(), user_id = (select auth.uid())
   where id = draft.id;
   return goes_live;
 end;
@@ -400,7 +401,7 @@ begin
   end if;
   -- A published reset from today; earlier versions stay for Restore.
   insert into public.interface_text_overrides (text_key, locale, status, is_reset, show_from, user_id, published_at)
-  values (text_key, locale, 'published', true, public.romania_today(), (select auth.uid()), now())
+  values (text_key, locale, 'published', true, public.romania_today(), (select auth.uid()), clock_timestamp())
   returning id into reset_id;
   perform public.log_staff_action('interface_text.reset', 'interface_text_overrides', reset_id::text, null, null,
     jsonb_build_object('text', live_text), jsonb_build_object('key', text_key, 'locale', locale, 'text', null));

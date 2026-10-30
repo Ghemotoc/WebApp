@@ -1213,6 +1213,64 @@ export type Database = {
           },
         ];
       };
+      interface_text_overrides: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_reset: boolean;
+          locale: string;
+          published_at: string | null;
+          show_from: string | null;
+          status: string;
+          text: string;
+          text_key: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          is_reset?: boolean;
+          locale: string;
+          published_at?: string | null;
+          show_from?: string | null;
+          status?: string;
+          text?: string;
+          text_key: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_reset?: boolean;
+          locale?: string;
+          published_at?: string | null;
+          show_from?: string | null;
+          status?: string;
+          text?: string;
+          text_key?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'interface_text_overrides_locale_fkey';
+            columns: ['locale'];
+            isOneToOne: false;
+            referencedRelation: 'languages';
+            referencedColumns: ['code'];
+          },
+          {
+            foreignKeyName: 'interface_text_overrides_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       invites: {
         Row: {
           code_hash: string;
@@ -3665,6 +3723,7 @@ export type Database = {
       };
       admin_publish_classic: { Args: { target_story_id: string }; Returns: Json };
       admin_publish_cms_version: { Args: { version_id: string }; Returns: string };
+      admin_publish_interface_text: { Args: { version_id: string }; Returns: string };
       admin_raise_story_rating: {
         Args: {
           new_rating: Database['public']['Enums']['story_rating'];
@@ -3709,11 +3768,16 @@ export type Database = {
         Args: { question: string; report_reference: string };
         Returns: undefined;
       };
+      admin_reset_interface_text: {
+        Args: { locale: string; text_key: string };
+        Returns: undefined;
+      };
       admin_reset_pen_name: {
         Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
       };
       admin_restore_cms_version: { Args: { version_id: string }; Returns: string };
+      admin_restore_interface_text: { Args: { version_id: string }; Returns: string };
       admin_restore_item: {
         Args: { reason_given: string; target_item_id: string };
         Returns: boolean;
@@ -3754,6 +3818,17 @@ export type Database = {
           new_content: Json;
           new_show_from?: string;
           new_show_until?: string;
+        };
+        Returns: string;
+      };
+      admin_save_interface_text: {
+        Args: {
+          brand_names: string[];
+          file_placeholders: string[];
+          locale: string;
+          new_show_from?: string;
+          new_text: string;
+          text_key: string;
         };
         Returns: string;
       };
@@ -4230,6 +4305,36 @@ export type Database = {
       };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
+      interface_text_live: {
+        Args: { wanted_locale: string };
+        Returns: {
+          created_at: string;
+          id: string;
+          is_reset: boolean;
+          locale: string;
+          published_at: string | null;
+          show_from: string | null;
+          status: string;
+          text: string;
+          text_key: string;
+          updated_at: string;
+          user_id: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'interface_text_overrides';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      interface_text_live_text: {
+        Args: { wanted_key: string; wanted_locale: string };
+        Returns: string;
+      };
+      interface_text_problems: {
+        Args: { brand_names: string[]; file_placeholders: string[]; new_text: string };
+        Returns: string[];
+      };
       invite_code_hash: { Args: { code: string }; Returns: string };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_blocked_with: { Args: { other_user_id: string }; Returns: boolean };
@@ -4684,6 +4789,13 @@ export type Database = {
       };
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
+      published_interface_text: {
+        Args: { wanted_locale: string };
+        Returns: {
+          text: string;
+          text_key: string;
+        }[];
+      };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
@@ -5046,6 +5158,7 @@ export type Database = {
       };
       take_rate_limit: { Args: { action: string }; Returns: undefined };
       teaser_of: { Args: { chapter_body: string; word_limit: number }; Returns: string };
+      text_placeholders: { Args: { value: string }; Returns: string[] };
       tier_hours: {
         Args: { target_tier: Database['public']['Enums']['case_tier'] };
         Returns: number;
@@ -5082,6 +5195,7 @@ export type Database = {
           show_until: string;
         }[];
       };
+      with_comma_below: { Args: { value: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
       writer_follow_state: { Args: { wanted_handle: string }; Returns: Json };
       writers_published_by_market: {
