@@ -4,18 +4,24 @@
  * the list of fields to fix").
  *
  * The message is a polite live region, so a screen reader hears it without focus moving.
- * Who uses it: PublishControls.
+ * Who uses it: PublishControls, and the interface text editor (S1-E11-18).
  */
 import { useTranslation } from 'react-i18next';
 
 import { Notice } from '@/components/ui/Notice';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
-import type { WebsiteEditorState } from '../../hooks/useWebsiteEditor';
+import type { WebsiteContentError } from '../../api/websiteContentStore';
+
+/** The part of an editor's state the feedback reads (the website and interface text editors). */
+export interface FeedbackState {
+  failure: WebsiteContentError | null;
+  outcome: { action: string; goesLive: string | null } | null;
+}
 
 /** What the feedback needs. */
 interface EditorFeedbackProps {
-  state: WebsiteEditorState;
+  state: FeedbackState;
   /** The field's label, for the list of fields to fix. */
   labelOf: (field: string) => string;
 }

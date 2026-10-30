@@ -3,30 +3,35 @@
   "madeBy": "An app by {{companyName}}",
   "notYou": "If you didn’t ask for this, you can ignore this email. Nothing will change.",
   "confirmation": {
+    "subject": "Confirm your email address",
     "heading": "Confirm your email address",
     "body": "Thanks for joining {{productName}}. Press the button to confirm your email address. Until you do, you can read stories but you can’t publish, comment, post or send messages.",
     "button": "Confirm my email",
     "linkNote": "The link works once and expires after an hour."
   },
   "magicLink": {
+    "subject": "Your log-in link",
     "heading": "Your log-in link",
     "body": "Press the button to log in to {{productName}}. No password needed.",
     "button": "Log in",
     "linkNote": "The link works once and expires after an hour."
   },
   "recovery": {
+    "subject": "Reset your password",
     "heading": "Reset your password",
     "body": "Someone asked to reset the password for your {{productName}} account. If it was you, press the button to choose a new one.",
     "button": "Choose a new password",
     "linkNote": "The link works once and expires after an hour."
   },
   "passwordChanged": {
+    "subject": "Your password was changed",
     "heading": "Your password was changed",
     "body": "The password for your {{productName}} account has just been changed, and we logged you out on every other device. If this wasn’t you, reset your password now.",
     "button": "Reset my password",
     "linkNote": "You can see where you’re logged in under Settings."
   },
   "emailChange": {
+    "subject": "Your code to change your email",
     "heading": "Your code to change your email address",
     "body": "Someone asked to change the email address of a {{productName}} account. We send one code to the current address and another to the new one. Type both in Settings, and the change happens only once both are right. Until then, the current address keeps working.",
     "codeLabel": "Your code for this address:",
