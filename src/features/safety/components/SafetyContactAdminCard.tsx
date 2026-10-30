@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
-import { InfoPill } from '@/components/ui/InfoPill';
 import { LabelRows } from '@/components/ui/LabelRows';
 import { Textarea } from '@/components/ui/Textarea';
 
@@ -84,7 +83,11 @@ function ContactDetails({ contact }: { contact: StaffSafetyContact }) {
     <LabelRows
       rows={[
         { label: t('admin.form.phone'), value: contact.phoneNumber ?? none },
-        { label: t('admin.form.link'), value: contact.link ?? none },
+        {
+          label: t('admin.form.link'),
+          // A long address breaks anywhere rather than pushing the page sideways (rule 21).
+          value: <span className="break-all">{contact.link ?? none}</span>,
+        },
         { label: t('admin.form.hours'), value: contact.openingHours ?? none },
         { label: t('admin.form.hoursRo'), value: contact.openingHoursRo ?? none },
         { label: t('admin.form.confidence'), value: t(`admin.confidence.${contact.confidence}`) },
@@ -108,9 +111,13 @@ export function SafetyContactAdminCard(props: SafetyContactAdminCardProps) {
   const [isRemoving, setIsRemoving] = useState(false);
   return (
     <li className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="m-0 font-heading text-lg font-bold text-heading">{contact.label}</h3>
-        <InfoPill tone="neutral">{t(`kinds.${contact.kind}`)}</InfoPill>
+      {/* The kind as a small line, not a pill: a pill never wraps, and "Raportează materiale cu
+          abuz sexual asupra copiilor" is wider than a phone (rule 21). */}
+      <div className="flex flex-col gap-1">
+        <span className="text-[13px] font-semibold text-meta">{t(`kinds.${contact.kind}`)}</span>
+        <h3 className="m-0 font-heading text-lg font-bold break-words text-heading">
+          {contact.label}
+        </h3>
       </div>
       <ContactDetails contact={contact} />
       {contact.note !== null && <p className="m-0 text-sm text-body">{contact.note}</p>}
