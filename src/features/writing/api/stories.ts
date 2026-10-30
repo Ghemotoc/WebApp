@@ -3,7 +3,7 @@
  *
  * Who calls it: the hooks in src/features/writing/hooks/.
  * What it calls next: Supabase.
- * - Reading the form's choices: open_story_languages() (the languages of the open markets) and
+ * - Reading the form's choices: story_language_choices() (every language, open or coming) and
  *   the categories table (categories_select_public).
  * - Making a story: create_story() (supabase/migrations/…_s1_e3_01_stories.sql), which answers
  *   {outcome: 'ok', slug} or {outcome: 'not_active'} when the account may not write yet.
@@ -108,17 +108,25 @@ function toLabelsJson(labels: StoryLabelsPayload) {
 /** What the settings functions answer. */
 export type SettingsOutcome = 'ok' | 'not_active' | 'not_found';
 
+/** One language on the new story form: open ones can be chosen, the rest are "coming". */
+export interface StoryLanguageChoice {
+  code: string;
+  isOpen: boolean;
+}
+
 /**
- * Reads the languages a story may be written in.
+ * Reads every language with whether a story may be written in it yet (S1-E11-05, criterion 5).
  *
  * @param client - the shared Supabase client
- * @returns the BCP 47 codes of the open markets' languages, for example ['en', 'ro']
+ * @returns the languages, interface languages first, for example [{ code: 'en', isOpen: true }]
  * Errors: throws with Supabase's message when the database can't be reached.
  */
-export async function fetchOpenLanguages(client: AppSupabaseClient): Promise<string[]> {
-  const { data, error } = await client.rpc('open_story_languages');
-  if (error !== null) throw new Error(`Could not read the open languages: ${error.message}`);
-  return data;
+export async function fetchStoryLanguages(
+  client: AppSupabaseClient,
+): Promise<StoryLanguageChoice[]> {
+  const { data, error } = await client.rpc('story_language_choices');
+  if (error !== null) throw new Error(`Could not read the languages: ${error.message}`);
+  return data.map((row) => ({ code: row.code, isOpen: row.is_open }));
 }
 
 /**

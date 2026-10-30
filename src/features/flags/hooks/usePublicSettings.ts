@@ -1,9 +1,9 @@
 /**
- * usePublicSettings: the public settings, cached for the whole visit (story S1-E2-05).
+ * usePublicSettings: the public settings, read again every minute (story S1-E2-05; S1-E11-03: a
+ * change on Staff › Settings applies within a minute).
  *
  * Who calls it: screens whose words name a setting, for example the log-in pause ("paused for 15
- * minutes"). What it calls: api/publicSettings.ts. Settings change by migration until S1-E11-03,
- * so one read per visit is enough.
+ * minutes"). What it calls: api/publicSettings.ts. Staff change them on Staff › Settings (S1-E11-03).
  * Safe default: until the settings arrive, or if they can't be read, numberOf() answers with the
  * decided value given by the caller.
  */
@@ -13,6 +13,9 @@ import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchPublicSettings, type PublicSettings } from '../api/publicSettings';
 
+/** How long a read stays fresh: a change on Staff › Settings reaches the app within a minute. */
+const settingFreshMilliseconds = 60 * 1000;
+
 /**
  * Loads the settings.
  *
@@ -21,7 +24,8 @@ import { fetchPublicSettings, type PublicSettings } from '../api/publicSettings'
 export function usePublicSettings() {
   const settings = useQuery<PublicSettings>({
     queryKey: ['public-settings'],
-    staleTime: Infinity,
+    staleTime: settingFreshMilliseconds,
+    refetchInterval: settingFreshMilliseconds,
     queryFn: async () => {
       const client = await getSupabaseClient();
       if (client === null) throw new Error('The app is not connected to its database.');

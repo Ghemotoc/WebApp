@@ -82,6 +82,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.roles',
     descriptionKey: 'home.areas.roles',
   },
+  // Content settings, markets and languages (S1-E11-03, S1-E11-05), after the areas staff use
+  // every day and before the numbers (architecture 1.8.2).
+  {
+    area: 'settings',
+    href: '/staff/settings',
+    labelKey: 'nav.settings',
+    descriptionKey: 'home.areas.settings',
+  },
   // The March test numbers (S1-E15-02), just before the audit log (architecture 1.8.2).
   {
     area: 'metrics',

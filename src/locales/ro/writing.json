@@ -45,7 +45,8 @@
     "creating": "Se creează…",
     "notActive": "Contul tău nu poate crea povești încă. Confirmă-ți adresa de e-mail și alege un nume de utilizator, sau așteaptă să se deschidă testul pentru vârsta ta.",
     "createFailed": "Nu am putut salva povestea. Verifică-ți conexiunea și încearcă din nou.",
-    "signedOut": "Conectează-te ca să începi o poveste."
+    "signedOut": "Conectează-te ca să începi o poveste.",
+    "languageComing": "{{language}}: vine când avem moderatori care o citesc"
   },
   "categories": {
     "fiction": "Ficțiune",

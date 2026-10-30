@@ -96,7 +96,7 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 ## Error log and maintenance mode (S1-E1-05)
 
 - **Error log.** `client_errors` keeps what broke in a browser, never who: the error's name, a scrubbed message, the route pattern (`/join/:code`), the app version, the browser family and the time. It has no `user_id` on purpose. Rows arrive only through `report_client_error()` and are deleted after 30 days by the pg_cron job `purge-old-client-errors` (03:17 UTC every night; `client_errors_keep_days`, a proposal). Owner and admin read it with `select * from public.admin_list_client_errors();` (or the table, in the SQL editor) until the admin site (S1-E11-01) gives it a screen. This migration also switches on pg_cron (`create extension if not exists pg_cron`).
-- **Maintenance mode.** Until the settings screen (S1-E11-03), switch it in the SQL editor:
+- **Maintenance mode.** Switch it on Staff › Settings (S1-E11-03); in an emergency without the admin site, the SQL editor works too:
 
   ```sql
   update public.feature_flags set is_enabled = true where key = 'maintenance_mode';   -- on
@@ -185,7 +185,7 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 
 - **Readers never read the tables** (ADR 0004): `stories` and `story_tags` have owner-only select policies; readers go through `get_story_page()` (S1-E3-05) and `get_chapter()` (S1-E4-01a). Every write is a function: `create_story()` here, `update_my_story()` and the rest in later stories.
 - **Owner and address:** `stories.user_id` is the writer's user ID (never shown); `stories.slug` is the public address, the title's web form plus six random characters, fixed at creation.
-- **Categories and tags:** `categories` (fiction, poetry, nonfiction_essays; changed by migration until S1-E11-03); `tags` holds every tag once per `normalise_tag()` form (lower case, trimmed, no diacritics, ş/ţ corrected), so "Fantezie" and "fantezie" are one tag; at most 10 per story (trigger).
+- **Categories and tags:** `categories` (fiction, poetry, nonfiction_essays; staff change their order on Staff › Settings, S1-E11-03, and a new one arrives by migration with its names in the locale files); `tags` holds every tag once per `normalise_tag()` form (lower case, trimmed, no diacritics, ş/ţ corrected), so "Fantezie" and "fantezie" are one tag; at most 10 per story (trigger).
 - **Covers:** `cover_kind` is automatic (nothing stored; the design comes from the story's ID, `src/components/covers/automaticCover.ts`, S1-E3-13), drawn (one of the 16 approved designs plus two palette colours, checked by constraints) or upload (behind the `picture_uploads` flag, off; the private `covers` bucket and its owner-only rules are the contract for the upload story).
 - **Languages:** `open_story_languages()` is the open markets' languages; a story can only be in one of them.
 - **Shared contract with Lane C:** `is_moderated_away(type, id)` is a stub answering false, created only if no function of that name exists, so Lane C's real one wins.

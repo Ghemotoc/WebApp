@@ -145,7 +145,10 @@ test.describe('country from the connection (S1-E2-10)', () => {
   }) => {
     const address = `country-au-${Date.now()}@example.com`;
     setPublicSignUp(true);
-    runSql(`update public.markets set is_open = true where country_code = 'AU';`);
+    // is_open follows the market's status (S1-E11-05), so open it the way staff would.
+    runSql(
+      `update public.markets set status = 'open', legal_check = 'done' where country_code = 'AU';`,
+    );
     try {
       await openSignUpFrom(page, 'AU', '/sign-up');
       await fillSignUp(page, address, String(new Date().getFullYear() - 14));
@@ -154,7 +157,9 @@ test.describe('country from the connection (S1-E2-10)', () => {
       expect(runSql(`select count(*) from auth.users where email = '${address}'`)).toBe('0');
     } finally {
       setPublicSignUp(false);
-      runSql(`update public.markets set is_open = false where country_code = 'AU';`);
+      runSql(
+        `update public.markets set status = 'closed', legal_check = 'not_started' where country_code = 'AU';`,
+      );
     }
   });
 

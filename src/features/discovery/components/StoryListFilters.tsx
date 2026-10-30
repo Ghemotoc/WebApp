@@ -58,9 +58,10 @@ function ListDropDowns({ request, sortOrder, onChange }: StoryListFiltersProps) 
   const { languages } = useStoryFormOptions();
   const languageOptions = [
     { value: anyValue, label: t('seeAll.anyLanguage') },
-    ...languages.map((code) => ({
+    // Every language stories may be written in, open or not, so an older story still filters.
+    ...languages.map(({ code }) => ({
       value: code,
-      label: t(`languages.${code}`, { ns: 'writing' }),
+      label: t(`languages.${code}`, { ns: 'writing', defaultValue: code }),
       lang: code,
     })),
   ];

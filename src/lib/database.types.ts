@@ -1222,6 +1222,34 @@ export type Database = {
         };
         Relationships: [];
       };
+      languages: {
+        Row: {
+          code: string;
+          created_at: string;
+          id: string;
+          is_interface: boolean;
+          status: Database['public']['Enums']['language_status'];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          code: string;
+          created_at?: string;
+          id?: string;
+          is_interface?: boolean;
+          status?: Database['public']['Enums']['language_status'];
+          updated_at?: string;
+        };
+        Update: {
+          code?: string;
+          created_at?: string;
+          id?: string;
+          is_interface?: boolean;
+          status?: Database['public']['Enums']['language_status'];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       legal_document_versions: {
         Row: {
           body_markdown: string;
@@ -1311,7 +1339,9 @@ export type Database = {
           id: string;
           is_open: boolean;
           languages: string[];
+          legal_check: Database['public']['Enums']['legal_check_status'];
           minimum_age: number;
+          status: Database['public']['Enums']['market_status'];
           updated_at: string;
         };
         ComputedFields: never;
@@ -1321,7 +1351,9 @@ export type Database = {
           id?: string;
           is_open?: boolean;
           languages: string[];
+          legal_check?: Database['public']['Enums']['legal_check_status'];
           minimum_age?: number;
+          status?: Database['public']['Enums']['market_status'];
           updated_at?: string;
         };
         Update: {
@@ -1330,7 +1362,9 @@ export type Database = {
           id?: string;
           is_open?: boolean;
           languages?: string[];
+          legal_check?: Database['public']['Enums']['legal_check_status'];
           minimum_age?: number;
+          status?: Database['public']['Enums']['market_status'];
           updated_at?: string;
         };
         Relationships: [];
@@ -2600,6 +2634,46 @@ export type Database = {
         };
         Relationships: [];
       };
+      staff_languages: {
+        Row: {
+          created_at: string;
+          id: string;
+          language_code: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          language_code: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          language_code?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_languages_language_code_fkey';
+            columns: ['language_code'];
+            isOneToOne: false;
+            referencedRelation: 'languages';
+            referencedColumns: ['code'];
+          },
+          {
+            foreignKeyName: 'staff_languages_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       staff_permissions: {
         Row: {
           created_at: string;
@@ -3196,6 +3270,14 @@ export type Database = {
       };
       admin_acknowledge_on_call_alert: { Args: { alert_id: string }; Returns: boolean };
       admin_add_classic_author: { Args: { author_name: string; died: number }; Returns: string };
+      admin_add_name_word: {
+        Args: { how_it_matches: string; new_word: string; word_language: string };
+        Returns: string;
+      };
+      admin_add_reserved_name: {
+        Args: { how_it_matches: string; new_name: string };
+        Returns: string;
+      };
       admin_appeals_queue: {
         Args: { status_filter?: Database['public']['Enums']['appeal_status'] };
         Returns: {
@@ -3484,6 +3566,7 @@ export type Database = {
         }[];
       };
       admin_moderator_mail_thread: { Args: { thread_reference: string }; Returns: Json };
+      admin_move_category: { Args: { category_slug: string; move_by: number }; Returns: number };
       admin_on_call_alerts: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -3514,10 +3597,12 @@ export type Database = {
         Returns: string;
       };
       admin_release_case: { Args: { target_case_id: string }; Returns: boolean };
+      admin_remove_name_word: { Args: { target_word_id: string }; Returns: boolean };
       admin_remove_on_call_shift: {
         Args: { reason_given: string; shift_id: string };
         Returns: boolean;
       };
+      admin_remove_reserved_name: { Args: { target_name_id: string }; Returns: boolean };
       admin_remove_role: {
         Args: {
           reason_given: string;
@@ -3609,9 +3694,22 @@ export type Database = {
         Args: { chapter_list: Json; target_story_id: string };
         Returns: Json;
       };
+      admin_set_flag: { Args: { flag_key: string; turn_on: boolean }; Returns: boolean };
+      admin_set_language_status: {
+        Args: { language_code: string; new_status: Database['public']['Enums']['language_status'] };
+        Returns: Database['public']['Enums']['language_status'];
+      };
       admin_set_mail_status: {
         Args: { new_status: string; thread_reference: string };
         Returns: boolean;
+      };
+      admin_set_market: {
+        Args: {
+          market_country: string;
+          new_legal_check: Database['public']['Enums']['legal_check_status'];
+          new_status: Database['public']['Enums']['market_status'];
+        };
+        Returns: Database['public']['Enums']['market_status'];
       };
       admin_set_on_call_shift: {
         Args: {
@@ -3630,6 +3728,11 @@ export type Database = {
           target_user_id: string;
         };
         Returns: boolean;
+      };
+      admin_set_setting: { Args: { new_value: Json; setting_key: string }; Returns: Json };
+      admin_set_staff_languages: {
+        Args: { language_codes: string[]; target_user_id: string };
+        Returns: number;
       };
       admin_sign_out_everywhere: {
         Args: { reason_given: string; target_user_id: string };
@@ -4000,6 +4103,15 @@ export type Database = {
           owner_user_id: string;
         }[];
       };
+      language_moderator_counts: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          code: string;
+          is_interface: boolean;
+          moderators: number;
+          status: Database['public']['Enums']['language_status'];
+        }[];
+      };
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
       legal_documents_to_accept: {
         Args: { target_user_id: string };
@@ -4121,6 +4233,17 @@ export type Database = {
         Returns: string;
       };
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
+      market_change_problem: {
+        Args: {
+          new_legal_check: Database['public']['Enums']['legal_check_status'];
+          new_status: Database['public']['Enums']['market_status'];
+          target: Omit<
+            Database['public']['Tables']['markets']['Row'],
+            Database['public']['Tables']['markets']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       mask_email: { Args: { address: string }; Returns: string };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
       may_see_march_numbers: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -4631,6 +4754,7 @@ export type Database = {
         Returns: undefined;
       };
       require_safety_contacts_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_settings_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
       return_rate_on: { Args: { for_day: string }; Returns: number };
@@ -4672,6 +4796,7 @@ export type Database = {
         Returns: undefined;
       };
       setting_value: { Args: { setting_key: string }; Returns: Json };
+      setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
       show_passed_avatar: {
         Args: {
           picture: Omit<
@@ -4724,6 +4849,13 @@ export type Database = {
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
+      story_language_choices: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          code: string;
+          is_open: boolean;
+        }[];
+      };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_signals: {
@@ -4815,6 +4947,9 @@ export type Database = {
       comment_deleted_by: 'author' | 'writer';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
+      language_status: 'open' | 'ready' | 'closed';
+      legal_check_status: 'not_started' | 'in_progress' | 'done';
+      market_status: 'open' | 'ready' | 'closed';
       moderated_state: 'hidden' | 'removed';
       moderation_action:
         'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban' | 'public_note';
@@ -5049,6 +5184,9 @@ export const Constants = {
       comment_deleted_by: ['author', 'writer'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
+      language_status: ['open', 'ready', 'closed'],
+      legal_check_status: ['not_started', 'in_progress', 'done'],
+      market_status: ['open', 'ready', 'closed'],
       moderated_state: ['hidden', 'removed'],
       moderation_action: [
         'no_action',

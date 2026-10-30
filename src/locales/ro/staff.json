@@ -70,7 +70,8 @@
     "onCall": "De gardă",
     "appeals": "Contestații",
     "moderatorMail": "Mesaje moderatori",
-    "safetyContacts": "Contacte de siguranță"
+    "safetyContacts": "Contacte de siguranță",
+    "settings": "Setări"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -101,7 +102,8 @@
       "moderator_mail": "Mesajele membrilor către echipa de moderare, într-o singură căsuță comună.",
       "appeals": "Contestațiile la deciziile de moderare, decise de alt moderator unde se poate.",
       "safety_contacts": "Liniile de ajutor și numerele de urgență din ecranele de raportare și verificarea lor lunară.",
-      "classics": "Adaugă și verifică clasicii din domeniul public pentru contul oficial."
+      "classics": "Adaugă și verifică clasicii din domeniul public pentru contul oficial.",
+      "settings": "Comutatoare, valori și limite, rafturile din Descoperă, categorii, nume rezervate, piețe și limbi."
     }
   },
   "auditLog": {
@@ -512,5 +514,13 @@
       "byline_few": "De {{name}} (m. {{year}}) · {{count}} capitole",
       "byline_other": "De {{name}} (m. {{year}}) · {{count}} de capitole"
     }
+  },
+  "languages": {
+    "heading": "Limbile pe care le citește",
+    "hint": "O limbă se deschide doar când e de serviciu un moderator care o citește.",
+    "save": "Salvează limbile",
+    "saveLabel": "Salvează limbile pe care le citește @{{handle}}",
+    "saved": "Salvat.",
+    "failed": "Limbile nu au putut fi salvate. Încearcă din nou."
   }
 }

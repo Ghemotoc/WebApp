@@ -5,8 +5,7 @@
  * Who calls it: hooks/useMaintenanceMode.ts.
  * What it calls next:
  * - public.feature_flags, row maintenance_mode, through feature_flags_select_public (anyone may
- *   read public flags). Until the settings screen (S1-E11-03), an admin switches it in the SQL
- *   editor (supabase/README.md, "Maintenance mode").
+ *   read public flags). The owner and admins switch it on Staff › Settings (S1-E11-03).
  * - public.is_staff_session(), the same check every staff rule uses (S1-E2-07a): true for a
  *   staff-role session in March, the Google Workspace check after S1-E2-07b.
  */
