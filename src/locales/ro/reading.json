@@ -45,7 +45,12 @@
     "chapterCount_other": "{{count}} de capitole",
     "updated": "Actualizată pe {{date}}",
     "classicSource": "Textul după:",
-    "classicTranslator": "Traducere de {{name}}."
+    "classicTranslator": "Traducere de {{name}}.",
+    "rankBadges": "Locul poveștii în etichetele ei",
+    "rankBadge": "#{{rank}} în {{tag}}",
+    "rankBadgeOutOf_one": "din {{count}} poveste",
+    "rankBadgeOutOf_few": "din {{count}} povești",
+    "rankBadgeOutOf_other": "din {{count}} de povești"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

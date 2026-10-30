@@ -7,7 +7,8 @@
  * clamp(36px, 4.4vw, 64px), "by <name>" at 16 px, the blurb at 17 px / 1.6 up to 640 px wide,
  * the content note box when the writer left one (S1-E3-06: readers see it before they open the
  * story), the tag chips, each a link to its tag page (S1-E5-01), "Follow story" (S1-E6-05) and,
- * under the writer's name, the stats row (StoryStats, S1-E5-03). The other action buttons arrive
+ * under the writer's name, the stats row (StoryStats, S1-E5-03). Under the cover, the rank badges
+ * (RankBadges, CMS-1g). The other action buttons arrive
  * with the library and sharing (S1-E4-03, S1-E4-05).
  * Who uses it: StoryPage.
  */
@@ -20,6 +21,7 @@ import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 import { FollowButton } from '@/features/people/components/FollowButton';
+import { RankBadges } from '@/features/tags/components/RankBadges';
 import { useTagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
 
 import type { StoryPageData } from '../api/storyPage';
@@ -80,6 +82,8 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
           />
         }
       />
+      {/* CMS-1g: the story's ranks in its tags ("#4 in Fantasy"), right under the cover. */}
+      <RankBadges slug={story.slug} />
       <div className="flex flex-wrap gap-1.5">
         <InfoPill tone="plum">
           {t(`categories.${story.categorySlug}`, {

@@ -7,7 +7,8 @@
  * What it shows: the story's title as the heading, then the same sections as the new story form
  * (the basics, category and tags, the cover, with the current values), "Status and comments",
  * the save bar, and the delete card. The "Labels" section joins with S1-E3-06 and the chapters
- * with S1-E3-03. The writer can go back to the automatic cover from here (S1-E3-13).
+ * with S1-E3-03. The writer can go back to the automatic cover from here (S1-E3-13), and pick the
+ * rank badges the cover shows (CMS-1g, RankBadgePicker).
  * What it calls: useMyStories (the story), useStorySettingsForm (answers, checks,
  * update_my_story()), DeleteStoryControl (delete_my_story(), restore_my_story()).
  */
@@ -21,6 +22,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
+import { RankBadgePicker } from '@/features/tags/components/RankBadgePicker';
 
 import type { MyStory } from '../api/stories';
 import { useMyStories } from '../hooks/useMyStories';
@@ -69,6 +71,7 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
         categories={options.categories}
         set={form.set}
       />
+      <RankBadgePicker slug={story.slug} />
       <CoverSection
         storyId={story.id}
         title={form.answers.title}

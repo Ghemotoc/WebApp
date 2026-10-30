@@ -3108,6 +3108,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           slug: string;
           title: string;
@@ -3139,6 +3140,7 @@ export type Database = {
           is_parody?: boolean;
           language_code: string;
           last_chapter_published_at?: string | null;
+          rank_badge_tag_ids?: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           slug: string;
           title: string;
@@ -3169,6 +3171,7 @@ export type Database = {
           is_parody?: boolean;
           language_code?: string;
           last_chapter_published_at?: string | null;
+          rank_badge_tag_ids?: string[] | null;
           rating?: Database['public']['Enums']['story_rating'];
           slug?: string;
           title?: string;
@@ -4626,6 +4629,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           slug: string;
           title: string;
@@ -5047,6 +5051,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           slug: string;
           title: string;
@@ -5253,6 +5258,7 @@ export type Database = {
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
+      set_rank_badge_tags: { Args: { story_slug: string; tag_names: string[] }; Returns: Json };
       set_story_tags: {
         Args: { owner_id: string; tag_names: string[]; target_story_id: string };
         Returns: undefined;
@@ -5320,6 +5326,13 @@ export type Database = {
       };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
+      story_rank_in_tag: {
+        Args: { tag_name: string; target_story_id: string };
+        Returns: {
+          stories_in_tag: number;
+          tag_rank: number;
+        }[];
+      };
       story_signals: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -5331,6 +5344,16 @@ export type Database = {
         }[];
       };
       story_slug_for: { Args: { title: string }; Returns: string };
+      story_tag_ranks: {
+        Args: { story_slug: string };
+        Returns: {
+          is_badge: boolean;
+          is_picked: boolean;
+          stories_in_tag: number;
+          tag_name: string;
+          tag_rank: number;
+        }[];
+      };
       story_writer_name: {
         Args: { target_story_id: string; writer_handle: string; writer_pen_name: string };
         Returns: string;

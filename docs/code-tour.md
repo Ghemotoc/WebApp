@@ -1181,6 +1181,14 @@ A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobod
 - **Where it starts (staff):** `/staff/tags` (`TagsAdminPage`), for owner, admin and moderator. Approve or Save the names → `admin_name_tag()` (a name in every interface language, none taken by another tag; logged `tag.approved` or `tag.named`). Reject → `admin_reject_tag()` (the tag leaves every story, each writer gets a `tag_rejected` notification, logged `tag.rejected` with the reason). `/staff/tags/missing` lists approved tags without a name in a newly opened language.
 - **Tests:** `supabase/tests/database/175-tags.test.sql`, `e2e/tags.spec.ts`, `src/features/tags/lib/tagCatalogue.test.ts`.
 
+### Rank badges on the cover (CMS-1g)
+
+Under a story's cover the story page shows where it stands in its tags ("#3 in Owls"), and the writer may pick which tags those badges show.
+
+- **Readers:** `StoryHeader` → `RankBadges` → `useTagRanks()` → `story_tag_ranks()`. For each approved tag it calls `story_rank_in_tag()`, which ranks the story inside `listed_stories('tag', …)` by the tag page's popular order (`story_scores`, then the newer story, then the address). `listed_stories()` holds only the stories this reader may see, so ranks follow the reader's age, blocks and moderation. A story with no score, or a tag with fewer than `rank_badge_min_stories` (5) stories, shows no rank. The cover shows the 3 best ranks, or the writer's picks.
+- **Writers:** Story settings → `RankBadgePicker` (one chip per approved tag with its rank) → `useSaveRankBadgePick()` → `set_rank_badge_tags()`, which saves up to 3 tag IDs in `stories.rank_badge_tag_ids` (null means automatic). It saves on its own, apart from the form's Save button.
+- **Tests:** `supabase/tests/database/176-tag-rank-badges.test.sql`, `e2e/tag-rank-badges.spec.ts`, `src/features/tags/lib/rankPick.test.ts`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.

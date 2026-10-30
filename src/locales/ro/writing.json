@@ -337,5 +337,21 @@
       "dropped": "Ai lăsat {{title}} pe locul {{position}} din {{total}}.",
       "cancelled": "Mutare anulată. {{title}} rămâne unde era."
     }
+  },
+  "rankBadges": {
+    "legend": "Insignele de clasament de pe copertă",
+    "intro": "Coperta arată locul poveștii în etichetele ei, de exemplu „#4 în Fantezie”, socotit la fel ca pe paginile etichetelor. Arată cele mai bune 3 locuri, dacă nu alegi aici până la 3 etichete. O etichetă arată un loc după ce povestea are cititori și eticheta adună câteva povești.",
+    "pickLabel": "Etichetele afișate ca insigne",
+    "rankOf": "{{tag}} · #{{rank}} din {{count}}",
+    "noRank": "{{tag}} · încă fără loc",
+    "automatic": "Se văd cele mai bune 3 locuri ale tale.",
+    "picked_one": "Se vede eticheta aleasă de tine.",
+    "picked_few": "Se văd cele {{count}} etichete alese de tine.",
+    "picked_other": "Se văd cele {{count}} de etichete alese de tine.",
+    "useBest": "Arată în schimb cele mai bune 3 locuri",
+    "full": "Ai ales 3. Debifează una ca să alegi alta.",
+    "noTags": "Etichetele aprobate apar aici după ce salvezi povestea cu etichete.",
+    "saved": "Salvat. Cititorii văd noile insigne în câteva minute.",
+    "saveFailed": "Insignele nu au putut fi salvate. Încearcă din nou peste puțin timp."
   }
 }

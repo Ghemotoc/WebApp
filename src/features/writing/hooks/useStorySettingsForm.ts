@@ -84,6 +84,8 @@ export function useStorySettingsForm(story: MyStory) {
     onSuccess: async (result) => {
       setOutcome(result === 'ok' ? 'saved' : result);
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
+      // The tags may have changed, so the rank badge picker reads them again (CMS-1g).
+      await queryClient.invalidateQueries({ queryKey: ['tag-ranks', story.slug] });
     },
     onError: () => setOutcome('save_failed'),
   });

@@ -17,6 +17,8 @@ export interface ChipProps {
   isPressed: boolean;
   onPressedChange: (isPressed: boolean) => void;
   children: ReactNode;
+  /** Can't be switched for now (CMS-1g: a fourth rank badge); shown faded. */
+  isDisabled?: boolean;
 }
 
 /**
@@ -25,14 +27,16 @@ export interface ChipProps {
  *
  * @returns the chip button
  */
-export function Chip({ isPressed, onPressedChange, children }: ChipProps) {
+export function Chip({ isPressed, onPressedChange, children, isDisabled = false }: ChipProps) {
   return (
     <button
       type="button"
       aria-pressed={isPressed}
+      disabled={isDisabled}
       onClick={() => onPressedChange(!isPressed)}
       className={cn(
         "relative inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3.5 font-body text-sm leading-none font-semibold whitespace-nowrap after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-['']",
+        isDisabled && 'cursor-not-allowed opacity-60',
         isPressed
           ? 'border-chip-on bg-chip-on text-chip-on-text'
           : 'border-control-border bg-surface text-heading hover:bg-tint',
