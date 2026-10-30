@@ -27,7 +27,9 @@
     "popular": "Populare",
     "popularEyebrow": "Cele mai citite și apreciate",
     "rising": "Noi și în ascensiune",
-    "risingEyebrow": "Scriitori noi"
+    "risingEyebrow": "Scriitori noi",
+    "searchEyebrow": "Căutare",
+    "search": "Povești pentru „{{term}}”"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} capitol",
@@ -63,6 +65,7 @@
     "unknownList": "Nu există o astfel de listă."
   },
   "sort": {
+    "relevance": "Cele mai potrivite",
     "popular": "Populare",
     "updated": "Actualizate recent",
     "newest": "Cele mai noi",

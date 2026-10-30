@@ -327,12 +327,32 @@ const writeRoutes: RouteObject[] = [
     '/discover/c/:categorySlug',
     '/discover/t/:tag',
     '/u/:handle/stories',
+    // Every story a search finds (S1-E5-04): the term is in ?q=.
+    '/search/stories',
   ].map((path): RouteObject => ({
     path,
     HydrateFallback: () => null,
     lazy: async () => {
       const { StoryListPage } = await import('@/features/discovery/components/StoryListPage');
       return { Component: StoryListPage };
+    },
+  })),
+  // Search (S1-E5-04): the page with stories, writers and tags, and the writers' and tags' own
+  // See all pages; the term is in ?q=.
+  {
+    path: '/search',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { SearchPage } = await import('@/features/search/components/SearchPage');
+      return { Component: SearchPage };
+    },
+  },
+  ...(['writers', 'tags'] as const).map((group): RouteObject => ({
+    path: `/search/${group}`,
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { SearchGroupPage } = await import('@/features/search/components/SearchGroupPage');
+      return { Component: () => <SearchGroupPage group={group} /> };
     },
   })),
   // A writer's public profile (S1-E5-05): by username, never the user ID (architecture 1.6);

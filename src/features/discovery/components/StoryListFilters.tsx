@@ -14,7 +14,7 @@ import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOption
 
 import type { CompletionStatus, ListRequest, SortOrder } from '../api/storyLists';
 import { categoryAccent } from '../lib/categoryAccents';
-import { sortOrders } from '../lib/listAddresses';
+import { sortChoicesFor } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 /** What the filters need. */
@@ -65,7 +65,10 @@ function ListDropDowns({ request, sortOrder, onChange }: StoryListFiltersProps) 
       lang: code,
     })),
   ];
-  const sortOptions = sortOrders.map((order) => ({ value: order, label: t(`sort.${order}`) }));
+  const sortOptions = sortChoicesFor(request.kind).map((order) => ({
+    value: order,
+    label: t(`sort.${order}`),
+  }));
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
       <Select

@@ -27,7 +27,9 @@
     "popular": "Popular",
     "popularEyebrow": "Most read and liked",
     "rising": "New and rising",
-    "risingEyebrow": "New writers"
+    "risingEyebrow": "New writers",
+    "searchEyebrow": "Search",
+    "search": "Stories for “{{term}}”"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} chapter",
@@ -63,6 +65,7 @@
     "unknownList": "There is no such list."
   },
   "sort": {
+    "relevance": "Best match",
     "popular": "Popular",
     "updated": "Recently updated",
     "newest": "Newest",

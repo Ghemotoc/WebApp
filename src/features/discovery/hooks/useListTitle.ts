@@ -54,6 +54,13 @@ export function useListTitle(request: ListRequest, stories: ListedStory[]): List
         isUnknown: false,
       };
     }
+    case 'search':
+      // S1-E5-04: the search page's "View more" for stories.
+      return {
+        eyebrow: t('lists.searchEyebrow'),
+        title: t('lists.search', { term: key }),
+        isUnknown: false,
+      };
     default:
       return {
         eyebrow: t(`lists.${request.kind}Eyebrow`),

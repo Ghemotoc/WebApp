@@ -21,7 +21,9 @@ const storageKey = 'story-list-sort';
  */
 export function rememberedSort(): SortOrder | null {
   try {
-    return sortFrom(window.sessionStorage.getItem(storageKey));
+    const sortOrder = sortFrom(window.sessionStorage.getItem(storageKey));
+    // "Best match" is for search only, so it never carries over to another list (S1-E5-04).
+    return sortOrder === 'relevance' ? null : sortOrder;
   } catch {
     return null;
   }

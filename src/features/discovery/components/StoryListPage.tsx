@@ -4,7 +4,8 @@
  *
  * Who shows it: the router, at /discover/all/:listKind (a Discover shelf's "View more"),
  * /discover/c/:categorySlug (a category page), /discover/t/:tag (a tag on the story page) and
- * /u/:handle/stories (a writer's profile). The address decides the list (listFromParams()).
+ * /u/:handle/stories (a writer's profile) and /search/stories?q= (every story a search finds,
+ * S1-E5-04). The address decides the list (listFromParams()).
  * What it shows: StoryListHeader, the filters, the rating note, then the stories as a grid with
  * "Load more" (StoryGrid). Filters and the sort live in the address, so a list can be shared;
  * the sort is also kept for the rest of the visit (S1-E5-02).
@@ -12,7 +13,7 @@
  * leaves out what this reader may not see (ratings, blocks, drafts, moderation).
  * What it calls: useStoryList → browse_stories().
  */
-import { Link, useParams, useSearchParams } from 'react-router';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -70,6 +71,8 @@ function hasFilters(request: ListRequest): boolean {
  * @returns the sort to use
  */
 function sortInUse(request: ListRequest): SortOrder {
+  // Search keeps its own "Best match" unless the reader picks another sort on it (S1-E5-04).
+  if (request.kind === 'search') return request.sortOrder ?? listDefaultSort('search');
   return request.sortOrder ?? rememberedSort() ?? listDefaultSort(request.kind);
 }
 
@@ -185,7 +188,14 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
  */
 export function StoryListPage() {
   const params = useParams();
-  const list = listFromParams(params);
+  const [search] = useSearchParams();
+  const { pathname } = useLocation();
+  // /search/stories names its list by the term in ?q= (S1-E5-04); the other lists by the path.
+  const isSearch = pathname === '/search/stories';
+  const list = listFromParams({
+    ...params,
+    searchTerm: isSearch ? (search.get('q') ?? '') : undefined,
+  });
   return (
     <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14">
       {list === null ? (

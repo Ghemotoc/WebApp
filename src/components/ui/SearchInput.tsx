@@ -7,7 +7,7 @@
  * search for "ştiri" finds "știri".
  * Who uses it: Search (S1-E5-04) and the staff Users screen (S1-E11-02).
  */
-import type { ChangeEvent, InputHTMLAttributes } from 'react';
+import type { ChangeEvent, InputHTMLAttributes, Ref } from 'react';
 
 import { SearchIcon } from '@/components/icons/SearchIcon';
 import { normaliseTypedText } from '@/lib/romanian-text';
@@ -16,6 +16,8 @@ import { normaliseTypedText } from '@/lib/romanian-text';
 export interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
+  /** The field itself, so a "Clear" button can put the focus back in it (S1-E5-04). */
+  ref?: Ref<HTMLInputElement>;
 }
 
 /**
@@ -23,7 +25,7 @@ export interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> 
  *
  * @returns the field
  */
-export function SearchInput({ id, label, onChange, ...inputProps }: SearchInputProps) {
+export function SearchInput({ id, label, onChange, ref, ...inputProps }: SearchInputProps) {
   /** Corrects Romanian letters, then hands the change to the form. */
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     normaliseTypedText(event.target);
@@ -37,6 +39,7 @@ export function SearchInput({ id, label, onChange, ...inputProps }: SearchInputP
       </label>
       <SearchIcon className="pointer-events-none absolute top-1/2 left-5 -translate-y-1/2 text-meta" />
       <input
+        ref={ref}
         id={id}
         type="search"
         className="h-13 w-full rounded-full border border-control-border bg-surface pr-5 pl-13 font-body text-base text-ink"

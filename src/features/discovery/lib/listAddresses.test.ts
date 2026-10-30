@@ -10,6 +10,7 @@ import {
   listFromParams,
   plainList,
   requestFromAddress,
+  sortChoicesFor,
   sortFrom,
 } from './listAddresses';
 
@@ -107,5 +108,23 @@ describe('the Popular and New and rising lists', () => {
   it('have their own See all addresses', () => {
     expect(listAddress(plainList('popular'))).toBe('/discover/all/popular');
     expect(listFromParams({ listKind: 'rising' })).toEqual({ kind: 'rising', key: null });
+  });
+});
+
+describe('the search list (S1-E5-04)', () => {
+  it('keeps the term in ?q= on its See all page', () => {
+    expect(listAddress(plainList('search', 'povești'))).toBe('/search/stories?q=pove%C8%99ti');
+    expect(listFromParams({ searchTerm: 'povești' })).toEqual({ kind: 'search', key: 'povești' });
+  });
+
+  it('sorts by best match unless the reader picks another sort', () => {
+    expect(listDefaultSort('search')).toBe('relevance');
+    expect(sortChoicesFor('search')[0]).toBe('relevance');
+  });
+
+  it('never offers best match on another list, even from an address', () => {
+    expect(sortChoicesFor('popular')).not.toContain('relevance');
+    const request = requestFromAddress('new', null, new URLSearchParams('sort=relevance'));
+    expect(request.sortOrder).toBeNull();
   });
 });

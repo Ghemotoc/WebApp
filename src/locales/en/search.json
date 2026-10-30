@@ -1,0 +1,60 @@
+{
+  "page": {
+    "documentTitle": "Search · {{productName}}",
+    "eyebrow": "Search",
+    "heading": "Search",
+    "resultsFor": "Results for “{{term}}”",
+    "count_one": "{{count}} result across stories, writers and tags.",
+    "count_few": "{{count}} results across stories, writers and tags.",
+    "count_other": "{{count}} results across stories, writers and tags.",
+    "start": "Find a story by its title, a tag or its writer's name.",
+    "tooShort": "Type at least 2 letters to search.",
+    "loadFailed": "Search isn't working right now. Try again in a moment."
+  },
+  "form": {
+    "label": "Search stories, writers and tags",
+    "placeholder": "Search stories, writers and tags",
+    "submit": "Search",
+    "clear": "Clear",
+    "hintLead": "No need for diacritics.",
+    "hint": "“povesti” also finds “povești”. Romanian and English word endings match too, so “poveste” and “povestea” count as the same word."
+  },
+  "groups": {
+    "label": "Show results for",
+    "stories": "Stories",
+    "writers": "Writers",
+    "tags": "Tags",
+    "storiesTitle_one": "{{count}} story",
+    "storiesTitle_few": "{{count}} stories",
+    "storiesTitle_other": "{{count}} stories",
+    "writersTitle_one": "{{count}} writer",
+    "writersTitle_few": "{{count}} writers",
+    "writersTitle_other": "{{count}} writers",
+    "tagsTitle_one": "{{count}} tag",
+    "tagsTitle_few": "{{count}} tags",
+    "tagsTitle_other": "{{count}} tags",
+    "safetyNote": "Search never shows a story rated 13+, 16+ or 18+ to anyone younger. It also hides people you blocked and anything moderators removed."
+  },
+  "results": {
+    "stories_one": "{{count}} story",
+    "stories_few": "{{count}} stories",
+    "stories_other": "{{count}} stories",
+    "writerHandle": "@{{handle}}"
+  },
+  "empty": {
+    "title": "No results for “{{term}}”",
+    "description": "Check the spelling, use fewer words or search for a tag such as “fantasy”.",
+    "browse": "Browse Discover"
+  },
+  "seeAll": {
+    "writersEyebrow": "Search",
+    "writersTitle": "Writers for “{{term}}”",
+    "tagsEyebrow": "Search",
+    "tagsTitle": "Tags for “{{term}}”",
+    "backToSearch": "Back to the search",
+    "loadMore": "Load more",
+    "loadingMore": "Loading…",
+    "none": "Nothing found.",
+    "count": "Results: {{count}}"
+  }
+}
