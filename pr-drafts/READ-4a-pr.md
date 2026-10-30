@@ -68,6 +68,18 @@ This is part (a) of the READ-4 bundle in Robert's full-app plan: S1-E4-03, the l
   - axe at 390 px in ro and en.
 - Unit tests: `lib/places.test.ts`, `lib/deviceKind.test.ts`, `reading/lib/savedPlace.test.ts` (the scroll position matches the progress line's measure) and `useSavedPlace.test.ts`.
 
+## Local check run
+
+Fast checks for this part (Robert, 30 Oct: the full e2e suite runs once at the end of the READ-4 bundle):
+
+- lint, typecheck and types:check: pass
+- unit tests: 724 passed
+- db reset and test db (every pgTAP file): PASS
+- i18n:check and migrations:check: pass
+- functions build: compiled
+- e2e for this part and the screens it touches (library, chapter-reader, discover, follows, teaser, copy-protection, publish, story-settings, epic-s1-e4, epic-s1-e5, ratings, writer-profile, search, classics-shelf, staff-shell, home): 183 passed, 2 failed, then both passed on a rerun. writer-profile had counted a story left behind by an interrupted earlier run (removed). chapter-reader's 320 to 1440 px axe sweep timed out once and passed alone.
+- Screenshots of /library and the story page at 390, 768 and 1440 px (teen_17): checked by eye; nothing overlaps or scrolls sideways.
+
 ## Follow-ups
 
 - "Your lists" (reading lists) on the board has no story yet. It would be a new user-content type (it needs reporting if lists can be shared).
