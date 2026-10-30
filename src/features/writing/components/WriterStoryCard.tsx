@@ -15,6 +15,7 @@ import { Link } from 'react-router';
 
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { DrawnCover } from '@/components/covers/DrawnCover';
+import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
 
@@ -90,12 +91,18 @@ export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
       aria-labelledby={`story-${story.id}-title`}
       className="flex gap-5 rounded-card border border-border bg-surface p-5 shadow-card"
     >
-      <DrawnCover
-        title={story.title}
-        choice={cover}
-        size="tile"
-        isDecorative
+      <StoryCoverArt
+        story={story}
         className="w-24 shrink-0 self-start"
+        drawn={
+          <DrawnCover
+            title={story.title}
+            choice={cover}
+            size="tile"
+            isDecorative
+            className="w-24 shrink-0 self-start"
+          />
+        }
       />
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <h3

@@ -60,7 +60,6 @@
     "heading": "Copertă",
     "kindLabel": "Tipul copertei",
     "draw": "Desenează o copertă",
-    "upload": "Încarcă o imagine",
     "preview": "Previzualizare",
     "previewLabel": "Previzualizarea copertei: {{design}}, fundal {{background}} cu {{part}} {{accent}}. Titlul {{title}}, de {{penName}}.",
     "partLine": "linie",
@@ -114,7 +113,9 @@
       "sky": "Cer",
       "sage": "Salvie",
       "paper": "Hârtie"
-    }
+    },
+    "uploadLater": "Vrei să folosești o imagine proprie? Salvează mai întâi povestea, apoi încarc-o din setările poveștii.",
+    "uploadChosen": "Imaginea încărcată este coperta. Alege mai jos un model desenat dacă vrei să-l folosești pe acela."
   },
   "preview": {
     "eyebrow": "Cum o vor vedea cititorii",

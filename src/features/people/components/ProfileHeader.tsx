@@ -55,7 +55,7 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
   const { t, i18n } = usePeopleTranslation();
   return (
     <Card className="flex flex-col gap-6 p-[clamp(20px,4vw,40px)] md:flex-row md:items-start">
-      <ProfileAvatar name={profile.displayName} />
+      <ProfileAvatar name={profile.displayName} handle={profile.handle} />
       <div className="flex min-w-0 flex-col gap-3 md:flex-[999_1_420px]">
         <Eyebrow>{t('profile.eyebrow')}</Eyebrow>
         <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words text-heading">

@@ -17,6 +17,8 @@
  * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
  * for error reports, as a pattern such as "/join/:code", never the address itself.
  * Notifications (S1-E7-01): the bell with the unread count sits before "Write" while signed in.
+ * Pictures (S1-E10-05): usePendingPictureRetry asks once per signed-in visit for the check of any
+ * picture whose services were down when it was uploaded.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
@@ -31,6 +33,8 @@ import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
+import { useSession } from '@/features/auth/hooks/useSession';
+import { usePendingPictureRetry } from '@/features/pictures/hooks/usePictures';
 import { WriteLink } from '@/features/writing/components/WriteLink';
 
 import { Footer } from './Footer';
@@ -47,6 +51,9 @@ export function AppLayout() {
   useAccountLanguage();
   // Remember the page on screen for error reports (S1-E1-05).
   useTrackRoutePattern();
+  // Check again any picture whose check couldn't run when it was uploaded (S1-E10-05).
+  const { userId } = useSession();
+  usePendingPictureRetry(userId);
 
   return (
     <div className="flex min-h-dvh flex-col bg-paper text-ink">

@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
+import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { InfoPill } from '@/components/ui/InfoPill';
@@ -29,6 +30,30 @@ interface TeaserStoryCardProps {
 }
 
 /**
+ * The cover beside the teaser's title: the small "tile" size keeps the full title on a 112 px cover
+ * (DoD: never clipped), and an uploaded cover shows once it passes its check (S1-E10-05).
+ *
+ * @returns the cover
+ */
+function TeaserCover({ story }: { story: TeaserStoryCardProps['story'] }) {
+  return (
+    <StoryCoverArt
+      story={story}
+      className="w-[112px] shrink-0 self-start"
+      drawn={
+        <DrawnCover
+          title={story.title}
+          choice={resolveCoverChoice(story)}
+          size="tile"
+          isDecorative
+          className="w-[112px] shrink-0"
+        />
+      }
+    />
+  );
+}
+
+/**
  * Renders the card.
  *
  * @returns the story's card, with the page's H1
@@ -40,15 +65,8 @@ export function TeaserStoryCard({ story, chapterNumber, chapterTotal }: TeaserSt
       aria-labelledby="teaser-story-title"
       className="relative flex flex-col gap-6 rounded-[24px] border border-border bg-surface p-6 shadow-[0_8px_24px_rgba(72,28,95,0.08)] sm:flex-row sm:p-7"
     >
-      {/* The small "tile" size keeps the full title on a 112 px cover (DoD: never clipped); the
-          pen name is beside it, so the cover shows the title only, as on the board. */}
-      <DrawnCover
-        title={story.title}
-        choice={resolveCoverChoice(story)}
-        size="tile"
-        isDecorative
-        className="w-[112px] shrink-0"
-      />
+      {/* The pen name is beside the cover, so the cover shows the title only, as on the board. */}
+      <TeaserCover story={story} />
       <div className="flex min-w-0 flex-col gap-2.5 lg:pr-16">
         <Eyebrow>{t('teaser.shared', { number: chapterNumber, total: chapterTotal })}</Eyebrow>
         <h1

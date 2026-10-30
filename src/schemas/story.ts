@@ -20,9 +20,13 @@ export const MAXIMUM_TITLE_LENGTH = 120;
 /** The blurb's limit (board 4.2: "of 500 characters"). */
 export const MAXIMUM_BLURB_LENGTH = 500;
 
-/** A cover choice: automatic (nothing stored) or drawn (a design and two palette colours). */
+/**
+ * A cover choice: automatic (nothing stored), drawn (a design and two palette colours) or an
+ * uploaded picture (its path in the covers bucket, registered for the picture check, S1-E10-05).
+ */
 export const storyCoverSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('automatic') }),
+  z.object({ kind: z.literal('upload'), tallPath: z.string().min(1).max(200) }),
   z.object({
     kind: z.literal('drawn'),
     design: z.enum(coverDesignKeys),
@@ -33,6 +37,18 @@ export const storyCoverSchema = z.discriminatedUnion('kind', [
 
 /** A cover choice as the form keeps it. */
 export type StoryCoverChoice = z.infer<typeof storyCoverSchema>;
+
+/**
+ * The cover as create_story() and update_my_story() read it: an upload's path travels as
+ * tall_path (the database's name); the other kinds go as they are.
+ *
+ * @param cover - the form's choice
+ * @returns the JSON for the database
+ */
+export function coverJsonFor(cover: StoryCoverChoice): Record<string, string> {
+  if (cover.kind === 'upload') return { kind: 'upload', tall_path: cover.tallPath };
+  return { ...cover };
+}
 
 /** The four ratings, youngest first (Q17; the database enum story_rating). */
 export const storyRatings = ['all_ages', '13_plus', '16_plus', '18_plus'] as const;

@@ -17,6 +17,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
+import { AvatarSettingsSection } from '@/features/pictures/components/AvatarSettingsSection';
 import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
 
 import { useMyNames } from '../hooks/useMyNames';
@@ -63,6 +64,7 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       )}
       {names.handle !== null && <AccountNamesSection account={account} names={names} />}
       {names.handle !== null && <BioSettingsSection handle={names.handle} />}
+      {names.handle !== null && <AvatarSettingsSection handle={names.handle} />}
       {/* Every signed-in account sees and can change its own address, minors included. */}
       <EmailSettingsSection />
       <BirthdaySettingsSection />

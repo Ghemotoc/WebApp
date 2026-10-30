@@ -60,7 +60,6 @@
     "heading": "Cover",
     "kindLabel": "Cover type",
     "draw": "Draw a cover",
-    "upload": "Upload a picture",
     "preview": "Preview",
     "previewLabel": "Cover preview: {{design}}, {{background}} background with {{accent}} {{part}}. Title {{title}}, by {{penName}}.",
     "partLine": "underline",
@@ -114,7 +113,9 @@
       "sky": "Sky",
       "sage": "Sage",
       "paper": "Paper"
-    }
+    },
+    "uploadLater": "Want to use your own picture? Save the story first, then upload it in the story's settings.",
+    "uploadChosen": "Your uploaded picture is the cover. Pick a drawn design below to use that instead."
   },
   "preview": {
     "eyebrow": "How readers will see it",

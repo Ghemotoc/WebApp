@@ -107,5 +107,28 @@
   "actions": {
     "report": "Report",
     "reportItem": "Report {{item}}"
+  },
+  "pictures": {
+    "beingChecked": "Picture being checked",
+    "waitingForCheck": "Waiting for a check",
+    "waitingForPerson": "Waiting for a person",
+    "uploading": "Uploading and checking your picture…",
+    "passed": "Your picture passed the check.",
+    "held": "A person on our moderation team will look at your picture before others can see it. We'll let you know.",
+    "pending": "Your picture is uploaded. We'll check it as soon as we can; until then only you can see it.",
+    "failed": {
+      "wrong_type": "That file isn't a JPEG, PNG or WebP picture.",
+      "too_big": "That picture is too big. Choose a smaller one.",
+      "too_many": "You've uploaded a lot of pictures in the last hour. Try again in {{minutes}} minutes.",
+      "not_allowed": "You can't upload this picture right now.",
+      "unreachable": "We couldn't upload your picture. Check your connection and try again."
+    },
+    "coverLabel": "Upload a picture",
+    "coverHint": "JPEG, PNG or WebP, up to 5 MB. A tall picture (5 by 8) fits best. Readers see it once it passes our picture check.",
+    "coverPreview": "Your uploaded cover",
+    "coverRights": "Only upload a picture you made or have the right to use.",
+    "avatarLabel": "Upload a profile picture",
+    "avatarHint": "JPEG, PNG or WebP, up to 2 MB. Others see it once it passes our picture check.",
+    "avatarHeading": "Profile picture"
   }
 }
