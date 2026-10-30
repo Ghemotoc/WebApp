@@ -1469,6 +1469,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      library_entries: {
+        Row: {
+          created_at: string;
+          id: string;
+          shelf: Database['public']['Enums']['library_shelf'];
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          shelf: Database['public']['Enums']['library_shelf'];
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          shelf?: Database['public']['Enums']['library_shelf'];
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'library_entries_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'library_entries_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       markets: {
         Row: {
           country_code: string;
@@ -2229,6 +2272,62 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'rate_limit_events_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      reading_positions: {
+        Row: {
+          chapter_id: string;
+          created_at: string;
+          device_kind: string;
+          id: string;
+          percent: number;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          created_at?: string;
+          device_kind: string;
+          id?: string;
+          percent: number;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          chapter_id?: string;
+          created_at?: string;
+          device_kind?: string;
+          id?: string;
+          percent?: number;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reading_positions_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reading_positions_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reading_positions_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
@@ -4270,6 +4369,13 @@ export type Database = {
           story_id: string;
         }[];
       };
+      chapter_place: {
+        Args: { target_chapter_id: string };
+        Returns: {
+          number: number;
+          total: number;
+        }[];
+      };
       chapter_publish_now: {
         Args: {
           chapter: Omit<
@@ -4481,6 +4587,16 @@ export type Database = {
       };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       escalate_on_call_alerts: { Args: Record<PropertyKey, never>; Returns: number };
+      finishes_story: {
+        Args: {
+          read_percent: number;
+          target_chapter: Omit<
+            Database['public']['Tables']['chapters']['Row'],
+            Database['public']['Tables']['chapters']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
       follow_story: { Args: { should_follow: boolean; story_slug: string }; Returns: Json };
       follow_writer: { Args: { should_follow: boolean; target_handle: string }; Returns: Json };
@@ -4575,6 +4691,7 @@ export type Database = {
         }[];
       };
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
+      latest_place_json: { Args: { target_story_id: string }; Returns: Json };
       legal_documents_to_accept: {
         Args: { target_user_id: string };
         Returns: {
@@ -4746,6 +4863,7 @@ export type Database = {
           handle: string;
         }[];
       };
+      my_follows: { Args: Record<PropertyKey, never>; Returns: Json };
       my_greeting: { Args: Record<PropertyKey, never>; Returns: Json };
       my_legal_documents_to_accept: {
         Args: Record<PropertyKey, never>;
@@ -4755,6 +4873,7 @@ export type Database = {
           version_label: string;
         }[];
       };
+      my_library: { Args: Record<PropertyKey, never>; Returns: Json };
       my_live_chapter: {
         Args: { chapter_code: string };
         Returns: {
@@ -4810,6 +4929,7 @@ export type Database = {
           picture_id: string;
         }[];
       };
+      my_place_in_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       my_report_detail_requests: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -5015,6 +5135,39 @@ export type Database = {
         Returns: Json;
       };
       readable_chapter: {
+        Args: { chapter_code: string; story_slug: string };
+        Returns: {
+          code: string;
+          created_at: string;
+          deleted_at: string | null;
+          draft_body: string;
+          draft_saved_at: string | null;
+          draft_title: string;
+          draft_version: number;
+          edited_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          last_published_at: string | null;
+          position: number;
+          published_body: string | null;
+          published_title: string | null;
+          published_word_count: number | null;
+          scheduled_for: string | null;
+          status: Database['public']['Enums']['chapter_status'];
+          story_id: string;
+          unpublished_at: string | null;
+          updated_at: string;
+          user_id: string;
+          word_count: number;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'chapters';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      readable_chapter_for: {
         Args: { chapter_code: string; story_slug: string };
         Returns: {
           code: string;
@@ -5255,6 +5408,15 @@ export type Database = {
         Args: { body: string; chapter_code: string; expected_version: number; title: string };
         Returns: Json;
       };
+      save_reading_position: {
+        Args: {
+          chapter_code: string;
+          device_kind: string;
+          read_percent: number;
+          story_slug: string;
+        };
+        Returns: Json;
+      };
       schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
@@ -5286,6 +5448,10 @@ export type Database = {
       };
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
+      set_library_shelf: {
+        Args: { story_slug: string; wanted_shelf: Database['public']['Enums']['library_shelf'] };
+        Returns: Json;
+      };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
       set_my_birthday: { Args: { wanted_day?: number; wanted_month?: number }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
@@ -5357,6 +5523,7 @@ export type Database = {
           is_open: boolean;
         }[];
       };
+      story_library_state: { Args: { story_slug: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_matches_search: {
         Args: {
@@ -5507,6 +5674,7 @@ export type Database = {
       cover_kind: 'automatic' | 'drawn' | 'upload';
       language_status: 'open' | 'ready' | 'closed';
       legal_check_status: 'not_started' | 'in_progress' | 'done';
+      library_shelf: 'reading' | 'saved' | 'finished';
       market_status: 'open' | 'ready' | 'closed';
       moderated_state: 'hidden' | 'removed';
       moderation_action:
@@ -5761,6 +5929,7 @@ export const Constants = {
       cover_kind: ['automatic', 'drawn', 'upload'],
       language_status: ['open', 'ready', 'closed'],
       legal_check_status: ['not_started', 'in_progress', 'done'],
+      library_shelf: ['reading', 'saved', 'finished'],
       market_status: ['open', 'ready', 'closed'],
       moderated_state: ['hidden', 'removed'],
       moderation_action: [

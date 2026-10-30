@@ -337,6 +337,23 @@ const writeRoutes: RouteObject[] = [
       return { Component: StoryListPage };
     },
   })),
+  // The reader's library (S1-E4-03) and each shelf's See all page, which is a story list.
+  {
+    path: '/library',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { LibraryPage } = await import('@/features/library/components/LibraryPage');
+      return { Component: LibraryPage };
+    },
+  },
+  {
+    path: '/library/:shelf',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { StoryListPage } = await import('@/features/discovery/components/StoryListPage');
+      return { Component: StoryListPage };
+    },
+  },
   // Search (S1-E5-04): the page with stories, writers and tags, and the writers' and tags' own
   // See all pages; the term is in ?q=.
   {

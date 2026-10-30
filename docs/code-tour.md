@@ -1206,6 +1206,13 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - **Writers and tags:** `search_writers()` lists only writers with a story this reader may see, so a search never turns up a minor's account, and never answers a user ID. `search_tags()` finds approved tags by any of their names. Their See all pages are `/search/writers` and `/search/tags` (`SearchGroupPage`).
 - **Tests:** `supabase/tests/database/177-search.test.sql`, `e2e/search.spec.ts`, `src/features/search/lib/searchAddresses.test.ts`, `src/features/discovery/lib/listAddresses.test.ts`.
 
+## The library and the reader's place (S1-E4-03; READ-4a)
+
+- Screen 3.7 is `/library` (`src/features/library/components/LibraryPage.tsx`): "Continue reading" (`my_library()`), the shelves (Reading, Saved for later, Finished, each `browse_stories('library', <shelf>)` with its See all page at `/library/<shelf>`) and "What you follow" (`my_follows()`).
+- How a place travels: the reader screen (`ChapterReaderPage`) measures the progress (`useReadingProgress`), `useSavedPlace` saves it 3 seconds after scrolling stops and when the reader leaves → `save_reading_position()` → `reading_positions` (one row per chapter) and `library_entries` (the story joins Reading, and Finished at the end of a completed story). Next time, `my_place_in_chapter()` brings it back and `SavedPlaceOffer` offers "Go back there".
+- The story page's "Start reading" / "Continue chapter n" and the Library drop-down are `StoryReadingActions` → `story_library_state()` and `set_library_shelf()`.
+- Both tables are readable by their owner only; nobody else ever sees what someone reads. Tests: `supabase/tests/database/179-library.test.sql`, `e2e/library.spec.ts`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.

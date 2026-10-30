@@ -31,7 +31,13 @@
     "searchEyebrow": "Search",
     "search": "Stories for “{{term}}”",
     "classics": "Public-domain classics",
-    "classicsEyebrow": "Free to read, for good"
+    "classicsEyebrow": "Free to read, for good",
+    "libraryEyebrow": "Your library",
+    "libraryShelves": {
+      "reading": "Reading",
+      "saved": "Saved for later",
+      "finished": "Finished"
+    }
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} chapter",

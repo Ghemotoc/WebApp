@@ -15,11 +15,12 @@ export interface NavigationItem {
 }
 
 /**
- * Top bar links that exist today: Discover (S1-E5-01). Coming: Home (S1-E5-08), Library
- * (S1-E4-03), Forums (S1-E8-01), Messages (S1-E9-01).
+ * Top bar links that exist today: Discover (S1-E5-01) and Library (S1-E4-03; a visitor gets a
+ * log-in card there). Coming: Home (S1-E5-08), Forums (S1-E8-01), Messages (S1-E9-01).
  */
 export const primaryNavigation: NavigationItem[] = [
   { href: '/discover', labelKey: 'nav.discover' },
+  { href: '/library', labelKey: 'nav.library' },
 ];
 
 /**

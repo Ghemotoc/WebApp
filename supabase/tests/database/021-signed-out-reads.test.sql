@@ -79,6 +79,8 @@ select results_eq(
        ('invites', 0::bigint),
        ('jobs', 0::bigint),
        ('languages', (select count(*) from public.languages)),
+       -- A reader's library and places are theirs only (S1-E4-03).
+       ('library_entries', 0::bigint),
        ('legal_document_versions',
         (select count(*) from public.legal_document_versions where published_at <= now())),
        ('legal_documents', (select count(*) from public.legal_documents)),
@@ -92,6 +94,7 @@ select results_eq(
        ('picture_checks', 0::bigint),
        ('profiles', 0::bigint),
        ('public_notices', 0::bigint),
+       ('reading_positions', 0::bigint),
        ('rate_limit_events', 0::bigint),
        ('report_detail_requests', 0::bigint),
        ('report_reason_tiers', 0::bigint),

@@ -31,7 +31,13 @@
     "searchEyebrow": "Căutare",
     "search": "Povești pentru „{{term}}”",
     "classics": "Clasici din domeniul public",
-    "classicsEyebrow": "Liberi de drepturi, pentru totdeauna"
+    "classicsEyebrow": "Liberi de drepturi, pentru totdeauna",
+    "libraryEyebrow": "Biblioteca ta",
+    "libraryShelves": {
+      "reading": "Citesc acum",
+      "saved": "Păstrate pentru mai târziu",
+      "finished": "Terminate"
+    }
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} capitol",

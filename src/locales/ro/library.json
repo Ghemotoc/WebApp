@@ -1,0 +1,74 @@
+{
+  "documentTitle": "Biblioteca ta",
+  "eyebrow": "Bibliotecă",
+  "title": "Biblioteca ta",
+  "intro": "Continuă de unde ai rămas. Locul tău în fiecare capitol e păstrat pe orice dispozitiv pe care intri în cont.",
+  "private": {
+    "lead": "Privat.",
+    "body": "Doar tu îți vezi biblioteca."
+  },
+  "signedOut": {
+    "title": "Păstrează o bibliotecă",
+    "body": "Intră în cont ca să păstrezi povești pentru mai târziu și să continui de unde ai rămas, pe orice dispozitiv.",
+    "logIn": "Intră în cont"
+  },
+  "loadFailed": "Biblioteca nu s-a putut încărca. Verifică conexiunea și încearcă din nou.",
+  "continue": {
+    "heading": "Continuă lectura",
+    "by": "de",
+    "where": "Capitolul {{number}} din {{total}}",
+    "progress": "{{percent}}% din capitolul {{number}}",
+    "stopped": "Te-ai oprit {{position}} capitolului {{number}} pe {{device}}, {{when}}.",
+    "positions": {
+      "start": "aproape de începutul",
+      "middle": "la jumătatea",
+      "end": "aproape de finalul"
+    },
+    "devices": {
+      "phone": "telefon",
+      "tablet": "tabletă",
+      "computer": "calculator"
+    },
+    "nextOut": "A apărut capitolul {{number}}",
+    "completed": "Poveste încheiată",
+    "button": "Continuă",
+    "buttonLabel": "Continuă {{title}}",
+    "empty": "Poveștile pe care începi să le citești apar aici, cu locul unde ai rămas."
+  },
+  "shelves": {
+    "eyebrow": "Rafturile tale",
+    "heading": "Povești din biblioteca ta",
+    "choose": "Raft",
+    "option": "{{name}} ({{count}})",
+    "reading": "Citesc acum",
+    "saved": "Păstrate pentru mai târziu",
+    "finished": "Terminate",
+    "chapterOf": "Capitolul {{number}} din {{total}}",
+    "notStarted": "Neîncepută",
+    "empty": {
+      "reading": "Încă nimic aici. Deschide orice capitol și povestea ajunge pe acest raft.",
+      "saved": "Nimic păstrat pentru mai târziu. Folosește „Bibliotecă” pe pagina unei povești ca s-o păstrezi.",
+      "finished": "Poveștile citite până la capăt ajung aici."
+    }
+  },
+  "following": {
+    "eyebrow": "Urmărești",
+    "heading": "Ce urmărești",
+    "intro": "Primești o notificare când publică ceva nou.",
+    "writers": "Scriitori ({{count}})",
+    "stories": "Povești ({{count}})",
+    "lastUpdate": "Ultima actualizare {{when}}",
+    "nothingYet": "Nimic publicat încă",
+    "noWriters": "Încă nu urmărești niciun scriitor. Folosește „Urmărește” pe profilul unui scriitor.",
+    "noStories": "Încă nu urmărești nicio poveste. Folosește „Urmărește povestea” pe pagina unei povești.",
+    "new": "Nou"
+  },
+  "button": {
+    "label": "Bibliotecă",
+    "none": "Nu e în biblioteca ta",
+    "saveFailed": "Nu s-a salvat. Încearcă din nou.",
+    "logIn": "Intră în cont ca s-o păstrezi"
+  },
+  "startReading": "Începe lectura",
+  "continueChapter": "Continuă capitolul {{number}}"
+}

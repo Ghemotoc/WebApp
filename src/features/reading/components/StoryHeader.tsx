@@ -8,8 +8,8 @@
  * the content note box when the writer left one (S1-E3-06: readers see it before they open the
  * story), the tag chips, each a link to its tag page (S1-E5-01), "Follow story" (S1-E6-05) and,
  * under the writer's name, the stats row (StoryStats, S1-E5-03). Under the cover, the rank badges
- * (RankBadges, CMS-1g). The other action buttons arrive
- * with the library and sharing (S1-E4-03, S1-E4-05).
+ * (RankBadges, CMS-1g). Under the stats, "Start reading" or "Continue chapter n" and the
+ * Library drop-down (StoryReadingActions, S1-E4-03); Share arrives with S1-E4-05.
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ import { DrawnCover } from '@/components/covers/DrawnCover';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
+import { StoryReadingActions } from '@/features/library/components/StoryReadingActions';
 import { FollowButton } from '@/features/people/components/FollowButton';
 import { RankBadges } from '@/features/tags/components/RankBadges';
 import { useTagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
@@ -55,6 +56,29 @@ function StoryTagLinks({ tags }: { tags: string[] }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * Start or continue reading and the Library drop-down (S1-E4-03), then "Follow story" (S1-E6-05);
+ * none of them on one's own story.
+ *
+ * @returns the actions
+ */
+function StoryActions({ story }: { story: StoryPageData }) {
+  return (
+    <>
+      <StoryReadingActions
+        storySlug={story.slug}
+        firstChapterCode={
+          story.chapters.find((chapter) => chapter.status === 'published')?.code ?? null
+        }
+        isOwner={story.isOwner}
+      />
+      {!story.isOwner && story.isPublic && (
+        <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
+      )}
+    </>
   );
 }
 
@@ -104,10 +128,7 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
         <strong className="font-bold text-heading">{story.writer.displayName}</strong>
       </p>
       <StoryStats story={story} />
-      {/* Follow the story, so new chapters reach the reader (S1-E6-05); not on one's own. */}
-      {!story.isOwner && story.isPublic && (
-        <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
-      )}
+      <StoryActions story={story} />
       {story.blurb !== '' && (
         <p className="m-0 max-w-[640px] text-[17px] leading-[1.6] text-body">{story.blurb}</p>
       )}

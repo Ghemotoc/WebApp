@@ -13,7 +13,8 @@
  * right-click and copy turned off, with the honest notice under the chapter (S1-E4-06a). Under
  * the banner slot: the comments (S1-E6-01), fetched after the text (ChapterComments).
  * What it calls: useChapter → get_chapter() (ADR 0004); useRecordRead → record_chapter_read()
- * once the text is on screen; useReadingProgress for the progress line; useStoryPreview →
+ * once the text is on screen; useReadingProgress for the progress line; useSavedPlace keeps the
+ * reader's place and SavedPlaceOffer offers the one saved last time (S1-E4-03); useStoryPreview →
  * get_link_preview() only when a signed-out visitor's chapter answered nothing.
  */
 import { useRef } from 'react';
@@ -28,6 +29,7 @@ import { useChapter } from '../hooks/useChapter';
 import { useChapterBanner } from '../hooks/useChapterBanner';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useRecordRead } from '../hooks/useRecordRead';
+import { useSavedPlace } from '../hooks/useSavedPlace';
 import { useStoryPreview } from '../hooks/useStoryPreview';
 
 import { ChapterBannerSlot } from './ChapterBannerSlot';
@@ -38,6 +40,7 @@ import { ChapterReaderHeader } from './ChapterReaderHeader';
 import { CopyNotice } from './CopyNotice';
 import { NoPreviewNotice } from './NoPreviewNotice';
 import { ProtectedChapterText } from './ProtectedChapterText';
+import { SavedPlaceOffer } from './SavedPlaceOffer';
 import { TeaserPage } from './TeaserPage';
 
 /** "This chapter isn't available", with the way home. */
@@ -84,6 +87,8 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
   const hasText = chapter.body !== null;
   const progress = useReadingProgress(textRef, hasText);
   useRecordRead(chapter.story.slug, chapter.code, hasText);
+  // S1-E4-03: keep the reader's place and offer the one saved last time.
+  const { savedPercent } = useSavedPlace(chapter.story.slug, chapter.code, progress, hasText);
   const { banner } = useChapterBanner(chapter.story.slug);
   return (
     <>
@@ -95,6 +100,7 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
         <ChapterReaderHeader chapter={chapter} />
         {chapter.body !== null && (
           <div ref={textRef} className="lg:pr-20">
+            {savedPercent !== null && <SavedPlaceOffer percent={savedPercent} textRef={textRef} />}
             <ProtectedChapterText
               markdown={chapter.body}
               language={chapter.story.languageCode}
