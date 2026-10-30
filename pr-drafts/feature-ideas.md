@@ -18,6 +18,14 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
   where readers stop most. Helps writers find slow chapters; M; fits WRITE-2.
 - **Library export.** Include the reader's shelves in "Download my data" (it is personal data anyway). S; fits
   PRIVACY.
+- **Atkinson Hyperlegible as a fourth reading font.** Self-hosted (OFL licence, no third-party script), built for
+  low-vision readers. The board already names it for the apps; it can work in the browser now. S; fits READ-4 or later.
+- **Night theme by the clock.** An option to switch the chapter to Night after a chosen hour (for example 21:00),
+  using only the device's clock. Kinder for bedtime readers, many of them teens; S.
+- **Reading ruler.** A soft band that highlights the current line, toggled in Reading settings. Helps readers with
+  dyslexia or ADHD keep their place; M.
+- **Settings preview sentence.** A short sample paragraph at the top of the panel, so readers on a long chapter
+  see the change without closing the panel; S.
 
 ## Sent
 
