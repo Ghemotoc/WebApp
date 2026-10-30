@@ -107,5 +107,41 @@
     "count_other": "{{count}} likes",
     "readOnly": "Your account can’t like chapters yet.",
     "failed": "We couldn’t save your like. Try again."
+  },
+  "settings": {
+    "button": "Reading settings",
+    "title": "Reading settings",
+    "close": "Close reading settings",
+    "font": "Font",
+    "fonts": {
+      "sans": "Inter",
+      "serif": "Serif",
+      "dyslexia_friendly": "Dyslexia-friendly"
+    },
+    "fontHint": "A small set that works in every browser, including one that many readers with dyslexia find easier.",
+    "textSize": "Text size",
+    "textSizeValue": "{{size}} px",
+    "textSizeFromDevice": "{{size}} px, from your device",
+    "followDevice": "Use my device’s size",
+    "lineSpacing": "Line spacing",
+    "spacings": {
+      "compact": "Compact",
+      "normal": "Normal",
+      "wide": "Wide"
+    },
+    "lineWidth": "Line width",
+    "widths": {
+      "narrow": "Narrow",
+      "medium": "Medium",
+      "wide": "Wide"
+    },
+    "theme": "Theme",
+    "themes": {
+      "light": "Light",
+      "sepia": "Sepia",
+      "night": "Night"
+    },
+    "saved": "Saved to your account, so they apply on all your devices. Text size starts from your device’s own setting.",
+    "saveFailed": "We couldn’t save your reading settings. They still apply here; check your connection and change one again to retry."
   }
 }

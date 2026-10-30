@@ -2335,6 +2335,51 @@ export type Database = {
           },
         ];
       };
+      reading_settings: {
+        Row: {
+          created_at: string;
+          font: Database['public']['Enums']['reading_font'];
+          id: string;
+          line_spacing: Database['public']['Enums']['reading_line_spacing'];
+          line_width: Database['public']['Enums']['reading_line_width'];
+          text_size: number | null;
+          theme: Database['public']['Enums']['reading_theme'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          font?: Database['public']['Enums']['reading_font'];
+          id?: string;
+          line_spacing?: Database['public']['Enums']['reading_line_spacing'];
+          line_width?: Database['public']['Enums']['reading_line_width'];
+          text_size?: number | null;
+          theme?: Database['public']['Enums']['reading_theme'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          font?: Database['public']['Enums']['reading_font'];
+          id?: string;
+          line_spacing?: Database['public']['Enums']['reading_line_spacing'];
+          line_width?: Database['public']['Enums']['reading_line_width'];
+          text_size?: number | null;
+          theme?: Database['public']['Enums']['reading_theme'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reading_settings_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       report_detail_requests: {
         Row: {
           answer: string | null;
@@ -5417,6 +5462,16 @@ export type Database = {
         };
         Returns: Json;
       };
+      save_reading_settings: {
+        Args: {
+          wanted_font: Database['public']['Enums']['reading_font'];
+          wanted_line_spacing: Database['public']['Enums']['reading_line_spacing'];
+          wanted_line_width: Database['public']['Enums']['reading_line_width'];
+          wanted_text_size: number;
+          wanted_theme: Database['public']['Enums']['reading_theme'];
+        };
+        Returns: undefined;
+      };
       schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
@@ -5694,6 +5749,10 @@ export type Database = {
         'cover' | 'avatar' | 'chapter_picture' | 'drawing' | 'quote_card' | 'space_banner';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
+      reading_font: 'sans' | 'serif' | 'dyslexia_friendly';
+      reading_line_spacing: 'compact' | 'normal' | 'wide';
+      reading_line_width: 'narrow' | 'medium' | 'wide';
+      reading_theme: 'light' | 'sepia' | 'night';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -5957,6 +6016,10 @@ export const Constants = {
       picture_kind: ['cover', 'avatar', 'chapter_picture', 'drawing', 'quote_card', 'space_banner'],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       reaction_kind: ['heart', 'fire', 'laugh', 'wow', 'sad', 'star'],
+      reading_font: ['sans', 'serif', 'dyslexia_friendly'],
+      reading_line_spacing: ['compact', 'normal', 'wide'],
+      reading_line_width: ['narrow', 'medium', 'wide'],
+      reading_theme: ['light', 'sepia', 'night'],
       report_reason: [
         'illegal_content',
         'harassment',

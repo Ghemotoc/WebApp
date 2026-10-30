@@ -9,7 +9,7 @@
  * one plum with a tick, never colour alone). A disabled choice is dashed and greyed, as on the
  * board's "coming" languages.
  * Who uses it: the new story form (language, category) and story settings; later Discover's
- * sort and the rating picker (S1-E3-06).
+ * sort and the rating picker (S1-E3-06), and the reader's reading settings (S1-E4-02).
  */
 import { useId, type KeyboardEvent, type ReactNode } from 'react';
 
@@ -32,6 +32,8 @@ export interface ChoiceChipsProps {
   /** The group's accessible name; shown on screen when isLabelVisible. */
   label: string;
   isLabelVisible?: boolean;
+  /** Shows the visible label as an eyebrow (Cutive 14 px), as form section labels are drawn. */
+  isLabelEyebrow?: boolean;
   options: ChoiceOption[];
   value: string;
   onChange: (value: string) => void;
@@ -67,6 +69,13 @@ function chipClasses(isChosen: boolean, isDisabled: boolean): string {
     !isChosen && !isDisabled && 'border-control-border bg-surface text-heading hover:bg-tint',
     isDisabled && 'cursor-not-allowed border-dashed border-dashed-border bg-panel text-meta',
   );
+}
+
+/** The label's classes: hidden, plain or an eyebrow (DoD: form section labels are eyebrows). */
+function labelClasses(isVisible: boolean, isEyebrow: boolean): string {
+  if (!isVisible) return 'sr-only';
+  if (isEyebrow) return 'font-eyebrow text-sm leading-[1.3] font-normal text-eyebrow';
+  return 'text-sm font-semibold text-ink';
 }
 
 /** One chip of the group. */
@@ -119,6 +128,7 @@ function ChoiceChip({
 export function ChoiceChips({
   label,
   isLabelVisible = false,
+  isLabelEyebrow = false,
   options,
   value,
   onChange,
@@ -147,7 +157,7 @@ export function ChoiceChips({
 
   return (
     <div className="flex flex-col gap-2">
-      <span id={labelId} className={isLabelVisible ? 'text-sm font-semibold text-ink' : 'sr-only'}>
+      <span id={labelId} className={labelClasses(isLabelVisible, isLabelEyebrow)}>
         {label}
       </span>
       <div

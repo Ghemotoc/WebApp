@@ -95,6 +95,8 @@ select results_eq(
        ('profiles', 0::bigint),
        ('public_notices', 0::bigint),
        ('reading_positions', 0::bigint),
+       -- How someone likes to read is theirs only (S1-E4-02).
+       ('reading_settings', 0::bigint),
        ('rate_limit_events', 0::bigint),
        ('report_detail_requests', 0::bigint),
        ('report_reason_tiers', 0::bigint),

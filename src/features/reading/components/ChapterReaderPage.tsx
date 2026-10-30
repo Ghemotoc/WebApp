@@ -14,10 +14,11 @@
  * the banner slot: the comments (S1-E6-01), fetched after the text (ChapterComments).
  * What it calls: useChapter → get_chapter() (ADR 0004); useRecordRead → record_chapter_read()
  * once the text is on screen; useReadingProgress for the progress line; useSavedPlace keeps the
- * reader's place and SavedPlaceOffer offers the one saved last time (S1-E4-03); useStoryPreview →
+ * reader's place and SavedPlaceOffer offers the one saved last time (S1-E4-03); useReadingLook
+ * applies the reader's font, size, spacing, width and theme (S1-E4-02); useStoryPreview →
  * get_link_preview() only when a signed-out visitor's chapter answered nothing.
  */
-import { useRef } from 'react';
+import { useRef, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
@@ -27,6 +28,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import type { ReaderChapter } from '../api/chapter';
 import { useChapter } from '../hooks/useChapter';
 import { useChapterBanner } from '../hooks/useChapterBanner';
+import { useReadingLook } from '../hooks/useReadingLook';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useRecordRead } from '../hooks/useRecordRead';
 import { useSavedPlace } from '../hooks/useSavedPlace';
@@ -79,6 +81,33 @@ function ChapterMissing({ storySlug, chapterCode }: { storySlug: string; chapter
   );
 }
 
+/** The chapter's text in the reader's look, with anything shown above it (the saved place). */
+function ChapterTextBlock(props: {
+  chapter: ReaderChapter;
+  body: string;
+  textRef: RefObject<HTMLDivElement | null>;
+  look: ReturnType<typeof useReadingLook>;
+  children: ReactNode;
+}) {
+  const { chapter, body, textRef, look, children } = props;
+  return (
+    <div ref={textRef} className="lg:pr-20">
+      {children}
+      <div
+        className={look.page.className}
+        data-theme={look.page.dataTheme}
+        style={look.textVariables}
+      >
+        <ProtectedChapterText
+          markdown={body}
+          language={chapter.story.languageCode}
+          className="tmc-chapter-text--reader"
+        />
+      </div>
+    </div>
+  );
+}
+
 /** The bar and the chapter, once it is known. */
 function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
   const { t } = useTranslation('reading');
@@ -90,23 +119,28 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
   // S1-E4-03: keep the reader's place and offer the one saved last time.
   const { savedPercent } = useSavedPlace(chapter.story.slug, chapter.code, progress, hasText);
   const { banner } = useChapterBanner(chapter.story.slug);
+  // S1-E4-02: the reader's own font, size, spacing, width and theme.
+  const look = useReadingLook();
   return (
     <>
       <title>
         {t('reader.documentTitle', { chapter: chapter.title, story: chapter.story.title })}
       </title>
-      <ChapterBar chapter={chapter} progress={hasText ? progress : 0} />
-      <article aria-labelledby="chapter-title" className="mx-auto w-full max-w-[760px]">
+      <ChapterBar
+        chapter={chapter}
+        progress={hasText ? progress : 0}
+        deviceSize={look.isSignedIn ? look.deviceSize : null}
+      />
+      <article
+        aria-labelledby="chapter-title"
+        className="mx-auto w-full"
+        style={{ maxWidth: look.columnWidth }}
+      >
         <ChapterReaderHeader chapter={chapter} />
         {chapter.body !== null && (
-          <div ref={textRef} className="lg:pr-20">
+          <ChapterTextBlock chapter={chapter} body={chapter.body} textRef={textRef} look={look}>
             {savedPercent !== null && <SavedPlaceOffer percent={savedPercent} textRef={textRef} />}
-            <ProtectedChapterText
-              markdown={chapter.body}
-              language={chapter.story.languageCode}
-              className="tmc-chapter-text--reader"
-            />
-          </div>
+          </ChapterTextBlock>
         )}
         {hasText && <ChapterEnd chapter={chapter} />}
       </article>
