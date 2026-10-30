@@ -7,7 +7,7 @@
  *   log in; the database gives neither anything (the pgTAP test 040 proves the server side);
  * - each staff persona sees only the areas its role allows (architecture 1.8.3): owner and admin
  *   get Moderation (S1-E10-03a), Users (S1-E11-02, with Invites as its tab), Roles and Audit
- *   log, the moderator gets Moderation and Users, support gets Users, the content editor gets
+ *   log (and Website, CMS-1b), the moderator gets Moderation and Users, support gets Users, the content editor gets
  *   none;
  * - the owner searches the audit log, exports a CSV file, and the export is itself logged;
  * - every staff screen passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
@@ -73,6 +73,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Users',
       'Classics',
       'Roles',
+      'Website',
       'Settings',
       'Metrics',
       'Audit log',
@@ -90,6 +91,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Users',
       'Classics',
       'Roles',
+      'Website',
       'Settings',
       'Metrics',
       'Audit log',
