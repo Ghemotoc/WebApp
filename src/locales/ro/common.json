@@ -34,7 +34,8 @@
     "notificationsUnread_one": "Notificări, {{count}} nouă",
     "notificationsUnread_few": "Notificări, {{count}} noi",
     "notificationsUnread_other": "Notificări, {{count}} de noi",
-    "accessibility": "Accesibilitate"
+    "accessibility": "Accesibilitate",
+    "help": "Ajutor"
   },
   "theme": {
     "label": "Temă",
@@ -131,5 +132,27 @@
     "avatarLabel": "Încarcă o poză de profil",
     "avatarHint": "JPEG, PNG sau WebP, până la 2 MB. Ceilalți o văd după ce trece verificarea imaginilor.",
     "avatarHeading": "Poza de profil"
+  },
+  "website": {
+    "whyEyebrow": "De ce să scrii aici",
+    "trending": "Populare săptămâna asta",
+    "trendingEyebrow": "Populare",
+    "completed": "Povești terminate",
+    "completedEyebrow": "Terminate",
+    "readFailed": "Nu am putut încărca textul acestei pagini. Verifică conexiunea și încearcă din nou.",
+    "noticeLabel": "Anunț",
+    "noticeMore": "Află mai multe",
+    "noticeClose": "Închide anunțul",
+    "help": {
+      "documentTitle": "Ajutor · {{productName}}",
+      "eyebrow": "Ajutor",
+      "heading": "Cu ce te putem ajuta?",
+      "intro": "Ghiduri scurte despre scris, citit și siguranță aici, plus răspunsuri la întrebările puse cel mai des.",
+      "questions": "Întrebări",
+      "back": "Toate paginile de ajutor",
+      "pageTitle": "{{title}} · Ajutor",
+      "notFoundHeading": "Nu găsim această pagină de ajutor",
+      "notFound": "Poate a fost mutată sau scoasă. Toate paginile de ajutor sunt pe pagina Ajutor."
+    }
   }
 }

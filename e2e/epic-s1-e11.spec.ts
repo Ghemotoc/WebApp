@@ -107,7 +107,7 @@ test.describe('epic S1-E11 journeys', () => {
     await expect(owner.getByRole('table')).not.toContainText('example.com');
 
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a; SAFE-4 added moderator mail,
-    // appeals and the safety contacts; CMS-1a added Settings).
+    // appeals and the safety contacts; CMS-1a added Settings; CMS-1b added Website).
     expect(await menuLinks(owner)).toEqual([
       'Moderation',
       'Moderator mail',
@@ -117,6 +117,7 @@ test.describe('epic S1-E11 journeys', () => {
       'Users',
       'Classics',
       'Roles',
+      'Website',
       'Settings',
       'Metrics',
       'Audit log',

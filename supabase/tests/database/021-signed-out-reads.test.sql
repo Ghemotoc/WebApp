@@ -64,6 +64,7 @@ select results_eq(
        -- through the story page.
        ('classic_works', 0::bigint),
        ('client_errors', 0::bigint),
+       ('cms_versions', 0::bigint),
        ('comment_downvotes', 0::bigint),
        ('comment_reactions', 0::bigint),
        ('comments', 0::bigint),

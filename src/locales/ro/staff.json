@@ -71,7 +71,8 @@
     "appeals": "Contestații",
     "moderatorMail": "Mesaje moderatori",
     "safetyContacts": "Contacte de siguranță",
-    "settings": "Setări"
+    "settings": "Setări",
+    "website": "Site"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -103,7 +104,8 @@
       "appeals": "Contestațiile la deciziile de moderare, decise de alt moderator unde se poate.",
       "safety_contacts": "Liniile de ajutor și numerele de urgență din ecranele de raportare și verificarea lor lunară.",
       "classics": "Adaugă și verifică clasicii din domeniul public pentru contul oficial.",
-      "settings": "Comutatoare, valori și limite, rafturile din Descoperă, categorii, nume rezervate, piețe și limbi."
+      "settings": "Comutatoare, valori și limite, rafturile din Descoperă, categorii, nume rezervate, piețe și limbi.",
+      "website_cms": "Pagina principală, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă."
     }
   },
   "auditLog": {

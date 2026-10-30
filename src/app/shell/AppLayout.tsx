@@ -35,6 +35,7 @@ import { NotificationBell } from '@/features/notifications/components/Notificati
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePendingPictureRetry } from '@/features/pictures/hooks/usePictures';
+import { NoticeStrip } from '@/features/website/components/NoticeStrip';
 import { WriteLink } from '@/features/writing/components/WriteLink';
 
 import { Footer } from './Footer';
@@ -78,6 +79,8 @@ export function AppLayout() {
       />
       {/* "You're offline" and "You're back online" (S1-E1-05). */}
       <OfflineBanner />
+      {/* The notice banner staff publish from Website › Notice banners (S1-E11-10). */}
+      <NoticeStrip />
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* While maintenance mode is on, the maintenance page replaces all of this (S1-E1-05). */}
         <MaintenanceGate>

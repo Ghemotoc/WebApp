@@ -9,8 +9,8 @@ Today the app is a skeleton: one home page, the brand config, translations and C
 1. **`index.html`** is the only HTML page. The browser loads it first. Its `<head>` runs `public/theme-init.js`, which picks light or night mode before anything draws. It holds an empty `<div id="root">` and loads `src/main.tsx`. Its `<title>` is filled in from the brand config at build time by `vite.config.ts`.
 2. **`src/main.tsx`** starts the app in four steps: find the root element, start the translations (`src/lib/i18n.ts`) in the language this browser last chose, or Romanian on a first visit (`src/lib/language-preference.ts`), build the router from `src/app/router.tsx`, and draw everything inside `src/app/AppProviders.tsx`.
 3. **`src/app/AppProviders.tsx`** wraps every screen with the shared services: TanStack Query (the data cache that hooks use to talk to Supabase) and i18next (translations).
-4. **`src/app/router.tsx`** lists every address and the page it shows. Every public page sits inside **`src/app/shell/AppLayout.tsx`**: a "Skip to content" link, the `TopBar`, the page in `<main>`, then the `Footer` with the Device / Light / Night drop-down. The English / Română drop-down sits in both the top bar and the footer, and `useAccountLanguage` shows a signed-in person's account language (S1-E1-04). Today: `/` shows `HomePage`; `/design` shows every component (development and staging only); any other address goes back to `/` until S1-E1-05 adds a 404 page.
-5. **`src/features/<feature>/components/<Page>.tsx`** is the page itself, for example `src/features/home/components/HomePage.tsx`. Pages build on the shared components in `src/components/ui/`.
+4. **`src/app/router.tsx`** lists every address and the page it shows. Every public page sits inside **`src/app/shell/AppLayout.tsx`**: a "Skip to content" link, the `TopBar`, the page in `<main>`, then the `Footer` with the Device / Light / Night drop-down. The English / Română drop-down sits in both the top bar and the footer, and `useAccountLanguage` shows a signed-in person's account language (S1-E1-04). Today: `/` shows the website home page (`WebsiteHomePage`, text from the CMS, S1-E5-08); `/design` shows every component (development and staging only); any other address goes back to `/` until S1-E1-05 adds a 404 page.
+5. **`src/features/<feature>/components/<Page>.tsx`** is the page itself, for example `src/features/website/components/WebsiteHomePage.tsx`. Pages build on the shared components in `src/components/ui/`.
 
 The product name, site, email addresses and social handle come from **`src/config/brand.ts`** only (decided 17 Oct 2026, 12:47). Translations say `{{productName}}` and i18next fills it in from that file. A test (`scripts/find-hard-coded-brand-values.test.ts`) fails if any of those values is typed anywhere else in `src/`, `supabase/`, `public/`, `e2e/` or `index.html`.
 
@@ -981,7 +981,7 @@ What the Foundations epic left in place, and where to find it. The epic report, 
 
 | Kind | Where | Story |
 | --- | --- | --- |
-| Screens | `/` (`src/features/home/`) and `/design` (`src/features/design-system/`, local and staging only), inside the shell in `src/app/shell/` | S1-E1-01, S1-E1-03 |
+| Screens | `/` (`src/features/website/` since CMS-1b; first `src/features/home/`) and `/design` (`src/features/design-system/`, local and staging only), inside the shell in `src/app/shell/` | S1-E1-01, S1-E1-03 |
 | Hooks | `useThemePreference` (`src/features/theme/hooks/`), `useInterfaceLanguage` and `useAccountLanguage` (`src/features/language/hooks/`) | S1-E1-03, S1-E1-04 |
 | Supabase calls | `src/features/language/api/profileLocale.ts`, through the one client in `src/lib/supabase.ts` | S1-E1-04 |
 | Tables | `profiles`, `staff_roles`, `feature_flags`, `settings`, `audit_log` | S1-E1-02, S1-E1-04 |
@@ -1143,6 +1143,16 @@ The owner and admins change how the platform works from `/staff/settings` (`src/
 - **Markets and languages:** `languages` (one row per BCP 47 code, with its status) and `staff_languages` (who reads what, set on Staff › Roles by `StaffLanguages`). `admin_set_language_status()` refuses to open a language no moderator reads; `admin_set_market()` refuses Ready or Open without the legal check, Open without an open language, and lets only the owner open a market. `markets.is_open` follows `markets.status` by trigger, so sign-up (S1-E2-10) is unchanged. The new story form now lists every language and shows the closed ones as "coming" (`story_language_choices()`).
 - **Tests:** `supabase/tests/database/170-settings-admin.test.sql`, `171-markets-and-languages.test.sql` and `e2e/settings-admin.spec.ts`.
 
+## The website CMS, notices and help (S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08; CMS-1b)
+
+Website pages get their text only from the CMS, never from the locale files (decided 17 Oct 2026, 19:14). For March the content lives in the app's database behind one contract, `WebsiteContentStore` (`src/features/website/api/websiteContentStore.ts`), so moving it to the website's own database later swaps only the store.
+
+- **Where it starts (visitors):** `/` is `WebsiteHomePage`, `/help` is `HelpCentrePage`, `/help/:slug` is `HelpPageView`, and `NoticeStrip` sits in `AppLayout` above every page. Each reads through `useWebsiteContent(kind, schema)` → `appDatabaseStore().readLive()` → `website_content()`, which picks the visitor's market (the country from the connection) and language, falls back to Romania in English, and returns only live, published rows. If a read fails the page shows the last copy it saw (`lib/lastKnownContent.ts`).
+- **Where it starts (staff):** `/staff/website`, `/staff/website/notices` and `/staff/website/help` are `WebsiteAdminPage`, open to the owner and admins only (`staff_may('website_cms', 'act')`). Staff pick a market and language (`MarketLanguagePicker`), edit with counted fields and a live preview, then save a draft or publish with a "show from" date (`PublishControls`).
+- **How one click travels:** Publish → `useWebsiteEditor().act({ kind: 'publish', draft })` → `admin_save_cms_draft()` then `admin_publish_cms_version()`. The second checks the role, asks `cms_content_problems()` for empty, too-long or broken-link fields (refused with the list as the error's hint, read back by `websiteErrorFrom()` and shown under each field), marks the version published and writes `website.published` to `audit_log` with the before and after copy, in one transaction.
+- **One table:** `cms_versions` holds every version of every kind (home page, notice, help page, question): one draft per entry, published versions with their "show from" date, and removals. Version 1 (the 16 Oct 2026 copy) is seeded by `…_s1_e11_06_website_content_v1.sql` with no `user_id`.
+- **Tests:** `supabase/tests/database/172-website-cms.test.sql`, `e2e/website-cms.spec.ts` and the unit tests in `src/features/website/lib/`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.
@@ -1180,7 +1190,7 @@ Read in this order; each file's header comment says what it is for and where thi
 
 1. `CLAUDE.md`: the rules, then `docs/architecture.md` sections 1.5 to 1.7 and `docs/definition-of-done.md`.
 2. `index.html` → `src/main.tsx` → `src/app/AppProviders.tsx` → `src/app/router.tsx`: how the app starts.
-3. `src/features/home/components/HomePage.tsx` and its test: the smallest complete feature.
+3. `src/features/website/components/HelpPageView.tsx` and `hooks/useWebsiteContent.ts`: a small public page, from the URL to the database and back.
 4. `src/config/brand.ts` and `src/lib/i18n.ts`: where the name and the words come from.
 5. `src/locales/ro/common.json` and `src/locales/en/common.json`: the interface text.
 6. `src/styles/tokens.css`, `src/components/ui/README.md` and `/design` in the running app (`npm run dev`, then open /design): how screens look and which components to reuse.

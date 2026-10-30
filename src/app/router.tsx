@@ -16,9 +16,11 @@ import { ResetPasswordPage } from '@/features/auth/components/ResetPasswordPage'
 import { SignInPage } from '@/features/auth/components/SignInPage';
 import { SignUpPage } from '@/features/auth/components/SignUpPage';
 import { ErrorPage } from '@/features/errors/components/ErrorPage';
-import { HomePage } from '@/features/home/components/HomePage';
 import { LegalCentrePage } from '@/features/legal/components/LegalCentrePage';
 import { prefetchChapter } from '@/features/reading/api/chapterPrefetch';
+import { HelpCentrePage } from '@/features/website/components/HelpCentrePage';
+import { HelpPageView } from '@/features/website/components/HelpPageView';
+import { WebsiteHomePage } from '@/features/website/components/WebsiteHomePage';
 
 import { AppLayout } from './shell/AppLayout';
 import { NotFoundPage } from './shell/NotFoundPage';
@@ -114,6 +116,15 @@ const staffRoutes: RouteObject = {
         const { SafetyContactsAdminPage } =
           await import('@/features/safety/components/SafetyContactsAdminPage');
         return { Component: SafetyContactsAdminPage };
+      },
+    },
+    // The website CMS (S1-E11-06, S1-E11-10, S1-E11-12): owner and admin; the area picks the tab.
+    {
+      path: 'website/:area?',
+      lazy: async () => {
+        const { WebsiteAdminPage } =
+          await import('@/features/website/components/staff/WebsiteAdminPage');
+        return { Component: WebsiteAdminPage };
       },
     },
     // Content settings, markets and languages (S1-E11-03, S1-E11-05): owner and admin.
@@ -366,7 +377,11 @@ export const appRoutes: RouteObject[] = [
  */
 function pageRoutes(): RouteObject[] {
   return [
-    { path: '/', element: <HomePage /> },
+    // The public home page, all of its copy from the website CMS (S1-E5-08, S1-E11-06).
+    { path: '/', element: <WebsiteHomePage /> },
+    // Help: the CMS help pages and questions for the visitor's market and language (S1-E11-12).
+    { path: '/help', element: <HelpCentrePage /> },
+    { path: '/help/:slug', element: <HelpPageView /> },
     // The Legal centre (S1-E14-01): /legal opens the terms; each document has its own address.
     { path: '/legal', element: <Navigate to="/legal/terms" replace /> },
     { path: '/legal/:documentSlug', element: <LegalCentrePage /> },

@@ -1,0 +1,168 @@
+{
+  "documentTitle": "Site · Echipă",
+  "eyebrow": "Echipă · site",
+  "heading": "Site",
+  "intro": "Editează pagina principală a site-ului, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă. Alege întâi piața și limba. O versiune apare la 00:00, ora României, în data de la care se afișează, iar fiecare publicare e în jurnalul de audit.",
+  "auditLink": "Vezi toate schimbările site-ului în jurnalul de audit",
+  "loading": "Se încarcă…",
+  "counter": "{{used}} din {{limit}} caractere",
+  "markdownHint": "Folosește **aldin**, *cursiv*, ## titluri, liste și [linkuri](/help). Linkurile spre paginile noastre încep cu /.",
+  "edit": "Editează",
+  "editLabel": "Editează {{name}}",
+  "remove": "Scoate",
+  "removeLabel": "Scoate {{name}}",
+  "tabs": {
+    "label": "Secțiunile site-ului",
+    "home": "Pagina principală",
+    "notices": "Anunțuri",
+    "help": "Ajutor și întrebări"
+  },
+  "picker": {
+    "market": "Piața",
+    "language": "Limba conținutului"
+  },
+  "languages": {
+    "ro": "Română",
+    "en": "English"
+  },
+  "showFrom": "Se afișează de la",
+  "showFromHint": "Data de azi apare în cel mult un minut. O dată mai târzie apare la 00:00, ora României, în ziua aceea, iar versiunea de acum rămâne până atunci. Salvarea ciornei nu schimbă nimic pe site.",
+  "saveDraft": "Salvează ciorna",
+  "publish": "Publică",
+  "schedule": "Programează",
+  "fixFields": "Corectează aceste câmpuri înainte de publicare",
+  "problems": {
+    "empty": "Completează câmpul.",
+    "too_long": "Textul depășește limita.",
+    "broken_link": "Linkul nu duce nicăieri: {{address}}",
+    "not_in_headline": "Alege un cuvânt din titlu.",
+    "invalid": "Nu se poate salva așa.",
+    "bad_address": "Folosește doar litere mici, cifre și cratime, cel mult 60.",
+    "before_show_from": "Alege o zi după cea în care apare."
+  },
+  "failures": {
+    "not_allowed": "Doar proprietarul și administratorii pot edita site-ul.",
+    "invalid": "Nu se poate salva așa.",
+    "not_found": "Versiunea nu mai există. Reîncarcă pagina.",
+    "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou.",
+    "bad_address": "Folosește doar litere mici, cifre și cratime, cel mult 60.",
+    "unknown_kind": "Acest tip de conținut nu există.",
+    "unknown_market": "Piața nu există.",
+    "unknown_language": "Limba nu e una dintre limbile acestei piețe.",
+    "home_page_stays": "Pagina principală poate fi înlocuită, dar nu scoasă."
+  },
+  "outcomes": {
+    "save": "Ciorna e salvată. Pe site nu s-a schimbat nimic.",
+    "publish": "Publicat. Apare pe {{date}}.",
+    "restore": "Versiunea mai veche e din nou ciornă. Public-o ca să apară pe site.",
+    "remove": "Scos. Nu mai apare pe site."
+  },
+  "history": {
+    "heading": "Versiuni",
+    "live": "Pe site acum",
+    "scheduled": "Programată",
+    "nothingLive": "Nu e nimic pe site.",
+    "none": "Niciuna",
+    "since": "De pe {{date}}",
+    "goesLive": "Apare pe {{date}}",
+    "earlier": "Afișată de pe {{date}}, publicată {{published}}",
+    "restore": "Readu",
+    "restoreLabel": "Readu versiunea afișată de pe {{date}}"
+  },
+  "states": {
+    "live": "Pe site",
+    "scheduled": "Programat",
+    "draft": "Ciornă",
+    "ended": "Încheiat"
+  },
+  "home": {
+    "preview": "Previzualizare",
+    "heroLegend": "Partea de sus",
+    "sectionsLegend": "De ce să scrii aici, siguranță și întrebări",
+    "fields": {
+      "eyebrow": "Rândul de deasupra titlului",
+      "headlineFirst": "Titlul, primul rând",
+      "headlineSecond": "Titlul, al doilea rând",
+      "underlinedWord": "Cuvântul subliniat cu auriu",
+      "lede": "Rândul de sub titlu",
+      "primaryButton": "Primul buton",
+      "secondaryButton": "Al doilea buton",
+      "points": "Punctul scurt {{number}}",
+      "whyHeading": "De ce să scrii aici: titlu",
+      "whyCards": {
+        "title": "Cardul {{number}}: titlu",
+        "body": "Cardul {{number}}: text"
+      },
+      "safetyHeading": "Siguranță: titlu",
+      "safetyLines": "Rândul de siguranță {{number}}",
+      "questionsHeading": "Întrebări: titlu"
+    }
+  },
+  "notices": {
+    "new": "Anunț nou",
+    "none": "Încă nu există anunțuri pe această piață.",
+    "back": "Înapoi la toate anunțurile",
+    "end": "Încheie acum",
+    "endLabel": "Încheie acum anunțul „{{text}}”",
+    "editLabel": "Editează anunțul „{{text}}”",
+    "type": "Tipul",
+    "types": {
+      "news": "Noutate",
+      "contest": "Concurs",
+      "important": "Important"
+    },
+    "showOn": "Apare pe",
+    "places": {
+      "all": "Toate paginile",
+      "home": "Doar pagina principală"
+    },
+    "textIn": "Textul în {{language}}",
+    "link": "Link (opțional)",
+    "linkHint": "Una dintre paginile noastre, care începe cu /, de exemplu /discover.",
+    "showUntil": "Se afișează până la (opțional)",
+    "showUntilHint": "Dispare la 00:00, ora României, în ziua aceea.",
+    "fields": {
+      "texts": {
+        "ro": "Textul în română",
+        "en": "Textul în engleză"
+      },
+      "link": "Link",
+      "noticeType": "Tipul",
+      "showOn": "Apare pe",
+      "showUntil": "Afișează până la"
+    }
+  },
+  "help": {
+    "heading": "Pagini de ajutor",
+    "new": "Pagină de ajutor nouă",
+    "back": "Înapoi la ajutor și întrebări",
+    "preview": "Previzualizare",
+    "addressHint": "Litere mici, cifre și cratime. Nu se mai poate schimba ulterior.",
+    "fields": {
+      "address": "Adresa web (/help/…)",
+      "title": "Titlul",
+      "section": "Secțiunea",
+      "body": "Pagina"
+    }
+  },
+  "questions": {
+    "heading": "Întrebări",
+    "new": "Întrebare nouă",
+    "places": {
+      "home": "Pagina principală",
+      "help": "Centrul de ajutor",
+      "both": "Amândouă"
+    },
+    "fields": {
+      "key": "Cheia",
+      "question": "Întrebarea",
+      "answer": "Răspunsul",
+      "position": "Ordinea",
+      "showOn": "Apare pe"
+    }
+  },
+  "legal": {
+    "label": "Text cu greutate juridică (vârstă, acord, confidențialitate, raportări, mesaje sau bani)",
+    "reminder": "Textul trebuie să spună același lucru ca documentele juridice. Dacă nu se potrivesc, documentele juridice au întâietate, iar pagina se corectează în aceeași zi."
+  }
+}

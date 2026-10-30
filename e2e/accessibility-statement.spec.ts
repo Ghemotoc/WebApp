@@ -8,7 +8,7 @@
  *   centre in Romanian and in English;
  * - visiting the main pages, signed out and signed in, sets no cookie at all, and stores nothing
  *   in the browser outside the reviewed keys (the theme, the language, the session, and the
- *   per-tab sort order and read counter);
+ *   per-tab sort order, read counter and closed notices, and the last website content seen);
  * - the statement passes axe at 390, 768 and 1440 px.
  * Test data: seed personas only.
  */
@@ -24,7 +24,21 @@ const reviewedStorageKeys = [
   'auth-session',
   'story-list-sort',
   'reader-counted-chapters',
+  // The website's notices a visitor closed this tab (CMS-1b, S1-E11-10).
+  'closed-notices',
 ];
+
+/**
+ * Keys that start with these are reviewed too: the last website content a visitor saw, kept so a
+ * page still shows it when a read fails (CMS-1b, S1-E11-06; architecture 1.8.6).
+ */
+const reviewedStoragePrefixes = ['website-content:'];
+
+/** True when the app may write this storage key. */
+function isReviewedKey(key: string): boolean {
+  if (reviewedStorageKeys.includes(key)) return true;
+  return reviewedStoragePrefixes.some((prefix) => key.startsWith(prefix));
+}
 
 /** The pages a visitor and a member usually open. */
 const mainPages = ['/', '/discover', '/legal/terms', '/legal/accessibility', '/report'];
@@ -40,9 +54,7 @@ async function expectNoCookiesOn(page: Page): Promise<void> {
     await page.goto(address);
     await page.waitForLoadState('networkidle');
     expect(await page.context().cookies(), `cookies after ${address}`).toEqual([]);
-    const unexpected = (await storageKeys(page)).filter(
-      (key) => !reviewedStorageKeys.includes(key),
-    );
+    const unexpected = (await storageKeys(page)).filter((key) => !isReviewedKey(key));
     expect(unexpected, `storage keys after ${address}`).toEqual([]);
   }
 }

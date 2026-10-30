@@ -12,13 +12,11 @@
  */
 import { expect, test, type Page } from '@playwright/test';
 
-import { brand } from '../src/config/brand';
-
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 /** The home heading in each language. */
-const romanianHeading = `Bun venit la ${brand.productName}`;
-const englishHeading = `Welcome to ${brand.productName}`;
+const romanianHeading = 'Scrie povești. Fii citit.';
+const englishHeading = 'Write stories. Get read.';
 
 /** The top bar's language drop-down (its label is hidden on screen, as on the board). */
 function topBarLanguage(page: Page, label: 'Limbă' | 'Language') {
