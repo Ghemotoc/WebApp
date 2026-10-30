@@ -82,6 +82,23 @@ const staffRoutes: RouteObject = {
         return { Component: CasePage };
       },
     },
+    // Moderator mail (S1-E10-11): the team's shared inbox and one thread.
+    {
+      path: 'moderator-mail',
+      lazy: async () => {
+        const { StaffMailInboxPage } =
+          await import('@/features/moderator-mail/components/StaffMailInboxPage');
+        return { Component: StaffMailInboxPage };
+      },
+    },
+    {
+      path: 'moderator-mail/:reference',
+      lazy: async () => {
+        const { StaffMailThreadPage } =
+          await import('@/features/moderator-mail/components/StaffMailThreadPage');
+        return { Component: StaffMailThreadPage };
+      },
+    },
     // Appeals against moderation decisions (S1-E10-07): owner, admin and moderator.
     {
       path: 'appeals',
@@ -158,6 +175,38 @@ const staffRoutes: RouteObject = {
     },
   ],
 };
+
+/**
+ * Messages to the moderators (S1-E10-11): the list, a new message and one thread; a
+ * moderator_mail_reply notification links to the thread. Each is loaded when opened.
+ */
+const moderatorMailRoutes: RouteObject[] = [
+  {
+    path: '/moderator-mail',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { MyMailPage } = await import('@/features/moderator-mail/components/MyMailPage');
+      return { Component: MyMailPage };
+    },
+  },
+  {
+    path: '/moderator-mail/new',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { NewMailPage } = await import('@/features/moderator-mail/components/NewMailPage');
+      return { Component: NewMailPage };
+    },
+  },
+  {
+    path: '/moderator-mail/:reference',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { MailThreadPage } =
+        await import('@/features/moderator-mail/components/MailThreadPage');
+      return { Component: MailThreadPage };
+    },
+  },
+];
 
 /**
  * Lane A: writing and reading (S1-E3, S1-E4). The writer screens are loaded only when someone
@@ -348,6 +397,7 @@ function pageRoutes(): RouteObject[] {
         return { Component: MyReportsPage };
       },
     },
+    ...moderatorMailRoutes,
     // Lane A: writing and reading (S1-E3, S1-E4).
     ...writeRoutes,
     // Contact us: the form for users and visitors (S1-E14-04; Lane C), loaded when opened.

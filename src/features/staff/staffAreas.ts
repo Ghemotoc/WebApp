@@ -25,6 +25,8 @@ export interface StaffAreaPage {
 export const staffAreaPages: StaffAreaPage[] = [
   // The moderation queue and case pages (S1-E10-03a), first in the menu (architecture 1.8.2).
   { area: 'moderation', href: '/staff/moderation', labelKey: 'nav.moderation' },
+  // Moderator mail (S1-E10-11): the team's shared inbox, for everyone who acts on moderation.
+  { area: 'moderation', href: '/staff/moderator-mail', labelKey: 'nav.moderatorMail' },
   // Appeals against decisions (S1-E10-07), next to the queue (architecture 1.8.2).
   { area: 'appeals', href: '/staff/appeals', labelKey: 'nav.appeals' },
   // Who is on call for removal orders (S1-E10-09), next to the queue those orders land in.

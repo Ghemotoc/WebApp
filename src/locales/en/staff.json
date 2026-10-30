@@ -68,7 +68,8 @@
     "metrics": "Metrics",
     "classics": "Classics",
     "onCall": "On call",
-    "appeals": "Appeals"
+    "appeals": "Appeals",
+    "moderatorMail": "Moderator mail"
   },
   "shell": {
     "eyebrow": "Staff",
