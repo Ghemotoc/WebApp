@@ -5,7 +5,8 @@
  * profile (15 px bold), the "Writer" pill on the story's writer's comments, the date ("2 days
  * ago", 13 px), then the words in 16 px. A reply sits under its comment after a fine line, 18 px
  * in. Each part is a real <article> with the author named, so a screen reader can move from
- * comment to comment.
+ * comment to comment. A comment on one paragraph says which ("On paragraph 4", 13 px, 600, in the
+ * link colour; S1-E6-06), or that the writer has since changed it.
  * Who uses it: CommentsSection (and itself, for replies). What it calls: CommentBody,
  * CommentActions (with CommentReactions at the start of its row, S1-E6-02), CommentComposer (the
  * reply box).
@@ -66,6 +67,24 @@ function CommentHeader({ comment }: { comment: ChapterComment }) {
 }
 
 /**
+ * "On paragraph 4", or "On an earlier version", for a top-level comment on one paragraph
+ * (S1-E6-06). A paragraph's own thread leaves it out (the comments there carry no paragraph).
+ *
+ * @returns the line, or nothing for a comment on the whole chapter
+ */
+function ParagraphLabel({ paragraph }: { paragraph: ChapterComment['paragraph'] }) {
+  const { t } = useCommentsTranslation();
+  if (paragraph === null) return null;
+  return (
+    <p className="m-0 mb-1 text-[13px] font-semibold text-link">
+      {paragraph === 'earlier'
+        ? t('comment.onEarlierVersion')
+        : t('comment.onParagraph', { number: paragraph })}
+    </p>
+  );
+}
+
+/**
  * Renders the comment and, for a top-level one, its replies and the reply box.
  *
  * @returns the comment
@@ -92,6 +111,7 @@ export function CommentItem({ address, comment, isReply = false }: CommentItemPr
         {initialsOf(name)}
       </span>
       <div className="min-w-0 flex-1">
+        {!isReply && <ParagraphLabel paragraph={comment.paragraph} />}
         <CommentHeader comment={comment} />
         <CommentBody comment={comment} />
         <CommentActions

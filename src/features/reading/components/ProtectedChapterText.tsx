@@ -22,8 +22,14 @@ const blockedEvents = ['contextmenu', 'copy', 'cut', 'dragstart'] as const;
 /** What the wrapper needs: the same as ChapterText (the text, its language and its pictures). */
 export type ProtectedChapterTextProps = ChapterTextProps;
 
-/** Stops the browser's own handling of the event (the menu, the copy, the cut or the drag). */
+/**
+ * Stops the browser's own handling of the event (the menu, the copy, the cut or the drag),
+ * except inside a paragraph's comment thread (S1-E6-06): those are readers' words and their own
+ * comment box, which copy and paste as anywhere else.
+ */
 function preventDefault(event: Event) {
+  const target = event.target instanceof Element ? event.target : null;
+  if (target?.closest('[data-paragraph-thread]') != null) return;
   event.preventDefault();
 }
 

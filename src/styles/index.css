@@ -186,6 +186,42 @@
 .tmc-chapter-text .tmc-shared-passage:focus {
   outline: none;
 }
+/* Paragraph comments on the reader (S1-E6-06; board 3.5): each paragraph shares a row with its
+   comment marker, 44 px wide with 8 px between on phones and 64 px with 16 px on wide screens.
+   The column appears only once the marker is drawn (the counts have arrived and comments are
+   on), so the paragraph's own element never changes. The thread spans the whole row under the
+   paragraph (col-span-full). */
+.tmc-chapter-text .tmc-paragraph-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+.tmc-chapter-text .tmc-paragraph-row:has(> .tmc-paragraph-marker) {
+  grid-template-columns: minmax(0, 1fr) 44px;
+  column-gap: 8px;
+}
+@media (min-width: 1024px) {
+  .tmc-chapter-text .tmc-paragraph-row:has(> .tmc-paragraph-marker) {
+    grid-template-columns: minmax(0, 1fr) 64px;
+    column-gap: 16px;
+  }
+}
+/* The thread is readers' words in the interface's look, not the chapter's: the body font at
+   16 px, whatever the reader chose for the text. Names keep their own colour and no underline;
+   links inside comments keep the link look. */
+.tmc-chapter-text .tmc-paragraph-thread {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+.tmc-chapter-text .tmc-paragraph-thread a.no-underline {
+  color: var(--ink);
+  text-decoration: none;
+}
+.tmc-chapter-text .tmc-paragraph-thread a.no-underline:hover {
+  text-decoration: underline;
+}
 /* ProseMirror's own needs: the placeholder-free empty paragraph still takes a line. */
 .tmc-chapter-text .ProseMirror {
   outline: none;

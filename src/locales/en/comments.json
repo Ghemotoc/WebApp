@@ -22,7 +22,8 @@
     "postReply": "Post reply",
     "cancel": "Cancel",
     "kind": "Be kind. Every report is read by a person.",
-    "posted": "Your comment is up."
+    "posted": "Your comment is up.",
+    "paragraphLabel": "Comment on this paragraph"
   },
   "failures": {
     "read_only": "Your account can’t comment yet.",
@@ -50,7 +51,9 @@
     "removed": "[Removed by the moderation team]",
     "hiddenNote": "Hidden by the moderation team. Only you can see it.",
     "reportLabel": "the comment by {{name}}",
-    "replies": "Replies to {{name}}"
+    "replies": "Replies to {{name}}",
+    "onParagraph": "On paragraph {{number}}",
+    "onEarlierVersion": "On an earlier version"
   },
   "reactions": {
     "add": "Add a reaction",
@@ -77,5 +80,19 @@
       "read_only": "Your account can’t downvote yet.",
       "other": "We couldn’t save your downvote. Check your connection and try again."
     }
+  },
+  "paragraph": {
+    "label": "Comments on paragraph {{number}}",
+    "earlierLabel": "Comments on an earlier version",
+    "loading": "Loading the comments…",
+    "title_one": "{{count}} comment on this paragraph",
+    "title_few": "{{count}} comments on this paragraph",
+    "title_other": "{{count}} comments on this paragraph",
+    "emptyTitle": "No comments on this paragraph yet",
+    "earlierTitle_one": "{{count}} comment on an earlier version",
+    "earlierTitle_few": "{{count}} comments on an earlier version",
+    "earlierTitle_other": "{{count}} comments on an earlier version",
+    "earlierNote": "The writer has changed these paragraphs since these comments were left.",
+    "close": "Close"
   }
 }

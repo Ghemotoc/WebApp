@@ -22,25 +22,34 @@
  * highlighted and SharedPassageNotice brings it into view; the saved-place offer waits for
  * another visit. A visible picture gets "Share picture" (PictureShareButton, fetched on its own),
  * which reads the chapter from SharedChapterContext.
+ * Paragraph comments (S1-E6-06): for a signed-in reader on a story with comments on, each
+ * paragraph gets a comment marker beside it (ParagraphCommentMarker, through ChapterText's
+ * paragraphAddon) whose thread opens under the paragraph, and EarlierVersionComments follows the
+ * text when comments sit on paragraphs the writer has since changed. useParagraphCommentCounts →
+ * paragraph_comment_counts() gives the counts; ParagraphCommentsContext carries them in.
  */
-import { lazy, useMemo, useRef, type ReactNode, type RefObject } from 'react';
+import { lazy, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { QuoteShareWatcher } from '@/features/sharing/components/QuoteShareWatcher';
+import type { SharedChapter } from '@/features/sharing/lib/sharedChapter';
 import { SharedChapterContext } from '@/features/sharing/lib/sharedChapterContext';
 import { parseSpot, type SpotRange } from '@/lib/chapter-blocks';
 
 import type { ReaderChapter } from '../api/chapter';
+import type { ParagraphPlace } from '../api/paragraphComments';
 import { useChapter } from '../hooks/useChapter';
 import { useChapterBanner } from '../hooks/useChapterBanner';
+import { useParagraphCommentCounts } from '../hooks/useParagraphCommentCounts';
 import { useReadingLook } from '../hooks/useReadingLook';
 import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useRecordRead } from '../hooks/useRecordRead';
 import { useSavedPlace } from '../hooks/useSavedPlace';
 import { useStoryPreview } from '../hooks/useStoryPreview';
+import { ParagraphCommentsContext, type ParagraphComments } from '../lib/paragraphCommentsContext';
 import { toSharedChapter } from '../lib/toSharedChapter';
 
 import { ChapterBannerSlot } from './ChapterBannerSlot';
@@ -49,7 +58,9 @@ import { ChapterComments } from './ChapterComments';
 import { ChapterEnd } from './ChapterEnd';
 import { ChapterReaderHeader } from './ChapterReaderHeader';
 import { CopyNotice } from './CopyNotice';
+import { EarlierVersionComments } from './EarlierVersionComments';
 import { NoPreviewNotice } from './NoPreviewNotice';
+import { ParagraphCommentMarker } from './ParagraphCommentMarker';
 import { ProtectedChapterText } from './ProtectedChapterText';
 import { SavedPlaceOffer } from './SavedPlaceOffer';
 import { SharedPassageNotice } from './SharedPassageNotice';
@@ -116,18 +127,25 @@ function AboveText(props: {
   return <SavedPlaceOffer percent={props.savedPercent} textRef={props.textRef} />;
 }
 
-/** The chapter's text in the reader's look, with anything shown above it (the saved place). */
+/**
+ * The chapter's text in the reader's look, with anything shown above it (the saved place) and,
+ * a comment marker beside each paragraph (S1-E6-06). The marker is always passed in, so the
+ * paragraphs keep the same elements when the counts arrive (a shared passage keeps its focus);
+ * it draws nothing until then, or at all with comments off. When `hasMarkers`, the markers take
+ * the room the text otherwise leaves free on wide screens.
+ */
 function ChapterTextBlock(props: {
   chapter: ReaderChapter;
   body: string;
   textRef: RefObject<HTMLDivElement | null>;
   look: ReturnType<typeof useReadingLook>;
   spot: SpotRange | null;
+  hasMarkers: boolean;
   children: ReactNode;
 }) {
-  const { chapter, body, textRef, look, spot, children } = props;
+  const { chapter, body, textRef, look, spot, hasMarkers, children } = props;
   return (
-    <div ref={textRef} className="lg:pr-20">
+    <div ref={textRef} className={hasMarkers ? undefined : 'lg:pr-20'}>
       {children}
       <div
         className={look.page.className}
@@ -144,9 +162,50 @@ function ChapterTextBlock(props: {
           canReportMedia
           spot={spot}
           pictureShare={PictureShareButton}
+          paragraphAddon={ParagraphCommentMarker}
         />
+        <EarlierVersionComments />
       </div>
     </div>
+  );
+}
+
+/**
+ * The paragraph markers' facts for one chapter (S1-E6-06): the counts, and which thread is open.
+ *
+ * @param chapter - the chapter being read
+ * @param hasText - false while there is no text
+ * @returns the context value, or null when there are no markers (signed out, comments off)
+ */
+function useParagraphComments(chapter: ReaderChapter, hasText: boolean): ParagraphComments | null {
+  const address = useMemo(
+    () => ({ storySlug: chapter.story.slug, chapterCode: chapter.code }),
+    [chapter.story.slug, chapter.code],
+  );
+  const counts = useParagraphCommentCounts(address, hasText);
+  const [openPlace, setOpenPlace] = useState<ParagraphPlace | null>(null);
+  return useMemo(
+    () => (counts === null ? null : { address, counts, openPlace, setOpenPlace }),
+    [address, counts, openPlace],
+  );
+}
+
+/**
+ * What follows the chapter: the copy notice, the "Share quote" watcher, the banner slot (never
+ * inside the text, S1-E4-01b) and the comments (S1-E6-01).
+ */
+function UnderTheChapter(props: { chapter: ReaderChapter; sharedChapter: SharedChapter }) {
+  const { chapter, sharedChapter } = props;
+  const { banner } = useChapterBanner(chapter.story.slug);
+  return (
+    <>
+      <CopyNotice penName={chapter.story.writer.displayName} />
+      <QuoteShareWatcher chapter={sharedChapter} />
+      <ChapterBannerSlot banner={banner} />
+      <div className="mx-auto w-full max-w-[760px]">
+        <ChapterComments address={{ storySlug: chapter.story.slug, chapterCode: chapter.code }} />
+      </div>
+    </>
   );
 }
 
@@ -161,9 +220,10 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
   useRecordRead(chapter.story.slug, chapter.code, hasText);
   // S1-E4-03: keep the reader's place and offer the one saved last time.
   const { savedPercent } = useSavedPlace(chapter.story.slug, chapter.code, progress, hasText);
-  const { banner } = useChapterBanner(chapter.story.slug);
   // S1-E4-02: the reader's own font, size, spacing, width and theme.
   const look = useReadingLook();
+  // S1-E6-06: the comment markers beside the paragraphs.
+  const paragraphComments = useParagraphComments(chapter, hasText);
   return (
     <>
       <title>
@@ -182,32 +242,28 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
         <ChapterReaderHeader chapter={chapter} />
         {chapter.body !== null && (
           <SharedChapterContext.Provider value={sharedChapter}>
-            <ChapterTextBlock
-              chapter={chapter}
-              body={chapter.body}
-              textRef={textRef}
-              look={look}
-              spot={spot}
-            >
-              <AboveText
+            <ParagraphCommentsContext.Provider value={paragraphComments}>
+              <ChapterTextBlock
                 chapter={chapter}
-                spot={spot}
-                savedPercent={savedPercent}
+                body={chapter.body}
                 textRef={textRef}
-              />
-            </ChapterTextBlock>
+                look={look}
+                spot={spot}
+                hasMarkers={paragraphComments !== null}
+              >
+                <AboveText
+                  chapter={chapter}
+                  spot={spot}
+                  savedPercent={savedPercent}
+                  textRef={textRef}
+                />
+              </ChapterTextBlock>
+            </ParagraphCommentsContext.Provider>
           </SharedChapterContext.Provider>
         )}
         {hasText && <ChapterEnd chapter={chapter} />}
       </article>
-      {hasText && <CopyNotice penName={chapter.story.writer.displayName} />}
-      {hasText && <QuoteShareWatcher chapter={sharedChapter} />}
-      {hasText && <ChapterBannerSlot banner={banner} />}
-      {hasText && (
-        <div className="mx-auto w-full max-w-[760px]">
-          <ChapterComments address={{ storySlug: chapter.story.slug, chapterCode: chapter.code }} />
-        </div>
-      )}
+      {hasText && <UnderTheChapter chapter={chapter} sharedChapter={sharedChapter} />}
     </>
   );
 }

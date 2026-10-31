@@ -7,7 +7,9 @@
  * "Post comment" button and "Be kind. Every report is read by a person." The counter is linked to
  * the box with aria-describedby, so a screen reader hears it with the field. A refusal is said in
  * plain words, the limit with the minutes to wait (criterion 4).
- * Who uses it: CommentsSection (a new comment) and CommentItem (a reply).
+ * The same box, without the card, posts a comment on one paragraph in its thread (S1-E6-06).
+ * Who uses it: CommentsSection (a new comment), CommentItem (a reply) and ParagraphThread (a
+ * comment on a paragraph).
  * What it calls: usePostComment → post_comment().
  */
 import { useId, useState, type FormEvent } from 'react';
@@ -30,6 +32,8 @@ export interface CommentComposerProps {
   replyTo?: { commentId: string; authorName: string };
   /** Called after a successful post, and on Cancel for a reply. */
   onDone?: () => void;
+  /** For a comment on one paragraph (S1-E6-06): its number, from 1. */
+  paragraph?: number;
 }
 
 /**
@@ -50,7 +54,7 @@ function failureText(failure: CommentError): [string, Record<string, unknown>] {
  * @param props - the composer's props
  * @returns the fields, their setters, send() and the post's progress
  */
-function useComposer({ address, replyTo, onDone }: CommentComposerProps) {
+function useComposer({ address, replyTo, onDone, paragraph }: CommentComposerProps) {
   const [text, setText] = useState('');
   const [isSpoiler, setIsSpoiler] = useState(false);
   const [justPosted, setJustPosted] = useState(false);
@@ -60,7 +64,8 @@ function useComposer({ address, replyTo, onDone }: CommentComposerProps) {
   async function send(event: FormEvent) {
     event.preventDefault();
     try {
-      await posting.post({ body: text, isSpoiler, replyTo: replyTo?.commentId ?? null });
+      const where = paragraph === undefined ? {} : { paragraph };
+      await posting.post({ body: text, isSpoiler, replyTo: replyTo?.commentId ?? null, ...where });
       setText('');
       setIsSpoiler(false);
       setJustPosted(true);
@@ -119,6 +124,19 @@ function ComposerControls({ composer, counterId, isReply, onCancel }: ComposerCo
 }
 
 /**
+ * The label above the text box.
+ *
+ * @param props - the composer's props
+ * @returns the translation key and its values: a reply, a paragraph or the chapter
+ */
+function labelText(props: CommentComposerProps): [string, Record<string, unknown>] {
+  if (props.replyTo !== undefined)
+    return ['composer.replyLabel', { name: props.replyTo.authorName }];
+  if (props.paragraph !== undefined) return ['composer.paragraphLabel', {}];
+  return ['composer.label', {}];
+}
+
+/**
  * Renders the form.
  *
  * @returns the composer
@@ -130,25 +148,27 @@ export function CommentComposer(props: CommentComposerProps) {
   const composer = useComposer(props);
   const replyTo = props.replyTo;
   const isReply = replyTo !== undefined;
+  // A reply and a paragraph's comment sit inside a card already, so they get no card of their own.
+  const isCompact = isReply || props.paragraph !== undefined;
   const failure = composer.posting.failure;
   return (
     <form
       onSubmit={composer.send}
       className={cn(
         'flex flex-col gap-3',
-        !isReply && 'rounded-[24px] border border-border bg-surface px-6 py-5',
+        !isCompact && 'rounded-[24px] border border-border bg-surface px-6 py-5',
       )}
     >
       <label htmlFor={fieldId} className="text-[15px] font-semibold text-ink">
-        {isReply ? t('composer.replyLabel', { name: replyTo.authorName }) : t('composer.label')}
+        {t(...labelText(props))}
       </label>
       <textarea
         id={fieldId}
-        rows={isReply ? 2 : 3}
+        rows={isCompact ? 2 : 3}
         maxLength={longestComment}
         value={composer.text}
         onChange={(event) => composer.setText(event.target.value)}
-        placeholder={isReply ? undefined : t('composer.placeholder')}
+        placeholder={isCompact ? undefined : t('composer.placeholder')}
         aria-describedby={counterId}
         className="w-full resize-y rounded-2xl border border-control-border bg-paper px-[18px] py-3.5 text-base leading-normal text-ink"
       />
@@ -166,7 +186,7 @@ export function CommentComposer(props: CommentComposerProps) {
       <p role="status" className="sr-only">
         {composer.justPosted ? t('composer.posted') : ''}
       </p>
-      {!isReply && <p className="m-0 text-[13px] text-meta">{t('composer.kind')}</p>}
+      {!isCompact && <p className="m-0 text-[13px] text-meta">{t('composer.kind')}</p>}
     </form>
   );
 }

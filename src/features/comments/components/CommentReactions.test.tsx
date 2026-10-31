@@ -34,6 +34,7 @@ const comment: ChapterComment = {
   reactions: { counts: { heart: 4, wow: 1 }, mine: 'heart' },
   isDownvotedByMe: false,
   replies: [],
+  paragraph: null,
 };
 
 /** Signs the test reader in (a user ID) or out (null). */

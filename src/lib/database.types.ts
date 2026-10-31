@@ -1021,6 +1021,8 @@ export type Database = {
           deleted_by: Database['public']['Enums']['comment_deleted_by'] | null;
           id: string;
           is_spoiler: boolean;
+          paragraph_key: string | null;
+          paragraph_number: number | null;
           parent_comment_id: string | null;
           updated_at: string;
           user_id: string;
@@ -1038,6 +1040,8 @@ export type Database = {
           deleted_by?: Database['public']['Enums']['comment_deleted_by'] | null;
           id?: string;
           is_spoiler?: boolean;
+          paragraph_key?: string | null;
+          paragraph_number?: number | null;
           parent_comment_id?: string | null;
           updated_at?: string;
           user_id: string;
@@ -1050,6 +1054,8 @@ export type Database = {
           deleted_by?: Database['public']['Enums']['comment_deleted_by'] | null;
           id?: string;
           is_spoiler?: boolean;
+          paragraph_key?: string | null;
+          paragraph_number?: number | null;
           parent_comment_id?: string | null;
           updated_at?: string;
           user_id?: string;
@@ -4813,6 +4819,13 @@ export type Database = {
           story_id: string;
         }[];
       };
+      chapter_paragraphs: {
+        Args: { body: string };
+        Returns: {
+          block_number: number;
+          paragraph_key: string;
+        }[];
+      };
       chapter_picture_references: {
         Args: { body: string };
         Returns: {
@@ -4960,6 +4973,16 @@ export type Database = {
       comment_json: {
         Args: {
           story_writer_id: string;
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      comment_paragraph_json: {
+        Args: {
+          body: string;
           target: Omit<
             Database['public']['Tables']['comments']['Row'],
             Database['public']['Tables']['comments']['ComputedFields']
@@ -5554,6 +5577,16 @@ export type Database = {
         };
         Returns: Json;
       };
+      paragraph_comment_counts: {
+        Args: { chapter_code: string; story_slug: string };
+        Returns: Json;
+      };
+      paragraph_comments: {
+        Args: { block_number?: number; chapter_code: string; story_slug: string };
+        Returns: Json;
+      };
+      paragraph_key_of: { Args: { block_text: string }; Returns: string };
+      paragraph_now: { Args: { body: string; key: string; number: number }; Returns: number };
       picture_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       picture_is_visible: { Args: { bucket: string; path: string }; Returns: boolean };
       picture_reader_may_see: { Args: { bucket: string; path: string }; Returns: boolean };
@@ -5572,6 +5605,16 @@ export type Database = {
           chapter_code: string;
           is_spoiler?: boolean;
           reply_to?: string;
+          story_slug: string;
+        };
+        Returns: Json;
+      };
+      post_paragraph_comment: {
+        Args: {
+          block_number: number;
+          body: string;
+          chapter_code: string;
+          is_spoiler?: boolean;
           story_slug: string;
         };
         Returns: Json;

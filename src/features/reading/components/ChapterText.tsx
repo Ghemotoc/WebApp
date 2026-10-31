@@ -16,12 +16,21 @@
  * Blocks (S1-E4-11): every top-level part is marked with the blocks it holds (lib/numberBlocks.ts),
  * so a passage or picture can be shared as a link to its spot, and a shared passage is highlighted.
  * A picture readers may share gets the Share button the reader passes in (pictureShare).
+ * Paragraph comments (S1-E6-06): when the reader passes paragraphAddon, each top-level paragraph
+ * sits in a two-column row (.tmc-paragraph-row) with the addon (the comment marker) beside it.
  * Look: the shared `.tmc-chapter-text` styles (src/styles/index.css), board 4.3 and 3.5.
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.
  */
 import type { Element, ElementContent } from 'hast';
-import Markdown, { type Components, type Options } from 'react-markdown';
-import { createContext, Suspense, useContext, useMemo, type ComponentType } from 'react';
+import Markdown, { type Components, type ExtraProps, type Options } from 'react-markdown';
+import {
+  createContext,
+  Suspense,
+  useContext,
+  useMemo,
+  type ComponentPropsWithoutRef,
+  type ComponentType,
+} from 'react';
 
 import type { EmbedView } from '@/features/embeds/api/embeds';
 import { ChapterEmbed } from '@/features/embeds/components/ChapterEmbed';
@@ -110,6 +119,11 @@ export interface ChapterTextProps {
   spot?: SpotRange | null;
   /** The reader's Share button for a visible picture (S1-E4-11); left out, there is none. */
   pictureShare?: ComponentType<PictureShareProps>;
+  /**
+   * What sits beside each top-level paragraph (S1-E6-06: the reader's comment marker), given the
+   * paragraph's block number; left out, paragraphs are drawn on their own.
+   */
+  paragraphAddon?: ComponentType<{ block: number }>;
 }
 
 /** What a picture's Share button is given. */
@@ -127,6 +141,7 @@ interface ChapterMedia {
   writerName: string | null;
   canReport: boolean;
   pictureShare: ComponentType<PictureShareProps> | null;
+  paragraphAddon: ComponentType<{ block: number }> | null;
 }
 
 /** What the drawers below read; set by ChapterText around the text. */
@@ -136,6 +151,7 @@ const ChapterMediaContext = createContext<ChapterMedia>({
   writerName: null,
   canReport: false,
   pictureShare: null,
+  paragraphAddon: null,
 });
 
 /**
@@ -179,7 +195,31 @@ function MediaImage({ address, alt }: { address: string; alt: string }) {
   );
 }
 
-/** The element drawers: links, the stray heading 1, pictures and cards. Defined once. */
+/**
+ * Draws one paragraph. A paragraph holding a picture or a card is a block (a figure can't sit in
+ * a <p>). With a paragraph addon (S1-E6-06), a top-level paragraph shares a row with it; the
+ * block marks (data-block, the highlight) stay on the paragraph itself, where the share bar and
+ * the shared-passage highlight look for them.
+ *
+ * @param props - the paragraph's attributes and its hast node
+ * @returns the paragraph
+ */
+function ChapterParagraph({ node, ...props }: ComponentPropsWithoutRef<'p'> & ExtraProps) {
+  const media = useContext(ChapterMediaContext);
+  if (holdsMedia(node)) return <div {...props} />;
+  const Addon = media.paragraphAddon;
+  // Only top-level paragraphs are numbered (lib/numberBlocks.ts); those inside a quote or a list aren't.
+  const block = Number((props as Record<string, unknown>)['data-block']);
+  if (Addon === null || !Number.isInteger(block) || block < 1) return <p {...props} />;
+  return (
+    <div className="tmc-paragraph-row">
+      <p {...props} />
+      <Addon block={block} />
+    </div>
+  );
+}
+
+/** The element drawers: links, the stray heading 1, paragraphs, pictures and cards. Defined once. */
 const chapterComponents: Components = {
   // Links: safe address only, never followed for ranking, never given the page's opener.
   a: ({ href, children }) =>
@@ -193,7 +233,7 @@ const chapterComponents: Components = {
   // A heading 1 can't be stored (the editor snaps it), but if one ever arrives it reads as h2.
   h1: ({ children }) => <h2>{children}</h2>,
   // The block marks (data-block, the highlight) are passed on, so a picture's block keeps them.
-  p: ({ node, ...props }) => (holdsMedia(node) ? <div {...props} /> : <p {...props} />),
+  p: ChapterParagraph,
   img: ({ src, alt }) => (
     <MediaImage address={typeof src === 'string' ? src : ''} alt={alt ?? ''} />
   ),
@@ -214,6 +254,7 @@ export function ChapterText({
   canReportMedia = false,
   spot = null,
   pictureShare,
+  paragraphAddon,
 }: ChapterTextProps) {
   // The media for the drawers, kept the same object while nothing in it changes.
   const media = useMemo(
@@ -223,8 +264,9 @@ export function ChapterText({
       writerName,
       canReport: canReportMedia,
       pictureShare: pictureShare ?? null,
+      paragraphAddon: paragraphAddon ?? null,
     }),
-    [pictures, embeds, writerName, canReportMedia, pictureShare],
+    [pictures, embeds, writerName, canReportMedia, pictureShare, paragraphAddon],
   );
   // The block numbers and the highlight, worked out again only when the text or spot changes.
   const rehypePlugins = useMemo<Options['rehypePlugins']>(

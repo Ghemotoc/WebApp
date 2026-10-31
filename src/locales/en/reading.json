@@ -82,6 +82,15 @@
       "found": "You opened a link to a passage. It’s highlighted below.",
       "notFound": "You opened a link to a passage that isn’t in this chapter any more. The writer may have changed it.",
       "fromStart": "Read from the start"
+    },
+    "paragraphComments": {
+      "add": "Comment on this paragraph",
+      "count_one": "{{count}} comment on this paragraph",
+      "count_few": "{{count}} comments on this paragraph",
+      "count_other": "{{count}} comments on this paragraph",
+      "earlier_one": "{{count}} comment on an earlier version of this chapter",
+      "earlier_few": "{{count}} comments on an earlier version of this chapter",
+      "earlier_other": "{{count}} comments on an earlier version of this chapter"
     }
   },
   "teaser": {

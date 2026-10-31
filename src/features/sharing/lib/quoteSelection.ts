@@ -31,11 +31,13 @@ export interface QuoteSelection {
  * Whether a node sits inside the chapter text.
  *
  * @param node - a selection's start or end
- * @returns true inside [data-protected-text]
+ * @returns true inside [data-protected-text], but not in a paragraph's comment thread there
+ *   (S1-E6-06: readers' words are not the writer's to quote)
  */
 function isInChapterText(node: Node | null): boolean {
   const element = node instanceof Element ? node : (node?.parentElement ?? null);
-  return element !== null && element.closest('[data-protected-text]') !== null;
+  if (element === null || element.closest('[data-paragraph-thread]') !== null) return false;
+  return element.closest('[data-protected-text]') !== null;
 }
 
 /**
