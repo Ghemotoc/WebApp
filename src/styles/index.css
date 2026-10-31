@@ -270,3 +270,23 @@
 .tmc-chapter-text.tmc-chapter-text--reader > * + * {
   margin-top: 24px;
 }
+
+/* Story Atlas (S1-E17-06): the words-against-target bar. The track is the control border colour
+   (at least 3:1 against the card, WCAG 1.4.11) and the fill is plum ink; the percentage is also
+   written beside it, so the bar never carries the meaning alone. */
+.tmc-atlas-progress {
+  appearance: none;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  background: var(--tint);
+  overflow: hidden;
+}
+.tmc-atlas-progress::-webkit-progress-bar {
+  background: var(--tint);
+}
+.tmc-atlas-progress::-webkit-progress-value {
+  background: var(--primary);
+}
+.tmc-atlas-progress::-moz-progress-bar {
+  background: var(--primary);
+}

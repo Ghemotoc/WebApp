@@ -1,0 +1,93 @@
+{
+  "homeDocumentTitle": "Story Atlas",
+  "documentTitle": "{{title}}: Story Atlas",
+  "eyebrow": "Story Atlas",
+  "atAGlance": "At a glance",
+  "switcher": {
+    "label": "Story",
+    "newStory": "New story",
+    "write": "Write"
+  },
+  "empty": {
+    "title": "Plan your first story",
+    "description": "Story Atlas keeps each story’s plan beside its chapters: what it’s about, how long it should be and where you are with it. Only you see it.",
+    "action": "New story"
+  },
+  "signedOut": "Sign in to plan your stories.",
+  "notFound": "We couldn’t find that story among yours. It may have been deleted.",
+  "loadFailed": "Your plan didn’t load. Check your connection and try again.",
+  "privateNote": "Only you can see your plan.",
+  "save": {
+    "saving": "Saving…",
+    "saved": "Saved",
+    "failed": "Not saved. What you typed is still here, and we’ll try again when you next change it."
+  },
+  "details": {
+    "heading": "Story details",
+    "sharedHint": "The title, genre and audience are the story’s own: changing them here changes them in Story settings too.",
+    "title": "Title",
+    "titleRequired": "Give the story a title.",
+    "genre": "Genre",
+    "audience": "Audience",
+    "logline": "Logline",
+    "loglineHint": "The story in a sentence or two, to remind yourself what it’s about.",
+    "seriesName": "Series name",
+    "wordTarget": "Word target",
+    "wordTargetInvalid": "Use a whole number of words, from 1 to 5,000,000.",
+    "writingStatus": "Writing status",
+    "publishingRoute": "Publishing route"
+  },
+  "writingStatus": {
+    "planning": "Planning",
+    "drafting": "Drafting",
+    "revising": "Revising",
+    "editing": "Editing",
+    "finished": "Finished",
+    "on_hold": "On hold"
+  },
+  "publishingRoute": {
+    "undecided": "Not decided yet",
+    "serial_here": "Chapter by chapter on {{productName}}",
+    "complete_here": "All at once on {{productName}}",
+    "here_and_elsewhere": "On {{productName}} and elsewhere"
+  },
+  "summary": {
+    "heading": "The story",
+    "noLogline": "No logline yet.",
+    "genre": "Genre",
+    "audience": "Audience",
+    "route": "Publishing route",
+    "status": "Writing status"
+  },
+  "words": {
+    "heading": "Words",
+    "count": "{{written}} of {{target}} words",
+    "percent": "{{percent}}% of your word target"
+  },
+  "chapters": {
+    "heading": "Chapters",
+    "count_one": "{{count}} chapter",
+    "count_few": "{{count}} chapters",
+    "count_other": "{{count}} chapters",
+    "published": "{{published}} published",
+    "none": "No chapters yet.",
+    "recent": "Edited recently",
+    "chapterTitle": "Chapter {{number}}: {{title}}",
+    "chapterUntitled": "Chapter {{number}}",
+    "manage": "Manage chapters"
+  },
+  "linked": {
+    "heading": "Linked project",
+    "hint": "A project of yours outside {{productName}}, such as a shared folder or a mood board.",
+    "label": "Name",
+    "address": "Web address",
+    "addressHint": "The full address, starting with https://",
+    "invalid": "Use a full web address that starts with http:// or https://.",
+    "open": "Open {{label}}",
+    "newTab": "(opens in a new tab)"
+  },
+  "delete": {
+    "heading": "Delete this story",
+    "note": "Its whole plan goes with it."
+  }
+}

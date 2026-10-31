@@ -157,7 +157,8 @@
     "chapterCount_one": "{{count}} chapter",
     "chapterCount_few": "{{count}} chapters",
     "chapterCount_other": "{{count}} chapters",
-    "manageChapters": "Manage chapters"
+    "manageChapters": "Manage chapters",
+    "plan": "Plan"
   },
   "status": {
     "heading": "Status and comments",

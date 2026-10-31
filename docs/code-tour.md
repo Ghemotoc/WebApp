@@ -1395,3 +1395,12 @@ Read in this order; each file's header comment says what it is for and where thi
 - Pressing a marker fetches `src/features/comments/components/ParagraphThread.tsx` (through `LazyParagraphThread`), which reads `paragraph_comments()` and posts with `post_paragraph_comment()`. Replies, reactions, downvotes and the Report button are the ordinary comment pieces.
 - How a comment stays on its paragraph: it stores the paragraph's number and a fingerprint of its words (`paragraph_key_of()`). `paragraph_now()` finds the paragraph with the same fingerprint nearest that number in the chapter as published now; none means "an earlier version" (`EarlierVersionComments`).
 - The thread sits inside the protected text, so `data-paragraph-thread` tells the copy protection and the "Share quote" bar to leave it alone.
+
+## Story Atlas: a story's plan (S1-E17-01 to S1-E17-06; ATLAS-a)
+
+- One story, two sides: New story (`create_story()`) also makes the story's plan, through the trigger `stories_make_plan`. "Plan" on each card in Your writing and "Plan this story" in the chapter editor lead to `/plan/s/:storySlug`; `/plan` (`AtlasHomePage`) opens the story planned last on this device (`src/features/atlas/lib/lastPlannedStory.ts`).
+- Start at `src/features/atlas/components/StoryAtlasPage.tsx`: `useStoryPlan` reads `story_plan()` and hands out the savers. `AtlasTopBar` holds the story switcher (the same list as Your writing, `useMyStories`), "Write" and "New story" (`/write/new?from=plan`, which `useNewStoryForm` sends back to the plan).
+- `AtAGlance` lays out the cards. Every field is a `PlanTextField`, `PlanSelectField` or `WordTargetField`, each saving by itself through `useAutosaveField` (a short pause, or on leaving the field) with a `SaveNote` under it. The plan's own fields go to `update_story_plan()`; the title, genre and audience go to `update_my_story()`, so Story settings shows the same values.
+- Delete is the writer section's own `DeleteStoryControl`; purging the story deletes its plan too.
+- The text is in `src/locales/*/atlas.json`, registered when Story Atlas first renders (`registerAtlasTranslations.ts`).
+

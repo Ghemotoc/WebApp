@@ -94,7 +94,8 @@
     "rating": "Clasificare",
     "tags": "Etichete",
     "noTags": "Niciuna încă",
-    "change": "Schimbă din setările poveștii"
+    "change": "Schimbă din setările poveștii",
+    "plan": "Plănuiește povestea"
   },
   "yourStories": {
     "heading": "Poveștile tale",
