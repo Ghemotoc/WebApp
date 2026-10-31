@@ -95,7 +95,8 @@
     "glance": "Pe scurt",
     "characters": "Personaje",
     "connections": "Legături",
-    "bible": "Biblia"
+    "bible": "Biblia",
+    "storyline": "Firul poveștii"
   },
   "characters": {
     "heading": "Personaje",
@@ -440,6 +441,94 @@
       "povAndPresent": "punct de vedere, prezent",
       "chapter": "Capitolul {{number}}: {{title}}",
       "loadFailed": "Nu am putut încărca unde apare personajul."
+    }
+  },
+  "storyline": {
+    "documentTitle": "Firul poveștii pentru {{title}}: Story Atlas",
+    "heading": "Firul poveștii",
+    "viewLabel": "Vizualizare",
+    "views": {
+      "board": "Panou",
+      "timeline": "Cronologie",
+      "lanes": "Perspective"
+    },
+    "board": {
+      "heading": "Panoul capitolelor",
+      "hint": "Trage un card sau folosește-i butoanele ca să-l muți în același act sau în alt act. Numerele capitolelor se actualizează singure.",
+      "noAct": "Fără act",
+      "empty": "Încă nu e niciun capitol aici.",
+      "chapterNumber": "Capitolul {{number}}",
+      "untitled": "Capitol fără titlu",
+      "pov": "Perspectivă: {{name}}",
+      "noPov": "Încă fără perspectivă",
+      "published": "Publicat",
+      "words_one": "{{words}} cuvânt",
+      "words_few": "{{words}} cuvinte",
+      "words_other": "{{words}} de cuvinte",
+      "worldDate": "Data în poveste: {{date}}",
+      "addChapter": "Adaugă capitol",
+      "addChapterIn": "Adaugă capitol în {{name}}",
+      "addFailed": "Nu am putut adăuga capitolul. Încearcă din nou peste puțin timp.",
+      "moveFailed": "Nu am putut muta capitolul, așa că panoul arată ordinea salvată acum.",
+      "moves": {
+        "earlier": "Mai devreme",
+        "later": "Mai târziu",
+        "previousAct": "Actul anterior",
+        "nextAct": "Actul următor",
+        "earlierNamed": "Mută {{title}} mai devreme",
+        "laterNamed": "Mută {{title}} mai târziu",
+        "previousActNamed": "Mută {{title}} în actul anterior",
+        "nextActNamed": "Mută {{title}} în actul următor",
+        "group": "Mută {{title}}"
+      },
+      "confirm": {
+        "heading": "Schimbi ordinea pe care o văd cititorii?",
+        "body": "Mutarea aceasta pune capitolele publicate într-o ordine nouă. Cititorii vor vedea imediat ordinea nouă și numerele noi ale capitolelor.",
+        "keep": "Păstrează ordinea",
+        "move": "Mută-l"
+      }
+    },
+    "timeline": {
+      "heading": "Cronologie",
+      "hint": "Evenimentele și capitolele cu dată, de la cele mai vechi. Un capitol își ia locul după valoarea de sortare din planul lui.",
+      "listLabel": "Evenimente și capitole în ordinea poveștii",
+      "event": "Eveniment",
+      "chapter": "Capitol",
+      "empty": "Cronologia e încă goală. Adaugă un eveniment sau dă-i unui capitol o valoare de sortare în planul lui.",
+      "add": {
+        "heading": "Adaugă un eveniment",
+        "title": "Titlu",
+        "displayDate": "Data așa cum apare",
+        "displayDateHint": "De exemplu „Primăvara lui 2055”.",
+        "sortValue": "Valoare de sortare",
+        "sortValueHint": "Un număr care îl așază, de exemplu 2055,3.",
+        "description": "Descriere",
+        "button": "Adaugă evenimentul",
+        "titleRequired": "Dă-i evenimentului un titlu.",
+        "sortRequired": "Dă-i evenimentului un număr după care să fie sortat, de exemplu 2055,3.",
+        "failed": "Nu am putut adăuga evenimentul. Încearcă din nou peste puțin timp."
+      },
+      "edit": "Modifică",
+      "editNamed": "Modifică {{title}}",
+      "done": "Gata",
+      "sortValueInvalid": "Folosește un număr, de exemplu 2055,3.",
+      "delete": "Șterge",
+      "deleteNamed": "Șterge {{title}}",
+      "confirmDelete": "Ștergi definitiv „{{title}}”?",
+      "yes": "Da, șterge-l",
+      "keep": "Păstrează-l",
+      "deleteFailed": "Nu am putut șterge evenimentul. Încearcă din nou peste puțin timp.",
+      "undatedHeading": "Capitole fără dată",
+      "undatedHint": "Deschide un capitol și completează-i data în poveste și valoarea de sortare ca să-l așezi în cronologie.",
+      "undatedNone": "Fiecare capitol are un loc în cronologie."
+    },
+    "lanes": {
+      "heading": "Culoarele perspectivelor",
+      "hint": "Fiecare rând e un capitol, în ordinea cărții, cu un semn în coloana celui care îl povestește.",
+      "caption": "Capitolele după personajul din perspectiva căruia sunt spuse",
+      "chapterColumn": "Capitol",
+      "none": "Niciun capitol nu are încă o perspectivă. Alege una în planul fiecărui capitol.",
+      "noChapters": "Povestea nu are încă niciun capitol."
     }
   }
 }

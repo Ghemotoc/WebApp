@@ -4237,6 +4237,58 @@ export type Database = {
           },
         ];
       };
+      story_events: {
+        Row: {
+          created_at: string;
+          description: string;
+          display_date: string;
+          id: string;
+          sort_value: number;
+          story_id: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          description?: string;
+          display_date?: string;
+          id?: string;
+          sort_value: number;
+          story_id: string;
+          title: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          display_date?: string;
+          id?: string;
+          sort_value?: number;
+          story_id?: string;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_events_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_events_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_plan_acts: {
         Row: {
           created_at: string;
@@ -4650,6 +4702,7 @@ export type Database = {
       add_bible_section: { Args: { section_name: string; story_slug: string }; Returns: Json };
       add_chapter_scene: { Args: { chapter_code: string; scene_title: string }; Returns: Json };
       add_chapter_share: { Args: { target_chapter_id: string }; Returns: undefined };
+      add_chapter_to_act: { Args: { act_id: string; story_slug: string }; Returns: Json };
       add_character_field: { Args: { field_name: string; story_slug: string }; Returns: Json };
       add_character_relationship: {
         Args: {
@@ -4669,6 +4722,16 @@ export type Database = {
           >;
         };
         Returns: undefined;
+      };
+      add_story_event: {
+        Args: {
+          description: string;
+          display_date: string;
+          event_title: string;
+          sort_value: number;
+          story_slug: string;
+        };
+        Returns: Json;
       };
       admin_account_open_cases: {
         Args: { target_user_id: string };
@@ -5740,6 +5803,7 @@ export type Database = {
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       delete_story_character: { Args: { character_id: string }; Returns: Json };
+      delete_story_event: { Args: { event_id: string }; Returns: Json };
       disconnect_canva: { Args: Record<PropertyKey, never>; Returns: boolean };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       downvote_comment: {
@@ -6279,6 +6343,26 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      my_story_event: {
+        Args: { target_event_id: string };
+        Returns: {
+          created_at: string;
+          description: string;
+          display_date: string;
+          id: string;
+          sort_value: number;
+          story_id: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'story_events';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       my_unread_notification_count: { Args: Record<PropertyKey, never>; Returns: number };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
@@ -6392,6 +6476,10 @@ export type Database = {
         };
         Returns: Json;
       };
+      place_chapter_on_board: {
+        Args: { act_id: string; chapter_code: string; chapter_codes: string[]; confirmed: boolean };
+        Returns: Json;
+      };
       plan_text: { Args: { raw_text: string }; Returns: string };
       post_comment: {
         Args: {
@@ -6461,6 +6549,10 @@ export type Database = {
           text: string;
           text_key: string;
         }[];
+      };
+      published_order: {
+        Args: { chapter_codes: string[]; target_story_id: string };
+        Returns: string[];
       };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
@@ -7009,6 +7101,7 @@ export type Database = {
         }[];
       };
       story_slug_for: { Args: { title: string }; Returns: string };
+      story_storyline: { Args: { story_slug: string }; Returns: Json };
       story_tag_ranks: {
         Args: { story_slug: string };
         Returns: {
@@ -7023,6 +7116,7 @@ export type Database = {
         Args: { target_story_id: string; writer_handle: string; writer_pen_name: string };
         Returns: string;
       };
+      storyline_chapters_json: { Args: { target_story_id: string }; Returns: Json };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       submit_appeal: { Args: { explanation: string; statement_reference: string }; Returns: Json };
       submit_public_notice: {
@@ -7067,6 +7161,7 @@ export type Database = {
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_story_character: { Args: { changes: Json; character_id: string }; Returns: Json };
+      update_story_event: { Args: { changes: Json; event_id: string }; Returns: Json };
       update_story_plan: { Args: { changes: Json; story_slug: string }; Returns: Json };
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };

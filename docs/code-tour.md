@@ -1434,3 +1434,10 @@ Read in this order; each file's header comment says what it is for and where thi
 - Scenes (`ChapterScenesSection`, `ChapterSceneRow`) go through `add_chapter_scene()`, `update_chapter_scene()`, `move_chapter_scene()` and `delete_chapter_scene()`. Characters present are `PresentCharacterChips` → `set_chapter_character_present()`.
 - On each character sheet, `CharacterAppearancesSection` reads `character_appearances()`: the chapters the character is the point of view of or present in.
 
+## Story Atlas: the storyline (S1-E17-19 to S1-E17-22; ATLAS-f)
+
+- `/plan/s/:storySlug/storyline` is `StorylinePage`: a view toggle (`ChoiceChips`: Board, Timeline, POV lanes) remembered on the device by `lib/storylineView.ts`, then `ChapterBoard`, `TimelineView` or `PovLanesView`. One reading, `story_storyline()` through `useStoryline`, feeds all three.
+- The board's columns and moves are plain functions in `lib/boardColumns.ts` (one column per act, then "No act"; `orderAfterMove()` works out the book's new order). One click: "Move Calmul earlier" on a `BoardCard` → `useBoardMoves().move` → `placeChapterOnBoard()` in `api/storyline.ts` → `place_chapter_on_board()`. When published chapters would change order the database answers `needs_confirmation` and nothing moves until the writer says "Move it" in `BoardMoveDialog`, as Manage chapters asks (S1-E3-04).
+- Chapter numbers in the plan count only chapters of the type "chapter" (`chapterNumbers()`, used by the board, the timeline, the lanes and the writing view's list through `useChapterLabels`).
+- Timeline events live in `story_events` (`add_story_event()`, `update_story_event()`, `delete_story_event()`); `lib/timeline.ts` sorts them with dated chapters and lists the undated ones apart.
+

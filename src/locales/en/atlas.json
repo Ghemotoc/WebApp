@@ -95,7 +95,8 @@
     "glance": "At a glance",
     "characters": "Characters",
     "connections": "Connections",
-    "bible": "Bible"
+    "bible": "Bible",
+    "storyline": "Storyline"
   },
   "characters": {
     "heading": "Characters",
@@ -440,6 +441,94 @@
       "povAndPresent": "point of view, present",
       "chapter": "Chapter {{number}}: {{title}}",
       "loadFailed": "We couldn’t load where this character appears."
+    }
+  },
+  "storyline": {
+    "documentTitle": "Storyline of {{title}}: Story Atlas",
+    "heading": "Storyline",
+    "viewLabel": "View",
+    "views": {
+      "board": "Board",
+      "timeline": "Timeline",
+      "lanes": "POV lanes"
+    },
+    "board": {
+      "heading": "Chapter board",
+      "hint": "Drag a card, or use its buttons, to move it within an act or to another act. Chapter numbers follow by themselves.",
+      "noAct": "No act",
+      "empty": "No chapters here yet.",
+      "chapterNumber": "Chapter {{number}}",
+      "untitled": "Untitled chapter",
+      "pov": "POV: {{name}}",
+      "noPov": "No point of view yet",
+      "published": "Published",
+      "words_one": "{{words}} word",
+      "words_few": "{{words}} words",
+      "words_other": "{{words}} words",
+      "worldDate": "In-world date: {{date}}",
+      "addChapter": "Add chapter",
+      "addChapterIn": "Add chapter to {{name}}",
+      "addFailed": "We couldn’t add the chapter. Try again in a moment.",
+      "moveFailed": "We couldn’t move the chapter, so the board shows the order as it is saved now.",
+      "moves": {
+        "earlier": "Earlier",
+        "later": "Later",
+        "previousAct": "Previous act",
+        "nextAct": "Next act",
+        "earlierNamed": "Move {{title}} earlier",
+        "laterNamed": "Move {{title}} later",
+        "previousActNamed": "Move {{title}} to the previous act",
+        "nextActNamed": "Move {{title}} to the next act",
+        "group": "Move {{title}}"
+      },
+      "confirm": {
+        "heading": "Change the order readers see?",
+        "body": "This move puts published chapters in a new order. Readers will see the new order and the new chapter numbers straight away.",
+        "keep": "Keep the order",
+        "move": "Move it"
+      }
+    },
+    "timeline": {
+      "heading": "Timeline",
+      "hint": "Events and dated chapters, earliest first. A chapter gets its place from the sort value in its plan.",
+      "listLabel": "Events and chapters in story order",
+      "event": "Event",
+      "chapter": "Chapter",
+      "empty": "Nothing on the timeline yet. Add an event, or give a chapter a sort value in its plan.",
+      "add": {
+        "heading": "Add an event",
+        "title": "Title",
+        "displayDate": "Date as it shows",
+        "displayDateHint": "For example “Spring 2055”.",
+        "sortValue": "Sort value",
+        "sortValueHint": "A number that places it, such as 2055.3.",
+        "description": "Description",
+        "button": "Add event",
+        "titleRequired": "Give the event a title.",
+        "sortRequired": "Give the event a number to sort by, such as 2055.3.",
+        "failed": "We couldn’t add the event. Try again in a moment."
+      },
+      "edit": "Edit",
+      "editNamed": "Edit {{title}}",
+      "done": "Done",
+      "sortValueInvalid": "Use a number, such as 2055.3.",
+      "delete": "Delete",
+      "deleteNamed": "Delete {{title}}",
+      "confirmDelete": "Delete “{{title}}” for good?",
+      "yes": "Yes, delete it",
+      "keep": "Keep it",
+      "deleteFailed": "We couldn’t delete the event. Try again in a moment.",
+      "undatedHeading": "Chapters without a date",
+      "undatedHint": "Open a chapter and fill in its in-world date and sort value to place it on the timeline.",
+      "undatedNone": "Every chapter has a place on the timeline."
+    },
+    "lanes": {
+      "heading": "Point-of-view lanes",
+      "hint": "Each row is a chapter in book order, with a mark in the column of whoever tells it.",
+      "caption": "Chapters by point-of-view character",
+      "chapterColumn": "Chapter",
+      "none": "No chapter has a point of view yet. Pick one in each chapter’s plan.",
+      "noChapters": "This story has no chapters yet."
     }
   }
 }

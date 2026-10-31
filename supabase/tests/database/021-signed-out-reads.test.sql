@@ -135,6 +135,7 @@ select results_eq(
        ('story_character_fields', 0::bigint),
        ('story_character_relationships', 0::bigint),
        ('story_characters', 0::bigint),
+       ('story_events', 0::bigint),
        ('story_plan_acts', 0::bigint),
        ('story_plans', 0::bigint),
        ('story_scores', 0::bigint),

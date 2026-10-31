@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 
 import type { ChapterProgress } from '../api/chapterPlans';
 import { useChapterProgress } from '../hooks/useChapterProgress';
+import { chapterNumbers } from '../lib/boardColumns';
 import { percentOfTarget } from '../lib/planProgress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
@@ -30,10 +31,13 @@ export interface WritingChapterListProps {
 function ChapterLine({
   slug,
   chapter,
+  number,
   isOpen,
 }: {
   slug: string;
   chapter: ChapterProgress;
+  /** Its number among the story's chapters of the type "chapter" (lib/boardColumns.ts). */
+  number: number | undefined;
   isOpen: boolean;
 }) {
   const { t, i18n } = useAtlasTranslation();
@@ -50,7 +54,8 @@ function ChapterLine({
         )}
       >
         <span className={cn('break-words', isOpen && 'font-semibold')}>
-          {t(`chapterPlan.listKinds.${chapter.kind}`, { number: chapter.position })} {name}
+          {t(`chapterPlan.listKinds.${chapter.kind}`, { number: number ?? chapter.position })}{' '}
+          {name}
         </span>
         {chapter.wordTarget !== null && (
           <>
@@ -81,6 +86,8 @@ function ChapterLine({
 export function WritingChapterList({ slug, openChapterCode, footer }: WritingChapterListProps) {
   const { t } = useAtlasTranslation();
   const { chapters } = useChapterProgress(slug);
+  // Only chapters of the type "chapter" are numbered, as on the storyline board (S1-E17-19).
+  const numbers = chapterNumbers(chapters ?? []);
   return (
     <nav
       aria-label={t('chapterPlan.listLabel')}
@@ -95,6 +102,7 @@ export function WritingChapterList({ slug, openChapterCode, footer }: WritingCha
             key={chapter.code}
             slug={slug}
             chapter={chapter}
+            number={numbers.get(chapter.code)}
             isOpen={chapter.code === openChapterCode}
           />
         ))}
