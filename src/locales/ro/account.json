@@ -315,7 +315,7 @@
     "documentTitle": "Configurează-ți profilul · {{productName}}",
     "eyebrow": "Bun venit pe {{productName}}",
     "heading": "Configurează-ți profilul",
-    "intro": "Câțiva pași scurți. Doar numele de utilizator e obligatoriu. Poți sări peste restul și îl poți schimba mai târziu din Setări.",
+    "intro": "Trei pași scurți. Doar numele de utilizator e obligatoriu. Poți sări peste restul și îl poți schimba mai târziu din Setări.",
     "stepOf": "Pasul {{step}} din {{total}}",
     "next": "Mai departe",
     "skip": "Sari peste",
@@ -425,5 +425,82 @@
       "passwordLinkSent": "Ți-am trimis pe email un link ca să-ți alegi o parolă.",
       "tooManyAttempts": "Prea multe încercări. Așteaptă câteva minute și încearcă din nou."
     }
+  },
+  "teacherBadge": {
+    "heading": "Ești profesor?",
+    "stepLine": "Pasul {{step}} din {{total}} · pentru adulți (18+) · opțional",
+    "intro": "Cu o insignă de Profesor poți crea spații private de clasă pentru elevii tăi. Un spațiu de clasă îl văd doar tu și elevii care au codul tău de invitație. Poți sări peste acest pas și îl poți face mai târziu.",
+    "wayLegend": "Cum vrei să arăți că predai?",
+    "ways": {
+      "school_email": {
+        "title": "Confirmă adresa de la școală",
+        "text": "Cea mai rapidă cale. Îți trimitem un link pe adresa de la școală. Deschide-l ca să primești insigna."
+      },
+      "proof": {
+        "title": "Încarcă o dovadă că predai",
+        "text": "O scrisoare de la școală sau legitimația de cadru didactic. Echipa noastră o verifică, de obicei în două zile lucrătoare."
+      }
+    },
+    "email": {
+      "label": "Adresa de email de la școală",
+      "placeholder": "nume@scoalata.edu.ro",
+      "hint": "Folosește adresa primită de la școală, de exemplu una care se termină în .edu.ro sau în numele site-ului școlii. Adresele personale, ca Gmail, nu se iau în calcul.",
+      "send": "Trimite linkul",
+      "sending": "Se trimite…",
+      "status": {
+        "not_email": "Încă nu arată ca o adresă de email.",
+        "personal": "Pare o adresă personală. Folosește-o pe cea de la școală sau încarcă o dovadă.",
+        "school": "Pare o adresă de școală.",
+        "other": "Vom verifica dacă adresa aparține unei școli."
+      }
+    },
+    "proof": {
+      "label": "Dovada că predai",
+      "hint": "O scrisoare de la școală sau o fotografie a legitimației. JPG, PNG sau PDF, de cel mult 10 MB.",
+      "whatTitle": "Ce facem cu ea",
+      "whatText": "O folosim doar ca să verificăm că predai. După verificare, o ștergem.",
+      "untilThen": "Până atunci contul tău funcționează normal, iar insigna apare ca",
+      "send": "Trimite dovada",
+      "sending": "Se trimite…"
+    },
+    "pending": "Insignă de Profesor · în așteptare",
+    "linkSent": "Am trimis linkul la {{email}}. Deschide-l pe orice dispozitiv ca să primești insigna. Nu-l găsești? Uită-te și în dosarul Spam.",
+    "proofSent": "Mulțumim, am primit-o. Echipa noastră o verifică, de obicei în două zile lucrătoare. Contul tău funcționează normal până atunci și te anunțăm când e gata.",
+    "failures": {
+      "signed_out": "Conectează-te din nou, apoi încearcă iar.",
+      "invalid": "Încă nu arată ca o adresă de email.",
+      "personal_address": "Pare o adresă personală. Folosește-o pe cea de la școală sau încarcă o dovadă.",
+      "not_available": "Acum nu poți cere o insignă de Profesor.",
+      "too_soon": "Așteaptă un minut înainte să trimiți alt link.",
+      "unavailable": "Nu am reușit să trimitem. Încearcă din nou peste câteva minute.",
+      "wrong_type": "Alege un fișier JPG, PNG sau PDF.",
+      "too_big": "Fișierul are peste 10 MB. Alege unul mai mic.",
+      "no_file": "Alege mai întâi un fișier."
+    },
+    "skip": "Nu ești profesor? Sari peste",
+    "goToDiscover": "Mergi la Descoperă",
+    "settings": {
+      "heading": "Insigna de Profesor",
+      "intro": "Cu o insignă de Profesor poți crea spații private de clasă pentru elevii tăi. Pe profilul tău apare „Profesor”.",
+      "have": "Ai insigna de Profesor din {{date}}.",
+      "waitingForStaff": "Echipa noastră îți verifică cererea. Te anunțăm când e gata.",
+      "linkWaiting": "Am trimis un link la adresa ta de la {{domain}}. Deschide-l ca să primești insigna. Funcționează până pe {{date}}.",
+      "rejected": "Ultima ta cerere nu a fost aprobată. Echipa noastră a spus: „{{reason}}”",
+      "tryAgain": "Poți încerca din nou cu altă adresă de la școală sau cu o dovadă.",
+      "removed": "Insigna ta de Profesor a fost retrasă. O poți cere din nou."
+    },
+    "confirm": {
+      "documentTitle": "Adresa ta de la școală · {{productName}}",
+      "eyebrow": "Insigna de Profesor",
+      "heading": "Adresa ta de la școală",
+      "checking": "Îți verificăm linkul…",
+      "approved": "Gata. Ai insigna de Profesor și apare pe profilul tău.",
+      "waiting_for_staff": "Mulțumim, adresa ta e confirmată. Echipa noastră va verifica dacă aparține unei școli și te anunțăm când e gata.",
+      "expired": "Linkul a expirat. Cere unul nou din Setări.",
+      "gone": "Linkul nu mai funcționează. Poate a fost deja folosit sau s-a trimis unul mai nou.",
+      "failed": "Nu am putut verifica linkul. Încearcă din nou peste câteva minute.",
+      "goToSettings": "Mergi la Setări"
+    },
+    "teacher": "Profesor"
   }
 }

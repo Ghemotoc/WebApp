@@ -2849,13 +2849,18 @@ export type Database = {
           pen_name_changed_at: string | null;
           region_code: string | null;
           shows_online_status: boolean;
+          teacher_badge_since: string | null;
           updated_at: string;
           age_check_can_ask_manual: boolean | null;
           age_check_can_start_for: boolean | null;
           age_check_threshold_for: number | null;
+          teacher_check_can_ask: boolean | null;
         };
         ComputedFields:
-          'age_check_can_ask_manual' | 'age_check_can_start_for' | 'age_check_threshold_for';
+          | 'age_check_can_ask_manual'
+          | 'age_check_can_start_for'
+          | 'age_check_threshold_for'
+          | 'teacher_check_can_ask';
         Insert: {
           adults_may_message?: boolean;
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
@@ -2882,6 +2887,7 @@ export type Database = {
           pen_name_changed_at?: string | null;
           region_code?: string | null;
           shows_online_status?: boolean;
+          teacher_badge_since?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -2910,6 +2916,7 @@ export type Database = {
           pen_name_changed_at?: string | null;
           region_code?: string | null;
           shows_online_status?: boolean;
+          teacher_badge_since?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -5061,6 +5068,60 @@ export type Database = {
           },
         ];
       };
+      teacher_checks: {
+        Row: {
+          created_at: string;
+          decided_at: string | null;
+          decision_reason: string | null;
+          id: string;
+          link_expires_at: string | null;
+          proof_path: string | null;
+          school_domain: string | null;
+          status: string;
+          token_hash: string | null;
+          updated_at: string;
+          user_id: string;
+          way: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          decided_at?: string | null;
+          decision_reason?: string | null;
+          id?: string;
+          link_expires_at?: string | null;
+          proof_path?: string | null;
+          school_domain?: string | null;
+          status: string;
+          token_hash?: string | null;
+          updated_at?: string;
+          user_id: string;
+          way: string;
+        };
+        Update: {
+          created_at?: string;
+          decided_at?: string | null;
+          decision_reason?: string | null;
+          id?: string;
+          link_expires_at?: string | null;
+          proof_path?: string | null;
+          school_domain?: string | null;
+          status?: string;
+          token_hash?: string | null;
+          updated_at?: string;
+          user_id?: string;
+          way?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'teacher_checks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       username_approvals: {
         Row: {
           approved_by_user_id: string;
@@ -5405,6 +5466,10 @@ export type Database = {
         Args: { decision: string; reason: string; request_id: string };
         Returns: Json;
       };
+      admin_decide_teacher_check: {
+        Args: { check_id: string; decision: string; reason: string };
+        Returns: Json;
+      };
       admin_due_decision_emails: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -5618,6 +5683,7 @@ export type Database = {
         }[];
       };
       admin_on_call_rota: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_open_teacher_proof: { Args: { check_id: string }; Returns: string };
       admin_order_timeline: { Args: { target_case_id: string }; Returns: Json };
       admin_pause_reporting: {
         Args: { note_text?: string; reporter_handle: string; source_case_id?: string };
@@ -5663,6 +5729,10 @@ export type Database = {
       admin_remove_safety_contact: {
         Args: { reason_given: string; target_contact_id: string };
         Returns: boolean;
+      };
+      admin_remove_teacher_badge: {
+        Args: { reason: string; teacher_handle: string };
+        Returns: Json;
       };
       admin_reply_mail: {
         Args: { body: string; is_note?: boolean; thread_reference: string };
@@ -5830,6 +5900,26 @@ export type Database = {
       admin_sign_out_everywhere: {
         Args: { reason_given: string; target_user_id: string };
         Returns: number;
+      };
+      admin_teacher_checks: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          check_id: string;
+          display_name: string;
+          handle: string;
+          has_proof: boolean;
+          requested_at: string;
+          school_domain: string;
+          way: string;
+        }[];
+      };
+      admin_teachers: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          badge_since: string;
+          display_name: string;
+          handle: string;
+        }[];
       };
       admin_unmatched_notices: {
         Args: Record<PropertyKey, never>;
@@ -6001,6 +6091,10 @@ export type Database = {
         Args: { language: string; parent_email: string; signature: string; token_hash: string };
         Returns: Json;
       };
+      begin_teacher_email_check: {
+        Args: { school_domain: string; signature: string; token_hash: string };
+        Returns: Json;
+      };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
       browse_stories: {
@@ -6015,6 +6109,44 @@ export type Database = {
           sort_order?: string;
         };
         Returns: Json;
+      };
+      caller_profile_for_teacher_check: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          adults_may_message: boolean;
+          age_check_method: Database['public']['Enums']['age_check_method'] | null;
+          age_check_result: Database['public']['Enums']['age_check_result'];
+          age_checked_at: string | null;
+          avatar_picture_id: string | null;
+          bio: string;
+          birth_month: number | null;
+          birth_year: number | null;
+          birthday_day: number | null;
+          birthday_month: number | null;
+          country_code: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          handle: string | null;
+          handle_changed_at: string | null;
+          handle_skeleton: string | null;
+          handle_slug: string | null;
+          id: string;
+          locale: string;
+          marketing_email_opt_in: boolean;
+          onboarded_at: string | null;
+          pen_name: string | null;
+          pen_name_changed_at: string | null;
+          region_code: string | null;
+          shows_online_status: boolean;
+          teacher_badge_since: string | null;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'profiles';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
       cancel_social_sign_up: { Args: Record<PropertyKey, never>; Returns: undefined };
@@ -6310,6 +6442,7 @@ export type Database = {
       compliance_times_problem: { Args: { completed: string; received: string }; Returns: string };
       compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
+      confirm_teacher_email: { Args: { token: string }; Returns: Json };
       content_is_held_for_moderation: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
@@ -6455,6 +6588,7 @@ export type Database = {
       };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       get_writer_profile: { Args: { wanted_handle: string }; Returns: Json };
+      grant_teacher_badge: { Args: { target_user_id: string }; Returns: undefined };
       greeting_for: {
         Args: {
           birthday_day: number;
@@ -6507,6 +6641,8 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
       };
+      is_personal_email_domain: { Args: { domain: string }; Returns: boolean };
+      is_school_domain_trusted: { Args: { domain: string }; Returns: boolean };
       is_social_provider: { Args: { provider: string }; Returns: boolean };
       is_staff: {
         Args: { required_role?: Database['public']['Enums']['staff_role'] };
@@ -6996,6 +7132,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      my_teacher_check: { Args: Record<PropertyKey, never>; Returns: Json };
       my_unread_notification_count: { Args: Record<PropertyKey, never>; Returns: number };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
@@ -7234,6 +7371,7 @@ export type Database = {
           pen_name_changed_at: string | null;
           region_code: string | null;
           shows_online_status: boolean;
+          teacher_badge_since: string | null;
           updated_at: string;
         }[];
         SetofOptions: {
@@ -7477,6 +7615,7 @@ export type Database = {
       rename_bible_section: { Args: { section_id: string; section_name: string }; Returns: Json };
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
+      replace_sent_teacher_link: { Args: { target_user_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
       report_client_error: {
         Args: {
@@ -7604,6 +7743,7 @@ export type Database = {
       require_safety_contacts_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_settings_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_tag_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_teacher_checks_access: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_website_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
@@ -7909,12 +8049,24 @@ export type Database = {
           received_at: string;
         }[];
       };
+      submit_teacher_proof: { Args: { proof_path: string }; Returns: Json };
       tag_for_name: {
         Args: { include_waiting?: boolean; preferred_language?: string; typed_name: string };
         Returns: string;
       };
       tag_name_problems: { Args: { names: Json; target_tag_id: string }; Returns: string[] };
       take_rate_limit: { Args: { action: string }; Returns: undefined };
+      teacher_check_can_ask: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      teacher_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
+      teacher_proof_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       teaser_of: { Args: { chapter_body: string; word_limit: number }; Returns: string };
       text_placeholders: { Args: { value: string }; Returns: string[] };
       tier_hours: {
@@ -8046,7 +8198,9 @@ export type Database = {
         | 'parental_consent_agreed'
         | 'parental_consent_withdrawn'
         | 'login_method_added'
-        | 'login_method_removed';
+        | 'login_method_removed'
+        | 'teacher_check_decided'
+        | 'teacher_badge_removed';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -8330,6 +8484,8 @@ export const Constants = {
         'parental_consent_withdrawn',
         'login_method_added',
         'login_method_removed',
+        'teacher_check_decided',
+        'teacher_badge_removed',
       ],
       picture_kind: [
         'cover',

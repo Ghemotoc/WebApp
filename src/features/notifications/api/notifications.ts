@@ -26,7 +26,9 @@ export type NotificationKind =
   | 'parental_consent_agreed'
   | 'parental_consent_withdrawn'
   | 'login_method_added'
-  | 'login_method_removed';
+  | 'login_method_removed'
+  | 'teacher_check_decided'
+  | 'teacher_badge_removed';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

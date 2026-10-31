@@ -203,6 +203,15 @@ const staffRoutes: RouteObject = {
         return { Component: ClassicsPage };
       },
     },
+    // Schools › Verify teachers (S1-E2-11): owner, admin and moderators with the permission.
+    {
+      path: 'schools/teachers',
+      lazy: async () => {
+        const { TeacherChecksPage } =
+          await import('@/features/staff/components/schools/TeacherChecksPage');
+        return { Component: TeacherChecksPage };
+      },
+    },
     // The March test numbers (S1-E15-02): owner and admin; moderators see a pointer to the queue.
     {
       path: 'metrics',
@@ -249,7 +258,8 @@ const ageCheckRoutes: RouteObject[] = [
 
 /**
  * Parental consent (S1-E2-03): the writer's page and the page a parent opens from the email. Each
- * is loaded when opened; the parent's page works signed out.
+ * is loaded when opened; the parent's page works signed out. The Teacher badge's link page
+ * (S1-E2-11) sits here too: another page opened from an email with a token after "#".
  */
 const parentConsentRoutes: RouteObject[] = [
   {
@@ -268,6 +278,16 @@ const parentConsentRoutes: RouteObject[] = [
       const { ParentAnswerPage } =
         await import('@/features/parent-consent/components/ParentAnswerPage');
       return { Component: ParentAnswerPage };
+    },
+  },
+  // The Teacher badge's school email link (S1-E2-11): works signed out, on any device.
+  {
+    path: '/teacher-check/confirm',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { TeacherConfirmPage } =
+        await import('@/features/teacher-badge/components/TeacherConfirmPage');
+      return { Component: TeacherConfirmPage };
     },
   },
 ];

@@ -24,6 +24,7 @@ import { LikesSettingsSection } from '@/features/onboarding/components/LikesSett
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
 import { AvatarSettingsSection } from '@/features/pictures/components/AvatarSettingsSection';
 import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
+import { TeacherBadgeSection } from '@/features/teacher-badge/components/TeacherBadgeSection';
 
 import { useMyNames } from '../hooks/useMyNames';
 import { displayName } from '../lib/nameRules';
@@ -73,6 +74,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       {names.handle !== null && <AvatarSettingsSection handle={names.handle} />}
       {/* The county, likes and (16 and 17) adult messages chosen in setup (S1-E2-06). */}
       {names.handle !== null && <LikesSettingsSection />}
+      {/* The Teacher badge for adults (S1-E2-11): ask later, see where it stands. */}
+      <TeacherBadgeSection />
       {/* Every signed-in account sees and can change its own address, minors included. */}
       <EmailSettingsSection />
       {/* Google, Apple, Microsoft and passkeys (S1-E2-09); hidden while their flags are off. */}

@@ -247,6 +247,14 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **The writer dashboard (S1-E3-07):** no table of its own. `writer_dashboard(period)` ('all' or 'last_30_days') adds up the caller's live chapters through the internal `writer_chapter_numbers()`: reads from `chapter_reads`, read-through from `reading_positions` (readers whose place is at 95% or more over readers with a place), likes, comments shown to the writer, follows and `chapter_shares`; the writer's own never count. Every count goes through `shown_count()` (null for 1 to 4, shown as "fewer than 5") and the rate through `read_through_percent()` (null below 5 readers). It also returns new followers per week (`writer_followers_by_week()`), the per-chapter rows (`writer_dashboard_chapters()`) and the 3 newest visible comments (`writer_latest_comments()`), never a user ID. Test `182-writer-dashboard`.
 - Tests: `tests/database/100-categories-and-tags`, `101-stories`, `102-covers-bucket`, `103-story-settings`.
 
+## The Teacher badge (S1-E2-11)
+
+- **Who may ask:** a live adult account (age band `18_plus`) that is active, has no badge and has nothing waiting for staff (`teacher_check_can_ask()`).
+- **School email:** our server makes the link's token and stores only its hash and the address's domain through `begin_teacher_email_check()`, signed with the Vault secret `teacher_check_secret` (the same value as Cloudflare's `TEACHER_CHECK_SECRET`; ADR 0011's pattern). Personal domains are refused (`is_personal_email_domain()`, the board's list). The link works for `teacher_link_hours` (48, a proposal). `confirm_teacher_email(token)` gives the badge at once for a `.edu.ro` domain; anything else waits for staff.
+- **Proof:** the private bucket `teacher-proofs` (10 MB, JPEG, PNG, WebP or PDF; a proposal). The person may upload only while they may ask, under a random name; only staff with Schools access can read or delete it. `submit_teacher_proof()` checks the file is theirs.
+- **Staff:** `admin_teacher_checks()`, `admin_teachers()`, `admin_open_teacher_proof()` (logs `teacher_proof_opened`), `admin_decide_teacher_check()` (refuses while the proof file is still there, so it is always deleted first) and `admin_remove_teacher_badge()`, for owner, admin and moderators with the `teacher_checks` permission. Each decision needs a reason the person reads, writes the audit log and sends a notification.
+- **Seed:** the `teacher` persona has the badge from an approved `.edu.ro` check; the `moderator` persona holds the `teacher_checks` permission. Staging gets both from `staging-topups/S1-E2-11.sql`.
+
 ## Seed personas
 
 Every persona's username is its persona name (for example `adult_writer`); adult_writer's pen name is `Lia Scrie`.
@@ -261,7 +269,7 @@ Every persona signs in with `<persona>@personas.test` and the shared test passwo
 | …0004 | kid_14_waiting | 13 to 15 | not admitted / waiting for a parent | consent pending: S1-E2-03 |
 | …0005 | pending_check | 18 plus | active in March; age check pending after | 14-day clean-up: S1-E2-08 |
 | …0006 | failed_check | 18 plus | read-only, age check failed | manual check: S1-E2-08b |
-| …0007 | teacher | 18 plus | active | Teacher badge: S1-E2-11 |
+| …0007 | teacher | 18 plus | active, with the Teacher badge (S1-E2-11) | class spaces: S1-E8-11 |
 | …0008 to …0012 | owner, admin, moderator, support, editor | 18 plus | active, with their staff role | Google sessions: S1-E2-07b |
 | …0013, …0014 | suspended_user, banned_user | 18 plus | suspended (7 days), banned | from the decided seed cases (S1-E10-06) |
 | …0015, …0016 | blocker, blocked | 18 plus, 16 to 17 | active, not admitted | the block: S1-E5-05 |

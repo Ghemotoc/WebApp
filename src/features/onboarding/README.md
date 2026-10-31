@@ -9,6 +9,7 @@
   - `NameStep`: the username (only when missing, through the account feature's `SetupForm`), the interface language and the optional county (`RegionSelect`).
   - `LikesStep`: what they like to read and write and topics (`LikesFields`), which fill Discover's "Picked for you".
   - `SafetyStep`: under-18s only: block, report, who can message them (`AdultMessagesSwitch` for 16 and 17) and the guidelines in short.
+  - `TeacherStep` (from the teacher-badge feature, S1-E2-11): adults only, optional: "Are you a teacher?".
 - `components/LikesSettingsSection.tsx`: Settings › What you like, the same choices later.
 
-The notice that links here ("Finish setting up your profile") is the account feature's `SetupProfileNotice`. The database side is the `…_s1_e2_06_onboarding.sql` migration; the Teacher badge step for adults joins with S1-E2-11.
+The notice that links here ("Finish setting up your profile") is the account feature's `SetupProfileNotice`. The database side is the `…_s1_e2_06_onboarding.sql` migration; the Teacher badge step for adults is the teacher-badge feature's (S1-E2-11).

@@ -3,9 +3,10 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - a new adult sees "Finish setting up your profile" on every page, goes through two steps
- *   (name and language with the optional county, then likes) and lands on Discover, where
- *   "Picked for you" shows stories in what they picked (criteria 1 and 2);
+ * - a new adult sees "Finish setting up your profile" on every page, goes through three steps
+ *   (name and language with the optional county, likes, then the optional "Are you a teacher?",
+ *   S1-E2-11) and lands on Discover, where "Picked for you" shows stories in what they picked
+ *   (criteria 1 and 2);
  * - a 17-year-old gets a third step, "Staying safe here", with "Let adults message me" off until
  *   they tick it (criterion 3);
  * - Settings › What you like changes the county and the likes later;
@@ -161,7 +162,7 @@ test.describe('onboarding (S1-E2-06)', () => {
     removeStories();
   });
 
-  test('a new adult goes through two steps and lands on Discover with their picks', async ({
+  test('a new adult goes through three steps and lands on Discover with their picks', async ({
     browser,
   }) => {
     const page = await openAs(browser, accounts.adult, '/');
@@ -176,13 +177,13 @@ test.describe('onboarding (S1-E2-06)', () => {
     ).toBeVisible();
 
     // Step 1: the language and the optional county; the country is never asked.
-    await expect(page.getByText('Step 1 of 2')).toBeVisible();
+    await expect(page.getByText('Step 1 of 3')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Your name and language' })).toBeVisible();
     await page.getByLabel('County (optional)').selectOption('RO-CJ');
     await page.getByRole('button', { name: 'Next' }).click();
 
     // Step 2: the likes. Focus moves to the new step's heading.
-    await expect(page.getByText('Step 2 of 2')).toBeVisible();
+    await expect(page.getByText('Step 2 of 3')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'What do you like?' })).toBeFocused();
     const reading = page.getByRole('group', { name: 'I like to read' });
     await reading.getByRole('button', { name: 'Poetry' }).click();
@@ -191,6 +192,11 @@ test.describe('onboarding (S1-E2-06)', () => {
       'true',
     );
     await expect(page.getByRole('status').filter({ hasText: '1 picked' })).toBeVisible();
+    await page.getByRole('button', { name: 'Next' }).click();
+
+    // Step 3, for adults only and optional: "Are you a teacher?" (S1-E2-11).
+    await expect(page.getByText('Step 3 of 3 · for adults (18+) · optional')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Are you a teacher?' })).toBeFocused();
     await page.getByRole('button', { name: 'Go to Discover' }).click();
 
     // Discover, with "Picked for you"; setup is done and the notice is gone.

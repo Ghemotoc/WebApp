@@ -19,7 +19,7 @@
 --   four test invite codes (one that works, one expired, used up, revoked) S1-E2-01 (end of file)
 --   kid_14_ok's agreed consent and kid_14_waiting's pending consent  S1-E2-03 (end of file)
 --   every persona counted as set up (onboarded_at)                   S1-E2-06 (end of file)
---   teacher's Teacher badge                                           S1-E2-11
+--   teacher's Teacher badge, moderator's teacher checks permission   S1-E2-11 (end of file)
 --   suspended_user's and banned_user's sanctions                      S1-E10-06 (the decided cases at the end)
 --   blocker blocking blocked                                          S1-E5-05
 --   owner's and moderator's safeguarding permission, 20 cases        S1-E10-03a (end of file)
@@ -351,3 +351,13 @@ values
 -- Onboarding (S1-E2-06): every persona has set up already, so the steps and the "Finish setting up"
 -- notice never get in a test's way. e2e/onboarding.spec.ts makes its own new accounts.
 update public.profiles set onboarded_at = now() where onboarded_at is null;
+
+-- Teacher badge (S1-E2-11): the teacher persona holds the badge through an approved school email
+-- check, so class spaces (S1-E8-11) and the profile's "Teacher" have someone to show; the
+-- moderator persona holds the teacher checks permission, so Schools › Teacher checks has a
+-- moderator who may use it (support and content editor stay refused).
+update public.profiles set teacher_badge_since = now() where id = '00000000-0000-4000-8000-000000000007';
+insert into public.teacher_checks (user_id, way, school_domain, status, decided_at)
+values ('00000000-0000-4000-8000-000000000007', 'school_email', 'liceul-exemplu.edu.ro', 'approved', now());
+insert into public.staff_permissions (user_id, permission, granted_by_user_id)
+values ('00000000-0000-4000-8000-000000000010', 'teacher_checks', '00000000-0000-4000-8000-000000000008');

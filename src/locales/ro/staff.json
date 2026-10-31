@@ -73,7 +73,8 @@
     "tags": "Etichete",
     "safetyContacts": "Contacte de siguranță",
     "settings": "Setări",
-    "website": "Site"
+    "website": "Site",
+    "schools": "Școli"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -107,7 +108,8 @@
       "safety_contacts": "Liniile de ajutor și numerele de urgență din ecranele de raportare și verificarea lor lunară.",
       "classics": "Adaugă și verifică clasicii din domeniul public pentru contul oficial.",
       "settings": "Comutatoare, valori și limite, rafturile din Descoperă, categorii, nume rezervate, piețe și limbi.",
-      "website_cms": "Pagina principală, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă."
+      "website_cms": "Pagina principală, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă.",
+      "schools": "Verifică profesorii și, mai târziu, gestionează spațiile de clasă."
     }
   },
   "auditLog": {
@@ -441,7 +443,7 @@
         "notFinished": "Neterminate"
       },
       "notCountedYet": "Încă nu",
-      "ageChecksNote": "Contestațiile se numără când vin verificările manuale, odată cu verificarea Yoti. Verificările contestate fac parte dintre cele picate.",
+      "ageChecksNote": "La contestate se numără cererile de verificare manuală a vârstei. Verificările contestate fac parte dintre cele picate.",
       "tiersEyebrow": "Moderare",
       "tiersHeading": "Raportări pe niveluri",
       "tiersIntro_one": "Cazurile din ultima zi: raportări, ordine de eliminare și imagini oprite la verificare. Moderatorii noștri le citesc pe fiecare. Un caz se numără după ce e decis sau după ce i-a trecut termenul.",
@@ -768,5 +770,41 @@
       "refused": "Nu a mers: poate cererea are deja o decizie. Reîncarcă pagina.",
       "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
     }
+  },
+  "teacherChecks": {
+    "documentTitle": "Verifică profesorii",
+    "eyebrow": "Profesori",
+    "heading": "Verifică profesorii",
+    "intro": "Un profesor moderează o clasă în care cei mai mulți au sub 18 ani, așa că școala trebuie să garanteze pentru el. După aprobare, profilul arată insigna „Profesor” și poate deține spații de clasă.",
+    "footer": "Profesorii respectă aceeași regulă pentru mesaje ca orice adult: niciodată cu cei sub 16 ani, iar cu cei de 16 și 17 ani doar dacă adolescentul o activează. Munca la clasă se face în spațiul clasei, nu în mesaje private.",
+    "notAllowed": "Doar proprietarul, administratorii și moderatorii cu permisiunea de verificare a profesorilor verifică profesorii.",
+    "none": "Nu așteaptă nimeni o verificare de profesor.",
+    "asked": "Cerută",
+    "how": "Cum a confirmat școala",
+    "byEmail": "A fost deschis un link trimis la o adresă de școală de la {{domain}}",
+    "byProof": "O scrisoare sau un card de angajat de la școală",
+    "openProof": "Deschide dovada",
+    "proofNote": "Deschiderea dovezii se înregistrează. Se deschide pentru un minut și se șterge imediat ce decizi.",
+    "approve": "Aprobă profesorul",
+    "notYet": "Încă nu",
+    "reasonLabel": {
+      "approved": "Notă pentru profesor (o va citi)",
+      "rejected": "De ce încă nu (o va citi)"
+    },
+    "reasonHint": "Scrie simplu. Rămâne în jurnalul de audit.",
+    "confirm": {
+      "approved": "Aprobă și dă insigna",
+      "rejected": "Trimite „Încă nu”"
+    },
+    "failures": {
+      "not_allowed": "Rolul tău nu poate face asta.",
+      "refused": "Nu a mers: poate cererea are deja o decizie. Reîncarcă pagina.",
+      "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
+    },
+    "teachersHeading": "Profesori",
+    "teacherSince": "@{{handle}} · profesor din {{since}}",
+    "removeBadge": "Scoate insigna",
+    "removeReason": "De ce se scoate insigna (profesorul o va citi)",
+    "noTeachers": "Nimeni nu are încă insigna de Profesor."
   }
 }

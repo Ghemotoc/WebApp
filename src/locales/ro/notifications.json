@@ -52,7 +52,9 @@
     "parentConsentAgreed": "a fost de acord. Contul tău e gata: acum poți publica, comenta, posta și trimite mesaje.",
     "parentConsentWithdrawn": "și-a retras acordul. Deocamdată contul tău e doar pentru citit.",
     "loginMethodAdded": "a fost conectat un nou mod de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
-    "loginMethodRemoved": "a fost deconectat un mod de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne."
+    "loginMethodRemoved": "a fost deconectat un mod de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
+    "teacherCheckDecided": "cererea ta pentru insigna de Profesor are un răspuns.",
+    "teacherBadgeRemoved": "ți-a retras insigna de Profesor."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -93,7 +95,8 @@
     "seeResult": "Vezi rezultatul",
     "checkMyAge": "Verifică-mi vârsta",
     "seeMyAccount": "Vezi ce înseamnă",
-    "seeWaysToLogIn": "Vezi modurile de autentificare"
+    "seeWaysToLogIn": "Vezi modurile de autentificare",
+    "seeTeacherBadge": "Vezi insigna de Profesor"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

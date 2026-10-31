@@ -261,6 +261,24 @@ the parent's email → /parent-consent/answer#<token> (ParentAnswerPage, signed 
 
 `ParentConsentNotice` in `AppLayout` links an account that waits for a parent to `/parent-consent`. Staff withdraw from the account page ("Withdraw parental consent", `admin_withdraw_parental_consent()`). Tests: `201` in `supabase/tests/database/`, `server/parent-consent.test.ts`, `e2e/parent-consent.spec.ts`.
 
+## The Teacher badge (S1-E2-11)
+
+An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:
+
+```
+TeacherStep / TeacherBadgeSection (useMyTeacherCheck → my_teacher_check())   src/features/teacher-badge/
+  school email: SchoolEmailWay → POST /api/teacher-check/link (server/teacher-check.ts) with the person's sign-in
+    → a random token; begin_teacher_email_check(domain, hash), signed → teacher_checks → the email (Mailpit locally)
+    the email → /teacher-check/confirm#<token> (TeacherConfirmPage) → confirm_teacher_email(token)
+    → .edu.ro: the badge at once; anything else: waiting for staff
+  proof: ProofWay → preparePicture → Storage teacher-proofs → submit_teacher_proof() → waiting for staff
+/staff/schools/teachers (TeacherChecksPage, useTeacherChecks)                 src/features/staff/components/schools/
+  → admin_open_teacher_proof() (a logged sensitive read) → the file for a minute
+  → the file deleted → admin_decide_teacher_check() → the badge or "Not yet", a notification and the audit log
+```
+
+The badge shows on the profile (`get_writer_profile()`'s `is_teacher`, `TeacherBadgePill`). Tests: `204` in `supabase/tests/database/`, `server/teacher-check.test.ts`, `e2e/teacher-badge.spec.ts`.
+
 ## Onboarding (S1-E2-06)
 
 A new account past the age check sets up its profile once, at `/setup`:

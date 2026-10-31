@@ -56,9 +56,14 @@ export function everyView(addresses: string[]): ScreenView[] {
  *
  * @param page - a Playwright page (signed in or not, as the test set it up)
  * @param view - the address, width, theme and language
+ * @param reachScreen - optional clicks that reach the screen after the address opens
  * Errors: fails the test when axe finds a serious or critical issue, or the page scrolls sideways.
  */
-export async function checkScreen(page: Page, view: ScreenView): Promise<void> {
+export async function checkScreen(
+  page: Page,
+  view: ScreenView,
+  reachScreen?: (page: Page) => Promise<void>,
+): Promise<void> {
   // Step 1: the theme and language a returning visitor's browser would have.
   await page.addInitScript(
     ([themeKey, themeValue, languageKey, languageValue]) => {
@@ -75,6 +80,8 @@ export async function checkScreen(page: Page, view: ScreenView): Promise<void> {
   await page.setViewportSize({ width: view.width, height: 900 });
   await page.goto(view.address);
   await expect(page.locator('html')).toHaveAttribute('lang', view.language);
+  // A screen that is a step inside a page (onboarding step 3, S1-E2-11) is reached by clicks.
+  if (reachScreen !== undefined) await reachScreen(page);
   // Step 2: give the page's data a moment to arrive, so axe checks the loaded screen.
   await page.waitForTimeout(600);
   // Step 3: axe against WCAG 2.0, 2.1 and 2.2, levels A and AA.

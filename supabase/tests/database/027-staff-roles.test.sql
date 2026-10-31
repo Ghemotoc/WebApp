@@ -26,9 +26,10 @@ create temp table ids as select
   '00000000-0000-4000-8000-000000000011'::uuid as support;
 grant select on ids to authenticated, anon;
 
--- The seed gives the moderator the safeguarding permission (S1-E10-03a); this test proves the
--- permission's own rules, so it starts without it.
-delete from public.staff_permissions where user_id = (select moderator from ids) and permission = 'safeguarding';
+-- The seed gives the moderator the safeguarding (S1-E10-03a) and teacher checks (S1-E2-11)
+-- permissions; this test proves the permissions' own rules, so it starts without them.
+delete from public.staff_permissions where user_id = (select moderator from ids)
+  and permission in ('safeguarding', 'teacher_checks');
 
 -- A fresh password sign-in, as Supabase's tokens carry it in "amr": changing a role needs one
 -- within staff_fresh_sign_in_minutes (S1-E11-01).
