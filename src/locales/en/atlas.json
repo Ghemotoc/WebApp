@@ -94,7 +94,8 @@
     "label": "Story Atlas sections",
     "glance": "At a glance",
     "characters": "Characters",
-    "connections": "Connections"
+    "connections": "Connections",
+    "bible": "Bible"
   },
   "characters": {
     "heading": "Characters",
@@ -289,6 +290,77 @@
       "leftOff_other": "{{count}} characters with no family links are left off.",
       "generationsLabel": "Generations",
       "generation": "Generation {{number}}: {{names}}"
+    }
+  },
+  "bible": {
+    "heading": "Story bible",
+    "documentTitle": "Story bible of {{title}}: Story Atlas",
+    "presets": {
+      "premise": "Premise and themes",
+      "world": "World and places",
+      "magic": "Magic and rules",
+      "cosmology": "Cosmology and belief",
+      "factions": "Factions and organisations",
+      "history": "History",
+      "glossary": "Glossary"
+    },
+    "contents": {
+      "heading": "Sections",
+      "manage": "Manage sections",
+      "newEntry": "New entry",
+      "newEntryIn": "New entry in {{section}}",
+      "newEntryName": "New entry",
+      "noEntries": "No entries yet.",
+      "createFailed": "The entry wasn’t made. Check your connection and try again."
+    },
+    "pick": "Choose an entry to read it, or manage the sections here.",
+    "entryNotFound": "That entry isn’t in this bible any more.",
+    "sections": {
+      "heading": "Manage sections",
+      "hint": "Drag a section, or use its Up and Down buttons, to change the order. Only an empty section can be deleted.",
+      "name": "Name of section {{number}}",
+      "defaultHint": "Leave it empty to keep the name “{{name}}”.",
+      "up": "Up",
+      "down": "Down",
+      "moveUp": "Move {{name}} up",
+      "moveDown": "Move {{name}} down",
+      "drag": "Drag to reorder {{name}}",
+      "moveFailed": "The order wasn’t saved. Check your connection and try again.",
+      "entries_one": "{{count}} entry",
+      "entries_few": "{{count}} entries",
+      "entries_other": "{{count}} entries",
+      "delete": "Delete",
+      "deleteNamed": "Delete {{name}}",
+      "confirm": "Delete the section “{{name}}”? This can’t be undone.",
+      "yes": "Yes, delete",
+      "keep": "Keep it",
+      "notEmpty": "Move or delete its entries first: only an empty section can be deleted.",
+      "deleteFailed": "The section wasn’t deleted. Check your connection and try again.",
+      "addHeading": "Add a section",
+      "addName": "New section’s name",
+      "add": "Add section",
+      "nameRequired": "Give the section a name.",
+      "addFailed": "The section wasn’t added. Check your connection and try again."
+    },
+    "entry": {
+      "edit": "Edit",
+      "editing": "Editing: changes save by themselves.",
+      "title": "Title",
+      "tags": "Tags",
+      "tagsHint": "Separate tags with commas.",
+      "section": "Section",
+      "body": "Text",
+      "bodyHint": "You can use **bold**, *italic*, lists, headings and links such as [a map](https://example.com).",
+      "empty": "No text yet. Choose Edit to write it.",
+      "inSection": "In {{section}}",
+      "delete": {
+        "heading": "Delete this entry",
+        "button": "Delete entry",
+        "confirm": "Delete “{{title}}”? This can’t be undone.",
+        "yes": "Yes, delete",
+        "keep": "Keep it",
+        "failed": "The entry wasn’t deleted. Check your connection and try again."
+      }
     }
   }
 }

@@ -328,6 +328,15 @@ const writeRoutes: RouteObject[] = [
       return { Component: ConnectionsPage };
     },
   },
+  // A story's bible (S1-E17-17 and 18): its sections and entries, and one entry when it is open.
+  {
+    path: '/plan/s/:storySlug/bible/:entryId?',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { BiblePage } = await import('@/features/atlas/components/BiblePage');
+      return { Component: BiblePage };
+    },
+  },
   // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
   // or deletes it.
   {

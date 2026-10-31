@@ -94,7 +94,8 @@
     "label": "Secțiunile Story Atlas",
     "glance": "Pe scurt",
     "characters": "Personaje",
-    "connections": "Legături"
+    "connections": "Legături",
+    "bible": "Biblia"
   },
   "characters": {
     "heading": "Personaje",
@@ -289,6 +290,77 @@
       "leftOff_other": "{{count}} de personaje fără legături de familie nu apar.",
       "generationsLabel": "Generații",
       "generation": "Generația {{number}}: {{names}}"
+    }
+  },
+  "bible": {
+    "heading": "Biblia poveștii",
+    "documentTitle": "Biblia poveștii {{title}}: Story Atlas",
+    "presets": {
+      "premise": "Premisă și teme",
+      "world": "Lume și locuri",
+      "magic": "Magie și reguli",
+      "cosmology": "Cosmologie și credințe",
+      "factions": "Facțiuni și organizații",
+      "history": "Istorie",
+      "glossary": "Glosar"
+    },
+    "contents": {
+      "heading": "Secțiuni",
+      "manage": "Organizează secțiunile",
+      "newEntry": "Intrare nouă",
+      "newEntryIn": "Intrare nouă în {{section}}",
+      "newEntryName": "Intrare nouă",
+      "noEntries": "Încă nu ai intrări.",
+      "createFailed": "Intrarea nu a fost creată. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "pick": "Alege o intrare ca s-o citești sau organizează secțiunile aici.",
+    "entryNotFound": "Intrarea aceasta nu mai e în biblie.",
+    "sections": {
+      "heading": "Organizează secțiunile",
+      "hint": "Trage o secțiune sau folosește butoanele Sus și Jos ca să schimbi ordinea. Doar o secțiune goală poate fi ștearsă.",
+      "name": "Numele secțiunii {{number}}",
+      "defaultHint": "Lasă gol ca să rămână numele „{{name}}”.",
+      "up": "Sus",
+      "down": "Jos",
+      "moveUp": "Mută {{name}} mai sus",
+      "moveDown": "Mută {{name}} mai jos",
+      "drag": "Trage ca să muți {{name}}",
+      "moveFailed": "Ordinea nu a fost salvată. Verifică-ți conexiunea și încearcă din nou.",
+      "entries_one": "{{count}} intrare",
+      "entries_few": "{{count}} intrări",
+      "entries_other": "{{count}} de intrări",
+      "delete": "Șterge",
+      "deleteNamed": "Șterge {{name}}",
+      "confirm": "Ștergi secțiunea „{{name}}”? Asta nu se poate anula.",
+      "yes": "Da, șterge",
+      "keep": "Păstreaz-o",
+      "notEmpty": "Mută sau șterge mai întâi intrările: doar o secțiune goală poate fi ștearsă.",
+      "deleteFailed": "Secțiunea nu a fost ștearsă. Verifică-ți conexiunea și încearcă din nou.",
+      "addHeading": "Adaugă o secțiune",
+      "addName": "Numele secțiunii noi",
+      "add": "Adaugă secțiunea",
+      "nameRequired": "Dă-i un nume secțiunii.",
+      "addFailed": "Secțiunea nu a fost adăugată. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "entry": {
+      "edit": "Editează",
+      "editing": "Editezi: modificările se salvează singure.",
+      "title": "Titlu",
+      "tags": "Etichete",
+      "tagsHint": "Desparte etichetele prin virgulă.",
+      "section": "Secțiune",
+      "body": "Text",
+      "bodyHint": "Poți folosi **aldine**, *cursive*, liste, titluri și linkuri precum [o hartă](https://example.com).",
+      "empty": "Încă nu ai text. Alege Editează ca să-l scrii.",
+      "inSection": "În {{section}}",
+      "delete": {
+        "heading": "Șterge intrarea",
+        "button": "Șterge intrarea",
+        "confirm": "Ștergi „{{title}}”? Asta nu se poate anula.",
+        "yes": "Da, șterge",
+        "keep": "Păstreaz-o",
+        "failed": "Intrarea nu a fost ștearsă. Verifică-ți conexiunea și încearcă din nou."
+      }
     }
   }
 }
