@@ -54,7 +54,21 @@ This is part (g), the last part of the READ-4 bundle in Robert's full-app plan: 
 
 ## Local check run
 
-RESULTS_PLACEHOLDER
+Full clean-start run for the READ-4 bundle on `dfa2075` (fresh `npm ci`, fresh Supabase, build, `npm run checks`, functions build):
+
+| Check | Result |
+| --- | --- |
+| lint, typecheck, types:check, i18n:check, migrations:check | pass |
+| unit tests | 128 files, 783 passed |
+| db reset + test db | 94 files, 1,998 tests, PASS |
+| functions build | compiled |
+| e2e, whole suite | 1,198 passed, 2 failed (see below). The run stopped at the session's 1-hour limit after 961 tests, as it has before, so the remaining specs (story-settings to year-of-birth) ran in a second call: 244 passed |
+
+The failures, neither from this change:
+- `reader-performance`: the throttled cold load measured 2.28 s against the 2.0 s budget. This is known on main on this machine (2.3 to 2.4 s).
+- `legal.spec.ts`: one test failed in each parallel run, a different one each time (an axe view, then the new-terms notice). The spec passes on its own, 51 of 51. It publishes a new terms version while other specs run, so this is a race between specs; I have noted it as a follow-up.
+
+The new spec `staff-compliance-log` passed, and so did `staff-metrics` and `epic-s1-e15`.
 
 ## By hand
 
@@ -65,6 +79,7 @@ RESULTS_PLACEHOLDER
 
 ## Follow-ups
 
+- `legal.spec.ts` races other specs when the whole suite runs in parallel (it changes the current terms version). It should run on its own or use a version that only its own persona sees.
 - The retention panel on the board, with the purge job's last run, fits best with the retention jobs (S1-E13-04).
 - GitHub Actions won't run on this pull request until 1 November (the account's Actions minutes are used up for this billing period). The full local check run is pasted above instead, and Cloudflare's preview build is the live check.
 
