@@ -7,6 +7,11 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Not yet sent
 
+- **Highlights writers can see.** Readers mark a line they loved; the writer sees a soft heat map of the
+  most-loved paragraphs (counts only, never who). Gives writers feedback without asking readers to
+  write a comment; M; after paragraph comments.
+- **Reply to a paragraph from the notification.** The comment notification links straight to the paragraph
+  with its thread open (`/s/<story>/<chapter>/p4?thread`), so the writer answers in context; S.
 - **Reading streaks without pressure.** A private "you read 5 days this week" note in the Library, never a
   public badge and never a guilt notification. Helps readers come back; S; fits READ-4 or later.
 - **"Finished" shelf thank-you.** When a reader moves a story to Finished, offer a one-tap "Tell the writer you
