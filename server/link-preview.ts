@@ -20,6 +20,9 @@
  * Who calls it: functions/s/[[path]].ts on Cloudflare Pages, and server/pages-functions-plugin.ts
  * locally (npm run dev, npm run preview and the end-to-end tests).
  * What it calls: the Supabase REST endpoint /rest/v1/rpc/get_link_preview with the public anon key.
+ * A link to a spot in a chapter (/s/<story>/<chapter>/p3-5, S1-E4-11) shows the passage instead of
+ * the blurb, from get_shared_passage() (server/shared-passage.ts); for 16+ and 18+ it never has
+ * one, and the preview stays the title and the rating.
  * Never logged: the request, the visitor or any user text (CLAUDE.md rule 12).
  */
 // The wording comes from the app's own locale files (CLAUDE.md rule 4). Nothing else from src/
@@ -30,12 +33,20 @@
 import englishReading from '../src/locales/en/reading.json';
 import romanianReading from '../src/locales/ro/reading.json';
 
-import { linkPreviewPalette } from './link-preview-palette.ts';
+import { parseSpot, type SpotRange } from '../src/lib/chapter-blocks.ts';
 
-/** A shared address: a story page (/s/<story>) or a chapter (/s/<story>/<chapter>). */
+import { linkPreviewPalette } from './link-preview-palette.ts';
+import { fetchSharedPassage } from './shared-passage.ts';
+
+/**
+ * A shared address: a story page (/s/<story>), a chapter (/s/<story>/<chapter>) or a spot in a
+ * chapter (/s/<story>/<chapter>/p3-5, S1-E4-11).
+ */
 export interface SharedAddress {
   storySlug: string;
   chapterCode: string | null;
+  /** The blocks of a shared passage or picture, or null. */
+  spot: SpotRange | null;
 }
 
 /** What get_link_preview() says a visitor who isn't logged in may see. */
@@ -52,6 +63,8 @@ export interface LinkPreview {
   chapterTitle: string | null;
   /** True when the address names a chapter. */
   isChapter: boolean;
+  /** The shared passage as one plain line (S1-E4-11), or null. */
+  passage: string | null;
 }
 
 /** Where the database is: the same public values the app is built with. */
@@ -81,6 +94,17 @@ const chapterCodePattern = /^[a-z0-9]{8}$/;
 const ratingLabels = { all_ages: 'All ages', '13_plus': '13+', '16_plus': '16+', '18_plus': '18+' };
 
 /**
+ * Reads the spot part of an address: only one the reader can read (p3 or p3-5, S1-E4-11).
+ *
+ * @param part - the part after the chapter's code, if there is one
+ * @returns null when there is no spot, the spot, or undefined when the part isn't a spot
+ */
+function spotOf(part: string | undefined): SpotRange | null | undefined {
+  if (part === undefined) return null;
+  return parseSpot(part) ?? undefined;
+}
+
+/**
  * Reads a shared address from a path.
  *
  * @param pathname - the request's path, for example "/s/statia-meteo/ab12cd34"
@@ -89,12 +113,14 @@ const ratingLabels = { all_ages: 'All ages', '13_plus': '13+', '16_plus': '16+',
 export function parseSharedAddress(pathname: string): SharedAddress | null {
   const parts = pathname.replace(/\/+$/, '').split('/');
   // parts[0] is the empty text before the first slash; parts[1] must be "s".
-  if (parts[1] !== 's' || parts.length < 3 || parts.length > 4) return null;
+  if (parts[1] !== 's' || parts.length < 3 || parts.length > 5) return null;
   const storySlug = parts[2] ?? '';
   const chapterCode = parts[3] ?? null;
   if (!storySlugPattern.test(storySlug)) return null;
   if (chapterCode !== null && !chapterCodePattern.test(chapterCode)) return null;
-  return { storySlug, chapterCode };
+  const spot = spotOf(parts[4]);
+  if (spot === undefined) return null;
+  return { storySlug, chapterCode, spot };
 }
 
 /** The JSON get_link_preview() answers. */
@@ -115,7 +141,7 @@ interface PreviewRow {
  *
  * @param settings - the Supabase address and public anon key
  * @param address - the story and chapter
- * @returns the preview, or null when the story or chapter has none
+ * @returns the preview, or null when the story or chapter has none; with a spot, the passage too
  * Errors: throws when the database answers with an error or can't be reached.
  */
 export async function fetchLinkPreview(
@@ -136,6 +162,17 @@ export async function fetchLinkPreview(
   // Step 2: turn the database's names into ours.
   const row = (await response.json()) as PreviewRow | null;
   if (row === null) return null;
+  // Step 3: the passage, for a spot in a story whose text visitors may see (S1-E4-11).
+  const passage =
+    address.spot === null || address.chapterCode === null || row.hides_text
+      ? null
+      : await fetchSharedPassage({
+          ...settings,
+          storySlug: address.storySlug,
+          chapterCode: address.chapterCode,
+          spot: address.spot,
+          pictureWords: previewWords(row.language_code).picture,
+        });
   return {
     slug: row.slug,
     title: row.title,
@@ -147,6 +184,7 @@ export async function fetchLinkPreview(
     cover: row.cover,
     chapterTitle: row.chapter?.title ?? null,
     isChapter: address.chapterCode !== null,
+    passage,
   };
 }
 
@@ -212,6 +250,13 @@ export function previewText(preview: LinkPreview): { title: string; description:
   const title =
     preview.chapterTitle === null ? preview.title : `${preview.title} · ${preview.chapterTitle}`;
   const byLine = words.byWriter.replace('{{name}}', preview.writerName ?? '');
+  // A shared passage takes the blurb's place (S1-E4-11), in quotation marks.
+  if (preview.passage !== null) {
+    return {
+      title,
+      description: `${byLine} · ${words.quoted.replace('{{passage}}', preview.passage)}`,
+    };
+  }
   const description =
     preview.blurb === null || preview.blurb === '' ? byLine : `${byLine} · ${preview.blurb}`;
   return { title, description };

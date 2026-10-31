@@ -18,14 +18,20 @@
  * applies the reader's font, size, spacing, width and theme (S1-E4-02); useStoryPreview →
  * get_link_preview() only when a signed-out visitor's chapter answered nothing. QuoteShareWatcher
  * offers "Share quote" for a passage selected in the text (S1-E4-07).
+ * Shared passages (S1-E4-11): at /s/:storySlug/:chapterCode/:spot (p3 or p3-5) the passage is
+ * highlighted and SharedPassageNotice brings it into view; the saved-place offer waits for
+ * another visit. A visible picture gets "Share picture" (PictureShareButton, fetched on its own),
+ * which reads the chapter from SharedChapterContext.
  */
-import { useRef, type ReactNode, type RefObject } from 'react';
+import { lazy, useMemo, useRef, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { QuoteShareWatcher } from '@/features/sharing/components/QuoteShareWatcher';
+import { SharedChapterContext } from '@/features/sharing/lib/sharedChapterContext';
+import { parseSpot, type SpotRange } from '@/lib/chapter-blocks';
 
 import type { ReaderChapter } from '../api/chapter';
 import { useChapter } from '../hooks/useChapter';
@@ -46,7 +52,14 @@ import { CopyNotice } from './CopyNotice';
 import { NoPreviewNotice } from './NoPreviewNotice';
 import { ProtectedChapterText } from './ProtectedChapterText';
 import { SavedPlaceOffer } from './SavedPlaceOffer';
+import { SharedPassageNotice } from './SharedPassageNotice';
 import { TeaserPage } from './TeaserPage';
+
+/** "Share picture" under each visible picture, fetched when the first one is drawn (S1-E4-11). */
+const PictureShareButton = lazy(async () => {
+  const module = await import('@/features/sharing/components/PictureShareButton');
+  return { default: module.PictureShareButton };
+});
 
 /** "This chapter isn't available", with the way home. */
 function ChapterUnavailable() {
@@ -84,15 +97,35 @@ function ChapterMissing({ storySlug, chapterCode }: { storySlug: string; chapter
   );
 }
 
+/**
+ * What sits above the text: the shared passage's notice when the address has a spot (S1-E4-11),
+ * otherwise the saved place from last time (S1-E4-03), or nothing.
+ */
+function AboveText(props: {
+  chapter: ReaderChapter;
+  spot: SpotRange | null;
+  savedPercent: number | null;
+  textRef: RefObject<HTMLDivElement | null>;
+}) {
+  if (props.spot !== null) {
+    return (
+      <SharedPassageNotice chapterPath={`/s/${props.chapter.story.slug}/${props.chapter.code}`} />
+    );
+  }
+  if (props.savedPercent === null) return null;
+  return <SavedPlaceOffer percent={props.savedPercent} textRef={props.textRef} />;
+}
+
 /** The chapter's text in the reader's look, with anything shown above it (the saved place). */
 function ChapterTextBlock(props: {
   chapter: ReaderChapter;
   body: string;
   textRef: RefObject<HTMLDivElement | null>;
   look: ReturnType<typeof useReadingLook>;
+  spot: SpotRange | null;
   children: ReactNode;
 }) {
-  const { chapter, body, textRef, look, children } = props;
+  const { chapter, body, textRef, look, spot, children } = props;
   return (
     <div ref={textRef} className="lg:pr-20">
       {children}
@@ -109,15 +142,18 @@ function ChapterTextBlock(props: {
           embeds={chapter.embeds}
           writerName={chapter.story.writer.displayName}
           canReportMedia
+          spot={spot}
+          pictureShare={PictureShareButton}
         />
       </div>
     </div>
   );
 }
 
-/** The bar and the chapter, once it is known. */
-function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
+/** The bar and the chapter, once it is known; `spot` is the shared passage, if any. */
+function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotRange | null }) {
   const { t } = useTranslation('reading');
+  const sharedChapter = useMemo(() => toSharedChapter(chapter), [chapter]);
   const textRef = useRef<HTMLDivElement>(null);
   // Since S1-E4-04 every answer has text (visitors get TeaserPage); the check stays for safety.
   const hasText = chapter.body !== null;
@@ -145,14 +181,27 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
       >
         <ChapterReaderHeader chapter={chapter} />
         {chapter.body !== null && (
-          <ChapterTextBlock chapter={chapter} body={chapter.body} textRef={textRef} look={look}>
-            {savedPercent !== null && <SavedPlaceOffer percent={savedPercent} textRef={textRef} />}
-          </ChapterTextBlock>
+          <SharedChapterContext.Provider value={sharedChapter}>
+            <ChapterTextBlock
+              chapter={chapter}
+              body={chapter.body}
+              textRef={textRef}
+              look={look}
+              spot={spot}
+            >
+              <AboveText
+                chapter={chapter}
+                spot={spot}
+                savedPercent={savedPercent}
+                textRef={textRef}
+              />
+            </ChapterTextBlock>
+          </SharedChapterContext.Provider>
         )}
         {hasText && <ChapterEnd chapter={chapter} />}
       </article>
       {hasText && <CopyNotice penName={chapter.story.writer.displayName} />}
-      {hasText && <QuoteShareWatcher chapter={toSharedChapter(chapter)} />}
+      {hasText && <QuoteShareWatcher chapter={sharedChapter} />}
       {hasText && <ChapterBannerSlot banner={banner} />}
       {hasText && (
         <div className="mx-auto w-full max-w-[760px]">
@@ -168,12 +217,13 @@ function ChapterShown(props: {
   storySlug: string;
   chapterCode: string;
   chapter: ReaderChapter | null;
+  spot: SpotRange | null;
 }) {
   if (props.chapter === null) {
     return <ChapterMissing storySlug={props.storySlug} chapterCode={props.chapterCode} />;
   }
   if (props.chapter.isTeaser) return <TeaserPage chapter={props.chapter} />;
-  return <ChapterReading chapter={props.chapter} />;
+  return <ChapterReading chapter={props.chapter} spot={props.spot} />;
 }
 
 /**
@@ -183,7 +233,9 @@ function ChapterShown(props: {
  */
 export function ChapterReaderPage() {
   const { t } = useTranslation('reading');
-  const { storySlug = '', chapterCode = '' } = useParams();
+  const { storySlug = '', chapterCode = '', spot } = useParams();
+  // A shared passage's spot (S1-E4-11); anything that isn't one is read as no spot.
+  const sharedSpot = useMemo(() => parseSpot(spot), [spot]);
   const { chapter, isLoaded, loadFailed } = useChapter(storySlug, chapterCode);
 
   if (loadFailed) {
@@ -196,7 +248,12 @@ export function ChapterReaderPage() {
   if (!isLoaded) return null;
   return (
     <PageContainer className="tmc-rise flex flex-col pt-7 pb-12">
-      <ChapterShown storySlug={storySlug} chapterCode={chapterCode} chapter={chapter} />
+      <ChapterShown
+        storySlug={storySlug}
+        chapterCode={chapterCode}
+        chapter={chapter}
+        spot={sharedSpot}
+      />
     </PageContainer>
   );
 }

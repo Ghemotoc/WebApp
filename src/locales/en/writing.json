@@ -174,9 +174,14 @@
     "off": "Off. Existing comments are hidden and nobody can add new ones."
   },
   "quoteCards": {
-    "label": "Quote cards",
-    "on": "On. Readers can turn a short passage into a picture to share, one per chapter.",
-    "off": "Off. Readers can still share a link to a chapter, but not a quote card."
+    "label": "Quote cards and passage links",
+    "on": "On. Readers can turn a short passage into a picture to share, one per chapter, and share a link that opens the chapter at a passage.",
+    "off": "Off. Readers can still share a link to a chapter, but not a quote card or a link to a passage."
+  },
+  "pictureSharing": {
+    "label": "Sharing pictures",
+    "on": "On. Readers can share a picture from your chapters as a card with your name and a link to it. Only pictures that passed the check.",
+    "off": "Off. Readers can’t share your chapters’ pictures."
   },
   "settings": {
     "documentTitle": "Story settings · {{productName}}",

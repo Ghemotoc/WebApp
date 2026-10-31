@@ -23,8 +23,10 @@ export interface StoryAnswers {
   completionStatus: 'ongoing' | 'completed';
   /** Whether readers may comment (S1-E3-05; enforced by S1-E6-01); on for a new story. */
   commentsEnabled: boolean;
-  /** The quote card switch (S1-E4-07). */
+  /** The quote card switch (S1-E4-07); since S1-E4-11 it covers passage links too. */
   quoteCardsEnabled: boolean;
+  /** Whether readers may share the chapters' pictures (S1-E4-11); on for a new story. */
+  pictureSharingEnabled: boolean;
   /** All ages, 13+, 16+ or 18+ (S1-E3-06); null until the writer picks one (required). */
   rating: StoryRating | null;
   isFanFiction: boolean;

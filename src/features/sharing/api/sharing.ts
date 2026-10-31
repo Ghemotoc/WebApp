@@ -6,7 +6,9 @@
  * What it calls next (supabase/migrations/…_s1_e4_05_07_share_and_quote_cards.sql):
  * - record_chapter_share(): one more on the chapter's share total for today, never who shared;
  * - quote_card_state(): whether the reader may make a quote card and whether they already did;
- * - make_quote_card(): records the card (one per chapter, Q17) before the device draws it.
+ * - make_quote_card(): records the card (one per chapter, Q17) before the device draws it;
+ * - share_options() (S1-E4-11, …_s1_e4_11_share_passages_and_pictures.sql): whether the reader may
+ *   share passages and pictures from the chapter (the writer's two switches; never for 16+ or 18+).
  * Every function takes the chapter's address and applies the reader's rules (rating, blocks,
  * moderation); none returns a user ID.
  */
@@ -116,4 +118,33 @@ export async function makeQuoteCard(
   const outcome = (data as { outcome?: string } | null)?.outcome;
   if (outcome === 'ok' || outcome === 'already_made' || outcome === 'switched_off') return outcome;
   return 'not_found';
+}
+
+/** What the reader may share from a chapter beyond its plain link (S1-E4-11). */
+export interface ShareOptions {
+  /** Passages: quote cards and passage links. */
+  passages: boolean;
+  /** The chapter's pictures: picture cards and picture links. */
+  pictures: boolean;
+}
+
+/**
+ * Asks what the reader may share from a chapter.
+ *
+ * @param client - the shared Supabase client
+ * @param address - the chapter
+ * @returns the options; both false for a visitor, a 16+ or 18+ story, or a chapter they can't read
+ * Errors: throws with Supabase's message when the database can't be reached.
+ */
+export async function fetchShareOptions(
+  client: AppSupabaseClient,
+  address: ChapterAddress,
+): Promise<ShareOptions> {
+  const { data, error } = await client.rpc('share_options', {
+    story_slug: address.storySlug,
+    chapter_code: address.chapterCode,
+  });
+  if (error !== null) throw new Error(`Could not read what may be shared: ${error.message}`);
+  const row = data as { passages?: boolean; pictures?: boolean } | null;
+  return { passages: row?.passages === true, pictures: row?.pictures === true };
 }

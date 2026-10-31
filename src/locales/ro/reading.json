@@ -77,7 +77,12 @@
     "copyNotice": "Pe web, clicul dreapta și copierea sunt oprite pentru capitole. Asta face copierea mai grea, dar nu poate opri capturile de ecran. {{penName}} păstrează toate drepturile asupra acestei povești.",
     "reportLabel": "capitolul {{number}} din {{story}}",
     "savedPlace": "Te-ai oprit la {{percent}}% din acest capitol.",
-    "goToSavedPlace": "Mergi acolo"
+    "goToSavedPlace": "Mergi acolo",
+    "sharedPassage": {
+      "found": "Ai deschis un link către un pasaj. E evidențiat mai jos.",
+      "notFound": "Ai deschis un link către un pasaj care nu mai e în acest capitol. Poate autorul l-a schimbat.",
+      "fromStart": "Citește de la început"
+    }
   },
   "teaser": {
     "shared": "Trimis ție · capitolul {{number}} din {{total}}",
@@ -96,7 +101,9 @@
   },
   "linkPreview": {
     "byWriter": "de {{name}}",
-    "hiddenDescription": "Clasificată {{rating}}. Conectează-te ca să vezi dacă o poți citi."
+    "hiddenDescription": "Clasificată {{rating}}. Conectează-te ca să vezi dacă o poți citi.",
+    "picture": "Imagine: {{alt}}",
+    "quoted": "„{{passage}}”"
   },
   "likes": {
     "like": "Apreciază capitolul",

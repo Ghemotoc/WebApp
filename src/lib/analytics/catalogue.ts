@@ -33,6 +33,8 @@ export interface AnalyticsEventProperties {
   chapter_shared: { method: 'copy_link' | 'share_sheet' };
   /** A reader saved a quote card picture. */
   quote_card_saved: Record<string, never>;
+  /** A reader saved a picture card (S1-E4-11). */
+  picture_card_saved: Record<string, never>;
 }
 
 /** Every catalogued event's name. */
@@ -50,4 +52,5 @@ export const analyticsEventNames: readonly AnalyticsEventName[] = [
   'story_followed',
   'chapter_shared',
   'quote_card_saved',
+  'picture_card_saved',
 ];

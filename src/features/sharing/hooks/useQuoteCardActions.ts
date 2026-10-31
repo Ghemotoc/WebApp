@@ -6,7 +6,7 @@
  * becomes a short status line, read out by screen readers. "already_made" hands over to the limit
  * pop-up (second criterion).
  * Who calls it: QuoteCardDialog. What it calls: api/sharing.ts → make_quote_card(), and
- * lib/clipboard.ts.
+ * lib/clipboard.ts and lib/cardImage.ts.
  */
 import { useQueryClient } from '@tanstack/react-query';
 import { useState, type RefObject } from 'react';
@@ -16,40 +16,10 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { trackEvent } from '@/lib/analytics/track';
 
 import { makeQuoteCard, QuoteCardRateLimitError, type ChapterAddress } from '../api/sharing';
+import { downloadPicture, pictureOf } from '../lib/cardImage';
 import { copyPicture } from '../lib/clipboard';
 
 import { quoteCardStateQueryKey } from './useQuoteCardState';
-
-/**
- * The canvas as a PNG.
- *
- * @param canvas - the drawn card
- * @returns the picture
- * Errors: throws when the browser can't make the picture.
- */
-function pictureOf(canvas: HTMLCanvasElement): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob === null) reject(new Error('The browser could not make the picture.'));
-      else resolve(blob);
-    }, 'image/png');
-  });
-}
-
-/**
- * Hands the picture to the browser as a download.
- *
- * @param picture - the PNG
- * @param fileName - the name without ".png"
- */
-function download(picture: Blob, fileName: string) {
-  const address = URL.createObjectURL(picture);
-  const link = document.createElement('a');
-  link.href = address;
-  link.download = `${fileName}.png`;
-  link.click();
-  window.setTimeout(() => URL.revokeObjectURL(address), 1000);
-}
 
 /**
  * Follows the card's actions.
@@ -105,7 +75,7 @@ export function useQuoteCardActions(
     );
   const saveImage = () =>
     run(async (picture) => {
-      download(picture, t('quote.fileName'));
+      downloadPicture(picture, t('quote.fileName'));
       // No properties: never the passage or the chapter (docs/analytics-events.md).
       trackEvent('quote_card_saved', {});
       return t('quote.savedImage');

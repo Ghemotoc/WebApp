@@ -171,6 +171,21 @@
   color: var(--link);
   text-decoration: underline;
 }
+/* A shared passage opened from its link (S1-E4-11): a soft tint with a bar in the focus colour,
+   never colour alone (the notice above the text says it is highlighted). The tint keeps the
+   text's own colour readable in every theme; the passage takes focus without an outline of its
+   own, as the bar already marks it. */
+.tmc-chapter-text .tmc-shared-passage {
+  margin-inline: -12px;
+  padding: 6px 12px 6px 9px;
+  border-left: 3px solid var(--focus-ring);
+  border-radius: 6px;
+  background: var(--info-bg);
+  scroll-margin: 96px;
+}
+.tmc-chapter-text .tmc-shared-passage:focus {
+  outline: none;
+}
 /* ProseMirror's own needs: the placeholder-free empty paragraph still takes a line. */
 .tmc-chapter-text .ProseMirror {
   outline: none;

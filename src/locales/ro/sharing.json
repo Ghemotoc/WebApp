@@ -4,7 +4,11 @@
     "buttonLabel": "Distribuie capitolul {{number}}",
     "quoteButton": "Distribuie citatul",
     "quoteCount": "{{count}} din 280 de caractere",
-    "quoteTooLong": "Selectează cel mult 280 de caractere ca să distribui un citat. Ai selectat {{count}}."
+    "quoteTooLong": "Selectează cel mult 280 de caractere ca să distribui un citat. Ai selectat {{count}}.",
+    "passageLink": "Copiază linkul către acest pasaj",
+    "passageCopied": "Linkul a fost copiat. Cine îl deschide citește de la acest pasaj.",
+    "passageCopyFailed": "Browserul nu ne-a lăsat să copiem linkul.",
+    "passageTooLong": "Selectează cel mult cinci paragrafe ca să trimiți un link către ele."
   },
   "dialog": {
     "eyebrow": "Distribuie",
@@ -67,5 +71,28 @@
     "close": "Închide",
     "copyLink": "Copiază linkul în schimb",
     "copied": "Linkul a fost copiat."
+  },
+  "picture": {
+    "button": "Distribuie imaginea",
+    "buttonLabel": "Distribuie imaginea: {{alt}}",
+    "eyebrow": "Distribuie o imagine",
+    "title": "Cardul tău cu imaginea",
+    "description": "Imaginea, cu titlul poveștii, numele autorului și un link către acest loc din capitol.",
+    "altLabel": "Text alternativ pentru imagine",
+    "altHint": "L-am scris noi pentru tine. Cititoarele de ecran îl citesc cu voce tare, ca toată lumea să știe ce arată imaginea. Lipește-l ca descriere a imaginii când o postezi.",
+    "altText": "O imagine din {{story}} de {{writer}}: {{alt}}",
+    "linkLabel": "Link:",
+    "copyLink": "Copiază linkul",
+    "copyImage": "Copiază imaginea",
+    "saveImage": "Salvează imaginea",
+    "copiedLink": "Linkul a fost copiat. Cine îl deschide citește de la această imagine.",
+    "copyLinkFailed": "Browserul nu ne-a lăsat să copiem linkul. Selectează-l și copiază-l tu.",
+    "copiedImage": "Imaginea a fost copiată. Lipește-o unde vrei s-o distribui.",
+    "copyImageFailed": "Browserul tău nu poate copia imagini. Salvează imaginea.",
+    "savedImage": "Imaginea a fost salvată.",
+    "fileName": "card-imagine",
+    "loadFailed": "Imaginea nu s-a putut încărca pentru card. Poți copia totuși linkul.",
+    "failed": "Cardul nu a putut fi făcut. Verifică conexiunea și încearcă din nou.",
+    "close": "Închide"
   }
 }

@@ -41,6 +41,7 @@ function emptyAnswers(): StoryAnswers {
     completionStatus: 'ongoing',
     commentsEnabled: true,
     quoteCardsEnabled: true,
+    pictureSharingEnabled: true,
     // The rating and the AI answer have no default: the writer must pick them (S1-E3-06).
     rating: null,
     isFanFiction: false,

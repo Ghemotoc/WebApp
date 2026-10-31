@@ -18,5 +18,6 @@ The rule (S1-E15-03): every event the code sends is a row here and a line in `sr
 | `story_followed` | a reader follows a story | none (never which) | `src/features/people/hooks/useFollow.ts` | S1-E6-05 |
 | `chapter_shared` | a reader copies a chapter's link or shares it with the device's share sheet | `method`: `copy_link` or `share_sheet` | `src/features/sharing/lib/countShare.ts` | S1-E4-05 |
 | `quote_card_saved` | a reader saves a quote card picture | none | `src/features/sharing/hooks/useQuoteCardActions.ts` | S1-E4-07 |
+| `picture_card_saved` | a reader saves a picture card | none | `src/features/sharing/hooks/usePictureCardActions.ts` | S1-E4-11 |
 
 Candidates not built: `sign_up_refused` with the reason only, `story_completed`, `story_deleted`, `story_rating_raised`, `profile_viewed` and `account_blocked`. The March numbers for sign-ups, reports and follows come from the database instead (S1-E15-02).

@@ -137,14 +137,16 @@ export const newStorySchema = newStoryShape.superRefine(labelRules);
 /** The checked answers. */
 export type NewStoryInput = z.infer<typeof newStorySchema>;
 
-/** The story settings form's answers (S1-E3-05): the same fields plus status, comments and quote cards. */
+/** The story settings form's answers (S1-E3-05): the same fields plus status, comments and the sharing switches. */
 export const storySettingsSchema = newStoryShape
   .omit({ storyId: true })
   .extend({
     completionStatus: z.enum(['ongoing', 'completed']),
     commentsEnabled: z.boolean(),
-    /** The writer's switch for quote cards (S1-E4-07). */
+    /** The writer's switch for quote cards (S1-E4-07) and passage links (S1-E4-11). */
     quoteCardsEnabled: z.boolean(),
+    /** The writer's switch for sharing the chapters' pictures (S1-E4-11). */
+    pictureSharingEnabled: z.boolean(),
   })
   .superRefine(labelRules);
 

@@ -3,7 +3,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { chapterShareLink, printedLink } from './shareLink';
+import { chapterShareLink, passageShareLink, printedLink } from './shareLink';
 
 describe('chapterShareLink', () => {
   it("is the chapter's public address and nothing else", () => {
@@ -28,5 +28,17 @@ describe('chapterShareLink', () => {
 
   it('prints without the scheme on the card', () => {
     expect(printedLink('https://example.org/s/a/b')).toBe('example.org/s/a/b');
+  });
+});
+
+describe('passageShareLink (S1-E4-11)', () => {
+  it('adds only the spot: which blocks, nothing about who shared', () => {
+    const address = { storySlug: 'ploaia', chapterCode: 'abcd1234' };
+    expect(passageShareLink(address, { first: 3, last: 5 }, 'https://example.org')).toBe(
+      'https://example.org/s/ploaia/abcd1234/p3-5',
+    );
+    const link = new URL(passageShareLink(address, { first: 2, last: 2 }));
+    expect(link.search).toBe('');
+    expect(link.pathname.endsWith('/abcd1234/p2')).toBe(true);
   });
 });

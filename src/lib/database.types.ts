@@ -3612,6 +3612,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          picture_sharing_enabled: boolean;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -3645,6 +3646,7 @@ export type Database = {
           is_parody?: boolean;
           language_code: string;
           last_chapter_published_at?: string | null;
+          picture_sharing_enabled?: boolean;
           quote_cards_enabled?: boolean;
           rank_badge_tag_ids?: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -3677,6 +3679,7 @@ export type Database = {
           is_parody?: boolean;
           language_code?: string;
           last_chapter_published_at?: string | null;
+          picture_sharing_enabled?: boolean;
           quote_cards_enabled?: boolean;
           rank_badge_tag_ids?: string[] | null;
           rating?: Database['public']['Enums']['story_rating'];
@@ -4770,6 +4773,13 @@ export type Database = {
         Args: { last_changed_at: string; setting_key: string };
         Returns: boolean;
       };
+      chapter_blocks: {
+        Args: { body: string };
+        Returns: {
+          block_number: number;
+          block_text: string;
+        }[];
+      };
       chapter_code: { Args: Record<PropertyKey, never>; Returns: string };
       chapter_comments: {
         Args: { chapter_code: string; older_than?: string; story_slug: string };
@@ -5088,6 +5098,10 @@ export type Database = {
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
+      get_shared_passage: {
+        Args: { chapter_code: string; first_block: number; last_block: number; story_slug: string };
+        Returns: Json;
+      };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       get_writer_profile: { Args: { wanted_handle: string }; Returns: Json };
       greeting_for: {
@@ -5253,6 +5267,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          picture_sharing_enabled: boolean;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -5722,6 +5737,7 @@ export type Database = {
           is_parody: boolean;
           language_code: string;
           last_chapter_published_at: string | null;
+          picture_sharing_enabled: boolean;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -6005,6 +6021,7 @@ export type Database = {
       };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
+      share_options: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       shareable_chapter: {
         Args: { chapter_code: string; story_slug: string };
         Returns: {
@@ -6012,6 +6029,17 @@ export type Database = {
           quote_cards_enabled: boolean;
           writer_id: string;
         }[];
+      };
+      shared_block: {
+        Args: {
+          block_text: string;
+          story: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+          target_chapter_id: string;
+        };
+        Returns: Json;
       };
       show_passed_avatar: {
         Args: {
@@ -6112,6 +6140,10 @@ export type Database = {
           points: number;
           story_id: string;
         }[];
+      };
+      story_shares_content: {
+        Args: { story_rating: Database['public']['Enums']['story_rating'] };
+        Returns: boolean;
       };
       story_signals: {
         Args: Record<PropertyKey, never>;

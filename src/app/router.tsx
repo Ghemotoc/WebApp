@@ -354,6 +354,22 @@ const writeRoutes: RouteObject[] = [
       return { Component: ChapterReaderPage };
     },
   },
+  // The same reader opened at a shared passage or picture (S1-E4-11): the spot is "p3" or "p3-5",
+  // the blocks to highlight; the link preview for this address shows the passage.
+  {
+    path: '/s/:storySlug/:chapterCode/:spot',
+    HydrateFallback: () => null,
+    // Starts reading the chapter while the reader's code downloads (S1-E4-01b, the 2-second
+    // budget); it returns at once, so it never holds the page back.
+    loader: ({ params }) => {
+      prefetchChapter(params.storySlug ?? '', params.chapterCode ?? '');
+      return null;
+    },
+    lazy: async () => {
+      const { ChapterReaderPage } = await import('@/features/reading/components/ChapterReaderPage');
+      return { Component: ChapterReaderPage };
+    },
+  },
   // Discover (S1-E5-01) and every list's See all page (S1-E5-09): the Discover shelves, a
   // category, a tag and a writer's stories share one page; the address decides the list.
   {
