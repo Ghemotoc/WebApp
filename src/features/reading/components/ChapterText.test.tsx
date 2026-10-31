@@ -65,9 +65,7 @@ describe('ChapterText', () => {
       'src',
       'https://storage.test/signed',
     );
-    expect(
-      screen.getByRole('button', { name: 'actions.reportItem' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'actions.reportItem' })).toBeInTheDocument();
   });
 
   it('shows "Picture being checked" for a picture that isn\'t visible, and the marker for a removed one', () => {
