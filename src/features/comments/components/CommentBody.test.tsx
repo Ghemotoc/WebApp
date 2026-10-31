@@ -26,6 +26,7 @@ function commentWith(changes: Partial<ChapterComment>): ChapterComment {
     reactions: { counts: {}, mine: null },
     isDownvotedByMe: false,
     replies: [],
+    paragraph: null,
     ...changes,
   };
 }

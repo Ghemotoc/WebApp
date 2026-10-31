@@ -22,13 +22,15 @@ const QuoteShareBar = lazy(async () => {
  * Whether something is selected inside the chapter text (lib/quoteSelection.ts reads it fully
  * once the bar has loaded; this only decides whether to fetch the bar).
  *
- * @returns true when a selection starts in [data-protected-text]
+ * @returns true when a selection starts in [data-protected-text], outside a paragraph's comment
+ *   thread (S1-E6-06)
  */
 function hasSelectionInText(): boolean {
   const selection = window.getSelection();
   if (selection === null || selection.isCollapsed) return false;
   const node = selection.anchorNode;
   const element = node instanceof Element ? node : (node?.parentElement ?? null);
+  if (element?.closest('[data-paragraph-thread]') != null) return false;
   return element?.closest('[data-protected-text]') != null;
 }
 

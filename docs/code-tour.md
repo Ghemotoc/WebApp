@@ -1387,3 +1387,11 @@ Read in this order; each file's header comment says what it is for and where thi
 8. `.github/workflows/ci.yml`: what has to pass before anything merges, and when the long jobs run (not on drafts, not for documentation-only changes).
 9. `src/features/language/`: the first feature that saves to the database, from drop-down to SQL function (traced above).
 10. `e2e/home.spec.ts`, `e2e/language.spec.ts` and `scripts/`: how the checks prove each rule.
+
+## Comments on a paragraph (S1-E6-06; WRITE-5f)
+
+- Start at `src/features/reading/components/ChapterReaderPage.tsx`: `useParagraphCommentCounts` asks `paragraph_comment_counts()` for the count beside each paragraph and puts it in `ParagraphCommentsContext`.
+- `ChapterText` draws each top-level paragraph in a `.tmc-paragraph-row` with the addon the reader passes in, `ParagraphCommentMarker`. Its block number is the same one the share links use (`src/lib/chapter-blocks.ts` and `chapter_blocks()` in SQL).
+- Pressing a marker fetches `src/features/comments/components/ParagraphThread.tsx` (through `LazyParagraphThread`), which reads `paragraph_comments()` and posts with `post_paragraph_comment()`. Replies, reactions, downvotes and the Report button are the ordinary comment pieces.
+- How a comment stays on its paragraph: it stores the paragraph's number and a fingerprint of its words (`paragraph_key_of()`). `paragraph_now()` finds the paragraph with the same fingerprint nearest that number in the chapter as published now; none means "an earlier version" (`EarlierVersionComments`).
+- The thread sits inside the protected text, so `data-paragraph-thread` tells the copy protection and the "Share quote" bar to leave it alone.

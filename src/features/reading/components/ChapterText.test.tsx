@@ -81,4 +81,27 @@ describe('ChapterText', () => {
     expect(screen.getByText('pictures.chapter.beingChecked')).toBeInTheDocument();
     expect(container.querySelector('p figure')).toBeNull();
   });
+  it('puts the paragraph addon beside each top-level paragraph only, with its number (S1-E6-06)', () => {
+    /** A stand-in for the comment marker, saying which paragraph it is beside. */
+    function Marker({ block }: { block: number }) {
+      return <button type="button">{`marker ${block}`}</button>;
+    }
+    const { container } = render(
+      <ChapterText
+        language="ro"
+        markdown={'Primul.\n\n## Un titlu\n\nAl doilea.\n\n> Un citat'}
+        paragraphAddon={Marker}
+      />,
+    );
+    // The paragraphs are blocks 1 and 3; the heading and the quoted paragraph get no marker.
+    const markers = screen.getAllByRole('button').map((button) => button.textContent);
+    expect(markers).toEqual(['marker 1', 'marker 3']);
+    // The block marks stay on the paragraph itself, where the share bar looks for them.
+    expect(container.querySelector('.tmc-paragraph-row > p')).toHaveAttribute('data-block', '1');
+  });
+
+  it('draws paragraphs on their own without an addon', () => {
+    const { container } = render(<ChapterText language="ro" markdown={'Primul.\n\nAl doilea.'} />);
+    expect(container.querySelector('.tmc-paragraph-row')).toBeNull();
+  });
 });

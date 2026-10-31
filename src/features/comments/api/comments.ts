@@ -1,5 +1,7 @@
 /**
- * Comments on a chapter: reading a page, posting, replying and deleting (story S1-E6-01).
+ * Comments on a chapter: reading a page, posting, replying and deleting (story S1-E6-01). A
+ * comment can also be on one paragraph (S1-E6-06): it carries which one, and postComment sends
+ * it through post_paragraph_comment().
  * Each comment also carries its reactions (S1-E6-02, api/reactions.ts) and whether the reader
  * downvoted it (S1-E6-04, api/downvotes.ts).
  *
@@ -37,6 +39,11 @@ export interface ChapterComment {
   isDownvotedByMe: boolean;
   /** Replies, oldest first; always empty on a reply (one level deep). */
   replies: ChapterComment[];
+  /**
+   * The paragraph it is on today (S1-E6-06): its number, 'earlier' when the writer has since
+   * changed that paragraph, or null for the whole chapter (and inside a paragraph's own thread).
+   */
+  paragraph: number | 'earlier' | null;
 }
 
 /** One page of comments, newest first. */
@@ -63,7 +70,7 @@ export class CommentError extends Error {
 }
 
 /** The JSON one comment arrives as. */
-interface CommentRow {
+export interface CommentRow {
   id: string;
   author: { handle: string; display_name: string };
   is_writer: boolean;
@@ -76,10 +83,11 @@ interface CommentRow {
   reactions?: ReactionsRow;
   downvoted_by_me?: boolean;
   replies?: CommentRow[];
+  paragraph?: number | 'earlier' | null;
 }
 
-/** The JSON a page arrives as. */
-interface CommentsPageRow {
+/** The JSON a page arrives as (chapter_comments() and paragraph_comments()). */
+export interface CommentsPageRow {
   comments_enabled: boolean;
   total: number;
   has_more: boolean;
@@ -106,6 +114,7 @@ export function commentFrom(row: CommentRow): ChapterComment {
     reactions: row.reactions ?? { counts: {}, mine: null },
     isDownvotedByMe: row.downvoted_by_me ?? false,
     replies: (row.replies ?? []).map(commentFrom),
+    paragraph: row.paragraph ?? null,
   };
 }
 
@@ -179,14 +188,43 @@ export interface NewComment {
   isSpoiler: boolean;
   /** The top-level comment it answers, or null. */
   replyTo: string | null;
+  /** The paragraph it is on (S1-E6-06), counted from 1; left out for the whole chapter. */
+  paragraph?: number;
 }
 
 /**
- * Posts a comment or a reply.
+ * Posts a comment on one paragraph (S1-E6-06).
  *
  * @param client - the shared Supabase client
  * @param address - the chapter
- * @param comment - the text, the spoiler mark and what it answers
+ * @param comment - the text, the spoiler mark and the paragraph
+ * @param paragraph - the paragraph's number, from 1
+ * @returns the new comment's ID
+ * Errors: throws CommentError (see commentErrorFrom; gone when the paragraph isn't there).
+ */
+async function postParagraphComment(
+  client: AppSupabaseClient,
+  address: ChapterAddress,
+  comment: NewComment,
+  paragraph: number,
+): Promise<string> {
+  const { data, error } = await client.rpc('post_paragraph_comment', {
+    story_slug: address.storySlug,
+    chapter_code: address.chapterCode,
+    block_number: paragraph,
+    body: comment.body,
+    is_spoiler: comment.isSpoiler,
+  });
+  if (error !== null) throw commentErrorFrom(error);
+  return (data as unknown as { id: string }).id;
+}
+
+/**
+ * Posts a comment, a reply, or a comment on one paragraph.
+ *
+ * @param client - the shared Supabase client
+ * @param address - the chapter
+ * @param comment - the text, the spoiler mark, what it answers and the paragraph, if any
  * @returns the new comment's ID
  * Errors: throws CommentError (see commentErrorFrom).
  */
@@ -195,6 +233,11 @@ export async function postComment(
   address: ChapterAddress,
   comment: NewComment,
 ): Promise<string> {
+  // A comment on a paragraph has its own call; a reply goes through post_comment() and takes
+  // its comment's paragraph in the database.
+  if (comment.paragraph !== undefined && comment.replyTo === null) {
+    return postParagraphComment(client, address, comment, comment.paragraph);
+  }
   const { data, error } = await client.rpc('post_comment', {
     story_slug: address.storySlug,
     chapter_code: address.chapterCode,

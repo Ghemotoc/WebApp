@@ -82,6 +82,15 @@
       "found": "Ai deschis un link către un pasaj. E evidențiat mai jos.",
       "notFound": "Ai deschis un link către un pasaj care nu mai e în acest capitol. Poate autorul l-a schimbat.",
       "fromStart": "Citește de la început"
+    },
+    "paragraphComments": {
+      "add": "Comentează acest paragraf",
+      "count_one": "{{count}} comentariu la acest paragraf",
+      "count_few": "{{count}} comentarii la acest paragraf",
+      "count_other": "{{count}} de comentarii la acest paragraf",
+      "earlier_one": "{{count}} comentariu la o versiune mai veche a capitolului",
+      "earlier_few": "{{count}} comentarii la o versiune mai veche a capitolului",
+      "earlier_other": "{{count}} de comentarii la o versiune mai veche a capitolului"
     }
   },
   "teaser": {
