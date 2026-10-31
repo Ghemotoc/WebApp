@@ -82,6 +82,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.classics',
     descriptionKey: 'home.areas.classics',
   },
+  // Schools › Verify teachers (S1-E2-11): owner, admin and moderators with the teacher checks
+  // permission; class spaces join it with S1-E8-11.
+  {
+    area: 'schools',
+    href: '/staff/schools/teachers',
+    labelKey: 'nav.schools',
+    descriptionKey: 'home.areas.schools',
+  },
   // S1-E2-07a built /staff/roles outside the shell; S1-E11-01 moves it in.
   {
     area: 'roles',

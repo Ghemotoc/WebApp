@@ -145,6 +145,7 @@ test.describe('epic S1-E11 journeys', () => {
       'On call',
       'Users',
       'Classics',
+      'Schools',
       'Roles',
       'Website',
       'Settings',
@@ -160,6 +161,7 @@ test.describe('epic S1-E11 journeys', () => {
       'Safety contacts',
       'On call',
       'Users',
+      'Schools',
       'Metrics',
     ]);
     const support = await openAs(browser, 'support', '/staff');

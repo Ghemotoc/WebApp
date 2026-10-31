@@ -269,6 +269,29 @@ function loginMethodText(t: TFunction, notification: AppNotification): Notificat
   };
 }
 
+/**
+ * The Teacher badge request was decided (approved or turned down), or staff removed the badge
+ * (S1-E2-11, criteria 6 and 8). The row leads to Settings › Teacher badge, which shows the
+ * outcome, the team's reason and how to try again.
+ *
+ * @param t - the notifications translation function
+ * @param notification - the row; its kind says which
+ * @returns the row's words
+ */
+function teacherBadgeText(t: TFunction, notification: AppNotification): NotificationText {
+  // A .edu.ro address is approved without anyone on the team, so a decision comes from "Your
+  // account"; only a removal is always the team's.
+  const isDecided = notification.kind === 'teacher_check_decided';
+  return {
+    who: isDecided ? t('who.yourAccount') : t('who.moderationTeam'),
+    what: isDecided ? t('what.teacherCheckDecided') : t('what.teacherBadgeRemoved'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.seeTeacherBadge'),
+    href: '/settings#teacher-badge',
+  };
+}
+
 /** The moderation team's kinds and the function that words each one. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -284,6 +307,8 @@ const teamTextFor: Partial<
   parental_consent_withdrawn: parentConsentText,
   login_method_added: loginMethodText,
   login_method_removed: loginMethodText,
+  teacher_check_decided: teacherBadgeText,
+  teacher_badge_removed: teacherBadgeText,
 };
 
 /**

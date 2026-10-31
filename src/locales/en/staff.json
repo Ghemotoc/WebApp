@@ -73,7 +73,8 @@
     "tags": "Tags",
     "safetyContacts": "Safety contacts",
     "settings": "Settings",
-    "website": "Website"
+    "website": "Website",
+    "schools": "Schools"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -107,7 +108,8 @@
       "safety_contacts": "The helplines and emergency numbers shown on reporting screens, and their monthly check.",
       "classics": "Add and check public-domain classics for the official account.",
       "settings": "Feature flags, values and limits, the Discover mix, categories, reserved names, and markets and languages.",
-      "website_cms": "The home page, notice banners, help pages and questions, for each market and language."
+      "website_cms": "The home page, notice banners, help pages and questions, for each market and language.",
+      "schools": "Verify teachers and, later, run class spaces."
     }
   },
   "auditLog": {
@@ -441,7 +443,7 @@
         "notFinished": "Not finished"
       },
       "notCountedYet": "Not yet",
-      "ageChecksNote": "Appeals are counted once manual age checks arrive with the Yoti check. Appealed checks are part of the failed ones.",
+      "ageChecksNote": "Appealed counts the requests for a manual age check. Appealed checks are part of the failed ones.",
       "tiersEyebrow": "Moderation",
       "tiersHeading": "Reports by tier",
       "tiersIntro_one": "Cases from the last day: reports, removal orders and pictures held by the picture check. Our own moderators read every one. A case counts once it is decided or its time limit has passed.",
@@ -768,5 +770,41 @@
       "refused": "That didn’t work: the request may already be decided. Reload the page.",
       "unreachable": "We couldn’t reach the database. Try again in a moment."
     }
+  },
+  "teacherChecks": {
+    "documentTitle": "Verify teachers",
+    "eyebrow": "Teachers",
+    "heading": "Verify teachers",
+    "intro": "A teacher moderates a class of mostly under-18s, so the school must vouch for them. Once approved, their profile shows a “Teacher” badge and they can own class spaces.",
+    "footer": "Teachers follow the same messaging rule as every adult: never with under-16s, and with 16 and 17-year-olds only if the teen turns it on. Class work happens in the class space, not in private messages.",
+    "notAllowed": "Only the owner, admins and moderators with the teacher checks permission verify teachers.",
+    "none": "No one is waiting for a teacher check.",
+    "asked": "Asked",
+    "how": "How the school confirmed",
+    "byEmail": "A link sent to a school address at {{domain}} was opened",
+    "byProof": "A letter or staff card from the school",
+    "openProof": "Open the proof",
+    "proofNote": "Opening the proof is logged. It opens for one minute, and it is deleted as soon as you decide.",
+    "approve": "Approve teacher",
+    "notYet": "Not yet",
+    "reasonLabel": {
+      "approved": "Note for the teacher (they will read it)",
+      "rejected": "Why not yet (they will read it)"
+    },
+    "reasonHint": "Write it plainly. It is kept in the audit log.",
+    "confirm": {
+      "approved": "Approve and give the badge",
+      "rejected": "Send “Not yet”"
+    },
+    "failures": {
+      "not_allowed": "Your role can’t do this.",
+      "refused": "That didn’t work: maybe the request already has a decision. Reload the page.",
+      "unreachable": "We couldn’t reach the database. Try again in a moment."
+    },
+    "teachersHeading": "Teachers",
+    "teacherSince": "@{{handle}} · teacher since {{since}}",
+    "removeBadge": "Remove badge",
+    "removeReason": "Why the badge is removed (the teacher will read it)",
+    "noTeachers": "No one has the Teacher badge yet."
   }
 }

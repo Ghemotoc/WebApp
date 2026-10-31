@@ -1,7 +1,8 @@
 /**
  * ProfileHeader: the top card of the profile (story S1-E5-05; board 6.1): the avatar, "Writer",
  * the name as the page's heading, "@handle · Joined May 2026", the bio, the numbers and, on the
- * right, Follow (S1-E6-05) or, on one's own profile, "Edit your profile".
+ * right, Follow (S1-E6-05) or, on one's own profile, "Edit your profile". A writer with the
+ * Teacher badge gets a "Teacher" pill under the handle line (S1-E2-11).
  *
  * Board values: the name in Bricolage 800 at clamp(36px, 4.4vw, 64px), the handle line 15 px in
  * the meta colour, the bio 18 px / 1.6 up to 640 px wide. Not shown in March, as the board's
@@ -16,6 +17,7 @@ import { Link } from 'react-router';
 
 import { Card } from '@/components/ui/Card';
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { TeacherBadgePill } from '@/features/teacher-badge/components/TeacherBadgePill';
 
 import type { WriterProfile } from '../api/writerProfile';
 import { formatJoinedMonth } from '../lib/formatting';
@@ -67,6 +69,12 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
             date: formatJoinedMonth(profile.joinedAt, i18n.language),
           })}
         </p>
+        {/* The Teacher badge (S1-E2-11 criterion 7): never when it was granted, only that it is. */}
+        {profile.isTeacher && (
+          <p className="m-0">
+            <TeacherBadgePill isPending={false} />
+          </p>
+        )}
         <p className="m-0 max-w-[640px] text-lg leading-[1.6] break-words whitespace-pre-line text-body">
           {profile.bio === '' ? t('profile.noBio') : profile.bio}
         </p>

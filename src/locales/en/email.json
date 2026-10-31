@@ -78,5 +78,11 @@
     "withdrawnBody": "We’ve made @{{handle}}’s account read-only. They can still read stories, but can’t publish, comment, post or send messages. If you have questions about what happens next, reply to this email.",
     "refusedSubject": "Your account won’t be activated",
     "refusedBody": "Your parent or guardian didn’t agree, so we won’t activate your {{productName}} account, and we’ve deleted it and its data. You can sign up again later and ask another parent or guardian."
+  },
+  "teacherCheck": {
+    "linkSubject": "Confirm your school address for {{productName}}",
+    "linkBody": "Someone asked for a Teacher badge on {{productName}} and gave this as their school address. Open the link to confirm it’s yours.",
+    "linkAction": "Confirm your school address: {{link}}",
+    "linkNotYou": "Didn’t ask for this? Ignore this email and nothing changes. The link stops working after a while."
   }
 }

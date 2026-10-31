@@ -33,7 +33,8 @@ function romanianToday(): { month: string; day: string } {
     day: 'numeric',
   }).formatToParts(new Date());
   const valueOf = (type: string) => parts.find((part) => part.type === type)?.value ?? '';
-  return { month: valueOf('month'), day: valueOf('day') };
+  // Some ICU versions pad the day ("01"); the selects' values are plain numbers ("1").
+  return { month: String(Number(valueOf('month'))), day: String(Number(valueOf('day'))) };
 }
 
 /** Opens an address in English as a persona, in a fresh browser context. */

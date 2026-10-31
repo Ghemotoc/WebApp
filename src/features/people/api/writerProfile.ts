@@ -37,6 +37,8 @@ export interface WriterProfile {
   isMe: boolean;
   /** The reader blocks this person: the page shows Unblock and no stories. */
   iBlocked: boolean;
+  /** The writer holds the Teacher badge, shown as "Teacher" (S1-E2-11). */
+  isTeacher: boolean;
   counts: { stories: number; chapters: number; reads: number };
   stories: ProfileStory[];
 }
@@ -69,6 +71,7 @@ interface WriterProfileRow {
   joined_at: string;
   is_me: boolean;
   i_blocked: boolean;
+  is_teacher: boolean;
   counts: { stories: number; chapters: number; reads: number };
   stories: ProfileStoryRow[];
 }
@@ -135,6 +138,7 @@ export async function fetchWriterProfile(
     joinedAt: row.joined_at,
     isMe: row.is_me,
     iBlocked: row.i_blocked,
+    isTeacher: row.is_teacher,
     counts: row.counts,
     stories: row.stories.map(toProfileStory),
   };

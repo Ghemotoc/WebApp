@@ -73,6 +73,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'On call',
       'Users',
       'Classics',
+      'Schools',
       'Roles',
       'Website',
       'Settings',
@@ -92,6 +93,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'On call',
       'Users',
       'Classics',
+      'Schools',
       'Roles',
       'Website',
       'Settings',
@@ -100,7 +102,8 @@ test.describe('admin shell (S1-E11-01)', () => {
     ]);
 
     // A moderator gets the queue (S1-E10-03a), moderator mail (S1-E10-11), appeals (S1-E10-07),
-    // reads the safety contacts (S1-E10-13b) and has Users (S1-E11-02).
+    // reads the safety contacts (S1-E10-13b), has Users (S1-E11-02) and, with the seed's teacher
+    // checks permission, Schools (S1-E2-11).
     const moderatorPage = await openAs(browser, 'moderator', '/staff');
     expect(await menuLinks(moderatorPage)).toEqual([
       'Moderation',
@@ -110,6 +113,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Safety contacts',
       'On call',
       'Users',
+      'Schools',
       'Metrics',
     ]);
 

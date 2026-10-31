@@ -19,7 +19,9 @@
  * /api/age-check/… (server/age-check.ts, S1-E2-08: always the Yoti stand-in locally, signed with
  * AGE_CHECK_SECRET, the same value the tests put in the local Vault),
  * /api/parent-consent/… (server/parent-consent.ts, S1-E2-03: signed with PARENTAL_CONSENT_SECRET,
- * the same value the tests put in the local Vault; the emails go to Mailpit) and
+ * the same value the tests put in the local Vault; the emails go to Mailpit),
+ * /api/teacher-check/… (server/teacher-check.ts, S1-E2-11: signed with TEACHER_CHECK_SECRET, the
+ * same value the tests put in the local Vault; the link goes to Mailpit) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * Stand-ins:
@@ -56,6 +58,7 @@ import {
   type NotificationEmailOptions,
 } from './notification-emails.ts';
 import { handleParentConsent } from './parent-consent.ts';
+import { handleTeacherCheck } from './teacher-check.ts';
 import { handlePictureCheck } from './picture-check.ts';
 import { pictureChecker } from './picture-check/index.ts';
 import { overridesFromDatabase } from './send-email.ts';
@@ -301,6 +304,14 @@ function outsideServiceHandlerFor(
       handleParentConsent(withLocalOrigin(request), {
         ...notificationEmailOptions(environment),
         secret: process.env.PARENTAL_CONSENT_SECRET,
+      });
+  }
+  if ((url ?? '').startsWith('/api/teacher-check/')) {
+    // The Teacher badge's school email link (S1-E2-11): the local secret and Mailpit's inbox.
+    return (request) =>
+      handleTeacherCheck(withLocalOrigin(request), {
+        ...notificationEmailOptions(environment),
+        secret: process.env.TEACHER_CHECK_SECRET,
       });
   }
   return null;

@@ -3,8 +3,9 @@
  *
  * Who shows it: OnboardingPage. What it calls: useMyOnboarding.save({ kind: 'preferences' }),
  * which stores the picks as explicit choices (save_my_preferences()); they fill Discover's
- * "Picked for you". "Skip" moves on without saving. When this is the last step (an adult, until
- * the Teacher badge step, S1-E2-11), the buttons finish setup instead.
+ * "Picked for you". "Skip" moves on without saving. When this is the last step (only while the
+ * age group is unknown: under-18s get the safety step and adults the Teacher badge step,
+ * S1-E2-11), the buttons finish setup instead.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -315,7 +315,7 @@
     "documentTitle": "Set up your profile · {{productName}}",
     "eyebrow": "Welcome to {{productName}}",
     "heading": "Set up your profile",
-    "intro": "A few short steps. Only your username is required. You can skip the rest and change it later in Settings.",
+    "intro": "Three short steps. Only your username is required. You can skip the rest and change it later in Settings.",
     "stepOf": "Step {{step}} of {{total}}",
     "next": "Next",
     "skip": "Skip",
@@ -425,5 +425,82 @@
       "passwordLinkSent": "We’ve emailed you a link to choose a password.",
       "tooManyAttempts": "Too many tries. Wait a few minutes and try again."
     }
+  },
+  "teacherBadge": {
+    "heading": "Are you a teacher?",
+    "stepLine": "Step {{step}} of {{total}} · for adults (18+) · optional",
+    "intro": "Get a Teacher badge and you can create private class spaces for your students. Only you and students with your invite code can see a class space. You can skip this and do it later.",
+    "wayLegend": "How do you want to show you teach?",
+    "ways": {
+      "school_email": {
+        "title": "Confirm your school email",
+        "text": "The quickest way. We send a link to your school address. Open it to get your badge."
+      },
+      "proof": {
+        "title": "Upload proof that you teach",
+        "text": "A letter from your school or your staff card. Our team checks it, usually within two working days."
+      }
+    },
+    "email": {
+      "label": "School email address",
+      "placeholder": "name@yourschool.edu.ro",
+      "hint": "Use the address your school gave you, for example one ending in .edu.ro or your school’s own website name. Personal addresses like Gmail don’t count.",
+      "send": "Send link",
+      "sending": "Sending…",
+      "status": {
+        "not_email": "This doesn’t look like an email address yet.",
+        "personal": "This looks like a personal address. Use your school one, or upload proof instead.",
+        "school": "Looks like a school address.",
+        "other": "We’ll check this address belongs to a school."
+      }
+    },
+    "proof": {
+      "label": "Proof that you teach",
+      "hint": "A letter from your school or a photo of your staff card. JPG, PNG or PDF, up to 10 MB.",
+      "whatTitle": "What we do with it",
+      "whatText": "We only use it to check that you teach. Once the check is done, we delete it.",
+      "untilThen": "Until then your account works as normal and your badge shows as",
+      "send": "Send proof",
+      "sending": "Sending…"
+    },
+    "pending": "Teacher badge · pending",
+    "linkSent": "Link sent to {{email}}. Open it on any device to get your badge. Can’t find it? Check your spam folder.",
+    "proofSent": "Thanks, we’ve got it. Our team usually checks it within two working days. Your account works as normal while you wait, and we’ll notify you when it’s done.",
+    "failures": {
+      "signed_out": "Log in again, then try once more.",
+      "invalid": "This doesn’t look like an email address yet.",
+      "personal_address": "This looks like a personal address. Use your school one, or upload proof instead.",
+      "not_available": "You can’t ask for a Teacher badge right now.",
+      "too_soon": "Wait a minute before sending another link.",
+      "unavailable": "We couldn’t send it. Try again in a few minutes.",
+      "wrong_type": "Choose a JPG, PNG or PDF file.",
+      "too_big": "This file is bigger than 10 MB. Choose a smaller one.",
+      "no_file": "Choose a file first."
+    },
+    "skip": "Not a teacher? Skip this",
+    "goToDiscover": "Go to Discover",
+    "settings": {
+      "heading": "Teacher badge",
+      "intro": "With a Teacher badge you can create private class spaces for your students. It shows as “Teacher” on your profile.",
+      "have": "You’ve had the Teacher badge since {{date}}.",
+      "waitingForStaff": "Our team is checking your request. We’ll notify you when it’s done.",
+      "linkWaiting": "We sent a link to your address at {{domain}}. Open it to get your badge. It works until {{date}}.",
+      "rejected": "Your last request wasn’t approved. Our team said: “{{reason}}”",
+      "tryAgain": "You can try again with another school address or with proof.",
+      "removed": "Your Teacher badge was removed. You can ask for it again."
+    },
+    "confirm": {
+      "documentTitle": "Your school address · {{productName}}",
+      "eyebrow": "Teacher badge",
+      "heading": "Your school address",
+      "checking": "Checking your link…",
+      "approved": "Done. You have the Teacher badge, and it shows on your profile.",
+      "waiting_for_staff": "Thanks, your address is confirmed. Our team will check that it belongs to a school and we’ll notify you when it’s done.",
+      "expired": "This link has expired. Ask for a new one in Settings.",
+      "gone": "This link doesn’t work any more. It may have been used already, or a newer one was sent.",
+      "failed": "We couldn’t check the link. Try again in a few minutes.",
+      "goToSettings": "Go to Settings"
+    },
+    "teacher": "Teacher"
   }
 }

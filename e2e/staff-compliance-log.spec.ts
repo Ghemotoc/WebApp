@@ -77,7 +77,9 @@ test.describe('metrics and the compliance log (S1-E11-04)', () => {
     ).toBeVisible();
     const ageChecks = page.getByRole('region', { name: 'Age checks' });
     await expect(ageChecks.getByText('Passed')).toBeVisible();
-    await expect(ageChecks.getByText('Not yet')).toBeVisible();
+    // Manual age checks count as appealed since S1-E2-08b, so the tile shows a number.
+    await expect(ageChecks.getByText('Appealed', { exact: true })).toBeVisible();
+    await expect(ageChecks.getByText(/requests for a manual age check/)).toBeVisible();
     const tiers = page.getByRole('region', { name: 'Reports by tier' });
     await expect(
       tiers.getByRole('cell', { name: 'Removal order from an authority' }),

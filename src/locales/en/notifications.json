@@ -52,7 +52,9 @@
     "parentConsentAgreed": "agreed. Your account is ready: you can now publish, comment, post and send messages.",
     "parentConsentWithdrawn": "withdrew their consent. Your account is read-only for now.",
     "loginMethodAdded": "a new way to log in was connected. If this wasn’t you, change your password and contact us.",
-    "loginMethodRemoved": "a way to log in was disconnected. If this wasn’t you, change your password and contact us."
+    "loginMethodRemoved": "a way to log in was disconnected. If this wasn’t you, change your password and contact us.",
+    "teacherCheckDecided": "your Teacher badge request has an answer.",
+    "teacherBadgeRemoved": "removed your Teacher badge."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -93,7 +95,8 @@
     "seeResult": "See the result",
     "checkMyAge": "Check my age",
     "seeMyAccount": "See what this means",
-    "seeWaysToLogIn": "See ways to log in"
+    "seeWaysToLogIn": "See ways to log in",
+    "seeTeacherBadge": "See your Teacher badge"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

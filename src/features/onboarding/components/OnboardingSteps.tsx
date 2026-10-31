@@ -5,14 +5,16 @@
  * Who shows it: OnboardingPage, while setup is due. What it shows:
  * - step 1, NameStep (username if missing, language, county);
  * - step 2, LikesStep (what they like to read and write, topics);
- * - step 3, SafetyStep, only for the 13-to-15 and 16-to-17 age groups (criterion 3). Adults
- *   finish after step 2 until the Teacher badge step arrives (S1-E2-11).
+ * - step 3, SafetyStep for the 13-to-15 and 16-to-17 age groups (criterion 3), or TeacherStep,
+ *   "Are you a teacher?", for adults (S1-E2-11; optional, and skipping it stores nothing).
  * Finishing calls finish_onboarding() and goes to Discover. When the step changes, focus moves
  * to the new step's heading, so a keyboard or screen reader user starts at its top (WCAG 2.4.3).
  */
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+
+import { TeacherStep } from '@/features/teacher-badge/components/TeacherStep';
 
 import type { MyOnboarding } from '../api/onboarding';
 import type { useMyOnboarding } from '../hooks/useMyOnboarding';
@@ -22,20 +24,35 @@ import { NameStep } from './NameStep';
 import { SafetyStep } from './SafetyStep';
 import { StepHeader } from './StepHeader';
 
-/** The heading key of each step, in order. */
-const stepHeadingKeys = [
-  'onboarding.name.heading',
-  'onboarding.likes.heading',
-  'onboarding.safety.heading',
-];
+/** Which step 3 the person gets, by age group, or none. */
+type StepThree = 'safety' | 'teacher' | null;
+
+/** The heading key of steps 1 and 2, then of each kind of step 3. */
+const stepHeadingKeys = ['onboarding.name.heading', 'onboarding.likes.heading'];
+const stepThreeHeadingKeys = {
+  safety: 'onboarding.safety.heading',
+  teacher: 'teacherBadge.heading',
+};
 
 /**
- * Whether the person gets the safety step: under-18s only (criterion 3).
+ * Which step 3 the person gets: the safety step for under-18s (S1-E2-06 criterion 3), the
+ * Teacher badge step for adults (S1-E2-11 criterion 1), none while the age group is unknown.
  *
- * @returns true for the 13-to-15 and 16-to-17 age groups
+ * @returns 'safety', 'teacher' or null
  */
-function needsSafetyStep(onboarding: MyOnboarding): boolean {
-  return onboarding.ageBand === '13_to_15' || onboarding.ageBand === '16_to_17';
+function stepThreeFor(onboarding: MyOnboarding): StepThree {
+  if (onboarding.ageBand === '13_to_15' || onboarding.ageBand === '16_to_17') return 'safety';
+  return onboarding.ageBand === '18_plus' ? 'teacher' : null;
+}
+
+/**
+ * The heading key of a step.
+ *
+ * @returns the key
+ */
+function headingKeyFor(step: number, stepThree: StepThree): string {
+  if (step === 3 && stepThree !== null) return stepThreeHeadingKeys[stepThree];
+  return stepHeadingKeys[step - 1] ?? '';
 }
 
 /**
@@ -64,7 +81,8 @@ export function OnboardingSteps(props: {
   const { t } = useTranslation('account');
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const total = needsSafetyStep(props.onboarding) ? 3 : 2;
+  const stepThree = stepThreeFor(props.onboarding);
+  const total = stepThree === null ? 2 : 3;
   const headingId = `onboarding-step-${step}`;
   useFocusOnStepChange(step, headingId);
 
@@ -80,9 +98,9 @@ export function OnboardingSteps(props: {
       <StepHeader
         step={step}
         total={total}
-        title={t(stepHeadingKeys[step - 1] ?? '')}
+        title={t(headingKeyFor(step, stepThree))}
         headingId={headingId}
-        isForUnder18={step === 3}
+        stepThree={step === 3 ? stepThree : null}
       />
       {step === 1 && (
         <NameStep onboarding={props.onboarding} state={props.state} onNext={() => setStep(2)} />
@@ -95,8 +113,11 @@ export function OnboardingSteps(props: {
           onNext={total === 2 ? onFinish : () => setStep(3)}
         />
       )}
-      {step === 3 && (
+      {step === 3 && stepThree === 'safety' && (
         <SafetyStep onboarding={props.onboarding} state={props.state} onFinish={onFinish} />
+      )}
+      {step === 3 && stepThree === 'teacher' && (
+        <TeacherStep onFinish={onFinish} isFinishing={props.state.isSaving} />
       )}
     </section>
   );
