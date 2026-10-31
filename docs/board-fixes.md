@@ -94,7 +94,13 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | Chapters (4.4) | The breadcrumb reads "Writer dashboard" | The same words, leading to `/write` (Your writing until S1-E3-07) |
 | NewStory (4.2) | "Right now: Sky, picked for you automatically" is fixed to Sky on the board | The design comes from the story's ID, which the form makes before the story exists (S1-E3-13) |
 | Editor (4.3) | "Story details" panel: a rating select without the explanations, "Content notes" ticks and a "Visibility" select | Becomes a read-only summary with "Change in story settings" (S1-E3-06): ratings and labels are set in one place, always with the full guide; "Visibility" goes because the rule is "only you until the first chapter is published" (Robert, 23 Oct 2026, Q15) |
-| WriterDashboard (4.1) | The statistics tiles, the followers chart, the drafts list and the latest comments | S1-E3-07 (after March); `/write` shows the "Story by story" list only ("Your writing", Robert, 23 Oct 2026, Q15) |
+| WriterDashboard (4.1) | The statistics tiles, the followers chart, the drafts list and the latest comments | Built in S1-E3-07 (READ-4d). Until then `/write` showed the "Story by story" list only ("Your writing", Robert, 23 Oct 2026, Q15) |
+| WriterDashboard (4.1) | "Comments: including 18 paragraph comments" | "From readers, on your chapters": paragraph comments don't exist yet (S1-E6-06, after March) |
+| WriterDashboard (4.1) | "Reads: chapters 5 and 6 brought most of them" for the last 30 days | "Chapter openings in the last 30 days": a "most of them" line would point at small chapters' numbers |
+| WriterDashboard (4.1) | "See all comments" beside "Latest on your chapters" | Left out until a page of all comments on a writer's chapters exists; each card's Reply goes to the comments under that chapter |
+| WriterDashboard (4.1) | The time period as a two-button pill group | The ChoiceChips radio group every other screen uses for one-of-a-few choices |
+| WriterDashboard (4.1) | Exact numbers above every bar of "Followers over time" | "< 5" above a week with 1 to 4 new followers and a short bar that never shows its real size; the chart's text alternative says "fewer than 5" (S1-E3-07, criterion 2) |
+| WriterDashboard (4.1) | "Reschedule" on a scheduled chapter | Opens the chapter's editor, where the Publish panel changes the time (S1-E3-03) |
 | WriterDashboard (4.1) | Draft pills in the old solid-gold style | The pill system's gold information pill |
 | Every signed-in board | The "Write" pill's pen icon is the dark pen on the dark button | The icon is inverted with a CSS filter until Lane B's tokenised doodle icons land |
 | Every signed-in board | Top bar links Home, Discover, Library, Forums, Messages and the bell | Still only the links to pages that exist (src/app/navigation.ts); "Write" joins them in S1-E3-01 |

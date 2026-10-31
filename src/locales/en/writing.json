@@ -358,5 +358,77 @@
     "noTags": "Approved tags appear here once you save the story with tags.",
     "saved": "Saved. Readers see the new badges within a few minutes.",
     "saveFailed": "The badges couldn't be saved. Try again in a moment."
+  },
+  "dashboard": {
+    "continueDraft": "Continue draft",
+    "fewerThanFive": "fewer than 5",
+    "fewerShort": "< 5",
+    "loadFailed": "We couldn’t load your numbers. Refresh the page to try again.",
+    "totals": {
+      "eyebrow": "All your stories",
+      "heading": "How readers respond",
+      "periodLabel": "Time period",
+      "last30Days": "Last 30 days",
+      "allTime": "All time",
+      "reads": "Reads",
+      "readsSince": "Since chapter 1 on {{date}}",
+      "readsNone": "No chapter published yet",
+      "readsLast30": "Chapter openings in the last 30 days",
+      "readThrough": "Read-through",
+      "readThroughNote": "Share of readers who got to the end",
+      "likes": "Likes",
+      "likesAcross_one": "Across {{count}} chapter",
+      "likesAcross_few": "Across {{count}} chapters",
+      "likesAcross_other": "Across {{count}} chapters",
+      "comments": "Comments",
+      "commentsNote": "From readers, on your chapters",
+      "followers": "Followers",
+      "followersNote": "People who follow you",
+      "followersLast30": "New followers in 30 days",
+      "privacyStrong": "These are totals only.",
+      "privacy": "You never see which readers opened a chapter. Any number that comes from fewer than 5 readers shows as “fewer than 5”, so nobody can be picked out."
+    },
+    "followers": {
+      "eyebrow": "Followers over time",
+      "heading_one": "{{value}} follower",
+      "heading_few": "{{value}} followers",
+      "heading_other": "{{value}} followers",
+      "headingFew": "Fewer than 5 followers",
+      "thisWeek": "+{{value}} this week",
+      "chartLabel": "New followers per week, last 8 weeks: {{values}}",
+      "note": "New followers each week. Weeks start on Monday."
+    },
+    "notPublished": {
+      "eyebrow": "Drafts and scheduled",
+      "heading": "Not published yet",
+      "empty": "Nothing waiting: every chapter is out.",
+      "untitled": "Chapter {{number}}, untitled",
+      "titled": "Chapter {{number}}: {{title}}",
+      "draftMeta": "{{story}} · {{words}} · saved {{when}}",
+      "scheduledMeta": "Publishes {{when}}, Romania time",
+      "edit": "Edit",
+      "reschedule": "Reschedule"
+    },
+    "table": {
+      "regionLabel": "Numbers per chapter for {{title}}. Scroll sideways on small screens.",
+      "caption": "Per chapter, all time. Read-through is the share of readers who got to the end of the chapter.",
+      "chapter": "Chapter",
+      "status": "Status",
+      "reads": "Reads",
+      "readThrough": "Read-through",
+      "likes": "Likes",
+      "comments": "Comments",
+      "notPublished": "not published",
+      "row": "{{number}}. {{title}}"
+    },
+    "noNumbersYet": "No numbers yet.",
+    "comments": {
+      "eyebrow": "Comments",
+      "heading": "Latest on your chapters",
+      "onChapter": "on chapter {{number}} · {{when}}",
+      "reply": "Reply",
+      "replyLabel": "Reply to {{name}} on chapter {{number}}",
+      "empty": "No comments yet. They appear here when readers write under your chapters."
+    }
   }
 }

@@ -5253,6 +5253,7 @@ export type Database = {
         Args: { comment_id: string; wanted_kind: Database['public']['Enums']['reaction_kind'] };
         Returns: Json;
       };
+      read_through_percent: { Args: { finished: number; readers: number }; Returns: number };
       readable_chapter: {
         Args: { chapter_code: string; story_slug: string };
         Returns: {
@@ -5615,6 +5616,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      shown_count: { Args: { total: number }; Returns: number };
       sign_in_pause_until: { Args: { email_hash: string }; Returns: string };
       sign_out_everywhere: { Args: { target_user_id: string }; Returns: undefined };
       sign_up_age_outcome: { Args: { birth_month?: number; birth_year: number }; Returns: string };
@@ -5784,7 +5786,23 @@ export type Database = {
       };
       with_comma_below: { Args: { value: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
+      writer_chapter_numbers: {
+        Args: { since: string; writer_id: string };
+        Returns: {
+          chapter_id: string;
+          comments: number;
+          finished: number;
+          likes: number;
+          readers: number;
+          reads: number;
+          shares: number;
+        }[];
+      };
+      writer_dashboard: { Args: { period?: string }; Returns: Json };
+      writer_dashboard_chapters: { Args: { writer_id: string }; Returns: Json };
       writer_follow_state: { Args: { wanted_handle: string }; Returns: Json };
+      writer_followers_by_week: { Args: { writer_id: string }; Returns: Json };
+      writer_latest_comments: { Args: { writer_id: string }; Returns: Json };
       writers_published_by_market: {
         Args: { for_day: string };
         Returns: {

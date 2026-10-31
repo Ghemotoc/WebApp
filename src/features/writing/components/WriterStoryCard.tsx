@@ -7,7 +7,8 @@
  * from S1-E3-06), the tags, the
  * lock line "Only you can see this story until you publish its first chapter" while nothing is
  * published, and the buttons: "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Story
- * settings" and "See story page" (S1-E3-05); "Manage chapters" (S1-E3-04).
+ * settings" and "See story page" (S1-E3-05); "Manage chapters" (S1-E3-04). Under it, once a chapter
+ * exists, the numbers per chapter (ChapterStatsTable, S1-E3-07).
  * Who uses it: YourWritingPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -20,8 +21,10 @@ import { InfoPill } from '@/components/ui/InfoPill';
 import { StoryLabelPills } from '@/features/reading/components/StoryLabelPills';
 import { TagNames } from '@/features/tags/components/TagNames';
 
+import type { DashboardChapter } from '../api/dashboard';
 import type { MyStory } from '../api/stories';
 
+import { ChapterStatsTable } from './ChapterStatsTable';
 import { NewChapterButton } from './NewChapterButton';
 
 /** What the card needs: the story and the cover to draw (YourWritingPage works it out per row). */
@@ -29,6 +32,8 @@ export interface WriterStoryCardProps {
   story: MyStory;
   /** The writer's drawn choice, or the automatic design from the ID (S1-E3-13). */
   cover: DrawnCoverChoice;
+  /** The story's chapters with their numbers (S1-E3-07); empty while they load. */
+  chapterNumbers: DashboardChapter[];
 }
 
 /** "Write chapter one" or "Continue chapter n" (S1-E3-02a), "Manage chapters" once there is a chapter (S1-E3-04), "Story settings" and "See story page" (S1-E3-05). */
@@ -80,18 +85,11 @@ function WriteChapterLink({
   );
 }
 
-/**
- * Renders the card.
- *
- * @returns the story card
- */
-export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
+/** The card's top row: cover, title, blurb, pills, tags and buttons. */
+function StoryCardSummary({ story, cover }: { story: MyStory; cover: DrawnCoverChoice }) {
   const { t } = useTranslation('writing');
   return (
-    <article
-      aria-labelledby={`story-${story.id}-title`}
-      className="flex gap-5 rounded-card border border-border bg-surface p-5 shadow-card"
-    >
+    <div className="flex gap-5">
       <StoryCoverArt
         story={story}
         className="w-24 shrink-0 self-start"
@@ -141,6 +139,25 @@ export function WriterStoryCard({ story, cover }: WriterStoryCardProps) {
         )}
         <StoryCardLinks story={story} />
       </div>
+    </div>
+  );
+}
+
+/**
+ * Renders the card.
+ *
+ * @returns the story card
+ */
+export function WriterStoryCard({ story, cover, chapterNumbers }: WriterStoryCardProps) {
+  return (
+    <article
+      aria-labelledby={`story-${story.id}-title`}
+      className="flex flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-card"
+    >
+      <StoryCardSummary story={story} cover={cover} />
+      {chapterNumbers.length > 0 && (
+        <ChapterStatsTable storyTitle={story.title} chapters={chapterNumbers} />
+      )}
     </article>
   );
 }
