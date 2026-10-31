@@ -5,11 +5,13 @@
  * Who shows it: the router, at /write; the top bar's "Write" button leads here.
  * What it shows: the header with "+ New story", then "Story by story" with one WriterStoryCard
  * per live story (filtered by Ongoing or Completed, S1-E3-05), or an empty state, and "Recently
- * deleted" with undo when a story was deleted in the last 30 days (S1-E3-05). The board's
- * statistics tiles, followers chart, drafts list and latest comments are the writer dashboard
- * proper (S1-E3-07, after March) and stay out.
- * What it calls: useMyStories (stories through stories_select_own). After creating a story,
- * NewStoryPage lands here with a "saved" notice (router state).
+ * deleted" with undo when a story was deleted in the last 30 days (S1-E3-05). Once the writer has
+ * a story, the writer dashboard (S1-E3-07) joins it: "Continue draft" in the header, the tiles,
+ * followers chart and drafts list above the stories (WriterDashboardTop), a numbers table in each
+ * story card and "Latest on your chapters" below.
+ * What it calls: useMyStories (stories through stories_select_own) and useWriterDashboard
+ * (writer_dashboard()). After creating a story, NewStoryPage lands here with a "saved" notice
+ * (router state).
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,10 +25,15 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
+import type { DashboardChapter, DashboardPeriod, WriterDashboard } from '../api/dashboard';
 import type { MyStory } from '../api/stories';
 import { useMyStories } from '../hooks/useMyStories';
+import { useWriterDashboard } from '../hooks/useWriterDashboard';
+import { waitingChapters } from '../lib/dashboardChapters';
 
+import { LatestComments } from './LatestComments';
 import { RecentlyDeleted } from './RecentlyDeleted';
+import { WriterDashboardTop } from './WriterDashboardTop';
 import { WriterStoryCard } from './WriterStoryCard';
 
 /** The status filter's choices: everything, Ongoing or Completed (S1-E3-05). */
@@ -42,6 +49,21 @@ type StatusFilter = 'all' | 'ongoing' | 'completed';
 function liveStoriesFor(stories: MyStory[], filter: StatusFilter): MyStory[] {
   return stories.filter(
     (story) => story.deletedAt === null && (filter === 'all' || story.completionStatus === filter),
+  );
+}
+
+/** The board's "Continue draft": the most recently saved draft or scheduled chapter's editor. */
+function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
+  const { t } = useTranslation('writing');
+  const latest = waitingChapters(chapters).find((chapter) => chapter.status === 'draft');
+  if (latest === undefined) return null;
+  return (
+    <Link
+      to={`/write/s/${latest.storySlug}/c/${latest.chapterCode}`}
+      className="inline-flex h-12 items-center rounded-full border border-control-border bg-surface px-6 text-[15px] font-semibold whitespace-nowrap text-heading no-underline hover:bg-tint"
+    >
+      {t('dashboard.continueDraft')}
+    </Link>
   );
 }
 
@@ -84,9 +106,11 @@ function StatusFilterChips({
 function StoriesBody({
   writing,
   filter,
+  chapterNumbers,
 }: {
   writing: ReturnType<typeof useMyStories>;
   filter: StatusFilter;
+  chapterNumbers: DashboardChapter[];
 }) {
   const { t } = useTranslation('writing');
   if (!writing.isKnown) return null;
@@ -111,10 +135,117 @@ function StoriesBody({
           key={story.id}
           story={story}
           cover={covers[index] ?? automaticCoverFor(story.id)}
+          chapterNumbers={chapterNumbers.filter((chapter) => chapter.storySlug === story.slug)}
         />
       ))}
     </div>
   );
+}
+
+/** The page's header: eyebrow, heading, intro, "Continue draft" and "+ New story". */
+function YourWritingHeader({
+  isSignedIn,
+  chapters,
+}: {
+  isSignedIn: boolean;
+  chapters: DashboardChapter[];
+}) {
+  const { t } = useTranslation('writing');
+  return (
+    <header className="relative flex flex-wrap items-end justify-between gap-6">
+      <div className="flex max-w-[640px] flex-col gap-2">
+        <Eyebrow>{t('yourWriting.eyebrow')}</Eyebrow>
+        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
+          {t('yourWriting.heading')}
+        </h1>
+        <p className="m-0 text-lg leading-[1.6] text-body">{t('yourWriting.intro')}</p>
+      </div>
+      {isSignedIn && (
+        <div className="flex flex-wrap gap-3">
+          <ContinueDraftLink chapters={chapters} />
+          <NewStoryLink label={t('yourWriting.newStory')} />
+        </div>
+      )}
+      <Doodle
+        name="typewriter"
+        kind="background"
+        hideBelow="wide"
+        className="absolute -top-4 right-[420px] w-28 -rotate-6"
+      />
+    </header>
+  );
+}
+
+/** "Story by story": the heading, the status filter and the stories with their numbers. */
+function StoriesSection({
+  writing,
+  chapterNumbers,
+}: {
+  writing: ReturnType<typeof useMyStories>;
+  chapterNumbers: DashboardChapter[];
+}) {
+  const { t } = useTranslation('writing');
+  const [filter, setFilter] = useState<StatusFilter>('all');
+  return (
+    <section className="flex flex-col gap-5">
+      <div className="relative flex flex-col gap-1 pr-24">
+        <Eyebrow>{t('yourWriting.storiesEyebrow')}</Eyebrow>
+        <h2 className="m-0 font-heading text-[30px] font-bold text-heading">
+          {t('yourWriting.storiesHeading')}
+        </h2>
+      </div>
+      {writing.isSignedIn && <StatusFilterChips value={filter} onChange={setFilter} />}
+      <StoriesBody writing={writing} filter={filter} chapterNumbers={chapterNumbers} />
+    </section>
+  );
+}
+
+/** Story titles by slug, for the dashboard's draft rows. */
+function titlesBySlug(stories: MyStory[]): Map<string, string> {
+  return new Map(stories.map((story) => [story.slug, story.title]));
+}
+
+/** The dashboard's upper half, shown once the writer has a live story. */
+function DashboardTopWhenReady({
+  dashboard,
+  loadFailed,
+  stories,
+  period,
+  onPeriodChange,
+}: {
+  dashboard: WriterDashboard | null;
+  loadFailed: boolean;
+  stories: MyStory[];
+  period: DashboardPeriod;
+  onPeriodChange: (period: DashboardPeriod) => void;
+}) {
+  const { t } = useTranslation('writing');
+  if (loadFailed) return <Notice tone="error">{t('dashboard.loadFailed')}</Notice>;
+  if (dashboard === null) return null;
+  return (
+    <WriterDashboardTop
+      dashboard={dashboard}
+      period={period}
+      onPeriodChange={onPeriodChange}
+      storyTitles={titlesBySlug(stories)}
+    />
+  );
+}
+
+/**
+ * What NewStoryPage said on the way here (router state): a story was just created, or its first
+ * chapter couldn't be made.
+ *
+ * @returns justCreated and chapterFailed
+ */
+function useArrivalNotices() {
+  const location = useLocation() as {
+    state?: { createdSlug?: string; chapterFailed?: boolean } | null;
+  };
+  return {
+    justCreated: typeof location.state?.createdSlug === 'string',
+    chapterFailed: location.state?.chapterFailed === true,
+  };
 }
 
 /**
@@ -125,53 +256,31 @@ function StoriesBody({
 export function YourWritingPage() {
   const { t } = useTranslation('writing');
   const writing = useMyStories();
-  const location = useLocation() as {
-    state?: { createdSlug?: string; chapterFailed?: boolean } | null;
-  };
-  const justCreated = typeof location.state?.createdSlug === 'string';
-  const chapterFailed = location.state?.chapterFailed === true;
-  const [filter, setFilter] = useState<StatusFilter>('all');
+  const [period, setPeriod] = useState<DashboardPeriod>('all');
+  const { dashboard, loadFailed } = useWriterDashboard(period);
+  const { justCreated, chapterFailed } = useArrivalNotices();
+  const liveStories = liveStoriesFor(writing.stories, 'all');
   const deletedStories = writing.stories.filter((story) => story.deletedAt !== null);
+  const chapters = dashboard?.chapters ?? [];
+  const hasStories = writing.isSignedIn && liveStories.length > 0;
 
   return (
     <PageContainer className="tmc-rise flex flex-col gap-10 pt-12 pb-7">
       <title>{t('yourWriting.documentTitle')}</title>
-      <header className="relative flex flex-wrap items-end justify-between gap-6">
-        <div className="flex max-w-[640px] flex-col gap-2">
-          <Eyebrow>{t('yourWriting.eyebrow')}</Eyebrow>
-          <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
-            {t('yourWriting.heading')}
-          </h1>
-          <p className="m-0 text-lg leading-[1.6] text-body">{t('yourWriting.intro')}</p>
-        </div>
-        {writing.isSignedIn && <NewStoryLink label={t('yourWriting.newStory')} />}
-        <Doodle
-          name="typewriter"
-          kind="background"
-          hideBelow="wide"
-          className="absolute -top-4 right-[260px] w-28 -rotate-6"
-        />
-      </header>
+      <YourWritingHeader isSignedIn={writing.isSignedIn} chapters={chapters} />
       {justCreated && <Notice tone="success">{t('yourWriting.created')}</Notice>}
       {chapterFailed && <Notice tone="warning">{t('errors.chapterCreateFailed')}</Notice>}
-      <section className="flex flex-col gap-5">
-        <div className="relative flex flex-col gap-1 pr-24">
-          <Eyebrow>{t('yourWriting.storiesEyebrow')}</Eyebrow>
-          <h2 className="m-0 font-heading text-[30px] font-bold text-heading">
-            {t('yourWriting.storiesHeading')}
-          </h2>
-          {/* The pencil cup sits at the row's far right, inside the padding the text never uses. */}
-          <Doodle
-            name="pencil-cup"
-            kind="widget"
-            on="Story by story"
-            hideBelow="phone"
-            className="absolute top-0 right-2 w-16"
-          />
-        </div>
-        {writing.isSignedIn && <StatusFilterChips value={filter} onChange={setFilter} />}
-        <StoriesBody writing={writing} filter={filter} />
-      </section>
+      {hasStories && (
+        <DashboardTopWhenReady
+          dashboard={dashboard}
+          loadFailed={loadFailed}
+          stories={liveStories}
+          period={period}
+          onPeriodChange={setPeriod}
+        />
+      )}
+      <StoriesSection writing={writing} chapterNumbers={chapters} />
+      {hasStories && dashboard !== null && <LatestComments comments={dashboard.latestComments} />}
       <RecentlyDeleted stories={deletedStories} />
     </PageContainer>
   );

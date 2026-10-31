@@ -358,5 +358,77 @@
     "noTags": "Etichetele aprobate apar aici după ce salvezi povestea cu etichete.",
     "saved": "Salvat. Cititorii văd noile insigne în câteva minute.",
     "saveFailed": "Insignele nu au putut fi salvate. Încearcă din nou peste puțin timp."
+  },
+  "dashboard": {
+    "continueDraft": "Continuă ciorna",
+    "fewerThanFive": "mai puțin de 5",
+    "fewerShort": "< 5",
+    "loadFailed": "Nu ți-am putut încărca cifrele. Reîncarcă pagina ca să încerci din nou.",
+    "totals": {
+      "eyebrow": "Toate poveștile tale",
+      "heading": "Cum răspund cititorii",
+      "periodLabel": "Perioada",
+      "last30Days": "Ultimele 30 de zile",
+      "allTime": "De la început",
+      "reads": "Citiri",
+      "readsSince": "De la capitolul 1, pe {{date}}",
+      "readsNone": "Niciun capitol publicat încă",
+      "readsLast30": "Capitole deschise în ultimele 30 de zile",
+      "readThrough": "Citite până la capăt",
+      "readThroughNote": "Partea cititorilor care au ajuns la final",
+      "likes": "Aprecieri",
+      "likesAcross_one": "Pe {{count}} capitol",
+      "likesAcross_few": "Pe {{count}} capitole",
+      "likesAcross_other": "Pe {{count}} de capitole",
+      "comments": "Comentarii",
+      "commentsNote": "De la cititori, la capitolele tale",
+      "followers": "Urmăritori",
+      "followersNote": "Oamenii care te urmăresc",
+      "followersLast30": "Urmăritori noi în 30 de zile",
+      "privacyStrong": "Acestea sunt doar totaluri.",
+      "privacy": "Nu vezi niciodată ce cititori au deschis un capitol. Orice cifră care vine de la mai puțin de 5 cititori apare ca „mai puțin de 5”, ca nimeni să nu poată fi identificat."
+    },
+    "followers": {
+      "eyebrow": "Urmăritori în timp",
+      "heading_one": "{{value}} urmăritor",
+      "heading_few": "{{value}} urmăritori",
+      "heading_other": "{{value}} de urmăritori",
+      "headingFew": "Mai puțin de 5 urmăritori",
+      "thisWeek": "+{{value}} săptămâna asta",
+      "chartLabel": "Urmăritori noi pe săptămână, ultimele 8 săptămâni: {{values}}",
+      "note": "Urmăritori noi în fiecare săptămână. Săptămânile încep lunea."
+    },
+    "notPublished": {
+      "eyebrow": "Ciorne și programate",
+      "heading": "Încă nepublicate",
+      "empty": "Nimic în așteptare: toate capitolele sunt publicate.",
+      "untitled": "Capitolul {{number}}, fără titlu",
+      "titled": "Capitolul {{number}}: {{title}}",
+      "draftMeta": "{{story}} · {{words}} · salvat {{when}}",
+      "scheduledMeta": "Se publică {{when}}, ora României",
+      "edit": "Editează",
+      "reschedule": "Reprogramează"
+    },
+    "table": {
+      "regionLabel": "Cifrele pe capitole pentru {{title}}. Derulează lateral pe ecranele mici.",
+      "caption": "Pe capitole, de la început. „Citite până la capăt” este partea cititorilor care au ajuns la finalul capitolului.",
+      "chapter": "Capitol",
+      "status": "Stare",
+      "reads": "Citiri",
+      "readThrough": "Până la capăt",
+      "likes": "Aprecieri",
+      "comments": "Comentarii",
+      "notPublished": "nepublicat",
+      "row": "{{number}}. {{title}}"
+    },
+    "noNumbersYet": "Încă nu sunt cifre.",
+    "comments": {
+      "eyebrow": "Comentarii",
+      "heading": "Cele mai noi la capitolele tale",
+      "onChapter": "la capitolul {{number}} · {{when}}",
+      "reply": "Răspunde",
+      "replyLabel": "Răspunde-i lui {{name}} la capitolul {{number}}",
+      "empty": "Încă nu ai comentarii. Apar aici când cititorii scriu sub capitolele tale."
+    }
   }
 }
