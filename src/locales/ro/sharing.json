@@ -46,7 +46,7 @@
     "altLabel": "Text alternativ pentru imagine",
     "altHint": "L-am scris noi pentru tine. Cititoarele de ecran îl citesc cu voce tare, ca toată lumea să știe ce spune imaginea. Lipește-l ca descriere a imaginii când o postezi.",
     "altText": "Card cu un citat din {{story}} de {{writer}}: „{{passage}}”",
-    "byline": "de {{writer}} · {{link}}",
+    "byline": "de {{writer}}",
     "limitShort": "Un singur card cu citat pe capitol.",
     "copyImage": "Copiază imaginea",
     "saveImage": "Salvează imaginea",

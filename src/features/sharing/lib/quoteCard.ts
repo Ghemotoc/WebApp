@@ -2,7 +2,7 @@
  * Draws the quote-share card on a canvas (story S1-E4-07; board 3.6 Share, "Your quote card").
  *
  * The card is drawn on the reader's device and never stored: the passage, the story's title,
- * "by <pen name> · <link>" and the product's name (S1-E4-07, first criterion). It is a square
+ * "by <pen name>", the link and the product's name (S1-E4-07, first criterion). It is a square
  * 1080 px picture, the size most social apps take without cropping.
  * Backgrounds (S1-E4-07, fourth criterion; Robert, canvas comments, 16 Oct 2026): the default is
  * plain brand purple with no gold glow (the board's purple gradient), or one of our nine palette
@@ -44,8 +44,10 @@ export const paletteBackgrounds: readonly QuoteCardBackground[] = [
 export interface QuoteCardContent {
   passage: string;
   storyTitle: string;
-  /** "by inkwolf · example.com/s/…/…", already in the reader's language. */
-  byline: string;
+  /** "by inkwolf", already in the reader's language. */
+  writerLine: string;
+  /** The chapter's link without "https://" (lib/shareLink.ts). */
+  link: string;
   productName: string;
   background: QuoteCardBackground;
 }
@@ -167,7 +169,34 @@ function drawPassage(
 }
 
 /**
- * Draws the footer: the story's title, the byline (up to two lines) and the product's name.
+ * The largest size, from a list of sizes, at which a text fits in the given number of lines.
+ *
+ * @param context - the canvas's 2D context (its font is changed)
+ * @param text - the text
+ * @param fit - fontFor (the font for a size), sizes (to try, largest first) and maxLines
+ * @returns the size and the lines at that size (the smallest size if none fits)
+ */
+function fitText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  fit: { fontFor: (size: number) => string; sizes: readonly number[]; maxLines: number },
+): { size: number; lines: string[] } {
+  let fitted = { size: fit.sizes[fit.sizes.length - 1] ?? 24, lines: [text] };
+  for (const size of fit.sizes) {
+    context.font = fit.fontFor(size);
+    const lines = wrapLines(text, footerWidth, (line) => context.measureText(line).width);
+    fitted = { size, lines };
+    if (lines.length <= fit.maxLines) break;
+  }
+  return fitted;
+}
+
+/** The footer's width: the whole text width (the product's name sits at the top). */
+const footerWidth = textWidth;
+
+/**
+ * Draws the footer from the bottom up: the link, "by <pen name>" and the story's title, each
+ * shrunk until it fits, so the full title and the full link always show.
  *
  * @param context - the canvas's 2D context
  * @param content - the card's content
@@ -178,30 +207,46 @@ function drawFooter(
   content: QuoteCardContent,
   colours: ReturnType<typeof inkFor>,
 ) {
-  const footerWidth = textWidth - 220;
-  context.fillStyle = colours.text;
-  context.font = `bold 40px ${titleFontFamily}`;
-  const titleLines = wrapLines(
-    content.storyTitle,
-    footerWidth,
-    (text) => context.measureText(text).width,
-  );
-  context.fillText(titleLines[0] ?? '', margin, 880);
+  // Step 1: the link on the last line, as small as 18 px to fit in one line.
   context.fillStyle = colours.soft;
+  const link = fitText(context, content.link, {
+    fontFor: (size) => `${size}px ${bodyFontFamily}`,
+    sizes: [26, 22, 18],
+    maxLines: 1,
+  });
+  link.lines.forEach((line, index) => context.fillText(line, margin, 1000 + index * 24));
+  // Step 2: "by <pen name>" above it.
   context.font = `28px ${bodyFontFamily}`;
-  const bylineLines = wrapLines(
-    content.byline,
-    footerWidth,
-    (text) => context.measureText(text).width,
-  );
-  bylineLines
-    .slice(0, 2)
-    .forEach((line, index) => context.fillText(line, margin, 928 + index * 38));
-  // The product's name in the corner, where the board has the logo.
+  context.fillText(content.writerLine, margin, 956);
+  // Step 3: the title above that, up to two lines.
+  context.fillStyle = colours.text;
+  const title = fitText(context, content.storyTitle, {
+    fontFor: (size) => `bold ${size}px ${titleFontFamily}`,
+    sizes: [40, 34, 28],
+    maxLines: 2,
+  });
+  const lineHeight = Math.round(title.size * 1.2);
+  title.lines.forEach((line, index) => {
+    context.fillText(line, margin, 908 - (title.lines.length - 1 - index) * lineHeight);
+  });
+}
+
+/**
+ * Draws the product's name in the top right corner, where the board has the logo.
+ *
+ * @param context - the canvas's 2D context
+ * @param productName - from the brand config
+ * @param colours - the words' colours
+ */
+function drawProductName(
+  context: CanvasRenderingContext2D,
+  productName: string,
+  colours: ReturnType<typeof inkFor>,
+) {
   context.fillStyle = colours.mark;
   context.font = `bold 32px ${titleFontFamily}`;
   context.textAlign = 'right';
-  context.fillText(content.productName, cardSize - margin, 928);
+  context.fillText(productName, cardSize - margin, margin + 32);
   context.textAlign = 'left';
 }
 
@@ -218,4 +263,5 @@ export function drawQuoteCard(context: CanvasRenderingContext2D, content: QuoteC
   context.textAlign = 'left';
   drawPassage(context, content.passage, colours);
   drawFooter(context, content, colours);
+  drawProductName(context, content.productName, colours);
 }

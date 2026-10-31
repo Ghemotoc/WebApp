@@ -4,7 +4,7 @@
  * Board values: the eyebrow "Share a quote", the heading, "Made from the text you selected.
  * n of 280 characters.", the card, Background, "Alt text for the image" with "We wrote this for
  * you…", then "One quote card per chapter." with Copy image and Save image.
- * The card shows the passage, the story's title, "by <pen name> · <link>" and the product's name
+ * The card shows the passage, the story's title, "by <pen name>", the link and the product's name
  * (first criterion). The alt text is written for the reader and they may change it (fifth
  * criterion). The first copy or save records the card; a second card from the same chapter shows
  * the limit pop-up instead (second criterion).
@@ -91,7 +91,8 @@ export function QuoteCardDialog({
     return {
       passage,
       storyTitle: chapter.storyTitle,
-      byline: t('quote.byline', { writer: chapter.writerName, link }),
+      writerLine: t('quote.byline', { writer: chapter.writerName }),
+      link,
       productName: brand.productName,
       background,
     };

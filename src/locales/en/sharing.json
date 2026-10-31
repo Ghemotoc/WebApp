@@ -46,7 +46,7 @@
     "altLabel": "Alt text for the image",
     "altHint": "We wrote this for you. Screen readers read it out, so everyone knows what the image says. Paste it as the picture’s description when you post it.",
     "altText": "A quote card from {{story}} by {{writer}}: “{{passage}}”",
-    "byline": "by {{writer}} · {{link}}",
+    "byline": "by {{writer}}",
     "limitShort": "One quote card per chapter.",
     "copyImage": "Copy image",
     "saveImage": "Save image",
