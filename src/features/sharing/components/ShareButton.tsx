@@ -41,9 +41,10 @@ function prefersSystemShare(): boolean {
  * script budget (lib/countShare.ts).
  *
  * @param address - the chapter
+ * @param method - how it was shared, for the analytics event
  */
-function countShare(address: ChapterAddress) {
-  void import('../lib/countShare').then((module) => module.countShare(address));
+function countShare(address: ChapterAddress, method: 'copy_link' | 'share_sheet') {
+  void import('../lib/countShare').then((module) => module.countShare(address, method));
 }
 
 /**
@@ -77,7 +78,8 @@ export function ShareButton({ chapter }: { chapter: SharedChapter }) {
   async function share() {
     if (prefersSystemShare()) {
       try {
-        if (await shareWithSystem(chapter.storyTitle, link)) countShare(chapter.address);
+        if (await shareWithSystem(chapter.storyTitle, link))
+          countShare(chapter.address, 'share_sheet');
         return;
       } catch (error) {
         // The sheet failed (not cancelled): fall back to copying, as on a computer.
@@ -85,7 +87,7 @@ export function ShareButton({ chapter }: { chapter: SharedChapter }) {
       }
     }
     const copied = await copyText(link);
-    if (copied) countShare(chapter.address);
+    if (copied) countShare(chapter.address, 'copy_link');
     setWasCopied(copied);
     setIsOpen(true);
   }

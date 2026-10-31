@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { defaultLanguage, isSupportedLanguage, type SupportedLanguage } from '@/lib/i18n';
 import { saveDeviceLanguage } from '@/lib/language-preference';
 import { getSupabaseClient } from '@/lib/supabase';
+import { trackEvent } from '@/lib/analytics/track';
 
 import { hasSignedInSession, saveAccountLanguage, startLanguageChoice } from '../api/profileLocale';
 
@@ -67,6 +68,8 @@ export function useInterfaceLanguage() {
         // Steps 1 and 2: switch the screen and remember the choice in this browser.
         await i18n.changeLanguage(nextLanguage);
         saveDeviceLanguage(nextLanguage);
+        // The analytics event carries the new language only (docs/analytics-events.md).
+        trackEvent('language_changed', { language: nextLanguage });
         // Step 3: when someone is signed in, save it to the account.
         setSaveStatus(await saveToAccount(nextLanguage));
       } finally {

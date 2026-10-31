@@ -25,6 +25,7 @@ import { checkHandle } from '@/features/account/api/accountNames';
 import type { HandleOutcome } from '@/features/account/lib/nameRules';
 import { getSupabaseClient, type AppSupabaseClient } from '@/lib/supabase';
 import { findSignUpProblems, type SignUpAnswers, type SignUpProblems } from '@/schemas/signUp';
+import { trackEvent } from '@/lib/analytics/track';
 
 import { signUp, SignUpError, type SignUpContext, type SignUpFailure } from '../api/signUp';
 import { checkPasswordLeak } from '../lib/passwordLeak';
@@ -131,6 +132,8 @@ async function sendSignUp(
   if (handleOutcome !== 'ok') return { handle: handleOutcome };
   // Step 4: Supabase Auth and the sign-up trigger, which checks the username again.
   await signUp(client, draft as SignUpAnswers, context);
+  // No properties: never who signed up (docs/analytics-events.md).
+  trackEvent('sign_up_completed', {});
   return null;
 }
 

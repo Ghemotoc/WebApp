@@ -1250,6 +1250,20 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - The writer's switch: "Quote cards" in `StoryStatusSection` → `update_my_story()` with `quote_cards_enabled`.
 - Both actions have hourly limits in the `rate_limits` setting (`chapter_share`, `quote_card`). Tests: `supabase/tests/database/181-share-and-quote-cards.test.sql`, `src/features/sharing/lib/*.test.ts`, `e2e/share.spec.ts`.
 
+## Cookieless analytics and the event catalogue (S1-E15-01, S1-E15-03; READ-4f)
+
+A screen that wants to count something calls `trackEvent('<object_action>', {…})` from `src/lib/analytics/track.ts`:
+
+```
+screen or hook → trackEvent(name, properties)   only names and properties in src/lib/analytics/catalogue.ts
+   → off (no VITE_ANALYTICS_* variables), or the browser says Do Not Track: nothing leaves
+   → otherwise one fetch without cookies to Plausible or Umami (Q49 OPEN), reported against the site root
+```
+
+No script, no cookie, no page views, no personal data (ADR 0007). `docs/analytics-events.md` lists every event with where it fires; `catalogue.test.ts` fails the build when the document and the code disagree. To add an event: a line in `catalogue.ts`, a row in the document, then the call.
+
+Tests: `src/lib/analytics/track.test.ts`, `src/lib/analytics/catalogue.test.ts`.
+
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 
 What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-E11.md`, lists what works, the open Must stories, the known gaps and the stubs still on.

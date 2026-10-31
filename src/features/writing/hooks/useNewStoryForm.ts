@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { newStorySchema, type NewStoryInput } from '@/schemas/story';
+import { trackEvent } from '@/lib/analytics/track';
 
 import { createChapter } from '../api/chapters';
 import { createStory } from '../api/stories';
@@ -66,13 +67,15 @@ export function useNewStoryForm() {
 
   const create = useMutation({
     mutationFn: async (input: NewStoryInput) => createStory(await requireClient(), input),
-    onSuccess: async (result) => {
+    onSuccess: async (result, input) => {
       // Step 3: a read-only account gets the plain message; a new story goes to the list.
       if (result.outcome === 'not_active') {
         setFormError('notActive');
         return;
       }
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
+      // The category only, never the story (docs/analytics-events.md).
+      trackEvent('story_created', { category: input.categorySlug });
       // Step 4: chapter one is made straight away and the editor opens on it (board 4.2's
       // "Create and write chapter one"); if that fails the story is still there on Your writing.
       try {

@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { getSupabaseClient } from '@/lib/supabase';
+import { trackEvent } from '@/lib/analytics/track';
 
 import {
   fetchFollowState,
@@ -67,8 +68,12 @@ export function useFollow(target: FollowTarget) {
   const change = useMutation({
     mutationFn: async (shouldFollow: boolean) =>
       setFollow(await requireClient(), target, shouldFollow),
-    onSuccess: async (newState) => {
+    onSuccess: async (newState, shouldFollow) => {
       queryClient.setQueryData(queryKey, newState);
+      // Never who or what was followed (docs/analytics-events.md).
+      if (shouldFollow && newState.following) {
+        trackEvent(target.kind === 'writer' ? 'writer_followed' : 'story_followed', {});
+      }
       // Discover's "New from writers you follow" shelf changes with every follow (S1-E5-01).
       await queryClient.invalidateQueries({ queryKey: ['story-list'] });
     },
