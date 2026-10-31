@@ -4289,6 +4289,110 @@ export type Database = {
           },
         ];
       };
+      story_ideas: {
+        Row: {
+          body: string;
+          created_at: string;
+          done_at: string | null;
+          id: string;
+          kind: string;
+          outcome: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          created_at?: string;
+          done_at?: string | null;
+          id?: string;
+          kind?: string;
+          outcome?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          done_at?: string | null;
+          id?: string;
+          kind?: string;
+          outcome?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_ideas_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_ideas_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_marketing: {
+        Row: {
+          back_cover_blurb: string;
+          comparable_titles: string;
+          created_at: string;
+          hooks_keywords: string;
+          launch_notes: string;
+          query_pitch: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          back_cover_blurb?: string;
+          comparable_titles?: string;
+          created_at?: string;
+          hooks_keywords?: string;
+          launch_notes?: string;
+          query_pitch?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          back_cover_blurb?: string;
+          comparable_titles?: string;
+          created_at?: string;
+          hooks_keywords?: string;
+          launch_notes?: string;
+          query_pitch?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_marketing_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: true;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_marketing_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_plan_acts: {
         Row: {
           created_at: string;
@@ -4731,6 +4835,10 @@ export type Database = {
           sort_value: number;
           story_slug: string;
         };
+        Returns: Json;
+      };
+      add_story_idea: {
+        Args: { idea_body: string; idea_kind: string; story_slug: string };
         Returns: Json;
       };
       admin_account_open_cases: {
@@ -5804,6 +5912,7 @@ export type Database = {
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       delete_story_character: { Args: { character_id: string }; Returns: Json };
       delete_story_event: { Args: { event_id: string }; Returns: Json };
+      delete_story_idea: { Args: { idea_id: string }; Returns: Json };
       disconnect_canva: { Args: Record<PropertyKey, never>; Returns: boolean };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       downvote_comment: {
@@ -6293,6 +6402,7 @@ export type Database = {
       };
       my_picture_states: { Args: { picture_ids: string[] }; Returns: Json };
       my_place_in_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      my_planned_story_id: { Args: { story_slug: string }; Returns: string };
       my_report_detail_requests: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -6359,6 +6469,26 @@ export type Database = {
         SetofOptions: {
           from: '*';
           to: 'story_events';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      my_story_idea: {
+        Args: { target_idea_id: string };
+        Returns: {
+          body: string;
+          created_at: string;
+          done_at: string | null;
+          id: string;
+          kind: string;
+          outcome: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'story_ideas';
           isOneToOne: true;
           isSetofReturn: false;
         };
@@ -7038,6 +7168,7 @@ export type Database = {
       story_follower_count_of: { Args: { target_story_id: string }; Returns: number };
       story_has_copied_work_note: { Args: { target_story_id: string }; Returns: boolean };
       story_has_readable_chapter: { Args: { target_story_id: string }; Returns: boolean };
+      story_ideas: { Args: { story_slug: string }; Returns: Json };
       story_language_choices: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -7047,6 +7178,7 @@ export type Database = {
       };
       story_library_state: { Args: { story_slug: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
+      story_marketing: { Args: { story_slug: string }; Returns: Json };
       story_matches_search: {
         Args: {
           target: Omit<
@@ -7162,6 +7294,8 @@ export type Database = {
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
       update_story_character: { Args: { changes: Json; character_id: string }; Returns: Json };
       update_story_event: { Args: { changes: Json; event_id: string }; Returns: Json };
+      update_story_idea: { Args: { changes: Json; idea_id: string }; Returns: Json };
+      update_story_marketing: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_story_plan: { Args: { changes: Json; story_slug: string }; Returns: Json };
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
