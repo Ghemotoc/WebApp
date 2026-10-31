@@ -2617,6 +2617,80 @@ export type Database = {
           },
         ];
       };
+      parental_consents: {
+        Row: {
+          created_at: string;
+          decided_at: string | null;
+          id: string;
+          is_guardian_confirmed: boolean;
+          language: string;
+          parent_email: string;
+          privacy_version_id: string | null;
+          status: string;
+          terms_version_id: string | null;
+          token_hash: string;
+          updated_at: string;
+          user_id: string;
+          withdrawn_at: string | null;
+          withdrawn_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          decided_at?: string | null;
+          id?: string;
+          is_guardian_confirmed?: boolean;
+          language: string;
+          parent_email: string;
+          privacy_version_id?: string | null;
+          status?: string;
+          terms_version_id?: string | null;
+          token_hash: string;
+          updated_at?: string;
+          user_id: string;
+          withdrawn_at?: string | null;
+          withdrawn_by?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          decided_at?: string | null;
+          id?: string;
+          is_guardian_confirmed?: boolean;
+          language?: string;
+          parent_email?: string;
+          privacy_version_id?: string | null;
+          status?: string;
+          terms_version_id?: string | null;
+          token_hash?: string;
+          updated_at?: string;
+          user_id?: string;
+          withdrawn_at?: string | null;
+          withdrawn_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'parental_consents_privacy_version_id_fkey';
+            columns: ['privacy_version_id'];
+            isOneToOne: false;
+            referencedRelation: 'legal_document_versions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'parental_consents_terms_version_id_fkey';
+            columns: ['terms_version_id'];
+            isOneToOne: false;
+            referencedRelation: 'legal_document_versions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'parental_consents_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       picture_checks: {
         Row: {
           attempts: number;
@@ -5678,6 +5752,10 @@ export type Database = {
         }[];
       };
       admin_waiting_decision_email_count: { Args: Record<PropertyKey, never>; Returns: number };
+      admin_withdraw_parental_consent: {
+        Args: { reason_given: string; target_user_id: string };
+        Returns: boolean;
+      };
       age_band: {
         Args: Record<PropertyKey, never>;
         Returns: Database['public']['Enums']['age_band'];
@@ -5730,6 +5808,10 @@ export type Database = {
         Returns: number;
       };
       another_appeals_decider_exists: { Args: Record<PropertyKey, never>; Returns: boolean };
+      answer_parental_consent: {
+        Args: { decision: string; page_language: string; signature: string; token: string };
+        Returns: Json;
+      };
       answer_report_detail_request: {
         Args: { answer_text: string; target_request_id: string };
         Returns: undefined;
@@ -5779,6 +5861,10 @@ export type Database = {
       banned_email_hash: { Args: { email: string }; Returns: string };
       begin_age_check: {
         Args: { signature: string; threshold: number; yoti_session_id: string };
+        Returns: Json;
+      };
+      begin_parental_consent: {
+        Args: { language: string; parent_email: string; signature: string; token_hash: string };
         Returns: Json;
       };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
@@ -6237,6 +6323,7 @@ export type Database = {
         Returns: string;
       };
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
+      has_parental_consent: { Args: { target_user_id: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
       interface_text_live: {
         Args: { wanted_locale: string };
@@ -6312,6 +6399,10 @@ export type Database = {
           moderators: number;
           status: Database['public']['Enums']['language_status'];
         }[];
+      };
+      latest_legal_version: {
+        Args: { document_slug: string; wanted_language: string };
+        Returns: string;
       };
       latest_manual_age_check: { Args: { target_user_id: string }; Returns: Json };
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
@@ -6652,6 +6743,7 @@ export type Database = {
       my_moderator_mail_thread: { Args: { thread_reference: string }; Returns: Json };
       my_notification_email_settings: { Args: Record<PropertyKey, never>; Returns: Json };
       my_notifications: { Args: { older_than?: string; page_size?: number }; Returns: Json };
+      my_parental_consent: { Args: Record<PropertyKey, never>; Returns: Json };
       my_pending_pictures: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -6860,6 +6952,47 @@ export type Database = {
       };
       paragraph_key_of: { Args: { block_text: string }; Returns: string };
       paragraph_now: { Args: { body: string; key: string; number: number }; Returns: number };
+      parental_consent_agree: {
+        Args: {
+          page_language: string;
+          request: Omit<
+            Database['public']['Tables']['parental_consents']['Row'],
+            Database['public']['Tables']['parental_consents']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
+      parental_consent_by_token: {
+        Args: { raw_token: string };
+        Returns: {
+          created_at: string;
+          decided_at: string | null;
+          id: string;
+          is_guardian_confirmed: boolean;
+          language: string;
+          parent_email: string;
+          privacy_version_id: string | null;
+          status: string;
+          terms_version_id: string | null;
+          token_hash: string;
+          updated_at: string;
+          user_id: string;
+          withdrawn_at: string | null;
+          withdrawn_by: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'parental_consents';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      parental_consent_deadline: { Args: { target_user_id: string }; Returns: string };
+      parental_consent_is_signed: {
+        Args: { payload: string; signature: string };
+        Returns: boolean;
+      };
+      parental_consent_request: { Args: { token: string }; Returns: Json };
       picture_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       picture_is_visible: { Args: { bucket: string; path: string }; Returns: boolean };
       picture_reader_may_see: { Args: { bucket: string; path: string }; Returns: boolean };
@@ -7743,7 +7876,9 @@ export type Database = {
         | 'moderator_mail_reply'
         | 'tag_rejected'
         | 'age_check_decided'
-        | 'age_check_18_invite';
+        | 'age_check_18_invite'
+        | 'parental_consent_agreed'
+        | 'parental_consent_withdrawn';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -8023,6 +8158,8 @@ export const Constants = {
         'tag_rejected',
         'age_check_decided',
         'age_check_18_invite',
+        'parental_consent_agreed',
+        'parental_consent_withdrawn',
       ],
       picture_kind: [
         'cover',

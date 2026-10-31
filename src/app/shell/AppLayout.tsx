@@ -14,6 +14,8 @@
  * username to /setup.
  * Age check (S1-E2-08): AgeCheckNotice sits under that and links an account that waits for an age
  * check to /age-check.
+ * Parental consent (S1-E2-03): ParentConsentNotice sits under that and links an under-16 whose
+ * account waits for a parent or guardian to /parent-consent.
  * Error, offline and maintenance states (S1-E1-05): OfflineBanner sits under the top bar;
  * MaintenanceGate swaps the notices and the page for the maintenance page while maintenance mode is
  * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
@@ -36,6 +38,7 @@ import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
+import { ParentConsentNotice } from '@/features/parent-consent/components/ParentConsentNotice';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePendingPictureRetry } from '@/features/pictures/hooks/usePictures';
 import { NoticeStrip } from '@/features/website/components/NoticeStrip';
@@ -93,6 +96,8 @@ export function AppLayout() {
           <SetupProfileNotice />
           {/* "Confirm your age", for an account that waits for an age check (S1-E2-08). */}
           <AgeCheckNotice />
+          {/* "Ask a parent or guardian", for an under-16 who waits for consent (S1-E2-03). */}
+          <ParentConsentNotice />
           {/* A live suspension or reporting pause, said plainly on every page (S1-E10-06). */}
           <SanctionNotice />
           <Outlet />

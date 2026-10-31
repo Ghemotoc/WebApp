@@ -17,7 +17,7 @@
 -- Persona states held in tables that later stories create are added by those stories:
 --   every persona's acceptance of the terms and privacy notice v0.1      S1-E14-01 (below)
 --   four test invite codes (one that works, one expired, used up, revoked) S1-E2-01 (end of file)
---   kid_14_ok's agreed consent and kid_14_waiting's pending consent  S1-E2-03
+--   kid_14_ok's agreed consent and kid_14_waiting's pending consent  S1-E2-03 (end of file)
 --   teacher's Teacher badge                                           S1-E2-11
 --   suspended_user's and banned_user's sanctions                      S1-E10-06 (the decided cases at the end)
 --   blocker blocking blocked                                          S1-E5-05
@@ -336,3 +336,13 @@ insert into public.follows_users (user_id, followed_user_id)
   values ('00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000001');
 insert into public.follows_stories (user_id, story_id)
   values ('00000000-0000-4000-8000-000000000002', '00000000-0000-4000-9000-000000000001');
+
+-- Parental consent (S1-E2-03): kid_14_ok's parent agreed, so the account is active once adults_only
+-- is off; kid_14_waiting's parent hasn't answered yet. The token hashes stand for links nobody holds.
+insert into public.parental_consents (user_id, parent_email, language, token_hash, status,
+  is_guardian_confirmed, decided_at)
+values
+  ('00000000-0000-4000-8000-000000000003', 'parent.kid14ok@example.com', 'ro',
+   encode(extensions.digest('seed-kid-14-ok-consent', 'sha256'), 'hex'), 'agreed', true, now()),
+  ('00000000-0000-4000-8000-000000000004', 'parent.kid14waiting@example.com', 'ro',
+   encode(extensions.digest('seed-kid-14-waiting-consent', 'sha256'), 'hex'), 'waiting', false, null);

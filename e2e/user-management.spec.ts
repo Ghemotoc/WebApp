@@ -63,8 +63,10 @@ test.describe('user management (S1-E11-02)', () => {
       .getByRole('link', { name: 'Users' })
       .click();
     await expect(page.getByRole('heading', { name: 'Users', level: 1 })).toBeVisible();
-    // The moderator has no Invites area, so there are no tabs.
-    await expect(page.getByRole('navigation', { name: 'Users' })).toHaveCount(0);
+    // The moderator has no Invites area; their tabs are Accounts and Manual age checks (S1-E2-08b).
+    const tabs = page.getByRole('navigation', { name: 'Users' });
+    await expect(tabs.getByRole('link', { name: 'Manual age checks' })).toBeVisible();
+    await expect(tabs.getByRole('link', { name: 'Invites' })).toHaveCount(0);
 
     await page.getByLabel('Username, pen name, email or user ID').fill('suspended');
     await page.getByRole('button', { name: 'Search' }).click();

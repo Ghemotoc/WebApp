@@ -17,7 +17,9 @@
  * /api/canva/… (server/canva.ts, S1-E3-12: always the Canva stand-in locally, with its own token
  * key),
  * /api/age-check/… (server/age-check.ts, S1-E2-08: always the Yoti stand-in locally, signed with
- * AGE_CHECK_SECRET, the same value the tests put in the local Vault) and
+ * AGE_CHECK_SECRET, the same value the tests put in the local Vault),
+ * /api/parent-consent/… (server/parent-consent.ts, S1-E2-03: signed with PARENTAL_CONSENT_SECRET,
+ * the same value the tests put in the local Vault; the emails go to Mailpit) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * Stand-ins:
@@ -53,6 +55,7 @@ import {
   handleUnsubscribe,
   type NotificationEmailOptions,
 } from './notification-emails.ts';
+import { handleParentConsent } from './parent-consent.ts';
 import { handlePictureCheck } from './picture-check.ts';
 import { pictureChecker } from './picture-check/index.ts';
 import { overridesFromDatabase } from './send-email.ts';
@@ -290,6 +293,14 @@ function outsideServiceHandlerFor(
         anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
         secret: process.env.AGE_CHECK_SECRET,
         settings: { mode: 'stub' },
+      });
+  }
+  if ((url ?? '').startsWith('/api/parent-consent/')) {
+    // Parental consent (S1-E2-03): the local Supabase, the local secret and Mailpit's inbox.
+    return (request) =>
+      handleParentConsent(withLocalOrigin(request), {
+        ...notificationEmailOptions(environment),
+        secret: process.env.PARENTAL_CONSENT_SECRET,
       });
   }
   return null;

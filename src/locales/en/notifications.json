@@ -34,7 +34,8 @@
     "many_one": "{{first}}, {{second}} and {{count}} other",
     "many_other": "{{first}}, {{second}} and {{count}} others",
     "moderationTeam": "Moderation team:",
-    "many_few": "{{first}}, {{second}} and {{count}} others"
+    "many_few": "{{first}}, {{second}} and {{count}} others",
+    "parentOrGuardian": "Your parent or guardian"
   },
   "chapterOfStory": "Chapter {{position}} of {{story}}",
   "what": {
@@ -46,7 +47,9 @@
     "mailReply": "answered your message.",
     "tagRejected": "took a new tag off your story “{{title}}”: it wasn’t approved.",
     "ageCheckDecided": "checked your age by hand. See the result and the reason.",
-    "ageCheck18Invite": "your year of birth now says you’re 18 or over. Confirm it with an ID document to get the settings for adults."
+    "ageCheck18Invite": "your year of birth now says you’re 18 or over. Confirm it with an ID document to get the settings for adults.",
+    "parentConsentAgreed": "agreed. Your account is ready: you can now publish, comment, post and send messages.",
+    "parentConsentWithdrawn": "withdrew their consent. Your account is read-only for now."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -85,7 +88,8 @@
     "readReply": "Read the reply",
     "editTags": "Edit the tags",
     "seeResult": "See the result",
-    "checkMyAge": "Check my age"
+    "checkMyAge": "Check my age",
+    "seeMyAccount": "See what this means"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

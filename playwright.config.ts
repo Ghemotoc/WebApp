@@ -109,6 +109,9 @@ export default defineConfig({
       // The age check's signing secret for local tests only (S1-E2-08); e2e/age-check puts the
       // same value in the local database's Vault. Never a real secret.
       AGE_CHECK_SECRET: 'local-e2e-age-secret',
+      // Parental consent's signing secret for local tests only (S1-E2-03); e2e/parent-consent puts
+      // the same value in the local database's Vault. Never a real secret.
+      PARENTAL_CONSENT_SECRET: 'local-e2e-consent-secret',
       // The notification email worker's key (S1-E7-02): the same local-only value supabase/seed.sql
       // puts in the Vault as email_worker_key. Never a real secret.
       EMAIL_WORKER_KEY: 'local-only-email-worker-key-not-for-staging',

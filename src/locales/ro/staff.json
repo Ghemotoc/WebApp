@@ -313,7 +313,8 @@
         "reset_pen_name": "Resetează pseudonimul",
         "sign_out_everywhere": "Deconectează peste tot",
         "approve_username": "Aprobă un nume",
-        "correct_birthday": "Corectează ziua de naștere"
+        "correct_birthday": "Corectează ziua de naștere",
+        "withdraw_parental_consent": "Retrage acordul părintelui"
       },
       "explain": {
         "warning": "Avertismentul rămâne în istoricul contului. Nu oprește persoana să facă ceva.",
@@ -322,7 +323,8 @@
         "reset_pen_name": "Pseudonimul e șters și se vede numele de utilizator. Persoana poate alege imediat alt pseudonim; cel vechi rămâne în jurnalul de audit.",
         "sign_out_everywhere": "Toate dispozitivele conectate la acest cont sunt deconectate. O pagină deja deschisă mai merge până la o oră.",
         "approve_username": "Folosește asta când verificarea cuvintelor a refuzat din greșeală un nume nevinovat. Persoana salvează apoi singură numele.",
-        "correct_birthday": "Folosește asta doar când persoana a cerut-o. Alege ziua de naștere pe care ți-a dat-o; „Nesetată” o șterge. Anul nașterii nu se schimbă niciodată."
+        "correct_birthday": "Folosește asta doar când persoana a cerut-o. Alege ziua de naștere pe care ți-a dat-o; „Nesetată” o șterge. Anul nașterii nu se schimbă niciodată.",
+        "withdraw_parental_consent": "Folosește asta doar când părintele sau tutorele ne-a cerut. Contul devine doar pentru citit imediat, iar autorul e anunțat; nu se șterge nimic."
       },
       "howLong": "Cât timp",
       "days_1": "24 de ore",
@@ -342,7 +344,8 @@
         "reset_pen_name": "Resetează pseudonimul",
         "sign_out_everywhere": "Deconectează peste tot",
         "approve_username": "Aprobă numele",
-        "correct_birthday": "Salvează ziua de naștere"
+        "correct_birthday": "Salvează ziua de naștere",
+        "withdraw_parental_consent": "Retrage acordul"
       },
       "done": {
         "warning": "Gata. Avertismentul e pe cont.",
@@ -351,7 +354,8 @@
         "reset_pen_name": "Gata. Pseudonimul a fost resetat.",
         "sign_out_everywhere": "Gata. Toate sesiunile s-au închis.",
         "approve_username": "Gata. Persoana poate salva acum numele.",
-        "correct_birthday": "Gata. Ziua de naștere e salvată."
+        "correct_birthday": "Gata. Ziua de naștere e salvată.",
+        "withdraw_parental_consent": "Gata. Acordul e retras, iar contul e doar pentru citit."
       },
       "dataRequests": "Exportul și ștergerea datelor: în timpul testului pe bază de invitație, oamenii cer prin email și răspundem de mână. Zona Cereri de date vine mai târziu.",
       "message": "Ce îi spunem persoanei",
@@ -380,7 +384,8 @@
       "no_such_account": "Nu există un astfel de cont. Caută din nou.",
       "no_pen_name": "Contul nu are pseudonim.",
       "refused": "N-am salvat. Contul poate avea deja această sancțiune sau lipsește un câmp.",
-      "unreachable": "Nu am putut ajunge la server. Verifică conexiunea și încearcă din nou."
+      "unreachable": "Nu am putut ajunge la server. Verifică conexiunea și încearcă din nou.",
+      "no_consent": "Contul nu are un acord al părintelui de retras."
     }
   },
   "metrics": {

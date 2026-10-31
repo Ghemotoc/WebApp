@@ -65,8 +65,8 @@ select results_eq(
                   '00000000-0000-4000-8000-000000000003', '00000000-0000-4000-8000-000000000004',
                   '00000000-0000-4000-8000-000000000005')
      order by id $$,
-  $$ values ('active'), ('active'), ('awaiting_parental_consent'), ('awaiting_parental_consent'), ('age_check_pending') $$,
-  'adults_only off: teen_17 active, both under-16s wait for a parent, pending_check needs the age check'
+  $$ values ('active'), ('active'), ('active'), ('awaiting_parental_consent'), ('age_check_pending') $$,
+  'adults_only off: teen_17 and kid_14_ok (a parent agreed, S1-E2-03) active, kid_14_waiting waits for a parent, pending_check needs the age check'
 );
 update public.feature_flags set is_enabled = true where key = 'adults_only';
 

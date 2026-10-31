@@ -34,7 +34,8 @@
     "many_one": "{{first}}, {{second}} și încă {{count}} persoană",
     "many_few": "{{first}}, {{second}} și încă {{count}} persoane",
     "many_other": "{{first}}, {{second}} și încă {{count}} de persoane",
-    "moderationTeam": "Echipa de moderare:"
+    "moderationTeam": "Echipa de moderare:",
+    "parentOrGuardian": "Părintele sau tutorele tău"
   },
   "chapterOfStory": "capitolul {{position}} din {{story}}",
   "what": {
@@ -46,7 +47,9 @@
     "mailReply": "ți-a răspuns la mesaj.",
     "tagRejected": "a scos o etichetă nouă de la povestea ta „{{title}}”: nu a fost aprobată.",
     "ageCheckDecided": "ți-a verificat vârsta manual. Vezi rezultatul și motivul.",
-    "ageCheck18Invite": "după anul nașterii, acum ai cel puțin 18 ani. Confirmă cu un act de identitate ca să primești setările pentru adulți."
+    "ageCheck18Invite": "după anul nașterii, acum ai cel puțin 18 ani. Confirmă cu un act de identitate ca să primești setările pentru adulți.",
+    "parentConsentAgreed": "a fost de acord. Contul tău e gata: acum poți publica, comenta, posta și trimite mesaje.",
+    "parentConsentWithdrawn": "și-a retras acordul. Deocamdată contul tău e doar pentru citit."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -85,7 +88,8 @@
     "readReply": "Citește răspunsul",
     "editTags": "Modifică etichetele",
     "seeResult": "Vezi rezultatul",
-    "checkMyAge": "Verifică-mi vârsta"
+    "checkMyAge": "Verifică-mi vârsta",
+    "seeMyAccount": "Vezi ce înseamnă"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

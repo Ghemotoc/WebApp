@@ -313,7 +313,8 @@
         "reset_pen_name": "Reset pen name",
         "sign_out_everywhere": "Sign out everywhere",
         "approve_username": "Approve a name",
-        "correct_birthday": "Correct birthday"
+        "correct_birthday": "Correct birthday",
+        "withdraw_parental_consent": "Withdraw parental consent"
       },
       "explain": {
         "warning": "A warning is a record on the account. It doesn’t stop the person doing anything.",
@@ -322,7 +323,8 @@
         "reset_pen_name": "The pen name is removed and the username shows instead. The person can choose a new pen name straight away; the old one stays in the audit log.",
         "sign_out_everywhere": "Every device signed in to this account is signed out. A page already open keeps working for up to an hour.",
         "approve_username": "Use this when the word checks refused a harmless name by mistake. The person then saves the name themselves.",
-        "correct_birthday": "Use this only when the person asked for it. Pick the birthday they gave you; \"Not set\" removes it. The year of birth never changes."
+        "correct_birthday": "Use this only when the person asked for it. Pick the birthday they gave you; \"Not set\" removes it. The year of birth never changes.",
+        "withdraw_parental_consent": "Use this only when the parent or guardian asked us to. The account becomes read-only straight away and the writer is told; nothing is deleted."
       },
       "howLong": "How long",
       "days_1": "24 hours",
@@ -342,7 +344,8 @@
         "reset_pen_name": "Reset the pen name",
         "sign_out_everywhere": "Sign out everywhere",
         "approve_username": "Approve the name",
-        "correct_birthday": "Save the birthday"
+        "correct_birthday": "Save the birthday",
+        "withdraw_parental_consent": "Withdraw the consent"
       },
       "done": {
         "warning": "Done. The warning is on the account.",
@@ -351,7 +354,8 @@
         "reset_pen_name": "Done. The pen name was reset.",
         "sign_out_everywhere": "Done. Every session ended.",
         "approve_username": "Done. The person can now save that name.",
-        "correct_birthday": "Done. The birthday is saved."
+        "correct_birthday": "Done. The birthday is saved.",
+        "withdraw_parental_consent": "Done. The consent is withdrawn and the account is read-only."
       },
       "dataRequests": "Data export and deletion: during the invited test, people ask by email and we answer by hand. The Data requests area comes later.",
       "message": "What we tell the person",
@@ -380,7 +384,8 @@
       "no_such_account": "There is no such account. Search again.",
       "no_pen_name": "This account has no pen name.",
       "refused": "That wasn’t saved. The account may already have this sanction, or a field is missing.",
-      "unreachable": "We couldn’t reach our server. Check your connection and try again."
+      "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+      "no_consent": "This account has no parental consent to withdraw."
     }
   },
   "metrics": {
