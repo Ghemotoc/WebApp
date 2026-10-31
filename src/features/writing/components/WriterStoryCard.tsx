@@ -58,6 +58,13 @@ function StoryCardLinks({ story }: { story: MyStory }) {
       >
         {t('storyCard.settings')}
       </Link>
+      {/* "Plan" beside "Write": the story's side in Story Atlas (S1-E17 notes). */}
+      <Link
+        to={`/plan/s/${slug}`}
+        className="inline-flex h-11 items-center rounded-full border border-control-border bg-surface px-5 text-sm font-semibold text-heading no-underline hover:bg-tint"
+      >
+        {t('storyCard.plan')}
+      </Link>
       <Link to={`/s/${slug}`} className="inline-flex min-h-11 items-center text-sm font-semibold">
         {t('storyCard.seePage')}
       </Link>

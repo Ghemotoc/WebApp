@@ -3718,6 +3718,110 @@ export type Database = {
           },
         ];
       };
+      story_plan_acts: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          position: number;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          position: number;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          position?: number;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_plan_acts_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_plan_acts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_plans: {
+        Row: {
+          created_at: string;
+          linked_project_label: string;
+          linked_project_url: string;
+          logline: string;
+          publishing_route: string;
+          series_name: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+          word_target: number;
+          writing_status: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          linked_project_label?: string;
+          linked_project_url?: string;
+          logline?: string;
+          publishing_route?: string;
+          series_name?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+          word_target?: number;
+          writing_status?: string;
+        };
+        Update: {
+          created_at?: string;
+          linked_project_label?: string;
+          linked_project_url?: string;
+          logline?: string;
+          publishing_route?: string;
+          series_name?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+          word_target?: number;
+          writing_status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_plans_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: true;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_plans_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_scores: {
         Row: {
           computed_at: string;
@@ -6158,6 +6262,8 @@ export type Database = {
         Returns: boolean;
       };
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
+      story_plan: { Args: { story_slug: string }; Returns: Json };
+      story_plan_chapters: { Args: { plan_story_id: string }; Returns: Json };
       story_rank_in_tag: {
         Args: { tag_name: string; target_story_id: string };
         Returns: {
@@ -6252,6 +6358,7 @@ export type Database = {
       unsubscribe_from_emails: { Args: { unsubscribe_key: string }; Returns: boolean };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
+      update_story_plan: { Args: { changes: Json; story_slug: string }; Returns: Json };
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };

@@ -94,6 +94,9 @@ async function openDashboard(browser: Browser, width = 1440): Promise<Page> {
     'en',
   ] as const);
   const page = await context.newPage();
+  // Reduce motion turns off the page's fade-in, so axe measures the colours the page settles on
+  // (as checkScreen does): mid-fade, the eyebrow read as low contrast in the bundle 5 full run.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/write');
   await expect(page.getByRole('heading', { level: 2, name: 'How readers respond' })).toBeVisible();
   return page;

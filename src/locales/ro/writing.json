@@ -157,7 +157,8 @@
     "chapterCount_one": "{{count}} capitol",
     "chapterCount_few": "{{count}} capitole",
     "chapterCount_other": "{{count}} de capitole",
-    "manageChapters": "Gestionează capitolele"
+    "manageChapters": "Gestionează capitolele",
+    "plan": "Plănuiește"
   },
   "status": {
     "heading": "Stare și comentarii",

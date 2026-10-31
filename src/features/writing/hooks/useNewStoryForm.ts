@@ -3,13 +3,14 @@
  *
  * Who calls it: NewStoryPage. What it calls: the zod schema (src/schemas/story.ts) to check the
  * answers, then api/stories.ts → create_story(); on success the writer's story list is refreshed,
- * chapter one is made (api/chapters.ts → create_chapter(), S1-E3-02a) and the editor opens on it.
+ * chapter one is made (api/chapters.ts → create_chapter(), S1-E3-02a) and the editor opens on it;
+ * a story made from Story Atlas (?from=plan) opens on its plan instead (S1-E17-01).
  * Errors: each field's mistake is a translation key; 'not_active' and a failed call become a
  * plain message at the top of the form.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -65,6 +66,9 @@ export function useNewStoryForm() {
   const { userId } = useSession();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  // "New story" in Story Atlas links here with ?from=plan (S1-E17-01).
+  const [searchParams] = useSearchParams();
+  const startedFromAtlas = searchParams.get('from') === 'plan';
 
   const create = useMutation({
     mutationFn: async (input: NewStoryInput) => createStory(await requireClient(), input),
@@ -77,7 +81,12 @@ export function useNewStoryForm() {
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
       // The category only, never the story (docs/analytics-events.md).
       trackEvent('story_created', { category: input.categorySlug });
-      // Step 4: chapter one is made straight away and the editor opens on it (board 4.2's
+      // Step 4 (S1-E17-01): a story made from Story Atlas opens on its plan's at-a-glance page.
+      if (startedFromAtlas) {
+        await navigate(`/plan/s/${result.slug}`);
+        return;
+      }
+      // Step 5: chapter one is made straight away and the editor opens on it (board 4.2's
       // "Create and write chapter one"); if that fails the story is still there on Your writing.
       try {
         const chapter = await createChapter(await requireClient(), result.slug);

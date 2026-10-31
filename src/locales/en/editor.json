@@ -94,7 +94,8 @@
     "rating": "Rating",
     "tags": "Tags",
     "noTags": "None yet",
-    "change": "Change in story settings"
+    "change": "Change in story settings",
+    "plan": "Plan this story"
   },
   "yourStories": {
     "heading": "Your stories",

@@ -71,6 +71,13 @@ function StoryDetailsPanel({ story }: { story: MyStory }) {
       >
         {t('details.change')}
       </Link>
+      {/* Story Atlas, the story's planning side (S1-E17-01: "Plan this story" beside the usual next step). */}
+      <Link
+        to={`/plan/s/${story.slug}`}
+        className="inline-flex min-h-11 items-center self-start text-sm font-semibold"
+      >
+        {t('details.plan')}
+      </Link>
     </Panel>
   );
 }

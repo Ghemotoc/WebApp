@@ -1,0 +1,93 @@
+{
+  "homeDocumentTitle": "Atlasul poveștii",
+  "documentTitle": "{{title}}: Atlasul poveștii",
+  "eyebrow": "Atlasul poveștii",
+  "atAGlance": "Pe scurt",
+  "switcher": {
+    "label": "Povestea",
+    "newStory": "Poveste nouă",
+    "write": "Scrie"
+  },
+  "empty": {
+    "title": "Plănuiește-ți prima poveste",
+    "description": "Atlasul poveștii ține planul fiecărei povești lângă capitolele ei: despre ce e, cât de lungă să fie și unde ai ajuns. Doar tu îl vezi.",
+    "action": "Poveste nouă"
+  },
+  "signedOut": "Intră în cont ca să-ți plănuiești poveștile.",
+  "notFound": "Nu am găsit povestea printre ale tale. Poate a fost ștearsă.",
+  "loadFailed": "Planul nu s-a încărcat. Verifică-ți conexiunea și încearcă din nou.",
+  "privateNote": "Doar tu îți vezi planul.",
+  "save": {
+    "saving": "Se salvează…",
+    "saved": "Salvat",
+    "failed": "Nu s-a salvat. Ce ai scris e tot aici și încercăm din nou la următoarea schimbare."
+  },
+  "details": {
+    "heading": "Detaliile poveștii",
+    "sharedHint": "Titlul, genul și publicul sunt ale poveștii: dacă le schimbi aici, se schimbă și în Setările poveștii.",
+    "title": "Titlu",
+    "titleRequired": "Dă-i poveștii un titlu.",
+    "genre": "Gen",
+    "audience": "Public",
+    "logline": "Rezumat",
+    "loglineHint": "Povestea în una-două propoziții, ca să-ți amintești despre ce e.",
+    "seriesName": "Numele seriei",
+    "wordTarget": "Ținta de cuvinte",
+    "wordTargetInvalid": "Scrie un număr întreg de cuvinte, de la 1 la 5.000.000.",
+    "writingStatus": "Stadiul scrierii",
+    "publishingRoute": "Cum publici"
+  },
+  "writingStatus": {
+    "planning": "Plănuiesc",
+    "drafting": "Scriu prima variantă",
+    "revising": "Rescriu",
+    "editing": "Corectez",
+    "finished": "Terminată",
+    "on_hold": "În pauză"
+  },
+  "publishingRoute": {
+    "undecided": "Nu m-am hotărât",
+    "serial_here": "Capitol cu capitol pe {{productName}}",
+    "complete_here": "Toată odată pe {{productName}}",
+    "here_and_elsewhere": "Pe {{productName}} și în altă parte"
+  },
+  "summary": {
+    "heading": "Povestea",
+    "noLogline": "Încă nu are rezumat.",
+    "genre": "Gen",
+    "audience": "Public",
+    "route": "Cum publici",
+    "status": "Stadiul scrierii"
+  },
+  "words": {
+    "heading": "Cuvinte",
+    "count": "{{written}} din {{target}} de cuvinte",
+    "percent": "{{percent}}% din ținta ta de cuvinte"
+  },
+  "chapters": {
+    "heading": "Capitole",
+    "count_one": "{{count}} capitol",
+    "count_few": "{{count}} capitole",
+    "count_other": "{{count}} de capitole",
+    "published": "publicate: {{published}}",
+    "none": "Încă nu are capitole.",
+    "recent": "Modificate recent",
+    "chapterTitle": "Capitolul {{number}}: {{title}}",
+    "chapterUntitled": "Capitolul {{number}}",
+    "manage": "Gestionează capitolele"
+  },
+  "linked": {
+    "heading": "Proiect legat",
+    "hint": "Un proiect de-al tău din afara {{productName}}, de pildă un dosar comun sau un panou de inspirație.",
+    "label": "Nume",
+    "address": "Adresă web",
+    "addressHint": "Adresa întreagă, care începe cu https://",
+    "invalid": "Folosește o adresă web întreagă, care începe cu http:// sau https://.",
+    "open": "Deschide {{label}}",
+    "newTab": "(se deschide într-o filă nouă)"
+  },
+  "delete": {
+    "heading": "Șterge povestea",
+    "note": "Tot planul ei se șterge odată cu ea."
+  }
+}

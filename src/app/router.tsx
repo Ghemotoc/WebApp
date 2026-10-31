@@ -291,6 +291,24 @@ const writeRoutes: RouteObject[] = [
       return { Component: NewStoryPage };
     },
   },
+  // Story Atlas (S1-E17): the planning side of each of the writer's stories. /plan opens the story
+  // planned last on this device; /plan/s/:storySlug is that story's at-a-glance page.
+  {
+    path: '/plan',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { AtlasHomePage } = await import('@/features/atlas/components/AtlasHomePage');
+      return { Component: AtlasHomePage };
+    },
+  },
+  {
+    path: '/plan/s/:storySlug',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { StoryAtlasPage } = await import('@/features/atlas/components/StoryAtlasPage');
+      return { Component: StoryAtlasPage };
+    },
+  },
   // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
   // or deletes it.
   {
