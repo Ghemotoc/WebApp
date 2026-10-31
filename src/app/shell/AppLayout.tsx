@@ -12,6 +12,8 @@
  * "We've updated our Terms" when a signed-in person must accept a new version before posting.
  * Usernames (S1-E2-04): SetupProfileNotice sits under it and links a signed-in person without a
  * username to /setup.
+ * Age check (S1-E2-08): AgeCheckNotice sits under that and links an account that waits for an age
+ * check to /age-check.
  * Error, offline and maintenance states (S1-E1-05): OfflineBanner sits under the top bar;
  * MaintenanceGate swaps the notices and the page for the maintenance page while maintenance mode is
  * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
@@ -25,6 +27,7 @@ import { Outlet } from 'react-router';
 
 import { SanctionNotice } from '@/features/account/components/SanctionNotice';
 import { SetupProfileNotice } from '@/features/account/components/SetupProfileNotice';
+import { AgeCheckNotice } from '@/features/age-check/components/AgeCheckNotice';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePattern';
@@ -88,6 +91,8 @@ export function AppLayout() {
           <LegalUpdateNotice />
           {/* "Choose a username", for a signed-in person who hasn't chosen one yet (S1-E2-04). */}
           <SetupProfileNotice />
+          {/* "Confirm your age", for an account that waits for an age check (S1-E2-08). */}
+          <AgeCheckNotice />
           {/* A live suspension or reporting pause, said plainly on every page (S1-E10-06). */}
           <SanctionNotice />
           <Outlet />

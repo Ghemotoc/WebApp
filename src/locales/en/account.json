@@ -143,5 +143,76 @@
     "saving": "Saving…",
     "saved": "Saved.",
     "saveFailed": "We couldn’t save your birthday. Check your connection and try again."
+  },
+  "ageCheck": {
+    "documentTitle": "Confirm your age",
+    "eyebrow": "Age check",
+    "heading": "Confirm your age",
+    "intro13": "We check that you’re 13 or over, and whether you’re under 18, so you get the right safety settings.",
+    "intro18": "We check that you’re 18 or over, so you get the settings for adults.",
+    "methodsHeading": "Two ways to check",
+    "methodsIntro": "You choose one on Yoti’s page.",
+    "selfieTitle": "Quick selfie",
+    "selfieNote": "(no ID needed)",
+    "selfieBody": "Yoti estimates your age from a photo, then deletes it.",
+    "documentTitleMethod": "Use an ID document",
+    "documentBody": "Use your ID card or passport. Use this if you’d rather not take a selfie, or if the selfie check didn’t work.",
+    "start": "Continue with Yoti",
+    "starting": "Opening Yoti…",
+    "startHint": "Takes you to Yoti’s page. When you’re done, you come back here.",
+    "keptLabel": "What we keep:",
+    "keptBody": "the result (for example “13 or over”), the date and which method you used. Never your photo or your document.",
+    "howEyebrow": "How it works",
+    "howHeading": "Three short steps",
+    "step1": "Yoti’s page opens.",
+    "step2": "You take a selfie or scan your ID there.",
+    "step3": "You come back here and see your result.",
+    "readOnly": "Until the check is done, you can read but not post.",
+    "byYoti": "Age check by Yoti",
+    "signedOut": "Log in to check your age.",
+    "logIn": "Log in",
+    "loadFailed": "We couldn’t load your age check. Try again in a moment.",
+    "nothingToDo": "There’s no age check to do right now.",
+    "birthYearInSettings": "Your year of birth is in Settings.",
+    "openSettings": "Open Settings",
+    "confirmed": "Age confirmed: {{result}}",
+    "confirmedMeta": "{{date}} · {{method}}",
+    "photoDeleted": "Yoti deleted your photo after the check.",
+    "continue": "Continue",
+    "results": {
+      "18_or_over": "18 or over",
+      "13_or_over": "13 or over"
+    },
+    "methods": {
+      "facial_estimation": "Selfie",
+      "id_document": "ID document",
+      "manual": "Manual check"
+    },
+    "errors": {
+      "signed_out": "Your session ended. Log in again to check your age.",
+      "not_needed": "There’s no age check to do right now.",
+      "unavailable": "The age check isn’t available right now. Try again later.",
+      "unreachable": "We couldn’t reach the age check. Check your connection and try again."
+    },
+    "return": {
+      "documentTitle": "Your age check",
+      "checkingHeading": "Checking your age",
+      "checkingBody": "We’re waiting for the result from Yoti. This can take a moment. Keep this page open.",
+      "adultYearBody": "Settings for adults need an “18 or over” result. You can get one with an ID document.",
+      "useDocument": "Use an ID document",
+      "failedHeading": "We couldn’t confirm your age",
+      "failedBody": "The check didn’t give a clear result. You can try again, or use an ID document instead.",
+      "tryAgain": "Try again",
+      "notFinishedHeading": "The check wasn’t finished",
+      "notFinishedBody": "The Yoti page was closed or ran out of time. Nothing from it was kept. Start a new check when you’re ready.",
+      "cancelledHeading": "You stopped the check",
+      "cancelledBody": "You left Yoti’s page before the check finished. Nothing from it was kept. Start a new check when you’re ready.",
+      "startAgain": "Start again"
+    },
+    "notice": {
+      "heading": "Confirm your age",
+      "body": "Until your age is confirmed, you can read but not post.",
+      "action": "Check my age"
+    }
   }
 }

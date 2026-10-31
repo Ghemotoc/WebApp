@@ -143,5 +143,76 @@
     "saving": "Se salvează…",
     "saved": "Salvat.",
     "saveFailed": "Nu am putut salva ziua de naștere. Verifică-ți conexiunea și încearcă din nou."
+  },
+  "ageCheck": {
+    "documentTitle": "Confirmă-ți vârsta",
+    "eyebrow": "Verificarea vârstei",
+    "heading": "Confirmă-ți vârsta",
+    "intro13": "Verificăm că ai cel puțin 13 ani și dacă ai sub 18 ani, ca să primești setările de siguranță potrivite.",
+    "intro18": "Verificăm că ai cel puțin 18 ani, ca să primești setările pentru adulți.",
+    "methodsHeading": "Două feluri de a verifica",
+    "methodsIntro": "Alegi unul pe pagina Yoti.",
+    "selfieTitle": "Un selfie rapid",
+    "selfieNote": "(fără act de identitate)",
+    "selfieBody": "Yoti îți estimează vârsta dintr-o fotografie, apoi o șterge.",
+    "documentTitleMethod": "Folosește un act de identitate",
+    "documentBody": "Folosește buletinul sau pașaportul. Alege asta dacă nu vrei să faci un selfie sau dacă verificarea cu selfie nu a mers.",
+    "start": "Continuă cu Yoti",
+    "starting": "Se deschide Yoti…",
+    "startHint": "Te duce pe pagina Yoti. Când termini, te întorci aici.",
+    "keptLabel": "Ce păstrăm:",
+    "keptBody": "rezultatul (de exemplu „13 ani sau mai mult”), data și metoda folosită. Niciodată fotografia sau actul tău.",
+    "howEyebrow": "Cum funcționează",
+    "howHeading": "Trei pași scurți",
+    "step1": "Se deschide pagina Yoti.",
+    "step2": "Acolo faci un selfie sau scanezi actul de identitate.",
+    "step3": "Te întorci aici și vezi rezultatul.",
+    "readOnly": "Până se termină verificarea, poți citi, dar nu poți posta.",
+    "byYoti": "Verificarea vârstei prin Yoti",
+    "signedOut": "Intră în cont ca să îți verifici vârsta.",
+    "logIn": "Intră în cont",
+    "loadFailed": "Nu am putut încărca verificarea vârstei. Încearcă din nou peste puțin timp.",
+    "nothingToDo": "Acum nu e nicio verificare a vârstei de făcut.",
+    "birthYearInSettings": "Anul nașterii tale e în Setări.",
+    "openSettings": "Deschide Setările",
+    "confirmed": "Vârstă confirmată: {{result}}",
+    "confirmedMeta": "{{date}} · {{method}}",
+    "photoDeleted": "Yoti ți-a șters fotografia după verificare.",
+    "continue": "Continuă",
+    "results": {
+      "18_or_over": "18 ani sau mai mult",
+      "13_or_over": "13 ani sau mai mult"
+    },
+    "methods": {
+      "facial_estimation": "Selfie",
+      "id_document": "Act de identitate",
+      "manual": "Verificare manuală"
+    },
+    "errors": {
+      "signed_out": "Sesiunea ta s-a încheiat. Intră din nou în cont ca să îți verifici vârsta.",
+      "not_needed": "Acum nu e nicio verificare a vârstei de făcut.",
+      "unavailable": "Verificarea vârstei nu e disponibilă acum. Încearcă mai târziu.",
+      "unreachable": "Nu am putut ajunge la verificarea vârstei. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "return": {
+      "documentTitle": "Verificarea vârstei tale",
+      "checkingHeading": "Îți verificăm vârsta",
+      "checkingBody": "Așteptăm rezultatul de la Yoti. Poate dura puțin. Ține pagina deschisă.",
+      "adultYearBody": "Setările pentru adulți cer rezultatul „18 ani sau mai mult”. Îl poți obține cu un act de identitate.",
+      "useDocument": "Folosește un act de identitate",
+      "failedHeading": "Nu ți-am putut confirma vârsta",
+      "failedBody": "Verificarea nu a dat un rezultat clar. Poți încerca din nou sau poți folosi un act de identitate.",
+      "tryAgain": "Încearcă din nou",
+      "notFinishedHeading": "Verificarea nu s-a terminat",
+      "notFinishedBody": "Pagina Yoti a fost închisă sau timpul a expirat. Nu am păstrat nimic de acolo. Începe o verificare nouă când ești gata.",
+      "cancelledHeading": "Ai oprit verificarea",
+      "cancelledBody": "Ai ieșit de pe pagina Yoti înainte să se termine verificarea. Nu am păstrat nimic de acolo. Începe o verificare nouă când ești gata.",
+      "startAgain": "Începe din nou"
+    },
+    "notice": {
+      "heading": "Confirmă-ți vârsta",
+      "body": "Până îți confirmăm vârsta, poți citi, dar nu poți posta.",
+      "action": "Verifică-mi vârsta"
+    }
   }
 }

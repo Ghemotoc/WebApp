@@ -3,6 +3,45 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      age_check_sessions: {
+        Row: {
+          created_at: string;
+          expires_at: string;
+          id: string;
+          threshold: number;
+          updated_at: string;
+          user_id: string;
+          yoti_session_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          expires_at: string;
+          id?: string;
+          threshold: number;
+          updated_at?: string;
+          user_id: string;
+          yoti_session_id: string;
+        };
+        Update: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          threshold?: number;
+          updated_at?: string;
+          user_id?: string;
+          yoti_session_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'age_check_sessions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       appeals: {
         Row: {
           created_at: string;
@@ -2620,8 +2659,10 @@ export type Database = {
           pen_name_changed_at: string | null;
           shows_online_status: boolean;
           updated_at: string;
+          age_check_can_start_for: boolean | null;
+          age_check_threshold_for: number | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'age_check_can_start_for' | 'age_check_threshold_for';
         Insert: {
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
@@ -5552,7 +5593,34 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['age_band'];
       };
+      age_check_can_start_for: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      age_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       age_check_numbers: { Args: Record<PropertyKey, never>; Returns: Json };
+      age_check_result_value: {
+        Args: {
+          current_result: Database['public']['Enums']['age_check_result'];
+          passed: boolean;
+          threshold: number;
+        };
+        Returns: Database['public']['Enums']['age_check_result'];
+      };
+      age_check_threshold_for: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: number;
+      };
       another_appeals_decider_exists: { Args: Record<PropertyKey, never>; Returns: boolean };
       answer_report_detail_request: {
         Args: { answer_text: string; target_request_id: string };
@@ -5601,6 +5669,10 @@ export type Database = {
       };
       avatar_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       banned_email_hash: { Args: { email: string }; Returns: string };
+      begin_age_check: {
+        Args: { signature: string; threshold: number; yoti_session_id: string };
+        Returns: Json;
+      };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
       browse_stories: {
@@ -6298,6 +6370,7 @@ export type Database = {
       move_bible_section: { Args: { new_position: number; section_id: string }; Returns: Json };
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       move_chapter_scene: { Args: { new_position: number; scene_id: string }; Returns: Json };
+      my_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
       my_bible_entry: {
         Args: { target_entry_id: string };
         Returns: {
@@ -6818,6 +6891,7 @@ export type Database = {
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_expired_age_check_sessions: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
@@ -6943,6 +7017,15 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      record_age_check_result: {
+        Args: {
+          method: Database['public']['Enums']['age_check_method'];
+          outcome: string;
+          signature: string;
+          yoti_session_id: string;
+        };
+        Returns: Json;
       };
       record_chapter_read: { Args: { chapter_code: string; story_slug: string }; Returns: boolean };
       record_chapter_share: {

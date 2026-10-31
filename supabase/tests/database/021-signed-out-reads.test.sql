@@ -47,6 +47,7 @@ $$;
 select results_eq(
   $$ select table_name, visible_rows from pg_temp.rows_visible_to_anon() order by table_name $$,
   $$ select * from (values
+       ('age_check_sessions', 0::bigint),
        ('appeals', 0::bigint),
        ('audit_log', 0::bigint),
        ('banned_email_hashes', 0::bigint),

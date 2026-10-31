@@ -218,6 +218,23 @@ handle_new_auth_user() → verified_signup_country(token) with Vault's signup_co
 
 Settings › Account shows it as "Romania · From your connection" (`CountryRow`).
 
+## Checking one's age with Yoti (S1-E2-08a, added 5 Nov 2026; ADR 0010)
+
+Our server talks to Yoti; the browser only follows links, and the database keeps only the result:
+
+```
+/age-check (AgeCheckPage, useMyAgeCheck → my_age_check(): the line to check, 13 or 18)
+  → "Continue with Yoti" (StartAgeCheckButton) → POST /api/age-check/start
+      (server/age-check.ts; functions/api/age-check/[[path]].ts) with the person's sign-in
+  → a Yoti session (server/age-check/yoti.ts) → begin_age_check(), signed → age_check_sessions
+  → Yoti's hosted page: a selfie or an ID document
+Yoti → POST /api/age-check/webhook → Yoti's signature checked → the result fetched from Yoti
+  → record_age_check_result(), signed → profiles.age_check_result, age_checked_at, age_check_method
+Yoti → /age-check/return (AgeCheckReturnPage) → my_age_check() every 2 s → the message (lib/returnOutcome.ts)
+```
+
+`AgeCheckNotice` in `AppLayout` links an account that waits for a check to `/age-check` (hidden while `adults_only` is on). While `YOTI` isn't "real", `server/age-check/stub.ts` plays Yoti with its own page. Tests: `199` in `supabase/tests/database/`, `server/age-check.test.ts`, `src/features/age-check/lib/returnOutcome.test.ts`, `e2e/age-check.spec.ts`.
+
 ## Logging in (S1-E2-05)
 
 ```

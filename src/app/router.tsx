@@ -214,6 +214,30 @@ const staffRoutes: RouteObject = {
 };
 
 /**
+ * The age check with Yoti (S1-E2-08): the start page and where Yoti sends the person back. Each is
+ * loaded when opened.
+ */
+const ageCheckRoutes: RouteObject[] = [
+  {
+    path: '/age-check',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { AgeCheckPage } = await import('@/features/age-check/components/AgeCheckPage');
+      return { Component: AgeCheckPage };
+    },
+  },
+  {
+    path: '/age-check/return',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { AgeCheckReturnPage } =
+        await import('@/features/age-check/components/AgeCheckReturnPage');
+      return { Component: AgeCheckReturnPage };
+    },
+  },
+];
+
+/**
  * Notifications (S1-E7-01), loaded when opened; the bell in the top bar links here. And the
  * one-click unsubscribe from a notification email (S1-E7-02), which works signed out.
  */
@@ -630,6 +654,7 @@ function pageRoutes(): RouteObject[] {
         return { Component: SettingsPage };
       },
     },
+    ...ageCheckRoutes,
     ...notificationRoutes,
     // My reports and decisions (S1-E10-04): statements of reasons and the reports a person sent;
     // a decision's notification links here. Loaded when opened.

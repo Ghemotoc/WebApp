@@ -106,6 +106,9 @@ export default defineConfig({
       // The picture check's signing secret for local tests only (S1-E10-05); e2e/picture-check
       // puts the same value in the local database's Vault. Never a real secret.
       PICTURE_CHECK_SECRET: 'local-e2e-picture-secret',
+      // The age check's signing secret for local tests only (S1-E2-08); e2e/age-check puts the
+      // same value in the local database's Vault. Never a real secret.
+      AGE_CHECK_SECRET: 'local-e2e-age-secret',
       // The notification email worker's key (S1-E7-02): the same local-only value supabase/seed.sql
       // puts in the Vault as email_worker_key. Never a real secret.
       EMAIL_WORKER_KEY: 'local-only-email-worker-key-not-for-staging',
