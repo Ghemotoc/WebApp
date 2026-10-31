@@ -930,6 +930,28 @@ Reading applies the reader's rules again (`notification_is_shown()`): a chapter 
 
 Tests: `154-notifications.test.sql`, `lib/notificationText.test.ts`, `lib/dayGroups.test.ts`, `e2e/notifications.spec.ts`.
 
+## Notification emails (S1-E7-02)
+
+Each person picks Instant, Daily digest or Off per kind in Settings › Notifications; account, safety and legal emails (a moderation decision) always go. Cloudflare Pages has no scheduler, so the database wakes the sender:
+
+```
+notifications (new row) ─ trigger queue_instant_email ──┐  Instant kinds and moderation decisions
+queue_daily_digests(), 06:00 UTC (pg_cron) ─────────────┤  one digest per person of the day's unread
+                                                        ▼
+                                               email_outbox (never an address or words)
+run_email_worker(), every 5 minutes (pg_cron) ─ pg_net POST /api/notification-emails, Bearer worker key
+server/notification-emails.ts → email_worker_claim(key): the address, the language and the items,
+   read as the recipient (blocks, ratings, moderation, as on their page) → Brevo (Mailpit locally)
+   → email_worker_mark_sent(key)
+Settings › Notifications → hooks/useEmailSettings → set_notification_email()
+email link /unsubscribe?key= (button) or the List-Unsubscribe header (POST /api/unsubscribe)
+   → unsubscribe_from_emails(key): every optional kind Off, works signed out
+```
+
+The worker key is the Vault secret `email_worker_key` and Cloudflare's `EMAIL_WORKER_KEY` (the same value); `email_worker_url` in the Vault turns the calls on (not set locally, so local pg_cron never calls out; the e2e test wakes the worker itself). Marketing email has a gate before any sender exists: `marketing_email_allowed()` is true only for an adult who opted in, and `set_marketing_email_opt_in()` refuses anyone under 18 (Q50).
+
+Tests: `183-notification-emails.test.sql`, `server/notification-emails.test.ts`, `e2e/notification-emails.spec.ts`.
+
 ## Discover and the story lists (S1-E5-01, S1-E5-09, S1-E5-02)
 
 `/discover` from the top bar; a shelf's "View more", a tag on the story page or "View more" on a profile open a list page:

@@ -36,5 +36,31 @@
     "body": "Cineva a cerut schimbarea adresei de email a unui cont {{productName}}. Trimitem un cod la adresa actuală și altul la cea nouă. Scrie-le pe amândouă în Setări, iar schimbarea se face doar după ce sunt corecte amândouă. Până atunci, adresa actuală merge în continuare.",
     "codeLabel": "Codul tău pentru această adresă:",
     "linkNote": "Codul merge o singură dată și expiră după o oră."
+  },
+  "notificationEmails": {
+    "subjectDigest": "Rezumatul tău zilnic de pe {{productName}}",
+    "subjectDecision": "O decizie de moderare despre ceva ce ai postat",
+    "digestIntro": "Iată ce s-a întâmplat pe {{productName}} de ieri încoace:",
+    "instantIntro": "Ceva nou pe {{productName}}:",
+    "whoSomeone": "Cineva",
+    "whoTwo": "{{first}} și {{second}}",
+    "whoManyOne": "{{first}}, {{second}} și încă o persoană",
+    "whoMany": "{{first}}, {{second}} și încă {{count}} persoane",
+    "where": "capitolul {{position}} din „{{story}}”",
+    "newChapter": "{{who}} a publicat {{where}}.",
+    "newChapterMany": "{{who}} au publicat {{where}}.",
+    "commentOnChapter": "{{who}} a comentat la {{where}}.",
+    "commentOnChapterMany": "{{who}} au comentat la {{where}}.",
+    "commentReply": "{{who}} a răspuns la comentariul tău de la {{where}}.",
+    "commentReplyMany": "{{who}} au răspuns la comentariul tău de la {{where}}.",
+    "commentReactions": "{{who}} a reacționat la comentariul tău de la {{where}}.",
+    "commentReactionsMany": "{{who}} au reacționat la comentariul tău de la {{where}}.",
+    "newFollower": "{{who}} a început să te urmărească.",
+    "newFollowerMany": "{{who}} au început să te urmărească.",
+    "moderationDecision": "Echipa noastră de moderare a luat o decizie despre ceva ce ai postat. Deschide notificările ca să citești motivele și cum poți contesta.",
+    "seeAll": "Vezi totul pe {{productName}}: {{link}}",
+    "why": "Primești aceste emailuri pentru că așa ai ales în Setări, la Notificări: {{link}}",
+    "unsubscribe": "Oprește aceste emailuri cu un singur clic: {{link}}",
+    "required": "Acest email este despre contul tău și siguranță, așa că îl trimitem mereu."
   }
 }

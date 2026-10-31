@@ -184,6 +184,18 @@ begin
 end;
 $$;
 
+-- A local-only key for the notification email worker (S1-E7-02): the same value goes in
+-- EMAIL_WORKER_KEY for the local Pages Functions and the e2e tests. email_worker_url is left unset,
+-- so pg_cron never calls out from a developer's machine; staging and production set both by hand.
+do $$
+begin
+  if not exists (select 1 from vault.secrets where name = 'email_worker_key') then
+    perform vault.create_secret('local-only-email-worker-key-not-for-staging', 'email_worker_key',
+      'Key the email worker shows the database (S1-E7-02). Local seed value; staging and production set their own by hand.');
+  end if;
+end;
+$$;
+
 -- The safeguarding permission for owner and moderator (S1-E10-03a; decided 23 Oct 2026, Q6), so
 -- the safeguarding cases below are visible to them and hidden from the admin persona, which lets
 -- tests and hand checks see both sides.

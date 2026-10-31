@@ -6,6 +6,8 @@
  * Routes: POST /api/password-check (server/password-check.ts), GET /api/signup-context
  * (server/signup-context.ts, S1-E2-10), POST /api/contact (server/contact.ts, S1-E14-04),
  * POST /api/decision-emails (server/decision-emails.ts, S1-E10-04),
+ * POST /api/notification-emails and POST /api/unsubscribe (server/notification-emails.ts,
+ * S1-E7-02: the worker key is EMAIL_WORKER_KEY, the seeded Vault value; emails go to Mailpit),
  * POST /api/notice (server/notice.ts, S1-E10-02: signed with NOTICE_SECRET, the same value the
  * tests put in the local Vault; its emails go to Mailpit too) and
  * POST /api/picture-check (server/picture-check.ts, S1-E10-05: always the stub locally, signed
@@ -36,8 +38,14 @@ import { handleContact, sendWithMailpit } from './contact.ts';
 import { handleDecisionEmails } from './decision-emails.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
 import { handleNotice } from './notice.ts';
+import {
+  handleNotificationEmails,
+  handleUnsubscribe,
+  type NotificationEmailOptions,
+} from './notification-emails.ts';
 import { handlePictureCheck } from './picture-check.ts';
 import { pictureChecker } from './picture-check/index.ts';
+import { overridesFromDatabase } from './send-email.ts';
 import { handleSignupContext } from './signup-context.ts';
 import {
   fetchFromHaveIBeenPwned,
@@ -121,6 +129,33 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
 type FunctionHandler = (request: Request) => Promise<Response>;
 
 /**
+ * The notification email worker's settings locally: the local Supabase, EMAIL_WORKER_KEY from the
+ * environment (the seeded Vault value in the e2e tests), the bundled texts with the local
+ * overrides, and Mailpit instead of Brevo.
+ *
+ * @param environment - the VITE_ values
+ * @returns the options for handleNotificationEmails()
+ */
+function notificationEmailOptions(environment: Record<string, string>): NotificationEmailOptions {
+  const supabaseUrl = environment.VITE_SUPABASE_URL ?? '';
+  const anonKey = environment.VITE_SUPABASE_ANON_KEY ?? '';
+  const productName = process.env.VITE_BRAND_NAME ?? brandDefaults.productName;
+  return {
+    supabaseUrl,
+    anonKey,
+    workerKey: process.env.EMAIL_WORKER_KEY,
+    sender: {
+      name: productName,
+      email: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
+    },
+    productName,
+    companyName: process.env.VITE_BRAND_COMPANY_NAME ?? brandDefaults.companyName,
+    sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
+    readOverrides: overridesFromDatabase(supabaseUrl, anonKey),
+  };
+}
+
+/**
  * Picks the handler for the functions that read or write the local database.
  *
  * @param url - the request's address
@@ -155,6 +190,18 @@ function databaseHandlerFor(
           sightengine: { apiUser: '', apiSecret: '' },
           arachnid: { username: '', password: '' },
         }),
+      });
+  }
+  if (url === '/api/notification-emails') {
+    // The notification emails (S1-E7-02): the local Supabase, the seeded worker key, Mailpit.
+    return (request) => handleNotificationEmails(request, notificationEmailOptions(environment));
+  }
+  if ((url ?? '').startsWith('/api/unsubscribe')) {
+    // The one-click unsubscribe from an email's header (S1-E7-02).
+    return (request) =>
+      handleUnsubscribe(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
       });
   }
   if (url === '/api/decision-emails') {

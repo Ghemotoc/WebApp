@@ -11,6 +11,9 @@ The database runs a few jobs on a timer with `pg_cron`. Each is a named job, cre
 | `publish-due-chapters` | every minute | `publish_due_chapters()` | publishes scheduled chapters whose time has come; skips deleted stories and writers who are no longer active | S1-E3-03 |
 | `run-notification-jobs` | every minute | `run_notification_jobs()` | turns queued `chapter_published` and `comment_posted` jobs into notifications for followers, writers and comment authors, and marks the jobs done | S1-E7-01 |
 | `purge-old-notifications` | 03:41 every day | `purge_old_notifications()` | deletes notifications older than 90 days (`notifications_keep_days`), moderation decisions after a year | S1-E7-01 |
+| `purge-sent-emails` | 03:52 every day | `purge_sent_emails()` | deletes `email_outbox` rows 30 days after their email left | S1-E7-02 |
+| `queue-daily-email-digests` | 06:00 every day | `queue_daily_digests()` | queues one digest per person of the last day's unread notifications whose kind they set to Daily digest and that no email carried yet | S1-E7-02 |
+| `run-email-worker` | every 5 minutes | `run_email_worker()` | when emails are due, calls `/api/notification-emails` through pg_net with the worker key; does nothing while the Vault lacks `email_worker_url` or `email_worker_key` | S1-E7-02 |
 | `count-daily-metrics` | 04:07 every day | `run_daily_metrics()` | counts yesterday's March test numbers (writers who published, signed-up readers, chapter reads, the approximate return rate) into `daily_metrics`, by market too; re-running a day replaces it; deletes rows older than 3 years (`daily_metrics_keep_years`) | S1-E15-02 |
 | `compute-story-scores` | 13 minutes past every hour | `compute_story_scores()` | scores every readable story for Popular and New and rising from the last 60 days of reads, likes, comments (never the writer's own, never downvotes) and read-through, halved every 7 days; the weights are `ranking_weight_*` settings | S1-E5-03 |
 

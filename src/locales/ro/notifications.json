@@ -112,5 +112,47 @@
     "open": "contestația ta {{reference}} așteaptă un moderator.",
     "upheld": "un alt moderator s-a uitat din nou la contestația ta {{reference}}. Decizia rămâne.",
     "overturned": "un alt moderator s-a uitat din nou la contestația ta {{reference}} și a schimbat decizia."
+  },
+  "emailSettings": {
+    "eyebrow": "Notificări",
+    "heading": "Notificări",
+    "intro": "Alege ce îți trimitem pe email. Totul apare în continuare în aplicație.",
+    "tableLabel": "Emailuri de notificare",
+    "typeColumn": "Tip",
+    "emailColumn": "Email",
+    "selectLabel": "Email pentru {{label}}",
+    "kinds": {
+      "comment_reply": "Răspunsuri la comentariile mele",
+      "new_chapter": "Capitole noi în poveștile pe care le urmăresc",
+      "comment_on_chapter": "Comentarii la capitolele mele",
+      "new_follower": "Urmăritori noi"
+    },
+    "deliveries": {
+      "instant": "Imediat",
+      "daily": "Rezumat zilnic",
+      "off": "Oprit"
+    },
+    "requiredLabel": "Cont, siguranță și aspecte legale",
+    "requiredValue": "Trimise mereu",
+    "saved": "Salvat.",
+    "saveFailed": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou.",
+    "loadFailed": "Nu am putut încărca alegerile tale pentru emailuri. Verifică-ți conexiunea și încearcă din nou.",
+    "digestNote": "Rezumatul zilnic vine o dată pe zi, dimineața, și doar când s-a întâmplat ceva.",
+    "noMarketingTitle": "Fără emailuri de marketing.",
+    "noMarketing": "Nu trimitem emailuri promoționale nimănui sub 18 ani.",
+    "unsubscribeNote": "Fiecare email, în afară de cele despre cont, siguranță și aspecte legale, are un link de dezabonare cu un singur clic."
+  },
+  "unsubscribe": {
+    "documentTitle": "Dezabonare",
+    "eyebrow": "Emailuri",
+    "heading": "Oprește emailurile de notificare",
+    "intro": "Astfel oprești toate emailurile de notificare pe care ți le trimitem: răspunsuri, capitole noi, comentarii și urmăritori noi. Emailurile despre cont, siguranță și aspecte legale vin în continuare.",
+    "button": "Oprește aceste emailuri",
+    "working": "Se oprește…",
+    "done": "Gata. Nu îți mai trimitem emailuri de notificare. Le poți porni din nou în Setări.",
+    "settingsLink": "Deschide Setările",
+    "unknown": "Acest link nu mai merge. Conectează-te și schimbă emailurile din Setări.",
+    "failed": "Nu am putut face asta. Verifică-ți conexiunea și încearcă din nou.",
+    "missingKey": "Linkului îi lipsește cheia. Deschide din nou linkul din email."
   }
 }

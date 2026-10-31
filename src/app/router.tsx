@@ -214,6 +214,31 @@ const staffRoutes: RouteObject = {
 };
 
 /**
+ * Notifications (S1-E7-01), loaded when opened; the bell in the top bar links here. And the
+ * one-click unsubscribe from a notification email (S1-E7-02), which works signed out.
+ */
+const notificationRoutes: RouteObject[] = [
+  {
+    path: '/notifications',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { NotificationsPage } =
+        await import('@/features/notifications/components/NotificationsPage');
+      return { Component: NotificationsPage };
+    },
+  },
+  {
+    path: '/unsubscribe',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { UnsubscribePage } =
+        await import('@/features/notifications/components/UnsubscribePage');
+      return { Component: UnsubscribePage };
+    },
+  },
+];
+
+/**
  * Messages to the moderators (S1-E10-11): the list, a new message and one thread; a
  * moderator_mail_reply notification links to the thread. Each is loaded when opened.
  */
@@ -455,16 +480,7 @@ function pageRoutes(): RouteObject[] {
         return { Component: SettingsPage };
       },
     },
-    // Notifications (S1-E7-01): loaded when opened; the bell in the top bar links here.
-    {
-      path: '/notifications',
-      HydrateFallback: () => null,
-      lazy: async () => {
-        const { NotificationsPage } =
-          await import('@/features/notifications/components/NotificationsPage');
-        return { Component: NotificationsPage };
-      },
-    },
+    ...notificationRoutes,
     // My reports and decisions (S1-E10-04): statements of reasons and the reports a person sent;
     // a decision's notification links here. Loaded when opened.
     {
