@@ -1,11 +1,12 @@
 /**
- * CharacterSheet: one character's sheet on the Characters page (stories S1-E17-09 to S1-E17-11
- * and S1-E17-13).
+ * CharacterSheet: one character's sheet on the Characters page (stories S1-E17-09 to S1-E17-11,
+ * S1-E17-13 and S1-E17-14).
  *
  * From top to bottom: the name as the heading, the name and role, the picture, then the four
  * groups (Basics, Look and voice, Inside, In the story with the first appearance), the writer's
- * own fields and Delete. Every field saves by itself. The caller gives it a key per character,
- * so switching characters saves what was waiting and starts the next sheet fresh.
+ * own fields, the character's relationships (S1-E17-14) and Delete. Every field saves by itself.
+ * The caller gives it a key per character, so switching characters saves what was waiting and
+ * starts the next sheet fresh.
  * Who uses it: CharactersPage. What it calls: useStoryCast's changers (through the props) and the
  * sheet's section components.
  */
@@ -14,6 +15,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { CharacterIdentityFields } from './CharacterIdentityFields';
 import { CharacterPictureSection } from './CharacterPictureSection';
+import { CharacterRelationshipsSection } from './CharacterRelationshipsSection';
 import { CustomValuesSection } from './CustomValuesSection';
 import { DeleteCharacterSection } from './DeleteCharacterSection';
 import { PlanSelectField } from './PlanSelectField';
@@ -99,6 +101,7 @@ export function CharacterSheet(props: CharacterSheetProps) {
         fields={cast.fields}
         saveValue={async (fieldId, value) => saveChange({ custom: { [fieldId]: value } })}
       />
+      <CharacterRelationshipsSection slug={slug} cast={cast} characterId={character.id} />
       <DeleteCharacterSection name={character.name} onDelete={props.onDelete} />
     </article>
   );

@@ -8,7 +8,8 @@
  * - create_story_character(), update_story_character() and delete_story_character();
  * - add_character_field() and update_character_field() (the writer's own fields, S1-E17-10);
  * - set_character_picture() and remove_character_picture(), with the upload and file delete in
- *   src/features/pictures/api/pictures.ts (S1-E17-11).
+ *   src/features/pictures/api/pictures.ts (S1-E17-11);
+ * - add_character_relationship() and delete_character_relationship() (S1-E17-14).
  * Characters are private: only their writer can read them (story_characters_select_own).
  */
 import type { Json } from '@/lib/database.types';
@@ -63,6 +64,35 @@ export interface StoryCharacter {
   pictureAlt: string;
 }
 
+/** The relationship types, in the order the list offers them (S1-E17-14). */
+export const relationshipKinds = [
+  'parent_of',
+  'sibling_of',
+  'partner_of',
+  'loves',
+  'made',
+  'friend_of',
+  'ally_of',
+  'mentors',
+  'works_for',
+  'enemy_of',
+  'resents',
+  'killed',
+  'custom',
+] as const;
+export type RelationshipKind = (typeof relationshipKinds)[number];
+
+/** How two characters are connected, read "<from> is <kind> <to>" (S1-E17-14). */
+export interface CharacterRelationship {
+  id: string;
+  fromId: string;
+  toId: string;
+  kind: RelationshipKind;
+  /** The writer's own label, for a custom relationship only. */
+  customLabel: string;
+  note: string;
+}
+
 /** One of the writer's own fields (S1-E17-10). */
 export interface CharacterField {
   id: string;
@@ -78,6 +108,7 @@ export interface StoryCast {
   characters: StoryCharacter[];
   fields: CharacterField[];
   chapters: { code: string; position: number; title: string }[];
+  relationships: CharacterRelationship[];
 }
 
 /** The cache key of one story's cast. */
@@ -106,6 +137,14 @@ interface StoryCastRow {
   characters: CharacterRow[];
   fields: { id: string; name: string; position: number; is_hidden: boolean }[];
   chapters: { code: string; position: number; title: string }[];
+  relationships: {
+    id: string;
+    from: string;
+    to: string;
+    kind: RelationshipKind;
+    custom_label: string;
+    note: string;
+  }[];
 }
 
 /**
@@ -164,6 +203,14 @@ export async function fetchStoryCast(
       isHidden: field.is_hidden,
     })),
     chapters: row.chapters,
+    relationships: row.relationships.map((link) => ({
+      id: link.id,
+      fromId: link.from,
+      toId: link.to,
+      kind: link.kind,
+      customLabel: link.custom_label,
+      note: link.note,
+    })),
   };
 }
 
@@ -321,4 +368,50 @@ export async function updateCharacterField(
 ): Promise<void> {
   const answer = await client.rpc('update_character_field', { field_id: fieldId, changes: change });
   okAnswer(answer, 'change the field');
+}
+
+/** What a new relationship needs (S1-E17-14). */
+export interface NewRelationship {
+  fromId: string;
+  toId: string;
+  kind: RelationshipKind;
+  /** Only for a custom relationship. */
+  customLabel: string;
+  note: string;
+}
+
+/**
+ * Records how two of the writer's characters are connected (S1-E17-14).
+ *
+ * @param client - the shared Supabase client
+ * @param relationship - the two characters, the type, the label and the note
+ * Errors: throws when the database refuses it (the same character twice, a custom type with no
+ *   label) or can't be reached.
+ */
+export async function addRelationship(
+  client: AppSupabaseClient,
+  relationship: NewRelationship,
+): Promise<void> {
+  const answer = await client.rpc('add_character_relationship', {
+    from_character_id: relationship.fromId,
+    to_character_id: relationship.toId,
+    relationship_kind: relationship.kind,
+    custom_label: relationship.customLabel,
+    note: relationship.note,
+  });
+  okAnswer(answer, 'add the relationship');
+}
+
+/**
+ * Deletes one of the writer's relationships (S1-E17-14; the screen asks twice first).
+ *
+ * @param client - the shared Supabase client
+ * @param relationshipId - the relationship
+ * Errors: throws when the database can't be reached or the relationship isn't the writer's.
+ */
+export async function deleteRelationship(client: AppSupabaseClient, relationshipId: string) {
+  const answer = await client.rpc('delete_character_relationship', {
+    relationship_id: relationshipId,
+  });
+  okAnswer(answer, 'delete the relationship');
 }

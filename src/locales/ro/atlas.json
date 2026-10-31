@@ -93,7 +93,8 @@
   "nav": {
     "label": "Secțiunile Story Atlas",
     "glance": "Pe scurt",
-    "characters": "Personaje"
+    "characters": "Personaje",
+    "connections": "Legături"
   },
   "characters": {
     "heading": "Personaje",
@@ -200,5 +201,94 @@
     "removedNote": "Scos: ascuns de pe fișe, cu tot ce ai scris păstrat.",
     "nameRequired": "Dă-i câmpului un nume.",
     "failed": "Nu s-a salvat. Verifică-ți conexiunea și încearcă din nou."
+  },
+  "connections": {
+    "heading": "Legături",
+    "documentTitle": "Legături în {{title}}: Story Atlas",
+    "noCharacters": "Adaugă mai întâi cel puțin două personaje, apoi leagă-le aici.",
+    "openCharacters": "Deschide personajele",
+    "kinds": {
+      "parent_of": "Părinte pentru",
+      "sibling_of": "Frate sau soră cu",
+      "partner_of": "Partener(ă) sau soț(ie) pentru",
+      "loves": "Îndrăgostit(ă) de",
+      "made": "A transformat sau a creat",
+      "friend_of": "Prieten(ă) cu",
+      "ally_of": "Aliat(ă) cu",
+      "mentors": "Mentor pentru",
+      "works_for": "Lucrează pentru",
+      "enemy_of": "În dușmănie cu",
+      "resents": "Are resentimente față de",
+      "killed": "A ucis",
+      "custom": "Altă legătură (eticheta ta)"
+    },
+    "sentences": {
+      "parent_of": "{{from}} e părinte pentru {{to}}",
+      "sibling_of": "{{from}} e frate sau soră cu {{to}}",
+      "partner_of": "{{from}} e partener(ă) sau soț(ie) pentru {{to}}",
+      "loves": "{{from}} e îndrăgostit(ă) de {{to}}",
+      "made": "{{to}} a fost transformat(ă) sau creat(ă) de {{from}}",
+      "friend_of": "{{from}} e prieten(ă) cu {{to}}",
+      "ally_of": "{{from}} e aliat(ă) cu {{to}}",
+      "mentors": "{{from}} e mentor pentru {{to}}",
+      "works_for": "{{from}} lucrează pentru {{to}}",
+      "enemy_of": "{{from}} e în dușmănie cu {{to}}",
+      "resents": "{{from}} are resentimente față de {{to}}",
+      "killed": "{{to}} a fost ucis(ă) de {{from}}",
+      "custom": "{{from}}: {{label}} {{to}}"
+    },
+    "categories": {
+      "family": "Familie",
+      "love": "Dragoste",
+      "lineage": "Descendență (creatori)",
+      "allies": "Aliați",
+      "conflict": "Conflict",
+      "other": "Altele"
+    },
+    "add": {
+      "heading": "Adaugă o legătură",
+      "hint": "Se citește de la primul personaj la al doilea: „Ana e părinte pentru Vali”.",
+      "from": "Personaj",
+      "to": "Celălalt personaj",
+      "pickCharacter": "Alege un personaj",
+      "kind": "Legătura",
+      "customLabel": "Eticheta ta",
+      "customHint": "De exemplu „rival cu” sau „îi datorează lui”.",
+      "note": "Notă (opțional)",
+      "button": "Adaugă legătura",
+      "added": "Legătura a fost adăugată.",
+      "pickBoth": "Alege ambele personaje.",
+      "labelRequired": "Scrie eticheta ta pentru această legătură.",
+      "failed": "Legătura nu a fost salvată. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "list": {
+      "heading": "Toate legăturile",
+      "sheetHeading": "Legături",
+      "none": "Încă nu ai legături.",
+      "delete": "Șterge",
+      "confirm": "Ștergi „{{sentence}}”?",
+      "yes": "Da, șterge",
+      "keep": "Păstreaz-o",
+      "failed": "Legătura nu a fost ștearsă. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "map": {
+      "heading": "Harta legăturilor",
+      "hint": "Alege un personaj ca să-i deschizi fișa. Aceleași legături sunt scrise și la Toate legăturile.",
+      "region": "Harta legăturilor; pe ecrane mici se derulează în lateral",
+      "categoriesLabel": "Arată categoriile",
+      "none": "Încă nu sunt legături de desenat."
+    },
+    "tree": {
+      "heading": "Arborele familiei",
+      "hint": "Făcut din „Părinte pentru” și „Partener(ă) sau soț(ie) pentru”. Generațiile mai vechi sunt sus.",
+      "includeMade": "Include și transformările sau creațiile",
+      "region": "Arborele familiei; pe ecrane mici se derulează în lateral",
+      "none": "Încă nu sunt legături de familie. Adaugă „Părinte pentru” sau „Partener(ă) sau soț(ie) pentru” ca să apară arborele.",
+      "leftOff_one": "{{count}} personaj fără legături de familie nu apare.",
+      "leftOff_few": "{{count}} personaje fără legături de familie nu apar.",
+      "leftOff_other": "{{count}} de personaje fără legături de familie nu apar.",
+      "generationsLabel": "Generații",
+      "generation": "Generația {{number}}: {{names}}"
+    }
   }
 }

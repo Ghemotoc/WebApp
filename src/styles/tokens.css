@@ -113,6 +113,15 @@
   --shadow-nav: 0 1px 2px rgba(38, 20, 46, 0.04), 0 8px 24px -12px rgba(38, 20, 46, 0.12);
   --shadow-card: 0 1px 2px rgba(38, 20, 46, 0.04), 0 18px 40px -28px rgba(38, 20, 46, 0.3);
   --shadow-popover: 0 1px 2px rgba(38, 20, 46, 0.05), 0 24px 48px -24px rgba(38, 20, 46, 0.35);
+
+  /* Story Atlas relationship lines (S1-E17-15): one colour per category, each also drawn with its
+     own line style, so the meaning never rests on colour alone. At least 3:1 on cards. */
+  --atlas-line-family: #481c5f;
+  --atlas-line-love: #b0306a;
+  --atlas-line-lineage: #6b4f00;
+  --atlas-line-allies: #2f6b3a;
+  --atlas-line-conflict: #8c2b3a;
+  --atlas-line-other: #4a5866;
 }
 
 [data-theme='night'] {
@@ -200,6 +209,14 @@
   --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 40px -28px rgba(0, 0, 0, 0.7);
   --shadow-popover: 0 1px 2px rgba(0, 0, 0, 0.3), 0 24px 48px -24px rgba(0, 0, 0, 0.8);
+
+  /* Story Atlas relationship lines (S1-E17-15), lightened for night cards. */
+  --atlas-line-family: #e9ddf0;
+  --atlas-line-love: #f4a6c8;
+  --atlas-line-lineage: #e6c24c;
+  --atlas-line-allies: #9fd3a8;
+  --atlas-line-conflict: #f2a7b3;
+  --atlas-line-other: #c6d0da;
 }
 
 /* Tailwind classes from the tokens: bg-paper, text-ink, border-control-border and so on. */

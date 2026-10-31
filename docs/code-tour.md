@@ -1411,3 +1411,11 @@ Read in this order; each file's header comment says what it is for and where thi
 - A picture: `uploadAtlasPicture()` in `src/features/pictures/api/pictures.ts` prepares, uploads, registers and checks it; `set_character_picture()` puts it on the sheet. `CharacterAvatar` shows it once it passed, or the initials (`lib/characterInitials.ts`).
 - On the at-a-glance page, `CastAtAGlance` shows the cast count and `CharacterFieldsSection` adds, removes and brings back the writer's own fields.
 
+## Story Atlas: connections (S1-E17-14 to S1-E17-16; ATLAS-c)
+
+- Start at `src/features/atlas/components/ConnectionsPage.tsx` (`/plan/s/:storySlug/connections`, the third item in `AtlasSectionNav`). It reads the same `story_cast()` as the Characters page, whose answer now carries `relationships`.
+- One click: "Add relationship" in `AddRelationshipForm` → `useRelationshipChangers().relate` → `addRelationship()` in `api/characters.ts` → `add_character_relationship()` → a row in `story_character_relationships` (read back only by the writer, `story_character_relationships_select_own`) → the cast is refreshed and every view redraws.
+- `RelationshipMap` places the nodes with `lib/relationshipMap.ts` and draws each line in its category's colour and dash (`lib/relationshipCategories.ts`, colours `--atlas-line-*` in `src/styles/tokens.css`); the nodes are real links to the sheets, and `RelationshipList` under "All relationships" is the same data for screen readers.
+- `FamilyTreeView` builds the generations with `lib/familyTree.ts` and draws them with `lib/familyTreeLayout.ts`.
+- On each sheet, `CharacterRelationshipsSection` lists the character's relationships both ways and adds new ones.
+
