@@ -3718,6 +3718,114 @@ export type Database = {
           },
         ];
       };
+      story_bible_entries: {
+        Row: {
+          body: string;
+          created_at: string;
+          id: string;
+          section_id: string;
+          story_id: string;
+          tags: string[];
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          section_id: string;
+          story_id: string;
+          tags?: string[];
+          title: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          section_id?: string;
+          story_id?: string;
+          tags?: string[];
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_bible_entries_section_id_fkey';
+            columns: ['section_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_bible_sections';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_bible_entries_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_bible_entries_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_bible_sections: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          position: number;
+          preset: string | null;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          position: number;
+          preset?: string | null;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          position?: number;
+          preset?: string | null;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_bible_sections_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_bible_sections_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_character_fields: {
         Row: {
           created_at: string;
@@ -4321,6 +4429,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      add_bible_section: { Args: { section_name: string; story_slug: string }; Returns: Json };
       add_chapter_share: { Args: { target_chapter_id: string }; Returns: undefined };
       add_character_field: { Args: { field_name: string; story_slug: string }; Returns: Json };
       add_character_relationship: {
@@ -5176,6 +5285,7 @@ export type Database = {
         Returns: Json;
       };
       character_sheet_keys: { Args: Record<PropertyKey, never>; Returns: string[] };
+      check_bible_text: { Args: { body: string }; Returns: string };
       check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
       check_chapter_embeds: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_pictures: { Args: { body: string; owner_id: string }; Returns: undefined };
@@ -5227,6 +5337,7 @@ export type Database = {
       };
       classic_work_json: { Args: { target_story_id: string }; Returns: Json };
       classics_account_id: { Args: Record<PropertyKey, never>; Returns: string };
+      clean_bible_tags: { Args: { raw_tags: Json }; Returns: string[] };
       clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
       close_finished_safety_checks: { Args: { target_country: string }; Returns: undefined };
@@ -5342,6 +5453,7 @@ export type Database = {
       count_links: { Args: { body: string }; Returns: number };
       count_words: { Args: { body: string }; Returns: number };
       cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      create_bible_entry: { Args: { entry_title: string; section_id: string }; Returns: Json };
       create_chapter: { Args: { story_slug: string }; Returns: Json };
       create_monthly_safety_checks: { Args: Record<PropertyKey, never>; Returns: number };
       create_story: {
@@ -5394,6 +5506,8 @@ export type Database = {
         Args: { kind: Database['public']['Enums']['notification_kind'] };
         Returns: Database['public']['Enums']['email_delivery'];
       };
+      delete_bible_entry: { Args: { entry_id: string }; Returns: Json };
+      delete_bible_section: { Args: { section_id: string }; Returns: Json };
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
       delete_character_relationship: { Args: { relationship_id: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
@@ -5673,6 +5787,10 @@ export type Database = {
         };
         Returns: string;
       };
+      make_bible_sections: {
+        Args: { plan_story_id: string; writer_id: string };
+        Returns: undefined;
+      };
       make_quote_card: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
       market_change_problem: {
@@ -5709,7 +5827,47 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: Database['public']['Enums']['moderated_state'];
       };
+      move_bible_section: { Args: { new_position: number; section_id: string }; Returns: Json };
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
+      my_bible_entry: {
+        Args: { target_entry_id: string };
+        Returns: {
+          body: string;
+          created_at: string;
+          id: string;
+          section_id: string;
+          story_id: string;
+          tags: string[];
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'story_bible_entries';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      my_bible_section: {
+        Args: { target_section_id: string };
+        Returns: {
+          created_at: string;
+          id: string;
+          name: string;
+          position: number;
+          preset: string | null;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'story_bible_sections';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       my_blocked_accounts: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -6196,6 +6354,7 @@ export type Database = {
       };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
+      rename_bible_section: { Args: { section_id: string; section_name: string }; Returns: Json };
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
@@ -6496,6 +6655,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      story_bible: { Args: { story_slug: string }; Returns: Json };
       story_card_json: { Args: { target_story_id: string }; Returns: Json };
       story_cast: { Args: { story_slug: string }; Returns: Json };
       story_classic_author: { Args: { target_story_id: string }; Returns: Json };
@@ -6619,6 +6779,7 @@ export type Database = {
       };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       unsubscribe_from_emails: { Args: { unsubscribe_key: string }; Returns: boolean };
+      update_bible_entry: { Args: { changes: Json; entry_id: string }; Returns: Json };
       update_character_field: { Args: { changes: Json; field_id: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };

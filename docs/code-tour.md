@@ -1419,3 +1419,10 @@ Read in this order; each file's header comment says what it is for and where thi
 - `FamilyTreeView` builds the generations with `lib/familyTree.ts` and draws them with `lib/familyTreeLayout.ts`.
 - On each sheet, `CharacterRelationshipsSection` lists the character's relationships both ways and adds new ones.
 
+## Story Atlas: the bible (S1-E17-17 and S1-E17-18; ATLAS-d)
+
+- Start at `src/features/atlas/components/BiblePage.tsx` (`/plan/s/:storySlug/bible` and `…/bible/:entryId`, the fourth item in `AtlasSectionNav`). `useStoryBible` reads `story_bible()`: the sections in order and every entry.
+- Every new story plan gets the seven default sections from `make_bible_sections()` (called by `make_story_plan()`); a default section with an empty name shows its translated default name (`hooks/useBibleSectionName.ts`).
+- One click: "New entry" in `BibleContents` → `useStoryBible().createEntry` → `create_bible_entry()` → a row in `story_bible_entries` → the page opens it with `?edit`, where `BibleEntryEditor`'s fields save by themselves through `update_bible_entry()`.
+- Reading mode is `BibleEntryView` with `BibleMarkdown` (no raw HTML, safe links only, `rel="nofollow ugc noopener"`). `BibleSectionsManager` renames, moves (drag or Up and Down) and deletes sections; `delete_bible_section()` refuses one that still has entries.
+
