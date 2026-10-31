@@ -278,6 +278,28 @@ Settings › What you like (LikesSettingsSection) → the same writes
 
 Tests: `202` in `supabase/tests/database/`, `e2e/onboarding.spec.ts`.
 
+## Google, Apple, Microsoft and passkeys (S1-E2-09)
+
+All behind the `social_login` and `passkey_login` flags (off in March). A provider only replaces the
+password: the rest of the sign-up form, and the same database rules, still apply.
+
+```
+Sign-up: SignUpForm → SocialSignUp → useSignUpForm.continueWith()       src/features/auth/
+  → checks everything but email and password → keeps the answers in sessionStorage
+  → signInWithOAuth() → the provider → /auth/social-return (SocialReturnPage)
+  → settleSocialReturn() → finish_social_sign_up(kept answers)
+       → create_profile_from_sign_up(): the same rules as the sign-up trigger
+       → refused: cancel_social_sign_up() removes the account
+Log in: OtherWaysToLogIn → signInWithOAuth() or signInWithPasskey()
+Settings › Ways to log in: LoginMethodsSection → useLoginMethods       src/features/account/
+  → my_login_methods(); Connect: expect_identity_link() → linkIdentity()
+  → guard_identity_link() (auth.identities) lets a provider join only when asked for
+  → notify_login_method_change() → login_method_added / _removed, always emailed
+```
+
+Tests: `203` in `supabase/tests/database/`, `src/features/auth/api/socialReturn.test.ts`,
+`e2e/ways-to-log-in.spec.ts` (passkeys with Chrome's virtual authenticator).
+
 ## Logging in (S1-E2-05)
 
 ```

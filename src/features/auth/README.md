@@ -1,6 +1,6 @@
 # Auth
 
-Who is signed in, signing up, confirming the email, logging in and out, and password resets. Started by S1-E14-01; built by S1-E2-01, S1-E2-02 and S1-E2-05.
+Who is signed in, signing up, confirming the email, logging in and out, and password resets. Started by S1-E14-01; built by S1-E2-01, S1-E2-02, S1-E2-05 and S1-E2-09.
 
 - `hooks/useSession.ts`: follows the signed-in person through Supabase Auth; answers their user ID (for data caches only, never shown on screen) and whether the first answer has arrived. Without Supabase settings it answers "signed out".
 
@@ -34,3 +34,10 @@ Country from the connection (S1-E2-10):
 - `components/AgeRefusal.tsx` also refuses someone under their country's minimum age (16 in Australia, Q19); `src/lib/age.ts` has `isUnderMarketAge()`.
 - `components/SignUpCardFlow.tsx`: the changing part of the sign-up card (invite gate or form).
 
+Google, Apple, Microsoft and passkeys (S1-E2-09), behind the `social_login` and `passkey_login` flags:
+
+- `components/SocialSignUp.tsx`: "or sign up with" under the sign-up form, with `SocialButtons` (the providers' own logos, `src/assets/brands/`) and the age line; `useSignUpForm.continueWith()` checks everything but the email and password first.
+- `components/OtherWaysToLogIn.tsx`: the providers and "Use a passkey" above the log-in form, then `OrDivider`.
+- `components/SocialReturnPage.tsx`: `/auth/social-return`, where the providers send the person back; `api/socialReturn.ts` decides what happens.
+- `api/socialSignIn.ts`: leaving for a provider, the answers kept in sessionStorage, `finish_social_sign_up()`, `cancel_social_sign_up()` and the passkey log-in.
+- Settings › Ways to log in lives in `src/features/account/` (`LoginMethodsSection`).

@@ -165,6 +165,23 @@ describe('the notification email worker', () => {
     expect(email?.headers).toBeUndefined();
   });
 
+  it('sends a new way to log in with its own subject, never naming which one (S1-E2-09)', async () => {
+    const loginMethod: EmailNotificationItem = {
+      ...followers,
+      kind: 'login_method_added',
+      actors: [],
+      actor_count: 0,
+    };
+    const [email] = await sendOnce([
+      claimed({ delivery: 'required', unsubscribe_key: null, items: [loginMethod] }),
+    ]);
+    expect(email?.subject).toBe('A change to how you log in to Product');
+    expect(email?.text).toContain('A new way to log in was connected to your account.');
+    expect(email?.text).not.toMatch(/Google|Apple|Microsoft|passkey/);
+    expect(email?.text).toContain('we always send it');
+    expect(email?.headers).toBeUndefined();
+  });
+
   it('uses the admins’ wording when there is an override', async () => {
     const overrides = new Map([
       ['email:notificationEmails.subjectDigest', 'Today on {{productName}}'],

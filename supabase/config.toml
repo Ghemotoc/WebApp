@@ -187,7 +187,10 @@ enable_signup = true
 # Allow/disallow anonymous sign-ins to your project.
 enable_anonymous_sign_ins = false
 # Allow/disallow testing manual linking of accounts
-enable_manual_linking = false
+# S1-E2-09: "Connect Google, Apple or Microsoft" in Settings › Ways to log in uses linkIdentity().
+# A link nobody asked for is refused by the guard_identity_link trigger. Set the same on the hosted
+# projects by hand (GO-LIVE list).
+enable_manual_linking = true
 # Passwords shorter than this value will be rejected as weak. Minimum 6, recommended 8 or more.
 # At least 10 characters (canvas 2.1; story S1-E2-01). Set the same on staging by hand (PR by-hand list).
 minimum_password_length = 10
@@ -196,14 +199,17 @@ minimum_password_length = 10
 password_requirements = ""
 
 # Configure passkey sign-ins.
-# [auth.passkey]
-# enabled = false
+# S1-E2-09: "Use a passkey" and passkeys in Settings, shown only while the passkey_login flag is on.
+# A passkey needs a domain name, never an IP address, so local passkey tests open the app at
+# localhost. The hosted projects get their own relying party (the site's domain) by hand (GO-LIVE).
+[auth.passkey]
+enabled = true
 
 # Configure WebAuthn relying party settings (required when passkey is enabled).
-# [auth.webauthn]
-# rp_display_name = "Supabase"
-# rp_id = "localhost"
-# rp_origins = ["http://127.0.0.1:3000"]
+[auth.webauthn]
+rp_display_name = "Local development"
+rp_id = "localhost"
+rp_origins = ["http://localhost:4173", "http://localhost:5173"]
 
 [auth.rate_limit]
 # Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.

@@ -5,8 +5,8 @@
  * instead"; year of birth, and the month only when needed (S1-E2-02, BirthFields); and acceptance of the current terms with consent to the privacy notice.
  * The username sits under the email, with the same live "is it free?" check as setup (Robert,
  * 25 Oct 2026: chosen with the password, so the account has a name from the start); the pen name
- * stays optional and comes in setup or Settings (S1-E2-04). The Google, Apple and Microsoft
- * buttons belong to S1-E2-09 and stay hidden while the social_login flag is off.
+ * stays optional and comes in setup or Settings (S1-E2-04). Under "Create account", the Google,
+ * Apple and Microsoft buttons (SocialSignUp, S1-E2-09) show only while the social_login flag is on.
  * What it calls: useSignUpForm (checks, the leaked-password check, Supabase Auth). Once the link
  * is sent, the parent shows CheckYourEmail instead.
  * Who uses it: SignUpPage.
@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 import { HandleField } from '@/features/account/components/HandleField';
+import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 import type { HandleOutcome } from '@/features/account/lib/nameRules';
 
 import type { SignUpFailure } from '../api/signUp';
@@ -25,6 +26,7 @@ import type { useSignUpForm } from '../hooks/useSignUpForm';
 
 import { BirthFields } from './BirthFields';
 import { PasswordFields } from './PasswordFields';
+import { SocialSignUp } from './SocialSignUp';
 import { TermsCheckbox } from './TermsCheckbox';
 
 /** The message key for each way a sign-up can fail. */
@@ -50,6 +52,8 @@ interface SignUpFormProps {
 export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
   const { t } = useTranslation('auth');
   const { answers, setField, problems } = form;
+  // Off in March: the buttons appear only once the providers are set up (S1-E2-09).
+  const isSocialLoginOn = useFeatureFlags().isOn('social_login', false);
   const problemText = (key: string | undefined) => (key === undefined ? undefined : t(key));
 
   /** Sends the form without reloading the page. */
@@ -104,6 +108,7 @@ export function SignUpForm({ form, includesAgeCheck }: SignUpFormProps) {
       <Button type="submit" size="xl" disabled={form.isSending}>
         {form.isSending ? t('signUp.submitting') : t('signUp.submit')}
       </Button>
+      {isSocialLoginOn && <SocialSignUp form={form} />}
     </form>
   );
 }

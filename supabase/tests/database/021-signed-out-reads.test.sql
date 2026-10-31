@@ -89,6 +89,7 @@ select results_eq(
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
        ('follows_stories', 0::bigint),
        ('follows_users', 0::bigint),
+       ('identity_link_requests', 0::bigint),
        ('interface_text_overrides', 0::bigint),
        ('invites', 0::bigint),
        ('jobs', 0::bigint),

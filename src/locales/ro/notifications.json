@@ -35,7 +35,8 @@
     "many_few": "{{first}}, {{second}} și încă {{count}} persoane",
     "many_other": "{{first}}, {{second}} și încă {{count}} de persoane",
     "moderationTeam": "Echipa de moderare:",
-    "parentOrGuardian": "Părintele sau tutorele tău"
+    "parentOrGuardian": "Părintele sau tutorele tău",
+    "yourAccount": "Contul tău:"
   },
   "chapterOfStory": "capitolul {{position}} din {{story}}",
   "what": {
@@ -49,7 +50,9 @@
     "ageCheckDecided": "ți-a verificat vârsta manual. Vezi rezultatul și motivul.",
     "ageCheck18Invite": "după anul nașterii, acum ai cel puțin 18 ani. Confirmă cu un act de identitate ca să primești setările pentru adulți.",
     "parentConsentAgreed": "a fost de acord. Contul tău e gata: acum poți publica, comenta, posta și trimite mesaje.",
-    "parentConsentWithdrawn": "și-a retras acordul. Deocamdată contul tău e doar pentru citit."
+    "parentConsentWithdrawn": "și-a retras acordul. Deocamdată contul tău e doar pentru citit.",
+    "loginMethodAdded": "a fost conectat un nou mod de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
+    "loginMethodRemoved": "a fost deconectat un mod de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -89,7 +92,8 @@
     "editTags": "Modifică etichetele",
     "seeResult": "Vezi rezultatul",
     "checkMyAge": "Verifică-mi vârsta",
-    "seeMyAccount": "Vezi ce înseamnă"
+    "seeMyAccount": "Vezi ce înseamnă",
+    "seeWaysToLogIn": "Vezi modurile de autentificare"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

@@ -1782,6 +1782,42 @@ export type Database = {
           },
         ];
       };
+      identity_link_requests: {
+        Row: {
+          created_at: string;
+          expires_at: string;
+          id: string;
+          provider: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          provider: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          provider?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'identity_link_requests_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       interface_text_overrides: {
         Row: {
           created_at: string;
@@ -5118,6 +5154,7 @@ export type Database = {
         Returns: number;
       };
       account_is_new: { Args: { target_user_id: string }; Returns: boolean };
+      account_set_up_before_now: { Args: { target_user_id: string }; Returns: boolean };
       account_state: {
         Args: { target_user_id: string };
         Returns: Database['public']['Enums']['account_status'];
@@ -5980,6 +6017,7 @@ export type Database = {
         Returns: Json;
       };
       cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
+      cancel_social_sign_up: { Args: Record<PropertyKey, never>; Returns: undefined };
       case_item_content: {
         Args: {
           target: Omit<
@@ -6282,6 +6320,10 @@ export type Database = {
       create_bible_entry: { Args: { entry_title: string; section_id: string }; Returns: Json };
       create_chapter: { Args: { story_slug: string }; Returns: Json };
       create_monthly_safety_checks: { Args: Record<PropertyKey, never>; Returns: number };
+      create_profile_from_sign_up: {
+        Args: { new_user_id: string; sign_up_data: Json };
+        Returns: undefined;
+      };
       create_story: {
         Args: {
           blurb: string;
@@ -6385,7 +6427,9 @@ export type Database = {
       erase_unchecked_account: { Args: { target_user_id: string }; Returns: undefined };
       erase_unchecked_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       escalate_on_call_alerts: { Args: Record<PropertyKey, never>; Returns: number };
+      expect_identity_link: { Args: { wanted_provider: string }; Returns: undefined };
       finish_onboarding: { Args: Record<PropertyKey, never>; Returns: undefined };
+      finish_social_sign_up: { Args: { sign_up_data: Json }; Returns: Json };
       finishes_story: {
         Args: {
           read_percent: number;
@@ -6463,6 +6507,7 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
       };
+      is_social_provider: { Args: { provider: string }; Returns: boolean };
       is_staff: {
         Args: { required_role?: Database['public']['Enums']['staff_role'] };
         Returns: boolean;
@@ -6827,6 +6872,7 @@ export type Database = {
         };
       };
       my_live_story_id: { Args: { story_slug: string }; Returns: string };
+      my_login_methods: { Args: Record<PropertyKey, never>; Returns: Json };
       my_moderator_mail: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -7257,6 +7303,7 @@ export type Database = {
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
       purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
       purge_sent_emails: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_unfinished_social_sign_ups: { Args: Record<PropertyKey, never>; Returns: number };
       queue_daily_digests: { Args: Record<PropertyKey, never>; Returns: number };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       ranking_setting: { Args: { fallback: number; setting_key: string }; Returns: number };
@@ -7722,6 +7769,7 @@ export type Database = {
         Args: { birth_month?: number; birth_year: number; country_code: string };
         Returns: string;
       };
+      sign_up_rule_of: { Args: { message: string }; Returns: string };
       sign_ups_by_age_group: { Args: Record<PropertyKey, never>; Returns: Json };
       signed_up_reader_count: { Args: { for_day: string }; Returns: number };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
@@ -7887,6 +7935,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      unfinished_social_account: { Args: { target_user_id: string }; Returns: boolean };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       unsubscribe_from_emails: { Args: { unsubscribe_key: string }; Returns: boolean };
       update_bible_entry: { Args: { changes: Json; entry_id: string }; Returns: Json };
@@ -7995,7 +8044,9 @@ export type Database = {
         | 'age_check_decided'
         | 'age_check_18_invite'
         | 'parental_consent_agreed'
-        | 'parental_consent_withdrawn';
+        | 'parental_consent_withdrawn'
+        | 'login_method_added'
+        | 'login_method_removed';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -8277,6 +8328,8 @@ export const Constants = {
         'age_check_18_invite',
         'parental_consent_agreed',
         'parental_consent_withdrawn',
+        'login_method_added',
+        'login_method_removed',
       ],
       picture_kind: [
         'cover',

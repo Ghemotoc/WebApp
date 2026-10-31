@@ -57,6 +57,33 @@ export function signUpFailureFromCode(code: string | undefined): SignUpFailure {
   return code === undefined ? 'unreachable' : 'refused';
 }
 
+/** The answers the sign-up trigger (and finish_social_sign_up()) reads besides the email. */
+export type SignUpDataAnswers = Pick<SignUpAnswers, 'birthYear' | 'birthMonth' | 'handle'>;
+
+/**
+ * The data the sign-up trigger checks, in the database's names. A Google, Apple or Microsoft
+ * sign-up sends the same data to finish_social_sign_up() (S1-E2-09), so both run the same rules.
+ *
+ * @param answers - the year and month of birth and the username from the form
+ * @param context - the invite, the legal versions, the language and the signed country
+ * @returns the data, ready for Supabase Auth or the database function
+ */
+export function signUpData(answers: SignUpDataAnswers, context: SignUpContext) {
+  return {
+    birth_year: answers.birthYear,
+    // Only when the year needed it; the database ignores a month for any other year (S1-E2-02).
+    birth_month: answers.birthMonth === '' ? null : answers.birthMonth,
+    invite_code: context.inviteCode,
+    accepted_terms_version_id: context.termsVersionId,
+    accepted_privacy_version_id: context.privacyVersionId,
+    locale: context.locale,
+    // The username from the form; the trigger checks it with check_handle() (S1-E2-04).
+    handle: answers.handle,
+    // The country, signed by our Pages Function; the trigger checks it (S1-E2-10).
+    signup_context: context.signupToken,
+  };
+}
+
 /**
  * Signs a new person up.
  *
@@ -72,19 +99,7 @@ export async function signUp(
   context: SignUpContext,
 ): Promise<void> {
   // Step 1: the data the sign-up trigger checks.
-  const data = {
-    birth_year: answers.birthYear,
-    // Only when the year needed it; the database ignores a month for any other year (S1-E2-02).
-    birth_month: answers.birthMonth === '' ? null : answers.birthMonth,
-    invite_code: context.inviteCode,
-    accepted_terms_version_id: context.termsVersionId,
-    accepted_privacy_version_id: context.privacyVersionId,
-    locale: context.locale,
-    // The username from the form; the trigger checks it with check_handle() (S1-E2-04).
-    handle: answers.handle,
-    // The country, signed by our Pages Function; the trigger checks it (S1-E2-10).
-    signup_context: context.signupToken,
-  };
+  const data = signUpData(answers, context);
   // Step 2: a password, or a link emailed each time.
   const { error } =
     answers.method === 'password'

@@ -10,6 +10,7 @@ import { Navigate, type RouteObject } from 'react-router';
 
 import { OnboardingPage } from '@/features/onboarding/components/OnboardingPage';
 import { ConfirmEmailPage } from '@/features/auth/components/ConfirmEmailPage';
+import { SocialReturnPage } from '@/features/auth/components/SocialReturnPage';
 import { ForgotPasswordPage } from '@/features/auth/components/ForgotPasswordPage';
 import { NotOpenPage } from '@/features/auth/components/NotOpenPage';
 import { ResetPasswordPage } from '@/features/auth/components/ResetPasswordPage';
@@ -669,6 +670,8 @@ function pageRoutes(): RouteObject[] {
     { path: '/sign-up', element: <SignUpPage /> },
     { path: '/join/:code', element: <SignUpPage /> },
     { path: '/auth/confirm', element: <ConfirmEmailPage /> },
+    // Where Google, Apple and Microsoft send the person back (S1-E2-09).
+    { path: '/auth/social-return', element: <SocialReturnPage /> },
     // Log in and password reset (S1-E2-05): /reset-password is where the reset email lands.
     { path: '/sign-in', element: <SignInPage /> },
     { path: '/forgot-password', element: <ForgotPasswordPage /> },

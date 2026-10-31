@@ -35,7 +35,8 @@
     "many_other": "{{first}}, {{second}} and {{count}} others",
     "moderationTeam": "Moderation team:",
     "many_few": "{{first}}, {{second}} and {{count}} others",
-    "parentOrGuardian": "Your parent or guardian"
+    "parentOrGuardian": "Your parent or guardian",
+    "yourAccount": "Your account:"
   },
   "chapterOfStory": "Chapter {{position}} of {{story}}",
   "what": {
@@ -49,7 +50,9 @@
     "ageCheckDecided": "checked your age by hand. See the result and the reason.",
     "ageCheck18Invite": "your year of birth now says you’re 18 or over. Confirm it with an ID document to get the settings for adults.",
     "parentConsentAgreed": "agreed. Your account is ready: you can now publish, comment, post and send messages.",
-    "parentConsentWithdrawn": "withdrew their consent. Your account is read-only for now."
+    "parentConsentWithdrawn": "withdrew their consent. Your account is read-only for now.",
+    "loginMethodAdded": "a new way to log in was connected. If this wasn’t you, change your password and contact us.",
+    "loginMethodRemoved": "a way to log in was disconnected. If this wasn’t you, change your password and contact us."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -89,7 +92,8 @@
     "editTags": "Edit the tags",
     "seeResult": "See the result",
     "checkMyAge": "Check my age",
-    "seeMyAccount": "See what this means"
+    "seeMyAccount": "See what this means",
+    "seeWaysToLogIn": "See ways to log in"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",
