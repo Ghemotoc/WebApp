@@ -261,6 +261,16 @@ the parent's email → /parent-consent/answer#<token> (ParentAnswerPage, signed 
 
 `ParentConsentNotice` in `AppLayout` links an account that waits for a parent to `/parent-consent`. Staff withdraw from the account page ("Withdraw parental consent", `admin_withdraw_parental_consent()`). Tests: `201` in `supabase/tests/database/`, `server/parent-consent.test.ts`, `e2e/parent-consent.spec.ts`.
 
+## Who may message whom (S1-E9-03)
+
+```
+/u/:handle (WriterProfilePage → useWriterProfile → get_writer_profile())   src/features/people/
+  → can_message(visitor, writer): blocks, age rules, the writer's messages_from
+  → ProfileHeader: "<name> isn't taking messages right now" when it says no, whatever the reason
+```
+
+`can_message()` is the one rule the private messages functions (S1-E9-01 onwards) ask first. Tests: `205` in `supabase/tests/database/`, `e2e/messaging-rules.spec.ts`.
+
 ## The Teacher badge (S1-E2-11)
 
 An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:

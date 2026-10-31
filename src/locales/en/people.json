@@ -5,6 +5,7 @@
     "handleAndJoined": "@{{handle}} · Joined {{date}}",
     "noBio": "No bio yet.",
     "editProfile": "Edit your profile",
+    "notTakingMessages": "{{name}} isn’t taking messages right now.",
     "avatarLabel": "{{name}}’s profile picture",
     "stories_one": "Story",
     "stories_few": "Stories",

@@ -5,6 +5,7 @@
     "handleAndJoined": "@{{handle}} · Aici din {{date}}",
     "noBio": "Încă nu are o descriere.",
     "editProfile": "Editează-ți profilul",
+    "notTakingMessages": "{{name}} nu primește mesaje acum.",
     "avatarLabel": "Poza de profil: {{name}}",
     "stories_one": "Poveste",
     "stories_few": "Povești",
