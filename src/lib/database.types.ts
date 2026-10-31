@@ -4176,8 +4176,9 @@ export type Database = {
           updated_at: string;
           user_id: string;
           character_json: Json | null;
+          character_link_names: string[] | null;
         };
-        ComputedFields: 'character_json';
+        ComputedFields: 'character_json' | 'character_link_names';
         Insert: {
           created_at?: string;
           custom_values?: NonNullable<Json>;
@@ -5506,8 +5507,10 @@ export type Database = {
         Args: { answer_text: string; target_request_id: string };
         Returns: undefined;
       };
+      atlas_fold: { Args: { value: string }; Returns: string };
       atlas_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       atlas_picture_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      atlas_snippet: { Args: { haystack: string; needle: string }; Returns: string };
       attach_notice_to_case: {
         Args: {
           new_notice: Omit<
@@ -5677,6 +5680,16 @@ export type Database = {
         };
         Returns: Json;
       };
+      character_link_names: {
+        Args: {
+          target_character: Omit<
+            Database['public']['Tables']['story_characters']['Row'],
+            Database['public']['Tables']['story_characters']['ComputedFields']
+          >;
+        };
+        Returns: string[];
+      };
+      character_mentions: { Args: { character_id: string }; Returns: Json };
       character_of_story: {
         Args: { character_id: string; target_story_id: string };
         Returns: string;
@@ -6053,6 +6066,7 @@ export type Database = {
           owner_user_id: string;
         }[];
       };
+      jsonb_values_text: { Args: { document: Json }; Returns: string };
       language_moderator_counts: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -7034,6 +7048,7 @@ export type Database = {
       search_fold: { Args: { raw_text: string }; Returns: string };
       search_like_pattern: { Args: { term: string }; Returns: string };
       search_query: { Args: { term: string }; Returns: unknown };
+      search_story: { Args: { query: string; story_slug: string }; Returns: Json };
       search_tags: {
         Args: { page_offset?: number; page_size?: number; term: string };
         Returns: Json;
@@ -7178,6 +7193,7 @@ export type Database = {
       };
       story_library_state: { Args: { story_slug: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
+      story_link_targets: { Args: { story_slug: string }; Returns: Json };
       story_marketing: { Args: { story_slug: string }; Returns: Json };
       story_matches_search: {
         Args: {
@@ -7211,6 +7227,16 @@ export type Database = {
         Returns: number;
       };
       story_search_text: { Args: { target_story_id: string }; Returns: string };
+      story_search_texts: {
+        Args: { target_story_id: string };
+        Returns: {
+          chapter: string;
+          haystack: string;
+          kind: string;
+          ref: string;
+          title: string;
+        }[];
+      };
       story_share_points: {
         Args: Record<PropertyKey, never>;
         Returns: {

@@ -5,7 +5,9 @@
  *
  * Its type as a pill (words, not colour alone), the Done tick-box and the date it was done, then
  * its text and "Action or outcome", each saving by itself, its type and Delete (asked twice).
- * Who uses it: IdeasPage. What it calls: the save and remove props (useStoryIdeas).
+ * The [[Name]] links in its text and outcome show as chips under them (S1-E17-28, S1-E17-31).
+ * Who uses it: IdeasPage. What it calls: the save and remove props (useStoryIdeas) and
+ * CrossLinkChips.
  */
 import { useState } from 'react';
 
@@ -15,6 +17,7 @@ import { Notice } from '@/components/ui/Notice';
 import { ideaKinds, type IdeaKind, type StoryIdea, type StoryIdeaChange } from '../api/ideas';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { CrossLinkChips } from './CrossLinkChips';
 import { PlanSelectField } from './PlanSelectField';
 import { PlanTextField } from './PlanTextField';
 import { TwoStepDelete } from './TwoStepDelete';
@@ -119,6 +122,7 @@ export function IdeaItem(props: IdeaItemProps) {
   const idBase = `atlas-idea-${idea.id}`;
   return (
     <li
+      id={`atlas-idea-${idea.id}`}
       data-testid="atlas-idea-item"
       className="flex flex-col gap-3 border-b border-hairline py-5 last:border-b-0"
     >
@@ -144,6 +148,7 @@ export function IdeaItem(props: IdeaItemProps) {
         maxLength={2000}
         save={async (typed) => save({ outcome: typed })}
       />
+      <CrossLinkChips texts={[idea.body, idea.outcome]} />
       <IdeaActions {...props} />
     </li>
   );

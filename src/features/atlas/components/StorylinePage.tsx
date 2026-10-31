@@ -7,10 +7,11 @@
  * storyline opens on it next time. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryline → story_storyline() and the changers; ChapterBoard, TimelineView, PovLanesView;
- * lib/storylineView.ts; useMyStories for the top bar.
+ * lib/storylineView.ts ("?view=timeline" from a search result wins over it); useMyStories for
+ * the top bar.
  */
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router';
 
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { Notice } from '@/components/ui/Notice';
@@ -117,7 +118,12 @@ export function StorylinePage() {
   const { storyline, loadFailed } = useStoryline(storySlug);
   const { stories } = useMyStories();
   const story = stories.find((candidate) => candidate.slug === storySlug);
-  const [view, setView] = useState<StorylineView>(readStorylineView);
+  // "?view=timeline" (from a search result for an event) wins over the remembered view.
+  const [searchParams] = useSearchParams();
+  const [view, setView] = useState<StorylineView>(
+    () =>
+      storylineViews.find((option) => option === searchParams.get('view')) ?? readStorylineView(),
+  );
 
   if (!isKnown) return null;
   return (

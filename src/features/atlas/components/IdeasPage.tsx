@@ -7,10 +7,10 @@
  * outcome", so Done reads as a log of decisions. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryIdeas → story_ideas() and the changers; IdeaQuickAdd and IdeaItem; lib/ideaFilters.ts;
- * useMyStories for the top bar.
+ * useScrollToHash for a note opened from a search result; useMyStories for the top bar.
  */
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router';
 
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { Notice } from '@/components/ui/Notice';
@@ -19,6 +19,7 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
 import type { StoryIdeas } from '../api/ideas';
+import { useScrollToHash } from '../hooks/useScrollToHash';
 import { useStoryIdeas } from '../hooks/useStoryIdeas';
 import { filterIdeas, ideaFilters, type IdeaFilter } from '../lib/ideaFilters';
 import { writeAddressFor } from '../lib/writeAddress';
@@ -32,8 +33,14 @@ import { IdeaQuickAdd } from './IdeaQuickAdd';
 function IdeaList({ slug, ideas }: { slug: string; ideas: StoryIdeas }) {
   const { t } = useAtlasTranslation();
   const { save, remove } = useStoryIdeas(slug);
-  const [filter, setFilter] = useState<IdeaFilter>('open');
+  // "?show=all" (from a search result or a mention) opens on All, so a ticked note is there too.
+  const [searchParams] = useSearchParams();
+  const [filter, setFilter] = useState<IdeaFilter>(
+    searchParams.get('show') === 'all' ? 'all' : 'open',
+  );
   const shown = filterIdeas(ideas.items, filter);
+  // "#atlas-idea-<id>" brings that note into view once the list is drawn.
+  useScrollToHash(true);
   return (
     <section
       aria-labelledby="atlas-ideas-list-heading"

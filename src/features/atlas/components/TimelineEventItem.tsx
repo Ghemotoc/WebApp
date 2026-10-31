@@ -4,7 +4,9 @@
  *
  * Reads as a line: an "Event" pill (the marker is words, not colour alone), the date, the title
  * and the description. "Edit" opens its fields, each saving by itself, and Delete, which asks
- * twice. Who uses it: TimelineView. What it calls: the save and remove props (useStoryline).
+ * twice. The description's [[Name]] links are links when read and chips while editing
+ * (S1-E17-31). Who uses it: TimelineView. What it calls: the save and remove props
+ * (useStoryline), CrossLinkText and CrossLinkChips.
  */
 import { useState } from 'react';
 
@@ -15,6 +17,8 @@ import type { StoryEvent, StoryEventChange } from '../api/storyline';
 import { sortValueFrom } from '../lib/optionalNumbers';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { CrossLinkChips } from './CrossLinkChips';
+import { CrossLinkText } from './CrossLinkText';
 import { PlanTextField } from './PlanTextField';
 import { TwoStepDelete } from './TwoStepDelete';
 
@@ -69,6 +73,7 @@ function EventFields({ event, save, remove }: TimelineEventItemProps) {
         maxLength={5000}
         save={async (value) => save({ description: value })}
       />
+      <CrossLinkChips texts={[event.description]} />
       <TwoStepDelete
         buttonLabel={t('storyline.timeline.delete')}
         buttonAccessibleName={t('storyline.timeline.deleteNamed', { title: event.title })}
@@ -105,7 +110,9 @@ export function TimelineEventItem(props: TimelineEventItemProps) {
       </div>
       <p className="m-0 font-semibold break-words text-heading">{event.title}</p>
       {event.description !== '' && !isEditing && (
-        <p className="m-0 text-sm break-words whitespace-pre-line text-body">{event.description}</p>
+        <p className="m-0 text-sm break-words whitespace-pre-line text-body">
+          <CrossLinkText text={event.description} />
+        </p>
       )}
       {isEditing && <EventFields {...props} />}
       <Button

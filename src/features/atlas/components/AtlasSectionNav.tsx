@@ -32,10 +32,10 @@ const sectionPaths: Record<AtlasSection, string> = {
  * Renders the sections.
  *
  * @param props.slug - the story open now
- * @param props.current - the section open now
+ * @param props.current - the section open now, or null when none is (the search page)
  * @returns the navigation row
  */
-export function AtlasSectionNav({ slug, current }: { slug: string; current: AtlasSection }) {
+export function AtlasSectionNav({ slug, current }: { slug: string; current: AtlasSection | null }) {
   const { t } = useAtlasTranslation();
   const sections: AtlasSection[] = [
     'glance',

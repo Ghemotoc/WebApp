@@ -4,8 +4,10 @@
  * lists them"; "when I choose an item, then it opens with one click").
  *
  * Each chapter is a link to its editor, with whether the character is the point of view, present
- * or both. "Mentioned in" (the [[Name]] links) joins it with S1-E17-31 in part h.
- * Who uses it: CharacterSheet. What it calls: useCharacterAppearances → character_appearances().
+ * or both. Under it, "Mentioned in": the places that link to the character with [[their name]]
+ * or an alias (S1-E17-31).
+ * Who uses it: CharacterSheet. What it calls: useCharacterAppearances → character_appearances()
+ * and CharacterMentionsList.
  */
 import { Link } from 'react-router';
 
@@ -14,6 +16,8 @@ import { Notice } from '@/components/ui/Notice';
 import type { CharacterAppearance } from '../api/chapterPlans';
 import { useCharacterAppearances } from '../hooks/useCharacterAppearances';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
+
+import { CharacterMentionsList } from './CharacterMentionsList';
 
 /** The words for how the character is in one chapter. */
 function roleKey(appearance: CharacterAppearance): string {
@@ -27,7 +31,7 @@ function roleKey(appearance: CharacterAppearance): string {
  *
  * @param props.slug - the story's address, for the chapter links
  * @param props.characterId - the character's ID
- * @returns the card with the list, a note when there is nothing yet, or a plain message
+ * @returns the card with both lists, a note when there is nothing yet, or a plain message
  */
 export function CharacterAppearancesSection({
   slug,
@@ -71,6 +75,7 @@ export function CharacterAppearancesSection({
           ))}
         </ul>
       )}
+      <CharacterMentionsList slug={slug} characterId={characterId} />
     </section>
   );
 }
