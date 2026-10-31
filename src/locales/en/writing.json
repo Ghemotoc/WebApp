@@ -430,5 +430,42 @@
       "replyLabel": "Reply to {{name}} on chapter {{number}}",
       "empty": "No comments yet. They appear here when readers write under your chapters."
     }
+  },
+  "canva": {
+    "documentTitle": "Design it in Canva · {{productName}}",
+    "heading": "Design it in Canva",
+    "backToWriting": "Back to Your writing",
+    "backToSettings": "Back to your story’s settings",
+    "opening": "Opening Canva…",
+    "signedOut": "Log in first, then press “Design it in Canva” again in your story’s settings.",
+    "working": "One moment. We’re talking to Canva…",
+    "cancelled": "You didn’t connect Canva, so nothing was shared with Canva. You can try again any time from your story’s settings.",
+    "saved": "Your Canva cover is saved.",
+    "savedChecking": "You can see it now. Readers see it once our picture check has looked at it, usually within a few minutes. You can close this tab.",
+    "savedVisible": "Readers can see it now. You can close this tab.",
+    "design": "Design it in Canva",
+    "newTab": "(opens a new tab)",
+    "note": "Canva opens a blank cover at the right size. When you press Return in Canva, your cover comes back here. You need your own Canva account, and Canva’s rules apply there. Nothing is shared with Canva until you connect.",
+    "failed": {
+      "switched_off": "Designing covers in Canva is switched off right now.",
+      "account": "Your account can’t change covers right now.",
+      "not_connected": "Canva isn’t connected any more. Press “Design it in Canva” again in your story’s settings to connect it.",
+      "declined": "Canva didn’t accept the connection. Please try again from your story’s settings.",
+      "expired": "This link has expired or didn’t come from Canva. Please start again from your story’s settings.",
+      "export_failed": "Canva couldn’t export your design. Open it in Canva and press Return again.",
+      "unavailable": "Canva isn’t set up on our side yet. Please try again later.",
+      "unreachable": "We couldn’t reach Canva or our server. Check your connection and try again.",
+      "signed_out": "Log in first, then try again.",
+      "invalid": "This page only works on the way to Canva and back. Start from your story’s settings.",
+      "storyNotFound": "We couldn’t find that story among yours."
+    },
+    "settings": {
+      "heading": "Canva",
+      "notConnected": "Not connected. You connect Canva the first time you press “Design it in Canva” in a story’s cover settings.",
+      "connected": "Connected since {{date}}. We use it only to open blank covers and bring back the ones you design.",
+      "disconnect": "Disconnect Canva",
+      "disconnectFailed": "We couldn’t disconnect Canva. Please try again.",
+      "loadFailed": "We couldn’t check whether Canva is connected. Please try again."
+    }
   }
 }

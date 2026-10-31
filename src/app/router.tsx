@@ -301,6 +301,23 @@ const writeRoutes: RouteObject[] = [
       return { Component: StorySettingsPage };
     },
   },
+  // Design it in Canva (S1-E3-12): the new tab's two pages, on the way to Canva and back.
+  {
+    path: '/canva/start',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { CanvaStartPage } = await import('@/features/canva/components/CanvaStartPage');
+      return { Component: CanvaStartPage };
+    },
+  },
+  {
+    path: '/canva/return',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { CanvaReturnPage } = await import('@/features/canva/components/CanvaReturnPage');
+      return { Component: CanvaReturnPage };
+    },
+  },
   // Manage chapters (S1-E3-04): reorder, rename, unpublish, delete and undo one story's chapters.
   {
     path: '/write/s/:storySlug/chapters',

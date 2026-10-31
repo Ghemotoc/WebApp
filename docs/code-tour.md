@@ -530,6 +530,23 @@ get_chapter() → embeds: { <ID>: { state, service, media_path, title } } → Ch
 
 A card is reportable (`embed`); a moderator removes one card without touching the chapter (CaseEmbedPanel on the case page). ChapterText hands pictures and cards to its drawers through a context, so a re-render never rebuilds a playing card. Tests: `186` in `supabase/tests/database/`, `src/lib/embed-links.test.ts`, `src/lib/chapter-embeds.test.ts`, `server/embeds.test.ts`, `e2e/music-and-video.spec.ts`.
 
+**Design a cover in Canva (S1-E3-12; ADR 0009).** The new tab goes to Canva and back; our server holds the secrets:
+
+```
+Story settings › "Design it in Canva" (CanvaCoverLink, flags canva_covers and picture_uploads)
+  → new tab /canva/start (CanvaStartPage, useCanvaStart) → PKCE verifier and state in sessionStorage
+  → POST /api/canva/design (server/canva.ts; functions/api/canva/[[path]].ts)
+      not connected: Canva's consent page → /canva/return?code → POST /api/canva/connect
+        → tokens encrypted (server/canva/tokens.ts) → save_canva_connection() → canva_connections
+      connected: a blank 1600 × 2560 design, correlation state = the story's ID → Canva's editor
+  → Return → /canva/return?correlation_jwt (CanvaReturnPage, useCanvaReturn)
+  → POST /api/canva/return: the token checked (server/canva/jwt.ts), the design exported as a PNG
+  → uploadPicture() (picture check) → update_my_story(cover upload) → "Your Canva cover is saved"
+Settings › Canva (CanvaSettingsSection) → POST /api/canva/disconnect → revoke, disconnect_canva()
+```
+
+While `CANVA` isn't "real", `server/canva/stub.ts` plays Canva with its own pages. Tests: `187` in `supabase/tests/database/`, `server/canva.test.ts`, `server/canva/canva-parts.test.ts`, `e2e/canva-covers.spec.ts`.
+
 **Appeals (S1-E10-07).** On `/my-reports` each statement shows until when it can be appealed (six months, DSA art. 20(1)); `AppealSection` → `submit_appeal()`. Staff decide on `/staff/appeals` (`AppealsPage` → `admin_appeals_queue()`, `admin_decide_appeal()`); a moderator never decides an appeal on their own decision. Changing a decision restores the item and lifts the sanction; the person is notified (`appeal_decided`) either way.
 
 **Moderator mail (S1-E10-11).** `/moderator-mail` for members and `/staff/moderator-mail` for staff, `src/features/moderator-mail/`. One shared inbox; replies go out as "The moderation team"; internal notes stay with staff; a reply notifies the member (`moderator_mail_reply`).

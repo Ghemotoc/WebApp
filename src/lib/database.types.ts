@@ -209,6 +209,45 @@ export type Database = {
           },
         ];
       };
+      canva_connections: {
+        Row: {
+          access_expires_at: string;
+          access_token_ciphertext: string;
+          created_at: string;
+          id: string;
+          refresh_token_ciphertext: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          access_expires_at: string;
+          access_token_ciphertext: string;
+          created_at?: string;
+          id?: string;
+          refresh_token_ciphertext: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          access_expires_at?: string;
+          access_token_ciphertext?: string;
+          created_at?: string;
+          id?: string;
+          refresh_token_ciphertext?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'canva_connections_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       case_actions: {
         Row: {
           action: Database['public']['Enums']['moderation_action'];
@@ -4991,6 +5030,7 @@ export type Database = {
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
+      disconnect_canva: { Args: Record<PropertyKey, never>; Returns: boolean };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       downvote_comment: {
         Args: { comment_id: string; should_downvote: boolean };
@@ -5882,6 +5922,10 @@ export type Database = {
       sanction_end: {
         Args: { days: number; wanted_kind: Database['public']['Enums']['sanction_kind'] };
         Returns: string;
+      };
+      save_canva_connection: {
+        Args: { access_ciphertext: string; access_expires: string; refresh_ciphertext: string };
+        Returns: undefined;
       };
       save_chapter_draft: {
         Args: { body: string; chapter_code: string; expected_version: number; title: string };

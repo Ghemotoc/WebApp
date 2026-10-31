@@ -4,7 +4,8 @@
  * Who shows it: the router, at /settings; the top bar links here while signed in.
  * What it shows today: "Signed in as …", the Account panel (username and pen name), "About you"
  * (the bio), the Email address panel (S1-E2-05, added 25 Oct 2026: only the owner sees it),
- * Notifications (the notification emails, S1-E7-02), "Blocked accounts" (S1-E5-05), Signed-in devices (S1-E2-05) and the Legal panel. The board's
+ * Notifications (the notification emails, S1-E7-02), "Blocked accounts" (S1-E5-05), Canva
+ * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05) and the Legal panel. The board's
  * other tabs (Privacy, Ways to log in, Messages, Language, My certificates) arrive
  * with their stories (S1-E13-01, S1-E2-09 and others), so only what works is shown
  * (docs/board-fixes.md).
@@ -17,6 +18,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
+import { CanvaSettingsSection } from '@/features/canva/components/CanvaSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
 import { AvatarSettingsSection } from '@/features/pictures/components/AvatarSettingsSection';
 import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
@@ -74,6 +76,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       {/* A moderator's question about one of the person's reports (S1-E10-08). */}
       <ReportQuestionsSection />
       <BlockedAccountsSection />
+      {/* Canva, while it can be used or is still connected (S1-E3-12). */}
+      <CanvaSettingsSection />
       <SignedInDevicesSection />
       <LegalLinksSection />
     </>

@@ -8,9 +8,10 @@
  * Uploads (S1-E10-05): while the `picture_uploads` flag is on, Story settings shows "Upload a
  * picture" (CoverUploadField): the picture is checked before readers see it. A new story shows a
  * line saying the upload is in the story's settings once it is saved, because the database lets
- * an upload into a story's folder only once the story exists. Canva is S1-E3-12.
+ * an upload into a story's folder only once the story exists. Story settings also offers "Design it
+ * in Canva" while `canva_covers` is on too (CanvaCoverLink, S1-E3-12).
  * Who uses it: NewStoryPage and StorySettingsPage. What it calls: useFeatureFlags,
- * CoverUploadField, DrawnCoverPicker, CoverColourSwatches, DrawnCover.
+ * CoverUploadField, CanvaCoverLink, DrawnCoverPicker, CoverColourSwatches, DrawnCover.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -26,6 +27,7 @@ import { DrawnCover } from '@/components/covers/DrawnCover';
 import { Button } from '@/components/ui/Button';
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { CanvaCoverLink } from '@/features/canva/components/CanvaCoverLink';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 import { CoverUploadField } from '@/features/pictures/components/CoverUploadField';
 import type { StoryCoverChoice } from '@/schemas/story';
@@ -71,6 +73,7 @@ function UploadPart({
         storyId={storyId}
         onUploaded={(path) => onChange({ kind: 'upload', tallPath: path })}
       />
+      {isOn('canva_covers', false) && <CanvaCoverLink storyId={storyId} />}
     </div>
   );
 }
