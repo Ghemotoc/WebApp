@@ -410,7 +410,155 @@
     "unreachable": "Nu am putut încărca cifrele. Verifică conexiunea și încearcă din nou.",
     "loading": "Se încarcă cifrele…",
     "notCountedYet": "Cifrele nu au fost numărate încă. Numărătoarea rulează devreme, în fiecare dimineață.",
-    "countedOn": "Numărate pe {{date}}"
+    "countedOn": "Numărate pe {{date}}",
+    "overview": {
+      "unreachable": "Nu am putut încărca aceste cifre. Verifică conexiunea și încearcă din nou.",
+      "signUpsEyebrow": "Înscrieri",
+      "signUpsHeading": "Înscrieri pe grupe de vârstă",
+      "signUpsIntro_one": "Numărate după anul nașterii. {{count}} înscriere până acum.",
+      "signUpsIntro_few": "Numărate după anul nașterii. {{count}} înscrieri până acum.",
+      "signUpsIntro_other": "Numărate după anul nașterii. {{count}} de înscrieri până acum.",
+      "ageGroups": {
+        "13_to_15": "13–15 ani",
+        "16_to_17": "16–17 ani",
+        "18_plus": "18 ani sau peste",
+        "notGiven": "Anul nu e dat"
+      },
+      "signUpsNote": "Arătăm doar grupa de vârstă, niciodată anul nașterii.",
+      "ageChecksEyebrow": "Verificarea vârstei",
+      "ageChecksHeading": "Verificări ale vârstei",
+      "ageChecksIntro": "Doar rezultatele. Nu păstrăm nicio fotografie și niciun document.",
+      "ageChecks": {
+        "passed": "Trecute",
+        "failed": "Picate",
+        "appealed": "Contestate",
+        "notFinished": "Neterminate"
+      },
+      "notCountedYet": "Încă nu",
+      "ageChecksNote": "Contestațiile se numără când vin verificările manuale, odată cu verificarea Yoti. Verificările contestate fac parte dintre cele picate.",
+      "tiersEyebrow": "Moderare",
+      "tiersHeading": "Raportări pe niveluri",
+      "tiersIntro_one": "Cazurile din ultima zi: raportări, ordine de eliminare și imagini oprite la verificare. Moderatorii noștri le citesc pe fiecare. Un caz se numără după ce e decis sau după ce i-a trecut termenul.",
+      "tiersIntro_few": "Cazurile din ultimele {{count}} zile: raportări, ordine de eliminare și imagini oprite la verificare. Moderatorii noștri le citesc pe fiecare. Un caz se numără după ce e decis sau după ce i-a trecut termenul.",
+      "tiersIntro_other": "Cazurile din ultimele {{count}} de zile: raportări, ordine de eliminare și imagini oprite la verificare. Moderatorii noștri le citesc pe fiecare. Un caz se numără după ce e decis sau după ce i-a trecut termenul.",
+      "tiersTotal": "{{share}}% rezolvate la timp · {{inTime}} din {{measured}}",
+      "nothingToMeasure": "Încă nimic de măsurat",
+      "tierColumns": {
+        "tier": "Nivel",
+        "limit": "Termen",
+        "cases": "Cazuri",
+        "inTime": "Rezolvate la timp",
+        "share": "Procent"
+      },
+      "tiers": {
+        "one_hour": "Ordin de eliminare de la o autoritate",
+        "same_day": "Siguranța copiilor sau risc de autovătămare",
+        "two_days": "Alt conținut ilegal",
+        "seven_days": "Restul"
+      },
+      "hours_one": "{{count}} oră",
+      "hours_few": "{{count}} ore",
+      "hours_other": "{{count}} de ore",
+      "days_one": "{{count}} zi",
+      "days_few": "{{count}} zile",
+      "days_other": "{{count}} de zile",
+      "inTimeOf": "{{inTime}} din {{measured}}",
+      "queueLink": "Deschide coada"
+    },
+    "analytics": {
+      "eyebrow": "Statistici de utilizare",
+      "heading": "Statistici fără cookie-uri",
+      "noCookies": "Fără cookie-uri",
+      "noIds": "Fără ID-uri de utilizator",
+      "eu": "Găzduite în UE",
+      "on": "Pornite: evenimentele merg la {{provider}}.",
+      "off": "Oprite deocamdată. Pornesc după ce alegem Plausible sau Umami și îi setăm adresa.",
+      "topEvents": "Cele mai dese evenimente se văd în panoul instrumentului. Nu păstrăm nicio copie aici.",
+      "catalogueEyebrow": "Catalogul de evenimente",
+      "catalogueHeading": "O singură listă de evenimente",
+      "catalogueBody": "Fiecare eveniment e în docs/analytics-events.md, cu un nume de forma object_action, proprietățile lui și locul unde apare. Niciun eveniment nu conține date personale.",
+      "catalogueCount_one": "{{count}} nume de eveniment în cod și e în catalog. Un nume care nu e în listă pică testele.",
+      "catalogueCount_few": "{{count}} nume de evenimente în cod, toate în catalog. Un nume care nu e în listă pică testele.",
+      "catalogueCount_other": "{{count}} de nume de evenimente în cod, toate în catalog. Un nume care nu e în listă pică testele."
+    },
+    "compliance": {
+      "eyebrow": "Registrul de conformitate",
+      "heading": "Ordine ale autorităților și cereri legale",
+      "intro": "Fiecare intrare păstrează autoritatea, data, conținutul, ce am făcut și orele. Ordinele de eliminare venite prin formularul public de raportare se adaugă singure.",
+      "export": "Exportă registrul DSA (CSV)",
+      "exporting": "Se exportă…",
+      "exportFailed": "Nu am putut exporta registrul. Încearcă din nou.",
+      "logRequest": "Adaugă o cerere",
+      "saved": "Salvată ca {{reference}}.",
+      "columns": {
+        "reference": "Ref.",
+        "kind": "Tip",
+        "authority": "Autoritate",
+        "received": "Primită",
+        "content": "Conținut",
+        "action": "Ce am făcut",
+        "done": "Rezolvată"
+      },
+      "kinds": {
+        "authority_order": "Ordin al unei autorități",
+        "legal_request": "Cerere legală",
+        "launch_notice": "Notificare la lansare"
+      },
+      "open": "Deschisă",
+      "empty": "Încă nu e nimic în registru.",
+      "form": {
+        "label": "Adaugă o cerere",
+        "kind": "Ce este",
+        "authority": "Autoritate",
+        "authorityHint": "Cine a trimis-o sau, pentru notificarea la lansare, cui i-a fost trimisă.",
+        "receivedDate": "Primită pe",
+        "doneDate": "Rezolvată pe",
+        "time": "Ora (România)",
+        "content": "Ce au cerut",
+        "contentHint": "Numește un cont doar prin numele de utilizator.",
+        "isDone": "Deja rezolvată",
+        "action": "Ce am făcut",
+        "save": "Salvează în registru",
+        "saving": "Se salvează…",
+        "cancel": "Renunță"
+      },
+      "complete": {
+        "button": "Notează ce s-a făcut pentru {{reference}}",
+        "label": "Ce s-a făcut pentru {{reference}}",
+        "hint": "Se salvează ca rezolvată acum. O intrare rezolvată nu mai poate fi schimbată.",
+        "save": "Salvează ca rezolvată"
+      },
+      "problems": {
+        "empty": "Completează toate câmpurile.",
+        "too_long": "Unul dintre câmpuri e prea lung. Păstrează-le sub 2.000 de caractere.",
+        "in_future": "Ora aceasta e în viitor. Verifică data și ora.",
+        "done_before_received": "Nu poate fi rezolvată înainte să fi sosit. Verifică orele.",
+        "action_needs_time": "Scrie atât ce s-a făcut, cât și când.",
+        "already_done": "Cineva a notat-o deja. Registrul o arată acum.",
+        "badTime": "Scrie o dată și o oră.",
+        "not_allowed": "Registrul de conformitate e pentru proprietar și administratori.",
+        "unreachable": "Nu am putut ajunge la registru. Verifică conexiunea și încearcă din nou."
+      }
+    },
+    "launch": {
+      "eyebrow": "Sarcină la lansare",
+      "heading": "Notifică ANCOM în 45 de zile de la lansare",
+      "law": "Legea 50/2024. Când notificarea e trimisă, adaug-o aici ca notificare la lansare.",
+      "toDoPill": "De făcut",
+      "donePill": "Făcută",
+      "due": "Termen: {{date}}, de la lansarea din {{launch}}.",
+      "noDate": "Setează data lansării ca să vezi termenul.",
+      "done": "Făcută pe {{date}}, în registru ca {{reference}}.",
+      "dateLabel": "Data lansării",
+      "save": "Salvează data",
+      "saving": "Se salvează…",
+      "failed": "Nu am putut salva data. Încearcă din nou."
+    },
+    "transparency": {
+      "eyebrow": "Rapoarte de transparență",
+      "heading": "Încă nu sunt obligatorii pentru noi",
+      "body": "Microîntreprinderile și întreprinderile mici sunt scutite (DSA art. 15 alin. (2)). Păstrăm aceste date ca să fim pregătiți când creștem."
+    }
   },
   "classics": {
     "documentTitle": "Clasice · Echipa",

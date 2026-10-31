@@ -120,6 +120,22 @@ export function defaultScheduleFields(now: Date): { date: string; time: string }
 }
 
 /**
+ * The date and time fields for "now", Romania time: what a form that logs something that just
+ * happened starts with (S1-E11-04, the compliance log).
+ *
+ * @param now - the current moment
+ * @returns { date: "YYYY-MM-DD", time: "HH:MM" }
+ */
+export function romaniaNowFields(now: Date): { date: string; time: string } {
+  const parts = bucharestParts(now);
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return {
+    date: `${parts.year}-${pad(parts.month)}-${pad(parts.day)}`,
+    time: `${pad(parts.hour)}:${pad(parts.minute)}`,
+  };
+}
+
+/**
  * Shows a moment as Romania time in the interface language: "sâmbătă, 17 octombrie la 18:00" or
  * "Saturday 17 October at 18:00".
  *

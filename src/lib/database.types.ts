@@ -980,6 +980,67 @@ export type Database = {
           },
         ];
       };
+      compliance_log_entries: {
+        Row: {
+          action_taken: string | null;
+          authority: string;
+          completed_at: string | null;
+          completed_by_user_id: string | null;
+          content: string;
+          created_at: string;
+          entry_kind: Database['public']['Enums']['compliance_entry_kind'];
+          id: string;
+          received_at: string;
+          reference: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          action_taken?: string | null;
+          authority: string;
+          completed_at?: string | null;
+          completed_by_user_id?: string | null;
+          content: string;
+          created_at?: string;
+          entry_kind: Database['public']['Enums']['compliance_entry_kind'];
+          id?: string;
+          received_at: string;
+          reference?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          action_taken?: string | null;
+          authority?: string;
+          completed_at?: string | null;
+          completed_by_user_id?: string | null;
+          content?: string;
+          created_at?: string;
+          entry_kind?: Database['public']['Enums']['compliance_entry_kind'];
+          id?: string;
+          received_at?: string;
+          reference?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'compliance_log_entries_completed_by_user_id_fkey';
+            columns: ['completed_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'compliance_log_entries_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       confusable_characters: {
         Row: {
           created_at: string;
@@ -3997,6 +4058,11 @@ export type Database = {
         Args: { note: string; target_notice_id: string };
         Returns: undefined;
       };
+      admin_complete_compliance_entry: {
+        Args: { action: string; done_at?: string; entry_reference: string };
+        Returns: string;
+      };
+      admin_compliance_log: { Args: { for_export?: boolean }; Returns: Json };
       admin_confirm_safety_contact: { Args: { target_contact_id: string }; Returns: boolean };
       admin_create_invite: {
         Args: { admits?: number; private_note?: string; valid_days?: number };
@@ -4147,6 +4213,17 @@ export type Database = {
           tag_id: string;
         }[];
       };
+      admin_log_compliance_entry: {
+        Args: {
+          action?: string;
+          authority: string;
+          done_at?: string;
+          kind: Database['public']['Enums']['compliance_entry_kind'];
+          received: string;
+          what_was_asked: string;
+        };
+        Returns: string;
+      };
       admin_log_referral: {
         Args: {
           authority_name: string;
@@ -4162,6 +4239,7 @@ export type Database = {
         Args: { reason_given: string; target_case_id: string };
         Returns: boolean;
       };
+      admin_metrics_overview: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_moderation_queue: {
         Args: {
           case_id?: string;
@@ -4385,6 +4463,7 @@ export type Database = {
         Args: { language_code: string; new_status: Database['public']['Enums']['language_status'] };
         Returns: Database['public']['Enums']['language_status'];
       };
+      admin_set_launch_date: { Args: { new_date: string }; Returns: string };
       admin_set_mail_status: {
         Args: { new_status: string; thread_reference: string };
         Returns: boolean;
@@ -4492,6 +4571,7 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['age_band'];
       };
+      age_check_numbers: { Args: Record<PropertyKey, never>; Returns: Json };
       another_appeals_decider_exists: { Args: Record<PropertyKey, never>; Returns: boolean };
       answer_report_detail_request: {
         Args: { answer_text: string; target_request_id: string };
@@ -4573,6 +4653,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      cases_by_tier: { Args: { window_days: number }; Returns: Json };
       change_is_too_soon: {
         Args: { last_changed_at: string; setting_key: string };
         Returns: boolean;
@@ -4758,6 +4839,7 @@ export type Database = {
         Returns: string;
       };
       comment_wait_minutes: { Args: { author_id: string }; Returns: number };
+      compliance_times_problem: { Args: { completed: string; received: string }; Returns: string };
       compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
       content_is_held_for_moderation: {
@@ -4954,6 +5036,7 @@ export type Database = {
       };
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
       latest_place_json: { Args: { target_story_id: string }; Returns: Json };
+      launch_task: { Args: Record<PropertyKey, never>; Returns: Json };
       legal_documents_to_accept: {
         Args: { target_user_id: string };
         Returns: {
@@ -5534,6 +5617,7 @@ export type Database = {
         };
         Returns: string;
       };
+      removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
@@ -5624,6 +5708,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      require_compliance_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_mail_thread_for_staff: {
         Args: { thread_reference: string };
         Returns: {
@@ -5787,6 +5872,7 @@ export type Database = {
         Args: { birth_month?: number; birth_year: number; country_code: string };
         Returns: string;
       };
+      sign_ups_by_age_group: { Args: Record<PropertyKey, never>; Returns: Json };
       signed_up_reader_count: { Args: { for_day: string }; Returns: number };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
@@ -5999,6 +6085,7 @@ export type Database = {
       classic_kind: 'novel' | 'short_story' | 'fairy_tale' | 'poem' | 'play' | 'essay';
       comment_deleted_by: 'author' | 'writer';
       completion_status: 'ongoing' | 'completed';
+      compliance_entry_kind: 'authority_order' | 'legal_request' | 'launch_notice';
       cover_kind: 'automatic' | 'drawn' | 'upload';
       email_delivery: 'instant' | 'daily' | 'off';
       language_status: 'open' | 'ready' | 'closed';
@@ -6259,6 +6346,7 @@ export const Constants = {
       classic_kind: ['novel', 'short_story', 'fairy_tale', 'poem', 'play', 'essay'],
       comment_deleted_by: ['author', 'writer'],
       completion_status: ['ongoing', 'completed'],
+      compliance_entry_kind: ['authority_order', 'legal_request', 'launch_notice'],
       cover_kind: ['automatic', 'drawn', 'upload'],
       email_delivery: ['instant', 'daily', 'off'],
       language_status: ['open', 'ready', 'closed'],

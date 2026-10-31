@@ -1,15 +1,17 @@
 /**
- * MarchNumbersPage: /staff/metrics, the March test numbers (story S1-E15-02; board AdminMetrics,
- * screen 8.7; architecture 1.8.3: Metrics is View for owner and admin, queue numbers only for
- * moderators).
+ * MarchNumbersPage: /staff/metrics, the March test numbers and the compliance log (stories
+ * S1-E15-02 and S1-E11-04; board AdminMetrics, screen 8.7; architecture 1.8.3: Metrics is View for
+ * owner and admin, queue numbers only for moderators).
  *
  * What it shows: writers who published, signed-up readers and the return rate (labelled an
  * approximation, decided 17 Oct 2026, 12:34), each with its target; writers by market; chapter
- * reads per day. Totals counted once a night; nothing here lists people. Plain components, no
+ * reads per day. Totals counted once a night; nothing here lists people. Then, from S1-E11-04:
+ * sign-ups by age group, age checks, reports by tier, the analytics status and event catalogue,
+ * the compliance log, the ANCOM launch task and the transparency note. Plain components, no
  * doodles (staff screens).
  * Who shows it: the router, inside StaffLayout. The database refuses anyone but the owner and
  * admins (admin_march_numbers()); a moderator is pointed to the moderation queue instead.
- * What it calls: useMarchNumbers → api/marchNumbers.ts.
+ * What it calls: useMarchNumbers → api/marchNumbers.ts; the S1-E11-04 sections load their own.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -23,8 +25,11 @@ import { formatRomaniaShortDate } from '@/lib/romania-time';
 import type { MarchNumbers } from '../../api/marchNumbers';
 import { useMarchNumbers } from '../../hooks/useMarchNumbers';
 
+import { AnalyticsCards } from './AnalyticsCards';
+import { ComplianceLogSection } from './ComplianceLogSection';
 import { MarchNumberLists } from './MarchNumberLists';
 import { MarchTargetCard } from './MarchTargetCard';
+import { MetricsOverviewSections } from './MetricsOverviewSections';
 
 /**
  * The three numbers with their targets.
@@ -99,6 +104,9 @@ function MarchNumbersBody() {
         writersByMarket={numbers.writersByMarket}
         readsPerDay={numbers.readsPerDay}
       />
+      <MetricsOverviewSections />
+      <AnalyticsCards />
+      <ComplianceLogSection />
     </>
   );
 }
