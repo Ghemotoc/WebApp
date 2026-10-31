@@ -7,6 +7,11 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Not yet sent
 
+
+## Sent
+
+### Sent 31 Oct 2026 (/mnt/project-files/feature-ideas/2026-10-31.md)
+
 - **Highlights writers can see.** Readers mark a line they loved; the writer sees a soft heat map of the
   most-loved paragraphs (counts only, never who). Gives writers feedback without asking readers to
   write a comment; M; after paragraph comments.
@@ -40,7 +45,6 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 - **"Most shared passages" for writers.** On the writer dashboard, the paragraphs readers link to most (counted per paragraph per day, never who), so a writer sees which lines land. Why: writers on Substack love seeing their most-highlighted lines; it rewards craft without any personal data. (Seen while building S1-E4-11.)
 - **Picture links in the preview image.** Once a passed picture can have a safe public copy, a picture link's preview shows the picture itself, not the cover colour. Why: picture links would stand out in chats, which is the whole point of a picture card. (S1-E4-11 follow-up.)
 
-## Sent
 
 (none yet)
 
