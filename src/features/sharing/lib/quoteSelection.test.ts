@@ -27,6 +27,7 @@ describe('readQuoteSelection', () => {
       passage: 'Nu era niciun Ilie.',
       length: 19,
       fits: true,
+      blocks: null,
     });
   });
 
@@ -42,6 +43,20 @@ describe('readQuoteSelection', () => {
   it('reads nothing when nothing is selected', () => {
     window.getSelection()?.removeAllRanges();
     expect(readQuoteSelection(window.getSelection())).toBeNull();
+  });
+});
+
+describe('the blocks a selection covers (S1-E4-11)', () => {
+  it('runs from the block it starts in to the block it ends in', () => {
+    document.body.innerHTML =
+      '<div data-protected-text><p data-block="2" id="a">Unu</p><p data-block="4" data-block-end="5" id="b">Doi</p></div>';
+    const range = document.createRange();
+    range.setStart(document.getElementById('a')?.firstChild ?? document.body, 1);
+    range.setEnd(document.getElementById('b')?.firstChild ?? document.body, 2);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    expect(readQuoteSelection(selection)?.blocks).toEqual({ first: 2, last: 4 });
   });
 });
 

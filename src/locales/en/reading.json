@@ -77,7 +77,12 @@
     "copyNotice": "On the web, right-click and copying are turned off for chapters. That makes copying harder, but it can’t stop screenshots. {{penName}} keeps all the rights to this story.",
     "reportLabel": "chapter {{number}} of {{story}}",
     "savedPlace": "You stopped {{percent}}% of the way through this chapter.",
-    "goToSavedPlace": "Go back there"
+    "goToSavedPlace": "Go back there",
+    "sharedPassage": {
+      "found": "You opened a link to a passage. It’s highlighted below.",
+      "notFound": "You opened a link to a passage that isn’t in this chapter any more. The writer may have changed it.",
+      "fromStart": "Read from the start"
+    }
   },
   "teaser": {
     "shared": "Shared with you · chapter {{number}} of {{total}}",
@@ -96,7 +101,9 @@
   },
   "linkPreview": {
     "byWriter": "by {{name}}",
-    "hiddenDescription": "Rated {{rating}}. Log in to check if you can read it."
+    "hiddenDescription": "Rated {{rating}}. Log in to check if you can read it.",
+    "picture": "Picture: {{alt}}",
+    "quoted": "“{{passage}}”"
   },
   "likes": {
     "like": "Like this chapter",

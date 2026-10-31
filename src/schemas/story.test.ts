@@ -83,6 +83,7 @@ describe('newStorySchema', () => {
       completionStatus: 'ongoing',
       commentsEnabled: true,
       quoteCardsEnabled: true,
+      pictureSharingEnabled: true,
     });
     expect(result.success).toBe(false);
   });

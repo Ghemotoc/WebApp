@@ -56,6 +56,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     completionStatus: story.completionStatus,
     commentsEnabled: story.commentsEnabled,
     quoteCardsEnabled: story.quoteCardsEnabled,
+    pictureSharingEnabled: story.pictureSharingEnabled,
     rating: story.rating,
     isFanFiction: story.isFanFiction,
     isParody: story.isParody,

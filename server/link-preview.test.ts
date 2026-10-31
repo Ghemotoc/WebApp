@@ -27,6 +27,7 @@ const chapterPreview: LinkPreview = {
   cover: { kind: 'drawn', background: 'sky' },
   chapterTitle: 'Caietele bunicii',
   isChapter: true,
+  passage: null,
 };
 
 /** A host that serves indexHtml and answers with the given preview (or throws). */
@@ -54,10 +55,12 @@ describe('shared addresses', () => {
     expect(parseSharedAddress('/s/statia-meteo')).toEqual({
       storySlug: 'statia-meteo',
       chapterCode: null,
+      spot: null,
     });
     expect(parseSharedAddress('/s/statia-meteo/ab12cd34/')).toEqual({
       storySlug: 'statia-meteo',
       chapterCode: 'ab12cd34',
+      spot: null,
     });
     expect(parseSharedAddress('/s/')).toBeNull();
     expect(parseSharedAddress('/s/Statia')).toBeNull();
@@ -65,9 +68,28 @@ describe('shared addresses', () => {
     expect(parseSharedAddress('/s/a/ab12cd34/more')).toBeNull();
     expect(parseSharedAddress('/write/s/statia-meteo')).toBeNull();
   });
+
+  it('reads a spot after a chapter: one block or up to five (S1-E4-11)', () => {
+    expect(parseSharedAddress('/s/statia-meteo/ab12cd34/p3-5')?.spot).toEqual({
+      first: 3,
+      last: 5,
+    });
+    expect(parseSharedAddress('/s/statia-meteo/ab12cd34/p2')?.spot).toEqual({ first: 2, last: 2 });
+    expect(parseSharedAddress('/s/statia-meteo/ab12cd34/p1-9')).toBeNull();
+    expect(parseSharedAddress('/s/statia-meteo/ab12cd34/p2/more')).toBeNull();
+  });
 });
 
 describe('the preview card', () => {
+  it('shows a shared passage instead of the blurb (S1-E4-11)', () => {
+    expect(previewText({ ...chapterPreview, passage: 'Ploua peste oraș.' }).description).toBe(
+      'de Lia Scrie · „Ploua peste oraș.”',
+    );
+    expect(
+      previewText({ ...chapterPreview, languageCode: 'en', passage: 'It rained.' }).description,
+    ).toBe('by Lia Scrie · “It rained.”');
+  });
+
   it('shows the story and chapter title, the pen name and the blurb', () => {
     expect(previewText(chapterPreview)).toEqual({
       title: 'Stația meteo · Caietele bunicii',

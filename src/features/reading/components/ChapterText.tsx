@@ -13,20 +13,26 @@
  * from anywhere else (an http address) is dropped.
  * Music and video cards (S1-E3-10): an "embed:<ID>" image address is drawn by ChapterEmbed from
  * the card the database sent; nothing loads from the service until the reader presses play.
+ * Blocks (S1-E4-11): every top-level part is marked with the blocks it holds (lib/numberBlocks.ts),
+ * so a passage or picture can be shared as a link to its spot, and a shared passage is highlighted.
+ * A picture readers may share gets the Share button the reader passes in (pictureShare).
  * Look: the shared `.tmc-chapter-text` styles (src/styles/index.css), board 4.3 and 3.5.
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.
  */
 import type { Element, ElementContent } from 'hast';
-import Markdown, { type Components } from 'react-markdown';
-import { createContext, useContext, useMemo } from 'react';
+import Markdown, { type Components, type Options } from 'react-markdown';
+import { createContext, Suspense, useContext, useMemo, type ComponentType } from 'react';
 
 import type { EmbedView } from '@/features/embeds/api/embeds';
 import { ChapterEmbed } from '@/features/embeds/components/ChapterEmbed';
 import type { PictureView } from '@/features/pictures/api/pictures';
 import { ChapterPicture } from '@/features/pictures/components/ChapterPicture';
+import { chapterBlocks, type SpotRange } from '@/lib/chapter-blocks';
 import { embedIdFromAddress } from '@/lib/chapter-embeds';
 import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
+
+import { numberBlocks } from '../lib/numberBlocks';
 
 /** The elements a chapter may contain (ADR 0005; img only for pictures and cards, S1-E3-09, S1-E3-10). */
 const allowedElements = [
@@ -100,6 +106,18 @@ export interface ChapterTextProps {
    * S1-E3-10 criterion 4).
    */
   canReportMedia?: boolean;
+  /** The shared passage to highlight, from the address (S1-E4-11), or null. */
+  spot?: SpotRange | null;
+  /** The reader's Share button for a visible picture (S1-E4-11); left out, there is none. */
+  pictureShare?: ComponentType<PictureShareProps>;
+}
+
+/** What a picture's Share button is given. */
+export interface PictureShareProps {
+  pictureId: string;
+  alt: string;
+  /** The picture's signed address, for drawing the picture card. */
+  url: string;
 }
 
 /** What the picture and card drawers read. */
@@ -108,6 +126,7 @@ interface ChapterMedia {
   embeds: Record<string, EmbedView>;
   writerName: string | null;
   canReport: boolean;
+  pictureShare: ComponentType<PictureShareProps> | null;
 }
 
 /** What the drawers below read; set by ChapterText around the text. */
@@ -116,6 +135,7 @@ const ChapterMediaContext = createContext<ChapterMedia>({
   embeds: {},
   writerName: null,
   canReport: false,
+  pictureShare: null,
 });
 
 /**
@@ -132,13 +152,18 @@ function MediaImage({ address, alt }: { address: string; alt: string }) {
   const media = useContext(ChapterMediaContext);
   const pictureId = pictureIdFromAddress(address);
   if (pictureId !== null) {
+    const view = media.pictures[pictureId];
+    const PictureShare = media.pictureShare;
     return (
-      <ChapterPicture
-        pictureId={pictureId}
-        alt={alt}
-        view={media.pictures[pictureId]}
-        canReport={media.canReport}
-      />
+      <>
+        <ChapterPicture pictureId={pictureId} alt={alt} view={view} canReport={media.canReport} />
+        {/* Only a picture readers can see may be shared (S1-E4-11 legal note). */}
+        {PictureShare !== null && view?.state === 'visible' && view.url !== null && (
+          <Suspense fallback={null}>
+            <PictureShare pictureId={pictureId} alt={alt} url={view.url} />
+          </Suspense>
+        )}
+      </>
     );
   }
   const embedId = embedIdFromAddress(address);
@@ -167,7 +192,8 @@ const chapterComponents: Components = {
     ),
   // A heading 1 can't be stored (the editor snaps it), but if one ever arrives it reads as h2.
   h1: ({ children }) => <h2>{children}</h2>,
-  p: ({ node, children }) => (holdsMedia(node) ? <div>{children}</div> : <p>{children}</p>),
+  // The block marks (data-block, the highlight) are passed on, so a picture's block keeps them.
+  p: ({ node, ...props }) => (holdsMedia(node) ? <div {...props} /> : <p {...props} />),
   img: ({ src, alt }) => (
     <MediaImage address={typeof src === 'string' ? src : ''} alt={alt ?? ''} />
   ),
@@ -186,11 +212,24 @@ export function ChapterText({
   embeds = {},
   writerName = null,
   canReportMedia = false,
+  spot = null,
+  pictureShare,
 }: ChapterTextProps) {
   // The media for the drawers, kept the same object while nothing in it changes.
   const media = useMemo(
-    () => ({ pictures, embeds, writerName, canReport: canReportMedia }),
-    [pictures, embeds, writerName, canReportMedia],
+    () => ({
+      pictures,
+      embeds,
+      writerName,
+      canReport: canReportMedia,
+      pictureShare: pictureShare ?? null,
+    }),
+    [pictures, embeds, writerName, canReportMedia, pictureShare],
+  );
+  // The block numbers and the highlight, worked out again only when the text or spot changes.
+  const rehypePlugins = useMemo<Options['rehypePlugins']>(
+    () => [[numberBlocks, { blocks: chapterBlocks(markdown), highlight: spot }]],
+    [markdown, spot],
   );
   return (
     <div lang={language} className={`tmc-chapter-text ${className}`}>
@@ -200,6 +239,7 @@ export function ChapterText({
           allowedElements={[...allowedElements, 'h1']}
           unwrapDisallowed
           urlTransform={keepSafeAddress}
+          rehypePlugins={rehypePlugins}
           components={chapterComponents}
         >
           {markdown}

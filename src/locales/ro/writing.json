@@ -174,9 +174,14 @@
     "off": "Oprite. Comentariile existente sunt ascunse și nimeni nu poate adăuga altele."
   },
   "quoteCards": {
-    "label": "Carduri cu citate",
-    "on": "Pornit. Cititorii pot face dintr-un pasaj scurt o imagine de distribuit, una pe capitol.",
-    "off": "Oprit. Cititorii pot distribui în continuare linkul unui capitol, dar nu un card cu citat."
+    "label": "Carduri cu citate și linkuri către pasaje",
+    "on": "Pornit. Cititorii pot face dintr-un pasaj scurt o imagine de distribuit, una pe capitol, și pot trimite un link care deschide capitolul la un pasaj.",
+    "off": "Oprit. Cititorii pot distribui în continuare linkul unui capitol, dar nu un card cu citat sau un link către un pasaj."
+  },
+  "pictureSharing": {
+    "label": "Distribuirea imaginilor",
+    "on": "Pornit. Cititorii pot distribui o imagine din capitolele tale ca un card cu numele tău și un link către ea. Doar imaginile care au trecut verificarea.",
+    "off": "Oprit. Cititorii nu pot distribui imaginile din capitolele tale."
   },
   "settings": {
     "documentTitle": "Setările poveștii · {{productName}}",

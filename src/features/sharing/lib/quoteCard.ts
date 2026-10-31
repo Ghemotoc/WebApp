@@ -7,7 +7,8 @@
  * Backgrounds (S1-E4-07, fourth criterion; Robert, canvas comments, 16 Oct 2026): the default is
  * plain brand purple with no gold glow (the board's purple gradient), or one of our nine palette
  * colours. Light colours get dark words, dark ones light words, so the text keeps its contrast.
- * Who calls it: components/QuoteCardCanvas.tsx. What it calls: the canvas 2D API only.
+ * Who calls it: components/QuoteCardCanvas.tsx, and lib/pictureCard.ts for the shared footer
+ * (S1-E4-11). What it calls: the canvas 2D API only.
  */
 
 /** One background a card can have. */
@@ -57,7 +58,7 @@ export type MeasureText = (text: string) => number;
 
 /** The card's size and margins, in canvas pixels. */
 export const cardSize = 1080;
-const margin = 96;
+export const margin = 96;
 const textWidth = cardSize - margin * 2;
 
 /** The fonts the card uses: the reading serif for the quote, the app's own for the rest. */
@@ -117,7 +118,10 @@ export function quoteFontSize(passage: string): number {
  * @param context - the canvas's 2D context
  * @param background - the chosen background
  */
-function paintBackground(context: CanvasRenderingContext2D, background: QuoteCardBackground) {
+export function paintBackground(
+  context: CanvasRenderingContext2D,
+  background: QuoteCardBackground,
+) {
   if (background.colours.length === 1) {
     context.fillStyle = background.colours[0] ?? '#481C5F';
   } else {
@@ -132,7 +136,7 @@ function paintBackground(context: CanvasRenderingContext2D, background: QuoteCar
 }
 
 /** The colours of the words on a background. */
-function inkFor(background: QuoteCardBackground) {
+export function inkFor(background: QuoteCardBackground) {
   if (background.isLight) return { text: '#2A0E33', soft: '#4A3A52', mark: '#672786' };
   return { text: '#FFFFFF', soft: '#E9DDF0', mark: '#E6C24C' };
 }
@@ -202,9 +206,9 @@ const footerWidth = textWidth;
  * @param content - the card's content
  * @param colours - the words' colours
  */
-function drawFooter(
+export function drawFooter(
   context: CanvasRenderingContext2D,
-  content: QuoteCardContent,
+  content: Pick<QuoteCardContent, 'storyTitle' | 'writerLine' | 'link'>,
   colours: ReturnType<typeof inkFor>,
 ) {
   // Step 1: the link on the last line, as small as 18 px to fit in one line.
@@ -238,7 +242,7 @@ function drawFooter(
  * @param productName - from the brand config
  * @param colours - the words' colours
  */
-function drawProductName(
+export function drawProductName(
   context: CanvasRenderingContext2D,
   productName: string,
   colours: ReturnType<typeof inkFor>,

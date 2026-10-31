@@ -4,7 +4,11 @@
     "buttonLabel": "Share chapter {{number}}",
     "quoteButton": "Share quote",
     "quoteCount": "{{count}} of 280 characters",
-    "quoteTooLong": "Select 280 characters or fewer to share a quote. You have {{count}}."
+    "quoteTooLong": "Select 280 characters or fewer to share a quote. You have {{count}}.",
+    "passageLink": "Copy link to this passage",
+    "passageCopied": "Link copied. Whoever opens it reads from this passage.",
+    "passageCopyFailed": "Your browser didn’t let us copy the link.",
+    "passageTooLong": "Select five paragraphs or fewer to share a link to them."
   },
   "dialog": {
     "eyebrow": "Share",
@@ -67,5 +71,28 @@
     "close": "Close",
     "copyLink": "Copy the link instead",
     "copied": "Link copied."
+  },
+  "picture": {
+    "button": "Share picture",
+    "buttonLabel": "Share picture: {{alt}}",
+    "eyebrow": "Share a picture",
+    "title": "Your picture card",
+    "description": "The picture with the story’s title, the writer’s name and a link to this spot in the chapter.",
+    "altLabel": "Alt text for the image",
+    "altHint": "We wrote this for you. Screen readers read it out, so everyone knows what the image shows. Paste it as the picture’s description when you post it.",
+    "altText": "A picture from {{story}} by {{writer}}: {{alt}}",
+    "linkLabel": "Link:",
+    "copyLink": "Copy link",
+    "copyImage": "Copy image",
+    "saveImage": "Save image",
+    "copiedLink": "Link copied. Whoever opens it reads from this picture.",
+    "copyLinkFailed": "Your browser didn’t let us copy the link. Select it and copy it yourself.",
+    "copiedImage": "Image copied. Paste it where you want to share it.",
+    "copyImageFailed": "Your browser can’t copy pictures. Save the image instead.",
+    "savedImage": "Image saved.",
+    "fileName": "picture-card",
+    "loadFailed": "The picture couldn’t be loaded for the card. You can still copy the link.",
+    "failed": "The card couldn’t be made. Check your connection and try again.",
+    "close": "Close"
   }
 }

@@ -1318,6 +1318,16 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - The writer's switch: "Quote cards" in `StoryStatusSection` → `update_my_story()` with `quote_cards_enabled`.
 - Both actions have hourly limits in the `rate_limits` setting (`chapter_share`, `quote_card`). Tests: `supabase/tests/database/181-share-and-quote-cards.test.sql`, `src/features/sharing/lib/*.test.ts`, `e2e/share.spec.ts`.
 
+## Sharing a passage or a picture (S1-E4-11; WRITE-5e)
+
+- Blocks: a chapter's stored Markdown is cut into blocks at blank lines, counted from 1, by `src/lib/chapter-blocks.ts` and by the SQL `chapter_blocks()` the same way. `ChapterText` runs `reading/lib/numberBlocks.ts` as a rehype step, which marks each top-level part with `data-block` and `data-block-end` and highlights a shared passage.
+- How a passage link travels: a selection in the chapter text → `QuoteShareBar` (as for quote cards) → `PassageLinkButton` reads the blocks from the selection's parts (`selectedBlocks()` in `lib/quoteSelection.ts`) → copies `/s/<story>/<chapter>/p<first>-<last>` (`passageShareLink()`, at most five blocks, no sharer ID) → counts a share.
+- How a picture card travels: `ChapterText` draws the reader's `pictureShare` component (the lazily loaded `PictureShareButton`) under each visible picture → it asks `share_options()` (the writer's `picture_sharing_enabled` and the rating) → `PictureCardDialog` fetches the picture as a file (`usePictureBitmap`), draws the card (`lib/pictureCard.ts`, the quote card's footer) and copies or saves it.
+- Opening a spot link: the router's `/s/:storySlug/:chapterCode/:spot` → `ChapterReaderPage` reads the spot with `parseSpot()` → `ChapterText` highlights it → `SharedPassageNotice` scrolls to it and moves focus there.
+- The preview: `server/link-preview.ts` reads the spot from the address and asks `get_shared_passage()` (`server/shared-passage.ts`) for the passage, which takes the blurb's place in `og:description`. The database refuses 16+ and 18+, a wrong range, text while the passage switch is off and a picture unless its switch is on and its check passed.
+- The writer's switches: "Quote cards and passage links" (`quote_cards_enabled`) and "Sharing pictures" (`picture_sharing_enabled`) in `StoryStatusSection` → `update_my_story()`.
+- Tests: `supabase/tests/database/188-share-passages-and-pictures.test.sql`, `src/lib/chapter-blocks.test.ts`, `server/shared-passage.test.ts`, `e2e/share-passages.spec.ts`.
+
 ## Cookieless analytics and the event catalogue (S1-E15-01, S1-E15-03; READ-4f)
 
 A screen that wants to count something calls `trackEvent('<object_action>', {…})` from `src/lib/analytics/track.ts`:

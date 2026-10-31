@@ -111,6 +111,13 @@ export function StoryStatusSection({ answers, set }: StoryStatusSectionProps) {
         note={answers.quoteCardsEnabled ? t('quoteCards.on') : t('quoteCards.off')}
         onToggle={() => set('quoteCardsEnabled', !answers.quoteCardsEnabled)}
       />
+      <StorySwitch
+        idPrefix="story-picture-sharing"
+        label={t('pictureSharing.label')}
+        isOn={answers.pictureSharingEnabled}
+        note={answers.pictureSharingEnabled ? t('pictureSharing.on') : t('pictureSharing.off')}
+        onToggle={() => set('pictureSharingEnabled', !answers.pictureSharingEnabled)}
+      />
     </FormSection>
   );
 }
