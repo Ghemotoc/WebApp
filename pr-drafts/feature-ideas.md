@@ -42,3 +42,9 @@ As a writer, I want the read-through rate to count every reader who reached the 
 
 ### A "Where readers stop" line per chapter (idea, 31 Oct 2026)
 As a writer, I want to see roughly where in a chapter readers stop (first, middle or last third, as totals with the "fewer than 5" rule), so that I know which scenes lose people. Why: the places are already saved for the Library; grouping them into thirds keeps it aggregate and gives writers something they can act on.
+
+### Cover templates with the title already placed (idea, 31 Oct 2026)
+As a writer, I want "Design it in Canva" to start from a cover template with my title and pen name already on it, so that I only have to pick a picture and colours. Why: S1-E3-12 opens a blank 1600 × 2560 design; Canva Connect can fill brand templates from data, and a ready-made layout would give writers who aren't designers a good cover in a few minutes.
+
+### The settings tab notices the new cover by itself (idea, 31 Oct 2026)
+As a writer, I want my story's settings to show the cover I just made in Canva as soon as I go back to that tab, so that I'm not left wondering whether it worked. Why: the cover comes back in the tab Canva used; a small "refresh on focus" for the settings form closes the loop without a page reload.
