@@ -7,9 +7,12 @@
  * deleted, hidden by a moderator, rated above the reader's age or by someone either side blocks.
  * It never carries the user ID. A signed-out visitor gets only the teaser: the first whole
  * paragraphs up to 600 words, cut on the server (S1-E4-04). The pictures in the text come with
- * it, each with its check state (S1-E3-09); their files are read through signed addresses. record_chapter_read(story_slug, chapter_code) adds one to
- * today's total, never who read (supabase/migrations/…_s1_e4_01a_reader.sql).
+ * it, each with its check state (S1-E3-09); their files are read through signed addresses. So
+ * do the music and video cards, each with its service and what to play (S1-E3-10).
+ * record_chapter_read(story_slug, chapter_code) adds one to today's total, never who read
+ * (supabase/migrations/…_s1_e4_01a_reader.sql).
  */
+import { embedViewsFromJson, type EmbedView } from '@/features/embeds/api/embeds';
 import { pictureViewsFromJson, type PictureView } from '@/features/pictures/api/pictures';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -49,6 +52,8 @@ export interface ReaderChapter {
    * reader may see (S1-E3-09).
    */
   pictures: Record<string, PictureView>;
+  /** The music and video cards in that text by ID (S1-E3-10). */
+  embeds: Record<string, EmbedView>;
 }
 
 /** The shape get_chapter() answers, as JSON. */
@@ -75,6 +80,7 @@ interface ChapterRow {
   text_continues: boolean;
   body: string | null;
   pictures?: Json;
+  embeds?: Json;
 }
 
 /**
@@ -122,6 +128,7 @@ export async function fetchChapter(
     body: row.body,
     // Signed addresses for the pictures the reader may see; Storage refuses the others.
     pictures: await pictureViewsFromJson(client, row.pictures),
+    embeds: embedViewsFromJson(row.embeds),
   };
 }
 

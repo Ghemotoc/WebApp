@@ -132,6 +132,29 @@ describe('chapter pictures in the converters (S1-E3-09)', () => {
   });
 });
 
+describe('music and video cards in the converters (S1-E3-10)', () => {
+  const embedId = '2c9c2f4e-3a52-4c36-9b0e-2f7d1d0e5a11';
+
+  it('keeps a card on its own line through a round trip', () => {
+    const markdown = `Ascultă asta.\n\n![Cum se face o prognoză](embed:${embedId})\n\nSfârșit.`;
+    const document = markdownToEditorDocument(markdown);
+    expect(document.content?.[1]).toEqual({
+      type: 'chapterEmbed',
+      attrs: { embedId, title: 'Cum se face o prognoză' },
+    });
+    expect(editorDocumentToMarkdown(document)).toBe(markdown);
+  });
+
+  it('drops a card without a real ID and leaves it out of the plain text', () => {
+    const markdown = editorDocumentToMarkdown({
+      type: 'doc',
+      content: [{ type: 'chapterEmbed', attrs: { embedId: 'javascript:x', title: 'Nu' } }],
+    });
+    expect(markdown).toBe('');
+    expect(markdownToPlainText(`Text\n\n![Titlu](embed:${embedId})`)).not.toContain('embed:');
+  });
+});
+
 describe('isAllowedLink', () => {
   it('allows http, https and mailto only', () => {
     expect(isAllowedLink('https://example.org')).toBe(true);

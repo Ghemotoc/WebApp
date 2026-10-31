@@ -143,5 +143,30 @@
     },
     "saved": "Saved to your account, so they apply on all your devices. Text size starts from your device’s own setting.",
     "saveFailed": "We couldn’t save your reading settings. They still apply here; check your connection and change one again to retry."
+  },
+  "embed": {
+    "removed": "[Removed by the moderation team]",
+    "notLoaded": "This music or video couldn’t be loaded.",
+    "groupLabel": {
+      "music": "Music from {{service}}",
+      "video": "Video from {{service}}"
+    },
+    "play": {
+      "music": "Play music: {{title}}. Plays from {{service}}",
+      "video": "Play video: {{title}}. Plays from {{service}}"
+    },
+    "playerTitle": "{{title}}, playing from {{service}}",
+    "eyebrow": {
+      "music": "Music · {{service}}",
+      "video": "Video · {{service}}"
+    },
+    "cookies": "Plays from {{service}}. {{service}} may use cookies.",
+    "terms": "Once you press play, {{service}}’s own terms and age rules apply.",
+    "stop": "Stop",
+    "addedBy": "Added by {{name}}",
+    "reportLabel": {
+      "music": "the music “{{title}}”",
+      "video": "the video “{{title}}”"
+    }
   }
 }

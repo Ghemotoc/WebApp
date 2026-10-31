@@ -7,7 +7,8 @@
  * Markdown: it works on a document tree, and these two functions translate at the edges.
  * Allowed nodes: paragraphs, headings (levels 2 and 3), bold, italic, quote, bullet and
  * numbered lists, the scene break (* * *), links (http, https, mailto) and chapter pictures on
- * their own line, `![alt text](picture:<ID>)` (S1-E3-09, src/lib/chapter-pictures.ts). Anything
+ * their own line, `![alt text](picture:<ID>)` (S1-E3-09, src/lib/chapter-pictures.ts), and music
+ * and video cards, `![title](embed:<ID>)` (S1-E3-10, src/lib/chapter-embeds.ts). Anything
  * else in the Markdown (raw HTML, other pictures, code) becomes plain text, so nothing
  * unexpected survives.
  *
@@ -17,6 +18,7 @@
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { Nodes as MarkdownNode, PhrasingContent, RootContent } from 'mdast';
 
+import { embedAddress, embedIdFromAddress } from '@/lib/chapter-embeds';
 import { pictureAddress, pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
@@ -84,17 +86,23 @@ function paragraph(content: EditorNode[]): EditorNode {
 }
 
 /**
- * A paragraph that is only a chapter picture becomes the editor's picture block (S1-E3-09).
+ * A paragraph that is only a chapter picture becomes the editor's picture block (S1-E3-09), and
+ * one that is only a music or video card becomes the card block (S1-E3-10).
  *
  * @param node - a paragraph from the Markdown
- * @returns the picture node, or null when the paragraph is anything else
+ * @returns the picture or card node, or null when the paragraph is anything else
  */
 function pictureToEditor(node: Extract<RootContent, { type: 'paragraph' }>): EditorNode | null {
   const onlyChild = node.children.length === 1 ? node.children[0] : undefined;
   if (onlyChild?.type !== 'image') return null;
   const pictureId = pictureIdFromAddress(onlyChild.url);
-  if (pictureId === null) return null;
-  return { type: 'chapterPicture', attrs: { pictureId, alt: onlyChild.alt ?? '' } };
+  if (pictureId !== null) {
+    return { type: 'chapterPicture', attrs: { pictureId, alt: onlyChild.alt ?? '' } };
+  }
+  // A music or video card is the same kind of line with an "embed:" address (S1-E3-10).
+  const embedId = embedIdFromAddress(onlyChild.url);
+  if (embedId === null) return null;
+  return { type: 'chapterEmbed', attrs: { embedId, title: onlyChild.alt ?? '' } };
 }
 
 /** A list: bullet or numbered, each item holding blocks. */
@@ -232,11 +240,16 @@ function blockToMarkdown(node: EditorNode): string | null {
       return listToMarkdown(node);
     case 'horizontalRule':
       return '* * *';
-    case 'chapterPicture':
-      return pictureToMarkdown(node);
     default:
-      return null;
+      return mediaToMarkdown(node);
   }
+}
+
+/** A picture or a card back to Markdown, or null for any other node (S1-E3-09, S1-E3-10). */
+function mediaToMarkdown(node: EditorNode): string | null {
+  if (node.type === 'chapterPicture') return pictureToMarkdown(node);
+  if (node.type === 'chapterEmbed') return embedToMarkdown(node);
+  return null;
 }
 
 /**
@@ -251,6 +264,20 @@ function pictureToMarkdown(node: EditorNode): string | null {
   const alt = typeof node.attrs?.alt === 'string' ? node.attrs.alt : '';
   const oneLineAlt = alt.replace(/\s+/g, ' ').trim();
   return `![${escapeMarkdownText(oneLineAlt)}](${pictureAddress(pictureId)})`;
+}
+
+/**
+ * A music or video card back to Markdown: `![title](embed:<ID>)` on its own line, the title on
+ * one line with its Markdown characters escaped (S1-E3-10).
+ *
+ * @returns the line, or null for a card without a well-formed ID (it is dropped)
+ */
+function embedToMarkdown(node: EditorNode): string | null {
+  const embedId = typeof node.attrs?.embedId === 'string' ? node.attrs.embedId : '';
+  if (embedIdFromAddress(embedAddress(embedId)) === null) return null;
+  const title = typeof node.attrs?.title === 'string' ? node.attrs.title : '';
+  const oneLineTitle = title.replace(/\s+/g, ' ').trim();
+  return `![${escapeMarkdownText(oneLineTitle)}](${embedAddress(embedId)})`;
 }
 
 /** Block content back to Markdown, blocks separated by a blank line. */
@@ -289,8 +316,8 @@ function plainTextOfEditorNode(node: EditorNode): string {
   if (node.type === 'text') return node.text ?? '';
   if (node.type === 'hardBreak') return '\n';
   if (node.type === 'horizontalRule') return '* * *';
-  // A picture has no words of its own to compare (S1-E3-09).
-  if (node.type === 'chapterPicture') return '';
+  // A picture or a card has no words of its own to compare (S1-E3-09, S1-E3-10).
+  if (node.type === 'chapterPicture' || node.type === 'chapterEmbed') return '';
   const parts = (node.content ?? []).map(plainTextOfEditorNode);
   const isInline = (node.content ?? []).every(
     (child) => child.type === 'text' || child.type === 'hardBreak',

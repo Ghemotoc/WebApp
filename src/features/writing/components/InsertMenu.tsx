@@ -8,8 +8,9 @@
  * Keyboard (WAI-ARIA menu button): Enter, Space or the down arrow opens it on the first item; the
  * arrow keys, Home and End move; Escape closes it and puts focus back on the button; Tab or a
  * click outside closes it.
- * The items arrive from the caller, so each story adds its own (pictures in S1-E3-09; drawings,
- * music and video join in S1-E3-10 and S1-E3-11).
+ * The items arrive from the caller, so each story adds its own (pictures in S1-E3-09, music and
+ * video in S1-E3-10, drawings in S1-E3-11), and so does the footnote under them (a plain line
+ * above a hairline, 13 px meta text).
  * Who uses it: ChapterInsertControls.
  */
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
@@ -67,47 +68,62 @@ interface InsertMenuPanelProps {
   menuRef: RefObject<HTMLDivElement | null>;
   menuId: string;
   items: InsertMenuItem[];
+  footnote: string | undefined;
   onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
   onPicked: () => void;
 }
 
 /** The open menu: one row per item, each with its doodle icon, name and note. */
-function InsertMenuPanel({ menuRef, menuId, items, onKeyDown, onPicked }: InsertMenuPanelProps) {
+function InsertMenuPanel(props: InsertMenuPanelProps) {
+  const { menuRef, menuId, items, footnote, onKeyDown, onPicked } = props;
   const { t } = useTranslation('editor');
+  // The footnote sits outside the menu role (a menu holds only items) and describes it.
+  const footnoteId = `${menuId}-note`;
   return (
-    <div
-      ref={menuRef}
-      id={menuId}
-      role="menu"
-      tabIndex={-1}
-      aria-label={t('insert.menuLabel')}
-      onKeyDown={onKeyDown}
-      className="absolute top-[54px] left-0 z-20 flex w-[min(340px,calc(100vw-32px))] flex-col gap-0.5 rounded-[24px] border border-border bg-surface p-2 shadow-card"
-    >
-      {items.map((item) => (
-        <button
-          key={item.key}
-          type="button"
-          role="menuitem"
-          tabIndex={-1}
-          onClick={() => {
-            onPicked();
-            item.onPick();
-          }}
-          className="flex min-h-14 w-full items-start gap-3 rounded-2xl px-3.5 py-2.5 text-left hover:bg-tint focus-visible:bg-tint"
-        >
-          <span
-            aria-hidden="true"
-            className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-tint"
+    <div className="absolute top-[54px] left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-[24px] border border-border bg-surface p-2 shadow-card">
+      <div
+        ref={menuRef}
+        id={menuId}
+        role="menu"
+        tabIndex={-1}
+        aria-label={t('insert.menuLabel')}
+        aria-describedby={footnote === undefined ? undefined : footnoteId}
+        onKeyDown={onKeyDown}
+        className="flex flex-col gap-0.5"
+      >
+        {items.map((item) => (
+          <button
+            key={item.key}
+            type="button"
+            role="menuitem"
+            tabIndex={-1}
+            onClick={() => {
+              onPicked();
+              item.onPick();
+            }}
+            className="flex min-h-14 w-full items-start gap-3 rounded-2xl px-3.5 py-2.5 text-left hover:bg-tint focus-visible:bg-tint"
           >
-            <img src={item.icon} alt="" width={26} height={26} />
-          </span>
-          <span className="flex flex-col gap-0.5">
-            <span className="text-[15px] font-semibold text-ink">{item.label}</span>
-            <span className="text-[13px] leading-snug text-meta">{item.note}</span>
-          </span>
-        </button>
-      ))}
+            <span
+              aria-hidden="true"
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-tint"
+            >
+              <img src={item.icon} alt="" width={26} height={26} />
+            </span>
+            <span className="flex flex-col gap-0.5">
+              <span className="text-[15px] font-semibold text-ink">{item.label}</span>
+              <span className="text-[13px] leading-snug text-meta">{item.note}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+      {footnote !== undefined && (
+        <p
+          id={footnoteId}
+          className="m-0 mt-1 border-t border-hairline px-3.5 pt-2.5 pb-1.5 text-[13px] leading-normal text-meta"
+        >
+          {footnote}
+        </p>
+      )}
     </div>
   );
 }
@@ -115,9 +131,11 @@ function InsertMenuPanel({ menuRef, menuId, items, onKeyDown, onPicked }: Insert
 /**
  * Renders the button and, while open, the menu.
  *
+ * @param items - the menu's items
+ * @param footnote - an optional line under them
  * @returns the menu button; nothing when there are no items
  */
-export function InsertMenu({ items }: { items: InsertMenuItem[] }) {
+export function InsertMenu({ items, footnote }: { items: InsertMenuItem[]; footnote?: string }) {
   const { t } = useTranslation('editor');
   const menuId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -162,6 +180,7 @@ export function InsertMenu({ items }: { items: InsertMenuItem[] }) {
           menuRef={menuRef}
           menuId={menuId}
           items={items}
+          footnote={footnote}
           onKeyDown={handleMenuKeyDown}
           onPicked={() => setOpen(false)}
         />

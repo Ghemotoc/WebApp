@@ -450,5 +450,15 @@
       "rating_raised": "Clasificare ridicată",
       "ai_label_added": "Etichetă IA adăugată"
     }
+  },
+  "embed": {
+    "heading": "Cardul cu muzică sau video",
+    "service": "Serviciu",
+    "title": "Titlu",
+    "author": "Canal sau artist",
+    "noTitle": "Serviciul nu l-a dat",
+    "chapter": "În capitolul",
+    "link": "Linkul scriitorului",
+    "decisionHint": "Deschide linkul într-o filă nouă ca să-l judeci; pe această pagină nu se încarcă nimic de la serviciu. Dacă scoți elementul, dispare doar acest card, iar capitolul rămâne."
   }
 }

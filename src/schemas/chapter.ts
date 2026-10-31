@@ -8,7 +8,8 @@
  * outside the allow-list, so this is the last net: no HTML tag, no script link, not too long,
  * and ş/ţ corrected (rule 4). Pictures (S1-E3-09): each needs alt text of at most 300
  * characters, and a chapter holds at most 30 (check_chapter_pictures() in the database also
- * checks each picture is the writer's own).
+ * checks each picture is the writer's own). Music and video cards (S1-E3-10): at most 10
+ * (check_chapter_embeds() also checks each card is the writer's own).
  */
 import { z } from 'zod';
 
@@ -17,6 +18,7 @@ import {
   MAXIMUM_PICTURES_PER_CHAPTER,
   pictureReferencesIn,
 } from '@/lib/chapter-pictures';
+import { embedReferenceCount, MAXIMUM_EMBEDS_PER_CHAPTER } from '@/lib/chapter-embeds';
 import { normaliseRomanianLetters } from '@/lib/romanian-text';
 
 /** The chapter title's limit (the database constraint). */
@@ -85,6 +87,10 @@ export const chapterDraftSchema = z.object({
         .refine(
           (body) => pictureReferencesIn(body).length <= MAXIMUM_PICTURES_PER_CHAPTER,
           'errors.tooManyPictures',
+        )
+        .refine(
+          (body) => embedReferenceCount(body) <= MAXIMUM_EMBEDS_PER_CHAPTER,
+          'errors.tooManyEmbeds',
         ),
     ),
   /** The draft_version the editor loaded or last saved; a stale one is a conflict. */

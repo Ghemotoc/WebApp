@@ -112,7 +112,8 @@
     "createFailed": "We couldn’t add a chapter. Check your connection and try again.",
     "pictureNeedsAlt": "Every picture needs alt text. Write it under the picture and the chapter will save.",
     "altTooLong": "Alt text can have at most 300 characters. Shorten it under the picture.",
-    "tooManyPictures": "A chapter can hold at most 30 pictures. Remove some, or split the chapter into two."
+    "tooManyPictures": "A chapter can hold at most 30 pictures. Remove some, or split the chapter into two.",
+    "tooManyEmbeds": "A chapter can hold at most 10 music and video cards. Remove some, or split the chapter into two."
   },
   "conflict": {
     "keepMine": "Keep this version",
@@ -139,7 +140,12 @@
     "button": "Insert",
     "menuLabel": "Insert",
     "picture": "Picture",
-    "pictureNote": "Upload a picture. Alt text is required."
+    "pictureNote": "Upload a picture. Alt text is required.",
+    "music": "Music",
+    "musicNote": "A link from Spotify or Apple Music.",
+    "video": "Video",
+    "videoNote": "A link from YouTube, Vimeo or Loom.",
+    "embedFootnote": "Links from approved services only. Nothing loads from them until a reader presses play."
   },
   "pictureDialog": {
     "heading": "Add a picture",
@@ -181,6 +187,53 @@
       "waiting_for_person": "Our picture check flagged it, so someone on our moderation team will decide. Until then readers see “Picture being checked”.",
       "visible": "It passed our picture check. We removed the location data from the file.",
       "removed": "Readers see “[Removed by the moderation team]” in its place. You can remove it from the chapter."
+    }
+  },
+  "embed": {
+    "label": "Music or video card",
+    "loading": "Loading the card…",
+    "removed": "Removed by the moderation team",
+    "removedNote": "Readers see “[Removed by the moderation team]” here. You can remove the card or leave it.",
+    "notLoaded": "We couldn’t load this card. Check your connection.",
+    "eyebrow": {
+      "music": "Music · {{service}}",
+      "video": "Video · {{service}}"
+    },
+    "readersSee": {
+      "music": "Readers see this card. The music plays from {{service}}, which may use cookies.",
+      "video": "Readers see this card. The video plays from {{service}}, which may use cookies."
+    },
+    "nothingLoads": "Nothing loads from {{service}} until the reader presses play.",
+    "remove": {
+      "music": "Remove music",
+      "video": "Remove video"
+    }
+  },
+  "embedDialog": {
+    "heading": {
+      "music": "Add music",
+      "video": "Add a video"
+    },
+    "linkLabel": "Link",
+    "linkHint": {
+      "music": "Paste a link to a song, album or playlist on Spotify or Apple Music. Videos from YouTube, Vimeo and Loom work too.",
+      "video": "Paste a link to a video on YouTube, Vimeo or Loom. Music from Spotify and Apple Music works too."
+    },
+    "privacyNote": "Readers see a card with the title. Nothing loads from the other service until a reader presses play.",
+    "missingLink": "Paste a link.",
+    "adding": "Finding it…",
+    "add": "Add",
+    "cancel": "Cancel",
+    "failed": {
+      "not_allowed": "That link isn’t from Spotify, Apple Music, YouTube, Vimeo or Loom, or it doesn’t point to one song or video.",
+      "not_found": "The service says there’s no song or video at that link, or it’s private. Check the link.",
+      "switched_off": "Music and video cards are switched off right now.",
+      "account": "Your account can’t add music or videos right now.",
+      "chapter_not_found": "We couldn’t find this chapter. Reload the page and try again.",
+      "too_many": "You’ve added a lot of music and videos in the last hour. Try again in {{minutes}} minutes.",
+      "unreachable": "We couldn’t reach the service. Check your connection and try again.",
+      "signed_out": "Log in again, then add the link.",
+      "invalid": "That link is too long or empty."
     }
   }
 }
