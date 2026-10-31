@@ -3767,6 +3767,75 @@ export type Database = {
           },
         ];
       };
+      story_character_relationships: {
+        Row: {
+          created_at: string;
+          custom_label: string;
+          from_character_id: string;
+          id: string;
+          kind: string;
+          note: string;
+          story_id: string;
+          to_character_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          custom_label?: string;
+          from_character_id: string;
+          id?: string;
+          kind: string;
+          note?: string;
+          story_id: string;
+          to_character_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          custom_label?: string;
+          from_character_id?: string;
+          id?: string;
+          kind?: string;
+          note?: string;
+          story_id?: string;
+          to_character_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_character_relationships_from_character_id_fkey';
+            columns: ['from_character_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_characters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_character_relationships_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_character_relationships_to_character_id_fkey';
+            columns: ['to_character_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_characters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_character_relationships_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_characters: {
         Row: {
           created_at: string;
@@ -4254,6 +4323,16 @@ export type Database = {
       };
       add_chapter_share: { Args: { target_chapter_id: string }; Returns: undefined };
       add_character_field: { Args: { field_name: string; story_slug: string }; Returns: Json };
+      add_character_relationship: {
+        Args: {
+          custom_label: string;
+          from_character_id: string;
+          note: string;
+          relationship_kind: string;
+          to_character_id: string;
+        };
+        Returns: Json;
+      };
       add_copied_work_note: {
         Args: {
           target: Omit<
@@ -5316,6 +5395,7 @@ export type Database = {
         Returns: Database['public']['Enums']['email_delivery'];
       };
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
+      delete_character_relationship: { Args: { relationship_id: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       delete_story_character: { Args: { character_id: string }; Returns: Json };

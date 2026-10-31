@@ -1,7 +1,7 @@
 /**
  * AtlasSectionNav: the row of Story Atlas sections under the top bar (stories S1-E17-06 and
- * S1-E17-08): At a glance and Characters, with more joining as the bundle's parts land
- * (connections, the bible, the storyline, ideas).
+ * S1-E17-08 and S1-E17-15): At a glance, Characters and Connections, with more joining as the
+ * bundle's parts land (the bible, the storyline, ideas).
  *
  * Real links with aria-current on the one open now, so a screen reader says where the writer is;
  * the open one is also filled, not told by colour alone. On a phone the row wraps.
@@ -14,10 +14,14 @@ import { cn } from '@/lib/utils';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 /** The sections there are so far. */
-export type AtlasSection = 'glance' | 'characters';
+export type AtlasSection = 'glance' | 'characters' | 'connections';
 
 /** Each section's address after /plan/s/<slug>. */
-const sectionPaths: Record<AtlasSection, string> = { glance: '', characters: '/characters' };
+const sectionPaths: Record<AtlasSection, string> = {
+  glance: '',
+  characters: '/characters',
+  connections: '/connections',
+};
 
 /**
  * Renders the sections.
@@ -28,7 +32,7 @@ const sectionPaths: Record<AtlasSection, string> = { glance: '', characters: '/c
  */
 export function AtlasSectionNav({ slug, current }: { slug: string; current: AtlasSection }) {
   const { t } = useAtlasTranslation();
-  const sections: AtlasSection[] = ['glance', 'characters'];
+  const sections: AtlasSection[] = ['glance', 'characters', 'connections'];
   return (
     <nav aria-label={t('nav.label')}>
       <ul className="m-0 flex list-none flex-wrap gap-2 p-0">

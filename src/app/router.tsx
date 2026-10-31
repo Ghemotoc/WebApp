@@ -318,6 +318,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: CharactersPage };
     },
   },
+  // How a story's characters are connected (S1-E17-14 to 16): the map, the family tree and the
+  // list of relationships.
+  {
+    path: '/plan/s/:storySlug/connections',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ConnectionsPage } = await import('@/features/atlas/components/ConnectionsPage');
+      return { Component: ConnectionsPage };
+    },
+  },
   // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
   // or deletes it.
   {

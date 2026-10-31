@@ -93,7 +93,8 @@
   "nav": {
     "label": "Story Atlas sections",
     "glance": "At a glance",
-    "characters": "Characters"
+    "characters": "Characters",
+    "connections": "Connections"
   },
   "characters": {
     "heading": "Characters",
@@ -200,5 +201,94 @@
     "removedNote": "Removed: hidden from the sheets, with what you wrote kept.",
     "nameRequired": "Give the field a name.",
     "failed": "That didn’t save. Check your connection and try again."
+  },
+  "connections": {
+    "heading": "Connections",
+    "documentTitle": "Connections in {{title}}: Story Atlas",
+    "noCharacters": "Add at least two characters first, then connect them here.",
+    "openCharacters": "Open the characters",
+    "kinds": {
+      "parent_of": "Parent of",
+      "sibling_of": "Sibling of",
+      "partner_of": "Partner or spouse of",
+      "loves": "Loves",
+      "made": "Turned or made",
+      "friend_of": "Friend of",
+      "ally_of": "Ally of",
+      "mentors": "Mentors",
+      "works_for": "Works for",
+      "enemy_of": "Enemy of",
+      "resents": "Resents",
+      "killed": "Killed",
+      "custom": "Custom (your own label)"
+    },
+    "sentences": {
+      "parent_of": "{{from}} is the parent of {{to}}",
+      "sibling_of": "{{from}} is the sibling of {{to}}",
+      "partner_of": "{{from}} is the partner or spouse of {{to}}",
+      "loves": "{{from}} loves {{to}}",
+      "made": "{{from}} turned or made {{to}}",
+      "friend_of": "{{from}} is a friend of {{to}}",
+      "ally_of": "{{from}} is an ally of {{to}}",
+      "mentors": "{{from}} mentors {{to}}",
+      "works_for": "{{from}} works for {{to}}",
+      "enemy_of": "{{from}} is an enemy of {{to}}",
+      "resents": "{{from}} resents {{to}}",
+      "killed": "{{from}} killed {{to}}",
+      "custom": "{{from}}: {{label}} {{to}}"
+    },
+    "categories": {
+      "family": "Family",
+      "love": "Love",
+      "lineage": "Lineage (makers)",
+      "allies": "Allies",
+      "conflict": "Conflict",
+      "other": "Other"
+    },
+    "add": {
+      "heading": "Add a relationship",
+      "hint": "Read from the first character to the second: “Ana is the parent of Vali”.",
+      "from": "Character",
+      "to": "Other character",
+      "pickCharacter": "Pick a character",
+      "kind": "Relationship",
+      "customLabel": "Your label",
+      "customHint": "For example “rival of” or “owes a debt to”.",
+      "note": "Note (optional)",
+      "button": "Add relationship",
+      "added": "Relationship added.",
+      "pickBoth": "Pick both characters.",
+      "labelRequired": "Write your label for this relationship.",
+      "failed": "The relationship wasn’t saved. Check your connection and try again."
+    },
+    "list": {
+      "heading": "All relationships",
+      "sheetHeading": "Relationships",
+      "none": "No relationships yet.",
+      "delete": "Delete",
+      "confirm": "Delete “{{sentence}}”?",
+      "yes": "Yes, delete",
+      "keep": "Keep it",
+      "failed": "The relationship wasn’t deleted. Check your connection and try again."
+    },
+    "map": {
+      "heading": "Relationship map",
+      "hint": "Choose a character to open their sheet. The same relationships are listed under All relationships.",
+      "region": "Relationship map; scrolls sideways on small screens",
+      "categoriesLabel": "Show categories",
+      "none": "No relationships to draw yet."
+    },
+    "tree": {
+      "heading": "Family tree",
+      "hint": "Built from “Parent of” and “Partner or spouse of”. Older generations at the top.",
+      "includeMade": "Include turned or made",
+      "region": "Family tree; scrolls sideways on small screens",
+      "none": "No family links yet. Add “Parent of” or “Partner or spouse of” to draw the tree.",
+      "leftOff_one": "{{count}} character with no family links is left off.",
+      "leftOff_few": "{{count}} characters with no family links are left off.",
+      "leftOff_other": "{{count}} characters with no family links are left off.",
+      "generationsLabel": "Generations",
+      "generation": "Generation {{number}}: {{names}}"
+    }
   }
 }

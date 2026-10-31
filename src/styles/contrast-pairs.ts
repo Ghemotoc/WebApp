@@ -89,6 +89,13 @@ const interfacePairs: ContrastPair[] = [
     usedFor: 'focus ring on cards',
   },
   { foreground: 'primary', background: 'paper', minimumRatio: 3, usedFor: 'primary button shape' },
+  // Story Atlas relationship lines on the map's card (S1-E17-15).
+  ...['family', 'love', 'lineage', 'allies', 'conflict', 'other'].map((category): ContrastPair => ({
+    foreground: `atlas-line-${category}`,
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: `${category} lines on the relationship map`,
+  })),
 ];
 
 /** All pairs, checked in both themes. */
