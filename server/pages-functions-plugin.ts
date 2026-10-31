@@ -15,7 +15,9 @@
  * POST /api/embed (server/embeds.ts, S1-E3-10: always the oEmbed stand-in locally, so nothing
  * leaves the machine),
  * /api/canva/… (server/canva.ts, S1-E3-12: always the Canva stand-in locally, with its own token
- * key) and
+ * key),
+ * /api/age-check/… (server/age-check.ts, S1-E2-08: always the Yoti stand-in locally, signed with
+ * AGE_CHECK_SECRET, the same value the tests put in the local Vault) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * Stand-ins:
@@ -38,6 +40,7 @@ import { loadEnv, type Connect, type Plugin } from 'vite';
 
 import { brandDefaults } from '../src/config/brand.ts';
 
+import { handleAgeCheck } from './age-check.ts';
 import { handleCanva } from './canva.ts';
 import { handleContact, sendWithMailpit } from './contact.ts';
 import { handleDecisionEmails } from './decision-emails.ts';
@@ -256,7 +259,7 @@ function canvaOptions(environment: Record<string, string>) {
 
 /**
  * Picks the handler for the functions that stand in for an outside service locally (oEmbed for
- * music and video, Canva for covers), so nothing leaves the machine.
+ * music and video, Canva for covers, Yoti for the age check), so nothing leaves the machine.
  *
  * @param url - the request's address
  * @param environment - the VITE_ values: the local Supabase's address and anon key
@@ -278,6 +281,16 @@ function outsideServiceHandlerFor(
   if ((url ?? '').startsWith('/api/canva/')) {
     // Design it in Canva (S1-E3-12): the local Supabase and the stand-in, never Canva itself.
     return (request) => handleCanva(withLocalOrigin(request), canvaOptions(environment));
+  }
+  if ((url ?? '').startsWith('/api/age-check/')) {
+    // The age check (S1-E2-08): the local Supabase, the local secret and always the Yoti stand-in.
+    return (request) =>
+      handleAgeCheck(withLocalOrigin(request), {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+        secret: process.env.AGE_CHECK_SECRET,
+        settings: { mode: 'stub' },
+      });
   }
   return null;
 }

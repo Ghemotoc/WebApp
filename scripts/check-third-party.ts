@@ -39,6 +39,8 @@ const reviewedHosts: Record<string, string> = {
   'open.spotify.com': 'the Spotify player; only after play (ADR 0008)',
   'embed.music.apple.com': 'the Apple Music player; only after play (ADR 0008)',
   'music.apple.com': 'a writer’s clean source link for moderators; never loaded',
+  // Story Atlas (S1-E17): the writer's Markdown help shows a sample link; never loaded.
+  'example.com': 'the sample link in the Atlas text help; never loaded',
   localhost: 'a placeholder base address inside React Router and the local Supabase in development',
 };
 
@@ -105,6 +107,8 @@ function bundleProblems(path: string, allowed: Set<string>): string[] {
   const hosts = new Set<string>();
   for (const match of text.matchAll(/https?:\/\/([a-zA-Z0-9.-]+)/g)) {
     const host = (match[1] ?? '').toLowerCase().replace(/\.$/, '');
+    // "https://." at the end of a sentence in help text names no host at all.
+    if (host === '') continue;
     if (!allowed.has(host)) hosts.add(host);
   }
   return [...hosts].map((host) => `${path} mentions ${host}, which isn't a reviewed host`);

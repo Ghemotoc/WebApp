@@ -86,6 +86,13 @@ Why `set_my_locale()` and not an update policy on `profiles`: a policy would let
 
 While the `adults_only` flag is on (the March test), under-18s are `minor_not_admitted` and adults are active once their email is confirmed and a username chosen (`handle_missing` until then, S1-E2-04), without the age check.
 
+## The age check (S1-E2-08a, ADR 0010)
+
+- **`age_check_sessions`** links one Yoti session to one account while the check runs (one row per account; the owner may read their own). It holds no personal data beyond the link and is deleted when the result arrives; `purge_expired_age_check_sessions()` (pg_cron `purge-expired-age-check-sessions`, hourly at :17) removes rows past `expires_at` (30 minutes).
+- **`my_age_check()`** answers the caller's result, date and method, the line a new check tests (18 when the year of birth says 18 or over, otherwise 13), whether one can start, whether one is on its way and whether the account waits for one. Never the year of birth.
+- **Our server's two writes** are signed with HMAC-SHA256 and the Vault secret `age_check_secret` (the same value as Cloudflare's `AGE_CHECK_SECRET`), checked by `age_check_is_signed()`: `begin_age_check(yoti_session_id, threshold, signature)` as the person, over `begin|<session>|<threshold>`, and `record_age_check_result(yoti_session_id, outcome, method, signature)` as a visitor, over `result|<session>|<outcome>|<method>`. Without the secret neither acts.
+- **Kept:** only `profiles.age_check_result`, `age_checked_at` and `age_check_method`. A pass at the 18 line stores `18_or_over` and at the 13 line `13_or_over` (no check can start once `18_or_over` is stored); a failure stores `failed`, unless an earlier pass is kept.
+
 ## Country and markets (S1-E2-10)
 
 - **`markets`** lists each country: open or not, its minimum age (16 in Australia, Q19) and its languages (BCP 47). Romania is open; GB, IE, US, CA, AU and NZ are closed until their legal check. Anyone may read it; it changes by migration until S1-E11-05.
