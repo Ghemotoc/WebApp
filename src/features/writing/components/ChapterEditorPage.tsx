@@ -13,8 +13,8 @@
  * ChapterPreviewDialog (S1-E3-03).
  * Errors: a chapter that isn't the writer's shows "We can't find this chapter among yours"; a
  * failed load shows the plain message; save problems show in the Saving box.
- * Left out on purpose: the board's Insert menu (pictures, drawings, music, video), which is
- * S1-E3-09 to 11 after March.
+ * The toolbar's Insert menu (ChapterInsertControls) adds pictures (S1-E3-09) while the
+ * picture_uploads flag is on; drawings, music and video join it with S1-E3-10 and S1-E3-11.
  */
 import { EditorContent } from '@tiptap/react';
 import { useState } from 'react';
@@ -312,6 +312,7 @@ function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorSta
               editor={editing.editor}
               wordCount={wordCount}
               onLink={editing.openLinkDialog}
+              chapterId={chapter.id}
             />
           )}
           <div className="tmc-chapter-text rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card">

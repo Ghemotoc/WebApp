@@ -6,13 +6,15 @@
  * List, Link, Scene break. Every button has an accessible name, a title with its shortcut,
  * aria-keyshortcuts, aria-pressed (for the toggles) and a focus ring; the bar is a
  * role="toolbar" with one tab stop and the arrow keys moving between buttons (WCAG 2.1.1).
- * The board's Insert menu (picture, drawing, music, video) is S1-E3-09 to 11, after March.
+ * The board's Insert menu (ChapterInsertControls, S1-E3-09) sits after a thin divider, before
+ * the word count, with its own tab stop.
  * Who uses it: ChapterEditorPage.
  */
 import type { Editor } from '@tiptap/react';
 import { useState, type KeyboardEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ChapterInsertControls } from './ChapterInsertControls';
 import {
   BoldIcon,
   HeadingIcon,
@@ -38,6 +40,8 @@ export interface EditorToolbarProps {
   editor: Editor;
   wordCount: number;
   onLink: () => void;
+  /** The chapter's row ID, for the Insert menu's pictures (S1-E3-09). */
+  chapterId: string;
 }
 
 /**
@@ -104,7 +108,7 @@ function toolbarActions(onLink: () => void): ToolbarAction[] {
  *
  * @returns the bar with its buttons and the word count
  */
-export function EditorToolbar({ editor, wordCount, onLink }: EditorToolbarProps) {
+export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorToolbarProps) {
   const { t } = useTranslation('editor');
   const actions = toolbarActions(onLink);
   // One tab stop: Tab lands on the remembered button, the arrow keys move along the bar.
@@ -153,6 +157,7 @@ export function EditorToolbar({ editor, wordCount, onLink }: EditorToolbarProps)
           </button>
         );
       })}
+      <ChapterInsertControls editor={editor} chapterId={chapterId} />
       <span className="ml-auto px-4 text-sm text-meta">{t('wordCount', { count: wordCount })}</span>
     </div>
   );

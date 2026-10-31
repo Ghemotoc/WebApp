@@ -6,9 +6,12 @@
  * chapter's text. It answers nothing when the reader may not see the chapter: unpublished,
  * deleted, hidden by a moderator, rated above the reader's age or by someone either side blocks.
  * It never carries the user ID. A signed-out visitor gets only the teaser: the first whole
- * paragraphs up to 600 words, cut on the server (S1-E4-04). record_chapter_read(story_slug, chapter_code) adds one to
+ * paragraphs up to 600 words, cut on the server (S1-E4-04). The pictures in the text come with
+ * it, each with its check state (S1-E3-09); their files are read through signed addresses. record_chapter_read(story_slug, chapter_code) adds one to
  * today's total, never who read (supabase/migrations/…_s1_e4_01a_reader.sql).
  */
+import { pictureViewsFromJson, type PictureView } from '@/features/pictures/api/pictures';
+import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 /** One chapter as the reader shows it. */
@@ -41,6 +44,11 @@ export interface ReaderChapter {
   textContinues: boolean;
   /** The published text as the Markdown subset (ADR 0005), or only its teaser. */
   body: string | null;
+  /**
+   * The pictures in that text by ID, with their check state and a signed address for those the
+   * reader may see (S1-E3-09).
+   */
+  pictures: Record<string, PictureView>;
 }
 
 /** The shape get_chapter() answers, as JSON. */
@@ -66,6 +74,7 @@ interface ChapterRow {
   is_teaser: boolean;
   text_continues: boolean;
   body: string | null;
+  pictures?: Json;
 }
 
 /**
@@ -111,6 +120,8 @@ export async function fetchChapter(
     isTeaser: row.is_teaser,
     textContinues: row.text_continues,
     body: row.body,
+    // Signed addresses for the pictures the reader may see; Storage refuses the others.
+    pictures: await pictureViewsFromJson(client, row.pictures),
   };
 }
 

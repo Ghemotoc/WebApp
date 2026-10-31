@@ -3,7 +3,8 @@
  *
  * Only the allowed formatting exists in the editor, so nothing else can be typed or pasted in:
  * paragraphs, headings 2 and 3, bold, italic, quote, bullet and numbered lists, the scene
- * break and links (http, https, mailto; never opened by a click inside the editor). Code,
+ * break, links (http, https, mailto; never opened by a click inside the editor) and chapter
+ * pictures (S1-E3-09, chapterPictureNode.ts). Code,
  * strike-through and underline are switched off because the stored Markdown subset has no
  * place for them (CLAUDE.md rule 8).
  * Keyboard shortcuts follow board 4.3: Bold Ctrl+B and Italic Ctrl+I (TipTap's own), Heading
@@ -14,6 +15,7 @@ import { Extension } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 
 import { isAllowedLink } from './chapterMarkdown';
+import { ChapterPictureNode } from './chapterPictureNode';
 
 /** What the shortcut extension needs from the screen: a way to open the link dialog. */
 export interface ChapterShortcutOptions {
@@ -66,5 +68,7 @@ export function chapterEditorExtensions(options: ChapterShortcutOptions) {
       },
     }),
     ChapterShortcuts.configure(options),
+    // Pictures (S1-E3-09): only through Insert › Picture, never pasted.
+    ChapterPictureNode,
   ];
 }

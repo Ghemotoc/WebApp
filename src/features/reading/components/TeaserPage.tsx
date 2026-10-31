@@ -55,6 +55,8 @@ function TeaserChapter({ chapter }: { chapter: ReaderChapter }) {
           markdown={chapter.body ?? ''}
           language={chapter.story.languageCode}
           className="tmc-chapter-text--reader"
+          pictures={chapter.pictures}
+          canReportPictures
         />
       </div>
     </article>

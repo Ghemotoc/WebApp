@@ -499,6 +499,22 @@ Story settings › Cover / Settings › Profile picture (only while the picture_
        pending (a service down) → usePendingPictureRetry tries again, at most 5 times
 ```
 
+**Pictures in chapters (S1-E3-09).** The same check, for a picture inside a chapter:
+
+```
+Chapter editor › Insert › Picture (only while the picture_uploads flag is on)
+  PictureInsertDialog (file, alt text, "I have the right to use this picture")
+    → useChapterPictureUpload → uploadChapterPicture() (src/features/pictures/api/pictures.ts)
+       preparePicture(): redrawn on a canvas, so no location data, at most 1600 px
+       chapter-images/<chapter ID>/<ID>.webp, then rpc register_chapter_picture(), then the check
+    → a chapterPicture block in the editor, stored as ![alt](picture:<ID>) on its own line
+save_chapter_draft() → check_chapter_pictures(): at most 30, each with alt text, each the writer's
+get_chapter() → pictures: { <ID>: { state, bucket, path } } → ChapterText → ChapterPicture
+  passed: the picture and Report; pending or held: "Picture being checked"; removed: the marker
+```
+
+Covers and profile pictures now go through `preparePicture()` too. Tests: `185` in `supabase/tests/database/`, `src/lib/chapter-pictures.test.ts`, `e2e/chapter-pictures.spec.ts`.
+
 **Appeals (S1-E10-07).** On `/my-reports` each statement shows until when it can be appealed (six months, DSA art. 20(1)); `AppealSection` → `submit_appeal()`. Staff decide on `/staff/appeals` (`AppealsPage` → `admin_appeals_queue()`, `admin_decide_appeal()`); a moderator never decides an appeal on their own decision. Changing a decision restores the item and lifts the sanction; the person is notified (`appeal_decided`) either way.
 
 **Moderator mail (S1-E10-11).** `/moderator-mail` for members and `/staff/moderator-mail` for staff, `src/features/moderator-mail/`. One shared inbox; replies go out as "The moderation team"; internal notes stay with staff; a reply notifies the member (`moderator_mail_reply`).

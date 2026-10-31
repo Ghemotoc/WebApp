@@ -14,17 +14,13 @@
  */
 import { useEffect, useRef } from 'react';
 
-import { ChapterText } from './ChapterText';
+import { ChapterText, type ChapterTextProps } from './ChapterText';
 
 /** The browser events this turns off on the chapter text. */
 const blockedEvents = ['contextmenu', 'copy', 'cut', 'dragstart'] as const;
 
-/** What the wrapper needs: the same as ChapterText. */
-export interface ProtectedChapterTextProps {
-  markdown: string;
-  language: string;
-  className?: string;
-}
+/** What the wrapper needs: the same as ChapterText (the text, its language and its pictures). */
+export type ProtectedChapterTextProps = ChapterTextProps;
 
 /** Stops the browser's own handling of the event (the menu, the copy, the cut or the drag). */
 function preventDefault(event: Event) {
@@ -36,7 +32,7 @@ function preventDefault(event: Event) {
  *
  * @returns the chapter text inside an element that stops the four events
  */
-export function ProtectedChapterText({ markdown, language, className }: ProtectedChapterTextProps) {
+export function ProtectedChapterText(props: ProtectedChapterTextProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   // Native listeners rather than JSX handlers: they only cancel the browser's defaults and add
@@ -52,7 +48,7 @@ export function ProtectedChapterText({ markdown, language, className }: Protecte
 
   return (
     <div ref={wrapperRef} data-protected-text="">
-      <ChapterText markdown={markdown} language={language} className={className} />
+      <ChapterText {...props} />
     </div>
   );
 }

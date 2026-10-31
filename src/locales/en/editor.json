@@ -109,7 +109,10 @@
     "linkNotAllowed": "Only http, https and mailto links are allowed.",
     "saveFailed": "We couldn’t save the chapter.",
     "loadFailed": "We couldn’t load this chapter. Check your connection and try again.",
-    "createFailed": "We couldn’t add a chapter. Check your connection and try again."
+    "createFailed": "We couldn’t add a chapter. Check your connection and try again.",
+    "pictureNeedsAlt": "Every picture needs alt text. Write it under the picture and the chapter will save.",
+    "altTooLong": "Alt text can have at most 300 characters. Shorten it under the picture.",
+    "tooManyPictures": "A chapter can hold at most 30 pictures. Remove some, or split the chapter into two."
   },
   "conflict": {
     "keepMine": "Keep this version",
@@ -131,5 +134,53 @@
     "heading": "Preview",
     "note": "This is how readers will see the chapter.",
     "close": "Close"
+  },
+  "insert": {
+    "button": "Insert",
+    "menuLabel": "Insert",
+    "picture": "Picture",
+    "pictureNote": "Upload a picture. Alt text is required."
+  },
+  "pictureDialog": {
+    "heading": "Add a picture",
+    "fileLabel": "Picture",
+    "fileHint": "JPEG, PNG or WebP, up to 5 MB. We remove the location and camera data and make it the right size for reading.",
+    "altLabel": "Alt text",
+    "altHint": "Describe the picture for readers who use a screen reader.",
+    "rightsLabel": "I have the right to use this picture",
+    "rightsHint": "You made it, or its owner lets you use it. If someone shows us it’s theirs, we may take it down.",
+    "checkNote": "Every picture goes through our picture check before readers see it.",
+    "add": "Add the picture",
+    "cancel": "Cancel",
+    "uploading": "Uploading and checking your picture…",
+    "missingFile": "Choose a picture.",
+    "missingAlt": "Write alt text for the picture.",
+    "missingRights": "Tick the box to confirm you have the right to use this picture."
+  },
+  "picture": {
+    "label": "Picture in this chapter",
+    "altLabel": "Alt text (required)",
+    "altHint": "Describe the picture for readers who use a screen reader.",
+    "altMissing": "Write alt text so readers who can’t see the picture know what it shows.",
+    "remove": "Remove picture",
+    "notLoaded": "We couldn’t load this picture. Check your connection; it’s still in your chapter.",
+    "state": {
+      "checking": "Being checked",
+      "waiting_for_person": "Waiting for a person",
+      "visible": "Checked",
+      "removed": "Removed"
+    },
+    "noteTitle": {
+      "checking": "Checked before it shows.",
+      "waiting_for_person": "A person will look at it.",
+      "visible": "Readers can see it.",
+      "removed": "A moderator removed it."
+    },
+    "note": {
+      "checking": "Readers see this picture once our picture check passes. We removed the location data from the file.",
+      "waiting_for_person": "Our picture check flagged it, so someone on our moderation team will decide. Until then readers see “Picture being checked”.",
+      "visible": "It passed our picture check. We removed the location data from the file.",
+      "removed": "Readers see “[Removed by the moderation team]” in its place. You can remove it from the chapter."
+    }
   }
 }

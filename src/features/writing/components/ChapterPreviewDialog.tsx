@@ -4,14 +4,17 @@
  *
  * What it shows: the chapter's title and its text drawn by ChapterText, the reader's renderer,
  * so the writer sees exactly what will be published (the draft as saved on screen now). A native
- * <dialog>: focus stays inside, Escape closes it.
- * Who uses it: ChapterEditorPage.
+ * <dialog>: focus stays inside, Escape closes it. Pictures show as readers will see them: a
+ * picture still in its check shows "Picture being checked" (S1-E3-09).
+ * Who uses it: ChapterEditorPage. What it calls: useMyPictureStates for the text's pictures.
  */
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
+import { useMyPictureStates } from '@/features/pictures/hooks/useChapterPictures';
 import { ChapterText } from '@/features/reading/components/ChapterText';
+import { pictureIdsIn } from '@/lib/chapter-pictures';
 
 /** What the dialog needs. */
 export interface ChapterPreviewDialogProps {
@@ -37,6 +40,7 @@ export function ChapterPreviewDialog({
 }: ChapterPreviewDialogProps) {
   const { t } = useTranslation('editor');
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const { pictures } = useMyPictureStates(pictureIdsIn(markdown));
 
   // Open and close the native dialog as the prop changes.
   useEffect(() => {
@@ -73,6 +77,7 @@ export function ChapterPreviewDialog({
           markdown={markdown}
           language={language}
           className="mx-auto w-full max-w-[680px]"
+          pictures={pictures}
         />
       </div>
     </dialog>
