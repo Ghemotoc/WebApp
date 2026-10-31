@@ -58,8 +58,11 @@ select results_eq(
        ('canva_connections', 0::bigint),
       ('chapter_embeds', 0::bigint),
        ('chapter_likes', 0::bigint),
+       ('chapter_plan_characters', 0::bigint),
+       ('chapter_plans', 0::bigint),
        ('chapter_reads', 0::bigint),
        ('chapter_revisions', 0::bigint),
+       ('chapter_scenes', 0::bigint),
        ('chapter_shares', 0::bigint),
        ('chapters', 0::bigint),
        -- The real authors of public-domain classics, public on every byline (S1-E5-06).

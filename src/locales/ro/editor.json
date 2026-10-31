@@ -2,6 +2,7 @@
   "documentTitle": "{{chapter}} · {{story}} · {{productName}}",
   "back": "Panoul autorului",
   "chapterNumber": "Capitolul {{number}}",
+  "newChapter": "Capitol nou",
   "state": {
     "draft": "Ciornă",
     "scheduled": "Programat",

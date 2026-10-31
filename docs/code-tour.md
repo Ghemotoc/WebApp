@@ -1426,3 +1426,11 @@ Read in this order; each file's header comment says what it is for and where thi
 - One click: "New entry" in `BibleContents` → `useStoryBible().createEntry` → `create_bible_entry()` → a row in `story_bible_entries` → the page opens it with `?edit`, where `BibleEntryEditor`'s fields save by themselves through `update_bible_entry()`.
 - Reading mode is `BibleEntryView` with `BibleMarkdown` (no raw HTML, safe links only, `rel="nofollow ugc noopener"`). `BibleSectionsManager` renames, moves (drag or Up and Down) and deletes sections; `delete_bible_section()` refuses one that still has entries.
 
+## Story Atlas: chapter planning and the writing view (S1-E17-23 to S1-E17-26; ATLAS-e)
+
+- The writing view is the chapter editor (`src/features/writing/components/ChapterEditorPage.tsx`) with four pieces from `src/features/atlas/components/`: `WritingChapterList` (left on a laptop, last on a phone), `ChapterPlanPanel` (under the aside), `ChapterWordsLine` (under the text) and `FocusModeToggle` (hides the list and the plan).
+- Every chapter has a private `chapter_plans` row, made by the `chapters_make_chapter_plan` trigger. Readers never read it: it sits in its own table, read only by the writer (`chapter_plans_select_own`).
+- One click: picking a point of view in `ChapterPlanBasics` → `useChapterPlan().saveFields` → `saveChapterPlanChange()` in `api/chapterPlans.ts` → `update_chapter_plan()` → the plan and the chapter list are read again, so a new word target shows in both.
+- Scenes (`ChapterScenesSection`, `ChapterSceneRow`) go through `add_chapter_scene()`, `update_chapter_scene()`, `move_chapter_scene()` and `delete_chapter_scene()`. Characters present are `PresentCharacterChips` → `set_chapter_character_present()`.
+- On each character sheet, `CharacterAppearancesSection` reads `character_appearances()`: the chapters the character is the point of view of or present in.
+

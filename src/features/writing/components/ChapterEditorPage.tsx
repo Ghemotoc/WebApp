@@ -15,6 +15,11 @@
  * failed load shows the plain message; save problems show in the Saving box.
  * The toolbar's Insert menu (ChapterInsertControls) adds pictures (S1-E3-09) while the
  * picture_uploads flag is on; drawings, music and video join it with S1-E3-10 and S1-E3-11.
+ * Story Atlas's writing view (S1-E17-23 to S1-E17-26) adds, from src/features/atlas: the story's
+ * chapter list on the left (WritingChapterList, with "New chapter"), the chapter's plan under the
+ * aside (ChapterPlanPanel), the words against the chapter's target under the text with the
+ * long-chapter warning (ChapterWordsLine) and Focus mode (FocusModeToggle), which hides the list
+ * and the plan.
  */
 import { EditorContent } from '@tiptap/react';
 import { useState } from 'react';
@@ -28,6 +33,10 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { TextInput } from '@/components/ui/TextInput';
 import { brand } from '@/config/brand';
+import { ChapterPlanPanel } from '@/features/atlas/components/ChapterPlanPanel';
+import { ChapterWordsLine } from '@/features/atlas/components/ChapterWordsLine';
+import { FocusModeToggle } from '@/features/atlas/components/FocusModeToggle';
+import { WritingChapterList } from '@/features/atlas/components/WritingChapterList';
 import { MAXIMUM_CHAPTER_TITLE_LENGTH } from '@/schemas/chapter';
 
 import type { ChapterStatus, MyChapter } from '../api/chapters';
@@ -48,6 +57,7 @@ import { CompareVersionsDialog } from './CompareVersionsDialog';
 import { EditorAside } from './EditorAside';
 import { EditorToolbar } from './EditorToolbar';
 import { LinkDialog } from './LinkDialog';
+import { NewChapterButton } from './NewChapterButton';
 import { PublishPanel } from './PublishPanel';
 
 /** The state pill's tone: a draft is neutral, scheduled gold, published sage. */
@@ -164,6 +174,8 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
   const { isOnline } = useOnlineStatus();
   const [title, setTitle] = useState(start.title);
   const [wordCount, setWordCount] = useState(chapter.wordCount);
+  // The characters in the text, for the long-chapter warning (S1-E17-23); the start is close enough.
+  const [characterCount, setCharacterCount] = useState(start.body.length);
   const autosave = useAutosave({
     chapterCode: chapter.code,
     initialVersion: start.version,
@@ -176,7 +188,9 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     label: t('bodyLabel'),
     onChange: () => {
       autosave.markChanged();
-      setWordCount(countWords(editing.editor?.getText() ?? ''));
+      const text = editing.editor?.getText() ?? '';
+      setWordCount(countWords(text));
+      setCharacterCount(text.length);
     },
     // Leaving the text saves at once (board 4.3: "when you click away from the text").
     onBlur: () => void autosave.saveNow(),
@@ -195,7 +209,7 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     setWordCount(other.wordCount);
     autosave.acceptOther(other.draftVersion);
   }
-  return { title, changeTitle, wordCount, autosave, editing, loadOther };
+  return { title, changeTitle, wordCount, characterCount, autosave, editing, loadOther };
 }
 
 /** The conflict's two choices and the compare dialog's open state (S1-E3-02b). */
@@ -258,11 +272,13 @@ function EditorSideColumn(props: {
   publishing: ReturnType<typeof useChapterPublishing>;
   stories: MyStory[];
   onPreview: () => void;
+  /** False in focus mode, which hides the planning panel (S1-E17-23). */
+  showsPlan: boolean;
 }) {
   const { chapter, publishing } = props;
   const story = props.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
   return (
-    <div className="w-full flex-[1_1_300px] lg:max-w-[340px]">
+    <div className="flex w-full flex-[1_1_300px] flex-col gap-7 lg:max-w-[340px]">
       <EditorAside
         saveState={props.loaded.autosave.state}
         publishControls={
@@ -274,26 +290,86 @@ function EditorSideColumn(props: {
         stories={props.stories.filter((candidate) => candidate.deletedAt === null)}
         currentSlug={chapter.story.slug}
       />
+      {/* The chapter's planning (Story Atlas, S1-E17-24), stacked under the aside on a phone. */}
+      {props.showsPlan && <ChapterPlanPanel slug={chapter.story.slug} chapterCode={chapter.code} />}
     </div>
   );
 }
 
-/** The editor itself, once the chapter is loaded: the title, the toolbar, the text and the aside. */
+/** The main column: the title, the toolbar, the text, the live count, the notes and the dialogs. */
+function EditorMainColumn(props: {
+  chapter: MyChapter;
+  loaded: ReturnType<typeof useLoadedEditor>;
+  conflict: ReturnType<typeof useConflictChoices>;
+  language: string;
+  isPreviewOpen: boolean;
+  closePreview: () => void;
+}) {
+  const { chapter, loaded } = props;
+  const { title, changeTitle, wordCount, autosave, editing } = loaded;
+  return (
+    <main className="flex min-w-0 flex-[999_1_560px] flex-col gap-3.5">
+      <ChapterTitleField
+        value={title}
+        onChange={changeTitle}
+        onBlur={() => void autosave.saveNow()}
+      />
+      {editing.editor !== null && (
+        <EditorToolbar
+          editor={editing.editor}
+          wordCount={wordCount}
+          onLink={editing.openLinkDialog}
+          chapterId={chapter.id}
+        />
+      )}
+      <div className="tmc-chapter-text rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card">
+        <EditorContent editor={editing.editor} />
+      </div>
+      {/* Words against the chapter's target, live (Story Atlas, S1-E17-23 and S1-E17-26). */}
+      <ChapterWordsLine
+        slug={chapter.story.slug}
+        chapterCode={chapter.code}
+        wordCount={wordCount}
+        characterCount={loaded.characterCount}
+      />
+      <EditorFootnotes />
+      <EditorDialogs chapterCode={chapter.code} loaded={loaded} conflict={props.conflict} />
+      <ChapterPreviewDialog
+        isOpen={props.isPreviewOpen}
+        title={title}
+        markdown={props.isPreviewOpen ? editing.readBody() : ''}
+        language={props.language}
+        onClose={props.closePreview}
+      />
+    </main>
+  );
+}
+
+/**
+ * The editor itself, once the chapter is loaded: the chapter list (Story Atlas's writing view,
+ * S1-E17-23; first on a laptop, last on a phone), the main column and the aside with the
+ * chapter's plan. Focus mode hides the list and the plan.
+ */
 function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorStart }) {
   const { t } = useTranslation('editor');
   const writing = useMyStories();
   const loaded = useLoadedEditor(chapter, start);
-  const { title, changeTitle, wordCount, autosave, editing } = loaded;
   const conflict = useConflictChoices(loaded);
-  const publishing = useChapterPublishing(chapter, autosave);
+  const publishing = useChapterPublishing(chapter, loaded.autosave);
   const [isPreviewOpen, setPreviewOpen] = useState(false);
+  const [isFocusMode, setFocusMode] = useState(false);
   const story = writing.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
-  const documentTitle = title === '' ? t('chapterNumber', { number: chapter.position }) : title;
+  const documentTitle =
+    loaded.title === '' ? t('chapterNumber', { number: chapter.position }) : loaded.title;
 
   return (
     <>
-      <EditorBreadcrumb chapter={chapter} status={publishing.state.status} />
-      <div className="flex flex-col gap-7 lg:flex-row lg:items-start">
+      {/* The toggle follows the breadcrumb, clear of the Saving panel's desk lamp on the right. */}
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <EditorBreadcrumb chapter={chapter} status={publishing.state.status} />
+        <FocusModeToggle isOn={isFocusMode} onChange={setFocusMode} />
+      </div>
+      <div className="flex flex-col gap-7 lg:flex-row lg:flex-wrap lg:items-start">
         <title>
           {t('documentTitle', {
             chapter: documentTitle,
@@ -301,33 +377,14 @@ function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorSta
             productName: brand.productName,
           })}
         </title>
-        <main className="flex min-w-0 flex-[999_1_560px] flex-col gap-3.5">
-          <ChapterTitleField
-            value={title}
-            onChange={changeTitle}
-            onBlur={() => void autosave.saveNow()}
-          />
-          {editing.editor !== null && (
-            <EditorToolbar
-              editor={editing.editor}
-              wordCount={wordCount}
-              onLink={editing.openLinkDialog}
-              chapterId={chapter.id}
-            />
-          )}
-          <div className="tmc-chapter-text rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card">
-            <EditorContent editor={editing.editor} />
-          </div>
-          <EditorFootnotes />
-          <EditorDialogs chapterCode={chapter.code} loaded={loaded} conflict={conflict} />
-          <ChapterPreviewDialog
-            isOpen={isPreviewOpen}
-            title={title}
-            markdown={isPreviewOpen ? editing.readBody() : ''}
-            language={story?.languageCode ?? 'ro'}
-            onClose={() => setPreviewOpen(false)}
-          />
-        </main>
+        <EditorMainColumn
+          chapter={chapter}
+          loaded={loaded}
+          conflict={conflict}
+          language={story?.languageCode ?? 'ro'}
+          isPreviewOpen={isPreviewOpen}
+          closePreview={() => setPreviewOpen(false)}
+        />
         <EditorSideColumn
           chapter={chapter}
           loaded={loaded}
@@ -335,7 +392,17 @@ function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorSta
           publishing={publishing}
           stories={writing.stories}
           onPreview={() => setPreviewOpen(true)}
+          showsPlan={!isFocusMode}
         />
+        {!isFocusMode && (
+          <div className="order-last w-full lg:basis-full xl:order-first xl:w-[240px] xl:shrink-0 xl:basis-auto">
+            <WritingChapterList
+              slug={chapter.story.slug}
+              openChapterCode={chapter.code}
+              footer={<NewChapterButton slug={chapter.story.slug} label={t('newChapter')} />}
+            />
+          </div>
+        )}
       </div>
     </>
   );
