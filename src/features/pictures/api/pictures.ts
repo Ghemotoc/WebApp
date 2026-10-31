@@ -1,13 +1,15 @@
 /**
- * Uploaded pictures: uploading a cover, a profile picture or a picture in a chapter, asking for its
- * check, and reading a picture's state for the screens (stories S1-E10-05 and S1-E3-09; CLAUDE.md
+ * Uploaded pictures: uploading a cover, a profile picture, a picture in a chapter or a Story Atlas
+ * picture, asking for its check, and reading a picture's state for the screens (stories S1-E10-05,
+ * S1-E3-09 and S1-E17-11; CLAUDE.md
  * rule 19: every uploaded picture is checked before anyone else sees it). Every file is prepared
  * first (lib/preparePicture.ts: location data removed, resized).
  *
  * Who calls it: the hooks in ../hooks (covers on cards, the story page and the teaser; the profile
  * picture; the upload fields in Story settings and Settings › Profile).
- * What it calls next: Supabase Storage (the private `covers`, `avatars` and `chapter-images`
- * buckets), the database functions register_picture(), register_chapter_picture(),
+ * What it calls next: Supabase Storage (the private `covers`, `avatars`, `chapter-images` and
+ * `atlas-images` buckets), the database functions register_picture(), register_chapter_picture(),
+ * register_atlas_picture(),
  * story_cover_picture(), profile_avatar_picture(), my_pending_pictures() and my_picture_states()
  * (…_s1_e10_05_picture_check.sql, …_s1_e3_09_chapter_pictures.sql), and POST /api/picture-check
  * (server/picture-check.ts), which runs the checks with the person's own sign-in.
@@ -35,8 +37,9 @@ export interface PictureView {
   url: string | null;
 }
 
-/** The buckets people upload to: covers, profile pictures and chapter pictures (S1-E3-09). */
-export type PictureBucket = 'covers' | 'avatars' | 'chapter-images';
+/** The buckets people upload to: covers, profile pictures, chapter pictures (S1-E3-09) and Story
+ * Atlas pictures (S1-E17-11). */
+export type PictureBucket = 'covers' | 'avatars' | 'chapter-images' | 'atlas-images';
 
 /** The picture types the buckets accept, and the largest file each takes (the bucket limits). */
 export const pictureTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
@@ -44,6 +47,7 @@ export const largestPictureBytes: Record<PictureBucket, number> = {
   covers: 5 * 1024 * 1024,
   avatars: 2 * 1024 * 1024,
   'chapter-images': 5 * 1024 * 1024,
+  'atlas-images': 5 * 1024 * 1024,
 };
 
 /** Why an upload didn't work. */
@@ -311,6 +315,51 @@ export async function uploadChapterPicture(
   // Step 4: the check, as for every other picture.
   const status = await requestPictureCheck(client, registered.data, upload.file.name);
   return { pictureId: registered.data, status };
+}
+
+/**
+ * Uploads a picture for the writer's Story Atlas, registers it and asks for its check
+ * (S1-E17-11). It shows on the sheet only once the check passed.
+ *
+ * @param client - the shared Supabase client
+ * @param upload - the story's ID (the folder in `atlas-images`) and the file
+ * @returns the picture's ID (for set_character_picture()) and its status after the check
+ * @throws PictureUploadError as uploadPicture()
+ */
+export async function uploadAtlasPicture(
+  client: AppSupabaseClient,
+  upload: { storyId: string; file: File },
+): Promise<{ pictureId: string; status: string }> {
+  // Step 1: the prepared file, in the story's folder.
+  const path = await storePicture(client, {
+    bucket: 'atlas-images',
+    folder: upload.storyId,
+    file: upload.file,
+    longestSide: longestSideFor.atlasImage,
+  });
+  // Step 2: registered as pending; the hourly limit is counted here.
+  const registered = await client.rpc('register_atlas_picture', { target_path: path });
+  if (registered.error !== null) throw registrationFailure(registered.error);
+  // Step 3: the check, as for every other picture (CLAUDE.md rule 19).
+  const status = await requestPictureCheck(client, registered.data, upload.file.name);
+  return { pictureId: registered.data, status };
+}
+
+/**
+ * Deletes a file the writer no longer uses (S1-E17-11: "removing it deletes the file"). Storage
+ * keeps a file that a moderator or the authorities still need (atlas_images_delete_own).
+ *
+ * @param client - the shared Supabase client
+ * @param file - the bucket and path the database returned, or null when there was none
+ * Errors: none thrown; a file that couldn't be deleted is only left behind, never shown again,
+ *   because its picture is already marked deleted.
+ */
+export async function deleteStoredPicture(
+  client: AppSupabaseClient,
+  file: { bucket: string; path: string } | null,
+): Promise<void> {
+  if (file === null) return;
+  await client.storage.from(file.bucket).remove([file.path]);
 }
 
 /**

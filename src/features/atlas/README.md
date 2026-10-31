@@ -7,5 +7,7 @@ Story Atlas, the private planning side of every story (epic S1-E17, `docs/storie
 - Fields that save by themselves: `PlanTextField`, `PlanSelectField`, `WordTargetField`, with `SaveNote`; the logic is `hooks/useAutosaveField.ts`.
 - `hooks/useStoryPlan.ts` and `api/storyPlans.ts`: `story_plan()`, `update_story_plan()` and, for the title, genre and audience, `update_my_story()`.
 - `lib/`: `lastPlannedStory.ts` (the device's last story), `planProgress.ts` (the words bar), `wordTarget.ts` (reading a typed target), `linkedProject.ts` (http and https only).
+- `components/CharactersPage.tsx`: `/plan/s/:storySlug/characters/:characterId?` (ATLAS-b, S1-E17-08 to 13): `CastList`, `CharacterSheet` and its sections, `CharacterAvatar`; `AtlasSectionNav` under the top bar. On the at-a-glance page, `CastAtAGlance` and `CharacterFieldsSection`.
+- `hooks/useStoryCast.ts` and `api/characters.ts`: `story_cast()` and the character, field and picture functions; `lib/castGroups.ts`, `lib/characterInitials.ts`, `lib/writeAddress.ts`.
 - `registerAtlasTranslations.ts`: the `atlas` text, added when Story Atlas first renders.
-- The database side: `supabase/README.md`, "Stories", "Story Atlas plans".
+- The database side: `supabase/README.md`, "Stories", "Story Atlas plans" and "Story Atlas characters".

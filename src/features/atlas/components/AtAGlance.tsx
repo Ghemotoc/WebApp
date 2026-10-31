@@ -3,9 +3,10 @@
  * top bar.
  *
  * The title as the page heading with "Only you can see your plan", then two rows that stack on
- * a phone: "The story" beside the words and chapters, and the details beside the linked project
- * and Delete. Further parts of the bundle add the cast (part b), the chapters' planning status
- * and targets (part e) and the open questions and ideas (part g) to the first row.
+ * a phone: "The story" beside the words, chapters and characters, and the details beside the
+ * linked project, the writer's own character fields and Delete. Further parts of the bundle add
+ * the chapters' planning status and targets (part e) and the open questions and ideas (part g)
+ * to the first row.
  * Who uses it: StoryAtlasPage. What it calls: useStoryPlan for the savers; the section components.
  */
 import { DeleteStoryControl } from '@/features/writing/components/DeleteStoryControl';
@@ -15,7 +16,9 @@ import type { StoryPlanPage } from '../api/storyPlans';
 import { useStoryPlan } from '../hooks/useStoryPlan';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { CastAtAGlance } from './CastAtAGlance';
 import { ChaptersAtAGlance } from './ChaptersAtAGlance';
+import { CharacterFieldsSection } from './CharacterFieldsSection';
 import { LinkedProjectSection } from './LinkedProjectSection';
 import { StoryDetailsSection } from './StoryDetailsSection';
 import { StorySummary } from './StorySummary';
@@ -66,12 +69,14 @@ export function AtAGlance({ page, story }: { page: StoryPlanPage; story: MyStory
             wordTarget={page.plan.wordTarget}
           />
           <ChaptersAtAGlance page={page} />
+          <CastAtAGlance page={page} />
         </div>
       </div>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <StoryDetailsSection page={page} saveStory={saveStory} savePlan={savePlan} />
         <div className="flex min-w-0 flex-col gap-6">
           <LinkedProjectSection page={page} savePlan={savePlan} />
+          <CharacterFieldsSection slug={page.story.slug} />
           {story !== undefined && <DeleteSection story={story} />}
         </div>
       </div>

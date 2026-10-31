@@ -89,5 +89,116 @@
   "delete": {
     "heading": "Delete this story",
     "note": "Its whole plan goes with it."
+  },
+  "nav": {
+    "label": "Story Atlas sections",
+    "glance": "At a glance",
+    "characters": "Characters"
+  },
+  "characters": {
+    "heading": "Characters",
+    "documentTitle": "Characters in {{title}}: Story Atlas",
+    "newCharacter": "New character",
+    "newName": "New character",
+    "count_one": "{{count}} character",
+    "count_few": "{{count}} characters",
+    "count_other": "{{count}} characters",
+    "filter": "Filter characters",
+    "filterHint": "By name, or by what they’re also known as.",
+    "none": "No characters yet. Add the first with New character.",
+    "noMatch": "No one matches “{{filter}}”.",
+    "pick": "Choose a character to open their sheet.",
+    "notFound": "That character isn’t in this story any more.",
+    "createFailed": "The character wasn’t added. Check your connection and try again.",
+    "name": "Name",
+    "nameRequired": "Give the character a name.",
+    "roleLabel": "Role",
+    "role": {
+      "protagonist": "Protagonist",
+      "deuteragonist": "Deuteragonist",
+      "antagonist": "Antagonist",
+      "supporting": "Supporting",
+      "minor": "Minor",
+      "mentioned": "Mentioned only"
+    },
+    "groups": {
+      "basics": "Basics",
+      "lookAndVoice": "Look and voice",
+      "inside": "Inside",
+      "inTheStory": "In the story"
+    },
+    "fields": {
+      "also_known_as": "Also known as",
+      "species": "Species or kind",
+      "pronouns": "Pronouns",
+      "age_or_born": "Age or year born",
+      "life_status": "Status",
+      "occupation": "Occupation",
+      "origin": "Origin",
+      "appearance": "Appearance",
+      "distinguishing_marks": "Distinguishing marks",
+      "voice": "Voice and mannerisms",
+      "personality": "Personality",
+      "wants": "What they want",
+      "needs": "What they need",
+      "fear_or_wound": "Fear or wound",
+      "secrets": "Secrets",
+      "values_and_code": "Values and code",
+      "backstory": "Backstory",
+      "arc": "Arc",
+      "key_lines": "Key lines and quotes",
+      "notes": "Notes"
+    },
+    "hints": {
+      "also_known_as": "Other names and nicknames, separated by commas.",
+      "age_or_born": "An age, or the year they were born.",
+      "life_status": "For example alive, dead or undead."
+    },
+    "firstAppearance": "First appearance",
+    "firstAppearanceNone": "Not picked yet",
+    "custom": {
+      "heading": "Your own fields",
+      "none": "No fields of your own yet.",
+      "manage": "Add or remove your own fields on the at-a-glance page"
+    },
+    "picture": {
+      "heading": "Picture",
+      "none": "No picture yet, so the initials show.",
+      "upload": "Choose a picture",
+      "hint": "JPEG, PNG or WebP, up to 5 MB. It’s checked before it shows, and only you see it.",
+      "alt": "Describe the picture",
+      "altHint": "For anyone who can’t see it.",
+      "remove": "Remove picture",
+      "removeFailed": "The picture wasn’t removed. Check your connection and try again.",
+      "checking": "Your picture is being checked. It shows here once it passes.",
+      "waiting_for_person": "A person on our team will look at this picture first.",
+      "removed": "The moderation team removed this picture."
+    },
+    "delete": {
+      "heading": "Delete this character",
+      "button": "Delete character",
+      "confirm": "Delete {{name}}? Their picture goes too, and this can’t be undone.",
+      "yes": "Yes, delete",
+      "keep": "Keep {{name}}",
+      "failed": "The character wasn’t deleted. Check your connection and try again."
+    },
+    "glance": {
+      "heading": "Characters",
+      "none": "No characters yet.",
+      "recent": "Edited recently",
+      "open": "Open characters"
+    }
+  },
+  "fieldsSection": {
+    "heading": "Your character fields",
+    "hint": "A field you add here shows on every character’s sheet in this story, such as “Turned by”.",
+    "none": "No fields of your own yet.",
+    "name": "New field",
+    "add": "Add field",
+    "remove": "Remove",
+    "restore": "Bring back",
+    "removedNote": "Removed: hidden from the sheets, with what you wrote kept.",
+    "nameRequired": "Give the field a name.",
+    "failed": "That didn’t save. Check your connection and try again."
   }
 }
