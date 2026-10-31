@@ -430,5 +430,42 @@
       "replyLabel": "Răspunde-i lui {{name}} la capitolul {{number}}",
       "empty": "Încă nu ai comentarii. Apar aici când cititorii scriu sub capitolele tale."
     }
+  },
+  "canva": {
+    "documentTitle": "Creează-o în Canva · {{productName}}",
+    "heading": "Creează-o în Canva",
+    "backToWriting": "Înapoi la Scrierile tale",
+    "backToSettings": "Înapoi la setările poveștii",
+    "opening": "Se deschide Canva…",
+    "signedOut": "Conectează-te mai întâi, apoi apasă din nou „Creează-o în Canva” în setările poveștii.",
+    "working": "O clipă. Vorbim cu Canva…",
+    "cancelled": "Nu ai conectat Canva, așa că nu s-a trimis nimic către Canva. Poți încerca oricând din setările poveștii.",
+    "saved": "Coperta ta din Canva e salvată.",
+    "savedChecking": "O vezi deja. Cititorii o văd după ce verificarea imaginilor o analizează, de obicei în câteva minute. Poți închide fila.",
+    "savedVisible": "Cititorii o pot vedea acum. Poți închide fila.",
+    "design": "Creează-o în Canva",
+    "newTab": "(se deschide într-o filă nouă)",
+    "note": "Canva deschide o copertă goală, la mărimea potrivită. Când apeși Return în Canva, coperta ta revine aici. Ai nevoie de propriul cont Canva, iar acolo se aplică regulile Canva. Nu se trimite nimic către Canva până nu te conectezi.",
+    "failed": {
+      "switched_off": "Crearea copertelor în Canva e oprită acum.",
+      "account": "Contul tău nu poate schimba coperte acum.",
+      "not_connected": "Canva nu mai e conectat. Apasă din nou „Creează-o în Canva” în setările poveștii ca să-l conectezi.",
+      "declined": "Canva nu a acceptat conectarea. Încearcă din nou din setările poveștii.",
+      "expired": "Linkul a expirat sau nu vine de la Canva. Începe din nou din setările poveștii.",
+      "export_failed": "Canva nu a putut exporta designul. Deschide-l în Canva și apasă din nou Return.",
+      "unavailable": "Canva nu e încă pregătit la noi. Încearcă mai târziu.",
+      "unreachable": "Nu am putut ajunge la Canva sau la serverul nostru. Verifică conexiunea și încearcă din nou.",
+      "signed_out": "Conectează-te mai întâi, apoi încearcă din nou.",
+      "invalid": "Pagina aceasta merge doar în drum spre Canva și înapoi. Începe din setările poveștii.",
+      "storyNotFound": "Nu am găsit povestea aceasta printre ale tale."
+    },
+    "settings": {
+      "heading": "Canva",
+      "notConnected": "Neconectat. Conectezi Canva prima dată când apeși „Creează-o în Canva” în setările copertei unei povești.",
+      "connected": "Conectat din {{date}}. Îl folosim doar ca să deschidem coperte goale și să aducem înapoi ce creezi.",
+      "disconnect": "Deconectează Canva",
+      "disconnectFailed": "Nu am putut deconecta Canva. Încearcă din nou.",
+      "loadFailed": "Nu am putut verifica dacă Canva e conectat. Încearcă din nou."
+    }
   }
 }

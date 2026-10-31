@@ -13,7 +13,9 @@
  * POST /api/picture-check (server/picture-check.ts, S1-E10-05: always the stub locally, signed
  * with PICTURE_CHECK_SECRET, the same value the tests put in the local Vault),
  * POST /api/embed (server/embeds.ts, S1-E3-10: always the oEmbed stand-in locally, so nothing
- * leaves the machine) and
+ * leaves the machine),
+ * /api/canva/… (server/canva.ts, S1-E3-12: always the Canva stand-in locally, with its own token
+ * key) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * Stand-ins:
@@ -36,6 +38,7 @@ import { loadEnv, type Connect, type Plugin } from 'vite';
 
 import { brandDefaults } from '../src/config/brand.ts';
 
+import { handleCanva } from './canva.ts';
 import { handleContact, sendWithMailpit } from './contact.ts';
 import { handleDecisionEmails } from './decision-emails.ts';
 import { handleEmbed } from './embeds.ts';
@@ -98,7 +101,8 @@ async function toWebRequest(nodeRequest: IncomingMessage): Promise<Request> {
 async function sendWebResponse(response: Response, nodeResponse: ServerResponse): Promise<void> {
   nodeResponse.statusCode = response.status;
   response.headers.forEach((value, name) => nodeResponse.setHeader(name, value));
-  nodeResponse.end(await response.text());
+  // The bytes as they are: a picture (the Canva export, S1-E3-12) must not pass through text.
+  nodeResponse.end(Buffer.from(await response.arrayBuffer()));
 }
 
 /** How each server reads the app's index.html: the dev server builds it, preview reads dist/. */
@@ -223,6 +227,62 @@ function databaseHandlerFor(
 }
 
 /**
+ * The request at this server's real address: toWebRequest() always says "localhost", but the
+ * Canva stand-in's pages link back to our own pages, so they need the port too.
+ *
+ * @param request - the request as toWebRequest() made it
+ * @returns the same request at http://<Host header>
+ */
+function withLocalOrigin(request: Request): Request {
+  const address = new URL(request.url);
+  const host = request.headers.get('host') ?? 'localhost';
+  return new Request(`http://${host}${address.pathname}${address.search}`, request);
+}
+
+/**
+ * The Canva handler's settings locally: the local Supabase and always the stand-in (S1-E3-12).
+ *
+ * @param environment - the VITE_ values
+ * @returns the options for handleCanva()
+ */
+function canvaOptions(environment: Record<string, string>) {
+  return {
+    supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+    anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+    tokenSecret: undefined,
+    settings: { mode: 'stub' },
+  };
+}
+
+/**
+ * Picks the handler for the functions that stand in for an outside service locally (oEmbed for
+ * music and video, Canva for covers), so nothing leaves the machine.
+ *
+ * @param url - the request's address
+ * @param environment - the VITE_ values: the local Supabase's address and anon key
+ * @returns the function that answers it, or null for every other address
+ */
+function outsideServiceHandlerFor(
+  url: string | undefined,
+  environment: Record<string, string>,
+): FunctionHandler | null {
+  if (url === '/api/embed') {
+    // Music and video cards (S1-E3-10): the local Supabase and the oEmbed stand-in.
+    return (request) =>
+      handleEmbed(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+        lookUpOembed: oembedLookup('stub'),
+      });
+  }
+  if ((url ?? '').startsWith('/api/canva/')) {
+    // Design it in Canva (S1-E3-12): the local Supabase and the stand-in, never Canva itself.
+    return (request) => handleCanva(withLocalOrigin(request), canvaOptions(environment));
+  }
+  return null;
+}
+
+/**
  * Picks the handler for an address, or none.
  *
  * @param url - the request's address
@@ -254,15 +314,8 @@ function handlerFor(
   }
   const databaseHandler = databaseHandlerFor(url, environment);
   if (databaseHandler !== null) return databaseHandler;
-  if (url === '/api/embed') {
-    // Music and video cards (S1-E3-10): the local Supabase and the oEmbed stand-in.
-    return (request) =>
-      handleEmbed(request, {
-        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
-        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
-        lookUpOembed: oembedLookup('stub'),
-      });
-  }
+  const outsideServiceHandler = outsideServiceHandlerFor(url, environment);
+  if (outsideServiceHandler !== null) return outsideServiceHandler;
   if (url === '/api/signup-context') {
     // A test can ask for another country with the X-Fake-Country header; this file never runs on
     // Cloudflare, where only the real connection counts.

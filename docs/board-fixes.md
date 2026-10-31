@@ -58,7 +58,7 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 
 | Board | Element | What the app does |
 | --- | --- | --- |
-| NewStory (4.2) | The "Draw a cover / Upload a picture" switch, the tall and square upload flow and the "Design it in Canva" button | Not shown: no picture uploads in the demo (decided 23 Oct 2026), the flag `picture_uploads` is off; Canva is S1-E3-12, after March |
+| NewStory (4.2) | The "Draw a cover / Upload a picture" switch, the tall and square upload flow and the "Design it in Canva" button | Not shown: no picture uploads in the demo (decided 23 Oct 2026), the flag `picture_uploads` is off; Canva is built behind `canva_covers` (S1-E3-12), off until GO-LIVE |
 | NewStory (4.2) | The dashed "coming" languages (Magyar, Deutsch, Français, Español) with "Coming once we have moderators who read it" | Only the open markets' languages are listed (`open_story_languages()`); the hint says more open once we have moderators who read them |
 | NewStory (4.2) | Waves' default accent is #6E93BF, outside the 9-colour palette | Violet, the nearest palette colour |
 | NewStory (4.2) | "Status and comments" on the new story form | Only in story settings (S1-E3-05): a new story starts Ongoing with comments on, as the board's defaults, and the intro says everything can be changed in story settings; "Where can people read this story?" is S1-E3-08 (after March) and "Labels" S1-E3-06 |
@@ -147,6 +147,9 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | Editor (4.3) | The picture's state as a plain line under it | A state pill (being checked, checked, held, removed) with a short note, so the writer knows readers can't see it yet (S1-E3-09) |
 | Editor (4.3) | "Change link" on a music or video card | Left out: the writer removes the card and adds the new link, so every card's title comes from our server's oEmbed lookup (S1-E3-10) |
 | Reader (3.5) | The service's logo on the music or video card | The service's name as text ("Video · YouTube") until the official logos come from each brand kit, unchanged (DoD, third-party buttons; GO-LIVE) (S1-E3-10) |
+| NewStory (4.2) | The dashed logo slot in "Design it in Canva" | Text only until Canva's official, full-colour logo from its brand kit is in design/assets/ (DoD, third-party buttons; GO-LIVE) (S1-E3-12) |
+| NewStory (4.2) | "When you press Return in Canva, your cover comes back here" | The cover comes back in the tab Canva used, which says "Your Canva cover is saved" and links to the story's settings; the settings tab shows it after a refresh. The note adds "Nothing is shared with Canva until you connect", and the "(Idea for later…)" line is left out (S1-E3-12) |
+| NewStory (4.2) | "Design it in Canva" on a new story | Only in Story settings, like the upload: a cover needs the story to exist first (S1-E3-12) |
 | Reader (3.5) | A thumbnail picture of the video on the card before play | A plain plum panel with a play button: a thumbnail would load from the service before the reader chose to play (S1-E3-10 criterion 2) |
 | Reader (3.5) | The card's text | Adds "Once you press play, YouTube's own terms and age rules apply.", which the story's legal note asks for (S1-E3-10) |
 | Editor (4.3) | The sketch pad drawn inline under the text, with "Insert drawing" and Cancel | A dialog, like Add a picture, so focus stays in the pad and Escape closes it; the same tools, sheet and buttons inside (S1-E3-11) |
