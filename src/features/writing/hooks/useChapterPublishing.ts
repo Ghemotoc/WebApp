@@ -15,6 +15,7 @@ import { useState } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { trackEvent } from '@/lib/analytics/track';
 
 import {
   runChapterAction,
@@ -119,6 +120,9 @@ export function useChapterPublishing(chapter: MyChapter, autosave: AutosaveForPu
       if (outcome !== 'ok') return setProblem(problemFor(outcome));
       setProblem(null);
       setState((current) => stateAfter(action, current));
+      // No properties: never which chapter (docs/analytics-events.md).
+      if (action.kind === 'publish') trackEvent('chapter_published', {});
+      if (action.kind === 'schedule') trackEvent('chapter_scheduled', {});
       // Your writing shows the chapter's status and "Only you can see this story" from this.
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
     },

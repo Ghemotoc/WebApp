@@ -13,6 +13,7 @@ import { useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
+import { trackEvent } from '@/lib/analytics/track';
 
 import { makeQuoteCard, QuoteCardRateLimitError, type ChapterAddress } from '../api/sharing';
 import { copyPicture } from '../lib/clipboard';
@@ -105,6 +106,8 @@ export function useQuoteCardActions(
   const saveImage = () =>
     run(async (picture) => {
       download(picture, t('quote.fileName'));
+      // No properties: never the passage or the chapter (docs/analytics-events.md).
+      trackEvent('quote_card_saved', {});
       return t('quote.savedImage');
     });
   return { copyImage, saveImage, status, isWorking };

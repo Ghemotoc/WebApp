@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { trackEvent } from '@/lib/analytics/track';
 
 import { ReportError, sendReport, type ReportFailure, type ReportRequest } from '../api/reports';
 
@@ -32,6 +33,9 @@ export function useReportItem() {
   const { userId, isKnown } = useSession();
   const send = useMutation({
     mutationFn: async (request: ReportRequest) => sendReport(await requireClient(), request),
+    // The reason and the kind of item only, never the item or the reporter (analytics catalogue).
+    onSuccess: (_receipt, request) =>
+      trackEvent('report_submitted', { reason: request.reason, item_type: request.itemType }),
   });
   return {
     isSignedIn: userId !== null,
