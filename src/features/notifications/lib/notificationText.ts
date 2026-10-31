@@ -193,6 +193,42 @@ function tagRejectedText(t: TFunction, notification: AppNotification): Notificat
   };
 }
 
+/**
+ * Staff decided the person's manual age check (S1-E2-08b). It never says who decided; the result
+ * and the reason are on the age check page.
+ *
+ * @param t - the notifications translation function
+ * @returns the row's words
+ */
+function ageCheckDecidedText(t: TFunction): NotificationText {
+  return {
+    who: t('who.moderationTeam'),
+    what: t('what.ageCheckDecided'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.seeResult'),
+    href: '/age-check',
+  };
+}
+
+/**
+ * The person's year of birth now says 18 or over while they hold only "13 or over" (S1-E2-08b,
+ * criterion 10): an invitation to take an "18 or over" check.
+ *
+ * @param t - the notifications translation function
+ * @returns the row's words
+ */
+function adultInviteText(t: TFunction): NotificationText {
+  return {
+    who: t('who.moderationTeam'),
+    what: t('what.ageCheck18Invite'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.checkMyAge'),
+    href: '/age-check',
+  };
+}
+
 /** The moderation team's kinds and the function that words each one. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -202,6 +238,8 @@ const teamTextFor: Partial<
   appeal_decided: appealText,
   moderator_mail_reply: mailReplyText,
   tag_rejected: tagRejectedText,
+  age_check_decided: ageCheckDecidedText,
+  age_check_18_invite: adultInviteText,
 };
 
 /**

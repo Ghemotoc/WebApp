@@ -6,7 +6,8 @@
  * What it shows: the line being checked (13 or 18, from my_age_check()), the two methods, what we
  * keep and "Continue with Yoti" (AgeCheckStartPanel), with the three steps beside it. A check
  * already done shows its result instead; with nothing to check it says so. Signed out, it asks
- * the person to log in. The board's "Ask for a manual check" link comes with part 08b.
+ * the person to log in. After a check that didn't work, ManualCheckPanel offers a manual check
+ * (part 08b).
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -22,6 +23,7 @@ import { useMyAgeCheck } from '../hooks/useMyAgeCheck';
 import { AgeCheckResultSummary } from './AgeCheckResultSummary';
 import { AgeCheckStartPanel } from './AgeCheckStartPanel';
 import { AgeCheckSteps } from './AgeCheckSteps';
+import { ManualCheckPanel } from './ManualCheckPanel';
 
 /** The class of a link drawn as a secondary button. */
 const linkButtonClass =
@@ -74,7 +76,12 @@ function AgeCheckCardBody() {
   if (check === undefined) return null;
   if (check === null) return <p className="m-0 text-body">{t('ageCheck.nothingToDo')}</p>;
   if (!check.canStart) return <NoCheckToDo check={check} />;
-  return <AgeCheckStartPanel />;
+  return (
+    <>
+      <AgeCheckStartPanel />
+      <ManualCheckPanel check={check} />
+    </>
+  );
 }
 
 /**

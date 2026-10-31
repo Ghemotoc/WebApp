@@ -213,6 +213,17 @@
       "heading": "Confirm your age",
       "body": "Until your age is confirmed, you can read but not post.",
       "action": "Check my age"
+    },
+    "fourteenDays": "If it isn’t done within 14 days of joining, we delete the account and your year (and month) of birth.",
+    "manual": {
+      "stillNotWorking": "Still not working?",
+      "askLine": "Ask for a manual check. A person checks it and replies within 5 working days. They never see a photo.",
+      "ask": "Ask for a manual check",
+      "askFailed": "We couldn’t send your request. Try again in a moment.",
+      "openTitle": "A person is checking your age.",
+      "openBody": "They reply within 5 working days. Your account stays read-only until then.",
+      "refusedTitle": "We couldn’t confirm your age by hand.",
+      "refusedBody": "The reason: {{reason}} You can start a new check with Yoti."
     }
   }
 }

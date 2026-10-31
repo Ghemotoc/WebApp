@@ -17,6 +17,8 @@ export interface ReasonFormProps {
   /** A unique id for the field. */
   id: string;
   label: string;
+  /** The line under the field; by default, that only staff read the reason. */
+  hint?: string;
   confirmLabel: string;
   isBusy: boolean;
   onConfirm: (reason: string) => Promise<unknown>;
@@ -31,6 +33,7 @@ export interface ReasonFormProps {
 export function ReasonForm({
   id,
   label,
+  hint,
   confirmLabel,
   isBusy,
   onConfirm,
@@ -52,7 +55,7 @@ export function ReasonForm({
       <TextInput
         id={id}
         label={label}
-        hint={t('reason.hint')}
+        hint={hint ?? t('reason.hint')}
         errorMessage={problem ?? undefined}
         value={reason}
         onChange={(event) => setReason(event.target.value)}

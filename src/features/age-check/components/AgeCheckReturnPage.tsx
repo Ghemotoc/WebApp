@@ -22,6 +22,7 @@ import { useMyAgeCheck } from '../hooks/useMyAgeCheck';
 import { returnOutcome } from '../lib/returnOutcome';
 
 import { AgeCheckResultSummary } from './AgeCheckResultSummary';
+import { ManualCheckPanel } from './ManualCheckPanel';
 import { StartAgeCheckButton } from './StartAgeCheckButton';
 
 /** How often the page reads the check again while waiting. */
@@ -78,6 +79,8 @@ function ReturnMessage(props: { check: MyAgeCheck; wasCancelled: boolean; hasWai
         {props.check.canStart ? (
           <StartAgeCheckButton label={t('ageCheck.return.tryAgain')} />
         ) : null}
+        {/* Still not working: a manual check (part 08b, criterion 7). */}
+        <ManualCheckPanel check={props.check} />
       </>
     );
   }

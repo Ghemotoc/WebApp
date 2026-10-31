@@ -3,6 +3,45 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      age_check_attempts: {
+        Row: {
+          created_at: string;
+          id: string;
+          method: Database['public']['Enums']['age_check_method'];
+          outcome: string;
+          threshold: number;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          method: Database['public']['Enums']['age_check_method'];
+          outcome: string;
+          threshold: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          method?: Database['public']['Enums']['age_check_method'];
+          outcome?: string;
+          threshold?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'age_check_attempts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       age_check_sessions: {
         Row: {
           created_at: string;
@@ -2039,6 +2078,45 @@ export type Database = {
           },
         ];
       };
+      manual_age_checks: {
+        Row: {
+          created_at: string;
+          decided_at: string | null;
+          decision_reason: string | null;
+          id: string;
+          status: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          decided_at?: string | null;
+          decision_reason?: string | null;
+          id?: string;
+          status?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          decided_at?: string | null;
+          decision_reason?: string | null;
+          id?: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'manual_age_checks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       markets: {
         Row: {
           country_code: string;
@@ -2642,7 +2720,7 @@ export type Database = {
           avatar_picture_id: string | null;
           bio: string;
           birth_month: number | null;
-          birth_year: number;
+          birth_year: number | null;
           birthday_day: number | null;
           birthday_month: number | null;
           country_code: string | null;
@@ -2659,10 +2737,12 @@ export type Database = {
           pen_name_changed_at: string | null;
           shows_online_status: boolean;
           updated_at: string;
+          age_check_can_ask_manual: boolean | null;
           age_check_can_start_for: boolean | null;
           age_check_threshold_for: number | null;
         };
-        ComputedFields: 'age_check_can_start_for' | 'age_check_threshold_for';
+        ComputedFields:
+          'age_check_can_ask_manual' | 'age_check_can_start_for' | 'age_check_threshold_for';
         Insert: {
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
@@ -2670,7 +2750,7 @@ export type Database = {
           avatar_picture_id?: string | null;
           bio?: string;
           birth_month?: number | null;
-          birth_year: number;
+          birth_year?: number | null;
           birthday_day?: number | null;
           birthday_month?: number | null;
           country_code?: string | null;
@@ -2695,7 +2775,7 @@ export type Database = {
           avatar_picture_id?: string | null;
           bio?: string;
           birth_month?: number | null;
-          birth_year?: number;
+          birth_year?: number | null;
           birthday_day?: number | null;
           birthday_month?: number | null;
           country_code?: string | null;
@@ -5113,6 +5193,10 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_decide_manual_age_check: {
+        Args: { decision: string; reason: string; request_id: string };
+        Returns: Json;
+      };
       admin_due_decision_emails: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -5254,6 +5338,20 @@ export type Database = {
           target_case_id: string;
         };
         Returns: string;
+      };
+      admin_manual_age_checks: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          age_band: Database['public']['Enums']['age_band'];
+          age_check_result: Database['public']['Enums']['age_check_result'];
+          answer_by: string;
+          attempts: Json;
+          birth_month: number;
+          birth_year: number;
+          handle: string;
+          request_id: string;
+          requested_at: string;
+        }[];
       };
       admin_march_numbers: { Args: { days?: number }; Returns: Json };
       admin_mark_decision_emails_sent: { Args: { notice_ids: string[] }; Returns: number };
@@ -5592,6 +5690,16 @@ export type Database = {
           on_date: string;
         };
         Returns: Database['public']['Enums']['age_band'];
+      };
+      age_check_attempt_history: { Args: { target_user_id: string }; Returns: Json };
+      age_check_can_ask_manual: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
       };
       age_check_can_start_for: {
         Args: {
@@ -6091,6 +6199,8 @@ export type Database = {
         Returns: Json;
       };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
+      erase_unchecked_account: { Args: { target_user_id: string }; Returns: undefined };
+      erase_unchecked_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       escalate_on_call_alerts: { Args: Record<PropertyKey, never>; Returns: number };
       finishes_story: {
         Args: {
@@ -6159,6 +6269,7 @@ export type Database = {
         Returns: string[];
       };
       invite_code_hash: { Args: { code: string }; Returns: string };
+      invite_new_adults_to_age_check: { Args: Record<PropertyKey, never>; Returns: number };
       is_active_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_blocked_with: { Args: { other_user_id: string }; Returns: boolean };
       is_email_banned: { Args: { email: string }; Returns: boolean };
@@ -6202,6 +6313,7 @@ export type Database = {
           status: Database['public']['Enums']['language_status'];
         }[];
       };
+      latest_manual_age_check: { Args: { target_user_id: string }; Returns: Json };
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
       latest_place_json: { Args: { target_story_id: string }; Returns: Json };
       launch_task: { Args: Record<PropertyKey, never>; Returns: Json };
@@ -6332,6 +6444,10 @@ export type Database = {
         Returns: undefined;
       };
       make_quote_card: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      manual_decision_result: {
+        Args: { current_result: Database['public']['Enums']['age_check_result']; decision: string };
+        Returns: Database['public']['Enums']['age_check_result'];
+      };
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
       market_change_problem: {
         Args: {
@@ -6813,7 +6929,7 @@ export type Database = {
           avatar_picture_id: string | null;
           bio: string;
           birth_month: number | null;
-          birth_year: number;
+          birth_year: number | null;
           birthday_day: number | null;
           birthday_month: number | null;
           country_code: string | null;
@@ -6892,6 +7008,7 @@ export type Database = {
       purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_expired_age_check_sessions: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_age_check_attempts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
@@ -7109,6 +7226,7 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: string;
       };
+      request_manual_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
       require_account_action_allowed: {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
@@ -7549,6 +7667,7 @@ export type Database = {
       };
       with_comma_below: { Args: { value: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
+      working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
       writer_chapter_numbers: {
         Args: { since: string; writer_id: string };
         Returns: {
@@ -7622,7 +7741,9 @@ export type Database = {
         | 'report_outcome'
         | 'appeal_decided'
         | 'moderator_mail_reply'
-        | 'tag_rejected';
+        | 'tag_rejected'
+        | 'age_check_decided'
+        | 'age_check_18_invite';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -7900,6 +8021,8 @@ export const Constants = {
         'appeal_decided',
         'moderator_mail_reply',
         'tag_rejected',
+        'age_check_decided',
+        'age_check_18_invite',
       ],
       picture_kind: [
         'cover',

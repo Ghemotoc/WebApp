@@ -20,7 +20,9 @@ export type NotificationKind =
   | 'report_outcome'
   | 'appeal_decided'
   | 'moderator_mail_reply'
-  | 'tag_rejected';
+  | 'tag_rejected'
+  | 'age_check_decided'
+  | 'age_check_18_invite';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

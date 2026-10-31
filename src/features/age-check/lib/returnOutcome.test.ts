@@ -17,6 +17,8 @@ const waiting: MyAgeCheck = {
   canStart: true,
   isChecking: true,
   needsCheck: true,
+  canAskManual: false,
+  manualCheck: null,
 };
 
 describe('the return page', () => {

@@ -47,6 +47,7 @@ $$;
 select results_eq(
   $$ select table_name, visible_rows from pg_temp.rows_visible_to_anon() order by table_name $$,
   $$ select * from (values
+       ('age_check_attempts', 0::bigint),
        ('age_check_sessions', 0::bigint),
        ('appeals', 0::bigint),
        ('audit_log', 0::bigint),
@@ -97,6 +98,7 @@ select results_eq(
        ('legal_document_versions',
         (select count(*) from public.legal_document_versions where published_at <= now())),
        ('legal_documents', (select count(*) from public.legal_documents)),
+       ('manual_age_checks', 0::bigint),
        ('markets', (select count(*) from public.markets)),
        ('moderated_items', 0::bigint),
        ('moderator_mail_messages', 0::bigint),

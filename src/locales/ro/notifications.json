@@ -44,7 +44,9 @@
     "commentReactions": "a reacționat la comentariul tău de la {{where}}.",
     "newFollower": "a început să te urmărească.",
     "mailReply": "ți-a răspuns la mesaj.",
-    "tagRejected": "a scos o etichetă nouă de la povestea ta „{{title}}”: nu a fost aprobată."
+    "tagRejected": "a scos o etichetă nouă de la povestea ta „{{title}}”: nu a fost aprobată.",
+    "ageCheckDecided": "ți-a verificat vârsta manual. Vezi rezultatul și motivul.",
+    "ageCheck18Invite": "după anul nașterii, acum ai cel puțin 18 ani. Confirmă cu un act de identitate ca să primești setările pentru adulți."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -81,7 +83,9 @@
     "readWhy": "Vezi de ce",
     "seeMyReports": "Vezi raportările mele",
     "readReply": "Citește răspunsul",
-    "editTags": "Modifică etichetele"
+    "editTags": "Modifică etichetele",
+    "seeResult": "Vezi rezultatul",
+    "checkMyAge": "Verifică-mi vârsta"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

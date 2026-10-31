@@ -96,8 +96,8 @@ select ok(
   'the year of birth itself is never returned, only the group');
 select is(
   public.admin_metrics_overview() #>> '{age_checks,appealed}',
-  null,
-  'appeals are not counted until manual age checks exist (S1-E2-08)');
+  (select count(*)::text from public.manual_age_checks),
+  'appealed counts the manual age check requests (S1-E2-08b)');
 select ok(
   (public.admin_metrics_overview() #>> '{age_checks,passed}')::integer >= 1,
   'passed age checks are counted from the results');

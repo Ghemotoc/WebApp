@@ -2,8 +2,8 @@
  * AgeCheckSteps: the "How it works" card beside the age check (story S1-E2-08, part 08a; board
  * AgeCheck.dc.html, "Three short steps").
  *
- * Who shows it: AgeCheckPage. What it calls: nothing. The board's 14-day line comes with the
- * clean-up job in part 08b, so only the read-only line is said here.
+ * Who shows it: AgeCheckPage. What it calls: nothing. The read-only line and the 14-day line say
+ * what the database does: account_state() and erase_unchecked_accounts() (part 08b).
  */
 import { useTranslation } from 'react-i18next';
 
@@ -47,7 +47,9 @@ export function AgeCheckSteps() {
           </li>
         ))}
       </ol>
-      <p className="m-0 text-sm text-meta">{t('ageCheck.readOnly')}</p>
+      <p className="m-0 text-sm text-meta">
+        {t('ageCheck.readOnly')} {t('ageCheck.fourteenDays')}
+      </p>
     </section>
   );
 }

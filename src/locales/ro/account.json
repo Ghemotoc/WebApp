@@ -213,6 +213,17 @@
       "heading": "Confirmă-ți vârsta",
       "body": "Până îți confirmăm vârsta, poți citi, dar nu poți posta.",
       "action": "Verifică-mi vârsta"
+    },
+    "fourteenDays": "Dacă nu o termini în 14 zile de la înscriere, ștergem contul și anul (și luna) nașterii.",
+    "manual": {
+      "stillNotWorking": "Tot nu merge?",
+      "askLine": "Cere o verificare manuală. O persoană o face și îți răspunde în 5 zile lucrătoare. Nu vede nicio fotografie.",
+      "ask": "Cere o verificare manuală",
+      "askFailed": "Nu am putut trimite cererea. Încearcă din nou peste puțin timp.",
+      "openTitle": "O persoană îți verifică vârsta.",
+      "openBody": "Îți răspunde în 5 zile lucrătoare. Până atunci, contul tău rămâne doar pentru citit.",
+      "refusedTitle": "Nu ți-am putut confirma vârsta manual.",
+      "refusedBody": "Motivul: {{reason}} Poți începe o verificare nouă cu Yoti."
     }
   }
 }

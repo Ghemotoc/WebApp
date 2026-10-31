@@ -1,9 +1,11 @@
 /**
- * UsersTabs: the two tabs of the Users area, Accounts and Invites (story S1-E11-02; board
- * AdminUsers 8.5; board-fixes: Invites is a tab under Users, decided 17 Oct 2026, 13:01).
+ * UsersTabs: the tabs of the Users area, Accounts, Manual age checks and Invites (story
+ * S1-E11-02; board AdminUsers 8.5; board-fixes: Invites is a tab under Users, decided 17 Oct
+ * 2026, 13:01; Manual age checks, S1-E2-08b).
  *
- * Who shows it: UsersPage and InvitesPage. What it reads: useMyStaffAccess, so a tab shows only
- * when the person's role has its area (support and moderators have no Invites tab). The tabs are
+ * Who shows it: UsersPage, ManualAgeChecksPage and InvitesPage. What it reads: useMyStaffAccess,
+ * so a tab shows only when the person's role has its area, and Manual age checks only when the
+ * role may act on Users (support may only view, and moderators have no Invites tab). The tabs are
  * links (each tab is its own address), marked with aria-current, not an ARIA tab widget.
  */
 import { useTranslation } from 'react-i18next';
@@ -13,8 +15,19 @@ import { useMyStaffAccess } from '../../hooks/useMyStaffAccess';
 
 /** One tab: the area that opens it, its address and its text. */
 const usersTabs = [
-  { area: 'users', href: '/staff/users', labelKey: 'users.tabs.accounts' },
-  { area: 'invites', href: '/staff/users/invites', labelKey: 'users.tabs.invites' },
+  { area: 'users', needsAct: false, href: '/staff/users', labelKey: 'users.tabs.accounts' },
+  {
+    area: 'users',
+    needsAct: true,
+    href: '/staff/users/age-checks',
+    labelKey: 'users.tabs.ageChecks',
+  },
+  {
+    area: 'invites',
+    needsAct: false,
+    href: '/staff/users/invites',
+    labelKey: 'users.tabs.invites',
+  },
 ] as const;
 
 /**
@@ -25,8 +38,10 @@ const usersTabs = [
 export function UsersTabs() {
   const { t } = useTranslation('staff');
   const { access } = useMyStaffAccess();
-  const allowedAreas = access.areas.map((area) => area.area);
-  const tabs = usersTabs.filter((tab) => allowedAreas.includes(tab.area));
+  // A tab shows when the role has its area, with "act" where the tab needs it.
+  const tabs = usersTabs.filter((tab) =>
+    access.areas.some((area) => area.area === tab.area && (!tab.needsAct || area.access === 'act')),
+  );
   if (tabs.length < 2) return null;
   return (
     <nav aria-label={t('users.tabs.label')}>
