@@ -173,6 +173,11 @@
     "on": "On. Readers can comment on every chapter.",
     "off": "Off. Existing comments are hidden and nobody can add new ones."
   },
+  "quoteCards": {
+    "label": "Quote cards",
+    "on": "On. Readers can turn a short passage into a picture to share, one per chapter.",
+    "off": "Off. Readers can still share a link to a chapter, but not a quote card."
+  },
   "settings": {
     "documentTitle": "Story settings · {{productName}}",
     "eyebrow": "Write · story settings",

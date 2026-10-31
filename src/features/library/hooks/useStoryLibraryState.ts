@@ -19,7 +19,7 @@ import {
   type StoryLibraryState,
 } from '../api/library';
 
-import { libraryQueryKey } from './useLibraryOverview';
+import { libraryQueryKey } from '../libraryQueryKey';
 
 /**
  * Follows one story's place in the library.

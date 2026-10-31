@@ -957,7 +957,7 @@ Tests: `151-browse-stories.test.sql`, `152-story-list-sorts.test.sql`, `lib/list
 ```
 pg_cron compute-story-scores (every hour) → compute_story_scores()
   story_signals(): reads (chapter_reads totals), likes and comments (never the writer's own),
-  read-through; each halved every ranking_half_life_days; weights ranking_weight_*; never downvotes
+  read-through; story_share_points(): shares (chapter_shares totals, S1-E4-05); each halved every ranking_half_life_days; weights ranking_weight_*; never downvotes
   ▼  story_scores (one number per story; staff may read it, readers only see the order)
 browse_stories('popular' | 'rising', …, sort_order 'popular') orders by it; list_default_sort()
 get_story_page() → 'stats' {likes, comments} → StoryStats on the story page
@@ -1219,6 +1219,14 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - How a change travels: the panel calls `change()` in `useReadingSettings`, which replaces the cached settings at once (so the text changes straight away) and saves the whole set 600 ms later → `save_reading_settings()` → `reading_settings` (one row per reader). Another device reads the row when the chapter opens.
 - How the text gets its look: `useReadingLook` joins the settings with the device's own text size (the page's root font size, read once; 19 px at the normal 16) and puts CSS variables (`--reading-font-size` and so on) on the box around the text; `src/styles/index.css` reads them in `.tmc-chapter-text--reader`. Sepia and Night wrap the text in `.tmc-reading-page` (Night with `data-theme="night"`, so it reuses the night tokens).
 - The row is readable by its owner only. Tests: `supabase/tests/database/180-reading-settings.test.sql`, `src/features/reading/lib/readingStyle.test.ts`, `e2e/reading-settings.spec.ts`.
+
+## Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)
+
+- Where it lives: `src/features/sharing/` (see its README). The reader screen adds `ShareButtonWhenNear` to `ChapterEnd`'s row (it fetches `ShareButton` when the row nears the screen, `src/lib/use-is-near.ts`) and `QuoteShareWatcher` under the chapter (it fetches `QuoteShareBar` on the first selection); `reading/lib/toSharedChapter.ts` hands them only public things (address, titles, number, pen name).
+- How a share travels: Share → on a touch screen with a share menu, `navigator.share()`; otherwise `copyText()` and the lazily loaded `ShareDialog` → `lib/countShare.ts` (fetched after the share) → `record_chapter_share()` → `chapter_shares` (a total per chapter per day, never who) → the hourly `compute_story_scores()` adds `story_share_points()` with the `ranking_weight_shares` setting. The link is `lib/shareLink.ts`: the chapter's address on the brand's website, with no query string.
+- How a quote card travels: selecting text in `[data-protected-text]` → `useQuoteSelection` (once per frame) → the bar, if `quote_card_state()` allows it (fetched on the first selection by `QuoteShareWatcher`; signed in, readable, the writer's `stories.quote_cards_enabled` on) → `LoadedQuoteDialog` (fetched on the first press) → `QuoteCardDialog` draws the card on a canvas (`lib/quoteCard.ts`, never stored) → the first Copy image or Save image calls `make_quote_card()`, which records `quote_cards` (one per reader per chapter, Q17) and counts a share. "already_made" opens `QuoteLimitDialog`.
+- The writer's switch: "Quote cards" in `StoryStatusSection` → `update_my_story()` with `quote_cards_enabled`.
+- Both actions have hourly limits in the `rate_limits` setting (`chapter_share`, `quote_card`). Tests: `supabase/tests/database/181-share-and-quote-cards.test.sql`, `src/features/sharing/lib/*.test.ts`, `e2e/share.spec.ts`.
 
 ## Epic S1-E11 at a glance (checked by S1-E11-QA)
 

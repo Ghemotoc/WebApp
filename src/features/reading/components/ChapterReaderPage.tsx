@@ -16,7 +16,8 @@
  * once the text is on screen; useReadingProgress for the progress line; useSavedPlace keeps the
  * reader's place and SavedPlaceOffer offers the one saved last time (S1-E4-03); useReadingLook
  * applies the reader's font, size, spacing, width and theme (S1-E4-02); useStoryPreview →
- * get_link_preview() only when a signed-out visitor's chapter answered nothing.
+ * get_link_preview() only when a signed-out visitor's chapter answered nothing. QuoteShareWatcher
+ * offers "Share quote" for a passage selected in the text (S1-E4-07).
  */
 import { useRef, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { QuoteShareWatcher } from '@/features/sharing/components/QuoteShareWatcher';
 
 import type { ReaderChapter } from '../api/chapter';
 import { useChapter } from '../hooks/useChapter';
@@ -33,6 +35,7 @@ import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useRecordRead } from '../hooks/useRecordRead';
 import { useSavedPlace } from '../hooks/useSavedPlace';
 import { useStoryPreview } from '../hooks/useStoryPreview';
+import { toSharedChapter } from '../lib/toSharedChapter';
 
 import { ChapterBannerSlot } from './ChapterBannerSlot';
 import { ChapterBar } from './ChapterBar';
@@ -145,6 +148,7 @@ function ChapterReading({ chapter }: { chapter: ReaderChapter }) {
         {hasText && <ChapterEnd chapter={chapter} />}
       </article>
       {hasText && <CopyNotice penName={chapter.story.writer.displayName} />}
+      {hasText && <QuoteShareWatcher chapter={toSharedChapter(chapter)} />}
       {hasText && <ChapterBannerSlot banner={banner} />}
       {hasText && (
         <div className="mx-auto w-full max-w-[760px]">

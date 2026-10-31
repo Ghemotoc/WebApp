@@ -8,9 +8,12 @@
  * (40 KB on top of the home page, e2e/reader-performance.spec.ts, S1-E4-01b). An empty marker
  * holds the place until then; a browser without IntersectionObserver gets the comments at once.
  * Who uses it: ChapterReaderPage, under the copy notice and the banner slot (board 3.5).
- * What it calls: src/features/comments/components/CommentsSection.tsx.
+ * What it calls: useIsNear (src/lib/use-is-near.ts), then
+ * src/features/comments/components/CommentsSection.tsx.
  */
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useRef } from 'react';
+
+import { useIsNear } from '@/lib/use-is-near';
 
 import type { ChapterAddress } from '../api/likes';
 
@@ -24,37 +27,13 @@ const CommentsSection = lazy(async () => {
 const fetchMargin = '800px';
 
 /**
- * True once the marker comes within fetchMargin of the screen; it stays true.
- *
- * @param marker - the element that holds the comments' place
- * @returns whether the comments should be fetched
- */
-function useIsNear(marker: React.RefObject<HTMLDivElement | null>): boolean {
-  const [isNear, setIsNear] = useState(() => typeof IntersectionObserver === 'undefined');
-  useEffect(() => {
-    const element = marker.current;
-    if (isNear || element === null) return undefined;
-    // Step 1: watch the marker; the first time it nears the screen, fetch and stop watching.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) setIsNear(true);
-      },
-      { rootMargin: fetchMargin },
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [isNear, marker]);
-  return isNear;
-}
-
-/**
  * Renders the marker, then the comments once the reader is near and their file has arrived.
  *
  * @returns the comments area
  */
 export function ChapterComments({ address }: { address: ChapterAddress }) {
   const marker = useRef<HTMLDivElement>(null);
-  const isNear = useIsNear(marker);
+  const isNear = useIsNear(marker, fetchMargin);
   return (
     <div ref={marker}>
       {isNear && (

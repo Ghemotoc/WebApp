@@ -137,12 +137,14 @@ export const newStorySchema = newStoryShape.superRefine(labelRules);
 /** The checked answers. */
 export type NewStoryInput = z.infer<typeof newStorySchema>;
 
-/** The story settings form's answers (S1-E3-05): the same fields plus status and comments. */
+/** The story settings form's answers (S1-E3-05): the same fields plus status, comments and quote cards. */
 export const storySettingsSchema = newStoryShape
   .omit({ storyId: true })
   .extend({
     completionStatus: z.enum(['ongoing', 'completed']),
     commentsEnabled: z.boolean(),
+    /** The writer's switch for quote cards (S1-E4-07). */
+    quoteCardsEnabled: z.boolean(),
   })
   .superRefine(labelRules);
 

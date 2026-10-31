@@ -20,7 +20,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { fetchPlaceInChapter, saveReadingPosition } from '@/features/library/api/library';
-import { libraryQueryKey } from '@/features/library/hooks/useLibraryOverview';
+import { libraryQueryKey } from '@/features/library/libraryQueryKey';
 import { deviceKindFor } from '@/features/library/lib/deviceKind';
 
 /** How long scrolling has to stop before the place is saved. */
