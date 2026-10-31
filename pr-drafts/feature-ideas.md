@@ -32,6 +32,8 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
   default to, so a story's cards look like a set on social media; S; fits READ-4 or later.
 - **Share a whole story, not just a chapter.** "Share" on the story page with the same clean link and chat
   preview, pointing at chapter 1's teaser; S.
+- **"Most shared passages" for writers.** On the writer dashboard, the paragraphs readers link to most (counted per paragraph per day, never who), so a writer sees which lines land. Why: writers on Substack love seeing their most-highlighted lines; it rewards craft without any personal data. (Seen while building S1-E4-11.)
+- **Picture links in the preview image.** Once a passed picture can have a safe public copy, a picture link's preview shows the picture itself, not the cover colour. Why: picture links would stand out in chats, which is the whole point of a picture card. (S1-E4-11 follow-up.)
 
 ## Sent
 
