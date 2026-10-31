@@ -5,14 +5,14 @@
  * - Each category has its own colour and its own line style (lib/relationshipCategories.ts), so
  *   meaning never rests on colour alone; the category switches double as the legend, each with a
  *   sample of its line, and turning one off hides its lines.
- * - Every node is a real link to that character's sheet, so it can be reached by keyboard.
+ * - Every node is a real link to that character's sheet (or, on a readers' page, their public
+ *   page while Characters is public), so it can be reached by keyboard.
  * - The map sits in its own focusable region that scrolls sideways on a phone; the page doesn't.
  * - The lines are drawing only (hidden from screen readers): the same relationships are written
  *   out under "All relationships" on the same page.
- * Who uses it: ConnectionsPage. What it calls: the layout and category helpers.
+ * Who uses it: ConnectionsPage and PublicConnections. What it calls: the layout and category helpers.
  */
 import { useState } from 'react';
-import { Link } from 'react-router';
 
 import { Chip } from '@/components/ui/Chip';
 
@@ -28,10 +28,12 @@ import { layoutRelationshipMap, nodeRadius, type MapLayout } from '../lib/relati
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { CharacterAvatar } from './CharacterAvatar';
+import { MaybeLink } from './MaybeLink';
 
 /** What the map needs. */
 export interface RelationshipMapProps {
-  slug: string;
+  /** Where a character's node opens: their sheet, a reader page, or null for no link. */
+  addressOf: (characterId: string) => string | null;
   cast: StoryCast;
   words: RelationshipWords;
 }
@@ -128,7 +130,15 @@ function MapLines({ layout, words }: { layout: MapLayout; words: RelationshipWor
 }
 
 /** The nodes: each a link to the character's sheet, with the name under the picture. */
-function MapNodes({ slug, cast, layout }: { slug: string; cast: StoryCast; layout: MapLayout }) {
+function MapNodes({
+  addressOf,
+  cast,
+  layout,
+}: {
+  addressOf: RelationshipMapProps['addressOf'];
+  cast: StoryCast;
+  layout: MapLayout;
+}) {
   return (
     <ul className="m-0 list-none p-0">
       {layout.nodes.map((node) => {
@@ -140,8 +150,8 @@ function MapNodes({ slug, cast, layout }: { slug: string; cast: StoryCast; layou
             className="absolute w-[120px]"
             style={{ left: node.x - 60, top: node.y - nodeRadius }}
           >
-            <Link
-              to={`/plan/s/${slug}/characters/${node.id}`}
+            <MaybeLink
+              to={addressOf(node.id)}
               className="flex flex-col items-center gap-1 rounded-card text-center no-underline"
             >
               <span className="flex size-14 items-center justify-center rounded-full border-2 border-control-border bg-surface">
@@ -150,7 +160,7 @@ function MapNodes({ slug, cast, layout }: { slug: string; cast: StoryCast; layou
               <span className="max-w-full rounded-md bg-surface px-1 text-sm font-semibold break-words text-heading">
                 {character.name}
               </span>
-            </Link>
+            </MaybeLink>
           </li>
         );
       })}
@@ -163,7 +173,7 @@ function MapNodes({ slug, cast, layout }: { slug: string; cast: StoryCast; layou
  *
  * @returns the switches and the scrolling map
  */
-export function RelationshipMap({ slug, cast, words }: RelationshipMapProps) {
+export function RelationshipMap({ addressOf, cast, words }: RelationshipMapProps) {
   const { t } = useAtlasTranslation();
   const [hiddenCategories, setHiddenCategories] = useState<RelationshipCategory[]>([]);
   // Step 1: only the relationships whose category is switched on.
@@ -216,7 +226,7 @@ export function RelationshipMap({ slug, cast, words }: RelationshipMapProps) {
       >
         <div className="relative mx-auto" style={{ width: layout.size, height: layout.size }}>
           <MapLines layout={layout} words={words} />
-          <MapNodes slug={slug} cast={cast} layout={layout} />
+          <MapNodes addressOf={addressOf} cast={cast} layout={layout} />
         </div>
       </div>
     </div>

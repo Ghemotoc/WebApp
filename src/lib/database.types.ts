@@ -3940,7 +3940,9 @@ export type Database = {
           body: string;
           created_at: string;
           id: string;
+          is_private: boolean;
           section_id: string;
+          show_from_chapter_id: string | null;
           story_id: string;
           tags: string[];
           title: string;
@@ -3952,7 +3954,9 @@ export type Database = {
           body?: string;
           created_at?: string;
           id?: string;
+          is_private?: boolean;
           section_id: string;
+          show_from_chapter_id?: string | null;
           story_id: string;
           tags?: string[];
           title: string;
@@ -3963,7 +3967,9 @@ export type Database = {
           body?: string;
           created_at?: string;
           id?: string;
+          is_private?: boolean;
           section_id?: string;
+          show_from_chapter_id?: string | null;
           story_id?: string;
           tags?: string[];
           title?: string;
@@ -3976,6 +3982,13 @@ export type Database = {
             columns: ['section_id'];
             isOneToOne: false;
             referencedRelation: 'story_bible_sections';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_bible_entries_show_from_chapter_id_fkey';
+            columns: ['show_from_chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
             referencedColumns: ['id'];
           },
           {
@@ -3998,6 +4011,7 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
+          is_private: boolean;
           name: string;
           position: number;
           preset: string | null;
@@ -4009,6 +4023,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           id?: string;
+          is_private?: boolean;
           name?: string;
           position: number;
           preset?: string | null;
@@ -4019,6 +4034,7 @@ export type Database = {
         Update: {
           created_at?: string;
           id?: string;
+          is_private?: boolean;
           name?: string;
           position?: number;
           preset?: string | null;
@@ -4098,6 +4114,7 @@ export type Database = {
           custom_label: string;
           from_character_id: string;
           id: string;
+          is_private: boolean;
           kind: string;
           note: string;
           story_id: string;
@@ -4111,6 +4128,7 @@ export type Database = {
           custom_label?: string;
           from_character_id: string;
           id?: string;
+          is_private?: boolean;
           kind: string;
           note?: string;
           story_id: string;
@@ -4123,6 +4141,7 @@ export type Database = {
           custom_label?: string;
           from_character_id?: string;
           id?: string;
+          is_private?: boolean;
           kind?: string;
           note?: string;
           story_id?: string;
@@ -4167,11 +4186,14 @@ export type Database = {
           custom_values: NonNullable<Json>;
           first_appearance_chapter_id: string | null;
           id: string;
+          is_private: boolean;
           name: string;
           picture_alt: string;
           picture_id: string | null;
+          public_sheet_parts: string[];
           role: string;
           sheet: NonNullable<Json>;
+          show_from_chapter_id: string | null;
           story_id: string;
           updated_at: string;
           user_id: string;
@@ -4184,11 +4206,14 @@ export type Database = {
           custom_values?: NonNullable<Json>;
           first_appearance_chapter_id?: string | null;
           id?: string;
+          is_private?: boolean;
           name: string;
           picture_alt?: string;
           picture_id?: string | null;
+          public_sheet_parts?: string[];
           role?: string;
           sheet?: NonNullable<Json>;
+          show_from_chapter_id?: string | null;
           story_id: string;
           updated_at?: string;
           user_id: string;
@@ -4198,11 +4223,14 @@ export type Database = {
           custom_values?: NonNullable<Json>;
           first_appearance_chapter_id?: string | null;
           id?: string;
+          is_private?: boolean;
           name?: string;
           picture_alt?: string;
           picture_id?: string | null;
+          public_sheet_parts?: string[];
           role?: string;
           sheet?: NonNullable<Json>;
+          show_from_chapter_id?: string | null;
           story_id?: string;
           updated_at?: string;
           user_id?: string;
@@ -4220,6 +4248,13 @@ export type Database = {
             columns: ['picture_id'];
             isOneToOne: false;
             referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_characters_show_from_chapter_id_fkey';
+            columns: ['show_from_chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
             referencedColumns: ['id'];
           },
           {
@@ -4244,6 +4279,8 @@ export type Database = {
           description: string;
           display_date: string;
           id: string;
+          is_private: boolean;
+          show_from_chapter_id: string | null;
           sort_value: number;
           story_id: string;
           title: string;
@@ -4256,6 +4293,8 @@ export type Database = {
           description?: string;
           display_date?: string;
           id?: string;
+          is_private?: boolean;
+          show_from_chapter_id?: string | null;
           sort_value: number;
           story_id: string;
           title: string;
@@ -4267,6 +4306,8 @@ export type Database = {
           description?: string;
           display_date?: string;
           id?: string;
+          is_private?: boolean;
+          show_from_chapter_id?: string | null;
           sort_value?: number;
           story_id?: string;
           title?: string;
@@ -4274,6 +4315,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'story_events_show_from_chapter_id_fkey';
+            columns: ['show_from_chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'story_events_story_id_fkey';
             columns: ['story_id'];
@@ -4446,6 +4494,7 @@ export type Database = {
           linked_project_label: string;
           linked_project_url: string;
           logline: string;
+          public_areas: string[];
           publishing_route: string;
           series_name: string;
           story_id: string;
@@ -4460,6 +4509,7 @@ export type Database = {
           linked_project_label?: string;
           linked_project_url?: string;
           logline?: string;
+          public_areas?: string[];
           publishing_route?: string;
           series_name?: string;
           story_id: string;
@@ -4473,6 +4523,7 @@ export type Database = {
           linked_project_label?: string;
           linked_project_url?: string;
           logline?: string;
+          public_areas?: string[];
           publishing_route?: string;
           series_name?: string;
           story_id?: string;
@@ -5509,6 +5560,7 @@ export type Database = {
       };
       atlas_fold: { Args: { value: string }; Returns: string };
       atlas_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
+      atlas_picture_is_public: { Args: { object_name: string }; Returns: boolean };
       atlas_picture_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       atlas_snippet: { Args: { haystack: string; needle: string }; Returns: string };
       attach_notice_to_case: {
@@ -5694,6 +5746,7 @@ export type Database = {
         Args: { character_id: string; target_story_id: string };
         Returns: string;
       };
+      character_part_keys: { Args: { parts: string[] }; Returns: string[] };
       character_sheet_keys: { Args: Record<PropertyKey, never>; Returns: string[] };
       check_bible_text: { Args: { body: string }; Returns: string };
       check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
@@ -5985,6 +6038,7 @@ export type Database = {
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
+      get_public_story_plan: { Args: { story_slug: string }; Returns: Json };
       get_shared_passage: {
         Args: { chapter_code: string; first_block: number; last_block: number; story_slug: string };
         Returns: Json;
@@ -6250,7 +6304,9 @@ export type Database = {
           body: string;
           created_at: string;
           id: string;
+          is_private: boolean;
           section_id: string;
+          show_from_chapter_id: string | null;
           story_id: string;
           tags: string[];
           title: string;
@@ -6269,6 +6325,7 @@ export type Database = {
         Returns: {
           created_at: string;
           id: string;
+          is_private: boolean;
           name: string;
           position: number;
           preset: string | null;
@@ -6416,6 +6473,7 @@ export type Database = {
       };
       my_picture_states: { Args: { picture_ids: string[] }; Returns: Json };
       my_place_in_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      my_plan_item_kind: { Args: { target_item_id: string }; Returns: string };
       my_planned_story_id: { Args: { story_slug: string }; Returns: string };
       my_report_detail_requests: {
         Args: Record<PropertyKey, never>;
@@ -6451,11 +6509,14 @@ export type Database = {
           custom_values: NonNullable<Json>;
           first_appearance_chapter_id: string | null;
           id: string;
+          is_private: boolean;
           name: string;
           picture_alt: string;
           picture_id: string | null;
+          public_sheet_parts: string[];
           role: string;
           sheet: NonNullable<Json>;
+          show_from_chapter_id: string | null;
           story_id: string;
           updated_at: string;
           user_id: string;
@@ -6474,6 +6535,8 @@ export type Database = {
           description: string;
           display_date: string;
           id: string;
+          is_private: boolean;
+          show_from_chapter_id: string | null;
           sort_value: number;
           story_id: string;
           title: string;
@@ -6624,6 +6687,27 @@ export type Database = {
         Args: { act_id: string; chapter_code: string; chapter_codes: string[]; confirmed: boolean };
         Returns: Json;
       };
+      plan_area_names: { Args: Record<PropertyKey, never>; Returns: string[] };
+      plan_guard_json: { Args: { as_preview: boolean; show_from: string }; Returns: Json };
+      plan_item_address: { Args: { target_item_id: string }; Returns: string };
+      plan_item_area_is_public: { Args: { areas: string[]; item_kind: string }; Returns: boolean };
+      plan_item_content: { Args: { target_item_id: string }; Returns: Json };
+      plan_item_is_public: { Args: { target_item_id: string }; Returns: boolean };
+      plan_item_row: {
+        Args: { target_item_id: string };
+        Returns: {
+          item_is_private: boolean;
+          item_kind: string;
+          owner_user_id: string;
+          story_id: string;
+          title: string;
+        }[];
+      };
+      plan_item_shows: {
+        Args: { as_preview: boolean; item_id: string; item_is_private: boolean; show_from: string };
+        Returns: boolean;
+      };
+      plan_story_readable: { Args: { target_story_id: string }; Returns: boolean };
       plan_text: { Args: { raw_text: string }; Returns: string };
       post_comment: {
         Args: {
@@ -6645,6 +6729,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      preview_story_plan: { Args: { story_slug: string }; Returns: Json };
       profile_avatar_picture: { Args: { profile_handle: string }; Returns: Json };
       profile_for_handle: {
         Args: { wanted_handle: string };
@@ -6681,9 +6766,41 @@ export type Database = {
         };
       };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
+      public_character_json: {
+        Args: {
+          as_preview: boolean;
+          target_character: Omit<
+            Database['public']['Tables']['story_characters']['Row'],
+            Database['public']['Tables']['story_characters']['ComputedFields']
+          >;
+          with_sheet: boolean;
+        };
+        Returns: Json;
+      };
       public_notice_payload_is_signed: {
         Args: { payload: string; signature: string };
         Returns: boolean;
+      };
+      public_plan_bible: {
+        Args: { areas: string[]; as_preview: boolean; target_story_id: string };
+        Returns: Json;
+      };
+      public_plan_characters: {
+        Args: { areas: string[]; as_preview: boolean; target_story_id: string };
+        Returns: Json;
+      };
+      public_plan_events: {
+        Args: { areas: string[]; as_preview: boolean; target_story_id: string };
+        Returns: Json;
+      };
+      public_plan_fields: {
+        Args: { areas: string[]; as_preview: boolean; target_story_id: string };
+        Returns: Json;
+      };
+      public_plan_json: { Args: { as_preview: boolean; target_story_id: string }; Returns: Json };
+      public_plan_relationships: {
+        Args: { areas: string[]; as_preview: boolean; target_story_id: string };
+        Returns: Json;
       };
       publish_chapter: { Args: { chapter_code: string }; Returns: Json };
       publish_due_chapters: { Args: Record<PropertyKey, never>; Returns: number };
@@ -6784,6 +6901,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      reader_reached_chapter: { Args: { target_chapter_id: string }; Returns: boolean };
       reader_visible_story: {
         Args: { story_slug: string };
         Returns: {
@@ -7082,6 +7200,10 @@ export type Database = {
         Args: { character_id: string; new_picture_id: string };
         Returns: Json;
       };
+      set_character_public_parts: {
+        Args: { character_id: string; parts: string[] };
+        Returns: Json;
+      };
       set_library_shelf: {
         Args: { story_slug: string; wanted_shelf: Database['public']['Enums']['library_shelf'] };
         Returns: Json;
@@ -7099,7 +7221,10 @@ export type Database = {
         };
         Returns: undefined;
       };
+      set_plan_item_privacy: { Args: { item_id: string; keep_private: boolean }; Returns: Json };
+      set_plan_item_show_from: { Args: { chapter_code: string; item_id: string }; Returns: Json };
       set_rank_badge_tags: { Args: { story_slug: string; tag_names: string[] }; Returns: Json };
+      set_story_public_areas: { Args: { areas: string[]; story_slug: string }; Returns: Json };
       set_story_tags: {
         Args: { owner_id: string; tag_names: string[]; target_story_id: string };
         Returns: undefined;
@@ -7208,6 +7333,7 @@ export type Database = {
       story_page_chapters: { Args: { is_owner: boolean; target_story_id: string }; Returns: Json };
       story_plan: { Args: { story_slug: string }; Returns: Json };
       story_plan_chapters: { Args: { plan_story_id: string }; Returns: Json };
+      story_plan_visibility: { Args: { story_slug: string }; Returns: Json };
       story_rank_in_tag: {
         Args: { tag_name: string; target_story_id: string };
         Returns: {
@@ -7442,7 +7568,8 @@ export type Database = {
         | 'copied_published_work'
         | 'undisclosed_ai'
         | 'other';
-      reportable_type: 'profile' | 'story' | 'chapter' | 'comment' | 'picture' | 'embed';
+      reportable_type:
+        'profile' | 'story' | 'chapter' | 'comment' | 'picture' | 'embed' | 'atlas_item';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -7721,7 +7848,7 @@ export const Constants = {
         'undisclosed_ai',
         'other',
       ],
-      reportable_type: ['profile', 'story', 'chapter', 'comment', 'picture', 'embed'],
+      reportable_type: ['profile', 'story', 'chapter', 'comment', 'picture', 'embed', 'atlas_item'],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [
         'emergency',

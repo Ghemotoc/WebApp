@@ -50,7 +50,18 @@
     "rankBadge": "#{{rank}} in {{tag}}",
     "rankBadgeOutOf_one": "out of {{count}} story",
     "rankBadgeOutOf_few": "out of {{count}} stories",
-    "rankBadgeOutOf_other": "out of {{count}} stories"
+    "rankBadgeOutOf_other": "out of {{count}} stories",
+    "world": {
+      "heading": "The story’s world",
+      "hint": "The writer shares these parts of their plan.",
+      "areas": {
+        "characters": "Characters",
+        "relationship_map": "Map",
+        "family_tree": "Family tree",
+        "bible": "World",
+        "timeline": "Timeline"
+      }
+    }
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

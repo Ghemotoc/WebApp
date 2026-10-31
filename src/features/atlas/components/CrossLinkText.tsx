@@ -3,11 +3,10 @@
  * views).
  *
  * Plain text only: the words are React text, never HTML, so nothing the writer typed can run
- * (CLAUDE.md rule 8). Who uses it: TimelineEventItem. What it calls: lib/crossLinks.ts,
- * useOpenStorySlug, useLinkTargets and CrossLink.
+ * (CLAUDE.md rule 8). Who uses it: TimelineEventItem and PublicTimeline. What it calls:
+ * lib/crossLinks.ts, useCrossLinks and CrossLink.
  */
-import { useLinkTargets } from '../hooks/useLinkTargets';
-import { useOpenStorySlug } from '../hooks/useOpenStorySlug';
+import { useCrossLinks } from '../hooks/useCrossLinks';
 import { resolveCrossLink, splitCrossLinks } from '../lib/crossLinks';
 
 import { CrossLink } from './CrossLink';
@@ -19,9 +18,8 @@ import { CrossLink } from './CrossLink';
  * @returns the text's pieces, to sit inside the caller's paragraph
  */
 export function CrossLinkText({ text }: { text: string }) {
-  // The links resolve against the open story's names.
-  const slug = useOpenStorySlug();
-  const { index, isLoaded } = useLinkTargets(slug);
+  // The links resolve against the open story's names, or a readers' page's public items.
+  const { slug, index, isLoaded } = useCrossLinks();
   return (
     <>
       {splitCrossLinks(text).map((piece, place) =>

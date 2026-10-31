@@ -28,6 +28,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 import { AddRelationshipForm } from './AddRelationshipForm';
 import { AtlasTopBar } from './AtlasTopBar';
 import { FamilyTreeView } from './FamilyTreeView';
+import { ItemVisibilityControls } from './ItemVisibilityControls';
 import { RelationshipList } from './RelationshipList';
 import { RelationshipMap } from './RelationshipMap';
 
@@ -62,6 +63,8 @@ function ConnectionsBody({ slug, cast }: { slug: string; cast: StoryCast }) {
   const { t } = useAtlasTranslation();
   const { relate, unrelate } = useRelationshipChangers(slug);
   const words = useRelationshipWords(cast);
+  // Each node and box opens that character's sheet.
+  const sheetAddress = (characterId: string) => `/plan/s/${slug}/characters/${characterId}`;
   if (cast.characters.length < 2) {
     return (
       <div className="flex flex-col gap-3">
@@ -82,17 +85,29 @@ function ConnectionsBody({ slug, cast }: { slug: string; cast: StoryCast }) {
         heading={t('connections.map.heading')}
         hint={t('connections.map.hint')}
       >
-        <RelationshipMap slug={slug} cast={cast} words={words} />
+        <RelationshipMap addressOf={sheetAddress} cast={cast} words={words} />
       </ConnectionsCard>
       <ConnectionsCard
         id="atlas-tree-heading"
         heading={t('connections.tree.heading')}
         hint={t('connections.tree.hint')}
       >
-        <FamilyTreeView slug={slug} cast={cast} words={words} />
+        <FamilyTreeView addressOf={sheetAddress} cast={cast} words={words} />
       </ConnectionsCard>
       <ConnectionsCard id="atlas-all-relationships-heading" heading={t('connections.list.heading')}>
-        <RelationshipList relationships={cast.relationships} words={words} onDelete={unrelate} />
+        <RelationshipList
+          relationships={cast.relationships}
+          words={words}
+          onDelete={unrelate}
+          extra={(relationship, sentence) => (
+            <ItemVisibilityControls
+              slug={slug}
+              itemId={relationship.id}
+              itemName={sentence}
+              allowsGuard={false}
+            />
+          )}
+        />
       </ConnectionsCard>
     </div>
   );

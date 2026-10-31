@@ -12,7 +12,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
  *
  * @returns a function from a section to its shown name
  */
-export function useBibleSectionName(): (section: BibleSection) => string {
+export function useBibleSectionName(): (section: Pick<BibleSection, 'name' | 'preset'>) => string {
   const { t } = useAtlasTranslation();
   return (section) => {
     if (section.name.trim() !== '' || section.preset === null) return section.name;

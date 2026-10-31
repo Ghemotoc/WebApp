@@ -11,14 +11,14 @@
  * read "not found yet": before drawing, each [[Name]] is turned into a link to the address
  * "#atlas-link:<name>", which only this component's link drawing understands.
  * Who uses it: BibleEntryView. What it calls: react-markdown, lib/crossLinks.ts,
- * useOpenStorySlug, useLinkTargets and CrossLink.
+ * useCrossLinks and CrossLink. On a readers' page (S1-E17-33) the same text resolves against the
+ * public items only, so a private one reads as plain words.
  */
 import Markdown, { type Components } from 'react-markdown';
 
 import { isAllowedLink } from '@/lib/safe-links';
 
-import { useLinkTargets } from '../hooks/useLinkTargets';
-import { useOpenStorySlug } from '../hooks/useOpenStorySlug';
+import { useCrossLinks } from '../hooks/useCrossLinks';
 import { resolveCrossLink, splitCrossLinks, type LinkIndex } from '../lib/crossLinks';
 
 import { CrossLink } from './CrossLink';
@@ -108,9 +108,9 @@ function linkComponent(slug: string, index: LinkIndex | null): Components['a'] {
  * @returns the text as HTML, at the reading size
  */
 export function BibleMarkdown({ text }: { text: string }) {
-  // The links resolve against the open story's names (S1-E17-31).
-  const slug = useOpenStorySlug();
-  const { index, isLoaded } = useLinkTargets(slug);
+  // The links resolve against the open story's names (S1-E17-31), or on a readers' page
+  // against its public items only (S1-E17-32).
+  const { slug, index, isLoaded } = useCrossLinks();
   return (
     <div className="flex flex-col gap-3 text-base leading-[1.6] break-words text-ink">
       <Markdown

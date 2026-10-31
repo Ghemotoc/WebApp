@@ -50,7 +50,18 @@
     "rankBadge": "#{{rank}} în {{tag}}",
     "rankBadgeOutOf_one": "din {{count}} poveste",
     "rankBadgeOutOf_few": "din {{count}} povești",
-    "rankBadgeOutOf_other": "din {{count}} de povești"
+    "rankBadgeOutOf_other": "din {{count}} de povești",
+    "world": {
+      "heading": "Lumea poveștii",
+      "hint": "Autorul împărtășește aceste părți din planul său.",
+      "areas": {
+        "characters": "Personaje",
+        "relationship_map": "Hartă",
+        "family_tree": "Arbore genealogic",
+        "bible": "Lume",
+        "timeline": "Cronologie"
+      }
+    }
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",

@@ -13,7 +13,6 @@
  * Who uses it: ConnectionsPage.
  */
 import { useState } from 'react';
-import { Link } from 'react-router';
 
 import { Chip } from '@/components/ui/Chip';
 
@@ -24,9 +23,12 @@ import { boxHeight, boxWidth, layoutFamilyTree, type TreeLayout } from '../lib/f
 import { lineStyles } from '../lib/relationshipCategories';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { MaybeLink } from './MaybeLink';
+
 /** What the tree needs. */
 export interface FamilyTreeViewProps {
-  slug: string;
+  /** Where a character's box opens: their sheet, a reader page, or null for no link. */
+  addressOf: (characterId: string) => string | null;
   cast: StoryCast;
   words: RelationshipWords;
 }
@@ -64,11 +66,11 @@ function TreeLines({ layout, madeKeys }: { layout: TreeLayout; madeKeys: Set<str
 
 /** The boxes, each a link to the character's sheet. */
 function TreeBoxes({
-  slug,
+  addressOf,
   layout,
   words,
 }: {
-  slug: string;
+  addressOf: FamilyTreeViewProps['addressOf'];
   layout: TreeLayout;
   words: RelationshipWords;
 }) {
@@ -80,12 +82,12 @@ function TreeBoxes({
           className="absolute"
           style={{ left: box.x, top: box.y, width: boxWidth, height: boxHeight }}
         >
-          <Link
-            to={`/plan/s/${slug}/characters/${box.id}`}
+          <MaybeLink
+            to={addressOf(box.id)}
             className="flex size-full items-center justify-center rounded-xl border-2 border-control-border bg-surface px-2 text-center text-sm font-semibold break-words text-heading no-underline hover:bg-tint"
           >
             {words.nameOf(box.id)}
-          </Link>
+          </MaybeLink>
         </li>
       ))}
     </ul>
@@ -114,7 +116,7 @@ function GenerationsList({ tree, words }: { tree: FamilyTree; words: Relationshi
  *
  * @returns the switch, the scrolling tree, the note and the screen-reader list
  */
-export function FamilyTreeView({ slug, cast, words }: FamilyTreeViewProps) {
+export function FamilyTreeView({ addressOf, cast, words }: FamilyTreeViewProps) {
   const { t } = useAtlasTranslation();
   const [includeMade, setIncludeMade] = useState(false);
   const characterIds = cast.characters.map((character) => character.id);
@@ -146,7 +148,7 @@ export function FamilyTreeView({ slug, cast, words }: FamilyTreeViewProps) {
         >
           <div className="relative mx-auto" style={{ width: layout.width, height: layout.height }}>
             <TreeLines layout={layout} madeKeys={madeKeys} />
-            <TreeBoxes slug={slug} layout={layout} words={words} />
+            <TreeBoxes addressOf={addressOf} layout={layout} words={words} />
           </div>
         </div>
       )}

@@ -98,7 +98,8 @@
     "bible": "Biblia",
     "storyline": "Firul poveștii",
     "ideas": "Idei",
-    "marketing": "Marketing"
+    "marketing": "Marketing",
+    "readers": "Cititori"
   },
   "characters": {
     "heading": "Personaje",
@@ -659,6 +660,81 @@
         "idea": "notiță",
         "event": "eveniment din cronologie"
       }
+    }
+  },
+  "readers": {
+    "documentTitle": "Ce văd cititorii în {{title}}: Story Atlas",
+    "heading": "Ce văd cititorii",
+    "intro": "Tot ce e în planul tău rămâne privat până când pornești o zonă. O zonă pornită apare lângă poveste după ce o publici, pentru fiecare cititor căruia ratingul poveștii îi permite.",
+    "introItems": "Ca să păstrezi ceva doar pentru tine, bifează „Păstrează privat” pe pagina lui: un personaj, o relație, o secțiune sau o intrare din biblie ori un eveniment. Un personaj, o intrare sau un eveniment pot aștepta și până când cititorul ajunge la un anumit capitol, ca să nu dezvălui povestea.",
+    "notPublished": "Povestea ta nu e publicată încă, așa că cititorii nu văd nimic din toate acestea.",
+    "previewLink": "Vezi ca un cititor",
+    "areas": {
+      "legend": "Zone pe care le văd cititorii",
+      "hints": {
+        "characters": "Pagina fiecărui personaj, doar cu părțile din fișă pe care le deschizi.",
+        "relationship_map": "Harta legăturilor dintre personaje, cu lista ei.",
+        "family_tree": "Arborele genealogic.",
+        "bible": "Biblia poveștii, ca lumea poveștii, în modul de citire.",
+        "timeline": "Evenimentele din cronologie, în ordine."
+      }
+    },
+    "item": {
+      "heading": "Ce văd cititorii",
+      "characterHint": "Cititorii văd acest personaj cât timp Personajele, harta sau arborele genealogic sunt publice și doar părțile din fișă pe care le deschizi mai jos.",
+      "entryHint": "Cititorii văd această intrare cât timp biblia poveștii e publică.",
+      "settingsLink": "Alege ce văd cititorii",
+      "keepPrivate": "Păstrează privat",
+      "keepPrivateNamed": "Păstrează privat: {{name}}",
+      "groupLabel": "Ce văd cititorii din {{name}}",
+      "showFrom": "Cititorii văd de la",
+      "fromStart": "Început",
+      "chapterOption": "Capitolul {{number}}: {{title}}",
+      "saveFailed": "Nu s-a salvat. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "parts": {
+      "label": "Părți din fișă pe care le văd cititorii",
+      "basics": "De bază",
+      "look_and_voice": "Înfățișare și voce",
+      "inside": "Pe dinăuntru",
+      "in_the_story": "În poveste",
+      "notes": "Notițe"
+    },
+    "preview": {
+      "documentTitle": "{{title}} văzută ca un cititor: Story Atlas",
+      "heading": "Vezi ca un cititor",
+      "note": "Asta văd cititorii. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
+      "notPublished": "Asta vor vedea cititorii după ce îți publici povestea. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
+      "nothing": "Nimic nu e public încă."
+    }
+  },
+  "publicPlan": {
+    "documentTitle": "{{area}}: {{title}}",
+    "eyebrow": "Lumea poveștii",
+    "navLabel": "Părți din lumea poveștii",
+    "notFound": "Asta nu e disponibilă. Poate autorul n-o împărtășește sau povestea nu îți e disponibilă.",
+    "loadFailed": "Nu s-a putut încărca. Verifică-ți conexiunea și încearcă din nou.",
+    "guard": "Apare de la capitolul {{number}}: {{title}}",
+    "areas": {
+      "characters": "Personaje",
+      "relationship_map": "Hartă",
+      "family_tree": "Arbore genealogic",
+      "bible": "Lume",
+      "timeline": "Cronologie"
+    },
+    "cast": {
+      "none": "Niciun personaj de arătat încă."
+    },
+    "character": {
+      "back": "Toate personajele",
+      "connections": "Legături",
+      "notShown": "Acest personaj nu apare aici."
+    },
+    "world": {
+      "none": "Nimic din lumea poveștii de arătat încă."
+    },
+    "timeline": {
+      "none": "Niciun eveniment de arătat încă."
     }
   }
 }

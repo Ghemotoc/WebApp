@@ -58,7 +58,8 @@
     "profile": "your profile",
     "other": "your post",
     "picture": "your picture",
-    "embed": "your music or video"
+    "embed": "your music or video",
+    "atlas_item": "something from your story’s world"
   },
   "decisions": {
     "no_action": "a moderator checked a report about {{item}} and took no action, so nothing changes.",

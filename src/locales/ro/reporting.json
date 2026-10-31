@@ -7,7 +7,8 @@
       "chapter": "Raportează acest capitol",
       "comment": "Raportează acest comentariu",
       "picture": "Raportează această imagine",
-      "embed": "Raportează această muzică sau acest videoclip"
+      "embed": "Raportează această muzică sau acest videoclip",
+      "atlas_item": "Raportează asta din lumea poveștii"
     },
     "anonymous": "{{item}}. Nu va vedea cine a raportat.",
     "whatIsWrong": "Ce nu e în regulă?",

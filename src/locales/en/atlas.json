@@ -98,7 +98,8 @@
     "bible": "Bible",
     "storyline": "Storyline",
     "ideas": "Ideas",
-    "marketing": "Marketing"
+    "marketing": "Marketing",
+    "readers": "Readers"
   },
   "characters": {
     "heading": "Characters",
@@ -659,6 +660,81 @@
         "idea": "note",
         "event": "timeline event"
       }
+    }
+  },
+  "readers": {
+    "documentTitle": "What readers can see in {{title}}: Story Atlas",
+    "heading": "What readers can see",
+    "intro": "Everything in your plan is private until you turn an area on. An area you turn on shows with your story once it’s published, for every reader the story’s rating allows.",
+    "introItems": "To hold one thing back, tick “Keep private” on its own page: a character, a relationship, a section or entry of the bible, or an event. A character, entry or event can also wait until a reader reaches a chapter, so sharing it doesn’t spoil the story.",
+    "notPublished": "Your story isn’t published yet, so readers can’t see any of this yet.",
+    "previewLink": "Preview as a reader",
+    "areas": {
+      "legend": "Areas readers see",
+      "hints": {
+        "characters": "Each character’s page, with only the parts of the sheet you open.",
+        "relationship_map": "The map of how your characters are connected, with its list.",
+        "family_tree": "The family tree.",
+        "bible": "Your story bible, as the story’s world, in reading mode.",
+        "timeline": "The events on your timeline, in order."
+      }
+    },
+    "item": {
+      "heading": "What readers see",
+      "characterHint": "Readers see this character while Characters, the map or the family tree is public, and only the parts of the sheet you open below.",
+      "entryHint": "Readers see this entry while the story bible is public.",
+      "settingsLink": "Choose what readers can see",
+      "keepPrivate": "Keep private",
+      "keepPrivateNamed": "Keep private: {{name}}",
+      "groupLabel": "What readers see of {{name}}",
+      "showFrom": "Readers see it from",
+      "fromStart": "The start",
+      "chapterOption": "Chapter {{number}}: {{title}}",
+      "saveFailed": "That wasn’t saved. Check your connection and try again."
+    },
+    "parts": {
+      "label": "Parts of the sheet readers see",
+      "basics": "Basics",
+      "look_and_voice": "Look and voice",
+      "inside": "Inside",
+      "in_the_story": "In the story",
+      "notes": "Notes"
+    },
+    "preview": {
+      "documentTitle": "Preview of {{title}} as a reader: Story Atlas",
+      "heading": "Preview as a reader",
+      "note": "This is what readers see. Anything marked with a chapter shows only once a reader gets there.",
+      "notPublished": "This is what readers will see once your story is published. Anything marked with a chapter shows only once a reader gets there.",
+      "nothing": "Nothing is public yet."
+    }
+  },
+  "publicPlan": {
+    "documentTitle": "{{area}}: {{title}}",
+    "eyebrow": "The story’s world",
+    "navLabel": "Parts of the story’s world",
+    "notFound": "This isn’t available. The writer may not share it, or the story isn’t available to you.",
+    "loadFailed": "This couldn’t load. Check your connection and try again.",
+    "guard": "Shows from chapter {{number}}: {{title}}",
+    "areas": {
+      "characters": "Characters",
+      "relationship_map": "Map",
+      "family_tree": "Family tree",
+      "bible": "World",
+      "timeline": "Timeline"
+    },
+    "cast": {
+      "none": "No characters to show yet."
+    },
+    "character": {
+      "back": "All characters",
+      "connections": "Connections",
+      "notShown": "This character isn’t shown here."
+    },
+    "world": {
+      "none": "Nothing from the story’s world to show yet."
+    },
+    "timeline": {
+      "none": "No events to show yet."
     }
   }
 }
