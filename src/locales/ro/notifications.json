@@ -58,7 +58,8 @@
     "profile": "profilul tău",
     "other": "postarea ta",
     "picture": "imaginea ta",
-    "embed": "muzica sau videoclipul tău"
+    "embed": "muzica sau videoclipul tău",
+    "atlas_item": "ceva din lumea poveștii tale"
   },
   "decisions": {
     "no_action": "un moderator a verificat o raportare despre {{item}} și nu a luat nicio măsură, așa că nu se schimbă nimic.",

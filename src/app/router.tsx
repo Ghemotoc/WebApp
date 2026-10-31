@@ -374,6 +374,28 @@ const writeRoutes: RouteObject[] = [
       return { Component: AtlasSearchPage };
     },
   },
+  // What readers can see of a story's plan (S1-E17-32): the area switches, and the writer's
+  // "Preview as a reader" of one area (or of one character's page).
+  {
+    path: '/plan/s/:storySlug/readers',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ReaderViewPage } = await import('@/features/atlas/components/ReaderViewPage');
+      return { Component: ReaderViewPage };
+    },
+  },
+  ...[
+    '/plan/s/:storySlug/preview',
+    '/plan/s/:storySlug/preview/:areaPath',
+    '/plan/s/:storySlug/preview/:areaPath/:characterId',
+  ].map((path): RouteObject => ({
+    path,
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { PlanPreviewPage } = await import('@/features/atlas/components/PlanPreviewPage');
+      return { Component: PlanPreviewPage };
+    },
+  })),
   // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
   // or deletes it.
   {
@@ -421,6 +443,18 @@ const writeRoutes: RouteObject[] = [
       return { Component: ChapterEditorPage };
     },
   },
+  // The parts of a story's plan its writer shares (S1-E17-33): /s/<story>/atlas/<area>, and one
+  // character's page. "atlas" is five letters, so it can never be a chapter's 8-character code.
+  ...['/s/:storySlug/atlas/:areaPath', '/s/:storySlug/atlas/:areaPath/:characterId'].map(
+    (path): RouteObject => ({
+      path,
+      HydrateFallback: () => null,
+      lazy: async () => {
+        const { PublicPlanPage } = await import('@/features/atlas/components/PublicPlanPage');
+        return { Component: PublicPlanPage };
+      },
+    }),
+  ),
   // The chapter reader (S1-E4-01a): a chapter by the story's slug and the chapter's code; the
   // same rules as the story page, through get_chapter() (ADR 0004).
   {

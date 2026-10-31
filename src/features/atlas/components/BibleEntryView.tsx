@@ -15,9 +15,11 @@ import { InfoPill } from '@/components/ui/InfoPill';
 
 import type { BibleEntry, BibleEntryChange, StoryBible } from '../api/bible';
 import { useBibleSectionName } from '../hooks/useBibleSectionName';
+import { useOpenStorySlug } from '../hooks/useOpenStorySlug';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { BibleEntryEditor } from './BibleEntryEditor';
+import { ItemVisibilityControls } from './ItemVisibilityControls';
 import { BibleMarkdown } from './BibleMarkdown';
 import { TwoStepDelete } from './TwoStepDelete';
 
@@ -62,6 +64,27 @@ function EntryReading({ bible, entry }: Pick<BibleEntryViewProps, 'bible' | 'ent
   );
 }
 
+/** "What readers see" for the entry: Keep private and the chapter it waits for (S1-E17-32, 35). */
+function EntryReadersSection({ entry }: { entry: BibleEntry }) {
+  const { t } = useAtlasTranslation();
+  const slug = useOpenStorySlug();
+  return (
+    <section
+      aria-labelledby="atlas-bible-entry-readers-heading"
+      className="flex flex-col gap-2 border-t border-hairline pt-4"
+    >
+      <h3
+        id="atlas-bible-entry-readers-heading"
+        className="m-0 font-heading text-lg font-bold text-heading"
+      >
+        {t('readers.item.heading')}
+      </h3>
+      <p className="m-0 text-sm text-body">{t('readers.item.entryHint')}</p>
+      <ItemVisibilityControls slug={slug} itemId={entry.id} itemName={entry.title} allowsGuard />
+    </section>
+  );
+}
+
 /**
  * Renders the entry.
  *
@@ -96,6 +119,7 @@ export function BibleEntryView({ bible, entry, startsEditing, save, remove }: Bi
       ) : (
         <EntryReading bible={bible} entry={entry} />
       )}
+      <EntryReadersSection entry={entry} />
       <section
         aria-labelledby="atlas-bible-entry-delete-heading"
         className="flex flex-col gap-2 border-t border-hairline pt-4"

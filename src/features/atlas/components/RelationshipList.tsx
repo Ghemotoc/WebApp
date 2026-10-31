@@ -8,7 +8,7 @@
  * without a second, confirming click). The list's rows have a fine line between them (DoD: label
  * rows). Who uses it: CharacterRelationshipsSection and ConnectionsPage.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -23,6 +23,8 @@ export interface RelationshipListProps {
   words: RelationshipWords;
   /** Deletes one relationship; throws when it can't. */
   onDelete: (relationshipId: string) => Promise<void>;
+  /** Anything more under a relationship: "Keep private" on the Connections page (S1-E17-32). */
+  extra?: (relationship: CharacterRelationship, sentence: string) => ReactNode;
 }
 
 /** One relationship's row: the sentence, the note, and Delete with its question. */
@@ -30,10 +32,12 @@ function RelationshipRow({
   relationship,
   words,
   onDelete,
+  extra,
 }: {
   relationship: CharacterRelationship;
   words: RelationshipWords;
   onDelete: RelationshipListProps['onDelete'];
+  extra: RelationshipListProps['extra'];
 }) {
   const { t } = useAtlasTranslation();
   const [isAsking, setIsAsking] = useState(false);
@@ -66,6 +70,7 @@ function RelationshipRow({
       {relationship.note !== '' && (
         <p className="m-0 text-sm break-words whitespace-pre-line text-body">{relationship.note}</p>
       )}
+      {extra?.(relationship, sentence)}
       {isAsking && (
         <div className="flex flex-col gap-2">
           <p ref={question} tabIndex={-1} className="m-0 text-body">
@@ -93,7 +98,7 @@ function RelationshipRow({
  *
  * @returns the list of relationships
  */
-export function RelationshipList({ relationships, words, onDelete }: RelationshipListProps) {
+export function RelationshipList({ relationships, words, onDelete, extra }: RelationshipListProps) {
   const { t } = useAtlasTranslation();
   if (relationships.length === 0) {
     return <p className="m-0 text-body">{t('connections.list.none')}</p>;
@@ -106,6 +111,7 @@ export function RelationshipList({ relationships, words, onDelete }: Relationshi
           relationship={relationship}
           words={words}
           onDelete={onDelete}
+          extra={extra}
         />
       ))}
     </ul>

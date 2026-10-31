@@ -13,8 +13,10 @@ import { Button } from '@/components/ui/Button';
 
 import type { BibleSection } from '../api/bible';
 import { useBibleSectionName } from '../hooks/useBibleSectionName';
+import { useOpenStorySlug } from '../hooks/useOpenStorySlug';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { ItemVisibilityControls } from './ItemVisibilityControls';
 import { PlanTextField } from './PlanTextField';
 import { TwoStepDelete } from './TwoStepDelete';
 
@@ -113,6 +115,14 @@ function SectionNameField({ section, rename }: Pick<BibleSectionRowProps, 'secti
   );
 }
 
+/** "Keep private" for the section and its entries (S1-E17-32). */
+function SectionVisibility({ sectionId, name }: { sectionId: string; name: string }) {
+  const slug = useOpenStorySlug();
+  return (
+    <ItemVisibilityControls slug={slug} itemId={sectionId} itemName={name} allowsGuard={false} />
+  );
+}
+
 /**
  * Renders the row.
  *
@@ -159,6 +169,7 @@ export function BibleSectionRow(props: BibleSectionRowProps) {
             isLast={props.isLast}
             moveTo={props.moveTo}
           />
+          <SectionVisibility sectionId={section.id} name={name} />
           <TwoStepDelete
             buttonLabel={t('bible.sections.delete')}
             buttonAccessibleName={t('bible.sections.deleteNamed', { name })}

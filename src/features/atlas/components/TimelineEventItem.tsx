@@ -14,12 +14,14 @@ import { Button } from '@/components/ui/Button';
 import { InfoPill } from '@/components/ui/InfoPill';
 
 import type { StoryEvent, StoryEventChange } from '../api/storyline';
+import { useOpenStorySlug } from '../hooks/useOpenStorySlug';
 import { sortValueFrom } from '../lib/optionalNumbers';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { CrossLinkChips } from './CrossLinkChips';
 import { CrossLinkText } from './CrossLinkText';
 import { PlanTextField } from './PlanTextField';
+import { ItemVisibilityControls } from './ItemVisibilityControls';
 import { TwoStepDelete } from './TwoStepDelete';
 
 /** What the item needs. */
@@ -27,6 +29,14 @@ export interface TimelineEventItemProps {
   event: StoryEvent;
   save: (change: StoryEventChange) => Promise<void>;
   remove: () => Promise<void>;
+}
+
+/** "Keep private" and the chapter the event waits for (S1-E17-32, S1-E17-35). */
+function EventVisibility({ event }: { event: StoryEvent }) {
+  const slug = useOpenStorySlug();
+  return (
+    <ItemVisibilityControls slug={slug} itemId={event.id} itemName={event.title} allowsGuard />
+  );
 }
 
 /** The event's fields while it is being edited. */
@@ -74,6 +84,7 @@ function EventFields({ event, save, remove }: TimelineEventItemProps) {
         save={async (value) => save({ description: value })}
       />
       <CrossLinkChips texts={[event.description]} />
+      <EventVisibility event={event} />
       <TwoStepDelete
         buttonLabel={t('storyline.timeline.delete')}
         buttonAccessibleName={t('storyline.timeline.deleteNamed', { title: event.title })}

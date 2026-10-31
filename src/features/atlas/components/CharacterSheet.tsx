@@ -4,7 +4,8 @@
  *
  * From top to bottom: the name as the heading, the name and role, the picture, then the four
  * groups (Basics, Look and voice, Inside, In the story with the first appearance), the writer's
- * own fields, the character's relationships (S1-E17-14) and Delete. Every field saves by itself.
+ * own fields, the character's relationships (S1-E17-14), what readers see of them (S1-E17-32)
+ * and Delete. Every field saves by itself.
  * The caller gives it a key per character, so switching characters saves what was waiting and
  * starts the next sheet fresh.
  * Who uses it: CharactersPage. What it calls: useStoryCast's changers (through the props) and the
@@ -20,6 +21,7 @@ import { CharacterRelationshipsSection } from './CharacterRelationshipsSection';
 import { CustomValuesSection } from './CustomValuesSection';
 import { DeleteCharacterSection } from './DeleteCharacterSection';
 import { PlanSelectField } from './PlanSelectField';
+import { ReaderVisibilitySection } from './ReaderVisibilitySection';
 import { SheetGroupSection } from './SheetGroupSection';
 
 /** What the sheet needs. */
@@ -104,6 +106,12 @@ export function CharacterSheet(props: CharacterSheetProps) {
       />
       <CharacterAppearancesSection slug={slug} characterId={character.id} />
       <CharacterRelationshipsSection slug={slug} cast={cast} characterId={character.id} />
+      <ReaderVisibilitySection
+        slug={slug}
+        characterId={character.id}
+        name={character.name}
+        fields={cast.fields}
+      />
       <DeleteCharacterSection name={character.name} onDelete={props.onDelete} />
     </article>
   );

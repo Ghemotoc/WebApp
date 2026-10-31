@@ -5,12 +5,17 @@
  *
  * A resolved link is an ordinary underlined link to its character, entry or chapter. One that
  * resolves to nothing shows the name with a dashed underline and the words "not found yet" (in
- * words, not by colour alone). Who uses it: CrossLinkText and BibleMarkdown. What it calls:
- * lib/itemAddress.ts.
+ * words, not by colour alone). On a readers' page (S1-E17-32) only public items resolve, a name
+ * with no public match reads as plain words (never "not found yet", never a hint of a private
+ * item), and a match opens the reader page that shows it.
+ * Who uses it: CrossLinkText and BibleMarkdown. What it calls: lib/itemAddress.ts and the
+ * readers' links from useCrossLinks.
  */
+import { useContext } from 'react';
 import { Link } from 'react-router';
 
 import type { LinkTarget } from '../api/links';
+import { ReaderLinksContext } from '../hooks/useCrossLinks';
 import { itemAddress } from '../lib/itemAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
@@ -33,7 +38,18 @@ export interface CrossLinkProps {
  */
 export function CrossLink({ slug, name, target }: CrossLinkProps) {
   const { t } = useAtlasTranslation();
+  const reader = useContext(ReaderLinksContext);
   if (target === undefined) return <>{name}</>;
+  // A readers' page: a public match opens its reader page; anything else is plain words.
+  if (reader !== null) {
+    const address = target === null ? null : reader.addressOf(target);
+    if (address === null) return <>{name}</>;
+    return (
+      <Link to={address} className="text-link underline">
+        {name}
+      </Link>
+    );
+  }
   if (target === null) {
     return (
       <span data-testid="atlas-cross-link-missing">
