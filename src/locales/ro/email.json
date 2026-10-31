@@ -61,7 +61,10 @@
     "seeAll": "Vezi totul pe {{productName}}: {{link}}",
     "why": "Primești aceste emailuri pentru că așa ai ales în Setări, la Notificări: {{link}}",
     "unsubscribe": "Oprește aceste emailuri cu un singur clic: {{link}}",
-    "required": "Acest email este despre contul tău și siguranță, așa că îl trimitem mereu."
+    "required": "Acest email este despre contul tău și siguranță, așa că îl trimitem mereu.",
+    "subjectLoginMethod": "O schimbare la felul în care intri pe {{productName}}",
+    "loginMethodAdded": "Un nou mod de autentificare a fost conectat la contul tău. Le vezi pe toate în Setări, la Moduri de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
+    "loginMethodRemoved": "Un mod de autentificare a fost deconectat de la contul tău. Le vezi pe cele rămase în Setări, la Moduri de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne."
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} te roagă să fii de acord cu contul său {{productName}}",

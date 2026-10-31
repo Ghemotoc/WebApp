@@ -24,7 +24,9 @@ export type NotificationKind =
   | 'age_check_decided'
   | 'age_check_18_invite'
   | 'parental_consent_agreed'
-  | 'parental_consent_withdrawn';
+  | 'parental_consent_withdrawn'
+  | 'login_method_added'
+  | 'login_method_removed';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

@@ -114,6 +114,14 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **`profiles.adults_may_message`** is off by default and only a 16 or 17-year-old can turn it on (`set_adults_may_message()`, hint `not_16_or_17`); S1-E9-03 reads it.
 - **Reading:** `my_onboarding()` (the age group, never the year of birth), `onboarding_topics(language)`. **Writes:** `save_my_region()` (hint `unknown_region`) and `finish_onboarding()` (hint `handle_missing`).
 
+## Google, Apple, Microsoft and passkeys (S1-E2-09)
+
+- **Flags.** `social_login` and `passkey_login`, both public and off until the providers and the passkey settings are set up on the hosted projects (GO-LIVE). Locally `config.toml` turns on manual linking and passkeys with `localhost` as the relying party, so passkey tests open the app at `http://localhost:4173`.
+- **Sign-up.** `handle_new_auth_user()` now makes no profile for a Google, Apple or Microsoft account (`is_social_provider()`); the profile comes from `finish_social_sign_up(sign_up_data)`, which runs `create_profile_from_sign_up()`, the same steps the trigger runs for a password sign-up, and answers `{outcome: ok | finished | refused, rule}`. Until then the account gate treats the account as none. `cancel_social_sign_up()` removes an unfinished one; `purge_unfinished_social_sign_ups()` (pg_cron, hourly) removes any older than a day.
+- **Never merged silently (criterion 5).** `guard_identity_link()`, a trigger on `auth.identities`, refuses a provider on an account set up before now unless `expect_identity_link(provider)` asked for it in the last ten minutes (`identity_link_requests`, the owner reads their own rows). Supabase Auth then sends the error back to the return page.
+- **Telling the person.** `notify_login_method_change()` on `auth.identities` and `auth.webauthn_credentials` notifies `login_method_added` or `login_method_removed`; `email_delivery_for()` makes both `required`, so they are always emailed.
+- **Reading.** `my_login_methods()`: whether there is a password, the providers and the passkeys, never a provider's email.
+
 ## Country and markets (S1-E2-10)
 
 - **`markets`** lists each country: open or not, its minimum age (16 in Australia, Q19) and its languages (BCP 47). Romania is open; GB, IE, US, CA, AU and NZ are closed until their legal check. Anyone may read it; it changes by migration until S1-E11-05.

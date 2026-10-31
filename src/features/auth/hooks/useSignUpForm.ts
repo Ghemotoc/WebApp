@@ -10,6 +10,8 @@
  * under 18 while adults_only is on, or under their country's minimum age (16 in Australia,
  * S1-E2-10), is refused; every answer is cleared and nothing is sent ("We don't keep anything you
  * typed", S1-E2-02).
+ * "Continue with Google" (or Apple or Microsoft, S1-E2-09) runs the same checks except the email
+ * and password, then leaves for the provider (api/socialSignIn.ts); the return page finishes it.
  * What it returns: the answers and a setter per field, the problems to show (translation keys),
  * the age outcome, whether it is sending, a failure or refusal, and the email the link went to.
  */
@@ -28,6 +30,7 @@ import { findSignUpProblems, type SignUpAnswers, type SignUpProblems } from '@/s
 import { trackEvent } from '@/lib/analytics/track';
 
 import { signUp, SignUpError, type SignUpContext, type SignUpFailure } from '../api/signUp';
+import { startSocialSignUp, type SocialProvider } from '../api/socialSignIn';
 import { checkPasswordLeak } from '../lib/passwordLeak';
 
 /** What the form holds before it is checked: the box may still be unticked. */
@@ -137,12 +140,43 @@ async function sendSignUp(
   return null;
 }
 
+/** An address that passes the email rule, for a provider sign-up, which has no email field. */
+const providerEmailStandIn = 'provider.sign-up@example.com';
+
+/**
+ * Checks the answers a provider sign-up sends (everything but the email and password), then
+ * leaves for the provider (S1-E2-09). The database checks them all again when the person is back.
+ *
+ * @param draft - the form's answers
+ * @param context - the invite, legal versions and language
+ * @param provider - Google, Apple or Microsoft
+ * @returns problems to show, or null once the browser is on its way to the provider
+ */
+async function sendSocialSignUp(
+  draft: SignUpDraft,
+  context: SignUpContext,
+  provider: SocialProvider,
+): Promise<SignUpProblems | null> {
+  // Step 1: the form rules, as for an emailed link, so no password is asked for.
+  const problems = findSignUpProblems({ ...draft, method: 'link', email: providerEmailStandIn });
+  if (Object.keys(problems).length > 0) return problems;
+  // Step 2: the username's full check, so a refusal shows under the field before leaving.
+  const client = await getSupabaseClient();
+  if (client === null) throw new SignUpError('unreachable');
+  const handleOutcome = await handleOutcomeBeforeSending(client, draft.handle);
+  if (handleOutcome !== 'ok') return { handle: handleOutcome };
+  // Step 3: keep the answers in this tab and go to the provider.
+  await startSocialSignUp(client, provider, draft, context);
+  return null;
+}
+
 /**
  * The form's state and actions.
  *
  * @param context - the invite, the legal versions and the language, or null while they load
  * @param isAdultsOnly - the adults_only flag (on in March)
- * @returns answers, setField, problems, ageOutcome, submit, isSending, failure, refusedFor, sentTo
+ * @returns answers, setField, problems, ageOutcome, submit, continueWith, isSending, failure,
+ *   refusedFor and sentTo
  */
 export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boolean) {
   const [answers, setAnswers] = useState<SignUpDraft>(emptyDraft);
@@ -159,8 +193,13 @@ export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boole
     setProblems((current) => ({ ...current, [field]: undefined }));
   }
 
-  /** Checks and sends the form; shows problems or the "check your email" step. */
-  async function submit() {
+  /**
+   * Runs the age rules, then one way of sending; shows the problems, or calls onSent.
+   *
+   * @param send - sends the answers and returns the problems found, or null
+   * @param onSent - what happens once they went through
+   */
+  async function checkThenSend(send: () => Promise<SignUpProblems | null>, onSent: () => void) {
     if (context === null || isSending) return;
     // The age rules first, the market's own minimum age included: a refusal clears every answer
     // and sends nothing.
@@ -173,8 +212,8 @@ export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boole
     setIsSending(true);
     setFailure(null);
     try {
-      const found = await sendSignUp(answers, context);
-      if (found === null) setSentTo(answers.email);
+      const found = await send();
+      if (found === null) onSent();
       else setProblems(found);
     } catch (error) {
       setFailure(error instanceof SignUpError ? error.failure : 'unreachable');
@@ -183,12 +222,32 @@ export function useSignUpForm(context: SignUpContext | null, isAdultsOnly: boole
     }
   }
 
+  /** Checks and sends the form; shows problems or the "check your email" step. */
+  async function submit() {
+    if (context === null) return;
+    await checkThenSend(
+      () => sendSignUp(answers, context),
+      () => setSentTo(answers.email),
+    );
+  }
+
+  /** "Continue with …": checks the answers and leaves for the provider (S1-E2-09). */
+  async function continueWith(provider: SocialProvider) {
+    if (context === null) return;
+    // Nothing happens once sent: the browser is already leaving for the provider.
+    await checkThenSend(
+      () => sendSocialSignUp(answers, context, provider),
+      () => undefined,
+    );
+  }
+
   return {
     answers,
     setField,
     problems,
     ageOutcome,
     submit,
+    continueWith,
     isSending,
     failure,
     refusedFor,

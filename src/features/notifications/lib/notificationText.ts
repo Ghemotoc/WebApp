@@ -249,6 +249,26 @@ function parentConsentText(t: TFunction, notification: AppNotification): Notific
   };
 }
 
+/**
+ * A way to log in was connected or disconnected (S1-E2-09, criterion 4). The row never says which
+ * one, so it reads the same whoever looks at the screen; Settings › Ways to log in lists them.
+ *
+ * @param t - the notifications translation function
+ * @param notification - the row; its kind says which
+ * @returns the row's words
+ */
+function loginMethodText(t: TFunction, notification: AppNotification): NotificationText {
+  const isAdded = notification.kind === 'login_method_added';
+  return {
+    who: t('who.yourAccount'),
+    what: isAdded ? t('what.loginMethodAdded') : t('what.loginMethodRemoved'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.seeWaysToLogIn'),
+    href: '/settings#ways-to-log-in',
+  };
+}
+
 /** The moderation team's kinds and the function that words each one. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -262,6 +282,8 @@ const teamTextFor: Partial<
   age_check_18_invite: adultInviteText,
   parental_consent_agreed: parentConsentText,
   parental_consent_withdrawn: parentConsentText,
+  login_method_added: loginMethodText,
+  login_method_removed: loginMethodText,
 };
 
 /**
