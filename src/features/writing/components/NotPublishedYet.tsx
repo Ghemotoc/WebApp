@@ -2,7 +2,8 @@
  * NotPublishedYet: "Drafts and scheduled" on the writer dashboard (story S1-E3-07; board
  * WriterDashboard 4.1).
  *
- * Board values: a white card with the pencil-cup widget doodle at its top right, Cutive eyebrow,
+ * Board values: a white card with the pencil-cup widget doodle at its top right (from 1000 px,
+ * where the card sits beside the chart; stacked under it, the doodle would touch the chart), Cutive eyebrow,
  * the 26 px heading, and one sand row per waiting chapter: a gold "Draft" or sky "Scheduled" pill,
  * "Chapter n: title", the story, words and when it was saved (or when it publishes, Romania time)
  * and an "Edit" or "Reschedule" link to the editor. Newest first, at most four.
@@ -84,10 +85,11 @@ export function NotPublishedYet({ chapters, storyTitles }: NotPublishedYetProps)
         name="pencil-cup"
         kind="widget"
         on="Not published yet"
-        hideBelow="phone"
-        className="absolute -top-[52px] right-7 w-[88px] rotate-[7deg]"
+        hideBelow="wide"
+        className="absolute -top-9 right-7 w-[88px] rotate-[7deg]"
       />
-      <div className="flex flex-col gap-1.5">
+      {/* The heading stops short of the card's right side, where the pencil cup sits. */}
+      <div className="flex flex-col gap-1.5 pr-28">
         <Eyebrow>{t('dashboard.notPublished.eyebrow')}</Eyebrow>
         <h2
           id="dashboard-waiting-heading"

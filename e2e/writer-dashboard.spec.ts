@@ -10,7 +10,8 @@
  *   under the chapter, appears (criterion 3);
  * - "Last 30 days" changes the tiles; "Not published yet" lists the draft with an Edit link and
  *   "Continue draft" opens it;
- * - axe finds nothing serious and nothing scrolls sideways at 390, 768 and 1440 px.
+ * - axe finds nothing serious, nothing scrolls sideways and no doodle touches text at 390, 768
+ *   and 1440 px.
  * Test data: a story by the editor persona (…12, which no other spec writes with) with one
  * published chapter and one draft; reading places, likes, follows and a comment from seeded
  * personas. All removed afterwards.
@@ -20,6 +21,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { expectNoDoodleOverlap } from './support/doodles';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 const writerId = '00000000-0000-4000-8000-000000000012';
@@ -164,7 +166,7 @@ test.describe('The writer dashboard', () => {
   });
 
   for (const width of [390, 768, 1440]) {
-    test(`passes axe and fits at ${width} px`, async ({ browser }) => {
+    test(`passes axe, fits and keeps doodles off text at ${width} px`, async ({ browser }) => {
       const page = await openDashboard(browser, width);
       await expect(page.getByRole('heading', { name: /followers?$/ })).toBeVisible();
       const results = await new AxeBuilder({ page })
@@ -176,6 +178,7 @@ test.describe('The writer dashboard', () => {
       expect(serious).toEqual([]);
       const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
       expect(pageWidth).toBeLessThanOrEqual(width);
+      await expectNoDoodleOverlap(page);
       await page.context().close();
     });
   }

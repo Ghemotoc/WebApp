@@ -170,7 +170,7 @@ function YourWritingHeader({
         name="typewriter"
         kind="background"
         hideBelow="wide"
-        className="absolute -top-4 right-[330px] w-28 -rotate-6"
+        className="absolute -top-4 right-[420px] w-28 -rotate-6"
       />
     </header>
   );
