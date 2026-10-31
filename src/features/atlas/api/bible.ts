@@ -11,6 +11,8 @@
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 
+import { checkedAnswer } from './checkedAnswer';
+
 /** The seven default sections every plan starts with (S1-E17-17). */
 export const bibleSectionPresets = [
   'premise',
@@ -104,27 +106,6 @@ export async function fetchStoryBible(
       updatedAt: entry.updated_at,
     })),
   };
-}
-
-/**
- * The answer of a change, or an error naming what didn't work.
- *
- * @param answer - what Supabase returned
- * @param action - the words for the error message ("add the section")
- * @param allowedOutcomes - the outcomes that aren't an error ('ok' unless the caller says more)
- * @returns the answer's object, whose outcome is 'ok' or one the caller allows
- */
-function checkedAnswer(
-  answer: { data: unknown; error: { message: string } | null },
-  action: string,
-  allowedOutcomes: string[] = ['ok'],
-): Record<string, unknown> {
-  if (answer.error !== null) throw new Error(`Could not ${action}: ${answer.error.message}`);
-  const data = answer.data as Record<string, unknown> | null;
-  if (!allowedOutcomes.includes(String(data?.outcome))) {
-    throw new Error(`Could not ${action}: ${String(data?.outcome)}`);
-  }
-  return data ?? {};
 }
 
 /**

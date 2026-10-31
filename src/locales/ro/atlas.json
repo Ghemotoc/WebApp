@@ -362,5 +362,84 @@
         "failed": "Intrarea nu a fost ștearsă. Verifică-ți conexiunea și încearcă din nou."
       }
     }
+  },
+  "chapterPlan": {
+    "heading": "Planul capitolului",
+    "privateNote": "Doar tu vezi asta. Cititorii, niciodată.",
+    "openPlan": "Deschide planul poveștii",
+    "loadFailed": "Nu am putut încărca planul capitolului. Încearcă din nou peste puțin timp.",
+    "none": "Niciunul",
+    "kind": "Tip",
+    "kinds": {
+      "chapter": "Capitol",
+      "prologue": "Prolog",
+      "interlude": "Interludiu",
+      "epilogue": "Epilog"
+    },
+    "listKinds": {
+      "chapter": "{{number}}.",
+      "prologue": "Prolog:",
+      "interlude": "Interludiu:",
+      "epilogue": "Epilog:"
+    },
+    "status": "Stadiu",
+    "statuses": {
+      "idea": "Idee",
+      "outlined": "Schițat",
+      "drafting": "În scriere",
+      "revising": "În revizuire",
+      "done": "Gata"
+    },
+    "pov": "Punct de vedere",
+    "act": "Act",
+    "wordTarget": "Ținta de cuvinte",
+    "wordTargetHint": "Las-o goală dacă nu vrei o țintă.",
+    "wordTargetInvalid": "Scrie un număr întreg de la 1 la 1.000.000 sau las-o goală.",
+    "worldDate": "Data din poveste",
+    "worldDateHint": "Cum o scrii tu, de exemplu „Primăvara, anul 3”.",
+    "worldSort": "Valoare de ordonare",
+    "worldSortHint": "Un număr care pune datele din poveste în ordine, de exemplu 3 sau 3,5.",
+    "worldSortInvalid": "Scrie un număr sau las-o goală.",
+    "location": "Locul",
+    "summary": "Rezumat",
+    "present": "Personaje prezente",
+    "noCharacters": "Povestea nu are încă personaje.",
+    "addCharacters": "Adaugă personaje",
+    "presentFailed": "Nu am putut salva cine e prezent. Încearcă din nou.",
+    "scenes": {
+      "heading": "Scene",
+      "none": "Încă nu ai scene.",
+      "title": "Titlul scenei {{number}}",
+      "titleRequired": "O scenă are nevoie de un titlu.",
+      "newTitle": "Titlul scenei noi",
+      "add": "Adaugă scena",
+      "addFailed": "Nu am putut adăuga scena. Încearcă din nou.",
+      "up": "Mai devreme",
+      "down": "Mai târziu",
+      "moveUp": "Mută {{title}} mai devreme",
+      "moveDown": "Mută {{title}} mai târziu",
+      "moveFailed": "Nu am putut muta scena. Încearcă din nou.",
+      "delete": "Șterge",
+      "deleteNamed": "Șterge {{title}}",
+      "confirm": "Ștergi scena „{{title}}”? Nu se mai poate anula.",
+      "yes": "Da, șterge",
+      "keep": "Păstreaz-o",
+      "deleteFailed": "Nu am putut șterge scena. Încearcă din nou."
+    },
+    "wordsOfTarget": "{{words}} / {{target}} de cuvinte",
+    "nearLimit": "Capitolul e aproape de cât poate cuprinde un capitol. Gândește-te să-l împarți în două.",
+    "focusMode": "Mod concentrare",
+    "listHeading": "Capitole",
+    "listLabel": "Capitolele poveștii",
+    "untitled": "Fără titlu",
+    "appearsIn": {
+      "heading": "Apare în",
+      "none": "Nu apare încă în niciun capitol. Alege personajul ca punct de vedere sau marchează-l prezent în planul unui capitol.",
+      "pov": "punct de vedere",
+      "present": "prezent",
+      "povAndPresent": "punct de vedere, prezent",
+      "chapter": "Capitolul {{number}}: {{title}}",
+      "loadFailed": "Nu am putut încărca unde apare personajul."
+    }
   }
 }

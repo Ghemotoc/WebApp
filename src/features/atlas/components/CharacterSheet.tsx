@@ -14,6 +14,7 @@ import type { CharacterChange, SheetKey, StoryCast, StoryCharacter } from '../ap
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { CharacterIdentityFields } from './CharacterIdentityFields';
+import { CharacterAppearancesSection } from './CharacterAppearancesSection';
 import { CharacterPictureSection } from './CharacterPictureSection';
 import { CharacterRelationshipsSection } from './CharacterRelationshipsSection';
 import { CustomValuesSection } from './CustomValuesSection';
@@ -101,6 +102,7 @@ export function CharacterSheet(props: CharacterSheetProps) {
         fields={cast.fields}
         saveValue={async (fieldId, value) => saveChange({ custom: { [fieldId]: value } })}
       />
+      <CharacterAppearancesSection slug={slug} characterId={character.id} />
       <CharacterRelationshipsSection slug={slug} cast={cast} characterId={character.id} />
       <DeleteCharacterSection name={character.name} onDelete={props.onDelete} />
     </article>

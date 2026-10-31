@@ -362,5 +362,84 @@
         "failed": "The entry wasn’t deleted. Check your connection and try again."
       }
     }
+  },
+  "chapterPlan": {
+    "heading": "Plan for this chapter",
+    "privateNote": "Only you see this. Readers never do.",
+    "openPlan": "Open the story’s plan",
+    "loadFailed": "We couldn’t load this chapter’s plan. Try again in a moment.",
+    "none": "None",
+    "kind": "Type",
+    "kinds": {
+      "chapter": "Chapter",
+      "prologue": "Prologue",
+      "interlude": "Interlude",
+      "epilogue": "Epilogue"
+    },
+    "listKinds": {
+      "chapter": "{{number}}.",
+      "prologue": "Prologue:",
+      "interlude": "Interlude:",
+      "epilogue": "Epilogue:"
+    },
+    "status": "Status",
+    "statuses": {
+      "idea": "Idea",
+      "outlined": "Outlined",
+      "drafting": "Drafting",
+      "revising": "Revising",
+      "done": "Done"
+    },
+    "pov": "Point of view",
+    "act": "Act",
+    "wordTarget": "Word target",
+    "wordTargetHint": "Leave it empty for no target.",
+    "wordTargetInvalid": "Type a whole number from 1 to 1,000,000, or leave it empty.",
+    "worldDate": "In-world date",
+    "worldDateHint": "As you write it, for example “Spring, year 3”.",
+    "worldSort": "Sort value",
+    "worldSortHint": "A number that puts the in-world dates in order, for example 3 or 3.5.",
+    "worldSortInvalid": "Type a number, or leave it empty.",
+    "location": "Location",
+    "summary": "Summary",
+    "present": "Characters present",
+    "noCharacters": "This story has no characters yet.",
+    "addCharacters": "Add characters",
+    "presentFailed": "We couldn’t save who is present. Try again.",
+    "scenes": {
+      "heading": "Scenes",
+      "none": "No scenes yet.",
+      "title": "Title of scene {{number}}",
+      "titleRequired": "A scene needs a title.",
+      "newTitle": "New scene’s title",
+      "add": "Add scene",
+      "addFailed": "We couldn’t add the scene. Try again.",
+      "up": "Earlier",
+      "down": "Later",
+      "moveUp": "Move {{title}} earlier",
+      "moveDown": "Move {{title}} later",
+      "moveFailed": "We couldn’t move the scene. Try again.",
+      "delete": "Delete",
+      "deleteNamed": "Delete {{title}}",
+      "confirm": "Delete the scene “{{title}}”? This can’t be undone.",
+      "yes": "Yes, delete",
+      "keep": "Keep it",
+      "deleteFailed": "We couldn’t delete the scene. Try again."
+    },
+    "wordsOfTarget": "{{words}} / {{target}} words",
+    "nearLimit": "This chapter is close to the most one chapter can hold. Think about splitting it into two.",
+    "focusMode": "Focus mode",
+    "listHeading": "Chapters",
+    "listLabel": "Chapters of this story",
+    "untitled": "Untitled",
+    "appearsIn": {
+      "heading": "Appears in",
+      "none": "Not in any chapter yet. Pick this character as the point of view or mark them present in a chapter’s plan.",
+      "pov": "point of view",
+      "present": "present",
+      "povAndPresent": "point of view, present",
+      "chapter": "Chapter {{number}}: {{title}}",
+      "loadFailed": "We couldn’t load where this character appears."
+    }
   }
 }

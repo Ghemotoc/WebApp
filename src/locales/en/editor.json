@@ -2,6 +2,7 @@
   "documentTitle": "{{chapter}} · {{story}} · {{productName}}",
   "back": "Writer dashboard",
   "chapterNumber": "Chapter {{number}}",
+  "newChapter": "New chapter",
   "state": {
     "draft": "Draft",
     "scheduled": "Scheduled",
