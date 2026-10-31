@@ -143,5 +143,9 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | Settings (6.3) | Notifications as a tab with a 30 px heading | A panel on the one Settings page with the same 22 px heading as the other panels, until the tabs arrive; the email footer links to it as /settings#notifications (S1-E7-02) |
 | Settings (6.3) | The quiet-hours doodle beside the marketing note | The mail doodle beside "No marketing emails"; the other notes are plain lines (S1-E7-02) |
 | Editor (4.3) | "Replace picture" beside "Remove picture" on an inserted picture | Left out: replacing means a new upload and a new check, so the writer removes the picture and inserts the new one (S1-E3-09) |
-| Editor (4.3) | The Insert menu with picture, drawing, music and video, and its footnote about links | Only Picture for now; music and video join with S1-E3-10 (with the footnote), drawings with S1-E3-11 (S1-E3-09) |
+| Editor (4.3) | The Insert menu with picture, drawing, music and video, and its footnote about links | Picture, Music and Video (with the footnote, S1-E3-10); drawings join with S1-E3-11 (S1-E3-09) |
 | Editor (4.3) | The picture's state as a plain line under it | A state pill (being checked, checked, held, removed) with a short note, so the writer knows readers can't see it yet (S1-E3-09) |
+| Editor (4.3) | "Change link" on a music or video card | Left out: the writer removes the card and adds the new link, so every card's title comes from our server's oEmbed lookup (S1-E3-10) |
+| Reader (3.5) | The service's logo on the music or video card | The service's name as text ("Video · YouTube") until the official logos come from each brand kit, unchanged (DoD, third-party buttons; GO-LIVE) (S1-E3-10) |
+| Reader (3.5) | A thumbnail picture of the video on the card before play | A plain plum panel with a play button: a thumbnail would load from the service before the reader chose to play (S1-E3-10 criterion 2) |
+| Reader (3.5) | The card's text | Adds "Once you press play, YouTube's own terms and age rules apply.", which the story's legal note asks for (S1-E3-10) |

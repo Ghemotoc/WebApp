@@ -106,7 +106,9 @@ function ChapterTextBlock(props: {
           language={chapter.story.languageCode}
           className="tmc-chapter-text--reader"
           pictures={chapter.pictures}
-          canReportPictures
+          embeds={chapter.embeds}
+          writerName={chapter.story.writer.displayName}
+          canReportMedia
         />
       </div>
     </div>

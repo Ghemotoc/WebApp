@@ -389,6 +389,65 @@ export type Database = {
         };
         Relationships: [];
       };
+      chapter_embeds: {
+        Row: {
+          author_name: string | null;
+          chapter_id: string;
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          media_path: string;
+          service: Database['public']['Enums']['embed_service'];
+          source_url: string;
+          title: string | null;
+          updated_at: string;
+          user_id: string;
+          embed_json: Json | null;
+        };
+        ComputedFields: 'embed_json';
+        Insert: {
+          author_name?: string | null;
+          chapter_id: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          media_path: string;
+          service: Database['public']['Enums']['embed_service'];
+          source_url: string;
+          title?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          author_name?: string | null;
+          chapter_id?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          media_path?: string;
+          service?: Database['public']['Enums']['embed_service'];
+          source_url?: string;
+          title?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'chapter_embeds_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chapter_embeds_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_likes: {
         Row: {
           chapter_id: string;
@@ -4019,6 +4078,7 @@ export type Database = {
           staff_handle: string;
         }[];
       };
+      admin_case_embed: { Args: { target_case_id: string }; Returns: Json };
       admin_case_notices: {
         Args: { target_case_id: string };
         Returns: {
@@ -4676,6 +4736,13 @@ export type Database = {
         Args: { chapter_code: string; older_than?: string; story_slug: string };
         Returns: Json;
       };
+      chapter_embed_references: {
+        Args: { body: string };
+        Returns: {
+          embed_id: string;
+        }[];
+      };
+      chapter_embed_states: { Args: { body: string; owner_id: string }; Returns: Json };
       chapter_gate_outcome: {
         Args: {
           chapter: Omit<
@@ -4723,6 +4790,7 @@ export type Database = {
         Returns: undefined;
       };
       check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
+      check_chapter_embeds: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_pictures: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
       check_comment_text: { Args: { body: string }; Returns: string };
@@ -4952,6 +5020,15 @@ export type Database = {
         Returns: number;
       };
       email_worker_unsubscribe_key: { Args: { target_user_id: string }; Returns: string };
+      embed_json: {
+        Args: {
+          card: Omit<
+            Database['public']['Tables']['chapter_embeds']['Row'],
+            Database['public']['Tables']['chapter_embeds']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       escalate_on_call_alerts: { Args: Record<PropertyKey, never>; Returns: number };
       finishes_story: {
@@ -5226,6 +5303,7 @@ export type Database = {
           handle: string;
         }[];
       };
+      my_embeds: { Args: { embed_ids: string[] }; Returns: Json };
       my_followers: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -5632,6 +5710,17 @@ export type Database = {
       record_sign_up_consent: {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
+      };
+      register_chapter_embed: {
+        Args: {
+          embed_author_name: string;
+          embed_media_path: string;
+          embed_service: Database['public']['Enums']['embed_service'];
+          embed_source_url: string;
+          embed_title: string;
+          target_chapter_id: string;
+        };
+        Returns: string;
       };
       register_chapter_picture: {
         Args: { rights_confirmed: boolean; target_path: string };
@@ -6116,6 +6205,7 @@ export type Database = {
       compliance_entry_kind: 'authority_order' | 'legal_request' | 'launch_notice';
       cover_kind: 'automatic' | 'drawn' | 'upload';
       email_delivery: 'instant' | 'daily' | 'off';
+      embed_service: 'youtube' | 'vimeo' | 'loom' | 'spotify' | 'apple_music';
       language_status: 'open' | 'ready' | 'closed';
       legal_check_status: 'not_started' | 'in_progress' | 'done';
       library_shelf: 'reading' | 'saved' | 'finished';
@@ -6156,7 +6246,7 @@ export type Database = {
         | 'copied_published_work'
         | 'undisclosed_ai'
         | 'other';
-      reportable_type: 'profile' | 'story' | 'chapter' | 'comment' | 'picture';
+      reportable_type: 'profile' | 'story' | 'chapter' | 'comment' | 'picture' | 'embed';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -6377,6 +6467,7 @@ export const Constants = {
       compliance_entry_kind: ['authority_order', 'legal_request', 'launch_notice'],
       cover_kind: ['automatic', 'drawn', 'upload'],
       email_delivery: ['instant', 'daily', 'off'],
+      embed_service: ['youtube', 'vimeo', 'loom', 'spotify', 'apple_music'],
       language_status: ['open', 'ready', 'closed'],
       legal_check_status: ['not_started', 'in_progress', 'done'],
       library_shelf: ['reading', 'saved', 'finished'],
@@ -6426,7 +6517,7 @@ export const Constants = {
         'undisclosed_ai',
         'other',
       ],
-      reportable_type: ['profile', 'story', 'chapter', 'comment', 'picture'],
+      reportable_type: ['profile', 'story', 'chapter', 'comment', 'picture', 'embed'],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [
         'emergency',

@@ -54,6 +54,8 @@ select results_eq(
        ('case_actions', 0::bigint),
        ('cases', 0::bigint),
        ('categories', (select count(*) from public.categories)),
+       -- Music and video cards reach readers only through get_chapter() (S1-E3-10).
+       ('chapter_embeds', 0::bigint),
        ('chapter_likes', 0::bigint),
        ('chapter_reads', 0::bigint),
        ('chapter_revisions', 0::bigint),

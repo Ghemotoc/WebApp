@@ -515,6 +515,19 @@ get_chapter() → pictures: { <ID>: { state, bucket, path } } → ChapterText �
 
 Covers and profile pictures now go through `preparePicture()` too. Tests: `185` in `supabase/tests/database/`, `src/lib/chapter-pictures.test.ts`, `e2e/chapter-pictures.spec.ts`.
 
+**Music and video in chapters (S1-E3-10; ADR 0008).** A writer pastes a link; our server, not the reader's browser, looks it up:
+
+```
+Insert › Music or Video (ChapterInsertControls, flag media_embeds) → EmbedInsertDialog
+  → parseEmbedLink() (src/lib/embed-links.ts: Spotify, Apple Music, YouTube, Vimeo, Loom only)
+  → POST /api/embed (server/embeds.ts; functions/api/embed.ts) → oEmbed title (server/embeds/oembed.ts)
+  → register_chapter_embed() as the writer → chapter_embeds → the card ![title](embed:<ID>) in the text
+get_chapter() → embeds: { <ID>: { state, service, media_path, title } } → ChapterText → ChapterEmbed
+  → nothing from the service until Play → EmbedPlayer (youtube-nocookie.com, Vimeo dnt=1)
+```
+
+A card is reportable (`embed`); a moderator removes one card without touching the chapter (CaseEmbedPanel on the case page). ChapterText hands pictures and cards to its drawers through a context, so a re-render never rebuilds a playing card. Tests: `186` in `supabase/tests/database/`, `src/lib/embed-links.test.ts`, `src/lib/chapter-embeds.test.ts`, `server/embeds.test.ts`, `e2e/music-and-video.spec.ts`.
+
 **Appeals (S1-E10-07).** On `/my-reports` each statement shows until when it can be appealed (six months, DSA art. 20(1)); `AppealSection` → `submit_appeal()`. Staff decide on `/staff/appeals` (`AppealsPage` → `admin_appeals_queue()`, `admin_decide_appeal()`); a moderator never decides an appeal on their own decision. Changing a decision restores the item and lifts the sanction; the person is notified (`appeal_decided`) either way.
 
 **Moderator mail (S1-E10-11).** `/moderator-mail` for members and `/staff/moderator-mail` for staff, `src/features/moderator-mail/`. One shared inbox; replies go out as "The moderation team"; internal notes stay with staff; a reply notifies the member (`moderator_mail_reply`).

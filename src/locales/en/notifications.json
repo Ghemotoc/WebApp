@@ -56,7 +56,9 @@
     "chapter": "your chapter",
     "comment": "your comment",
     "profile": "your profile",
-    "other": "your post"
+    "other": "your post",
+    "picture": "your picture",
+    "embed": "your music or video"
   },
   "decisions": {
     "no_action": "a moderator checked a report about {{item}} and took no action, so nothing changes.",

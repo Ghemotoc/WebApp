@@ -58,7 +58,7 @@ describe('ChapterText', () => {
         language="ro"
         markdown={`Text\n\n![Harta dealurilor](picture:${pictureId})`}
         pictures={{ [pictureId]: { state: 'visible', url: 'https://storage.test/signed' } }}
-        canReportPictures
+        canReportMedia
       />,
     );
     expect(screen.getByRole('img', { name: 'Harta dealurilor' })).toHaveAttribute(

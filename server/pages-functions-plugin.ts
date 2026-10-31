@@ -11,7 +11,9 @@
  * POST /api/notice (server/notice.ts, S1-E10-02: signed with NOTICE_SECRET, the same value the
  * tests put in the local Vault; its emails go to Mailpit too) and
  * POST /api/picture-check (server/picture-check.ts, S1-E10-05: always the stub locally, signed
- * with PICTURE_CHECK_SECRET, the same value the tests put in the local Vault) and
+ * with PICTURE_CHECK_SECRET, the same value the tests put in the local Vault),
+ * POST /api/embed (server/embeds.ts, S1-E3-10: always the oEmbed stand-in locally, so nothing
+ * leaves the machine) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * Stand-ins:
@@ -36,6 +38,8 @@ import { brandDefaults } from '../src/config/brand.ts';
 
 import { handleContact, sendWithMailpit } from './contact.ts';
 import { handleDecisionEmails } from './decision-emails.ts';
+import { handleEmbed } from './embeds.ts';
+import { oembedLookup } from './embeds/oembed.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
 import { handleNotice } from './notice.ts';
 import {
@@ -250,6 +254,15 @@ function handlerFor(
   }
   const databaseHandler = databaseHandlerFor(url, environment);
   if (databaseHandler !== null) return databaseHandler;
+  if (url === '/api/embed') {
+    // Music and video cards (S1-E3-10): the local Supabase and the oEmbed stand-in.
+    return (request) =>
+      handleEmbed(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+        lookUpOembed: oembedLookup('stub'),
+      });
+  }
   if (url === '/api/signup-context') {
     // A test can ask for another country with the X-Fake-Country header; this file never runs on
     // Cloudflare, where only the real connection counts.

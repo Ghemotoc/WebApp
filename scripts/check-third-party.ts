@@ -29,6 +29,16 @@ const reviewedHosts: Record<string, string> = {
   'json-schema.org': 'the JSON Schema identifier inside zod; never loaded',
   'tailwindcss.com': 'the licence comment in the built stylesheet; never loaded',
   'prosemirror.net': 'a link in an editor warning; never loaded',
+  // Music and video players (S1-E3-10; ADR 0008): loaded in an iframe only after the reader
+  // presses play, never on page load. The source links are shown to moderators, never loaded.
+  'www.youtube-nocookie.com': 'the YouTube player, privacy-enhanced; only after play (ADR 0008)',
+  'www.youtube.com': 'a writer’s clean source link for moderators; never loaded',
+  'player.vimeo.com': 'the Vimeo player with do-not-track; only after play (ADR 0008)',
+  'vimeo.com': 'a writer’s clean source link for moderators; never loaded',
+  'www.loom.com': 'the Loom player; only after play (ADR 0008)',
+  'open.spotify.com': 'the Spotify player; only after play (ADR 0008)',
+  'embed.music.apple.com': 'the Apple Music player; only after play (ADR 0008)',
+  'music.apple.com': 'a writer’s clean source link for moderators; never loaded',
   localhost: 'a placeholder base address inside React Router and the local Supabase in development',
 };
 

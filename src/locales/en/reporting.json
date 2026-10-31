@@ -5,7 +5,9 @@
       "profile": "Report this profile",
       "story": "Report this story",
       "chapter": "Report this chapter",
-      "comment": "Report this comment"
+      "comment": "Report this comment",
+      "picture": "Report this picture",
+      "embed": "Report this music or video"
     },
     "anonymous": "{{item}}. They won’t see who reported it.",
     "whatIsWrong": "What’s wrong?",

@@ -143,5 +143,30 @@
     },
     "saved": "Salvate în contul tău, deci se aplică pe toate dispozitivele tale. Mărimea textului pornește de la setarea dispozitivului tău.",
     "saveFailed": "Nu am putut salva setările de citire. Se aplică în continuare aici; verifică-ți conexiunea și schimbă din nou o setare ca să încercăm iar."
+  },
+  "embed": {
+    "removed": "[Scos de echipa de moderare]",
+    "notLoaded": "Muzica sau videoclipul nu a putut fi încărcat.",
+    "groupLabel": {
+      "music": "Muzică de pe {{service}}",
+      "video": "Video de pe {{service}}"
+    },
+    "play": {
+      "music": "Pornește muzica: {{title}}. Pornește de pe {{service}}",
+      "video": "Pornește videoclipul: {{title}}. Pornește de pe {{service}}"
+    },
+    "playerTitle": "{{title}}, de pe {{service}}",
+    "eyebrow": {
+      "music": "Muzică · {{service}}",
+      "video": "Video · {{service}}"
+    },
+    "cookies": "Pornește de pe {{service}}. {{service}} poate folosi cookie-uri.",
+    "terms": "După ce apeși pe play, se aplică termenii și regulile de vârstă ale serviciului {{service}}.",
+    "stop": "Oprește",
+    "addedBy": "Adăugat de {{name}}",
+    "reportLabel": {
+      "music": "muzica „{{title}}”",
+      "video": "videoclipul „{{title}}”"
+    }
   }
 }

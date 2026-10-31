@@ -37,6 +37,7 @@ const chapter: ReaderChapter = {
   textContinues: false,
   body: 'Primul paragraf.\n\nAl doilea paragraf.',
   pictures: {},
+  embeds: {},
 };
 
 let banner: ChapterBanner | null = null;

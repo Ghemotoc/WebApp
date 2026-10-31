@@ -450,5 +450,15 @@
       "rating_raised": "Rating raised",
       "ai_label_added": "AI label added"
     }
+  },
+  "embed": {
+    "heading": "The music or video card",
+    "service": "Service",
+    "title": "Title",
+    "author": "Channel or artist",
+    "noTitle": "Not given by the service",
+    "chapter": "In the chapter",
+    "link": "The writer’s link",
+    "decisionHint": "Open the link in a new tab to judge it; nothing from the service loads on this page. Removing the item takes away this one card, and the chapter stays up."
   }
 }

@@ -5,7 +5,9 @@
       "profile": "Raportează acest profil",
       "story": "Raportează această poveste",
       "chapter": "Raportează acest capitol",
-      "comment": "Raportează acest comentariu"
+      "comment": "Raportează acest comentariu",
+      "picture": "Raportează această imagine",
+      "embed": "Raportează această muzică sau acest videoclip"
     },
     "anonymous": "{{item}}. Nu va vedea cine a raportat.",
     "whatIsWrong": "Ce nu e în regulă?",
