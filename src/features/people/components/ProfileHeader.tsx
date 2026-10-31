@@ -2,7 +2,9 @@
  * ProfileHeader: the top card of the profile (story S1-E5-05; board 6.1): the avatar, "Writer",
  * the name as the page's heading, "@handle · Joined May 2026", the bio, the numbers and, on the
  * right, Follow (S1-E6-05) or, on one's own profile, "Edit your profile". A writer with the
- * Teacher badge gets a "Teacher" pill under the handle line (S1-E2-11).
+ * Teacher badge gets a "Teacher" pill under the handle line (S1-E2-11). Under Follow, a visitor who
+ * may not message this person sees "<name> isn't taking messages right now" (S1-E9-03), the same
+ * note whatever the reason, so it never tells anyone an age.
  *
  * Board values: the name in Bricolage 800 at clamp(36px, 4.4vw, 64px), the handle line 15 px in
  * the meta colour, the bio 18 px / 1.6 up to 640 px wide. Not shown in March, as the board's
@@ -82,6 +84,11 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
       </div>
       <div className="flex flex-none flex-col items-start gap-3">
         <ProfileAction profile={profile} />
+        {profile.canMessage === false && !profile.iBlocked && (
+          <p className="m-0 max-w-[260px] text-sm text-meta">
+            {t('profile.notTakingMessages', { name: profile.displayName })}
+          </p>
+        )}
       </div>
     </Card>
   );

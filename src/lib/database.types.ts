@@ -2844,6 +2844,7 @@ export type Database = {
           id: string;
           locale: string;
           marketing_email_opt_in: boolean;
+          messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
@@ -2854,12 +2855,16 @@ export type Database = {
           age_check_can_ask_manual: boolean | null;
           age_check_can_start_for: boolean | null;
           age_check_threshold_for: number | null;
+          message_age_group: string | null;
+          message_audience_of: Database['public']['Enums']['message_audience'] | null;
           teacher_check_can_ask: boolean | null;
         };
         ComputedFields:
           | 'age_check_can_ask_manual'
           | 'age_check_can_start_for'
           | 'age_check_threshold_for'
+          | 'message_age_group'
+          | 'message_audience_of'
           | 'teacher_check_can_ask';
         Insert: {
           adults_may_message?: boolean;
@@ -2882,6 +2887,7 @@ export type Database = {
           id: string;
           locale?: string;
           marketing_email_opt_in?: boolean;
+          messages_from?: Database['public']['Enums']['message_audience'] | null;
           onboarded_at?: string | null;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
@@ -2911,6 +2917,7 @@ export type Database = {
           id?: string;
           locale?: string;
           marketing_email_opt_in?: boolean;
+          messages_from?: Database['public']['Enums']['message_audience'] | null;
           onboarded_at?: string | null;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
@@ -6031,6 +6038,19 @@ export type Database = {
         };
         Returns: number;
       };
+      ages_allow_messages: {
+        Args: {
+          first_person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+          second_person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       another_appeals_decider_exists: { Args: Record<PropertyKey, never>; Returns: boolean };
       answer_parental_consent: {
         Args: { decision: string; page_language: string; signature: string; token: string };
@@ -6133,6 +6153,7 @@ export type Database = {
           id: string;
           locale: string;
           marketing_email_opt_in: boolean;
+          messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
@@ -6148,6 +6169,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      can_message: { Args: { recipient_id: string; sender_id: string }; Returns: boolean };
       cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
       cancel_social_sign_up: { Args: Record<PropertyKey, never>; Returns: undefined };
       case_item_content: {
@@ -6834,6 +6856,24 @@ export type Database = {
       mask_email: { Args: { address: string }; Returns: string };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
       may_see_march_numbers: { Args: Record<PropertyKey, never>; Returns: boolean };
+      message_age_group: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      message_audience_of: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: Database['public']['Enums']['message_audience'];
+      };
       metric_on: {
         Args: { for_day: string; wanted_market?: string; wanted_metric: string };
         Returns: number;
@@ -7366,6 +7406,7 @@ export type Database = {
           id: string;
           locale: string;
           marketing_email_opt_in: boolean;
+          messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
@@ -8179,6 +8220,7 @@ export type Database = {
       legal_check_status: 'not_started' | 'in_progress' | 'done';
       library_shelf: 'reading' | 'saved' | 'finished';
       market_status: 'open' | 'ready' | 'closed';
+      message_audience: 'everyone' | 'people_i_follow' | 'nobody';
       moderated_state: 'hidden' | 'removed';
       moderation_action:
         'no_action' | 'hide' | 'remove' | 'restrict' | 'warn' | 'suspend' | 'ban' | 'public_note';
@@ -8456,6 +8498,7 @@ export const Constants = {
       legal_check_status: ['not_started', 'in_progress', 'done'],
       library_shelf: ['reading', 'saved', 'finished'],
       market_status: ['open', 'ready', 'closed'],
+      message_audience: ['everyone', 'people_i_follow', 'nobody'],
       moderated_state: ['hidden', 'removed'],
       moderation_action: [
         'no_action',

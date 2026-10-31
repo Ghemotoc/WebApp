@@ -255,6 +255,13 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Staff:** `admin_teacher_checks()`, `admin_teachers()`, `admin_open_teacher_proof()` (logs `teacher_proof_opened`), `admin_decide_teacher_check()` (refuses while the proof file is still there, so it is always deleted first) and `admin_remove_teacher_badge()`, for owner, admin and moderators with the `teacher_checks` permission. Each decision needs a reason the person reads, writes the audit log and sends a notification.
 - **Seed:** the `teacher` persona has the badge from an approved `.edu.ro` check; the `moderator` persona holds the `teacher_checks` permission. Staging gets both from `staging-topups/S1-E2-11.sql`.
 
+## Who may message whom (S1-E9-03)
+
+- **One rule:** `can_message(sender, recipient)`, internal; every messaging function (S1-E9-01 onwards) asks it before a new conversation or request. It checks two live profiles, an active sender, no block either way, the age rules and the recipient's `messages_from`.
+- **Age rules (Q6, Q13):** under-16 and adult never, either way; 16 or 17 and adult only with the teen's `adults_may_message` on (both ways, a proposal); under-18s with each other and adults with each other as normal. An unknown age counts as under 16 (`message_age_group()`).
+- **The recipient's setting:** `profiles.messages_from` (`everyone`, `people_i_follow`, `nobody`); empty means people they follow under 18 and everyone for adults (`message_audience_of()`; proposals). Settings to change it: S1-E9-04.
+- **Never why:** `get_writer_profile()` gives the signed-in visitor `can_message` only (null signed out or on one's own profile); the profile shows the same neutral note for every reason.
+
 ## Seed personas
 
 Every persona's username is its persona name (for example `adult_writer`); adult_writer's pen name is `Lia Scrie`.

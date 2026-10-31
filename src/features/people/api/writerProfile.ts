@@ -39,6 +39,11 @@ export interface WriterProfile {
   iBlocked: boolean;
   /** The writer holds the Teacher badge, shown as "Teacher" (S1-E2-11). */
   isTeacher: boolean;
+  /**
+   * Whether the signed-in visitor may start a chat with this person (S1-E9-03): null signed out
+   * or on one's own profile. False never says why, so nobody learns an age from it.
+   */
+  canMessage: boolean | null;
   counts: { stories: number; chapters: number; reads: number };
   stories: ProfileStory[];
 }
@@ -72,6 +77,7 @@ interface WriterProfileRow {
   is_me: boolean;
   i_blocked: boolean;
   is_teacher: boolean;
+  can_message: boolean | null;
   counts: { stories: number; chapters: number; reads: number };
   stories: ProfileStoryRow[];
 }
@@ -139,6 +145,7 @@ export async function fetchWriterProfile(
     isMe: row.is_me,
     iBlocked: row.i_blocked,
     isTeacher: row.is_teacher,
+    canMessage: row.can_message,
     counts: row.counts,
     stories: row.stories.map(toProfileStory),
   };
