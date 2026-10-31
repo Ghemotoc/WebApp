@@ -229,6 +229,26 @@ function adultInviteText(t: TFunction): NotificationText {
   };
 }
 
+/**
+ * A parent or guardian agreed or withdrew their consent (S1-E2-03, criteria 2 and 5). Both lead
+ * to the writer's consent page, which says what the account can do now.
+ *
+ * @param t - the notifications translation function
+ * @param notification - the row; its kind says which
+ * @returns the row's words
+ */
+function parentConsentText(t: TFunction, notification: AppNotification): NotificationText {
+  const isAgreed = notification.kind === 'parental_consent_agreed';
+  return {
+    who: t('who.parentOrGuardian'),
+    what: isAgreed ? t('what.parentConsentAgreed') : t('what.parentConsentWithdrawn'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.seeMyAccount'),
+    href: '/parent-consent',
+  };
+}
+
 /** The moderation team's kinds and the function that words each one. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -240,6 +260,8 @@ const teamTextFor: Partial<
   tag_rejected: tagRejectedText,
   age_check_decided: ageCheckDecidedText,
   age_check_18_invite: adultInviteText,
+  parental_consent_agreed: parentConsentText,
+  parental_consent_withdrawn: parentConsentText,
 };
 
 /**

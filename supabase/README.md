@@ -97,6 +97,15 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **The invitation at 18 (S1-E2-08b).** `invite_new_adults_to_age_check()` (pg_cron `invite-new-adults-to-age-check`, 22:15 UTC) tells anyone whose year of birth now says 18 but who holds only `13_or_over`, once (`age_check_18_invite`).
 - **The 14-day clean-up (S1-E2-08b).** `erase_unchecked_accounts()` (pg_cron `erase-unchecked-accounts`, 02:45 UTC) erases the personal data of an account still waiting 14 days after sign-up with no manual check open, through `erase_unchecked_account()`: the profile is marked deleted, the year and month of birth, pen name, bio and birthday go, sessions and identities go, the email becomes `<id>@deleted.invalid` and the login is banned. Seed personas are skipped. Deleting the rows themselves is S1-E13-05.
 
+## Parental consent (S1-E2-03, ADR 0011)
+
+- **`parental_consents`**: one row per email sent to a parent or guardian; at most one waiting or agreed row per account. The writer reads their own; no one writes it directly. Rows are `waiting`, `agreed`, `refused`, `withdrawn` (by the parent or staff) or `replaced` (a newer email went out).
+- **The gate.** `account_state()` says `awaiting_parental_consent` for an under-16 whose age check passed, while the `parental_consent` flag is on (owner-only to turn off) and `has_parental_consent()` is false. `parental_consent_deadline()` is 14 days after the later of sign-up and the age check.
+- **Our server's two writes** are signed with HMAC-SHA256 and the Vault secret `parental_consent_secret` (the same value as Cloudflare's `PARENTAL_CONSENT_SECRET`), checked by `parental_consent_is_signed()`: `begin_parental_consent(parent_email, language, token_hash, signature)` as the writer, over `consent|<user>|<email>|<language>|<hash>` (hints `own_email`, `too_soon`), and `answer_parental_consent(token, decision, page_language, signature)` as a visitor, over `answer|<hash>|<decision>`. Only the token's SHA-256 is stored.
+- **Reading.** `my_parental_consent()` for the writer (never the token); `parental_consent_request(token)` for the parent's page (the writer's email, username, year of birth and the document versions).
+- **Answers.** A yes stores the guardian box and the privacy notice and terms versions; a no erases the account through `erase_unchecked_account()` (which now deletes `parental_consents` too); a withdrawal makes the account read-only and notifies the writer (`parental_consent_withdrawn`). `admin_withdraw_parental_consent(target_user_id, reason)` does the same for staff (owner, admin, moderator), logging `parental_consent.withdrawn`.
+- **The clean-up.** `erase_unchecked_accounts()` also erases an account still waiting for a parent after the deadline; a withdrawn consent is never erased automatically (OPEN for the lawyer).
+
 ## Country and markets (S1-E2-10)
 
 - **`markets`** lists each country: open or not, its minimum age (16 in Australia, Q19) and its languages (BCP 47). Romania is open; GB, IE, US, CA, AU and NZ are closed until their legal check. Anyone may read it; it changes by migration until S1-E11-05.

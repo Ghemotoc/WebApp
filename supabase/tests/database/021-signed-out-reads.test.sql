@@ -107,6 +107,7 @@ select results_eq(
        ('notifications', 0::bigint),
        ('on_call_alerts', 0::bigint),
        ('on_call_rota', 0::bigint),
+       ('parental_consents', 0::bigint),
        ('picture_checks', 0::bigint),
        ('profiles', 0::bigint),
        ('public_notices', 0::bigint),

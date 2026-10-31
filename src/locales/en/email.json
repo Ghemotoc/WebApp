@@ -62,5 +62,18 @@
     "why": "You get these emails because of your choices in Settings, under Notifications: {{link}}",
     "unsubscribe": "Stop these emails with one click: {{link}}",
     "required": "This email is about your account and safety, so we always send it."
+  },
+  "parentConsent": {
+    "requestSubject": "@{{handle}} asked you to agree to their {{productName}} account",
+    "requestBody": "Someone who signed up to {{productName}} as @{{handle}} gave your email as their parent or guardian. They’re under 16, so they need you to agree before they can publish, comment, post or send messages. Until then they can only read.",
+    "requestAction": "Read what we keep and how we protect under-18s, then answer: {{link}}",
+    "requestDeadline": "If nobody says yes by {{deadline}}, we delete the account and its data.",
+    "agreedSubject": "You agreed to @{{handle}}’s account",
+    "agreedBody": "Thank you. You agreed on {{date}}, so @{{handle}} can now publish, comment, post and send messages.",
+    "agreedWithdraw": "You can withdraw your consent at any time from the same page: {{link}}",
+    "withdrawnSubject": "You withdrew your consent for @{{handle}}",
+    "withdrawnBody": "We’ve made @{{handle}}’s account read-only. They can still read stories, but can’t publish, comment, post or send messages. If you have questions about what happens next, reply to this email.",
+    "refusedSubject": "Your account won’t be activated",
+    "refusedBody": "Your parent or guardian didn’t agree, so we won’t activate your {{productName}} account, and we’ve deleted it and its data. You can sign up again later and ask another parent or guardian."
   }
 }

@@ -247,6 +247,31 @@ const ageCheckRoutes: RouteObject[] = [
 ];
 
 /**
+ * Parental consent (S1-E2-03): the writer's page and the page a parent opens from the email. Each
+ * is loaded when opened; the parent's page works signed out.
+ */
+const parentConsentRoutes: RouteObject[] = [
+  {
+    path: '/parent-consent',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ParentConsentPage } =
+        await import('@/features/parent-consent/components/ParentConsentPage');
+      return { Component: ParentConsentPage };
+    },
+  },
+  {
+    path: '/parent-consent/answer',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ParentAnswerPage } =
+        await import('@/features/parent-consent/components/ParentAnswerPage');
+      return { Component: ParentAnswerPage };
+    },
+  },
+];
+
+/**
  * Notifications (S1-E7-01), loaded when opened; the bell in the top bar links here. And the
  * one-click unsubscribe from a notification email (S1-E7-02), which works signed out.
  */
@@ -664,6 +689,7 @@ function pageRoutes(): RouteObject[] {
       },
     },
     ...ageCheckRoutes,
+    ...parentConsentRoutes,
     ...notificationRoutes,
     // My reports and decisions (S1-E10-04): statements of reasons and the reports a person sent;
     // a decision's notification links here. Loaded when opened.

@@ -36,6 +36,10 @@ function offeredActions(summary: AccountSummary): AccountActionKind[] {
   const offered: AccountActionKind[] = isStaff ? [] : ['warning', 'suspension', 'ban'];
   if (summary.penName !== null) offered.push('reset_pen_name');
   offered.push('sign_out_everywhere', 'approve_username', 'correct_birthday');
+  // S1-E2-03: only an active 13-to-15 can have a consent to withdraw; the database checks again.
+  if (summary.ageBand === '13_to_15' && summary.status === 'active') {
+    offered.push('withdraw_parental_consent');
+  }
   return offered;
 }
 

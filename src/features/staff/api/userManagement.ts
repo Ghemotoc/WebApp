@@ -21,6 +21,8 @@ export const userManagementFailures = [
   'reason_missing',
   'no_such_account',
   'no_pen_name',
+  // S1-E2-03: there is no live parental consent to withdraw.
+  'no_consent',
   'refused',
   'unreachable',
 ] as const;
@@ -194,7 +196,31 @@ export type AccountAction =
   | { kind: 'sign_out_everywhere'; reason: string }
   | { kind: 'approve_username'; nameKind: 'handle' | 'pen_name'; name: string; reason: string }
   // S1-E2-12: the person asked staff to fix their birthday; null month clears it.
-  | { kind: 'correct_birthday'; month: number | null; day: number | null; reason: string };
+  | { kind: 'correct_birthday'; month: number | null; day: number | null; reason: string }
+  // S1-E2-03: a parent or guardian asked staff to withdraw their consent.
+  | { kind: 'withdraw_parental_consent'; reason: string };
+
+/** The actions that take only the account and a reason, and the function each one calls. */
+const reasonOnlyFunctions = {
+  reset_pen_name: 'admin_reset_pen_name',
+  sign_out_everywhere: 'admin_sign_out_everywhere',
+  // S1-E2-03: the account becomes read-only; the database logs it and tells the writer.
+  withdraw_parental_consent: 'admin_withdraw_parental_consent',
+} as const;
+
+/** The kinds in reasonOnlyFunctions. */
+type ReasonOnlyKind = keyof typeof reasonOnlyFunctions;
+
+/**
+ * Whether an action takes only the account and a reason.
+ *
+ * @returns true for the kinds in reasonOnlyFunctions
+ */
+function isReasonOnly(
+  action: AccountAction,
+): action is Extract<AccountAction, { kind: ReasonOnlyKind }> {
+  return action.kind in reasonOnlyFunctions;
+}
 
 /**
  * Asks the database for the right function for an action.
@@ -205,15 +231,8 @@ export type AccountAction =
  * @returns Postgres's error, or null when it was done
  */
 async function callForAction(client: AppSupabaseClient, userId: string, action: AccountAction) {
-  if (action.kind === 'reset_pen_name') {
-    const answer = await client.rpc('admin_reset_pen_name', {
-      target_user_id: userId,
-      reason_given: action.reason,
-    });
-    return answer.error;
-  }
-  if (action.kind === 'sign_out_everywhere') {
-    const answer = await client.rpc('admin_sign_out_everywhere', {
+  if (isReasonOnly(action)) {
+    const answer = await client.rpc(reasonOnlyFunctions[action.kind], {
       target_user_id: userId,
       reason_given: action.reason,
     });

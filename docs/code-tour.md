@@ -246,6 +246,21 @@ Staff › Users › Manual age checks (src/features/staff/components/age-checks/
 
 Three nightly jobs belong here too: `invite_new_adults_to_age_check()` (someone now 18 who holds only "13 or over"), `erase_unchecked_accounts()` (the 14-day clean-up) and `purge_old_age_check_attempts()`. Tests: `200` in `supabase/tests/database/`, `e2e/manual-age-check.spec.ts`.
 
+## Parental consent (S1-E2-03, ADR 0011)
+
+An under-16 whose age check passed asks a parent or guardian:
+
+```
+/parent-consent (ParentConsentPage, useMyParentConsent → my_parental_consent())
+  → AskParentForm → POST /api/parent-consent/request (server/parent-consent.ts) with the writer's sign-in
+  → a random token; begin_parental_consent(hash), signed → parental_consents → the email (Mailpit locally)
+the parent's email → /parent-consent/answer#<token> (ParentAnswerPage, signed out)
+  → useConsentRequest → parental_consent_request(token) → ParentAnswerDetails + ParentAnswerForm
+  → POST /api/parent-consent/answer, signed → answer_parental_consent() → active, erased or read-only
+```
+
+`ParentConsentNotice` in `AppLayout` links an account that waits for a parent to `/parent-consent`. Staff withdraw from the account page ("Withdraw parental consent", `admin_withdraw_parental_consent()`). Tests: `201` in `supabase/tests/database/`, `server/parent-consent.test.ts`, `e2e/parent-consent.spec.ts`.
+
 ## Logging in (S1-E2-05)
 
 ```
