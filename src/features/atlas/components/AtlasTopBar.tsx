@@ -4,9 +4,10 @@
  * "Story Atlas", the story switcher, "Write" (the same story's chapters in the writer section,
  * so "Plan" and "Write" sit side by side, S1-E17 notes) and "New story", which opens the usual
  * New story form and comes back to the new story's plan (S1-E17-01). Under it, the row of
- * sections (AtlasSectionNav: At a glance, Characters, Connections, Bible, Storyline). No doodles: a working
- * screen with many controls. Who uses it: StoryAtlasPage, CharactersPage, ConnectionsPage and
- * BiblePage.
+ * sections (AtlasSectionNav: At a glance, Characters, Connections, Bible, Storyline, Ideas and
+ * Marketing). No doodles: a working screen with many controls. Who uses it: every Story Atlas
+ * page (StoryAtlasPage, CharactersPage, ConnectionsPage, BiblePage, StorylinePage, IdeasPage and
+ * MarketingPage).
  */
 import { Link } from 'react-router';
 

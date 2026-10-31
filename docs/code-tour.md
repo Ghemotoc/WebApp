@@ -1441,3 +1441,7 @@ Read in this order; each file's header comment says what it is for and where thi
 - Chapter numbers in the plan count only chapters of the type "chapter" (`chapterNumbers()`, used by the board, the timeline, the lanes and the writing view's list through `useChapterLabels`).
 - Timeline events live in `story_events` (`add_story_event()`, `update_story_event()`, `delete_story_event()`); `lib/timeline.ts` sorts them with dated chapters and lists the undated ones apart.
 
+## Story Atlas: questions and ideas, and marketing (S1-E17-27 to S1-E17-29; ATLAS-g)
+
+- `/plan/s/:storySlug/ideas` is `IdeasPage`: `IdeaQuickAdd` (a type and one line; Enter sends the form and the box clears) and the list of `IdeaItem`s, filtered Open, Done or All by `lib/ideaFilters.ts`. One click: ticking Done → `useStoryIdeas().save(id, { is_done: true })` → `saveStoryIdeaChange()` in `api/ideas.ts` → `update_story_idea()`, which records the day it was done the first time and keeps it.
+- `/plan/s/:storySlug/marketing` is `MarketingPage`: `MarketingFields` and `BackCoverPreview`. The logline, genre, audience and publishing route are the same fields as At a glance (`useStoryPlan`); the blurb, comparable titles, hooks, query pitch and launch notes save through `useStoryMarketing` → `update_story_marketing()`, whose row is made on the first save. `hooks/useStoryChoiceOptions.ts` gives both pages the same genre and audience lists.

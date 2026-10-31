@@ -6,13 +6,9 @@
  * (one place for both sides). The logline, series name, word target, writing status and
  * publishing route are the plan's own and private. Every field saves by itself.
  * Who uses it: StoryAtlasPage. What it calls: useStoryPlan's saveStory and savePlan, and
- * useStoryFormOptions for the genres.
+ * useStoryChoiceOptions for the genres and audiences.
  */
-import { useTranslation } from 'react-i18next';
-
 import { FormSection } from '@/features/writing/components/FormSection';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
-import { storyRatings } from '@/schemas/story';
 
 import {
   publishingRoutes,
@@ -21,6 +17,7 @@ import {
   type StoryField,
   type StoryPlanPage,
 } from '../api/storyPlans';
+import { useStoryChoiceOptions } from '../hooks/useStoryChoiceOptions';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { PlanSelectField } from './PlanSelectField';
@@ -43,16 +40,7 @@ export interface StoryDetailsSectionProps {
 /** The title, genre and audience: the story's own fields, shared with Story settings. */
 function StoryOwnFields({ page, saveStory }: Omit<StoryDetailsSectionProps, 'savePlan'>) {
   const { t } = useAtlasTranslation();
-  const { t: tWriting } = useTranslation('writing');
-  const { categories } = useStoryFormOptions();
-  const genreOptions = categories.map((category) => ({
-    value: category.slug,
-    label: tWriting(`categories.${category.slug}`, { defaultValue: category.slug }),
-  }));
-  const audienceOptions = storyRatings.map((rating) => ({
-    value: rating,
-    label: tWriting(`rating.${rating}`),
-  }));
+  const { genreOptions, audienceOptions } = useStoryChoiceOptions();
   return (
     <>
       <p className="m-0 text-sm text-meta">{t('details.sharedHint')}</p>

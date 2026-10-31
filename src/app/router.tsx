@@ -347,6 +347,24 @@ const writeRoutes: RouteObject[] = [
       return { Component: StorylinePage };
     },
   },
+  // A story's questions and ideas (S1-E17-27 and 28): the quick-add box and the list to tick off.
+  {
+    path: '/plan/s/:storySlug/ideas',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { IdeasPage } = await import('@/features/atlas/components/IdeasPage');
+      return { Component: IdeasPage };
+    },
+  },
+  // A story's marketing notes (S1-E17-29), with the back-cover preview.
+  {
+    path: '/plan/s/:storySlug/marketing',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { MarketingPage } = await import('@/features/atlas/components/MarketingPage');
+      return { Component: MarketingPage };
+    },
+  },
   // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
   // or deletes it.
   {

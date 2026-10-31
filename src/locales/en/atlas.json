@@ -96,7 +96,9 @@
     "characters": "Characters",
     "connections": "Connections",
     "bible": "Bible",
-    "storyline": "Storyline"
+    "storyline": "Storyline",
+    "ideas": "Ideas",
+    "marketing": "Marketing"
   },
   "characters": {
     "heading": "Characters",
@@ -529,6 +531,79 @@
       "chapterColumn": "Chapter",
       "none": "No chapter has a point of view yet. Pick one in each chapter’s plan.",
       "noChapters": "This story has no chapters yet."
+    }
+  },
+  "ideas": {
+    "documentTitle": "Questions and ideas for {{title}}: Story Atlas",
+    "heading": "Questions and ideas",
+    "add": {
+      "heading": "Jot it down",
+      "kind": "Type",
+      "line": "Question or idea",
+      "lineHint": "One line is enough. Press Enter to add it.",
+      "button": "Add",
+      "empty": "Write something first.",
+      "failed": "We couldn’t add it. Check your connection and try again."
+    },
+    "kinds": {
+      "question": "Question",
+      "idea": "Idea",
+      "todo": "To-do",
+      "decision": "Decision"
+    },
+    "listHeading": "Your notes",
+    "filterLabel": "Show",
+    "filters": {
+      "open": "Open ({{count}})",
+      "done": "Done ({{count}})",
+      "all": "All ({{count}})"
+    },
+    "empty": {
+      "open": "Nothing open. Everything is ticked off, or there’s nothing yet.",
+      "done": "Nothing ticked off yet.",
+      "all": "No notes yet. Add the first above."
+    },
+    "done": "Done",
+    "doneNamed": "Done: {{body}}",
+    "doneOn": "Done on {{date}}",
+    "tickFailed": "We couldn’t save the tick. Try again.",
+    "body": "Note",
+    "outcome": "Action or outcome",
+    "outcomeHint": "What you decided or did about it.",
+    "delete": "Delete",
+    "deleteNamed": "Delete “{{body}}”",
+    "confirmDelete": "Delete “{{body}}”? This can’t be undone.",
+    "yes": "Yes, delete it",
+    "keep": "Keep it",
+    "deleteFailed": "We couldn’t delete it. Try again."
+  },
+  "marketing": {
+    "documentTitle": "Marketing for {{title}}: Story Atlas",
+    "heading": "Marketing",
+    "pitchHeading": "The pitch",
+    "launchHeading": "Getting it out",
+    "sharedHint": "The logline and publishing route are the same as on At a glance; the genre and audience are the same as in Story settings.",
+    "fields": {
+      "back_cover_blurb": "Back-cover blurb",
+      "comparable_titles": "Comparable titles",
+      "hooks_keywords": "Hooks and keywords",
+      "query_pitch": "Query pitch",
+      "launch_notes": "Launch notes"
+    },
+    "hints": {
+      "back_cover_blurb": "What a reader turning the book over would read.",
+      "comparable_titles": "Books or stories like yours, for example “The Shadow of the Wind meets Stranger Things”.",
+      "hooks_keywords": "What makes it stand out, and the words a reader might search for.",
+      "query_pitch": "The pitch you’d send to an agent or a publisher.",
+      "launch_notes": "Dates, places to share it, who to tell."
+    },
+    "backCover": {
+      "heading": "Back cover",
+      "hint": "See the title, logline, blurb and comparable titles laid out like the back of a book.",
+      "show": "Show the back cover",
+      "hide": "Hide the back cover",
+      "forReadersOf": "For readers of",
+      "empty": "Write a logline, a blurb or comparable titles and they’ll show here."
     }
   }
 }

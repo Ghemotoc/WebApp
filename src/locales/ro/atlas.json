@@ -96,7 +96,9 @@
     "characters": "Personaje",
     "connections": "Legături",
     "bible": "Biblia",
-    "storyline": "Firul poveștii"
+    "storyline": "Firul poveștii",
+    "ideas": "Idei",
+    "marketing": "Marketing"
   },
   "characters": {
     "heading": "Personaje",
@@ -529,6 +531,79 @@
       "chapterColumn": "Capitol",
       "none": "Niciun capitol nu are încă o perspectivă. Alege una în planul fiecărui capitol.",
       "noChapters": "Povestea nu are încă niciun capitol."
+    }
+  },
+  "ideas": {
+    "documentTitle": "Întrebări și idei pentru {{title}}: Story Atlas",
+    "heading": "Întrebări și idei",
+    "add": {
+      "heading": "Notează repede",
+      "kind": "Tip",
+      "line": "Întrebare sau idee",
+      "lineHint": "Ajunge un rând. Apasă Enter ca s-o adaugi.",
+      "button": "Adaugă",
+      "empty": "Scrie ceva mai întâi.",
+      "failed": "N-am putut s-o adăugăm. Verifică conexiunea și încearcă din nou."
+    },
+    "kinds": {
+      "question": "Întrebare",
+      "idea": "Idee",
+      "todo": "De făcut",
+      "decision": "Decizie"
+    },
+    "listHeading": "Notițele tale",
+    "filterLabel": "Arată",
+    "filters": {
+      "open": "Deschise ({{count}})",
+      "done": "Rezolvate ({{count}})",
+      "all": "Toate ({{count}})"
+    },
+    "empty": {
+      "open": "Nimic deschis. Totul e bifat sau încă nu e nimic.",
+      "done": "Nimic bifat încă.",
+      "all": "Încă nu ai notițe. Adaug-o pe prima mai sus."
+    },
+    "done": "Rezolvat",
+    "doneNamed": "Rezolvat: {{body}}",
+    "doneOn": "Rezolvat pe {{date}}",
+    "tickFailed": "N-am putut salva bifa. Încearcă din nou.",
+    "body": "Notiță",
+    "outcome": "Acțiune sau rezultat",
+    "outcomeHint": "Ce ai hotărât sau ce ai făcut.",
+    "delete": "Șterge",
+    "deleteNamed": "Șterge „{{body}}”",
+    "confirmDelete": "Ștergi „{{body}}”? Nu se mai poate anula.",
+    "yes": "Da, șterge",
+    "keep": "Păstreaz-o",
+    "deleteFailed": "N-am putut s-o ștergem. Încearcă din nou."
+  },
+  "marketing": {
+    "documentTitle": "Marketing pentru {{title}}: Story Atlas",
+    "heading": "Marketing",
+    "pitchHeading": "Prezentarea",
+    "launchHeading": "Lansarea",
+    "sharedHint": "Rezumatul și felul în care publici sunt aceleași ca în Pe scurt; genul și publicul sunt aceleași ca în Setările poveștii.",
+    "fields": {
+      "back_cover_blurb": "Textul de pe coperta a patra",
+      "comparable_titles": "Titluri asemănătoare",
+      "hooks_keywords": "Puncte forte și cuvinte-cheie",
+      "query_pitch": "Prezentarea pentru edituri",
+      "launch_notes": "Note pentru lansare"
+    },
+    "hints": {
+      "back_cover_blurb": "Ce ar citi cineva care întoarce cartea.",
+      "comparable_titles": "Cărți sau povești ca a ta, de exemplu „Umbra vântului întâlnește Stranger Things”.",
+      "hooks_keywords": "Ce o face să iasă în evidență și cuvintele pe care le-ar căuta un cititor.",
+      "query_pitch": "Prezentarea pe care ai trimite-o unui agent sau unei edituri.",
+      "launch_notes": "Date, locuri unde s-o împarți, cui să-i spui."
+    },
+    "backCover": {
+      "heading": "Coperta a patra",
+      "hint": "Vezi titlul, rezumatul, textul și titlurile asemănătoare așezate ca pe spatele unei cărți.",
+      "show": "Arată coperta a patra",
+      "hide": "Ascunde coperta a patra",
+      "forReadersOf": "Pentru cititorii cărților",
+      "empty": "Scrie rezumatul, textul sau titlurile asemănătoare și vor apărea aici."
     }
   }
 }
