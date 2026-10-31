@@ -2,13 +2,13 @@
 
 Newest state at the top. Read this first on "continue".
 
-## Now (31 Oct 2026, after READ-4e)
+## Now (31 Oct 2026, after READ-4f)
 
 - **Robert's new plan (30 Oct 2026, 05:22): build the full Stage 1 app, all 17 bundles in `full-app-bundles.md`, one at a time, without waiting for him.** It replaces the March-only order and the "Not March" list. Everything else in the builder brief still applies.
 - Outside services: adapter with a `stub` and a `real` provider, misleading features behind a flag that is off, the missing key or account added to GO-LIVE in `by-hand-for-robert.md`. Never stop for them.
 - Before each bundle: check main, skip what is built, finish what is partly built.
 - If the usage limit hits: stop cleanly, carry on at "continue".
-- Now: bundles 2 (CMS-1, #210 to #215) and 3 (DISCOVER-2: 3a search #216, 3b classics shelf and S1-E11-16b #217) are done. Bundle 4 READ-4: 4a library (S1-E4-03, #218), 4b reading settings (S1-E4-02, #219) 4c share and quote card (S1-E4-05, S1-E4-07, #220) 4d writer dashboard (S1-E3-07, #221) and 4e email notifications and digests (S1-E7-02, #222) merged. Next 4f: cookieless analytics behind a stub, event catalogue and metrics (S1-E15-01 #134, S1-E15-03 #136, S1-E11-04 #102), then the full e2e run for the bundle before 4f merges. Follow-ups: a GIN index for search when the catalogue grows (3a); rank badges on story cards need a cached rank table (2g). The full quality run can pass the 1-hour background limit: run e2e in a separate background call if it is killed. Checklist uses lettered parts per bundle (Robert, 30 Oct 11:42).
+- Now: bundles 2 (CMS-1, #210 to #215) and 3 (DISCOVER-2: 3a search #216, 3b classics shelf and S1-E11-16b #217) are done. Bundle 4 READ-4: 4a library (S1-E4-03, #218), 4b reading settings (S1-E4-02, #219) 4c share and quote card (S1-E4-05, S1-E4-07, #220) 4d writer dashboard (S1-E3-07, #221) 4e email notifications and digests (S1-E7-02, #222) and 4f cookieless analytics and the event catalogue (S1-E15-01, S1-E15-03, #223) merged. Next 4g: staff metrics and the compliance log (S1-E11-04 #102), then the full e2e run for the bundle before 4g merges. Follow-ups: a GIN index for search when the catalogue grows (3a); rank badges on story cards need a cached rank table (2g). The full quality run can pass the 1-hour background limit: run e2e in a separate background call if it is killed. Checklist uses lettered parts per bundle (Robert, 30 Oct 11:42).
 - Use Node 24 and the pre-installed Chromium (`source scratchpad/env.sh`, which sets PLAYWRIGHT_CHROMIUM_PATH; without it Playwright looks for a browser that isn't there): the shell's default Node 22 fails `formatStatNumber` ("19K").
 - After a container restart, start Docker with `nohup dockerd > /tmp/dockerd.log 2>&1 &` before the quality run.
 - Robert (30 Oct 22:10): fast checks per lettered part, full e2e (quality.sh) once before the bundle's last part merges. 22:17: no message to Robert on merges; the daily 9:00 CET ideas document (scheduled task trig_01UMV8y7xARfgpioUZKXYEhC; list in `feature-ideas.md`) is the only regular message.
