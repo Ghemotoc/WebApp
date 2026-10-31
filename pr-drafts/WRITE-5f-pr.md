@@ -54,7 +54,7 @@ Readers can now comment on one paragraph of a chapter, as board 3.5 draws it.
 - **e2e with `--workers=1`:**
   - `paragraph-comments`, `comments`, `comment-reactions`, `comment-downvotes`, `share-passages`, `copy-protection`, `chapter-reader` and `reader-performance` pass, apart from the known timing below.
   - An earlier run showed that the markers arriving after the text replaced the paragraphs, so a shared passage lost its focus. Fixed: the paragraph elements now stay the same, and the marker column appears only once the marker is drawn.
-- **Full e2e run for bundle 5:** FULLRUN
+- **Full e2e run for bundle 5:** Full e2e run for bundle 5 (3 shards, then `legal.spec.ts` on its own): 1,184 tests, 1,183 passed. Three failed in the parallel run and passed when run again on their own: `writer-dashboard.spec.ts` at 768 px (axe read the eyebrow colour while it was still fading in), `chapter-drawings.spec.ts` and `notifications.spec.ts` (state left in the database by the first, aborted shard runs; it passed 13 of 13 after `supabase db reset`). The one real failure is the known reader cold-load timing (`reader-performance.spec.ts`, 2-second limit), which also fails on main on this machine; its 40 KB script budget test passes.
 - **Known failure:** `reader-performance`'s 2-second first-paragraph timing fails on this machine. It fails on `main` too, so the cause is the machine, not this change. The 40 KB script-budget test passes.
 
 ## By hand
