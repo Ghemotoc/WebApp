@@ -26,6 +26,12 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
   dyslexia or ADHD keep their place; M.
 - **Settings preview sentence.** A short sample paragraph at the top of the panel, so readers on a long chapter
   see the change without closing the panel; S.
+- **"Most shared this week" shelf.** A Discover shelf ordered by the new share totals (aggregates only, never
+  who shared). Gives readers a different door into stories than likes; S; fits DISCOVER.
+- **Quote card in the writer's own colours.** The writer picks which of our palette colours their story's cards
+  default to, so a story's cards look like a set on social media; S; fits READ-4 or later.
+- **Share a whole story, not just a chapter.** "Share" on the story page with the same clean link and chat
+  preview, pointing at chapter 1's teaser; S.
 
 ## Sent
 
