@@ -6,8 +6,10 @@
  * teaser (S1-E4-04) and searches with Postgres full text (S1-E5-04). The editor never sees
  * Markdown: it works on a document tree, and these two functions translate at the edges.
  * Allowed nodes: paragraphs, headings (levels 2 and 3), bold, italic, quote, bullet and
- * numbered lists, the scene break (* * *) and links (http, https, mailto). Anything else in
- * the Markdown (raw HTML, pictures, code) becomes plain text, so nothing unexpected survives.
+ * numbered lists, the scene break (* * *), links (http, https, mailto) and chapter pictures on
+ * their own line, `![alt text](picture:<ID>)` (S1-E3-09, src/lib/chapter-pictures.ts). Anything
+ * else in the Markdown (raw HTML, other pictures, code) becomes plain text, so nothing
+ * unexpected survives.
  *
  * Who calls it: useChapterEditor (Markdown → document when the chapter loads; document →
  * Markdown on every save). Tests: chapterMarkdown.test.ts (a round trip for every node).
@@ -15,6 +17,7 @@
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { Nodes as MarkdownNode, PhrasingContent, RootContent } from 'mdast';
 
+import { pictureAddress, pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
 /** A mark on a run of text: bold, italic or a link. */
@@ -80,6 +83,20 @@ function paragraph(content: EditorNode[]): EditorNode {
   return content.length === 0 ? { type: 'paragraph' } : { type: 'paragraph', content };
 }
 
+/**
+ * A paragraph that is only a chapter picture becomes the editor's picture block (S1-E3-09).
+ *
+ * @param node - a paragraph from the Markdown
+ * @returns the picture node, or null when the paragraph is anything else
+ */
+function pictureToEditor(node: Extract<RootContent, { type: 'paragraph' }>): EditorNode | null {
+  const onlyChild = node.children.length === 1 ? node.children[0] : undefined;
+  if (onlyChild?.type !== 'image') return null;
+  const pictureId = pictureIdFromAddress(onlyChild.url);
+  if (pictureId === null) return null;
+  return { type: 'chapterPicture', attrs: { pictureId, alt: onlyChild.alt ?? '' } };
+}
+
 /** A list: bullet or numbered, each item holding blocks. */
 function listToEditor(node: Extract<RootContent, { type: 'list' }>): EditorNode {
   const isOrdered = node.ordered === true;
@@ -97,7 +114,7 @@ function listToEditor(node: Extract<RootContent, { type: 'list' }>): EditorNode 
 function blockToEditor(node: RootContent): EditorNode | null {
   switch (node.type) {
     case 'paragraph':
-      return paragraph(inlineToEditor(node.children, []));
+      return pictureToEditor(node) ?? paragraph(inlineToEditor(node.children, []));
     case 'heading':
       // Level 1 is the story's own title; level 4 and deeper are too small. Both snap to 2 and 3.
       return {
@@ -215,9 +232,25 @@ function blockToMarkdown(node: EditorNode): string | null {
       return listToMarkdown(node);
     case 'horizontalRule':
       return '* * *';
+    case 'chapterPicture':
+      return pictureToMarkdown(node);
     default:
       return null;
   }
+}
+
+/**
+ * A chapter picture back to Markdown: `![alt text](picture:<ID>)` on its own line, the alt text
+ * on one line with its Markdown characters escaped (S1-E3-09).
+ *
+ * @returns the line, or null for a picture without a well-formed ID (it is dropped)
+ */
+function pictureToMarkdown(node: EditorNode): string | null {
+  const pictureId = typeof node.attrs?.pictureId === 'string' ? node.attrs.pictureId : '';
+  if (pictureIdFromAddress(pictureAddress(pictureId)) === null) return null;
+  const alt = typeof node.attrs?.alt === 'string' ? node.attrs.alt : '';
+  const oneLineAlt = alt.replace(/\s+/g, ' ').trim();
+  return `![${escapeMarkdownText(oneLineAlt)}](${pictureAddress(pictureId)})`;
 }
 
 /** Block content back to Markdown, blocks separated by a blank line. */
@@ -256,6 +289,8 @@ function plainTextOfEditorNode(node: EditorNode): string {
   if (node.type === 'text') return node.text ?? '';
   if (node.type === 'hardBreak') return '\n';
   if (node.type === 'horizontalRule') return '* * *';
+  // A picture has no words of its own to compare (S1-E3-09).
+  if (node.type === 'chapterPicture') return '';
   const parts = (node.content ?? []).map(plainTextOfEditorNode);
   const isInline = (node.content ?? []).every(
     (child) => child.type === 'text' || child.type === 'hardBreak',

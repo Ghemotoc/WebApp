@@ -10,6 +10,8 @@
  *   still read, accepts, and the notice goes;
  * - axe finds no serious issue and nothing scrolls sideways at 390, 768 and 1440 px.
  * Test data: seed personas only. The new version is added with SQL and removed afterwards.
+ * Run it on its own when the suite is split across parallel runs on one database: while the new
+ * version exists every signed-in persona sees the notice, so other specs fail at random.
  */
 import { expect, test } from '@playwright/test';
 

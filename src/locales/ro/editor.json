@@ -109,7 +109,10 @@
     "linkNotAllowed": "Sunt permise doar linkuri http, https și mailto.",
     "saveFailed": "Nu am putut salva capitolul.",
     "loadFailed": "Nu am putut încărca acest capitol. Verifică conexiunea și încearcă din nou.",
-    "createFailed": "Nu am putut adăuga un capitol. Verifică conexiunea și încearcă din nou."
+    "createFailed": "Nu am putut adăuga un capitol. Verifică conexiunea și încearcă din nou.",
+    "pictureNeedsAlt": "Fiecare imagine are nevoie de un text alternativ. Scrie-l sub imagine și capitolul se va salva.",
+    "altTooLong": "Textul alternativ poate avea cel mult 300 de caractere. Scurtează-l sub imagine.",
+    "tooManyPictures": "Un capitol poate avea cel mult 30 de imagini. Scoate câteva sau împarte capitolul în două."
   },
   "conflict": {
     "keepMine": "Păstrează această versiune",
@@ -131,5 +134,53 @@
     "heading": "Previzualizare",
     "note": "Așa vor vedea cititorii capitolul.",
     "close": "Închide"
+  },
+  "insert": {
+    "button": "Inserează",
+    "menuLabel": "Inserează",
+    "picture": "Imagine",
+    "pictureNote": "Încarcă o imagine. Textul alternativ e obligatoriu."
+  },
+  "pictureDialog": {
+    "heading": "Adaugă o imagine",
+    "fileLabel": "Imagine",
+    "fileHint": "JPEG, PNG sau WebP, până la 5 MB. Scoatem datele despre locație și cameră și o aducem la mărimea potrivită pentru citit.",
+    "altLabel": "Text alternativ",
+    "altHint": "Descrie imaginea pentru cititorii care folosesc un cititor de ecran.",
+    "rightsLabel": "Am dreptul să folosesc această imagine",
+    "rightsHint": "Ai făcut-o tu sau cine o deține te lasă s-o folosești. Dacă cineva ne arată că e a lui, o putem scoate.",
+    "checkNote": "Fiecare imagine trece prin verificarea imaginilor înainte s-o vadă cititorii.",
+    "add": "Adaugă imaginea",
+    "cancel": "Renunță",
+    "uploading": "Îți încărcăm și verificăm imaginea…",
+    "missingFile": "Alege o imagine.",
+    "missingAlt": "Scrie un text alternativ pentru imagine.",
+    "missingRights": "Bifează căsuța ca să confirmi că ai dreptul să folosești imaginea."
+  },
+  "picture": {
+    "label": "Imagine din acest capitol",
+    "altLabel": "Text alternativ (obligatoriu)",
+    "altHint": "Descrie imaginea pentru cititorii care folosesc un cititor de ecran.",
+    "altMissing": "Scrie un text alternativ, ca cititorii care nu văd imaginea să știe ce arată.",
+    "remove": "Scoate imaginea",
+    "notLoaded": "Nu am putut încărca imaginea. Verifică-ți conexiunea; imaginea e tot în capitol.",
+    "state": {
+      "checking": "În verificare",
+      "waiting_for_person": "Așteaptă un om din echipă",
+      "visible": "Verificată",
+      "removed": "Eliminată"
+    },
+    "noteTitle": {
+      "checking": "Verificată înainte să apară.",
+      "waiting_for_person": "Un om din echipă se va uita la ea.",
+      "visible": "Cititorii o pot vedea.",
+      "removed": "Un moderator a eliminat-o."
+    },
+    "note": {
+      "checking": "Cititorii văd imaginea după ce trece verificarea imaginilor. Am scos datele despre locație din fișier.",
+      "waiting_for_person": "Verificarea imaginilor a semnalat-o, așa că decide cineva din echipa de moderare. Până atunci cititorii văd „Imagine în verificare”.",
+      "visible": "A trecut verificarea imaginilor. Am scos datele despre locație din fișier.",
+      "removed": "Cititorii văd „[Eliminat de echipa de moderare]” în locul ei. O poți scoate din capitol."
+    }
   }
 }

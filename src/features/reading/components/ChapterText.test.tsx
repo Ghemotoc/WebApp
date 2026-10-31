@@ -6,6 +6,8 @@ import { describe, expect, it } from 'vitest';
 
 import { ChapterText } from './ChapterText';
 
+const pictureId = '0b9c2f4e-3a52-4c36-9b0e-2f7d1d0e5a11';
+
 describe('ChapterText', () => {
   it('draws headings, bold, italic, quotes, lists and the scene break', () => {
     const { container } = render(
@@ -48,5 +50,35 @@ describe('ChapterText', () => {
     );
     expect(container.querySelector('script')).toBeNull();
     expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('draws a checked chapter picture with its alt text and a Report button (S1-E3-09)', () => {
+    render(
+      <ChapterText
+        language="ro"
+        markdown={`Text\n\n![Harta dealurilor](picture:${pictureId})`}
+        pictures={{ [pictureId]: { state: 'visible', url: 'https://storage.test/signed' } }}
+        canReportPictures
+      />,
+    );
+    expect(screen.getByRole('img', { name: 'Harta dealurilor' })).toHaveAttribute(
+      'src',
+      'https://storage.test/signed',
+    );
+    expect(screen.getByRole('button', { name: 'actions.reportItem' })).toBeInTheDocument();
+  });
+
+  it('shows "Picture being checked" for a picture that isn\'t visible, and the marker for a removed one', () => {
+    const { container } = render(
+      <ChapterText
+        language="ro"
+        markdown={`![Unu](picture:${pictureId})\n\n![Doi](picture:1b9c2f4e-3a52-4c36-9b0e-2f7d1d0e5a11)`}
+        pictures={{ [pictureId]: { state: 'removed', url: null } }}
+      />,
+    );
+    expect(container.querySelector('img')).toBeNull();
+    expect(screen.getByText('pictures.chapter.removed')).toBeInTheDocument();
+    expect(screen.getByText('pictures.chapter.beingChecked')).toBeInTheDocument();
+    expect(container.querySelector('p figure')).toBeNull();
   });
 });

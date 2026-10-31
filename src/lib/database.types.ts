@@ -2184,6 +2184,7 @@ export type Database = {
           attempts: number;
           bucket: string;
           case_id: string | null;
+          chapter_id: string | null;
           checked_at: string | null;
           created_at: string;
           deleted_at: string | null;
@@ -2193,6 +2194,7 @@ export type Database = {
           path: string;
           preserve_until: string | null;
           provider: string | null;
+          rights_confirmed_at: string | null;
           status: Database['public']['Enums']['picture_status'];
           story_id: string | null;
           updated_at: string;
@@ -2205,6 +2207,7 @@ export type Database = {
           attempts?: number;
           bucket: string;
           case_id?: string | null;
+          chapter_id?: string | null;
           checked_at?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -2214,6 +2217,7 @@ export type Database = {
           path: string;
           preserve_until?: string | null;
           provider?: string | null;
+          rights_confirmed_at?: string | null;
           status?: Database['public']['Enums']['picture_status'];
           story_id?: string | null;
           updated_at?: string;
@@ -2223,6 +2227,7 @@ export type Database = {
           attempts?: number;
           bucket?: string;
           case_id?: string | null;
+          chapter_id?: string | null;
           checked_at?: string | null;
           created_at?: string;
           deleted_at?: string | null;
@@ -2232,6 +2237,7 @@ export type Database = {
           path?: string;
           preserve_until?: string | null;
           provider?: string | null;
+          rights_confirmed_at?: string | null;
           status?: Database['public']['Enums']['picture_status'];
           story_id?: string | null;
           updated_at?: string;
@@ -2243,6 +2249,13 @@ export type Database = {
             columns: ['case_id'];
             isOneToOne: false;
             referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'picture_checks_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
             referencedColumns: ['id'];
           },
           {
@@ -4684,6 +4697,15 @@ export type Database = {
           story_id: string;
         }[];
       };
+      chapter_picture_references: {
+        Args: { body: string };
+        Returns: {
+          alt_text: string;
+          picture_id: string;
+        }[];
+      };
+      chapter_picture_states: { Args: { body: string; owner_id: string }; Returns: Json };
+      chapter_picture_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       chapter_place: {
         Args: { target_chapter_id: string };
         Returns: {
@@ -4701,6 +4723,7 @@ export type Database = {
         Returns: undefined;
       };
       check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
+      check_chapter_pictures: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
       check_comment_text: { Args: { body: string }; Returns: string };
       check_handle: { Args: { candidate: string }; Returns: string };
@@ -5278,6 +5301,7 @@ export type Database = {
           picture_id: string;
         }[];
       };
+      my_picture_states: { Args: { picture_ids: string[] }; Returns: Json };
       my_place_in_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       my_report_detail_requests: {
         Args: Record<PropertyKey, never>;
@@ -5608,6 +5632,10 @@ export type Database = {
       record_sign_up_consent: {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
+      };
+      register_chapter_picture: {
+        Args: { rights_confirmed: boolean; target_path: string };
+        Returns: string;
       };
       register_picture: {
         Args: {

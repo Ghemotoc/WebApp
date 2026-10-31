@@ -39,4 +39,18 @@ describe('chapterDraftSchema', () => {
       false,
     );
   });
+  it('refuses a picture without alt text, alt text over 300 characters and too many pictures (S1-E3-09)', () => {
+    const pictureId = '0b9c2f4e-3a52-4c36-9b0e-2f7d1d0e5a11';
+    const picture = (alt: string) => `![${alt}](picture:${pictureId})`;
+    const noAlt = chapterDraftSchema.safeParse({ ...good, body: picture('  ') });
+    expect(noAlt.error?.issues[0]?.message).toBe('errors.pictureNeedsAlt');
+    const longAlt = chapterDraftSchema.safeParse({ ...good, body: picture('a'.repeat(301)) });
+    expect(longAlt.error?.issues[0]?.message).toBe('errors.altTooLong');
+    const many = chapterDraftSchema.safeParse({
+      ...good,
+      body: Array.from({ length: 31 }, () => picture('Hartă')).join('\n\n'),
+    });
+    expect(many.error?.issues[0]?.message).toBe('errors.tooManyPictures');
+    expect(chapterDraftSchema.safeParse({ ...good, body: picture('Hartă') }).success).toBe(true);
+  });
 });

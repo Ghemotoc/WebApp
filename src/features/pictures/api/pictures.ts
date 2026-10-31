@@ -1,13 +1,15 @@
 /**
- * Uploaded pictures: uploading a cover or a profile picture, asking for its check, and reading a
- * picture's state for the screens (story S1-E10-05; CLAUDE.md rule 19: every uploaded picture is
- * checked before anyone else sees it).
+ * Uploaded pictures: uploading a cover, a profile picture or a picture in a chapter, asking for its
+ * check, and reading a picture's state for the screens (stories S1-E10-05 and S1-E3-09; CLAUDE.md
+ * rule 19: every uploaded picture is checked before anyone else sees it). Every file is prepared
+ * first (lib/preparePicture.ts: location data removed, resized).
  *
  * Who calls it: the hooks in ../hooks (covers on cards, the story page and the teaser; the profile
  * picture; the upload fields in Story settings and Settings › Profile).
- * What it calls next: Supabase Storage (the private `covers` and `avatars` buckets), the database
- * functions register_picture(), story_cover_picture(), profile_avatar_picture() and
- * my_pending_pictures() (…_s1_e10_05_picture_check.sql), and POST /api/picture-check
+ * What it calls next: Supabase Storage (the private `covers`, `avatars` and `chapter-images`
+ * buckets), the database functions register_picture(), register_chapter_picture(),
+ * story_cover_picture(), profile_avatar_picture(), my_pending_pictures() and my_picture_states()
+ * (…_s1_e10_05_picture_check.sql, …_s1_e3_09_chapter_pictures.sql), and POST /api/picture-check
  * (server/picture-check.ts), which runs the checks with the person's own sign-in.
  * A picture is shown only through a signed address that lasts an hour; Storage refuses one for a
  * picture that hasn't passed, unless the caller is the uploader or moderation staff.
@@ -15,6 +17,13 @@
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import { pictureCheckResponseSchema } from '@/schemas/pictureCheck';
+
+import {
+  endingForPreparedType,
+  longestSideFor,
+  PicturePreparationError,
+  preparePicture,
+} from '../lib/preparePicture';
 
 /** How a screen draws a picture. */
 export type PictureState = 'visible' | 'checking' | 'waiting_for_person' | 'removed';
@@ -26,19 +35,20 @@ export interface PictureView {
   url: string | null;
 }
 
-/** The two buckets people upload to. */
-export type PictureBucket = 'covers' | 'avatars';
+/** The buckets people upload to: covers, profile pictures and chapter pictures (S1-E3-09). */
+export type PictureBucket = 'covers' | 'avatars' | 'chapter-images';
 
 /** The picture types the buckets accept, and the largest file each takes (the bucket limits). */
 export const pictureTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
 export const largestPictureBytes: Record<PictureBucket, number> = {
   covers: 5 * 1024 * 1024,
   avatars: 2 * 1024 * 1024,
+  'chapter-images': 5 * 1024 * 1024,
 };
 
 /** Why an upload didn't work. */
 export type PictureUploadFailure =
-  'wrong_type' | 'too_big' | 'too_many' | 'not_allowed' | 'unreachable';
+  'wrong_type' | 'too_big' | 'too_many' | 'not_allowed' | 'rights_not_confirmed' | 'unreachable';
 
 /** The error a failed upload throws; waitMinutes is set for too_many. */
 export class PictureUploadError extends Error {
@@ -170,13 +180,6 @@ export function checkPictureFile(file: File, bucket: PictureBucket): void {
   if (file.size > largestPictureBytes[bucket]) throw new PictureUploadError('too_big');
 }
 
-/** The file ending for a picture type. */
-function endingFor(type: string): string {
-  if (type === 'image/png') return 'png';
-  if (type === 'image/webp') return 'webp';
-  return 'jpg';
-}
-
 /** Reads the minutes to wait from a rate-limit error's hint ("wait_minutes:12"). */
 function waitMinutesFrom(hint: string | undefined): number | null {
   const match = /wait_minutes:(\d+)/.exec(hint ?? '');
@@ -193,7 +196,50 @@ export interface PictureUpload {
 }
 
 /**
- * Uploads a picture under a fresh random name, registers it and asks for its check.
+ * Checks the chosen file, prepares it (metadata out, made smaller, ../lib/preparePicture.ts) and
+ * puts it in its bucket under a fresh random name, never the user ID (architecture 1.6).
+ *
+ * @param target - the bucket, the folder (the story's or chapter's ID, or null for a profile
+ *   picture), the file and the longest side it may have
+ * @returns the stored path
+ * @throws PictureUploadError wrong_type, too_big or not_allowed (Storage refused it)
+ */
+async function storePicture(
+  client: AppSupabaseClient,
+  target: { bucket: PictureBucket; folder: string | null; file: File; longestSide: number },
+): Promise<string> {
+  const { bucket, folder, file, longestSide } = target;
+  // Step 1: the file itself, before anything is sent.
+  checkPictureFile(file, bucket);
+  // Step 2: only its pixels, at the size it is shown (S1-E3-09 criterion 2).
+  const prepared = await preparePicture(file, longestSide).catch((error: unknown) => {
+    throw error instanceof PicturePreparationError ? new PictureUploadError('wrong_type') : error;
+  });
+  // Step 3: a random name inside the folder.
+  const fileName = `${crypto.randomUUID()}.${endingForPreparedType(prepared.type)}`;
+  const path = folder === null ? fileName : `${folder}/${fileName}`;
+  const stored = await client.storage
+    .from(bucket)
+    .upload(path, prepared, { contentType: prepared.type });
+  if (stored.error !== null) throw new PictureUploadError('not_allowed');
+  return path;
+}
+
+/**
+ * Turns a refused registration into the person's reason.
+ *
+ * @param error - the error the database returned
+ * @returns the error to throw
+ */
+function registrationFailure(error: { code: string; hint?: string }): PictureUploadError {
+  if (error.code === '54000')
+    return new PictureUploadError('too_many', waitMinutesFrom(error.hint));
+  if (error.hint === 'rights_not_confirmed') return new PictureUploadError('rights_not_confirmed');
+  return new PictureUploadError(error.code === '' ? 'unreachable' : 'not_allowed');
+}
+
+/**
+ * Uploads a cover or a profile picture, registers it and asks for its check.
  *
  * @param client - the shared Supabase client
  * @param upload - where it goes and the file
@@ -205,30 +251,110 @@ export async function uploadPicture(
   client: AppSupabaseClient,
   upload: PictureUpload,
 ): Promise<{ path: string; status: string }> {
-  // Step 1: the file itself, before anything is sent.
-  checkPictureFile(upload.file, upload.bucket);
-  // Step 2: a random name, never the user ID (architecture 1.6), inside the story's folder.
-  const fileName = `${crypto.randomUUID()}.${endingFor(upload.file.type)}`;
-  const path = upload.folder === null ? fileName : `${upload.folder}/${fileName}`;
-  const stored = await client.storage
-    .from(upload.bucket)
-    .upload(path, upload.file, { contentType: upload.file.type });
-  if (stored.error !== null) throw new PictureUploadError('not_allowed');
-  // Step 3: registered as pending; the hourly limit is counted here.
+  // Step 1: the prepared file, in the story's folder for a cover.
+  const path = await storePicture(client, {
+    bucket: upload.bucket,
+    folder: upload.folder,
+    file: upload.file,
+    longestSide: longestSideFor[upload.kind],
+  });
+  // Step 2: registered as pending; the hourly limit is counted here.
   const registered = await client.rpc('register_picture', {
     target_bucket: upload.bucket,
     target_path: path,
     picture_kind: upload.kind,
   });
-  if (registered.error !== null) {
-    if (registered.error.code === '54000') {
-      throw new PictureUploadError('too_many', waitMinutesFrom(registered.error.hint));
-    }
-    throw new PictureUploadError(registered.error.code === '' ? 'unreachable' : 'not_allowed');
-  }
-  // Step 4: the check; a service that is down leaves it pending, tried again later.
+  if (registered.error !== null) throw registrationFailure(registered.error);
+  // Step 3: the check; a service that is down leaves it pending, tried again later. The stand-in
+  // reads the original file name, so it goes with the request.
   const status = await requestPictureCheck(client, registered.data, upload.file.name);
   return { path, status };
+}
+
+/** What a chapter picture upload needs (S1-E3-09). */
+export interface ChapterPictureUpload {
+  /** The chapter's row ID, the folder in `chapter-images`. */
+  chapterId: string;
+  file: File;
+  /** The "I have the right to use this picture" box. */
+  rightsConfirmed: boolean;
+}
+
+/**
+ * Uploads a picture for a chapter, registers it with the rights confirmation and asks for its
+ * check (S1-E3-09).
+ *
+ * @param client - the shared Supabase client
+ * @param upload - the chapter, the file and the confirmation
+ * @returns the picture's ID (for the text) and its status after the check
+ * @throws PictureUploadError as uploadPicture(), plus rights_not_confirmed
+ */
+export async function uploadChapterPicture(
+  client: AppSupabaseClient,
+  upload: ChapterPictureUpload,
+): Promise<{ pictureId: string; status: string }> {
+  // Step 1: the confirmation first, so nothing is sent without it.
+  if (!upload.rightsConfirmed) throw new PictureUploadError('rights_not_confirmed');
+  // Step 2: the prepared file, in the chapter's folder.
+  const path = await storePicture(client, {
+    bucket: 'chapter-images',
+    folder: upload.chapterId,
+    file: upload.file,
+    longestSide: longestSideFor.chapterPicture,
+  });
+  // Step 3: registered as pending, with the confirmation; the hourly limit is counted here.
+  const registered = await client.rpc('register_chapter_picture', {
+    target_path: path,
+    rights_confirmed: true,
+  });
+  if (registered.error !== null) throw registrationFailure(registered.error);
+  // Step 4: the check, as for every other picture.
+  const status = await requestPictureCheck(client, registered.data, upload.file.name);
+  return { pictureId: registered.data, status };
+}
+
+/**
+ * Turns {"<ID>": picture_state_json} into what the screens draw, with a signed address for each
+ * picture the caller may see.
+ *
+ * @param client - the shared Supabase client
+ * @param json - the map from get_chapter() or my_picture_states()
+ * @returns the views by picture ID; entries that aren't pictures are left out
+ */
+export async function pictureViewsFromJson(
+  client: AppSupabaseClient,
+  json: Json | null | undefined,
+): Promise<Record<string, PictureView>> {
+  if (json === null || json === undefined || typeof json !== 'object' || Array.isArray(json)) {
+    return {};
+  }
+  const entries = await Promise.all(
+    Object.entries(json).map(async ([pictureId, value]) => {
+      const view = await viewFrom(client, value ?? null);
+      return [pictureId, view] as const;
+    }),
+  );
+  const views: Record<string, PictureView> = {};
+  for (const [pictureId, view] of entries) if (view !== null) views[pictureId] = view;
+  return views;
+}
+
+/**
+ * The caller's own pictures, for the editor and the writer's preview (S1-E3-09).
+ *
+ * @param client - the shared Supabase client
+ * @param pictureIds - the pictures in the text
+ * @returns the views by picture ID; anyone else's pictures are left out by the database
+ * Errors: throws when the database can't be reached.
+ */
+export async function fetchMyPictureStates(
+  client: AppSupabaseClient,
+  pictureIds: string[],
+): Promise<Record<string, PictureView>> {
+  if (pictureIds.length === 0) return {};
+  const { data, error } = await client.rpc('my_picture_states', { picture_ids: pictureIds });
+  if (error !== null) throw new Error(`Could not read the pictures: ${error.message}`);
+  return pictureViewsFromJson(client, data);
 }
 
 /**

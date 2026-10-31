@@ -100,6 +100,38 @@ describe('markdownToEditorDocument and editorDocumentToMarkdown', () => {
   });
 });
 
+describe('chapter pictures in the converters (S1-E3-09)', () => {
+  const pictureId = '0b9c2f4e-3a52-4c36-9b0e-2f7d1d0e5a11';
+
+  it('keeps a picture on its own line through a round trip, its alt text escaped', () => {
+    const markdown = `Bunica a desenat o hartă.\n\n![Harta \\[veche\\] a dealurilor](picture:${pictureId})\n\nSfârșit.`;
+    const document = markdownToEditorDocument(markdown);
+    expect(document.content?.[1]).toEqual({
+      type: 'chapterPicture',
+      attrs: { pictureId, alt: 'Harta [veche] a dealurilor' },
+    });
+    expect(editorDocumentToMarkdown(document)).toBe(markdown);
+  });
+
+  it('puts the alt text on one line and drops a picture without a real ID', () => {
+    const markdown = editorDocumentToMarkdown({
+      type: 'doc',
+      content: [
+        { type: 'chapterPicture', attrs: { pictureId, alt: 'Două\nrânduri' } },
+        { type: 'chapterPicture', attrs: { pictureId: 'https://x/y.png', alt: 'Nu' } },
+      ],
+    });
+    expect(markdown).toBe(`![Două rânduri](picture:${pictureId})`);
+  });
+
+  it('keeps a picture inside a sentence out of the editor, as before', () => {
+    const markdown = editorDocumentToMarkdown(
+      markdownToEditorDocument(`Text ![a](picture:${pictureId}) text`),
+    );
+    expect(markdown).not.toContain('picture:');
+  });
+});
+
 describe('isAllowedLink', () => {
   it('allows http, https and mailto only', () => {
     expect(isAllowedLink('https://example.org')).toBe(true);
