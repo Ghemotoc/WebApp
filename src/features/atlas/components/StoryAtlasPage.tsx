@@ -7,7 +7,8 @@
  * the chapters, then the details (each saving by itself), the linked project and Delete (the
  * same two-step delete as Story settings, S1-E3-05). Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
- * useStoryPlan → story_plan(); useMyStories for the switcher, "Write" and Delete;
+ * useStoryPlan → story_plan(); useMyStories for the switcher, "Write" (lib/writeAddress.ts) and
+ * Delete;
  * lib/lastPlannedStory.ts so /plan opens this story next time on this device (S1-E17-02).
  */
 import { useEffect } from 'react';
@@ -22,17 +23,11 @@ import { useMyStories } from '@/features/writing/hooks/useMyStories';
 import type { StoryPlanPage } from '../api/storyPlans';
 import { useStoryPlan } from '../hooks/useStoryPlan';
 import { rememberPlannedStory } from '../lib/lastPlannedStory';
+import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasTopBar } from './AtlasTopBar';
 import { AtAGlance } from './AtAGlance';
-
-/** Where "Write" goes: the latest chapter in the editor, or Your writing for a story with none. */
-function writeAddressFor(story: MyStory | undefined): string {
-  const latestChapter = story?.chapters.at(-1);
-  if (story === undefined || latestChapter === undefined) return '/write';
-  return `/write/s/${story.slug}/c/${latestChapter.code}`;
-}
 
 /** What shows under the bar: a wait, a plain message or the page. */
 function AtlasBody({
@@ -78,7 +73,9 @@ export function StoryAtlasPage() {
       <title>
         {page ? t('documentTitle', { title: page.story.title }) : t('homeDocumentTitle')}
       </title>
-      {userId !== null && <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} />}
+      {userId !== null && (
+        <AtlasTopBar slug={storySlug} writeAddress={writeAddressFor(story)} section="glance" />
+      )}
       <AtlasBody isSignedIn={userId !== null} page={page} loadFailed={loadFailed} story={story} />
     </PageContainer>
   );

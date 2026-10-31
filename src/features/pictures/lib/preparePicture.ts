@@ -20,6 +20,8 @@ export const longestSideFor = {
   avatar: 1024,
   // A chapter picture at the reader's widest column on a sharp screen (S1-E3-09).
   chapterPicture: 1600,
+  // A character's portrait or mood picture in Story Atlas (S1-E17-11).
+  atlasImage: 1600,
 } as const;
 
 /** The quality for WebP and JPEG: small files that still look sharp. */

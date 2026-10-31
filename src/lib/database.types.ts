@@ -3718,6 +3718,131 @@ export type Database = {
           },
         ];
       };
+      story_character_fields: {
+        Row: {
+          created_at: string;
+          hidden_at: string | null;
+          id: string;
+          name: string;
+          position: number;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          hidden_at?: string | null;
+          id?: string;
+          name: string;
+          position: number;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          hidden_at?: string | null;
+          id?: string;
+          name?: string;
+          position?: number;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_character_fields_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_character_fields_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_characters: {
+        Row: {
+          created_at: string;
+          custom_values: NonNullable<Json>;
+          first_appearance_chapter_id: string | null;
+          id: string;
+          name: string;
+          picture_alt: string;
+          picture_id: string | null;
+          role: string;
+          sheet: NonNullable<Json>;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+          character_json: Json | null;
+        };
+        ComputedFields: 'character_json';
+        Insert: {
+          created_at?: string;
+          custom_values?: NonNullable<Json>;
+          first_appearance_chapter_id?: string | null;
+          id?: string;
+          name: string;
+          picture_alt?: string;
+          picture_id?: string | null;
+          role?: string;
+          sheet?: NonNullable<Json>;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          custom_values?: NonNullable<Json>;
+          first_appearance_chapter_id?: string | null;
+          id?: string;
+          name?: string;
+          picture_alt?: string;
+          picture_id?: string | null;
+          role?: string;
+          sheet?: NonNullable<Json>;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_characters_first_appearance_chapter_id_fkey';
+            columns: ['first_appearance_chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_characters_picture_id_fkey';
+            columns: ['picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_characters_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_plans';
+            referencedColumns: ['story_id'];
+          },
+          {
+            foreignKeyName: 'story_characters_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_plan_acts: {
         Row: {
           created_at: string;
@@ -4128,6 +4253,7 @@ export type Database = {
         };
       };
       add_chapter_share: { Args: { target_chapter_id: string }; Returns: undefined };
+      add_character_field: { Args: { field_name: string; story_slug: string }; Returns: Json };
       add_copied_work_note: {
         Args: {
           target: Omit<
@@ -4802,6 +4928,8 @@ export type Database = {
         Args: { answer_text: string; target_request_id: string };
         Returns: undefined;
       };
+      atlas_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
+      atlas_picture_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       attach_notice_to_case: {
         Args: {
           new_notice: Omit<
@@ -4923,6 +5051,10 @@ export type Database = {
           story_id: string;
         }[];
       };
+      chapter_of_story: {
+        Args: { chapter_code: string; target_story_id: string };
+        Returns: string;
+      };
       chapter_paragraphs: {
         Args: { body: string };
         Returns: {
@@ -4955,11 +5087,26 @@ export type Database = {
         };
         Returns: undefined;
       };
+      character_json: {
+        Args: {
+          target_character: Omit<
+            Database['public']['Tables']['story_characters']['Row'],
+            Database['public']['Tables']['story_characters']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      character_sheet_keys: { Args: Record<PropertyKey, never>; Returns: string[] };
       check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
       check_chapter_embeds: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_pictures: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
+      check_character_texts: { Args: { allowed_keys: string[]; texts: Json }; Returns: undefined };
       check_comment_text: { Args: { body: string }; Returns: string };
+      check_custom_value_keys: {
+        Args: { custom: Json; target_story_id: string };
+        Returns: undefined;
+      };
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
       check_pen_name: { Args: { candidate: string }; Returns: string };
@@ -5131,6 +5278,10 @@ export type Database = {
         };
         Returns: Json;
       };
+      create_story_character: {
+        Args: { character_name: string; character_role: string; story_slug: string };
+        Returns: Json;
+      };
       current_seasonal_doodle: {
         Args: { on_date: string; place: string };
         Returns: {
@@ -5167,6 +5318,7 @@ export type Database = {
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
+      delete_story_character: { Args: { character_id: string }; Returns: Json };
       disconnect_canva: { Args: Record<PropertyKey, never>; Returns: boolean };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       downvote_comment: {
@@ -5222,6 +5374,7 @@ export type Database = {
       follow_story: { Args: { should_follow: boolean; story_slug: string }; Returns: Json };
       follow_writer: { Args: { should_follow: boolean; target_handle: string }; Returns: Json };
       follower_count_of: { Args: { writer_id: string }; Returns: number };
+      forget_character_picture: { Args: { old_picture_id: string }; Returns: Json };
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
@@ -5590,6 +5743,29 @@ export type Database = {
         }[];
       };
       my_statements: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_story_character: {
+        Args: { target_character_id: string };
+        Returns: {
+          created_at: string;
+          custom_values: NonNullable<Json>;
+          first_appearance_chapter_id: string | null;
+          id: string;
+          name: string;
+          picture_alt: string;
+          picture_id: string | null;
+          role: string;
+          sheet: NonNullable<Json>;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'story_characters';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       my_unread_notification_count: { Args: Record<PropertyKey, never>; Returns: number };
       name_has_listed_word: { Args: { name: string }; Returns: boolean };
       name_is_approved: {
@@ -5914,6 +6090,7 @@ export type Database = {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
       };
+      register_atlas_picture: { Args: { target_path: string }; Returns: string };
       register_chapter_embed: {
         Args: {
           embed_author_name: string;
@@ -5938,6 +6115,7 @@ export type Database = {
         Returns: string;
       };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
+      remove_character_picture: { Args: { character_id: string }; Returns: Json };
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
@@ -6144,6 +6322,10 @@ export type Database = {
       };
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_chapter_order: { Args: { chapter_codes: string[]; story_slug: string }; Returns: Json };
+      set_character_picture: {
+        Args: { character_id: string; new_picture_id: string };
+        Returns: Json;
+      };
       set_library_shelf: {
         Args: { story_slug: string; wanted_shelf: Database['public']['Enums']['library_shelf'] };
         Returns: Json;
@@ -6235,6 +6417,7 @@ export type Database = {
         Returns: Json;
       };
       story_card_json: { Args: { target_story_id: string }; Returns: Json };
+      story_cast: { Args: { story_slug: string }; Returns: Json };
       story_classic_author: { Args: { target_story_id: string }; Returns: Json };
       story_comment_total: { Args: { target_story_id: string }; Returns: number };
       story_cover_picture: { Args: { story_slug: string }; Returns: Json };
@@ -6356,8 +6539,10 @@ export type Database = {
       };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
       unsubscribe_from_emails: { Args: { unsubscribe_key: string }; Returns: boolean };
+      update_character_field: { Args: { changes: Json; field_id: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
+      update_story_character: { Args: { changes: Json; character_id: string }; Returns: Json };
       update_story_plan: { Args: { changes: Json; story_slug: string }; Returns: Json };
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
@@ -6451,7 +6636,13 @@ export type Database = {
         | 'moderator_mail_reply'
         | 'tag_rejected';
       picture_kind:
-        'cover' | 'avatar' | 'chapter_picture' | 'drawing' | 'quote_card' | 'space_banner';
+        | 'cover'
+        | 'avatar'
+        | 'chapter_picture'
+        | 'drawing'
+        | 'quote_card'
+        | 'space_banner'
+        | 'atlas_image';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
       reading_font: 'sans' | 'serif' | 'dyslexia_friendly';
@@ -6721,7 +6912,15 @@ export const Constants = {
         'moderator_mail_reply',
         'tag_rejected',
       ],
-      picture_kind: ['cover', 'avatar', 'chapter_picture', 'drawing', 'quote_card', 'space_banner'],
+      picture_kind: [
+        'cover',
+        'avatar',
+        'chapter_picture',
+        'drawing',
+        'quote_card',
+        'space_banner',
+        'atlas_image',
+      ],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       reaction_kind: ['heart', 'fire', 'laugh', 'wow', 'sad', 'star'],
       reading_font: ['sans', 'serif', 'dyslexia_friendly'],

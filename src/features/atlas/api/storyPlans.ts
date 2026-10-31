@@ -4,7 +4,7 @@
  * Who calls it: the hooks in src/features/atlas/hooks/.
  * What it calls next: Supabase.
  * - story_plan(): the at-a-glance page: the story's title, category and rating, the plan's own
- *   fields, its acts and the chapter numbers (supabase/migrations/…_s1_e17_01_story_plans.sql).
+ *   fields, its acts, the chapter numbers and the cast count (supabase/migrations/…_s1_e17_01_story_plans.sql).
  * - update_story_plan(): the plan's own fields, one change at a time (S1-E17-03, S1-E17-04).
  * - update_my_story() (S1-E3-05): the title, genre and audience, which are the story's own, so a
  *   change in Story Atlas is the same change as in Story settings (S1-E17-03).
@@ -64,6 +64,8 @@ export interface StoryPlanPage {
     publishedCount: number;
     recent: RecentChapter[];
   };
+  /** How many characters, and the three edited last (S1-E17-06, S1-E17-08). */
+  cast: { count: number; recent: { id: string; name: string }[] };
 }
 
 /** The cache key of one story's plan. */
@@ -96,6 +98,7 @@ interface StoryPlanRow {
     published_count: number;
     recent: { code: string; position: number; title: string; edited_at: string }[];
   };
+  cast: { count: number; recent: { id: string; name: string }[] };
 }
 
 /** The database's plan fields in the page's own names. */
@@ -132,6 +135,10 @@ function toStoryPlanPage(row: StoryPlanRow): StoryPlanPage {
         title: chapter.title,
         editedAt: chapter.edited_at,
       })),
+    },
+    cast: {
+      count: row.cast.count,
+      recent: row.cast.recent.map((character) => ({ id: character.id, name: character.name })),
     },
   };
 }

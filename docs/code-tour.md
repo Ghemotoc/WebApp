@@ -1404,3 +1404,10 @@ Read in this order; each file's header comment says what it is for and where thi
 - Delete is the writer section's own `DeleteStoryControl`; purging the story deletes its plan too.
 - The text is in `src/locales/*/atlas.json`, registered when Story Atlas first renders (`registerAtlasTranslations.ts`).
 
+## Story Atlas: characters (S1-E17-08 to S1-E17-13; ATLAS-b)
+
+- `AtlasSectionNav` under the top bar switches between At a glance and Characters (`/plan/s/:storySlug/characters/:characterId?`).
+- Start at `src/features/atlas/components/CharactersPage.tsx`: `useStoryCast` reads `story_cast()` and hands out every changer. `CastList` groups and filters the cast (`lib/castGroups.ts`); `CharacterSheet` (keyed by the character, so switching saves what was waiting) holds `CharacterIdentityFields`, `CharacterPictureSection`, four `SheetGroupSection`s, `CustomValuesSection` and `DeleteCharacterSection`, all saving through `update_story_character()`.
+- A picture: `uploadAtlasPicture()` in `src/features/pictures/api/pictures.ts` prepares, uploads, registers and checks it; `set_character_picture()` puts it on the sheet. `CharacterAvatar` shows it once it passed, or the initials (`lib/characterInitials.ts`).
+- On the at-a-glance page, `CastAtAGlance` shows the cast count and `CharacterFieldsSection` adds, removes and brings back the writer's own fields.
+

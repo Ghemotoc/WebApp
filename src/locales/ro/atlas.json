@@ -89,5 +89,116 @@
   "delete": {
     "heading": "Șterge povestea",
     "note": "Tot planul ei se șterge odată cu ea."
+  },
+  "nav": {
+    "label": "Secțiunile Story Atlas",
+    "glance": "Pe scurt",
+    "characters": "Personaje"
+  },
+  "characters": {
+    "heading": "Personaje",
+    "documentTitle": "Personajele din {{title}}: Story Atlas",
+    "newCharacter": "Personaj nou",
+    "newName": "Personaj nou",
+    "count_one": "{{count}} personaj",
+    "count_few": "{{count}} personaje",
+    "count_other": "{{count}} de personaje",
+    "filter": "Filtrează personajele",
+    "filterHint": "După nume sau după cum mai sunt cunoscute.",
+    "none": "Încă nu ai personaje. Adaugă-l pe primul cu Personaj nou.",
+    "noMatch": "Niciun personaj nu se potrivește cu „{{filter}}”.",
+    "pick": "Alege un personaj ca să-i deschizi fișa.",
+    "notFound": "Personajul acesta nu mai este în poveste.",
+    "createFailed": "Personajul nu a fost adăugat. Verifică-ți conexiunea și încearcă din nou.",
+    "name": "Nume",
+    "nameRequired": "Dă-i personajului un nume.",
+    "roleLabel": "Rol",
+    "role": {
+      "protagonist": "Protagonist",
+      "deuteragonist": "Deuteragonist",
+      "antagonist": "Antagonist",
+      "supporting": "Secundar",
+      "minor": "Episodic",
+      "mentioned": "Doar pomenit"
+    },
+    "groups": {
+      "basics": "Date de bază",
+      "lookAndVoice": "Înfățișare și voce",
+      "inside": "Pe dinăuntru",
+      "inTheStory": "În poveste"
+    },
+    "fields": {
+      "also_known_as": "Cunoscut și ca",
+      "species": "Specie sau fel",
+      "pronouns": "Pronume",
+      "age_or_born": "Vârstă sau anul nașterii",
+      "life_status": "Stare",
+      "occupation": "Ocupație",
+      "origin": "Origine",
+      "appearance": "Înfățișare",
+      "distinguishing_marks": "Semne distinctive",
+      "voice": "Voce și ticuri",
+      "personality": "Personalitate",
+      "wants": "Ce își dorește",
+      "needs": "De ce are nevoie",
+      "fear_or_wound": "Frică sau rană",
+      "secrets": "Secrete",
+      "values_and_code": "Valori și principii",
+      "backstory": "Trecut",
+      "arc": "Arc",
+      "key_lines": "Replici și citate importante",
+      "notes": "Note"
+    },
+    "hints": {
+      "also_known_as": "Alte nume și porecle, despărțite prin virgulă.",
+      "age_or_born": "O vârstă sau anul în care s-a născut.",
+      "life_status": "De exemplu viu, mort sau strigoi."
+    },
+    "firstAppearance": "Prima apariție",
+    "firstAppearanceNone": "Încă nealeasă",
+    "custom": {
+      "heading": "Câmpurile tale",
+      "none": "Încă nu ai câmpuri proprii.",
+      "manage": "Adaugă sau scoate câmpurile tale pe pagina Pe scurt"
+    },
+    "picture": {
+      "heading": "Imagine",
+      "none": "Încă nu are imagine, așa că se văd inițialele.",
+      "upload": "Alege o imagine",
+      "hint": "JPEG, PNG sau WebP, până la 5 MB. O verificăm înainte să apară și doar tu o vezi.",
+      "alt": "Descrie imaginea",
+      "altHint": "Pentru cine nu o poate vedea.",
+      "remove": "Scoate imaginea",
+      "removeFailed": "Imaginea nu a fost scoasă. Verifică-ți conexiunea și încearcă din nou.",
+      "checking": "Imaginea ta este verificată. Apare aici după ce trece verificarea.",
+      "waiting_for_person": "Un om din echipa noastră se va uita mai întâi la imagine.",
+      "removed": "Echipa de moderare a scos imaginea aceasta."
+    },
+    "delete": {
+      "heading": "Șterge personajul",
+      "button": "Șterge personajul",
+      "confirm": "Ștergi personajul {{name}}? Pleacă și imaginea lui, iar asta nu se poate anula.",
+      "yes": "Da, șterge",
+      "keep": "Păstrează-l pe {{name}}",
+      "failed": "Personajul nu a fost șters. Verifică-ți conexiunea și încearcă din nou."
+    },
+    "glance": {
+      "heading": "Personaje",
+      "none": "Încă nu ai personaje.",
+      "recent": "Modificate recent",
+      "open": "Deschide personajele"
+    }
+  },
+  "fieldsSection": {
+    "heading": "Câmpurile tale pentru personaje",
+    "hint": "Un câmp adăugat aici apare pe fișa fiecărui personaj din poveste, de exemplu „Transformat de”.",
+    "none": "Încă nu ai câmpuri proprii.",
+    "name": "Câmp nou",
+    "add": "Adaugă câmpul",
+    "remove": "Scoate",
+    "restore": "Adu-l înapoi",
+    "removedNote": "Scos: ascuns de pe fișe, cu tot ce ai scris păstrat.",
+    "nameRequired": "Dă-i câmpului un nume.",
+    "failed": "Nu s-a salvat. Verifică-ți conexiunea și încearcă din nou."
   }
 }

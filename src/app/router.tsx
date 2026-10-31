@@ -309,6 +309,15 @@ const writeRoutes: RouteObject[] = [
       return { Component: StoryAtlasPage };
     },
   },
+  // A story's characters in Story Atlas (S1-E17-08): the cast list, and one character's sheet.
+  {
+    path: '/plan/s/:storySlug/characters/:characterId?',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { CharactersPage } = await import('@/features/atlas/components/CharactersPage');
+      return { Component: CharactersPage };
+    },
+  },
   // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
   // or deletes it.
   {
