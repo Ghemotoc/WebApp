@@ -7,12 +7,40 @@
  * breaks, bold, italic, headings, lists, quotes and links are drawn, anything else is unwrapped to
  * its words; links keep only http, https and mailto addresses, get rel="nofollow ugc noopener"
  * and open in a new tab. Headings drop to h3 and h4, under the entry's own heading.
- * [[Name]] cross-links come with S1-E17-31 (part h).
- * Who uses it: BibleEntryView.
+ * [[Name]] cross-links (S1-E17-31) become links to the character, entry or chapter they name, or
+ * read "not found yet": before drawing, each [[Name]] is turned into a link to the address
+ * "#atlas-link:<name>", which only this component's link drawing understands.
+ * Who uses it: BibleEntryView. What it calls: react-markdown, lib/crossLinks.ts,
+ * useOpenStorySlug, useLinkTargets and CrossLink.
  */
 import Markdown, { type Components } from 'react-markdown';
 
 import { isAllowedLink } from '@/lib/safe-links';
+
+import { useLinkTargets } from '../hooks/useLinkTargets';
+import { useOpenStorySlug } from '../hooks/useOpenStorySlug';
+import { resolveCrossLink, splitCrossLinks, type LinkIndex } from '../lib/crossLinks';
+
+import { CrossLink } from './CrossLink';
+
+/** The address a [[Name]] is given before drawing; never a real address. */
+const crossLinkPrefix = '#atlas-link:';
+
+/** Turns each [[Name]] into a Markdown link to "#atlas-link:<name>". */
+function withCrossLinks(text: string): string {
+  return splitCrossLinks(text)
+    .map((piece) =>
+      piece.kind === 'text'
+        ? piece.text
+        : `[${piece.name}](${crossLinkPrefix}${encodeURIComponent(piece.name)})`,
+    )
+    .join('');
+}
+
+/** Keeps safe addresses and the cross-link ones; anything else becomes no address. */
+function keptAddress(url: string): string {
+  return url.startsWith(crossLinkPrefix) || isAllowedLink(url) ? url : '';
+}
 
 /** The elements an entry may contain. */
 const allowedElements = [
@@ -33,14 +61,6 @@ const allowedElements = [
 
 /** Headings sit under the entry's title, so every level the writer types becomes h3 or h4. */
 const components: Components = {
-  a: ({ href, children }) =>
-    href !== undefined && isAllowedLink(href) ? (
-      <a href={href} rel="nofollow ugc noopener" target="_blank" className="text-link underline">
-        {children}
-      </a>
-    ) : (
-      <>{children}</>
-    ),
   h1: ({ children }) => (
     <h3 className="m-0 font-heading text-xl font-bold text-heading">{children}</h3>
   ),
@@ -63,6 +83,24 @@ const components: Components = {
   p: ({ children }) => <p className="m-0">{children}</p>,
 };
 
+/** The link drawing: a cross-link, a safe outside link (new tab) or just its words. */
+function linkComponent(slug: string, index: LinkIndex | null): Components['a'] {
+  return function MarkdownLink({ href, children }) {
+    if (href?.startsWith(crossLinkPrefix) === true) {
+      const name = decodeURIComponent(href.slice(crossLinkPrefix.length));
+      // While the story's names load (index null) the name shows as plain words.
+      const target = index === null ? undefined : resolveCrossLink(name, index);
+      return <CrossLink slug={slug} name={name} target={target} />;
+    }
+    if (href === undefined || !isAllowedLink(href)) return <>{children}</>;
+    return (
+      <a href={href} rel="nofollow ugc noopener" target="_blank" className="text-link underline">
+        {children}
+      </a>
+    );
+  };
+}
+
 /**
  * Renders the text.
  *
@@ -70,16 +108,19 @@ const components: Components = {
  * @returns the text as HTML, at the reading size
  */
 export function BibleMarkdown({ text }: { text: string }) {
+  // The links resolve against the open story's names (S1-E17-31).
+  const slug = useOpenStorySlug();
+  const { index, isLoaded } = useLinkTargets(slug);
   return (
     <div className="flex flex-col gap-3 text-base leading-[1.6] break-words text-ink">
       <Markdown
         skipHtml
         allowedElements={allowedElements}
         unwrapDisallowed
-        urlTransform={(url) => (isAllowedLink(url) ? url : '')}
-        components={components}
+        urlTransform={keptAddress}
+        components={{ ...components, a: linkComponent(slug, isLoaded ? index : null) }}
       >
-        {text}
+        {withCrossLinks(text)}
       </Markdown>
     </div>
   );

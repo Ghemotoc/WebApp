@@ -605,5 +605,60 @@
       "forReadersOf": "Pentru cititorii cărților",
       "empty": "Scrie rezumatul, textul sau titlurile asemănătoare și vor apărea aici."
     }
+  },
+  "search": {
+    "label": "Caută în această poveste",
+    "placeholder": "Caută în poveste",
+    "documentTitle": "Caută „{{query}}”: Story Atlas",
+    "heading": "Căutare",
+    "tooShort_one": "Scrie cel puțin {{count}} literă ca să cauți.",
+    "tooShort_few": "Scrie cel puțin {{count}} litere ca să cauți.",
+    "tooShort_other": "Scrie cel puțin {{count}} de litere ca să cauți.",
+    "nothing": "Nimic din această poveste nu se potrivește cu „{{query}}”.",
+    "count_one": "{{count}} rezultat pentru „{{query}}”",
+    "count_few": "{{count}} rezultate pentru „{{query}}”",
+    "count_other": "{{count}} de rezultate pentru „{{query}}”",
+    "failed": "N-am putut căuta în poveste. Verifică conexiunea și încearcă din nou.",
+    "kinds": {
+      "character_one": "Personaje ({{count}})",
+      "character_few": "Personaje ({{count}})",
+      "character_other": "Personaje ({{count}})",
+      "entry_one": "Intrări din biblie ({{count}})",
+      "entry_few": "Intrări din biblie ({{count}})",
+      "entry_other": "Intrări din biblie ({{count}})",
+      "chapter_one": "Capitole ({{count}})",
+      "chapter_few": "Capitole ({{count}})",
+      "chapter_other": "Capitole ({{count}})",
+      "scene_one": "Scene ({{count}})",
+      "scene_few": "Scene ({{count}})",
+      "scene_other": "Scene ({{count}})",
+      "idea_one": "Întrebări și idei ({{count}})",
+      "idea_few": "Întrebări și idei ({{count}})",
+      "idea_other": "Întrebări și idei ({{count}})",
+      "event_one": "Evenimente din cronologie ({{count}})",
+      "event_few": "Evenimente din cronologie ({{count}})",
+      "event_other": "Evenimente din cronologie ({{count}})",
+      "marketing_one": "Note de marketing ({{count}})",
+      "marketing_few": "Note de marketing ({{count}})",
+      "marketing_other": "Note de marketing ({{count}})"
+    }
+  },
+  "links": {
+    "notFound": "încă negăsit",
+    "chipsLabel": "Legături:",
+    "chipNotFound": "{{name}}: încă negăsit",
+    "mentionedIn": {
+      "heading": "Menționat în",
+      "none": "Încă nicio [[legătură]] către acest personaj. Scrie [[numele lui]] într-o intrare, un capitol sau o notiță.",
+      "loadFailed": "N-am putut încărca locurile în care e menționat acest personaj.",
+      "kinds": {
+        "character": "personaj",
+        "entry": "intrare din biblie",
+        "chapter": "capitol",
+        "scene": "scenă",
+        "idea": "notiță",
+        "event": "eveniment din cronologie"
+      }
+    }
   }
 }

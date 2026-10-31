@@ -3,11 +3,11 @@
  *
  * "Story Atlas", the story switcher, "Write" (the same story's chapters in the writer section,
  * so "Plan" and "Write" sit side by side, S1-E17 notes) and "New story", which opens the usual
- * New story form and comes back to the new story's plan (S1-E17-01). Under it, the row of
- * sections (AtlasSectionNav: At a glance, Characters, Connections, Bible, Storyline, Ideas and
- * Marketing). No doodles: a working screen with many controls. Who uses it: every Story Atlas
- * page (StoryAtlasPage, CharactersPage, ConnectionsPage, BiblePage, StorylinePage, IdeasPage and
- * MarketingPage).
+ * New story form and comes back to the new story's plan (S1-E17-01). Under them, the search box
+ * (AtlasSearchBox, S1-E17-30), then the row of sections (AtlasSectionNav: At a glance,
+ * Characters, Connections, Bible, Storyline, Ideas and Marketing). No doodles: a working screen
+ * with many controls. Who uses it: every Story Atlas page (StoryAtlasPage, CharactersPage,
+ * ConnectionsPage, BiblePage, StorylinePage, IdeasPage, MarketingPage and AtlasSearchPage).
  */
 import { Link } from 'react-router';
 
@@ -15,6 +15,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasSearchBox } from './AtlasSearchBox';
 import { AtlasSectionNav, type AtlasSection } from './AtlasSectionNav';
 import { StorySwitcher } from './StorySwitcher';
 
@@ -27,7 +28,7 @@ const pillLink =
  *
  * @param props.slug - the story open now
  * @param props.writeAddress - where "Write" goes: the latest chapter, or the chapter list
- * @param props.section - the Story Atlas section open now
+ * @param props.section - the Story Atlas section open now, or null on the search page
  * @returns the bar
  */
 export function AtlasTopBar({
@@ -37,7 +38,7 @@ export function AtlasTopBar({
 }: {
   slug: string;
   writeAddress: string;
-  section: AtlasSection;
+  section: AtlasSection | null;
 }) {
   const { t } = useAtlasTranslation();
   return (
@@ -56,6 +57,7 @@ export function AtlasTopBar({
           </Link>
         </nav>
       </div>
+      <AtlasSearchBox slug={slug} />
       <AtlasSectionNav slug={slug} current={section} />
     </div>
   );

@@ -5,14 +5,16 @@
  *
  * Title, tags (typed with commas), section and text each save by themselves (Story Atlas
  * principle: no Save button to forget); the text box grows with the text.
- * Who uses it: BibleEntryView. What it calls: the save prop (useStoryBible's saveEntry) and
- * lib/bibleTags.ts.
+ * The text's [[Name]] links show as chips under it (S1-E17-31).
+ * Who uses it: BibleEntryView. What it calls: the save prop (useStoryBible's saveEntry),
+ * lib/bibleTags.ts and CrossLinkChips.
  */
 import type { BibleEntry, BibleEntryChange, StoryBible } from '../api/bible';
 import { useBibleSectionName } from '../hooks/useBibleSectionName';
 import { formatTags, parseTags } from '../lib/bibleTags';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { CrossLinkChips } from './CrossLinkChips';
 import { PlanSelectField } from './PlanSelectField';
 import { PlanTextField } from './PlanTextField';
 
@@ -69,6 +71,7 @@ export function BibleEntryEditor({ bible, entry, save }: BibleEntryEditorProps) 
         isMultiline
         maxLength={100000}
       />
+      <CrossLinkChips texts={[entry.body]} />
     </div>
   );
 }

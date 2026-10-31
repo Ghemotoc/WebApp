@@ -8,7 +8,8 @@
  * marketing notes. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryPlan → story_plan() and its savers; useStoryMarketing → story_marketing() and
- * update_story_marketing(); MarketingFields and BackCoverPreview; useMyStories for the top bar.
+ * update_story_marketing(); MarketingFields and BackCoverPreview; useScrollToHash for a field
+ * opened from a search result; useMyStories for the top bar.
  */
 import { useParams } from 'react-router';
 
@@ -19,6 +20,7 @@ import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
 import type { MarketingNotes } from '../api/marketing';
 import type { StoryPlanPage } from '../api/storyPlans';
+import { useScrollToHash } from '../hooks/useScrollToHash';
 import { useStoryMarketing } from '../hooks/useStoryMarketing';
 import { useStoryPlan } from '../hooks/useStoryPlan';
 import { writeAddressFor } from '../lib/writeAddress';
@@ -41,6 +43,8 @@ function MarketingBody({
   const { t } = useAtlasTranslation();
   const { savePlan, saveStory } = useStoryPlan(slug);
   const { save } = useStoryMarketing(slug);
+  // "#atlas-marketing-<field>" (from a search result) brings that field into view.
+  useScrollToHash(true);
   return (
     <>
       <header className="flex flex-col gap-2">

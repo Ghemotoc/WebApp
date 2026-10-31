@@ -365,6 +365,15 @@ const writeRoutes: RouteObject[] = [
       return { Component: MarketingPage };
     },
   },
+  // Search across one story (S1-E17-30): the results of the top bar's search box.
+  {
+    path: '/plan/s/:storySlug/search',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { AtlasSearchPage } = await import('@/features/atlas/components/AtlasSearchPage');
+      return { Component: AtlasSearchPage };
+    },
+  },
   // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
   // or deletes it.
   {

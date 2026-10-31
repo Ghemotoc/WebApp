@@ -605,5 +605,60 @@
       "forReadersOf": "For readers of",
       "empty": "Write a logline, a blurb or comparable titles and they’ll show here."
     }
+  },
+  "search": {
+    "label": "Search this story",
+    "placeholder": "Search this story",
+    "documentTitle": "Search “{{query}}”: Story Atlas",
+    "heading": "Search",
+    "tooShort_one": "Type at least {{count}} letter to search.",
+    "tooShort_few": "Type at least {{count}} letters to search.",
+    "tooShort_other": "Type at least {{count}} letters to search.",
+    "nothing": "Nothing in this story matches “{{query}}”.",
+    "count_one": "{{count}} result for “{{query}}”",
+    "count_few": "{{count}} results for “{{query}}”",
+    "count_other": "{{count}} results for “{{query}}”",
+    "failed": "We couldn’t search the story. Check your connection and try again.",
+    "kinds": {
+      "character_one": "Characters ({{count}})",
+      "character_few": "Characters ({{count}})",
+      "character_other": "Characters ({{count}})",
+      "entry_one": "Bible entries ({{count}})",
+      "entry_few": "Bible entries ({{count}})",
+      "entry_other": "Bible entries ({{count}})",
+      "chapter_one": "Chapters ({{count}})",
+      "chapter_few": "Chapters ({{count}})",
+      "chapter_other": "Chapters ({{count}})",
+      "scene_one": "Scenes ({{count}})",
+      "scene_few": "Scenes ({{count}})",
+      "scene_other": "Scenes ({{count}})",
+      "idea_one": "Questions and ideas ({{count}})",
+      "idea_few": "Questions and ideas ({{count}})",
+      "idea_other": "Questions and ideas ({{count}})",
+      "event_one": "Timeline events ({{count}})",
+      "event_few": "Timeline events ({{count}})",
+      "event_other": "Timeline events ({{count}})",
+      "marketing_one": "Marketing notes ({{count}})",
+      "marketing_few": "Marketing notes ({{count}})",
+      "marketing_other": "Marketing notes ({{count}})"
+    }
+  },
+  "links": {
+    "notFound": "not found yet",
+    "chipsLabel": "Links:",
+    "chipNotFound": "{{name}}: not found yet",
+    "mentionedIn": {
+      "heading": "Mentioned in",
+      "none": "No [[links]] to this character yet. Write [[their name]] in an entry, a chapter or a note.",
+      "loadFailed": "We couldn’t load where this character is mentioned.",
+      "kinds": {
+        "character": "character",
+        "entry": "bible entry",
+        "chapter": "chapter",
+        "scene": "scene",
+        "idea": "note",
+        "event": "timeline event"
+      }
+    }
   }
 }
