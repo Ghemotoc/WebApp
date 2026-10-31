@@ -337,6 +337,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: BiblePage };
     },
   },
+  // A story's storyline (S1-E17-19 to 22): the chapter board, the timeline and the
+  // point-of-view lanes, one toggle apart.
+  {
+    path: '/plan/s/:storySlug/storyline',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { StorylinePage } = await import('@/features/atlas/components/StorylinePage');
+      return { Component: StorylinePage };
+    },
+  },
   // Story settings (S1-E3-05): the writer changes a story's basics, cover, status and comments,
   // or deletes it.
   {
