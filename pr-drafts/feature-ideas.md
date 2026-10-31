@@ -36,3 +36,9 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 ## Sent
 
 (none yet)
+
+### Furthest place for an exact read-through (idea, 31 Oct 2026)
+As a writer, I want the read-through rate to count every reader who reached the end, even if they scrolled back up afterwards, so that the number matches what really happened. Why: the dashboard (S1-E3-07) uses each reader's latest place; keeping a "furthest place" beside it is one column and makes the rate exact.
+
+### A "Where readers stop" line per chapter (idea, 31 Oct 2026)
+As a writer, I want to see roughly where in a chapter readers stop (first, middle or last third, as totals with the "fewer than 5" rule), so that I know which scenes lose people. Why: the places are already saved for the Library; grouping them into thirds keeps it aggregate and gives writers something they can act on.
