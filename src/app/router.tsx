@@ -8,7 +8,7 @@
  */
 import { Navigate, type RouteObject } from 'react-router';
 
-import { SetupPage } from '@/features/account/components/SetupPage';
+import { OnboardingPage } from '@/features/onboarding/components/OnboardingPage';
 import { ConfirmEmailPage } from '@/features/auth/components/ConfirmEmailPage';
 import { ForgotPasswordPage } from '@/features/auth/components/ForgotPasswordPage';
 import { NotOpenPage } from '@/features/auth/components/NotOpenPage';
@@ -675,8 +675,9 @@ function pageRoutes(): RouteObject[] {
     { path: '/reset-password', element: <ResetPasswordPage /> },
     // Once sign-up is public, a visitor from a closed market lands here (S1-E2-10).
     { path: '/not-open', element: <NotOpenPage /> },
-    // Username and pen name (S1-E2-04): setup after the email is confirmed, and Settings.
-    { path: '/setup', element: <SetupPage /> },
+    // Set up your profile (S1-E2-04, S1-E2-06): the steps after the email is confirmed (and, for
+    // under-18s, the age check); names are changed later in Settings.
+    { path: '/setup', element: <OnboardingPage /> },
     // Settings loads when opened (PEOPLE-1): its bio and blocked-accounts sections bring the
     // people feature, which the first download of every page (the chapter reader's included)
     // shouldn't carry.

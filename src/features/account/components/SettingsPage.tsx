@@ -3,7 +3,7 @@
  *
  * Who shows it: the router, at /settings; the top bar links here while signed in.
  * What it shows today: "Signed in as …", the Account panel (username and pen name), "About you"
- * (the bio), the Email address panel (S1-E2-05, added 25 Oct 2026: only the owner sees it),
+ * (the bio), "What you like" (the county, likes and adult messages from setup, S1-E2-06), the Email address panel (S1-E2-05, added 25 Oct 2026: only the owner sees it),
  * Notifications (the notification emails, S1-E7-02), "Blocked accounts" (S1-E5-05), Canva
  * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05) and the Legal panel. The board's
  * other tabs (Privacy, Ways to log in, Messages, Language, My certificates) arrive
@@ -19,6 +19,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { CanvaSettingsSection } from '@/features/canva/components/CanvaSettingsSection';
+import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
 import { AvatarSettingsSection } from '@/features/pictures/components/AvatarSettingsSection';
 import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
@@ -68,6 +69,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       {names.handle !== null && <AccountNamesSection account={account} names={names} />}
       {names.handle !== null && <BioSettingsSection handle={names.handle} />}
       {names.handle !== null && <AvatarSettingsSection handle={names.handle} />}
+      {/* The county, likes and (16 and 17) adult messages chosen in setup (S1-E2-06). */}
+      {names.handle !== null && <LikesSettingsSection />}
       {/* Every signed-in account sees and can change its own address, minors included. */}
       <EmailSettingsSection />
       <BirthdaySettingsSection />

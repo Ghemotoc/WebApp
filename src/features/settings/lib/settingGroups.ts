@@ -113,6 +113,7 @@ export function ungroupedKeys(allKeys: string[]): string[] {
 /** The Discover shelves staff can choose from (S1-E5-03); "categories" is one shelf per category. */
 export const discoverShelfWords = [
   'following',
+  'picked',
   'popular',
   'rising',
   'new',

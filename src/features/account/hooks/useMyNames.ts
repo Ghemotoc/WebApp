@@ -2,7 +2,7 @@
  * useMyNames: the signed-in person's username and pen name, how long each must wait between
  * changes, and saving them (story S1-E2-04).
  *
- * Who calls it: SetupPage (/setup), AccountNamesSection (/settings) and SetupProfileNotice.
+ * Who calls it: OnboardingPage (/setup), AccountNamesSection (/settings) and SetupProfileNotice.
  * What it calls: api/accountNames.ts (profiles through profiles_select_own; the public settings;
  * set_my_handle() and set_my_pen_name()), and useSession to know whether someone is signed in.
  * Signed out, it never asks the database and the names are null.

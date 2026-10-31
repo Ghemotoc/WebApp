@@ -13,6 +13,8 @@
   "lists": {
     "following": "Noutăți de la scriitorii pe care îi urmărești",
     "followingEyebrow": "Urmărești",
+    "picked": "Alese pentru tine",
+    "pickedEyebrow": "Alegerile tale",
     "updated": "Actualizate recent",
     "updatedEyebrow": "Capitole noi",
     "new": "Povești noi",
@@ -70,7 +72,8 @@
     "followingSignedOut": "Intră în cont ca să vezi poveștile noi ale scriitorilor pe care îi urmărești.",
     "logIn": "Intră în cont",
     "ratingNote": "Clasificările funcționează ca la filme: o poveste 16+ sau 18+ e ascunsă celor mai tineri.",
-    "unknownList": "Nu există o astfel de listă."
+    "unknownList": "Nu există o astfel de listă.",
+    "pickedSignedOut": "Intră în cont ca să vezi povești alese după ce ai spus că îți place."
   },
   "sort": {
     "relevance": "Cele mai potrivite",

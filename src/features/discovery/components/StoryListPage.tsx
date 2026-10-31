@@ -147,8 +147,9 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
     setSearch(new URL(listAddress(next), window.location.origin).searchParams, { replace: true });
   }
   if (heading.isUnknown) return <UnknownList />;
-  // Step 3: the following list belongs to a signed-in reader.
-  const needsLogIn = kind === 'following' && isKnown && userId === null;
+  // Step 3: the following list and "Picked for you" (S1-E2-06) belong to a signed-in reader.
+  const isPersonal = kind === 'following' || kind === 'picked';
+  const needsLogIn = isPersonal && isKnown && userId === null;
   return (
     <>
       <title>
@@ -157,7 +158,8 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
       <StoryListHeader request={request} heading={heading} total={needsLogIn ? null : list.total} />
       {needsLogIn ? (
         <Notice tone="info">
-          {t('seeAll.followingSignedOut')} <Link to="/sign-in">{t('seeAll.logIn')}</Link>
+          {t(kind === 'picked' ? 'seeAll.pickedSignedOut' : 'seeAll.followingSignedOut')}{' '}
+          <Link to="/sign-in">{t('seeAll.logIn')}</Link>
         </Notice>
       ) : (
         <>

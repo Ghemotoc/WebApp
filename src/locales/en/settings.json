@@ -152,6 +152,7 @@
     "atLeastOne": "Keep at least one shelf.",
     "shelves": {
       "following": "From writers you follow",
+      "picked": "Picked for you (from each reader’s own choices)",
       "popular": "Popular",
       "rising": "New and rising writers",
       "new": "New stories",

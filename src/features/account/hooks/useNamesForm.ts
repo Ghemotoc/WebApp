@@ -2,7 +2,7 @@
  * useNamesForm: the answers and the save step shared by the setup form and the Settings account
  * section (story S1-E2-04).
  *
- * Who calls it: SetupPage (both names in one save) and AccountNamesSection (each name on its own).
+ * Who calls it: SetupForm (both names in one save) and AccountNamesSection (each name on its own).
  * What it calls: useMyNames's save mutations (set_my_handle() and set_my_pen_name()).
  * What it keeps: the typed names, what the last save answered for each, and whether saving failed
  * because the database couldn't be reached.

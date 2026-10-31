@@ -134,10 +134,14 @@ test('an invited adult signs up, confirms the email from Mailpit and is confirme
       'active',
     );
 
-    // "Continue" goes to the home page, with no "Choose a username" notice.
-    await page.getByRole('link', { name: 'Continue' }).click();
+    // "Continue" goes to the home page, with no "Choose a username" notice; the rest of setup
+    // is offered instead (S1-E2-06).
+    await page.getByRole('link', { name: 'Continue', exact: true }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: 'Choose a username' })).toHaveCount(0);
+    await expect(
+      page.getByRole('heading', { name: 'Finish setting up your profile' }),
+    ).toBeVisible();
   } finally {
     removeAccount(address);
   }

@@ -113,9 +113,13 @@ select results_eq(
        ('public_notices', 0::bigint),
        ('quote_cards', 0::bigint),
        ('reading_positions', 0::bigint),
+       -- What someone said they like is theirs only (S1-E2-06).
+       ('reading_preferences', 0::bigint),
        -- How someone likes to read is theirs only (S1-E4-02).
        ('reading_settings', 0::bigint),
        ('rate_limit_events', 0::bigint),
+       -- The counties are reference data for the onboarding drop-down (S1-E2-06).
+       ('regions', 42::bigint),
        ('report_detail_requests', 0::bigint),
        ('report_reason_tiers', 0::bigint),
        ('reports', 0::bigint),
@@ -151,7 +155,7 @@ select results_eq(
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
-  'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories and tags, nothing else'
+  'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories, tags and counties, nothing else'
 );
 
 select * from finish();

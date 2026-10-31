@@ -106,6 +106,14 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Answers.** A yes stores the guardian box and the privacy notice and terms versions; a no erases the account through `erase_unchecked_account()` (which now deletes `parental_consents` too); a withdrawal makes the account read-only and notifies the writer (`parental_consent_withdrawn`). `admin_withdraw_parental_consent(target_user_id, reason)` does the same for staff (owner, admin, moderator), logging `parental_consent.withdrawn`.
 - **The clean-up.** `erase_unchecked_accounts()` also erases an account still waiting for a parent after the deadline; a withdrawn consent is never erased automatically (OPEN for the lawyer).
 
+## Onboarding (S1-E2-06)
+
+- **`profiles.onboarded_at`** is empty until the person finishes or skips setup; accounts made before this migration, and every seed persona, count as set up. `onboarding_is_due()` is true for an empty value once the account is past the age check (not deleted, unconfirmed, banned, failed, not admitted or still pending).
+- **`regions`** lists Romania's 41 counties and Bucharest (ISO 3166-2 codes); everyone reads it, nobody writes it. **`profiles.region_code`** is optional and only for the "Popular in your area" shelf.
+- **`reading_preferences`**: one row per pick (`read` or `write` with a category, `topic` with a recommended, approved tag), the person's own explicit choices. The owner reads them; `save_my_preferences()` replaces them (at most 30 topics; hints `unknown_choice`, `too_many_topics`). `browse_stories('picked')` lists stories in a liked category or with a picked topic, and Discover's `discover_shelves` setting now has `picked` after `following`.
+- **`profiles.adults_may_message`** is off by default and only a 16 or 17-year-old can turn it on (`set_adults_may_message()`, hint `not_16_or_17`); S1-E9-03 reads it.
+- **Reading:** `my_onboarding()` (the age group, never the year of birth), `onboarding_topics(language)`. **Writes:** `save_my_region()` (hint `unknown_region`) and `finish_onboarding()` (hint `handle_missing`).
+
 ## Country and markets (S1-E2-10)
 
 - **`markets`** lists each country: open or not, its minimum age (16 in Australia, Q19) and its languages (BCP 47). Romania is open; GB, IE, US, CA, AU and NZ are closed until their legal check. Anyone may read it; it changes by migration until S1-E11-05.

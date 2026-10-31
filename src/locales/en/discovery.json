@@ -13,6 +13,8 @@
   "lists": {
     "following": "New from writers you follow",
     "followingEyebrow": "Following",
+    "picked": "Picked for you",
+    "pickedEyebrow": "Your picks",
     "updated": "Recently updated",
     "updatedEyebrow": "New chapters",
     "new": "New stories",
@@ -70,7 +72,8 @@
     "followingSignedOut": "Log in to see new stories from writers you follow.",
     "logIn": "Log in",
     "ratingNote": "Ratings work like film ratings: a 16+ or 18+ story is hidden from anyone younger.",
-    "unknownList": "There is no such list."
+    "unknownList": "There is no such list.",
+    "pickedSignedOut": "Log in to see stories picked from what you said you like."
   },
   "sort": {
     "relevance": "Best match",
