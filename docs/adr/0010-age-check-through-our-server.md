@@ -21,9 +21,12 @@ A signed-in person checks their age on Yoti's hosted page. Our server talks to Y
 
 ## Open points kept out of the code (CLAUDE.md rule 13)
 - The age buffer at the 13 line and whether Yoti also checks the 16 line (story S1-E2-08): Yoti-side settings, left unset.
-- Yoti's price and contract (Q55 and question 4a); the manual check's method is part 08b.
+- Yoti's price and contract (Q55 and question 4a).
+- How staff verify an age by hand (story S1-E2-08): part 08b records only the outcome and the reason the person reads; the method is for Robert and the lawyer.
 
 ## Consequences
 - The stand-in lets anyone pass. It must never be on where minors can join: GO-LIVE sets `YOTI=real` before `adults_only` goes off.
 - GO-LIVE: sign Yoti's contract and data processing agreement, set `YOTI=real`, `YOTI_API_KEY`, `YOTI_SDK_ID`, `YOTI_NOTIFICATION_PUBLIC_KEY` and `AGE_CHECK_SECRET` in Cloudflare and the same `AGE_CHECK_SECRET` in Vault as `age_check_secret`, register `/api/age-check/webhook` as the notification address, and add Yoti to the privacy notice and the record of processing.
+- Part 08b keeps one row per finished check (`age_check_attempts`: the line, the outcome and the method, for 6 months) so a moderator deciding a manual check sees what Yoti said, and a manual request (`manual_age_checks`) with the decision and its reason. Who decided is only in the audit log, so the person never sees a staff name.
+- An account still waiting 14 days after sign-up, with no manual check open, loses its personal data every night (`erase_unchecked_accounts()`): the profile is marked deleted, the year and month of birth, pen name, bio and birthday are erased, the email is replaced and the login is shut. Deleting the row itself waits for the account deletion story (S1-E13-05), because other tables point to profiles.
 - Yoti's addresses, request fields, signature header and salt length were written from Yoti's documentation and must be checked against it, in Yoti's sandbox, before go-live.

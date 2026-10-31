@@ -228,7 +228,8 @@
     "tabs": {
       "label": "Utilizatori",
       "accounts": "Conturi",
-      "invites": "Invitații"
+      "invites": "Invitații",
+      "ageChecks": "Verificări manuale ale vârstei"
     },
     "searchFormLabel": "Găsește un cont",
     "searchLabel": "Nume de utilizator, pseudonim, email sau ID",
@@ -723,5 +724,44 @@
     "saveLabel": "Salvează limbile pe care le citește @{{handle}}",
     "saved": "Salvat.",
     "failed": "Limbile nu au putut fi salvate. Încearcă din nou."
+  },
+  "manualChecks": {
+    "documentTitle": "Verificări manuale ale vârstei",
+    "eyebrow": "Utilizatori",
+    "heading": "Verificări manuale ale vârstei",
+    "intro": "Persoane la care verificarea vârstei nu a mers și care au cerut să le verifice cineva. Răspunde în 5 zile lucrătoare. Vezi anul nașterii aici doar ca să decizi; fiecare cerere afișată e înregistrată. Nu există niciodată o fotografie sau un act.",
+    "notAllowed": "Doar proprietarul, administratorii și moderatorii se ocupă de verificările manuale ale vârstei.",
+    "none": "Nimeni nu așteaptă o verificare manuală a vârstei.",
+    "birth": "Anul nașterii",
+    "result": "Verificarea vârstei acum",
+    "asked": "Cerută",
+    "answerBy": "Răspuns până la",
+    "attempts": "Verificări cu Yoti",
+    "noAttempts": "Niciuna înregistrată",
+    "attempt": "{{when}}: pragul de {{line}} ani, {{outcome}}, {{method}}",
+    "outcomes": {
+      "passed": "reușită",
+      "failed": "nereușită"
+    },
+    "methods": {
+      "facial_estimation": "selfie",
+      "id_document": "act de identitate",
+      "manual": "verificare manuală"
+    },
+    "decide": "Decide",
+    "decision": "Decizia",
+    "decisions": {
+      "passed_18": "Confirmă 18 ani sau mai mult",
+      "passed_13": "Confirmă 13 ani sau mai mult",
+      "refused": "Nu se poate confirma"
+    },
+    "reason": "Motivul (persoana îl citește)",
+    "reasonHint": "Persoana citește motivul în aplicație. Cine a decis rămâne doar în jurnalul de audit.",
+    "save": "Salvează decizia",
+    "failures": {
+      "not_allowed": "Rolul tău nu poate face asta.",
+      "refused": "Nu a mers: poate cererea are deja o decizie. Reîncarcă pagina.",
+      "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
+    }
   }
 }

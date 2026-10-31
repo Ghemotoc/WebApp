@@ -228,7 +228,8 @@
     "tabs": {
       "label": "Users",
       "accounts": "Accounts",
-      "invites": "Invites"
+      "invites": "Invites",
+      "ageChecks": "Manual age checks"
     },
     "searchFormLabel": "Find an account",
     "searchLabel": "Username, pen name, email or user ID",
@@ -723,5 +724,44 @@
     "saveLabel": "Save the languages @{{handle}} reads",
     "saved": "Saved.",
     "failed": "The languages couldn't be saved. Try again."
+  },
+  "manualChecks": {
+    "documentTitle": "Manual age checks",
+    "eyebrow": "Users",
+    "heading": "Manual age checks",
+    "intro": "People whose age check didn’t work and who asked for a person to check. Answer within 5 working days. You see the year of birth here only to decide; every request shown is logged. There is never a photo or a document.",
+    "notAllowed": "Only the owner, admins and moderators handle manual age checks.",
+    "none": "No one is waiting for a manual age check.",
+    "birth": "Year of birth",
+    "result": "Age check now",
+    "asked": "Asked",
+    "answerBy": "Answer by",
+    "attempts": "Checks with Yoti",
+    "noAttempts": "None recorded",
+    "attempt": "{{when}}: {{line}} line, {{outcome}}, {{method}}",
+    "outcomes": {
+      "passed": "passed",
+      "failed": "failed"
+    },
+    "methods": {
+      "facial_estimation": "selfie",
+      "id_document": "ID document",
+      "manual": "manual check"
+    },
+    "decide": "Decide",
+    "decision": "Decision",
+    "decisions": {
+      "passed_18": "Confirm 18 or over",
+      "passed_13": "Confirm 13 or over",
+      "refused": "Can’t confirm"
+    },
+    "reason": "Reason (the person reads it)",
+    "reasonHint": "The person reads this in the app. Who decided stays only in the audit log.",
+    "save": "Save the decision",
+    "failures": {
+      "not_allowed": "Your role can’t do this.",
+      "refused": "That didn’t work: the request may already be decided. Reload the page.",
+      "unreachable": "We couldn’t reach the database. Try again in a moment."
+    }
   }
 }

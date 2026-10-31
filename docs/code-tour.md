@@ -235,6 +235,17 @@ Yoti → /age-check/return (AgeCheckReturnPage) → my_age_check() every 2 s →
 
 `AgeCheckNotice` in `AppLayout` links an account that waits for a check to `/age-check` (hidden while `adults_only` is on). While `YOTI` isn't "real", `server/age-check/stub.ts` plays Yoti with its own page. Tests: `199` in `supabase/tests/database/`, `server/age-check.test.ts`, `src/features/age-check/lib/returnOutcome.test.ts`, `e2e/age-check.spec.ts`.
 
+When a check fails (S1-E2-08b), `ManualCheckPanel` offers "Ask for a manual check":
+
+```
+ManualCheckPanel → requestManualAgeCheck() → request_manual_age_check() → manual_age_checks
+Staff › Users › Manual age checks (src/features/staff/components/age-checks/ManualAgeChecksPage)
+  → useManualAgeChecks → admin_manual_age_checks() (year of birth and attempts, each read logged)
+  → "Decide" (ManualDecisionForm) → admin_decide_manual_age_check() → profiles + audit_log + notify()
+```
+
+Three nightly jobs belong here too: `invite_new_adults_to_age_check()` (someone now 18 who holds only "13 or over"), `erase_unchecked_accounts()` (the 14-day clean-up) and `purge_old_age_check_attempts()`. Tests: `200` in `supabase/tests/database/`, `e2e/manual-age-check.spec.ts`.
+
 ## Logging in (S1-E2-05)
 
 ```

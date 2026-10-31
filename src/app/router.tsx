@@ -170,6 +170,15 @@ const staffRoutes: RouteObject = {
         return { Component: UsersPage };
       },
     },
+    // Manual age checks (S1-E2-08b): owner, admin and moderator.
+    {
+      path: 'users/age-checks',
+      lazy: async () => {
+        const { ManualAgeChecksPage } =
+          await import('@/features/staff/components/age-checks/ManualAgeChecksPage');
+        return { Component: ManualAgeChecksPage };
+      },
+    },
     {
       path: 'users/invites',
       lazy: async () => {

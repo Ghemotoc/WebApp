@@ -6,7 +6,9 @@
  * - my_age_check() in the database (…_s1_e2_08a_age_check.sql): the stored result, the line a
  *   new check tests and whether one can start or is on its way;
  * - POST /api/age-check/start (server/age-check.ts) with the person's own sign-in: a new session
- *   at Yoti (or the stand-in) and the page to open. The app never sees Yoti's key (criterion 1).
+ *   at Yoti (or the stand-in) and the page to open. The app never sees Yoti's key (criterion 1);
+ * - request_manual_age_check() (…_s1_e2_08b_manual_age_checks.sql): "Ask for a manual check"
+ *   after a failed check (part 08b).
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { Database } from '@/lib/database.types';
@@ -24,6 +26,18 @@ export type AgeCheckResultValue = Database['public']['Enums']['age_check_result'
 /** How the stored result was reached, from the generated enum (rule 14). */
 export type AgeCheckMethodValue = Database['public']['Enums']['age_check_method'];
 
+/** A manual check request's state: open, or what staff decided (part 08b). */
+export type ManualCheckStatus = 'open' | 'passed_13' | 'passed_18' | 'refused';
+
+/** The person's latest manual check request. */
+export interface ManualCheck {
+  status: ManualCheckStatus;
+  requestedAt: string;
+  decidedAt: string | null;
+  /** Staff's reason, once decided. */
+  reason: string | null;
+}
+
 /** What the age check screens know about the person's check. */
 export interface MyAgeCheck {
   result: AgeCheckResultValue;
@@ -36,6 +50,9 @@ export interface MyAgeCheck {
   isChecking: boolean;
   /** The account waits for a check to pass before it can write. */
   needsCheck: boolean;
+  /** A manual check may be asked now: the latest check failed and nothing was asked since. */
+  canAskManual: boolean;
+  manualCheck: ManualCheck | null;
 }
 
 /** What my_age_check() answers. */
@@ -48,6 +65,28 @@ interface MyAgeCheckRow {
   can_start: boolean;
   is_checking: boolean;
   needs_check: boolean;
+  can_ask_manual: boolean;
+  manual_check: {
+    status: ManualCheckStatus;
+    requested_at: string;
+    decided_at: string | null;
+    reason: string | null;
+  } | null;
+}
+
+/**
+ * The latest manual check in the app's own shape.
+ *
+ * @returns the request, or null without one
+ */
+function manualCheckFrom(row: MyAgeCheckRow['manual_check']): ManualCheck | null {
+  if (row === null) return null;
+  return {
+    status: row.status,
+    requestedAt: row.requested_at,
+    decidedAt: row.decided_at,
+    reason: row.reason,
+  };
 }
 
 /** The cache key of the person's age check. */
@@ -74,6 +113,8 @@ export async function fetchMyAgeCheck(client: AppSupabaseClient): Promise<MyAgeC
     canStart: row.can_start,
     isChecking: row.is_checking,
     needsCheck: row.needs_check,
+    canAskManual: row.can_ask_manual,
+    manualCheck: manualCheckFrom(row.manual_check),
   };
 }
 
@@ -111,4 +152,18 @@ export async function startAgeCheck(client: AppSupabaseClient): Promise<AgeCheck
   if (response.ok && started.success) return started.data;
   const failed = ageCheckFailureSchema.safeParse(body);
   throw new AgeCheckStartError(failed.success ? failed.data.error : 'unavailable');
+}
+
+/**
+ * Asks for a manual check after a failed check (part 08b, criterion 7).
+ *
+ * @param client - the shared Supabase client
+ * Errors: throws when the database refuses (no failed check first, or one already open) or can't
+ *   be reached; the page then says it couldn't send the request.
+ */
+export async function requestManualAgeCheck(client: AppSupabaseClient): Promise<void> {
+  const answer = await client.rpc('request_manual_age_check');
+  if (answer.error !== null) {
+    throw new Error(`Could not ask for a manual check: ${answer.error.message}`);
+  }
 }
