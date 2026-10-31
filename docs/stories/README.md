@@ -12,14 +12,14 @@ All seven stages follow. Stage 1 is detailed enough to build; Stages 2 to 7 are 
 
 | Stage | Epics | Stories |
 | --- | --- | --- |
-| Stage 1: Platform | 17 | 160 |
+| Stage 1: Platform | 17 | 164 |
 | Stage 2: Newsroom | 4 | 13 |
 | Stage 3: Freelancers | 4 | 14 |
 | Stage 4: Publishers | 3 | 10 |
 | Stage 5: Imprint and newspapers | 4 | 12 |
 | Stage 6: Academia | 4 | 11 |
 | Stage 7: NGO | 4 | 11 |
-| **Total** | 40 | 231 |
+| **Total** | 40 | 235 |
 
 ### Stage 1: Platform (epics and user stories)
 
@@ -40,7 +40,7 @@ Scope: writing, reading, comments, follows, forums with user-created spaces, pri
 - Every story also has to pass the global Definition of Ready and Definition of Done in the CTO pack.
 - What each screen needs from the back end, what can be mocked and the build order are in the CTO pack, section 1.7. Each epic below names its screen group and wave.
 
-**Story count:** 178 stories in 17 epics (S1-E17 Story Atlas, 31 stories plus its epic check, was added on 31 Oct 2026 at Robert's request): 130 feature stories plus one epic check story per epic (S1-E1-QA to S1-E16-QA, added 17 Oct 2026, 12:36 at Robert's request; Must for the 11 epics with March MVP stories, Should for the other five; S1-E13 has no March story since 17 Oct 2026, 12:44). S1-E11-18 (edit interface text) was added on 17 Oct 2026, 19:16 to 19:19 at Robert's request and is in the March MVP, with the website CMS stories S1-E11-06, 10 and 12. S1-E11-16 (adding public-domain classics from the admin site) was added on 17 Oct 2026 at 12:00 at Robert's request. S1-E11-14 (landing pages), S1-E11-15 (contests) and S1-E12-05 (ad slot booking and fill order) were added on 17 Oct 2026 at 11:06 at Robert's request; all three are Should and come after the March MVP. S1-E11-13 (support tickets in the admin site) and S1-E10-13 (country-specific emergency and safety contacts) were added on 17 Oct 2026. Four were added on 16 Oct 2026 (evening): S1-E2-11, S1-E3-13, S1-E5-07 and S1-E11-06, all Should or Could. Eight were added on 16 Oct 2026 (late evening): S1-E5-08, S1-E11-07 to S1-E11-12 and S1-E13-05. Four more came with Robert's answers to the 71 questions (16 Oct 2026, late evening): S1-E1-06 (the move to our own Supabase), S1-E5-09 (See all page), S1-E12-04 (ad-network ads) and S1-E14-04 (Contact us). Three were added on 25 Oct 2026 at Robert's request: S1-E2-12 (optional birthday greeting), S1-E2-13 (joining anniversary greeting) and S1-E11-19 (edit email templates, in the March MVP with S1-E11-18). The March MVP is in section 1.13.
+**Story count:** 182 stories in 17 epics (S1-E17 Story Atlas, 35 stories plus its epic check, was added on 31 Oct 2026 at Robert's request): 130 feature stories plus one epic check story per epic (S1-E1-QA to S1-E16-QA, added 17 Oct 2026, 12:36 at Robert's request; Must for the 11 epics with March MVP stories, Should for the other five; S1-E13 has no March story since 17 Oct 2026, 12:44). S1-E11-18 (edit interface text) was added on 17 Oct 2026, 19:16 to 19:19 at Robert's request and is in the March MVP, with the website CMS stories S1-E11-06, 10 and 12. S1-E11-16 (adding public-domain classics from the admin site) was added on 17 Oct 2026 at 12:00 at Robert's request. S1-E11-14 (landing pages), S1-E11-15 (contests) and S1-E12-05 (ad slot booking and fill order) were added on 17 Oct 2026 at 11:06 at Robert's request; all three are Should and come after the March MVP. S1-E11-13 (support tickets in the admin site) and S1-E10-13 (country-specific emergency and safety contacts) were added on 17 Oct 2026. Four were added on 16 Oct 2026 (evening): S1-E2-11, S1-E3-13, S1-E5-07 and S1-E11-06, all Should or Could. Eight were added on 16 Oct 2026 (late evening): S1-E5-08, S1-E11-07 to S1-E11-12 and S1-E13-05. Four more came with Robert's answers to the 71 questions (16 Oct 2026, late evening): S1-E1-06 (the move to our own Supabase), S1-E5-09 (See all page), S1-E12-04 (ad-network ads) and S1-E14-04 (Contact us). Three were added on 25 Oct 2026 at Robert's request: S1-E2-12 (optional birthday greeting), S1-E2-13 (joining anniversary greeting) and S1-E11-19 (edit email templates, in the March MVP with S1-E11-18). The March MVP is in section 1.13.
 
 | Epic | Name | Stories |
 | --- | --- | --- |
@@ -60,7 +60,7 @@ Scope: writing, reading, comments, follows, forums with user-created spaces, pri
 | S1-E14 | Legal pages and compliance | 5 |
 | S1-E15 | Analytics and the March test | 4 |
 | S1-E16 | Platforms and app stores | 5 |
-| S1-E17 | Story Atlas (the writer's private planning workspace) | 32 |
+| S1-E17 | Story Atlas (the planning side of every story) | 36 |
 
 ---
 

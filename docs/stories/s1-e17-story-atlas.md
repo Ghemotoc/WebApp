@@ -1,6 +1,6 @@
 > Added 31 Oct 2026 at Robert's request (builder thread, 07:58). Robert's own story numbers (US-1.1 to US-10.2) are kept in brackets.
 
-#### S1-E17 Story Atlas: the writer's private planning workspace
+#### S1-E17 Story Atlas: the planning side of every story
 
 Story Atlas is the private planning side of every Ghemotoc story. It complements the writer section that already exists (S1-E3): a story the writer creates with "New story" (S1-E3-01) is the same story they plan in Story Atlas, and its chapters are the same chapters they write in the chapter editor (S1-E3-02) and publish (S1-E3-03). Story Atlas adds what a writer needs around the text: the story at a glance, characters, connections (relationship map and family tree), the story bible, the storyline (board, timeline, POV lanes), planning fields on each chapter, questions and ideas, marketing notes, and search with cross-links (Robert, 31 Oct 2026, 08:00: "intertwined with what we already have for the writer section when they start a new story, so it should complement it").
 
@@ -13,11 +13,11 @@ Story Atlas is the private planning side of every Ghemotoc story. It complements
 - Fields are generous by default, and the writer can add their own.
 - Images are blank by default. Only the writer's own uploads appear.
 - No AI suggestions, generation or analysis anywhere in Story Atlas.
-- Private to the writer: nobody else, staff included, reads it through the app.
+- Private by default, and the writer chooses what else readers can see (Robert, 31 Oct 2026, 08:02): beyond the story and its chapters, the writer can make any part of the plan public, such as the characters, the relationships between them, the map or the family tree, and readers then see it with the story (S1-E17-32 to S1-E17-35). Nothing is public until the writer turns it on.
 
 **Non-functional requirements**
 
-- Privacy: only the owner can read or edit their Story Atlas, enforced in RLS (CLAUDE.md rule 1).
+- Privacy: only the owner can edit their Story Atlas, and only the owner can read anything they haven't made public, enforced in RLS (CLAUDE.md rule 1). What is public follows the story's own reading rules: its rating (rule 18), blocks, moderation and whether the story is published.
 - Saving: changes save within about a second; a failed save says so in plain words and keeps the text.
 - Looks: matches Ghemotoc (plum ink on warm paper, Bricolage Grotesque headings, Inter body text, Cutive labels, pill buttons), in light and night themes.
 - Devices: laptop first, fully usable at 390 px, no sideways page scrolling (CLAUDE.md rule 21).
@@ -25,12 +25,12 @@ Story Atlas is the private planning side of every Ghemotoc story. It complements
 
 **Notes for the build (proposals, to confirm in the plan)**
 
-- **How it fits the writer section.** One story, two sides: readers see the published story and chapters; only the writer sees the plan. Planning data is never shown on a public screen, in a link preview or to staff through the app, even when the story is published. A chapter planned in Atlas is an ordinary draft chapter until the writer publishes it, and the manuscript is written in the existing chapter editor (S1-E3-02), with the planning fields beside it.
+- **How it fits the writer section.** One story, two sides: readers see the published story and chapters, and only the writer sees the plan, except the parts the writer makes public (S1-E17-32). Private planning data is never shown on a public screen, in a link preview or to staff through the app, even when the story is published. A chapter planned in Atlas is an ordinary draft chapter until the writer publishes it, and the manuscript is written in the existing chapter editor (S1-E3-02), with the planning fields beside it.
 - **Story Atlas in the menus.** "Plan" sits beside "Write" on each of the writer's stories (the writer dashboard and the story's own pages), and the Story Atlas switcher lists the same stories.
 - **Order of chapters.** Moving a published chapter on the board changes the order readers see, exactly as Manage chapters (S1-E3-04) does, so the board asks first when a move would renumber published chapters. Acts are private groupings and never shown to readers.
-- **Reporting (CLAUDE.md rule 6).** Nobody but its owner can see Atlas content, so there is nothing for another person to report and it gets no Report button; uploaded images still pass the picture check (rule 19).
+- **Reporting (CLAUDE.md rule 6).** A plan item the writer makes public is user content others can see, so it is reportable, has a Report button, respects blocks and can be hidden or removed by moderators (S1-E17-34). Private items are seen by nobody else and get no Report button. Every uploaded image passes the picture check (rule 19) before it can be made public.
 - **Data rights.** Atlas content is in Download my data (S1-E13-02) and goes with the account (S1-E13-03).
-- **Minors.** Any member can use it, minors included: it is private and has no contact with other people.
+- **Minors.** Any member can use it, minors included. Public plan items are read by readers the story's rating allows, like the chapters, and carry no messaging or contact.
 
 ##### S1-E17-01 Create a story with its plan (US-1.1)
 
@@ -374,6 +374,55 @@ As a writer, I want to type [[Name]] anywhere to link to a character, bible entr
   - Given a link with no match, when it shows, then it reads "not found yet", so I can see what still needs creating.
 - **Legal and compliance:** private to the writer; no new kind of public content.
 
+##### S1-E17-32 Choose what readers can see (Robert, 31 Oct 2026, 08:02)
+
+As a writer, I want to choose which parts of my plan readers can see, so that I can share my world, my cast and how they connect without giving away what I keep for myself.
+
+- **Priority:** Must · **Size:** M · **Depends on:** S1-E17-09, S1-E17-15, S1-E17-16, S1-E17-18, S1-E17-20
+- **Acceptance criteria:**
+  - Given a new plan, when it is created, then everything in it is private.
+  - Given the story's "What readers can see" settings, when I turn on an area (Characters, Relationship map, Family tree, Story bible, Timeline), then that area shows with the story once it is published.
+  - Given an area that is on, when I mark one item "Keep private" (a character, a relationship, a bible entry or section, an event), then readers never see that item; on character sheets, each group of fields (Basics, Look and voice, Inside, In the story) and each custom field has its own switch, with Inside and notes private by default.
+  - Given a private item, when a public one links to it with [[Name]], then readers see the name as plain text, never a link or a hint of the private item.
+  - Given "Preview as a reader", when I open it, then I see exactly what a reader would see.
+  - Given I turn something off, when a reader opens it next, then it is gone at once.
+- **Legal and compliance:** the switches are the writer's choice; nothing is made public by default (privacy by design).
+
+##### S1-E17-33 Readers see the public parts with the story
+
+As a reader, I want to see the characters, map and world a writer has chosen to share, so that I can follow the story more easily.
+
+- **Priority:** Must · **Size:** M · **Depends on:** S1-E17-32, S1-E4-01
+- **Acceptance criteria:**
+  - Given a published story with public areas, when I open the story page, then tabs or links for those areas show (for example Characters, Map, Family tree, World, Timeline), and none for areas that are off.
+  - Given a public area, when I open it, then it uses the same views as the writer's (the relationship map with its list version, the family tree, the bible in reading mode), read-only and with nothing private in it.
+  - Given the story's rating, blocks and moderation, when I can't read the story, then I can't open its public plan either (rule 18, enforced in RLS through the story's read rules).
+  - Given a story that isn't published, or is hidden or removed, when anyone but the writer asks, then nothing of its plan shows.
+  - Given a public area, when it shows, then it works at 390, 768 and 1440 px, by keyboard and with a screen reader.
+- **Legal and compliance:** public views never carry a user ID (rule 15); the writer's handle and pen name as on the story page.
+
+##### S1-E17-34 Report and moderate public plan items
+
+As a reader, I want to report a public character, entry or picture that breaks the rules, so that the moderation team can act on it.
+
+- **Priority:** Must · **Size:** S · **Depends on:** S1-E17-33, S1-E10-01, S1-E10-06
+- **Acceptance criteria:**
+  - Given a public plan item, when I view it, then it has the shared Report button (rule 6; a `reportable_type` value with its branches in `reportable_item_owner()` and `reportable_item_summary()`).
+  - Given a moderator hides or removes it, when readers open the area, then it is gone or shows "[Removed by the moderation team]", the writer gets a statement of reasons, and the writer still sees a hidden item in their plan (architecture 1.7.11).
+  - Given a picture on a public item, when it hasn't passed the picture check, then readers never see it (rule 19).
+  - Given a block either way, when the blocked person opens the story, then they see none of its public plan.
+- **Legal and compliance:** DSA art. 16 (notice) and art. 17 (statement of reasons) as for every user content type.
+
+##### S1-E17-35 Show it only after a chapter (spoiler guard)
+
+As a writer, I want a public item to appear only once a reader has reached a given chapter, so that sharing my cast doesn't spoil the story.
+
+- **Priority:** Could · **Size:** S · **Depends on:** S1-E17-33, S1-E4-03
+- **Acceptance criteria:**
+  - Given a public item, when I set "Show from chapter N", then a reader sees it only once their reading progress has reached chapter N; before that it isn't shown and isn't counted.
+  - Given a reader who isn't signed in, when they view the story's public plan, then items with a chapter set stay hidden.
+- **Legal and compliance:** reading progress stays private to the reader; only "reached chapter N or not" is used.
+
 ##### S1-E17-QA Epic check: Story Atlas
 
 As the founder, I want Story Atlas tested end to end once its stories are merged, so that I know it works as one tool.
@@ -381,6 +430,6 @@ As the founder, I want Story Atlas tested end to end once its stories are merged
 - **Priority:** Should · **Size:** S · **Depends on:** every S1-E17 story
 - **Acceptance criteria:**
   - Given a writer with two stories, when they create, link, move, search and delete items across every area, then nothing from one story shows in the other and every change survives a reload.
-  - Given another member and a staff account, when they try to read the writer's Atlas through the app or the database, then they get nothing (an allowed and a denied test per policy).
+  - Given another member and a staff account, when they try to read the writer's private plan through the app or the database, then they get nothing (an allowed and a denied test per policy); when the writer makes an area public, readers the story's rating allows see exactly the public items and nothing more.
   - Given every Atlas screen, when checked at 390, 768 and 1440 px in light and night themes, then axe finds no serious issues and nothing scrolls sideways.
 - **Legal and compliance:** none beyond the global checklist.
