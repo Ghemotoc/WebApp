@@ -18,6 +18,7 @@
 --   every persona's acceptance of the terms and privacy notice v0.1      S1-E14-01 (below)
 --   four test invite codes (one that works, one expired, used up, revoked) S1-E2-01 (end of file)
 --   kid_14_ok's agreed consent and kid_14_waiting's pending consent  S1-E2-03 (end of file)
+--   every persona counted as set up (onboarded_at)                   S1-E2-06 (end of file)
 --   teacher's Teacher badge                                           S1-E2-11
 --   suspended_user's and banned_user's sanctions                      S1-E10-06 (the decided cases at the end)
 --   blocker blocking blocked                                          S1-E5-05
@@ -346,3 +347,7 @@ values
    encode(extensions.digest('seed-kid-14-ok-consent', 'sha256'), 'hex'), 'agreed', true, now()),
   ('00000000-0000-4000-8000-000000000004', 'parent.kid14waiting@example.com', 'ro',
    encode(extensions.digest('seed-kid-14-waiting-consent', 'sha256'), 'hex'), 'waiting', false, null);
+
+-- Onboarding (S1-E2-06): every persona has set up already, so the steps and the "Finish setting up"
+-- notice never get in a test's way. e2e/onboarding.spec.ts makes its own new accounts.
+update public.profiles set onboarded_at = now() where onboarded_at is null;

@@ -35,6 +35,8 @@ export interface SelectProps {
   onChange: (value: string) => void;
   /** 'bar' in the top bar and footer (plum chevron), 'form' in forms (ink chevron), as on the boards. */
   placement?: 'bar' | 'form';
+  /** The id of a hint under the drop-down, read with it by screen readers (S1-E2-06). */
+  descriptionId?: string;
 }
 
 /**
@@ -50,6 +52,7 @@ export function Select({
   value,
   onChange,
   placement = 'form',
+  descriptionId,
 }: SelectProps) {
   /** Passes the chosen value up; the parent keeps the state. */
   function handleChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -68,6 +71,7 @@ export function Select({
         <select
           id={id}
           value={value}
+          aria-describedby={descriptionId}
           onChange={handleChange}
           className="h-11 w-auto max-w-full cursor-pointer appearance-none rounded-full border border-control-border bg-surface pr-9 pl-4 font-body text-sm font-semibold text-ink"
         >

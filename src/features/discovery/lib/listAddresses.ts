@@ -3,7 +3,7 @@
  *
  * Every See all page has its own address with its filters and sort in the query string, so a list
  * can be shared and opens the same for the next person (S1-E5-09, fourth criterion):
- *   /discover/all/<popular|rising|updated|new|completed|following|classics>   the Discover shelves
+ *   /discover/all/<popular|rising|updated|new|completed|following|picked|classics>   the Discover shelves
  *   /discover/c/<category>                            a category page
  *   /discover/t/<tag>                                 a tag page
  *   /u/<username>/stories                             a writer's stories (from the profile)
@@ -23,6 +23,7 @@ export const discoverListKinds: readonly ListKind[] = [
   'new',
   'completed',
   'following',
+  'picked',
   'classics',
 ];
 
@@ -67,6 +68,7 @@ export function listAddress(request: ListRequest): string {
     new: '/discover/all/new',
     completed: '/discover/all/completed',
     following: '/discover/all/following',
+    picked: '/discover/all/picked',
     classics: '/discover/all/classics',
     category: `/discover/c/${key}`,
     tag: `/discover/t/${key}`,

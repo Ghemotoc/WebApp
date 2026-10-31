@@ -2788,6 +2788,7 @@ export type Database = {
       };
       profiles: {
         Row: {
+          adults_may_message: boolean;
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
@@ -2807,8 +2808,10 @@ export type Database = {
           id: string;
           locale: string;
           marketing_email_opt_in: boolean;
+          onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
+          region_code: string | null;
           shows_online_status: boolean;
           updated_at: string;
           age_check_can_ask_manual: boolean | null;
@@ -2818,6 +2821,7 @@ export type Database = {
         ComputedFields:
           'age_check_can_ask_manual' | 'age_check_can_start_for' | 'age_check_threshold_for';
         Insert: {
+          adults_may_message?: boolean;
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
@@ -2837,12 +2841,15 @@ export type Database = {
           id: string;
           locale?: string;
           marketing_email_opt_in?: boolean;
+          onboarded_at?: string | null;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
+          region_code?: string | null;
           shows_online_status?: boolean;
           updated_at?: string;
         };
         Update: {
+          adults_may_message?: boolean;
           age_check_method?: Database['public']['Enums']['age_check_method'] | null;
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
@@ -2862,8 +2869,10 @@ export type Database = {
           id?: string;
           locale?: string;
           marketing_email_opt_in?: boolean;
+          onboarded_at?: string | null;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
+          region_code?: string | null;
           shows_online_status?: boolean;
           updated_at?: string;
         };
@@ -2874,6 +2883,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'picture_checks';
             referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'profiles_region_code_fkey';
+            columns: ['region_code'];
+            isOneToOne: false;
+            referencedRelation: 'regions';
+            referencedColumns: ['code'];
           },
         ];
       };
@@ -3110,6 +3126,59 @@ export type Database = {
           },
         ];
       };
+      reading_preferences: {
+        Row: {
+          category_id: string | null;
+          created_at: string;
+          id: string;
+          preference_kind: string;
+          tag_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          preference_kind: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          preference_kind?: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reading_preferences_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reading_preferences_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reading_preferences_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       reading_settings: {
         Row: {
           created_at: string;
@@ -3154,6 +3223,34 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      regions: {
+        Row: {
+          code: string;
+          country_code: string;
+          created_at: string;
+          name_en: string;
+          name_ro: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          code: string;
+          country_code: string;
+          created_at?: string;
+          name_en: string;
+          name_ro: string;
+          updated_at?: string;
+        };
+        Update: {
+          code?: string;
+          country_code?: string;
+          created_at?: string;
+          name_en?: string;
+          name_ro?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       report_detail_requests: {
         Row: {
@@ -6288,6 +6385,7 @@ export type Database = {
       erase_unchecked_account: { Args: { target_user_id: string }; Returns: undefined };
       erase_unchecked_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       escalate_on_call_alerts: { Args: Record<PropertyKey, never>; Returns: number };
+      finish_onboarding: { Args: Record<PropertyKey, never>; Returns: undefined };
       finishes_story: {
         Args: {
           read_percent: number;
@@ -6743,6 +6841,7 @@ export type Database = {
       my_moderator_mail_thread: { Args: { thread_reference: string }; Returns: Json };
       my_notification_email_settings: { Args: Record<PropertyKey, never>; Returns: Json };
       my_notifications: { Args: { older_than?: string; page_size?: number }; Returns: Json };
+      my_onboarding: { Args: Record<PropertyKey, never>; Returns: Json };
       my_parental_consent: { Args: Record<PropertyKey, never>; Returns: Json };
       my_pending_pictures: {
         Args: Record<PropertyKey, never>;
@@ -6913,6 +7012,14 @@ export type Database = {
       };
       on_call_gaps: { Args: { from_time: string; to_time: string }; Returns: Json };
       on_call_now: { Args: { at_time?: string }; Returns: string };
+      onboarding_is_due: { Args: { target_user_id: string }; Returns: boolean };
+      onboarding_topics: {
+        Args: { wanted_language: string };
+        Returns: {
+          name: string;
+          tag_id: string;
+        }[];
+      };
       open_downvote_case: {
         Args: {
           target: Omit<
@@ -7056,6 +7163,7 @@ export type Database = {
       profile_for_handle: {
         Args: { wanted_handle: string };
         Returns: {
+          adults_may_message: boolean;
           age_check_method: Database['public']['Enums']['age_check_method'] | null;
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
@@ -7075,8 +7183,10 @@ export type Database = {
           id: string;
           locale: string;
           marketing_email_opt_in: boolean;
+          onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
+          region_code: string | null;
           shows_online_status: boolean;
           updated_at: string;
         }[];
@@ -7410,6 +7520,7 @@ export type Database = {
         Returns: undefined;
       };
       require_compliance_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_live_profile: { Args: Record<PropertyKey, never>; Returns: string };
       require_mail_thread_for_staff: {
         Args: { thread_reference: string };
         Returns: {
@@ -7475,6 +7586,11 @@ export type Database = {
         Args: { body: string; chapter_code: string; expected_version: number; title: string };
         Returns: Json;
       };
+      save_my_preferences: {
+        Args: { read_categories: string[]; topic_tag_ids: string[]; write_categories: string[] };
+        Returns: undefined;
+      };
+      save_my_region: { Args: { wanted_region?: string }; Returns: undefined };
       save_reading_position: {
         Args: {
           chapter_code: string;
@@ -7524,6 +7640,7 @@ export type Database = {
         Args: { body: string; statement_reference?: string; subject: string };
         Returns: Json;
       };
+      set_adults_may_message: { Args: { allowed: boolean }; Returns: undefined };
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_chapter_character_present: {
         Args: { chapter_code: string; character_id: string; is_present: boolean };

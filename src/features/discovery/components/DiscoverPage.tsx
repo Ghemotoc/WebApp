@@ -47,6 +47,7 @@ import { GreetingLine } from './GreetingLine';
  */
 const defaultShelfOrder = [
   'following',
+  'picked',
   'popular',
   'rising',
   'new',
@@ -121,7 +122,8 @@ function ShelfFromSetting({ word, isSignedIn }: { word: string; isSignedIn: bool
   // Step 2: any other word is a list; an unknown word (a typo in the setting) shows nothing.
   const kind = shelfKindFrom(word);
   if (kind === null) return null;
-  if (kind === 'following' && !isSignedIn) return null;
+  // The follows shelf and "Picked for you" (S1-E2-06) belong to someone signed in.
+  if ((kind === 'following' || kind === 'picked') && !isSignedIn) return null;
   return (
     <DiscoverShelf
       eyebrow={t(`lists.${kind}Eyebrow`)}

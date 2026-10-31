@@ -2,14 +2,15 @@
  * SetupForm: the username and pen name form on the setup page (story S1-E2-04; board 2.5,
  * step 1).
  *
- * Who shows it: SetupPage, once the person's names have loaded. What it calls: useNamesForm,
- * which saves through set_my_handle() and set_my_pen_name().
- * "Save and continue" saves the username first, then the pen name if one was typed, then goes
- * to the home page. A refusal stays under its field; the username, once saved, stays saved.
+ * Who shows it: OnboardingPage (src/features/onboarding/), step 1, for an account without a
+ * username, once the person's names have loaded. What it calls: useNamesForm, which saves through
+ * set_my_handle() and set_my_pen_name().
+ * "Save and continue" saves the username first, then the pen name if one was typed, then calls
+ * onDone (the next part of setup, S1-E2-06). A refusal stays under its field; the username, once
+ * saved, stays saved.
  */
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -24,19 +25,25 @@ import { PenNameField } from './PenNameField';
  * The form, once the person's names have loaded.
  *
  * @param props.account - useMyNames's result
+ * @param props.onDone - called once both names are saved
  * @returns the form
  */
-export function SetupForm({ account }: { account: ReturnType<typeof useMyNames> }) {
+export function SetupForm({
+  account,
+  onDone,
+}: {
+  account: ReturnType<typeof useMyNames>;
+  onDone: () => void;
+}) {
   const { t } = useTranslation('account');
-  const navigate = useNavigate();
   const form = useNamesForm(account, { handle: '', penName: '' });
 
-  /** Saves the username, then the pen name if one was typed, then goes home. */
+  /** Saves the username, then the pen name if one was typed, then moves on. */
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!(await form.saveHandle())) return;
     if (form.penName.trim() !== '' && !(await form.savePenName())) return;
-    void navigate('/');
+    onDone();
   }
 
   return (

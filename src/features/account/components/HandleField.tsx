@@ -6,7 +6,7 @@
  * and hidden from screen readers; the label says "Username".
  * The status line is a polite live region, so a screen reader hears the answer once the check
  * finishes, without moving focus. The hint and the status are linked with aria-describedby.
- * Who uses it: SetupPage and AccountNamesSection. What it calls: hooks/useHandleCheck.ts.
+ * Who uses it: SetupForm (onboarding step 1) and AccountNamesSection. What it calls: hooks/useHandleCheck.ts.
  */
 import { useTranslation } from 'react-i18next';
 

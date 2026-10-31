@@ -310,5 +310,68 @@
       "goneBody": "Poate l-a înlocuit un email mai nou sau contul a fost șters. Dacă crezi că e o greșeală, scrie-ne.",
       "loading": "Se încarcă…"
     }
+  },
+  "onboarding": {
+    "documentTitle": "Configurează-ți profilul · {{productName}}",
+    "eyebrow": "Bun venit pe {{productName}}",
+    "heading": "Configurează-ți profilul",
+    "intro": "Câțiva pași scurți. Doar numele de utilizator e obligatoriu. Poți sări peste restul și îl poți schimba mai târziu din Setări.",
+    "stepOf": "Pasul {{step}} din {{total}}",
+    "next": "Mai departe",
+    "skip": "Sari peste",
+    "saving": "Se salvează…",
+    "goToDiscover": "Mergi la Descoperă",
+    "saveFailed": "Nu am putut salva. Încearcă din nou peste puțin timp.",
+    "loadFailed": "Nu am putut încărca profilul. Încearcă din nou peste puțin timp.",
+    "name": {
+      "heading": "Numele și limba ta",
+      "languageLabel": "Limba interfeței",
+      "languageHint": "Limba meniurilor și a butoanelor. {{productName}} se deschide în română pentru toată lumea. Dacă preferi engleza, alege-o aici sau din meniul de limbă. Se aplică pe toate dispozitivele tale.",
+      "countryHeading": "Țara",
+      "countryBody": "Îți aflăm țara din conexiune, așa că nu te întrebăm. O vezi în Setări.",
+      "regionLabel": "Județul (opțional)",
+      "regionNone": "Prefer să nu spun",
+      "regionHint": "Doar dacă îl alegi. Îl folosim numai pentru raftul „Populare în zona ta”. Nu urmărim niciodată unde ești."
+    },
+    "likes": {
+      "heading": "Ce îți place?",
+      "intro": "Alege oricâte vrei. Le folosim doar ca să-ți umplem ecranul principal și le poți schimba din Setări.",
+      "read": "Îmi place să citesc",
+      "write": "Vreau să scriu",
+      "topics": "Teme",
+      "picked_one": "{{count}} aleasă",
+      "picked_few": "{{count}} alese",
+      "picked_other": "{{count}} alese",
+      "noTopics": "Nu sunt încă teme de ales."
+    },
+    "safety": {
+      "heading": "Ca să fii în siguranță aici",
+      "stepLine": "Pasul {{step}} din {{total}} · pentru cei sub 18 ani",
+      "blockHeading": "Blochează pe cineva",
+      "blockBody": "Deschide-i profilul sau conversația, apoi apasă Blochează. Nu-ți mai poate scrie, nu te mai poate menționa sau urmări și nu află.",
+      "reportHeading": "Raportează orice",
+      "reportBody": "Fiecare poveste, comentariu, postare și mesaj are un buton Raportează. Fiecare raportare e citită de un om.",
+      "messagesHeading": "Cine îți poate scrie",
+      "messagesUnder16": "Adulții nu pot scrie niciodată cuiva sub 16 ani. Nimic nu poate schimba asta.",
+      "messagesSwitch": "Lasă adulții să-mi scrie",
+      "messagesTeenBody": "La 16 sau 17 ani, mesajele de la adulți sunt oprite, dacă nu le pornești tu. Poți schimba asta oricând din Setări.",
+      "guidelinesHeading": "Regulile comunității, pe scurt",
+      "guidelineKind": "Fii amabil. Fără bullying, amenințări sau ură.",
+      "guidelineOwnWork": "Publică doar ce ai scris tu. Răspunzi de ce publici.",
+      "guidelinePrivate": "Nu-ți spune adresa, școala sau numărul de telefon.",
+      "guidelineRate": "Clasifică-ți poveștile: Toate vârstele, 13+, 16+ sau 18+.",
+      "fullGuidelines": "Citește toate regulile"
+    },
+    "notice": {
+      "heading": "Termină de configurat profilul",
+      "body": "Alege-ți limba și ce îți place, ca Descoperă să-ți arate mai mult din asta. Durează un minut și poți sări peste orice pas.",
+      "action": "Continuă configurarea"
+    },
+    "settings": {
+      "heading": "Ce îți place",
+      "intro": "Județul tău și alegerile care umplu „Alese pentru tine” în Descoperă. Doar tu le vezi.",
+      "save": "Salvează",
+      "saved": "Salvat."
+    }
   }
 }

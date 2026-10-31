@@ -310,5 +310,68 @@
       "goneBody": "A newer email may have replaced it, or the account was deleted. If you think this is wrong, write to us.",
       "loading": "Loading…"
     }
+  },
+  "onboarding": {
+    "documentTitle": "Set up your profile · {{productName}}",
+    "eyebrow": "Welcome to {{productName}}",
+    "heading": "Set up your profile",
+    "intro": "A few short steps. Only your username is required. You can skip the rest and change it later in Settings.",
+    "stepOf": "Step {{step}} of {{total}}",
+    "next": "Next",
+    "skip": "Skip",
+    "saving": "Saving…",
+    "goToDiscover": "Go to Discover",
+    "saveFailed": "We couldn’t save that. Try again in a moment.",
+    "loadFailed": "We couldn’t load your profile. Try again in a moment.",
+    "name": {
+      "heading": "Your name and language",
+      "languageLabel": "Interface language",
+      "languageHint": "The language of menus and buttons. {{productName}} opens in Romanian for everyone. If you’d rather use English, pick it here or from the language menu. It applies on every device you use.",
+      "countryHeading": "Country",
+      "countryBody": "We work out your country from your connection, so we don’t ask. You can see it in Settings.",
+      "regionLabel": "County (optional)",
+      "regionNone": "I’d rather not say",
+      "regionHint": "Only if you choose it. We use it only for the “Popular in your area” shelf. We never track where you are."
+    },
+    "likes": {
+      "heading": "What do you like?",
+      "intro": "Pick as many as you want. We use your picks only to fill your home screen, and you can change them in Settings.",
+      "read": "I like to read",
+      "write": "I want to write",
+      "topics": "Topics",
+      "picked_one": "{{count}} picked",
+      "picked_few": "{{count}} picked",
+      "picked_other": "{{count}} picked",
+      "noTopics": "There are no topics to pick yet."
+    },
+    "safety": {
+      "heading": "Staying safe here",
+      "stepLine": "Step {{step}} of {{total}} · for under-18s",
+      "blockHeading": "Block someone",
+      "blockBody": "Open their profile or your chat, then press Block. They can’t message, mention or follow you, and they aren’t told.",
+      "reportHeading": "Report anything",
+      "reportBody": "Every story, comment, post and message has a Report button. A person reads every report.",
+      "messagesHeading": "Who can message you",
+      "messagesUnder16": "Adults can never message anyone under 16. Nothing can change that.",
+      "messagesSwitch": "Let adults message me",
+      "messagesTeenBody": "If you’re 16 or 17, messages from adults are off unless you turn them on. Change this any time in Settings.",
+      "guidelinesHeading": "The community guidelines, in short",
+      "guidelineKind": "Be kind. No bullying, threats or hate.",
+      "guidelineOwnWork": "Post your own work. You’re responsible for what you publish.",
+      "guidelinePrivate": "Keep your address, school and phone number private.",
+      "guidelineRate": "Rate your stories: All ages, 13+, 16+ or 18+.",
+      "fullGuidelines": "Read the full guidelines"
+    },
+    "notice": {
+      "heading": "Finish setting up your profile",
+      "body": "Pick your language and what you like, so Discover shows you more of it. It takes a minute, and you can skip any step.",
+      "action": "Continue setting up"
+    },
+    "settings": {
+      "heading": "What you like",
+      "intro": "Your county and the picks that fill “Picked for you” on Discover. Only you see them.",
+      "save": "Save",
+      "saved": "Saved."
+    }
   }
 }

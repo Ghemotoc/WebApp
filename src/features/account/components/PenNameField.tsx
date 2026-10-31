@@ -3,7 +3,7 @@
  *
  * The rules the form can answer at once (length, invisible characters) show as the person types;
  * the word checks run when they save, and a refusal from saving shows here too.
- * Who uses it: SetupPage and AccountNamesSection. It wraps the shared TextInput.
+ * Who uses it: SetupForm (onboarding step 1) and AccountNamesSection. It wraps the shared TextInput.
  */
 import { useTranslation } from 'react-i18next';
 

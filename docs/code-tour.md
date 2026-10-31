@@ -261,6 +261,23 @@ the parent's email → /parent-consent/answer#<token> (ParentAnswerPage, signed 
 
 `ParentConsentNotice` in `AppLayout` links an account that waits for a parent to `/parent-consent`. Staff withdraw from the account page ("Withdraw parental consent", `admin_withdraw_parental_consent()`). Tests: `201` in `supabase/tests/database/`, `server/parent-consent.test.ts`, `e2e/parent-consent.spec.ts`.
 
+## Onboarding (S1-E2-06)
+
+A new account past the age check sets up its profile once, at `/setup`:
+
+```
+SetupProfileNotice ("Finish setting up your profile", AppLayout) → /setup
+/setup (OnboardingPage, useMyOnboarding → my_onboarding())          src/features/onboarding/
+  → OnboardingSteps: NameStep → save_my_region()
+                     LikesStep → save_my_preferences() → reading_preferences
+                     SafetyStep (under-18s) → set_adults_may_message()
+  → finish_onboarding() → profiles.onboarded_at → /discover, where "Picked for you"
+    is browse_stories('picked') over reading_preferences
+Settings › What you like (LikesSettingsSection) → the same writes
+```
+
+Tests: `202` in `supabase/tests/database/`, `e2e/onboarding.spec.ts`.
+
 ## Logging in (S1-E2-05)
 
 ```
