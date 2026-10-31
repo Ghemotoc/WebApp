@@ -7,7 +7,7 @@
  * starts this instance in the language this browser last chose (src/lib/language-preference.ts).
  *
  * Where things come in from: src/locales/<language>/common.json, legal.json (the Legal centre,
- * S1-E14-01) and auth.json (sign-up and sign-in, S1-E2-01), account.json (setup and Settings, S1-E2-04), writing.json (the writer screens, S1-E3-01), reading.json (the story page and reader, S1-E3-05), editor.json (the chapter editor, S1-E3-02a); email.json is for the auth emails only
+ * S1-E14-01) and auth.json (sign-up and sign-in, S1-E2-01), account.json (setup and Settings, S1-E2-04), writing.json (the writer screens, S1-E3-01), reading.json (the story page and reader, S1-E3-05), editor.json (the chapter editor, S1-E3-02a); email.json is for the emails only (Auth, S1-E11-19, and notifications, S1-E7-02)
  * (scripts/build-auth-email-templates.ts) (the /design page adds its own
  * design.json when it loads, so production builds never carry it), and the product and company names from
  * src/config/brand.ts, which every translation can use as {{productName}} and {{companyName}}.

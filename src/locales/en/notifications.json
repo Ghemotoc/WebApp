@@ -112,5 +112,47 @@
     "open": "your appeal {{reference}} is waiting for a moderator.",
     "upheld": "a different moderator looked at your appeal {{reference}} again. The decision stands.",
     "overturned": "a different moderator looked at your appeal {{reference}} again and changed the decision."
+  },
+  "emailSettings": {
+    "eyebrow": "Notifications",
+    "heading": "Notifications",
+    "intro": "Choose what we email you. Everything still shows up in the app.",
+    "tableLabel": "Notification emails",
+    "typeColumn": "Type",
+    "emailColumn": "Email",
+    "selectLabel": "Email for {{label}}",
+    "kinds": {
+      "comment_reply": "Replies to my comments",
+      "new_chapter": "New chapters in stories I follow",
+      "comment_on_chapter": "Comments on my chapters",
+      "new_follower": "New followers"
+    },
+    "deliveries": {
+      "instant": "Instant",
+      "daily": "Daily digest",
+      "off": "Off"
+    },
+    "requiredLabel": "Account, safety and legal",
+    "requiredValue": "Always sent",
+    "saved": "Saved.",
+    "saveFailed": "We couldn’t save that. Check your connection and try again.",
+    "loadFailed": "We couldn’t load your email choices. Check your connection and try again.",
+    "digestNote": "The daily digest arrives once a day, in the morning, and only when something happened.",
+    "noMarketingTitle": "No marketing emails.",
+    "noMarketing": "We don’t send promotional emails to anyone under 18.",
+    "unsubscribeNote": "Every email except account, safety and legal ones has a one-click unsubscribe link."
+  },
+  "unsubscribe": {
+    "documentTitle": "Unsubscribe",
+    "eyebrow": "Emails",
+    "heading": "Stop notification emails",
+    "intro": "This turns off every notification email we send you: replies, new chapters, comments and new followers. Emails about your account, safety and legal matters still arrive.",
+    "button": "Stop these emails",
+    "working": "Stopping…",
+    "done": "Done. We won’t send you notification emails any more. You can turn them back on in Settings.",
+    "settingsLink": "Open Settings",
+    "unknown": "This link doesn’t work any more. Log in and change your emails in Settings.",
+    "failed": "We couldn’t do that. Check your connection and try again.",
+    "missingKey": "This link is missing its key. Open the link from the email again."
   }
 }

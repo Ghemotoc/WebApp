@@ -36,5 +36,31 @@
     "body": "Someone asked to change the email address of a {{productName}} account. We send one code to the current address and another to the new one. Type both in Settings, and the change happens only once both are right. Until then, the current address keeps working.",
     "codeLabel": "Your code for this address:",
     "linkNote": "The code works once and expires after an hour."
+  },
+  "notificationEmails": {
+    "subjectDigest": "Your daily round-up from {{productName}}",
+    "subjectDecision": "A moderation decision about something you posted",
+    "digestIntro": "Here’s what happened on {{productName}} since yesterday:",
+    "instantIntro": "Something new on {{productName}}:",
+    "whoSomeone": "Someone",
+    "whoTwo": "{{first}} and {{second}}",
+    "whoManyOne": "{{first}}, {{second}} and 1 other",
+    "whoMany": "{{first}}, {{second}} and {{count}} others",
+    "where": "chapter {{position}} of “{{story}}”",
+    "newChapter": "{{who}} published {{where}}.",
+    "newChapterMany": "{{who}} published {{where}}.",
+    "commentOnChapter": "{{who}} commented on {{where}}.",
+    "commentOnChapterMany": "{{who}} commented on {{where}}.",
+    "commentReply": "{{who}} replied to your comment on {{where}}.",
+    "commentReplyMany": "{{who}} replied to your comment on {{where}}.",
+    "commentReactions": "{{who}} reacted to your comment on {{where}}.",
+    "commentReactionsMany": "{{who}} reacted to your comment on {{where}}.",
+    "newFollower": "{{who}} started following you.",
+    "newFollowerMany": "{{who}} started following you.",
+    "moderationDecision": "Our moderation team made a decision about something you posted. Open your notifications to read the reasons and how to appeal.",
+    "seeAll": "See everything on {{productName}}: {{link}}",
+    "why": "You get these emails because of your choices in Settings, under Notifications: {{link}}",
+    "unsubscribe": "Stop these emails with one click: {{link}}",
+    "required": "This email is about your account and safety, so we always send it."
   }
 }

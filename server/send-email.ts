@@ -129,7 +129,7 @@ export async function verifyHookSignature(
  *
  * @returns the text
  */
-function textOf(
+export function textOf(
   texts: EmailTexts,
   overrides: Map<string, string>,
   path: string,

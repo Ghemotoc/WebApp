@@ -73,6 +73,9 @@ select results_eq(
        ('consents', 0::bigint),
        ('copied_work_notes', 0::bigint),
        ('daily_metrics', 0::bigint),
+       -- Notification emails: each person's own (S1-E7-02).
+       ('email_outbox', 0::bigint),
+       ('email_unsubscribe_keys', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
        ('follows_stories', 0::bigint),
        ('follows_users', 0::bigint),
@@ -89,6 +92,7 @@ select results_eq(
        ('moderated_items', 0::bigint),
        ('moderator_mail_messages', 0::bigint),
        ('moderator_mail_threads', 0::bigint),
+       ('notification_email_settings', 0::bigint),
        ('notifications', 0::bigint),
        ('on_call_alerts', 0::bigint),
        ('on_call_rota', 0::bigint),

@@ -12,3 +12,11 @@ In-app notifications (S1-E7-01), built by READ-3: the bell in the top bar and th
 - `api/notifications.ts` and the hooks: `my_notifications()`, `my_unread_notification_count()`, `mark_notifications_read()`. The bell asks every minute and on focus (no Realtime yet).
 - `registerNotificationsTranslations.ts`: the `notifications` text namespace, added when the page first renders.
 - The database side: `supabase/migrations/…_s1_e7_01_notifications.sql`; tests `154-notifications.test.sql`, `e2e/notifications.spec.ts`.
+
+Notification emails (S1-E7-02), built by READ-4e:
+
+- `components/NotificationEmailsSection.tsx` and `NotificationEmailRow.tsx`: "Notifications" in Settings (board 6.3): Instant, Daily digest or Off per kind; account, safety and legal emails are always sent.
+- `components/UnsubscribePage.tsx`: `/unsubscribe?key=…`, the page behind every optional email's link; one press stops every optional email, signed out.
+- `api/emailSettings.ts` and `hooks/useEmailSettings.ts`: `my_notification_email_settings()`, `set_notification_email()`, `unsubscribe_from_emails()`.
+- The sending: `server/notification-emails.ts` (`/api/notification-emails`, woken by pg_cron through pg_net, and `/api/unsubscribe`, the one-click header). Texts in `src/locales/*/email.json` under `notificationEmails`, editable by admins as `email:` overrides.
+- The database side: `supabase/migrations/…_s1_e7_02_notification_emails.sql`; tests `183-notification-emails.test.sql`, `server/notification-emails.test.ts`, `e2e/notification-emails.spec.ts`.

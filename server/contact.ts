@@ -22,6 +22,8 @@ export interface OutgoingEmail {
   text: string;
   /** The address a reply goes to, when it isn't the sender. */
   replyTo?: string;
+  /** Extra headers, such as List-Unsubscribe on notification emails (S1-E7-02; RFC 8058). */
+  headers?: Record<string, string>;
 }
 
 /** How emails leave: Brevo on Cloudflare, Mailpit locally. */
@@ -180,6 +182,7 @@ export function sendWithBrevo(apiKey: string): SendEmail {
         sender: { name: from.name, email: from.email },
         to: [{ email: email.to }],
         replyTo: email.replyTo === undefined ? undefined : { email: email.replyTo },
+        headers: email.headers,
         subject: email.subject,
         textContent: email.text,
       }),
@@ -205,6 +208,7 @@ export function sendWithMailpit(mailpitUrl: string): SendEmail {
         From: { Name: from.name, Email: from.email },
         To: [{ Email: email.to }],
         ReplyTo: email.replyTo === undefined ? undefined : [{ Email: email.replyTo }],
+        Headers: email.headers,
         Subject: email.subject,
         Text: email.text,
       }),

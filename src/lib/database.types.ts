@@ -1132,6 +1132,85 @@ export type Database = {
         };
         Relationships: [];
       };
+      email_outbox: {
+        Row: {
+          attempts: number;
+          claimed_at: string | null;
+          created_at: string;
+          delivery: string;
+          id: string;
+          notification_ids: string[];
+          sent_at: string | null;
+          updated_at: string;
+          user_id: string;
+          email_worker_items: Json | null;
+        };
+        ComputedFields: 'email_worker_items';
+        Insert: {
+          attempts?: number;
+          claimed_at?: string | null;
+          created_at?: string;
+          delivery: string;
+          id?: string;
+          notification_ids: string[];
+          sent_at?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          attempts?: number;
+          claimed_at?: string | null;
+          created_at?: string;
+          delivery?: string;
+          id?: string;
+          notification_ids?: string[];
+          sent_at?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'email_outbox_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      email_unsubscribe_keys: {
+        Row: {
+          created_at: string;
+          id: string;
+          unsubscribe_key: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          unsubscribe_key?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          unsubscribe_key?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'email_unsubscribe_keys_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       feature_flags: {
         Row: {
           created_at: string;
@@ -1765,6 +1844,42 @@ export type Database = {
           },
         ];
       };
+      notification_email_settings: {
+        Row: {
+          created_at: string;
+          delivery: Database['public']['Enums']['email_delivery'];
+          id: string;
+          kind: Database['public']['Enums']['notification_kind'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          delivery: Database['public']['Enums']['email_delivery'];
+          id?: string;
+          kind: Database['public']['Enums']['notification_kind'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          delivery?: Database['public']['Enums']['email_delivery'];
+          id?: string;
+          kind?: Database['public']['Enums']['notification_kind'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notification_email_settings_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       notifications: {
         Row: {
           actor_count: number;
@@ -2105,6 +2220,7 @@ export type Database = {
           handle_slug: string | null;
           id: string;
           locale: string;
+          marketing_email_opt_in: boolean;
           pen_name: string | null;
           pen_name_changed_at: string | null;
           shows_online_status: boolean;
@@ -2130,6 +2246,7 @@ export type Database = {
           handle_slug?: string | null;
           id: string;
           locale?: string;
+          marketing_email_opt_in?: boolean;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
           shows_online_status?: boolean;
@@ -2154,6 +2271,7 @@ export type Database = {
           handle_slug?: string | null;
           id?: string;
           locale?: string;
+          marketing_email_opt_in?: boolean;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
           shows_online_status?: boolean;
@@ -4693,6 +4811,10 @@ export type Database = {
         };
         Returns: string;
       };
+      default_email_delivery: {
+        Args: { kind: Database['public']['Enums']['notification_kind'] };
+        Returns: Database['public']['Enums']['email_delivery'];
+      };
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
@@ -4701,6 +4823,30 @@ export type Database = {
         Args: { comment_id: string; should_downvote: boolean };
         Returns: boolean;
       };
+      email_delivery_for: {
+        Args: { kind: Database['public']['Enums']['notification_kind']; target_user_id: string };
+        Returns: string;
+      };
+      email_worker_act_as: {
+        Args: { saved_claims?: string; target_user_id: string };
+        Returns: undefined;
+      };
+      email_worker_claim: { Args: { batch_size?: number; worker_key: string }; Returns: Json };
+      email_worker_items: {
+        Args: {
+          queued: Omit<
+            Database['public']['Tables']['email_outbox']['Row'],
+            Database['public']['Tables']['email_outbox']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      email_worker_key_matches: { Args: { worker_key: string }; Returns: boolean };
+      email_worker_mark_sent: {
+        Args: { outbox_ids: string[]; worker_key: string };
+        Returns: number;
+      };
+      email_worker_unsubscribe_key: { Args: { target_user_id: string }; Returns: string };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
       escalate_on_call_alerts: { Args: Record<PropertyKey, never>; Returns: number };
       finishes_story: {
@@ -4942,6 +5088,7 @@ export type Database = {
         };
         Returns: string;
       };
+      marketing_email_allowed: { Args: { target_user_id: string }; Returns: boolean };
       mask_email: { Args: { address: string }; Returns: string };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
       may_see_march_numbers: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -5038,6 +5185,7 @@ export type Database = {
         }[];
       };
       my_moderator_mail_thread: { Args: { thread_reference: string }; Returns: Json };
+      my_notification_email_settings: { Args: Record<PropertyKey, never>; Returns: Json };
       my_notifications: { Args: { older_than?: string; page_size?: number }; Returns: Json };
       my_pending_pictures: {
         Args: Record<PropertyKey, never>;
@@ -5210,6 +5358,7 @@ export type Database = {
           handle_slug: string | null;
           id: string;
           locale: string;
+          marketing_email_opt_in: boolean;
           pen_name: string | null;
           pen_name_changed_at: string | null;
           shows_online_status: boolean;
@@ -5243,6 +5392,8 @@ export type Database = {
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
       purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_sent_emails: { Args: Record<PropertyKey, never>; Returns: number };
+      queue_daily_digests: { Args: Record<PropertyKey, never>; Returns: number };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       ranking_setting: { Args: { fallback: number; setting_key: string }; Returns: number };
       rating_allows: {
@@ -5515,6 +5666,7 @@ export type Database = {
       return_rate_on: { Args: { for_day: string }; Returns: number };
       romania_today: { Args: Record<PropertyKey, never>; Returns: string };
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
+      run_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       safety_contact_values: {
         Args: {
@@ -5587,11 +5739,19 @@ export type Database = {
         Args: { story_slug: string; wanted_shelf: Database['public']['Enums']['library_shelf'] };
         Returns: Json;
       };
+      set_marketing_email_opt_in: { Args: { wanted: boolean }; Returns: undefined };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
       set_my_birthday: { Args: { wanted_day?: number; wanted_month?: number }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
+      set_notification_email: {
+        Args: {
+          delivery: Database['public']['Enums']['email_delivery'];
+          kind: Database['public']['Enums']['notification_kind'];
+        };
+        Returns: undefined;
+      };
       set_rank_badge_tags: { Args: { story_slug: string; tag_names: string[] }; Returns: Json };
       set_story_tags: {
         Args: { owner_id: string; tag_names: string[]; target_story_id: string };
@@ -5767,6 +5927,7 @@ export type Database = {
         Returns: undefined;
       };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
+      unsubscribe_from_emails: { Args: { unsubscribe_key: string }; Returns: boolean };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
@@ -5839,6 +6000,7 @@ export type Database = {
       comment_deleted_by: 'author' | 'writer';
       completion_status: 'ongoing' | 'completed';
       cover_kind: 'automatic' | 'drawn' | 'upload';
+      email_delivery: 'instant' | 'daily' | 'off';
       language_status: 'open' | 'ready' | 'closed';
       legal_check_status: 'not_started' | 'in_progress' | 'done';
       library_shelf: 'reading' | 'saved' | 'finished';
@@ -6098,6 +6260,7 @@ export const Constants = {
       comment_deleted_by: ['author', 'writer'],
       completion_status: ['ongoing', 'completed'],
       cover_kind: ['automatic', 'drawn', 'upload'],
+      email_delivery: ['instant', 'daily', 'off'],
       language_status: ['open', 'ready', 'closed'],
       legal_check_status: ['not_started', 'in_progress', 'done'],
       library_shelf: ['reading', 'saved', 'finished'],
