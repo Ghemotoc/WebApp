@@ -112,6 +112,12 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | AdminMetrics (8.7) | "Signed-up readers" | Confirmed, live accounts that aren't staff (S1-E15-02): "opened a chapter" would need a record per reader, which we never keep (decided 17 Oct 2026, 12:34) |
 | AdminMetrics (8.7) | Chapter reads drawn as a bar chart | A list of days and totals with a line between rows (S1-E15-02), so every number is real text; a chart can come later |
 | AdminMetrics (8.7) | The page for moderators | Moderators hold the metrics area for queue numbers only (architecture 1.8.3), so the page tells them so and links to the queue |
+| AdminMetrics (8.7) | "Top events, last 7 days" with counts | The page says the tool is on or off and points to its own dashboard: we keep no copy of event counts (ADR 0007; the tool is Q49, OPEN) (S1-E11-04) |
+| AdminMetrics (8.7) | "Last build passed. All 24 event names…" | The number of event names in the code; the unit test that fails on an unlisted name is the build check (S1-E11-04) |
+| AdminMetrics (8.7) | "Appealed" age checks with a number | "Not yet" until manual age checks exist (S1-E2-08, after March) (S1-E11-04) |
+| AdminMetrics (8.7) | "Retention: what we delete and when" with the nightly job's run | Not on the page: `docs/retention.md` is the one schedule, and a copy in the interface would drift. A summary with the purge job's run log can come with the retention jobs (S1-E13-04) |
+| AdminMetrics (8.7) | Compliance log rows without an "open" state | An open logged entry has "Record the action"; a done entry can't be changed, because it is proof. Removal orders from the public form are listed with their TCO reference and decision (S1-E11-04) |
+| AdminMetrics (8.7) | ANCOM due date fixed to 1 March 2027 | Counted from the `launch_date` setting, which the owner or an admin sets on the card (S1-E11-04) |
 | Story (3.4) | The stats row's reads | Likes, comments, chapters and the last update only (S1-E5-03): read totals stay with the writer (S1-E3-07) |
 | SignUp (2.1), Onboarding (2.5) | The username chosen in onboarding, after the email is confirmed | Chosen on the sign-up form with the password, checked as it is typed (Robert, 25 Oct 2026); onboarding's step 1 is then only for older accounts without one, and the pen name moves to Settings |
 | Settings (6.3) | No email address on the Account tab | An Email address panel for every account, minors included: the owner's own address, never public, and a change confirmed by links to both addresses (Robert, 25 Oct 2026) |

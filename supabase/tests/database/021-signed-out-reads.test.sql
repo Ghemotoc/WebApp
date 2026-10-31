@@ -69,6 +69,8 @@ select results_eq(
        ('comment_downvotes', 0::bigint),
        ('comment_reactions', 0::bigint),
        ('comments', 0::bigint),
+       -- The compliance log is for the owner and admins (S1-E11-04).
+       ('compliance_log_entries', 0::bigint),
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
        ('copied_work_notes', 0::bigint),

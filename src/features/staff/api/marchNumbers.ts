@@ -52,32 +52,32 @@ export class MarchNumbersError extends Error {
 const fallbackTargets = { writers: 20, readers: 200, returnRate: 30 };
 
 /**
- * A JSON value as a number.
+ * A JSON value as a number. Also used by api/metricsOverview.ts and api/complianceLog.ts.
  *
  * @param value - from the answer
  * @returns the number, or null for anything else
  */
-function numberOrNull(value: Json | undefined): number | null {
+export function numberOrNull(value: Json | undefined): number | null {
   return typeof value === 'number' ? value : null;
 }
 
 /**
- * A JSON value as an object.
+ * A JSON value as an object. Also used by api/metricsOverview.ts and api/complianceLog.ts.
  *
  * @param value - from the answer
  * @returns the object, or an empty one
  */
-function objectOf(value: Json | undefined): Record<string, Json | undefined> {
+export function objectOf(value: Json | undefined): Record<string, Json | undefined> {
   return typeof value === 'object' && value !== null && !Array.isArray(value) ? value : {};
 }
 
 /**
- * A JSON value as a list of objects.
+ * A JSON value as a list of objects. Also used by api/metricsOverview.ts and api/complianceLog.ts.
  *
  * @param value - from the answer
  * @returns the objects, or an empty list
  */
-function listOf(value: Json | undefined): Record<string, Json | undefined>[] {
+export function listOf(value: Json | undefined): Record<string, Json | undefined>[] {
   return Array.isArray(value) ? value.map((item) => objectOf(item)) : [];
 }
 

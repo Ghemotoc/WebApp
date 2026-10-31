@@ -410,7 +410,155 @@
     "unreachable": "We couldn’t load the numbers. Check your connection and try again.",
     "loading": "Loading the numbers…",
     "notCountedYet": "The numbers haven’t been counted yet. The count runs early each morning.",
-    "countedOn": "Counted on {{date}}"
+    "countedOn": "Counted on {{date}}",
+    "overview": {
+      "unreachable": "We couldn’t load these numbers. Check your connection and try again.",
+      "signUpsEyebrow": "Sign-ups",
+      "signUpsHeading": "Sign-ups by age group",
+      "signUpsIntro_one": "Counted from year of birth. {{count}} sign-up so far.",
+      "signUpsIntro_few": "Counted from year of birth. {{count}} sign-ups so far.",
+      "signUpsIntro_other": "Counted from year of birth. {{count}} sign-ups so far.",
+      "ageGroups": {
+        "13_to_15": "13 to 15",
+        "16_to_17": "16 to 17",
+        "18_plus": "18 or over",
+        "notGiven": "Year not given"
+      },
+      "signUpsNote": "We show the age group only, never the year of birth.",
+      "ageChecksEyebrow": "Age checks",
+      "ageChecksHeading": "Age checks",
+      "ageChecksIntro": "Results only. No photos or documents are kept.",
+      "ageChecks": {
+        "passed": "Passed",
+        "failed": "Failed",
+        "appealed": "Appealed",
+        "notFinished": "Not finished"
+      },
+      "notCountedYet": "Not yet",
+      "ageChecksNote": "Appeals are counted once manual age checks arrive with the Yoti check. Appealed checks are part of the failed ones.",
+      "tiersEyebrow": "Moderation",
+      "tiersHeading": "Reports by tier",
+      "tiersIntro_one": "Cases from the last day: reports, removal orders and pictures held by the picture check. Our own moderators read every one. A case counts once it is decided or its time limit has passed.",
+      "tiersIntro_few": "Cases from the last {{count}} days: reports, removal orders and pictures held by the picture check. Our own moderators read every one. A case counts once it is decided or its time limit has passed.",
+      "tiersIntro_other": "Cases from the last {{count}} days: reports, removal orders and pictures held by the picture check. Our own moderators read every one. A case counts once it is decided or its time limit has passed.",
+      "tiersTotal": "{{share}}% handled in time · {{inTime}} of {{measured}}",
+      "nothingToMeasure": "Nothing to measure yet",
+      "tierColumns": {
+        "tier": "Tier",
+        "limit": "Time limit",
+        "cases": "Cases",
+        "inTime": "Handled in time",
+        "share": "Share"
+      },
+      "tiers": {
+        "one_hour": "Removal order from an authority",
+        "same_day": "Child safety or self-harm risk",
+        "two_days": "Other illegal content",
+        "seven_days": "Everything else"
+      },
+      "hours_one": "{{count}} hour",
+      "hours_few": "{{count}} hours",
+      "hours_other": "{{count}} hours",
+      "days_one": "{{count}} day",
+      "days_few": "{{count}} days",
+      "days_other": "{{count}} days",
+      "inTimeOf": "{{inTime}} of {{measured}}",
+      "queueLink": "Open the queue"
+    },
+    "analytics": {
+      "eyebrow": "Product analytics",
+      "heading": "Cookieless analytics",
+      "noCookies": "No cookies",
+      "noIds": "No user IDs stored",
+      "eu": "Hosted in the EU",
+      "on": "On: events go to {{provider}}.",
+      "off": "Off for now. It switches on once Plausible or Umami is chosen and its address is set.",
+      "topEvents": "The top events are read in the tool’s own dashboard. We keep no copy of them here.",
+      "catalogueEyebrow": "Event catalogue",
+      "catalogueHeading": "One list of events",
+      "catalogueBody": "Every event lives in docs/analytics-events.md with an object_action name, its properties and where it fires. No event carries personal data.",
+      "catalogueCount_one": "{{count}} event name in the code, and it is in the catalogue. A name that isn’t listed fails the tests.",
+      "catalogueCount_few": "{{count}} event names in the code, all in the catalogue. A name that isn’t listed fails the tests.",
+      "catalogueCount_other": "{{count}} event names in the code, all in the catalogue. A name that isn’t listed fails the tests."
+    },
+    "compliance": {
+      "eyebrow": "Compliance log",
+      "heading": "Authority orders and legal requests",
+      "intro": "Each entry keeps the authority, the date, the content, the action taken and the times. Removal orders from the public report form are added on their own.",
+      "export": "Export DSA log (CSV)",
+      "exporting": "Exporting…",
+      "exportFailed": "We couldn’t export the log. Try again.",
+      "logRequest": "Log a request",
+      "saved": "Saved as {{reference}}.",
+      "columns": {
+        "reference": "Ref",
+        "kind": "Kind",
+        "authority": "Authority",
+        "received": "Received",
+        "content": "Content",
+        "action": "Action taken",
+        "done": "Done"
+      },
+      "kinds": {
+        "authority_order": "Authority order",
+        "legal_request": "Legal request",
+        "launch_notice": "Launch notice"
+      },
+      "open": "Open",
+      "empty": "Nothing logged yet.",
+      "form": {
+        "label": "Log a request",
+        "kind": "What it is",
+        "authority": "Authority",
+        "authorityHint": "Who sent it, or for the launch notice, who it went to.",
+        "receivedDate": "Received on",
+        "doneDate": "Done on",
+        "time": "Time (Romania)",
+        "content": "What they asked for",
+        "contentHint": "Name an account by its username only.",
+        "isDone": "Already dealt with",
+        "action": "Action taken",
+        "save": "Save to the log",
+        "saving": "Saving…",
+        "cancel": "Cancel"
+      },
+      "complete": {
+        "button": "Record the action for {{reference}}",
+        "label": "What was done about {{reference}}",
+        "hint": "It is saved as done now. A done entry can’t be changed later.",
+        "save": "Save as done"
+      },
+      "problems": {
+        "empty": "Fill in every field.",
+        "too_long": "One of the fields is too long. Keep each one under 2,000 characters.",
+        "in_future": "That time is in the future. Check the date and time.",
+        "done_before_received": "It can’t be done before it arrived. Check the times.",
+        "action_needs_time": "Give both the action taken and when it was done.",
+        "already_done": "Someone has already recorded this one. The log now shows it.",
+        "badTime": "Give a date and a time.",
+        "not_allowed": "The compliance log is for the owner and admins.",
+        "unreachable": "We couldn’t reach the log. Check your connection and try again."
+      }
+    },
+    "launch": {
+      "eyebrow": "Launch task",
+      "heading": "Notify ANCOM within 45 days of launch",
+      "law": "Law 50/2024. When the notice is sent, log it here as a launch notice.",
+      "toDoPill": "To do",
+      "donePill": "Done",
+      "due": "Due {{date}}, from the launch on {{launch}}.",
+      "noDate": "Set the launch date to see when it is due.",
+      "done": "Done on {{date}}, logged as {{reference}}.",
+      "dateLabel": "Launch date",
+      "save": "Save the date",
+      "saving": "Saving…",
+      "failed": "We couldn’t save the date. Try again."
+    },
+    "transparency": {
+      "eyebrow": "Transparency reports",
+      "heading": "Not required for us yet",
+      "body": "Micro and small companies are exempt (DSA art. 15(2)). We keep this data so we are ready when we grow."
+    }
   },
   "classics": {
     "documentTitle": "Classics · Staff",

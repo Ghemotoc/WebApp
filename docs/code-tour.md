@@ -1005,6 +1005,26 @@ The return rate is an approximation from daily totals (architecture 1.7.9): read
 
 Tests: `156-daily-metrics.test.sql`, `lib/marchNumbers.test.ts`, `e2e/staff-metrics.spec.ts`.
 
+## Live numbers and the compliance log (S1-E11-04)
+
+The same `/staff/metrics` page, below the March numbers (board AdminMetrics):
+
+```
+MetricsOverviewSections → hooks/useMetricsOverview → api/metricsOverview.ts → admin_metrics_overview()
+  sign_ups_by_age_group() (groups from the year of birth, never the year) · age_check_numbers()
+  · cases_by_tier(30) (cases by tier; "in time" = decided by the deadline)
+AnalyticsCards → lib/analytics (status from the VITE_ANALYTICS_* settings, the event count; no database)
+ComplianceLogSection → hooks/useComplianceLog → api/complianceLog.ts
+  → admin_compliance_log(for_export) (compliance_log_entries + removal orders from public_notices
+    + launch_task()) · admin_log_compliance_entry() · admin_complete_compliance_entry()
+    · admin_set_launch_date()   (owner and admin only: staff area compliance_log; each one audited)
+  → lib/complianceLogCsv.ts + lib/downloadCsv.ts for "Export DSA log (CSV)"
+```
+
+A done entry is proof and can't be changed. The ANCOM notice is due 45 days after the `launch_date` setting (Law 50/2024).
+
+Tests: `184-metrics-and-compliance-log.test.sql`, `lib/metricsOverview.test.ts`, `lib/complianceLogCsv.test.ts`, `lib/complianceEntryForm.test.ts`, `e2e/staff-compliance-log.spec.ts`.
+
 ## Epic S1-E1 at a glance (checked by S1-E1-QA)
 
 What the Foundations epic left in place, and where to find it. The epic report, `docs/epic-reports/S1-E1.md`, lists what works, the known gaps and the steps Robert does by hand.
