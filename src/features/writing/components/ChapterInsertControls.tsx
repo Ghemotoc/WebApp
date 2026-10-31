@@ -1,27 +1,37 @@
 /**
  * ChapterInsertControls: the editor's Insert menu and the dialogs its items open (stories
- * S1-E3-09 and S1-E3-10; board 4.3).
+ * S1-E3-09, S1-E3-10 and S1-E3-11; board 4.3).
  *
  * What it holds today: Picture (S1-E3-09), shown only while the picture_uploads flag is on, and
- * Music and Video (S1-E3-10), shown only while media_embeds is on: the same switches the database
- * checks (both stay off until their GO-LIVE steps). Drawing joins with S1-E3-11. With no items
+ * Drawing (S1-E3-11; a drawing is saved as a picture, so it shares picture_uploads), and Music and
+ * Video (S1-E3-10), shown only while media_embeds is on: the same switches the database checks
+ * (both stay off until their GO-LIVE steps). With no items
  * there is no Insert button at all; with Music or Video the menu ends with the board's note that
  * only approved services are allowed and nothing loads until a reader presses play.
  * Who uses it: ChapterEditorPage, inside the toolbar. What it calls: useFeatureFlags,
- * InsertMenu, PictureInsertDialog and EmbedInsertDialog.
+ * InsertMenu, PictureInsertDialog, DrawingInsertDialog and EmbedInsertDialog.
  */
 import type { Editor } from '@tiptap/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import drawingIcon from '@/assets/icons/drawing.svg';
 import musicIcon from '@/assets/icons/music.svg';
 import pictureIcon from '@/assets/icons/picture.svg';
 import videoIcon from '@/assets/icons/video.svg';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 
+import { DrawingInsertDialog } from './DrawingInsertDialog';
 import { EmbedInsertDialog, type EmbedDialogKind } from './EmbedInsertDialog';
 import { InsertMenu, type InsertMenuItem } from './InsertMenu';
 import { PictureInsertDialog } from './PictureInsertDialog';
+
+/** What the menu items open. */
+interface InsertOpeners {
+  openPicture: () => void;
+  openDrawing: () => void;
+  openEmbed: (kind: EmbedDialogKind) => void;
+}
 
 /** What the controls need. */
 export interface ChapterInsertControlsProps {
@@ -36,7 +46,7 @@ export interface ChapterInsertControlsProps {
  *
  * @returns the items, in the board's order
  */
-function useInsertItems(openPicture: () => void, openEmbed: (kind: EmbedDialogKind) => void) {
+function useInsertItems({ openPicture, openDrawing, openEmbed }: InsertOpeners) {
   const { t } = useTranslation('editor');
   const { isOn } = useFeatureFlags();
   const items: InsertMenuItem[] = [];
@@ -47,6 +57,13 @@ function useInsertItems(openPicture: () => void, openEmbed: (kind: EmbedDialogKi
       note: t('insert.pictureNote'),
       icon: pictureIcon,
       onPick: openPicture,
+    });
+    items.push({
+      key: 'drawing',
+      label: t('insert.drawing'),
+      note: t('insert.drawingNote'),
+      icon: drawingIcon,
+      onPick: openDrawing,
     });
   }
   const hasEmbeds = isOn('media_embeds', false);
@@ -78,8 +95,13 @@ function useInsertItems(openPicture: () => void, openEmbed: (kind: EmbedDialogKi
  */
 export function ChapterInsertControls({ editor, chapterId }: ChapterInsertControlsProps) {
   const [isPictureDialogOpen, setPictureDialogOpen] = useState(false);
+  const [isDrawingDialogOpen, setDrawingDialogOpen] = useState(false);
   const [embedDialogKind, setEmbedDialogKind] = useState<EmbedDialogKind>(null);
-  const { items, footnote } = useInsertItems(() => setPictureDialogOpen(true), setEmbedDialogKind);
+  const { items, footnote } = useInsertItems({
+    openPicture: () => setPictureDialogOpen(true),
+    openDrawing: () => setDrawingDialogOpen(true),
+    openEmbed: setEmbedDialogKind,
+  });
   if (items.length === 0) return null;
   return (
     <>
@@ -90,6 +112,12 @@ export function ChapterInsertControls({ editor, chapterId }: ChapterInsertContro
         chapterId={chapterId}
         isOpen={isPictureDialogOpen}
         onClose={() => setPictureDialogOpen(false)}
+      />
+      <DrawingInsertDialog
+        editor={editor}
+        chapterId={chapterId}
+        isOpen={isDrawingDialogOpen}
+        onClose={() => setDrawingDialogOpen(false)}
       />
       <EmbedInsertDialog
         editor={editor}
