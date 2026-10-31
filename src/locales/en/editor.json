@@ -141,6 +141,8 @@
     "menuLabel": "Insert",
     "picture": "Picture",
     "pictureNote": "Upload a picture. Alt text is required.",
+    "drawing": "Drawing",
+    "drawingNote": "Draw a sketch. Saved as a picture.",
     "music": "Music",
     "musicNote": "A link from Spotify or Apple Music.",
     "video": "Video",
@@ -235,5 +237,31 @@
       "signed_out": "Log in again, then add the link.",
       "invalid": "That link is too long or empty."
     }
+  },
+  "drawingDialog": {
+    "heading": "Draw a sketch",
+    "toolsLabel": "Drawing tools",
+    "pen": "Pen",
+    "eraser": "Eraser",
+    "colour": {
+      "black": "Colour: black",
+      "red": "Colour: red",
+      "blue": "Colour: blue"
+    },
+    "undo": "Undo",
+    "clear": "Clear",
+    "sheetRole": "sketch pad",
+    "sheetLabel": "Your drawing",
+    "sheetHint": "Draw with a mouse, a finger or a pen. With the keyboard, the arrow keys draw a line and Shift with an arrow moves without drawing.",
+    "lineCount_one": "{{count}} line drawn",
+    "lineCount_few": "{{count}} lines drawn",
+    "lineCount_other": "{{count}} lines drawn",
+    "altHint": "Describe the drawing for readers who use a screen reader.",
+    "rightsHint": "You drew it yourself, or its owner lets you use it. If someone shows us it’s theirs, we may take it down.",
+    "savedNote": "Saved into the chapter as a picture. It goes through our picture check before readers see it.",
+    "missingInk": "Draw something first.",
+    "uploading": "Saving and checking your drawing…",
+    "insert": "Insert drawing",
+    "cancel": "Cancel"
   }
 }

@@ -141,6 +141,8 @@
     "menuLabel": "Inserează",
     "picture": "Imagine",
     "pictureNote": "Încarcă o imagine. Textul alternativ e obligatoriu.",
+    "drawing": "Desen",
+    "drawingNote": "Desenează o schiță. Se salvează ca imagine.",
     "music": "Muzică",
     "musicNote": "Un link de pe Spotify sau Apple Music.",
     "video": "Video",
@@ -235,5 +237,31 @@
       "signed_out": "Intră din nou în cont, apoi adaugă linkul.",
       "invalid": "Linkul e prea lung sau gol."
     }
+  },
+  "drawingDialog": {
+    "heading": "Desenează o schiță",
+    "toolsLabel": "Unelte de desen",
+    "pen": "Creion",
+    "eraser": "Radieră",
+    "colour": {
+      "black": "Culoare: negru",
+      "red": "Culoare: roșu",
+      "blue": "Culoare: albastru"
+    },
+    "undo": "Anulează",
+    "clear": "Șterge tot",
+    "sheetRole": "planșă de desen",
+    "sheetLabel": "Desenul tău",
+    "sheetHint": "Desenează cu mouse-ul, cu degetul sau cu un creion digital. De la tastatură, săgețile trasează o linie, iar Shift cu o săgeată mută fără să deseneze.",
+    "lineCount_one": "{{count}} linie desenată",
+    "lineCount_few": "{{count}} linii desenate",
+    "lineCount_other": "{{count}} de linii desenate",
+    "altHint": "Descrie desenul pentru cititorii care folosesc un cititor de ecran.",
+    "rightsHint": "L-ai desenat tu sau proprietarul îți permite să-l folosești. Dacă cineva ne arată că e al lui, îl putem scoate.",
+    "savedNote": "Se salvează în capitol ca imagine. Trece prin verificarea noastră a imaginilor înainte să-l vadă cititorii.",
+    "missingInk": "Desenează ceva mai întâi.",
+    "uploading": "Îți salvăm și verificăm desenul…",
+    "insert": "Inserează desenul",
+    "cancel": "Renunță"
   }
 }

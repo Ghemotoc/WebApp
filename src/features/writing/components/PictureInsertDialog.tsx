@@ -12,17 +12,18 @@
  * insertChapterPicture() (lib/chapterPictureNode.ts).
  */
 import type { Editor } from '@tiptap/react';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
-import { PictureUploadError } from '@/features/pictures/api/pictures';
 import { useChapterPictureUpload } from '@/features/pictures/hooks/useChapterPictures';
 import { MAXIMUM_ALT_TEXT_LENGTH } from '@/lib/chapter-pictures';
 
+import { useNativeDialog } from '../hooks/useNativeDialog';
 import { insertChapterPicture } from '../lib/chapterPictureNode';
+import { pictureFailureMessage } from '../lib/pictureFailure';
 
 import { LabelCheckbox } from './LabelCheckbox';
 import { PictureFileField } from './PictureFileField';
@@ -65,31 +66,6 @@ function missingFieldsOf(form: PictureForm): MissingFields | null {
     rights: !form.rightsConfirmed,
   };
   return missing.file || missing.alt || missing.rights ? missing : null;
-}
-
-/**
- * The plain message for a refused upload.
- *
- * @returns the translation key and its values (common namespace)
- */
-function failureMessage(error: unknown): { key: string; values?: Record<string, number> } {
-  if (!(error instanceof PictureUploadError)) return { key: 'pictures.failed.unreachable' };
-  if (error.failure === 'too_many') {
-    return { key: 'pictures.failed.too_many', values: { minutes: error.waitMinutes ?? 60 } };
-  }
-  return { key: `pictures.failed.${error.failure}` };
-}
-
-/** Opens and closes the native dialog as the prop changes. */
-function useNativeDialog(isOpen: boolean) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (dialog === null) return;
-    if (isOpen && !dialog.open) dialog.showModal();
-    if (!isOpen && dialog.open) dialog.close();
-  }, [isOpen]);
-  return dialogRef;
 }
 
 /**
@@ -183,7 +159,7 @@ export function PictureInsertDialog(props: PictureInsertDialogProps) {
   const { form, setForm, missing, uploading, submit, close } = usePictureInsert(props);
   const dialogRef = useNativeDialog(props.isOpen);
 
-  const failure = uploading.error === null ? null : failureMessage(uploading.error);
+  const failure = uploading.error === null ? null : pictureFailureMessage(uploading.error);
   return (
     <dialog
       ref={dialogRef}

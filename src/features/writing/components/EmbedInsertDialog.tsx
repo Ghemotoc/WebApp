@@ -12,7 +12,7 @@
  * (lib/chapterEmbedNode.ts).
  */
 import type { Editor } from '@tiptap/react';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
@@ -22,6 +22,7 @@ import { EmbedAddError } from '@/features/embeds/api/embeds';
 import { useEmbedAddition } from '@/features/embeds/hooks/useEmbeds';
 import { EMBED_SERVICE_NAMES, parseEmbedLink } from '@/lib/embed-links';
 
+import { useNativeDialog } from '../hooks/useNativeDialog';
 import { insertChapterEmbed } from '../lib/chapterEmbedNode';
 
 /** Which item opened the dialog; null while it is closed. */
@@ -47,18 +48,6 @@ function failureMessage(error: unknown): { key: string; values?: Record<string, 
     return { key: 'embedDialog.failed.too_many', values: { minutes: error.waitMinutes ?? 60 } };
   }
   return { key: `embedDialog.failed.${error.failure}` };
-}
-
-/** Opens and closes the native dialog as the kind changes. */
-function useNativeDialog(isOpen: boolean) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (dialog === null) return;
-    if (isOpen && !dialog.open) dialog.showModal();
-    if (!isOpen && dialog.open) dialog.close();
-  }, [isOpen]);
-  return dialogRef;
 }
 
 /**
