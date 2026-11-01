@@ -99,6 +99,10 @@ select results_eq(
        ('follows_users', 0::bigint),
        -- Forum categories, forums and subforums with their names: public (FORUMS-1a).
        ('forum_names', (select count(*) from public.forum_names)),
+       -- Forum threads, posts and earlier versions: read only through functions (FORUMS-1b).
+       ('forum_post_revisions', 0::bigint),
+       ('forum_posts', 0::bigint),
+       ('forum_threads', 0::bigint),
        ('forums', (select count(*) from public.forums where deleted_at is null)),
        ('identity_link_requests', 0::bigint),
        ('interface_text_overrides', 0::bigint),

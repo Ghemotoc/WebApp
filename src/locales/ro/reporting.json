@@ -9,7 +9,9 @@
       "picture": "Raportează această imagine",
       "embed": "Raportează această muzică sau acest videoclip",
       "atlas_item": "Raportează asta din lumea poveștii",
-      "message": "Raportează acest mesaj"
+      "message": "Raportează acest mesaj",
+      "forum_thread": "Raportează discuția",
+      "forum_post": "Raportează mesajul"
     },
     "anonymous": "{{item}}. Nu va vedea cine a raportat.",
     "whatIsWrong": "Ce nu e în regulă?",

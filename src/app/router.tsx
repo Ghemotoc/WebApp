@@ -649,6 +649,23 @@ const writeRoutes: RouteObject[] = [
       return { Component: ForumPage };
     },
   },
+  // Threads and posts (FORUMS-1b, S1-E8-02): start a thread, and one thread with its posts.
+  {
+    path: '/forums/:forumSlug/new',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { NewThreadPage } = await import('@/features/forums/components/NewThreadPage');
+      return { Component: NewThreadPage };
+    },
+  },
+  {
+    path: '/forums/:forumSlug/:threadNumber',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ThreadPage } = await import('@/features/forums/components/ThreadPage');
+      return { Component: ThreadPage };
+    },
+  },
   // The reader's library (S1-E4-03) and each shelf's See all page, which is a story list.
   {
     path: '/library',

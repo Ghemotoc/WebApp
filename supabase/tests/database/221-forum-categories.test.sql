@@ -140,7 +140,8 @@ select is_empty($$ select 1 from public.forum_index('ro') where slug = 'sonete-s
 /* ---------- 6. Nothing closes on its own (criterion 3) ---------- */
 
 reset role;
-select is_empty($$ select jobname from cron.job where command ilike '%forum%' $$,
+select is_empty($$ select jobname from cron.job where command ilike '%forum%'
+    and command not ilike '%purge_deleted_forum_posts%' $$,
   'no scheduled job archives or closes forums or threads');
 
 select * from finish();
