@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #264 (IDEAS-1e, paragraph links and Most shared this week): nothing by hand. Please check the Romanian shelf title "Cele mai distribuite săptămâna asta".
 - #263 (IDEAS-1d, most-loved lines and where readers stop): nothing by hand.
 - #262 (IDEAS-1c): optionally add to the record of processing which stories a reader thanked a writer for (no words), kept for the life of the account.
 - #261 (IDEAS-1b, reading streak): add a line to the record of processing for minutes read per day (reader only, kept 14 days).
