@@ -38,16 +38,20 @@ export type SocialSignUpOutcome =
 /** The sessionStorage key for the answers kept while the person is at the provider. */
 const keptAnswersKey = 'social-sign-up-answers';
 
+/** Why the person went to the provider, when it isn't a sign-up or an ordinary log-in. */
+export type SocialReturnMode = 'link' | 'confirm';
+
 /** Where every provider sends the person back. */
 const returnPath = '/auth/social-return';
 
 /**
  * The address the provider sends the person back to.
  *
- * @param mode - 'link' when connecting from Settings; nothing for a sign-up or log-in
+ * @param mode - 'link' when connecting from Settings; 'confirm' when logging in again to confirm
+ *   deleting the account (S1-E13-03); nothing for a sign-up or log-in
  * @returns the full address on this site
  */
-export function socialReturnAddress(mode?: 'link'): string {
+export function socialReturnAddress(mode?: SocialReturnMode): string {
   const address = new URL(returnPath, window.location.origin);
   if (mode !== undefined) address.searchParams.set('mode', mode);
   return address.toString();
@@ -114,15 +118,17 @@ export async function startSocialSignUp(
  *
  * @param client - the shared Supabase client
  * @param provider - the provider chosen
+ * @param mode - 'confirm' when logging in again to confirm deleting the account (S1-E13-03)
  * Errors: throws when Supabase refuses to start, for example when the provider isn't set up.
  */
 export async function startSocialLogIn(
   client: AppSupabaseClient,
   provider: SocialProvider,
+  mode?: 'confirm',
 ): Promise<void> {
   const { error } = await client.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: socialReturnAddress(), scopes: scopesFor(provider) },
+    options: { redirectTo: socialReturnAddress(mode), scopes: scopesFor(provider) },
   });
   if (error !== null)
     throw new Error(`Could not start ${provider}: ${error.code ?? error.message}`);

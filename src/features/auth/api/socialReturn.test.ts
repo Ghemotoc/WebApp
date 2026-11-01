@@ -118,4 +118,13 @@ describe('the social return page', () => {
       to: '/settings#ways-to-log-in',
     });
   });
+
+  it('goes back to Delete account after logging in again to confirm (S1-E13-03)', async () => {
+    const { client, called } = fakeClient({ isSignedIn: true });
+    expect(await settleSocialReturn(client, { ...plainReturn, mode: 'confirm' })).toEqual({
+      kind: 'go',
+      to: '/settings#delete-account',
+    });
+    expect(called).not.toContain('cancel_social_sign_up');
+  });
 });

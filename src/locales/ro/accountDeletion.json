@@ -1,0 +1,68 @@
+{
+  "settings": {
+    "heading": "Șterge-ți contul",
+    "intro_one": "Contul tău se închide imediat. Îl ștergem definitiv după {{count}} zi. Poți anula dacă te conectezi până atunci.",
+    "intro_few": "Contul tău se închide imediat. Îl ștergem definitiv după {{count}} zile. Poți anula dacă te conectezi până atunci.",
+    "intro_other": "Contul tău se închide imediat. Îl ștergem definitiv după {{count}} de zile. Poți anula dacă te conectezi până atunci.",
+    "storiesLine": "Poveștile și capitolele tale se șterg odată cu contul.",
+    "downloadFirstBefore": "Poate vrei să",
+    "downloadFirstLink": "descarci mai întâi datele tale",
+    "downloadFirstAfter": ".",
+    "start": "Șterge-mi contul",
+    "webRoute": "Nu ai aplicația? Îți poți șterge contul și pe site-ul nostru, la {{address}}.",
+    "loadFailed": "Nu am putut verifica contul tău. Reîncarcă pagina ca să încerci din nou."
+  },
+  "confirm": {
+    "heading": "Ștergi contul?",
+    "body": "Contul tău se închide acum și nimeni nu-ți mai poate vedea profilul. Îl ștergem definitiv pe {{date}}. Dacă te răzgândești, conectează-te până atunci și anulează.",
+    "consequencesLabel": "Ce se întâmplă",
+    "consequences": {
+      "content": "Poveștile, capitolele, ciornele, comentariile și mesajele tale se șterg.",
+      "legalCase": "Dacă ceva ce ai postat face parte dintr-un caz legal deschis, păstrăm doar acel lucru până se încheie cazul.",
+      "records": "Raportările și deciziile de moderare despre contul tău se păstrează cât spune programul nostru de păstrare a datelor, fără profilul tău."
+    },
+    "downloadFirst": "Descarcă mai întâi datele mele",
+    "logInAgainLabel": "Conectează-te din nou ca să confirmi",
+    "logInAgainHint": "Așa nimeni altcineva nu-ți poate șterge contul pe un dispozitiv unde ai rămas conectat.",
+    "otherWays": "Conectează-te din nou cu",
+    "passwordLabel": "Sau cu parola",
+    "passwordButton": "Conectează-te",
+    "passkey": "Folosește o cheie de acces",
+    "confirmed": "Te-ai conectat din nou. Acum îți poți șterge contul.",
+    "keep": "Păstrez contul",
+    "delete": "Șterge-mi contul",
+    "failures": {
+      "wrongPassword": "Parola nu e corectă. Încearcă din nou.",
+      "cancelled": "Fereastra pentru cheia de acces s-a închis. Încearcă din nou când ești gata.",
+      "failed": "Nu te-am putut conecta din nou. Încearcă din nou peste un minut.",
+      "signInAgain": "Te-ai conectat acum ceva timp. Conectează-te din nou ca să confirmi.",
+      "staffAccount": "Acesta e un cont de echipă. Cere unui proprietar să-ți scoată mai întâi rolul din echipă.",
+      "deleteFailed": "Nu am putut șterge contul. Încearcă din nou peste un minut."
+    }
+  },
+  "closing": {
+    "heading": "Contul tău se închide",
+    "body": "Îl ștergem definitiv pe {{date}}. Până atunci, nimeni nu-ți poate vedea profilul, poveștile sau comentariile.",
+    "changeMind": "Te-ai răzgândit? Păstrează-ți contul și totul revine cum era.",
+    "keep": "Păstrez contul",
+    "logOut": "Deconectează-te",
+    "keepFailed": "Nu am putut păstra contul. Încearcă din nou peste un minut.",
+    "kept": "Bine ai revenit. Contul tău e din nou deschis."
+  },
+  "page": {
+    "heading": "Șterge-ți contul",
+    "intro": "Îți poți șterge contul aici, pe site, fără aplicație.",
+    "stepsLabel": "Cum",
+    "steps": {
+      "logIn": "Conectează-te la contul tău.",
+      "open": "Deschide Setări › Șterge contul.",
+      "confirm": "Conectează-te din nou ca să confirmi, apoi alege Șterge-mi contul."
+    },
+    "after_one": "Contul tău se închide imediat și îl ștergem definitiv după {{count}} zi. Până atunci, te poți conecta și poți anula.",
+    "after_few": "Contul tău se închide imediat și îl ștergem definitiv după {{count}} zile. Până atunci, te poți conecta și poți anula.",
+    "after_other": "Contul tău se închide imediat și îl ștergem definitiv după {{count}} de zile. Până atunci, te poți conecta și poți anula.",
+    "logIn": "Conectează-te",
+    "noAccess": "Nu te poți conecta? Scrie-ne la {{email}} și te ajutăm.",
+    "title": "Șterge-ți contul"
+  }
+}

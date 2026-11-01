@@ -289,6 +289,13 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **What goes in:** `my_data_export()` answers `{ format, made_at, user_id, account, tables }`. `account` is the email, when it was confirmed, the ways to log in and the profile; `tables` holds the person's rows of every table `data_export_tables()` includes. `export_row_for_owner()` drops other people's user IDs (naming the followed, blocked, written-to and reported person by username instead), secrets and internal notes. **A new user_content or user_action table must be added to `data_export_tables()`, included or left out with a reason; test `210` fails until it is.**
 - **Asking and finishing:** `request_data_export()` (three an hour, `rate_limits.data_export`) replaces a copy still being built; `finish_data_export(export_id, story_count)` needs the uploaded file, marks it ready for seven days, drops older rows and sends the `data_export_ready` notification. The browser builds the ZIP (ADR 0012); the clean-up of expired exports and their files is S1-E13-04.
 
+## Delete my account (S1-E13-03)
+
+- **The table:** `account_deletions` (`requested_at`, `delete_after`, `cancelled_at`, `completed_at`); the person reads their own rows (`account_deletions_select_own`), and the row stays after the deletion as its record.
+- **Closing:** `request_account_deletion()` needs a log-in within `account_deletion_fresh_sign_in_minutes` (10, from the token's `amr` claim) and refuses a staff account. It marks the profile, the live stories and the live comments deleted with the request's time, so `cancel_account_deletion()` brings back exactly those. `my_account_deletion()` works for a closing account.
+- **Deleting for good:** the nightly job `purge-closed-accounts` runs `purge_closed_accounts()` once `delete_after` (14 days, `account_deletion_days`) has passed. `delete_account_data()` keeps only what `content_is_held_for_moderation()` or `held_message_ids()` holds and the moderation records; the profile and login become a tombstone (`erase_closed_account()`), so the user ID is never reused and the username stays reserved. **A new user_content or user_action table must be added to `account_deletion_rules()`; test `211` fails until it is.**
+- **Comments:** `comments_body_is_written` now allows an empty body on a deleted comment, so one with other people's replies keeps its place with its words gone.
+
 ## Seed personas
 
 Every persona's username is its persona name (for example `adult_writer`); adult_writer's pen name is `Lia Scrie`.

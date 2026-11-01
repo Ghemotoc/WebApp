@@ -233,6 +233,22 @@ const staffRoutes: RouteObject = {
 };
 
 /**
+ * The website's account deletion page (S1-E13-03, criterion 5; Google Play asks for a web address
+ * where people can delete their account without the app). Loaded when opened.
+ */
+const accountDeletionRoutes: RouteObject[] = [
+  {
+    path: '/delete-account',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { DeleteAccountPage } =
+        await import('@/features/account-deletion/components/DeleteAccountPage');
+      return { Component: DeleteAccountPage };
+    },
+  },
+];
+
+/**
  * The age check with Yoti (S1-E2-08): the start page and where Yoti sends the person back. Each is
  * loaded when opened.
  */
@@ -727,6 +743,7 @@ function pageRoutes(): RouteObject[] {
         return { Component: SettingsPage };
       },
     },
+    ...accountDeletionRoutes,
     ...ageCheckRoutes,
     ...parentConsentRoutes,
     ...notificationRoutes,

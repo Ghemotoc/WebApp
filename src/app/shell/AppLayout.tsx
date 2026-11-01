@@ -23,11 +23,14 @@
  * Notifications (S1-E7-01): the bell with the unread count sits before "Write" while signed in.
  * Pictures (S1-E10-05): usePendingPictureRetry asks once per signed-in visit for the check of any
  * picture whose services were down when it was uploaded.
+ * Deleting an account (S1-E13-03): AccountClosingGate swaps the notices and the page for the
+ * closing-account page ("Keep my account" or "Log out") while the account waits to be deleted.
  */
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
 
 import { SanctionNotice } from '@/features/account/components/SanctionNotice';
+import { AccountClosingGate } from '@/features/account-deletion/components/AccountClosingGate';
 import { SetupProfileNotice } from '@/features/account/components/SetupProfileNotice';
 import { AgeCheckNotice } from '@/features/age-check/components/AgeCheckNotice';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
@@ -94,17 +97,20 @@ export function AppLayout() {
       <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* While maintenance mode is on, the maintenance page replaces all of this (S1-E1-05). */}
         <MaintenanceGate>
-          {/* "We've updated our Terms", for a signed-in person who must accept before posting (S1-E14-01). */}
-          <LegalUpdateNotice />
-          {/* "Choose a username", for a signed-in person who hasn't chosen one yet (S1-E2-04). */}
-          <SetupProfileNotice />
-          {/* "Confirm your age", for an account that waits for an age check (S1-E2-08). */}
-          <AgeCheckNotice />
-          {/* "Ask a parent or guardian", for an under-16 who waits for consent (S1-E2-03). */}
-          <ParentConsentNotice />
-          {/* A live suspension or reporting pause, said plainly on every page (S1-E10-06). */}
-          <SanctionNotice />
-          <Outlet />
+          {/* While the account waits to be deleted, the closing page replaces the rest (S1-E13-03). */}
+          <AccountClosingGate>
+            {/* "We've updated our Terms", for a signed-in person who must accept before posting (S1-E14-01). */}
+            <LegalUpdateNotice />
+            {/* "Choose a username", for a signed-in person who hasn't chosen one yet (S1-E2-04). */}
+            <SetupProfileNotice />
+            {/* "Confirm your age", for an account that waits for an age check (S1-E2-08). */}
+            <AgeCheckNotice />
+            {/* "Ask a parent or guardian", for an under-16 who waits for consent (S1-E2-03). */}
+            <ParentConsentNotice />
+            {/* A live suspension or reporting pause, said plainly on every page (S1-E10-06). */}
+            <SanctionNotice />
+            <Outlet />
+          </AccountClosingGate>
         </MaintenanceGate>
       </main>
       {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}

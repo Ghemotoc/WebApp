@@ -349,6 +349,22 @@ the "ready" notification → /settings#download-my-data
 
 The Word builder in `src/lib/word/` knows nothing about the database: a caller turns rows into a `WordStory`, translates the labels and loads the pictures. S1-E11-09a and S1-E13-05 reuse it. A new user table must be added to `data_export_tables()` (test `210` fails until it is). Tests: `210`, `src/lib/word/storyToWord.test.ts`, `src/features/data-export/lib/*.test.ts`, `e2e/download-my-data.spec.ts`.
 
+## Delete my account (S1-E13-03)
+
+```
+/settings#delete-account → DeleteAccountSection → "Delete my account"         src/features/account-deletion/
+  → DeleteAccountConfirm → ConfirmLogIn while the log-in is old (password, passkey or a provider with mode=confirm)
+  → useRequestAccountDeletion → request_account_deletion() (account_signed_in_recently())
+      profile, stories and comments marked deleted at once → account_deletions row (delete_after)
+  → AccountClosingGate (in AppLayout) → ClosingAccountPage: "Keep my account" → cancel_account_deletion()
+nightly purge-closed-accounts → purge_closed_accounts() → delete_account_data()
+  → delete_account_stories() + delete_account_conversation() (content_is_held_for_moderation() keeps what a case holds)
+  → every 'delete' table of account_deletion_rules() → erase_closed_account() (the tombstone)
+/delete-account (DeleteAccountPage) → the steps, or /settings#delete-account when signed in
+```
+
+The user ID is never reused: the profile and the login row stay as an empty tombstone. A new user table must be added to `account_deletion_rules()` (`delete`, `own_step` or `kept` with a reason; test `211` fails until it is). Tests: `211`, `e2e/delete-my-account.spec.ts`.
+
 ## The Teacher badge (S1-E2-11)
 
 An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:
