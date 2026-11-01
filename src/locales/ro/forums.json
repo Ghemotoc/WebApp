@@ -30,5 +30,115 @@
     "noThreads": "Încă nu sunt discuții aici.",
     "notFound": "Nu există niciun forum la această adresă.",
     "back": "Înapoi la forumuri"
+  },
+  "list": {
+    "heading": "Discuții",
+    "start": "Începe o discuție",
+    "startedBy": "Începută de {{name}}",
+    "replies_one": "{{count, number}} răspuns",
+    "replies_few": "{{count, number}} răspunsuri",
+    "replies_other": "{{count, number}} de răspunsuri",
+    "lastReply": "Ultimul mesaj {{time}}, de {{name}}",
+    "showMore": "Arată mai multe discuții",
+    "loadFailed": "Nu am putut încărca discuțiile. Verifică-ți conexiunea și încearcă din nou.",
+    "logInToStart": "Intră în cont ca să începi o discuție",
+    "categoryNote": "Discuțiile se poartă în forumurile din această categorie."
+  },
+  "person": {
+    "deleted": "Cont șters",
+    "starter": "A început discuția"
+  },
+  "thread": {
+    "startedBy": "Începută de <author>{{name}}</author> pe {{date}}",
+    "replies_one": "{{count, number}} răspuns",
+    "replies_few": "{{count, number}} răspunsuri",
+    "replies_other": "{{count, number}} de răspunsuri",
+    "notFound": "Discuția nu e aici. Poate a fost ștearsă sau nu o poți vedea.",
+    "loadFailed": "Nu am putut încărca discuția. Verifică-ți conexiunea și încearcă din nou.",
+    "hiddenNote": "Echipa de moderare a ascuns această discuție. Doar tu o poți vedea.",
+    "showMore": "Arată mai multe răspunsuri",
+    "facts": {
+      "title": "Despre discuție",
+      "replies": "Răspunsuri",
+      "writers": "Participanți",
+      "lastReply": "Ultimul răspuns"
+    },
+    "help": {
+      "title": "Ceva nu e în regulă?",
+      "text": "Apasă Raportează la orice mesaj. Un om din echipa noastră citește fiecare raport și îți spune ce am hotărât."
+    },
+    "reportLabel": "discuția „{{title}}”"
+  },
+  "post": {
+    "label": "Mesajul {{number}}, de {{name}}",
+    "permalink": "#{{number}}",
+    "edited": "Modificat {{time}}",
+    "deleted": "Mesaj șters",
+    "removed": "[Eliminat de echipa de moderare]",
+    "hiddenNote": "Echipa de moderare a ascuns acest mesaj. Doar tu îl poți vedea.",
+    "edit": "Modifică",
+    "editLabel": "Modifică mesajul {{number}}",
+    "delete": "Șterge",
+    "deleteLabel": "Șterge mesajul {{number}}",
+    "deleteQuestion": "Ștergi mesajul? Numărul lui rămâne, cu mențiunea „Mesaj șters”.",
+    "deleteConfirm": "Șterge mesajul",
+    "cancel": "Renunță",
+    "save": "Salvează modificările",
+    "reportLabel": "mesajul {{number}}, de {{name}}",
+    "history": "Versiuni anterioare",
+    "historyLabel": "Versiuni anterioare ale mesajului {{number}}",
+    "historyHide": "Ascunde versiunile anterioare",
+    "historyHeading": "Versiunile anterioare, de la cea mai veche. Doar moderatorii le văd.",
+    "historyWritten": "Scrisă {{time}}",
+    "historyTitle": "Titlul de atunci: {{title}}",
+    "historyFailed": "Nu am putut încărca versiunile anterioare.",
+    "linkCopied": "Link copiat",
+    "permalinkPrefix": "Link către mesajul"
+  },
+  "editor": {
+    "title": "Titlu",
+    "body": "Mesajul tău",
+    "reply": "Răspunsul tău",
+    "help": "Doar formatare simplă: aldine, cursive, linkuri, citate și liste.",
+    "counter": "{{count}} / {{limit}}",
+    "counterLabel": "{{count}} din {{limit}} caractere folosite"
+  },
+  "reply": {
+    "eyebrow": "Răspuns",
+    "heading": "Răspunsul tău",
+    "post": "Trimite răspunsul",
+    "logIn": "Intră în cont ca să răspunzi",
+    "notActive": "Contul tău nu poate scrie încă.",
+    "posted": "Răspunsul tău a apărut ca #{{number}}."
+  },
+  "newThread": {
+    "eyebrow": "Discuție nouă",
+    "heading": "Începe o discuție în {{forum}}",
+    "post": "Publică discuția",
+    "cancel": "Renunță",
+    "logIn": "Intră în cont ca să începi o discuție."
+  },
+  "failures": {
+    "signed_out": "Intră mai întâi în cont.",
+    "not_active": "Contul tău nu poate scrie acum.",
+    "not_mine": "Doar autorul poate modifica un mesaj.",
+    "too_many_one": "Ai scris mult în ultima oră. Așteaptă {{count}} minut și încearcă din nou.",
+    "too_many_few": "Ai scris mult în ultima oră. Așteaptă {{count}} minute și încearcă din nou.",
+    "too_many_other": "Ai scris mult în ultima oră. Așteaptă {{count}} de minute și încearcă din nou.",
+    "too_many_unknown": "Ai scris mult în ultima oră. Așteaptă puțin și încearcă din nou.",
+    "gone": "Nu mai e aici. Poate a fost șters.",
+    "category": "Începe discuția într-unul dintre forumurile din această categorie.",
+    "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou.",
+    "title": {
+      "empty": "Dă-i discuției un titlu.",
+      "too_long": "Titlul poate avea cel mult 120 de caractere.",
+      "html": "Titlul nu poate conține etichete HTML."
+    },
+    "body": {
+      "empty": "Scrie ceva mai întâi.",
+      "too_long": "Mesajul e prea lung. Împarte-l în două mesaje.",
+      "html": "Mesajele nu pot conține etichete HTML. Folosește formatarea simplă.",
+      "link": "Linkurile trebuie să înceapă cu http, https sau mailto."
+    }
   }
 }

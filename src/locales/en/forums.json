@@ -30,5 +30,115 @@
     "noThreads": "No threads here yet.",
     "notFound": "There’s no forum at this address.",
     "back": "Back to the forums"
+  },
+  "list": {
+    "heading": "Threads",
+    "start": "Start a thread",
+    "startedBy": "Started by {{name}}",
+    "replies_one": "{{count, number}} reply",
+    "replies_other": "{{count, number}} replies",
+    "lastReply": "Last post {{time}} by {{name}}",
+    "showMore": "Show more threads",
+    "loadFailed": "We couldn’t load the threads. Check your connection and try again.",
+    "logInToStart": "Log in to start a thread",
+    "categoryNote": "Threads go in the forums inside this category.",
+    "replies_few": "{{count, number}} replies"
+  },
+  "person": {
+    "deleted": "Deleted account",
+    "starter": "Thread starter"
+  },
+  "thread": {
+    "startedBy": "Started by <author>{{name}}</author> on {{date}}",
+    "replies_one": "{{count, number}} reply",
+    "replies_other": "{{count, number}} replies",
+    "notFound": "This thread isn’t here. It may have been deleted, or you can’t see it.",
+    "loadFailed": "We couldn’t load this thread. Check your connection and try again.",
+    "hiddenNote": "Our moderation team hid this thread. Only you can see it.",
+    "showMore": "Show more replies",
+    "facts": {
+      "title": "This thread",
+      "replies": "Replies",
+      "writers": "Writers taking part",
+      "lastReply": "Last reply"
+    },
+    "help": {
+      "title": "Something wrong?",
+      "text": "Press Report on any post. A person on our team reads every report and tells you what we decided."
+    },
+    "reportLabel": "the thread “{{title}}”",
+    "replies_few": "{{count, number}} replies"
+  },
+  "post": {
+    "label": "Post {{number}} by {{name}}",
+    "permalink": "#{{number}}",
+    "edited": "Edited {{time}}",
+    "deleted": "Post deleted",
+    "removed": "[Removed by the moderation team]",
+    "hiddenNote": "Our moderation team hid this post. Only you can see it.",
+    "edit": "Edit",
+    "editLabel": "Edit post {{number}}",
+    "delete": "Delete",
+    "deleteLabel": "Delete post {{number}}",
+    "deleteQuestion": "Delete this post? Its number stays, marked “Post deleted”.",
+    "deleteConfirm": "Delete the post",
+    "cancel": "Cancel",
+    "save": "Save changes",
+    "reportLabel": "post {{number}} by {{name}}",
+    "history": "Earlier versions",
+    "historyLabel": "Earlier versions of post {{number}}",
+    "historyHide": "Hide earlier versions",
+    "historyHeading": "Earlier versions, oldest first. Only moderators see these.",
+    "historyWritten": "Written {{time}}",
+    "historyTitle": "Title then: {{title}}",
+    "historyFailed": "We couldn’t load the earlier versions.",
+    "linkCopied": "Link copied",
+    "permalinkPrefix": "Link to post"
+  },
+  "editor": {
+    "title": "Title",
+    "body": "Your post",
+    "reply": "Your reply",
+    "help": "Simple formatting only: bold, italic, links, quotes and lists.",
+    "counter": "{{count}} / {{limit}}",
+    "counterLabel": "{{count}} of {{limit}} characters used"
+  },
+  "reply": {
+    "eyebrow": "Reply",
+    "heading": "Your reply",
+    "post": "Post reply",
+    "logIn": "Log in to reply",
+    "notActive": "Your account can’t post yet.",
+    "posted": "Your reply is posted as #{{number}}."
+  },
+  "newThread": {
+    "eyebrow": "New thread",
+    "heading": "Start a thread in {{forum}}",
+    "post": "Post the thread",
+    "cancel": "Cancel",
+    "logIn": "Log in to start a thread."
+  },
+  "failures": {
+    "signed_out": "Log in first.",
+    "not_active": "Your account can’t post right now.",
+    "not_mine": "Only its author can change a post.",
+    "too_many_one": "You’ve posted a lot in the last hour. Wait {{count}} minute and try again.",
+    "too_many_other": "You’ve posted a lot in the last hour. Wait {{count}} minutes and try again.",
+    "too_many_unknown": "You’ve posted a lot in the last hour. Wait a little and try again.",
+    "gone": "That isn’t there any more. It may have been deleted.",
+    "category": "Start your thread in one of the forums inside this category.",
+    "unreachable": "We couldn’t save that. Check your connection and try again.",
+    "title": {
+      "empty": "Give the thread a title.",
+      "too_long": "Keep the title under 120 characters.",
+      "html": "Titles can’t contain HTML tags."
+    },
+    "body": {
+      "empty": "Write something first.",
+      "too_long": "This post is too long. Split it into two posts.",
+      "html": "Posts can’t contain HTML tags. Use the simple formatting instead.",
+      "link": "Links must start with http, https or mailto."
+    },
+    "too_many_few": "You’ve posted a lot in the last hour. Wait {{count}} minutes and try again."
   }
 }

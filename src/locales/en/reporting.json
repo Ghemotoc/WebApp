@@ -9,7 +9,9 @@
       "picture": "Report this picture",
       "embed": "Report this music or video",
       "atlas_item": "Report this from the story’s world",
-      "message": "Report this message"
+      "message": "Report this message",
+      "forum_thread": "Report this thread",
+      "forum_post": "Report this post"
     },
     "anonymous": "{{item}}. They won’t see who reported it.",
     "whatIsWrong": "What’s wrong?",

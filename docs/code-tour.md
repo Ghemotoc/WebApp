@@ -1646,10 +1646,21 @@ Idea IDEA-20261031-12 (GDPR art. 15 and 20).
 
 - Where it lives: `src/features/forums/` (see its README) and `supabase/migrations/…_forums1_a_forum_categories.sql`.
 - One table, three levels: `forums` holds categories (no parent, level 0), forums (level 1) and subforums (level 2); the trigger `forums_set_level()` sets the level and refuses a fourth. `forum_names` holds each one's name and description per interface language, like tag names: forums are staff content, never locale-file text.
-- How the index travels: `/forums` → `ForumsPage` → `useForumIndex()` → `forum_index(language_code)` (anyone, signed out included) → `lib/forumTree.ts` puts pinned categories first in staff order, then the rest by latest activity (Q45). `/forums/:forumSlug` (`ForumPage`) reuses the same read for its breadcrumb and the forums inside it. Until part b the counts are 0 and every forum says "No posts yet".
+- How the index travels: `/forums` → `ForumsPage` → `useForumIndex()` → `forum_index(language_code)` (anyone, signed out included) → `lib/forumTree.ts` puts pinned categories first in staff order, then the rest by latest activity (Q45). `/forums/:forumSlug` (`ForumPage`) reuses the same read for its breadcrumb and the forums inside it. Part b fills in the counts and the latest post.
 - How staff change them: `/staff/forums` (owner and admin, the `settings` area) → `useForumAdmin()` → `admin_list_forums()`, `admin_save_forum()`, `admin_delete_forum()`, each logged in `audit_log`. Refusals come back as field hints ("ro:empty", "parent:too_deep", "slug:taken").
 - Threads never close on their own (S1-E8-01, criterion 3): no job touches forums; test 221 checks `cron.job`.
 - Tests: `supabase/tests/database/221-forum-categories.test.sql`, `src/features/forums/lib/*.test.ts`, `e2e/forums.spec.ts`.
+
+## Forum threads and posts (S1-E8-02; FORUMS-1b)
+
+- Where it lives: `src/features/forums/` (`api/forumThreads.ts`, `api/forumWrites.ts`, the thread components) and `supabase/migrations/…_forums1_b_threads_and_posts.sql`.
+- Three tables, read only through functions: `forum_threads` (a public `thread_number` for the address, `last_post_at` for the list's order, Q45), `forum_posts` (`post_number` #1, #2… fixed for good, so a permalink never moves) and `forum_post_revisions` (earlier versions of edited posts; only moderators read them).
+- How a thread travels: `/forums/:forumSlug` → `ThreadList` → `useThreadList()` → `forum_thread_list()`; `/forums/:forumSlug/:threadNumber?post=7` → `ThreadPage` → `useForumThread()` → `forum_thread()` (reads at least as far as #7, then the page scrolls to and focuses `#post-7`). Both apply blocks and moderation and never answer a user ID.
+- How a post is written: `NewThreadPage` (`start_forum_thread()`), `ReplyForm` (`reply_to_forum_thread()`), `PostEditForm` (`edit_forum_post()`), `PostActions` (`delete_forum_post()`). Each goes through `require_forum_writer()` (the account gate and the post limit) and `check_forum_post_text()` (no HTML, no script links: rule 8). Refusals come back as hints ("body:html", "wait_minutes:12") that `lib/forumFailures.ts` turns into words under the right field.
+- Safe display: `ForumPostText` draws only bold, italic, links, quotes and lists (react-markdown with `skipHtml`); links get `rel="nofollow ugc noopener"`.
+- Reporting: `forum_thread` and `forum_post` are reportable types with their branches in the four shared functions; `ReportButton` sits on the thread and on every post.
+- Account deletion and retention: closing an account turns its posts into "Post deleted" markers; `delete_account_forum_posts()` and the nightly `purge-deleted-forum-posts` erase the words 30 days on, keeping only what a case holds.
+- Tests: `supabase/tests/database/222-forum-threads-and-posts.test.sql`, `src/features/forums/**/*.test.ts(x)`, `e2e/forum-threads.spec.ts`.
 
 ## Sharing a passage or a picture (S1-E4-11; WRITE-5e)
 

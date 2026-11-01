@@ -75,7 +75,9 @@
     "picture": "your picture",
     "embed": "your music or video",
     "atlas_item": "something from your story’s world",
-    "message": "your message"
+    "message": "your message",
+    "forum_thread": "your forum thread",
+    "forum_post": "your forum post"
   },
   "decisions": {
     "no_action": "a moderator checked a report about {{item}} and took no action, so nothing changes.",

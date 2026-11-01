@@ -2081,6 +2081,167 @@ export type Database = {
           },
         ];
       };
+      forum_post_revisions: {
+        Row: {
+          body: string;
+          created_at: string;
+          id: string;
+          post_id: string;
+          title: string | null;
+          updated_at: string;
+          user_id: string;
+          written_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          created_at?: string;
+          id?: string;
+          post_id: string;
+          title?: string | null;
+          updated_at?: string;
+          user_id: string;
+          written_at: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          post_id?: string;
+          title?: string | null;
+          updated_at?: string;
+          user_id?: string;
+          written_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_post_revisions_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_post_revisions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      forum_posts: {
+        Row: {
+          body: string;
+          created_at: string;
+          deleted_at: string | null;
+          edited_at: string | null;
+          id: string;
+          post_number: number;
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+          forum_post_state_for_caller: string | null;
+        };
+        ComputedFields: 'forum_post_state_for_caller';
+        Insert: {
+          body: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          edited_at?: string | null;
+          id?: string;
+          post_number: number;
+          thread_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          edited_at?: string | null;
+          id?: string;
+          post_number?: number;
+          thread_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_posts_thread_id_fkey';
+            columns: ['thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_threads';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_posts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      forum_threads: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          forum_id: string;
+          id: string;
+          last_post_at: string;
+          last_post_number: number;
+          thread_number: number;
+          title: string;
+          updated_at: string;
+          user_id: string;
+          forum_thread_header_json: Json | null;
+          forum_thread_is_shown: boolean | null;
+          forum_thread_summary_json: Json | null;
+        };
+        ComputedFields:
+          'forum_thread_header_json' | 'forum_thread_is_shown' | 'forum_thread_summary_json';
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          forum_id: string;
+          id?: string;
+          last_post_at?: string;
+          last_post_number?: number;
+          thread_number?: never;
+          title: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          forum_id?: string;
+          id?: string;
+          last_post_at?: string;
+          last_post_number?: number;
+          thread_number?: never;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_threads_forum_id_fkey';
+            columns: ['forum_id'];
+            isOneToOne: false;
+            referencedRelation: 'forums';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_threads_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       forums: {
         Row: {
           accent: Database['public']['Enums']['forum_accent'];
@@ -6936,6 +7097,8 @@ export type Database = {
         Args: { custom: Json; target_story_id: string };
         Returns: undefined;
       };
+      check_forum_post_text: { Args: { body: string }; Returns: string };
+      check_forum_thread_title: { Args: { title: string }; Returns: string };
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
       check_pen_name: { Args: { candidate: string }; Returns: string };
@@ -7193,6 +7356,7 @@ export type Database = {
       };
       delete_account_conversation: { Args: { target_user_id: string }; Returns: undefined };
       delete_account_data: { Args: { target_user_id: string }; Returns: undefined };
+      delete_account_forum_posts: { Args: { target_user_id: string }; Returns: undefined };
       delete_account_stories: { Args: { target_user_id: string }; Returns: undefined };
       delete_bible_entry: { Args: { entry_id: string }; Returns: Json };
       delete_bible_section: { Args: { section_id: string }; Returns: Json };
@@ -7201,6 +7365,7 @@ export type Database = {
       delete_character_relationship: { Args: { relationship_id: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
       delete_conversation: { Args: { other_handle: string }; Returns: Json };
+      delete_forum_post: { Args: { post_id: string }; Returns: Json };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       delete_story_character: { Args: { character_id: string }; Returns: Json };
       delete_story_event: { Args: { event_id: string }; Returns: Json };
@@ -7211,6 +7376,7 @@ export type Database = {
         Args: { comment_id: string; should_downvote: boolean };
         Returns: boolean;
       };
+      edit_forum_post: { Args: { body: string; post_id: string; title?: string }; Returns: Json };
       email_delivery_for: {
         Args: { kind: Database['public']['Enums']['notification_kind']; target_user_id: string };
         Returns: string;
@@ -7304,6 +7470,7 @@ export type Database = {
           thread_count: number;
         }[];
       };
+      forum_live_post_count: { Args: { target_thread_id: string }; Returns: number };
       forum_name_in: {
         Args: { target_forum_id: string; wanted_language: string };
         Returns: {
@@ -7312,6 +7479,60 @@ export type Database = {
         }[];
       };
       forum_name_problems: { Args: { names: Json }; Returns: string[] };
+      forum_person_json: { Args: { person_id: string }; Returns: Json };
+      forum_post_history: { Args: { post_id: string }; Returns: Json };
+      forum_post_json: {
+        Args: {
+          starter_id: string;
+          target: Omit<
+            Database['public']['Tables']['forum_posts']['Row'],
+            Database['public']['Tables']['forum_posts']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      forum_post_state_for_caller: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_posts']['Row'],
+            Database['public']['Tables']['forum_posts']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      forum_post_wait_minutes: { Args: { author_id: string }; Returns: number };
+      forum_thread: {
+        Args: { after_post?: number; thread_number: number; up_to_post?: number };
+        Returns: Json;
+      };
+      forum_thread_header_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_threads']['Row'],
+            Database['public']['Tables']['forum_threads']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      forum_thread_is_shown: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_threads']['Row'],
+            Database['public']['Tables']['forum_threads']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      forum_thread_list: { Args: { forum_slug: string; older_than?: string }; Returns: Json };
+      forum_thread_summary_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_threads']['Row'],
+            Database['public']['Tables']['forum_threads']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
@@ -8079,6 +8300,26 @@ export type Database = {
         };
         Returns: Json;
       };
+      own_forum_post_for_change: {
+        Args: { post_id: string };
+        Returns: {
+          body: string;
+          created_at: string;
+          deleted_at: string | null;
+          edited_at: string | null;
+          id: string;
+          post_number: number;
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'forum_posts';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       paragraph_comment_counts: {
         Args: { chapter_code: string; story_slug: string };
         Returns: Json;
@@ -8306,6 +8547,7 @@ export type Database = {
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chats: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_deleted_forum_posts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_pictures: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_expired_age_check_sessions: { Args: Record<PropertyKey, never>; Returns: number };
@@ -8505,6 +8747,7 @@ export type Database = {
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
       replace_sent_teacher_link: { Args: { target_user_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
+      reply_to_forum_thread: { Args: { body: string; thread_number: number }; Returns: Json };
       report_client_error: {
         Args: {
           app_version: string;
@@ -8607,6 +8850,7 @@ export type Database = {
       };
       require_compliance_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_forum_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_forum_writer: { Args: Record<PropertyKey, never>; Returns: string };
       require_live_profile: { Args: Record<PropertyKey, never>; Returns: string };
       require_mail_thread_for_staff: {
         Args: { thread_reference: string };
@@ -8901,6 +9145,10 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      start_forum_thread: {
+        Args: { body: string; forum_slug: string; title: string };
+        Returns: Json;
       };
       start_reading_habit: { Args: { device_time_zone: string }; Returns: undefined };
       statement_ground_for_case: {
@@ -9267,7 +9515,9 @@ export type Database = {
         | 'picture'
         | 'embed'
         | 'atlas_item'
-        | 'message';
+        | 'message'
+        | 'forum_thread'
+        | 'forum_post';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -9574,6 +9824,8 @@ export const Constants = {
         'embed',
         'atlas_item',
         'message',
+        'forum_thread',
+        'forum_post',
       ],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [
