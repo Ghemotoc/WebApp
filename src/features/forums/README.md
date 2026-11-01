@@ -23,6 +23,8 @@ S1-E8-02; board 5.2 Forum thread).
 - Quotes and the quick reply (S1-E8-03, FORUMS-1c): `hooks/useQuotePicks.ts`,
   `components/ForumQuoteBlock.tsx`, `lib/forumAddresses.ts`; "Quote" and "Add to quotes" in
   `PostActions`, the picked quotes in `ReplyForm`.
+- Read and unread (S1-E8-04, FORUMS-1d): `api/forumReads.ts`, `hooks/useForumReads.ts`,
+  `components/UnreadDot.tsx`, `MarkReadButton.tsx` and `NewForYou.tsx`.
 - Staff (`/staff/forums`, owner and admin): `api/forumAdmin.ts` (`admin_list_forums()`,
   `admin_save_forum()`, `admin_delete_forum()`), `hooks/useForumAdmin.ts`, `lib/forumForm.ts`,
   and `components/staff/` (`ForumsAdminPage`, `ForumAdminRow`, `ForumForm` with
@@ -31,4 +33,4 @@ S1-E8-02; board 5.2 Forum thread).
   names themselves are staff content in `forum_names`, never in the locale files.
 
 The database half is `supabase/migrations/…_forums1_a_forum_categories.sql` and
-`…_forums1_b_threads_and_posts.sql` and `…_forums1_c_quotes.sql`.
+`…_forums1_b_threads_and_posts.sql`, `…_forums1_c_quotes.sql` and `…_forums1_d_read_and_unread.sql`.

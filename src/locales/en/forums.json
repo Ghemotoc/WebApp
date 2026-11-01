@@ -160,5 +160,23 @@
     "deleted": "This post was deleted.",
     "removed": "[Removed by the moderation team]",
     "unavailable": "This post isn’t available."
+  },
+  "unread": {
+    "new": "New posts since your last visit",
+    "none": "No new posts",
+    "markAll": "Mark all as read",
+    "mark": "Mark as read",
+    "markLabel": "Mark as read: {{name}}",
+    "markFailed": "We couldn’t mark that as read. Try again."
+  },
+  "newForYou": {
+    "eyebrow": "Since your last visit",
+    "heading": "New for you",
+    "note": "Each link opens at the first post you haven’t read.",
+    "count_one": "{{count}} new",
+    "count_few": "{{count}} new",
+    "count_other": "{{count}} new",
+    "empty": "You’re up to date.",
+    "loadFailed": "We couldn’t load what’s new. Try again later."
   }
 }

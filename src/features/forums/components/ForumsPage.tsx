@@ -8,14 +8,19 @@
  * then each category (ForumCategorySection) in the order of Q45 (pinned categories first), the
  * line that threads never close on their own (S1-E8-01, third criterion), and beside them
  * "Forum rules in short".
- * Not yet, as noted in docs/board-fixes.md: New thread (part b), search (part f), "Mark all as
- * read" and "New for you" (part d), Spaces (bundle FORUMS-2) and the ad slots (S1-E12-01).
- * What it calls: useForumIndex → forum_index(); lib/forumTree.ts puts it in order.
+ * Part d (S1-E8-04) adds, for a signed-in reader, "Mark all as read", the dots' legend and the
+ * "New for you" card.
+ * Not yet, as noted in docs/board-fixes.md: search (part f), Spaces (bundle FORUMS-2) and the ad
+ * slots (S1-E12-01).
+ * What it calls: useForumIndex → forum_index(); lib/forumTree.ts puts it in order;
+ * MarkReadButton, UnreadLegend and NewForYou.
  */
 import { Doodle } from '@/components/ui/Doodle';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+
+import { useSession } from '@/features/auth/hooks/useSession';
 
 import { useForumIndex } from '../hooks/useForumIndex';
 import { buildForumTree, type ForumCategory } from '../lib/forumTree';
@@ -23,6 +28,9 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumCategorySection } from './ForumCategorySection';
 import { ForumRulesCard } from './ForumRulesCard';
+import { MarkReadButton } from './MarkReadButton';
+import { NewForYou } from './NewForYou';
+import { UnreadCircle } from './UnreadDot';
 
 /** The heading block: the eyebrow with the count, the title and the intro. */
 function ForumsHeader({ threadCount }: { threadCount: number }) {
@@ -34,6 +42,9 @@ function ForumsHeader({ threadCount }: { threadCount: number }) {
         {t('title')}
       </h1>
       <p className="m-0 text-base leading-relaxed text-body">{t('intro')}</p>
+      <div className="mt-2">
+        <MarkReadButton forumSlug={null} />
+      </div>
       <Doodle
         name="music-notes"
         kind="background"
@@ -41,6 +52,29 @@ function ForumsHeader({ threadCount }: { threadCount: number }) {
         className="absolute -top-4 -right-40 w-[72px] rotate-6"
       />
     </header>
+  );
+}
+
+/**
+ * What the dots mean, for a signed-in reader (board 5.1's legend; S1-E8-04).
+ *
+ * @returns the two entries, or nothing for a visitor
+ */
+function UnreadLegend() {
+  const { t } = useForumsTranslation();
+  const { userId } = useSession();
+  if (userId === null) return null;
+  return (
+    <p className="m-0 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-body">
+      <span className="inline-flex items-center gap-2">
+        <UnreadCircle isNew />
+        {t('unread.new')}
+      </span>
+      <span className="inline-flex items-center gap-2">
+        <UnreadCircle isNew={false} />
+        {t('unread.none')}
+      </span>
+    </p>
   );
 }
 
@@ -61,6 +95,7 @@ function ForumCategories({
       {groups.map((group) => (
         <ForumCategorySection key={group.category.id} group={group} />
       ))}
+      <UnreadLegend />
       <p className="m-0 text-sm text-body">{t('neverClose')}</p>
     </>
   );
@@ -84,6 +119,7 @@ export function ForumsPage() {
           <ForumCategories groups={groups} loadFailed={loadFailed} />
         </div>
         <aside className="flex flex-col gap-6">
+          <NewForYou />
           <ForumRulesCard />
         </aside>
       </div>

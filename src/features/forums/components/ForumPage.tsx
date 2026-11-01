@@ -5,7 +5,8 @@
  * What it shows: the breadcrumb (Forums › category › forum), the forum's name and description,
  * the subforums inside it as rows like the index's, and its threads with "Start a thread"
  * (ThreadList, part b, S1-E8-02). A category's address shows its forums the same way; threads
- * live in the forums inside it.
+ * live in the forums inside it. Part d adds "Mark as read" for the forum and those inside it
+ * (MarkReadButton, S1-E8-04).
  * What it calls: useForumIndex (the same read as the index, so moving between them is instant);
  * lib/forumTree.ts finds the forum, its path and its children; ForumBreadcrumb and ThreadList.
  */
@@ -20,6 +21,7 @@ import { childrenOf, forumPath } from '../lib/forumTree';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumBreadcrumb } from './ForumBreadcrumb';
+import { MarkReadButton } from './MarkReadButton';
 import { ForumRow } from './ForumRow';
 import { ThreadList } from './ThreadList';
 
@@ -69,6 +71,9 @@ function ForumContent({ entries, path }: { entries: ForumEntry[]; path: ForumEnt
           {forum.name}
         </h1>
         {forum.description !== '' && <p className="m-0 text-base text-body">{forum.description}</p>}
+        <div>
+          <MarkReadButton forumSlug={forum.slug} forumName={forum.name} />
+        </div>
       </header>
       <ForumChildren entries={entries} forum={forum} />
       {forum.level > 0 && <ThreadList forumSlug={forum.slug} />}

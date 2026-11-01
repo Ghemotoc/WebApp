@@ -8,6 +8,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
+import { useSession } from '@/features/auth/hooks/useSession';
 
 import {
   fetchThread,
@@ -26,8 +27,10 @@ import { forumsQueryKey } from './useForumIndex';
  *   isLoadingMore and loadFailed
  */
 export function useThreadList(forumSlug: string) {
+  // Which threads are new is per reader (S1-E8-04), so signing in or out reads again.
+  const { userId } = useSession();
   const list = useInfiniteQuery({
-    queryKey: [forumsQueryKey, 'threads', forumSlug],
+    queryKey: [forumsQueryKey, 'threads', forumSlug, userId],
     queryFn: async ({ pageParam }: { pageParam: string | null }) =>
       fetchThreadList(await requireClient(), forumSlug, pageParam),
     initialPageParam: null as string | null,

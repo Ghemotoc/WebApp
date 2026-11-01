@@ -1,7 +1,7 @@
 /**
  * Forum threads and posts: reading a forum's threads and a thread's posts, and starting,
  * replying, editing and deleting (bundle FORUMS-1, part b; story S1-E8-02; board 5.2). Part c
- * adds each post's quotes (S1-E8-03).
+ * adds each post's quotes (S1-E8-03); part d, whether a thread is new to the reader (S1-E8-04).
  *
  * Who calls it: hooks/useForumThreads.ts. What it calls next: forum_thread_list(),
  * forum_thread(), start_forum_thread(), reply_to_forum_thread(), edit_forum_post(),
@@ -89,6 +89,10 @@ export interface ForumThreadSummary {
   replyCount: number;
   lastPostAt: string;
   lastPoster: ForumPerson;
+  /** Whether it has posts new to the reader (S1-E8-04); null for a visitor. */
+  isUnread: boolean | null;
+  /** The first post new to the reader, where the list opens it; null when none is. */
+  firstUnreadPost: number | null;
 }
 
 /** One read of a forum's list. */
@@ -237,6 +241,8 @@ function summaryFrom(row: JsonObject): ForumThreadSummary {
     replyCount: Number(row['reply_count']),
     lastPostAt: String(row['last_post_at']),
     lastPoster: personFrom(row['last_poster']),
+    isUnread: typeof row['is_unread'] === 'boolean' ? row['is_unread'] : null,
+    firstUnreadPost: typeof row['first_unread_post'] === 'number' ? row['first_unread_post'] : null,
   };
 }
 

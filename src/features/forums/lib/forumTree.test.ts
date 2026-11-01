@@ -25,6 +25,7 @@ function entry(slug: string, changes: Partial<ForumEntry> = {}): ForumEntry {
     postCount: 0,
     latestActivityAt: null,
     latestPost: null,
+    hasUnread: null,
     ...changes,
   };
 }

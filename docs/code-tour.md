@@ -1669,6 +1669,15 @@ Idea IDEA-20261031-12 (GDPR art. 15 and 20).
 - How a quote is drawn: `forum_thread()` → `forum_post_json()` → `forum_quote_json()` for each quoted post, as it is now. A reply stores which posts it quotes, never a copy of their words, so a post that is deleted, removed by staff or hidden from the reader by a block shows a marker in every quote instead of its words.
 - Tests: `supabase/tests/database/223-forum-quotes.test.sql`, `src/features/forums/api/forumWrites.test.ts`, `e2e/forum-quotes.spec.ts`.
 
+## Read and unread in the forums (S1-E8-04; FORUMS-1d)
+
+- Where it lives: `src/features/forums/api/forumReads.ts`, `hooks/useForumReads.ts`, `components/UnreadDot.tsx`, `MarkReadButton.tsx`, `NewForYou.tsx`, and `supabase/migrations/…_forums1_d_read_and_unread.sql`.
+- The rule (the phpBB pattern): a post is new to a reader when someone else wrote it, they can read it, it came after `forum_read_since()` (the latest of their account's creation, their "Mark all as read" and the mark on its forum) and its number is after the last one they saw in that thread (`forum_thread_reads`). `forum_first_unread_post()` and `forum_unread_post_count()` apply it; `forum_has_unread()` asks it of every thread in a forum and the forums inside it.
+- How a mark travels: the thread page → `useMarkThreadRead()` with the highest post number on screen → `mark_forum_thread_read()` (only moves forward). "Mark as read" / "Mark all as read" → `MarkReadButton` → `mark_forums_read(slug | null)` → one `forum_read_marks` row per forum inside, or one for the board. After a mark, the index, the lists and "New for you" read again.
+- Where it shows: `forum_index()`'s `has_unread` (the dot on each forum), `forum_thread_summary_json()`'s `is_unread` and `first_unread_post` (the dot on each thread, and the list's link opens at the first new post), `forum_new_for_you()` (the side card). A visitor gets null: no dots.
+- Privacy: both tables are readable only by their owner, in Download my data, and deleted with the account.
+- Tests: `supabase/tests/database/224-forum-read-marks.test.sql`, `src/features/forums/api/forumReads.test.ts`, `e2e/forum-read-marks.spec.ts`.
+
 ## Sharing a passage or a picture (S1-E4-11; WRITE-5e)
 
 - Blocks: a chapter's stored Markdown is cut into blocks at blank lines, counted from 1, by `src/lib/chapter-blocks.ts` and by the SQL `chapter_blocks()` the same way. `ChapterText` runs `reading/lib/numberBlocks.ts` as a rehype step, which marks each top-level part with `data-block` and `data-block-end` and highlights a shared passage.

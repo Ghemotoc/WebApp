@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
+import { useSession } from '@/features/auth/hooks/useSession';
 
 import { fetchForumIndex, type ForumEntry } from '../api/forumIndex';
 
@@ -23,8 +24,10 @@ export function useForumIndex() {
   const { i18n } = useTranslation();
   // The names come in the language the reader sees the app in; a new language reads again.
   const language = i18n.language;
+  // New posts are per reader (S1-E8-04), so signing in or out reads again.
+  const { userId } = useSession();
   const index = useQuery<ForumEntry[]>({
-    queryKey: [forumsQueryKey, 'index', language],
+    queryKey: [forumsQueryKey, 'index', language, userId],
     queryFn: async () => fetchForumIndex(await requireClient(), language),
   });
   return { entries: index.data ?? null, loadFailed: index.isError };

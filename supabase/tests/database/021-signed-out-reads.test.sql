@@ -102,6 +102,9 @@ select results_eq(
        -- Forum threads, posts and earlier versions: read only through functions (FORUMS-1b).
        ('forum_post_revisions', 0::bigint),
        ('forum_posts', 0::bigint),
+       -- Read marks and thread reads: only one's own (FORUMS-1d).
+       ('forum_read_marks', 0::bigint),
+       ('forum_thread_reads', 0::bigint),
        ('forum_threads', 0::bigint),
        ('forums', (select count(*) from public.forums where deleted_at is null)),
        ('identity_link_requests', 0::bigint),
