@@ -137,6 +137,22 @@ export const newStorySchema = newStoryShape.superRefine(labelRules);
 /** The checked answers. */
 export type NewStoryInput = z.infer<typeof newStorySchema>;
 
+/**
+ * The colours a writer may pick for their story's quote and picture cards (IDEAS-1c): the board's
+ * nine palette colours. The database's stories_card_colour_on_palette check holds the same list.
+ */
+export const cardColourKeys = [
+  'plum',
+  'violet',
+  'gold',
+  'ink',
+  'lilac',
+  'blush',
+  'sky',
+  'sage',
+  'paper',
+] as const;
+
 /** The story settings form's answers (S1-E3-05): the same fields plus status, comments and the sharing switches. */
 export const storySettingsSchema = newStoryShape
   .omit({ storyId: true })
@@ -147,6 +163,8 @@ export const storySettingsSchema = newStoryShape
     quoteCardsEnabled: z.boolean(),
     /** The writer's switch for sharing the chapters' pictures (S1-E4-11). */
     pictureSharingEnabled: z.boolean(),
+    /** The palette colour readers' new cards start in, or null for our default (IDEAS-1c). */
+    cardColour: z.enum(cardColourKeys).nullable(),
   })
   .superRefine(labelRules);
 

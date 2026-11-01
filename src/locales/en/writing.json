@@ -184,6 +184,11 @@
     "on": "On. Readers can share a picture from your chapters as a card with your name and a link to it. Only pictures that passed the check.",
     "off": "Off. Readers can’t share your chapters’ pictures."
   },
+  "cardColour": {
+    "label": "Colour for quote and picture cards",
+    "ourDefault": "Our default",
+    "hint": "New cards readers make from your story start in this colour. Each reader can still pick another for their own card."
+  },
   "settings": {
     "documentTitle": "Story settings · {{productName}}",
     "eyebrow": "Write · story settings",

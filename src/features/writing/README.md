@@ -16,6 +16,7 @@ The writer's side: creating a story, its cover, and (later in the lane) chapters
 - Story Atlas (S1-E17, `src/features/atlas/`): "Plan" on each `WriterStoryCard`, "Plan this story" in `EditorAside`, and New story with `?from=plan` opens the new story's plan (`useNewStoryForm`).
 - `hooks/useNewStoryForm.ts` (answers, zod checks, `create_story()`), `useStorySettingsForm.ts` (the same for `update_my_story()`), `useStoryActions.ts` (delete and undo), `useStoryFormOptions.ts` (open languages and categories), `useMyStories.ts` (the writer's own list, deleted ones included); `storyAnswers.ts` is the answers type the sections share.
 - `api/stories.ts`: `open_story_languages()`, `categories`, `create_story()`, `stories` with tags.
+- `components/CardColourField.tsx` (IDEAS-1 part c): the colour readers' new quote and picture cards start in, saved as `card_colour` by `update_my_story()`.
 - `lib/tags.ts`: the tag rule the form applies as the writer types, the same as the database's `normalise_tag()`.
 - Covers are drawn by `src/components/covers/` (`DrawnCover`, `coverDesigns.ts`, `automaticCover.ts` for a skipped cover, S1-E3-13), shared with every screen that shows a cover. The form makes the story's ID so the automatic design is known before the story exists.
 - The database side: `supabase/README.md`, "Stories".

@@ -19,6 +19,7 @@ import type { ChapterAddress } from '../api/sharing';
 import { copyText } from '../lib/clipboard';
 import type { SharedChapter } from '../lib/sharedChapter';
 import { chapterShareLink } from '../lib/shareLink';
+import { prefersSystemShare, shareWithSystem } from '../lib/systemShare';
 import { registerSharingTranslations } from '../registerSharingTranslations';
 
 /** The dialog with its texts, fetched the first time it opens. */
@@ -26,15 +27,6 @@ const LoadedShareDialog = lazy(async () => {
   const module = await import('./LoadedShareDialog');
   return { default: module.LoadedShareDialog };
 });
-
-/**
- * Whether to use the system share sheet: a touch screen whose browser offers one.
- *
- * @returns true on phones and tablets with navigator.share
- */
-function prefersSystemShare(): boolean {
-  return typeof navigator.share === 'function' && window.matchMedia('(pointer: coarse)').matches;
-}
 
 /**
  * Counts a share: fetches the counting code after the share, so it stays out of the reader's
@@ -45,21 +37,6 @@ function prefersSystemShare(): boolean {
  */
 function countShare(address: ChapterAddress, method: 'copy_link' | 'share_sheet') {
   void import('../lib/countShare').then((module) => module.countShare(address, method));
-}
-
-/**
- * Opens the system share sheet.
- *
- * @returns true when the reader shared, false when they cancelled; throws when the sheet failed
- */
-async function shareWithSystem(title: string, link: string): Promise<boolean> {
-  try {
-    await navigator.share({ title, url: link });
-    return true;
-  } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') return false;
-    throw error;
-  }
 }
 
 /**

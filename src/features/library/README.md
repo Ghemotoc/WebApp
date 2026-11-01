@@ -11,4 +11,5 @@ The reader's library and their place in every chapter. Built by READ-4a: S1-E4-0
 - `lib/places.ts` (where Continue leads, "Chapter 15 is out"), `lib/deviceKind.ts` (phone, tablet or computer from the window width).
 - The reader screen's side lives in `src/features/reading/`: `hooks/useSavedPlace.ts` and `components/SavedPlaceOffer.tsx`.
 - The database side: `supabase/migrations/…_s1_e4_03_library.sql`; test `179`.
+- `components/FinishedThanksButton.tsx` and `hooks/useFinishedThanks.ts` (IDEAS-1 part c): "Tell the writer you finished it" on a story on the Finished shelf, through `send_finished_thanks()`; it reads "Sent" once it went.
 - `components/ReadingHabitNote.tsx` and `ReadingHabitSettings.tsx` (IDEAS-1 part b): "Your reading days", the private reading streak, from `src/features/reading-habit/`.

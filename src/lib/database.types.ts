@@ -1915,6 +1915,46 @@ export type Database = {
         };
         Relationships: [];
       };
+      finished_thanks: {
+        Row: {
+          created_at: string;
+          id: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'finished_thanks_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'finished_thanks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       follows_stories: {
         Row: {
           created_at: string;
@@ -4550,6 +4590,7 @@ export type Database = {
           ai_disclosure: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at: string | null;
           blurb: string;
+          card_colour: string | null;
           category_id: string;
           classic_author_id: string | null;
           comments_enabled: boolean;
@@ -4584,6 +4625,7 @@ export type Database = {
           ai_disclosure?: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at?: string | null;
           blurb?: string;
+          card_colour?: string | null;
           category_id: string;
           classic_author_id?: string | null;
           comments_enabled?: boolean;
@@ -4617,6 +4659,7 @@ export type Database = {
           ai_disclosure?: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at?: string | null;
           blurb?: string;
+          card_colour?: string | null;
           category_id?: string;
           classic_author_id?: string | null;
           comments_enabled?: boolean;
@@ -7269,6 +7312,7 @@ export type Database = {
           ai_disclosure: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at: string | null;
           blurb: string;
+          card_colour: string | null;
           category_id: string;
           classic_author_id: string | null;
           comments_enabled: boolean;
@@ -8176,6 +8220,7 @@ export type Database = {
           ai_disclosure: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at: string | null;
           blurb: string;
+          card_colour: string | null;
           category_id: string;
           classic_author_id: string | null;
           comments_enabled: boolean;
@@ -8539,6 +8584,7 @@ export type Database = {
         };
         Returns: string[];
       };
+      send_finished_thanks: { Args: { story_slug: string }; Returns: Json };
       send_message: { Args: { body: string; recipient_handle: string }; Returns: Json };
       send_moderator_mail: {
         Args: { body: string; statement_reference?: string; subject: string };
@@ -8979,7 +9025,8 @@ export type Database = {
         | 'teacher_badge_removed'
         | 'data_export_ready'
         | 'stories_export_ready'
-        | 'reading_reminder';
+        | 'reading_reminder'
+        | 'story_finished';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -9281,6 +9328,7 @@ export const Constants = {
         'data_export_ready',
         'stories_export_ready',
         'reading_reminder',
+        'story_finished',
       ],
       picture_kind: [
         'cover',

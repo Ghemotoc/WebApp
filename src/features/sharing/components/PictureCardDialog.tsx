@@ -3,7 +3,9 @@
  *
  * It shows the card (the picture, the story's title, "by <pen name>" and the link to the
  * picture's spot), the alt text we write and the reader may change, the link itself with Copy
- * link, and Copy image and Save image. The link carries no sharer ID (legal note).
+ * link, and Copy image and Save image. The link carries no sharer ID (legal note). The card starts
+ * in the writer's card colour when they picked one, and the reader can change it with the same
+ * Background picker as the quote card (IDEAS-1c).
  * Who uses it: PictureShareButton. What it calls: PictureCardCanvas, usePictureBitmap and
  * usePictureCardActions.
  */
@@ -16,10 +18,13 @@ import { brand } from '@/config/brand';
 
 import { usePictureBitmap } from '../hooks/usePictureBitmap';
 import { usePictureCardActions } from '../hooks/usePictureCardActions';
-import type { PictureCardContent } from '../lib/pictureCard';
+import { useShareOptions } from '../hooks/useShareOptions';
+import { paperBackground, type PictureCardContent } from '../lib/pictureCard';
+import { backgroundByKey, type QuoteCardBackground } from '../lib/quoteCard';
 import type { SharedChapter } from '../lib/sharedChapter';
 import { printedLink } from '../lib/shareLink';
 
+import { BackgroundPicker } from './BackgroundPicker';
 import { PictureCardCanvas } from './PictureCardCanvas';
 import { SharingModal } from './SharingModal';
 
@@ -69,6 +74,21 @@ function PictureCardButtons(props: {
 }
 
 /**
+ * The picture's link, printed without "https://".
+ *
+ * @returns the line
+ */
+function PictureLinkLine({ link }: { link: string }) {
+  const { t } = useTranslation('sharing');
+  return (
+    <p className="m-0 text-sm break-all text-body">
+      <span className="font-semibold text-heading">{t('picture.linkLabel')}</span>{' '}
+      {printedLink(link)}
+    </p>
+  );
+}
+
+/**
  * Renders the dialog.
  *
  * @returns the dialog
@@ -88,15 +108,21 @@ export function PictureCardDialog({
   const [altText, setAltText] = useState(() =>
     t('picture.altText', { story: chapter.storyTitle, writer: chapter.writerName, alt }),
   );
-  // Step 2: the words on the card, kept stable so the canvas redraws only on a real change.
+  // Step 2: the card's colour: the writer's when they picked one (IDEAS-1c), otherwise paper.
+  const { cardColour } = useShareOptions(chapter.address);
+  // The reader's own choice wins; the writer's colour may arrive a moment after the dialog opens.
+  const [chosenBackground, setBackground] = useState<QuoteCardBackground | null>(null);
+  const background = chosenBackground ?? backgroundByKey(cardColour) ?? paperBackground;
+  // Step 3: the words on the card, kept stable so the canvas redraws only on a real change.
   const content = useMemo<PictureCardContent>(
     () => ({
       storyTitle: chapter.storyTitle,
       writerLine: t('quote.byline', { writer: chapter.writerName }),
       link: printedLink(link),
       productName: brand.productName,
+      background,
     }),
-    [chapter, link, t],
+    [chapter, link, background, t],
   );
   const actions = usePictureCardActions(chapter.address, link, canvasRef);
   return (
@@ -115,6 +141,7 @@ export function PictureCardDialog({
         canvasRef={canvasRef}
       />
       {picture.failed && <p className="m-0 text-sm text-body">{t('picture.loadFailed')}</p>}
+      <BackgroundPicker chosen={background} onChoose={setBackground} />
       <Textarea
         id="picture-alt-text"
         label={t('picture.altLabel')}
@@ -123,10 +150,7 @@ export function PictureCardDialog({
         value={altText}
         onChange={(event) => setAltText(event.target.value)}
       />
-      <p className="m-0 text-sm break-all text-body">
-        <span className="font-semibold text-heading">{t('picture.linkLabel')}</span>{' '}
-        {printedLink(link)}
-      </p>
+      <PictureLinkLine link={link} />
       <PictureCardButtons actions={actions} isReady={picture.bitmap !== null} />
     </SharingModal>
   );

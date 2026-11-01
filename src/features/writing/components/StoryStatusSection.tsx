@@ -6,7 +6,8 @@
  * Readers can filter by it."; Comments as a switch (role="switch", 60 × 34 px) with "On. Readers
  * can comment on every chapter." or "Off. Existing comments are hidden and nobody can add new
  * ones." The switch is stored now and enforced by S1-E6-01. A second switch, Quote cards
- * (S1-E4-07, third criterion), hides "Share quote" on every chapter when it is off.
+ * (S1-E4-07, third criterion), hides "Share quote" on every chapter when it is off. Then the
+ * picture switch (S1-E4-11) and the card colour drop-down (IDEAS-1c, CardColourField).
  * Who uses it: StorySettingsPage (the new story form keeps the defaults; docs/board-fixes.md).
  */
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ import { ChoiceChips } from '@/components/ui/ChoiceChips';
 
 import type { SetStoryAnswer, StoryAnswers } from '../hooks/storyAnswers';
 
+import { CardColourField } from './CardColourField';
 import { FormSection } from './FormSection';
 
 /** What the section needs. */
@@ -117,6 +119,11 @@ export function StoryStatusSection({ answers, set }: StoryStatusSectionProps) {
         isOn={answers.pictureSharingEnabled}
         note={answers.pictureSharingEnabled ? t('pictureSharing.on') : t('pictureSharing.off')}
         onToggle={() => set('pictureSharingEnabled', !answers.pictureSharingEnabled)}
+      />
+      {/* IDEAS-1c: the colour readers' new quote and picture cards start in. */}
+      <CardColourField
+        value={answers.cardColour}
+        onChange={(colour) => set('cardColour', colour)}
       />
     </FormSection>
   );

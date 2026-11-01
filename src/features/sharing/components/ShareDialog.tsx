@@ -10,18 +10,19 @@
  * Differences from the board (docs/board-fixes.md): "Send in Messages" waits for private messages
  * (S1-E9-01); "Share a quote" is a hint, because a quote starts from text selected in the chapter;
  * the chat preview shows the chapter, since the reader has no blurb at hand.
- * Who uses it: LoadedSharingDialogs. What it calls: lib/clipboard.ts.
+ * Who uses it: LoadedShareDialog. What it calls: ShareLinkRow (the link and Copy link) and
+ * SharePrivacyNote, shared with the whole-story dialog since IDEAS-1c.
  */
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { brand } from '@/config/brand';
 
 import type { SharedChapter } from '../lib/sharedChapter';
-import { copyText } from '../lib/clipboard';
 import { chapterShareLink } from '../lib/shareLink';
 
+import { ShareLinkRow } from './ShareLinkRow';
+import { SharePrivacyNote } from './SharePrivacyNote';
 import { SharingModal } from './SharingModal';
 
 /** What the dialog needs. */
@@ -31,59 +32,6 @@ export interface ShareDialogProps {
   chapter: SharedChapter;
   /** Whether the Share button's copy worked: true, false, or null when it didn't try. */
   wasCopied: boolean | null;
-}
-
-/** The small shield before the privacy line (a status icon, which the doodle rule exempts). */
-function ShieldIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="mt-0.5 flex-none text-(--success-text)"
-    >
-      <path d="M12 3 5 6v6c0 4 3 7.5 7 9 4-1.5 7-5 7-9V6z" />
-    </svg>
-  );
-}
-
-/**
- * The link, its Copy button and what happened to the last copy.
- *
- * @returns the field row and the status line
- */
-function LinkRow({ link, wasCopied }: { link: string; wasCopied: boolean | null }) {
-  const { t } = useTranslation('sharing');
-  const [copied, setCopied] = useState(wasCopied);
-  let status = '';
-  if (copied === true) status = t('dialog.copied');
-  if (copied === false) status = t('dialog.copyFailed');
-  return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor="share-link" className="font-eyebrow text-sm text-eyebrow">
-        {t('dialog.linkLabel')}
-      </label>
-      <div className="flex flex-wrap items-center gap-3">
-        <input
-          id="share-link"
-          readOnly
-          value={link}
-          onFocus={(event) => event.target.select()}
-          className="h-11 min-w-0 flex-1 basis-56 rounded-full border border-control-border bg-paper px-4 text-sm text-ink"
-        />
-        <Button onClick={() => void copyText(link).then(setCopied)}>{t('dialog.copy')}</Button>
-      </div>
-      <p role="status" className="m-0 min-h-5 text-sm text-body">
-        {status}
-      </p>
-    </div>
-  );
 }
 
 /**
@@ -136,11 +84,8 @@ export function ShareDialog({ isOpen, onClose, chapter, wasCopied }: ShareDialog
       })}
       closeLabel={t('dialog.close')}
     >
-      <LinkRow link={link} wasCopied={wasCopied} />
-      <p className="m-0 flex gap-2 text-sm text-body">
-        <ShieldIcon />
-        <span>{t('dialog.privacy')}</span>
-      </p>
+      <ShareLinkRow link={link} wasCopied={wasCopied} />
+      <SharePrivacyNote text={t('dialog.privacy')} />
       <div className="flex flex-col gap-2">
         <h3 className="m-0 font-eyebrow text-sm font-normal text-eyebrow">
           {t('dialog.otherWays')}

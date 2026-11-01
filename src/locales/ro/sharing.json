@@ -94,5 +94,12 @@
     "loadFailed": "Imaginea nu s-a putut încărca pentru card. Poți copia totuși linkul.",
     "failed": "Cardul nu a putut fi făcut. Verifică conexiunea și încearcă din nou.",
     "close": "Închide"
+  },
+  "story": {
+    "buttonLabel": "Distribuie povestea {{title}}",
+    "title": "Distribuie această poveste",
+    "privacy": "Linkul nu conține numele tău și niciun cod de urmărire.",
+    "friendNote": "Prietenul tău vede pagina poveștii în browser și își poate face cont gratuit ca să o citească.",
+    "titleOnlyNote": "Povestea are clasificarea {{rating}}, așa că previzualizarea arată doar titlul și clasificarea."
   }
 }

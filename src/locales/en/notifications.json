@@ -58,7 +58,8 @@
     "teacherBadgeRemoved": "removed your Teacher badge.",
     "dataExportReady": "your copy of your data is ready to download.",
     "storiesExportReady": "your stories are ready to download as Word files.",
-    "readingReminder": "a few minutes of reading today?"
+    "readingReminder": "a few minutes of reading today?",
+    "storyFinished": "finished {{story}} and says thank you for writing it."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -104,7 +105,8 @@
     "seeTeacherBadge": "See your Teacher badge",
     "downloadMyData": "Download your data",
     "downloadMyStories": "Download your stories",
-    "openLibrary": "Open your library"
+    "openLibrary": "Open your library",
+    "openStory": "Open the story"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

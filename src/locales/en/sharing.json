@@ -94,5 +94,12 @@
     "loadFailed": "The picture couldn’t be loaded for the card. You can still copy the link.",
     "failed": "The card couldn’t be made. Check your connection and try again.",
     "close": "Close"
+  },
+  "story": {
+    "buttonLabel": "Share the story {{title}}",
+    "title": "Share this story",
+    "privacy": "The link doesn’t include your name or any tracking code.",
+    "friendNote": "Your friend sees the story’s page in their browser and can join for free to read it.",
+    "titleOnlyNote": "This story is rated {{rating}}, so the preview shows only its title and rating."
   }
 }

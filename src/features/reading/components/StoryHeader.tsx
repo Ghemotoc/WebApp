@@ -9,7 +9,8 @@
  * story), the tag chips, each a link to its tag page (S1-E5-01), "Follow story" (S1-E6-05) and,
  * under the writer's name, the stats row (StoryStats, S1-E5-03). Under the cover, the rank badges
  * (RankBadges, CMS-1g). Under the stats, "Start reading" or "Continue chapter n" and the
- * Library drop-down (StoryReadingActions, S1-E4-03); Share arrives with S1-E4-05.
+ * Library drop-down (StoryReadingActions, S1-E4-03), then Follow and, since IDEAS-1c, Share for the
+ * whole story (StoryShareButton).
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -22,6 +23,8 @@ import { InfoPill } from '@/components/ui/InfoPill';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 import { StoryReadingActions } from '@/features/library/components/StoryReadingActions';
 import { FollowButton } from '@/features/people/components/FollowButton';
+import { StoryShareButton } from '@/features/sharing/components/StoryShareButton';
+import type { SharedStory } from '@/features/sharing/lib/sharedStory';
 import { RankBadges } from '@/features/tags/components/RankBadges';
 import { useTagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
 
@@ -60,8 +63,25 @@ function StoryTagLinks({ tags }: { tags: string[] }) {
 }
 
 /**
- * Start or continue reading and the Library drop-down (S1-E4-03), then "Follow story" (S1-E6-05);
- * none of them on one's own story.
+ * What sharing the whole story needs (IDEAS-1c): no user ID, only what the link preview shows.
+ *
+ * @param story - the story page's data
+ * @returns the shared story
+ */
+function sharedStoryOf(story: StoryPageData): SharedStory {
+  return {
+    slug: story.slug,
+    title: story.title,
+    writerName: story.writer.displayName,
+    blurb: story.blurb,
+    rating: story.labels.rating,
+    coverBackground: story.drawnCover?.background ?? null,
+  };
+}
+
+/**
+ * Start or continue reading and the Library drop-down (S1-E4-03), then "Follow story" (S1-E6-05),
+ * none of them on one's own story, and Share (IDEAS-1c) for every public story.
  *
  * @returns the actions
  */
@@ -75,8 +95,14 @@ function StoryActions({ story }: { story: StoryPageData }) {
         }
         isOwner={story.isOwner}
       />
-      {!story.isOwner && story.isPublic && (
-        <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
+      {story.isPublic && (
+        <div className="flex flex-wrap items-center gap-3">
+          {!story.isOwner && (
+            <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
+          )}
+          {/* IDEAS-1c: share the whole story, for readers and the writer alike. */}
+          <StoryShareButton story={sharedStoryOf(story)} />
+        </div>
       )}
     </>
   );

@@ -19,7 +19,13 @@ import { Textarea } from '@/components/ui/Textarea';
 import { brand } from '@/config/brand';
 
 import { useQuoteCardActions } from '../hooks/useQuoteCardActions';
-import { purpleBackground, type QuoteCardContent } from '../lib/quoteCard';
+import { useShareOptions } from '../hooks/useShareOptions';
+import {
+  backgroundByKey,
+  purpleBackground,
+  type QuoteCardBackground,
+  type QuoteCardContent,
+} from '../lib/quoteCard';
 import type { SharedChapter } from '../lib/sharedChapter';
 import { chapterShareLink, printedLink } from '../lib/shareLink';
 
@@ -80,7 +86,12 @@ export function QuoteCardDialog({
 }: QuoteCardDialogProps) {
   const { t } = useTranslation('sharing');
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [background, setBackground] = useState(purpleBackground);
+  // Step 0: the reader's own choice wins; until they make one, the card is in the writer's colour
+  // when they picked one (IDEAS-1c, which may arrive a moment after the dialog opens), otherwise
+  // our purple.
+  const { cardColour } = useShareOptions(chapter.address);
+  const [chosenBackground, setBackground] = useState<QuoteCardBackground | null>(null);
+  const background = chosenBackground ?? backgroundByKey(cardColour) ?? purpleBackground;
   // Step 1: the alt text we write; the reader may change it.
   const [altText, setAltText] = useState(() =>
     t('quote.altText', { story: chapter.storyTitle, writer: chapter.writerName, passage }),

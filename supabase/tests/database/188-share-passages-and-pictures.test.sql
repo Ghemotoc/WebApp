@@ -78,14 +78,14 @@ select is((select block_text from public.chapter_blocks(E'\n\nUnu\n\n\nDoi\n') w
 
 select pg_temp.sign_out();
 select is(public.share_options('statia-meteo-seed01', 'pass0001'),
-  '{"passages": false, "pictures": false}'::jsonb,
+  '{"passages": false, "pictures": false, "card_colour": null}'::jsonb,
   'a signed-out visitor may share nothing but the address');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(public.share_options('statia-meteo-seed01', 'pass0001'),
-  '{"passages": true, "pictures": true}'::jsonb,
+  '{"passages": true, "pictures": true, "card_colour": null}'::jsonb,
   'a signed-in reader may share passages and pictures while both switches are on');
 select is(public.share_options('statia-meteo-seed01', 'nosuch01'),
-  '{"passages": false, "pictures": false}'::jsonb,
+  '{"passages": false, "pictures": false, "card_colour": null}'::jsonb,
   'a chapter that doesn''t exist offers nothing');
 
 /* ---------- 3. The shared passage, as a link preview asks for it ---------- */
@@ -123,7 +123,7 @@ update public.stories set picture_sharing_enabled = true, quote_cards_enabled = 
 where slug = 'statia-meteo-seed01';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(public.share_options('statia-meteo-seed01', 'pass0001'),
-  '{"passages": false, "pictures": true}'::jsonb,
+  '{"passages": false, "pictures": true, "card_colour": null}'::jsonb,
   'with the passage switch off, only pictures may be shared');
 select pg_temp.sign_out();
 select is(pg_temp.passage(1, 1), null, 'and text isn''t in a shared passage');
@@ -134,7 +134,7 @@ select pg_temp.as_postgres();
 update public.stories set quote_cards_enabled = true, rating = '16_plus' where slug = 'statia-meteo-seed01';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(public.share_options('statia-meteo-seed01', 'pass0001'),
-  '{"passages": false, "pictures": false}'::jsonb,
+  '{"passages": false, "pictures": false, "card_colour": null}'::jsonb,
   'an adult reading a 16+ story may share nothing but the link');
 select is(public.quote_card_state('statia-meteo-seed01', 'pass0001') ->> 'allowed', 'false',
   'and no quote card is offered for it');
