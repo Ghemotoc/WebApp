@@ -2,7 +2,7 @@
  * The hooks behind Settings › Download my data (story S1-E13-02).
  *
  * Who calls them: DownloadMyDataSection. What they call: api/dataExport.ts and
- * lib/runDataExport.ts. The run's state lives in runDataExport's small store, so it survives the
+ * lib/exportRunStore.ts. The run's state lives in that small store, so it survives the
  * panel closing and opening again while the copy is being made.
  */
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -20,7 +20,7 @@ import {
   dataExportRunState,
   startDataExport,
   subscribeToDataExportRun,
-} from '../lib/runDataExport';
+} from '../lib/exportRunStore';
 import type { StatusLabels } from '../lib/storiesForWord';
 
 /** The copies' cache key, per person. */

@@ -10,10 +10,12 @@
  *   6. the older copies' files are deleted, so only one copy of the person's data is kept;
  *   7. the ZIP is uploaded to the private exports bucket;
  *   8. finish_data_export() marks it ready for seven days and sends the notification.
- * It runs in the background of the open tab: the person can keep using the app (the module keeps
- * going when the Settings panel closes), and the panel shows its state through the small store at
- * the bottom of this file. If the tab closes halfway, asking again starts afresh.
- * Who calls it: useStartDataExport(). What it calls: api/dataExport.ts and the libs beside it.
+ * It runs in the background of the open tab: the person can keep using the app (it keeps going
+ * when the Settings panel closes), and the panel shows its state through exportRunStore.ts. If the
+ * tab closes halfway, asking again starts afresh.
+ * Who calls it: startDataExport() in exportRunStore.ts, which loads this file (and the Word and
+ * ZIP libraries with it) only when a copy is asked for, so Settings stays small.
+ * What it calls: api/dataExport.ts and the libs beside it.
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 import { storyToWord } from '@/lib/word/storyToWord';
@@ -42,10 +44,6 @@ export interface DataExportRunOptions {
   /** Draws a picture for Word; the browser's canvas by default, a fake in tests. */
   preparePicture?: (file: Blob) => Promise<WordPicture | null>;
 }
-
-/** Where the current run stands, for the Settings panel. */
-export type DataExportRunState =
-  { phase: 'idle' } | { phase: 'running' } | { phase: 'failed'; message: string };
 
 /**
  * Loads every picture the stories show, drawn for Word. A picture that can't be loaded is left
@@ -121,46 +119,4 @@ export async function makeDataExport(options: DataExportRunOptions): Promise<num
   await uploadExportFile(options.client, opened.fileName, zip);
   await finishDataExport(options.client, opened.exportId, wordFiles.length);
   return wordFiles.length;
-}
-
-/* ---------- The run's state, shared by every panel that shows it ---------- */
-
-let currentState: DataExportRunState = { phase: 'idle' };
-const listeners = new Set<() => void>();
-
-/** Changes the state and tells every panel. */
-function setRunState(next: DataExportRunState): void {
-  currentState = next;
-  for (const listener of listeners) listener();
-}
-
-/** For useSyncExternalStore: listens for state changes. */
-export function subscribeToDataExportRun(listener: () => void): () => void {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
-}
-
-/** For useSyncExternalStore: the state now. */
-export function dataExportRunState(): DataExportRunState {
-  return currentState;
-}
-
-/**
- * Starts a copy unless one is already being made in this tab, and keeps the state up to date.
- *
- * @param options - the client and the translated words
- * @returns once the copy is ready or has failed (a failure is in the state, never thrown)
- */
-export async function startDataExport(options: DataExportRunOptions): Promise<void> {
-  if (currentState.phase === 'running') return;
-  setRunState({ phase: 'running' });
-  try {
-    await makeDataExport(options);
-    setRunState({ phase: 'idle' });
-  } catch (error) {
-    // Logged for the developer without any of the person's data; the panel shows a plain line.
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`The data copy failed: ${message}`);
-    setRunState({ phase: 'failed', message });
-  }
 }

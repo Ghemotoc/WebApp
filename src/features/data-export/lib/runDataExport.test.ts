@@ -8,7 +8,8 @@ import { describe, expect, it, vi } from 'vitest';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { WordLabels } from '@/lib/word/wordTypes';
 
-import { dataExportRunState, makeDataExport, startDataExport } from './runDataExport';
+import { dataExportRunState, startDataExport } from './exportRunStore';
+import { makeDataExport } from './runDataExport';
 
 const wordLabels: WordLabels = {
   byLine: (name) => `By ${name}`,

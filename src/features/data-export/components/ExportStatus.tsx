@@ -19,7 +19,7 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
 import { exportDownloadAddress, type DataExport } from '../api/dataExport';
-import type { DataExportRunState } from '../lib/runDataExport';
+import type { DataExportRunState } from '../lib/exportRunStore';
 import { fileSizeText } from '../lib/fileSize';
 import { useDataExportTranslation } from '../registerDataExportTranslations';
 

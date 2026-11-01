@@ -17,6 +17,7 @@
     "readyTitle": "Your file is ready.",
     "readyBody": "The link works only while you’re logged in and stops working on {{date}}.",
     "readySize_one": "{{count}} story as a Word file · {{size}}",
+    "readySize_few": "{{count}} stories as Word files · {{size}}",
     "readySize_other": "{{count}} stories as Word files · {{size}}",
     "download": "Download ZIP",
     "downloadFailed": "We couldn’t open your file. Log in again and try once more.",

@@ -29,6 +29,16 @@ const reviewedHosts: Record<string, string> = {
   'json-schema.org': 'the JSON Schema identifier inside zod; never loaded',
   'tailwindcss.com': 'the licence comment in the built stylesheet; never loaded',
   'prosemirror.net': 'a link in an editor warning; never loaded',
+  // The Word builder (S1-E13-02, the docx library): XML namespaces written into every .docx file
+  // and one help link in a comment; none is ever loaded.
+  'schemas.openxmlformats.org': 'Word file XML namespaces (docx library); never loaded',
+  'schemas.microsoft.com': 'Word file XML namespaces (docx library); never loaded',
+  'purl.org': 'Dublin Core namespaces in a Word file’s properties (docx library); never loaded',
+  'answers.microsoft.com': 'a help link in the docx library; never loaded',
+  'stuk.github.io':
+    'a link in the ZIP library’s error message when a file isn’t a ZIP; never loaded',
+  'rolldown.rs':
+    'a link in the bundler’s error message for require() inside the Word and ZIP libraries; never loaded',
   // Music and video players (S1-E3-10; ADR 0008): loaded in an iframe only after the reader
   // presses play, never on page load. The source links are shown to moderators, never loaded.
   'www.youtube-nocookie.com': 'the YouTube player, privacy-enhanced; only after play (ADR 0008)',
