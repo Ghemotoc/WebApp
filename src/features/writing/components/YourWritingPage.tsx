@@ -8,7 +8,8 @@
  * deleted" with undo when a story was deleted in the last 30 days (S1-E3-05). Once the writer has
  * a story, the writer dashboard (S1-E3-07) joins it: "Continue draft" in the header, the tiles,
  * followers chart and drafts list above the stories (WriterDashboardTop), a numbers table in each
- * story card and "Latest on your chapters" below.
+ * story card and "Latest on your chapters" below. Between the two sits "Lines and stops"
+ * (ChapterInsights, bundle IDEAS-1 part d): one chapter's most-loved lines and where readers stop.
  * What it calls: useMyStories (stories through stories_select_own) and useWriterDashboard
  * (writer_dashboard()). After creating a story, NewStoryPage lands here with a "saved" notice
  * (router state).
@@ -31,6 +32,7 @@ import { useMyStories } from '../hooks/useMyStories';
 import { useWriterDashboard } from '../hooks/useWriterDashboard';
 import { waitingChapters } from '../lib/dashboardChapters';
 
+import { ChapterInsights } from './ChapterInsights';
 import { LatestComments } from './LatestComments';
 import { RecentlyDeleted } from './RecentlyDeleted';
 import { WriterDashboardTop } from './WriterDashboardTop';
@@ -280,7 +282,12 @@ export function YourWritingPage() {
         />
       )}
       <StoriesSection writing={writing} chapterNumbers={chapters} />
-      {hasStories && dashboard !== null && <LatestComments comments={dashboard.latestComments} />}
+      {hasStories && dashboard !== null && (
+        <>
+          <ChapterInsights chapters={chapters} storyTitles={titlesBySlug(liveStories)} />
+          <LatestComments comments={dashboard.latestComments} />
+        </>
+      )}
       <RecentlyDeleted stories={deletedStories} />
     </PageContainer>
   );

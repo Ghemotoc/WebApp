@@ -2952,6 +2952,36 @@ export type Database = {
           },
         ];
       };
+      paragraph_shares: {
+        Row: {
+          chapter_id: string;
+          paragraph_key: string;
+          shared_on: string;
+          total: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_id: string;
+          paragraph_key: string;
+          shared_on: string;
+          total?: number;
+        };
+        Update: {
+          chapter_id?: string;
+          paragraph_key?: string;
+          shared_on?: string;
+          total?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'paragraph_shares_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       parental_consents: {
         Row: {
           created_at: string;
@@ -7902,6 +7932,7 @@ export type Database = {
         Args: { block_number?: number; chapter_code: string; story_slug: string };
         Returns: Json;
       };
+      paragraph_excerpt: { Args: { block_text: string }; Returns: string };
       paragraph_key_of: { Args: { block_text: string }; Returns: string };
       paragraph_now: { Args: { body: string; key: string; number: number }; Returns: number };
       parental_consent_agree: {
@@ -8269,6 +8300,10 @@ export type Database = {
       record_chapter_read: { Args: { chapter_code: string; story_slug: string }; Returns: boolean };
       record_chapter_share: {
         Args: { chapter_code: string; story_slug: string };
+        Returns: boolean;
+      };
+      record_passage_share: {
+        Args: { chapter_code: string; first_block: number; last_block: number; story_slug: string };
         Returns: boolean;
       };
       record_picture_check: {
@@ -8936,6 +8971,10 @@ export type Database = {
       with_comma_below: { Args: { value: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
       working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
+      writer_chapter_insights: {
+        Args: { chapter_code: string; story_slug: string };
+        Returns: Json;
+      };
       writer_chapter_numbers: {
         Args: { since: string; writer_id: string };
         Returns: {
@@ -8953,6 +8992,11 @@ export type Database = {
       writer_follow_state: { Args: { wanted_handle: string }; Returns: Json };
       writer_followers_by_week: { Args: { writer_id: string }; Returns: Json };
       writer_latest_comments: { Args: { writer_id: string }; Returns: Json };
+      writer_loved_lines: { Args: { target_chapter_id: string; writer_id: string }; Returns: Json };
+      writer_reader_stops: {
+        Args: { target_chapter_id: string; writer_id: string };
+        Returns: Json;
+      };
       writers_published_by_market: {
         Args: { for_day: string };
         Returns: {

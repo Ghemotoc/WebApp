@@ -12,6 +12,7 @@ import { useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { trackEvent } from '@/lib/analytics/track';
+import type { SpotRange } from '@/lib/chapter-blocks';
 
 import type { ChapterAddress } from '../api/sharing';
 import { downloadPicture, pictureOf } from '../lib/cardImage';
@@ -23,12 +24,14 @@ import { copyPicture, copyText } from '../lib/clipboard';
  * @param address - the chapter
  * @param link - the picture's full link
  * @param canvasRef - the drawn card
+ * @param range - the picture's block, so the share counts for that paragraph too (IDEAS-1d)
  * @returns copyLink(), copyImage(), saveImage(), status and isWorking
  */
 export function usePictureCardActions(
   address: ChapterAddress,
   link: string,
   canvasRef: RefObject<HTMLCanvasElement | null>,
+  range: SpotRange | null,
 ) {
   const { t } = useTranslation('sharing');
   const [hasCounted, setHasCounted] = useState(false);
@@ -39,7 +42,9 @@ export function usePictureCardActions(
   function countOnce() {
     if (hasCounted) return;
     setHasCounted(true);
-    void import('../lib/countShare').then((module) => module.countShare(address, 'copy_link'));
+    void import('../lib/countShare').then((module) =>
+      module.countShare(address, 'copy_link', range),
+    );
   }
 
   /** Runs one action on the drawn card and turns failures into a status line. */

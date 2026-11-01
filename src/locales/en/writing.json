@@ -478,5 +478,23 @@
       "disconnectFailed": "We couldn’t disconnect Canva. Please try again.",
       "loadFailed": "We couldn’t check whether Canva is connected. Please try again."
     }
+  },
+  "insights": {
+    "eyebrow": "Only you see this",
+    "heading": "Lines and stops",
+    "intro": "Totals from readers’ shared passages, paragraph comments and saved places. Never who.",
+    "chapterLabel": "Chapter",
+    "option": "{{story}} · Chapter {{number}}: {{title}}",
+    "lovedHeading": "Most-loved lines",
+    "lovedEmpty": "No shared passages or paragraph comments on this chapter yet.",
+    "paragraph": "Paragraph {{number}}",
+    "lineCounts": "Shares: {{shares}} · Paragraph comments: {{comments}}",
+    "stopsHeading": "Where readers stop",
+    "stopsIntro": "Where readers’ saved places are, in tenths of the chapter. The last tenth includes readers who reached the end.",
+    "stopsFewer": "Fewer than 5 readers have a saved place in this chapter, so there is no bar yet.",
+    "readers": "From {{readers}} readers",
+    "tenth": "{{from}} to {{to}}%",
+    "tenthValue": "{{percent}}% of readers",
+    "loadFailed": "We couldn’t load these numbers. Refresh the page to try again."
   }
 }

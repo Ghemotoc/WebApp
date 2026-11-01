@@ -478,5 +478,23 @@
       "disconnectFailed": "Nu am putut deconecta Canva. Încearcă din nou.",
       "loadFailed": "Nu am putut verifica dacă Canva e conectat. Încearcă din nou."
     }
+  },
+  "insights": {
+    "eyebrow": "Doar tu vezi asta",
+    "heading": "Rânduri și opriri",
+    "intro": "Totaluri din pasajele distribuite de cititori, din comentariile la paragrafe și din locurile salvate. Niciodată cine.",
+    "chapterLabel": "Capitol",
+    "option": "{{story}} · Capitolul {{number}}: {{title}}",
+    "lovedHeading": "Cele mai iubite rânduri",
+    "lovedEmpty": "Încă nu există pasaje distribuite sau comentarii la paragrafe în acest capitol.",
+    "paragraph": "Paragraful {{number}}",
+    "lineCounts": "Distribuiri: {{shares}} · Comentarii la paragraf: {{comments}}",
+    "stopsHeading": "Unde se opresc cititorii",
+    "stopsIntro": "Unde sunt locurile salvate de cititori, pe zecimi din capitol. Ultima zecime îi include pe cititorii care au ajuns la final.",
+    "stopsFewer": "Mai puțin de 5 cititori au un loc salvat în acest capitol, așa că încă nu există o bară.",
+    "readers": "Din {{readers}} cititori",
+    "tenth": "{{from}}–{{to}}%",
+    "tenthValue": "{{percent}}% dintre cititori",
+    "loadFailed": "Nu am putut încărca aceste cifre. Reîncarcă pagina ca să încerci din nou."
   }
 }

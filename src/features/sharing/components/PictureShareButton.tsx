@@ -19,22 +19,34 @@ import type { PictureShareProps } from '@/features/reading/components/ChapterTex
 import { useShareOptions } from '../hooks/useShareOptions';
 import { SharedChapterContext } from '../lib/sharedChapterContext';
 import type { SharedChapter } from '../lib/sharedChapter';
+import type { SpotRange } from '@/lib/chapter-blocks';
+
 import { chapterShareLink, passageShareLink } from '../lib/shareLink';
 import { registerSharingTranslations } from '../registerSharingTranslations';
 
 import { PictureCardDialog } from './PictureCardDialog';
 
+/** Where a picture card points: its link, and the block it sits in when that can be told. */
+interface PictureSpot {
+  link: string;
+  range: SpotRange | null;
+}
+
 /**
  * The link to the block an element sits in, or the chapter's own link when it can't be told.
+ * The block also goes to the share count, for the writer's most-loved lines (IDEAS-1d).
  *
  * @param element - the button's wrapper
  * @param chapter - the chapter
- * @returns the full link
+ * @returns the full link and the block
  */
-function linkToSpot(element: HTMLElement | null, chapter: SharedChapter): string {
+function spotOf(element: HTMLElement | null, chapter: SharedChapter): PictureSpot {
   const block = Number(element?.closest('[data-block]')?.getAttribute('data-block'));
-  if (!Number.isInteger(block) || block < 1) return chapterShareLink(chapter.address);
-  return passageShareLink(chapter.address, { first: block, last: block });
+  if (!Number.isInteger(block) || block < 1) {
+    return { link: chapterShareLink(chapter.address), range: null };
+  }
+  const range = { first: block, last: block };
+  return { link: passageShareLink(chapter.address, range), range };
 }
 
 /**
@@ -54,7 +66,7 @@ function PictureShareForChapter({
   const { t } = useTranslation('sharing');
   const options = useShareOptions(chapter.address);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [link, setLink] = useState<string | null>(null);
+  const [spot, setSpot] = useState<PictureSpot | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   if (!options.pictures) return null;
   return (
@@ -63,20 +75,21 @@ function PictureShareForChapter({
         variant="secondary"
         aria-label={t('picture.buttonLabel', { alt: picture.alt })}
         onClick={() => {
-          setLink(linkToSpot(wrapperRef.current, chapter));
+          setSpot(spotOf(wrapperRef.current, chapter));
           setIsOpen(true);
         }}
       >
         {t('picture.button')}
       </Button>
-      {link !== null && (
+      {spot !== null && (
         <PictureCardDialog
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           chapter={chapter}
           alt={picture.alt}
           url={picture.url}
-          link={link}
+          link={spot.link}
+          range={spot.range}
         />
       )}
     </div>
