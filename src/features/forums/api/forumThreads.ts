@@ -1,6 +1,7 @@
 /**
  * Forum threads and posts: reading a forum's threads and a thread's posts, and starting,
- * replying, editing and deleting (bundle FORUMS-1, part b; story S1-E8-02; board 5.2).
+ * replying, editing and deleting (bundle FORUMS-1, part b; story S1-E8-02; board 5.2). Part c
+ * adds each post's quotes (S1-E8-03).
  *
  * Who calls it: hooks/useForumThreads.ts. What it calls next: forum_thread_list(),
  * forum_thread(), start_forum_thread(), reply_to_forum_thread(), edit_forum_post(),
@@ -17,6 +18,23 @@ export type ForumPerson = { handle: string; displayName: string; isStaff: boolea
 /** What a reader sees in a post's place (forum_post_state_for_caller()). */
 export type ForumPostState = 'live' | 'hidden' | 'removed' | 'deleted';
 
+/**
+ * What a quote shows (forum_quote_json()): the quoted post's words, a marker when its author
+ * deleted it or staff removed it, or "unavailable" when this reader can't read it (S1-E8-03).
+ */
+export type ForumQuoteState = 'live' | 'deleted' | 'removed' | 'unavailable';
+
+/** One quoted post inside a reply, drawn from the quoted post as it is now (S1-E8-03). */
+export interface ForumQuote {
+  /** The quoted post's number, for the link back to it. */
+  number: number;
+  /** Null for a deleted account, and when the quote is unavailable. */
+  author: ForumPerson;
+  state: ForumQuoteState;
+  /** The words, only when live. */
+  body: string | null;
+}
+
 /** One post in a thread. */
 export interface ForumPost {
   id: string;
@@ -31,6 +49,8 @@ export interface ForumPost {
   state: ForumPostState;
   /** The words, only for live and hidden posts. */
   body: string | null;
+  /** The posts it quotes, in thread order (S1-E8-03). */
+  quotes: ForumQuote[];
   canEdit: boolean;
   canDelete: boolean;
   /** Moderators only: the post has earlier versions to read. */
@@ -136,6 +156,25 @@ export function personFrom(value: Json | undefined): ForumPerson {
   };
 }
 
+/** The quote states the database sends; anything else reads as unavailable. */
+const quoteStates: ForumQuoteState[] = ['live', 'deleted', 'removed', 'unavailable'];
+
+/**
+ * Reads one quote.
+ *
+ * @param row - forum_quote_json()'s answer
+ * @returns the quote
+ */
+export function quoteFrom(row: JsonObject): ForumQuote {
+  const state = quoteStates.find((known) => known === row['state']) ?? 'unavailable';
+  return {
+    number: Number(row['number']),
+    author: personFrom(row['author']),
+    state,
+    body: state === 'live' ? textOrNull(row['body']) : null,
+  };
+}
+
 /**
  * Reads one post.
  *
@@ -153,6 +192,7 @@ export function postFrom(row: JsonObject): ForumPost {
     editedAt: textOrNull(row['edited_at']),
     state: String(row['state']) as ForumPostState,
     body: textOrNull(row['body']),
+    quotes: listOf(row['quotes']).map(quoteFrom),
     canEdit: row['can_edit'] === true,
     canDelete: row['can_delete'] === true,
     hasHistory: row['has_history'] === true,

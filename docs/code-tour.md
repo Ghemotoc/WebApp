@@ -1662,6 +1662,13 @@ Idea IDEA-20261031-12 (GDPR art. 15 and 20).
 - Account deletion and retention: closing an account turns its posts into "Post deleted" markers; `delete_account_forum_posts()` and the nightly `purge-deleted-forum-posts` erase the words 30 days on, keeping only what a case holds.
 - Tests: `supabase/tests/database/222-forum-threads-and-posts.test.sql`, `src/features/forums/**/*.test.ts(x)`, `e2e/forum-threads.spec.ts`.
 
+## Forum quotes and the quick reply (S1-E8-03; FORUMS-1c)
+
+- Where it lives: `src/features/forums/hooks/useQuotePicks.ts` (the posts picked to quote), `components/ForumQuoteBlock.tsx` (one quote), `PostActions` ("Quote" and the "Add to quotes" chip), `ReplyForm` (the quick reply box, with the picked quotes above it) and `supabase/migrations/…_forums1_c_quotes.sql`.
+- How a quote travels: "Quote" on #2 → `useQuotePicks().quoteOnly()` (that post alone, then focus moves to the reply box `#forum-reply-box`) → `ReplyForm` draws the pick from the posts on the page → "Post reply" → `reply_to_forum_thread(thread_number, body, quoted_posts)` → `forum_quotes_for_reply()` checks each is a live post of this thread the replier can read and puts them in thread order → `forum_posts.quoted_post_ids`.
+- How a quote is drawn: `forum_thread()` → `forum_post_json()` → `forum_quote_json()` for each quoted post, as it is now. A reply stores which posts it quotes, never a copy of their words, so a post that is deleted, removed by staff or hidden from the reader by a block shows a marker in every quote instead of its words.
+- Tests: `supabase/tests/database/223-forum-quotes.test.sql`, `src/features/forums/api/forumWrites.test.ts`, `e2e/forum-quotes.spec.ts`.
+
 ## Sharing a passage or a picture (S1-E4-11; WRITE-5e)
 
 - Blocks: a chapter's stored Markdown is cut into blocks at blank lines, counted from 1, by `src/lib/chapter-blocks.ts` and by the SQL `chapter_blocks()` the same way. `ChapterText` runs `reading/lib/numberBlocks.ts` as a rehype step, which marks each top-level part with `data-block` and `data-block-end` and highlights a shared passage.

@@ -1,11 +1,13 @@
 /**
  * How the database's refusals become words the screen can say (bundle FORUMS-1, part b;
- * S1-E8-02): forumWriteErrorFrom() and failureMessages().
+ * S1-E8-02; part c, S1-E8-03, adds the quotes): forumWriteErrorFrom(), failureMessages() and
+ * quoteFrom().
  */
 import { describe, expect, it } from 'vitest';
 
 import { failureMessages } from '../lib/forumFailures';
 
+import { quoteFrom } from './forumThreads';
 import { forumWriteErrorFrom } from './forumWrites';
 
 /** A stand-in for t(): the key, with the count when there is one. */
@@ -46,8 +48,37 @@ describe('forumWriteErrorFrom', () => {
     expect(failureMessages(unknown, translate).general).toBe('failures.too_many_unknown');
   });
 
+  it('puts a quote that went, or too many quotes, above the buttons', () => {
+    const missing = forumWriteErrorFrom({ code: '23514', hint: 'quote:missing' });
+    expect(failureMessages(missing, translate).general).toBe('failures.quote_missing');
+    const tooMany = forumWriteErrorFrom({ code: '23514', hint: 'quote:too_many' });
+    expect(failureMessages(tooMany, translate).general).toBe('failures.quote_too_many');
+  });
+
   it('treats anything else as unreachable', () => {
     expect(forumWriteErrorFrom({ code: 'P0002' }).failure).toBe('gone');
     expect(forumWriteErrorFrom({ code: '08000' }).failure).toBe('unreachable');
+  });
+});
+
+describe('quoteFrom', () => {
+  it('keeps the words of a live quote', () => {
+    const quote = quoteFrom({
+      number: 2,
+      state: 'live',
+      body: 'Start with the scene.',
+      author: { handle: 'teacher', display_name: 'Lia', is_staff: false },
+    });
+    expect(quote).toEqual({
+      number: 2,
+      state: 'live',
+      body: 'Start with the scene.',
+      author: { handle: 'teacher', displayName: 'Lia', isStaff: false },
+    });
+  });
+
+  it('never keeps words for a marker, and reads an unknown state as unavailable', () => {
+    expect(quoteFrom({ number: 3, state: 'removed', body: 'gone' }).body).toBeNull();
+    expect(quoteFrom({ number: 4, state: 'strange', body: 'x' }).state).toBe('unavailable');
   });
 });

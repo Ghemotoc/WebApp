@@ -6,8 +6,10 @@
  * What it shows: the heading, the posts in order (#1, #2…), "Show more replies", the reply card,
  * and the side column. A permalink (?post=7) reads at least as far as #7 and scrolls to it and
  * focuses it (criterion 3). An address with the wrong forum moves to the right one. Anyone can
- * read; signed out, the reply card says to log in.
- * What it calls: useForumThread → forum_thread(); useForumIndex for the breadcrumb.
+ * read; signed out, the reply card says to log in. Part c keeps the posts picked to quote, which
+ * each post's buttons change and the reply card sends (S1-E8-03).
+ * What it calls: useForumThread → forum_thread(); useForumIndex for the breadcrumb;
+ * useQuotePicks.
  */
 import { useEffect } from 'react';
 import { Link, Navigate, useParams, useSearchParams } from 'react-router';
@@ -19,6 +21,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import type { ForumPost } from '../api/forumThreads';
 import { useForumIndex } from '../hooks/useForumIndex';
 import { useForumThread } from '../hooks/useForumThreads';
+import { useQuotePicks } from '../hooks/useQuotePicks';
 import { forumPath } from '../lib/forumTree';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
@@ -67,8 +70,11 @@ function ThreadPosts({
   threadNumber: number;
 }) {
   const { t } = useForumsTranslation();
+  const quotePicks = useQuotePicks();
   const thread = read.thread;
   if (thread === undefined || thread === null) return null;
+  // Quoting is for readers who may reply; everyone else sees no quote buttons.
+  const picksForPosts = thread.canReply ? quotePicks : null;
   return (
     <div className="flex min-w-0 flex-col gap-4">
       <ol className="m-0 flex list-none flex-col gap-4 p-0">
@@ -79,6 +85,7 @@ function ThreadPosts({
               forumSlug={thread.forumSlug}
               threadNumber={threadNumber}
               threadTitle={post.number === 1 ? thread.title : null}
+              quotePicks={picksForPosts}
             />
           </li>
         ))}
@@ -90,7 +97,10 @@ function ThreadPosts({
           </Button>
         </div>
       )}
-      <ReplyForm threadNumber={threadNumber} canReply={thread.canReply} />
+      <ReplyForm
+        target={{ forumSlug: thread.forumSlug, threadNumber, posts: read.posts, quotePicks }}
+        canReply={thread.canReply}
+      />
     </div>
   );
 }

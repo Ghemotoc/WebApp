@@ -7,7 +7,7 @@
  * links, quotes and lists are drawn ("Simple formatting only", board 5.2), anything else is
  * unwrapped to its words; links keep only http, https and mailto addresses, get
  * rel="nofollow ugc noopener" and open in a new tab.
- * Who uses it: ForumPostCard; PostHistory for the earlier versions.
+ * Who uses it: ForumPostCard; PostHistory for the earlier versions; ForumQuoteBlock for quotes.
  */
 import Markdown, { type Components } from 'react-markdown';
 

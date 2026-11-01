@@ -93,7 +93,13 @@
     "historyTitle": "Title then: {{title}}",
     "historyFailed": "We couldn’t load the earlier versions.",
     "linkCopied": "Link copied",
-    "permalinkPrefix": "Link to post"
+    "permalinkPrefix": "Link to post",
+    "quote": "Quote",
+    "quoteLabel": "Quote post {{number}}",
+    "addQuote": "Add to quotes",
+    "addedQuote": "Added to quotes",
+    "addQuoteLabel": "Add to quotes: post {{number}}",
+    "addedQuoteLabel": "Added to quotes: post {{number}}"
   },
   "editor": {
     "title": "Title",
@@ -109,7 +115,12 @@
     "post": "Post reply",
     "logIn": "Log in to reply",
     "notActive": "Your account can’t post yet.",
-    "posted": "Your reply is posted as #{{number}}."
+    "posted": "Your reply is posted as #{{number}}.",
+    "quoted_one": "{{count}} post quoted",
+    "quoted_few": "{{count}} posts quoted",
+    "quoted_other": "{{count}} posts quoted",
+    "removeQuotes": "Remove quotes",
+    "quotesLabel": "The posts you’re quoting"
   },
   "newThread": {
     "eyebrow": "New thread",
@@ -139,6 +150,15 @@
       "html": "Posts can’t contain HTML tags. Use the simple formatting instead.",
       "link": "Links must start with http, https or mailto."
     },
-    "too_many_few": "You’ve posted a lot in the last hour. Wait {{count}} minutes and try again."
+    "too_many_few": "You’ve posted a lot in the last hour. Wait {{count}} minutes and try again.",
+    "quote_missing": "A post you quoted isn’t there any more. Remove your quotes and try again.",
+    "quote_too_many": "You can quote up to 10 posts in one reply."
+  },
+  "quote": {
+    "wrote": "{{name}} wrote in",
+    "fromPost": "From",
+    "deleted": "This post was deleted.",
+    "removed": "[Removed by the moderation team]",
+    "unavailable": "This post isn’t available."
   }
 }
