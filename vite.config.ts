@@ -78,7 +78,11 @@ export default defineConfig(({ mode }) => {
           test: {
             name: 'scripts',
             environment: 'node',
-            include: ['scripts/**/*.test.ts', 'server/**/*.test.ts', 'supabase/functions/**/*.test.ts'],
+            include: [
+              'scripts/**/*.test.ts',
+              'server/**/*.test.ts',
+              'supabase/functions/**/*.test.ts',
+            ],
           },
         },
       ],
