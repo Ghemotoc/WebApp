@@ -19,6 +19,7 @@
     "detailsHint": "Spune-ne orice ne ajută să verificăm. Cel mult {{max}} de caractere.",
     "detailsTooLong": "E prea lung. Păstrează sub 2.000 de caractere.",
     "aPersonReads": "O persoană din echipa noastră citește fiecare raportare. Nimic nu se schimbă până nu verificăm.",
+    "messageContext": "Vom trimite acest mesaj și până la 20 de mesaje dinaintea lui, ca persoana care verifică să vadă ce s-a întâmplat.",
     "close": "Închide",
     "cancel": "Renunță",
     "send": "Trimite raportarea",

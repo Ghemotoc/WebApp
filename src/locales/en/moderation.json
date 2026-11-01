@@ -460,5 +460,15 @@
     "chapter": "In the chapter",
     "link": "The writer’s link",
     "decisionHint": "Open the link in a new tab to judge it; nothing from the service loads on this page. Removing the item takes away this one card, and the chapter stays up."
+  },
+  "message": {
+    "heading": "The reported message and the 20 before it",
+    "between": "A private chat between @{{first}} and @{{second}}.",
+    "listLabel": "Messages, oldest first",
+    "reported": "Reported",
+    "gone": "These messages have been deleted since the report.",
+    "loadFailed": "We couldn’t load the messages. Try again in a moment.",
+    "loggedHint": "Private messages are shown only in a case about one, and every time you open them it’s written in the audit log.",
+    "decisionHint": "Removing the item takes away the reported message only; the chat and the other messages stay."
   }
 }

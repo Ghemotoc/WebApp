@@ -8,8 +8,9 @@
  * (S1-E10-04), the removal-order timeline and Emergency disable (S1-E10-09), and the safeguarding
  * checklist, contacts, evidence pack and referrals, or "Move to safeguarding" (S1-E10-10); who
  * has claimed the case (S1-E10-03b, ClaimControl) and, for a picture-check case, the picture and
- * what was flagged (S1-E10-05, CasePicturePanel); for a music or video card, its link (S1-E3-10, CaseEmbedPanel). Not yet: the records panel and the reporter
- * panel. Plain components, no doodles.
+ * what was flagged (S1-E10-05, CasePicturePanel); for a music or video card, its link (S1-E3-10,
+ * CaseEmbedPanel); for a private message, it and up to 20 messages before it (S1-E9-02,
+ * CaseMessagePanel). Not yet: the records panel and the reporter panel. Plain components, no doodles.
  * Who shows it: the router, inside StaffLayout. The database refuses anyone outside moderation
  * staff, and hides a safeguarding case from staff without the permission (Q6): to them the page
  * says there is no case here.
@@ -33,6 +34,7 @@ import { AccountSanctions } from './AccountSanctions';
 import { CaseDecisions } from './CaseDecisions';
 import { CaseNotices } from './CaseNotices';
 import { CaseEmbedPanel } from './CaseEmbedPanel';
+import { CaseMessagePanel } from './CaseMessagePanel';
 import { CasePicturePanel } from './CasePicturePanel';
 import { ClaimControl } from './ClaimControl';
 import { CaseReports } from './CaseReports';
@@ -183,6 +185,7 @@ function CaseBody({
         <div className="flex flex-col gap-6">
           {theCase.itemType === 'picture' && <CasePicturePanel caseId={theCase.id} />}
           {theCase.itemType === 'embed' && <CaseEmbedPanel caseId={theCase.id} />}
+          {theCase.itemType === 'message' && <CaseMessagePanel caseId={theCase.id} />}
           <CaseReports
             reports={caseState.reports}
             sanctions={sanctions}

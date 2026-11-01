@@ -19,6 +19,7 @@
     "detailsHint": "Tell us anything that helps us check. At most {{max}} characters.",
     "detailsTooLong": "That’s too long. Keep it under 2,000 characters.",
     "aPersonReads": "A person on our team reads every report. Nothing changes until we’ve checked it.",
+    "messageContext": "We’ll send this message and up to 20 messages before it, so the person who checks can see what happened.",
     "close": "Close",
     "cancel": "Cancel",
     "send": "Send report",

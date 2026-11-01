@@ -460,5 +460,15 @@
     "chapter": "În capitolul",
     "link": "Linkul scriitorului",
     "decisionHint": "Deschide linkul într-o filă nouă ca să-l judeci; pe această pagină nu se încarcă nimic de la serviciu. Dacă scoți elementul, dispare doar acest card, iar capitolul rămâne."
+  },
+  "message": {
+    "heading": "Mesajul raportat și cele 20 dinaintea lui",
+    "between": "O conversație privată între @{{first}} și @{{second}}.",
+    "listLabel": "Mesaje, de la cel mai vechi",
+    "reported": "Raportat",
+    "gone": "Aceste mesaje au fost șterse după raportare.",
+    "loadFailed": "Nu am putut încărca mesajele. Încearcă din nou peste câteva clipe.",
+    "loggedHint": "Mesajele private apar doar într-un caz despre unul dintre ele și, de fiecare dată când le deschizi, acest lucru se notează în jurnalul de audit.",
+    "decisionHint": "Dacă elimini elementul, dispare doar mesajul raportat; conversația și celelalte mesaje rămân."
   }
 }

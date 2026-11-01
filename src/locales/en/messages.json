@@ -55,6 +55,18 @@
     "delete": "Delete request",
     "deleted": "Request deleted. {{name}} won’t be told."
   },
+  "block": {
+    "button": "Block",
+    "open": "Block {{name}}",
+    "eyebrow": "Block",
+    "title": "Block {{name}}?",
+    "body": "You won’t be able to message, mention or follow each other. {{name}} won’t be told.",
+    "confirm": "Block {{name}}",
+    "saving": "Blocking…",
+    "cancel": "Don’t block",
+    "close": "Close",
+    "failed": "We couldn’t block them. Try again."
+  },
   "about": {
     "title": "About this chat",
     "viewProfile": "View {{name}}’s profile",

@@ -290,6 +290,23 @@ the other person: MessagesNavLink (useUnreadMessageCount → unread_message_coun
 
 The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`. Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
 
+## Block and report inside messages (S1-E9-02)
+
+From a chat to the moderator's case page, and blocking:
+
+```
+ChatPanel → ChatHeader                                                    src/features/messages/
+  Block → ChatBlockDialog → useBlock → set_block() (ends the follows both ways) → back to /messages
+    send_message() and conversation_with() then refuse the pair both ways (S1-E9-01)
+  Report → <ReportButton itemType="profile">; each message from the other person → itemType="message"
+    ReportDialog says the message and up to 20 before it go with it → report_item('message', id)
+/staff/moderation/cases/:caseId → CasePage → CaseMessagePanel                src/features/moderation/
+  useCaseMessage → admin_case_message() → message_with_context() (the message + up to 20 before it)
+    → audit_log 'sensitive_read.case_message'
+```
+
+The context is read from the chat when staff open the case; the safeguarding evidence pack gets the same messages through `case_item_content()`. Tests: `207` in `supabase/tests/database/`, `e2e/messages-block-and-report.spec.ts`.
+
 ## The Teacher badge (S1-E2-11)
 
 An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:

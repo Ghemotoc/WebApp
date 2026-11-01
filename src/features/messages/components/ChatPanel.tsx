@@ -1,6 +1,6 @@
 /**
- * ChatPanel: one chat: the person at the top, the messages, and at the bottom whatever the reader
- * can do now (story S1-E9-01; board Messages 5.5).
+ * ChatPanel: one chat: the person at the top with Block and Report (ChatHeader, S1-E9-02), the
+ * messages, and at the bottom whatever the reader can do now (story S1-E9-01; board Messages 5.5).
  *
  * The bottom is one of four things, decided by the database (conversation_with()):
  * - a request to the reader: Accept request and Delete request (criterion 2);
@@ -19,7 +19,7 @@ import { useConversation } from '../hooks/useMessages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 
 import { AboutChatPanel } from './AboutChatPanel';
-import { ChatAvatar } from './ChatAvatar';
+import { ChatHeader } from './ChatHeader';
 import { ChatMessages } from './ChatMessages';
 import { MessageComposer } from './MessageComposer';
 import { RequestActions } from './RequestActions';
@@ -108,18 +108,7 @@ function LoadedChat({ chat, state }: { chat: Conversation; state: ChatState }) {
         aria-labelledby="chat-heading"
         className="flex min-w-0 flex-col border-border lg:border-x"
       >
-        <header className="flex items-center gap-3 border-b border-border p-4">
-          <ChatAvatar name={chat.displayName} handle={chat.handle} />
-          <div className="flex min-w-0 flex-col">
-            <h2
-              id="chat-heading"
-              className="m-0 truncate font-heading text-xl font-bold text-heading"
-            >
-              {chat.displayName}
-            </h2>
-            <p className="m-0 truncate text-sm text-meta">@{chat.handle}</p>
-          </div>
-        </header>
+        <ChatHeader chat={chat} />
         <MessagesRegion chat={chat} />
         <ChatBottom chat={chat} state={state} />
       </section>

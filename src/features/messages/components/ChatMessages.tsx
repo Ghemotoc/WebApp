@@ -3,7 +3,8 @@
  * board Messages 5.5).
  *
  * The person's own messages sit on the right in plum, the other person's on the left in white
- * with Report beside them (CLAUDE.md rule 6; part c adds the 20 messages of context). Each has
+ * with Report beside them (CLAUDE.md rule 6); a report takes that message and up to 20 before it
+ * to the moderation team (S1-E9-02). Each has
  * "name · time" under it. Words are plain text, shown as written with their line breaks, never
  * HTML or Markdown, so nothing in a message can run or link anywhere. A message the moderation
  * team removed reads "[Removed by the moderation team]".
