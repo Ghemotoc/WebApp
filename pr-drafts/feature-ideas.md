@@ -12,7 +12,7 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ### Sent 1 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-01.md)
 
-12 ideas, IDEA-20261101-1 to 12: Download my data guide, download before deleting, sample EPUB, About the writer page, retention periods in Privacy settings, quiet hours for message emails, a kind No thanks for requests, teens see their parent's consent, furthest place for read-through, Canva cover templates, settings notice a new Canva cover, picture links show the picture. The four 31 Oct leftovers below went out in this one.
+12 ideas, IDEA-20261101-1 to 12: Download my data guide, download before deleting, sample EPUB, About the writer page, retention periods in Privacy settings, quiet hours for message emails, a kind No thanks for requests, teens see their parent's consent, furthest place for read-through, Canva cover templates, settings notice a new Canva cover, picture links show the picture. Three of the 31 Oct leftovers below went out in this one; "Where readers stop" was already IDEA-20261031-5.
 
 ### Furthest place for an exact read-through (idea, 31 Oct 2026)
 As a writer, I want the read-through rate to count every reader who reached the end, even if they scrolled back up afterwards, so that the number matches what really happened. Why: the dashboard (S1-E3-07) uses each reader's latest place; keeping a "furthest place" beside it is one column and makes the rate exact.
