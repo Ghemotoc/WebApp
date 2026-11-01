@@ -35,9 +35,10 @@ const nameSize = 65;
 const accentBar = { width: 260, height: 15 };
 const lineGap = 30;
 
-/** The fonts, as the app loads them; the canvas falls back to sans-serif before they load. */
-const titleFont = (size: number) => `700 ${size}px "Bricolage Grotesque", sans-serif`;
-const nameFont = `500 ${nameSize}px Inter, sans-serif`;
+/** The fonts, by the names src/styles/tokens.css gives them; sans-serif only if they can't load. */
+const titleFont = (size: number) =>
+  `700 ${size}px "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif`;
+const nameFont = `500 ${nameSize}px "Inter Variable", Inter, sans-serif`;
 
 /** What a drawn cover needs. */
 export interface DrawnCoverWords {
@@ -175,8 +176,8 @@ function drawWords(context: CanvasRenderingContext2D, words: DrawnCoverWords): v
  */
 export async function drawnCoverPicture(words: DrawnCoverWords): Promise<EpubImage> {
   const { canvas, context } = newCanvas(coverWidth, coverHeight);
-  // Wait for the app's fonts, so the title is drawn in Bricolage Grotesque, not a fallback.
-  await document.fonts.ready;
+  // Load the two fonts first: a canvas doesn't wait for them, and would draw a fallback.
+  await Promise.all([document.fonts.load(titleFont(titleBaseSize)), document.fonts.load(nameFont)]);
   context.fillStyle = coverPalette[words.choice.background];
   context.fillRect(0, 0, coverWidth, coverHeight);
   drawArtwork(context, words.choice);

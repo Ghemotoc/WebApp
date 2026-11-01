@@ -20,8 +20,8 @@ import { readFile } from 'node:fs/promises';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 import JSZip from 'jszip';
 
-import englishDataExport from '../src/locales/en/dataExport.json';
-import romanianDataExport from '../src/locales/ro/dataExport.json';
+import englishDataExport from '../src/locales/en/dataExport.json' with { type: 'json' };
+import romanianDataExport from '../src/locales/ro/dataExport.json' with { type: 'json' };
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -126,7 +126,10 @@ test.describe('EPUB of a completed story', () => {
       (await book.file('OEBPS/images/cover.jpg')?.async('uint8array')) ?? new Uint8Array();
     expect(cover.length).toBeGreaterThan(1000);
     const nav = (await book.file('OEBPS/nav.xhtml')?.async('string')) ?? '';
-    const chapters = [...nav.matchAll(/>(Capitolul [^<]+)</g)].map((match) => match[1]);
+    // The table of contents' own list (the hidden landmarks list names chapter 1 again).
+    const chapters = [...nav.matchAll(/<li><a href="chapter-\d+\.xhtml">([^<]+)</g)].map(
+      (match) => match[1],
+    );
     expect(chapters).toEqual(['Capitolul 1: Dimineața', 'Capitolul 2: Ploaia']);
     expect(nav).not.toContain('Ciornă secretă');
     const year = new Date().getFullYear();
