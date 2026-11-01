@@ -30,7 +30,8 @@ export type NotificationKind =
   | 'teacher_check_decided'
   | 'teacher_badge_removed'
   | 'data_export_ready'
-  | 'stories_export_ready';
+  | 'stories_export_ready'
+  | 'reading_reminder';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

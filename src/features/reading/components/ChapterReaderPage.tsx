@@ -38,6 +38,7 @@ import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { useReadingMinutes } from '@/features/reading-habit/hooks/useReadingMinutes';
 import { QuoteShareWatcher } from '@/features/sharing/components/QuoteShareWatcher';
 import type { SharedChapter } from '@/features/sharing/lib/sharedChapter';
 import { SharedChapterContext } from '@/features/sharing/lib/sharedChapterContext';
@@ -248,6 +249,8 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
   const hasText = chapter.body !== null;
   const progress = useReadingProgress(textRef, hasText);
   useRecordRead(chapter.story.slug, chapter.code, hasText);
+  // IDEAS-1b: a minute for each minute of active reading, only for a reader who keeps a streak.
+  useReadingMinutes();
   // S1-E4-03: keep the reader's place and offer the one saved last time.
   const { savedPercent, placePercent } = useSavedPlace(
     chapter.story.slug,

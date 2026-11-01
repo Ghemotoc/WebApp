@@ -328,6 +328,24 @@ function storiesExportReadyText(t: TFunction): NotificationText {
   };
 }
 
+/**
+ * The reader's own gentle reminder, on a day they haven't read their target yet (IDEAS-1b; idea
+ * IDEA-20261031-13). The row leads to the Library, where the private streak is.
+ *
+ * @param t - the notifications translation function
+ * @returns the row's words
+ */
+function readingReminderText(t: TFunction): NotificationText {
+  return {
+    who: t('who.yourLibrary'),
+    what: t('what.readingReminder'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.openLibrary'),
+    href: '/library#reading-days',
+  };
+}
+
 /** The moderation team's kinds and the function that words each one. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -347,6 +365,7 @@ const teamTextFor: Partial<
   teacher_badge_removed: teacherBadgeText,
   data_export_ready: dataExportReadyText,
   stories_export_ready: storiesExportReadyText,
+  reading_reminder: readingReminderText,
 };
 
 /**

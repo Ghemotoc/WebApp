@@ -3392,6 +3392,87 @@ export type Database = {
           },
         ];
       };
+      reading_habits: {
+        Row: {
+          created_at: string;
+          daily_target_minutes: number | null;
+          id: string;
+          last_reminded_on: string | null;
+          reminder_time: string | null;
+          reminders_on: boolean;
+          time_zone: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          daily_target_minutes?: number | null;
+          id?: string;
+          last_reminded_on?: string | null;
+          reminder_time?: string | null;
+          reminders_on?: boolean;
+          time_zone: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          daily_target_minutes?: number | null;
+          id?: string;
+          last_reminded_on?: string | null;
+          reminder_time?: string | null;
+          reminders_on?: boolean;
+          time_zone?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reading_habits_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      reading_minutes: {
+        Row: {
+          created_at: string;
+          id: string;
+          minutes: number;
+          read_on: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          minutes: number;
+          read_on: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          minutes?: number;
+          read_on?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reading_minutes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       reading_positions: {
         Row: {
           chapter_id: string;
@@ -5598,6 +5679,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      add_reading_minute: { Args: Record<PropertyKey, never>; Returns: number };
       add_story_event: {
         Args: {
           description: string;
@@ -7067,6 +7149,8 @@ export type Database = {
       is_blocked_with: { Args: { other_user_id: string }; Returns: boolean };
       is_email_banned: { Args: { email: string }; Returns: boolean };
       is_feature_enabled: { Args: { flag_key: string }; Returns: boolean };
+      is_in_quiet_hours: { Args: { time_of_day: string }; Returns: boolean };
+      is_known_time_zone: { Args: { zone_name: string }; Returns: boolean };
       is_moderated_away: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
@@ -7080,6 +7164,7 @@ export type Database = {
       };
       is_staff_session: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_story_list_kind: { Args: { list_kind: string }; Returns: boolean };
+      is_under_18_or_unknown: { Args: { person_id: string }; Returns: boolean };
       issue_statement_of_reasons: {
         Args: {
           about: Json;
@@ -7568,6 +7653,7 @@ export type Database = {
       my_plan_item_kind: { Args: { target_item_id: string }; Returns: string };
       my_planned_story_id: { Args: { story_slug: string }; Returns: string };
       my_privacy_settings: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_reading_habit: { Args: Record<PropertyKey, never>; Returns: Json };
       my_report_detail_requests: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -7999,6 +8085,7 @@ export type Database = {
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_reading_minutes: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_staff_records: { Args: Record<PropertyKey, never>; Returns: number };
       purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
       purge_sent_emails: { Args: Record<PropertyKey, never>; Returns: number };
@@ -8394,6 +8481,15 @@ export type Database = {
         Returns: undefined;
       };
       save_my_region: { Args: { wanted_region?: string }; Returns: undefined };
+      save_reading_habit: {
+        Args: {
+          device_time_zone: string;
+          wanted_reminder_time: string;
+          wanted_reminders_on: boolean;
+          wanted_target: number;
+        };
+        Returns: undefined;
+      };
       save_reading_position: {
         Args: {
           chapter_code: string;
@@ -8448,6 +8544,7 @@ export type Database = {
         Args: { body: string; statement_reference?: string; subject: string };
         Returns: Json;
       };
+      send_reading_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       set_adults_may_message: { Args: { allowed: boolean }; Returns: undefined };
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
       set_chapter_character_present: {
@@ -8568,6 +8665,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      start_reading_habit: { Args: { device_time_zone: string }; Returns: undefined };
       statement_ground_for_case: {
         Args: {
           target: Omit<
@@ -8589,6 +8687,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      stop_reading_habit: { Args: Record<PropertyKey, never>; Returns: undefined };
       storage_files_to_sweep: {
         Args: { max_files?: number };
         Returns: {
@@ -8879,7 +8978,8 @@ export type Database = {
         | 'teacher_check_decided'
         | 'teacher_badge_removed'
         | 'data_export_ready'
-        | 'stories_export_ready';
+        | 'stories_export_ready'
+        | 'reading_reminder';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -9180,6 +9280,7 @@ export const Constants = {
         'teacher_badge_removed',
         'data_export_ready',
         'stories_export_ready',
+        'reading_reminder',
       ],
       picture_kind: [
         'cover',
