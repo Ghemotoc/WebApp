@@ -8,6 +8,8 @@
  */
 import type { TFunction } from 'i18next';
 
+import { paragraphHash } from '@/lib/paragraph-link';
+
 import type { AppNotification } from '../api/notifications';
 
 /** A row's words and link. */
@@ -46,6 +48,20 @@ export function whoDidIt(t: TFunction, notification: AppNotification): string {
 function chapterAddress(notification: AppNotification): string | null {
   if (notification.story === null || notification.chapter === null) return null;
   return `/s/${notification.story.slug}/${notification.chapter.code}`;
+}
+
+/**
+ * Where a row about a comment goes: the chapter, opened at the comment's paragraph thread when
+ * it was left on a paragraph (IDEAS-1e; idea IDEA-20261031-2), or at "on an earlier version"
+ * when the writer has since changed that paragraph.
+ *
+ * @param notification - the row
+ * @returns the address, or null when the row names no chapter
+ */
+function commentAddress(notification: AppNotification): string | null {
+  const address = chapterAddress(notification);
+  if (address === null || notification.commentPlace === null) return address;
+  return `${address}${paragraphHash(notification.commentPlace)}`;
 }
 
 /**
@@ -406,14 +422,14 @@ export function notificationText(
         ...base,
         what: t('what.commentOnChapter', { where }),
         actionLabel: t('actions.openChapter'),
-        href: chapterAddress(notification),
+        href: commentAddress(notification),
       };
     case 'comment_reply':
       return {
         ...base,
         what: t('what.commentReply', { where }),
         actionLabel: t('actions.reply'),
-        href: chapterAddress(notification),
+        href: commentAddress(notification),
       };
     case 'comment_reactions':
       return {
@@ -424,7 +440,7 @@ export function notificationText(
             ? t('grouped.reactions', { count: notification.actorCount })
             : null,
         actionLabel: t('actions.openChapter'),
-        href: chapterAddress(notification),
+        href: commentAddress(notification),
       };
     case 'story_finished':
       return finishedText(t, notification, base);

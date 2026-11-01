@@ -41,7 +41,9 @@
       "finished": "Terminate"
     },
     "readerLibrary": "Ce are {{name}} în bibliotecă",
-    "readerLibraryEyebrow": "Bibliotecă"
+    "readerLibraryEyebrow": "Bibliotecă",
+    "shared": "Cele mai distribuite săptămâna asta",
+    "sharedEyebrow": "Recomandate de cititori"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} capitol",
@@ -85,7 +87,8 @@
     "oldest": "Cele mai vechi",
     "title_az": "Titlu, de la A la Z",
     "title_za": "Titlu, de la Z la A",
-    "writer": "Scriitor, de la A la Z"
+    "writer": "Scriitor, de la A la Z",
+    "shared": "Cele mai distribuite săptămâna asta"
   },
   "greeting": {
     "morning": "Bună dimineața, {{name}}.",

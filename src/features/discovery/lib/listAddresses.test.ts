@@ -111,6 +111,19 @@ describe('the Popular and New and rising lists', () => {
   });
 });
 
+describe('"Most shared this week" (IDEAS-1e)', () => {
+  it('has its own See all address and opens in its own order', () => {
+    expect(listAddress(plainList('shared'))).toBe('/discover/all/shared');
+    expect(listFromParams({ listKind: 'shared' })).toEqual({ kind: 'shared', key: null });
+    expect(listDefaultSort('shared')).toBe('shared');
+  });
+
+  it('offers its order first, and only on its own list', () => {
+    expect(sortChoicesFor('shared')[0]).toBe('shared');
+    expect(sortChoicesFor('popular')).not.toContain('shared');
+  });
+});
+
 describe('the search list (S1-E5-04)', () => {
   it('keeps the term in ?q= on its See all page', () => {
     expect(listAddress(plainList('search', 'povești'))).toBe('/search/stories?q=pove%C8%99ti');

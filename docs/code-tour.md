@@ -1618,6 +1618,14 @@ Ideas IDEA-20261031-1 (most-loved lines) and -5 (where readers stop). Totals onl
 - The writer's panel: `YourWritingPage` → `ChapterInsights` (a drop-down of the writer's published chapters) → `useChapterInsights()` → `api/insights.ts` → `writer_chapter_insights()`, which answers only the chapter's own writer. It returns `loved_lines` from `writer_loved_lines()` (the five paragraphs with the most shares plus other people's visible paragraph comments, each with its first words from `paragraph_excerpt()`) and `stops` from `writer_reader_stops()` (readers' `reading_positions` on the chapter in tenths, or nothing below five readers). Every count goes through `shown_count()`, so 1 to 4 reads "fewer than 5". `LovedLines` and `ReaderStopsBar` draw them; the bar is decoration and each tenth is also written out.
 - Tests: `supabase/tests/database/218-writer-insights.test.sql`, `e2e/writer-dashboard.spec.ts` ("Lines and stops").
 
+## Paragraph links and "Most shared this week" (IDEAS-1 part e)
+
+Ideas IDEA-20261031-2 and -9.
+
+- A notification opens the paragraph: `notification_json()` adds `comment_place` for a comment, a reply or reactions (`comment_paragraph_json()`, S1-E6-06: the paragraph's number today, "earlier" or null). `notificationText()` adds `#paragraph-4` or `#paragraph-earlier` to the chapter's address (`src/lib/paragraph-link.ts`). In the reader, `useParagraphComments` starts with that thread open through `hooks/useLinkedParagraphThread.ts`, which, once the markers are drawn, scrolls the thread's marker to the middle of the screen and focuses it.
+- "Most shared this week": the story list `shared` (`list_holds_story()`: shared at least once in the last 7 days) in its own order, the sort `shared` (`story_shares_this_week()`, totals from `chapter_shares`, never who), which `browse_stories()` accepts only on that list. Discover shows it after "New and rising" (`discover_shelves`), with a See all page at `/discover/all/shared`. The reader's age, blocks and moderation apply as on every list (`listed_stories()`).
+- Tests: `supabase/tests/database/219-paragraph-links-and-most-shared.test.sql`, `src/lib/paragraph-link.test.ts`, `notificationText.test.ts`, `listAddresses.test.ts`, `e2e/paragraph-links-most-shared.spec.ts`.
+
 ## Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)
 
 - Where it lives: `src/features/sharing/` (see its README). The reader screen adds `ShareButtonWhenNear` to `ChapterEnd`'s row (it fetches `ShareButton` when the row nears the screen, `src/lib/use-is-near.ts`) and `QuoteShareWatcher` under the chapter (it fetches `QuoteShareBar` on the first selection); `reading/lib/toSharedChapter.ts` hands them only public things (address, titles, number, pen name).

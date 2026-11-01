@@ -7,6 +7,7 @@
  * mark_notifications_read() (…_s1_e7_01_notifications.sql). The database decides what the reader
  * may see (blocks, ratings, moderation) and answers usernames, never a user ID (architecture 1.6).
  */
+import type { ParagraphLinkPlace } from '@/lib/paragraph-link';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 /** What a notification is about (the database's notification_kind). */
@@ -71,6 +72,11 @@ export interface AppNotification {
   chapter: { code: string; title: string | null; position: number } | null;
   /** The first words of the comment, when it is still up. */
   commentExcerpt: string | null;
+  /**
+   * Where the comment sits today: a paragraph's number, 'earlier' when the writer has since
+   * changed it, or null for a comment on the whole chapter (IDEAS-1e).
+   */
+  commentPlace: ParagraphLinkPlace | null;
   decision: ModerationDecision | null;
   /** What a decision was about and where it is. */
   item: { itemType: string; reference: string; address: string | null } | null;
@@ -108,6 +114,7 @@ interface NotificationRow {
   story: { slug: string; title: string } | null;
   chapter: { code: string; title: string | null; position: number } | null;
   comment_excerpt: string | null;
+  comment_place?: ParagraphLinkPlace | null;
   decision: ModerationDecision | null;
   item: { item_type: string; reference: string; address: string | null } | null;
   statement: { reference: string; action: string } | null;
@@ -155,6 +162,7 @@ function toNotification(row: NotificationRow): AppNotification {
     story: row.story,
     chapter: row.chapter,
     commentExcerpt: row.comment_excerpt,
+    commentPlace: row.comment_place ?? null,
     decision: row.decision,
     item:
       row.item === null
