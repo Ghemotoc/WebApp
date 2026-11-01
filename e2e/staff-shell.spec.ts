@@ -77,6 +77,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Roles',
       'Website',
       'Settings',
+      'Forums',
       'Metrics',
       'Audit log',
     ]);
@@ -97,6 +98,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Roles',
       'Website',
       'Settings',
+      'Forums',
       'Metrics',
       'Audit log',
     ]);

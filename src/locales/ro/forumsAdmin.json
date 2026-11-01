@@ -1,0 +1,73 @@
+{
+  "documentTitle": "Forumuri · Echipă",
+  "eyebrow": "Echipă · forumuri",
+  "heading": "Forumuri",
+  "intro": "Categoriile conțin forumuri, iar un forum poate conține subforumuri: două niveluri sub o categorie, nu mai mult. Dă fiecăruia un nume în fiecare limbă a interfeței. Categoriile fixate apar primele în lista forumurilor, în ordinea pe care o alegi; celelalte urmează după cel mai recent mesaj. Fiecare schimbare apare în jurnalul de audit.",
+  "addCategory": "Adaugă o categorie",
+  "addInside": "Adaugă un forum în interior",
+  "addInsideLabel": "Adaugă un forum în interior: {{name}}",
+  "change": "Modifică",
+  "changeLabel": "Modifică {{name}}",
+  "remove": "Elimină",
+  "removeLabel": "Elimină {{name}}",
+  "levels": {
+    "0": "Categorie",
+    "1": "Forum",
+    "2": "Subforum"
+  },
+  "pinned": "Fixată",
+  "address": "Adresă",
+  "addressHint": "Litere mici, cifre și cratime: /forums/primele-capitole.",
+  "nameIn": "Numele în {{language}}",
+  "descriptionIn": "Descrierea în {{language}}",
+  "languages": {
+    "ro": "română",
+    "en": "engleză"
+  },
+  "parent": "Se află în",
+  "noParent": "Nicăieri: este o categorie",
+  "position": "Ordine",
+  "positionHint": "Numerele mai mici apar primele printre vecini.",
+  "pinCategory": "Fixeaz-o în partea de sus a listei forumurilor",
+  "accent": "Culoare",
+  "accents": {
+    "plum": "Prună",
+    "sky": "Cer",
+    "blush": "Roz",
+    "sage": "Salvie",
+    "gold": "Auriu"
+  },
+  "doodle": "Desen",
+  "noDoodle": "Niciunul",
+  "save": "Salvează",
+  "cancel": "Renunță",
+  "newHeading": "Forum nou",
+  "reason": "De ce este eliminat",
+  "reasonHint": "Pentru jurnalul de audit. Doar un forum gol poate fi eliminat.",
+  "confirmRemove": "Elimină forumul",
+  "empty": "Încă nu există forumuri. Adaugă o categorie ca să începi.",
+  "problems": {
+    "empty": "Dă-i un nume.",
+    "too_long": "Numele poate avea cel mult 80 de caractere.",
+    "description_too_long": "Descrierea poate avea cel mult 200 de caractere.",
+    "unknown_language": "Această limbă nu este deschisă.",
+    "format": "Folosește litere mici, cifre și cratime simple, între 2 și 60 de caractere.",
+    "taken": "Alt forum folosește deja această adresă.",
+    "too_deep": "Un subforum nu poate conține forumuri. Alege o categorie sau un forum.",
+    "missing": "Acel forum nu mai există.",
+    "has_children": "Mută sau elimină mai întâi forumurile din interior.",
+    "not_category": "Doar o categorie poate fi fixată.",
+    "reason_empty": "Spune de ce este eliminat.",
+    "reason_too_long": "Motivul poate avea cel mult 300 de caractere."
+  },
+  "outcomes": {
+    "saved": "Salvat. Lista forumurilor îl arată acum.",
+    "removed": "Eliminat. Nu mai apare în lista forumurilor."
+  },
+  "failures": {
+    "not_allowed": "Doar proprietarul și administratorii pot modifica forumurile.",
+    "invalid": "Verifică câmpurile marcate mai jos.",
+    "not_found": "Acel forum nu mai există. Lista a fost reîncărcată.",
+    "unreachable": "Nu am putut ajunge la server. Încearcă din nou."
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "eyebrow_one": "Forumuri · {{count, number}} discuție",
+  "eyebrow_few": "Forumuri · {{count, number}} discuții",
+  "eyebrow_other": "Forumuri · {{count, number}} de discuții",
+  "title": "Forumuri",
+  "intro": "Pune întrebări despre scris, fă schimb de păreri și cunoaște alți scriitori. Oricine poate citi forumurile. Ca să scrii, ai nevoie de un cont.",
+  "loadFailed": "Nu am putut încărca forumurile. Verifică-ți conexiunea și încearcă din nou.",
+  "empty": "Încă nu există forumuri.",
+  "forumCount_one": "{{count}} forum",
+  "forumCount_few": "{{count}} forumuri",
+  "forumCount_other": "{{count}} de forumuri",
+  "subforums": "Subforumuri:",
+  "threads": "Discuții",
+  "posts": "Mesaje",
+  "latestPost": "Ultimul mesaj",
+  "noPosts": "Încă nu sunt mesaje",
+  "staff": "Echipă",
+  "postedBy": "de {{name}}",
+  "neverClose": "Discuțiile cu cea mai recentă activitate apar primele. Nu se închid niciodată singure, așa că poți răspunde oricând la o discuție mai veche.",
+  "rules": {
+    "title": "Regulile forumului, pe scurt",
+    "first": "Comentează textul, nu persoana care l-a scris.",
+    "second": "Nu trimite mesaje celor care ți-au cerut să nu le scrii.",
+    "third": "Fiecare mesaj are un buton de raportare. Un om citește fiecare raport.",
+    "guidelines": "Citește regulile comunității"
+  },
+  "forum": {
+    "breadcrumb": "Unde te afli",
+    "inside": "Subforumuri",
+    "noThreads": "Încă nu sunt discuții aici.",
+    "notFound": "Nu există niciun forum la această adresă.",
+    "back": "Înapoi la forumuri"
+  }
+}

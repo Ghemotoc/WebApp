@@ -111,6 +111,16 @@ const staffRoutes: RouteObject = {
         return { Component: TagsAdminPage };
       },
     },
+    // Forum categories, forums and subforums (FORUMS-1a, S1-E8-01): owner and admin, the
+    // settings area.
+    {
+      path: 'forums',
+      lazy: async () => {
+        const { ForumsAdminPage } =
+          await import('@/features/forums/components/staff/ForumsAdminPage');
+        return { Component: ForumsAdminPage };
+      },
+    },
     // Appeals against moderation decisions (S1-E10-07): owner, admin and moderator.
     {
       path: 'appeals',
@@ -622,6 +632,23 @@ const writeRoutes: RouteObject[] = [
       return { Component: StoryListPage };
     },
   })),
+  // The forums (FORUMS-1a, S1-E8-01): the index and one forum or subforum. Anyone can read them.
+  {
+    path: '/forums',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ForumsPage } = await import('@/features/forums/components/ForumsPage');
+      return { Component: ForumsPage };
+    },
+  },
+  {
+    path: '/forums/:forumSlug',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ForumPage } = await import('@/features/forums/components/ForumPage');
+      return { Component: ForumPage };
+    },
+  },
   // The reader's library (S1-E4-03) and each shelf's See all page, which is a story list.
   {
     path: '/library',

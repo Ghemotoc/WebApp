@@ -149,6 +149,7 @@ test.describe('epic S1-E11 journeys', () => {
       'Roles',
       'Website',
       'Settings',
+      'Forums',
       'Metrics',
       'Audit log',
     ]);

@@ -113,6 +113,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.settings',
     descriptionKey: 'home.areas.settings',
   },
+  // Forum categories, forums and subforums (FORUMS-1a, S1-E8-01): part of Settings in
+  // architecture 1.8.2 ("categories, forums"), so the same owner and admins.
+  {
+    area: 'settings',
+    href: '/staff/forums',
+    labelKey: 'nav.forums',
+    descriptionKey: 'home.areas.forums',
+  },
   // The March test numbers (S1-E15-02), just before the audit log (architecture 1.8.2).
   {
     area: 'metrics',
