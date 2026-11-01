@@ -3767,6 +3767,34 @@ export type Database = {
         };
         Relationships: [];
       };
+      retention_runs: {
+        Row: {
+          created_at: string;
+          id: string;
+          job_name: string;
+          ran_at: string;
+          rows_removed: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          job_name: string;
+          ran_at?: string;
+          rows_removed: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          job_name?: string;
+          ran_at?: string;
+          rows_removed?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       safeguarding_referrals: {
         Row: {
           authority_name: string;
@@ -6923,6 +6951,7 @@ export type Database = {
         Returns: boolean;
       };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
+      fold_old_daily_totals: { Args: Record<PropertyKey, never>; Returns: number };
       follow_story: { Args: { should_follow: boolean; story_slug: string }; Returns: Json };
       follow_writer: { Args: { should_follow: boolean; target_handle: string }; Returns: Json };
       follower_count_of: { Args: { writer_id: string }; Returns: number };
@@ -7026,6 +7055,7 @@ export type Database = {
         }[];
       };
       jsonb_values_text: { Args: { document: Json }; Returns: string };
+      keep_setting: { Args: { default_value: number; setting_key: string }; Returns: number };
       language_moderator_counts: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -7915,14 +7945,19 @@ export type Database = {
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chats: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_deleted_pictures: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_expired_age_check_sessions: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_expired_exports: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_age_check_attempts: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_audit_log: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_client_errors: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_notifications: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_staff_records: { Args: Record<PropertyKey, never>; Returns: number };
       purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
       purge_sent_emails: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_unconfirmed_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_unfinished_social_sign_ups: { Args: Record<PropertyKey, never>; Returns: number };
       queue_daily_digests: { Args: Record<PropertyKey, never>; Returns: number };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
@@ -8062,6 +8097,10 @@ export type Database = {
       record_picture_check: {
         Args: { payload: string; signature: string };
         Returns: Database['public']['Enums']['picture_status'];
+      };
+      record_retention_run: {
+        Args: { removed_count: number; run_job_name: string };
+        Returns: undefined;
       };
       record_sign_in_failure: { Args: { email_hash: string }; Returns: string };
       record_sign_up_consent: {
@@ -8237,6 +8276,8 @@ export type Database = {
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };
+      run_retention_jobs: { Args: Record<PropertyKey, never>; Returns: number };
+      run_storage_sweep: { Args: Record<PropertyKey, never>; Returns: boolean };
       safety_contact_values: {
         Args: {
           target: Omit<
@@ -8453,6 +8494,13 @@ export type Database = {
           >;
         };
         Returns: Json;
+      };
+      storage_files_to_sweep: {
+        Args: { max_files?: number };
+        Returns: {
+          bucket_id: string;
+          name: string;
+        }[];
       };
       story_bible: { Args: { story_slug: string }; Returns: Json };
       story_card_json: { Args: { target_story_id: string }; Returns: Json };

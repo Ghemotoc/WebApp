@@ -133,6 +133,8 @@ select results_eq(
        ('report_reason_tiers', 0::bigint),
        ('reports', 0::bigint),
        ('reserved_names', 0::bigint),
+       -- The record of each night's clean-up is for owner and admin only (S1-E13-04).
+       ('retention_runs', 0::bigint),
        ('safeguarding_referrals', 0::bigint),
        ('safety_contact_checks', 0::bigint),
        ('safety_contact_gaps', 0::bigint),

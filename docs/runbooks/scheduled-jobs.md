@@ -18,8 +18,13 @@ The database runs a few jobs on a timer with `pg_cron`. Each is a named job, cre
 | `run-email-worker` | every 5 minutes | `run_email_worker()` | when emails are due, calls `/api/notification-emails` through pg_net with the worker key; does nothing while the Vault lacks `email_worker_url` or `email_worker_key` | S1-E7-02 |
 | `count-daily-metrics` | 04:07 every day | `run_daily_metrics()` | counts yesterday's March test numbers (writers who published, signed-up readers, chapter reads, the approximate return rate) into `daily_metrics`, by market too; re-running a day replaces it; deletes rows older than 3 years (`daily_metrics_keep_years`) | S1-E15-02 |
 | `compute-story-scores` | 13 minutes past every hour | `compute_story_scores()` | scores every readable story for Popular and New and rising from the last 60 days of reads, likes, comments (never the writer's own, never downvotes) and read-through, halved every 7 days; the weights are `ranking_weight_*` settings | S1-E5-03 |
+| `purge-closed-accounts` | 03:05 every day | `purge_closed_accounts()` | deletes for good every account whose 14 days since "Delete my account" have passed, keeping only what a case holds | S1-E13-03 |
+| `run-retention-jobs` | 03:47 every day | `run_retention_jobs()` | the retention clean-ups: unconfirmed accounts after 7 days, expired exports, removed pictures after 30 days, old staff records, audit rows older than 3 years and daily read and share totals older than 3 years (folded into one total); writes one `retention_runs` row per clean-up | S1-E13-04 |
+| `run-storage-sweep` | 04:17 every day | `run_storage_sweep()` | when files no row points at are due (`storage_files_to_sweep()`), calls the `storage-sweep` Edge Function through pg_net, which deletes them through the Storage API; does nothing while the Vault lacks `storage_sweep_url` or `storage_sweep_key` | S1-E13-04 |
 
 ## See what ran
+
+The retention clean-ups also leave their own record, readable by owner and admin: `select job_name, rows_removed, ran_at from public.retention_runs order by ran_at desc limit 20;`. A night with no rows means `run-retention-jobs` didn't run.
 
 In the Supabase dashboard's SQL editor (read-only queries are fine there; never change the schema from the dashboard):
 

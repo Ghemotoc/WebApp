@@ -73,12 +73,16 @@ export default defineConfig(({ mode }) => {
           },
         },
         {
-          // Repository checks (scripts/) read files from disk, so they run in plain Node.
+          // Repository checks (scripts/), server code and Edge Function logic run in plain Node.
           extends: true,
           test: {
             name: 'scripts',
             environment: 'node',
-            include: ['scripts/**/*.test.ts', 'server/**/*.test.ts'],
+            include: [
+              'scripts/**/*.test.ts',
+              'server/**/*.test.ts',
+              'supabase/functions/**/*.test.ts',
+            ],
           },
         },
       ],

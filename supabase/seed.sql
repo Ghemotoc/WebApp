@@ -128,16 +128,18 @@ $$;
 -- Test invites for the March test's invite-only sign-up (S1-E2-01). Local and staging only: this
 -- file never runs in production, so no known code ever reaches real users. The admin persona made
 -- them; the codes are in supabase/README.md. S1-E11-17 adds the admin screen that makes real ones.
+-- The expired and revoked ones ended yesterday, so the retention job (90 days after an invite
+-- ends, S1-E13-04) never removes them from a fresh database.
 insert into public.invites (user_id, code_hash, max_uses, use_count, expires_at, revoked_at, note)
 values
   ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('PERSONAS-TEST-INVITE'),
    1000, 0, '2100-01-01', null, 'Seed: works for every test sign-up'),
   ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('EXPIRED-TEST-INVITE'),
-   5, 0, '2026-01-01', null, 'Seed: expired'),
+   5, 0, now() - interval '1 day', null, 'Seed: expired'),
   ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('USED-UP-TEST-INVITE'),
    1, 1, '2100-01-01', null, 'Seed: used up'),
   ('00000000-0000-4000-8000-000000000009', public.invite_code_hash('REVOKED-TEST-INVITE'),
-   5, 0, '2100-01-01', '2026-10-17', 'Seed: revoked');
+   5, 0, '2100-01-01', now() - interval '1 day', 'Seed: revoked');
 
 
 -- Lane A: writing and reading (S1-E3-01 onwards). Two stories for adult_writer (one drawn cover,
