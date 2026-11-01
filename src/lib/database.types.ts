@@ -3,6 +3,48 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      account_deletions: {
+        Row: {
+          cancelled_at: string | null;
+          completed_at: string | null;
+          created_at: string;
+          delete_after: string;
+          id: string;
+          requested_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          cancelled_at?: string | null;
+          completed_at?: string | null;
+          created_at?: string;
+          delete_after: string;
+          id?: string;
+          requested_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          cancelled_at?: string | null;
+          completed_at?: string | null;
+          created_at?: string;
+          delete_after?: string;
+          id?: string;
+          requested_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'account_deletions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       age_check_attempts: {
         Row: {
           created_at: string;
@@ -5426,8 +5468,18 @@ export type Database = {
         Args: { document_slugs: string[]; reading_language?: string };
         Returns: number;
       };
+      account_deletion_rules: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          action: string;
+          step: number;
+          table_name: string;
+          why: string;
+        }[];
+      };
       account_is_new: { Args: { target_user_id: string }; Returns: boolean };
       account_set_up_before_now: { Args: { target_user_id: string }; Returns: boolean };
+      account_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
       account_state: {
         Args: { target_user_id: string };
         Returns: Database['public']['Enums']['account_status'];
@@ -6392,6 +6444,7 @@ export type Database = {
         };
       };
       can_message: { Args: { recipient_id: string; sender_id: string }; Returns: boolean };
+      cancel_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
       cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
       cancel_social_sign_up: { Args: Record<PropertyKey, never>; Returns: undefined };
       case_item_content: {
@@ -6792,6 +6845,9 @@ export type Database = {
         Args: { kind: Database['public']['Enums']['notification_kind'] };
         Returns: Database['public']['Enums']['email_delivery'];
       };
+      delete_account_conversation: { Args: { target_user_id: string }; Returns: undefined };
+      delete_account_data: { Args: { target_user_id: string }; Returns: undefined };
+      delete_account_stories: { Args: { target_user_id: string }; Returns: undefined };
       delete_bible_entry: { Args: { entry_id: string }; Returns: Json };
       delete_bible_section: { Args: { section_id: string }; Returns: Json };
       delete_chapter: { Args: { chapter_code: string }; Returns: Json };
@@ -6843,6 +6899,7 @@ export type Database = {
         Returns: Json;
       };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
+      erase_closed_account: { Args: { target_user_id: string }; Returns: undefined };
       erase_unchecked_account: { Args: { target_user_id: string }; Returns: undefined };
       erase_unchecked_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       escalate_on_call_alerts: { Args: Record<PropertyKey, never>; Returns: number };
@@ -7238,6 +7295,7 @@ export type Database = {
       move_bible_section: { Args: { new_position: number; section_id: string }; Returns: Json };
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       move_chapter_scene: { Args: { new_position: number; scene_id: string }; Returns: Json };
+      my_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
       my_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
       my_bible_entry: {
         Args: { target_entry_id: string };
@@ -7853,6 +7911,7 @@ export type Database = {
         Args: { chapter_codes: string[]; target_story_id: string };
         Returns: string[];
       };
+      purge_closed_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chats: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
@@ -8078,6 +8137,7 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: string;
       };
+      request_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
       request_data_export: { Args: Record<PropertyKey, never>; Returns: Json };
       request_manual_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
       require_account_action_allowed: {

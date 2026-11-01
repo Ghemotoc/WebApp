@@ -6,7 +6,8 @@
  * Each button carries the provider's own full-colour logo, unchanged (DoD design rules: brand
  * logos are never redrawn or recoloured). The buttons stay light in night mode too, because the
  * providers' brand guidelines ask for their logo on a light or black button, never on our colours.
- * Who shows it: SignUpForm and SocialLogIn, only while the social_login flag is on.
+ * Who shows it: SignUpForm and SocialLogIn, only while the social_login flag is on, and Settings ›
+ * Delete account (S1-E13-03) with only the providers the person has connected.
  * What it calls: onChoose, with the provider; the caller decides between sign-up and log-in.
  */
 import { useTranslation } from 'react-i18next';
@@ -39,6 +40,8 @@ interface SocialButtonsProps {
   onChoose: (provider: SocialProvider) => void;
   /** True while a sign-up or log-in is on its way, so a second press does nothing. */
   isBusy: boolean;
+  /** Which providers to show; all three by default. */
+  providers?: SocialProvider[];
 }
 
 /**
@@ -46,11 +49,16 @@ interface SocialButtonsProps {
  *
  * @returns a labelled group of buttons
  */
-export function SocialButtons({ groupLabel, onChoose, isBusy }: SocialButtonsProps) {
+export function SocialButtons({
+  groupLabel,
+  onChoose,
+  isBusy,
+  providers = socialProviders,
+}: SocialButtonsProps) {
   const { t } = useTranslation('auth');
   return (
     <div role="group" aria-label={groupLabel} className="flex flex-col gap-[10px]">
-      {socialProviders.map((provider) => (
+      {providers.map((provider) => (
         <button
           key={provider}
           type="button"

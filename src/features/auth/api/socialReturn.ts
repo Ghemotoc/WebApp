@@ -10,7 +10,8 @@
  * 1. the provider or Supabase Auth sent an error back: say why (a provider can't join an account
  *    that is already set up unless connected from Settings, criterion 5);
  * 2. connecting from Settings (mode=link): back to Settings › Ways to log in;
- * 3. not signed in: something went wrong on the way;
+ * 3. not signed in: something went wrong on the way; signed in after logging in again to confirm
+ *    deleting the account (mode=confirm, S1-E13-03): back to Settings › Delete account;
  * 4. the sign-up form kept answers: finish the sign-up, or cancel it when a rule refuses;
  * 5. no answers: an ordinary log-in, or someone who never joined, whose account is cancelled.
  */
@@ -35,7 +36,7 @@ export type SocialReturnOutcome =
 
 /** What the address said when the person came back, read before Supabase tidies it. */
 export interface SocialReturnAddress {
-  /** 'link' when connecting from Settings. */
+  /** 'link' when connecting from Settings; 'confirm' when confirming a deletion (S1-E13-03). */
   mode: string | null;
   /** The error code from the provider or Supabase Auth, if any. */
   errorCode: string | null;
@@ -120,6 +121,8 @@ export async function settleSocialReturn(
   // Case 3: no session means the provider's answer never reached Supabase.
   const { data } = await client.auth.getSession();
   if (data.session === null) return { kind: 'say', message: 'failed' };
+  // Case 3b: a log-in again to confirm deleting the account: back to that panel (S1-E13-03).
+  if (address.mode === 'confirm') return { kind: 'go', to: '/settings#delete-account' };
   // Case 4: a sign-up started on the form.
   const keptAnswers = takeKeptAnswers();
   if (keptAnswers !== null) return finishWithAnswers(client, keptAnswers);
