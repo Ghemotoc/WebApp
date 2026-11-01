@@ -3,12 +3,11 @@
  *
  * Who shows it: the router, at /library; the top bar's "Library" link leads here.
  * What it shows, top to bottom as on the board: the eyebrow, "Your library", the line about the
- * place being kept on every device and the "Private" note (S1-E4-03, third criterion: the library
- * is private, and no setting shares it yet); ContinueReading; LibraryShelves (Reading, Saved for
+ * place being kept on every device and who can see the library, with Change (S1-E4-03, third
+ * criterion: private by default; S1-E13-01 adds the choice); ContinueReading; LibraryShelves (Reading, Saved for
  * later, Finished); FollowingSection. A signed-out visitor gets a card asking them to log in.
  * Not yet, as noted in docs/board-fixes.md: the ad slot (S1-E12-01), "Your lists" (no story
- * builds reading lists yet) and "Downloaded to read offline" (the apps, S1-E4-08), and the
- * "Change" link beside "Private" (privacy settings, S1-E13-01).
+ * builds reading lists yet) and "Downloaded to read offline" (the apps, S1-E4-08).
  * What it calls: useLibraryOverview → my_library(); the sections call their own reads.
  */
 import { Link } from 'react-router';
@@ -18,6 +17,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { LibraryVisibilityLine } from '@/features/privacy/components/LibraryVisibilityLine';
 
 import { useLibraryOverview } from '../hooks/useLibraryOverview';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
@@ -26,7 +26,7 @@ import { ContinueReading } from './ContinueReading';
 import { FollowingSection } from './FollowingSection';
 import { LibraryShelves } from './LibraryShelves';
 
-/** The page's heading block, with the "Private" note. */
+/** The page's heading block, with who can see the library (S1-E13-01). */
 function LibraryHeader() {
   const { t } = useLibraryTranslation();
   return (
@@ -38,9 +38,7 @@ function LibraryHeader() {
         </h1>
         <p className="m-0 text-base leading-relaxed text-body">{t('intro')}</p>
       </div>
-      <p className="m-0 w-fit rounded-full bg-tint px-4 py-2.5 text-sm text-body">
-        <strong className="font-bold text-heading">{t('private.lead')}</strong> {t('private.body')}
-      </p>
+      <LibraryVisibilityLine />
       <Doodle
         name="tote-bag-of-books"
         kind="background"

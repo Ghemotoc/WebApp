@@ -39,7 +39,9 @@
       "reading": "Citesc acum",
       "saved": "Păstrate pentru mai târziu",
       "finished": "Terminate"
-    }
+    },
+    "readerLibrary": "Ce are {{name}} în bibliotecă",
+    "readerLibraryEyebrow": "Bibliotecă"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} capitol",

@@ -2983,12 +2983,15 @@ export type Database = {
           handle_skeleton: string | null;
           handle_slug: string | null;
           id: string;
+          last_active_at: string | null;
+          library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
           messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
+          profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
           shows_online_status: boolean;
           teacher_badge_since: string | null;
@@ -2996,16 +2999,20 @@ export type Database = {
           age_check_can_ask_manual: boolean | null;
           age_check_can_start_for: boolean | null;
           age_check_threshold_for: number | null;
+          bio_for_caller: string | null;
           message_age_group: string | null;
           message_audience_of: Database['public']['Enums']['message_audience'] | null;
+          profile_audience_of: Database['public']['Enums']['profile_audience'] | null;
           teacher_check_can_ask: boolean | null;
         };
         ComputedFields:
           | 'age_check_can_ask_manual'
           | 'age_check_can_start_for'
           | 'age_check_threshold_for'
+          | 'bio_for_caller'
           | 'message_age_group'
           | 'message_audience_of'
+          | 'profile_audience_of'
           | 'teacher_check_can_ask';
         Insert: {
           adults_may_message?: boolean;
@@ -3026,12 +3033,15 @@ export type Database = {
           handle_skeleton?: string | null;
           handle_slug?: string | null;
           id: string;
+          last_active_at?: string | null;
+          library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
           marketing_email_opt_in?: boolean;
           messages_from?: Database['public']['Enums']['message_audience'] | null;
           onboarded_at?: string | null;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
+          profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
           region_code?: string | null;
           shows_online_status?: boolean;
           teacher_badge_since?: string | null;
@@ -3056,12 +3066,15 @@ export type Database = {
           handle_skeleton?: string | null;
           handle_slug?: string | null;
           id?: string;
+          last_active_at?: string | null;
+          library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
           marketing_email_opt_in?: boolean;
           messages_from?: Database['public']['Enums']['message_audience'] | null;
           onboarded_at?: string | null;
           pen_name?: string | null;
           pen_name_changed_at?: string | null;
+          profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
           region_code?: string | null;
           shows_online_status?: boolean;
           teacher_badge_since?: string | null;
@@ -6261,6 +6274,15 @@ export type Database = {
         Args: { school_domain: string; signature: string; token_hash: string };
         Returns: Json;
       };
+      bio_for_caller: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
       browse_stories: {
@@ -6297,12 +6319,15 @@ export type Database = {
           handle_skeleton: string | null;
           handle_slug: string | null;
           id: string;
+          last_active_at: string | null;
+          library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
           messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
+          profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
           shows_online_status: boolean;
           teacher_badge_since: string | null;
@@ -6780,6 +6805,7 @@ export type Database = {
       follow_writer: { Args: { should_follow: boolean; target_handle: string }; Returns: Json };
       follower_count_of: { Args: { writer_id: string }; Returns: number };
       forget_character_picture: { Args: { old_picture_id: string }; Returns: Json };
+      forget_old_activity: { Args: Record<PropertyKey, never>; Returns: number };
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
@@ -6911,6 +6937,16 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      library_is_open_to: {
+        Args: {
+          owner: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+          viewer_id: string;
+        };
+        Returns: boolean;
       };
       like_chapter: {
         Args: { chapter_code: string; should_like: boolean; story_slug: string };
@@ -7094,12 +7130,15 @@ export type Database = {
           handle_skeleton: string | null;
           handle_slug: string | null;
           id: string;
+          last_active_at: string | null;
+          library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
           messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
+          profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
           shows_online_status: boolean;
           teacher_badge_since: string | null;
@@ -7329,6 +7368,7 @@ export type Database = {
       my_place_in_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       my_plan_item_kind: { Args: { target_item_id: string }; Returns: string };
       my_planned_story_id: { Args: { story_slug: string }; Returns: string };
+      my_privacy_settings: { Args: Record<PropertyKey, never>; Returns: Json };
       my_report_detail_requests: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -7444,6 +7484,7 @@ export type Database = {
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
+      note_i_am_online: { Args: Record<PropertyKey, never>; Returns: undefined };
       note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       notification_category: {
         Args: { kind: Database['public']['Enums']['notification_kind'] };
@@ -7634,6 +7675,15 @@ export type Database = {
         Returns: Json;
       };
       preview_story_plan: { Args: { story_slug: string }; Returns: Json };
+      profile_audience_of: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: Database['public']['Enums']['profile_audience'];
+      };
       profile_avatar_picture: { Args: { profile_handle: string }; Returns: Json };
       profile_for_handle: {
         Args: { wanted_handle: string };
@@ -7656,12 +7706,15 @@ export type Database = {
           handle_skeleton: string | null;
           handle_slug: string | null;
           id: string;
+          last_active_at: string | null;
+          library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
           messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
           pen_name_changed_at: string | null;
+          profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
           shows_online_status: boolean;
           teacher_badge_since: string | null;
@@ -7673,6 +7726,16 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      profile_is_open_to: {
+        Args: {
+          owner: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+          viewer_id: string;
+        };
+        Returns: boolean;
       };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
       public_character_json: {
@@ -8138,6 +8201,10 @@ export type Database = {
         Args: { character_id: string; parts: string[] };
         Returns: Json;
       };
+      set_library_audience: {
+        Args: { audience: Database['public']['Enums']['library_audience'] };
+        Returns: undefined;
+      };
       set_library_shelf: {
         Args: { story_slug: string; wanted_shelf: Database['public']['Enums']['library_shelf'] };
         Returns: Json;
@@ -8161,7 +8228,12 @@ export type Database = {
       };
       set_plan_item_privacy: { Args: { item_id: string; keep_private: boolean }; Returns: Json };
       set_plan_item_show_from: { Args: { chapter_code: string; item_id: string }; Returns: Json };
+      set_profile_audience: {
+        Args: { audience: Database['public']['Enums']['profile_audience'] };
+        Returns: undefined;
+      };
       set_rank_badge_tags: { Args: { story_slug: string; tag_names: string[] }; Returns: Json };
+      set_shows_online_status: { Args: { should_show: boolean }; Returns: undefined };
       set_story_public_areas: { Args: { areas: string[]; story_slug: string }; Returns: Json };
       set_story_tags: {
         Args: { owner_id: string; tag_names: string[]; target_story_id: string };
@@ -8436,6 +8508,7 @@ export type Database = {
           show_until: string;
         }[];
       };
+      who_is_online: { Args: { wanted_handles: string[] }; Returns: string[] };
       with_comma_below: { Args: { value: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
       working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
@@ -8498,6 +8571,7 @@ export type Database = {
       embed_service: 'youtube' | 'vimeo' | 'loom' | 'spotify' | 'apple_music';
       language_status: 'open' | 'ready' | 'closed';
       legal_check_status: 'not_started' | 'in_progress' | 'done';
+      library_audience: 'only_me' | 'people_i_follow' | 'everyone';
       library_shelf: 'reading' | 'saved' | 'finished';
       market_status: 'open' | 'ready' | 'closed';
       message_audience: 'everyone' | 'people_i_follow' | 'nobody';
@@ -8532,6 +8606,7 @@ export type Database = {
         | 'space_banner'
         | 'atlas_image';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
+      profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
       reading_font: 'sans' | 'serif' | 'dyslexia_friendly';
       reading_line_spacing: 'compact' | 'normal' | 'wide';
@@ -8784,6 +8859,7 @@ export const Constants = {
       embed_service: ['youtube', 'vimeo', 'loom', 'spotify', 'apple_music'],
       language_status: ['open', 'ready', 'closed'],
       legal_check_status: ['not_started', 'in_progress', 'done'],
+      library_audience: ['only_me', 'people_i_follow', 'everyone'],
       library_shelf: ['reading', 'saved', 'finished'],
       market_status: ['open', 'ready', 'closed'],
       message_audience: ['everyone', 'people_i_follow', 'nobody'],
@@ -8828,6 +8904,7 @@ export const Constants = {
         'atlas_image',
       ],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
+      profile_audience: ['everyone', 'members', 'people_i_follow'],
       reaction_kind: ['heart', 'fire', 'laugh', 'wow', 'sad', 'star'],
       reading_font: ['sans', 'serif', 'dyslexia_friendly'],
       reading_line_spacing: ['compact', 'normal', 'wide'],

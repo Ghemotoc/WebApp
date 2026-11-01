@@ -320,6 +320,20 @@ pg_cron 'purge-deleted-chats' nightly → purge_deleted_chats() → keeps held_m
 
 Tests: `208` in `supabase/tests/database/`, `e2e/message-settings.spec.ts`. The epic check walks all four stories together in `e2e/epic-s1-e9.spec.ts`.
 
+## Privacy settings (S1-E13-01)
+
+```
+/settings#privacy → PrivacySettingsSection (usePrivacySettings → my_privacy_settings())   src/features/privacy/
+  profile radios → set_profile_audience()   library radios → set_library_audience()
+  "Show when I'm online" → set_shows_online_status()   who can message you → Change → /settings#messages
+/u/:handle → get_writer_profile() → is_limited (no bio, no join month), library_open
+  → ProfileLibrary → browse_stories('reader_library', handle) → "View more" → /u/:readerHandle/library
+AppLayout → PresenceHeartbeat → note_i_am_online() every minute while switched on
+ProfileHeader, ChatHeader, ChatList → useOnlineHandles → who_is_online(handles) → OnlineDot
+```
+
+Under-18s start on the most private value of each choice; the database fills the defaults in. Tests: `209` in `supabase/tests/database/`, `e2e/privacy-settings.spec.ts`.
+
 ## The Teacher badge (S1-E2-11)
 
 An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:

@@ -1,0 +1,51 @@
+{
+  "settings": {
+    "eyebrow": "Confidențialitate",
+    "heading": "Confidențialitate",
+    "intro": "Alege ce pot vedea alții despre tine. Modificările se salvează pe loc.",
+    "under18": "Ai sub 18 ani, așa că fiecare setare de aici a pornit de la varianta cea mai privată. Le poți schimba oricând.",
+    "defaultForUnder18": "Implicit sub 18 ani",
+    "loadFailed": "Nu putem citi acum setările de confidențialitate. Încearcă din nou peste puțin timp.",
+    "saveFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
+  },
+  "profile": {
+    "legend": "Cine îți poate vedea profilul",
+    "everyone": "Oricine, inclusiv cei fără cont",
+    "members": "Doar cei care au cont",
+    "people_i_follow": "Doar oamenii pe care îi urmăresc",
+    "hint": "Pseudonimul apare mereu pe poveștile pe care le publici. Descrierea și luna în care ți-ai făcut contul urmează această alegere."
+  },
+  "messages": {
+    "legend": "Cine îți poate trimite mesaje",
+    "change": "Schimbă",
+    "changeLabel": "Schimbă cine îți poate trimite mesaje"
+  },
+  "online": {
+    "label": "Arată când sunt online",
+    "hint": "Oprit, dacă nu îl pornești tu. Când e pornit, oamenii pe care îi urmărești văd un punct mic lângă numele tău cât timp folosești aplicația.",
+    "dot": "Online"
+  },
+  "library": {
+    "legend": "Cine îți poate vedea biblioteca",
+    "only_me": "Doar eu",
+    "people_i_follow": "Oamenii pe care îi urmăresc",
+    "everyone": "Oricine",
+    "hint": "Biblioteca ta sunt poveștile de pe rafturile Citesc acum, Păstrate pentru mai târziu și Terminate. Când o pot vedea și alții, apare pe profilul tău."
+  },
+  "libraryNote": {
+    "only_me": {
+      "lead": "Privat.",
+      "body": "Doar tu îți vezi biblioteca."
+    },
+    "people_i_follow": {
+      "lead": "Împărtășit.",
+      "body": "Oamenii pe care îi urmărești îți văd biblioteca pe profil."
+    },
+    "everyone": {
+      "lead": "Public.",
+      "body": "Oricine îți vede biblioteca pe profil."
+    },
+    "change": "Schimbă",
+    "changeLabel": "Schimbă cine îți poate vedea biblioteca"
+  }
+}

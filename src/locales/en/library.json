@@ -3,10 +3,6 @@
   "eyebrow": "Library",
   "title": "Your library",
   "intro": "Carry on from where you stopped. Your place in every chapter is saved on every device you log in on.",
-  "private": {
-    "lead": "Private.",
-    "body": "Only you can see your library."
-  },
   "signedOut": {
     "title": "Keep a library",
     "body": "Log in to save stories for later and carry on from where you stopped, on any device.",

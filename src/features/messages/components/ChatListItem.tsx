@@ -4,10 +4,13 @@
  *
  * The open chat has the board's gold bar on the left and aria-current="page". Unread chats are
  * bold with a plum dot and say "new messages" to screen readers, so colour is never the only
- * sign. A removed last message reads "[Removed by the moderation team]".
+ * sign. A removed last message reads "[Removed by the moderation team]". The online dot follows
+ * the name while the other person shows as online to the reader (S1-E13-01).
  * Who shows it: ChatList. Where it goes: /messages/:handle.
  */
 import { Link } from 'react-router';
+
+import { OnlineDot } from '@/features/privacy/components/OnlineDot';
 
 import type { ConversationSummary } from '../api/messages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
@@ -47,7 +50,13 @@ function usePreview(chat: ConversationSummary): string {
  *
  * @returns a list item with a link to the chat
  */
-export function ChatListItem({ chat, isOpen }: { chat: ConversationSummary; isOpen: boolean }) {
+export function ChatListItem(props: {
+  chat: ConversationSummary;
+  isOpen: boolean;
+  /** The other person shows as online to the reader (S1-E13-01). */
+  isOnline: boolean;
+}) {
+  const { chat, isOpen, isOnline } = props;
   const { t, i18n } = useMessagesTranslation();
   const preview = usePreview(chat);
   const openStyle = isOpen ? 'border-l-gold bg-tint' : 'border-l-transparent';
@@ -63,6 +72,9 @@ export function ChatListItem({ chat, isOpen }: { chat: ConversationSummary; isOp
           <span className="flex items-baseline gap-2">
             <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-heading">
               {chat.otherDisplayName}
+              <span className="ml-1.5 inline-flex align-middle">
+                <OnlineDot isOnline={isOnline} />
+              </span>
               {chat.hasUnread && (
                 <>
                   <span

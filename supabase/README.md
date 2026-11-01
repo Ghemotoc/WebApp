@@ -274,6 +274,14 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Context for staff (S1-E9-02):** `message_with_context(message)` (internal) gives a reported message and up to the 20 before it in the same chat, oldest first. Staff read it through `admin_case_message(case)` (moderation staff who may see the case; each read logged as `sensitive_read.case_message`), and the evidence pack through `case_item_content()`. Blocking from a chat is the profile's `set_block()`.
 - **Settings and clean-up (S1-E9-04):** `set_message_audience()` saves `profiles.messages_from`; `delete_conversation(handle)` stamps the caller's `conversation_members.deleted_at` (the list, the chat and the `messages_select_member` policy then leave out everything before it, `chat_cleared_at()`). The nightly `purge_deleted_chats()` deletes the messages sent before both people deleted the chat, except `held_message_ids()` (a reported message and its 20 before it while the case is open, preserved, or decided less than `reported_messages_keep_days` ago), then the empty chat unless it is a declined request.
 
+## Privacy settings (S1-E13-01)
+
+- **Choices:** `profiles.profile_visible_to` (`profile_audience`: `everyone`, `members`, `people_i_follow`; empty means everyone for adults and people they follow under 18, `profile_audience_of()`), `profiles.library_visible_to` (`library_audience`: `only_me` for everyone at first, `people_i_follow`, `everyone`) and `profiles.shows_online_status` (off by default, Q50). Read with `my_privacy_settings()`; saved with `set_profile_audience()`, `set_library_audience()` and `set_shows_online_status()` (any signed-in member, read-only accounts included).
+- **The profile:** `profile_is_open_to(owner, viewer)` decides; a limited visitor gets `get_writer_profile()` with no bio and no `joined_at` (`is_limited`). The bio follows the same choice on the story page and in search (`bio_for_caller()` in `get_story_page()` and `search_writers()`).
+- **The library:** `library_is_open_to(owner, viewer)`; the profile says `library_open`, and the list `reader_library` (key: the username) in `browse_stories()` answers only those visitors.
+- **Online status:** `note_i_am_online()` stamps `profiles.last_active_at` only while the switch is on; `who_is_online(handles)` answers the people who are online for the caller: switched on, active in the last 5 minutes, following the caller, no block either way. The time is cleared when the switch goes off and nightly once a day old (`forget-old-activity`).
+- No new table, so no new policy; tests `209`.
+
 ## Seed personas
 
 Every persona's username is its persona name (for example `adult_writer`); adult_writer's pen name is `Lia Scrie`.

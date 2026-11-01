@@ -5,10 +5,10 @@
  * What it shows today: "Signed in as …", the Account panel (username and pen name), "About you"
  * (the bio), "What you like" (the county, likes and adult messages from setup, S1-E2-06), the Email address panel (S1-E2-05, added 25 Oct 2026: only the owner sees it),
  * Ways to log in (Google, Apple, Microsoft and passkeys, S1-E2-09, while their flags are on),
- * Notifications (the notification emails, S1-E7-02), "Blocked accounts" (S1-E5-05), Canva
+ * Privacy (who sees the profile and the library, online status, S1-E13-01), Notifications (the
+ * notification emails, S1-E7-02), Messages (S1-E9-04), "Blocked accounts" (S1-E5-05), Canva
  * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05) and the Legal panel. The board's
- * other tabs (Privacy, Messages, Language, My certificates) arrive
- * with their stories (S1-E13-01 and others), so only what works is shown
+ * other tabs (Language, My certificates) arrive with their stories, so only what works is shown
  * (docs/board-fixes.md).
  * Signed out, it says to log in; without a username, it links to setup.
  */
@@ -24,6 +24,7 @@ import { MessageSettingsSection } from '@/features/messages/components/MessageSe
 import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
 import { AvatarSettingsSection } from '@/features/pictures/components/AvatarSettingsSection';
+import { PrivacySettingsSection } from '@/features/privacy/components/PrivacySettingsSection';
 import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
 import { TeacherBadgeSection } from '@/features/teacher-badge/components/TeacherBadgeSection';
 
@@ -82,6 +83,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       {/* Google, Apple, Microsoft and passkeys (S1-E2-09); hidden while their flags are off. */}
       <LoginMethodsSection />
       <BirthdaySettingsSection />
+      {/* Who sees the profile and the library, and online status (S1-E13-01). */}
+      <PrivacySettingsSection />
       {/* What we email, per kind (S1-E7-02); every email's footer links to it. */}
       <NotificationEmailsSection />
       <MessageSettingsSection />

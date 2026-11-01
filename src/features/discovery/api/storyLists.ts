@@ -31,7 +31,9 @@ export type ListKind =
   // S1-E4-03: one shelf of the reader's own library (the key is the shelf).
   | 'library'
   // S1-E2-06: stories that match what the reader said they like (signed in only).
-  | 'picked';
+  | 'picked'
+  // S1-E13-01: someone's library, shown on their profile when they allow it (the key is the username).
+  | 'reader_library';
 
 /**
  * The reader's sort choices (S1-E5-02; popular from S1-E5-03; relevance, only for search, from

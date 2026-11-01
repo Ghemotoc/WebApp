@@ -37,7 +37,14 @@
     "goHome": "Go to Home",
     "loadFailed": "We couldn’t load this profile. Check your connection and try again.",
     "youBlockTitle": "You block @{{handle}}",
-    "youBlockBody": "You don’t see each other’s stories, and they can’t find your profile or follow you. They aren’t told."
+    "youBlockBody": "You don’t see each other’s stories, and they can’t find your profile or follow you. They aren’t told.",
+    "limitedNote": "{{name}} shares the rest of their profile with fewer people.",
+    "libraryEyebrow": "Library",
+    "libraryHeading": "{{name}}’s library",
+    "libraryVisibleTo": "Who can see this: {{audience}}.",
+    "libraryChange": "Change",
+    "libraryChangeLabel": "Change who can see your library",
+    "onlineLabel": "{{name}} is online"
   },
   "safety": {
     "heading": "Something wrong here?",

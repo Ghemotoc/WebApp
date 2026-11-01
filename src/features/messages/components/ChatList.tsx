@@ -11,6 +11,7 @@
 import { useState } from 'react';
 
 import { Notice } from '@/components/ui/Notice';
+import { useOnlineHandles } from '@/features/privacy/hooks/useOnlineStatus';
 
 import type { ConversationSummary } from '../api/messages';
 import { useConversations } from '../hooks/useMessages';
@@ -83,6 +84,8 @@ function ChatRows({
 }) {
   const { t } = useMessagesTranslation();
   const shown = chats.filter((chat) => chat.isRequestToMe === (view === 'requests'));
+  // Who of them is online for this reader, read once for the whole list (S1-E13-01).
+  const online = useOnlineHandles(shown.map((chat) => chat.otherHandle));
   if (shown.length === 0) {
     return (
       <p className="m-0 px-4 py-6 text-sm text-meta">
@@ -100,6 +103,7 @@ function ChatRows({
           key={chat.otherHandle}
           chat={chat}
           isOpen={chat.otherHandle.toLowerCase() === openHandle?.toLowerCase()}
+          isOnline={online.has(chat.otherHandle.toLowerCase())}
         />
       ))}
     </ul>

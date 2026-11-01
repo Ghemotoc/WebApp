@@ -5,8 +5,10 @@
  * Who calls it: hooks/useWriterProfile.ts.
  * What it calls next: get_writer_profile(handle) (…_s1_e5_05_profiles_and_blocks.sql). It answers
  * nothing for an unknown username, a profile a moderator hid, or a person who blocks the reader,
- * and never the user ID, year of birth, age check, email or online status.
+ * and never the user ID, year of birth, age check, email or online status. Since S1-E13-01 it
+ * also says whether the owner keeps the rest of their profile and their library from this reader.
  */
+import type { LibraryAudience } from '@/features/privacy/api/privacy';
 import type { CoverColourKey, CoverDesignKey } from '@/components/covers/coverDesigns';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { StoryRating } from '@/schemas/story';
@@ -32,8 +34,16 @@ export interface WriterProfile {
   handle: string;
   displayName: string;
   penName: string | null;
+  /** Empty when the profile is limited for this reader (S1-E13-01). */
   bio: string;
-  joinedAt: string;
+  /** Null when the profile is limited for this reader (S1-E13-01). */
+  joinedAt: string | null;
+  /** The owner keeps the rest of their profile from this reader: no bio, no join month. */
+  isLimited: boolean;
+  /** The reader may see the owner's library shelf (S1-E13-01). */
+  libraryOpen: boolean;
+  /** The owner's library choice, on their own profile only; null for anyone else. */
+  libraryAudience: LibraryAudience | null;
   isMe: boolean;
   /** The reader blocks this person: the page shows Unblock and no stories. */
   iBlocked: boolean;
@@ -73,7 +83,10 @@ interface WriterProfileRow {
   display_name: string;
   pen_name: string | null;
   bio: string;
-  joined_at: string;
+  joined_at: string | null;
+  is_limited: boolean;
+  library_open: boolean;
+  library_audience: LibraryAudience | null;
   is_me: boolean;
   i_blocked: boolean;
   is_teacher: boolean;
@@ -142,6 +155,9 @@ export async function fetchWriterProfile(
     penName: row.pen_name,
     bio: row.bio,
     joinedAt: row.joined_at,
+    isLimited: row.is_limited,
+    libraryOpen: row.library_open,
+    libraryAudience: row.library_audience,
     isMe: row.is_me,
     iBlocked: row.i_blocked,
     isTeacher: row.is_teacher,
