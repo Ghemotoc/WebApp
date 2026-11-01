@@ -160,5 +160,23 @@
     "deleted": "Postarea a fost ștearsă.",
     "removed": "[Eliminat de echipa de moderare]",
     "unavailable": "Postarea nu e disponibilă."
+  },
+  "unread": {
+    "new": "Postări noi de la ultima vizită",
+    "none": "Nicio postare nouă",
+    "markAll": "Marchează tot ca citit",
+    "mark": "Marchează ca citit",
+    "markLabel": "Marchează ca citit: {{name}}",
+    "markFailed": "Nu am putut marca drept citit. Încearcă din nou."
+  },
+  "newForYou": {
+    "eyebrow": "De la ultima vizită",
+    "heading": "Noutăți pentru tine",
+    "note": "Fiecare link se deschide la prima postare pe care n-ai citit-o.",
+    "count_one": "{{count}} nouă",
+    "count_few": "{{count}} noi",
+    "count_other": "{{count}} de noi",
+    "empty": "Ești la zi.",
+    "loadFailed": "Nu am putut încărca noutățile. Încearcă mai târziu."
   }
 }

@@ -7,7 +7,8 @@
  * and the side column. A permalink (?post=7) reads at least as far as #7 and scrolls to it and
  * focuses it (criterion 3). An address with the wrong forum moves to the right one. Anyone can
  * read; signed out, the reply card says to log in. Part c keeps the posts picked to quote, which
- * each post's buttons change and the reply card sends (S1-E8-03).
+ * each post's buttons change and the reply card sends (S1-E8-03). Part d marks the thread read
+ * up to the last post on screen for a signed-in reader (useMarkThreadRead, S1-E8-04).
  * What it calls: useForumThread → forum_thread(); useForumIndex for the breadcrumb;
  * useQuotePicks.
  */
@@ -20,6 +21,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 
 import type { ForumPost } from '../api/forumThreads';
 import { useForumIndex } from '../hooks/useForumIndex';
+import { useMarkThreadRead } from '../hooks/useForumReads';
 import { useForumThread } from '../hooks/useForumThreads';
 import { useQuotePicks } from '../hooks/useQuotePicks';
 import { forumPath } from '../lib/forumTree';
@@ -166,6 +168,8 @@ export function ThreadPage() {
   const wantedPost = permalinkPost(searchParams.get('post'));
   const read = useForumThread(threadNumber, wantedPost);
   useScrollToPost(read.posts, wantedPost);
+  // What is on screen counts as read (S1-E8-04): the highest post number shown.
+  useMarkThreadRead(threadNumber, read.posts.at(-1)?.number ?? null);
   const movedTo = read.thread?.forumSlug;
   if (movedTo !== undefined && movedTo !== forumSlug) {
     // The thread lives in another forum (it was moved, or the address was typed): go there.

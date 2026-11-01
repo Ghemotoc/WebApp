@@ -46,6 +46,11 @@ export interface ForumEntry {
   /** When its latest post was written; null while it has none. */
   latestActivityAt: string | null;
   latestPost: ForumLatestPost | null;
+  /**
+   * Whether it, or a forum inside it, has posts new to the reader (S1-E8-04); null for a
+   * visitor, who sees no dots.
+   */
+  hasUnread: boolean | null;
 }
 
 /**
@@ -91,6 +96,8 @@ function toForumEntry(row: ForumIndexRow): ForumEntry {
     postCount: Number(row.post_count),
     latestActivityAt: (row.latest_activity_at as string | null) ?? null,
     latestPost: toLatestPost(row.latest_post),
+    // The generated type says boolean, but a visitor gets null.
+    hasUnread: (row.has_unread as boolean | null) ?? null,
   };
 }
 

@@ -2186,6 +2186,95 @@ export type Database = {
           },
         ];
       };
+      forum_read_marks: {
+        Row: {
+          created_at: string;
+          forum_id: string | null;
+          id: string;
+          marked_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          forum_id?: string | null;
+          id?: string;
+          marked_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          forum_id?: string | null;
+          id?: string;
+          marked_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_read_marks_forum_id_fkey';
+            columns: ['forum_id'];
+            isOneToOne: false;
+            referencedRelation: 'forums';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_read_marks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      forum_thread_reads: {
+        Row: {
+          created_at: string;
+          id: string;
+          last_read_post_number: number;
+          read_at: string;
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          last_read_post_number?: number;
+          read_at?: string;
+          thread_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          last_read_post_number?: number;
+          read_at?: string;
+          thread_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_thread_reads_thread_id_fkey';
+            columns: ['thread_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_threads';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_thread_reads_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       forum_threads: {
         Row: {
           created_at: string;
@@ -2198,12 +2287,18 @@ export type Database = {
           title: string;
           updated_at: string;
           user_id: string;
+          forum_first_unread_post: number | null;
           forum_thread_header_json: Json | null;
           forum_thread_is_shown: boolean | null;
           forum_thread_summary_json: Json | null;
+          forum_unread_post_count: number | null;
         };
         ComputedFields:
-          'forum_thread_header_json' | 'forum_thread_is_shown' | 'forum_thread_summary_json';
+          | 'forum_first_unread_post'
+          | 'forum_thread_header_json'
+          | 'forum_thread_is_shown'
+          | 'forum_thread_summary_json'
+          | 'forum_unread_post_count';
         Insert: {
           created_at?: string;
           deleted_at?: string | null;
@@ -7453,13 +7548,25 @@ export type Database = {
       follower_count_of: { Args: { writer_id: string }; Returns: number };
       forget_character_picture: { Args: { old_picture_id: string }; Returns: Json };
       forget_old_activity: { Args: Record<PropertyKey, never>; Returns: number };
+      forum_and_children: { Args: { top_forum_id: string }; Returns: string[] };
       forum_as_json: { Args: { target_forum_id: string }; Returns: Json };
+      forum_first_unread_post: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_threads']['Row'],
+            Database['public']['Tables']['forum_threads']['ComputedFields']
+          >;
+        };
+        Returns: number;
+      };
+      forum_has_unread: { Args: { target_forum_id: string }; Returns: boolean };
       forum_index: {
         Args: { language_code: string };
         Returns: {
           accent: Database['public']['Enums']['forum_accent'];
           description: string;
           doodle: string;
+          has_unread: boolean;
           id: string;
           is_pinned: boolean;
           latest_activity_at: string;
@@ -7482,6 +7589,7 @@ export type Database = {
         }[];
       };
       forum_name_problems: { Args: { names: Json }; Returns: string[] };
+      forum_new_for_you: { Args: { how_many?: number; language_code?: string }; Returns: Json };
       forum_person_json: { Args: { person_id: string }; Returns: Json };
       forum_post_history: { Args: { post_id: string }; Returns: Json };
       forum_post_json: {
@@ -7509,6 +7617,7 @@ export type Database = {
         Args: { target_thread_id: string; wanted: string[] };
         Returns: string[];
       };
+      forum_read_since: { Args: { target_forum_id: string }; Returns: string };
       forum_thread: {
         Args: { after_post?: number; thread_number: number; up_to_post?: number };
         Returns: Json;
@@ -7540,6 +7649,15 @@ export type Database = {
           >;
         };
         Returns: Json;
+      };
+      forum_unread_post_count: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_threads']['Row'],
+            Database['public']['Tables']['forum_threads']['ComputedFields']
+          >;
+        };
+        Returns: number;
       };
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
@@ -7803,6 +7921,11 @@ export type Database = {
         Returns: Database['public']['Enums']['age_check_result'];
       };
       mark_conversation_read: { Args: { other_handle: string }; Returns: undefined };
+      mark_forum_thread_read: {
+        Args: { thread_number: number; up_to_post: number };
+        Returns: undefined;
+      };
+      mark_forums_read: { Args: { forum_slug?: string }; Returns: undefined };
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
       market_change_problem: {
         Args: {

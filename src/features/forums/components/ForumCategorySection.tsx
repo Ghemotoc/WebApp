@@ -4,7 +4,7 @@
  *
  * Who uses it: ForumsPage. What it calls: ForumRow for each forum, and Doodle for the category's
  * doodle when it names one the app has (staff choose it on /staff/forums).
- * Not yet: "Mark as read" (part d, S1-E8-04).
+ * Part d adds "Mark as read" for the category and every forum inside it (S1-E8-04): MarkReadButton.
  */
 import { Doodle } from '@/components/ui/Doodle';
 import { doodleSources, type DoodleName } from '@/components/ui/doodleSources';
@@ -14,6 +14,7 @@ import type { ForumCategory } from '../lib/forumTree';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumRow } from './ForumRow';
+import { MarkReadButton } from './MarkReadButton';
 
 /** The colour bar beside the name, in each accent's dark pill colour (contrast 3:1 or more). */
 const accentBars: Record<ForumAccent, string> = {
@@ -58,13 +59,16 @@ export function ForumCategorySection({ group }: { group: ForumCategory }) {
           {category.name}
         </h2>
         <span className="text-[13px] text-body">{t('forumCount', { count: forums.length })}</span>
+        <span className="ml-auto">
+          <MarkReadButton forumSlug={category.slug} forumName={category.name} />
+        </span>
         {isDoodleName(category.doodle) && (
           <Doodle
             name={category.doodle}
             kind="widget"
             on="forum-category"
             hideBelow="phone"
-            className="ml-auto w-10"
+            className="w-10"
           />
         )}
       </header>
