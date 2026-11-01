@@ -58,19 +58,17 @@ describe('repository setup', () => {
     expect(ciWorkflow).not.toMatch(/^ {2}pull_request:\n(?:\s+#.*\n)*\s+branches:/m);
   });
 
-  it('runs the database and e2e jobs on main, and on pull requests once they are ready, pass checks and change more than docs', () => {
-    // "Tooling: run the long CI jobs only when they matter" (24 Oct 2026).
+  it('runs the database and e2e jobs only on main, after the merge, and only the quick checks on pull requests', () => {
+    // Robert, 1 Nov 2026: the full tests run locally before the merge and in CI after it
+    // (replaces "run the long CI jobs only when they matter", 24 Oct 2026).
     const ciWorkflow = readRepositoryFile('.github/workflows/ci.yml');
-    const gate =
-      'needs: [changes, checks]\n' +
-      '    # Runs on every push to main, after "checks", even if "checks" failed there';
-    const condition =
-      "!cancelled()\n      && (github.event_name == 'push'\n        || (github.event.pull_request.draft == false && needs.checks.result == 'success'))\n      && needs.changes.outputs.docs_only != 'true'";
+    const gate = 'needs: [checks]\n';
+    const condition = `if: "!cancelled() && github.event_name == 'push'"`;
 
     expect(ciWorkflow).toContain('types: [opened, synchronize, reopened, ready_for_review]');
     expect(ciWorkflow.split(gate)).toHaveLength(3);
     expect(ciWorkflow.split(condition)).toHaveLength(3);
-    expect(ciWorkflow).toContain('bash scripts/only-docs-changed.sh');
+    expect(ciWorkflow).not.toContain('only-docs-changed');
   });
 
   it('has a code tour that covers where the app starts, how a click travels, where things live and where to start reading', () => {
