@@ -1,0 +1,7 @@
+# FORUMS-1b plan: threads and posts with safe formatting (S1-E8-02, issue #68)
+
+- Migrations: `20261126100001_forums1_b_enums.sql` (reportable_type forum_thread, forum_post); `20261126100002_forums1_b_threads_and_posts.sql`: `forum_threads` (public thread_number, last_post_number, last_post_at), `forum_posts` (post_number unique per thread, edited_at), `forum_post_revisions`; RLS own + moderation view; functions forum_thread_list, forum_thread, start_forum_thread, reply_to_forum_thread, edit_forum_post, delete_forum_post, forum_post_history; text checks; post limit; forum_index counts and latest post; admin_delete_forum refuses forums with threads; reporting branches in the four shared functions; data_export_tables, account_deletion_rules, request/cancel deletion, delete_account_forum_posts; nightly purge-deleted-forum-posts.
+- Tests: 222 (45); 021 gains the three tables; 221's cron check skips the purge job.
+- Front end: thread list on the forum page, /forums/:slug/new, /forums/:slug/:number?post=N; ForumPostText (safe Markdown subset), edit, delete, earlier versions for moderators, reply card, side panel.
+- e2e: `e2e/forum-threads.spec.ts`.
+- Criteria: 1 (cleaned on save and display) → 222 section 2, ForumPostText test, e2e reply test; 2 (rel) → ForumPostText test, e2e; 3 (numbers and permalinks) → 222 section 1, e2e permalink test; 4 (Edited, moderators see the previous version) → 222 section 4, e2e edit test.
