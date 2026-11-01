@@ -36,7 +36,7 @@ export function useThreadList(forumSlug: string) {
     initialPageParam: null as string | null,
     // The next page starts after the oldest thread shown.
     getNextPageParam: (lastPage: ForumThreadListPage | null) =>
-      lastPage?.hasMore === true ? (lastPage.threads.at(-1)?.lastPostAt ?? null) : null,
+      lastPage?.hasMore === true ? (lastPage.threads.at(-1)?.bumpedAt ?? null) : null,
   });
   const pages = list.data?.pages ?? null;
   const firstPage = pages?.[0] ?? null;

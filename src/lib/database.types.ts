@@ -2277,12 +2277,17 @@ export type Database = {
       };
       forum_threads: {
         Row: {
+          bumped_at: string;
           created_at: string;
           deleted_at: string | null;
           forum_id: string;
           id: string;
+          is_sticky: boolean;
           last_post_at: string;
           last_post_number: number;
+          lock_reason: string | null;
+          locked_at: string | null;
+          locked_by_user_id: string | null;
           thread_number: number;
           title: string;
           updated_at: string;
@@ -2300,24 +2305,34 @@ export type Database = {
           | 'forum_thread_summary_json'
           | 'forum_unread_post_count';
         Insert: {
+          bumped_at?: string;
           created_at?: string;
           deleted_at?: string | null;
           forum_id: string;
           id?: string;
+          is_sticky?: boolean;
           last_post_at?: string;
           last_post_number?: number;
+          lock_reason?: string | null;
+          locked_at?: string | null;
+          locked_by_user_id?: string | null;
           thread_number?: never;
           title: string;
           updated_at?: string;
           user_id: string;
         };
         Update: {
+          bumped_at?: string;
           created_at?: string;
           deleted_at?: string | null;
           forum_id?: string;
           id?: string;
+          is_sticky?: boolean;
           last_post_at?: string;
           last_post_number?: number;
+          lock_reason?: string | null;
+          locked_at?: string | null;
+          locked_by_user_id?: string | null;
           thread_number?: never;
           title?: string;
           updated_at?: string;
@@ -2329,6 +2344,13 @@ export type Database = {
             columns: ['forum_id'];
             isOneToOne: false;
             referencedRelation: 'forums';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_threads_locked_by_user_id_fkey';
+            columns: ['locked_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
           {
@@ -6449,6 +6471,10 @@ export type Database = {
           tag_id: string;
         }[];
       };
+      admin_lock_forum_thread: {
+        Args: { reason: string; thread_number: number };
+        Returns: undefined;
+      };
       admin_log_compliance_entry: {
         Args: {
           action?: string;
@@ -6727,6 +6753,10 @@ export type Database = {
         Returns: Json;
       };
       admin_set_flag: { Args: { flag_key: string; turn_on: boolean }; Returns: boolean };
+      admin_set_forum_thread_sticky: {
+        Args: { is_sticky: boolean; reason: string; thread_number: number };
+        Returns: undefined;
+      };
       admin_set_language_status: {
         Args: { language_code: string; new_status: Database['public']['Enums']['language_status'] };
         Returns: Database['public']['Enums']['language_status'];
@@ -6790,6 +6820,10 @@ export type Database = {
           display_name: string;
           handle: string;
         }[];
+      };
+      admin_unlock_forum_thread: {
+        Args: { reason: string; thread_number: number };
+        Returns: undefined;
       };
       admin_unmatched_notices: {
         Args: Record<PropertyKey, never>;
@@ -7621,6 +7655,32 @@ export type Database = {
       forum_thread: {
         Args: { after_post?: number; thread_number: number; up_to_post?: number };
         Returns: Json;
+      };
+      forum_thread_for_moderation: {
+        Args: { reason: string; thread_number: number };
+        Returns: {
+          bumped_at: string;
+          created_at: string;
+          deleted_at: string | null;
+          forum_id: string;
+          id: string;
+          is_sticky: boolean;
+          last_post_at: string;
+          last_post_number: number;
+          lock_reason: string | null;
+          locked_at: string | null;
+          locked_by_user_id: string | null;
+          thread_number: number;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'forum_threads';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       forum_thread_header_json: {
         Args: {
@@ -8880,7 +8940,7 @@ export type Database = {
       replace_sent_teacher_link: { Args: { target_user_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
       reply_to_forum_thread: {
-        Args: { body: string; quoted_posts?: string[]; thread_number: number };
+        Args: { body: string; bump?: boolean; quoted_posts?: string[]; thread_number: number };
         Returns: Json;
       };
       report_client_error: {

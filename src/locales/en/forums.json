@@ -42,7 +42,9 @@
     "loadFailed": "We couldn’t load the threads. Check your connection and try again.",
     "logInToStart": "Log in to start a thread",
     "categoryNote": "Threads go in the forums inside this category.",
-    "replies_few": "{{count, number}} replies"
+    "replies_few": "{{count, number}} replies",
+    "pinned": "Pinned",
+    "locked": "Locked"
   },
   "person": {
     "deleted": "Deleted account",
@@ -120,7 +122,9 @@
     "quoted_few": "{{count}} posts quoted",
     "quoted_other": "{{count}} posts quoted",
     "removeQuotes": "Remove quotes",
-    "quotesLabel": "The posts you’re quoting"
+    "quotesLabel": "The posts you’re quoting",
+    "noBump": "Don’t bump",
+    "noBumpNote": "Your reply won’t move this thread to the top of the list."
   },
   "newThread": {
     "eyebrow": "New thread",
@@ -152,7 +156,8 @@
     },
     "too_many_few": "You’ve posted a lot in the last hour. Wait {{count}} minutes and try again.",
     "quote_missing": "A post you quoted isn’t there any more. Remove your quotes and try again.",
-    "quote_too_many": "You can quote up to 10 posts in one reply."
+    "quote_too_many": "You can quote up to 10 posts in one reply.",
+    "locked": "A moderator has locked this thread, so it takes no more replies."
   },
   "quote": {
     "wrote": "{{name}} wrote in",
@@ -178,5 +183,32 @@
     "count_other": "{{count}} new",
     "empty": "You’re up to date.",
     "loadFailed": "We couldn’t load what’s new. Try again later."
+  },
+  "locked": {
+    "heading": "This thread is locked",
+    "byTeam": "Locked by the moderation team on {{date}}. Reason: “{{reason}}”",
+    "stillRead": "You can still read every post, but nobody can reply."
+  },
+  "moderation": {
+    "heading": "Moderator tools",
+    "reason": "Reason",
+    "reasonHint": "Goes in the audit log. When you lock the thread, everyone sees the reason.",
+    "sticky": "Make sticky",
+    "unsticky": "Remove sticky",
+    "lock": "Lock thread",
+    "unlock": "Unlock thread",
+    "done": {
+      "sticky": "The thread is pinned to the top of its forum.",
+      "unsticky": "The thread is back in order of latest activity.",
+      "lock": "The thread is locked. Everyone can still read it.",
+      "unlock": "The thread is open for replies again."
+    },
+    "failures": {
+      "not_allowed": "Only moderators can do that.",
+      "reason_empty": "Write a reason first.",
+      "reason_too_long": "Keep the reason under 500 characters.",
+      "gone": "This thread isn’t there any more.",
+      "unreachable": "We couldn’t save that. Check your connection and try again."
+    }
   }
 }

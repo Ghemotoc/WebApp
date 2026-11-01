@@ -8,7 +8,9 @@
  * focuses it (criterion 3). An address with the wrong forum moves to the right one. Anyone can
  * read; signed out, the reply card says to log in. Part c keeps the posts picked to quote, which
  * each post's buttons change and the reply card sends (S1-E8-03). Part d marks the thread read
- * up to the last post on screen for a signed-in reader (useMarkThreadRead, S1-E8-04).
+ * up to the last post on screen for a signed-in reader (useMarkThreadRead, S1-E8-04). Part e
+ * shows the locked note instead of the reply box, and the moderator tools to moderation staff
+ * (ThreadModeration, S1-E8-05).
  * What it calls: useForumThread → forum_thread(); useForumIndex for the breadcrumb;
  * useQuotePicks.
  */
@@ -30,6 +32,7 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 import { ForumPostCard } from './ForumPostCard';
 import { ReplyForm } from './ReplyForm';
 import { ThreadHeader } from './ThreadHeader';
+import { ThreadModeration } from './ThreadModeration';
 import { ThreadSidePanel } from './ThreadSidePanel';
 
 /**
@@ -102,6 +105,7 @@ function ThreadPosts({
       <ReplyForm
         target={{ forumSlug: thread.forumSlug, threadNumber, posts: read.posts, quotePicks }}
         canReply={thread.canReply}
+        lock={thread.lock}
       />
     </div>
   );
@@ -149,7 +153,10 @@ function ThreadContent({
       <ThreadHeader thread={thread} path={path} />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <ThreadPosts read={read} threadNumber={threadNumber} />
-        <ThreadSidePanel thread={thread} />
+        <div className="flex flex-col gap-4">
+          <ThreadSidePanel thread={thread} />
+          <ThreadModeration thread={thread} />
+        </div>
       </div>
     </>
   );
