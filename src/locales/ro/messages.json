@@ -1,0 +1,93 @@
+{
+  "documentTitle": "Mesaje",
+  "chatDocumentTitle": "Mesaje cu {{name}}",
+  "eyebrow": "Mesaje",
+  "title": "Mesajele tale",
+  "lead": "Conversații private cu alți scriitori și cititori. Doar text.",
+  "signedOut": "Intră în cont ca să-ți vezi mesajele.",
+  "logIn": "Intră în cont",
+  "list": {
+    "title": "Conversații",
+    "newChat": "Începe o conversație nouă",
+    "tabsLabel": "Ce conversații",
+    "all": "Toate conversațiile",
+    "requests": "Cereri",
+    "requestsWaiting_one": "{{count}} în așteptare",
+    "requestsWaiting_few": "{{count}} în așteptare",
+    "requestsWaiting_other": "{{count}} în așteptare",
+    "empty": "Nicio conversație încă. Deschide profilul cuiva și alege Mesaj sau începe o conversație nouă.",
+    "requestsEmpty": "Nicio cerere de mesaj.",
+    "requestsHint": "Primele mesaje de la oameni care nu te urmăresc apar aici. Nu pot trimite altele până nu accepți.",
+    "you": "Tu: {{text}}",
+    "removed": "[Eliminat de echipa de moderare]",
+    "unread": "mesaje noi",
+    "waiting": "Așteaptă să accepte",
+    "loadFailed": "Nu ți-am putut încărca conversațiile. Încearcă din nou peste puțin timp."
+  },
+  "rules": {
+    "minors": "Adulții nu pot scrie niciodată cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite până nu le pornești tu.",
+    "audience": {
+      "everyone": "Acum, oricine îți poate scrie.",
+      "people_i_follow": "Acum, doar oamenii pe care îi urmărești îți pot scrie.",
+      "nobody": "Acum, nimeni nu poate începe o conversație nouă cu tine."
+    }
+  },
+  "chat": {
+    "pick": "Alege o conversație sau începe una nouă.",
+    "notFound": "Nu există nimeni cu acest nume de utilizator căruia să-i poți scrie.",
+    "loadFailed": "Nu am putut încărca această conversație. Încearcă din nou peste puțin timp.",
+    "back": "Toate conversațiile",
+    "messagesLabel": "Mesaje cu {{name}}",
+    "you": "Tu",
+    "removed": "[Eliminat de echipa de moderare]",
+    "startHint": "Salută. Dacă {{name}} nu te urmărește, primul tău mesaj ajunge la cererile sale și poți trimite altele după ce acceptă.",
+    "waiting": "Mesajul tău așteaptă în cererile lui {{name}}. Poți trimite altele după ce acceptă.",
+    "notTaking": "{{name}} nu primește mesaje acum.",
+    "composerLabel": "Mesaj pentru {{name}}",
+    "send": "Trimite",
+    "textOnly": "Doar text. Nu poți trimite poze sau fișiere.",
+    "reportLabel": "mesajul de la {{name}} de la ora {{time}}"
+  },
+  "request": {
+    "title": "{{name}} vrea să-ți scrie",
+    "explain": "Nu poate trimite altele până nu accepți. Dacă ștergi cererea, nu va afla.",
+    "accept": "Acceptă cererea",
+    "delete": "Șterge cererea",
+    "deleted": "Cerere ștearsă. {{name}} nu va afla."
+  },
+  "about": {
+    "title": "Despre conversație",
+    "viewProfile": "Vezi profilul lui {{name}}",
+    "followEachOther": "Vă urmăriți unul pe altul.",
+    "iFollow": "Tu urmărești această persoană.",
+    "theyFollow": "Această persoană te urmărește.",
+    "noFollow": "Nu vă urmăriți unul pe altul.",
+    "whoTitle": "Cine îți poate scrie",
+    "audience": {
+      "everyone": "Oricine",
+      "people_i_follow": "Oamenii pe care îi urmărești",
+      "nobody": "Nimeni"
+    },
+    "adultsTitle": "Mesaje de la adulți",
+    "on": "Pornite",
+    "off": "Oprite",
+    "adultsHint": "Adulții nu pot scrie niciodată cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite până nu le pornești tu. Doar tu le poți porni, din Setări.",
+    "privacyTitle": "Cine îți poate citi mesajele",
+    "privacy": "Mesajele nu sunt criptate end-to-end. Echipa noastră le citește doar dacă cineva le raportează sau dacă legea o cere."
+  },
+  "newChat": {
+    "eyebrow": "Mesaje",
+    "title": "Începe o conversație nouă",
+    "label": "Numele său de utilizator",
+    "hint": "Numele de după @ de pe profilul său.",
+    "open": "Deschide conversația",
+    "close": "Închide"
+  },
+  "failures": {
+    "not_taking": "Această persoană nu primește mesaje acum.",
+    "refused": "Scrie între 1 și 2.000 de caractere.",
+    "not_found": "Nu există nimeni cu acest nume de utilizator.",
+    "too_many": "Ai trimis multe mesaje în ultima oră. Încearcă din nou peste {{minutes}} minute.",
+    "unreachable": "Nu am putut face asta. Verifică-ți conexiunea și încearcă din nou."
+  }
+}

@@ -8,7 +8,8 @@
       "comment": "Raportează acest comentariu",
       "picture": "Raportează această imagine",
       "embed": "Raportează această muzică sau acest videoclip",
-      "atlas_item": "Raportează asta din lumea poveștii"
+      "atlas_item": "Raportează asta din lumea poveștii",
+      "message": "Raportează acest mesaj"
     },
     "anonymous": "{{item}}. Nu va vedea cine a raportat.",
     "whatIsWrong": "Ce nu e în regulă?",

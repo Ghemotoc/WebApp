@@ -8,7 +8,8 @@
       "comment": "Report this comment",
       "picture": "Report this picture",
       "embed": "Report this music or video",
-      "atlas_item": "Report this from the story’s world"
+      "atlas_item": "Report this from the story’s world",
+      "message": "Report this message"
     },
     "anonymous": "{{item}}. They won’t see who reported it.",
     "whatIsWrong": "What’s wrong?",

@@ -271,6 +271,25 @@ the parent's email → /parent-consent/answer#<token> (ParentAnswerPage, signed 
 
 `can_message()` is the one rule the private messages functions (S1-E9-01 onwards) ask first. Tests: `205` in `supabase/tests/database/`, `e2e/messaging-rules.spec.ts`.
 
+## Private messages (S1-E9-01)
+
+Sending a message, from the profile to the other person's top bar:
+
+```
+/u/:handle → ProfileHeader "Message" (only when can_message is true) → /messages/:handle
+MessagesPage → ChatList (useConversations → my_conversations())          src/features/messages/
+            → ChatPanel (useConversation → conversation_with()) + AboutChatPanel
+  MessageComposer → send_message(handle, words)
+    → conversation_can_send(): can_message() for a new chat, may_keep_writing() for one going on
+    → take_rate_limit('message'); a new chat: start_conversation() → accepted, or a request
+    → messages, conversations.last_message_at
+the other person: MessagesNavLink (useUnreadMessageCount → unread_message_count(), every minute)
+  → /messages → Requests: RequestActions → answer_message_request(accept or delete)
+  → opening the chat → mark_conversation_read()
+```
+
+The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`. Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+
 ## The Teacher badge (S1-E2-11)
 
 An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:

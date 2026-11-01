@@ -81,6 +81,9 @@ select results_eq(
        ('compliance_log_entries', 0::bigint),
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
+       -- Private messages are the two people's only (S1-E9-01).
+       ('conversation_members', 0::bigint),
+       ('conversations', 0::bigint),
        ('copied_work_notes', 0::bigint),
        ('daily_metrics', 0::bigint),
        -- Notification emails: each person's own (S1-E7-02).
@@ -101,6 +104,7 @@ select results_eq(
        ('legal_documents', (select count(*) from public.legal_documents)),
        ('manual_age_checks', 0::bigint),
        ('markets', (select count(*) from public.markets)),
+       ('messages', 0::bigint),
        ('moderated_items', 0::bigint),
        ('moderator_mail_messages', 0::bigint),
        ('moderator_mail_threads', 0::bigint),

@@ -13,3 +13,4 @@ Writer profiles, blocks and follows. Built by PEOPLE-1: S1-E5-05 (writer profile
 - Settings' bio field and "Blocked accounts" list are in `src/features/account/components/` and use this folder's hooks.
 - The database side: `supabase/migrations/…_s1_e5_05_profiles_and_blocks.sql` and `…_s1_e6_05_follows.sql`; tests `143` and `144`.
 - Who may message whom (S1-E9-03): `get_writer_profile()` answers `can_message` for the signed-in visitor, and `ProfileHeader` shows the neutral "isn’t taking messages right now" note when it is false, whatever the reason. The rule is `can_message()` in `…_s1_e9_03_messaging_rules.sql`; test `205`.
+- Message (S1-E9-01): `ProfileHeader` links to `/messages/:handle` when `can_message` is true (`src/features/messages/`).
