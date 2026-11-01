@@ -94,13 +94,13 @@ select is(pg_temp.outcome(public.send_finished_thanks('statia-meteo-seed01')), '
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is((select count(*) from public.finished_thanks), 1::bigint,
-  'allowed: the reader sees their own thank-you');
+  'allowed: finished_thanks_select_own, the reader sees their own thank-you');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((select count(*) from public.finished_thanks), 0::bigint,
-  'denied: the writer can''t list who thanked them (only the notification says so)');
+  'denied: finished_thanks_select_own, the writer can''t list who thanked them (only the notification says so)');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000015');
 select is((select count(*) from public.finished_thanks), 0::bigint,
-  'denied: another reader sees none');
+  'denied: finished_thanks_select_own, another reader sees none');
 select throws_ok($$ insert into public.finished_thanks (user_id, story_id)
   select '00000000-0000-4000-8000-000000000015', id from public.stories limit 1 $$, '42501', null,
   'denied: nobody writes the table directly');

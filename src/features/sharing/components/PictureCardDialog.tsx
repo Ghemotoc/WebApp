@@ -20,7 +20,7 @@ import { usePictureBitmap } from '../hooks/usePictureBitmap';
 import { usePictureCardActions } from '../hooks/usePictureCardActions';
 import { useShareOptions } from '../hooks/useShareOptions';
 import { paperBackground, type PictureCardContent } from '../lib/pictureCard';
-import { backgroundByKey } from '../lib/quoteCard';
+import { backgroundByKey, type QuoteCardBackground } from '../lib/quoteCard';
 import type { SharedChapter } from '../lib/sharedChapter';
 import { printedLink } from '../lib/shareLink';
 
@@ -110,9 +110,9 @@ export function PictureCardDialog({
   );
   // Step 2: the card's colour: the writer's when they picked one (IDEAS-1c), otherwise paper.
   const { cardColour } = useShareOptions(chapter.address);
-  const [background, setBackground] = useState(
-    () => backgroundByKey(cardColour) ?? paperBackground,
-  );
+  // The reader's own choice wins; the writer's colour may arrive a moment after the dialog opens.
+  const [chosenBackground, setBackground] = useState<QuoteCardBackground | null>(null);
+  const background = chosenBackground ?? backgroundByKey(cardColour) ?? paperBackground;
   // Step 3: the words on the card, kept stable so the canvas redraws only on a real change.
   const content = useMemo<PictureCardContent>(
     () => ({

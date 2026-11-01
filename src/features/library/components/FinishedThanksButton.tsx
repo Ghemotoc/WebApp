@@ -68,9 +68,8 @@ export function FinishedThanksButton({ storySlug, isSent }: FinishedThanksButton
           {t('thanks.hint')}
         </p>
       )}
-      <div role="status">
-        {noteKey !== null && <Notice tone={isError ? 'error' : 'success'}>{t(noteKey)}</Notice>}
-      </div>
+      {/* The notice is its own live region (status, or alert for an error). */}
+      {noteKey !== null && <Notice tone={isError ? 'error' : 'success'}>{t(noteKey)}</Notice>}
     </div>
   );
 }

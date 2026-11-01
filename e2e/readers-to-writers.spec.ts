@@ -19,7 +19,13 @@
  * persona. Everything is removed at the start and the end.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type BrowserContextOptions, type Page } from '@playwright/test';
+import {
+  expect,
+  test,
+  type Browser,
+  type BrowserContextOptions,
+  type Page,
+} from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -128,12 +134,14 @@ test.describe('readers to writers (IDEAS-1 part c)', () => {
     await expect(button).toHaveAccessibleDescription(/No message, just thanks/);
     // Step 2: it goes once and the button reads "Sent", also after a reload.
     await button.click();
-    await expect(page.getByRole('status').filter({ hasText: 'Sent. The writer' })).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: 'Sent. The writer' })).toHaveCount(1);
     await expect(page.getByRole('button', { name: 'Sent' })).toBeDisabled();
     expect(writerThanks()).toBe('1');
     await page.reload();
     await expect(page.getByRole('button', { name: 'Sent' })).toBeDisabled();
-    await expect(page.getByRole('button', { name: 'Tell the writer you finished it' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Tell the writer you finished it' })).toHaveCount(
+      0,
+    );
     expect(writerThanks()).toBe('1');
   });
 
@@ -147,7 +155,9 @@ test.describe('readers to writers (IDEAS-1 part c)', () => {
     await expect(page).toHaveURL(new RegExp(`/s/${storySlug}$`));
     // The writer's own story offers no thank-you.
     await expect(page.getByRole('heading', { level: 1, name: storyTitle })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Tell the writer you finished it' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Tell the writer you finished it' })).toHaveCount(
+      0,
+    );
   });
 
   test('it isn’t offered on another shelf', async ({ browser }) => {
@@ -156,7 +166,9 @@ test.describe('readers to writers (IDEAS-1 part c)', () => {
     const page = await openAs(browser, 'teacher', `/s/${storySlug}`);
     await expect(page.locator(`#library-shelf-${storySlug}`)).toHaveValue('reading');
     await expect(page.getByRole('button', { name: 'Sent' })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Tell the writer you finished it' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Tell the writer you finished it' })).toHaveCount(
+      0,
+    );
     runSql(`update public.library_entries set shelf = 'finished' where user_id = '${readerId}'
       and story_id = (select id from public.stories where slug = '${storySlug}');`);
   });
@@ -242,12 +254,24 @@ test.describe('readers to writers (IDEAS-1 part c)', () => {
     await selectParagraph(page);
     await page.getByRole('button', { name: 'Share quote' }).click();
     const dialog = page.getByRole('dialog', { name: 'Your quote card' });
-    await expect(dialog.getByRole('button', { name: 'Sage' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(dialog.getByRole('button', { name: 'Purple' })).toHaveAttribute('aria-pressed', 'false');
+    await expect(dialog.getByRole('button', { name: 'Sage' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(dialog.getByRole('button', { name: 'Purple' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
     // Step 3: the reader can still pick another colour.
     await dialog.getByRole('button', { name: 'Gold' }).click();
-    await expect(dialog.getByRole('button', { name: 'Gold' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(dialog.getByRole('button', { name: 'Sage' })).toHaveAttribute('aria-pressed', 'false');
+    await expect(dialog.getByRole('button', { name: 'Gold' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(dialog.getByRole('button', { name: 'Sage' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
   });
 
   for (const view of everyView([`/s/${storySlug}`])) {
