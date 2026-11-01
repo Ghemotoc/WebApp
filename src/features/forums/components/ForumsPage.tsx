@@ -10,7 +10,8 @@
  * "Forum rules in short".
  * Part d (S1-E8-04) adds, for a signed-in reader, "Mark all as read", the dots' legend and the
  * "New for you" card.
- * Not yet, as noted in docs/board-fixes.md: search (part f), Spaces (bundle FORUMS-2) and the ad
+ * Part f adds the search field under the heading (ForumSearchForm, S1-E8-10).
+ * Not yet, as noted in docs/board-fixes.md: Spaces (bundle FORUMS-2) and the ad
  * slots (S1-E12-01).
  * What it calls: useForumIndex → forum_index(); lib/forumTree.ts puts it in order;
  * MarkReadButton, UnreadLegend and NewForYou.
@@ -28,6 +29,7 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumCategorySection } from './ForumCategorySection';
 import { ForumRulesCard } from './ForumRulesCard';
+import { ForumSearchForm } from './ForumSearchForm';
 import { MarkReadButton } from './MarkReadButton';
 import { NewForYou } from './NewForYou';
 import { UnreadCircle } from './UnreadDot';
@@ -114,6 +116,7 @@ export function ForumsPage() {
   return (
     <PageContainer className="flex flex-col gap-8 py-10">
       <ForumsHeader threadCount={threadCount} />
+      <ForumSearchForm />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
         <div className="flex min-w-0 flex-col gap-6">
           <ForumCategories groups={groups} loadFailed={loadFailed} />

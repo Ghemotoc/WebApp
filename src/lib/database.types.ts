@@ -7636,6 +7636,16 @@ export type Database = {
         };
         Returns: Json;
       };
+      forum_post_search_text: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_posts']['Row'],
+            Database['public']['Tables']['forum_posts']['ComputedFields']
+          >;
+          thread_title: string;
+        };
+        Returns: string;
+      };
       forum_post_state_for_caller: {
         Args: {
           target: Omit<
@@ -7652,6 +7662,7 @@ export type Database = {
         Returns: string[];
       };
       forum_read_since: { Args: { target_forum_id: string }; Returns: string };
+      forum_search_snippet: { Args: { body: string }; Returns: string };
       forum_thread: {
         Args: { after_post?: number; thread_number: number; up_to_post?: number };
         Returns: Json;
@@ -9192,6 +9203,16 @@ export type Database = {
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
       search_fold: { Args: { raw_text: string }; Returns: string };
+      search_forum_posts: {
+        Args: {
+          author_handle?: string;
+          forum_slug?: string;
+          language_code?: string;
+          skip?: number;
+          term: string;
+        };
+        Returns: Json;
+      };
       search_like_pattern: { Args: { term: string }; Returns: string };
       search_query: { Args: { term: string }; Returns: unknown };
       search_story: { Args: { query: string; story_slug: string }; Returns: Json };

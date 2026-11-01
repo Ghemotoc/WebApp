@@ -210,5 +210,22 @@
       "gone": "Discuția nu mai există.",
       "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
     }
+  },
+  "search": {
+    "label": "Caută în discuții și mesaje",
+    "submit": "Caută",
+    "forum": "Forum",
+    "allForums": "Toate forumurile",
+    "author": "Autor",
+    "authorPlaceholder": "Nume de utilizator",
+    "title": "Caută în forumuri",
+    "results": "Rezultate",
+    "tooShort": "Scrie cel puțin 2 litere ca să cauți.",
+    "none": "Nu am găsit nimic pentru „{{term}}”. Încearcă alt cuvânt sau caută în toate forumurile.",
+    "loadFailed": "Nu am putut căuta în forumuri. Verifică-ți conexiunea și încearcă din nou.",
+    "showMore": "Arată mai multe rezultate",
+    "kindThread": "Discuție",
+    "kindPost": "Mesajul #{{number}}",
+    "where": "În {{forum}} · de {{name}} · {{date}}"
   }
 }

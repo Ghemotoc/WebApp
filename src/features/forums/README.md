@@ -28,6 +28,9 @@ S1-E8-02; board 5.2 Forum thread).
 - Sticky, locked and "Don't bump" (S1-E8-05, FORUMS-1e): `api/forumModeration.ts`,
   `hooks/useForumModeration.ts`, `components/ThreadModeration.tsx` (moderators only) and
   `LockedThreadNote.tsx`; the pills in `ThreadRow` and "Don't bump" in `ReplyForm`.
+- Search (S1-E8-10, FORUMS-1f): `api/forumSearch.ts`, `hooks/useForumSearch.ts`,
+  `lib/forumSearchAddress.ts`, `components/ForumSearchForm.tsx`, `ForumSearchPage.tsx`
+  (`/forums/search`) and `ForumSearchResultRow.tsx`.
 - Staff (`/staff/forums`, owner and admin): `api/forumAdmin.ts` (`admin_list_forums()`,
   `admin_save_forum()`, `admin_delete_forum()`), `hooks/useForumAdmin.ts`, `lib/forumForm.ts`,
   and `components/staff/` (`ForumsAdminPage`, `ForumAdminRow`, `ForumForm` with
