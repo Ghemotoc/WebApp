@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #258 (8f EPUB): nothing by hand. When you can, read the draft copyright lines in Interface text (Data export › EPUB book) and have a lawyer check them with the terms.
 - #257 (the CI setup test checks the new rule): nothing by hand.
 - #256 (CI: full tests only after the merge): nothing by hand.
 - **PRIVACY-e (#255, merged):** nothing on staging: no SQL top-up and no new secrets. New: Settings › Download my stories lets a writer pick one story or all, tick the chapters (all or chosen ones), the plan from Story Atlas and a JSON copy, and get one file or one ZIP; Download my data now also holds each story's plan as a Word file. Yours to decide (built as proposals): the chapters and plan are ticked by default and JSON isn't; the same choices within 24 hours with nothing changed offer the earlier files; one Download my stories copy is kept at a time. Optional: read the new Romanian lines (`dataExport.json`, the stories and plan blocks).
