@@ -39,7 +39,9 @@
       "reading": "Reading",
       "saved": "Saved for later",
       "finished": "Finished"
-    }
+    },
+    "readerLibrary": "{{name}}’s library",
+    "readerLibraryEyebrow": "Library"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} chapter",

@@ -37,7 +37,14 @@
     "goHome": "Mergi la Acasă",
     "loadFailed": "Nu am putut încărca profilul. Verifică-ți conexiunea și încearcă din nou.",
     "youBlockTitle": "Ai blocat contul @{{handle}}",
-    "youBlockBody": "Nu vă vedeți poveștile unul altuia, iar persoana nu îți poate găsi profilul și nu te poate urmări. Nu i se spune nimic."
+    "youBlockBody": "Nu vă vedeți poveștile unul altuia, iar persoana nu îți poate găsi profilul și nu te poate urmări. Nu i se spune nimic.",
+    "limitedNote": "{{name}} arată restul profilului doar unor oameni anume.",
+    "libraryEyebrow": "Bibliotecă",
+    "libraryHeading": "Ce are {{name}} în bibliotecă",
+    "libraryVisibleTo": "Cine vede asta: {{audience}}.",
+    "libraryChange": "Schimbă",
+    "libraryChangeLabel": "Schimbă cine îți poate vedea biblioteca",
+    "onlineLabel": "{{name}} e online"
   },
   "safety": {
     "heading": "Ceva nu e în regulă?",

@@ -5,7 +5,8 @@
  * Who shows it: the router, at /u/:handle; the story page's writer card ("See profile") and the
  * followers list lead here.
  * What it shows: ProfileHeader (avatar, name, handle, join month, bio, numbers, Follow), then
- * ProfileStories on the left and ProfileSafetyCard (Report and Block) on the right; one column
+ * ProfileStories and, when its owner lets the reader see it, ProfileLibrary (S1-E13-01) on the
+ * left and ProfileSafetyCard (Report and Block) on the right; one column
  * under 1024 px. The board's ad slot, forum posts, rank, forum signature and certificates come
  * with their own stories after March (S1-E12-01, S1-E8, S1-E8-09, S1-E2-11), so they aren't drawn.
  * No profile banners (Q50).
@@ -24,6 +25,7 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { useWriterProfile } from '../hooks/useWriterProfile';
 
 import { ProfileHeader } from './ProfileHeader';
+import { ProfileLibrary } from './ProfileLibrary';
 import { ProfileSafetyCard } from './ProfileSafetyCard';
 import { ProfileStories } from './ProfileStories';
 
@@ -82,7 +84,13 @@ export function WriterProfilePage() {
       <ProfileHeader profile={profile} />
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
         <div className="min-w-0 lg:flex-[999_1_620px]">
-          {!profile.iBlocked && <ProfileStories profile={profile} />}
+          {!profile.iBlocked && (
+            <div className="flex flex-col gap-10">
+              <ProfileStories profile={profile} />
+              {/* The library shelf, when the owner lets this reader see it (S1-E13-01). */}
+              <ProfileLibrary profile={profile} />
+            </div>
+          )}
         </div>
         {showsSafetyCard && (
           <div className="w-full lg:max-w-[340px] lg:flex-[1_1_300px]">

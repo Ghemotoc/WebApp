@@ -39,6 +39,7 @@ import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGa
 import { MessagesNavLink } from '@/features/messages/components/MessagesNavLink';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
+import { PresenceHeartbeat } from '@/features/privacy/components/PresenceHeartbeat';
 import { ParentConsentNotice } from '@/features/parent-consent/components/ParentConsentNotice';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePendingPictureRetry } from '@/features/pictures/hooks/usePictures';
@@ -106,6 +107,8 @@ export function AppLayout() {
           <Outlet />
         </MaintenanceGate>
       </main>
+      {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
+      <PresenceHeartbeat />
       <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />
     </div>
   );

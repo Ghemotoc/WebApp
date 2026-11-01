@@ -3,10 +3,6 @@
   "eyebrow": "Bibliotecă",
   "title": "Biblioteca ta",
   "intro": "Continuă de unde ai rămas. Locul tău în fiecare capitol e păstrat pe orice dispozitiv pe care intri în cont.",
-  "private": {
-    "lead": "Privat.",
-    "body": "Doar tu îți vezi biblioteca."
-  },
   "signedOut": {
     "title": "Păstrează o bibliotecă",
     "body": "Intră în cont ca să păstrezi povești pentru mai târziu și să continui de unde ai rămas, pe orice dispozitiv.",

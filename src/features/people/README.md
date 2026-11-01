@@ -3,6 +3,7 @@
 Writer profiles, blocks and follows. Built by PEOPLE-1: S1-E5-05 (writer profile page and blocks) and S1-E6-05 (follow a writer or a story).
 
 - `components/WriterProfilePage.tsx`: screen 6.1 at `/u/:handle` (ProfileHeader, ProfileStories, ProfileSafetyCard). Board: `design/boards/Profile.dc.html`.
+- `components/ProfileLibrary.tsx`: the person's library shelf on their profile when they let the reader see it, with "Who can see this" on their own (S1-E13-01; the choice is in `src/features/privacy/`). Since S1-E13-01 `ProfileHeader` shows the limited profile's note and the online dot.
 - `components/FollowButton.tsx`: `<FollowButton target={{ kind: 'writer', handle }} | {{ kind: 'story', slug }} targetLabel />`, used on the profile and on the story page (writer card and header).
 - `components/BlockDialog.tsx`, `ProfileSafetyCard.tsx`: Report (the shared ReportButton) and Block; Unblock when the reader already blocks the person.
 - `components/FollowersDialog.tsx`: the writer's own followers, only on their own profile (Q50).

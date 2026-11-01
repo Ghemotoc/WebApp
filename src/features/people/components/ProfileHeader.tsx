@@ -11,8 +11,11 @@
  * the meta colour, the bio 18 px / 1.6 up to 640 px wide. Not shown in March, as the board's
  * later parts: the rank chip (S1-E8-09), Share (the share sheet comes with the
  * apps) and the "…" menu (Report and Block sit in ProfileSafetyCard instead, so they're never
- * hidden behind a menu). Never shown: year of birth, age check, email, online status (story
- * S1-E5-05; the database doesn't send them).
+ * hidden behind a menu). Never shown: year of birth, age check or email (story S1-E5-05; the
+ * database doesn't send them). Since S1-E13-01: when the owner keeps the rest of their profile
+ * from this reader, the join month and the bio give way to "<name> shares the rest of their
+ * profile with fewer people"; and the online dot shows by the name when the owner turned online
+ * status on and follows the reader.
  * Who uses it: WriterProfilePage.
  */
 import { usePeopleTranslation } from '../registerPeopleTranslations';
@@ -20,6 +23,8 @@ import { Link } from 'react-router';
 
 import { Card } from '@/components/ui/Card';
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { OnlineDot } from '@/features/privacy/components/OnlineDot';
+import { useOnlineHandles } from '@/features/privacy/hooks/useOnlineStatus';
 import { TeacherBadgePill } from '@/features/teacher-badge/components/TeacherBadgePill';
 
 import type { WriterProfile } from '../api/writerProfile';
@@ -51,13 +56,49 @@ function ProfileAction({ profile }: { profile: WriterProfile }) {
   );
 }
 
+/** "@handle · Joined May 2026", or the handle alone when the profile is limited. */
+function HandleLine({ profile }: { profile: WriterProfile }) {
+  const { t, i18n } = usePeopleTranslation();
+  const online = useOnlineHandles(profile.isMe ? [] : [profile.handle]);
+  const words =
+    profile.joinedAt === null
+      ? `@${profile.handle}`
+      : t('profile.handleAndJoined', {
+          handle: profile.handle,
+          date: formatJoinedMonth(profile.joinedAt, i18n.language),
+        });
+  return (
+    <p className="m-0 flex flex-wrap items-center gap-2 text-[15px] break-words text-meta">
+      {words}
+      <OnlineDot isOnline={online.has(profile.handle.toLowerCase())} />
+    </p>
+  );
+}
+
+/** The bio, "No bio yet", or the limited profile's note. */
+function ProfileBio({ profile }: { profile: WriterProfile }) {
+  const { t } = usePeopleTranslation();
+  if (profile.isLimited) {
+    return (
+      <p className="m-0 max-w-[640px] text-base text-meta">
+        {t('profile.limitedNote', { name: profile.displayName })}
+      </p>
+    );
+  }
+  return (
+    <p className="m-0 max-w-[640px] text-lg leading-[1.6] break-words whitespace-pre-line text-body">
+      {profile.bio === '' ? t('profile.noBio') : profile.bio}
+    </p>
+  );
+}
+
 /**
  * Renders the card.
  *
  * @returns the header card
  */
 export function ProfileHeader({ profile }: { profile: WriterProfile }) {
-  const { t, i18n } = usePeopleTranslation();
+  const { t } = usePeopleTranslation();
   return (
     <Card className="flex flex-col gap-6 p-[clamp(20px,4vw,40px)] md:flex-row md:items-start">
       <ProfileAvatar name={profile.displayName} handle={profile.handle} />
@@ -66,21 +107,14 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
         <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words text-heading">
           {profile.displayName}
         </h1>
-        <p className="m-0 text-[15px] break-words text-meta">
-          {t('profile.handleAndJoined', {
-            handle: profile.handle,
-            date: formatJoinedMonth(profile.joinedAt, i18n.language),
-          })}
-        </p>
+        <HandleLine profile={profile} />
         {/* The Teacher badge (S1-E2-11 criterion 7): never when it was granted, only that it is. */}
         {profile.isTeacher && (
           <p className="m-0">
             <TeacherBadgePill isPending={false} />
           </p>
         )}
-        <p className="m-0 max-w-[640px] text-lg leading-[1.6] break-words whitespace-pre-line text-body">
-          {profile.bio === '' ? t('profile.noBio') : profile.bio}
-        </p>
+        <ProfileBio profile={profile} />
         <ProfileStats profile={profile} />
       </div>
       <div className="flex flex-none flex-col items-start gap-3">

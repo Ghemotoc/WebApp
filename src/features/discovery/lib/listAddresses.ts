@@ -9,6 +9,7 @@
  *   /u/<username>/stories                             a writer's stories (from the profile)
  *   /search/stories?q=<term>                          the stories a search finds (S1-E5-04)
  *   /library/<reading|saved|finished>                 one shelf of the reader's library (S1-E4-03)
+ *   /u/<username>/library                             someone's library, from their profile (S1-E13-01)
  * and ?category=…&status=…&language=…&sort=… for the filters.
  * Who uses it: DiscoverPage (each shelf's "View more"), StoryListPage, CategoryChips, the story
  * page's tags.
@@ -75,6 +76,7 @@ export function listAddress(request: ListRequest): string {
     writer: `/u/${key}/stories`,
     search: '/search/stories',
     library: `/library/${key}`,
+    reader_library: `/u/${key}/library`,
   };
   // Step 2: the query string carries the search term, the filters and the sort.
   const query = new URLSearchParams();
@@ -171,6 +173,8 @@ export interface ListRouteParams {
   searchTerm?: string;
   /** The shelf on /library/:shelf (S1-E4-03). */
   shelf?: string;
+  /** The username on /u/:readerHandle/library (S1-E13-01). */
+  readerHandle?: string;
 }
 
 /**
@@ -186,6 +190,8 @@ export function listFromParams(
   if (params.categorySlug !== undefined) return { kind: 'category', key: params.categorySlug };
   if (params.tag !== undefined) return { kind: 'tag', key: params.tag };
   if (params.handle !== undefined) return { kind: 'writer', key: params.handle };
+  if (params.readerHandle !== undefined)
+    return { kind: 'reader_library', key: params.readerHandle };
   if (params.searchTerm !== undefined) return { kind: 'search', key: params.searchTerm };
   // S1-E4-03: a library shelf; any other word is no list.
   if (params.shelf !== undefined) {

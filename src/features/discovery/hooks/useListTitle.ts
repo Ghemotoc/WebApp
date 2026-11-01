@@ -22,7 +22,8 @@ export interface ListTitle {
 
 /**
  * The eyebrow and title of a list named by its kind alone (Discover's shelves), or of a library
- * shelf (S1-E4-03), whose key is the shelf.
+ * shelf (S1-E4-03), whose key is the shelf, or of someone's library (S1-E13-01), whose key is
+ * their username.
  *
  * @param kind - the list
  * @param key - the shelf, for a library list
@@ -34,6 +35,14 @@ function namedListTitle(kind: ListKind, key: string, t: TFunction<'discovery'>):
     return {
       eyebrow: t('lists.libraryEyebrow'),
       title: t(`lists.libraryShelves.${key}`, { defaultValue: '' }),
+      isUnknown: false,
+    };
+  }
+  // S1-E13-01: someone's library, named by their username (the cards carry only the writers').
+  if (kind === 'reader_library') {
+    return {
+      eyebrow: t('lists.readerLibraryEyebrow'),
+      title: t('lists.readerLibrary', { name: `@${key}` }),
       isUnknown: false,
     };
   }

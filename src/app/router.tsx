@@ -594,6 +594,8 @@ const writeRoutes: RouteObject[] = [
     '/discover/c/:categorySlug',
     '/discover/t/:tag',
     '/u/:handle/stories',
+    // Someone's library, from their profile, when they let the reader see it (S1-E13-01).
+    '/u/:readerHandle/library',
     // Every story a search finds (S1-E5-04): the term is in ?q=.
     '/search/stories',
   ].map((path): RouteObject => ({
