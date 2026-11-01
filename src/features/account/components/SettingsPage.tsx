@@ -20,6 +20,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { CanvaSettingsSection } from '@/features/canva/components/CanvaSettingsSection';
+import { MessageSettingsSection } from '@/features/messages/components/MessageSettingsSection';
 import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
 import { AvatarSettingsSection } from '@/features/pictures/components/AvatarSettingsSection';
@@ -83,6 +84,7 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       <BirthdaySettingsSection />
       {/* What we email, per kind (S1-E7-02); every email's footer links to it. */}
       <NotificationEmailsSection />
+      <MessageSettingsSection />
       {/* A moderator's question about one of the person's reports (S1-E10-08). */}
       <ReportQuestionsSection />
       <BlockedAccountsSection />

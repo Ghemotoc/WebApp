@@ -19,6 +19,7 @@ import { useMessagesTranslation } from '../registerMessagesTranslations';
 
 import { ChatList } from './ChatList';
 import { ChatPanel } from './ChatPanel';
+import { MessageSettingsLink } from './MessageSettingsLink';
 
 /**
  * The card with the list and the chat.
@@ -69,6 +70,9 @@ export function MessagesPage() {
           {t('title')}
         </h1>
         <p className="m-0 text-lg leading-relaxed text-body">{t('lead')}</p>
+        {isKnown && userId !== null && (
+          <MessageSettingsLink text={t('settings.pageLink')} label={t('settings.pageLink')} />
+        )}
       </header>
       {isKnown && userId === null && (
         <p className="m-0 text-body">

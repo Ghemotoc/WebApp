@@ -8,7 +8,9 @@ The boards in design/boards are the source of truth for layout, but where a boar
 | --- | --- | --- |
 | Messages (5.5) | The three columns at every width, stacked on phones | Under 1024 px one column at a time: the chats at /messages, the chat (with "All chats" to go back, About below it) at /messages/:handle, so a phone never shows a long list above the chat (S1-E9-01) |
 | Messages (5.5) | The chat header's "Fiction writer · The Salt Mine Choir, 15 chapters" | The name and @username only; the profile is one link away in About this chat (S1-E9-01) |
-| Messages (5.5) | A small flag icon beside each message, "Change" links, "Delete chat" | Report is the shared text button beside each message from the other person (S1-E10-01); the settings, their "Change" links and Delete chat are S1-E9-04 (S1-E9-01). Block and Report in the chat header are built as drawn (S1-E9-02) |
+| Messages (5.5) | A small flag icon beside each message | Report is the shared text button beside each message from the other person (S1-E10-01). Block and Report in the chat header, the "Change" links and Delete chat are built as drawn (S1-E9-02, S1-E9-04) |
+| Messages (5.5) | "This is the setting for everyone under 18. You can also pick “Nobody”." | The story lets anyone pick any of the three, so the hint says under-18s start on "People you follow" and what "Nobody" does; the age rules still apply on top (S1-E9-04) |
+| Messages (5.5) | Delete chat as a plain button with no confirmation | It asks "Delete this chat?" first, because once both delete it the messages are gone for good (S1-E9-04) |
 | Messages (5.5) | A Report button on the Requests card, beside Accept and Delete request | The request's message has its own Report beside it, like every message, so the card has no second one (S1-E9-02) |
 | Messages (5.5) | The block dialog says "mention" | There are no @mentions yet; the copy stays, and mentions must respect blocks when they arrive (S1-E9-02) |
 | Messages (5.5) | The Requests card shows the sender's latest story ("Poetry · Small Rooms") | The request shows as the chat itself, with the message, Accept request and Delete request under it (S1-E9-01) |

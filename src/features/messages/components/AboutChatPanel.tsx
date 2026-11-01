@@ -3,10 +3,10 @@
  * other, who may message you, messages from adults (16 and 17-year-olds only) and who can read
  * messages (story S1-E9-01; board Messages 5.5, "About this chat").
  *
- * It shows only the reader's own setting and age group, never the other person's. Changing them
- * comes with Messages settings (S1-E9-04); "Delete chat" comes with that part too. Label rows
- * have a fine line between them (DoD, design rules).
- * Who shows it: MessagesPage. What it calls: useMyMessageSettings.
+ * It shows only the reader's own setting and age group, never the other person's, each with
+ * "Change" to Settings › Messages, and Delete chat (S1-E9-04). Label rows have a fine line
+ * between them (DoD, design rules).
+ * Who shows it: MessagesPage. What it calls: useMyMessageSettings and DeleteChatControl.
  */
 import { Link } from 'react-router';
 
@@ -15,6 +15,9 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import type { Conversation } from '../api/messages';
 import { useMyMessageSettings } from '../hooks/useMessages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
+
+import { DeleteChatControl } from './DeleteChatControl';
+import { MessageSettingsLink } from './MessageSettingsLink';
 
 /** "You follow each other", or which way round, or neither. */
 function followLineKey(chat: Conversation): string {
@@ -36,6 +39,7 @@ function MySettingRows() {
         <p className="m-0 font-semibold text-heading">
           {t(`about.audience.${settings.data.audience}`)}
         </p>
+        <MessageSettingsLink text={t('settings.change')} label={t('settings.changeWho')} />
       </div>
       {settings.data.ageGroup === 'teen' && (
         <div className="flex flex-col gap-1 border-b border-border py-3">
@@ -44,6 +48,7 @@ function MySettingRows() {
             {t(settings.data.adultsMayMessage ? 'about.on' : 'about.off')}
           </p>
           <p className="m-0 text-sm text-body">{t('about.adultsHint')}</p>
+          <MessageSettingsLink text={t('settings.change')} label={t('settings.changeAdults')} />
         </div>
       )}
     </>
@@ -69,6 +74,7 @@ export function AboutChatPanel({ chat }: { chat: Conversation }) {
         <p className="m-0 text-body">{t(followLineKey(chat))}</p>
       </div>
       <MySettingRows />
+      {chat.status !== null && !chat.isRequestToMe && <DeleteChatControl handle={chat.handle} />}
       <div className="mt-4 flex flex-col gap-1 rounded-card bg-panel p-4">
         <h3 className="m-0 text-sm font-semibold text-heading">{t('about.privacyTitle')}</h3>
         <p className="m-0 text-body">{t('about.privacy')}</p>

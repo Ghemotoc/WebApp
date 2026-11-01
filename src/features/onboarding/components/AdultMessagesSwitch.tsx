@@ -2,7 +2,8 @@
  * AdultMessagesSwitch: "Let adults message me", for 16 and 17-year-olds only (story S1-E2-06,
  * criterion 3; S1-E9-03 reads it; decided 16 Oct 2026, Q13).
  *
- * Who shows it: SafetyStep (setup, step 3) and AdultMessagesSettingsSection (Settings). What it
+ * Who shows it: SafetyStep (setup, step 3); Settings has its own copy in MessageSettingsSection
+ * (S1-E9-04). What it
  * calls: useMyOnboarding.save({ kind: 'adultsMayMessage' }) → set_adults_may_message(), which
  * refuses anyone who isn't 16 or 17. It starts off and is saved the moment it is ticked. The box
  * shows the new state at once and goes back if the save fails, so it never looks stuck.

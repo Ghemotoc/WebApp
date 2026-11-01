@@ -1,13 +1,13 @@
 /**
- * LikesSettingsSection: "What you like" in Settings: the county, the likes and, for a 16 or
- * 17-year-old, "Let adults message me" (story S1-E2-06; board Settings 6.3).
+ * LikesSettingsSection: "What you like" in Settings: the county and the likes (story S1-E2-06;
+ * board Settings 6.3). "Let adults message me" moved to Settings › Messages with the other
+ * message settings (MessageSettingsSection, S1-E9-04).
  *
  * Why: setup says every step can be skipped and changed later in Settings, so the same choices
  * live here (criteria 2 and 3).
  * Who shows it: SettingsPage, once the person has a username. What it calls: useMyOnboarding
  * (my_onboarding() and the writes) and useOnboardingChoices (the counties).
- * "Save" stores the county and the likes together; the switch saves itself the moment it is
- * ticked, as in setup.
+ * "Save" stores the county and the likes together.
  */
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,6 @@ import type { MyOnboarding, Preferences } from '../api/onboarding';
 import { useMyOnboarding } from '../hooks/useMyOnboarding';
 import { useOnboardingChoices } from '../hooks/useOnboardingChoices';
 
-import { AdultMessagesSwitch } from './AdultMessagesSwitch';
 import { LikesFields } from './LikesFields';
 import { RegionSelect } from './RegionSelect';
 
@@ -101,14 +100,6 @@ export function LikesSettingsSection() {
       <p className="m-0 text-body">{t('onboarding.settings.intro')}</p>
       {state.loadFailed && <Notice tone="error">{t('onboarding.loadFailed')}</Notice>}
       {onboarding != null && <LikesForm onboarding={onboarding} state={state} />}
-      {onboarding?.ageBand === '16_to_17' && (
-        <div className="flex flex-col gap-2 border-t border-border pt-4">
-          <h3 className="m-0 font-heading text-base font-semibold text-heading">
-            {t('onboarding.safety.messagesHeading')}
-          </h3>
-          <AdultMessagesSwitch id="settings-adult-messages" onboarding={onboarding} state={state} />
-        </div>
-      )}
     </section>
   );
 }
