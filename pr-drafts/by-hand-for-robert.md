@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #259 (PRIVACY epic check): nothing by hand. One question in the PR: should a closing account be offered its data download on the closing page?
 - #258 (8f EPUB): nothing by hand. When you can, read the draft copyright lines in Interface text (Data export › EPUB book) and have a lawyer check them with the terms.
 - #257 (the CI setup test checks the new rule): nothing by hand.
 - #256 (CI: full tests only after the merge): nothing by hand.
