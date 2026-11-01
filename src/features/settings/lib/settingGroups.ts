@@ -116,6 +116,8 @@ export const discoverShelfWords = [
   'picked',
   'popular',
   'rising',
+  // IDEAS-1e: "Most shared this week".
+  'shared',
   'new',
   'completed',
   'updated',
