@@ -86,7 +86,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `public/` | Files copied as they are into `dist/`: `_redirects` (every address serves `index.html` on Cloudflare Pages) and `theme-init.js` (light or night before the first paint) | S1-E1-01, S1-E1-03 |
 | `supabase/config.toml` | Local Supabase settings; also read by Supabase's GitHub integration | S1-E1-01 |
 | `supabase/migrations/` | Every schema change, as SQL files. The only way the database changes (CLAUDE.md rule 3). Staging gets them from Supabase's GitHub integration when main changes | S1-E1-02 onwards |
-| `supabase/functions/` | Edge functions (Deno), the only code that may hold secrets | first story with a function |
+| `supabase/functions/` | Edge functions (Deno), the only code that may hold the service role key; logic in a plain file next to `index.ts` so Vitest can test it | S1-E13-04 (`storage-sweep`) |
 | `supabase/tests/` | pgTAP database tests: an allowed and a denied test for every policy, plus the CI guards (`001` RLS on every table, `002` table kinds and `user_id`, `003` table grants match the policies) | S1-E1-02 onwards |
 | `supabase/seed.sql` | The 16 synthetic seed personas (accounts, profiles, staff roles); never real data | S1-E1-02 |
 | `supabase/README.md` | The database conventions every migration follows, the account gate and the persona list with the shared test password | S1-E1-02 |
@@ -364,6 +364,21 @@ nightly purge-closed-accounts → purge_closed_accounts() → delete_account_dat
 ```
 
 The user ID is never reused: the profile and the login row stay as an empty tombstone. A new user table must be added to `account_deletion_rules()` (`delete`, `own_step` or `kept` with a reason; test `211` fails until it is). Tests: `211`, `e2e/delete-my-account.spec.ts`.
+
+## The retention clean-ups (S1-E13-04)
+
+```
+nightly run-retention-jobs → run_retention_jobs()                     supabase/migrations/…_s1_e13_04_retention_jobs.sql
+  → purge_unconfirmed_accounts() → delete_account_data()   (email not confirmed after 7 days)
+  → purge_expired_exports(), purge_deleted_pictures(), purge_old_staff_records()
+  → purge_old_audit_log() (the one delete refuse_audit_log_change() lets through: rows older than 3 years)
+  → fold_old_daily_totals() (chapter_reads and chapter_shares older than 3 years → one row per chapter)
+  → record_retention_run() → retention_runs (one row per clean-up, owner and admin read it)
+nightly run-storage-sweep → run_storage_sweep() → pg_net → supabase/functions/storage-sweep/index.ts
+  → sweep.ts: storage_files_to_sweep() (service role) → Storage API delete, 100 names a call
+```
+
+The schedule itself is `docs/retention.md`; every keep time is a setting (`*_keep_*`, `unconfirmed_account_days`). Deleting a row never deletes its file, so a table that points at Storage files must also be read by `storage_files_to_sweep()`. This is the first Supabase Edge Function: the logic is in `sweep.ts` (plain TypeScript, tested by Vitest), and `index.ts` only hands it Deno's settings. Tests: `212`, `supabase/functions/storage-sweep/sweep.test.ts`.
 
 ## The Teacher badge (S1-E2-11)
 

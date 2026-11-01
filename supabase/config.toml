@@ -427,6 +427,11 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# The Storage sweep (S1-E13-04): the database calls it with its own sweep key, not a user's
+# session, so Supabase must not ask for a user token first.
+[functions.storage-sweep]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

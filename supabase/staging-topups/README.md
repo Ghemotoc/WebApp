@@ -38,3 +38,7 @@ The SQL Editor refuses the single file as too large, so the build also writes th
 - Safe to run twice: comments have fixed ids from their chapter and writer, everything else is one row per pair or per day.
 - The notification triggers fire for the new follows and reactions, so the demo writers' bells show activity.
 - Check it on your machine: `npm run demo:check-2b` (local database only; it resets it before and after).
+
+## The seed invites' end dates (S1-E13-04, 1 Nov 2026)
+
+`S1-E13-04.sql` moves the expired and revoked test invites' end dates to yesterday (and puts them back if the retention job already deleted them), because the nightly job deletes an invite 90 days after it ends. Safe to run twice; run it again if the sign-up tests ever miss either code on staging.

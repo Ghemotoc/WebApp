@@ -24,6 +24,7 @@
     "scripts",
     "e2e",
     "server",
-    "functions"
+    "functions",
+    "supabase/functions"
   ]
 }
