@@ -48,7 +48,7 @@ export function PassageLinkButton({
     const copied = await copyText(passageShareLink(address, range));
     setOutcome(copied ? 'copied' : 'failed');
     if (copied) {
-      void import('../lib/countShare').then((module) => module.countShare(address, 'copy_link'));
+      void import('../lib/countShare').then((module) => module.countShare(address, 'copy_link', range));
     }
   }
 

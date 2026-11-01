@@ -13,6 +13,7 @@
  * Every function takes the chapter's address and applies the reader's rules (rating, blocks,
  * moderation); none returns a user ID.
  */
+import type { SpotRange } from '@/lib/chapter-blocks';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 /** A chapter by its address. */
@@ -69,6 +70,31 @@ export async function recordChapterShare(
   const { data, error } = await client.rpc('record_chapter_share', {
     story_slug: address.storySlug,
     chapter_code: address.chapterCode,
+  });
+  if (error !== null) throw new Error(`Could not count the share: ${error.message}`);
+  return data === true;
+}
+
+/**
+ * Counts one share of a passage or picture link: once for the chapter and once for each paragraph
+ * it covers, for the writer's most-loved lines (IDEAS-1d). Never records who.
+ *
+ * @param client - the shared Supabase client
+ * @param address - the chapter
+ * @param range - the blocks the link covers (at most five)
+ * @returns true when counted; false for the writer's own chapter, a wrong range or past the limit
+ * Errors: throws with Supabase's message (signed out, or the database can't be reached).
+ */
+export async function recordPassageShare(
+  client: AppSupabaseClient,
+  address: ChapterAddress,
+  range: SpotRange,
+): Promise<boolean> {
+  const { data, error } = await client.rpc('record_passage_share', {
+    story_slug: address.storySlug,
+    chapter_code: address.chapterCode,
+    first_block: range.first,
+    last_block: range.last,
   });
   if (error !== null) throw new Error(`Could not count the share: ${error.message}`);
   return data === true;

@@ -8,6 +8,8 @@
  * - a count from fewer than 5 readers reads "fewer than 5" (criterion 2);
  * - the page names no reader who opened a chapter: only the commenter, whose words are public
  *   under the chapter, appears (criterion 3);
+ * - "Lines and stops" (bundle IDEAS-1, part d) shows the most-loved paragraph and where readers'
+ *   saved places are, as totals only;
  * - "Last 30 days" changes the tiles; "Not published yet" lists the draft with an Edit link and
  *   "Continue draft" opens it;
  * - axe finds nothing serious, nothing scrolls sideways and no doodle touches text at 390, 768
@@ -80,8 +82,12 @@ function seedDashboard() {
     insert into public.follows_users (user_id, followed_user_id)
     select follower::uuid, '${writerId}' from unnest(array['${personaId(2)}', '${personaId(3)}',
       '${personaId(7)}', '${personaId(8)}', '${personaId(9)}']) as follower;
-    insert into public.comments (user_id, chapter_id, body)
-    select '${personaId(7)}', id, 'Ce praf frumos!' from public.chapters where code = '${publishedCode}';`);
+    insert into public.comments (user_id, chapter_id, body, paragraph_key, paragraph_number)
+    select '${personaId(7)}', id, 'Ce praf frumos!', public.paragraph_key_of('Era praf peste tot.'), 1
+    from public.chapters where code = '${publishedCode}';
+    insert into public.paragraph_shares (chapter_id, paragraph_key, shared_on, total)
+    select id, public.paragraph_key_of('Era praf peste tot.'), current_date, 7
+    from public.chapters where code = '${publishedCode}';`);
 }
 
 /** Opens /write as the writer, in English. */
@@ -165,6 +171,29 @@ test.describe('The writer dashboard', () => {
     await expect(waiting.getByRole('link', { name: 'Edit: Chapter 2: Rama' })).toBeVisible();
     await page.getByRole('link', { name: 'Continue draft' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${storySlug}/c/${draftCode}$`));
+    await page.context().close();
+  });
+
+  test('"Lines and stops" shows the most-loved line and where readers stop, as totals', async ({
+    browser,
+  }) => {
+    const page = await openDashboard(browser);
+    const section = page.getByRole('region', { name: 'Lines and stops' });
+    await expect(section.getByLabel('Chapter')).toHaveValue(`${storySlug}/${publishedCode}`);
+    // Idea 1: the paragraph readers shared 7 times; its one comment shows as "fewer than 5".
+    const line = section.getByRole('listitem').filter({ hasText: 'Paragraph 1' });
+    await expect(line).toContainText('Era praf peste tot.');
+    await expect(line).toContainText('Shares: 7 · Paragraph comments: fewer than 5');
+    // Idea 5: six saved places, three at the end and three at 30%.
+    await expect(section.getByText('From 6 readers')).toBeVisible();
+    await expect(section.getByRole('listitem').filter({ hasText: '90 to 100%' })).toContainText(
+      '50% of readers',
+    );
+    await expect(section.getByRole('listitem').filter({ hasText: '30 to 40%' })).toContainText(
+      '50% of readers',
+    );
+    // No reader's name is anywhere in the section.
+    await expect(section.getByText('kid_14_ok')).toHaveCount(0);
     await page.context().close();
   });
 

@@ -1610,6 +1610,14 @@ Ideas IDEA-20261031-3, -10 and -11, with Robert's comments of 31 Oct 2026.
 - A writer's card colour: "Colour for quote and picture cards" (`CardColourField` in `StoryStatusSection`) → `update_my_story()` with `card_colour` → `stories.card_colour` (one of the nine palette keys, or null). `share_options()` returns it as `card_colour`; `QuoteCardDialog` and `PictureCardDialog` start in it (`backgroundByKey()` in `lib/quoteCard.ts`) and the reader can still change it with `BackgroundPicker`, which the picture card now has too.
 - Tests: `supabase/tests/database/217-readers-to-writers.test.sql`, `src/features/sharing/lib/sharedStory.test.ts`, `src/features/sharing/lib/shareLink.test.ts`, `e2e/readers-to-writers.spec.ts`.
 
+## Lines and stops, for writers (IDEAS-1 part d)
+
+Ideas IDEA-20261031-1 (most-loved lines) and -5 (where readers stop). Totals only, never who.
+
+- Counting a passage share: `PassageLinkButton` and the picture card's Copy and Save pass the shared blocks (`SpotRange`) to `lib/countShare.ts`, which calls `record_passage_share()` instead of `record_chapter_share()`. It counts the chapter share as before (`add_chapter_share()`, same rate limit) and adds one to `paragraph_shares` for each paragraph in the range: a total per chapter, paragraph fingerprint (`paragraph_key_of()`, S1-E6-06) and day. Nothing says who shared. The writer's own shares don't count.
+- The writer's panel: `YourWritingPage` → `ChapterInsights` (a drop-down of the writer's published chapters) → `useChapterInsights()` → `api/insights.ts` → `writer_chapter_insights()`, which answers only the chapter's own writer. It returns `loved_lines` from `writer_loved_lines()` (the five paragraphs with the most shares plus other people's visible paragraph comments, each with its first words from `paragraph_excerpt()`) and `stops` from `writer_reader_stops()` (readers' `reading_positions` on the chapter in tenths, or nothing below five readers). Every count goes through `shown_count()`, so 1 to 4 reads "fewer than 5". `LovedLines` and `ReaderStopsBar` draw them; the bar is decoration and each tenth is also written out.
+- Tests: `supabase/tests/database/218-writer-insights.test.sql`, `e2e/writer-dashboard.spec.ts` ("Lines and stops").
+
 ## Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)
 
 - Where it lives: `src/features/sharing/` (see its README). The reader screen adds `ShareButtonWhenNear` to `ChapterEnd`'s row (it fetches `ShareButton` when the row nears the screen, `src/lib/use-is-near.ts`) and `QuoteShareWatcher` under the chapter (it fetches `QuoteShareBar` on the first selection); `reading/lib/toSharedChapter.ts` hands them only public things (address, titles, number, pen name).

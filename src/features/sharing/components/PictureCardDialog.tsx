@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
+import type { SpotRange } from '@/lib/chapter-blocks';
 import { brand } from '@/config/brand';
 
 import { usePictureBitmap } from '../hooks/usePictureBitmap';
@@ -39,6 +40,8 @@ export interface PictureCardDialogProps {
   url: string;
   /** The full link to its spot in the chapter. */
   link: string;
+  /** The block the picture sits in, counted for the writer's most-loved lines (IDEAS-1d). */
+  range: SpotRange | null;
 }
 
 /**
@@ -100,6 +103,7 @@ export function PictureCardDialog({
   alt,
   url,
   link,
+  range,
 }: PictureCardDialogProps) {
   const { t } = useTranslation('sharing');
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -124,7 +128,7 @@ export function PictureCardDialog({
     }),
     [chapter, link, background, t],
   );
-  const actions = usePictureCardActions(chapter.address, link, canvasRef);
+  const actions = usePictureCardActions(chapter.address, link, canvasRef, range);
   return (
     <SharingModal
       isOpen={isOpen}
