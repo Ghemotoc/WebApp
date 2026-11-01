@@ -85,9 +85,7 @@ test.describe('block and report inside messages (S1-E9-02)', () => {
     expect(reference).toMatch(/^R-\d{6}$/);
 
     // Step 2: the moderator opens the case and sees the message with its context.
-    caseId = runSql(
-      `select case_id from public.reports where reference = '${reference}';`,
-    ).trim();
+    caseId = runSql(`select case_id from public.reports where reference = '${reference}';`).trim();
     const moderator = await openAs(browser, 'moderator', `/staff/moderation/cases/${caseId}`);
     const panel = moderator.getByRole('region', {
       name: 'The reported message and the 20 before it',
@@ -107,7 +105,9 @@ test.describe('block and report inside messages (S1-E9-02)', () => {
     const page = await openAs(browser, 'teacher', '/messages/adult_writer');
     await page.getByRole('button', { name: 'Block Lia Scrie' }).click();
     const dialog = page.getByRole('dialog', { name: 'Block Lia Scrie?' });
-    await expect(dialog).toContainText('You won’t be able to message, mention or follow each other.');
+    await expect(dialog).toContainText(
+      'You won’t be able to message, mention or follow each other.',
+    );
     await expect(dialog).toContainText('Lia Scrie won’t be told.');
     // Step 2: "Don't block" changes nothing; the second time it blocks.
     await dialog.getByRole('button', { name: 'Don’t block' }).click();
@@ -131,7 +131,9 @@ test.describe('block and report inside messages (S1-E9-02)', () => {
       runSql(`update public.profiles set locale = '${view.language}' where handle = 'moderator';`);
       await useSessionInBrowser(page.context(), (await signInPersona('moderator')).session);
       await checkScreen(page, { ...view, address: `${view.address}${caseId}` });
-      await expect(page.getByRole('heading', { name: /reported message|Mesajul raportat/ })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: /reported message|Mesajul raportat/ }),
+      ).toBeVisible();
     });
   }
 });
