@@ -145,7 +145,7 @@
       "copyrightHeading": "Drepturi de autor",
       "copyright": {
         "rights": "© {{year}} {{author}}. Toate drepturile rezervate.",
-        "noCopying": "Nicio parte a acestei cărți nu poate fi copiată, distribuită sau publicată din nou, în nicio formă, fără acordul scris dat de {{author}}.",
+        "noCopying": "Copierea, distribuirea sau publicarea din nou a oricărei părți a acestei cărți, în orice formă, sunt permise doar cu acordul scris dat de {{author}}.",
         "ownership": "Toate drepturile asupra acestei opere sunt deținute de {{author}}. {{productName}} a pregătit acest fișier și nu deține niciun drept asupra operei.",
         "prepared": "Această ediție a fost pregătită prin {{productName}} ({{siteUrl}}) pe {{date}}."
       },

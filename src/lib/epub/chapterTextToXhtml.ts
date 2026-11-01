@@ -98,7 +98,9 @@ function paragraphToXhtml(node: Paragraph, conversion: XhtmlConversion): string 
     const embedId = embedIdFromAddress(onlyChild.url);
     if (embedId !== null) return embedToXhtml(embedId, conversion);
   }
-  return `<p>${inlineToXhtml(node.children)}</p>`;
+  // A paragraph left with no words (a picture from elsewhere, say) prints nothing.
+  const words = inlineToXhtml(node.children);
+  return words.trim() === '' ? '' : `<p>${words}</p>`;
 }
 
 /** A list, numbered or not, with its items (a list inside an item stays inside it). */
