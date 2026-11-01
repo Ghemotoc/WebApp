@@ -2138,6 +2138,7 @@ export type Database = {
           edited_at: string | null;
           id: string;
           post_number: number;
+          quoted_post_ids: string[];
           thread_id: string;
           updated_at: string;
           user_id: string;
@@ -2151,6 +2152,7 @@ export type Database = {
           edited_at?: string | null;
           id?: string;
           post_number: number;
+          quoted_post_ids?: string[];
           thread_id: string;
           updated_at?: string;
           user_id: string;
@@ -2162,6 +2164,7 @@ export type Database = {
           edited_at?: string | null;
           id?: string;
           post_number?: number;
+          quoted_post_ids?: string[];
           thread_id?: string;
           updated_at?: string;
           user_id?: string;
@@ -7501,6 +7504,11 @@ export type Database = {
         Returns: string;
       };
       forum_post_wait_minutes: { Args: { author_id: string }; Returns: number };
+      forum_quote_json: { Args: { quoted_post_id: string }; Returns: Json };
+      forum_quotes_for_reply: {
+        Args: { target_thread_id: string; wanted: string[] };
+        Returns: string[];
+      };
       forum_thread: {
         Args: { after_post?: number; thread_number: number; up_to_post?: number };
         Returns: Json;
@@ -8309,6 +8317,7 @@ export type Database = {
           edited_at: string | null;
           id: string;
           post_number: number;
+          quoted_post_ids: string[];
           thread_id: string;
           updated_at: string;
           user_id: string;
@@ -8747,7 +8756,10 @@ export type Database = {
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
       replace_sent_teacher_link: { Args: { target_user_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
-      reply_to_forum_thread: { Args: { body: string; thread_number: number }; Returns: Json };
+      reply_to_forum_thread: {
+        Args: { body: string; quoted_posts?: string[]; thread_number: number };
+        Returns: Json;
+      };
       report_client_error: {
         Args: {
           app_version: string;

@@ -1,13 +1,17 @@
 /**
  * ReplyForm: "Your reply" at the bottom of a thread (bundle FORUMS-1, part b; S1-E8-02; board
- * 5.2's reply card). Part c adds quoting and the quick-reply details (S1-E8-03).
+ * 5.2's reply card). Part c adds quoting (S1-E8-03).
  *
- * Signed out, it links to log in; an account that can't write yet is told so. After posting the
- * box empties and the address moves to the new post's permalink, so the page shows and scrolls
- * to it.
- * Who uses it: ThreadPage. What it calls: useReplyToThread → reply_to_forum_thread().
+ * This card is the quick reply box at the bottom of every thread (criterion 3): the reader types
+ * and posts without leaving the page. Signed out, it links to log in; an account that can't
+ * write yet is told so. The posts picked with "Quote" or "Add to quotes" show above the box in
+ * thread order, each linking back to its post, with "2 posts quoted" and "Remove quotes" (board
+ * 5.2; criteria 1 and 2). After posting the box and the quotes empty and the address moves to the
+ * new post's permalink, so the page shows and scrolls to it.
+ * Who uses it: ThreadPage. What it calls: useReplyToThread → reply_to_forum_thread();
+ * ForumQuoteBlock for the picked posts.
  */
-import { useId, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
@@ -15,32 +19,105 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 
+import type { ForumPost, ForumQuote } from '../api/forumThreads';
 import { useReplyToThread } from '../hooks/useForumWrites';
+import { replyBoxId, type QuotePicks } from '../hooks/useQuotePicks';
+import { postAddress } from '../lib/forumAddresses';
 import { failureMessages } from '../lib/forumFailures';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
+import { ForumQuoteBlock } from './ForumQuoteBlock';
 import { PostEditor } from './PostEditor';
+
+/** Where the reply goes and what it may quote. */
+export interface ReplyTarget {
+  forumSlug: string;
+  threadNumber: number;
+  /** The posts on the page, in thread order: the picks are drawn from these. */
+  posts: ForumPost[];
+  quotePicks: QuotePicks;
+}
+
+/**
+ * The picked posts that can still be quoted, in thread order, as quotes.
+ *
+ * A picked post that was deleted or hidden since is left out, so the reply never asks to quote
+ * words that are gone.
+ *
+ * @param posts - the posts on the page, in thread order
+ * @param pickedIds - the picked posts' IDs
+ * @returns each picked live post with its quote
+ */
+function pickedQuotes(
+  posts: ForumPost[],
+  pickedIds: string[],
+): { id: string; quote: ForumQuote }[] {
+  const picked = posts.filter((post) => post.state === 'live' && pickedIds.includes(post.id));
+  return picked.map((post) => ({
+    id: post.id,
+    quote: { number: post.number, author: post.author, state: 'live', body: post.body },
+  }));
+}
+
+/**
+ * "2 posts quoted", "Remove quotes" and the quotes themselves.
+ *
+ * @returns the quotes about to be sent, or nothing when there are none
+ */
+function PickedQuotes({
+  target,
+  quotes,
+}: {
+  target: ReplyTarget;
+  quotes: { id: string; quote: ForumQuote }[];
+}) {
+  const { t } = useForumsTranslation();
+  if (quotes.length === 0) return null;
+  return (
+    <div role="group" aria-label={t('reply.quotesLabel')} className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-x-3 text-sm text-body">
+        <span>{t('reply.quoted', { count: quotes.length })}</span>
+        <button
+          type="button"
+          onClick={target.quotePicks.clear}
+          className="inline-flex h-11 items-center px-1.5 text-sm font-semibold text-link underline"
+        >
+          {t('reply.removeQuotes')}
+        </button>
+      </div>
+      {quotes.map(({ id, quote }) => (
+        <ForumQuoteBlock
+          key={id}
+          quote={quote}
+          postAddress={postAddress(target.forumSlug, target.threadNumber, quote.number)}
+        />
+      ))}
+    </div>
+  );
+}
 
 /**
  * The form itself, for a reader who may reply.
  *
- * @param props.threadNumber - the thread
- * @returns the editor, any refusal and "Post reply"
+ * @param props.target - the thread, its posts and the quote picks
+ * @returns the quotes, the editor, any refusal and "Post reply"
  */
-function ReplyFields({ threadNumber }: { threadNumber: number }) {
+function ReplyFields({ target }: { target: ReplyTarget }) {
   const { t } = useForumsTranslation();
-  const bodyId = useId();
   const [body, setBody] = useState('');
   const [, setSearchParams] = useSearchParams();
-  const replying = useReplyToThread(threadNumber);
+  const replying = useReplyToThread(target.threadNumber);
   const messages = failureMessages(replying.failure, t);
+  const quotes = pickedQuotes(target.posts, target.quotePicks.pickedIds);
 
-  /** Posts the reply, then shows it at its permalink. */
+  /** Posts the reply with its quotes, then shows it at its permalink. */
   async function send(event: FormEvent) {
     event.preventDefault();
     try {
-      const postNumber = await replying.run(body);
+      const quotedPostIds = quotes.map((picked) => picked.id);
+      const postNumber = await replying.run({ body, quotedPostIds });
       setBody('');
+      target.quotePicks.clear();
       setSearchParams({ post: String(postNumber) }, { replace: true });
     } catch {
       // The refusal shows from replying.failure.
@@ -49,8 +126,9 @@ function ReplyFields({ threadNumber }: { threadNumber: number }) {
 
   return (
     <form onSubmit={(event) => void send(event)} className="flex flex-col gap-4">
+      <PickedQuotes target={target} quotes={quotes} />
       <PostEditor
-        id={bodyId}
+        id={replyBoxId}
         label={t('editor.reply')}
         value={body}
         onChange={setBody}
@@ -69,11 +147,11 @@ function ReplyFields({ threadNumber }: { threadNumber: number }) {
 /**
  * Renders the card.
  *
- * @param props.threadNumber - the thread
+ * @param props.target - the thread, its posts and the quote picks
  * @param props.canReply - whether the account gate lets the reader write
  * @returns the reply card
  */
-export function ReplyForm({ threadNumber, canReply }: { threadNumber: number; canReply: boolean }) {
+export function ReplyForm({ target, canReply }: { target: ReplyTarget; canReply: boolean }) {
   const { t } = useForumsTranslation();
   const { userId, isKnown } = useSession();
   return (
@@ -98,7 +176,7 @@ export function ReplyForm({ threadNumber, canReply }: { threadNumber: number; ca
       {userId !== null && !canReply && (
         <p className="m-0 text-base text-body">{t('reply.notActive')}</p>
       )}
-      {userId !== null && canReply && <ReplyFields threadNumber={threadNumber} />}
+      {userId !== null && canReply && <ReplyFields target={target} />}
     </section>
   );
 }

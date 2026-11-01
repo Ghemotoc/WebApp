@@ -17,6 +17,7 @@ import {
   ForumWriteError,
   replyToThread,
   startThread,
+  type NewReply,
   type NewThread,
   type PostChange,
 } from '../api/forumWrites';
@@ -61,9 +62,9 @@ export function useStartThread() {
   return useForumWrite((client, thread: NewThread) => startThread(client, thread));
 }
 
-/** Replies to one thread; resolves with the new post's number. */
+/** Replies to one thread, with any quotes; resolves with the new post's number. */
 export function useReplyToThread(threadNumber: number) {
-  return useForumWrite((client, body: string) => replyToThread(client, threadNumber, body));
+  return useForumWrite((client, reply: NewReply) => replyToThread(client, threadNumber, reply));
 }
 
 /** Changes one's own post. */

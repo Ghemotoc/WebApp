@@ -20,6 +20,9 @@ S1-E8-02; board 5.2 Forum thread).
   (`/forums/:forumSlug/:threadNumber?post=N`) with `ThreadHeader`, `ForumPostCard`
   (`ForumPostText`, `PostActions`, `PostEditForm`, `PostHistory`), `ReplyForm`, `PostEditor` and
   `ThreadSidePanel`.
+- Quotes and the quick reply (S1-E8-03, FORUMS-1c): `hooks/useQuotePicks.ts`,
+  `components/ForumQuoteBlock.tsx`, `lib/forumAddresses.ts`; "Quote" and "Add to quotes" in
+  `PostActions`, the picked quotes in `ReplyForm`.
 - Staff (`/staff/forums`, owner and admin): `api/forumAdmin.ts` (`admin_list_forums()`,
   `admin_save_forum()`, `admin_delete_forum()`), `hooks/useForumAdmin.ts`, `lib/forumForm.ts`,
   and `components/staff/` (`ForumsAdminPage`, `ForumAdminRow`, `ForumForm` with
@@ -28,4 +31,4 @@ S1-E8-02; board 5.2 Forum thread).
   names themselves are staff content in `forum_names`, never in the locale files.
 
 The database half is `supabase/migrations/…_forums1_a_forum_categories.sql` and
-`…_forums1_b_threads_and_posts.sql`.
+`…_forums1_b_threads_and_posts.sql` and `…_forums1_c_quotes.sql`.

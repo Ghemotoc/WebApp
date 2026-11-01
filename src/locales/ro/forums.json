@@ -93,7 +93,13 @@
     "historyTitle": "Titlul de atunci: {{title}}",
     "historyFailed": "Nu am putut încărca versiunile anterioare.",
     "linkCopied": "Link copiat",
-    "permalinkPrefix": "Link către mesajul"
+    "permalinkPrefix": "Link către mesajul",
+    "quote": "Citează",
+    "quoteLabel": "Citează postarea {{number}}",
+    "addQuote": "Adaugă la citate",
+    "addedQuote": "Adăugată la citate",
+    "addQuoteLabel": "Adaugă la citate: postarea {{number}}",
+    "addedQuoteLabel": "Adăugată la citate: postarea {{number}}"
   },
   "editor": {
     "title": "Titlu",
@@ -109,7 +115,12 @@
     "post": "Trimite răspunsul",
     "logIn": "Intră în cont ca să răspunzi",
     "notActive": "Contul tău nu poate scrie încă.",
-    "posted": "Răspunsul tău a apărut ca #{{number}}."
+    "posted": "Răspunsul tău a apărut ca #{{number}}.",
+    "quoted_one": "{{count}} postare citată",
+    "quoted_few": "{{count}} postări citate",
+    "quoted_other": "{{count}} de postări citate",
+    "removeQuotes": "Elimină citatele",
+    "quotesLabel": "Postările pe care le citezi"
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
@@ -139,6 +150,15 @@
       "too_long": "Mesajul e prea lung. Împarte-l în două mesaje.",
       "html": "Mesajele nu pot conține etichete HTML. Folosește formatarea simplă.",
       "link": "Linkurile trebuie să înceapă cu http, https sau mailto."
-    }
+    },
+    "quote_missing": "O postare pe care ai citat-o nu mai există. Elimină citatele și încearcă din nou.",
+    "quote_too_many": "Poți cita cel mult 10 postări într-un răspuns."
+  },
+  "quote": {
+    "wrote": "{{name}} a scris în",
+    "fromPost": "Din",
+    "deleted": "Postarea a fost ștearsă.",
+    "removed": "[Eliminat de echipa de moderare]",
+    "unavailable": "Postarea nu e disponibilă."
   }
 }

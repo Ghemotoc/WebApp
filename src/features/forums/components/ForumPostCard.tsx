@@ -6,8 +6,10 @@
  * Oct, 19:20", 12 px), the post's number at the right as its permalink ("#1", criterion 3), the
  * words in 15 px, then the actions. A deleted or removed post keeps its number with a marker, so
  * the numbers never shift. Each card is a real <article> named "Post 3 by poppyverse", with an id
- * (post-3) a permalink scrolls to.
- * Who uses it: ThreadPage. What it calls: ForumPostText, PostActions, PostEditForm, PostHistory.
+ * (post-3) a permalink scrolls to. Part c draws a reply's quotes above its words, each linking
+ * back to the quoted post (S1-E8-03).
+ * Who uses it: ThreadPage. What it calls: ForumQuoteBlock, ForumPostText, PostActions,
+ * PostEditForm, PostHistory.
  */
 import { useId, useState } from 'react';
 import { Link } from 'react-router';
@@ -16,11 +18,14 @@ import { InfoPill } from '@/components/ui/InfoPill';
 import { initialsOf } from '@/features/people/lib/formatting';
 
 import type { ForumPost } from '../api/forumThreads';
+import type { QuotePicks } from '../hooks/useQuotePicks';
+import { postAddress } from '../lib/forumAddresses';
 import { postTime } from '../lib/forumDates';
 import { nameOf } from '../lib/forumPeople';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumPostText } from './ForumPostText';
+import { ForumQuoteBlock } from './ForumQuoteBlock';
 import { PostActions } from './PostActions';
 import { PostEditForm } from './PostEditForm';
 import { PostHistory } from './PostHistory';
@@ -32,6 +37,8 @@ export interface ForumPostCardProps {
   threadNumber: number;
   /** The thread's title, given only for post #1 (its title can be edited with it). */
   threadTitle: string | null;
+  /** The thread page's quote picks, or null when the reader can't reply (S1-E8-03). */
+  quotePicks: QuotePicks | null;
 }
 
 /**
@@ -79,7 +86,7 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
         </p>
       </div>
       <Link
-        to={`/forums/${forumSlug}/${threadNumber}?post=${post.number}`}
+        to={postAddress(forumSlug, threadNumber, post.number)}
         className="inline-flex min-h-6 items-center text-sm font-semibold text-link no-underline hover:underline"
       >
         <span className="sr-only">{t('post.permalinkPrefix')} </span>
@@ -90,11 +97,11 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
 }
 
 /**
- * The words, or the marker in their place.
+ * The words, or the marker in their place; a reply's quotes come first (S1-E8-03).
  *
  * @returns the post's body
  */
-function PostBody({ post }: { post: ForumPost }) {
+function PostBody({ post, forumSlug, threadNumber }: ForumPostCardProps) {
   const { t } = useForumsTranslation();
   if (post.state === 'deleted')
     return <p className="m-0 text-[15px] text-meta italic">{t('post.deleted')}</p>;
@@ -105,6 +112,13 @@ function PostBody({ post }: { post: ForumPost }) {
       {post.state === 'hidden' && (
         <p className="m-0 text-sm font-semibold text-body">{t('post.hiddenNote')}</p>
       )}
+      {post.quotes.map((quote) => (
+        <ForumQuoteBlock
+          key={quote.number}
+          quote={quote}
+          postAddress={postAddress(forumSlug, threadNumber, quote.number)}
+        />
+      ))}
       <ForumPostText text={post.body ?? ''} />
     </div>
   );
@@ -137,7 +151,7 @@ export function ForumPostCard(props: ForumPostCardProps) {
           onDone={() => setMode('reading')}
         />
       ) : (
-        <PostBody post={post} />
+        <PostBody {...props} />
       )}
       {isHistoryOpen && <PostHistory postId={post.id} id={historyRegionId} />}
       {mode !== 'editing' && (
@@ -151,6 +165,7 @@ export function ForumPostCard(props: ForumPostCardProps) {
           historyRegionId={historyRegionId}
           isHistoryOpen={isHistoryOpen}
           onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
+          quotePicks={props.quotePicks}
         />
       )}
     </article>

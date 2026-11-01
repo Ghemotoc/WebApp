@@ -19,6 +19,8 @@ export type ForumWriteFailure =
   | 'too_many'
   | 'gone'
   | 'category'
+  | 'quote_missing'
+  | 'quote_too_many'
   | 'invalid'
   | 'unreachable';
 
@@ -58,10 +60,14 @@ const fieldHints: Record<string, ForumFieldProblem> = {
  * Turns a refusal with Postgres's check_violation code (23514) into an error.
  *
  * @param hint - the error's hint
- * @returns 'category' for a thread in a category, 'invalid' with the field's problem otherwise
+ * @returns 'category' for a thread in a category, quote_missing or quote_too_many for the quotes,
+ *   'invalid' with the field's problem otherwise
  */
 function checkFailureFrom(hint: string): ForumWriteError {
   if (hint === 'forum:category') return new ForumWriteError('category');
+  // A quoted post went while the reply was being written, or too many were picked (S1-E8-03).
+  if (hint === 'quote:missing') return new ForumWriteError('quote_missing');
+  if (hint === 'quote:too_many') return new ForumWriteError('quote_too_many');
   const field = fieldHints[hint];
   if (field === undefined) return new ForumWriteError('unreachable');
   return new ForumWriteError('invalid', { field });
@@ -131,23 +137,31 @@ export async function startThread(client: AppSupabaseClient, thread: NewThread):
   return numberIn(data, 'thread_number');
 }
 
+/** A reply: its words and the posts it quotes (S1-E8-03). */
+export interface NewReply {
+  body: string;
+  /** The IDs of the quoted posts; the database puts them in thread order. */
+  quotedPostIds: string[];
+}
+
 /**
- * Adds a reply at the end of a thread.
+ * Adds a reply at the end of a thread, with any quotes.
  *
  * @param client - the Supabase client
  * @param threadNumber - the thread
- * @param body - the words
+ * @param reply - the words and the quoted posts
  * @returns the new post's number, for its permalink
  * @throws ForumWriteError when refused
  */
 export async function replyToThread(
   client: AppSupabaseClient,
   threadNumber: number,
-  body: string,
+  reply: NewReply,
 ): Promise<number> {
   const { data, error } = await client.rpc('reply_to_forum_thread', {
     thread_number: threadNumber,
-    body,
+    body: reply.body,
+    quoted_posts: reply.quotedPostIds,
   });
   if (error) throw forumWriteErrorFrom(error);
   return numberIn(data, 'post_number');

@@ -19,6 +19,11 @@ export interface ChipProps {
   children: ReactNode;
   /** Can't be switched for now (CMS-1g: a fourth rank badge); shown faded. */
   isDisabled?: boolean;
+  /**
+   * A fuller name for screen readers when several chips share the same words ("Add to quotes:
+   * post 3", FORUMS-1c). It must start with the visible words (WCAG 2.5.3, label in name).
+   */
+  accessibleName?: string;
 }
 
 /**
@@ -27,11 +32,18 @@ export interface ChipProps {
  *
  * @returns the chip button
  */
-export function Chip({ isPressed, onPressedChange, children, isDisabled = false }: ChipProps) {
+export function Chip({
+  isPressed,
+  onPressedChange,
+  children,
+  isDisabled = false,
+  accessibleName,
+}: ChipProps) {
   return (
     <button
       type="button"
       aria-pressed={isPressed}
+      aria-label={accessibleName}
       disabled={isDisabled}
       onClick={() => onPressedChange(!isPressed)}
       className={cn(
