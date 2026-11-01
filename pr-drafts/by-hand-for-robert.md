@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #262 (IDEAS-1c): optionally add to the record of processing which stories a reader thanked a writer for (no words), kept for the life of the account.
 - #261 (IDEAS-1b, reading streak): add a line to the record of processing for minutes read per day (reader only, kept 14 days).
 - #260 (IDEAS-1a, reading comfort): nothing by hand. Worth a look on staging: the reading ruler on a real phone.
 - #259 (PRIVACY epic check): nothing by hand. One question in the PR: should a closing account be offered its data download on the closing page?
