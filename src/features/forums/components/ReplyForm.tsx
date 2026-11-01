@@ -7,7 +7,9 @@
  * write yet is told so. The posts picked with "Quote" or "Add to quotes" show above the box in
  * thread order, each linking back to its post, with "2 posts quoted" and "Remove quotes" (board
  * 5.2; criteria 1 and 2). After posting the box and the quotes empty and the address moves to the
- * new post's permalink, so the page shows and scrolls to it.
+ * new post's permalink, so the page shows and scrolls to it. Part e adds "Don't bump" (the reply
+ * leaves the thread's place in the forum's list) and, on a locked thread, LockedThreadNote in
+ * place of the card (S1-E8-05 criteria 2 and 3).
  * Who uses it: ThreadPage. What it calls: useReplyToThread → reply_to_forum_thread();
  * ForumQuoteBlock for the picked posts.
  */
@@ -19,7 +21,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 
-import type { ForumPost, ForumQuote } from '../api/forumThreads';
+import type { ForumPost, ForumQuote, ForumThreadLock } from '../api/forumThreads';
 import { useReplyToThread } from '../hooks/useForumWrites';
 import { replyBoxId, type QuotePicks } from '../hooks/useQuotePicks';
 import { postAddress } from '../lib/forumAddresses';
@@ -27,6 +29,7 @@ import { failureMessages } from '../lib/forumFailures';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumQuoteBlock } from './ForumQuoteBlock';
+import { LockedThreadNote } from './LockedThreadNote';
 import { PostEditor } from './PostEditor';
 
 /** Where the reply goes and what it may quote. */
@@ -97,6 +100,37 @@ function PickedQuotes({
 }
 
 /**
+ * "Don't bump" with its explanation (board 5.2).
+ *
+ * @param props.checked - whether the reply should leave the thread where it is
+ * @param props.onChange - called with the new value
+ * @returns the labelled checkbox
+ */
+function NoBumpBox({ checked, onChange }: { checked: boolean; onChange: (next: boolean) => void }) {
+  const { t } = useForumsTranslation();
+  return (
+    <div className="flex min-h-11 flex-[1_1_320px] items-start gap-3">
+      <input
+        id="no-bump"
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        aria-describedby="no-bump-note"
+        className="size-6 flex-none cursor-pointer accent-primary"
+      />
+      <div className="flex flex-col gap-0.5">
+        <label htmlFor="no-bump" className="cursor-pointer text-[15px] font-semibold text-ink">
+          {t('reply.noBump')}
+        </label>
+        <p id="no-bump-note" className="m-0 text-[13px] text-meta">
+          {t('reply.noBumpNote')}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/**
  * The form itself, for a reader who may reply.
  *
  * @param props.target - the thread, its posts and the quote picks
@@ -105,6 +139,8 @@ function PickedQuotes({
 function ReplyFields({ target }: { target: ReplyTarget }) {
   const { t } = useForumsTranslation();
   const [body, setBody] = useState('');
+  // "Don't bump" (S1-E8-05 criterion 3): off by default, so a reply moves the thread up.
+  const [noBump, setNoBump] = useState(false);
   const [, setSearchParams] = useSearchParams();
   const replying = useReplyToThread(target.threadNumber);
   const messages = failureMessages(replying.failure, t);
@@ -115,8 +151,9 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
     event.preventDefault();
     try {
       const quotedPostIds = quotes.map((picked) => picked.id);
-      const postNumber = await replying.run({ body, quotedPostIds });
+      const postNumber = await replying.run({ body, quotedPostIds, bump: !noBump });
       setBody('');
+      setNoBump(false);
       target.quotePicks.clear();
       setSearchParams({ post: String(postNumber) }, { replace: true });
     } catch {
@@ -135,7 +172,8 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
         problem={messages.body}
       />
       {messages.general !== null && <Notice tone="error">{messages.general}</Notice>}
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+        <NoBumpBox checked={noBump} onChange={setNoBump} />
         <Button type="submit" disabled={replying.isRunning || body.trim() === ''}>
           {t('reply.post')}
         </Button>
@@ -148,12 +186,23 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
  * Renders the card.
  *
  * @param props.target - the thread, its posts and the quote picks
- * @param props.canReply - whether the account gate lets the reader write
- * @returns the reply card
+ * @param props.canReply - whether the reader may write here
+ * @param props.lock - the thread's lock, or null while it is open
+ * @returns the reply card, or the locked note on a locked thread
  */
-export function ReplyForm({ target, canReply }: { target: ReplyTarget; canReply: boolean }) {
+export function ReplyForm({
+  target,
+  canReply,
+  lock,
+}: {
+  target: ReplyTarget;
+  canReply: boolean;
+  lock: ForumThreadLock | null;
+}) {
   const { t } = useForumsTranslation();
   const { userId, isKnown } = useSession();
+  // A locked thread takes no replies from anyone (S1-E8-05 criterion 2).
+  if (lock !== null) return <LockedThreadNote lock={lock} />;
   return (
     <section
       aria-labelledby="reply-heading"

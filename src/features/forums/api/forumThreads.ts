@@ -70,7 +70,20 @@ export interface ForumThreadHeader {
   replyCount: number;
   writerCount: number;
   lastPostAt: string;
+  /** Pinned to the top of its forum by a moderator (S1-E8-05). */
+  isSticky: boolean;
+  /** Null while open; when and why the moderation team locked it (S1-E8-05). */
+  lock: ForumThreadLock | null;
+  /** Signed in, allowed to write, and the thread is open. */
   canReply: boolean;
+  /** Moderation staff: shows Make sticky, Lock and Unlock (the server checks again). */
+  canModerate: boolean;
+}
+
+/** Why a thread is locked; never who locked it (the page says "the moderation team"). */
+export interface ForumThreadLock {
+  lockedAt: string;
+  reason: string;
 }
 
 /** One read of a thread: the heading, some posts in order, and whether more come after. */
@@ -88,11 +101,17 @@ export interface ForumThreadSummary {
   createdAt: string;
   replyCount: number;
   lastPostAt: string;
+  /** When it last moved up the list; "Show more threads" carries on from here (S1-E8-05). */
+  bumpedAt: string;
   lastPoster: ForumPerson;
   /** Whether it has posts new to the reader (S1-E8-04); null for a visitor. */
   isUnread: boolean | null;
   /** The first post new to the reader, where the list opens it; null when none is. */
   firstUnreadPost: number | null;
+  /** Pinned to the top of its forum (S1-E8-05). */
+  isSticky: boolean;
+  /** Locked: readable, no replies (S1-E8-05). */
+  isLocked: boolean;
 }
 
 /** One read of a forum's list. */
@@ -222,8 +241,23 @@ function headerFrom(row: JsonObject): ForumThreadHeader {
     replyCount: Number(row['reply_count']),
     writerCount: Number(row['writer_count']),
     lastPostAt: String(row['last_post_at']),
+    isSticky: row['is_sticky'] === true,
+    lock: lockFrom(row['lock']),
     canReply: row['can_reply'] === true,
+    canModerate: row['can_moderate'] === true,
   };
+}
+
+/**
+ * Reads a thread's lock.
+ *
+ * @param value - the header's "lock" field: null while open
+ * @returns the lock, or null when the thread is open
+ */
+function lockFrom(value: Json | undefined): ForumThreadLock | null {
+  const lock = objectOf(value);
+  if (typeof lock['locked_at'] !== 'string') return null;
+  return { lockedAt: lock['locked_at'], reason: String(lock['reason'] ?? '') };
 }
 
 /**
@@ -240,18 +274,22 @@ function summaryFrom(row: JsonObject): ForumThreadSummary {
     createdAt: String(row['created_at']),
     replyCount: Number(row['reply_count']),
     lastPostAt: String(row['last_post_at']),
+    bumpedAt: String(row['bumped_at'] ?? row['last_post_at']),
     lastPoster: personFrom(row['last_poster']),
     isUnread: typeof row['is_unread'] === 'boolean' ? row['is_unread'] : null,
     firstUnreadPost: typeof row['first_unread_post'] === 'number' ? row['first_unread_post'] : null,
+    isSticky: row['is_sticky'] === true,
+    isLocked: row['is_locked'] === true,
   };
 }
 
 /**
- * Reads one page of a forum's threads, latest activity first.
+ * Reads one page of a forum's threads: sticky threads first on the first page, then the rest by
+ * latest activity (S1-E8-05).
  *
  * @param client - the Supabase client
  * @param forumSlug - the forum's address
- * @param olderThan - null for the first page; the last thread's lastPostAt for the next
+ * @param olderThan - null for the first page; the last thread's bumpedAt for the next
  * @returns the page, or null when there is no such forum
  * @throws Error when the database can't be reached
  */

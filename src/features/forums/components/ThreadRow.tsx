@@ -5,10 +5,12 @@
  * latest post came and from whom. A deleted account shows as "Deleted account"; a user ID never.
  * Who uses it: ThreadList.
  * Part d adds the new-posts dot, and an unread thread's link opens at its first new post
- * (S1-E8-04).
+ * (S1-E8-04). Part e adds the Pinned and Locked pills (S1-E8-05; board 5.2's gold pill).
  */
 import { Link } from 'react-router';
 
+import lockIcon from '@/assets/icons/lock.svg';
+import { InfoPill } from '@/components/ui/InfoPill';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 
 import type { ForumThreadSummary } from '../api/forumThreads';
@@ -17,6 +19,28 @@ import { nameOf } from '../lib/forumPeople';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { UnreadDot } from './UnreadDot';
+
+/**
+ * "Pinned" and "Locked" above the title, when they apply.
+ *
+ * @param props.thread - the thread
+ * @returns the pills, or nothing for an ordinary thread
+ */
+function ThreadPills({ thread }: { thread: ForumThreadSummary }) {
+  const { t } = useForumsTranslation();
+  if (!thread.isSticky && !thread.isLocked) return null;
+  return (
+    <span className="flex flex-wrap gap-2">
+      {thread.isSticky && <InfoPill tone="gold">{t('list.pinned')}</InfoPill>}
+      {thread.isLocked && (
+        <InfoPill tone="neutral">
+          <img src={lockIcon} alt="" aria-hidden="true" className="size-3.5" />
+          {t('list.locked')}
+        </InfoPill>
+      )}
+    </span>
+  );
+}
 
 /**
  * Renders the row.
@@ -46,6 +70,7 @@ export function ThreadRow({
           <UnreadDot isNew={thread.isUnread} />
         </span>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <ThreadPills thread={thread} />
           <Link
             to={address}
             className="font-heading text-lg leading-snug font-bold break-words text-heading underline-offset-2 hover:underline"

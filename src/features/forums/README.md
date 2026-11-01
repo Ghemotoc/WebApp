@@ -25,6 +25,9 @@ S1-E8-02; board 5.2 Forum thread).
   `PostActions`, the picked quotes in `ReplyForm`.
 - Read and unread (S1-E8-04, FORUMS-1d): `api/forumReads.ts`, `hooks/useForumReads.ts`,
   `components/UnreadDot.tsx`, `MarkReadButton.tsx` and `NewForYou.tsx`.
+- Sticky, locked and "Don't bump" (S1-E8-05, FORUMS-1e): `api/forumModeration.ts`,
+  `hooks/useForumModeration.ts`, `components/ThreadModeration.tsx` (moderators only) and
+  `LockedThreadNote.tsx`; the pills in `ThreadRow` and "Don't bump" in `ReplyForm`.
 - Staff (`/staff/forums`, owner and admin): `api/forumAdmin.ts` (`admin_list_forums()`,
   `admin_save_forum()`, `admin_delete_forum()`), `hooks/useForumAdmin.ts`, `lib/forumForm.ts`,
   and `components/staff/` (`ForumsAdminPage`, `ForumAdminRow`, `ForumForm` with

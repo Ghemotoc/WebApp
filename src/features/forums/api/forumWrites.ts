@@ -19,6 +19,7 @@ export type ForumWriteFailure =
   | 'too_many'
   | 'gone'
   | 'category'
+  | 'locked'
   | 'quote_missing'
   | 'quote_too_many'
   | 'invalid'
@@ -60,11 +61,13 @@ const fieldHints: Record<string, ForumFieldProblem> = {
  * Turns a refusal with Postgres's check_violation code (23514) into an error.
  *
  * @param hint - the error's hint
- * @returns 'category' for a thread in a category, quote_missing or quote_too_many for the quotes,
+ * @returns 'category' for a thread in a category, 'locked' for a locked thread, quote_missing or quote_too_many for the quotes,
  *   'invalid' with the field's problem otherwise
  */
 function checkFailureFrom(hint: string): ForumWriteError {
   if (hint === 'forum:category') return new ForumWriteError('category');
+  // A moderator locked the thread while the reply was being written (S1-E8-05).
+  if (hint === 'thread:locked') return new ForumWriteError('locked');
   // A quoted post went while the reply was being written, or too many were picked (S1-E8-03).
   if (hint === 'quote:missing') return new ForumWriteError('quote_missing');
   if (hint === 'quote:too_many') return new ForumWriteError('quote_too_many');
@@ -142,14 +145,17 @@ export interface NewReply {
   body: string;
   /** The IDs of the quoted posts; the database puts them in thread order. */
   quotedPostIds: string[];
+  /** False for "Don't bump": the thread keeps its place in the forum's list (S1-E8-05). */
+  bump: boolean;
 }
 
 /**
- * Adds a reply at the end of a thread, with any quotes.
+ * Adds a reply at the end of a thread, with any quotes, moving the thread up its forum unless
+ * the writer ticked "Don't bump".
  *
  * @param client - the Supabase client
  * @param threadNumber - the thread
- * @param reply - the words and the quoted posts
+ * @param reply - the words, the quoted posts and whether to bump
  * @returns the new post's number, for its permalink
  * @throws ForumWriteError when refused
  */
@@ -162,6 +168,7 @@ export async function replyToThread(
     thread_number: threadNumber,
     body: reply.body,
     quoted_posts: reply.quotedPostIds,
+    bump: reply.bump,
   });
   if (error) throw forumWriteErrorFrom(error);
   return numberIn(data, 'post_number');

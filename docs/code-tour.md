@@ -1678,6 +1678,15 @@ Idea IDEA-20261031-12 (GDPR art. 15 and 20).
 - Privacy: both tables are readable only by their owner, in Download my data, and deleted with the account.
 - Tests: `supabase/tests/database/224-forum-read-marks.test.sql`, `src/features/forums/api/forumReads.test.ts`, `e2e/forum-read-marks.spec.ts`.
 
+## Sticky and locked threads, and "Don't bump" (S1-E8-05; FORUMS-1e)
+
+- Where it lives: `src/features/forums/api/forumModeration.ts`, `hooks/useForumModeration.ts`, `components/ThreadModeration.tsx`, `LockedThreadNote.tsx`, the Pinned and Locked pills in `ThreadRow`, "Don't bump" in `ReplyForm`, and `supabase/migrations/…_forums1_e_sticky_and_locked.sql`.
+- The columns: `forum_threads.is_sticky`, `locked_at`, `locked_by_user_id`, `lock_reason` and `bumped_at`. The forum's list is ordered by `bumped_at`, not `last_post_at`: a reply with "Don't bump" moves `last_post_at` (so "Latest post" and the unread checks stay true) but leaves `bumped_at`.
+- How a moderator's change travels: the thread page's `ThreadModeration` (shown only when `forum_thread_header_json()` says `can_moderate`) → `useModerateThread()` → `admin_set_forum_thread_sticky()`, `admin_lock_forum_thread()` or `admin_unlock_forum_thread()` → `forum_thread_for_moderation()` checks `staff_may('moderation', 'act')` and the reason → the change and `log_staff_action()` in the same transaction.
+- How a locked thread refuses: `reply_to_forum_thread()` raises hint `thread:locked`; the header's `can_reply` is false, so `ReplyForm` draws `LockedThreadNote` instead of the box. The note names "the moderation team", never the moderator.
+- The list: `forum_thread_list()` puts every sticky thread first on the first page only, then pages the rest by `bumped_at`; "Show more threads" passes the last thread's `bumpedAt`.
+- Tests: `supabase/tests/database/225-forum-sticky-and-locked.test.sql`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-sticky-and-locked.spec.ts`.
+
 ## Sharing a passage or a picture (S1-E4-11; WRITE-5e)
 
 - Blocks: a chapter's stored Markdown is cut into blocks at blank lines, counted from 1, by `src/lib/chapter-blocks.ts` and by the SQL `chapter_blocks()` the same way. `ChapterText` runs `reading/lib/numberBlocks.ts` as a rehype step, which marks each top-level part with `data-block` and `data-block-end` and highlights a shared passage.

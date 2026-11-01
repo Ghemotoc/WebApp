@@ -30,6 +30,7 @@ import onceUponATime from '@/assets/doodles/once-upon-a-time.svg';
 import openBook from '@/assets/doodles/open-book.svg';
 import openSpiralNotebook from '@/assets/doodles/open-spiral-notebook.svg';
 import owlReadingGlasses from '@/assets/doodles/owl-reading-glasses.svg';
+import padlock from '@/assets/doodles/padlock.svg';
 import pencilCup from '@/assets/doodles/pencil-cup.svg';
 import rainCloud from '@/assets/doodles/rain-cloud.svg';
 import rainbow from '@/assets/doodles/rainbow.svg';
@@ -65,6 +66,7 @@ export const doodleSources = {
   'open-book': openBook,
   'open-spiral-notebook': openSpiralNotebook,
   'owl-reading-glasses': owlReadingGlasses,
+  padlock,
   'pencil-cup': pencilCup,
   'rain-cloud': rainCloud,
   rainbow,

@@ -42,7 +42,9 @@
     "showMore": "Arată mai multe discuții",
     "loadFailed": "Nu am putut încărca discuțiile. Verifică-ți conexiunea și încearcă din nou.",
     "logInToStart": "Intră în cont ca să începi o discuție",
-    "categoryNote": "Discuțiile se poartă în forumurile din această categorie."
+    "categoryNote": "Discuțiile se poartă în forumurile din această categorie.",
+    "pinned": "Fixată",
+    "locked": "Închisă"
   },
   "person": {
     "deleted": "Cont șters",
@@ -120,7 +122,9 @@
     "quoted_few": "{{count}} postări citate",
     "quoted_other": "{{count}} de postări citate",
     "removeQuotes": "Elimină citatele",
-    "quotesLabel": "Postările pe care le citezi"
+    "quotesLabel": "Postările pe care le citezi",
+    "noBump": "Nu o urca",
+    "noBumpNote": "Răspunsul tău nu va muta discuția în capul listei."
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
@@ -152,7 +156,8 @@
       "link": "Linkurile trebuie să înceapă cu http, https sau mailto."
     },
     "quote_missing": "O postare pe care ai citat-o nu mai există. Elimină citatele și încearcă din nou.",
-    "quote_too_many": "Poți cita cel mult 10 postări într-un răspuns."
+    "quote_too_many": "Poți cita cel mult 10 postări într-un răspuns.",
+    "locked": "Echipa de moderare a închis discuția, așa că nu mai primește răspunsuri."
   },
   "quote": {
     "wrote": "{{name}} a scris în",
@@ -178,5 +183,32 @@
     "count_other": "{{count}} de noi",
     "empty": "Ești la zi.",
     "loadFailed": "Nu am putut încărca noutățile. Încearcă mai târziu."
+  },
+  "locked": {
+    "heading": "Discuția este închisă",
+    "byTeam": "Închisă de echipa de moderare pe {{date}}. Motiv: „{{reason}}”",
+    "stillRead": "Poți citi în continuare toate mesajele, dar nimeni nu mai poate răspunde."
+  },
+  "moderation": {
+    "heading": "Unelte de moderare",
+    "reason": "Motiv",
+    "reasonHint": "Intră în jurnalul de audit. Când închizi discuția, toată lumea vede motivul.",
+    "sticky": "Fixează sus",
+    "unsticky": "Nu mai fixa",
+    "lock": "Închide discuția",
+    "unlock": "Redeschide discuția",
+    "done": {
+      "sticky": "Discuția e fixată în capul forumului.",
+      "unsticky": "Discuția e din nou în ordinea ultimei activități.",
+      "lock": "Discuția e închisă. Toată lumea o poate citi în continuare.",
+      "unlock": "Discuția primește din nou răspunsuri."
+    },
+    "failures": {
+      "not_allowed": "Doar echipa de moderare poate face asta.",
+      "reason_empty": "Scrie mai întâi un motiv.",
+      "reason_too_long": "Motivul trebuie să aibă sub 500 de caractere.",
+      "gone": "Discuția nu mai există.",
+      "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
+    }
   }
 }
