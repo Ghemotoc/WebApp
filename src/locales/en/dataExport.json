@@ -7,6 +7,7 @@
       "stories": "Stories and chapters, drafts included",
       "comments": "Comments",
       "messages": "Messages you sent",
+      "library": "Your library shelves, with each story’s title and link (also as a spreadsheet, library.csv)",
       "account": "Your account: username, pen name, year of birth, email address and the age check",
       "settings": "Your settings, consents and the reports you made"
     },
@@ -156,6 +157,18 @@
       "pictureMissing": "Picture: {{alt}}",
       "embedLine": "Music or video: {{title}}",
       "embedMissing": "A music or video card that is no longer available"
+    }
+  },
+  "library": {
+    "shelf": "Shelf",
+    "title": "Title",
+    "writer": "Writer",
+    "link": "Link",
+    "added": "Added on",
+    "shelves": {
+      "reading": "Reading",
+      "saved": "Saved for later",
+      "finished": "Finished"
     }
   }
 }

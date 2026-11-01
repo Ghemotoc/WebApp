@@ -5,6 +5,7 @@
 import JSZip from 'jszip';
 import { describe, expect, it, vi } from 'vitest';
 
+import { brand } from '@/config/brand';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { WordLabels } from '@/lib/word/wordTypes';
 
@@ -32,6 +33,17 @@ const dataFile = {
   made_at: '2026-11-01T00:00:00Z',
   user_id: 'user-1',
   account: { email: 'lia@example.test', profile: { handle: 'lia', pen_name: 'Lia Scrie' } },
+  // IDEAS-1f: one story on the Reading shelf; the brand's website makes its full link.
+  library: [
+    {
+      shelf: 'reading',
+      title: 'Farul, de noapte',
+      writer: 'Ana',
+      path: '/s/farul',
+      added_at: '2026-10-20T08:00:00Z',
+      moved_at: '2026-10-20T08:00:00Z',
+    },
+  ],
   tables: {
     stories: [
       {
@@ -117,6 +129,14 @@ function runOptions(client: AppSupabaseClient) {
     },
     formatDate: (isoDate: string) => isoDate.slice(0, 10),
     planText: { atlas: (key: string) => key, own: (key: string) => key },
+    libraryLabels: {
+      shelf: 'Shelf',
+      title: 'Title',
+      writer: 'Writer',
+      link: 'Link',
+      added: 'Added on',
+      shelves: { reading: 'Reading', saved: 'Saved for later', finished: 'Finished' },
+    },
   };
 }
 
@@ -139,6 +159,7 @@ describe('makeDataExport', () => {
     const zip = await JSZip.loadAsync(fake.uploadedZip() ?? new Uint8Array());
     expect(Object.keys(zip.files).sort()).toEqual([
       'data.json',
+      'library.csv',
       'stories/',
       'stories/ploaia-plan.docx',
       'stories/ploaia.docx',
@@ -146,6 +167,20 @@ describe('makeDataExport', () => {
     const data = JSON.parse((await zip.file('data.json')?.async('string')) ?? '{}');
     expect(data.user_id).toBe('user-1');
     expect(data.tables.chapters[0].draft_body).toBe('Ș și ț.');
+  });
+
+  it('adds the library shelves with full links, and as a spreadsheet (IDEAS-1f)', async () => {
+    const fake = fakeClient();
+    await makeDataExport(runOptions(fake.client));
+    const zip = await JSZip.loadAsync(fake.uploadedZip() ?? new Uint8Array());
+    const data = JSON.parse((await zip.file('data.json')?.async('string')) ?? '{}');
+    expect(data.library[0].link).toBe(`${brand.siteUrl}/s/farul`);
+    const csv = (await zip.file('library.csv')?.async('string')) ?? '';
+    expect(csv.split('\r\n')).toEqual([
+      '\uFEFFShelf,Title,Writer,Link,Added on',
+      `Reading,"Farul, de noapte",Ana,${brand.siteUrl}/s/farul,2026-10-20`,
+      '',
+    ]);
   });
 });
 

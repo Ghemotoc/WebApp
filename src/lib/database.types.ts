@@ -7134,6 +7134,7 @@ export type Database = {
         };
         Returns: string;
       };
+      export_library_of: { Args: { owner_id: string }; Returns: Json };
       export_row_for_owner: { Args: { stored_row: Json }; Returns: Json };
       export_tables_of: { Args: { owner_id: string }; Returns: Json };
       export_upload_allowed: { Args: { object_name: string }; Returns: boolean };

@@ -6,6 +6,7 @@
  * - criterion 1: adult_writer asks for their data in Settings; the browser builds one ZIP with
  *   data.json and a Word file per story, and Settings says the file is ready;
  * - criterion 2: the downloaded ZIP's data file holds the user ID and the account's email;
+ * - IDEAS-1f: it holds the library shelves with titles and full links, and library.csv;
  * - criterion 3: the person gets the "ready" notification, the line says when the link stops
  *   working, and nobody else can download the file (Storage refuses teen_17's address);
  * - axe at 390, 768 and 1440 px, light and night, ro and en, on Settings scrolled to the panel,
@@ -34,11 +35,16 @@ function resetExports() {
     delete from public.rate_limit_events where action = 'data_export';
     delete from public.notifications where kind = 'data_export_ready';
     delete from public.chapters where code = 'dlde2e01';
+    delete from public.library_entries where user_id = '00000000-0000-4000-8000-000000000001'
+      and story_id = '00000000-0000-4000-9000-000000000003';
     delete from public.stories where slug = '${storySlug}';
     update public.profiles set locale = 'ro' where handle in ('adult_writer', 'teen_17');`);
 }
 
-/** One draft story by adult_writer with Romanian letters in it. */
+/**
+ * One draft story by adult_writer with Romanian letters in it, and teen_17's seed story on
+ * adult_writer's "Saved for later" shelf (IDEAS-1f).
+ */
 function seedStory() {
   runSql(`insert into public.stories (user_id, slug, title, language_code, category_id,
       completion_status, rating)
@@ -46,7 +52,9 @@ function seedStory() {
       (select id from public.categories where slug = 'fiction'), 'ongoing', 'all_ages');
     insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body, word_count, status)
     values ((select id from public.stories where slug = '${storySlug}'),
-      '00000000-0000-4000-8000-000000000001', 'dlde2e01', 1, 'Începutul', 'Ș și ț.', 3, 'draft');`);
+      '00000000-0000-4000-8000-000000000001', 'dlde2e01', 1, 'Începutul', 'Ș și ț.', 3, 'draft');
+    insert into public.library_entries (user_id, story_id, shelf)
+    values ('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-9000-000000000003', 'saved');`);
 }
 
 test.describe('Download my data', () => {
@@ -95,6 +103,15 @@ test.describe('Download my data', () => {
       (await zip.file(`stories/${storySlug}.docx`)?.async('uint8array')) ?? new Uint8Array(),
     );
     expect(await word.file('word/document.xml')?.async('string')).toContain('Țara de sub ape');
+    // Step 5 (IDEAS-1f): the library shelves, with titles and full links, also as a spreadsheet.
+    const saved = data.library.find(
+      (entry: { title: string }) => entry.title === 'Scrisori din cutia poștală',
+    );
+    expect(saved.shelf).toBe('saved');
+    expect(saved.link).toMatch(/^https:\/\/.+\/s\/scrisori-din-cutia-postala-seed03$/);
+    const csv = (await zip.file('library.csv')?.async('string')) ?? '';
+    expect(csv).toContain(`Saved for later,Scrisori din cutia poștală,`);
+    expect(csv).toContain(saved.link);
     await context.close();
   });
 

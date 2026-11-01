@@ -7,12 +7,13 @@
  *   data.json            everything about the account (GDPR art. 20: structured, commonly used
  *                        and machine-readable), pretty-printed so a person can read it too;
  *   stories/<slug>.docx  one Word file per story (GDPR art. 15(3): a commonly used electronic form);
- *   stories/<slug>-plan.docx  the story's plan from Story Atlas (S1-E13-05; Robert, 1 Nov 2026).
+ *   stories/<slug>-plan.docx  the story's plan from Story Atlas (S1-E13-05; Robert, 1 Nov 2026);
+ *   library.csv          the reader's library shelves as a spreadsheet (IDEAS-1f).
  * Who calls it: runDataExport(). What it calls: JSZip, in the browser (ADR 0012).
  */
 import JSZip from 'jszip';
 
-/** One Word file for the ZIP. */
+/** One file for the ZIP: a Word file, or the library spreadsheet. */
 export interface ZipEntry {
   /** Its path inside the ZIP, for example "stories/rain.docx". */
   fileName: string;
@@ -26,7 +27,7 @@ export const DATA_FILE_NAME = 'data.json';
  * Builds the ZIP.
  *
  * @param document - the data file's contents (my_data_export()'s answer)
- * @param wordFiles - the stories' Word files
+ * @param wordFiles - the stories' Word files, and library.csv when there is one
  * @returns the ZIP's bytes
  * @throws when JSZip can't build it (the caller shows its plain message)
  */

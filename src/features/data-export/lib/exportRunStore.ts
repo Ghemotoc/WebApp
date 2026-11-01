@@ -8,7 +8,7 @@
  * and ZIP libraries with it, so it is loaded only when a copy is asked for and Settings stays small.
  * Who calls it: the hooks in ../hooks. What it calls: the two runs, loaded on demand.
  */
-import type { DataExportRunOptions } from './runDataExport';
+import type { DataExportOptions } from './runDataExport';
 import type { StoriesExportOutcome, StoriesExportRunOptions } from './runStoriesExport';
 
 /** Where the current run stands, for the Settings panel. */
@@ -78,7 +78,7 @@ export const storiesExportRunState = storiesStore.state;
  * @param options - the client and the translated words
  * @returns once the copy is ready or has failed (a failure is in the state, never thrown)
  */
-export async function startDataExport(options: DataExportRunOptions): Promise<void> {
+export async function startDataExport(options: DataExportOptions): Promise<void> {
   await dataStore.run('The data copy', async () => {
     // Load the run, and the Word and ZIP libraries with it, only now.
     const { makeDataExport } = await import('./runDataExport');

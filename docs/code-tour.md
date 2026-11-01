@@ -1626,6 +1626,14 @@ Ideas IDEA-20261031-2 and -9.
 - "Most shared this week": the story list `shared` (`list_holds_story()`: shared at least once in the last 7 days) in its own order, the sort `shared` (`story_shares_this_week()`, totals from `chapter_shares`, never who), which `browse_stories()` accepts only on that list. Discover shows it after "New and rising" (`discover_shelves`), with a See all page at `/discover/all/shared`. The reader's age, blocks and moderation apply as on every list (`listed_stories()`).
 - Tests: `supabase/tests/database/219-paragraph-links-and-most-shared.test.sql`, `src/lib/paragraph-link.test.ts`, `notificationText.test.ts`, `listAddresses.test.ts`, `e2e/paragraph-links-most-shared.spec.ts`.
 
+## Library shelves in Download my data (IDEAS-1 part f)
+
+Idea IDEA-20261031-12 (GDPR art. 15 and 20).
+
+- `my_data_export()` adds `library` from `export_library_of()`: each shelf entry with its shelf, the story's title, the writer's name, its address (`/s/<story>`, or null when the reader can no longer open it) and when it was shelved. `tables.library_entries` still has the raw rows.
+- In the browser, `makeDataExport()` runs `withLibraryLinks()` (`src/features/data-export/lib/libraryForExport.ts`), which turns each address into a full link with `brand.siteUrl`, and adds `library.csv` (`libraryCsvFile()`: a heading line in the reader's language, one line per story, UTF-8 with a byte-order mark) to the ZIP.
+- Tests: `supabase/tests/database/220-library-in-my-data.test.sql`, `runDataExport.test.ts`, `e2e/download-my-data.spec.ts`.
+
 ## Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)
 
 - Where it lives: `src/features/sharing/` (see its README). The reader screen adds `ShareButtonWhenNear` to `ChapterEnd`'s row (it fetches `ShareButton` when the row nears the screen, `src/lib/use-is-near.ts`) and `QuoteShareWatcher` under the chapter (it fetches `QuoteShareBar` on the first selection); `reading/lib/toSharedChapter.ts` hands them only public things (address, titles, number, pen name).
