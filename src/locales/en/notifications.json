@@ -55,7 +55,8 @@
     "loginMethodRemoved": "a way to log in was disconnected. If this wasn’t you, change your password and contact us.",
     "teacherCheckDecided": "your Teacher badge request has an answer.",
     "teacherBadgeRemoved": "removed your Teacher badge.",
-    "dataExportReady": "your copy of your data is ready to download."
+    "dataExportReady": "your copy of your data is ready to download.",
+    "storiesExportReady": "your stories are ready to download as Word files."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -99,7 +100,8 @@
     "seeMyAccount": "See what this means",
     "seeWaysToLogIn": "See ways to log in",
     "seeTeacherBadge": "See your Teacher badge",
-    "downloadMyData": "Download your data"
+    "downloadMyData": "Download your data",
+    "downloadMyStories": "Download your stories"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

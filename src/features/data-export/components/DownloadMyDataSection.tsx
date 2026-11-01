@@ -5,7 +5,8 @@
  *
  * Top to bottom as on the board: the heading and intro, what the copy holds, the note that
  * everything is in the data file and the stories are also Word files, then the request, preparing
- * or ready line (ExportStatus). The section has id "download-my-data", so the "ready"
+ * or ready line (ExportStatus), then Download my stories (DownloadMyStoriesBlock, S1-E13-05) and
+ * the note about downloading from 13. The section has id "download-my-data", so the "ready"
  * notification opens it.
  * Who shows it: SettingsPage. What it calls: useLatestDataExport, useDataExportRun and
  * useStartDataExport.
@@ -16,6 +17,7 @@ import { Notice } from '@/components/ui/Notice';
 import { useDataExportRun, useLatestDataExport, useStartDataExport } from '../hooks/useDataExport';
 import { useDataExportTranslation } from '../registerDataExportTranslations';
 
+import { DownloadMyStoriesBlock } from './DownloadMyStoriesBlock';
 import { ExportStatus } from './ExportStatus';
 
 /** What the copy holds, in the board's order (forum posts join once forums exist, S1-E8). */
@@ -72,6 +74,10 @@ export function DownloadMyDataSection() {
       </div>
       <IncludedList />
       <StatusBody />
+      <DownloadMyStoriesBlock />
+      <p className="m-0 rounded-2xl bg-tint px-4.5 py-4 text-[15px] leading-relaxed text-body">
+        {t('settings.minorsNote')}
+      </p>
     </section>
   );
 }

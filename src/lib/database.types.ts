@@ -1810,46 +1810,71 @@ export type Database = {
       };
       exports: {
         Row: {
+          chapter_ids: string[] | null;
+          content_fingerprint: string | null;
           created_at: string;
           expires_at: string | null;
           file_name: string;
           file_size: number | null;
           id: string;
+          include_chapters: boolean;
+          include_data: boolean;
+          include_plan: boolean;
           kind: Database['public']['Enums']['export_kind'];
           ready_at: string | null;
           state: Database['public']['Enums']['export_state'];
           story_count: number | null;
+          story_id: string | null;
           updated_at: string;
           user_id: string;
         };
         ComputedFields: never;
         Insert: {
+          chapter_ids?: string[] | null;
+          content_fingerprint?: string | null;
           created_at?: string;
           expires_at?: string | null;
           file_name: string;
           file_size?: number | null;
           id?: string;
+          include_chapters?: boolean;
+          include_data?: boolean;
+          include_plan?: boolean;
           kind: Database['public']['Enums']['export_kind'];
           ready_at?: string | null;
           state?: Database['public']['Enums']['export_state'];
           story_count?: number | null;
+          story_id?: string | null;
           updated_at?: string;
           user_id: string;
         };
         Update: {
+          chapter_ids?: string[] | null;
+          content_fingerprint?: string | null;
           created_at?: string;
           expires_at?: string | null;
           file_name?: string;
           file_size?: number | null;
           id?: string;
+          include_chapters?: boolean;
+          include_data?: boolean;
+          include_plan?: boolean;
           kind?: Database['public']['Enums']['export_kind'];
           ready_at?: string | null;
           state?: Database['public']['Enums']['export_state'];
           story_count?: number | null;
+          story_id?: string | null;
           updated_at?: string;
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'exports_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'exports_user_id_fkey';
             columns: ['user_id'];
@@ -6934,6 +6959,14 @@ export type Database = {
       expect_identity_link: { Args: { wanted_provider: string }; Returns: undefined };
       export_account_of: { Args: { owner_id: string }; Returns: Json };
       export_download_allowed: { Args: { object_name: string }; Returns: boolean };
+      export_file_extension: {
+        Args: {
+          choices: boolean[];
+          kind: Database['public']['Enums']['export_kind'];
+          story_id: string;
+        };
+        Returns: string;
+      };
       export_row_for_owner: { Args: { stored_row: Json }; Returns: Json };
       export_tables_of: { Args: { owner_id: string }; Returns: Json };
       export_upload_allowed: { Args: { object_name: string }; Returns: boolean };
@@ -8179,6 +8212,16 @@ export type Database = {
       request_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
       request_data_export: { Args: Record<PropertyKey, never>; Returns: Json };
       request_manual_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
+      request_stories_export: {
+        Args: {
+          chosen_chapter_ids?: string[];
+          chosen_story_id?: string;
+          include_chapters?: boolean;
+          include_data?: boolean;
+          include_plan?: boolean;
+        };
+        Returns: Json;
+      };
       require_account_action_allowed: {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
@@ -8272,6 +8315,41 @@ export type Database = {
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
       return_rate_on: { Args: { for_day: string }; Returns: number };
+      reusable_stories_export: {
+        Args: {
+          current_fingerprint: string;
+          owner_id: string;
+          wanted: Omit<
+            Database['public']['Tables']['exports']['Row'],
+            Database['public']['Tables']['exports']['ComputedFields']
+          >;
+        };
+        Returns: {
+          chapter_ids: string[] | null;
+          content_fingerprint: string | null;
+          created_at: string;
+          expires_at: string | null;
+          file_name: string;
+          file_size: number | null;
+          id: string;
+          include_chapters: boolean;
+          include_data: boolean;
+          include_plan: boolean;
+          kind: Database['public']['Enums']['export_kind'];
+          ready_at: string | null;
+          state: Database['public']['Enums']['export_state'];
+          story_count: number | null;
+          story_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'exports';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       romania_today: { Args: Record<PropertyKey, never>; Returns: string };
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -8502,6 +8580,16 @@ export type Database = {
           name: string;
         }[];
       };
+      stories_export_choice_problem: {
+        Args: {
+          anything_chosen: boolean;
+          chosen_chapter_ids: string[];
+          chosen_story_id: string;
+          owner_id: string;
+        };
+        Returns: string;
+      };
+      stories_fingerprint: { Args: { chosen_story_id: string; owner_id: string }; Returns: string };
       story_bible: { Args: { story_slug: string }; Returns: Json };
       story_card_json: { Args: { target_story_id: string }; Returns: Json };
       story_cast: { Args: { story_slug: string }; Returns: Json };
@@ -8744,7 +8832,7 @@ export type Database = {
       cover_kind: 'automatic' | 'drawn' | 'upload';
       email_delivery: 'instant' | 'daily' | 'off';
       embed_service: 'youtube' | 'vimeo' | 'loom' | 'spotify' | 'apple_music';
-      export_kind: 'all_my_data';
+      export_kind: 'all_my_data' | 'my_stories';
       export_state: 'building' | 'ready';
       language_status: 'open' | 'ready' | 'closed';
       legal_check_status: 'not_started' | 'in_progress' | 'done';
@@ -8774,7 +8862,8 @@ export type Database = {
         | 'login_method_removed'
         | 'teacher_check_decided'
         | 'teacher_badge_removed'
-        | 'data_export_ready';
+        | 'data_export_ready'
+        | 'stories_export_ready';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -9035,7 +9124,7 @@ export const Constants = {
       cover_kind: ['automatic', 'drawn', 'upload'],
       email_delivery: ['instant', 'daily', 'off'],
       embed_service: ['youtube', 'vimeo', 'loom', 'spotify', 'apple_music'],
-      export_kind: ['all_my_data'],
+      export_kind: ['all_my_data', 'my_stories'],
       export_state: ['building', 'ready'],
       language_status: ['open', 'ready', 'closed'],
       legal_check_status: ['not_started', 'in_progress', 'done'],
@@ -9074,6 +9163,7 @@ export const Constants = {
         'teacher_check_decided',
         'teacher_badge_removed',
         'data_export_ready',
+        'stories_export_ready',
       ],
       picture_kind: [
         'cover',

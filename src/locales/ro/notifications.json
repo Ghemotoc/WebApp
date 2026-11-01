@@ -55,7 +55,8 @@
     "loginMethodRemoved": "a fost deconectat un mod de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
     "teacherCheckDecided": "cererea ta pentru insigna de Profesor are un răspuns.",
     "teacherBadgeRemoved": "ți-a retras insigna de Profesor.",
-    "dataExportReady": "copia datelor tale e gata de descărcat."
+    "dataExportReady": "copia datelor tale e gata de descărcat.",
+    "storiesExportReady": "poveștile tale sunt gata de descărcat ca fișiere Word."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -99,7 +100,8 @@
     "seeMyAccount": "Vezi ce înseamnă",
     "seeWaysToLogIn": "Vezi modurile de autentificare",
     "seeTeacherBadge": "Vezi insigna de Profesor",
-    "downloadMyData": "Descarcă-ți datele"
+    "downloadMyData": "Descarcă-ți datele",
+    "downloadMyStories": "Descarcă-ți poveștile"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

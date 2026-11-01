@@ -85,7 +85,9 @@ function fakeClient(options: { failUpload?: boolean } = {}) {
       calls.push(`rpc:${name}`);
       return { data: answers[name], error: null };
     }),
-    from: () => ({ select: () => ({ order: async () => ({ data: [olderCopy], error: null }) }) }),
+    from: () => ({
+      select: () => ({ eq: () => ({ order: async () => ({ data: [olderCopy], error: null }) }) }),
+    }),
     storage: {
       from: () => ({
         remove: async (names: string[]) => {
@@ -114,6 +116,7 @@ function runOptions(client: AppSupabaseClient) {
       chapter: { draft: 'Draft', scheduled: 'Scheduled', published: 'Published' },
     },
     formatDate: (isoDate: string) => isoDate.slice(0, 10),
+    planText: { atlas: (key: string) => key, own: (key: string) => key },
   };
 }
 
@@ -130,11 +133,16 @@ describe('makeDataExport', () => {
     ]);
   });
 
-  it('uploads one ZIP with the data file and every story as a Word file', async () => {
+  it('uploads one ZIP with the data file and every story and its plan as Word files', async () => {
     const fake = fakeClient();
     await makeDataExport(runOptions(fake.client));
     const zip = await JSZip.loadAsync(fake.uploadedZip() ?? new Uint8Array());
-    expect(Object.keys(zip.files).sort()).toEqual(['data.json', 'stories/', 'stories/ploaia.docx']);
+    expect(Object.keys(zip.files).sort()).toEqual([
+      'data.json',
+      'stories/',
+      'stories/ploaia-plan.docx',
+      'stories/ploaia.docx',
+    ]);
     const data = JSON.parse((await zip.file('data.json')?.async('string')) ?? '{}');
     expect(data.user_id).toBe('user-1');
     expect(data.tables.chapters[0].draft_body).toBe('Ș și ț.');

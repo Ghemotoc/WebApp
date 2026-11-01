@@ -1,7 +1,8 @@
 /**
  * The hooks behind Settings › Download my data (story S1-E13-02).
  *
- * Who calls them: DownloadMyDataSection. What they call: api/dataExport.ts and
+ * Who calls them: DownloadMyDataSection (and useStoriesExport.ts reuses useWordLabels). What they
+ * call: api/dataExport.ts and
  * lib/exportRunStore.ts. The run's state lives in that small store, so it survives the
  * panel closing and opening again while the copy is being made.
  */
@@ -9,6 +10,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
+import { useAtlasTranslation } from '@/features/atlas/registerAtlasTranslations';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { unreadCountQueryKey } from '@/features/notifications/hooks/useUnreadNotificationCount';
 import { formatRomaniaDate } from '@/lib/romania-time';
@@ -21,6 +23,7 @@ import {
   startDataExport,
   subscribeToDataExportRun,
 } from '../lib/exportRunStore';
+import type { PlanWords } from '../lib/planForWord';
 import type { StatusLabels } from '../lib/storiesForWord';
 
 /** The copies' cache key, per person. */
@@ -60,8 +63,8 @@ export function useDataExportRun() {
   return useSyncExternalStore(subscribeToDataExportRun, dataExportRunState, dataExportRunState);
 }
 
-/** The Word files' words in the interface language. */
-function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusLabels } {
+/** The Word files' words in the interface language; Download my stories uses them too. */
+export function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusLabels } {
   const { t } = useDataExportTranslation();
   const wordLabels: WordLabels = {
     byLine: (name) => t('word.byLine', { name }),
@@ -89,6 +92,18 @@ function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusLabels }
 }
 
 /**
+ * The words of a story's plan file: Story Atlas's own texts (so the file reads like the screens)
+ * and the few of its own in dataExport.json (S1-E13-05).
+ *
+ * @returns the two translators the plan builder takes
+ */
+export function usePlanText(): Pick<PlanWords, 'atlas' | 'own'> {
+  const { t } = useDataExportTranslation();
+  const { t: atlasT } = useAtlasTranslation();
+  return { atlas: (key, values) => atlasT(key, values), own: (key, values) => t(key, values) };
+}
+
+/**
  * Starting a copy: builds it in the background of this tab, then reads the copies and the
  * notification count again.
  *
@@ -99,12 +114,14 @@ export function useStartDataExport() {
   const { userId } = useSession();
   const { i18n } = useDataExportTranslation();
   const { wordLabels, statusLabels } = useWordLabels();
+  const planText = usePlanText();
   return {
     start: async () => {
       await startDataExport({
         client: await requireClient(),
         wordLabels,
         statusLabels,
+        planText,
         formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), i18n.language),
       });
       await queryClient.invalidateQueries({ queryKey: dataExportsKey(userId) });

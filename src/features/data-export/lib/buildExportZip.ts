@@ -6,7 +6,8 @@
  * Inside the ZIP:
  *   data.json            everything about the account (GDPR art. 20: structured, commonly used
  *                        and machine-readable), pretty-printed so a person can read it too;
- *   stories/<slug>.docx  one Word file per story (GDPR art. 15(3): a commonly used electronic form).
+ *   stories/<slug>.docx  one Word file per story (GDPR art. 15(3): a commonly used electronic form);
+ *   stories/<slug>-plan.docx  the story's plan from Story Atlas (S1-E13-05; Robert, 1 Nov 2026).
  * Who calls it: runDataExport(). What it calls: JSZip, in the browser (ADR 0012).
  */
 import JSZip from 'jszip';
@@ -39,5 +40,21 @@ export async function buildExportZip(
   // Step 2: the Word files, already compressed inside, so they are stored as they are.
   for (const entry of wordFiles) zip.file(entry.fileName, entry.bytes, { compression: 'STORE' });
   // Step 3: the ZIP itself, compressed.
+  return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+}
+
+/**
+ * A ZIP of the chosen files only, for Download my stories (S1-E13-05): the stories' and plans'
+ * Word files and, when ticked, the JSON copy, all at the top of the ZIP.
+ *
+ * @param files - the files, the Word files named "stories/<slug>.docx"
+ * @returns the ZIP's bytes
+ */
+export async function buildWordZip(files: ZipEntry[]): Promise<Uint8Array> {
+  const zip = new JSZip();
+  for (const entry of files) {
+    // The "stories/" folder only makes sense next to the data file, so it goes here.
+    zip.file(entry.fileName.replace(/^stories\//, ''), entry.bytes, { compression: 'STORE' });
+  }
   return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
 }
