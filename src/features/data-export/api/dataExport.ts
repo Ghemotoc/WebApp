@@ -106,6 +106,21 @@ export type ExportedEmbed = Pick<Tables<'chapter_embeds'>, 'id' | 'title' | 'sou
 /** The parts of a picture row the Word files use. */
 export type ExportedPicture = Pick<Tables<'picture_checks'>, 'id' | 'bucket' | 'path' | 'status'>;
 
+/**
+ * One story on the reader's library shelves, as export_library_of() answers it (IDEAS-1f). `path`
+ * is null when the reader can no longer open the story; `link` is added in the browser
+ * (withLibraryLinks() in lib/libraryForExport.ts).
+ */
+export interface ExportedLibraryEntry {
+  shelf: Tables<'library_entries'>['shelf'];
+  title: string;
+  writer: string;
+  path: string | null;
+  added_at: string;
+  moved_at: string;
+  link?: string | null;
+}
+
 /** The data file, as my_data_export() answers it; only the parts this screen reads are typed. */
 export interface DataExportDocument {
   format: string;
@@ -115,6 +130,8 @@ export interface DataExportDocument {
     string,
     unknown
   >;
+  /** The library shelves with titles and addresses (IDEAS-1f). */
+  library?: ExportedLibraryEntry[];
   tables: {
     stories?: ExportedStory[];
     chapters?: ExportedChapter[];

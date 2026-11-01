@@ -20,8 +20,18 @@ import { useDataExportTranslation } from '../registerDataExportTranslations';
 import { DownloadMyStoriesBlock } from './DownloadMyStoriesBlock';
 import { ExportStatus } from './ExportStatus';
 
-/** What the copy holds, in the board's order (forum posts join once forums exist, S1-E8). */
-const includedParts = ['stories', 'comments', 'messages', 'account', 'settings'] as const;
+/**
+ * What the copy holds, in the board's order (forum posts join once forums exist, S1-E8); the
+ * library shelves since IDEAS-1f.
+ */
+const includedParts = [
+  'stories',
+  'comments',
+  'messages',
+  'library',
+  'account',
+  'settings',
+] as const;
 
 /** The list of what the copy holds. */
 function IncludedList() {

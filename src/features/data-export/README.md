@@ -14,3 +14,4 @@ Settings › Download my data, and the run that makes the copy. Built by S1-E13-
 - `api/dataExport.ts` and `hooks/useDataExport.ts`: the calls and the hooks.
 - Text: `src/locales/{ro,en}/dataExport.json` (`registerDataExportTranslations.ts`), including the words printed in the Word files.
 - The database side: `supabase/migrations/…_s1_e13_02_download_my_data.sql`; tests `210` and `e2e/download-my-data.spec.ts`; for Download my stories `…_s1_e13_05_download_my_stories.sql`, test `213` and `e2e/download-my-stories.spec.ts`.
+- `lib/libraryForExport.ts` (IDEAS-1 part f): the library shelves from `my_data_export()` get full links (`withLibraryLinks()`) and go into the ZIP as `library.csv` too (`libraryCsvFile()`). The database side: `supabase/migrations/…_ideas1_f_library_in_my_data.sql`; test `220`.

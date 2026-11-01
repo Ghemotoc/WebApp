@@ -17,6 +17,7 @@ import { formatRomaniaDate } from '@/lib/romania-time';
 import type { WordLabels } from '@/lib/word/wordTypes';
 
 import { fetchMyDataExports, type DataExport } from '../api/dataExport';
+import type { LibraryCsvLabels } from '../lib/libraryForExport';
 import { useDataExportTranslation } from '../registerDataExportTranslations';
 import {
   dataExportRunState,
@@ -92,6 +93,27 @@ export function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusL
 }
 
 /**
+ * The library spreadsheet's column and shelf names, in the interface language (IDEAS-1f).
+ *
+ * @returns the labels for library.csv
+ */
+function useLibraryLabels(): LibraryCsvLabels {
+  const { t } = useDataExportTranslation();
+  return {
+    shelf: t('library.shelf'),
+    title: t('library.title'),
+    writer: t('library.writer'),
+    link: t('library.link'),
+    added: t('library.added'),
+    shelves: {
+      reading: t('library.shelves.reading'),
+      saved: t('library.shelves.saved'),
+      finished: t('library.shelves.finished'),
+    },
+  };
+}
+
+/**
  * The words of a story's plan file: Story Atlas's own texts (so the file reads like the screens)
  * and the few of its own in dataExport.json (S1-E13-05).
  *
@@ -115,6 +137,7 @@ export function useStartDataExport() {
   const { i18n } = useDataExportTranslation();
   const { wordLabels, statusLabels } = useWordLabels();
   const planText = usePlanText();
+  const libraryLabels = useLibraryLabels();
   return {
     start: async () => {
       await startDataExport({
@@ -122,6 +145,7 @@ export function useStartDataExport() {
         wordLabels,
         statusLabels,
         planText,
+        libraryLabels,
         formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), i18n.language),
       });
       await queryClient.invalidateQueries({ queryKey: dataExportsKey(userId) });
