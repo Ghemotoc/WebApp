@@ -27,8 +27,12 @@
  * paragraphAddon) whose thread opens under the paragraph, and EarlierVersionComments follows the
  * text when comments sit on paragraphs the writer has since changed. useParagraphCommentCounts →
  * paragraph_comment_counts() gives the counts; ParagraphCommentsContext carries them in.
+ * Reading comfort (IDEAS-1 part a): useReadingLook takes the chapter's theme from Night by the
+ * clock or a pick by hand (useChapterTheme), ReadingRuler draws the band over the line being
+ * read, and an address ending "#resume" (the story page's "You are here") goes straight back to
+ * the saved place instead of offering it.
  */
-import { lazy, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { lazy, Suspense, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
@@ -38,6 +42,7 @@ import { QuoteShareWatcher } from '@/features/sharing/components/QuoteShareWatch
 import type { SharedChapter } from '@/features/sharing/lib/sharedChapter';
 import { SharedChapterContext } from '@/features/sharing/lib/sharedChapterContext';
 import { parseSpot, type SpotRange } from '@/lib/chapter-blocks';
+import { cn } from '@/lib/utils';
 
 import type { ReaderChapter } from '../api/chapter';
 import type { ParagraphPlace } from '../api/paragraphComments';
@@ -70,6 +75,12 @@ import { TeaserPage } from './TeaserPage';
 const PictureShareButton = lazy(async () => {
   const module = await import('@/features/sharing/components/PictureShareButton');
   return { default: module.PictureShareButton };
+});
+
+/** The reading ruler, loaded only for a reader who turned it on (IDEAS-1 part a). */
+const ReadingRuler = lazy(async () => {
+  const module = await import('./ReadingRuler');
+  return { default: module.ReadingRuler };
 });
 
 /** "This chapter isn't available", with the way home. */
@@ -116,12 +127,22 @@ function AboveText(props: {
   chapter: ReaderChapter;
   spot: SpotRange | null;
   savedPercent: number | null;
+  placePercent: number | null;
   textRef: RefObject<HTMLDivElement | null>;
 }) {
+  // The chapter the address said "#resume" for, remembered once: the address loses the hash as
+  // soon as the reader jumps back, and a later redraw must not then show the offer as well.
+  const [resumedChapter] = useState(() =>
+    window.location.hash === '#resume' ? props.chapter.code : null,
+  );
   if (props.spot !== null) {
     return (
       <SharedPassageNotice chapterPath={`/s/${props.chapter.story.slug}/${props.chapter.code}`} />
     );
+  }
+  // "You are here" on the story page (IDEAS-1 part a): straight back to the place.
+  if (resumedChapter === props.chapter.code && props.placePercent !== null) {
+    return <SavedPlaceOffer percent={props.placePercent} textRef={props.textRef} goesAtOnce />;
   }
   if (props.savedPercent === null) return null;
   return <SavedPlaceOffer percent={props.savedPercent} textRef={props.textRef} />;
@@ -144,14 +165,23 @@ function ChapterTextBlock(props: {
   children: ReactNode;
 }) {
   const { chapter, body, textRef, look, spot, hasMarkers, children } = props;
+  // The page box, which the reading ruler sits inside (IDEAS-1 part a).
+  const pageRef = useRef<HTMLDivElement>(null);
   return (
     <div ref={textRef} className={hasMarkers ? undefined : 'lg:pr-20'}>
       {children}
       <div
-        className={look.page.className}
+        ref={pageRef}
+        data-testid="chapter-page"
+        className={cn(look.page.className, look.hasRuler && 'tmc-has-ruler')}
         data-theme={look.page.dataTheme}
         style={look.textVariables}
       >
+        {look.hasRuler && (
+          <Suspense fallback={null}>
+            <ReadingRuler boxRef={pageRef} />
+          </Suspense>
+        )}
         <ProtectedChapterText
           markdown={body}
           language={chapter.story.languageCode}
@@ -219,9 +249,14 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
   const progress = useReadingProgress(textRef, hasText);
   useRecordRead(chapter.story.slug, chapter.code, hasText);
   // S1-E4-03: keep the reader's place and offer the one saved last time.
-  const { savedPercent } = useSavedPlace(chapter.story.slug, chapter.code, progress, hasText);
+  const { savedPercent, placePercent } = useSavedPlace(
+    chapter.story.slug,
+    chapter.code,
+    progress,
+    hasText,
+  );
   // S1-E4-02: the reader's own font, size, spacing, width and theme.
-  const look = useReadingLook();
+  const look = useReadingLook(chapter.code);
   // S1-E6-06: the comment markers beside the paragraphs.
   const paragraphComments = useParagraphComments(chapter, hasText);
   return (
@@ -255,6 +290,7 @@ function ChapterReading({ chapter, spot }: { chapter: ReaderChapter; spot: SpotR
                   chapter={chapter}
                   spot={spot}
                   savedPercent={savedPercent}
+                  placePercent={placePercent}
                   textRef={textRef}
                 />
               </ChapterTextBlock>

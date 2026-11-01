@@ -7,8 +7,13 @@
  * saved to the account. Every change shows on the chapter at once. No doodles: this is the
  * chapter reader (DoD design rules). The board's "Later, in the apps: any font on your device"
  * block is left out until the desktop and phone apps exist (docs/board-fixes.md).
+ * Reading comfort (IDEAS-1 part a): Atkinson Hyperlegible joins the fonts (IDEA-20261031-6);
+ * under Theme come Night by the clock (7) and the reading ruler (8), in ReadingComfortFields.
+ * The Theme chips show the chapter's theme: while the clock has turned it to Night, a pick by
+ * hand counts for this chapter only (useChapterTheme), so the usual theme stays as it was.
+ * The card scrolls inside itself when it is taller than the window, as it is on a phone.
  * Who uses it: ReadingSettingsControl. What it calls: useReadingSettings (the reader's
- * settings), which saves to the account.
+ * settings), which saves to the account, and useChapterTheme.
  */
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,13 +28,15 @@ import type {
   ReadingSettings,
   ReadingTheme,
 } from '../api/readingSettings';
+import { pickThemeForChapter, useChapterTheme } from '../hooks/useChapterTheme';
 import { useReadingSettings } from '../hooks/useReadingSettings';
 
+import { ReadingComfortFields } from './ReadingComfortFields';
 import { CloseIcon } from './ReaderIcons';
 import { TextSizeSlider } from './TextSizeSlider';
 
 /** The choices in the board's order. */
-const fonts: ReadingFont[] = ['sans', 'serif', 'dyslexia_friendly'];
+const fonts: ReadingFont[] = ['sans', 'serif', 'dyslexia_friendly', 'atkinson_hyperlegible'];
 const spacings: ReadingLineSpacing[] = ['compact', 'normal', 'wide'];
 const widths: ReadingLineWidth[] = ['narrow', 'medium', 'wide'];
 const themes: ReadingTheme[] = ['light', 'sepia', 'night'];
@@ -39,6 +46,8 @@ export interface ReadingSettingsPanelProps {
   id: string;
   /** The size that follows the device. */
   deviceSize: number;
+  /** The open chapter, whose theme a pick by hand may change for this chapter only. */
+  chapterCode: string;
   onClose: () => void;
 }
 
@@ -77,7 +86,29 @@ function FontChoice({ settings, change }: ChoicesProps) {
   );
 }
 
-/** The other three groups of chips: line spacing, line width and theme. */
+/** The Theme chips: the chapter's theme, with a pick by hand kept for this chapter at night. */
+function ThemeChoice({ settings, change, chapterCode }: ChoicesProps & { chapterCode: string }) {
+  const { t } = useTranslation('reading');
+  const { theme, isClockNight } = useChapterTheme(settings, chapterCode);
+  const pick = (value: string) => {
+    const picked = value as ReadingTheme;
+    // While the clock decides, the pick wins until the next chapter; otherwise it is the usual theme.
+    if (isClockNight) pickThemeForChapter(chapterCode, picked);
+    else change({ theme: picked });
+  };
+  return (
+    <ChoiceChips
+      label={t('settings.theme')}
+      isLabelVisible
+      isLabelEyebrow
+      options={optionsFor(themes, 'themes', t)}
+      value={theme}
+      onChange={pick}
+    />
+  );
+}
+
+/** The line spacing and line width chips. */
 function SettingChoices({ settings, change }: ChoicesProps) {
   const { t } = useTranslation('reading');
   return (
@@ -97,14 +128,6 @@ function SettingChoices({ settings, change }: ChoicesProps) {
         options={optionsFor(widths, 'widths', t)}
         value={settings.lineWidth}
         onChange={(value) => change({ lineWidth: value as ReadingLineWidth })}
-      />
-      <ChoiceChips
-        label={t('settings.theme')}
-        isLabelVisible
-        isLabelEyebrow
-        options={optionsFor(themes, 'themes', t)}
-        value={settings.theme}
-        onChange={(value) => change({ theme: value as ReadingTheme })}
       />
     </>
   );
@@ -138,7 +161,12 @@ function SaveNote({ saveFailed }: { saveFailed: boolean }) {
  *
  * @returns the settings card
  */
-export function ReadingSettingsPanel({ id, deviceSize, onClose }: ReadingSettingsPanelProps) {
+export function ReadingSettingsPanel({
+  id,
+  deviceSize,
+  chapterCode,
+  onClose,
+}: ReadingSettingsPanelProps) {
   const { t } = useTranslation('reading');
   const { settings, change, saveFailed } = useReadingSettings();
   // Opening moves focus to the heading, so the next Tab is inside the panel.
@@ -149,7 +177,7 @@ export function ReadingSettingsPanel({ id, deviceSize, onClose }: ReadingSetting
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className="tmc-rise absolute top-14 left-0 z-[5] flex w-[min(360px,calc(100vw-32px))] flex-col gap-[18px] rounded-card border border-border bg-surface p-[22px] shadow-popover"
+      className="tmc-rise absolute top-14 left-0 z-[5] flex max-h-[calc(100dvh-140px)] w-[min(360px,calc(100vw-32px))] flex-col gap-[18px] overflow-y-auto rounded-card border border-border bg-surface p-[22px] shadow-popover"
     >
       <div className="flex items-center justify-between gap-2">
         <h2
@@ -175,6 +203,8 @@ export function ReadingSettingsPanel({ id, deviceSize, onClose }: ReadingSetting
         onChange={(size) => change({ textSize: size })}
       />
       <SettingChoices settings={settings} change={change} />
+      <ThemeChoice settings={settings} change={change} chapterCode={chapterCode} />
+      <ReadingComfortFields settings={settings} change={change} />
       <SaveNote saveFailed={saveFailed} />
     </section>
   );

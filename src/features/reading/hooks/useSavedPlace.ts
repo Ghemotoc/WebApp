@@ -46,7 +46,8 @@ export function isPlaceWorthOffering(percent: number): boolean {
  * @param chapterCode - the chapter's code
  * @param progress - how far through the text the reader is now, 0 to 100 (useReadingProgress)
  * @param isShowingText - true once a signed-in reader has the whole text on screen
- * @returns savedPercent: the place to offer (null when there is none worth offering)
+ * @returns savedPercent: the place to offer (null when there is none worth offering); placePercent:
+ *   the saved place whatever it is (null when there is none), for going straight back (IDEAS-1 a)
  */
 export function useSavedPlace(
   storySlug: string,
@@ -94,6 +95,8 @@ export function useSavedPlace(
   const savedPercent = place.data?.percent ?? null;
   return {
     savedPercent: savedPercent !== null && isPlaceWorthOffering(savedPercent) ? savedPercent : null,
+    // The place itself, for "You are here" on the story page, which goes back to any place.
+    placePercent: savedPercent,
   };
 }
 

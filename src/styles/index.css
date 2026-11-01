@@ -186,6 +186,21 @@
 .tmc-chapter-text .tmc-shared-passage:focus {
   outline: none;
 }
+/* The reading ruler (IDEAS-1 part a, IDEA-20261031-8): the page box keeps its own stacking, so
+   the band (z-index -1) paints over the page's colour and under the words, never hiding text.
+   The tint is the shared passage's, which keeps the text's contrast in every theme. */
+.tmc-has-ruler {
+  position: relative;
+  isolation: isolate;
+}
+.tmc-reading-ruler {
+  position: absolute;
+  inset-inline: -8px;
+  z-index: -1;
+  border-radius: 6px;
+  background: var(--info-bg);
+  pointer-events: none;
+}
 /* Paragraph comments on the reader (S1-E6-06; board 3.5): each paragraph shares a row with its
    comment marker, 44 px wide with 8 px between on phones and 64 px with 16 px on wide screens.
    The column appears only once the marker is drawn (the counts have arrived and comments are
