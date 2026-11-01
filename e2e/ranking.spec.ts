@@ -22,8 +22,10 @@ const adultWriterId = '00000000-0000-4000-8000-000000000001';
 const teacherId = '00000000-0000-4000-8000-000000000007';
 const blockerId = '00000000-0000-4000-8000-000000000015';
 const tag = 'e2e-rank';
+// The setting as the migrations leave it (S1-E5-06 classics, S1-E2-06 picked, IDEAS-1e shared),
+// so cleaning up puts back every shelf the other specs expect.
 const defaultShelves =
-  '["following", "popular", "rising", "new", "completed", "updated", "categories"]';
+  '["following", "picked", "popular", "rising", "shared", "new", "completed", "updated", "classics", "categories"]';
 
 /** Removes this spec's stories, likes, comments and tag, and puts the setting back. */
 function cleanUp() {

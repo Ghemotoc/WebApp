@@ -49,6 +49,7 @@ import type { ReaderChapter } from '../api/chapter';
 import type { ParagraphPlace } from '../api/paragraphComments';
 import { useChapter } from '../hooks/useChapter';
 import { useChapterBanner } from '../hooks/useChapterBanner';
+import { useLinkedParagraphThread } from '../hooks/useLinkedParagraphThread';
 import { useParagraphCommentCounts } from '../hooks/useParagraphCommentCounts';
 import { useReadingLook } from '../hooks/useReadingLook';
 import { useReadingProgress } from '../hooks/useReadingProgress';
@@ -202,7 +203,8 @@ function ChapterTextBlock(props: {
 }
 
 /**
- * The paragraph markers' facts for one chapter (S1-E6-06): the counts, and which thread is open.
+ * The paragraph markers' facts for one chapter (S1-E6-06): the counts, and which thread is open,
+ * starting with the one the address asked for, if any (IDEAS-1e).
  *
  * @param chapter - the chapter being read
  * @param hasText - false while there is no text
@@ -214,7 +216,9 @@ function useParagraphComments(chapter: ReaderChapter, hasText: boolean): Paragra
     [chapter.story.slug, chapter.code],
   );
   const counts = useParagraphCommentCounts(address, hasText);
-  const [openPlace, setOpenPlace] = useState<ParagraphPlace | null>(null);
+  // A link such as a notification's "#paragraph-4" starts with that thread open (IDEAS-1e).
+  const linkedPlace = useLinkedParagraphThread(counts !== null);
+  const [openPlace, setOpenPlace] = useState<ParagraphPlace | null>(linkedPlace);
   return useMemo(
     () => (counts === null ? null : { address, counts, openPlace, setOpenPlace }),
     [address, counts, openPlace],

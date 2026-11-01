@@ -5,8 +5,8 @@
  * What it shows: the eyebrow and heading with "How ranking works" (a link to the terms' ranking
  * section, DSA art. 27; S1-E5-03), "Browse by category", then the shelves in the order of the
  * public setting discover_shelves (S1-E5-03, Q46: changed without a release): New from writers
- * you follow (signed in), Popular, New and rising, New stories, Completed, Recently updated and
- * one per category.
+ * you follow (signed in), Popular, New and rising, Most shared this week (IDEAS-1e), New stories,
+ * Completed, Recently updated and one per category.
  * Every shelf is one line of at most 20 with "View more" (CLAUDE.md rule 20), and the database
  * leaves out what this reader may not see: ratings above their age (rule 18), writers either side
  * blocks, drafts and moderated stories. Nothing is chosen from what the reader has read (no
@@ -50,6 +50,7 @@ const defaultShelfOrder = [
   'picked',
   'popular',
   'rising',
+  'shared',
   'new',
   'completed',
   'updated',

@@ -20,3 +20,4 @@ Notification emails (S1-E7-02), built by READ-4e:
 - `api/emailSettings.ts` and `hooks/useEmailSettings.ts`: `my_notification_email_settings()`, `set_notification_email()`, `unsubscribe_from_emails()`.
 - The sending: `server/notification-emails.ts` (`/api/notification-emails`, woken by pg_cron through pg_net, and `/api/unsubscribe`, the one-click header). Texts in `src/locales/*/email.json` under `notificationEmails`, editable by admins as `email:` overrides.
 - The database side: `supabase/migrations/…_s1_e7_02_notification_emails.sql`; tests `183-notification-emails.test.sql`, `server/notification-emails.test.ts`, `e2e/notification-emails.spec.ts`.
+- Paragraph links (IDEAS-1 part e): a row about a comment on a paragraph opens the chapter at that paragraph's thread (`#paragraph-4`, or `#paragraph-earlier` once the writer changed it), from `comment_place` in `notification_json()` and `src/lib/paragraph-link.ts`.

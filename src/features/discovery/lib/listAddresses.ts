@@ -3,7 +3,7 @@
  *
  * Every See all page has its own address with its filters and sort in the query string, so a list
  * can be shared and opens the same for the next person (S1-E5-09, fourth criterion):
- *   /discover/all/<popular|rising|updated|new|completed|following|picked|classics>   the Discover shelves
+ *   /discover/all/<popular|rising|shared|updated|new|completed|following|picked|classics>   the Discover shelves
  *   /discover/c/<category>                            a category page
  *   /discover/t/<tag>                                 a tag page
  *   /u/<username>/stories                             a writer's stories (from the profile)
@@ -20,6 +20,7 @@ import type { CompletionStatus, ListKind, ListRequest, SortOrder } from '../api/
 export const discoverListKinds: readonly ListKind[] = [
   'popular',
   'rising',
+  'shared',
   'updated',
   'new',
   'completed',
@@ -43,14 +44,18 @@ export const sortOrders: readonly SortOrder[] = [
 ];
 
 /**
- * The sorts a list's drop-down offers: search adds "Best match" first (S1-E5-04), which the
- * database refuses on any other list.
+ * The sorts a list's drop-down offers: search adds "Best match" first (S1-E5-04) and "Most
+ * shared this week" adds "Most shared this week" first (IDEAS-1e); the database refuses each on
+ * any other list.
  *
  * @param kind - which list
  * @returns the sorts, in the drop-down's order
  */
 export function sortChoicesFor(kind: ListKind): readonly SortOrder[] {
-  return kind === 'search' ? ['relevance', ...sortOrders] : sortOrders;
+  if (kind === 'search') return ['relevance', ...sortOrders];
+  // IDEAS-1e: "Most shared this week" adds its own order first, which no other list accepts.
+  if (kind === 'shared') return ['shared', ...sortOrders];
+  return sortOrders;
 }
 
 /**
@@ -65,6 +70,7 @@ export function listAddress(request: ListRequest): string {
   const paths: Record<ListKind, string> = {
     popular: '/discover/all/popular',
     rising: '/discover/all/rising',
+    shared: '/discover/all/shared',
     updated: '/discover/all/updated',
     new: '/discover/all/new',
     completed: '/discover/all/completed',
@@ -93,7 +99,7 @@ export function listAddress(request: ListRequest): string {
  * The order a list has when the reader hasn't picked one: the same rule as the database's
  * list_default_sort() (S1-E5-03; S1-E5-02, first criterion). New stories are newest first,
  * Recently updated, the follows shelf and the library's shelves (S1-E4-03) by their last chapter;
- * every other list is popular.
+ * "Most shared this week" by this week's shares (IDEAS-1e); every other list is popular.
  *
  * @param kind - which list
  * @returns the list's own sort
@@ -102,6 +108,7 @@ export function listDefaultSort(kind: ListKind): SortOrder {
   if (kind === 'new') return 'newest';
   if (kind === 'updated' || kind === 'following' || kind === 'library') return 'updated';
   if (kind === 'search') return 'relevance';
+  if (kind === 'shared') return 'shared';
   return 'popular';
 }
 

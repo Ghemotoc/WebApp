@@ -30,6 +30,7 @@ const newChapter: AppNotification = {
   story: { slug: 'salt-mine-choir', title: 'The Salt Mine Choir' },
   chapter: { code: 'abc123', title: 'Fifteen', position: 15 },
   commentExcerpt: null,
+  commentPlace: null,
   decision: null,
   item: null,
   statement: null,
@@ -50,6 +51,40 @@ describe('notificationText', () => {
     );
     expect(text.href).toBe('/s/salt-mine-choir/abc123');
     expect(text.actionLabel).toBe('Read now');
+  });
+
+  it("a comment on paragraph 4 opens the chapter at that paragraph's thread (IDEAS-1e)", () => {
+    const comment: AppNotification = {
+      ...newChapter,
+      kind: 'comment_on_chapter',
+      category: 'replies',
+      commentExcerpt: 'Lovely line.',
+      commentPlace: 4,
+    };
+    expect(notificationText(englishT(), comment, null).href).toBe(
+      '/s/salt-mine-choir/abc123#paragraph-4',
+    );
+  });
+
+  it('a reply on a paragraph the writer has since changed opens the earlier-version thread', () => {
+    const reply: AppNotification = {
+      ...newChapter,
+      kind: 'comment_reply',
+      category: 'replies',
+      commentPlace: 'earlier',
+    };
+    expect(notificationText(englishT(), reply, null).href).toBe(
+      '/s/salt-mine-choir/abc123#paragraph-earlier',
+    );
+  });
+
+  it('a comment on the whole chapter opens the chapter as before', () => {
+    const comment: AppNotification = {
+      ...newChapter,
+      kind: 'comment_on_chapter',
+      category: 'replies',
+    };
+    expect(notificationText(englishT(), comment, null).href).toBe('/s/salt-mine-choir/abc123');
   });
 
   it('twelve reactions read as two names and 10 others, with a pill counting them', () => {

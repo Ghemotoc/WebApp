@@ -8863,6 +8863,7 @@ export type Database = {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
         Returns: boolean;
       };
+      story_shares_this_week: { Args: { target_story_id: string }; Returns: number };
       story_signals: {
         Args: Record<PropertyKey, never>;
         Returns: {

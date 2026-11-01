@@ -41,7 +41,9 @@
       "finished": "Finished"
     },
     "readerLibrary": "{{name}}’s library",
-    "readerLibraryEyebrow": "Library"
+    "readerLibraryEyebrow": "Library",
+    "shared": "Most shared this week",
+    "sharedEyebrow": "Passed on by readers"
   },
   "card": {
     "meta_one": "{{writer}} · {{count}} chapter",
@@ -85,7 +87,8 @@
     "oldest": "Oldest",
     "title_az": "Title, A to Z",
     "title_za": "Title, Z to A",
-    "writer": "Writer, A to Z"
+    "writer": "Writer, A to Z",
+    "shared": "Most shared this week"
   },
   "greeting": {
     "morning": "Good morning, {{name}}.",

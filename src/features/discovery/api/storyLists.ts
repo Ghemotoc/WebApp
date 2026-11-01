@@ -33,14 +33,26 @@ export type ListKind =
   // S1-E2-06: stories that match what the reader said they like (signed in only).
   | 'picked'
   // S1-E13-01: someone's library, shown on their profile when they allow it (the key is the username).
-  | 'reader_library';
+  | 'reader_library'
+  // IDEAS-1e: the stories shared most in the last 7 days.
+  | 'shared';
 
 /**
  * The reader's sort choices (S1-E5-02; popular from S1-E5-03; relevance, only for search, from
- * S1-E5-04); null keeps the list's own order.
+ * S1-E5-04; this week's shares, only for "Most shared this week", from IDEAS-1e); null keeps the
+ * list's own order.
  */
 export type SortOrder =
-  'relevance' | 'popular' | 'updated' | 'newest' | 'oldest' | 'title_az' | 'title_za' | 'writer';
+  | 'relevance'
+  | 'popular'
+  | 'updated'
+  | 'newest'
+  | 'oldest'
+  | 'title_az'
+  | 'title_za'
+  | 'writer'
+  // IDEAS-1e: this week's shares, only on the 'shared' list.
+  | 'shared';
 
 /** Ongoing or completed: the status filter. */
 export type CompletionStatus = 'ongoing' | 'completed';
