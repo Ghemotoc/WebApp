@@ -55,6 +55,18 @@
     "delete": "Șterge cererea",
     "deleted": "Cerere ștearsă. {{name}} nu va afla."
   },
+  "block": {
+    "button": "Blochează",
+    "open": "Blochează {{name}}",
+    "eyebrow": "Blocare",
+    "title": "Blochezi {{name}}?",
+    "body": "Nu vă veți mai putea trimite mesaje, menționa sau urmări. {{name}} nu va afla.",
+    "confirm": "Blochează {{name}}",
+    "saving": "Se blochează…",
+    "cancel": "Nu bloca",
+    "close": "Închide",
+    "failed": "Nu am putut bloca persoana. Încearcă din nou."
+  },
   "about": {
     "title": "Despre conversație",
     "viewProfile": "Vezi profilul lui {{name}}",

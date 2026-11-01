@@ -5522,6 +5522,7 @@ export type Database = {
         }[];
       };
       admin_case_embed: { Args: { target_case_id: string }; Returns: Json };
+      admin_case_message: { Args: { target_case_id: string }; Returns: Json };
       admin_case_notices: {
         Args: { target_case_id: string };
         Returns: {
@@ -7060,6 +7061,7 @@ export type Database = {
         };
         Returns: string;
       };
+      message_with_context: { Args: { reported_message_id: string }; Returns: Json };
       messaging_partner: {
         Args: { wanted_handle: string };
         Returns: {

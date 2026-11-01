@@ -9,7 +9,8 @@
  * How it is a dialog: the browser's own <dialog> element with showModal(), which traps focus,
  * closes on Escape and gives focus back to the button that opened it (WCAG 2.2, 2.1.2 and 2.4.3).
  * With "Copied from a published work" it asks where the text came from, all optional, and attaches
- * the passage the reader selected before pressing Report (S1-E10-08).
+ * the passage the reader selected before pressing Report (S1-E10-08). For a private message it
+ * says that the message and up to 20 before it go with the report (S1-E9-02).
  * Signed out, it says to log in: reporting needs an account (the web form is S1-E10-02).
  * Above the form, "Is someone in danger right now?" shows the helplines for the reader's country
  * (S1-E10-13a), because a report is never the right tool for an emergency.
@@ -103,6 +104,24 @@ function FormButtons(props: { onCancel: () => void; isSending: boolean }) {
 }
 
 /**
+ * The lines under the details: for a private message, what goes to the team with it (S1-E9-02;
+ * board Messages 5.5), then that a person reads every report.
+ *
+ * @returns one or two lines
+ */
+function ReassuranceLines({ itemType }: { itemType: ReportableType }) {
+  const { t } = useTranslation('reporting');
+  return (
+    <>
+      {itemType === 'message' && (
+        <p className="m-0 text-sm text-body">{t('dialog.messageContext')}</p>
+      )}
+      <p className="m-0 text-sm text-body">{t('dialog.aPersonReads')}</p>
+    </>
+  );
+}
+
+/**
  * The form: reasons, details, the reassurance line, Cancel and Send.
  *
  * @returns the form
@@ -158,7 +177,7 @@ function ReportForm(props: ReportDialogProps & { report: ReturnType<typeof useRe
         onChange={setDetails}
         isTooLong={problem === 'details_too_long'}
       />
-      <p className="m-0 text-sm text-body">{t('dialog.aPersonReads')}</p>
+      <ReassuranceLines itemType={props.itemType} />
       {props.report.failure !== null && (
         <Notice tone="error">{t(`failures.${props.report.failure}`)}</Notice>
       )}
