@@ -114,5 +114,48 @@
       "scheduled": "Scheduled",
       "published": "Published"
     }
+  },
+  "epub": {
+    "heading": "An EPUB for e-readers",
+    "intro": "This story is completed, so you can make it into an EPUB book for Kindle or any other e-reader: the cover, a copyright page, the contents, then every published chapter. The plan from Story Atlas isn’t included.",
+    "open": "Make an EPUB",
+    "dialogHeading": "Make an EPUB of “{{title}}”",
+    "dialogIntro": "Check what the book will print. These details stay on this device: we don’t save them.",
+    "nameLabel": "Name on the book",
+    "nameHint": "Your pen name, or any name you want printed as the author, your own name included. We don’t keep it, so type it each time.",
+    "titleLabel": "Title",
+    "coverLegend": "Cover",
+    "coverStory": "The story’s cover",
+    "coverFile": "A picture from this device",
+    "coverFileLabel": "Picture for the cover",
+    "coverFileHint": "JPEG or PNG. It goes into the book only: we don’t upload it.",
+    "coverPreview": "Cover preview",
+    "make": "Make EPUB",
+    "making": "Making your EPUB on this device…",
+    "cancel": "Cancel",
+    "saved": "Your EPUB is saved as {{fileName}}. Open it in your e-reader’s app, or send it to your Kindle.",
+    "failed": "We couldn’t make the EPUB. Please try again.",
+    "problems": {
+      "noName": "Type the name to print on the book.",
+      "noTitle": "Type the book’s title.",
+      "noFile": "Choose a picture, or pick the story’s cover."
+    },
+    "book": {
+      "contents": "Contents",
+      "copyrightHeading": "Copyright",
+      "copyright": {
+        "rights": "© {{year}} {{author}}. All rights reserved.",
+        "noCopying": "No part of this book may be copied, shared or published again in any form without written permission from {{author}}.",
+        "ownership": "Every right to this work belongs to {{author}}. {{productName}} prepared this file and holds no rights to the work.",
+        "prepared": "This edition was prepared through {{productName}} ({{siteUrl}}) on {{date}}."
+      },
+      "byLine": "By {{name}}",
+      "coverAlt": "The cover of {{title}}",
+      "chapterNumber": "Chapter {{number}}",
+      "chapterWithTitle": "Chapter {{number}}: {{title}}",
+      "pictureMissing": "Picture: {{alt}}",
+      "embedLine": "Music or video: {{title}}",
+      "embedMissing": "A music or video card that is no longer available"
+    }
   }
 }

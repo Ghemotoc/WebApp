@@ -23,11 +23,16 @@ function document(): DataExportDocument {
     first_published_at: null,
     updated_at: '2026-10-02',
     deleted_at: null,
+    cover_kind: 'automatic' as const,
+    cover_design: null,
+    cover_background: null,
+    cover_accent: null,
   };
   const chapter = {
     story_id: 's1',
     draft_title: '',
     published_title: 'Unu publicat',
+    published_body: null,
     status: 'published' as const,
     created_at: '2026-10-01',
     first_published_at: '2026-10-01',
