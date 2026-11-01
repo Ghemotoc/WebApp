@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- FORUMS-1e (#270, 1 Nov): nothing by hand. Moderators can pin and lock threads (with a reason, shown on a locked thread as "the moderation team"), and "Don't bump" keeps a thread where it is. Please read the new Romanian texts.
 - FORUMS-1d (#269, 1 Nov): nothing by hand. Forums and threads with new posts get a dot, threads open at the first new post, "Mark all as read" and a "New for you" column. Please read the new Romanian texts.
 - FORUMS-1c (#268, 1 Nov): nothing by hand. Quote, Add to quotes and Remove quotes on forum threads; a quote shows a marker once its post is deleted or removed. Please read the new Romanian texts.
 - FORUMS-1b (#267, 1 Nov): nothing by hand. Members start threads in a forum and reply; every post has its number as a permalink, can be edited (moderators read earlier versions) and reported. Please read the Romanian forum texts.
