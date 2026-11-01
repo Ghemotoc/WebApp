@@ -121,6 +121,9 @@ select results_eq(
        ('profiles', 0::bigint),
        ('public_notices', 0::bigint),
        ('quote_cards', 0::bigint),
+       -- A private reading streak is the reader's only (IDEAS-1b).
+       ('reading_habits', 0::bigint),
+       ('reading_minutes', 0::bigint),
        ('reading_positions', 0::bigint),
        -- What someone said they like is theirs only (S1-E2-06).
        ('reading_preferences', 0::bigint),

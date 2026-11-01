@@ -181,10 +181,10 @@ select is((select sum(total)::integer from public.chapter_reads where chapter_id
 /* ---------- The nightly job and its record ---------- */
 
 select is(public.run_retention_jobs() >= 0, true, 'run_retention_jobs() runs every clean-up');
-select is((select count(*)::integer from public.retention_runs where ran_at = now()), 6, 'each clean-up writes one line of the record');
+select is((select count(*)::integer from public.retention_runs where ran_at = now()), 7, 'each clean-up writes one line of the record (the seventh is IDEAS-1b''s reading minutes)');
 
 select pg_temp.sign_in('09');
-select is((select count(*)::integer from public.retention_runs where ran_at = now()), 6,
+select is((select count(*)::integer from public.retention_runs where ran_at = now()), 7,
   'allowed: retention_runs_select_admin: an admin reads the clean-up record');
 select pg_temp.sign_in('01');
 select is((select count(*)::integer from public.retention_runs), 0,

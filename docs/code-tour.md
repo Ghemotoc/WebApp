@@ -1590,6 +1590,17 @@ Robert's picks of 31 Oct 2026, ideas 4, 6, 7 and 8 (`/mnt/project-files/feature-
 - How a setting travels: the same as the other reading settings: `ReadingComfortFields` → `change()` → `save_reading_settings()` (now with four more arguments, each with a default, so older calls still work).
 - Tests: `supabase/tests/database/215-reading-comfort.test.sql`, `lib/nightByClock.test.ts`, `lib/rulerLines.test.ts`, `e2e/reading-comfort.spec.ts`.
 
+## The private reading streak (IDEAS-1 part b)
+
+Idea IDEA-20261031-13, with Robert's comments of 31 Oct 2026.
+
+- Where it lives: `src/features/reading-habit/` holds the calls (`api/readingHabit.ts`), the hooks and the rules; the Library shows it as "Your reading days" (`src/features/library/components/ReadingHabitNote.tsx` and `ReadingHabitSettings.tsx`).
+- How a minute travels: the chapter reader calls `useReadingMinutes()`. Only while the streak is on, once a minute, if the tab is visible and the reader scrolled, pressed a key or touched in the last two minutes (`lib/activeReading.ts`), it calls `add_reading_minute()` → `reading_minutes` (one row per reader per day, on the reader's own clock; a second minute within 45 seconds is ignored, so two tabs can't count double).
+- How the note reads it: `my_reading_habit()` returns the target, the reminder, the days read since Monday and today's minutes. `start_reading_habit()`, `save_reading_habit()` and `stop_reading_habit()` change it; stopping deletes the minutes too.
+- The reminder: the pg_cron job `send-reading-reminders` (every five minutes, `send_reading_reminders()`) sends one in-app `reading_reminder` notification a day to a reader short of their target at their chosen time. Never the next day, never by email, and never between 22:00 and 07:00 for anyone under 18 (quiet hours, Q50); the save refuses such a time too.
+- Privacy: both tables are readable by their owner only, are in Download my data and are deleted with the account; minutes are kept 14 days (`purge_old_reading_minutes()` in the nightly retention run).
+- Tests: `supabase/tests/database/216-reading-streak.test.sql`, `src/features/reading-habit/lib/*.test.ts`, `e2e/reading-streak.spec.ts`.
+
 ## Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)
 
 - Where it lives: `src/features/sharing/` (see its README). The reader screen adds `ShareButtonWhenNear` to `ChapterEnd`'s row (it fetches `ShareButton` when the row nears the screen, `src/lib/use-is-near.ts`) and `QuoteShareWatcher` under the chapter (it fetches `QuoteShareBar` on the first selection); `reading/lib/toSharedChapter.ts` hands them only public things (address, titles, number, pen name).

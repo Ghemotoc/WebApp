@@ -201,6 +201,26 @@
   background: var(--info-bg);
   pointer-events: none;
 }
+
+/* The private reading streak's bar in the Library (IDEAS-1b): today's minutes against the
+   target. The track has a control-coloured edge so the bar keeps 3:1 against the card (WCAG
+   1.4.11); the filled part is the primary colour. */
+.tmc-habit-progress {
+  appearance: none;
+  border: 1px solid var(--control-border);
+  border-radius: 999px;
+  background: var(--tint);
+  overflow: hidden;
+}
+.tmc-habit-progress::-webkit-progress-bar {
+  background: var(--tint);
+}
+.tmc-habit-progress::-webkit-progress-value {
+  background: var(--primary);
+}
+.tmc-habit-progress::-moz-progress-bar {
+  background: var(--primary);
+}
 /* Paragraph comments on the reader (S1-E6-06; board 3.5): each paragraph shares a row with its
    comment marker, 44 px wide with 8 px between on phones and 64 px with 16 px on wide screens.
    The column appears only once the marker is drawn (the counts have arrived and comments are
