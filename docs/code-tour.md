@@ -415,6 +415,21 @@ nightly run-storage-sweep → run_storage_sweep() → pg_net → supabase/functi
 
 The schedule itself is `docs/retention.md`; every keep time is a setting (`*_keep_*`, `unconfirmed_account_days`). Deleting a row never deletes its file, so a table that points at Storage files must also be read by `storage_files_to_sweep()`. This is the first Supabase Edge Function: the logic is in `sweep.ts` (plain TypeScript, tested by Vitest), and `index.ts` only hands it Deno's settings. Tests: `212`, `supabase/functions/storage-sweep/sweep.test.ts`.
 
+### One journey through the whole epic (S1-E13-QA)
+
+A 14-year-old shows their library to people they follow, then downloads their data:
+
+```
+Settings › Privacy radio → usePrivacySettings → set_library_audience() → profiles.library_visible_to
+Settings › Download my data → runDataExport → request_data_export() → my_data_export()
+  → export_account_of() (the profile, with library_visible_to) + export_tables_of() (data_export_tables())
+  → data.json in the ZIP → private exports bucket → finish_data_export() → seven days later
+nightly run_retention_jobs() → purge_expired_exports() → the file goes with the Storage sweep
+Delete my account → request_account_deletion() → 14 days → purge_closed_accounts() → account_deletion_rules()
+```
+
+`data_export_tables()` and `account_deletion_rules()` must name the same tables (test `214`; `exports`, the copy itself, is the one table only deletion names). The epic check walks the five stories together in `e2e/epic-s1-e13.spec.ts` and `214`; its report is `docs/epic-reports/S1-E13.md`.
+
 ## The Teacher badge (S1-E2-11)
 
 An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:
