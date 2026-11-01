@@ -12,7 +12,13 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { unreadCountQueryKey } from '@/features/notifications/hooks/useUnreadNotificationCount';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
-import { fetchMyDataExports, type DataExport } from '../api/dataExport';
+import {
+  fetchChapterChoices,
+  fetchMyDataExports,
+  type ChapterChoice,
+  type DataExport,
+  type StoriesExportChoices,
+} from '../api/dataExport';
 import {
   startStoriesExport,
   storiesExportRunState,
@@ -21,7 +27,7 @@ import {
 import type { StoriesExportOutcome } from '../lib/runStoriesExport';
 import { useDataExportTranslation } from '../registerDataExportTranslations';
 
-import { useWordLabels } from './useDataExport';
+import { usePlanText, useWordLabels } from './useDataExport';
 
 /** The Word files' cache key, per person. */
 export function storiesExportsKey(userId: string | null) {
@@ -65,28 +71,45 @@ export function useStoriesExportRun() {
 }
 
 /**
- * "Get Word files": makes them in the background of this tab (or finds the earlier ones), then
+ * "Get my files": makes them in the background of this tab (or finds the earlier ones), then
  * reads the copies and the notification count again.
  *
- * @returns start(storyId), which answers 'reused', 'made' or null after a failure
+ * @returns start(choices), which answers 'reused', 'made' or null after a failure
  */
 export function useStartStoriesExport() {
   const queryClient = useQueryClient();
   const { userId } = useSession();
   const { i18n } = useDataExportTranslation();
   const { wordLabels, statusLabels } = useWordLabels();
+  const planText = usePlanText();
   return {
-    start: async (storyId: string | null): Promise<StoriesExportOutcome | null> => {
+    start: async (choices: StoriesExportChoices): Promise<StoriesExportOutcome | null> => {
       const outcome = await startStoriesExport({
         client: await requireClient(),
         wordLabels,
         statusLabels,
+        planText,
         formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), i18n.language),
-        storyId,
+        choices,
       });
       await queryClient.invalidateQueries({ queryKey: storiesExportsKey(userId) });
       await queryClient.invalidateQueries({ queryKey: unreadCountQueryKey(userId) });
       return outcome;
     },
   };
+}
+
+/**
+ * One story's live chapters, for "Only the chapters I choose".
+ *
+ * @param storyId - the story's ID, or null while "All my stories" is chosen (nothing is read)
+ * @returns the query: the chapters, first to last
+ */
+export function useChapterChoices(storyId: string | null) {
+  const { userId } = useSession();
+  return useQuery<ChapterChoice[]>({
+    queryKey: ['download-chapter-choices', userId, storyId],
+    enabled: userId !== null && storyId !== null,
+    queryFn: async () => fetchChapterChoices(await requireClient(), storyId ?? ''),
+  });
 }

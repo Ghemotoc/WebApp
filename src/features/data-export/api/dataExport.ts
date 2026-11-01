@@ -24,6 +24,10 @@ export type DataExport = Pick<
   | 'id'
   | 'kind'
   | 'story_id'
+  | 'chapter_ids'
+  | 'include_chapters'
+  | 'include_plan'
+  | 'include_data'
   | 'state'
   | 'file_name'
   | 'file_size'
@@ -39,9 +43,27 @@ export type DataExportState = Database['public']['Enums']['export_state'];
 /** What a copy holds: all of the person's data, or their stories as Word files. */
 export type DataExportKind = Database['public']['Enums']['export_kind'];
 
-/** The file types the bucket takes: a ZIP, or one Word file for one story. */
+/** The file types the bucket takes: a ZIP, or one Word or JSON file for one story. */
 export const ZIP_TYPE = 'application/zip';
 export const WORD_TYPE = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+export const JSON_TYPE = 'application/json';
+
+/**
+ * What the writer chose in Download my stories (Robert, 1 Nov 2026, 06:27 and 06:29): one story
+ * or all, one story's chapters or every one, and which files.
+ */
+export interface StoriesExportChoices {
+  /** The story's ID, or null for all the writer's stories. */
+  storyId: string | null;
+  /** The chosen chapters' IDs, or null for every chapter. */
+  chapterIds: string[] | null;
+  /** The chapters as a Word file. */
+  includeChapters: boolean;
+  /** The plan from Story Atlas as a Word file. */
+  includePlan: boolean;
+  /** The machine-readable copy (JSON). */
+  includeData: boolean;
+}
 
 /** The parts of a story row the Word files use (the data file keeps every field). */
 export type ExportedStory = Pick<
@@ -124,26 +146,30 @@ export async function fetchDataExportDocument(
   return data as unknown as DataExportDocument;
 }
 
-/** What "Get Word files" answered: the earlier files, or a new copy to make. */
+/** What "Get my files" answered: the earlier files, or a new copy to make. */
 export type StoriesExportOpened =
   { outcome: 'reused'; exportId: string } | { outcome: 'new'; exportId: string; fileName: string };
 
 /**
- * Opens a Download my stories copy of one story or all of them, or finds the unchanged one from
- * the last 24 hours (S1-E13-05).
+ * Opens a Download my stories copy of the writer's choices, or finds the unchanged one with the
+ * same choices from the last 24 hours (S1-E13-05).
  *
- * @param storyId - the story's ID, or null for all the writer's stories
+ * @param choices - the story, the chapters and the files the writer ticked
  * @returns the earlier files, or the new copy's ID and the name to upload under
  * @throws Error with Supabase's message, for example when the story isn't the writer's
  */
 export async function requestStoriesExport(
   client: AppSupabaseClient,
-  storyId: string | null,
+  choices: StoriesExportChoices,
 ): Promise<StoriesExportOpened> {
   const { data, error } = await client.rpc('request_stories_export', {
-    chosen_story_id: storyId ?? undefined,
+    chosen_story_id: choices.storyId ?? undefined,
+    chosen_chapter_ids: choices.chapterIds ?? undefined,
+    include_chapters: choices.includeChapters,
+    include_plan: choices.includePlan,
+    include_data: choices.includeData,
   });
-  if (error !== null) throw new Error(`Could not start the Word files: ${error.message}`);
+  if (error !== null) throw new Error(`Could not start the files: ${error.message}`);
   const answer = data as { outcome: 'reused' | 'new'; export_id: string; file_name?: string };
   if (answer.outcome === 'reused') return { outcome: 'reused', exportId: answer.export_id };
   return { outcome: 'new', exportId: answer.export_id, fileName: answer.file_name ?? '' };
@@ -217,7 +243,7 @@ export async function fetchMyDataExports(
   const { data, error } = await client
     .from('exports')
     .select(
-      'id, kind, story_id, state, file_name, file_size, story_count, created_at, ready_at, expires_at',
+      'id, kind, story_id, chapter_ids, include_chapters, include_plan, include_data, state, file_name, file_size, story_count, created_at, ready_at, expires_at',
     )
     .eq('kind', kind)
     .order('created_at', { ascending: false });
@@ -255,4 +281,40 @@ export async function downloadPicture(
 ): Promise<Blob | null> {
   const { data, error } = await client.storage.from(picture.bucket).download(picture.path);
   return error === null ? data : null;
+}
+
+/** One chapter the writer can tick in Download my stories. */
+export interface ChapterChoice {
+  id: string;
+  position: number;
+  title: string;
+  isDraft: boolean;
+}
+
+/**
+ * Reads one of the writer's stories' live chapters, in reading order, for the chapter choice
+ * (S1-E13-05; Robert, 1 Nov 2026, 06:27: "download just specific chapters"). The chapters'
+ * read policy lets only the writer see their drafts.
+ *
+ * @param storyId - the story's ID
+ * @returns the chapters, first to last
+ * @throws Error with Supabase's message when they can't be read
+ */
+export async function fetchChapterChoices(
+  client: AppSupabaseClient,
+  storyId: string,
+): Promise<ChapterChoice[]> {
+  const { data, error } = await client
+    .from('chapters')
+    .select('id, position, draft_title, first_published_at')
+    .eq('story_id', storyId)
+    .is('deleted_at', null)
+    .order('position');
+  if (error !== null) throw new Error(`Could not read the chapters: ${error.message}`);
+  return data.map((row) => ({
+    id: row.id,
+    position: row.position,
+    title: row.draft_title,
+    isDraft: row.first_published_at === null,
+  }));
 }

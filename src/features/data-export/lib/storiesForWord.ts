@@ -132,26 +132,3 @@ export function wordFileName(slug: string, taken: Set<string>): string {
   taken.add(name);
   return name;
 }
-
-/**
- * The data file narrowed to one story and its chapters, so only that story's Word file and
- * pictures are made (Download my stories, S1-E13-05). Null keeps every story.
- *
- * @param document - the data file
- * @param storyId - the story's ID, or null for all of them
- * @returns the same document, with only that story's rows in stories and chapters
- */
-export function documentForStory(
-  document: DataExportDocument,
-  storyId: string | null,
-): DataExportDocument {
-  if (storyId === null) return document;
-  return {
-    ...document,
-    tables: {
-      ...document.tables,
-      stories: (document.tables.stories ?? []).filter((story) => story.id === storyId),
-      chapters: (document.tables.chapters ?? []).filter((chapter) => chapter.story_id === storyId),
-    },
-  };
-}

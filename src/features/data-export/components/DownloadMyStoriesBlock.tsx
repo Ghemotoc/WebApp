@@ -1,22 +1,34 @@
 /**
  * DownloadMyStoriesBlock: "Download my stories" at the foot of Settings › Download my data (story
- * S1-E13-05; board Settings 6.3, the Download my data tab).
+ * S1-E13-05; board Settings 6.3, the Download my data tab; widened by Robert, 1 Nov 2026, 06:27
+ * and 06:29: the plan from Story Atlas, chosen chapters and a JSON copy).
  *
- * Top to bottom as on the board: the heading and intro, the Story drop-down (all my stories, or
- * one, drafts marked) with "Get Word files", and the line about the notification and the seven
- * days. Below it: "We're making your Word files…" while they are made, the ready line once they
- * are, or a plain line after a failure. A writer without stories sees one line instead of the
- * drop-down. It has id "download-my-stories", so the "ready" notification opens it.
- * Who shows it: DownloadMyDataSection. What it calls: useMyStories (features/writing) and the
- * hooks in ../hooks/useStoriesExport.ts.
+ * Top to bottom: the heading and intro, the Story drop-down (all my stories, or one, drafts
+ * marked), "What to include" (the chapters, the plan, the JSON copy), for one story "All
+ * chapters" or "Only the chapters I choose", then "Get my files" and the line about the
+ * notification and the seven days. Below it: "We're making your files…" while they are made, the
+ * ready line once they are, or a plain line after a failure. A writer without stories sees one
+ * line instead. It has id "download-my-stories", so the "ready" notification opens it.
+ * Who shows it: DownloadMyDataSection. What it calls: useMyStories (features/writing), the hooks
+ * in ../hooks/useStoriesExport.ts and ../hooks/useDownloadChoices.ts, and useScrollToHash for
+ * the notification's link.
  */
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
+import { useScrollToHash } from '@/features/atlas/hooks/useScrollToHash';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
+import {
+  ALL_STORIES,
+  choiceProblem,
+  requestChoices,
+  useDownloadChoices,
+  type ChoiceProblem,
+  type DownloadChoices,
+} from '../hooks/useDownloadChoices';
 import {
   useLatestStoriesExport,
   useStartStoriesExport,
@@ -24,10 +36,9 @@ import {
 } from '../hooks/useStoriesExport';
 import { useDataExportTranslation } from '../registerDataExportTranslations';
 
+import { ChapterChoice } from './ChapterChoice';
 import { StoriesExportReady } from './StoriesExportReady';
-
-/** The value of "All my stories" in the drop-down. */
-const ALL_STORIES = 'all';
+import { StoriesFileChoices } from './StoriesFileChoices';
 
 /** A story the writer still has, as the block needs it. */
 interface LiveStory {
@@ -51,17 +62,9 @@ function useLiveStories(): { stories: LiveStory[]; isKnown: boolean; loadFailed:
   return { stories: live, isKnown, loadFailed };
 }
 
-/** The drop-down and "Get Word files". */
-function StoryPicker({
-  stories,
-  onGet,
-}: {
-  stories: LiveStory[];
-  onGet: (choice: string) => void;
-}) {
+/** The Story drop-down. */
+function StoryPicker({ stories, choices }: { stories: LiveStory[]; choices: DownloadChoices }) {
   const { t } = useDataExportTranslation();
-  const [choice, setChoice] = useState(ALL_STORIES);
-  const isRunning = useStoriesExportRun().phase === 'running';
   const options = [
     { value: ALL_STORIES, label: t('stories.allOption', { count: stories.length }) },
     ...stories.map((story) => ({
@@ -70,23 +73,18 @@ function StoryPicker({
     })),
   ];
   return (
-    <div className="flex flex-wrap items-end gap-3">
-      <div className="flex min-w-0 flex-[1_1_260px] flex-col gap-2">
-        {/* The board's eyebrow label; the drop-down carries the same name for screen readers. */}
-        <span aria-hidden="true" className="font-eyebrow text-sm leading-[1.3] text-eyebrow">
-          {t('stories.storyLabel')}
-        </span>
-        <Select
-          id="download-story"
-          label={t('stories.storyLabel')}
-          options={options}
-          value={choice}
-          onChange={setChoice}
-        />
-      </div>
-      <Button size="lg" disabled={isRunning} onClick={() => onGet(choice)}>
-        {t('stories.get')}
-      </Button>
+    <div className="flex min-w-0 flex-col gap-2">
+      {/* The board's eyebrow label; the drop-down carries the same name for screen readers. */}
+      <span aria-hidden="true" className="font-eyebrow text-sm leading-[1.3] text-eyebrow">
+        {t('stories.storyLabel')}
+      </span>
+      <Select
+        id="download-story"
+        label={t('stories.storyLabel')}
+        options={options}
+        value={choices.story}
+        onChange={choices.setStory}
+      />
     </div>
   );
 }
@@ -111,6 +109,52 @@ function StoriesStatus({ stories, wasReused }: { stories: LiveStory[]; wasReused
   return <StoriesExportReady copy={copy} story={story} wasReused={wasReused} />;
 }
 
+/** Every control, "Get my files" and its hint. */
+function StoriesForm({ stories }: { stories: LiveStory[] }) {
+  const { t } = useDataExportTranslation();
+  const choices = useDownloadChoices();
+  const { start } = useStartStoriesExport();
+  const isRunning = useStoriesExportRun().phase === 'running';
+  const [problem, setProblem] = useState<ChoiceProblem>(null);
+  const [wasReused, setWasReused] = useState(false);
+
+  /** Checks the choices, then makes the files or finds the earlier ones. */
+  async function getFiles() {
+    const found = choiceProblem(choices);
+    setProblem(found);
+    if (found !== null) return;
+    setWasReused(false);
+    const outcome = await start(requestChoices(choices));
+    setWasReused(outcome === 'reused');
+  }
+
+  return (
+    <>
+      <StoryPicker stories={stories} choices={choices} />
+      <StoriesFileChoices choices={choices.files} onChange={choices.setFiles} />
+      {choices.showsChapterChoice && (
+        <ChapterChoice
+          storyId={choices.story}
+          onlyChosen={choices.onlyChosenChapters}
+          chosenIds={choices.chosenChapterIds}
+          onModeChange={choices.setOnlyChosenChapters}
+          onChosenChange={choices.setChosenChapterIds}
+        />
+      )}
+      <div aria-live="polite">
+        {problem !== null && <Notice tone="error">{t(`stories.problems.${problem}`)}</Notice>}
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <Button size="lg" disabled={isRunning} onClick={() => void getFiles()}>
+          {t('stories.get')}
+        </Button>
+      </div>
+      <span className="text-sm leading-normal text-meta">{t('stories.hint')}</span>
+      <StoriesStatus stories={stories} wasReused={wasReused} />
+    </>
+  );
+}
+
 /**
  * Renders the block.
  *
@@ -119,16 +163,9 @@ function StoriesStatus({ stories, wasReused }: { stories: LiveStory[]; wasReused
 export function DownloadMyStoriesBlock() {
   const { t } = useDataExportTranslation();
   const { stories, isKnown, loadFailed } = useLiveStories();
-  const { start } = useStartStoriesExport();
-  const [wasReused, setWasReused] = useState(false);
-
-  /** Starts the Word files for the choice, and remembers whether the earlier ones came back. */
-  async function getWordFiles(choice: string) {
-    setWasReused(false);
-    const outcome = await start(choice === ALL_STORIES ? null : choice);
-    setWasReused(outcome === 'reused');
-  }
-
+  // The "ready" notification links to #download-my-stories; the block grows once the stories
+  // arrive, so it is brought into view again then.
+  useScrollToHash(isKnown);
   return (
     <div
       id="download-my-stories"
@@ -140,13 +177,7 @@ export function DownloadMyStoriesBlock() {
       {isKnown && !loadFailed && stories.length === 0 && (
         <p className="m-0 text-[15px] text-body">{t('stories.none')}</p>
       )}
-      {stories.length > 0 && (
-        <>
-          <StoryPicker stories={stories} onGet={(choice) => void getWordFiles(choice)} />
-          <span className="text-sm leading-normal text-meta">{t('stories.hint')}</span>
-          <StoriesStatus stories={stories} wasReused={wasReused} />
-        </>
-      )}
+      {stories.length > 0 && <StoriesForm stories={stories} />}
     </div>
   );
 }

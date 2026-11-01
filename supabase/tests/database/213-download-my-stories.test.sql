@@ -2,11 +2,13 @@
 -- What it proves:
 -- - criterion 1: a writer opens a copy of one story (a single .docx) or all of them (a .zip);
 --   only their own live stories, and not when they have none;
+-- - the choices (Robert, 1 Nov 2026, 06:27 and 06:29): the chapters, all or chosen, the plan
+--   from Story Atlas and a JSON copy; one file chosen is that file, more is a ZIP;
 -- - criterion 2: finishing it makes it ready for seven days and sends stories_export_ready; a
 --   Download my data copy is never touched by it, and the other way round;
 -- - criterion 3: a suspended writer can still ask;
 -- - criterion 4: the same request within 24 hours offers the earlier files, unless the story
---   changed since (proposal);
+--   or its plan changed since, or the choices differ (proposal);
 -- - the exports rules: a Download my data copy can't name a story.
 -- The storage and row policies are S1-E13-02's (tests 210); they read either kind the same way.
 -- Personas: adult_writer (…01, two stories), teen_17 (…02, one story), kid_14_ok (…03, none),
@@ -15,7 +17,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(17);
+select plan(28);
 
 create function pg_temp.sign_in(persona_suffix text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -38,7 +40,7 @@ grant all on answers to authenticated;
 
 select pg_temp.sign_in('01');
 insert into answers values
-  ('one', public.request_stories_export('00000000-0000-4000-9000-000000000001'));
+  ('one', public.request_stories_export('00000000-0000-4000-9000-000000000001', null, true, false, false));
 select is((select answer ->> 'outcome' from answers where label = 'one'), 'new',
   'a writer opens a copy of one of their stories');
 select ok((select answer ->> 'file_name' from answers where label = 'one') like '%.docx',
@@ -51,8 +53,34 @@ select is((select count(*)::integer from public.exports where kind = 'my_stories
 
 select throws_ok($$ select public.request_stories_export('00000000-0000-4000-9000-000000000003') $$,
   '23514', null, 'a writer can''t download someone else''s story');
+
+/* ---------- The choices ---------- */
+
+select is(public.request_stories_export('00000000-0000-4000-9000-000000000001', null, false, true, false)
+  ->> 'file_name' like '%.docx', true, 'the plan alone is a single Word file');
+select is(public.request_stories_export('00000000-0000-4000-9000-000000000001', null, false, false, true)
+  ->> 'file_name' like '%.json', true, 'the JSON copy alone is a single JSON file');
+select is(public.request_stories_export('00000000-0000-4000-9000-000000000001', null, true, true, false)
+  ->> 'file_name' like '%.zip', true, 'the chapters and the plan together are one ZIP');
+select pg_temp.as_owner();
+insert into public.chapters (id, story_id, user_id, code, position, draft_title, draft_body, word_count, status)
+values ('00000000-0000-4000-9000-0000000021c1', '00000000-0000-4000-9000-000000000001',
+        '00000000-0000-4000-8000-000000000001', 'dlst2131', 1, 'One', 'Text.', 1, 'draft');
+select pg_temp.sign_in('01');
+select is(public.request_stories_export('00000000-0000-4000-9000-000000000001',
+    array['00000000-0000-4000-9000-0000000021c1']::uuid[], true, false, false) ->> 'outcome', 'new',
+  'a writer can choose which chapters go in');
+select is((select chapter_ids from public.exports where kind = 'my_stories' and state = 'building'),
+  array['00000000-0000-4000-9000-0000000021c1']::uuid[], 'the export remembers the chosen chapters');
+select throws_like(
+  $$ select public.request_stories_export('00000000-0000-4000-9000-000000000001',
+       array['00000000-0000-4000-9000-000000000999']::uuid[]) $$,
+  '%can''t be made%', 'a chapter that isn''t one of the story''s can''t be chosen');
+select throws_like(
+  $$ select public.request_stories_export('00000000-0000-4000-9000-000000000001', null, false, false, false) $$,
+  '%can''t be made%', 'nothing ticked is refused');
 select pg_temp.sign_in('03');
-select throws_like($$ select public.request_stories_export() $$, '%no story of yours%',
+select throws_like($$ select public.request_stories_export() $$, '%can''t be made%',
   'a reader with no stories is told there is nothing to download');
 
 /* ---------- Finishing (criterion 2) ---------- */
@@ -60,7 +88,7 @@ select throws_like($$ select public.request_stories_export() $$, '%no story of y
 select pg_temp.sign_in('01');
 delete from answers;
 insert into answers values
-  ('one', public.request_stories_export('00000000-0000-4000-9000-000000000001')),
+  ('one', public.request_stories_export('00000000-0000-4000-9000-000000000001', null, true, false, false)),
   ('data', public.request_data_export());
 select pg_temp.as_owner();
 select pg_temp.upload((select answer ->> 'file_name' from answers where label = 'one'));
@@ -91,21 +119,37 @@ select is((select count(*)::integer from public.exports where state = 'ready'), 
 /* ---------- The same request again (criterion 4) ---------- */
 
 insert into answers values
-  ('again', public.request_stories_export('00000000-0000-4000-9000-000000000001'));
+  ('again', public.request_stories_export('00000000-0000-4000-9000-000000000001', null, true, false, false));
 select is((select answer ->> 'export_id' from answers where label = 'again'),
   (select answer ->> 'export_id' from answers where label = 'one'),
   'asking again within 24 hours offers the files already made');
+select is(public.request_stories_export('00000000-0000-4000-9000-000000000001', null, true, true, false)
+  ->> 'outcome', 'new', 'other choices make a new copy');
 
--- The copy was made an hour ago and the writer has edited the story since.
+-- The copy was made an hour ago and the writer has changed the story since: once in Story
+-- Atlas (a new idea), once in the story itself.
 select pg_temp.as_owner();
+delete from public.exports where kind = 'my_stories' and state = 'building';
 update public.exports set ready_at = now() - interval '1 hour', expires_at = now() + interval '6 days'
 where id = (select (answer ->> 'export_id')::uuid from answers where label = 'one');
-update public.stories set blurb = blurb || ' ' where id = '00000000-0000-4000-9000-000000000001';
+update public.exports set content_fingerprint = 'from an hour ago'
+where id = (select (answer ->> 'export_id')::uuid from answers where label = 'one');
 select pg_temp.sign_in('01');
-insert into answers values
-  ('edited', public.request_stories_export('00000000-0000-4000-9000-000000000001'));
-select is((select answer ->> 'outcome' from answers where label = 'edited'), 'new',
-  'after an edit a new copy is made, so the Word file has the newest words');
+select is(public.request_stories_export('00000000-0000-4000-9000-000000000001', null, true, false, false)
+  ->> 'outcome', 'new', 'after a change a new copy is made, so the files have the newest words');
+select pg_temp.as_owner();
+select isnt(public.stories_fingerprint('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-9000-000000000001'),
+  null, 'the fingerprint is never empty');
+create temp table fingerprints as
+  select public.stories_fingerprint('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-9000-000000000001') as before;
+insert into public.story_ideas (story_id, user_id, kind, body)
+values ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-000000000001', 'idea', 'A storm.');
+select isnt(public.stories_fingerprint('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-9000-000000000001'),
+  (select before from fingerprints), 'a new idea in Story Atlas counts as a change');
+update fingerprints set before = public.stories_fingerprint('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-9000-000000000001');
+delete from public.story_ideas where body = 'A storm.';
+select isnt(public.stories_fingerprint('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-9000-000000000001'),
+  (select before from fingerprints), 'deleting it counts as a change too');
 
 /* ---------- A suspended writer (criterion 3) ---------- */
 

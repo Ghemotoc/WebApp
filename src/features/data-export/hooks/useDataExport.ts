@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
+import { useAtlasTranslation } from '@/features/atlas/registerAtlasTranslations';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { unreadCountQueryKey } from '@/features/notifications/hooks/useUnreadNotificationCount';
 import { formatRomaniaDate } from '@/lib/romania-time';
@@ -22,6 +23,7 @@ import {
   startDataExport,
   subscribeToDataExportRun,
 } from '../lib/exportRunStore';
+import type { PlanWords } from '../lib/planForWord';
 import type { StatusLabels } from '../lib/storiesForWord';
 
 /** The copies' cache key, per person. */
@@ -90,6 +92,18 @@ export function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusL
 }
 
 /**
+ * The words of a story's plan file: Story Atlas's own texts (so the file reads like the screens)
+ * and the few of its own in dataExport.json (S1-E13-05).
+ *
+ * @returns the two translators the plan builder takes
+ */
+export function usePlanText(): Pick<PlanWords, 'atlas' | 'own'> {
+  const { t } = useDataExportTranslation();
+  const { t: atlasT } = useAtlasTranslation();
+  return { atlas: (key, values) => atlasT(key, values), own: (key, values) => t(key, values) };
+}
+
+/**
  * Starting a copy: builds it in the background of this tab, then reads the copies and the
  * notification count again.
  *
@@ -100,12 +114,14 @@ export function useStartDataExport() {
   const { userId } = useSession();
   const { i18n } = useDataExportTranslation();
   const { wordLabels, statusLabels } = useWordLabels();
+  const planText = usePlanText();
   return {
     start: async () => {
       await startDataExport({
         client: await requireClient(),
         wordLabels,
         statusLabels,
+        planText,
         formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), i18n.language),
       });
       await queryClient.invalidateQueries({ queryKey: dataExportsKey(userId) });

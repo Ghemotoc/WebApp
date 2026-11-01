@@ -83,3 +83,42 @@ export interface WordLabels {
 
 /** How a date is printed, in the reader's language (for example "17 October 2026"). */
 export type WordDateFormatter = (isoDate: string) => string;
+
+/** One "Label: value" line in a story's plan. */
+export interface WordPlanDetail {
+  label: string;
+  value: string;
+}
+
+/** One thing in a part of the plan: a character, a bible entry, an idea and so on. */
+export interface WordPlanEntry {
+  /** Its name, printed as a heading, or null for a part that is only lines. */
+  title: string | null;
+  /** Its labelled lines, in order; empty values are left out by the caller. */
+  details: WordPlanDetail[];
+  /** Longer text the writer wrote in the Markdown subset (ADR 0005), or null. */
+  markdown: string | null;
+}
+
+/** One part of the plan, as Story Atlas names it ("Characters", "Story bible"). */
+export interface WordPlanPart {
+  heading: string;
+  entries: WordPlanEntry[];
+}
+
+/**
+ * A story's plan from Story Atlas, as it goes into its own Word file (Robert, 1 Nov 2026, 06:27:
+ * downloads hold the bible, the characters and the rest too). Parts with nothing in them are
+ * left out by the caller.
+ */
+export interface WordPlan {
+  /** "The plan of <title>" filled in. */
+  title: string;
+  writerName: string;
+  /** The writer's own user ID: their personal data, shown only to them. */
+  userId: string;
+  languageCode: string;
+  parts: WordPlanPart[];
+  /** The line printed when the writer hasn't planned anything yet. */
+  emptyNote: string;
+}

@@ -5,10 +5,14 @@
  * How it works: the same way as Download my data (S1-E13-02, ADR 0012). The writer's browser
  * builds the Word files with the shared Word builder and uploads them to the private exports
  * bucket; the database decides who may do what:
- * - request_stories_export() opens an export of kind my_stories for one story or all of them, or
- *   answers the copy from the last 24 hours when nothing in those stories has changed since
- *   (criterion 4, proposal);
- * - one story becomes one .docx file, all of them one ZIP of .docx files, under a random name;
+ * - request_stories_export() opens an export of kind my_stories for one story or all of them,
+ *   with the writer's choices: the chapters (all, or only chosen ones), the story's plan from
+ *   Story Atlas as its own Word file, and a machine-readable copy (JSON) (Robert, 1 Nov 2026,
+ *   06:27 and 06:29: "download whatever they want whenever they want"). It answers the copy from
+ *   the last 24 hours instead when the choices are the same and nothing in those stories or their
+ *   plans has changed since (criterion 4, proposal);
+ * - exactly one file chosen for one story is that file (.docx or .json); anything more, or all
+ *   the stories, is one ZIP; always under a random name;
  * - finish_data_export() now finishes either kind: it keeps one copy per kind, and sends
  *   stories_export_ready for Word files;
  * - a suspended writer can still do it (criterion 3, S1-E10-06): only a deleted account can't.
@@ -22,28 +26,76 @@
 -- The story a my_stories export holds; empty means all of the writer's stories. When the story
 -- is deleted for good, its export goes with it.
 alter table public.exports
-  add column story_id uuid references public.stories (id) on delete cascade;
+  add column story_id uuid references public.stories (id) on delete cascade,
+  add column chapter_ids uuid[],
+  add column include_chapters boolean not null default true,
+  add column include_plan boolean not null default true,
+  add column include_data boolean not null default false,
+  add column content_fingerprint text;
 
 comment on column public.exports.story_id is
-  'For my_stories: the one story the Word file holds, or null for all of them (S1-E13-05).';
+  'For my_stories: the one story the files hold, or null for all of them (S1-E13-05).';
+comment on column public.exports.chapter_ids is
+  'For my_stories of one story: the chapters the writer chose, or null for every chapter (S1-E13-05).';
+comment on column public.exports.include_chapters is
+  'For my_stories: the Word file of the story''s chapters is in (S1-E13-05).';
+comment on column public.exports.include_plan is
+  'For my_stories: the Word file of the story''s plan from Story Atlas is in (S1-E13-05).';
+comment on column public.exports.include_data is
+  'For my_stories: the machine-readable copy (JSON) of the stories is in (S1-E13-05).';
+comment on column public.exports.content_fingerprint is
+  'For my_stories: stories_fingerprint() when it was asked for, so an unchanged copy can be offered again (S1-E13-05).';
+
+/**
+ * export_file_extension: the kind of file an export is saved as. Download my data is always a
+ * ZIP; Download my stories is the one file chosen for one story (.docx for its chapters or its
+ * plan, .json for the machine-readable copy), and a ZIP for anything more or for all stories.
+ * Inputs: the export's kind, story and three choices. Returns: 'zip', 'docx' or 'json'.
+ * Internal: the file name check below and request_stories_export().
+ */
+create or replace function public.export_file_extension(
+  kind public.export_kind, story_id uuid, choices boolean[])
+returns text
+language sql
+immutable
+set search_path = ''
+as $$
+  select case
+    when kind = 'all_my_data' or story_id is null then 'zip'
+    when (select count(*) from unnest(choices) as chosen where chosen) > 1 then 'zip'
+    when choices[1] or choices[2] then 'docx'
+    else 'json'
+  end;
+$$;
+
+comment on function public.export_file_extension(public.export_kind, uuid, boolean[]) is
+  'Internal: zip, docx or json for an export and its choices (chapters, plan, data) (S1-E13-05).';
+revoke execute on function public.export_file_extension(public.export_kind, uuid, boolean[])
+  from public, anon, authenticated;
 
 alter table public.exports
-  add constraint exports_story_only_for_stories check (kind = 'my_stories' or story_id is null);
+  add constraint exports_story_only_for_stories check (kind = 'my_stories' or story_id is null),
+  add constraint exports_chapters_only_for_one_story
+    check (chapter_ids is null or (story_id is not null and include_chapters)),
+  add constraint exports_stories_choose_something
+    check (kind = 'all_my_data' or include_chapters or include_plan or include_data);
 
--- One story is a single Word file; everything else is a ZIP.
+-- The file is a ZIP, a Word file or a JSON file, as export_file_extension() says.
 alter table public.exports drop constraint exports_file_name_shape;
 alter table public.exports add constraint exports_file_name_shape check (
-  file_name ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(zip|docx)$'
-  and (file_name like '%.zip') = (kind = 'all_my_data' or story_id is null));
+  file_name ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(zip|docx|json)$'
+  and file_name like '%.' || public.export_file_extension(
+    kind, story_id, array[include_chapters, include_plan, include_data]));
 
 comment on table public.exports is
   'kind: user_action
-A copy someone asked for: all_my_data is one ZIP of their data (S1-E13-02; GDPR art. 15 and 20); my_stories is their stories as Word files (S1-E13-05). Each sits in the private exports bucket, readable only by them while ready and for seven days. Purged by S1-E13-04.';
+A copy someone asked for: all_my_data is one ZIP of their data (S1-E13-02; GDPR art. 15 and 20); my_stories is the stories they chose, as Word files of the chapters and the plan and a JSON copy (S1-E13-05). Each sits in the private exports bucket, readable only by them while ready and for seven days. Purged by S1-E13-04.';
 
--- The bucket also takes a single Word file now.
+-- The bucket also takes a single Word or JSON file now.
 update storage.buckets
 set allowed_mime_types = array[
-  'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+  'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/json']
 where id = 'exports';
 
 -- Ten requests an hour (a proposal): the work is on the writer's own device, so the limit only
@@ -55,13 +107,68 @@ update public.settings
 /* ---------- Asking ---------- */
 
 /**
- * reusable_stories_export: the writer's copy of the same stories from the last 24 hours, if
- * nothing in them has changed since it was made (criterion 4, proposal: an edit since then means
- * the writer wants their newest words, so a new copy is made).
- * Inputs: the writer and the story (null for all). Returns: the export, or null.
+ * stories_fingerprint: a short summary of everything the writer's chosen stories hold right now:
+ * every row of the story, its chapters, their plans, scenes, cards and pictures, its tags and
+ * every Story Atlas part, by key and last change. A change, a new row or a deleted one changes
+ * it, so an unchanged copy can be offered again and a changed one never is (criterion 4).
+ * Inputs: the writer and the story (null for all). Returns: an md5 text.
+ * Internal: request_stories_export(). When a new table holds a story's content, add it here and
+ * to STORY_TABLES in src/features/data-export/lib/storiesForData.ts.
+ */
+create or replace function public.stories_fingerprint(owner_id uuid, chosen_story_id uuid)
+returns text
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  with chosen as (
+    select stories.id from public.stories
+    where stories.user_id = owner_id
+      and (chosen_story_id is null or stories.id = chosen_story_id)
+  ),
+  chosen_chapters as (
+    select chapters.id from public.chapters where chapters.story_id in (select id from chosen)
+  ),
+  changes (row_key, changed_at) as (
+    select 'profile', updated_at from public.profiles where id = owner_id
+    union all select 'story:' || id, updated_at from public.stories where id in (select id from chosen)
+    union all select 'chapter:' || id, updated_at from public.chapters where id in (select id from chosen_chapters)
+    union all select 'embed:' || id, updated_at from public.chapter_embeds where chapter_id in (select id from chosen_chapters)
+    union all select 'picture:' || id, updated_at from public.picture_checks where story_id in (select id from chosen)
+    union all select 'chapter_plan:' || chapter_id, updated_at from public.chapter_plans where story_id in (select id from chosen)
+    union all select 'present:' || chapter_id || ':' || character_id, updated_at from public.chapter_plan_characters where story_id in (select id from chosen)
+    union all select 'scene:' || id, updated_at from public.chapter_scenes where story_id in (select id from chosen)
+    union all select 'tag:' || story_id || ':' || tag_id, updated_at from public.story_tags where story_id in (select id from chosen)
+    union all select 'plan:' || story_id, updated_at from public.story_plans where story_id in (select id from chosen)
+    union all select 'act:' || id, updated_at from public.story_plan_acts where story_id in (select id from chosen)
+    union all select 'character:' || id, updated_at from public.story_characters where story_id in (select id from chosen)
+    union all select 'field:' || id, updated_at from public.story_character_fields where story_id in (select id from chosen)
+    union all select 'connection:' || id, updated_at from public.story_character_relationships where story_id in (select id from chosen)
+    union all select 'bible_section:' || id, updated_at from public.story_bible_sections where story_id in (select id from chosen)
+    union all select 'bible_entry:' || id, updated_at from public.story_bible_entries where story_id in (select id from chosen)
+    union all select 'event:' || id, updated_at from public.story_events where story_id in (select id from chosen)
+    union all select 'idea:' || id, updated_at from public.story_ideas where story_id in (select id from chosen)
+    union all select 'marketing:' || story_id, updated_at from public.story_marketing where story_id in (select id from chosen)
+  )
+  select md5(coalesce(string_agg(row_key || '@' || changed_at::text, ',' order by row_key), ''))
+  from changes;
+$$;
+
+comment on function public.stories_fingerprint(uuid, uuid) is
+  'Internal: a summary of everything in the writer''s chosen stories and their plans, to spot a change (S1-E13-05).';
+revoke execute on function public.stories_fingerprint(uuid, uuid) from public, anon, authenticated;
+
+/**
+ * reusable_stories_export: the writer's copy from the last 24 hours with exactly the same choices,
+ * if nothing in those stories or their plans has changed since (criterion 4, proposal: an edit
+ * means the writer wants their newest words, so a new copy is made).
+ * Inputs: the writer, the new export as it would be (story, chapters and choices) and the current
+ * fingerprint. Returns: the export, or null.
  * Internal: request_stories_export().
  */
-create or replace function public.reusable_stories_export(owner_id uuid, chosen_story_id uuid)
+create or replace function public.reusable_stories_export(
+  owner_id uuid, wanted public.exports, current_fingerprint text)
 returns public.exports
 language sql
 stable
@@ -70,36 +177,87 @@ set search_path = ''
 as $$
   select exports.* from public.exports
   where exports.user_id = owner_id and exports.kind = 'my_stories' and exports.state = 'ready'
-    and exports.story_id is not distinct from chosen_story_id
     and exports.ready_at > now() - interval '24 hours'
     and exports.expires_at > now()
-    -- Nothing in the chosen stories changed after the copy was made.
-    and not exists (
-      select 1 from public.stories
-      left join public.chapters on chapters.story_id = stories.id
-      where stories.user_id = owner_id
-        and (chosen_story_id is null or stories.id = chosen_story_id)
-        and (stories.updated_at > exports.ready_at or chapters.updated_at > exports.ready_at))
+    and exports.story_id is not distinct from wanted.story_id
+    and exports.chapter_ids is not distinct from wanted.chapter_ids
+    and exports.include_chapters = wanted.include_chapters
+    and exports.include_plan = wanted.include_plan
+    and exports.include_data = wanted.include_data
+    and exports.content_fingerprint = current_fingerprint
   order by exports.ready_at desc
   limit 1;
 $$;
 
-comment on function public.reusable_stories_export(uuid, uuid) is
-  'Internal: the writer''s unchanged Word files of the same stories from the last 24 hours (S1-E13-05).';
-revoke execute on function public.reusable_stories_export(uuid, uuid) from public, anon, authenticated;
+comment on function public.reusable_stories_export(uuid, public.exports, text) is
+  'Internal: the writer''s unchanged copy of the same choices from the last 24 hours (S1-E13-05).';
+revoke execute on function public.reusable_stories_export(uuid, public.exports, text)
+  from public, anon, authenticated;
 
 /**
- * request_stories_export: "Get Word files" (criteria 1 and 4). Opens an export of the writer's
- * one story, or all their stories, unless the same files from the last 24 hours can be offered.
- * Input: chosen_story_id, the story's ID, or null for all the writer's stories.
+ * stories_export_choice_problem: why the writer's choices can't be made, or null when they can.
+ * Inputs: the writer, the story (null for all), the chosen chapters (null for every one) and
+ * whether anything at all is ticked. Returns: 'nothing_chosen', 'not_found', 'no_stories',
+ * 'no_chapters' or null.
+ * Internal: request_stories_export().
+ */
+create or replace function public.stories_export_choice_problem(
+  owner_id uuid, chosen_story_id uuid, chosen_chapter_ids uuid[], anything_chosen boolean)
+returns text
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select case
+    -- Nothing ticked.
+    when not anything_chosen then 'nothing_chosen'
+    -- Not the writer's own story that still exists, or no story at all for "all".
+    when not exists (
+      select 1 from public.stories
+      where stories.user_id = owner_id and stories.deleted_at is null
+        and (chosen_story_id is null or stories.id = chosen_story_id))
+      then case when chosen_story_id is null then 'no_stories' else 'not_found' end
+    -- Chosen chapters must be some, and every one a live chapter of that story.
+    when chosen_chapter_ids is not null and (
+      cardinality(chosen_chapter_ids) = 0
+      or exists (
+        select 1 from unnest(chosen_chapter_ids) as chosen (id)
+        where not exists (
+          select 1 from public.chapters
+          where chapters.id = chosen.id and chapters.story_id = chosen_story_id
+            and chapters.deleted_at is null)))
+      then 'no_chapters'
+    else null
+  end;
+$$;
+
+comment on function public.stories_export_choice_problem(uuid, uuid, uuid[], boolean) is
+  'Internal: why a Download my stories choice can''t be made, or null (S1-E13-05).';
+revoke execute on function public.stories_export_choice_problem(uuid, uuid, uuid[], boolean)
+  from public, anon, authenticated;
+
+/**
+ * request_stories_export: "Get my files" (criteria 1 and 4; Robert, 1 Nov 2026, 06:27 and 06:29).
+ * Opens a copy of the writer's one story, or all of them, with what they ticked, unless the same
+ * files from the last 24 hours can be offered.
+ * Inputs: chosen_story_id (null for all the writer's stories); chosen_chapter_ids (one story's
+ *   chapters, or null for every chapter); include_chapters (the Word file of the chapters);
+ *   include_plan (the Word file of the plan from Story Atlas); include_data (the JSON copy).
  * Returns: { outcome: 'reused', export_id } for the earlier files, or { outcome: 'new',
- *   export_id, file_name } with the name to upload under (.docx for one story, .zip for all).
- * Errors: insufficient_privilege (hint signed_out); check_violation with hint not_found (not the
- *   writer's own live story) or no_stories (nothing to download); the rate limit's error after
- *   ten new copies in an hour. A suspended writer may ask (criterion 3).
+ *   export_id, file_name } with the name to upload under (.docx, .json or .zip).
+ * Errors: insufficient_privilege (hint signed_out); check_violation with hint nothing_chosen,
+ *   not_found (not the writer's own live story), no_stories (nothing to download) or no_chapters
+ *   (a chosen chapter isn't one of the story's); the rate limit's error after ten new copies in
+ *   an hour. A suspended writer may ask (criterion 3).
  * Where it fits: makeStoriesExport() calls it first, then my_data_export().
  */
-create or replace function public.request_stories_export(chosen_story_id uuid default null)
+create or replace function public.request_stories_export(
+  chosen_story_id uuid default null,
+  chosen_chapter_ids uuid[] default null,
+  include_chapters boolean default true,
+  include_plan boolean default true,
+  include_data boolean default false)
 returns jsonb
 language plpgsql
 security definer
@@ -107,19 +265,31 @@ set search_path = ''
 as $$
 declare
   caller_id uuid := public.require_live_profile();
+  problem text;
+  wanted public.exports;
+  fingerprint text;
   earlier public.exports;
-  new_export public.exports;
 begin
-  -- Step 1: the writer's own story that still exists, or at least one story for "all".
-  if not exists (
-    select 1 from public.stories
-    where stories.user_id = caller_id and stories.deleted_at is null
-      and (chosen_story_id is null or stories.id = chosen_story_id)) then
-    raise exception 'There is no story of yours to download.' using errcode = 'check_violation',
-      hint = case when chosen_story_id is null then 'no_stories' else 'not_found' end;
+  -- Step 1: the choices make sense (chosen chapters only with one story's chapters ticked).
+  if chosen_story_id is null or not include_chapters then
+    chosen_chapter_ids := null;
+  elsif chosen_chapter_ids is not null then
+    -- In one order and once each, so the same choice is always the same list.
+    chosen_chapter_ids := array(select distinct unnest(chosen_chapter_ids) order by 1);
+  end if;
+  problem := public.stories_export_choice_problem(caller_id, chosen_story_id, chosen_chapter_ids,
+    include_chapters or include_plan or include_data);
+  if problem is not null then
+    raise exception 'Those files can''t be made.' using errcode = 'check_violation', hint = problem;
   end if;
   -- Step 2: the same files from the last 24 hours, if nothing changed since (criterion 4).
-  earlier := public.reusable_stories_export(caller_id, chosen_story_id);
+  wanted.story_id := chosen_story_id;
+  wanted.chapter_ids := chosen_chapter_ids;
+  wanted.include_chapters := include_chapters;
+  wanted.include_plan := include_plan;
+  wanted.include_data := include_data;
+  fingerprint := public.stories_fingerprint(caller_id, chosen_story_id);
+  earlier := public.reusable_stories_export(caller_id, wanted, fingerprint);
   if earlier.id is not null then
     return jsonb_build_object('outcome', 'reused', 'export_id', earlier.id);
   end if;
@@ -127,19 +297,24 @@ begin
   perform public.take_rate_limit('stories_export');
   delete from public.exports
   where exports.user_id = caller_id and exports.kind = 'my_stories' and exports.state = 'building';
-  -- Step 4: the new one, under a random name.
-  insert into public.exports (user_id, kind, story_id, file_name)
-  values (caller_id, 'my_stories', chosen_story_id,
-          gen_random_uuid()::text || case when chosen_story_id is null then '.zip' else '.docx' end)
-  returning * into new_export;
-  return jsonb_build_object('outcome', 'new', 'export_id', new_export.id, 'file_name', new_export.file_name);
+  -- Step 4: the new one, under a random name of the right kind of file.
+  insert into public.exports (user_id, kind, story_id, chapter_ids, include_chapters, include_plan,
+    include_data, content_fingerprint, file_name)
+  values (caller_id, 'my_stories', chosen_story_id, chosen_chapter_ids, include_chapters,
+    include_plan, include_data, fingerprint,
+    gen_random_uuid()::text || '.' || public.export_file_extension('my_stories', chosen_story_id,
+      array[include_chapters, include_plan, include_data]))
+  returning * into wanted;
+  return jsonb_build_object('outcome', 'new', 'export_id', wanted.id, 'file_name', wanted.file_name);
 end;
 $$;
 
-comment on function public.request_stories_export(uuid) is
-  'Opens a Download my stories export of one story or all, or offers the unchanged one from the last 24 hours (S1-E13-05).';
-revoke execute on function public.request_stories_export(uuid) from public, anon;
-grant execute on function public.request_stories_export(uuid) to authenticated;
+comment on function public.request_stories_export(uuid, uuid[], boolean, boolean, boolean) is
+  'Opens a Download my stories copy of the chosen stories, chapters, plan and JSON, or offers the unchanged one from the last 24 hours (S1-E13-05).';
+revoke execute on function public.request_stories_export(uuid, uuid[], boolean, boolean, boolean)
+  from public, anon;
+grant execute on function public.request_stories_export(uuid, uuid[], boolean, boolean, boolean)
+  to authenticated;
 
 /* ---------- Finishing ---------- */
 

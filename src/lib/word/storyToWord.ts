@@ -51,8 +51,8 @@ function wordLanguageOf(languageCode: string): string {
   return languageCode;
 }
 
-/** One "Label: value" line, the label in bold. */
-function detailLine(label: string, value: string): Paragraph {
+/** One "Label: value" line, the label in bold (planToWord() uses it too). */
+export function detailLine(label: string, value: string): Paragraph {
   return new Paragraph({
     children: [new TextRun({ text: `${label}: `, bold: true }), new TextRun(value)],
   });
@@ -176,17 +176,43 @@ export async function storyToWord(
     ...storyOpening(story, options),
     ...story.chapters.flatMap((chapter) => chapterParagraphs(chapter, options, conversion)),
   ];
-  // Step 3: the document, in the story's language, with a readable body font and the quote style.
-  const document = new Document({
+  // Step 3: the document, in the story's language.
+  return wordDocumentBytes({
     title: story.title,
     creator: story.writerName,
+    languageCode: story.languageCode,
+    children,
+  });
+}
+
+/** What wordDocumentBytes() needs: the file's title, author, language and paragraphs. */
+export interface WordDocumentContent {
+  title: string;
+  creator: string;
+  languageCode: string;
+  children: Paragraph[];
+}
+
+/**
+ * Packs paragraphs into a Word file with the builder's look: a readable body font, the quote
+ * style, the list numbering, and the language set on the whole document. planToWord() uses it
+ * too, so a story's plan looks like its story.
+ *
+ * @param content - the title, author, language and paragraphs
+ * @returns the .docx file's bytes
+ * @throws when the docx library can't build the file
+ */
+export async function wordDocumentBytes(content: WordDocumentContent): Promise<Uint8Array> {
+  const document = new Document({
+    title: content.title,
+    creator: content.creator,
     styles: {
       default: {
         document: {
           run: {
             font: 'Calibri',
             size: 24,
-            language: { value: wordLanguageOf(story.languageCode) },
+            language: { value: wordLanguageOf(content.languageCode) },
           },
         },
       },
@@ -202,7 +228,7 @@ export async function storyToWord(
       ],
     },
     numbering: listNumbering(),
-    sections: [{ children }],
+    sections: [{ children: content.children }],
   });
   return new Uint8Array(await Packer.toArrayBuffer(document));
 }

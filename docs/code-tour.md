@@ -352,17 +352,20 @@ The Word builder in `src/lib/word/` knows nothing about the database: a caller t
 ## Download my stories (S1-E13-05)
 
 ```
-/settings#download-my-stories → DownloadMyStoriesBlock → Story drop-down → "Get Word files"
-  → useStartStoriesExport → makeStoriesExport (in this tab, ADR 0012):
-      request_stories_export(story or null) → 'reused' (the same unchanged files from the last
-        24 hours: reusable_stories_export()) or 'new' with a .docx (one story) or .zip (all)
-      → my_data_export() narrowed to the stories → buildWordFiles() (the shared Word builder)
-      → one .docx, or buildWordZip() → delete older files → upload → finish_data_export() → notify()
-  ready line (StoriesExportReady) → "Download Word file" or "Download ZIP" (ExportDownloadButton)
-the "ready" notification (stories_export_ready) → /settings#download-my-stories
+/settings#download-my-stories → DownloadMyStoriesBlock → Story drop-down, What to include
+  (the chapters, the plan from Story Atlas, a JSON copy), All or chosen chapters → "Get my files"
+  → useDownloadChoices (choiceProblem(), requestChoices()) → useStartStoriesExport
+  → makeStoriesExport (in this tab, ADR 0012):
+      request_stories_export(story, chapters, three choices) → 'reused' (same choices, and
+        stories_fingerprint() unchanged in the last 24 hours) or 'new' with a .docx, .json or .zip
+      → my_data_export() → documentForChoice() (only STORY_TABLES and CHAPTER_TABLES, chosen rows)
+      → buildWordFiles() (storyToWord) + buildPlanFiles() (plansFrom() → planToWord()) + JSON
+      → one file as it is, or buildWordZip() → delete older files → upload → finish_data_export()
+  ready line (StoriesExportReady) → "Download Word file", "Download JSON file" or "Download ZIP"
+the "ready" notification (stories_export_ready) → /settings#download-my-stories (useScrollToHash)
 ```
 
-It reuses Download my data's table, bucket, storage policies and finishing function: `exports.kind` is `my_stories` and `exports.story_id` names the one story (null for all). One copy of each kind is kept. Tests: `213`, `src/features/data-export/lib/runStoriesExport.test.ts`, `e2e/download-my-stories.spec.ts`.
+It reuses Download my data's table, bucket, storage policies and finishing function: `exports.kind` is `my_stories`, `exports.story_id` names the one story (null for all) and `chapter_ids`, `include_chapters`, `include_plan` and `include_data` hold the choices. One copy of each kind is kept. Download my data's ZIP now holds each story's plan too (`stories/<slug>-plan.docx`). **A new table that holds a story's content goes into `STORY_TABLES` (`lib/storiesForData.ts`), `stories_fingerprint()` and, if it is part of the plan, `planForWord.ts`.** Tests: `213`, `src/features/data-export/lib/{runStoriesExport,planForWord}.test.ts`, `e2e/download-my-stories.spec.ts`.
 
 ## Delete my account (S1-E13-03)
 

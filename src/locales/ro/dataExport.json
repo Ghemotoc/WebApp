@@ -30,27 +30,67 @@
   },
   "stories": {
     "heading": "Descarcă-mi poveștile",
-    "intro": "Primește-ți poveștile ca fișiere Word (.docx) pe care le poți edita, tipări sau trimite unui agent. Sunt incluse toate capitolele, și ciornele, cu datele lor.",
+    "intro": "Primește-ți poveștile ca fișiere Word (.docx) pe care le poți edita, tipări sau trimite unui agent: toate capitolele, și ciornele, cu datele lor. Poți adăuga planul fiecărei povești din Story Atlas și o copie pe care o pot citi programele.",
     "storyLabel": "Poveste",
     "allOption_one": "Toate poveștile mele ({{count}})",
     "allOption_few": "Toate poveștile mele ({{count}})",
     "allOption_other": "Toate poveștile mele ({{count}})",
     "draftOption": "{{title}} (ciornă)",
-    "get": "Primește fișierele Word",
-    "hint": "Îți spunem când sunt gata. Linkul funcționează doar dacă te-ai conectat și expiră după șapte zile. PDF vine mai târziu.",
+    "get": "Primește fișierele",
+    "hint": "Îți spunem când sunt gata. Linkul funcționează doar dacă te-ai conectat și expiră după șapte zile. Un singur fișier vine așa cum e; mai multe vin într-o arhivă ZIP. PDF vine mai târziu.",
     "none": "Încă n-ai început nicio poveste. După ce începi una, o poți descărca aici ca fișier Word.",
-    "preparing": "Îți facem fișierele Word pe acest dispozitiv. Poți folosi aplicația mai departe, dar ține fila deschisă până sunt gata. Îți trimitem o notificare când sunt gata.",
-    "readyTitle": "Fișierele tale Word sunt gata.",
-    "holdsOne": "„{{title}}” ca fișier Word",
-    "holdsAll_one": "{{count}} poveste ca fișier Word, într-o arhivă ZIP",
-    "holdsAll_few": "{{count}} povești ca fișiere Word, într-o arhivă ZIP",
-    "holdsAll_other": "{{count}} de povești ca fișiere Word, într-o arhivă ZIP",
+    "preparing": "Îți facem fișierele pe acest dispozitiv. Poți folosi aplicația mai departe, dar ține fila deschisă până sunt gata. Îți trimitem o notificare când sunt gata.",
+    "readyTitle": "Fișierele tale sunt gata.",
     "reused": "Nu s-a schimbat nimic de când le-ai făcut acum puțin timp, așa că le ai din nou aici.",
-    "downloadOne": "Descarcă fișierul Word",
-    "downloadAll": "Descarcă ZIP",
     "downloadNameAll": "povestile-mele-{{date}}.zip",
-    "failed": "Nu am putut face fișierele Word. Încearcă din nou peste un minut.",
-    "loadFailed": "Nu am putut încărca poveștile tale. Reîncarcă pagina ca să încerci din nou."
+    "failed": "Nu am putut face fișierele. Încearcă din nou peste un minut.",
+    "loadFailed": "Nu am putut încărca poveștile tale. Reîncarcă pagina ca să încerci din nou.",
+    "include": {
+      "legend": "Ce să includem",
+      "chapters": "Capitolele, ca fișier Word",
+      "chaptersHint": "Toate capitolele în ordine, și ciornele, cu datele lor. Pentru o singură poveste poți alege capitolele.",
+      "plan": "Planul din Story Atlas, ca fișier Word",
+      "planHint": "Pe scurt, personaje, legături, biblia poveștii, firul poveștii, planurile capitolelor, idei și marketing.",
+      "data": "O copie pe care o pot citi programele (JSON)",
+      "dataHint": "Aceleași povești și planuri ca date pe care le poate citi un program, de exemplu ca să le muți la alt serviciu."
+    },
+    "chapters": {
+      "legend": "Capitole",
+      "all": "Toate capitolele",
+      "chosen": "Doar capitolele pe care le aleg",
+      "option": "Capitolul {{number}}: {{title}}",
+      "none": "Povestea asta nu are încă niciun capitol.",
+      "loadFailed": "Nu am putut încărca capitolele. Reîncarcă pagina ca să încerci din nou."
+    },
+    "problems": {
+      "nothingChosen": "Bifează cel puțin un lucru de inclus.",
+      "noChapters": "Alege cel puțin un capitol sau alege Toate capitolele."
+    },
+    "holds": {
+      "oneStory": "„{{title}}”",
+      "allStories_one": "{{count}} poveste",
+      "allStories_few": "{{count}} povești",
+      "allStories_other": "{{count}} de povești",
+      "chapters": "capitolele ca fișier Word",
+      "chosenChapters_one": "{{count}} capitol ales ca fișier Word",
+      "chosenChapters_few": "{{count}} capitole alese ca fișier Word",
+      "chosenChapters_other": "{{count}} de capitole alese ca fișier Word",
+      "plan": "planul ca fișier Word",
+      "data": "o copie JSON",
+      "inZip": "într-o arhivă ZIP"
+    },
+    "download": {
+      "docx": "Descarcă fișierul Word",
+      "json": "Descarcă fișierul JSON",
+      "zip": "Descarcă ZIP"
+    }
+  },
+  "plan": {
+    "title": "Planul pentru {{title}}",
+    "empty": "Încă nu ai planificat nimic în Story Atlas.",
+    "chapterPlans": "Planurile capitolelor",
+    "scene": "Scena {{number}}",
+    "done": "Rezolvat pe"
   },
   "word": {
     "byLine": "De {{name}}",
