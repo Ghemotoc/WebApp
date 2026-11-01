@@ -10,6 +10,22 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 1 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-01.md)
+
+12 ideas, IDEA-20261101-1 to 12: Download my data guide, download before deleting, sample EPUB, About the writer page, retention periods in Privacy settings, quiet hours for message emails, a kind No thanks for requests, teens see their parent's consent, furthest place for read-through, Canva cover templates, settings notice a new Canva cover, picture links show the picture. The four 31 Oct leftovers below went out in this one.
+
+### Furthest place for an exact read-through (idea, 31 Oct 2026)
+As a writer, I want the read-through rate to count every reader who reached the end, even if they scrolled back up afterwards, so that the number matches what really happened. Why: the dashboard (S1-E3-07) uses each reader's latest place; keeping a "furthest place" beside it is one column and makes the rate exact.
+
+### A "Where readers stop" line per chapter (idea, 31 Oct 2026)
+As a writer, I want to see roughly where in a chapter readers stop (first, middle or last third, as totals with the "fewer than 5" rule), so that I know which scenes lose people. Why: the places are already saved for the Library; grouping them into thirds keeps it aggregate and gives writers something they can act on.
+
+### Cover templates with the title already placed (idea, 31 Oct 2026)
+As a writer, I want "Design it in Canva" to start from a cover template with my title and pen name already on it, so that I only have to pick a picture and colours. Why: S1-E3-12 opens a blank 1600 × 2560 design; Canva Connect can fill brand templates from data, and a ready-made layout would give writers who aren't designers a good cover in a few minutes.
+
+### The settings tab notices the new cover by itself (idea, 31 Oct 2026)
+As a writer, I want my story's settings to show the cover I just made in Canva as soon as I go back to that tab, so that I'm not left wondering whether it worked. Why: the cover comes back in the tab Canva used; a small "refresh on focus" for the settings form closes the loop without a page reload.
+
 ### Sent 31 Oct 2026 (/mnt/project-files/feature-ideas/2026-10-31.md)
 
 - **Highlights writers can see.** Readers mark a line they loved; the writer sees a soft heat map of the
@@ -44,18 +60,3 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
   preview, pointing at chapter 1's teaser; S.
 - **"Most shared passages" for writers.** On the writer dashboard, the paragraphs readers link to most (counted per paragraph per day, never who), so a writer sees which lines land. Why: writers on Substack love seeing their most-highlighted lines; it rewards craft without any personal data. (Seen while building S1-E4-11.)
 - **Picture links in the preview image.** Once a passed picture can have a safe public copy, a picture link's preview shows the picture itself, not the cover colour. Why: picture links would stand out in chats, which is the whole point of a picture card. (S1-E4-11 follow-up.)
-
-
-(none yet)
-
-### Furthest place for an exact read-through (idea, 31 Oct 2026)
-As a writer, I want the read-through rate to count every reader who reached the end, even if they scrolled back up afterwards, so that the number matches what really happened. Why: the dashboard (S1-E3-07) uses each reader's latest place; keeping a "furthest place" beside it is one column and makes the rate exact.
-
-### A "Where readers stop" line per chapter (idea, 31 Oct 2026)
-As a writer, I want to see roughly where in a chapter readers stop (first, middle or last third, as totals with the "fewer than 5" rule), so that I know which scenes lose people. Why: the places are already saved for the Library; grouping them into thirds keeps it aggregate and gives writers something they can act on.
-
-### Cover templates with the title already placed (idea, 31 Oct 2026)
-As a writer, I want "Design it in Canva" to start from a cover template with my title and pen name already on it, so that I only have to pick a picture and colours. Why: S1-E3-12 opens a blank 1600 × 2560 design; Canva Connect can fill brand templates from data, and a ready-made layout would give writers who aren't designers a good cover in a few minutes.
-
-### The settings tab notices the new cover by itself (idea, 31 Oct 2026)
-As a writer, I want my story's settings to show the cover I just made in Canva as soon as I go back to that tab, so that I'm not left wondering whether it worked. Why: the cover comes back in the tab Canva used; a small "refresh on focus" for the settings form closes the loop without a page reload.
