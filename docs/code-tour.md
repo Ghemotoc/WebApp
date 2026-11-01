@@ -1642,6 +1642,15 @@ Idea IDEA-20261031-12 (GDPR art. 15 and 20).
 - The writer's switch: "Quote cards" in `StoryStatusSection` → `update_my_story()` with `quote_cards_enabled`.
 - Both actions have hourly limits in the `rate_limits` setting (`chapter_share`, `quote_card`). Tests: `supabase/tests/database/181-share-and-quote-cards.test.sql`, `src/features/sharing/lib/*.test.ts`, `e2e/share.spec.ts`.
 
+## Forum categories, forums and subforums (S1-E8-01; FORUMS-1a)
+
+- Where it lives: `src/features/forums/` (see its README) and `supabase/migrations/…_forums1_a_forum_categories.sql`.
+- One table, three levels: `forums` holds categories (no parent, level 0), forums (level 1) and subforums (level 2); the trigger `forums_set_level()` sets the level and refuses a fourth. `forum_names` holds each one's name and description per interface language, like tag names: forums are staff content, never locale-file text.
+- How the index travels: `/forums` → `ForumsPage` → `useForumIndex()` → `forum_index(language_code)` (anyone, signed out included) → `lib/forumTree.ts` puts pinned categories first in staff order, then the rest by latest activity (Q45). `/forums/:forumSlug` (`ForumPage`) reuses the same read for its breadcrumb and the forums inside it. Until part b the counts are 0 and every forum says "No posts yet".
+- How staff change them: `/staff/forums` (owner and admin, the `settings` area) → `useForumAdmin()` → `admin_list_forums()`, `admin_save_forum()`, `admin_delete_forum()`, each logged in `audit_log`. Refusals come back as field hints ("ro:empty", "parent:too_deep", "slug:taken").
+- Threads never close on their own (S1-E8-01, criterion 3): no job touches forums; test 221 checks `cron.job`.
+- Tests: `supabase/tests/database/221-forum-categories.test.sql`, `src/features/forums/lib/*.test.ts`, `e2e/forums.spec.ts`.
+
 ## Sharing a passage or a picture (S1-E4-11; WRITE-5e)
 
 - Blocks: a chapter's stored Markdown is cut into blocks at blank lines, counted from 1, by `src/lib/chapter-blocks.ts` and by the SQL `chapter_blocks()` the same way. `ChapterText` runs `reading/lib/numberBlocks.ts` as a rehype step, which marks each top-level part with `data-block` and `data-block-end` and highlights a shared passage.

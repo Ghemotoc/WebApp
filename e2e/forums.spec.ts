@@ -99,9 +99,12 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'First chapters' })).toBeVisible();
     await page.getByRole('link', { name: 'Fantasy and sci-fi openings' }).first().click();
     const breadcrumb = page.getByRole('navigation', { name: 'Where you are' });
-    await expect(breadcrumb).toContainText(
-      'Forums › Writing craft › First chapters › Fantasy and sci-fi openings',
-    );
+    await expect(breadcrumb.getByRole('listitem')).toHaveText([
+      'Forums',
+      '›Writing craft',
+      '›First chapters',
+      '›Fantasy and sci-fi openings',
+    ]);
     await expect(page.getByText('No threads here yet.')).toBeVisible();
     await breadcrumb.getByRole('link', { name: 'Writing craft' }).click();
     await expect(page.getByRole('link', { name: 'Worldbuilding' })).toBeVisible();
@@ -113,6 +116,8 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
   });
 
   test('an admin adds a category and a forum inside it, then removes them', async ({ browser }) => {
+    // Two saves, two removals and the index in between: longer than the default 30 s.
+    test.setTimeout(90_000);
     const page = await openAs(browser, 'admin', '/staff/forums');
     // Step 1: a pinned category, first in the order.
     await page.getByRole('button', { name: 'Add a category' }).click();
@@ -124,7 +129,7 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Saved. The forum index shows it now.')).toBeVisible();
     // Step 2: a forum inside it, with a description in both languages.
-    await page.getByRole('button', { name: 'Add a forum inside Poeți e2e' }).click();
+    await page.getByRole('button', { name: 'Add a forum inside Poets e2e' }).click();
     await fillNames(page, 'Romanian', 'Sonete e2e', 'Paisprezece versuri');
     await fillNames(page, 'English', 'Sonnets e2e', 'Fourteen lines');
     await page.getByLabel('Address').fill('e2e-sonnets');
@@ -136,15 +141,20 @@ test.describe('forum categories and subforums (FORUMS-1a, S1-E8-01)', () => {
     await expect(page.getByText('Fourteen lines')).toBeVisible();
     // Step 4: the category can't go while the forum is inside it; the forum can.
     await page.goto('/staff/forums');
-    await page.getByRole('button', { name: 'Remove Poeți e2e' }).click();
+    await page.getByRole('button', { name: 'Remove Poets e2e' }).click();
     await page.getByLabel('Why it is removed').fill('Only a test.');
     await page.getByRole('button', { name: 'Remove the forum' }).click();
     await expect(page.getByText('Move or remove the forums inside it first.')).toBeVisible();
     await page.getByRole('button', { name: 'Cancel' }).click();
-    await page.getByRole('button', { name: 'Remove Sonete e2e' }).click();
+    await page.getByRole('button', { name: 'Remove Sonnets e2e' }).click();
     await page.getByLabel('Why it is removed').fill('Only a test.');
     await page.getByRole('button', { name: 'Remove the forum' }).click();
     await expect(page.getByText('Removed. It has left the forum index.')).toBeVisible();
+    // Step 5: now empty, the category can go too.
+    await page.getByRole('button', { name: 'Remove Poets e2e' }).click();
+    await page.getByLabel('Why it is removed').fill('Only a test.');
+    await page.getByRole('button', { name: 'Remove the forum' }).click();
+    await expect(page.getByRole('heading', { name: 'Poets e2e' })).toHaveCount(0);
     await page.context().close();
   });
 

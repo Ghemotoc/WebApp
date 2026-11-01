@@ -282,6 +282,12 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Online status:** `note_i_am_online()` stamps `profiles.last_active_at` only while the switch is on; `who_is_online(handles)` answers the people who are online for the caller: switched on, active in the last 5 minutes, following the caller, no block either way. The time is cleared when the switch goes off and nightly once a day old (`forget-old-activity`).
 - No new table, so no new policy; tests `209`.
 
+## Forums (S1-E8-01)
+
+- **The tables:** `forums` (categories, forums and subforums in one table; `level` 0 to 2 set by `forums_set_level()`; `slug`, `position`, `is_pinned` for categories, `accent`, `doodle`, soft delete) and `forum_names` (name and description per interface language). Both are `kind: platform` and public to read while live (`forums_select_public`, `forum_names_select_public`); nobody writes them through the API.
+- **Reading:** `forum_index(language_code)` gives every live forum with its name in that language (else Romanian, `forum_name_in()`), thread and post counts, latest activity and latest post. Part b (S1-E8-02) fills in the numbers.
+- **Staff:** `admin_list_forums()`, `admin_save_forum()` and `admin_delete_forum()`, owner and admin (`staff_may('settings')`), each in the audit log. An address stays taken by a removed forum so old links never lead somewhere new.
+
 ## Download my data (S1-E13-02)
 
 - **The table:** `exports` (kind `all_my_data`; state `building` or `ready`; a random `file_name` "<uuid>.zip", never the user ID; `file_size` from storage; `expires_at` seven days after `ready_at`). The person reads their own rows (`exports_select_own`); every write goes through the functions.
