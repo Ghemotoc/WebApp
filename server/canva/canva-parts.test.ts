@@ -55,7 +55,12 @@ describe('the Canva token encryption', () => {
     expect(sealed).not.toContain('canva-access-token');
     expect(await decryptToken(key, sealed)).toBe('canva-access-token');
     expect(await decryptToken(otherKey, sealed)).toBeNull();
-    expect(await decryptToken(key, `${sealed.slice(0, -2)}AA`)).toBeNull();
+    // Change one character well inside the text: overwriting the last two with "AA" did nothing
+    // about 1 time in 256, when they already were "AA", and the test failed at random.
+    const middle = Math.floor(sealed.length / 2);
+    const changedCharacter = sealed[middle] === 'A' ? 'B' : 'A';
+    const tampered = `${sealed.slice(0, middle)}${changedCharacter}${sealed.slice(middle + 1)}`;
+    expect(await decryptToken(key, tampered)).toBeNull();
   });
 
   it('refuses a missing key or one that is not 32 bytes', async () => {
