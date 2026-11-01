@@ -36,6 +36,7 @@ import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePatte
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
 import { LegalUpdateNotice } from '@/features/legal/components/LegalUpdateNotice';
 import { MaintenanceGate } from '@/features/maintenance/components/MaintenanceGate';
+import { MessagesNavLink } from '@/features/messages/components/MessagesNavLink';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { OfflineBanner } from '@/features/offline/components/OfflineBanner';
 import { ParentConsentNotice } from '@/features/parent-consent/components/ParentConsentNotice';
@@ -71,6 +72,8 @@ export function AppLayout() {
         {t('shell.skipToContent')}
       </a>
       <TopBar
+        // Messages with its unread count, while signed in (S1-E9-01).
+        navigationEnd={<MessagesNavLink />}
         endSlot={
           <>
             <LanguageSelect id="language-select-top" />

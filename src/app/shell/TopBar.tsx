@@ -8,7 +8,8 @@
  * On phones the island wraps onto several rows, as the boards show; there is no hamburger menu.
  * Decisions: links appear only when their page exists (src/app/navigation.ts); there is no
  * theme switch here (Robert, 17 Oct 2026). The end slot holds the language drop-down from
- * S1-E1-04; notifications, Write and the account button come with their stories.
+ * S1-E1-04; notifications, Write and the account button come with their stories. Messages, with
+ * its unread count, comes in through navigationEnd while signed in (S1-E9-01).
  * Who uses it: AppLayout, and the /design page with the full board links.
  */
 import type { ReactNode } from 'react';
@@ -25,6 +26,8 @@ export interface TopBarProps {
   endSlot?: ReactNode;
   /** The navigation's accessible name; a specimen on /design passes its own so it isn't a second "Main". */
   navigationLabel?: string;
+  /** Links after the list that decide themselves whether to show, such as Messages while signed in (S1-E9-01). */
+  navigationEnd?: ReactNode;
 }
 
 /** A nav link's classes: plum, bold and gold-underlined when it is the current page. */
@@ -44,6 +47,7 @@ export function TopBar({
   navigationItems = primaryNavigation,
   endSlot,
   navigationLabel,
+  navigationEnd,
 }: TopBarProps) {
   const { t } = useTranslation();
 
@@ -68,6 +72,7 @@ export function TopBar({
                 </NavLink>
               </li>
             ))}
+            {navigationEnd}
           </ul>
         )}
         {/* Wraps on narrow phones, so the language menu, "Log in" and "Join for free" never push the page sideways (S1-E2-05; CLAUDE.md rule 21). */}

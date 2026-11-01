@@ -318,6 +318,19 @@ const notificationRoutes: RouteObject[] = [
 ];
 
 /**
+ * Private messages (S1-E9-01): the chats at /messages and one chat, by the other person's
+ * username, at /messages/:handle. The page is loaded when opened.
+ */
+const messagesRoutes: RouteObject[] = ['/messages', '/messages/:handle'].map((path) => ({
+  path,
+  HydrateFallback: () => null,
+  lazy: async () => {
+    const { MessagesPage } = await import('@/features/messages/components/MessagesPage');
+    return { Component: MessagesPage };
+  },
+}));
+
+/**
  * Messages to the moderators (S1-E10-11): the list, a new message and one thread; a
  * moderator_mail_reply notification links to the thread. Each is loaded when opened.
  */
@@ -726,6 +739,7 @@ function pageRoutes(): RouteObject[] {
       },
     },
     ...moderatorMailRoutes,
+    ...messagesRoutes,
     // Lane A: writing and reading (S1-E3, S1-E4).
     ...writeRoutes,
     // Contact us: the form for users and visitors (S1-E14-04; Lane C), loaded when opened.

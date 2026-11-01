@@ -262,6 +262,16 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **The recipient's setting:** `profiles.messages_from` (`everyone`, `people_i_follow`, `nobody`); empty means people they follow under 18 and everyone for adults (`message_audience_of()`; proposals). Settings to change it: S1-E9-04.
 - **Never why:** `get_writer_profile()` gives the signed-in visitor `can_message` only (null signed out or on one's own profile); the profile shows the same neutral note for every reason.
 
+## Private messages (S1-E9-01)
+
+- **Tables:** `conversations` (one per pair: who started it, `recipient_user_id`, `status` request, accepted or declined), `conversation_members` (each person's `last_read_at`) and `messages` (text only, 1 to 2,000 characters, `reportable: message`). Each person reads only their own rows; every write goes through the functions.
+- **Writing:** `send_message(handle, body)` asks `conversation_can_send()`: `can_message()` for a new chat (never to a staff account; members write to the team through moderator mail), `may_keep_writing()` (active, no block, ages allowed) for an accepted one, and in a request only the recipient may write, which accepts it. A first message to someone who doesn't follow the sender is a request; the sender can't send more until it is accepted. Refusals are `insufficient_privilege` with hint `not_taking`, the same for every reason.
+- **Requests:** `answer_message_request(handle, accept)`: accepted, or declined (gone from the recipient's lists; the sender is never told and still waits).
+- **Reading:** `my_conversations()`, `conversation_with(handle)` (null for someone who blocks the caller or whose profile is moderated away), `mark_conversation_read()`, `unread_message_count()` and `my_message_settings()` (the caller's own setting and age group only).
+- **Limits:** `new_conversation` and `message` in the `rate_limits` setting, the same for new and older accounts (Q61; proposals: 20 and 200 an hour).
+- **Reporting:** the `message` branches of `reportable_item_owner()` (only the two people in the chat), `reportable_item_summary()`, `case_item_content()` and `notification_item_json()`. A hidden or removed message is gone for the other person; its writer still sees a hidden one (`message_body_for()`).
+- **Seed:** one accepted chat between `teacher` and `adult_writer`; staging gets it from `staging-topups/S1-E9-01.sql`.
+
 ## Seed personas
 
 Every persona's username is its persona name (for example `adult_writer`); adult_writer's pen name is `Lia Scrie`.

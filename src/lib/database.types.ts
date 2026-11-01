@@ -1511,6 +1511,98 @@ export type Database = {
           },
         ];
       };
+      conversation_members: {
+        Row: {
+          conversation_id: string;
+          created_at: string;
+          id: string;
+          last_read_at: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          conversation_id: string;
+          created_at?: string;
+          id?: string;
+          last_read_at?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          conversation_id?: string;
+          created_at?: string;
+          id?: string;
+          last_read_at?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'conversation_members_conversation_id_fkey';
+            columns: ['conversation_id'];
+            isOneToOne: false;
+            referencedRelation: 'conversations';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'conversation_members_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      conversations: {
+        Row: {
+          accepted_at: string | null;
+          created_at: string;
+          id: string;
+          last_message_at: string;
+          recipient_user_id: string;
+          status: Database['public']['Enums']['conversation_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accepted_at?: string | null;
+          created_at?: string;
+          id?: string;
+          last_message_at?: string;
+          recipient_user_id: string;
+          status?: Database['public']['Enums']['conversation_status'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          created_at?: string;
+          id?: string;
+          last_message_at?: string;
+          recipient_user_id?: string;
+          status?: Database['public']['Enums']['conversation_status'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'conversations_recipient_user_id_fkey';
+            columns: ['recipient_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'conversations_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       copied_work_notes: {
         Row: {
           case_id: string;
@@ -2189,6 +2281,52 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      messages: {
+        Row: {
+          body: string;
+          conversation_id: string;
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          conversation_id: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          conversation_id?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'messages_conversation_id_fkey';
+            columns: ['conversation_id'];
+            isOneToOne: false;
+            referencedRelation: 'conversations';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'messages_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       moderated_items: {
         Row: {
@@ -6052,6 +6190,10 @@ export type Database = {
         Returns: boolean;
       };
       another_appeals_decider_exists: { Args: Record<PropertyKey, never>; Returns: boolean };
+      answer_message_request: {
+        Args: { sender_handle: string; should_accept: boolean };
+        Returns: Json;
+      };
       answer_parental_consent: {
         Args: { decision: string; page_language: string; signature: string; token: string };
         Returns: Json;
@@ -6469,6 +6611,38 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
       };
+      conversation_between: {
+        Args: { first_user_id: string; second_user_id: string };
+        Returns: {
+          accepted_at: string | null;
+          created_at: string;
+          id: string;
+          last_message_at: string;
+          recipient_user_id: string;
+          status: Database['public']['Enums']['conversation_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'conversations';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      conversation_can_send: {
+        Args: {
+          chat: Omit<
+            Database['public']['Tables']['conversations']['Row'],
+            Database['public']['Tables']['conversations']['ComputedFields']
+          >;
+          other_id: string;
+          writer_id: string;
+        };
+        Returns: boolean;
+      };
+      conversation_messages_json: { Args: { chat_id: string; reader_id: string }; Returns: Json };
+      conversation_with: { Args: { other_handle: string }; Returns: Json };
       count_links: { Args: { body: string }; Returns: number };
       count_words: { Args: { body: string }; Returns: number };
       cover_upload_allowed: { Args: { object_name: string }; Returns: boolean };
@@ -6840,6 +7014,7 @@ export type Database = {
         Args: { current_result: Database['public']['Enums']['age_check_result']; decision: string };
         Returns: Database['public']['Enums']['age_check_result'];
       };
+      mark_conversation_read: { Args: { other_handle: string }; Returns: undefined };
       mark_notifications_read: { Args: { notification_ids?: string[] }; Returns: number };
       market_change_problem: {
         Args: {
@@ -6854,6 +7029,7 @@ export type Database = {
       };
       marketing_email_allowed: { Args: { target_user_id: string }; Returns: boolean };
       mask_email: { Args: { address: string }; Returns: string };
+      may_keep_writing: { Args: { other_id: string; writer_id: string }; Returns: boolean };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
       may_see_march_numbers: { Args: Record<PropertyKey, never>; Returns: boolean };
       message_age_group: {
@@ -6873,6 +7049,55 @@ export type Database = {
           >;
         };
         Returns: Database['public']['Enums']['message_audience'];
+      };
+      message_body_for: {
+        Args: {
+          message: Omit<
+            Database['public']['Tables']['messages']['Row'],
+            Database['public']['Tables']['messages']['ComputedFields']
+          >;
+          reader_id: string;
+        };
+        Returns: string;
+      };
+      messaging_partner: {
+        Args: { wanted_handle: string };
+        Returns: {
+          adults_may_message: boolean;
+          age_check_method: Database['public']['Enums']['age_check_method'] | null;
+          age_check_result: Database['public']['Enums']['age_check_result'];
+          age_checked_at: string | null;
+          avatar_picture_id: string | null;
+          bio: string;
+          birth_month: number | null;
+          birth_year: number | null;
+          birthday_day: number | null;
+          birthday_month: number | null;
+          country_code: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          handle: string | null;
+          handle_changed_at: string | null;
+          handle_skeleton: string | null;
+          handle_slug: string | null;
+          id: string;
+          locale: string;
+          marketing_email_opt_in: boolean;
+          messages_from: Database['public']['Enums']['message_audience'] | null;
+          onboarded_at: string | null;
+          pen_name: string | null;
+          pen_name_changed_at: string | null;
+          region_code: string | null;
+          shows_online_status: boolean;
+          teacher_badge_since: string | null;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'profiles';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       metric_on: {
         Args: { for_day: string; wanted_market?: string; wanted_metric: string };
@@ -6994,6 +7219,19 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      my_conversations: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          has_unread: boolean;
+          is_request_to_me: boolean;
+          last_message_at: string;
+          last_message_from_me: boolean;
+          last_message_preview: string;
+          other_display_name: string;
+          other_handle: string;
+          status: Database['public']['Enums']['conversation_status'];
+        }[];
+      };
       my_embeds: { Args: { embed_ids: string[] }; Returns: Json };
       my_followers: {
         Args: Record<PropertyKey, never>;
@@ -7049,6 +7287,7 @@ export type Database = {
       };
       my_live_story_id: { Args: { story_slug: string }; Returns: string };
       my_login_methods: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_message_settings: { Args: Record<PropertyKey, never>; Returns: Json };
       my_moderator_mail: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -7769,6 +8008,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      require_messaging_caller: { Args: Record<PropertyKey, never>; Returns: string };
       require_not_last_owner: {
         Args: { removed_role: Database['public']['Enums']['staff_role']; target_user_id: string };
         Returns: undefined;
@@ -7864,6 +8104,7 @@ export type Database = {
         };
         Returns: string[];
       };
+      send_message: { Args: { body: string; recipient_handle: string }; Returns: Json };
       send_moderator_mail: {
         Args: { body: string; statement_reference?: string; subject: string };
         Returns: Json;
@@ -7956,6 +8197,25 @@ export type Database = {
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
+      start_conversation: {
+        Args: { recipient_id: string; sender_id: string };
+        Returns: {
+          accepted_at: string | null;
+          created_at: string;
+          id: string;
+          last_message_at: string;
+          recipient_user_id: string;
+          status: Database['public']['Enums']['conversation_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'conversations';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       statement_ground_for_case: {
         Args: {
           target: Omit<
@@ -8130,6 +8390,7 @@ export type Database = {
       };
       unfinished_social_account: { Args: { target_user_id: string }; Returns: boolean };
       unpublish_chapter: { Args: { chapter_code: string }; Returns: Json };
+      unread_message_count: { Args: Record<PropertyKey, never>; Returns: number };
       unsubscribe_from_emails: { Args: { unsubscribe_key: string }; Returns: boolean };
       update_bible_entry: { Args: { changes: Json; entry_id: string }; Returns: Json };
       update_chapter_plan: { Args: { changes: Json; chapter_code: string }; Returns: Json };
@@ -8213,6 +8474,7 @@ export type Database = {
       comment_deleted_by: 'author' | 'writer';
       completion_status: 'ongoing' | 'completed';
       compliance_entry_kind: 'authority_order' | 'legal_request' | 'launch_notice';
+      conversation_status: 'request' | 'accepted' | 'declined';
       cover_kind: 'automatic' | 'drawn' | 'upload';
       email_delivery: 'instant' | 'daily' | 'off';
       embed_service: 'youtube' | 'vimeo' | 'loom' | 'spotify' | 'apple_music';
@@ -8272,7 +8534,14 @@ export type Database = {
         | 'undisclosed_ai'
         | 'other';
       reportable_type:
-        'profile' | 'story' | 'chapter' | 'comment' | 'picture' | 'embed' | 'atlas_item';
+        | 'profile'
+        | 'story'
+        | 'chapter'
+        | 'comment'
+        | 'picture'
+        | 'embed'
+        | 'atlas_item'
+        | 'message';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -8491,6 +8760,7 @@ export const Constants = {
       comment_deleted_by: ['author', 'writer'],
       completion_status: ['ongoing', 'completed'],
       compliance_entry_kind: ['authority_order', 'legal_request', 'launch_notice'],
+      conversation_status: ['request', 'accepted', 'declined'],
       cover_kind: ['automatic', 'drawn', 'upload'],
       email_delivery: ['instant', 'daily', 'off'],
       embed_service: ['youtube', 'vimeo', 'loom', 'spotify', 'apple_music'],
@@ -8560,7 +8830,16 @@ export const Constants = {
         'undisclosed_ai',
         'other',
       ],
-      reportable_type: ['profile', 'story', 'chapter', 'comment', 'picture', 'embed', 'atlas_item'],
+      reportable_type: [
+        'profile',
+        'story',
+        'chapter',
+        'comment',
+        'picture',
+        'embed',
+        'atlas_item',
+        'message',
+      ],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [
         'emergency',

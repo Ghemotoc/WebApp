@@ -361,3 +361,19 @@ insert into public.teacher_checks (user_id, way, school_domain, status, decided_
 values ('00000000-0000-4000-8000-000000000007', 'school_email', 'liceul-exemplu.edu.ro', 'approved', now());
 insert into public.staff_permissions (user_id, permission, granted_by_user_id)
 values ('00000000-0000-4000-8000-000000000010', 'teacher_checks', '00000000-0000-4000-8000-000000000008');
+
+-- Private messages (S1-E9-01): one accepted chat between teacher and adult_writer, so Messages has
+-- something to show on staging and in screenshots. Tests that need their own chats make them.
+insert into public.conversations (id, user_id, recipient_user_id, status, accepted_at, last_message_at)
+values ('00000000-0000-4000-a000-000000000901', '00000000-0000-4000-8000-000000000007',
+        '00000000-0000-4000-8000-000000000001', 'accepted', now() - interval '2 hours', now() - interval '1 hour');
+insert into public.conversation_members (conversation_id, user_id, last_read_at)
+values ('00000000-0000-4000-a000-000000000901', '00000000-0000-4000-8000-000000000007', now() - interval '1 hour'),
+       ('00000000-0000-4000-a000-000000000901', '00000000-0000-4000-8000-000000000001', now() - interval '1 hour');
+insert into public.messages (conversation_id, user_id, body, created_at)
+values ('00000000-0000-4000-a000-000000000901', '00000000-0000-4000-8000-000000000007',
+        'Hi! My class is reading your story this week. Would you answer a few questions from them?', now() - interval '2 hours'),
+       ('00000000-0000-4000-a000-000000000901', '00000000-0000-4000-8000-000000000001',
+        'Of course. Send them over whenever you like.', now() - interval '90 minutes'),
+       ('00000000-0000-4000-a000-000000000901', '00000000-0000-4000-8000-000000000007',
+        'Thank you! I’ll collect them on Friday.', now() - interval '1 hour');

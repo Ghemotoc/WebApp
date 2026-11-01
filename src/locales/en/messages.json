@@ -1,0 +1,93 @@
+{
+  "documentTitle": "Messages",
+  "chatDocumentTitle": "Messages with {{name}}",
+  "eyebrow": "Messages",
+  "title": "Your messages",
+  "lead": "Private chats with other writers and readers. Text only.",
+  "signedOut": "Log in to see your messages.",
+  "logIn": "Log in",
+  "list": {
+    "title": "Chats",
+    "newChat": "Start a new chat",
+    "tabsLabel": "Which chats",
+    "all": "All chats",
+    "requests": "Requests",
+    "requestsWaiting_one": "{{count}} waiting",
+    "requestsWaiting_few": "{{count}} waiting",
+    "requestsWaiting_other": "{{count}} waiting",
+    "empty": "No chats yet. Open someone’s profile and choose Message, or start a new chat.",
+    "requestsEmpty": "No message requests.",
+    "requestsHint": "First messages from people who don’t follow you show up here. They can’t send more until you accept.",
+    "you": "You: {{text}}",
+    "removed": "[Removed by the moderation team]",
+    "unread": "new messages",
+    "waiting": "Waiting for them to accept",
+    "loadFailed": "We couldn’t load your chats. Try again in a moment."
+  },
+  "rules": {
+    "minors": "Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on.",
+    "audience": {
+      "everyone": "Right now, anyone can message you.",
+      "people_i_follow": "Right now, only people you follow can message you.",
+      "nobody": "Right now, nobody can start a new chat with you."
+    }
+  },
+  "chat": {
+    "pick": "Pick a chat, or start a new one.",
+    "notFound": "There’s nobody to message with that username.",
+    "loadFailed": "We couldn’t load this chat. Try again in a moment.",
+    "back": "All chats",
+    "messagesLabel": "Messages with {{name}}",
+    "you": "You",
+    "removed": "[Removed by the moderation team]",
+    "startHint": "Say hello. If {{name}} doesn’t follow you, your first message goes to their requests and you can send more once they accept.",
+    "waiting": "Your message is waiting in {{name}}’s requests. You can send more once they accept.",
+    "notTaking": "{{name}} isn’t taking messages right now.",
+    "composerLabel": "Message to {{name}}",
+    "send": "Send",
+    "textOnly": "Text only. You can’t send pictures or files.",
+    "reportLabel": "the message from {{name}} at {{time}}"
+  },
+  "request": {
+    "title": "{{name}} wants to message you",
+    "explain": "They can’t send more until you accept. If you delete the request, they won’t be told.",
+    "accept": "Accept request",
+    "delete": "Delete request",
+    "deleted": "Request deleted. {{name}} won’t be told."
+  },
+  "about": {
+    "title": "About this chat",
+    "viewProfile": "View {{name}}’s profile",
+    "followEachOther": "You follow each other.",
+    "iFollow": "You follow them.",
+    "theyFollow": "They follow you.",
+    "noFollow": "You don’t follow each other.",
+    "whoTitle": "Who can message you",
+    "audience": {
+      "everyone": "Everyone",
+      "people_i_follow": "People you follow",
+      "nobody": "Nobody"
+    },
+    "adultsTitle": "Messages from adults",
+    "on": "On",
+    "off": "Off",
+    "adultsHint": "Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Only you can turn this on, in Settings.",
+    "privacyTitle": "Who can read your messages",
+    "privacy": "Messages aren’t end-to-end encrypted. Our team reads them only if someone reports them or the law requires it."
+  },
+  "newChat": {
+    "eyebrow": "Messages",
+    "title": "Start a new chat",
+    "label": "Their username",
+    "hint": "The name after @ on their profile.",
+    "open": "Open chat",
+    "close": "Close"
+  },
+  "failures": {
+    "not_taking": "They aren’t taking messages right now.",
+    "refused": "Write between 1 and 2,000 characters.",
+    "not_found": "There’s nobody with that username.",
+    "too_many": "You’ve sent a lot of messages in the last hour. Try again in {{minutes}} minutes.",
+    "unreachable": "We couldn’t do that. Check your connection and try again."
+  }
+}

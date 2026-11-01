@@ -16,7 +16,8 @@ export interface NavigationItem {
 
 /**
  * Top bar links that exist today: Discover (S1-E5-01) and Library (S1-E4-03; a visitor gets a
- * log-in card there). Coming: Home (S1-E5-08), Forums (S1-E8-01), Messages (S1-E9-01).
+ * log-in card there). Coming: Home (S1-E5-08), Forums (S1-E8-01). Messages (S1-E9-01) is only for
+ * signed-in people, so it isn't in this list: MessagesNavLink adds it after these, with its count.
  */
 export const primaryNavigation: NavigationItem[] = [
   { href: '/discover', labelKey: 'nav.discover' },

@@ -1,0 +1,12 @@
+# Messages
+
+One-to-one private messages and message requests. Built by S1-E9-01 (bundle MESSAGES, part b) on the rule from S1-E9-03 (`can_message()`). Board: `design/boards/Messages.dc.html` (5.5).
+
+- `components/MessagesPage.tsx`: `/messages` and `/messages/:handle` (the other person's username). Three columns from 1024 px (`ChatList`, `ChatPanel`, `AboutChatPanel`); one at a time below that.
+- `components/ChatList.tsx`: "Chats", the + (`NewChatButton`, opens a chat by username), All chats and Requests, `MessagesRulesNotice` and the rows (`ChatListItem`, `ChatAvatar`).
+- `components/ChatPanel.tsx`: one chat: `ChatMessages` (bubbles, Report beside the other person's), then `RequestActions` for a request to the reader, `MessageComposer` when they may write, or a note ("waiting in their requests", or the neutral "isn't taking messages right now").
+- `components/MessagesNavLink.tsx`: Messages in the top bar with the number of chats with new messages, while signed in (passed to `TopBar` as `navigationEnd`).
+- `api/messages.ts` and `hooks/useMessages.ts`: `my_conversations()`, `conversation_with()`, `send_message()`, `answer_message_request()`, `mark_conversation_read()`, `unread_message_count()` and `my_message_settings()`. New messages arrive by asking again (5 s in a chat, 15 s for the list, 1 minute for the top bar).
+- Text: `src/locales/{ro,en}/messages.json`, loaded with the page (`registerMessagesTranslations.ts`); the top bar's words are in `common.json`.
+- The database side: `supabase/migrations/…_s1_e9_01_private_messages.sql`; tests `206` and `e2e/messages.spec.ts`.
+- Coming: block in a chat and the report's context (S1-E9-02), message settings, Delete chat and the clean-up (S1-E9-04).
