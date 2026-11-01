@@ -42,7 +42,9 @@ export function usePictureCardActions(
   function countOnce() {
     if (hasCounted) return;
     setHasCounted(true);
-    void import('../lib/countShare').then((module) => module.countShare(address, 'copy_link', range));
+    void import('../lib/countShare').then((module) =>
+      module.countShare(address, 'copy_link', range),
+    );
   }
 
   /** Runs one action on the drawn card and turns failures into a status line. */

@@ -20,14 +20,16 @@ import { formatShownCount } from '../lib/dashboardNumbers';
 function TenthRow({ index, percent }: { index: number; percent: number }) {
   const { t } = useTranslation('writing');
   return (
-    <li className="grid grid-cols-[88px_1fr_96px] items-center gap-3 text-sm">
+    <li className="grid grid-cols-[88px_1fr_auto] items-center gap-3 text-sm">
       <span className="text-body">
         {t('insights.tenth', { from: index * 10, to: index * 10 + 10 })}
       </span>
       <span aria-hidden="true" className="h-3 overflow-hidden rounded-full bg-tint">
         <span className="block h-full rounded-full bg-primary" style={{ width: `${percent}%` }} />
       </span>
-      <span className="text-right text-ink">{t('insights.tenthValue', { percent })}</span>
+      <span className="text-right whitespace-nowrap text-ink">
+        {t('insights.tenthValue', { percent })}
+      </span>
     </li>
   );
 }
