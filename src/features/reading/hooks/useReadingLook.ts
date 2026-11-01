@@ -3,9 +3,10 @@
  *
  * It joins the reader's saved settings (useReadingSettings) with the device's own text size,
  * read once when the chapter opens, and returns the values ChapterReading puts on the page: CSS
- * variables for the text, the column's width and the theme's box.
+ * variables for the text, the column's width and the theme's box. The theme is the chapter's
+ * (useChapterTheme), so Night by the clock and a theme picked by hand apply (IDEAS-1 part a).
  * Who calls it: ChapterReading in ChapterReaderPage.
- * What it calls: useReadingSettings and lib/readingStyle.ts.
+ * What it calls: useReadingSettings, useChapterTheme and lib/readingStyle.ts.
  */
 import { useState, type CSSProperties } from 'react';
 
@@ -17,6 +18,7 @@ import {
   readRootFontSize,
 } from '../lib/readingStyle';
 
+import { useChapterTheme } from './useChapterTheme';
 import { useReadingSettings } from './useReadingSettings';
 
 /** The theme's box around the text: its class and, for Night, the night tokens. */
@@ -41,11 +43,14 @@ export function readingPageFor(theme: ReadingTheme): ReadingPage {
 /**
  * Works out the look.
  *
+ * @param chapterCode - the open chapter, whose theme may come from the clock or a pick by hand
  * @returns textVariables (a style with the CSS variables), columnWidth (px), page (the theme's
- *   box), deviceSize (the size that follows the device) and isSignedIn
+ *   box), deviceSize (the size that follows the device), isSignedIn and hasRuler (the reading
+ *   ruler is on)
  */
-export function useReadingLook() {
+export function useReadingLook(chapterCode: string) {
   const { settings, isSignedIn } = useReadingSettings();
+  const { theme } = useChapterTheme(settings, chapterCode);
   // The device's size is read once: it changes only when the reader changes their device setting.
   const [deviceSize] = useState(() => deviceTextSize(readRootFontSize()));
   const textStyle = readingTextStyle(settings, deviceSize);
@@ -58,8 +63,9 @@ export function useReadingLook() {
   return {
     textVariables,
     columnWidth: readingColumnWidth(settings.lineWidth),
-    page: readingPageFor(settings.theme),
+    page: readingPageFor(theme),
     deviceSize,
     isSignedIn,
+    hasRuler: isSignedIn && settings.readingRuler,
   };
 }

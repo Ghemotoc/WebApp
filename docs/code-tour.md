@@ -1579,6 +1579,17 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - How the text gets its look: `useReadingLook` joins the settings with the device's own text size (the page's root font size, read once; 19 px at the normal 16) and puts CSS variables (`--reading-font-size` and so on) on the box around the text; `src/styles/index.css` reads them in `.tmc-chapter-text--reader`. Sepia and Night wrap the text in `.tmc-reading-page` (Night with `data-theme="night"`, so it reuses the night tokens).
 - The row is readable by its owner only. Tests: `supabase/tests/database/180-reading-settings.test.sql`, `src/features/reading/lib/readingStyle.test.ts`, `e2e/reading-settings.spec.ts`.
 
+## Reading place and comfort (IDEAS-1 part a)
+
+Robert's picks of 31 Oct 2026, ideas 4, 6, 7 and 8 (`/mnt/project-files/feature-ideas/2026-10-31.md`).
+
+- "You are here" (idea 4): on the story page, `StoryChapterList` asks `story_library_state()` (through `useStoryLibraryState`) for the reader's place and puts "You are here, 42%" beside that chapter. It links to `/s/<story>/<chapter>#resume`; `ChapterReaderPage`'s `AboveText` remembers the "#resume" once and `SavedPlaceOffer` (with `goesAtOnce`) scrolls straight to the place and takes the hash off the address.
+- Atkinson Hyperlegible (idea 6): a fourth font in the panel. It is self-hosted from `@fontsource/atkinson-hyperlegible` (imported in `src/styles/fonts.css`, so no outside font site), and `lib/readingStyle.ts` maps the new `reading_font` value to it.
+- Night by the clock (idea 7): two times the reader picks, kept in `reading_settings` (`night_by_clock`, `night_from`, `night_until`; there is no preset hour). `hooks/useChapterTheme.ts` reads the device's clock once when a chapter opens and asks `lib/nightByClock.ts` whether it falls inside the hours (a span past midnight is fine). A theme picked by hand while the clock decides is kept for that chapter only, in a small store the panel and the page share.
+- The reading ruler (idea 8): `reading_settings.reading_ruler`. `components/ReadingRuler.tsx` (loaded only when it is on) measures the text's lines from the browser's boxes for the words (`lib/rulerLines.ts`), and draws a tinted band behind the line under the pointer; the Up and Down keys move it a line at a time. It is `aria-hidden`, so screen readers read the chapter as before.
+- How a setting travels: the same as the other reading settings: `ReadingComfortFields` → `change()` → `save_reading_settings()` (now with four more arguments, each with a default, so older calls still work).
+- Tests: `supabase/tests/database/215-reading-comfort.test.sql`, `lib/nightByClock.test.ts`, `lib/rulerLines.test.ts`, `e2e/reading-comfort.spec.ts`.
+
 ## Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)
 
 - Where it lives: `src/features/sharing/` (see its README). The reader screen adds `ShareButtonWhenNear` to `ChapterEnd`'s row (it fetches `ShareButton` when the row nears the screen, `src/lib/use-is-near.ts`) and `QuoteShareWatcher` under the chapter (it fetches `QuoteShareBar` on the first selection); `reading/lib/toSharedChapter.ts` hands them only public things (address, titles, number, pen name).

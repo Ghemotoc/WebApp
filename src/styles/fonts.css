@@ -1,5 +1,5 @@
 /*
- * The four fonts, served from our own site instead of Google Fonts (story S1-E1-03).
+ * The fonts, served from our own site instead of Google Fonts (story S1-E1-03).
  *
  * Why self-hosted: loading fonts from Google sends every visitor's IP address to a third party,
  * which CLAUDE.md rule 7 (no third-party scripts without an ADR) and GDPR both argue against.
@@ -11,8 +11,15 @@
  *   Inter                body and interface text
  *   Cutive               eyebrow labels (14 px, sentence case)
  *   Shadows Into Light Two  handwritten accents
+ *   Atkinson Hyperlegible   a chapter reading font the reader can pick (IDEAS-1 part a,
+ *                           IDEA-20261031-6; OFL licence). Its files download only when a reader
+ *                           picks it, because a browser fetches a font only once text uses it.
  */
 @import '@fontsource-variable/bricolage-grotesque';
 @import '@fontsource-variable/inter';
 @import '@fontsource/cutive';
 @import '@fontsource/shadows-into-light-two';
+@import '@fontsource/atkinson-hyperlegible/400.css';
+@import '@fontsource/atkinson-hyperlegible/400-italic.css';
+@import '@fontsource/atkinson-hyperlegible/700.css';
+@import '@fontsource/atkinson-hyperlegible/700-italic.css';

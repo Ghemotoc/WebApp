@@ -27,9 +27,16 @@ const ReadingSettingsPanel = lazy(async () => {
  * Renders the button and, while open, the panel.
  *
  * @param props.deviceSize - the text size that follows the device, for the slider
+ * @param props.chapterCode - the open chapter, for its theme (IDEAS-1 part a)
  * @returns the control
  */
-export function ReadingSettingsControl({ deviceSize }: { deviceSize: number }) {
+export function ReadingSettingsControl({
+  deviceSize,
+  chapterCode,
+}: {
+  deviceSize: number;
+  chapterCode: string;
+}) {
   const { t } = useTranslation('reading');
   const panelId = useId();
   const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +78,12 @@ export function ReadingSettingsControl({ deviceSize }: { deviceSize: number }) {
         // While the panel's file loads, an empty stand-in carries its id, so aria-controls
         // never points at nothing (axe: aria-valid-attr-value).
         <Suspense fallback={<div id={panelId} hidden />}>
-          <ReadingSettingsPanel id={panelId} deviceSize={deviceSize} onClose={close} />
+          <ReadingSettingsPanel
+            id={panelId}
+            deviceSize={deviceSize}
+            chapterCode={chapterCode}
+            onClose={close}
+          />
         </Suspense>
       )}
     </div>

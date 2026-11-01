@@ -61,7 +61,9 @@
         "bible": "World",
         "timeline": "Timeline"
       }
-    }
+    },
+    "youAreHere": "You are here, {{percent}}%",
+    "youAreHereLink": "You are here, {{percent}}% through chapter {{number}}. Go back to that place"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
@@ -143,9 +145,10 @@
     "fonts": {
       "sans": "Inter",
       "serif": "Serif",
-      "dyslexia_friendly": "Dyslexia-friendly"
+      "dyslexia_friendly": "Dyslexia-friendly",
+      "atkinson_hyperlegible": "Atkinson Hyperlegible"
     },
-    "fontHint": "A small set that works in every browser, including one that many readers with dyslexia find easier.",
+    "fontHint": "Fonts that work in every browser: one that many readers with dyslexia find easier, and Atkinson Hyperlegible, made so letters that look alike are easy to tell apart.",
     "textSize": "Text size",
     "textSizeValue": "{{size}} px",
     "textSizeFromDevice": "{{size}} px, from your device",
@@ -168,6 +171,14 @@
       "sepia": "Sepia",
       "night": "Night"
     },
+    "nightByClock": "Night by the clock",
+    "nightByClockHint": "Chapters open in Night between two times you choose, on this device’s clock.",
+    "nightFrom": "From",
+    "nightUntil": "Until",
+    "nightWaiting": "Pick both times. Nothing changes until you do.",
+    "nightNextChapter": "Chapters you open between these times show in Night. A theme you pick yourself wins until the next chapter.",
+    "ruler": "Reading ruler",
+    "rulerHint": "A soft band follows the line you’re reading. Move the pointer over the text, or use the Up and Down arrow keys.",
     "saved": "Saved to your account, so they apply on all your devices. Text size starts from your device’s own setting.",
     "saveFailed": "We couldn’t save your reading settings. They still apply here; check your connection and change one again to retry."
   },

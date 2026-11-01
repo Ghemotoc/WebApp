@@ -6,9 +6,12 @@
  * purpose from the top, stays where they are. The button scrolls the text so the saved line
  * sits at the bottom of the window, which is how the place was measured (useReadingProgress),
  * then the offer goes away. No doodles: this is the chapter reader (DoD design rules).
+ * With goesAtOnce (IDEAS-1 part a, IDEA-20261031-4: the story page's "You are here" link, an
+ * address ending "#resume"), it goes back to the place as soon as the text is on screen, shows
+ * nothing, and takes "#resume" off the address so reloading starts where the reader is.
  * Who uses it: ChapterReaderPage, with the place from useSavedPlace.
  */
-import { useState, type RefObject } from 'react';
+import { useEffect, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
@@ -16,33 +19,46 @@ import { Button } from '@/components/ui/Button';
 import { scrollTopForPlace } from '../lib/savedPlace';
 
 /**
+ * Scrolls the page so the saved place sits at the bottom of the window.
+ *
+ * @param text - the chapter text's box, or null before it is drawn
+ * @param percent - the saved place
+ */
+function scrollToPlace(text: HTMLElement | null, percent: number) {
+  const box = text?.getBoundingClientRect();
+  if (box === undefined) return;
+  const top = scrollTopForPlace(box.top + window.scrollY, box.height, window.innerHeight, percent);
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
+/**
  * Renders the offer, or nothing once used.
  *
  * @param props.percent - the saved place
  * @param props.textRef - the chapter text's box
+ * @param props.goesAtOnce - true to go back straight away instead of offering
  * @returns the offer
  */
 export function SavedPlaceOffer({
   percent,
   textRef,
+  goesAtOnce = false,
 }: {
   percent: number;
   textRef: RefObject<HTMLElement | null>;
+  goesAtOnce?: boolean;
 }) {
   const { t } = useTranslation('reading');
   const [isUsed, setIsUsed] = useState(false);
-  if (isUsed) return null;
+  // "You are here": go back at once, then drop "#resume" from the address.
+  useEffect(() => {
+    if (!goesAtOnce) return;
+    scrollToPlace(textRef.current, percent);
+    window.history.replaceState(window.history.state, '', window.location.pathname);
+  }, [goesAtOnce, percent, textRef]);
+  if (isUsed || goesAtOnce) return null;
   const goBack = () => {
-    const box = textRef.current?.getBoundingClientRect();
-    if (box !== undefined) {
-      const top = scrollTopForPlace(
-        box.top + window.scrollY,
-        box.height,
-        window.innerHeight,
-        percent,
-      );
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
+    scrollToPlace(textRef.current, percent);
     setIsUsed(true);
   };
   return (

@@ -2,8 +2,9 @@
  * Turns the reader's settings into what the chapter text looks like (story S1-E4-02; board 3.5
  * Reader, "Reading settings").
  *
- * Board values: fonts Inter, a serif (Georgia) and a dyslexia-friendly one (Verdana with a
- * little extra letter spacing); text size 14 to 28 px, 19 px by default; line spacing 1.5, 1.7
+ * Board values: fonts Inter, a serif (Georgia), a dyslexia-friendly one (Verdana with a
+ * little extra letter spacing) and Atkinson Hyperlegible (IDEAS-1 part a, IDEA-20261031-6,
+ * served from our own files in src/styles/fonts.css); text size 14 to 28 px, 19 px by default; line spacing 1.5, 1.7
  * or 2; line width about 560, 680 or 780 px.
  * The device's own text size (S1-E4-02, third criterion): browsers and phones that make text
  * larger raise the page's root font size above 16 px, so the default 19 px grows by the same
@@ -31,6 +32,11 @@ const fontStyles: Record<ReadingFont, { family: string; letterSpacing: string }>
   serif: { family: "Georgia, 'Times New Roman', serif", letterSpacing: '0' },
   // Verdana's wide letters and the extra spacing help many readers with dyslexia (board 3.5).
   dyslexia_friendly: { family: 'Verdana, var(--font-body), sans-serif', letterSpacing: '0.04em' },
+  // Made by the Braille Institute so letters that look alike (I, l, 1; O, 0) are easy to tell apart.
+  atkinson_hyperlegible: {
+    family: "'Atkinson Hyperlegible', var(--font-body), sans-serif",
+    letterSpacing: '0',
+  },
 };
 
 /** Line height for each spacing. */

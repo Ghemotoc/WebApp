@@ -61,7 +61,9 @@
         "bible": "Lume",
         "timeline": "Cronologie"
       }
-    }
+    },
+    "youAreHere": "Ești aici, {{percent}}%",
+    "youAreHereLink": "Ești aici, {{percent}}% din capitolul {{number}}. Mergi înapoi acolo"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
@@ -143,9 +145,10 @@
     "fonts": {
       "sans": "Inter",
       "serif": "Serif",
-      "dyslexia_friendly": "Pentru dislexie"
+      "dyslexia_friendly": "Pentru dislexie",
+      "atkinson_hyperlegible": "Atkinson Hyperlegible"
     },
-    "fontHint": "Un set mic care merge în orice browser, inclusiv unul pe care mulți cititori cu dislexie îl găsesc mai ușor.",
+    "fontHint": "Fonturi care merg în orice browser: unul pe care mulți cititori cu dislexie îl găsesc mai ușor și Atkinson Hyperlegible, făcut ca literele care seamănă între ele să se deosebească ușor.",
     "textSize": "Mărimea textului",
     "textSizeValue": "{{size}} px",
     "textSizeFromDevice": "{{size}} px, de pe dispozitivul tău",
@@ -168,6 +171,14 @@
       "sepia": "Sepia",
       "night": "Noapte"
     },
+    "nightByClock": "Noapte după ceas",
+    "nightByClockHint": "Capitolele se deschid în tema Noapte între două ore alese de tine, după ceasul acestui dispozitiv.",
+    "nightFrom": "De la",
+    "nightUntil": "Până la",
+    "nightWaiting": "Alege ambele ore. Nimic nu se schimbă până atunci.",
+    "nightNextChapter": "Capitolele deschise între aceste ore apar în tema Noapte. O temă pe care o alegi tu rămâne până la capitolul următor.",
+    "ruler": "Riglă de citire",
+    "rulerHint": "O bandă discretă urmărește rândul pe care îl citești. Mișcă cursorul peste text sau folosește tastele săgeată sus și jos.",
     "saved": "Salvate în contul tău, deci se aplică pe toate dispozitivele tale. Mărimea textului pornește de la setarea dispozitivului tău.",
     "saveFailed": "Nu am putut salva setările de citire. Se aplică în continuare aici; verifică-ți conexiunea și schimbă din nou o setare ca să încercăm iar."
   },

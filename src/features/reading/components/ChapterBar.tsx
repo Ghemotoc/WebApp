@@ -77,7 +77,9 @@ export function ChapterBar({ chapter, progress, deviceSize }: ChapterBarProps) {
           {/* The story's own language, so a screen reader pronounces the title right (WCAG 3.1.2). */}
           <span lang={chapter.story.languageCode}>{chapter.story.title}</span>
         </Link>
-        {deviceSize !== null && <ReadingSettingsControl deviceSize={deviceSize} />}
+        {deviceSize !== null && (
+          <ReadingSettingsControl deviceSize={deviceSize} chapterCode={chapter.code} />
+        )}
         <ChapterNavigation chapter={chapter} />
       </div>
       <div

@@ -3508,6 +3508,10 @@ export type Database = {
           id: string;
           line_spacing: Database['public']['Enums']['reading_line_spacing'];
           line_width: Database['public']['Enums']['reading_line_width'];
+          night_by_clock: boolean;
+          night_from: string | null;
+          night_until: string | null;
+          reading_ruler: boolean;
           text_size: number | null;
           theme: Database['public']['Enums']['reading_theme'];
           updated_at: string;
@@ -3520,6 +3524,10 @@ export type Database = {
           id?: string;
           line_spacing?: Database['public']['Enums']['reading_line_spacing'];
           line_width?: Database['public']['Enums']['reading_line_width'];
+          night_by_clock?: boolean;
+          night_from?: string | null;
+          night_until?: string | null;
+          reading_ruler?: boolean;
           text_size?: number | null;
           theme?: Database['public']['Enums']['reading_theme'];
           updated_at?: string;
@@ -3531,6 +3539,10 @@ export type Database = {
           id?: string;
           line_spacing?: Database['public']['Enums']['reading_line_spacing'];
           line_width?: Database['public']['Enums']['reading_line_width'];
+          night_by_clock?: boolean;
+          night_from?: string | null;
+          night_until?: string | null;
+          reading_ruler?: boolean;
           text_size?: number | null;
           theme?: Database['public']['Enums']['reading_theme'];
           updated_at?: string;
@@ -8396,6 +8408,10 @@ export type Database = {
           wanted_font: Database['public']['Enums']['reading_font'];
           wanted_line_spacing: Database['public']['Enums']['reading_line_spacing'];
           wanted_line_width: Database['public']['Enums']['reading_line_width'];
+          wanted_night_by_clock?: boolean;
+          wanted_night_from?: string;
+          wanted_night_until?: string;
+          wanted_reading_ruler?: boolean;
           wanted_text_size: number;
           wanted_theme: Database['public']['Enums']['reading_theme'];
         };
@@ -8875,7 +8891,7 @@ export type Database = {
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
-      reading_font: 'sans' | 'serif' | 'dyslexia_friendly';
+      reading_font: 'sans' | 'serif' | 'dyslexia_friendly' | 'atkinson_hyperlegible';
       reading_line_spacing: 'compact' | 'normal' | 'wide';
       reading_line_width: 'narrow' | 'medium' | 'wide';
       reading_theme: 'light' | 'sepia' | 'night';
@@ -9177,7 +9193,7 @@ export const Constants = {
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       profile_audience: ['everyone', 'members', 'people_i_follow'],
       reaction_kind: ['heart', 'fire', 'laugh', 'wow', 'sad', 'star'],
-      reading_font: ['sans', 'serif', 'dyslexia_friendly'],
+      reading_font: ['sans', 'serif', 'dyslexia_friendly', 'atkinson_hyperlegible'],
       reading_line_spacing: ['compact', 'normal', 'wide'],
       reading_line_width: ['narrow', 'medium', 'wide'],
       reading_theme: ['light', 'sepia', 'night'],
