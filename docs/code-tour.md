@@ -367,6 +367,23 @@ the "ready" notification (stories_export_ready) → /settings#download-my-storie
 
 It reuses Download my data's table, bucket, storage policies and finishing function: `exports.kind` is `my_stories`, `exports.story_id` names the one story (null for all) and `chapter_ids`, `include_chapters`, `include_plan` and `include_data` hold the choices. One copy of each kind is kept. Download my data's ZIP now holds each story's plan too (`stories/<slug>-plan.docx`). **A new table that holds a story's content goes into `STORY_TABLES` (`lib/storiesForData.ts`), `stories_fingerprint()` and, if it is part of the plan, `planForWord.ts`.** Tests: `213`, `src/features/data-export/lib/{runStoriesExport,planForWord}.test.ts`, `e2e/download-my-stories.spec.ts`.
 
+### The EPUB of a completed story (S1-E13-05, PRIVACY part f)
+
+```
+Download my stories, one Completed story chosen → EpubSection → "Make an EPUB" → EpubDialog
+  (name: the pen name filled in, any name allowed, never stored; title; the cover: the story's
+  own or a JPEG or PNG from this device, previewed by EpubCoverField) → "Make EPUB"
+  → useMakeEpub: the book's language (the story's, when ro or en) + applyLocaleOverrides()
+  → makeEpub() (lib/runEpub.ts, loaded only now): my_data_export() → documentForChoice()
+      → the published chapters in order → their pictures → the cover (epubCover.ts draws it on a
+        canvas, or redraws the uploaded or picked picture) → the dataExport epub.book words
+      → buildEpub() (src/lib/epub/): mimetype, container.xml, content.opf, nav.xhtml, toc.ncx,
+        cover, title page, copyright page, one page per chapter (chapterTextToXhtml())
+  → saved straight to the device as <slug>.epub: no export row, no upload, no notification
+```
+
+Only the writer, only a Completed story, only published chapters, never the Atlas. The copyright page's words are interface text (`dataExport:epub.book.*`), so admins edit them in Interface text; `{{year}}`, `{{author}}`, `{{productName}}`, `{{siteUrl}}` and `{{date}}` are locked there. Tests: `src/lib/epub/buildEpub.test.ts`, `src/features/data-export/lib/runEpub.test.ts`, `e2e/epub.spec.ts`.
+
 ## Delete my account (S1-E13-03)
 
 ```

@@ -65,7 +65,7 @@ export interface StoriesExportChoices {
   includeData: boolean;
 }
 
-/** The parts of a story row the Word files use (the data file keeps every field). */
+/** The parts of a story row the Word files and the EPUB use (the data file keeps every field). */
 export type ExportedStory = Pick<
   Tables<'stories'>,
   | 'id'
@@ -77,9 +77,13 @@ export type ExportedStory = Pick<
   | 'first_published_at'
   | 'updated_at'
   | 'deleted_at'
+  | 'cover_kind'
+  | 'cover_design'
+  | 'cover_background'
+  | 'cover_accent'
 >;
 
-/** The parts of a chapter row the Word files use. */
+/** The parts of a chapter row the Word files and the EPUB use. */
 export type ExportedChapter = Pick<
   Tables<'chapters'>,
   | 'id'
@@ -88,6 +92,7 @@ export type ExportedChapter = Pick<
   | 'draft_title'
   | 'draft_body'
   | 'published_title'
+  | 'published_body'
   | 'status'
   | 'created_at'
   | 'first_published_at'

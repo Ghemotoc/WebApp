@@ -7,7 +7,8 @@
  * marked), "What to include" (the chapters, the plan, the JSON copy), for one story "All
  * chapters" or "Only the chapters I choose", then "Get my files" and the line about the
  * notification and the seven days. Below it: "We're making your files…" while they are made, the
- * ready line once they are, or a plain line after a failure. A writer without stories sees one
+ * ready line once they are, or a plain line after a failure; then, when one Completed story is
+ * chosen, "An EPUB for e-readers" (EpubSection, PRIVACY part f). A writer without stories sees one
  * line instead. It has id "download-my-stories", so the "ready" notification opens it.
  * Who shows it: DownloadMyDataSection. What it calls: useMyStories (features/writing), the hooks
  * in ../hooks/useStoriesExport.ts and ../hooks/useDownloadChoices.ts, and useScrollToHash for
@@ -29,6 +30,7 @@ import {
   type ChoiceProblem,
   type DownloadChoices,
 } from '../hooks/useDownloadChoices';
+import type { EpubStory } from '../hooks/useMakeEpub';
 import {
   useLatestStoriesExport,
   useStartStoriesExport,
@@ -37,15 +39,14 @@ import {
 import { useDataExportTranslation } from '../registerDataExportTranslations';
 
 import { ChapterChoice } from './ChapterChoice';
+import { EpubSection } from './EpubSection';
 import { StoriesExportReady } from './StoriesExportReady';
 import { StoriesFileChoices } from './StoriesFileChoices';
 
-/** A story the writer still has, as the block needs it. */
-interface LiveStory {
-  id: string;
-  slug: string;
-  title: string;
+/** A story the writer still has, as the block needs it (and the EPUB section, for a completed one). */
+interface LiveStory extends EpubStory {
   isDraft: boolean;
+  isCompleted: boolean;
 }
 
 /** The writer's stories that aren't deleted, newest first as Settings lists them elsewhere. */
@@ -57,7 +58,11 @@ function useLiveStories(): { stories: LiveStory[]; isKnown: boolean; loadFailed:
       id: story.id,
       slug: story.slug,
       title: story.title,
+      languageCode: story.languageCode,
+      coverKind: story.coverKind,
+      drawnCover: story.drawnCover,
       isDraft: story.firstPublishedAt === null,
+      isCompleted: story.completionStatus === 'completed',
     }));
   return { stories: live, isKnown, loadFailed };
 }
@@ -117,6 +122,8 @@ function StoriesForm({ stories }: { stories: LiveStory[] }) {
   const isRunning = useStoriesExportRun().phase === 'running';
   const [problem, setProblem] = useState<ChoiceProblem>(null);
   const [wasReused, setWasReused] = useState(false);
+  // The EPUB is offered only for one chosen story that is Completed (Robert, 1 Nov 2026, 06:31).
+  const chosenCompleted = stories.find((story) => story.id === choices.story && story.isCompleted);
 
   /** Checks the choices, then makes the files or finds the earlier ones. */
   async function getFiles() {
@@ -151,6 +158,9 @@ function StoriesForm({ stories }: { stories: LiveStory[] }) {
       </div>
       <span className="text-sm leading-normal text-meta">{t('stories.hint')}</span>
       <StoriesStatus stories={stories} wasReused={wasReused} />
+      {chosenCompleted !== undefined && (
+        <EpubSection key={chosenCompleted.id} story={chosenCompleted} />
+      )}
     </>
   );
 }

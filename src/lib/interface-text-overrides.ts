@@ -125,3 +125,27 @@ export function installInterfaceTextOverrides(
   instance.on('languageChanged', fetchLocale);
   fetchLocale(instance.language);
 }
+
+/**
+ * Writes one locale's published overrides for one namespace now, for text made in a language
+ * other than the screen's: the EPUB's book words follow the story's language (story S1-E13-05,
+ * PRIVACY part f), and staff edits to them must show there too.
+ *
+ * @param instance - the app's translation instance
+ * @param locale - the book's language ("ro" or "en")
+ * @param namespace - the namespace whose keys to write ("dataExport")
+ * @param loadOverrides - where the overrides come from (the database; a fake in tests)
+ * Errors: none; if the read fails the file text stays, and a warning says so.
+ */
+export async function applyLocaleOverrides(
+  instance: I18nInstance,
+  locale: string,
+  namespace: string,
+  loadOverrides: OverrideLoader = loadPublishedOverrides,
+): Promise<void> {
+  try {
+    applyOverrides(instance, locale, namespace, await loadOverrides(locale));
+  } catch (error) {
+    console.warn(`The ${locale} interface text overrides couldn't be read: ${String(error)}`);
+  }
+}

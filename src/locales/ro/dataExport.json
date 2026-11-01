@@ -114,5 +114,48 @@
       "scheduled": "Programat",
       "published": "Publicat"
     }
+  },
+  "epub": {
+    "heading": "Un EPUB pentru e-reader",
+    "intro": "Povestea e încheiată, așa că o poți face carte EPUB pentru Kindle sau orice alt e-reader: coperta, o pagină cu drepturile de autor, cuprinsul, apoi fiecare capitol publicat. Planul din Story Atlas nu e inclus.",
+    "open": "Fă un EPUB",
+    "dialogHeading": "Fă un EPUB din „{{title}}”",
+    "dialogIntro": "Verifică ce se va tipări în carte. Datele acestea rămân pe acest dispozitiv: nu le salvăm.",
+    "nameLabel": "Numele de pe carte",
+    "nameHint": "Pseudonimul tău sau orice nume vrei să apară ca autor, inclusiv numele tău real. Nu îl păstrăm, așa că scrie-l de fiecare dată.",
+    "titleLabel": "Titlul",
+    "coverLegend": "Coperta",
+    "coverStory": "Coperta poveștii",
+    "coverFile": "O imagine de pe acest dispozitiv",
+    "coverFileLabel": "Imaginea pentru copertă",
+    "coverFileHint": "JPEG sau PNG. Intră doar în carte: nu o încărcăm.",
+    "coverPreview": "Previzualizarea copertei",
+    "make": "Fă EPUB-ul",
+    "making": "Facem EPUB-ul pe acest dispozitiv…",
+    "cancel": "Anulează",
+    "saved": "EPUB-ul e salvat ca {{fileName}}. Deschide-l în aplicația e-reader-ului sau trimite-l pe Kindle.",
+    "failed": "Nu am putut face EPUB-ul. Te rugăm să încerci din nou.",
+    "problems": {
+      "noName": "Scrie numele de tipărit pe carte.",
+      "noTitle": "Scrie titlul cărții.",
+      "noFile": "Alege o imagine sau coperta poveștii."
+    },
+    "book": {
+      "contents": "Cuprins",
+      "copyrightHeading": "Drepturi de autor",
+      "copyright": {
+        "rights": "© {{year}} {{author}}. Toate drepturile rezervate.",
+        "noCopying": "Copierea, distribuirea sau publicarea din nou a oricărei părți a acestei cărți, în orice formă, sunt permise doar cu acordul scris dat de {{author}}.",
+        "ownership": "Toate drepturile asupra acestei opere sunt deținute de {{author}}. {{productName}} a pregătit acest fișier și nu deține niciun drept asupra operei.",
+        "prepared": "Această ediție a fost pregătită prin {{productName}} ({{siteUrl}}) pe {{date}}."
+      },
+      "byLine": "de {{name}}",
+      "coverAlt": "Coperta cărții {{title}}",
+      "chapterNumber": "Capitolul {{number}}",
+      "chapterWithTitle": "Capitolul {{number}}: {{title}}",
+      "pictureMissing": "Imagine: {{alt}}",
+      "embedLine": "Muzică sau video: {{title}}",
+      "embedMissing": "Un card de muzică sau video care nu mai e disponibil"
+    }
   }
 }

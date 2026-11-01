@@ -34,6 +34,11 @@ const reviewedHosts: Record<string, string> = {
   'schemas.openxmlformats.org': 'Word file XML namespaces (docx library); never loaded',
   'schemas.microsoft.com': 'Word file XML namespaces (docx library); never loaded',
   'purl.org': 'Dublin Core namespaces in a Word file’s properties (docx library); never loaded',
+  // The EPUB of a completed story (S1-E13-05, PRIVACY part f) names its XML namespaces; the
+  // book is built in the browser and none of them is ever loaded.
+  'www.idpf.org': 'EPUB package and page namespaces (src/lib/epub); never loaded',
+  'www.daisy.org':
+    'the NCX table of contents namespace for older e-readers (src/lib/epub); never loaded',
   'answers.microsoft.com': 'a help link in the docx library; never loaded',
   'stuk.github.io':
     'a link in the ZIP library’s error message when a file isn’t a ZIP; never loaded',
