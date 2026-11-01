@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #261 (IDEAS-1b, reading streak): add a line to the record of processing for minutes read per day (reader only, kept 14 days).
 - #260 (IDEAS-1a, reading comfort): nothing by hand. Worth a look on staging: the reading ruler on a real phone.
 - #259 (PRIVACY epic check): nothing by hand. One question in the PR: should a closing account be offered its data download on the closing page?
 - #258 (8f EPUB): nothing by hand. When you can, read the draft copyright lines in Interface text (Data export › EPUB book) and have a lawyer check them with the terms.
