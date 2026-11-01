@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- IDEAS-1f (#265, 1 Nov): nothing by hand. Download my data now includes the library shelves and a library.csv. Bundle 8b IDEAS-1 is complete.
 - #264 (IDEAS-1e, paragraph links and Most shared this week): nothing by hand. Please check the Romanian shelf title "Cele mai distribuite săptămâna asta".
 - #263 (IDEAS-1d, most-loved lines and where readers stop): nothing by hand.
 - #262 (IDEAS-1c): optionally add to the record of processing which stories a reader thanked a writer for (no words), kept for the life of the account.
