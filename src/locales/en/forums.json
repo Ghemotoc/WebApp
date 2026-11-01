@@ -1,0 +1,34 @@
+{
+  "eyebrow_one": "Forums · {{count, number}} thread",
+  "eyebrow_few": "Forums · {{count, number}} threads",
+  "eyebrow_other": "Forums · {{count, number}} threads",
+  "title": "Forums",
+  "intro": "Ask questions about writing, swap feedback and meet other writers. Anyone can read the forums. You need an account to post.",
+  "loadFailed": "We couldn’t load the forums. Check your connection and try again.",
+  "empty": "There are no forums yet.",
+  "forumCount_one": "{{count}} forum",
+  "forumCount_few": "{{count}} forums",
+  "forumCount_other": "{{count}} forums",
+  "subforums": "Subforums:",
+  "threads": "Threads",
+  "posts": "Posts",
+  "latestPost": "Latest post",
+  "noPosts": "No posts yet",
+  "staff": "Staff",
+  "postedBy": "by {{name}}",
+  "neverClose": "Threads with the latest activity come first. They never close on their own, so you can reply to an old thread any time.",
+  "rules": {
+    "title": "Forum rules in short",
+    "first": "Comment on the writing, not the writer.",
+    "second": "Don’t message people who asked you not to.",
+    "third": "Every post has a Report button. A person reads every report.",
+    "guidelines": "Read the community guidelines"
+  },
+  "forum": {
+    "breadcrumb": "Where you are",
+    "inside": "Subforums",
+    "noThreads": "No threads here yet.",
+    "notFound": "There’s no forum at this address.",
+    "back": "Back to the forums"
+  }
+}

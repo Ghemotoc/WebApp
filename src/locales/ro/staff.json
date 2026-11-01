@@ -74,7 +74,8 @@
     "safetyContacts": "Contacte de siguranță",
     "settings": "Setări",
     "website": "Site",
-    "schools": "Școli"
+    "schools": "Școli",
+    "forums": "Forumuri"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -109,7 +110,8 @@
       "classics": "Adaugă și verifică clasicii din domeniul public pentru contul oficial.",
       "settings": "Comutatoare, valori și limite, rafturile din Descoperă, categorii, nume rezervate, piețe și limbi.",
       "website_cms": "Pagina principală, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă.",
-      "schools": "Verifică profesorii și, mai târziu, gestionează spațiile de clasă."
+      "schools": "Verifică profesorii și, mai târziu, gestionează spațiile de clasă.",
+      "forums": "Categorii, forumuri și subforumuri: nume, ordine și fixare."
     }
   },
   "auditLog": {

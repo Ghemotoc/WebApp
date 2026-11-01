@@ -2035,6 +2035,103 @@ export type Database = {
           },
         ];
       };
+      forum_names: {
+        Row: {
+          created_at: string;
+          description: string;
+          forum_id: string;
+          id: string;
+          language_code: string;
+          name: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          description?: string;
+          forum_id: string;
+          id?: string;
+          language_code: string;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          forum_id?: string;
+          id?: string;
+          language_code?: string;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forum_names_forum_id_fkey';
+            columns: ['forum_id'];
+            isOneToOne: false;
+            referencedRelation: 'forums';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forum_names_language_code_fkey';
+            columns: ['language_code'];
+            isOneToOne: false;
+            referencedRelation: 'languages';
+            referencedColumns: ['code'];
+          },
+        ];
+      };
+      forums: {
+        Row: {
+          accent: Database['public']['Enums']['forum_accent'];
+          created_at: string;
+          deleted_at: string | null;
+          doodle: string | null;
+          id: string;
+          is_pinned: boolean;
+          level: number;
+          parent_id: string | null;
+          position: number;
+          slug: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accent?: Database['public']['Enums']['forum_accent'];
+          created_at?: string;
+          deleted_at?: string | null;
+          doodle?: string | null;
+          id?: string;
+          is_pinned?: boolean;
+          level?: number;
+          parent_id?: string | null;
+          position?: number;
+          slug: string;
+          updated_at?: string;
+        };
+        Update: {
+          accent?: Database['public']['Enums']['forum_accent'];
+          created_at?: string;
+          deleted_at?: string | null;
+          doodle?: string | null;
+          id?: string;
+          is_pinned?: boolean;
+          level?: number;
+          parent_id?: string | null;
+          position?: number;
+          slug?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'forums_parent_id_fkey';
+            columns: ['parent_id'];
+            isOneToOne: false;
+            referencedRelation: 'forums';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       identity_link_requests: {
         Row: {
           created_at: string;
@@ -5955,6 +6052,7 @@ export type Database = {
         Args: { check_id: string; decision: string; reason: string };
         Returns: Json;
       };
+      admin_delete_forum: { Args: { forum_id: string; reason: string }; Returns: undefined };
       admin_due_decision_emails: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -6039,6 +6137,21 @@ export type Database = {
           error_name: string;
           id: string;
           route_path: string;
+        }[];
+      };
+      admin_list_forums: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          accent: Database['public']['Enums']['forum_accent'];
+          doodle: string;
+          id: string;
+          is_pinned: boolean;
+          level: number;
+          missing_languages: string[];
+          names: Json;
+          parent_id: string;
+          position: number;
+          slug: string;
         }[];
       };
       admin_list_invites: {
@@ -6277,6 +6390,19 @@ export type Database = {
           new_content: Json;
           new_show_from?: string;
           new_show_until?: string;
+        };
+        Returns: string;
+      };
+      admin_save_forum: {
+        Args: {
+          accent: Database['public']['Enums']['forum_accent'];
+          doodle: string;
+          forum_id: string;
+          is_pinned: boolean;
+          names: Json;
+          parent_id: string;
+          slug: string;
+          sort_position: number;
         };
         Returns: string;
       };
@@ -7158,6 +7284,34 @@ export type Database = {
       follower_count_of: { Args: { writer_id: string }; Returns: number };
       forget_character_picture: { Args: { old_picture_id: string }; Returns: Json };
       forget_old_activity: { Args: Record<PropertyKey, never>; Returns: number };
+      forum_as_json: { Args: { target_forum_id: string }; Returns: Json };
+      forum_index: {
+        Args: { language_code: string };
+        Returns: {
+          accent: Database['public']['Enums']['forum_accent'];
+          description: string;
+          doodle: string;
+          id: string;
+          is_pinned: boolean;
+          latest_activity_at: string;
+          latest_post: Json;
+          level: number;
+          name: string;
+          parent_id: string;
+          position: number;
+          post_count: number;
+          slug: string;
+          thread_count: number;
+        }[];
+      };
+      forum_name_in: {
+        Args: { target_forum_id: string; wanted_language: string };
+        Returns: {
+          description: string;
+          name: string;
+        }[];
+      };
+      forum_name_problems: { Args: { names: Json }; Returns: string[] };
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string };
       get_chapter: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       get_link_preview: { Args: { chapter_code?: string; story_slug: string }; Returns: Json };
@@ -8452,6 +8606,7 @@ export type Database = {
         Returns: undefined;
       };
       require_compliance_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_forum_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_live_profile: { Args: Record<PropertyKey, never>; Returns: string };
       require_mail_thread_for_staff: {
         Args: { thread_reference: string };
@@ -8973,6 +9128,7 @@ export type Database = {
       with_comma_below: { Args: { value: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
       working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
+      write_forum_names: { Args: { names: Json; target_forum_id: string }; Returns: undefined };
       writer_chapter_insights: {
         Args: { chapter_code: string; story_slug: string };
         Returns: Json;
@@ -9041,6 +9197,7 @@ export type Database = {
       embed_service: 'youtube' | 'vimeo' | 'loom' | 'spotify' | 'apple_music';
       export_kind: 'all_my_data' | 'my_stories';
       export_state: 'building' | 'ready';
+      forum_accent: 'plum' | 'sky' | 'blush' | 'sage' | 'gold';
       language_status: 'open' | 'ready' | 'closed';
       legal_check_status: 'not_started' | 'in_progress' | 'done';
       library_audience: 'only_me' | 'people_i_follow' | 'everyone';
@@ -9335,6 +9492,7 @@ export const Constants = {
       embed_service: ['youtube', 'vimeo', 'loom', 'spotify', 'apple_music'],
       export_kind: ['all_my_data', 'my_stories'],
       export_state: ['building', 'ready'],
+      forum_accent: ['plum', 'sky', 'blush', 'sage', 'gold'],
       language_status: ['open', 'ready', 'closed'],
       legal_check_status: ['not_started', 'in_progress', 'done'],
       library_audience: ['only_me', 'people_i_follow', 'everyone'],

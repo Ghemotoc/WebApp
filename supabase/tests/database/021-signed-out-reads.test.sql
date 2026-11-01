@@ -97,6 +97,9 @@ select results_eq(
        ('finished_thanks', 0::bigint),
        ('follows_stories', 0::bigint),
        ('follows_users', 0::bigint),
+       -- Forum categories, forums and subforums with their names: public (FORUMS-1a).
+       ('forum_names', (select count(*) from public.forum_names)),
+       ('forums', (select count(*) from public.forums where deleted_at is null)),
        ('identity_link_requests', 0::bigint),
        ('interface_text_overrides', 0::bigint),
        ('invites', 0::bigint),

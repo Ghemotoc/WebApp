@@ -74,7 +74,8 @@
     "safetyContacts": "Safety contacts",
     "settings": "Settings",
     "website": "Website",
-    "schools": "Schools"
+    "schools": "Schools",
+    "forums": "Forums"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -109,7 +110,8 @@
       "classics": "Add and check public-domain classics for the official account.",
       "settings": "Feature flags, values and limits, the Discover mix, categories, reserved names, and markets and languages.",
       "website_cms": "The home page, notice banners, help pages and questions, for each market and language.",
-      "schools": "Verify teachers and, later, run class spaces."
+      "schools": "Verify teachers and, later, run class spaces.",
+      "forums": "Categories, forums and subforums: names, order and pins."
     }
   },
   "auditLog": {
