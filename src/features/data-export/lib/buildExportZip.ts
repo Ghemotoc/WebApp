@@ -41,3 +41,19 @@ export async function buildExportZip(
   // Step 3: the ZIP itself, compressed.
   return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
 }
+
+/**
+ * A ZIP of Word files only, for Download my stories with all the writer's stories (S1-E13-05).
+ * The files sit at the top of the ZIP, with no data file.
+ *
+ * @param wordFiles - the Word files, each named "stories/<slug>.docx"
+ * @returns the ZIP's bytes
+ */
+export async function buildWordZip(wordFiles: ZipEntry[]): Promise<Uint8Array> {
+  const zip = new JSZip();
+  for (const entry of wordFiles) {
+    // The "stories/" folder only makes sense next to the data file, so it goes here.
+    zip.file(entry.fileName.replace(/^stories\//, ''), entry.bytes, { compression: 'STORE' });
+  }
+  return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+}

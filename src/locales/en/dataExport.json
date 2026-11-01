@@ -25,7 +25,32 @@
     "failed": "We couldn’t make your file. Please try again in a minute.",
     "tryAgain": "Try again",
     "loadFailed": "We couldn’t check your copies. Reload the page to try again.",
-    "downloadName": "my-data-{{date}}.zip"
+    "downloadName": "my-data-{{date}}.zip",
+    "minorsNote": "You can download your own data and stories from 13. If a parent or guardian asks us for a child’s data, we check them against the consent record first."
+  },
+  "stories": {
+    "heading": "Download my stories",
+    "intro": "Get your stories as Word (.docx) files you can edit, print or send to an agent. Every chapter is in, drafts too, with the dates.",
+    "storyLabel": "Story",
+    "allOption_one": "All my stories ({{count}})",
+    "allOption_few": "All my stories ({{count}})",
+    "allOption_other": "All my stories ({{count}})",
+    "draftOption": "{{title}} (draft)",
+    "get": "Get Word files",
+    "hint": "We’ll tell you when they’re ready. The link works only while you’re logged in and stops working after seven days. PDF comes later.",
+    "none": "You haven’t started a story yet. Once you have, you can download it here as a Word file.",
+    "preparing": "We’re making your Word files on this device. You can keep using the app, but keep this tab open until they’re ready. We’ll send you a notification when they are.",
+    "readyTitle": "Your Word files are ready.",
+    "holdsOne": "“{{title}}” as a Word file",
+    "holdsAll_one": "{{count}} story as a Word file, in a ZIP",
+    "holdsAll_few": "{{count}} stories as Word files, in a ZIP",
+    "holdsAll_other": "{{count}} stories as Word files, in a ZIP",
+    "reused": "Nothing has changed since you made these a little while ago, so here they are again.",
+    "downloadOne": "Download Word file",
+    "downloadAll": "Download ZIP",
+    "downloadNameAll": "my-stories-{{date}}.zip",
+    "failed": "We couldn’t make your Word files. Please try again in a minute.",
+    "loadFailed": "We couldn’t load your stories. Reload the page to try again."
   },
   "word": {
     "byLine": "By {{name}}",

@@ -310,6 +310,24 @@ function dataExportReadyText(t: TFunction): NotificationText {
   };
 }
 
+/**
+ * The writer's Word files are ready (S1-E13-05, criterion 2). The row leads to Settings ›
+ * Download my data › Download my stories, where the download needs the writer to be signed in.
+ *
+ * @param t - the notifications translation function
+ * @returns the row's words
+ */
+function storiesExportReadyText(t: TFunction): NotificationText {
+  return {
+    who: t('who.yourAccount'),
+    what: t('what.storiesExportReady'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.downloadMyStories'),
+    href: '/settings#download-my-stories',
+  };
+}
+
 /** The moderation team's kinds and the function that words each one. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -328,6 +346,7 @@ const teamTextFor: Partial<
   teacher_check_decided: teacherBadgeText,
   teacher_badge_removed: teacherBadgeText,
   data_export_ready: dataExportReadyText,
+  stories_export_ready: storiesExportReadyText,
 };
 
 /**

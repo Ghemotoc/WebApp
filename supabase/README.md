@@ -289,6 +289,12 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **What goes in:** `my_data_export()` answers `{ format, made_at, user_id, account, tables }`. `account` is the email, when it was confirmed, the ways to log in and the profile; `tables` holds the person's rows of every table `data_export_tables()` includes. `export_row_for_owner()` drops other people's user IDs (naming the followed, blocked, written-to and reported person by username instead), secrets and internal notes. **A new user_content or user_action table must be added to `data_export_tables()`, included or left out with a reason; test `210` fails until it is.**
 - **Asking and finishing:** `request_data_export()` (three an hour, `rate_limits.data_export`) replaces a copy still being built; `finish_data_export(export_id, story_count)` needs the uploaded file, marks it ready for seven days, drops older rows and sends the `data_export_ready` notification. The browser builds the ZIP (ADR 0012); the clean-up of expired exports and their files is S1-E13-04.
 
+## Download my stories (S1-E13-05)
+
+- **The same table and bucket as Download my data:** `exports.kind` is `my_stories`, and `exports.story_id` names the one story (null for all; check `exports_story_only_for_stories`). One story is a "<uuid>.docx", all of them a "<uuid>.zip" (check `exports_file_name_shape`); the bucket takes both types.
+- **Asking:** `request_stories_export(chosen_story_id)` (ten an hour, `rate_limits.stories_export`) needs the writer's own live story, or at least one for "all" (hints `not_found` and `no_stories`). It answers `reused` with the earlier export when `reusable_stories_export()` finds one ready in the last 24 hours with nothing in those stories or their chapters changed since (proposal), otherwise `new` with the file name. A suspended writer may ask; a deleted account can't.
+- **Finishing:** `finish_data_export()` now finishes both kinds, keeps one copy per kind and sends `stories_export_ready` or `data_export_ready`.
+
 ## Delete my account (S1-E13-03)
 
 - **The table:** `account_deletions` (`requested_at`, `delete_after`, `cancelled_at`, `completed_at`); the person reads their own rows (`account_deletions_select_own`), and the row stays after the deletion as its record.

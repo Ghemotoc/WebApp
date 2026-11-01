@@ -349,6 +349,21 @@ the "ready" notification → /settings#download-my-data
 
 The Word builder in `src/lib/word/` knows nothing about the database: a caller turns rows into a `WordStory`, translates the labels and loads the pictures. S1-E11-09a and S1-E13-05 reuse it. A new user table must be added to `data_export_tables()` (test `210` fails until it is). Tests: `210`, `src/lib/word/storyToWord.test.ts`, `src/features/data-export/lib/*.test.ts`, `e2e/download-my-data.spec.ts`.
 
+## Download my stories (S1-E13-05)
+
+```
+/settings#download-my-stories → DownloadMyStoriesBlock → Story drop-down → "Get Word files"
+  → useStartStoriesExport → makeStoriesExport (in this tab, ADR 0012):
+      request_stories_export(story or null) → 'reused' (the same unchanged files from the last
+        24 hours: reusable_stories_export()) or 'new' with a .docx (one story) or .zip (all)
+      → my_data_export() narrowed to the stories → buildWordFiles() (the shared Word builder)
+      → one .docx, or buildWordZip() → delete older files → upload → finish_data_export() → notify()
+  ready line (StoriesExportReady) → "Download Word file" or "Download ZIP" (ExportDownloadButton)
+the "ready" notification (stories_export_ready) → /settings#download-my-stories
+```
+
+It reuses Download my data's table, bucket, storage policies and finishing function: `exports.kind` is `my_stories` and `exports.story_id` names the one story (null for all). One copy of each kind is kept. Tests: `213`, `src/features/data-export/lib/runStoriesExport.test.ts`, `e2e/download-my-stories.spec.ts`.
+
 ## Delete my account (S1-E13-03)
 
 ```

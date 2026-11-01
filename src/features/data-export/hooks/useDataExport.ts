@@ -1,7 +1,8 @@
 /**
  * The hooks behind Settings › Download my data (story S1-E13-02).
  *
- * Who calls them: DownloadMyDataSection. What they call: api/dataExport.ts and
+ * Who calls them: DownloadMyDataSection (and useStoriesExport.ts reuses useWordLabels). What they
+ * call: api/dataExport.ts and
  * lib/exportRunStore.ts. The run's state lives in that small store, so it survives the
  * panel closing and opening again while the copy is being made.
  */
@@ -60,8 +61,8 @@ export function useDataExportRun() {
   return useSyncExternalStore(subscribeToDataExportRun, dataExportRunState, dataExportRunState);
 }
 
-/** The Word files' words in the interface language. */
-function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusLabels } {
+/** The Word files' words in the interface language; Download my stories uses them too. */
+export function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusLabels } {
   const { t } = useDataExportTranslation();
   const wordLabels: WordLabels = {
     byLine: (name) => t('word.byLine', { name }),

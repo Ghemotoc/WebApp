@@ -25,7 +25,32 @@
     "failed": "Nu am putut pregăti fișierul. Te rugăm să încerci din nou peste un minut.",
     "tryAgain": "Încearcă din nou",
     "loadFailed": "Nu am putut verifica copiile tale. Reîncarcă pagina ca să încerci din nou.",
-    "downloadName": "datele-mele-{{date}}.zip"
+    "downloadName": "datele-mele-{{date}}.zip",
+    "minorsNote": "Îți poți descărca datele și poveștile de la 13 ani. Dacă un părinte sau tutore ne cere datele unui copil, îl verificăm mai întâi după acordul înregistrat."
+  },
+  "stories": {
+    "heading": "Descarcă-mi poveștile",
+    "intro": "Primește-ți poveștile ca fișiere Word (.docx) pe care le poți edita, tipări sau trimite unui agent. Sunt incluse toate capitolele, și ciornele, cu datele lor.",
+    "storyLabel": "Poveste",
+    "allOption_one": "Toate poveștile mele ({{count}})",
+    "allOption_few": "Toate poveștile mele ({{count}})",
+    "allOption_other": "Toate poveștile mele ({{count}})",
+    "draftOption": "{{title}} (ciornă)",
+    "get": "Primește fișierele Word",
+    "hint": "Îți spunem când sunt gata. Linkul funcționează doar dacă te-ai conectat și expiră după șapte zile. PDF vine mai târziu.",
+    "none": "Încă n-ai început nicio poveste. După ce începi una, o poți descărca aici ca fișier Word.",
+    "preparing": "Îți facem fișierele Word pe acest dispozitiv. Poți folosi aplicația mai departe, dar ține fila deschisă până sunt gata. Îți trimitem o notificare când sunt gata.",
+    "readyTitle": "Fișierele tale Word sunt gata.",
+    "holdsOne": "„{{title}}” ca fișier Word",
+    "holdsAll_one": "{{count}} poveste ca fișier Word, într-o arhivă ZIP",
+    "holdsAll_few": "{{count}} povești ca fișiere Word, într-o arhivă ZIP",
+    "holdsAll_other": "{{count}} de povești ca fișiere Word, într-o arhivă ZIP",
+    "reused": "Nu s-a schimbat nimic de când le-ai făcut acum puțin timp, așa că le ai din nou aici.",
+    "downloadOne": "Descarcă fișierul Word",
+    "downloadAll": "Descarcă ZIP",
+    "downloadNameAll": "povestile-mele-{{date}}.zip",
+    "failed": "Nu am putut face fișierele Word. Încearcă din nou peste un minut.",
+    "loadFailed": "Nu am putut încărca poveștile tale. Reîncarcă pagina ca să încerci din nou."
   },
   "word": {
     "byLine": "De {{name}}",

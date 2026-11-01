@@ -7,21 +7,20 @@
  *   "Make a new copy";
  * - failed: a plain line and "Try again".
  * Who shows it: DownloadMyDataSection. What it calls: the hooks it is given, and
- * exportDownloadAddress() when Download ZIP is pressed (a one-minute address for the signed-in
- * owner only, criterion 3).
+ * ExportDownloadButton for Download ZIP (a one-minute address for the signed-in owner only,
+ * criterion 3). The saved file is named after the day the copy was made, never after the person.
  */
-import { useState } from 'react';
-
 import clockIcon from '@/assets/icons/clock.svg';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { requireClient } from '@/features/account/hooks/useMyNames';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
-import { exportDownloadAddress, type DataExport } from '../api/dataExport';
+import type { DataExport } from '../api/dataExport';
 import type { DataExportRunState } from '../lib/exportRunStore';
 import { fileSizeText } from '../lib/fileSize';
 import { useDataExportTranslation } from '../registerDataExportTranslations';
+
+import { ExportDownloadButton } from './ExportDownloadButton';
 
 /** What the status needs. */
 interface ExportStatusProps {
@@ -51,39 +50,6 @@ function PreparingLine() {
   );
 }
 
-/** Opens a one-minute download address for the ready copy. */
-function DownloadButton({ copy }: { copy: DataExport }) {
-  const { t } = useDataExportTranslation();
-  const [hasFailed, setHasFailed] = useState(false);
-
-  /** Asks Storage for the address and lets the browser download it. */
-  async function download() {
-    setHasFailed(false);
-    try {
-      // The saved file is named after the day the copy was made, never after the person.
-      const day = (copy.ready_at ?? copy.created_at).slice(0, 10);
-      const address = await exportDownloadAddress(
-        await requireClient(),
-        copy.file_name,
-        t('settings.downloadName', { date: day }),
-      );
-      window.location.assign(address);
-    } catch (error) {
-      console.warn(`The copy couldn't be opened: ${String(error)}`);
-      setHasFailed(true);
-    }
-  }
-
-  return (
-    <>
-      <Button size="md" onClick={() => void download()}>
-        {t('settings.download')}
-      </Button>
-      {hasFailed && <Notice tone="error">{t('settings.downloadFailed')}</Notice>}
-    </>
-  );
-}
-
 /** "Your file is ready", its size and the download. */
 function ReadyLine({ copy, onStart }: { copy: DataExport; onStart: () => void }) {
   const { t, i18n } = useDataExportTranslation();
@@ -104,7 +70,13 @@ function ReadyLine({ copy, onStart }: { copy: DataExport; onStart: () => void })
             {t('settings.readySize', { count: copy.story_count ?? 0, size })}
           </span>
         </span>
-        <DownloadButton copy={copy} />
+        <ExportDownloadButton
+          copy={copy}
+          label={t('settings.download')}
+          downloadName={t('settings.downloadName', {
+            date: (copy.ready_at ?? copy.created_at).slice(0, 10),
+          })}
+        />
       </div>
       <Button variant="text" className="self-start" onClick={onStart}>
         {t('settings.makeNewCopy')}

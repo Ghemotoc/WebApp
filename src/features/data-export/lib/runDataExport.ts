@@ -66,11 +66,12 @@ async function loadPictures(
 }
 
 /**
- * One Word file per story, named after its slug.
+ * One Word file per story, named after its slug. Download my stories (runStoriesExport.ts) uses
+ * it too, so both copies hold exactly the same Word files.
  *
  * @returns the files for the ZIP
  */
-async function buildWordFiles(
+export async function buildWordFiles(
   input: WordInput,
   options: DataExportRunOptions,
 ): Promise<ZipEntry[]> {

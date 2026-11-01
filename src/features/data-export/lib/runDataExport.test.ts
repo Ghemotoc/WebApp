@@ -85,7 +85,9 @@ function fakeClient(options: { failUpload?: boolean } = {}) {
       calls.push(`rpc:${name}`);
       return { data: answers[name], error: null };
     }),
-    from: () => ({ select: () => ({ order: async () => ({ data: [olderCopy], error: null }) }) }),
+    from: () => ({
+      select: () => ({ eq: () => ({ order: async () => ({ data: [olderCopy], error: null }) }) }),
+    }),
     storage: {
       from: () => ({
         remove: async (names: string[]) => {

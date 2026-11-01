@@ -1,10 +1,13 @@
 /**
- * The database and storage calls of Download my data (story S1-E13-02; ADR 0012).
+ * The database and storage calls of Download my data (story S1-E13-02; ADR 0012) and Download my
+ * stories (S1-E13-05), which share the exports table, the bucket and the finishing step.
  *
- * Who calls it: lib/runDataExport.ts (making a copy) and the hooks in ../hooks (the Settings
- * panel). What it calls next: request_data_export(), my_data_export() and finish_data_export()
- * (supabase/migrations/…_s1_e13_02_download_my_data.sql), the exports table (the person's own
- * rows only, policy exports_select_own) and the private exports bucket.
+ * Who calls it: lib/runDataExport.ts and lib/runStoriesExport.ts (making a copy) and the hooks in
+ * ../hooks (the Settings panel). What it calls next: request_data_export(),
+ * request_stories_export(), my_data_export() and finish_data_export()
+ * (supabase/migrations/…_s1_e13_02_download_my_data.sql and …_s1_e13_05_download_my_stories.sql),
+ * the exports table (the person's own rows only, policy exports_select_own) and the private
+ * exports bucket.
  */
 import type { Database, Tables } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -19,6 +22,8 @@ const downloadAddressSeconds = 60;
 export type DataExport = Pick<
   Tables<'exports'>,
   | 'id'
+  | 'kind'
+  | 'story_id'
   | 'state'
   | 'file_name'
   | 'file_size'
@@ -30,6 +35,13 @@ export type DataExport = Pick<
 
 /** The export state, from the database's enum. */
 export type DataExportState = Database['public']['Enums']['export_state'];
+
+/** What a copy holds: all of the person's data, or their stories as Word files. */
+export type DataExportKind = Database['public']['Enums']['export_kind'];
+
+/** The file types the bucket takes: a ZIP, or one Word file for one story. */
+export const ZIP_TYPE = 'application/zip';
+export const WORD_TYPE = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
 /** The parts of a story row the Word files use (the data file keeps every field). */
 export type ExportedStory = Pick<
@@ -112,20 +124,48 @@ export async function fetchDataExportDocument(
   return data as unknown as DataExportDocument;
 }
 
+/** What "Get Word files" answered: the earlier files, or a new copy to make. */
+export type StoriesExportOpened =
+  { outcome: 'reused'; exportId: string } | { outcome: 'new'; exportId: string; fileName: string };
+
 /**
- * Uploads the finished ZIP under its export's random name.
+ * Opens a Download my stories copy of one story or all of them, or finds the unchanged one from
+ * the last 24 hours (S1-E13-05).
  *
+ * @param storyId - the story's ID, or null for all the writer's stories
+ * @returns the earlier files, or the new copy's ID and the name to upload under
+ * @throws Error with Supabase's message, for example when the story isn't the writer's
+ */
+export async function requestStoriesExport(
+  client: AppSupabaseClient,
+  storyId: string | null,
+): Promise<StoriesExportOpened> {
+  const { data, error } = await client.rpc('request_stories_export', {
+    chosen_story_id: storyId ?? undefined,
+  });
+  if (error !== null) throw new Error(`Could not start the Word files: ${error.message}`);
+  const answer = data as { outcome: 'reused' | 'new'; export_id: string; file_name?: string };
+  if (answer.outcome === 'reused') return { outcome: 'reused', exportId: answer.export_id };
+  return { outcome: 'new', exportId: answer.export_id, fileName: answer.file_name ?? '' };
+}
+
+/**
+ * Uploads the finished file under its export's random name: a ZIP, or for one story a single
+ * Word file (S1-E13-05).
+ *
+ * @param fileType - ZIP_TYPE (the default) or WORD_TYPE
  * @throws Error with Storage's message when the upload is refused
  */
 export async function uploadExportFile(
   client: AppSupabaseClient,
   fileName: string,
-  zip: Uint8Array,
+  bytes: Uint8Array,
+  fileType: string = ZIP_TYPE,
 ): Promise<void> {
   const { error } = await client.storage
     .from(EXPORTS_BUCKET)
-    .upload(fileName, new Blob([zip as Uint8Array<ArrayBuffer>], { type: 'application/zip' }), {
-      contentType: 'application/zip',
+    .upload(fileName, new Blob([bytes as Uint8Array<ArrayBuffer>], { type: fileType }), {
+      contentType: fileType,
       upsert: false,
     });
   if (error !== null) throw new Error(`Could not save the copy: ${error.message}`);
@@ -165,14 +205,21 @@ export async function finishDataExport(
 }
 
 /**
- * The person's copies, newest first.
+ * The person's copies of one kind, newest first.
  *
+ * @param kind - all_my_data (the default, Download my data) or my_stories (Download my stories)
  * @throws Error with Supabase's message when they can't be read
  */
-export async function fetchMyDataExports(client: AppSupabaseClient): Promise<DataExport[]> {
+export async function fetchMyDataExports(
+  client: AppSupabaseClient,
+  kind: DataExportKind = 'all_my_data',
+): Promise<DataExport[]> {
   const { data, error } = await client
     .from('exports')
-    .select('id, state, file_name, file_size, story_count, created_at, ready_at, expires_at')
+    .select(
+      'id, kind, story_id, state, file_name, file_size, story_count, created_at, ready_at, expires_at',
+    )
+    .eq('kind', kind)
     .order('created_at', { ascending: false });
   if (error !== null) throw new Error(`Could not read your copies: ${error.message}`);
   return data;
