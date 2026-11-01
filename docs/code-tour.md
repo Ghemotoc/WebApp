@@ -1687,6 +1687,13 @@ Idea IDEA-20261031-12 (GDPR art. 15 and 20).
 - The list: `forum_thread_list()` puts every sticky thread first on the first page only, then pages the rest by `bumped_at`; "Show more threads" passes the last thread's `bumpedAt`.
 - Tests: `supabase/tests/database/225-forum-sticky-and-locked.test.sql`, `src/features/forums/api/forumModeration.test.ts`, `e2e/forum-sticky-and-locked.spec.ts`.
 
+## Forum search (S1-E8-10; FORUMS-1f)
+
+- Where it lives: `src/features/forums/api/forumSearch.ts`, `hooks/useForumSearch.ts`, `lib/forumSearchAddress.ts`, `components/ForumSearchForm.tsx` (on the forum index and the results page), `ForumSearchPage.tsx` and `ForumSearchResultRow.tsx`, and `supabase/migrations/…_forums1_f_forum_search.sql`. Architecture 1.7.3 calls it `search_posts()`; it is `search_forum_posts()`.
+- How a search travels: the field → `/forums/search?q=…&forum=…&author=…` (the router's static path wins over `/forums/:forumSlug`, and the `forums_slug_not_search` constraint keeps any forum from taking "search") → `useForumSearch()` → `search_forum_posts()` → each live post the reader may read (`forum_post_state_for_caller()`, `forum_thread_is_shown()`: deleted, hidden, removed and blocked people drop out) matched on `forum_post_search_text()` with the story search's `search_fold()`, `search_query()` and `search_like_pattern()` → thread titles first, then by closeness, 20 at a time.
+- The forum filter takes a category, forum or subforum and searches everything inside it (`forum_and_children()`); the author filter takes a username with or without "@". Spaces come with S1-E8-06.
+- Tests: `supabase/tests/database/226-forum-search.test.sql`, `src/features/forums/api/forumSearch.test.ts`, `lib/forumSearchAddress.test.ts`, `e2e/forum-search.spec.ts`.
+
 ## Sharing a passage or a picture (S1-E4-11; WRITE-5e)
 
 - Blocks: a chapter's stored Markdown is cut into blocks at blank lines, counted from 1, by `src/lib/chapter-blocks.ts` and by the SQL `chapter_blocks()` the same way. `ChapterText` runs `reading/lib/numberBlocks.ts` as a rehype step, which marks each top-level part with `data-block` and `data-block-end` and highlights a shared passage.

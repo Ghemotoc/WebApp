@@ -641,6 +641,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: ForumsPage };
     },
   },
+  // Forum search (FORUMS-1f, S1-E8-10). A static path wins over /forums/:forumSlug, and no forum
+  // may take "search" as its address (the forums_slug_not_search constraint).
+  {
+    path: '/forums/search',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ForumSearchPage } = await import('@/features/forums/components/ForumSearchPage');
+      return { Component: ForumSearchPage };
+    },
+  },
   {
     path: '/forums/:forumSlug',
     HydrateFallback: () => null,

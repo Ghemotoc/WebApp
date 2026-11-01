@@ -210,5 +210,22 @@
       "gone": "This thread isn’t there any more.",
       "unreachable": "We couldn’t save that. Check your connection and try again."
     }
+  },
+  "search": {
+    "label": "Search forum threads and posts",
+    "submit": "Search",
+    "forum": "Forum",
+    "allForums": "All forums",
+    "author": "Author",
+    "authorPlaceholder": "Username",
+    "title": "Search the forums",
+    "results": "Results",
+    "tooShort": "Type at least 2 letters to search.",
+    "none": "Nothing found for “{{term}}”. Try another word, or search every forum.",
+    "loadFailed": "We couldn’t search the forums. Check your connection and try again.",
+    "showMore": "Show more results",
+    "kindThread": "Thread",
+    "kindPost": "Post #{{number}}",
+    "where": "In {{forum}} · by {{name}} · {{date}}"
   }
 }
