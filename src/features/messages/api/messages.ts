@@ -5,7 +5,9 @@
  * Who calls it: the hooks in ../hooks (the /messages pages and the top bar's Messages link).
  * What it calls next: my_conversations(), conversation_with(), send_message(),
  * answer_message_request(), mark_conversation_read(), unread_message_count() and
- * my_message_settings() (…_s1_e9_01_private_messages.sql). Every rule is in the database; a
+ * my_message_settings() (…_s1_e9_01_private_messages.sql); set_message_audience() and
+ * delete_conversation() (…_s1_e9_04_message_settings_and_retention.sql) and
+ * set_adults_may_message() (S1-E2-06). Every rule is in the database; a
  * refusal never says why (the neutral "isn't taking messages right now", S1-E9-03).
  */
 import type { Enums, Json } from '@/lib/database.types';
@@ -274,4 +276,40 @@ export async function fetchMyMessageSettings(
     ageGroup: ageGroupOf(settings.age_group),
     adultsMayMessage: settings.adults_may_message === true,
   };
+}
+
+/**
+ * Saves who may start a chat with the caller (S1-E9-04).
+ *
+ * @throws MessagesError
+ */
+export async function setMessageAudience(
+  client: AppSupabaseClient,
+  audience: MessageAudience,
+): Promise<void> {
+  const { error } = await client.rpc('set_message_audience', { audience });
+  if (error !== null) throw messagesErrorFrom(error);
+}
+
+/**
+ * A 16 or 17-year-old lets adults message them, or stops it (S1-E9-03; only the teen can).
+ *
+ * @throws MessagesError
+ */
+export async function setAdultsMayMessage(
+  client: AppSupabaseClient,
+  allowed: boolean,
+): Promise<void> {
+  const { error } = await client.rpc('set_adults_may_message', { allowed });
+  if (error !== null) throw messagesErrorFrom(error);
+}
+
+/**
+ * "Delete chat": removes the chat with this person for the caller only (S1-E9-04).
+ *
+ * @throws MessagesError
+ */
+export async function deleteConversation(client: AppSupabaseClient, handle: string): Promise<void> {
+  const { error } = await client.rpc('delete_conversation', { other_handle: handle });
+  if (error !== null) throw messagesErrorFrom(error);
 }

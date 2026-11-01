@@ -101,5 +101,32 @@
     "not_found": "There’s nobody with that username.",
     "too_many": "You’ve sent a lot of messages in the last hour. Try again in {{minutes}} minutes.",
     "unreachable": "We couldn’t do that. Check your connection and try again."
+  },
+  "settings": {
+    "pageLink": "Message settings",
+    "change": "Change",
+    "changeWho": "Change who can message you",
+    "changeAdults": "Change messages from adults",
+    "eyebrow": "Messages",
+    "heading": "Who can message you",
+    "intro": "Choose who can start a new chat with you. Chats you already have carry on whatever you pick.",
+    "whoLegend": "Who can start a chat with you",
+    "adultHint": "Adults start on “Everyone”. With “Nobody”, nobody can start a new chat with you.",
+    "under18Hint": "Under 18, you start on “People you follow”. With “Nobody”, nobody can start a new chat with you.",
+    "adultsLabel": "Let adults message me",
+    "deleteNote": "To delete a chat, open it and choose Delete chat in About this chat. When both of you delete it, the messages are deleted for good.",
+    "loadFailed": "We couldn’t load your message settings. Try again in a moment.",
+    "saveFailed": "We couldn’t save that. Try again."
+  },
+  "deleteChat": {
+    "eyebrow": "Delete",
+    "button": "Delete chat",
+    "title": "Delete this chat?",
+    "explain": "This removes the chat for you. When both of you delete it, the messages are deleted for good.",
+    "confirm": "Delete chat",
+    "deleting": "Deleting…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "failed": "We couldn’t delete the chat. Try again."
   }
 }

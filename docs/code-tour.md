@@ -307,6 +307,19 @@ ChatPanel → ChatHeader                                                    src/
 
 The context is read from the chat when staff open the case; the safeguarding evidence pack gets the same messages through `case_item_content()`. Tests: `207` in `supabase/tests/database/`, `e2e/messages-block-and-report.spec.ts`.
 
+## Message settings and Delete chat (S1-E9-04)
+
+```
+/messages "Message settings" or a "Change" link → /settings#messages → MessageSettingsSection     src/features/messages/
+  useSaveMessageSettings → set_message_audience() and set_adults_may_message() (16 and 17 only)
+About this chat → DeleteChatControl → useDeleteChat → delete_conversation(handle)
+  → conversation_members.deleted_at for the caller; my_conversations(), conversation_with() and the
+    messages_select_member policy leave out what came before it (chat_cleared_at())
+pg_cron 'purge-deleted-chats' nightly → purge_deleted_chats() → keeps held_message_ids() (reported + context)
+```
+
+Tests: `208` in `supabase/tests/database/`, `e2e/message-settings.spec.ts`. The epic check walks all four stories together in `e2e/epic-s1-e9.spec.ts`.
+
 ## The Teacher badge (S1-E2-11)
 
 An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:

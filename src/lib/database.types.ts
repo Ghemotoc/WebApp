@@ -1515,6 +1515,7 @@ export type Database = {
         Row: {
           conversation_id: string;
           created_at: string;
+          deleted_at: string | null;
           id: string;
           last_read_at: string | null;
           updated_at: string;
@@ -1524,6 +1525,7 @@ export type Database = {
         Insert: {
           conversation_id: string;
           created_at?: string;
+          deleted_at?: string | null;
           id?: string;
           last_read_at?: string | null;
           updated_at?: string;
@@ -1532,6 +1534,7 @@ export type Database = {
         Update: {
           conversation_id?: string;
           created_at?: string;
+          deleted_at?: string | null;
           id?: string;
           last_read_at?: string | null;
           updated_at?: string;
@@ -6446,6 +6449,7 @@ export type Database = {
       };
       character_part_keys: { Args: { parts: string[] }; Returns: string[] };
       character_sheet_keys: { Args: Record<PropertyKey, never>; Returns: string[] };
+      chat_cleared_at: { Args: { chat_id: string; person_id: string }; Returns: string };
       check_bible_text: { Args: { body: string }; Returns: string };
       check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
       check_chapter_embeds: { Args: { body: string; owner_id: string }; Returns: undefined };
@@ -6710,6 +6714,7 @@ export type Database = {
       delete_chapter_scene: { Args: { scene_id: string }; Returns: Json };
       delete_character_relationship: { Args: { relationship_id: string }; Returns: Json };
       delete_comment: { Args: { comment_id: string }; Returns: boolean };
+      delete_conversation: { Args: { other_handle: string }; Returns: Json };
       delete_my_story: { Args: { story_slug: string }; Returns: Json };
       delete_story_character: { Args: { character_id: string }; Returns: Json };
       delete_story_event: { Args: { event_id: string }; Returns: Json };
@@ -6798,6 +6803,12 @@ export type Database = {
       has_invisible_characters: { Args: { name: string }; Returns: boolean };
       has_parental_consent: { Args: { target_user_id: string }; Returns: boolean };
       hash_email: { Args: { email: string }; Returns: string };
+      held_message_ids: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          message_id: string;
+        }[];
+      };
       interface_text_live: {
         Args: { wanted_locale: string };
         Returns: {
@@ -7714,6 +7725,7 @@ export type Database = {
         Returns: string[];
       };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_deleted_chats: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_comments: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_stories: { Args: Record<PropertyKey, never>; Returns: number };
       purge_expired_age_check_sessions: { Args: Record<PropertyKey, never>; Returns: number };
@@ -8131,6 +8143,10 @@ export type Database = {
         Returns: Json;
       };
       set_marketing_email_opt_in: { Args: { wanted: boolean }; Returns: undefined };
+      set_message_audience: {
+        Args: { audience: Database['public']['Enums']['message_audience'] };
+        Returns: undefined;
+      };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
       set_my_birthday: { Args: { wanted_day?: number; wanted_month?: number }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };

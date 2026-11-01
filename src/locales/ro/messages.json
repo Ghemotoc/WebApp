@@ -101,5 +101,32 @@
     "not_found": "Nu există nimeni cu acest nume de utilizator.",
     "too_many": "Ai trimis multe mesaje în ultima oră. Încearcă din nou peste {{minutes}} minute.",
     "unreachable": "Nu am putut face asta. Verifică-ți conexiunea și încearcă din nou."
+  },
+  "settings": {
+    "pageLink": "Setări pentru mesaje",
+    "change": "Schimbă",
+    "changeWho": "Schimbă cine îți poate trimite mesaje",
+    "changeAdults": "Schimbă mesajele de la adulți",
+    "eyebrow": "Mesaje",
+    "heading": "Cine îți poate trimite mesaje",
+    "intro": "Alege cine poate începe o conversație nouă cu tine. Conversațiile pe care le ai deja continuă, orice ai alege.",
+    "whoLegend": "Cine poate începe o conversație cu tine",
+    "adultHint": "Pentru adulți, setarea de pornire este „Oricine”. Cu „Nimeni”, nimeni nu poate începe o conversație nouă cu tine.",
+    "under18Hint": "Sub 18 ani, setarea de pornire este „Oamenii pe care îi urmărești”. Cu „Nimeni”, nimeni nu poate începe o conversație nouă cu tine.",
+    "adultsLabel": "Permite adulților să-mi trimită mesaje",
+    "deleteNote": "Ca să ștergi o conversație, deschide-o și alege Șterge conversația în Despre conversație. Când o ștergeți amândoi, mesajele se șterg definitiv.",
+    "loadFailed": "Nu am putut încărca setările pentru mesaje. Încearcă din nou peste câteva clipe.",
+    "saveFailed": "Nu am putut salva. Încearcă din nou."
+  },
+  "deleteChat": {
+    "eyebrow": "Ștergere",
+    "button": "Șterge conversația",
+    "title": "Ștergi această conversație?",
+    "explain": "Conversația dispare doar pentru tine. Când o ștergeți amândoi, mesajele se șterg definitiv.",
+    "confirm": "Șterge conversația",
+    "deleting": "Se șterge…",
+    "cancel": "Anulează",
+    "close": "Închide",
+    "failed": "Nu am putut șterge conversația. Încearcă din nou."
   }
 }
