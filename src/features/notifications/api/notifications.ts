@@ -28,7 +28,8 @@ export type NotificationKind =
   | 'login_method_added'
   | 'login_method_removed'
   | 'teacher_check_decided'
-  | 'teacher_badge_removed';
+  | 'teacher_badge_removed'
+  | 'data_export_ready';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

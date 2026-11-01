@@ -334,6 +334,21 @@ ProfileHeader, ChatHeader, ChatList → useOnlineHandles → who_is_online(handl
 
 Under-18s start on the most private value of each choice; the database fills the defaults in. Tests: `209` in `supabase/tests/database/`, `e2e/privacy-settings.spec.ts`.
 
+## Download my data and the shared Word builder (S1-E13-02)
+
+```
+/settings#download-my-data → DownloadMyDataSection → "Request my data"           src/features/data-export/
+  → useStartDataExport → runDataExport (in this tab, ADR 0012):
+      request_data_export() → my_data_export() (data_export_tables(), export_row_for_owner())
+      → wordInputFrom() → storyToWord() per story (src/lib/word/, chapterTextToWord())
+      → buildExportZip() (data.json + stories/<slug>.docx)
+      → delete older files → upload to the private exports bucket → finish_data_export() → notify()
+  ready line → "Download ZIP" → exportDownloadAddress() (one minute, owner only, seven days)
+the "ready" notification → /settings#download-my-data
+```
+
+The Word builder in `src/lib/word/` knows nothing about the database: a caller turns rows into a `WordStory`, translates the labels and loads the pictures. S1-E11-09a and S1-E13-05 reuse it. A new user table must be added to `data_export_tables()` (test `210` fails until it is). Tests: `210`, `src/lib/word/storyToWord.test.ts`, `src/features/data-export/lib/*.test.ts`, `e2e/download-my-data.spec.ts`.
+
 ## The Teacher badge (S1-E2-11)
 
 An adult shows they teach, in onboarding step 3 or in Settings › Teacher badge:

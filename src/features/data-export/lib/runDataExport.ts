@@ -1,0 +1,166 @@
+/**
+ * Makes one copy of the signed-in person's data, start to finish (story S1-E13-02; ADR 0012).
+ *
+ * The steps, in this order:
+ *   1. request_data_export() opens a copy under a random file name;
+ *   2. my_data_export() answers the data file;
+ *   3. the chapter pictures are loaded and drawn as PNG (pictureForWord());
+ *   4. every story becomes a Word file through the shared Word builder (src/lib/word/);
+ *   5. the data file and the Word files go into one ZIP (buildExportZip());
+ *   6. the older copies' files are deleted, so only one copy of the person's data is kept;
+ *   7. the ZIP is uploaded to the private exports bucket;
+ *   8. finish_data_export() marks it ready for seven days and sends the notification.
+ * It runs in the background of the open tab: the person can keep using the app (the module keeps
+ * going when the Settings panel closes), and the panel shows its state through the small store at
+ * the bottom of this file. If the tab closes halfway, asking again starts afresh.
+ * Who calls it: useStartDataExport(). What it calls: api/dataExport.ts and the libs beside it.
+ */
+import type { AppSupabaseClient } from '@/lib/supabase';
+import { storyToWord } from '@/lib/word/storyToWord';
+import type { WordDateFormatter, WordLabels, WordPicture } from '@/lib/word/wordTypes';
+
+import {
+  deleteExportFiles,
+  downloadPicture,
+  fetchDataExportDocument,
+  fetchMyDataExports,
+  finishDataExport,
+  requestDataExport,
+  uploadExportFile,
+} from '../api/dataExport';
+
+import { buildExportZip, type ZipEntry } from './buildExportZip';
+import { pictureForWord } from './pictureForWord';
+import { wordFileName, wordInputFrom, type StatusLabels, type WordInput } from './storiesForWord';
+
+/** What a run needs from the screen: the client and the words, already translated. */
+export interface DataExportRunOptions {
+  client: AppSupabaseClient;
+  wordLabels: WordLabels;
+  statusLabels: StatusLabels;
+  formatDate: WordDateFormatter;
+  /** Draws a picture for Word; the browser's canvas by default, a fake in tests. */
+  preparePicture?: (file: Blob) => Promise<WordPicture | null>;
+}
+
+/** Where the current run stands, for the Settings panel. */
+export type DataExportRunState =
+  { phase: 'idle' } | { phase: 'running' } | { phase: 'failed'; message: string };
+
+/**
+ * Loads every picture the stories show, drawn for Word. A picture that can't be loaded is left
+ * out; its Word file says "Picture: <alt text>" instead.
+ *
+ * @returns the pictures by ID
+ */
+async function loadPictures(
+  input: WordInput,
+  options: DataExportRunOptions,
+): Promise<Map<string, WordPicture>> {
+  const prepare = options.preparePicture ?? pictureForWord;
+  const loaded = new Map<string, WordPicture>();
+  for (const picture of input.pictures) {
+    const file = await downloadPicture(options.client, picture);
+    const ready = file === null ? null : await prepare(file);
+    if (ready !== null) loaded.set(picture.id, ready);
+  }
+  return loaded;
+}
+
+/**
+ * One Word file per story, named after its slug.
+ *
+ * @returns the files for the ZIP
+ */
+async function buildWordFiles(
+  input: WordInput,
+  options: DataExportRunOptions,
+): Promise<ZipEntry[]> {
+  const pictures = await loadPictures(input, options);
+  const taken = new Set<string>();
+  const files: ZipEntry[] = [];
+  for (const entry of input.stories) {
+    const bytes = await storyToWord(entry.story, {
+      labels: options.wordLabels,
+      formatDate: options.formatDate,
+      assets: { pictures, embeds: input.embeds },
+    });
+    files.push({ fileName: wordFileName(entry.slug, taken), bytes });
+  }
+  return files;
+}
+
+/** The person's older copies that can still be deleted (ready and unexpired). */
+async function olderFileNames(client: AppSupabaseClient, newExportId: string): Promise<string[]> {
+  const copies = await fetchMyDataExports(client);
+  const now = Date.now();
+  return copies
+    .filter((copy) => copy.id !== newExportId && copy.state === 'ready')
+    .filter((copy) => copy.expires_at !== null && Date.parse(copy.expires_at) > now)
+    .map((copy) => copy.file_name);
+}
+
+/**
+ * Makes one copy, every step in order.
+ *
+ * @param options - the client and the translated words
+ * @returns how many Word files the ZIP holds
+ * @throws Error with a plain message at the first step that fails
+ */
+export async function makeDataExport(options: DataExportRunOptions): Promise<number> {
+  // Steps 1 and 2: open a copy and read the data file.
+  const opened = await requestDataExport(options.client);
+  const document = await fetchDataExportDocument(options.client);
+  // Steps 3 to 5: the Word files and the ZIP, built here in the browser (ADR 0012).
+  const input = wordInputFrom(document, options.statusLabels);
+  const wordFiles = await buildWordFiles(input, options);
+  const zip = await buildExportZip(document, wordFiles);
+  // Step 6: the older copies' files go before the new one is saved.
+  await deleteExportFiles(options.client, await olderFileNames(options.client, opened.exportId));
+  // Steps 7 and 8: save the ZIP, then mark it ready and notify.
+  await uploadExportFile(options.client, opened.fileName, zip);
+  await finishDataExport(options.client, opened.exportId, wordFiles.length);
+  return wordFiles.length;
+}
+
+/* ---------- The run's state, shared by every panel that shows it ---------- */
+
+let currentState: DataExportRunState = { phase: 'idle' };
+const listeners = new Set<() => void>();
+
+/** Changes the state and tells every panel. */
+function setRunState(next: DataExportRunState): void {
+  currentState = next;
+  for (const listener of listeners) listener();
+}
+
+/** For useSyncExternalStore: listens for state changes. */
+export function subscribeToDataExportRun(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+/** For useSyncExternalStore: the state now. */
+export function dataExportRunState(): DataExportRunState {
+  return currentState;
+}
+
+/**
+ * Starts a copy unless one is already being made in this tab, and keeps the state up to date.
+ *
+ * @param options - the client and the translated words
+ * @returns once the copy is ready or has failed (a failure is in the state, never thrown)
+ */
+export async function startDataExport(options: DataExportRunOptions): Promise<void> {
+  if (currentState.phase === 'running') return;
+  setRunState({ phase: 'running' });
+  try {
+    await makeDataExport(options);
+    setRunState({ phase: 'idle' });
+  } catch (error) {
+    // Logged for the developer without any of the person's data; the panel shows a plain line.
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`The data copy failed: ${message}`);
+    setRunState({ phase: 'failed', message });
+  }
+}

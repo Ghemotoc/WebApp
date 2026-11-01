@@ -282,6 +282,13 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Online status:** `note_i_am_online()` stamps `profiles.last_active_at` only while the switch is on; `who_is_online(handles)` answers the people who are online for the caller: switched on, active in the last 5 minutes, following the caller, no block either way. The time is cleared when the switch goes off and nightly once a day old (`forget-old-activity`).
 - No new table, so no new policy; tests `209`.
 
+## Download my data (S1-E13-02)
+
+- **The table:** `exports` (kind `all_my_data`; state `building` or `ready`; a random `file_name` "<uuid>.zip", never the user ID; `file_size` from storage; `expires_at` seven days after `ready_at`). The person reads their own rows (`exports_select_own`); every write goes through the functions.
+- **The bucket:** `exports`, private, 200 MB, ZIP only. `exports_insert_own` lets the person add the file of their own open export; `exports_select_own` lets them read it only while ready and unexpired; `exports_delete_own` lets them delete their own files (Postgres applies the read policy to a delete too, so only while readable).
+- **What goes in:** `my_data_export()` answers `{ format, made_at, user_id, account, tables }`. `account` is the email, when it was confirmed, the ways to log in and the profile; `tables` holds the person's rows of every table `data_export_tables()` includes. `export_row_for_owner()` drops other people's user IDs (naming the followed, blocked, written-to and reported person by username instead), secrets and internal notes. **A new user_content or user_action table must be added to `data_export_tables()`, included or left out with a reason; test `210` fails until it is.**
+- **Asking and finishing:** `request_data_export()` (three an hour, `rate_limits.data_export`) replaces a copy still being built; `finish_data_export(export_id, story_count)` needs the uploaded file, marks it ready for seven days, drops older rows and sends the `data_export_ready` notification. The browser builds the ZIP (ADR 0012); the clean-up of expired exports and their files is S1-E13-04.
+
 ## Seed personas
 
 Every persona's username is its persona name (for example `adult_writer`); adult_writer's pen name is `Lia Scrie`.

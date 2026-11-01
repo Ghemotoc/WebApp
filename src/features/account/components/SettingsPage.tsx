@@ -7,7 +7,8 @@
  * Ways to log in (Google, Apple, Microsoft and passkeys, S1-E2-09, while their flags are on),
  * Privacy (who sees the profile and the library, online status, S1-E13-01), Notifications (the
  * notification emails, S1-E7-02), Messages (S1-E9-04), "Blocked accounts" (S1-E5-05), Canva
- * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05) and the Legal panel. The board's
+ * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05), Download my data (S1-E13-02) and
+ * the Legal panel. The board's
  * other tabs (Language, My certificates) arrive with their stories, so only what works is shown
  * (docs/board-fixes.md).
  * Signed out, it says to log in; without a username, it links to setup.
@@ -20,6 +21,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { CanvaSettingsSection } from '@/features/canva/components/CanvaSettingsSection';
+import { DownloadMyDataSection } from '@/features/data-export/components/DownloadMyDataSection';
 import { MessageSettingsSection } from '@/features/messages/components/MessageSettingsSection';
 import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
@@ -94,6 +96,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       {/* Canva, while it can be used or is still connected (S1-E3-12). */}
       <CanvaSettingsSection />
       <SignedInDevicesSection />
+      {/* A copy of everything about the account, as one ZIP (S1-E13-02). */}
+      <DownloadMyDataSection />
       <LegalLinksSection />
     </>
   );

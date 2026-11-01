@@ -1766,6 +1766,57 @@ export type Database = {
           },
         ];
       };
+      exports: {
+        Row: {
+          created_at: string;
+          expires_at: string | null;
+          file_name: string;
+          file_size: number | null;
+          id: string;
+          kind: Database['public']['Enums']['export_kind'];
+          ready_at: string | null;
+          state: Database['public']['Enums']['export_state'];
+          story_count: number | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          expires_at?: string | null;
+          file_name: string;
+          file_size?: number | null;
+          id?: string;
+          kind: Database['public']['Enums']['export_kind'];
+          ready_at?: string | null;
+          state?: Database['public']['Enums']['export_state'];
+          story_count?: number | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          expires_at?: string | null;
+          file_name?: string;
+          file_size?: number | null;
+          id?: string;
+          kind?: Database['public']['Enums']['export_kind'];
+          ready_at?: string | null;
+          state?: Database['public']['Enums']['export_state'];
+          story_count?: number | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'exports_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       feature_flags: {
         Row: {
           created_at: string;
@@ -6706,6 +6757,14 @@ export type Database = {
           doodle: Database['public']['Enums']['seasonal_doodle'];
         }[];
       };
+      data_export_tables: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          is_included: boolean;
+          table_name: string;
+          why_left_out: string;
+        }[];
+      };
       decide_case: {
         Args: {
           chosen_action: Database['public']['Enums']['moderation_action'];
@@ -6788,6 +6847,12 @@ export type Database = {
       erase_unchecked_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       escalate_on_call_alerts: { Args: Record<PropertyKey, never>; Returns: number };
       expect_identity_link: { Args: { wanted_provider: string }; Returns: undefined };
+      export_account_of: { Args: { owner_id: string }; Returns: Json };
+      export_download_allowed: { Args: { object_name: string }; Returns: boolean };
+      export_row_for_owner: { Args: { stored_row: Json }; Returns: Json };
+      export_tables_of: { Args: { owner_id: string }; Returns: Json };
+      export_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      finish_data_export: { Args: { export_id: string; story_count: number }; Returns: Json };
       finish_onboarding: { Args: Record<PropertyKey, never>; Returns: undefined };
       finish_social_sign_up: { Args: { sign_up_data: Json }; Returns: Json };
       finishes_story: {
@@ -7284,6 +7349,7 @@ export type Database = {
           status: Database['public']['Enums']['conversation_status'];
         }[];
       };
+      my_data_export: { Args: Record<PropertyKey, never>; Returns: Json };
       my_embeds: { Args: { embed_ids: string[] }; Returns: Json };
       my_followers: {
         Args: Record<PropertyKey, never>;
@@ -8012,6 +8078,7 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: string;
       };
+      request_data_export: { Args: Record<PropertyKey, never>; Returns: Json };
       request_manual_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
       require_account_action_allowed: {
         Args: { reason_given: string; target_user_id: string };
@@ -8569,6 +8636,8 @@ export type Database = {
       cover_kind: 'automatic' | 'drawn' | 'upload';
       email_delivery: 'instant' | 'daily' | 'off';
       embed_service: 'youtube' | 'vimeo' | 'loom' | 'spotify' | 'apple_music';
+      export_kind: 'all_my_data';
+      export_state: 'building' | 'ready';
       language_status: 'open' | 'ready' | 'closed';
       legal_check_status: 'not_started' | 'in_progress' | 'done';
       library_audience: 'only_me' | 'people_i_follow' | 'everyone';
@@ -8596,7 +8665,8 @@ export type Database = {
         | 'login_method_added'
         | 'login_method_removed'
         | 'teacher_check_decided'
-        | 'teacher_badge_removed';
+        | 'teacher_badge_removed'
+        | 'data_export_ready';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -8857,6 +8927,8 @@ export const Constants = {
       cover_kind: ['automatic', 'drawn', 'upload'],
       email_delivery: ['instant', 'daily', 'off'],
       embed_service: ['youtube', 'vimeo', 'loom', 'spotify', 'apple_music'],
+      export_kind: ['all_my_data'],
+      export_state: ['building', 'ready'],
       language_status: ['open', 'ready', 'closed'],
       legal_check_status: ['not_started', 'in_progress', 'done'],
       library_audience: ['only_me', 'people_i_follow', 'everyone'],
@@ -8893,6 +8965,7 @@ export const Constants = {
         'login_method_removed',
         'teacher_check_decided',
         'teacher_badge_removed',
+        'data_export_ready',
       ],
       picture_kind: [
         'cover',
