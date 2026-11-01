@@ -13,8 +13,17 @@ import { useState } from 'react';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { applyLocaleOverrides } from '@/lib/interface-text-overrides';
 
+import type { CoverSource } from '@/components/covers/automaticCover';
+
 import type { EpubForm } from '../lib/runEpub';
 import { useDataExportTranslation } from '../registerDataExportTranslations';
+
+/** A completed story, as the EPUB form needs it: what to fill in and what cover to preview. */
+export interface EpubStory extends CoverSource {
+  slug: string;
+  title: string;
+  languageCode: string;
+}
 
 /** Where making the book is: not started, making it, saved under a name, or failed. */
 export type EpubState =
@@ -40,14 +49,15 @@ function saveOnDevice(bytes: Uint8Array, fileName: string): void {
  * Makes and saves the EPUB of one story.
  *
  * @param story - the story's ID and language
- * @returns the state and make(form), which never throws: a failure shows as the failed state
+ * @returns the state and make(form), which never throws: it answers true once the book is saved,
+ *   false after a failure, which also shows as the failed state
  */
-export function useMakeEpub(story: { id: string; languageCode: string }) {
+export function useMakeEpub(story: Pick<EpubStory, 'id' | 'languageCode'>) {
   const { i18n } = useDataExportTranslation();
   const [state, setState] = useState<EpubState>({ phase: 'idle' });
 
   /** Makes the book from the form, then saves it. */
-  async function make(form: EpubForm): Promise<void> {
+  async function make(form: EpubForm): Promise<boolean> {
     setState({ phase: 'making' });
     try {
       // Step 1: the book's language and its words, with staff edits for that language.
@@ -68,9 +78,11 @@ export function useMakeEpub(story: { id: string; languageCode: string }) {
       // Step 3: straight to the device.
       saveOnDevice(book.bytes, book.fileName);
       setState({ phase: 'saved', fileName: book.fileName });
+      return true;
     } catch (error) {
       console.warn(`The EPUB couldn't be made: ${String(error)}`);
       setState({ phase: 'failed' });
+      return false;
     }
   }
 
