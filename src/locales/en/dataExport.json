@@ -1,0 +1,53 @@
+{
+  "settings": {
+    "heading": "Download my data",
+    "intro": "Get a copy of everything about your account in one ZIP file: a data file (JSON) that other apps can read, plus every story as a Word (.docx) file.",
+    "includesLabel": "What’s in it",
+    "includes": {
+      "stories": "Stories and chapters, drafts included",
+      "comments": "Comments",
+      "messages": "Messages you sent",
+      "account": "Your account: username, pen name, year of birth, email address and the age check",
+      "settings": "Your settings, consents and the reports you made"
+    },
+    "everythingNote": "Everything above is in the data file. Your stories are also there as Word files, so you can open them, edit them or send them on.",
+    "request": "Request my data",
+    "requestHint": "We’ll tell you when it’s ready. By law we have up to one month.",
+    "preparing": "We’re preparing your file on this device. You can keep using the app, but keep this tab open until it’s ready. We’ll send you a notification when it’s ready.",
+    "readyTitle": "Your file is ready.",
+    "readyBody": "The link works only while you’re logged in and stops working on {{date}}.",
+    "readySize_one": "{{count}} story as a Word file · {{size}}",
+    "readySize_few": "{{count}} stories as Word files · {{size}}",
+    "readySize_other": "{{count}} stories as Word files · {{size}}",
+    "download": "Download ZIP",
+    "downloadFailed": "We couldn’t open your file. Log in again and try once more.",
+    "makeNewCopy": "Make a new copy",
+    "failed": "We couldn’t make your file. Please try again in a minute.",
+    "tryAgain": "Try again",
+    "loadFailed": "We couldn’t check your copies. Reload the page to try again.",
+    "downloadName": "my-data-{{date}}.zip"
+  },
+  "word": {
+    "byLine": "By {{name}}",
+    "userId": "User ID",
+    "created": "Created",
+    "firstPublished": "First published",
+    "lastUpdated": "Last updated",
+    "lastPublished": "Last published",
+    "notPublishedYet": "Not published yet",
+    "status": "Status",
+    "chapterNumber": "Chapter {{number}}",
+    "pictureMissing": "Picture: {{alt}}",
+    "embedLine": "Music or video: {{title}}",
+    "embedMissing": "A music or video card that is no longer available",
+    "storyStatus": {
+      "ongoing": "Ongoing",
+      "completed": "Completed"
+    },
+    "chapterStatus": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "published": "Published"
+    }
+  }
+}

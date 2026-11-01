@@ -1,0 +1,53 @@
+{
+  "settings": {
+    "heading": "Descarcă-mi datele",
+    "intro": "Primești o copie a tot ce ține de contul tău într-un singur fișier ZIP: un fișier de date (JSON) pe care îl pot citi alte aplicații și fiecare poveste ca fișier Word (.docx).",
+    "includesLabel": "Ce conține",
+    "includes": {
+      "stories": "Povești și capitole, inclusiv ciornele",
+      "comments": "Comentarii",
+      "messages": "Mesajele pe care le-ai trimis",
+      "account": "Contul tău: numele de utilizator, pseudonimul, anul nașterii, adresa de email și verificarea vârstei",
+      "settings": "Setările tale, acordurile date și raportările pe care le-ai făcut"
+    },
+    "everythingNote": "Tot ce e mai sus se află în fișierul de date. Poveștile tale sunt și ca fișiere Word, ca să le poți deschide, modifica sau trimite mai departe.",
+    "request": "Cere-mi datele",
+    "requestHint": "Îți spunem când e gata. Prin lege avem la dispoziție cel mult o lună.",
+    "preparing": "Îți pregătim fișierul pe acest dispozitiv. Poți folosi în continuare aplicația, dar ține această filă deschisă până e gata. Îți trimitem o notificare când e gata.",
+    "readyTitle": "Fișierul tău e gata.",
+    "readyBody": "Linkul merge doar cu contul tău conectat și nu mai funcționează din {{date}}.",
+    "readySize_one": "{{count}} poveste ca fișier Word · {{size}}",
+    "readySize_few": "{{count}} povești ca fișiere Word · {{size}}",
+    "readySize_other": "{{count}} de povești ca fișiere Word · {{size}}",
+    "download": "Descarcă ZIP-ul",
+    "downloadFailed": "Nu am putut deschide fișierul. Conectează-te din nou și mai încearcă o dată.",
+    "makeNewCopy": "Fă o copie nouă",
+    "failed": "Nu am putut pregăti fișierul. Te rugăm să încerci din nou peste un minut.",
+    "tryAgain": "Încearcă din nou",
+    "loadFailed": "Nu am putut verifica copiile tale. Reîncarcă pagina ca să încerci din nou.",
+    "downloadName": "datele-mele-{{date}}.zip"
+  },
+  "word": {
+    "byLine": "De {{name}}",
+    "userId": "ID utilizator",
+    "created": "Creat",
+    "firstPublished": "Publicat prima dată",
+    "lastUpdated": "Actualizat ultima dată",
+    "lastPublished": "Publicat ultima dată",
+    "notPublishedYet": "Nepublicat încă",
+    "status": "Stare",
+    "chapterNumber": "Capitolul {{number}}",
+    "pictureMissing": "Imagine: {{alt}}",
+    "embedLine": "Muzică sau video: {{title}}",
+    "embedMissing": "Un card de muzică sau video care nu mai e disponibil",
+    "storyStatus": {
+      "ongoing": "În curs",
+      "completed": "Încheiată"
+    },
+    "chapterStatus": {
+      "draft": "Ciornă",
+      "scheduled": "Programat",
+      "published": "Publicat"
+    }
+  }
+}

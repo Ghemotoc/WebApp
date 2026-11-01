@@ -292,6 +292,24 @@ function teacherBadgeText(t: TFunction, notification: AppNotification): Notifica
   };
 }
 
+/**
+ * The copy of the person's data is ready (S1-E13-02, criterion 3). The row leads to Settings ›
+ * Download my data, where the download needs the person to be signed in.
+ *
+ * @param t - the notifications translation function
+ * @returns the row's words
+ */
+function dataExportReadyText(t: TFunction): NotificationText {
+  return {
+    who: t('who.yourAccount'),
+    what: t('what.dataExportReady'),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.downloadMyData'),
+    href: '/settings#download-my-data',
+  };
+}
+
 /** The moderation team's kinds and the function that words each one. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -309,6 +327,7 @@ const teamTextFor: Partial<
   login_method_removed: loginMethodText,
   teacher_check_decided: teacherBadgeText,
   teacher_badge_removed: teacherBadgeText,
+  data_export_ready: dataExportReadyText,
 };
 
 /**

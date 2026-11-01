@@ -89,6 +89,8 @@ select results_eq(
        -- Notification emails: each person's own (S1-E7-02).
        ('email_outbox', 0::bigint),
        ('email_unsubscribe_keys', 0::bigint),
+       -- Download my data: each person's own (S1-E13-02).
+       ('exports', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
        ('follows_stories', 0::bigint),
        ('follows_users', 0::bigint),
