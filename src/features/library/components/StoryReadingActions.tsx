@@ -7,10 +7,12 @@
  * - "Library" puts the story on a shelf (Reading, Saved for later, Finished) or takes it off. It
  *   is a native drop-down in the shared style (DoD drop-downs), so it works by keyboard and
  *   screen reader with no extra code; the change saves at once.
- * The story's writer sees neither (their own story never fills their library). A signed-out
+ * - On a story on the Finished shelf, "Tell the writer you finished it" (FinishedThanksButton,
+ *   IDEAS-1c), which turns into "Sent" once it went.
+ * The story's writer sees none of them (their own story never fills their library). A signed-out
  * visitor sees "Start reading" and a "Log in to save it" link.
  * Who uses it: StoryHeader. What it calls: useStoryLibraryState → story_library_state() and
- * set_library_shelf().
+ * set_library_shelf(), and FinishedThanksButton.
  */
 import { Link } from 'react-router';
 
@@ -19,6 +21,8 @@ import { Select } from '@/components/ui/Select';
 
 import { libraryShelves, type LibraryShelf } from '../api/library';
 import { useStoryLibraryState } from '../hooks/useStoryLibraryState';
+
+import { FinishedThanksButton } from './FinishedThanksButton';
 import { continueAddress, continueChapterNumber } from '../lib/places';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
@@ -92,6 +96,9 @@ function LibraryChoice({ storySlug }: { storySlug: string }) {
         onChange={choose}
       />
       {library.saveFailed && <Notice tone="error">{t('button.saveFailed')}</Notice>}
+      {library.state.shelf === 'finished' && (
+        <FinishedThanksButton storySlug={storySlug} isSent={library.state.thanksSent} />
+      )}
     </div>
   );
 }

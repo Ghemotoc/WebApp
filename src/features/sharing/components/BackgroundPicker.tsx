@@ -1,11 +1,12 @@
 /**
- * BackgroundPicker: "Background" on the quote card (story S1-E4-07, fourth criterion; board 3.6).
+ * BackgroundPicker: "Background" on the quote card (story S1-E4-07, fourth criterion; board 3.6)
+ * and, since IDEAS-1c, on the picture card too.
  *
  * Board values: an eyebrow, the "Purple" chip (the default), then "Or one of our colours:" and
  * nine round swatches. Every choice is a toggle button with aria-pressed and a tick when chosen,
  * never colour alone (DoD pill system); each swatch is named ("Gold") and 44 px across.
  * "Story cover" and "Your own picture" come later with the image check (docs/board-fixes.md).
- * Who uses it: QuoteCardDialog.
+ * Who uses it: QuoteCardDialog and PictureCardDialog.
  */
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';

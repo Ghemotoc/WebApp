@@ -58,7 +58,8 @@
     "teacherBadgeRemoved": "ți-a retras insigna de Profesor.",
     "dataExportReady": "copia datelor tale e gata de descărcat.",
     "storiesExportReady": "poveștile tale sunt gata de descărcat ca fișiere Word.",
-    "readingReminder": "câteva minute de citit azi?"
+    "readingReminder": "câteva minute de citit azi?",
+    "storyFinished": "a terminat {{story}} și îți mulțumește că ai scris-o."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -104,7 +105,8 @@
     "seeTeacherBadge": "Vezi insigna de Profesor",
     "downloadMyData": "Descarcă-ți datele",
     "downloadMyStories": "Descarcă-ți poveștile",
-    "openLibrary": "Deschide biblioteca"
+    "openLibrary": "Deschide biblioteca",
+    "openStory": "Deschide povestea"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

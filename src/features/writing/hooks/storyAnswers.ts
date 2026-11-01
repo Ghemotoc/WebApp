@@ -27,6 +27,8 @@ export interface StoryAnswers {
   quoteCardsEnabled: boolean;
   /** Whether readers may share the chapters' pictures (S1-E4-11); on for a new story. */
   pictureSharingEnabled: boolean;
+  /** The palette colour readers' new quote and picture cards start in (IDEAS-1c); null for our default. */
+  cardColour: string | null;
   /** All ages, 13+, 16+ or 18+ (S1-E3-06); null until the writer picks one (required). */
   rating: StoryRating | null;
   isFanFiction: boolean;

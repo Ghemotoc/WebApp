@@ -7,6 +7,7 @@
  * Backgrounds (S1-E4-07, fourth criterion; Robert, canvas comments, 16 Oct 2026): the default is
  * plain brand purple with no gold glow (the board's purple gradient), or one of our nine palette
  * colours. Light colours get dark words, dark ones light words, so the text keeps its contrast.
+ * A writer may pick one palette colour for their story's new cards (IDEAS-1c, backgroundByKey).
  * Who calls it: components/QuoteCardCanvas.tsx, and lib/pictureCard.ts for the shared footer
  * (S1-E4-11). What it calls: the canvas 2D API only.
  */
@@ -40,6 +41,17 @@ export const paletteBackgrounds: readonly QuoteCardBackground[] = [
   { key: 'sage', colours: ['#C9D8BF'], isLight: true },
   { key: 'paper', colours: ['#FAF8F5'], isLight: true },
 ];
+
+/**
+ * Finds a palette colour by its key, for the writer's card colour (IDEAS-1c).
+ *
+ * @param key - a palette key such as "sage", or null when the writer picked none
+ * @returns the background, or null for no key or one that isn't on the palette
+ */
+export function backgroundByKey(key: string | null): QuoteCardBackground | null {
+  if (key === null) return null;
+  return paletteBackgrounds.find((background) => background.key === key) ?? null;
+}
 
 /** What goes on a card. */
 export interface QuoteCardContent {

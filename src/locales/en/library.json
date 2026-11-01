@@ -103,5 +103,13 @@
     "keepIt": "Keep it",
     "changeFailed": "That didn’t work. Check your connection and try again.",
     "loadFailed": "Your reading days couldn’t be loaded."
+  },
+  "thanks": {
+    "button": "Tell the writer you finished it",
+    "sent": "Sent",
+    "hint": "The writer sees your name and that you finished their story. No message, just thanks.",
+    "sentNote": "Sent. The writer will see that you finished their story.",
+    "failed": "We couldn’t send it. Please try again.",
+    "notActive": "You can send this once your account is ready to take part."
   }
 }

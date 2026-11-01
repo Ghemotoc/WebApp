@@ -1,9 +1,10 @@
 /**
- * Tests for the chapter share link (story S1-E4-05, second criterion and the no-tracking rule).
+ * Tests for the chapter share link (story S1-E4-05, second criterion and the no-tracking rule)
+ * and the whole story's link (IDEAS-1c).
  */
 import { describe, expect, it } from 'vitest';
 
-import { chapterShareLink, passageShareLink, printedLink } from './shareLink';
+import { chapterShareLink, passageShareLink, printedLink, storyShareLink } from './shareLink';
 
 describe('chapterShareLink', () => {
   it("is the chapter's public address and nothing else", () => {
@@ -40,5 +41,17 @@ describe('passageShareLink (S1-E4-11)', () => {
     const link = new URL(passageShareLink(address, { first: 2, last: 2 }));
     expect(link.search).toBe('');
     expect(link.pathname.endsWith('/abcd1234/p2')).toBe(true);
+  });
+});
+
+describe('storyShareLink', () => {
+  it("is the story page's public address and nothing else", () => {
+    expect(storyShareLink('ploaia', 'https://example.org/')).toBe('https://example.org/s/ploaia');
+  });
+
+  it('carries no query string, so no sharer ID and no tracking parameter', () => {
+    const link = new URL(storyShareLink('ploaia'));
+    expect(link.search).toBe('');
+    expect(link.hash).toBe('');
   });
 });

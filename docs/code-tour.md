@@ -1601,6 +1601,15 @@ Idea IDEA-20261031-13, with Robert's comments of 31 Oct 2026.
 - Privacy: both tables are readable by their owner only, are in Download my data and are deleted with the account; minutes are kept 14 days (`purge_old_reading_minutes()` in the nightly retention run).
 - Tests: `supabase/tests/database/216-reading-streak.test.sql`, `src/features/reading-habit/lib/*.test.ts`, `e2e/reading-streak.spec.ts`.
 
+## Readers to writers (IDEAS-1 part c)
+
+Ideas IDEA-20261031-3, -10 and -11, with Robert's comments of 31 Oct 2026.
+
+- "I finished it": on a story on the reader's Finished shelf, `StoryReadingActions` shows `FinishedThanksButton` (`src/features/library/components/`) → `useFinishedThanks()` → `send_finished_thanks()`, which checks the account gate, that the story is visible (so never across a block), not the reader's own and on their Finished shelf, records `finished_thanks` (once per reader per story) and calls `notify()` with the `story_finished` kind and the story's ID. No text from the reader, no email. `story_library_state()` says `thanks_sent`, so the button reads "Sent". The writer's row is worded by `finishedText()` in `src/features/notifications/lib/notificationText.ts` and opens the story.
+- Sharing a whole story: `StoryHeader` builds a `SharedStory` (`src/features/sharing/lib/sharedStory.ts`; no user ID) and shows `StoryShareButton` on every public story. It opens the system share sheet on a phone (`lib/systemShare.ts`, shared with the chapter's button) or copies `storyShareLink()` and opens `StoryShareDialog`, whose chat preview copies what `server/link-preview.ts` sends for `/s/<story>`: the cover colour, title, pen name and blurb, or only the title and rating for 16+ and 18+. Nothing is counted. `ShareLinkRow` and `SharePrivacyNote` are shared with the chapter's dialog.
+- A writer's card colour: "Colour for quote and picture cards" (`CardColourField` in `StoryStatusSection`) → `update_my_story()` with `card_colour` → `stories.card_colour` (one of the nine palette keys, or null). `share_options()` returns it as `card_colour`; `QuoteCardDialog` and `PictureCardDialog` start in it (`backgroundByKey()` in `lib/quoteCard.ts`) and the reader can still change it with `BackgroundPicker`, which the picture card now has too.
+- Tests: `supabase/tests/database/217-readers-to-writers.test.sql`, `src/features/sharing/lib/sharedStory.test.ts`, `src/features/sharing/lib/shareLink.test.ts`, `e2e/readers-to-writers.spec.ts`.
+
 ## Sharing a chapter and the quote card (S1-E4-05, S1-E4-07; READ-4c)
 
 - Where it lives: `src/features/sharing/` (see its README). The reader screen adds `ShareButtonWhenNear` to `ChapterEnd`'s row (it fetches `ShareButton` when the row nears the screen, `src/lib/use-is-near.ts`) and `QuoteShareWatcher` under the chapter (it fetches `QuoteShareBar` on the first selection); `reading/lib/toSharedChapter.ts` hands them only public things (address, titles, number, pen name).

@@ -66,6 +66,8 @@ export interface MyStory {
   quoteCardsEnabled: boolean;
   /** Whether readers may share its chapters' pictures (S1-E4-11). */
   pictureSharingEnabled: boolean;
+  /** The palette colour readers' new cards start in (IDEAS-1c); null for our default. */
+  cardColour: string | null;
   /** When the writer deleted it; null for a live story. Undo is possible for 30 days (S1-E3-05). */
   deletedAt: string | null;
   /** The labels (S1-E3-06). */
@@ -194,7 +196,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, comments_enabled, quote_cards_enabled, picture_sharing_enabled, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, comments_enabled, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // Only live chapters, in order; the deleted ones wait for the purge (S1-E3-04 shows undo).
     .is('chapters.deleted_at', null)
@@ -228,6 +230,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     commentsEnabled: row.comments_enabled,
     quoteCardsEnabled: row.quote_cards_enabled,
     pictureSharingEnabled: row.picture_sharing_enabled,
+    cardColour: row.card_colour,
     deletedAt: row.deleted_at,
     rating: row.rating,
     isFanFiction: row.is_fan_fiction,
@@ -284,6 +287,7 @@ export async function updateMyStory(
       comments_enabled: settings.commentsEnabled,
       quote_cards_enabled: settings.quoteCardsEnabled,
       picture_sharing_enabled: settings.pictureSharingEnabled,
+      card_colour: settings.cardColour,
       labels: toLabelsJson(settings),
     },
   });

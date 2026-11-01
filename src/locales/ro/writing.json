@@ -184,6 +184,11 @@
     "on": "Pornit. Cititorii pot distribui o imagine din capitolele tale ca un card cu numele tău și un link către ea. Doar imaginile care au trecut verificarea.",
     "off": "Oprit. Cititorii nu pot distribui imaginile din capitolele tale."
   },
+  "cardColour": {
+    "label": "Culoarea cardurilor cu citate și imagini",
+    "ourDefault": "Culoarea noastră obișnuită",
+    "hint": "Cardurile noi făcute de cititori din povestea ta pornesc în această culoare. Fiecare cititor poate alege totuși alta pentru cardul său."
+  },
   "settings": {
     "documentTitle": "Setările poveștii · {{productName}}",
     "eyebrow": "Scrie · setările poveștii",

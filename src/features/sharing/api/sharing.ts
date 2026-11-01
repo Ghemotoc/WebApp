@@ -8,7 +8,8 @@
  * - quote_card_state(): whether the reader may make a quote card and whether they already did;
  * - make_quote_card(): records the card (one per chapter, Q17) before the device draws it;
  * - share_options() (S1-E4-11, …_s1_e4_11_share_passages_and_pictures.sql): whether the reader may
- *   share passages and pictures from the chapter (the writer's two switches; never for 16+ or 18+).
+ *   share passages and pictures from the chapter (the writer's two switches; never for 16+ or 18+),
+ *   and the writer's colour for new cards (IDEAS-1c, …_ideas1_c_readers_to_writers.sql).
  * Every function takes the chapter's address and applies the reader's rules (rating, blocks,
  * moderation); none returns a user ID.
  */
@@ -126,6 +127,8 @@ export interface ShareOptions {
   passages: boolean;
   /** The chapter's pictures: picture cards and picture links. */
   pictures: boolean;
+  /** The palette colour the writer picked for new cards (IDEAS-1c); null for our default. */
+  cardColour: string | null;
 }
 
 /**
@@ -133,7 +136,8 @@ export interface ShareOptions {
  *
  * @param client - the shared Supabase client
  * @param address - the chapter
- * @returns the options; both false for a visitor, a 16+ or 18+ story, or a chapter they can't read
+ * @returns the options; both false (and no colour) for a visitor, a 16+ or 18+ story, or a
+ *   chapter they can't read
  * Errors: throws with Supabase's message when the database can't be reached.
  */
 export async function fetchShareOptions(
@@ -145,6 +149,14 @@ export async function fetchShareOptions(
     chapter_code: address.chapterCode,
   });
   if (error !== null) throw new Error(`Could not read what may be shared: ${error.message}`);
-  const row = data as { passages?: boolean; pictures?: boolean } | null;
-  return { passages: row?.passages === true, pictures: row?.pictures === true };
+  const row = data as {
+    passages?: boolean;
+    pictures?: boolean;
+    card_colour?: string | null;
+  } | null;
+  return {
+    passages: row?.passages === true,
+    pictures: row?.pictures === true,
+    cardColour: row?.card_colour ?? null,
+  };
 }

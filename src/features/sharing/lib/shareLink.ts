@@ -6,8 +6,8 @@
  * "utm_" or other tracking parameter, no query string at all. The website's domain comes from the
  * brand config (CLAUDE.md: names and domains are settings, not code). A visitor who opens it sees
  * the teaser (S1-E4-04), and chat apps get the link preview from functions/s/[[path]].ts.
- * Who calls it: ShareButton, ShareDialog, the quote card, the share bar's passage link and the
- * picture card (S1-E4-11).
+ * Who calls it: ShareButton, ShareDialog, the quote card, the share bar's passage link, the
+ * picture card (S1-E4-11) and, for a whole story, StoryShareButton (IDEAS-1c).
  */
 import { brand } from '@/config/brand';
 import { spotFor, type SpotRange } from '@/lib/chapter-blocks';
@@ -24,6 +24,19 @@ import type { ChapterAddress } from '../api/sharing';
 export function chapterShareLink(address: ChapterAddress, siteUrl: string = brand.siteUrl): string {
   const base = siteUrl.replace(/\/+$/, '');
   return `${base}/s/${encodeURIComponent(address.storySlug)}/${encodeURIComponent(address.chapterCode)}`;
+}
+
+/**
+ * Builds a whole story's share link (IDEAS-1c, idea IDEA-20261031-11): the story page's own
+ * address, nothing added.
+ *
+ * @param storySlug - the story's address
+ * @param siteUrl - the website's address (the brand's, unless a test passes one)
+ * @returns the full link, for example "https://example.com/s/my-story"
+ */
+export function storyShareLink(storySlug: string, siteUrl: string = brand.siteUrl): string {
+  const base = siteUrl.replace(/\/+$/, '');
+  return `${base}/s/${encodeURIComponent(storySlug)}`;
 }
 
 /**

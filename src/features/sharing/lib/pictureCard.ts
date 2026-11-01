@@ -2,7 +2,8 @@
  * Drawing a picture card: a chapter picture with the story's title, "by <pen name>" and the link
  * to the picture's spot in the chapter (story S1-E4-11, first criterion; board 3.6 Share).
  *
- * The card is 1080 × 1080 on the paper colour. The picture sits in the top part, as large as
+ * The card is 1080 × 1080, on the paper colour unless the writer picked a card colour or the reader
+ * chose another (IDEAS-1c); the words take light or dark ink to suit. The picture sits in the top part, as large as
  * fits without cropping (a writer's picture is never cut), and the footer is the quote card's,
  * so both cards look like one family. The product's name is in the top right corner.
  * Who calls it: components/PictureCardCanvas.tsx. What it calls: lib/quoteCard.ts's footer and
@@ -27,10 +28,12 @@ export interface PictureCardContent {
   /** The picture's link without "https://". */
   link: string;
   productName: string;
+  /** The card's colour: paper by default (IDEAS-1c lets the reader change it). */
+  background: QuoteCardBackground;
 }
 
-/** The card's background: the board's paper colour. */
-const paperBackground: QuoteCardBackground = paletteBackgrounds.find(
+/** The card's default background: the board's paper colour. */
+export const paperBackground: QuoteCardBackground = paletteBackgrounds.find(
   (background) => background.key === 'paper',
 ) ?? { key: 'paper', colours: ['#FAF8F5'], isLight: true };
 
@@ -70,8 +73,8 @@ export function drawPictureCard(
   content: PictureCardContent,
   picture: ImageBitmap | null,
 ): void {
-  const colours = inkFor(paperBackground);
-  paintBackground(context, paperBackground);
+  const colours = inkFor(content.background);
+  paintBackground(context, content.background);
   context.textBaseline = 'alphabetic';
   context.textAlign = 'left';
   if (picture !== null) {

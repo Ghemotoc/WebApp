@@ -426,9 +426,31 @@ export function notificationText(
         actionLabel: t('actions.openChapter'),
         href: chapterAddress(notification),
       };
+    case 'story_finished':
+      return finishedText(t, notification, base);
   }
   // Step 4: what is left is a new follower (the team's kinds were answered in step 1).
   return followerText(t, notification, ownHandle, base);
+}
+
+/**
+ * A reader finished the writer's story and says thanks (IDEAS-1c, idea IDEA-20261031-3): fixed
+ * words with the reader's name, never any text of theirs; the action opens the story.
+ *
+ * @returns the row's words
+ */
+function finishedText(
+  t: TFunction,
+  notification: AppNotification,
+  base: Pick<NotificationText, 'who' | 'quote' | 'grouped'>,
+): NotificationText {
+  const story = notification.story;
+  return {
+    ...base,
+    what: t('what.storyFinished', { story: story?.title ?? '' }),
+    actionLabel: story === null ? null : t('actions.openStory'),
+    href: story === null ? null : `/s/${story.slug}`,
+  };
 }
 
 /**

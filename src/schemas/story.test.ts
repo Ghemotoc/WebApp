@@ -84,6 +84,7 @@ describe('newStorySchema', () => {
       commentsEnabled: true,
       quoteCardsEnabled: true,
       pictureSharingEnabled: true,
+      cardColour: null,
     });
     expect(result.success).toBe(false);
   });

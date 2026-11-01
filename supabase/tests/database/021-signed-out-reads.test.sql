@@ -94,6 +94,7 @@ select results_eq(
        -- Download my data: each person's own (S1-E13-02).
        ('exports', 0::bigint),
        ('feature_flags', (select count(*) from public.feature_flags where is_public)),
+       ('finished_thanks', 0::bigint),
        ('follows_stories', 0::bigint),
        ('follows_users', 0::bigint),
        ('identity_link_requests', 0::bigint),

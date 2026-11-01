@@ -6,6 +6,8 @@
  * writes the caller's own rows only (row-level security and the functions' own checks); this
  * file turns the database's JSON into the app's shapes. The shelves' stories themselves come
  * from browse_stories('library', <shelf>) through the discovery feature's list code.
+ * Since IDEAS-1c it also says whether the reader thanked the writer, and sends that thank-you
+ * (…_ideas1_c_readers_to_writers.sql).
  */
 import {
   toListedStory,
@@ -69,6 +71,8 @@ export interface MyFollows {
 export interface StoryLibraryState {
   shelf: LibraryShelf | null;
   place: StoryPlace | null;
+  /** Whether the reader already told the writer they finished it (IDEAS-1c). */
+  thanksSent: boolean;
 }
 
 /** The database's JSON for a place. */
@@ -164,8 +168,39 @@ export async function fetchStoryLibraryState(
   const { data, error } = await client.rpc('story_library_state', { story_slug: storySlug });
   if (error !== null) throw new Error(`Could not read the story's place: ${error.message}`);
   if (data === null) return null;
-  const answer = data as unknown as { shelf: LibraryShelf | null; place: PlaceRow | null };
-  return { shelf: answer.shelf, place: answer.place === null ? null : toPlace(answer.place) };
+  const answer = data as unknown as {
+    shelf: LibraryShelf | null;
+    place: PlaceRow | null;
+    thanks_sent?: boolean;
+  };
+  return {
+    shelf: answer.shelf,
+    place: answer.place === null ? null : toPlace(answer.place),
+    thanksSent: answer.thanks_sent === true,
+  };
+}
+
+/** What send_finished_thanks() can answer (IDEAS-1c). */
+export type FinishedThanksOutcome =
+  'ok' | 'already_sent' | 'not_finished' | 'own_story' | 'not_active' | 'not_found';
+
+/**
+ * Tells a story's writer, in fixed kind words, that the reader finished it (idea
+ * IDEA-20261031-3). Once per story; nothing crosses a block.
+ *
+ * @param client - the shared Supabase client
+ * @param storySlug - the story's address
+ * @returns the outcome: 'ok', 'already_sent', or why it can't be sent
+ * Errors: throws with the database's message (signed out, or the database can't be reached).
+ */
+export async function sendFinishedThanks(
+  client: AppSupabaseClient,
+  storySlug: string,
+): Promise<FinishedThanksOutcome> {
+  const { data, error } = await client.rpc('send_finished_thanks', { story_slug: storySlug });
+  if (error !== null) throw new Error(`Could not tell the writer: ${error.message}`);
+  const outcome = (data as { outcome?: FinishedThanksOutcome } | null)?.outcome;
+  return outcome ?? 'not_found';
 }
 
 /**

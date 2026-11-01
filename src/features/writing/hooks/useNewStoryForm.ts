@@ -43,6 +43,8 @@ function emptyAnswers(): StoryAnswers {
     commentsEnabled: true,
     quoteCardsEnabled: true,
     pictureSharingEnabled: true,
+    // IDEAS-1c: our default card colour; the writer can pick one in the story's settings.
+    cardColour: null,
     // The rating and the AI answer have no default: the writer must pick them (S1-E3-06).
     rating: null,
     isFanFiction: false,
