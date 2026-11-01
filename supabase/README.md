@@ -271,6 +271,7 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 - **Limits:** `new_conversation` and `message` in the `rate_limits` setting, the same for new and older accounts (Q61; proposals: 20 and 200 an hour).
 - **Reporting:** the `message` branches of `reportable_item_owner()` (only the two people in the chat), `reportable_item_summary()`, `case_item_content()` and `notification_item_json()`. A hidden or removed message is gone for the other person; its writer still sees a hidden one (`message_body_for()`).
 - **Seed:** one accepted chat between `teacher` and `adult_writer`; staging gets it from `staging-topups/S1-E9-01.sql`.
+- **Context for staff (S1-E9-02):** `message_with_context(message)` (internal) gives a reported message and up to the 20 before it in the same chat, oldest first. Staff read it through `admin_case_message(case)` (moderation staff who may see the case; each read logged as `sensitive_read.case_message`), and the evidence pack through `case_item_content()`. Blocking from a chat is the profile's `set_block()`.
 
 ## Seed personas
 
