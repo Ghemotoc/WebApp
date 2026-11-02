@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #274 FORUMS2-c (space banners, join notifications, search by space): nothing by hand.
 - FORUMS-2b (#273, 2 Nov): nothing by hand. A space's owner adds moderators on its settings page and chooses their powers; /spaces/<name>/members and /spaces/<name>/log. Please read the new Romanian texts.
 - FORUMS-2a (#272, 2 Nov): run `supabase/staging-topups/FORUMS-2a.sql` once on staging (adds the two seed spaces; safe to run twice). Spaces are at /spaces.
 - FORUMS-1f (#271, 1 Nov): nothing by hand. Forum search is at /forums/search; try a word with or without diacritics.
