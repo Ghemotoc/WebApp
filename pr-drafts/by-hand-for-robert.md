@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- **CLASSES-c (#279, merged):** nothing on staging: no SQL top-up and no new secrets. New: a student can share a story only with their class from Story settings › "Who can read it"; then only they, the class and the moderation team can read it, it stays out of public lists, their profile and outside followers' notices, and the class page shows "Stories shared with the class". Only the writer can make it public again, never the teacher. Optional: read the new Romanian lines (`classStories` and `storyClass` in `spaces.json`).
 - **CLASSES-b (#278, merged):** nothing on staging: no SQL top-up and no new secrets. New: a teacher with the badge picks "Class space" on the new space form. Each class locks on 1 July (Romanian time), and the teacher can change the date, lock it now or unlock it from the class's settings. A locked class can be read but not posted in, and its code stops working. Settings also show who is still waiting to read and why. Students can type a code under Forums › Join a class. Yours to decide (proposals): the 1 July date and that a teacher can unlock. Optional: read the new Romanian lines (`classLock`, `classWaiting`, `classSpace` and `joinClass` in `spaces.json`).
 - #277 (CLASSES-a, class spaces and invite codes): nothing by hand.
 - #276 (10e ranks): nothing by hand. Please check the Romanian rank names (Debut, Condei, Condei de povești, Condei de roman); change them in Interface text if you like.
