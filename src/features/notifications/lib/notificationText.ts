@@ -434,6 +434,45 @@ function changeRequestText(t: TFunction, notification: AppNotification): Notific
   };
 }
 
+/**
+ * A teacher signed a certificate for the reader in their class (CLASSES-e; S1-E8-12 criterion 1).
+ * It leads to My certificates.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a certificate_issued row
+ * @returns the row's words
+ */
+function certificateIssuedText(t: TFunction, notification: AppNotification): NotificationText {
+  return {
+    who: t('who.yourAccount'),
+    what: t('what.certificateIssued', { space: notification.space?.name ?? '' }),
+    quote: null,
+    grouped: null,
+    actionLabel: t('actions.openCertificates'),
+    href: '/certificates',
+  };
+}
+
+/**
+ * The reader's class was archived: keep copies of its certificates within 30 days, before the
+ * printed real names are deleted (CLASSES-e; S1-E8-12 criterion 3; decided 17 Oct 2026, 12:44).
+ *
+ * @param t - the notifications translation function
+ * @param notification - a class_archived row
+ * @returns the row's words
+ */
+function classArchivedText(t: TFunction, notification: AppNotification): NotificationText {
+  const space = notification.space;
+  return {
+    who: t('who.yourAccount'),
+    what: t('what.classArchived', { space: space?.name ?? '' }),
+    quote: null,
+    grouped: null,
+    actionLabel: space === null ? null : t('actions.openClassCertificates'),
+    href: space === null ? null : `/spaces/${space.slug}/certificates`,
+  };
+}
+
 /** The kinds with words of their own (the team's, the account's and the spaces') and the function for each. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -457,6 +496,8 @@ const teamTextFor: Partial<
   space_join_request: spaceJoinRequestText,
   space_join_approved: spaceJoinApprovedText,
   customisation_change_requested: changeRequestText,
+  certificate_issued: certificateIssuedText,
+  class_archived: classArchivedText,
 };
 
 /**

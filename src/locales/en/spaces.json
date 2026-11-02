@@ -266,7 +266,9 @@
       "member_joined": "{{target}} joined with the class code.",
       "class_locked": "{{actor}} locked the class space.",
       "class_unlocked": "{{actor}} unlocked the class space.",
-      "lock_date_changed": "{{actor}} changed when the class space locks."
+      "lock_date_changed": "{{actor}} changed when the class space locks.",
+      "class_archived": "{{actor}} archived the class space.",
+      "certificates_issued": "{{actor}} signed certificates."
     }
   },
   "bannerPicture": {

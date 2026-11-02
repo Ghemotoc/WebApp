@@ -812,7 +812,8 @@
   "schoolsTabs": {
     "label": "Schools",
     "teachers": "Verify teachers",
-    "classes": "Class spaces"
+    "classes": "Class spaces",
+    "certificates": "Certificates"
   },
   "classSpaces": {
     "documentTitle": "Class spaces",
@@ -855,6 +856,49 @@
       "text": "Write a name and what the class is for.",
       "missing": "This class isn’t here any more.",
       "unreachable": "We couldn’t reach the server. Try again."
+    }
+  },
+  "staffCertificates": {
+    "documentTitle": "Certificates · Staff",
+    "eyebrow": "Schools",
+    "heading": "Certificates",
+    "intro": "Find a certificate by its code to see what it says and revoke it if it was made in error or after a rule breach. You never see the real name a student printed. Revoking is in the audit log and the check page then says “revoked”.",
+    "codeLabel": "Certificate code",
+    "find": "Find",
+    "none": "No certificate has this code.",
+    "notAllowed": "Only staff with access to Schools can look up certificates.",
+    "loadFailed": "We couldn’t look the code up. Try again.",
+    "status": "State",
+    "states": {
+      "valid": "Valid",
+      "revoked": "Revoked"
+    },
+    "student": "Student",
+    "programme": "Programme",
+    "result": "Result",
+    "class": "Class",
+    "school": "School",
+    "noSchool": "No school named",
+    "teacher": "Teacher",
+    "signed": "Signed",
+    "revokeReason": "Why it was revoked",
+    "reasonLabel": "Why are you revoking it?",
+    "reasonHint": "Up to 500 characters. It goes in the audit log.",
+    "revoke": "Revoke the certificate",
+    "failures": {
+      "not_allowed": "Only staff with access to Schools can revoke certificates.",
+      "missing": "No certificate has this code.",
+      "reason": "Say why, in 1 to 500 characters.",
+      "revoked": "This certificate is already revoked.",
+      "teacher_only": "We couldn’t revoke it. Try again.",
+      "not_member": "We couldn’t revoke it. Try again.",
+      "result": "We couldn’t revoke it. Try again.",
+      "programme": "We couldn’t revoke it. Try again.",
+      "empty": "We couldn’t revoke it. Try again.",
+      "archived": "We couldn’t revoke it. Try again.",
+      "name_deleted": "We couldn’t revoke it. Try again.",
+      "name_length": "We couldn’t revoke it. Try again.",
+      "unreachable": "We couldn’t revoke it. Try again."
     }
   }
 }

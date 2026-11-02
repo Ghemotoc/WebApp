@@ -64,7 +64,9 @@
     "required": "Acest email este despre contul tău și siguranță, așa că îl trimitem mereu.",
     "subjectLoginMethod": "O schimbare la felul în care intri pe {{productName}}",
     "loginMethodAdded": "Un nou mod de autentificare a fost conectat la contul tău. Le vezi pe toate în Setări, la Moduri de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
-    "loginMethodRemoved": "Un mod de autentificare a fost deconectat de la contul tău. Le vezi pe cele rămase în Setări, la Moduri de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne."
+    "loginMethodRemoved": "Un mod de autentificare a fost deconectat de la contul tău. Le vezi pe cele rămase în Setări, la Moduri de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
+    "subjectClassArchived": "Spațiul clasei a fost arhivat: păstrează copii ale diplomelor",
+    "classArchived": "Spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: după aceea, numele reale tipărite pe ele se șterg."
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} te roagă să fii de acord cu contul său {{productName}}",

@@ -182,6 +182,23 @@ describe('the notification email worker', () => {
     expect(email?.headers).toBeUndefined();
   });
 
+  it('tells a teacher their class is archived, always, naming the class (S1-E8-12)', async () => {
+    const archived: EmailNotificationItem = {
+      ...followers,
+      kind: 'class_archived',
+      actors: [],
+      actor_count: 0,
+      space: { slug: 'clasa-a-vii-a', name: 'Clasa a VII-a' },
+    };
+    const [email] = await sendOnce([
+      claimed({ delivery: 'required', unsubscribe_key: null, items: [archived] }),
+    ]);
+    expect(email?.subject).toBe('Your class space is archived: keep copies of its certificates');
+    expect(email?.text).toContain('“Clasa a VII-a” is archived');
+    expect(email?.text).toContain('within 30 days');
+    expect(email?.headers).toBeUndefined();
+  });
+
   it('uses the admins’ wording when there is an override', async () => {
     const overrides = new Map([
       ['email:notificationEmails.subjectDigest', 'Today on {{productName}}'],

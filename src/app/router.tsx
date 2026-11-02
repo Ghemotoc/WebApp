@@ -231,6 +231,15 @@ const staffRoutes: RouteObject = {
         return { Component: ClassSpacesPage };
       },
     },
+    // Schools › Certificates (bundle CLASSES, part e; S1-E8-12 criterion 7): the same access.
+    {
+      path: 'schools/certificates',
+      lazy: async () => {
+        const { StaffCertificatesPage } =
+          await import('@/features/staff/components/schools/StaffCertificatesPage');
+        return { Component: StaffCertificatesPage };
+      },
+    },
     // The March test numbers (S1-E15-02): owner and admin; moderators see a pointer to the queue.
     {
       path: 'metrics',
@@ -364,6 +373,40 @@ const messagesRoutes: RouteObject[] = ['/messages', '/messages/:handle'].map((pa
     return { Component: MessagesPage };
   },
 }));
+
+/**
+ * My certificates, one certificate and the public check of a code (bundle CLASSES, part e;
+ * S1-E8-12). Loaded when opened.
+ */
+const certificateRoutes: RouteObject[] = [
+  {
+    path: '/certificates',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { MyCertificatesPage } =
+        await import('@/features/certificates/components/MyCertificatesPage');
+      return { Component: MyCertificatesPage };
+    },
+  },
+  {
+    path: '/certificates/:certificateId',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { CertificatePage } =
+        await import('@/features/certificates/components/CertificatePage');
+      return { Component: CertificatePage };
+    },
+  },
+  {
+    path: '/verify',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { VerifyCertificatePage } =
+        await import('@/features/certificates/components/VerifyCertificatePage');
+      return { Component: VerifyCertificatePage };
+    },
+  },
+];
 
 /**
  * Messages to the moderators (S1-E10-11): the list, a new message and one thread; a
@@ -757,6 +800,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: ClassStoriesPage };
     },
   },
+  // A class's certificates, for its teacher (bundle CLASSES, part e; S1-E8-12).
+  {
+    path: '/spaces/:spaceSlug/certificates',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ClassCertificatesPage } =
+        await import('@/features/certificates/components/ClassCertificatesPage');
+      return { Component: ClassCertificatesPage };
+    },
+  },
   // A space's members and its moderation log (FORUMS-2b, S1-E8-07).
   {
     path: '/spaces/:spaceSlug/members',
@@ -909,6 +962,7 @@ function pageRoutes(): RouteObject[] {
         return { Component: MyReportsPage };
       },
     },
+    ...certificateRoutes,
     ...moderatorMailRoutes,
     ...messagesRoutes,
     // Lane A: writing and reading (S1-E3, S1-E4).

@@ -28,6 +28,9 @@ const knownActions = [
   'class_locked',
   'class_unlocked',
   'lock_date_changed',
+  // Archiving a class (CLASSES-d) and its certificates (CLASSES-e; S1-E8-12).
+  'class_archived',
+  'certificates_issued',
 ];
 
 /**

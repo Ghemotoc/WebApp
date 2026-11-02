@@ -36,7 +36,9 @@ export type NotificationKind =
   | 'story_finished'
   | 'space_join_request'
   | 'space_join_approved'
-  | 'customisation_change_requested';
+  | 'customisation_change_requested'
+  | 'certificate_issued'
+  | 'class_archived';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

@@ -548,6 +548,98 @@ export type Database = {
         };
         Relationships: [];
       };
+      certificates: {
+        Row: {
+          class_name: string;
+          code: string;
+          created_at: string;
+          id: string;
+          printed_name: string | null;
+          programme_name: string;
+          result: Database['public']['Enums']['certificate_result'];
+          revoke_reason: string | null;
+          revoked_at: string | null;
+          revoked_by_user_id: string | null;
+          school_name: string | null;
+          signed_at: string;
+          space_id: string | null;
+          teacher_name: string;
+          teacher_user_id: string | null;
+          updated_at: string;
+          user_id: string;
+          certificate_name_deleted_on: string | null;
+          certificate_status: string | null;
+        };
+        ComputedFields: 'certificate_name_deleted_on' | 'certificate_status';
+        Insert: {
+          class_name: string;
+          code: string;
+          created_at?: string;
+          id?: string;
+          printed_name?: string | null;
+          programme_name: string;
+          result: Database['public']['Enums']['certificate_result'];
+          revoke_reason?: string | null;
+          revoked_at?: string | null;
+          revoked_by_user_id?: string | null;
+          school_name?: string | null;
+          signed_at?: string;
+          space_id?: string | null;
+          teacher_name: string;
+          teacher_user_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          class_name?: string;
+          code?: string;
+          created_at?: string;
+          id?: string;
+          printed_name?: string | null;
+          programme_name?: string;
+          result?: Database['public']['Enums']['certificate_result'];
+          revoke_reason?: string | null;
+          revoked_at?: string | null;
+          revoked_by_user_id?: string | null;
+          school_name?: string | null;
+          signed_at?: string;
+          space_id?: string | null;
+          teacher_name?: string;
+          teacher_user_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'certificates_revoked_by_user_id_fkey';
+            columns: ['revoked_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'certificates_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'certificates_teacher_user_id_fkey';
+            columns: ['teacher_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'certificates_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       chapter_embeds: {
         Row: {
           author_name: string | null;
@@ -4476,6 +4568,28 @@ export type Database = {
         };
         Relationships: [];
       };
+      retired_certificate_codes: {
+        Row: {
+          code: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          code: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          code?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       safeguarding_referrals: {
         Row: {
           authority_name: string;
@@ -4996,6 +5110,7 @@ export type Database = {
           slug: string;
           updated_at: string;
           user_id: string;
+          check_certificate_class: undefined | null;
           space_acts_as_platform: boolean | null;
           space_card_visible: boolean | null;
           space_is_in_class: boolean | null;
@@ -5009,6 +5124,7 @@ export type Database = {
           space_viewer_json: Json | null;
         };
         ComputedFields:
+          | 'check_certificate_class'
           | 'space_acts_as_platform'
           | 'space_card_visible'
           | 'space_is_in_class'
@@ -6680,6 +6796,7 @@ export type Database = {
       };
       admin_case_statements: { Args: { target_case_id: string }; Returns: Json };
       admin_case_support_contacts: { Args: { target_case_id: string }; Returns: Json };
+      admin_certificate: { Args: { code: string }; Returns: Json };
       admin_claim_case: { Args: { target_case_id: string }; Returns: boolean };
       admin_class_spaces: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
@@ -7044,6 +7161,7 @@ export type Database = {
         Returns: boolean;
       };
       admin_reveal_email: { Args: { target_user_id: string }; Returns: string };
+      admin_revoke_certificate: { Args: { code: string; reason: string }; Returns: Json };
       admin_revoke_invite: {
         Args: { reason_given: string; target_invite_id: string };
         Returns: boolean;
@@ -7517,6 +7635,38 @@ export type Database = {
         Returns: boolean;
       };
       cases_by_tier: { Args: { window_days: number }; Returns: Json };
+      certificate_name_deleted_on: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['certificates']['Row'],
+            Database['public']['Tables']['certificates']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      certificate_result_from: {
+        Args: { typed: string };
+        Returns: Database['public']['Enums']['certificate_result'];
+      };
+      certificate_status: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['certificates']['Row'],
+            Database['public']['Tables']['certificates']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      certificate_student_id: {
+        Args: {
+          space: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+          typed_handle: string;
+        };
+        Returns: string;
+      };
       change_is_too_soon: {
         Args: { last_changed_at: string; setting_key: string };
         Returns: boolean;
@@ -7628,6 +7778,15 @@ export type Database = {
       chat_cleared_at: { Args: { chat_id: string; person_id: string }; Returns: string };
       check_bible_text: { Args: { body: string }; Returns: string };
       check_birthday: { Args: { wanted_day: number; wanted_month: number }; Returns: undefined };
+      check_certificate_class: {
+        Args: {
+          space: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       check_chapter_embeds: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_pictures: { Args: { body: string; owner_id: string }; Returns: undefined };
       check_chapter_text: { Args: { body: string }; Returns: string };
@@ -7654,6 +7813,7 @@ export type Database = {
       };
       check_story_cover: { Args: { cover: Json }; Returns: undefined };
       check_story_labels: { Args: { labels: Json }; Returns: undefined };
+      class_certificates: { Args: { slug: string }; Returns: Json };
       class_invite: { Args: { slug: string }; Returns: Json };
       class_invite_preview: { Args: { code: string }; Returns: Json };
       class_invite_row: {
@@ -7740,6 +7900,7 @@ export type Database = {
       classic_work_json: { Args: { target_story_id: string }; Returns: Json };
       classics_account_id: { Args: Record<PropertyKey, never>; Returns: string };
       clean_bible_tags: { Args: { raw_tags: Json }; Returns: string[] };
+      clean_certificate_code: { Args: { typed: string }; Returns: string };
       clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
       close_finished_safety_checks: { Args: { target_country: string }; Returns: undefined };
@@ -8343,6 +8504,10 @@ export type Database = {
       is_staff_session: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_story_list_kind: { Args: { list_kind: string }; Returns: boolean };
       is_under_18_or_unknown: { Args: { person_id: string }; Returns: boolean };
+      issue_class_certificates: {
+        Args: { programme_name: string; results: Json; slug: string };
+        Returns: Json;
+      };
       issue_statement_of_reasons: {
         Args: {
           about: Json;
@@ -8729,6 +8894,7 @@ export type Database = {
           handle: string;
         }[];
       };
+      my_certificates: { Args: Record<PropertyKey, never>; Returns: Json };
       my_chapter_plan: {
         Args: { chapter_code: string };
         Returns: {
@@ -8992,6 +9158,7 @@ export type Database = {
         Returns: string;
       };
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
+      new_certificate_code: { Args: Record<PropertyKey, never>; Returns: string };
       next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
       next_notice_reference: { Args: { notice_kind: string }; Returns: string };
       normalise_invite_code: { Args: { code: string }; Returns: string };
@@ -9358,6 +9525,7 @@ export type Database = {
         Args: { chapter_codes: string[]; target_story_id: string };
         Returns: string[];
       };
+      purge_class_certificate_names: { Args: Record<PropertyKey, never>; Returns: number };
       purge_closed_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chats: { Args: Record<PropertyKey, never>; Returns: number };
@@ -9872,6 +10040,10 @@ export type Database = {
       send_reading_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       set_adults_may_message: { Args: { allowed: boolean }; Returns: undefined };
       set_block: { Args: { should_block: boolean; target_handle: string }; Returns: Json };
+      set_certificate_printed_name: {
+        Args: { certificate_id: string; printed_name: string };
+        Returns: Json;
+      };
       set_chapter_character_present: {
         Args: { chapter_code: string; character_id: string; is_present: boolean };
         Returns: Json;
@@ -10471,6 +10643,7 @@ export type Database = {
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
+      verify_certificate: { Args: { code: string }; Returns: Json };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
       website_content: {
         Args: { visitor_country?: string; wanted_kind: string; wanted_language?: string };
@@ -10487,6 +10660,19 @@ export type Database = {
       with_comma_below: { Args: { value: string }; Returns: string };
       word_total: { Args: { any_text: string }; Returns: number };
       working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
+      write_class_certificate: {
+        Args: {
+          clean_programme: string;
+          space: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+          student_id: string;
+          teacher_display: string;
+          wanted_result: Database['public']['Enums']['certificate_result'];
+        };
+        Returns: string;
+      };
       write_forum_names: { Args: { names: Json; target_forum_id: string }; Returns: undefined };
       write_space_forum_names: {
         Args: { name: string; target_space_id: string };
@@ -10549,6 +10735,7 @@ export type Database = {
       case_source: 'report' | 'authority_order' | 'picture_check' | 'downvotes';
       case_status: 'open' | 'decided';
       case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
+      certificate_result: 'participant' | 'finalist' | 'winner';
       chapter_status: 'draft' | 'scheduled' | 'published';
       classic_kind: 'novel' | 'short_story' | 'fairy_tale' | 'poem' | 'play' | 'essay';
       comment_deleted_by: 'author' | 'writer';
@@ -10595,7 +10782,9 @@ export type Database = {
         | 'story_finished'
         | 'space_join_request'
         | 'space_join_approved'
-        | 'customisation_change_requested';
+        | 'customisation_change_requested'
+        | 'certificate_issued'
+        | 'class_archived';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -10861,6 +11050,7 @@ export const Constants = {
       case_source: ['report', 'authority_order', 'picture_check', 'downvotes'],
       case_status: ['open', 'decided'],
       case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
+      certificate_result: ['participant', 'finalist', 'winner'],
       chapter_status: ['draft', 'scheduled', 'published'],
       classic_kind: ['novel', 'short_story', 'fairy_tale', 'poem', 'play', 'essay'],
       comment_deleted_by: ['author', 'writer'],
@@ -10916,6 +11106,8 @@ export const Constants = {
         'space_join_request',
         'space_join_approved',
         'customisation_change_requested',
+        'certificate_issued',
+        'class_archived',
       ],
       picture_kind: [
         'cover',

@@ -812,7 +812,8 @@
   "schoolsTabs": {
     "label": "Școli",
     "teachers": "Verifică profesorii",
-    "classes": "Spații de clasă"
+    "classes": "Spații de clasă",
+    "certificates": "Diplome"
   },
   "classSpaces": {
     "documentTitle": "Spații de clasă",
@@ -855,6 +856,49 @@
       "text": "Scrie un nume și pentru ce e clasa.",
       "missing": "Clasa aceasta nu mai e aici.",
       "unreachable": "Nu am putut ajunge la server. Încearcă din nou."
+    }
+  },
+  "staffCertificates": {
+    "documentTitle": "Diplome · Echipa",
+    "eyebrow": "Școli",
+    "heading": "Diplome",
+    "intro": "Caută o diplomă după cod ca să vezi ce scrie pe ea și retrage-o dacă a fost emisă din greșeală sau după o încălcare a regulilor. Nu vezi niciodată numele real tipărit de elev. Retragerea apare în jurnalul de audit, iar pagina de verificare arată apoi „retrasă”.",
+    "codeLabel": "Codul diplomei",
+    "find": "Caută",
+    "none": "Nicio diplomă nu are acest cod.",
+    "notAllowed": "Doar membrii echipei cu acces la Școli pot căuta diplome.",
+    "loadFailed": "Nu am putut căuta codul. Încearcă din nou.",
+    "status": "Stare",
+    "states": {
+      "valid": "Valabilă",
+      "revoked": "Retrasă"
+    },
+    "student": "Elev",
+    "programme": "Program",
+    "result": "Rezultat",
+    "class": "Clasă",
+    "school": "Școală",
+    "noSchool": "Nicio școală trecută",
+    "teacher": "Cadru didactic",
+    "signed": "Semnată",
+    "revokeReason": "De ce a fost retrasă",
+    "reasonLabel": "De ce o retragi?",
+    "reasonHint": "Cel mult 500 de caractere. Apare în jurnalul de audit.",
+    "revoke": "Retrage diploma",
+    "failures": {
+      "not_allowed": "Doar membrii echipei cu acces la Școli pot retrage diplome.",
+      "missing": "Nicio diplomă nu are acest cod.",
+      "reason": "Spune de ce, în 1–500 de caractere.",
+      "revoked": "Diploma este deja retrasă.",
+      "teacher_only": "Nu am putut-o retrage. Încearcă din nou.",
+      "not_member": "Nu am putut-o retrage. Încearcă din nou.",
+      "result": "Nu am putut-o retrage. Încearcă din nou.",
+      "programme": "Nu am putut-o retrage. Încearcă din nou.",
+      "empty": "Nu am putut-o retrage. Încearcă din nou.",
+      "archived": "Nu am putut-o retrage. Încearcă din nou.",
+      "name_deleted": "Nu am putut-o retrage. Încearcă din nou.",
+      "name_length": "Nu am putut-o retrage. Încearcă din nou.",
+      "unreachable": "Nu am putut-o retrage. Încearcă din nou."
     }
   }
 }

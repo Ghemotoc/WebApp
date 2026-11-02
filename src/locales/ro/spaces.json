@@ -266,7 +266,9 @@
       "member_joined": "{{target}} a intrat cu codul clasei.",
       "class_locked": "{{actor}} a închis spațiul clasei.",
       "class_unlocked": "{{actor}} a redeschis spațiul clasei.",
-      "lock_date_changed": "{{actor}} a schimbat data la care se închide spațiul clasei."
+      "lock_date_changed": "{{actor}} a schimbat data la care se închide spațiul clasei.",
+      "class_archived": "{{actor}} a arhivat spațiul clasei.",
+      "certificates_issued": "{{actor}} a semnat diplome."
     }
   },
   "bannerPicture": {

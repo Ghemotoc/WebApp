@@ -60,6 +60,8 @@ select results_eq(
        ('categories', (select count(*) from public.categories)),
        -- Music and video cards reach readers only through get_chapter() (S1-E3-10).
        ('canva_connections', 0::bigint),
+       -- Certificates: the student's own, read through functions (S1-E8-12).
+       ('certificates', 0::bigint),
       ('chapter_embeds', 0::bigint),
        ('chapter_likes', 0::bigint),
        ('chapter_plan_characters', 0::bigint),
@@ -153,6 +155,7 @@ select results_eq(
        ('reserved_names', 0::bigint),
        -- The record of each night's clean-up is for owner and admin only (S1-E13-04).
        ('retention_runs', 0::bigint),
+       ('retired_certificate_codes', 0::bigint),
        ('safeguarding_referrals', 0::bigint),
        ('safety_contact_checks', 0::bigint),
        ('safety_contact_gaps', 0::bigint),

@@ -41,12 +41,15 @@ export interface EmailNotificationItem {
     | 'new_follower'
     | 'moderation_decision'
     | 'login_method_added'
-    | 'login_method_removed';
+    | 'login_method_removed'
+    | 'class_archived';
   actors: { handle: string; display_name: string }[];
   actor_count: number;
   story: { slug: string; title: string } | null;
   chapter: { code: string; title: string | null; position: number } | null;
   comment_excerpt: string | null;
+  /** The space a notice is about (an archived class, S1-E8-12), when the reader may see it. */
+  space?: { slug: string; name: string } | null;
 }
 
 /** One claimed email, as email_worker_claim() answers it. */
@@ -86,16 +89,19 @@ const lineKeys: Record<EmailNotificationItem['kind'], string> = {
   moderation_decision: 'moderationDecision',
   login_method_added: 'loginMethodAdded',
   login_method_removed: 'loginMethodRemoved',
+  class_archived: 'classArchived',
 };
 
 /**
  * The kinds that are about the person's own account, never about other people, so their line has
- * no "who" and no plural form: decisions (S1-E10-04) and ways to log in (S1-E2-09).
+ * no "who" and no plural form: decisions (S1-E10-04), ways to log in (S1-E2-09) and an archived
+ * class (S1-E8-12).
  */
 const accountKinds = new Set<EmailNotificationItem['kind']>([
   'moderation_decision',
   'login_method_added',
   'login_method_removed',
+  'class_archived',
 ]);
 
 /** The subject of each kind that is always sent (delivery 'required'), by its email.json key. */
@@ -103,6 +109,7 @@ const requiredSubjectKeys: Partial<Record<EmailNotificationItem['kind'], string>
   moderation_decision: 'subjectDecision',
   login_method_added: 'subjectLoginMethod',
   login_method_removed: 'subjectLoginMethod',
+  class_archived: 'subjectClassArchived',
 };
 
 /**
@@ -138,6 +145,21 @@ function whoDidIt(item: EmailNotificationItem, read: ReadText): string {
 }
 
 /**
+ * Where a notification happened: the story, or "chapter 3 of the story".
+ *
+ * @param item - the notification
+ * @param read - the text reader
+ * @returns the words
+ */
+function whereOf(item: EmailNotificationItem, read: ReadText): string {
+  if (item.chapter === null) return item.story?.title ?? '';
+  return read('notificationEmails.where', {
+    position: item.chapter.position,
+    story: item.story?.title ?? '',
+  });
+}
+
+/**
  * One notification as one sentence, with the comment's first words on the next line.
  *
  * @param item - the notification
@@ -145,18 +167,13 @@ function whoDidIt(item: EmailNotificationItem, read: ReadText): string {
  * @returns the line or lines
  */
 export function notificationLine(item: EmailNotificationItem, read: ReadText): string {
-  const where =
-    item.chapter === null
-      ? (item.story?.title ?? '')
-      : read('notificationEmails.where', {
-          position: item.chapter.position,
-          story: item.story?.title ?? '',
-        });
+  const where = whereOf(item, read);
   // Several people take the plural verb in Romanian ("au început"), so they have their own line.
   const isMany = !accountKinds.has(item.kind) && item.actor_count > 1;
   const line = read(`notificationEmails.${lineKeys[item.kind]}${isMany ? 'Many' : ''}`, {
     who: whoDidIt(item, read),
     where,
+    space: item.space?.name ?? '',
   });
   if (item.comment_excerpt === null || item.comment_excerpt === '') return line;
   return `${line}\n“${item.comment_excerpt}”`;
