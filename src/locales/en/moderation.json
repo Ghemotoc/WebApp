@@ -448,7 +448,9 @@
       "public_note": "Public note",
       "reporting_pause": "Reports paused",
       "rating_raised": "Rating raised",
-      "ai_label_added": "AI label added"
+      "ai_label_added": "AI label added",
+      "title_hidden": "Title hidden",
+      "cover_hidden": "Cover hidden"
     }
   },
   "embed": {

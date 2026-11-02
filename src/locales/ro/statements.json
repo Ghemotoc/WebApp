@@ -24,7 +24,9 @@
       "public_note": "Am adăugat o notă la povestea ta",
       "reporting_pause": "Ți-am oprit raportările pentru o vreme",
       "rating_raised": "Am ridicat clasificarea poveștii tale",
-      "ai_label_added": "Am etichetat povestea ta ca scrisă cu AI"
+      "ai_label_added": "Am etichetat povestea ta ca scrisă cu AI",
+      "title_hidden": "Am ascuns titlul poveștii tale",
+      "cover_hidden": "Am ascuns coperta poveștii tale"
     },
     "meta": "Decis pe {{date}} · {{reference}}",
     "about": "Despre",
@@ -41,7 +43,9 @@
       "reporting_pause": "Nu poți trimite raportări până pe {{date}}. Restul funcționează ca înainte.",
       "reporting_pauseNoDate": "Deocamdată nu poți trimite raportări. Restul funcționează ca înainte.",
       "rating_raised": "Am ridicat clasificarea poveștii, așa că cititorii mai tineri nu o mai văd. Textul nu s-a schimbat.",
-      "ai_label_added": "Am adăugat la poveste eticheta „Scrisă cu AI, nedeclarat”. Textul nu s-a schimbat."
+      "ai_label_added": "Am adăugat la poveste eticheta „Scrisă cu AI, nedeclarat”. Textul nu s-a schimbat.",
+      "title_hidden": "Cititorii văd „Titlu ascuns de echipa de moderare” în locul titlului până când îl schimbi. Povestea se poate citi în continuare, iar textul nu s-a schimbat.",
+      "cover_hidden": "Cititorii văd coperta automată în locul copertei tale până când alegi alta. Povestea se poate citi în continuare, iar textul nu s-a schimbat."
     },
     "why": "De ce",
     "noFacts": "Moderatorul nu a adăugat alte detalii. Scrie-ne dacă vrei să afli mai multe.",

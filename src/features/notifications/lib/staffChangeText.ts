@@ -2,7 +2,8 @@
  * What a "story_changed_by_staff" notification says (bundle ADMIN-2, part b1; story S1-E11-08
  * criterion 4): staff changed something about the writer's story that restricts nothing, such as
  * a corrected category or tag, comments switched, the story or a chapter shown again, or a removed
- * passage put back by Restore (bundle ADMIN-2, part b2). The row
+ * passage put back by Restore (bundle ADMIN-2, part b2), or a hidden title or cover shown again
+ * (part b3). The row
  * says what changed and quotes why; it never names the staff member. It leads to the story's
  * settings, where the writer can change it back or write to the moderators.
  *
@@ -32,8 +33,8 @@ function changedFieldsList(t: TFunction, fields: string[]): string {
 }
 
 /**
- * The line for a change that brought something back: a removed passage put back, or the story
- * or one chapter shown again; null for any other change.
+ * The line for a change that brought something back: a removed passage put back, a hidden title
+ * or cover shown again, or the story or one chapter shown again; null for any other change.
  *
  * @param t - the notifications translation function
  * @param notification - a story_changed_by_staff row
@@ -45,6 +46,9 @@ function broughtBackLine(t: TFunction, notification: AppNotification, story: str
   const number = notification.chapter?.position ?? 0;
   if (change === null) return null;
   if (change.fields.includes('passage')) return t('what.staffPutBackPassage', { number, story });
+  // Part b3: a title or cover hidden from readers is shown again (hiding sends a statement).
+  if (change.fields.includes('title')) return t('what.staffShowedTitle', { story });
+  if (change.fields.includes('cover')) return t('what.staffShowedCover', { story });
   if (change.visibility !== 'shown') return null;
   if (notification.chapter !== null) return t('what.staffShowedChapter', { number, story });
   return t('what.staffShowedStory', { story });

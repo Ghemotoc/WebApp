@@ -387,4 +387,22 @@ describe('notificationText', () => {
       'we put back the passage we removed from chapter 15 of “The Salt Mine Choir”.',
     );
   });
+
+  it('a hidden title or cover shown again says readers can see it again (ADMIN-2b3)', () => {
+    const shownAgain = (field: string): AppNotification => ({
+      ...newChapter,
+      kind: 'story_changed_by_staff',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      chapter: null,
+      staffChange: { fields: [field], visibility: null, reasonCode: 'other', reasonText: 'Fine.' },
+    });
+    expect(notificationText(englishT(), shownAgain('title'), null).what).toBe(
+      'readers can see the title of your story “The Salt Mine Choir” again.',
+    );
+    expect(notificationText(englishT(), shownAgain('cover'), null).what).toBe(
+      'readers can see the cover of your story “The Salt Mine Choir” again.',
+    );
+  });
 });

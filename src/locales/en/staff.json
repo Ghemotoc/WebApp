@@ -1050,6 +1050,7 @@
         "no_such_story": "This story or chapter no longer exists. The writer may have deleted it.",
         "reason_needed": "Pick a reason and say why in a few words.",
         "nothing_changed": "Nothing changed: the story already has these settings.",
+        "no_cover": "The story already shows the automatic cover, so there is nothing to hide.",
         "removed_by_case": "A moderation case removed this. Only that case or an appeal can bring it back.",
         "not_valid": "The story can’t be saved like this. A story about abuse or coercion needs the 16+ or 18+ rating and the writer’s content note, and a story can have at most 10 tags.",
         "unreachable": "The change wasn’t saved. Check your connection and try again.",
@@ -1059,6 +1060,28 @@
         "not_published": "This chapter has never been published, so it has no words to remove.",
         "passage_too_long": "Select at most 20,000 characters at once.",
         "no_such_version": "That version no longer exists."
+      }
+    },
+    "presentation": {
+      "heading": "Title and cover",
+      "intro": "If the title or cover breaks the rules, hide it from readers. Readers then see “Title hidden by the moderation team” or the automatic cover until the writer changes it. You never write a new title, and the writer’s own title and picture stay as they are. Hiding sends the writer a statement of reasons; showing again sends a notification.",
+      "coverLabel": "Cover",
+      "titleHiddenPill": "Title hidden from readers",
+      "coverHiddenPill": "Cover hidden from readers",
+      "title": {
+        "label": "Title",
+        "shown": "Readers see the title.",
+        "hidden": "Hidden: readers see “Title hidden by the moderation team” until the writer changes it.",
+        "hide": "Hide the title",
+        "show": "Show the title again"
+      },
+      "cover": {
+        "label": "Cover",
+        "shown": "Readers see this cover.",
+        "hidden": "Hidden: readers see the automatic cover until the writer picks another one.",
+        "automatic": "The story shows the automatic cover, so there is nothing to hide.",
+        "hide": "Hide the cover",
+        "show": "Show the cover again"
       }
     },
     "history": {
@@ -1073,7 +1096,8 @@
         "settings": "Settings",
         "visibility": "Who can find it",
         "chapter_visibility": "Chapter {{number}}",
-        "passage": "Chapter {{number}}"
+        "passage": "Chapter {{number}}",
+        "presentation": "Title and cover"
       },
       "change": "{{field}}: {{before}} → {{after}}",
       "passageRemoved_one": "a passage of {{count}} character removed",
@@ -1107,7 +1131,9 @@
         "is_parody": "Parody",
         "deals_with_abuse_or_coercion": "Abuse or coercion",
         "tag_names": "Tags",
-        "visibility": "Who can find it"
+        "visibility": "Who can find it",
+        "title": "Title",
+        "cover": "Cover"
       }
     },
     "passage": {

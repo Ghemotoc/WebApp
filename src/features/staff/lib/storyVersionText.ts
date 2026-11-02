@@ -1,7 +1,8 @@
 /**
  * What one version in a story's history says (bundle ADMIN-2, part b2; story S1-E11-08, part 08b):
  * "Settings", then one line per changed field, such as "Category: Poetry → Fiction";
- * "Who can find it: shown → hidden"; "Chapter 2: a passage of 14 characters removed".
+ * "Who can find it: shown → hidden"; "Chapter 2: a passage of 14 characters removed"; "Title and
+ * cover", then "Title: shown → hidden" (part b3).
  *
  * A removed passage's words are never part of a version (support can read the history), so the
  * line only counts its characters. Values are written in the page's language with the same words
@@ -40,6 +41,9 @@ function textWriters(t: TFunction, words: VersionWords): Record<string, (text: s
     category_slug: (text) => words.category(text),
     language_code: (text) => words.language(text),
     visibility: (text) => t(`stories.history.visibility.${text}`, { defaultValue: text }),
+    // Part b3: whether staff hid the title or the cover from readers.
+    title: (text) => t(`stories.history.visibility.${text}`, { defaultValue: text }),
+    cover: (text) => t(`stories.history.visibility.${text}`, { defaultValue: text }),
     completion_status: (text) => t(`writing:status.${text}`, { defaultValue: text }),
   };
 }

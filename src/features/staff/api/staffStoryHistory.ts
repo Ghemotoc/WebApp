@@ -19,8 +19,12 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 import { listOf, numberOrNull, objectOf } from './marchNumbers';
 import { storyChangeErrorFrom } from './staffStoryChanges';
 
-/** What one version changed: the settings, the story's visibility, a chapter's, or a passage. */
-export type StaffStoryVersionKind = 'settings' | 'visibility' | 'chapter_visibility' | 'passage';
+/**
+ * What one version changed: the settings, the story's visibility, a chapter's, a passage, or
+ * whether the title or cover shows (part b3).
+ */
+export type StaffStoryVersionKind =
+  'settings' | 'visibility' | 'chapter_visibility' | 'passage' | 'presentation';
 
 /** One version in a story's history. */
 export interface StaffStoryVersion {
@@ -63,6 +67,7 @@ const versionKinds: StaffStoryVersionKind[] = [
   'visibility',
   'chapter_visibility',
   'passage',
+  'presentation',
 ];
 
 /**

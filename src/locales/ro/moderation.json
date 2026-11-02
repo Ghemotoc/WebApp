@@ -448,7 +448,9 @@
       "public_note": "Notă publică",
       "reporting_pause": "Raportări oprite",
       "rating_raised": "Clasificare ridicată",
-      "ai_label_added": "Etichetă IA adăugată"
+      "ai_label_added": "Etichetă IA adăugată",
+      "title_hidden": "Titlu ascuns",
+      "cover_hidden": "Copertă ascunsă"
     }
   },
   "embed": {

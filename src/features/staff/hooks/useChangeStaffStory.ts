@@ -1,7 +1,7 @@
 /**
  * useChangeStaffStory: the changes staff make to one story (bundle ADMIN-2, parts b1 and b2; story
  * S1-E11-08): its settings, its visibility, one chapter's visibility, removing a passage from a
- * chapter and Restore on an earlier version.
+ * chapter, Restore on an earlier version and hiding the title or cover (part b3).
  *
  * Who calls it: StaffStoryPage, which passes it to StaffStorySettingsForm,
  * StaffStoryVisibilityForm, StaffStoryChapters and StaffStoryHistory. What it calls: api/staffStoryChanges.ts.
@@ -15,12 +15,14 @@ import {
   removeStaffChapterPassage,
   restoreStaffStoryVersion,
   setStaffChapterVisibility,
+  setStaffStoryPresentation,
   setStaffStoryVisibility,
   StoryChangeError,
   type ChapterPassage,
   type StaffStorySettingsChange,
   type StoryChangeFailure,
   type StoryChangeReason,
+  type StoryPresentationPart,
 } from '../api/staffStoryChanges';
 
 import { requireStaffClient } from './requireStaffClient';
@@ -36,7 +38,13 @@ export type StaffStoryChange =
       reason: StoryChangeReason;
     }
   | { kind: 'passage'; chapterId: string; passage: ChapterPassage; reason: StoryChangeReason }
-  | { kind: 'restore'; versionId: string; reason: StoryChangeReason };
+  | { kind: 'restore'; versionId: string; reason: StoryChangeReason }
+  | {
+      kind: 'presentation';
+      part: StoryPresentationPart;
+      state: 'shown' | 'hidden';
+      reason: StoryChangeReason;
+    };
 
 /**
  * Sends one change to the database.
@@ -54,6 +62,10 @@ async function sendChange(storyId: string, wanted: StaffStoryChange): Promise<vo
   }
   if (wanted.kind === 'passage') {
     return removeStaffChapterPassage(client, wanted.chapterId, wanted.passage, wanted.reason);
+  }
+  if (wanted.kind === 'presentation') {
+    const change = { part: wanted.part, state: wanted.state };
+    return setStaffStoryPresentation(client, storyId, change, wanted.reason);
   }
   if (wanted.kind === 'restore') {
     return restoreStaffStoryVersion(client, wanted.versionId, wanted.reason);

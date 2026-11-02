@@ -1050,6 +1050,7 @@
         "no_such_story": "Povestea sau capitolul nu mai există. Poate că persoana care scrie l-a șters.",
         "reason_needed": "Alege un motiv și spune de ce în câteva cuvinte.",
         "nothing_changed": "Nu s-a schimbat nimic: povestea are deja aceste setări.",
+        "no_cover": "Povestea are deja coperta automată, așa că nu e nimic de ascuns.",
         "removed_by_case": "Un caz de moderare a eliminat asta. Doar acel caz sau o contestație o poate aduce înapoi.",
         "not_valid": "Povestea nu poate fi salvată așa. O poveste despre abuz sau constrângere are nevoie de clasificarea 16+ sau 18+ și de avertismentul de conținut al persoanei care scrie, iar o poveste poate avea cel mult 10 etichete.",
         "unreachable": "Schimbarea nu s-a salvat. Verifică conexiunea și încearcă din nou.",
@@ -1059,6 +1060,28 @@
         "not_published": "Capitolul nu a fost publicat niciodată, deci nu are cuvinte de eliminat.",
         "passage_too_long": "Selectează cel mult 20.000 de caractere o dată.",
         "no_such_version": "Versiunea aceea nu mai există."
+      }
+    },
+    "presentation": {
+      "heading": "Titlu și copertă",
+      "intro": "Dacă titlul sau coperta încalcă regulile, ascunde-le de cititori. Cititorii văd atunci „Titlu ascuns de echipa de moderare” sau coperta automată până când persoana care scrie le schimbă. Nu scrii niciodată un titlu nou, iar titlul și imaginea persoanei care scrie rămân cum sunt. Ascunderea îi trimite persoanei care scrie o motivare a deciziei; reafișarea îi trimite o notificare.",
+      "coverLabel": "Copertă",
+      "titleHiddenPill": "Titlu ascuns de cititori",
+      "coverHiddenPill": "Copertă ascunsă de cititori",
+      "title": {
+        "label": "Titlu",
+        "shown": "Cititorii văd titlul.",
+        "hidden": "Ascuns: cititorii văd „Titlu ascuns de echipa de moderare” până când persoana care scrie îl schimbă.",
+        "hide": "Ascunde titlul",
+        "show": "Afișează din nou titlul"
+      },
+      "cover": {
+        "label": "Copertă",
+        "shown": "Cititorii văd această copertă.",
+        "hidden": "Ascunsă: cititorii văd coperta automată până când persoana care scrie alege alta.",
+        "automatic": "Povestea are coperta automată, așa că nu e nimic de ascuns.",
+        "hide": "Ascunde coperta",
+        "show": "Afișează din nou coperta"
       }
     },
     "history": {
@@ -1073,7 +1096,8 @@
         "settings": "Setări",
         "visibility": "Cine o poate găsi",
         "chapter_visibility": "Capitolul {{number}}",
-        "passage": "Capitolul {{number}}"
+        "passage": "Capitolul {{number}}",
+        "presentation": "Titlu și copertă"
       },
       "change": "{{field}}: {{before}} → {{after}}",
       "passageRemoved_one": "un pasaj de {{count}} caracter eliminat",
@@ -1107,7 +1131,9 @@
         "is_parody": "Parodie",
         "deals_with_abuse_or_coercion": "Abuz sau constrângere",
         "tag_names": "Etichete",
-        "visibility": "Cine o poate găsi"
+        "visibility": "Cine o poate găsi",
+        "title": "Titlu",
+        "cover": "Copertă"
       }
     },
     "passage": {

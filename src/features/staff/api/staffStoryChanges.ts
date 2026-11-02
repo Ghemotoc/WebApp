@@ -7,13 +7,16 @@
  * and tags). They never edit the writer's words (decided 16 Oct 2026, late evening, Q14), so
  * nothing here sends a title, a blurb or a content note. The one cut they may make is removing an
  * exact unlawful passage, which the marker "[Removed by the moderation team]" replaces (part b2);
- * Restore brings back what one earlier change replaced (part b2).
+ * Restore brings back what one earlier change replaced (part b2). Staff may hide the title (readers
+ * see "Title hidden by the moderation team") or the cover (readers see the automatic cover) until
+ * the writer changes it, but never write a new title (part b3).
  *
  * Who calls it: hooks/useChangeStaffStory.ts.
  * What it calls next: admin_change_story_settings(), admin_set_story_visibility() and
  * admin_set_chapter_visibility() in supabase/migrations/…_admin2_b1_change_story.sql, and
  * admin_remove_chapter_passage() and admin_restore_story_revision() in
- * supabase/migrations/…_admin2_b2_history_and_passages.sql. Each one
+ * supabase/migrations/…_admin2_b2_history_and_passages.sql, and admin_set_story_presentation() in
+ * supabase/migrations/…_admin2_b3_hide_title_cover.sql. Each one
  * checks the caller's role (owner, admin, moderator), stores a version, writes the audit log with
  * the owner's user ID and tells the writer: a statement of reasons when content is restricted,
  * a notification otherwise.
@@ -66,6 +69,7 @@ export type StoryChangeFailure =
   | 'not_published'
   | 'passage_too_long'
   | 'no_such_version'
+  | 'no_cover'
   | 'not_valid'
   | 'unreachable';
 
@@ -90,6 +94,7 @@ const namedFailures: StoryChangeFailure[] = [
   'not_published',
   'passage_too_long',
   'no_such_version',
+  'no_cover',
 ];
 
 /**
@@ -256,6 +261,36 @@ export async function restoreStaffStoryVersion(
 ): Promise<void> {
   const { error } = await client.rpc('admin_restore_story_revision', {
     target_revision_id: versionId,
+    reason_code: reason.code,
+    reason_text: reason.text,
+  });
+  if (error !== null) throw storyChangeErrorFrom(error);
+}
+
+/** The part of a story staff may hide from readers (S1-E11-08): its title or its cover. */
+export type StoryPresentationPart = 'title' | 'cover';
+
+/**
+ * Hides a story's title or cover from readers, or shows it again. The writer's title and cover
+ * stay as they wrote them; showing again sends the writer a notification, hiding a statement of
+ * reasons.
+ *
+ * @param client - the shared Supabase client
+ * @param storyId - the story
+ * @param change - the part (the title or the cover) and whether it shows or is hidden
+ * @param reason - why
+ * @throws StoryChangeError (no_cover when the story already shows the automatic cover)
+ */
+export async function setStaffStoryPresentation(
+  client: AppSupabaseClient,
+  storyId: string,
+  change: { part: StoryPresentationPart; state: 'shown' | 'hidden' },
+  reason: StoryChangeReason,
+): Promise<void> {
+  const { error } = await client.rpc('admin_set_story_presentation', {
+    target_story_id: storyId,
+    story_part: change.part,
+    wanted_state: change.state,
     reason_code: reason.code,
     reason_text: reason.text,
   });
