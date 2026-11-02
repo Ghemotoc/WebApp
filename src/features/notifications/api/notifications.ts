@@ -39,7 +39,9 @@ export type NotificationKind =
   | 'customisation_change_requested'
   | 'certificate_issued'
   | 'class_archived'
-  | 'story_changed_by_staff';
+  | 'story_changed_by_staff'
+  | 'data_request_confirm'
+  | 'data_request_extended';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
@@ -89,6 +91,13 @@ export interface NotificationStaffChange {
   reasonText: string;
 }
 
+/** The data request a notice is about (S1-E11-09). */
+export interface NotificationDataRequest {
+  reference: string;
+  deadline: string;
+  extensionReason: string | null;
+}
+
 /** One notification as the page draws it. */
 export interface AppNotification {
   id: string;
@@ -125,6 +134,11 @@ export interface AppNotification {
   changeRequest: NotificationChangeRequest | null;
   /** What staff changed about the writer's story, for story_changed_by_staff (S1-E11-08). */
   staffChange: NotificationStaffChange | null;
+  /**
+   * The data request a notice is about (S1-E11-09; ADMIN-2c1): its reference, its deadline as
+   * yyyy-mm-dd and, after an extension, why the team needs more time.
+   */
+  dataRequest: NotificationDataRequest | null;
   /** A moderation decision can't be switched off (criterion 4). */
   isRequired: boolean;
   isRead: boolean;
@@ -176,6 +190,7 @@ interface NotificationRow {
     reason_code: string;
     reason_text: string;
   } | null;
+  data_request?: { reference: string; deadline: string; extension_reason: string | null } | null;
   is_required: boolean;
   is_read: boolean;
   at: string;
@@ -214,6 +229,22 @@ function staffChangeOf(row: NotificationRow): NotificationStaffChange | null {
     visibility: typeof visibility === 'string' ? visibility : null,
     reasonCode: change.reason_code,
     reasonText: change.reason_text,
+  };
+}
+
+/**
+ * A data request in the page's shape (S1-E11-09).
+ *
+ * @param row - the database's row
+ * @returns the request, or null for other kinds
+ */
+function dataRequestOf(row: NotificationRow): NotificationDataRequest | null {
+  const request = row.data_request;
+  if (request === null || request === undefined) return null;
+  return {
+    reference: request.reference,
+    deadline: request.deadline,
+    extensionReason: request.extension_reason,
   };
 }
 
@@ -266,6 +297,7 @@ function toNotification(row: NotificationRow): AppNotification {
     space: row.space ?? null,
     changeRequest: changeRequestOf(row),
     staffChange: staffChangeOf(row),
+    dataRequest: dataRequestOf(row),
     isRequired: row.is_required,
     isRead: row.is_read,
     at: row.at,

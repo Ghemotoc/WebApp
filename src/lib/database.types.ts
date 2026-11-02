@@ -1886,6 +1886,104 @@ export type Database = {
         };
         Relationships: [];
       };
+      data_requests: {
+        Row: {
+          channel: Database['public']['Enums']['data_request_channel'];
+          closed_at: string | null;
+          created_at: string;
+          created_by_user_id: string;
+          due_on: string;
+          extended_at: string | null;
+          extended_to: string | null;
+          extension_reason: string | null;
+          handled_by_user_id: string;
+          id: string;
+          identity: Database['public']['Enums']['data_request_identity'];
+          identity_answered_at: string | null;
+          identity_asked_at: string | null;
+          note: string;
+          outcome: string | null;
+          received_on: string;
+          reference: string;
+          request_type: Database['public']['Enums']['data_request_type'];
+          state: Database['public']['Enums']['data_request_state'];
+          updated_at: string;
+          user_id: string;
+          data_request_deadline: string | null;
+          data_request_json: Json | null;
+          data_request_urgency: string | null;
+        };
+        ComputedFields: 'data_request_deadline' | 'data_request_json' | 'data_request_urgency';
+        Insert: {
+          channel: Database['public']['Enums']['data_request_channel'];
+          closed_at?: string | null;
+          created_at?: string;
+          created_by_user_id: string;
+          due_on: string;
+          extended_at?: string | null;
+          extended_to?: string | null;
+          extension_reason?: string | null;
+          handled_by_user_id: string;
+          id?: string;
+          identity: Database['public']['Enums']['data_request_identity'];
+          identity_answered_at?: string | null;
+          identity_asked_at?: string | null;
+          note?: string;
+          outcome?: string | null;
+          received_on: string;
+          reference?: string;
+          request_type: Database['public']['Enums']['data_request_type'];
+          state?: Database['public']['Enums']['data_request_state'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          channel?: Database['public']['Enums']['data_request_channel'];
+          closed_at?: string | null;
+          created_at?: string;
+          created_by_user_id?: string;
+          due_on?: string;
+          extended_at?: string | null;
+          extended_to?: string | null;
+          extension_reason?: string | null;
+          handled_by_user_id?: string;
+          id?: string;
+          identity?: Database['public']['Enums']['data_request_identity'];
+          identity_answered_at?: string | null;
+          identity_asked_at?: string | null;
+          note?: string;
+          outcome?: string | null;
+          received_on?: string;
+          reference?: string;
+          request_type?: Database['public']['Enums']['data_request_type'];
+          state?: Database['public']['Enums']['data_request_state'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'data_requests_created_by_user_id_fkey';
+            columns: ['created_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'data_requests_handled_by_user_id_fkey';
+            columns: ['handled_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'data_requests_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       email_outbox: {
         Row: {
           attempts: number;
@@ -3276,6 +3374,7 @@ export type Database = {
           chapter_id: string | null;
           comment_id: string | null;
           created_at: string;
+          data_request_id: string | null;
           decision: Database['public']['Enums']['moderation_action'] | null;
           group_key: string | null;
           id: string;
@@ -3302,6 +3401,7 @@ export type Database = {
           chapter_id?: string | null;
           comment_id?: string | null;
           created_at?: string;
+          data_request_id?: string | null;
           decision?: Database['public']['Enums']['moderation_action'] | null;
           group_key?: string | null;
           id?: string;
@@ -3325,6 +3425,7 @@ export type Database = {
           chapter_id?: string | null;
           comment_id?: string | null;
           created_at?: string;
+          data_request_id?: string | null;
           decision?: Database['public']['Enums']['moderation_action'] | null;
           group_key?: string | null;
           id?: string;
@@ -3373,6 +3474,13 @@ export type Database = {
             columns: ['comment_id'];
             isOneToOne: false;
             referencedRelation: 'comments';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_data_request_id_fkey';
+            columns: ['data_request_id'];
+            isOneToOne: false;
+            referencedRelation: 'data_requests';
             referencedColumns: ['id'];
           },
           {
@@ -7054,6 +7162,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_ask_data_request_confirmation: { Args: { target_request_id: string }; Returns: Json };
       admin_assign_mail: {
         Args: { assignee_handle: string; thread_reference: string };
         Returns: boolean;
@@ -7128,6 +7237,10 @@ export type Database = {
       admin_class_spaces: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
       admin_classic_suggestions: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_close_data_request: {
+        Args: { outcome: string; target_request_id: string };
+        Returns: Json;
+      };
       admin_close_unmatched_notice: {
         Args: { note: string; target_notice_id: string };
         Returns: undefined;
@@ -7150,6 +7263,40 @@ export type Database = {
           invite_id: string;
         }[];
       };
+      admin_data_request: { Args: { target_request_id: string }; Returns: Json };
+      admin_data_request_target: {
+        Args: { must_be_open: boolean; target_request_id: string };
+        Returns: {
+          channel: Database['public']['Enums']['data_request_channel'];
+          closed_at: string | null;
+          created_at: string;
+          created_by_user_id: string;
+          due_on: string;
+          extended_at: string | null;
+          extended_to: string | null;
+          extension_reason: string | null;
+          handled_by_user_id: string;
+          id: string;
+          identity: Database['public']['Enums']['data_request_identity'];
+          identity_answered_at: string | null;
+          identity_asked_at: string | null;
+          note: string;
+          outcome: string | null;
+          received_on: string;
+          reference: string;
+          request_type: Database['public']['Enums']['data_request_type'];
+          state: Database['public']['Enums']['data_request_state'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'data_requests';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_data_requests: { Args: { only_open: boolean }; Returns: Json };
       admin_decide_appeal: {
         Args: {
           message_to_person: string;
@@ -7223,6 +7370,10 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      admin_extend_data_request: {
+        Args: { extra_months: number; reason: string; target_request_id: string };
+        Returns: Json;
       };
       admin_find_accounts: {
         Args: { search_text: string };
@@ -7419,6 +7570,16 @@ export type Database = {
         }[];
       };
       admin_on_call_rota: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_open_data_request: {
+        Args: {
+          channel: Database['public']['Enums']['data_request_channel'];
+          note: string;
+          received_on: string;
+          request_type: Database['public']['Enums']['data_request_type'];
+          target_user_id: string;
+        };
+        Returns: Json;
+      };
       admin_open_teacher_proof: { Args: { check_id: string }; Returns: string };
       admin_order_timeline: { Args: { target_case_id: string }; Returns: Json };
       admin_passage_case: {
@@ -8059,6 +8220,10 @@ export type Database = {
         Returns: boolean;
       };
       another_appeals_decider_exists: { Args: Record<PropertyKey, never>; Returns: boolean };
+      answer_data_request: {
+        Args: { is_mine: boolean; request_reference: string };
+        Returns: string;
+      };
       answer_message_request: {
         Args: { sender_handle: string; should_accept: boolean };
         Returns: Json;
@@ -8694,6 +8859,34 @@ export type Database = {
           table_name: string;
           why_left_out: string;
         }[];
+      };
+      data_request_deadline: {
+        Args: {
+          request: Omit<
+            Database['public']['Tables']['data_requests']['Row'],
+            Database['public']['Tables']['data_requests']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      data_request_json: {
+        Args: {
+          request: Omit<
+            Database['public']['Tables']['data_requests']['Row'],
+            Database['public']['Tables']['data_requests']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      data_request_person_is_under_16: { Args: { person_id: string }; Returns: boolean };
+      data_request_urgency: {
+        Args: {
+          request: Omit<
+            Database['public']['Tables']['data_requests']['Row'],
+            Database['public']['Tables']['data_requests']['ComputedFields']
+          >;
+        };
+        Returns: string;
       };
       decide_case: {
         Args: {
@@ -9548,6 +9741,7 @@ export type Database = {
         }[];
       };
       my_data_export: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_data_requests: { Args: Record<PropertyKey, never>; Returns: Json };
       my_embeds: { Args: { embed_ids: string[] }; Returns: Json };
       my_followers: {
         Args: Record<PropertyKey, never>;
@@ -11390,6 +11584,10 @@ export type Database = {
       compliance_entry_kind: 'authority_order' | 'legal_request' | 'launch_notice';
       conversation_status: 'request' | 'accepted' | 'declined';
       cover_kind: 'automatic' | 'drawn' | 'upload';
+      data_request_channel: 'in_app' | 'email' | 'post';
+      data_request_identity: 'not_needed' | 'not_asked' | 'asked' | 'confirmed' | 'denied';
+      data_request_state: 'open' | 'closed';
+      data_request_type: 'copy' | 'move' | 'correct' | 'delete' | 'other';
       email_delivery: 'instant' | 'daily' | 'off';
       embed_service: 'youtube' | 'vimeo' | 'loom' | 'spotify' | 'apple_music';
       export_kind: 'all_my_data' | 'my_stories';
@@ -11432,7 +11630,9 @@ export type Database = {
         | 'customisation_change_requested'
         | 'certificate_issued'
         | 'class_archived'
-        | 'story_changed_by_staff';
+        | 'story_changed_by_staff'
+        | 'data_request_confirm'
+        | 'data_request_extended';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -11708,6 +11908,10 @@ export const Constants = {
       compliance_entry_kind: ['authority_order', 'legal_request', 'launch_notice'],
       conversation_status: ['request', 'accepted', 'declined'],
       cover_kind: ['automatic', 'drawn', 'upload'],
+      data_request_channel: ['in_app', 'email', 'post'],
+      data_request_identity: ['not_needed', 'not_asked', 'asked', 'confirmed', 'denied'],
+      data_request_state: ['open', 'closed'],
+      data_request_type: ['copy', 'move', 'correct', 'delete', 'other'],
       email_delivery: ['instant', 'daily', 'off'],
       embed_service: ['youtube', 'vimeo', 'loom', 'spotify', 'apple_music'],
       export_kind: ['all_my_data', 'my_stories'],
@@ -11759,6 +11963,8 @@ export const Constants = {
         'certificate_issued',
         'class_archived',
         'story_changed_by_staff',
+        'data_request_confirm',
+        'data_request_extended',
       ],
       picture_kind: [
         'cover',

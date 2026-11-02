@@ -12,6 +12,7 @@ import { paragraphHash } from '@/lib/paragraph-link';
 
 import type { AppNotification } from '../api/notifications';
 
+import { dataRequestNoticeText } from './dataRequestNoticeText';
 import { staffChangeText } from './staffChangeText';
 
 /** A row's words and link. */
@@ -501,6 +502,8 @@ const teamTextFor: Partial<
   certificate_issued: certificateIssuedText,
   class_archived: classArchivedText,
   story_changed_by_staff: staffChangeText,
+  data_request_confirm: dataRequestNoticeText,
+  data_request_extended: dataRequestNoticeText,
 };
 
 /**

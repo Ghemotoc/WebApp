@@ -89,6 +89,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.classics',
     descriptionKey: 'home.areas.classics',
   },
+  // Data requests (S1-E11-09; ADMIN-2c1): owner, admin and support, after Stories and Classics (architecture
+  // 1.8.2: "Support tickets, Data requests").
+  {
+    area: 'data_requests',
+    href: '/staff/data-requests',
+    labelKey: 'nav.dataRequests',
+    descriptionKey: 'home.areas.data_requests',
+  },
   // Schools › Verify teachers (S1-E2-11): owner, admin and moderators with the teacher checks
   // permission; class spaces join it with S1-E8-11.
   {

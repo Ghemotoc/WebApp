@@ -76,7 +76,8 @@
     "website": "Website",
     "schools": "Schools",
     "forums": "Forums",
-    "stories": "Stories"
+    "stories": "Stories",
+    "dataRequests": "Data requests"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -113,7 +114,8 @@
       "website_cms": "The home page, notice banners, help pages and questions, for each market and language.",
       "schools": "Verify teachers and set up class spaces for pilot schools.",
       "forums": "Categories, forums and subforums: names, order and pins.",
-      "stories": "Find any story by title, username or user ID, and open it to see its details and chapters."
+      "stories": "Find any story by title, username or user ID, and open it to see its details and chapters.",
+      "data_requests": "Log and answer requests to see, move, correct or delete someone’s data, each within its deadline."
     }
   },
   "auditLog": {

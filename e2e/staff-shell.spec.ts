@@ -74,6 +74,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Users',
       'Stories',
       'Classics',
+      'Data requests',
       'Schools',
       'Roles',
       'Website',
@@ -96,6 +97,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Users',
       'Stories',
       'Classics',
+      'Data requests',
       'Schools',
       'Roles',
       'Website',
@@ -123,13 +125,15 @@ test.describe('admin shell (S1-E11-01)', () => {
     ]);
 
     // Support has Users (S1-E11-02), keeps the safety contacts (S1-E10-13b) and sees the on-call
-    // rota (S1-E10-09). Owner, admin, moderator and support all see Stories (S1-E11-07).
+    // rota (S1-E10-09). Owner, admin, moderator and support all see Stories (S1-E11-07); owner, admin
+    // and support handle Data requests (S1-E11-09).
     const supportPage = await openAs(browser, 'support', '/staff');
     expect(await menuLinks(supportPage)).toEqual([
       'Safety contacts',
       'On call',
       'Users',
       'Stories',
+      'Data requests',
     ]);
 
     const editorPage = await openAs(browser, 'editor', '/staff/audit-log');

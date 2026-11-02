@@ -66,7 +66,11 @@
     "loginMethodAdded": "Un nou mod de autentificare a fost conectat la contul tău. Le vezi pe toate în Setări, la Moduri de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
     "loginMethodRemoved": "Un mod de autentificare a fost deconectat de la contul tău. Le vezi pe cele rămase în Setări, la Moduri de autentificare. Dacă nu ai fost tu, schimbă-ți parola și scrie-ne.",
     "subjectClassArchived": "Spațiul clasei a fost arhivat: păstrează copii ale diplomelor",
-    "classArchived": "Spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: după aceea, numele reale tipărite pe ele se șterg."
+    "classArchived": "Spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: după aceea, numele reale tipărite pe ele se șterg.",
+    "subjectDataRequestConfirm": "Tu ai trimis această cerere privind datele tale?",
+    "dataRequestConfirm": "Am primit o cerere privind datele din contul tău ({{reference}}) prin email sau poștă, nu din contul tău. Intră în cont și deschide Setări, la Cereri privind datele, ca să ne spui dacă tu ai trimis-o. Dacă nu, spune-ne acolo: nu îi vom da curs.",
+    "subjectDataRequestExtended": "Avem nevoie de mai mult timp pentru cererea ta privind datele",
+    "dataRequestExtended": "Avem nevoie de mai mult timp ca să răspundem la cererea ta privind datele {{reference}}. Îți răspundem până pe {{deadline}}. Motivul: {{reason}}"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} te roagă să fii de acord cu contul său {{productName}}",

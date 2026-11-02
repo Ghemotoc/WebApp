@@ -91,6 +91,7 @@ select results_eq(
        ('conversations', 0::bigint),
        ('copied_work_notes', 0::bigint),
        ('daily_metrics', 0::bigint),
+       ('data_requests', 0::bigint),
        -- Notification emails: each person's own (S1-E7-02).
        ('email_outbox', 0::bigint),
        ('email_unsubscribe_keys', 0::bigint),
