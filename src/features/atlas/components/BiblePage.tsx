@@ -1,5 +1,6 @@
 /**
- * BiblePage: /plan/s/:storySlug/bible and …/bible/:entryId, a story's bible in Story Atlas
+ * BiblePage: /plan/s/:storySlug/world and …/world/:entryId, a story's world (once called its bible;
+ * renamed "Story world" on 2 Nov 2026, ADMIN-2a2; the code keeps the name "bible") in Story Atlas
  * (stories S1-E17-17 and S1-E17-18).
  *
  * The Story Atlas top bar, then the contents (every section and its entries) and, beside them on
@@ -39,7 +40,7 @@ function BibleBody({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const changers = useStoryBible(slug);
-  const bibleAddress = `/plan/s/${slug}/bible`;
+  const bibleAddress = `/plan/s/${slug}/world`;
   const entry = bible.entries.find((candidate) => candidate.id === entryId);
 
   /** "New entry": makes one with the default title and opens it for writing. */

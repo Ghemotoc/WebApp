@@ -58,7 +58,7 @@ function ContentsSection({
           {entries.map((entry) => (
             <li key={entry.id}>
               <Link
-                to={`/plan/s/${slug}/bible/${entry.id}`}
+                to={`/plan/s/${slug}/world/${entry.id}`}
                 aria-current={entry.id === openEntryId ? 'page' : undefined}
                 className={cn(
                   'flex min-h-11 items-center rounded-xl px-2 py-1.5 break-words text-heading no-underline hover:bg-tint',
@@ -110,7 +110,7 @@ export function BibleContents({ slug, bible, openEntryId, onCreateEntry }: Bible
       >
         {t('bible.contents.heading')}
       </h2>
-      <Link to={`/plan/s/${slug}/bible`} className="self-start font-semibold text-link">
+      <Link to={`/plan/s/${slug}/world`} className="self-start font-semibold text-link">
         {t('bible.contents.manage')}
       </Link>
       <div aria-live="polite">

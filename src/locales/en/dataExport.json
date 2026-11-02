@@ -51,7 +51,7 @@
       "chapters": "The chapters, as a Word file",
       "chaptersHint": "Every chapter in order, drafts too, with the dates. For one story you can choose which chapters.",
       "plan": "The plan from Story Atlas, as a Word file",
-      "planHint": "At a glance, characters, connections, story bible, storyline, chapter plans, ideas and marketing.",
+      "planHint": "At a glance, characters, connections, story world, storyline, chapter plans, ideas and marketing.",
       "data": "A machine-readable copy (JSON)",
       "dataHint": "The same stories and plans as data a computer program can read, for example to move them to another service."
     },

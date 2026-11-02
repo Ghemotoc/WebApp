@@ -51,7 +51,7 @@
       "chapters": "Capitolele, ca fișier Word",
       "chaptersHint": "Toate capitolele în ordine, și ciornele, cu datele lor. Pentru o singură poveste poți alege capitolele.",
       "plan": "Planul din Story Atlas, ca fișier Word",
-      "planHint": "Pe scurt, personaje, legături, biblia poveștii, firul poveștii, planurile capitolelor, idei și marketing.",
+      "planHint": "Pe scurt, personaje, legături, lumea poveștii, firul poveștii, planurile capitolelor, idei și marketing.",
       "data": "O copie pe care o pot citi programele (JSON)",
       "dataHint": "Aceleași povești și planuri ca date pe care le poate citi un program, de exemplu ca să le muți la alt serviciu."
     },
