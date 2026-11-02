@@ -1925,3 +1925,18 @@ Read in this order; each file's header comment says what it is for and where thi
 - How it stays current: triggers on `chapters` (publish, unpublish, delete, words), `stories` (delete) and `moderated_items` (hide, remove, restore) call `refresh_writer_rank()`, which counts again and saves one row per writer. The row is private to its owner; everyone else reads the rank through `profile_rank(handle)` (rank, chapters, words; null for a blocked reader or a private profile) or a post's `author_rank`, never a user ID.
 - Where it shows: the gold pill beside the name on the profile (`ProfileHeader`) and on every forum post (`ForumPostCard`, criterion 5), the rank card at the top of the profile's side column, and the rank's sticker on the profile picture (`ProfileAvatar`).
 - Tests: `supabase/tests/database/231-writer-ranks.test.sql`, `src/features/forums/lib/writerRanks.test.ts`, `e2e/writer-ranks.spec.ts`.
+
+### One journey through the whole epic (S1-E8-QA)
+
+The epic lives in three feature folders: `src/features/forums/` (categories, threads, posts, quotes, read marks, sticky and locked, search, signatures and ranks), `src/features/spaces/` (spaces, their moderators, banners, classes and their codes) and `src/features/certificates/`. Every space and every class owns one hidden forum named `space-<slug>`, so a thread in a class goes through the same functions as one in the main forums. A student replies in their class and later gets a certificate:
+
+```
+Class page (SpacePage) → useSpace → space_page() → the class's hidden forum
+Thread page → useForumThread → forum_thread() (blocks, moderation, age group, class membership)
+Reply box (ReplyForm) → useReplyToThread → reply_to_forum_thread() → account gate (is_active_member()) → space_may_post()
+  → forum_posts (numbered for good) → mark_forum_thread_read() → "New for you" for everyone else
+Teacher › Certificates → issue_class_certificates() → certificates → notify('certificate_issued')
+Notifications › Open my certificates → /certificates → my_certificates() → CertificateSheet → print
+```
+
+The account gate is the one place minors are held back: while `adults_only` is on (the March test) an under-18 reads every forum and their class but can't post, and kid_14_waiting waits for a parent. The epic check walks the twelve stories together in `e2e/epic-s1-e8.spec.ts` and `supabase/tests/database/237-epic-s1-e8.test.sql`; its report is `docs/epic-reports/S1-E8.md`.
