@@ -110,7 +110,7 @@
       "classics": "Adaugă și verifică clasicii din domeniul public pentru contul oficial.",
       "settings": "Comutatoare, valori și limite, rafturile din Descoperă, categorii, nume rezervate, piețe și limbi.",
       "website_cms": "Pagina principală, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă.",
-      "schools": "Verifică profesorii și, mai târziu, gestionează spațiile de clasă.",
+      "schools": "Verifică profesorii și creează spații de clasă pentru școlile din pilot.",
       "forums": "Categorii, forumuri și subforumuri: nume, ordine și fixare."
     }
   },
@@ -808,5 +808,53 @@
     "removeBadge": "Scoate insigna",
     "removeReason": "De ce se scoate insigna (profesorul o va citi)",
     "noTeachers": "Nimeni nu are încă insigna de Profesor."
+  },
+  "schoolsTabs": {
+    "label": "Școli",
+    "teachers": "Verifică profesorii",
+    "classes": "Spații de clasă"
+  },
+  "classSpaces": {
+    "documentTitle": "Spații de clasă",
+    "eyebrow": "Școli",
+    "heading": "Spații de clasă",
+    "intro": "Creează o clasă pentru o școală din pilot, cu profesorul ca proprietar, apoi printează codul pe care profesorul îl dă elevilor. Profesorul are nevoie mai întâi de insigna de Profesor (Verifică profesorii).",
+    "notAllowed": "Doar membrii echipei care se ocupă de școli pot deschide pagina aceasta.",
+    "newTitle": "Creează o clasă",
+    "newIntro": "Profesorul e proprietarul clasei de la început și are toate uneltele clasei, ca și cum ar fi creat-o singur. Se blochează pe 1 iulie care urmează.",
+    "teacher": "Profesor",
+    "teacherHint": "Numele de utilizator, fără @. Are nevoie de insigna de Profesor.",
+    "name": "Numele clasei",
+    "school": "Școala",
+    "schoolHint": "Apare pe diplomele de clasă ale elevilor.",
+    "description": "Pentru ce e clasa",
+    "create": "Creează clasa",
+    "created": "Clasa e gata.",
+    "open": "Deschide-o",
+    "listTitle": "Toate spațiile de clasă",
+    "none": "Încă nu există spații de clasă.",
+    "noSchool": "Încă nescrisă",
+    "members": "Membri",
+    "status": "Stare",
+    "openUntil": "Deschisă până pe {{date}}",
+    "locked": "Blocată",
+    "archivedOn": "Arhivată pe {{date}}",
+    "changeSchool": "Schimbă școala",
+    "saveSchool": "Salvează școala",
+    "cancel": "Renunță",
+    "makeCode": "Fă un cod de printat",
+    "archive": "Arhivează clasa",
+    "archiveConfirm": "Arhivezi clasa definitiv? Nimeni nu poate anula asta.",
+    "archiveYes": "Da, arhiveaz-o",
+    "failures": {
+      "not_allowed": "Doar membrii echipei care se ocupă de școli pot face asta.",
+      "not_a_teacher": "Contul acesta nu are insigna de Profesor. Aprob-o mai întâi la Verifică profesorii.",
+      "school_needed": "Scrie numele școlii.",
+      "school_length": "Numele școlii poate avea cel mult 120 de caractere.",
+      "name_taken": "Alt spațiu are deja numele acesta.",
+      "text": "Scrie un nume și pentru ce e clasa.",
+      "missing": "Clasa aceasta nu mai e aici.",
+      "unreachable": "Nu am putut ajunge la server. Încearcă din nou."
+    }
   }
 }

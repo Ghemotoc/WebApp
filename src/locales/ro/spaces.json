@@ -368,8 +368,10 @@
       "not_allowed": "Doar profesorul și cei care conduc această clasă pot face asta.",
       "missing": "Această clasă nu mai există.",
       "lock_date": "Alege o zi din următorii doi ani.",
-      "unreachable": "Nu am putut ajunge la server. Încearcă din nou."
-    }
+      "unreachable": "Nu am putut ajunge la server. Încearcă din nou.",
+      "archived": "Clasa aceasta e arhivată, așa că rămâne blocată."
+    },
+    "archivedNote": "Clasa e arhivată, așa că rămâne blocată definitiv."
   },
   "classWaiting": {
     "title": "Așteaptă să intre",
@@ -395,7 +397,8 @@
     "step3Text": "Profesorul scrie codul pe tablă sau trimite linkul. Elevii îl scriu în Forumuri › Intră într-o clasă.",
     "yearEndTitle": "Când se termină anul școlar",
     "yearEndText": "La sfârșitul anului școlar spațiul se închide, așa că nimeni nu mai poate posta. Fiecare membru îl poate citi în continuare cât timp are cont și își păstrează poveștile și ciornele.",
-    "locksOn": "Se închide pe {{date}}."
+    "locksOn": "Se închide pe {{date}}.",
+    "archivedTitle": "Clasa aceasta e arhivată."
   },
   "joinClassLink": "Intră într-o clasă",
   "classStories": {
@@ -421,5 +424,16 @@
       "not_yours": "Poți împărtăși doar cu o clasă din care faci parte și care nu e blocată.",
       "unreachable": "Nu am putut ajunge la server. Încearcă din nou peste puțin timp."
     }
+  },
+  "classArchive": {
+    "eyebrow": "Închiderea clasei",
+    "title": "Arhivează clasa",
+    "intro": "Când clasa s-a încheiat, arhiveaz-o. Se blochează acum și definitiv: nimeni nu mai poate posta, reacționa, intra sau fi invitat, iar nimeni nu o mai poate debloca. Fiecare membru o poate citi în continuare cât timp are cont, iar elevii își păstrează poveștile și ciornele.",
+    "archive": "Arhivează clasa",
+    "confirmLabel": "Arhivezi clasa definitiv?",
+    "confirm": "Arhivezi clasa definitiv? Nimeni nu poate anula asta.",
+    "yes": "Da, arhiveaz-o",
+    "cancel": "Renunță",
+    "archived": "Clasa aceasta e arhivată. Membrii o pot citi în continuare, dar nimeni nu mai poate posta aici."
   }
 }

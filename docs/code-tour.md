@@ -1890,6 +1890,15 @@ Read in this order; each file's header comment says what it is for and where thi
 - No ad or banner shows on class stories or class spaces (Robert, 2 Nov 2026); banners are still stubbed, so bundle 14 builds that rule into `pick_banner()`.
 - Tests: `supabase/tests/database/234-class-stories.test.sql`, `src/features/spaces/api/classStories.test.ts`, `e2e/class-stories.spec.ts`.
 
+### The staff pilot set-up and archiving a class (CLASSES-d)
+
+- Where it lives: `src/features/staff/api/staffClassSpaces.ts`, `hooks/useStaffClassSpaces.ts` and `components/schools/` (`ClassSpacesPage` at `/staff/schools/classes`, `NewClassSpaceForm`, `StaffClassCard`, `StaffClassActions`, `StaffClassSchoolForm`, `SchoolsTabs`); `ClassArchiveCard` in a class's settings; `supabase/migrations/…_classes_d_pilot_setup.sql`.
+- `insert_class_space()` is the one place a class row is made, shared by the teacher's `create_class_space()` and the staff's `admin_create_class_space()` (Schools access, a named teacher with the badge, the school's name; audit log). The teacher owns it from the start, so every teacher tool works the same.
+- `spaces.school_name` prints on class certificates (part e). `admin_set_class_school()` corrects it, logged.
+- Staff make the class's code with the teacher's own `make_class_invite()` (platform moderators act in any space) and see it once in the same `NewClassInviteCode` panel, with Print.
+- `archive_class_space()` (the settings power, or staff) sets `spaces.archived_at` and locks the class now. `set_class_lock()` then refuses (`space:archived`), so nobody unlocks it again; members still read it. Part e counts the 30 days before printed names go from `archived_at`.
+- Tests: `supabase/tests/database/235-class-pilot-setup.test.sql`, `src/features/staff/api/staffClassSpaces.test.ts`, `e2e/class-pilot-setup.spec.ts`.
+
 ## Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)
 
 - Where it lives: `src/features/forums/api/forumSignatures.ts`, `hooks/useForumSignatures.ts`, `lib/signatureLimits.ts`; the components `SignatureBody` (the shared drawing), `ProfileSignatureCard` (board 6.1), `SignatureSettingsSection` with `SignatureWordsForm` and `SignaturePictureControls` (Settings, `#forum-signature`), `ChangeRequestNotice` and `CustomisationChangeForm` (staff); `uploadSignaturePicture()` in `src/features/pictures/api/pictures.ts`; `src/lib/animated-picture.ts`; `supabase/migrations/…_forums2_d_signatures.sql`.

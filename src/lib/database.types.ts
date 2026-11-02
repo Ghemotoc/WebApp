@@ -4977,6 +4977,7 @@ export type Database = {
       spaces: {
         Row: {
           age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
@@ -4991,6 +4992,7 @@ export type Database = {
           posting: Database['public']['Enums']['space_posting'];
           readers: Database['public']['Enums']['space_readers'];
           rules: string;
+          school_name: string | null;
           slug: string;
           updated_at: string;
           user_id: string;
@@ -5020,6 +5022,7 @@ export type Database = {
           | 'space_viewer_json';
         Insert: {
           age_group: Database['public']['Enums']['space_age_group'];
+          archived_at?: string | null;
           banner?: Database['public']['Enums']['space_banner'];
           banner_picture_id?: string | null;
           created_at?: string;
@@ -5034,12 +5037,14 @@ export type Database = {
           posting?: Database['public']['Enums']['space_posting'];
           readers?: Database['public']['Enums']['space_readers'];
           rules?: string;
+          school_name?: string | null;
           slug: string;
           updated_at?: string;
           user_id: string;
         };
         Update: {
           age_group?: Database['public']['Enums']['space_age_group'];
+          archived_at?: string | null;
           banner?: Database['public']['Enums']['space_banner'];
           banner_picture_id?: string | null;
           created_at?: string;
@@ -5054,6 +5059,7 @@ export type Database = {
           posting?: Database['public']['Enums']['space_posting'];
           readers?: Database['public']['Enums']['space_readers'];
           rules?: string;
+          school_name?: string | null;
           slug?: string;
           updated_at?: string;
           user_id?: string;
@@ -6675,6 +6681,7 @@ export type Database = {
       admin_case_statements: { Args: { target_case_id: string }; Returns: Json };
       admin_case_support_contacts: { Args: { target_case_id: string }; Returns: Json };
       admin_claim_case: { Args: { target_case_id: string }; Returns: boolean };
+      admin_class_spaces: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
       admin_classic_suggestions: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_close_unmatched_notice: {
@@ -6687,6 +6694,10 @@ export type Database = {
       };
       admin_compliance_log: { Args: { for_export?: boolean }; Returns: Json };
       admin_confirm_safety_contact: { Args: { target_contact_id: string }; Returns: boolean };
+      admin_create_class_space: {
+        Args: { description: string; name: string; school_name: string; teacher_handle: string };
+        Returns: Json;
+      };
       admin_create_invite: {
         Args: { admits?: number; private_note?: string; valid_days?: number };
         Returns: {
@@ -7141,6 +7152,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_set_class_school: { Args: { school_name: string; slug: string }; Returns: Json };
       admin_set_classic_chapters: {
         Args: { chapter_list: Json; target_story_id: string };
         Returns: Json;
@@ -7354,6 +7366,7 @@ export type Database = {
         Args: { answer_text: string; target_request_id: string };
         Returns: undefined;
       };
+      archive_class_space: { Args: { slug: string }; Returns: Json };
       atlas_fold: { Args: { value: string }; Returns: string };
       atlas_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       atlas_picture_is_public: { Args: { object_name: string }; Returns: boolean };
@@ -7670,6 +7683,7 @@ export type Database = {
         Args: { target_slug: string };
         Returns: {
           age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
@@ -7684,6 +7698,7 @@ export type Database = {
           posting: Database['public']['Enums']['space_posting'];
           readers: Database['public']['Enums']['space_readers'];
           rules: string;
+          school_name: string | null;
           slug: string;
           updated_at: string;
           user_id: string;
@@ -8237,6 +8252,44 @@ export type Database = {
         Returns: {
           message_id: string;
         }[];
+      };
+      insert_class_space: {
+        Args: {
+          banner: Database['public']['Enums']['space_banner'];
+          description: string;
+          name: string;
+          owner_id: string;
+          rules: string;
+          school: string;
+        };
+        Returns: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
+          banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          school_name: string | null;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'spaces';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       interface_text_live: {
         Args: { wanted_locale: string };
@@ -9051,6 +9104,7 @@ export type Database = {
         Args: { target_slug: string };
         Returns: {
           age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
@@ -9065,6 +9119,7 @@ export type Database = {
           posting: Database['public']['Enums']['space_posting'];
           readers: Database['public']['Enums']['space_readers'];
           rules: string;
+          school_name: string | null;
           slug: string;
           updated_at: string;
           user_id: string;
@@ -9960,6 +10015,7 @@ export type Database = {
         Args: { target_slug: string; wanted: Database['public']['Enums']['space_power'] };
         Returns: {
           age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
@@ -9974,6 +10030,7 @@ export type Database = {
           posting: Database['public']['Enums']['space_posting'];
           readers: Database['public']['Enums']['space_readers'];
           rules: string;
+          school_name: string | null;
           slug: string;
           updated_at: string;
           user_id: string;
@@ -10113,6 +10170,7 @@ export type Database = {
         Args: { target_forum_id: string };
         Returns: {
           age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
           banner: Database['public']['Enums']['space_banner'];
           banner_picture_id: string | null;
           created_at: string;
@@ -10127,6 +10185,7 @@ export type Database = {
           posting: Database['public']['Enums']['space_posting'];
           readers: Database['public']['Enums']['space_readers'];
           rules: string;
+          school_name: string | null;
           slug: string;
           updated_at: string;
           user_id: string;

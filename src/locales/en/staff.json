@@ -110,7 +110,7 @@
       "classics": "Add and check public-domain classics for the official account.",
       "settings": "Feature flags, values and limits, the Discover mix, categories, reserved names, and markets and languages.",
       "website_cms": "The home page, notice banners, help pages and questions, for each market and language.",
-      "schools": "Verify teachers and, later, run class spaces.",
+      "schools": "Verify teachers and set up class spaces for pilot schools.",
       "forums": "Categories, forums and subforums: names, order and pins."
     }
   },
@@ -808,5 +808,53 @@
     "removeBadge": "Remove badge",
     "removeReason": "Why the badge is removed (the teacher will read it)",
     "noTeachers": "No one has the Teacher badge yet."
+  },
+  "schoolsTabs": {
+    "label": "Schools",
+    "teachers": "Verify teachers",
+    "classes": "Class spaces"
+  },
+  "classSpaces": {
+    "documentTitle": "Class spaces",
+    "eyebrow": "Schools",
+    "heading": "Class spaces",
+    "intro": "Set up a class for a pilot school, with its teacher as the owner, then print the code for the teacher to give the students. The teacher needs the Teacher badge first (Verify teachers).",
+    "notAllowed": "Only staff who look after schools can open this page.",
+    "newTitle": "Set up a class",
+    "newIntro": "The teacher owns the class from the start and has every class tool, as if they had made it themselves. It locks on the next 1 July.",
+    "teacher": "Teacher",
+    "teacherHint": "Their username, without the @. They need the Teacher badge.",
+    "name": "Name of the class",
+    "school": "School",
+    "schoolHint": "It prints on the students’ class certificates.",
+    "description": "What the class is for",
+    "create": "Set up the class",
+    "created": "The class is ready.",
+    "open": "Open it",
+    "listTitle": "Every class space",
+    "none": "There are no class spaces yet.",
+    "noSchool": "Not written yet",
+    "members": "Members",
+    "status": "Status",
+    "openUntil": "Open until {{date}}",
+    "locked": "Locked",
+    "archivedOn": "Archived on {{date}}",
+    "changeSchool": "Change the school",
+    "saveSchool": "Save the school",
+    "cancel": "Cancel",
+    "makeCode": "Make a code to print",
+    "archive": "Archive the class",
+    "archiveConfirm": "Archive the class for good? Nobody can undo this.",
+    "archiveYes": "Yes, archive it",
+    "failures": {
+      "not_allowed": "Only staff who look after schools can do this.",
+      "not_a_teacher": "This account has no Teacher badge. Approve it on Verify teachers first.",
+      "school_needed": "Write the school’s name.",
+      "school_length": "The school’s name can be up to 120 characters.",
+      "name_taken": "Another space has this name.",
+      "text": "Write a name and what the class is for.",
+      "missing": "This class isn’t here any more.",
+      "unreachable": "We couldn’t reach the server. Try again."
+    }
   }
 }

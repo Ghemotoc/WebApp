@@ -4,7 +4,8 @@
  * member can still read it; board ClassSpace, "Lock the space now" and "Unlock the space").
  *
  * What it shows: the day the space locks (new classes lock on the next 1 July), a date field to
- * change it, "Lock the space now", and once locked, a note and "Unlock the space". Plain card
+ * change it, "Lock the space now", and once locked, a note and "Unlock the space" (not for an
+ * archived class, which stays locked for good: CLASSES-d). Plain card
  * style, no doodles.
  * Who shows it: SpaceSettingsPage, for a class space, to whoever holds its settings power (the
  * teacher, a space moderator given it, our moderation team). The database checks again.
@@ -117,14 +118,18 @@ export function ClassLockCard({ space }: { space: Space }) {
         {space.isLocked ? (
           <>
             <Notice tone="info">{t('classLock.locked')}</Notice>
-            <Button
-              variant="secondary"
-              className="self-start"
-              disabled={locking.isRunning}
-              onClick={unlock}
-            >
-              {t('classLock.unlock')}
-            </Button>
+            {space.isArchived ? (
+              <p className="m-0 text-body">{t('classLock.archivedNote')}</p>
+            ) : (
+              <Button
+                variant="secondary"
+                className="self-start"
+                disabled={locking.isRunning}
+                onClick={unlock}
+              >
+                {t('classLock.unlock')}
+              </Button>
+            )}
           </>
         ) : (
           <LockDateForm

@@ -222,6 +222,15 @@ const staffRoutes: RouteObject = {
         return { Component: TeacherChecksPage };
       },
     },
+    // Schools › Class spaces (bundle CLASSES, part d; S1-E8-11 criterion 10): the same access.
+    {
+      path: 'schools/classes',
+      lazy: async () => {
+        const { ClassSpacesPage } =
+          await import('@/features/staff/components/schools/ClassSpacesPage');
+        return { Component: ClassSpacesPage };
+      },
+    },
     // The March test numbers (S1-E15-02): owner and admin; moderators see a pointer to the queue.
     {
       path: 'metrics',

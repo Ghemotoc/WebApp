@@ -86,7 +86,10 @@ function SpaceContent({ space }: { space: Space }) {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <div className="flex min-w-0 flex-col gap-6">
           {space.isLocked && (
-            <Notice tone="info" title={t('classSpace.lockedTitle')}>
+            <Notice
+              tone="info"
+              title={t(space.isArchived ? 'classSpace.archivedTitle' : 'classSpace.lockedTitle')}
+            >
               {t('classSpace.lockedText')}
             </Notice>
           )}

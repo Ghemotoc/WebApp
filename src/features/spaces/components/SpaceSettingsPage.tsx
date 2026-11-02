@@ -10,10 +10,10 @@
  * moderation team (SpaceModeratorsCard). In a class space (bundle CLASSES, part a; S1-E8-11), the
  * class invite card for anyone holding the members power (ClassInviteCard). Part b adds, in a
  * class space, the members still waiting to read (ClassWaitingCard, same power) and the lock at the
- * end of the school year (ClassLockCard, the settings power). Anyone else is told only the owner can change it; the
+ * end of the school year (ClassLockCard, the settings power) and archiving it for good (ClassArchiveCard, CLASSES-d). Anyone else is told only the owner can change it; the
  * database checks again. A new name keeps the space's address, so links to it still work.
  * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceBannerPictureCard;
- * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard.
+ * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard; ClassArchiveCard.
  */
 import { useState } from 'react';
 import { useParams } from 'react-router';
@@ -25,6 +25,7 @@ import type { Space, SpaceSettings } from '../api/spaces';
 import { useSpace, useUpdateSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { ClassArchiveCard } from './ClassArchiveCard';
 import { ClassInviteCard } from './ClassInviteCard';
 import { ClassLockCard } from './ClassLockCard';
 import { ClassWaitingCard } from './ClassWaitingCard';
@@ -104,6 +105,7 @@ function ClassCards({ space }: { space: Space }) {
       {canInvite && <ClassInviteCard space={space} />}
       {canInvite && <ClassWaitingCard space={space} />}
       {canManage && <ClassLockCard space={space} />}
+      {canManage && <ClassArchiveCard space={space} />}
     </>
   );
 }
