@@ -1,14 +1,16 @@
 /**
  * SpaceHeaderCard: the space's header: its banner, badge, "Space · run by members", name,
  * description, pills, "214 members · Owner: inkwolf", the join buttons and Report (bundle
- * FORUMS-2, part a; S1-E8-06; design/boards/Space.dc.html's header).
+ * FORUMS-2, parts a and b; S1-E8-06 and S1-E8-07; design/boards/Space.dc.html's header).
  *
  * Board values: a 28 px card with a 168 px banner band, the 88 px badge overlapping it, the name
  * in Bricolage Grotesque at 36 to 64 px and the description at 18 px. The owner sees "Space
- * settings" where others see Report (nobody reports their own space; rule 6 for everyone else).
+ * settings" where others see Report (nobody reports their own space; rule 6 for everyone else);
+ * moderators also see the links to what their powers let them do (SpaceToolLinks).
  * Share comes with the share card (S1-E4-05) for spaces later, so it is left out here (noted in
  * docs/board-fixes.md).
- * Who shows it: SpacePage. What it calls: SpaceBadge, SpacePills, SpaceJoinActions, ReportButton.
+ * Who shows it: SpacePage. What it calls: SpaceBadge, SpacePills, SpaceJoinActions,
+ * SpaceToolLinks, ReportButton.
  */
 import { Link } from 'react-router';
 
@@ -23,6 +25,7 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 import { SpaceBadge } from './SpaceBadge';
 import { SpaceJoinActions } from './SpaceJoinActions';
 import { SpacePills } from './SpacePills';
+import { SpaceToolLinks } from './SpaceToolLinks';
 
 /**
  * "214 members · Owner: inkwolf", the owner's name a link to their profile.
@@ -50,21 +53,13 @@ function SpaceNumbers({ space }: { space: Space }) {
 }
 
 /**
- * Report for readers, "Space settings" for the owner.
+ * Report, for everyone but the owner.
  *
- * @returns the link or the button
+ * @returns the button, or nothing for the owner
  */
-function SpaceOwnerOrReport({ space }: { space: Space }) {
+function SpaceReport({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
-  if (space.viewer.canManage)
-    return (
-      <Link
-        to={`/spaces/${space.slug}/settings`}
-        className="inline-flex h-12 items-center rounded-full border border-control-border bg-surface px-5 text-[15px] font-semibold text-heading no-underline hover:bg-tint"
-      >
-        {t('space.settings')}
-      </Link>
-    );
+  if (space.viewer.membership === 'owner') return null;
   return (
     <ReportButton
       itemType="space"
@@ -114,7 +109,8 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
         </div>
         <div className="flex flex-col items-start gap-3 md:items-end">
           <SpaceJoinActions space={space} />
-          <SpaceOwnerOrReport space={space} />
+          <SpaceToolLinks space={space} />
+          <SpaceReport space={space} />
         </div>
       </div>
     </section>

@@ -4,9 +4,11 @@
  *
  * Who shows it: the router; "Space settings" on the space's header links here, for its owner.
  * What it shows: the same form as a new space, filled in, and "Your changes are saved." after
- * saving. Anyone but the owner is told only the owner can change it; the database checks again
- * (owned_space_for_change()). A new name keeps the space's address, so links to it still work.
- * What it calls: useSpace → space_page(); useUpdateSpace → update_space().
+ * saving, for anyone holding the settings power (the owner, a moderator given it, or our
+ * moderation team; part b, S1-E8-07). Under it, the Moderators card for the owner and our
+ * moderation team (SpaceModeratorsCard). Anyone else is told only the owner can change it; the
+ * database checks again. A new name keeps the space's address, so links to it still work.
+ * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceModeratorsCard.
  */
 import { useState } from 'react';
 import { useParams } from 'react-router';
@@ -21,6 +23,7 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
 import { SpaceFormCard } from './SpaceFormCard';
+import { SpaceModeratorsCard } from './SpaceModeratorsCard';
 import { SpaceNotFound } from './SpaceNotFound';
 
 /**
@@ -77,6 +80,24 @@ function SettingsForm({ space }: { space: Space }) {
 }
 
 /**
+ * The settings form and the Moderators card, each for whoever may use it.
+ *
+ * @param props.space - the space
+ * @returns the cards, or "only the owner" for someone who may use neither
+ */
+function SettingsCards({ space }: { space: Space }) {
+  const { t } = useSpacesTranslation();
+  const { canManage, canAppoint } = space.viewer;
+  if (!canManage && !canAppoint) return <Notice tone="info">{t('form.notOwner')}</Notice>;
+  return (
+    <>
+      {canManage && <SettingsForm key={space.slug} space={space} />}
+      {canAppoint && <SpaceModeratorsCard space={space} />}
+    </>
+  );
+}
+
+/**
  * Renders the page.
  *
  * @returns the form, "only the owner" or a "not here" note
@@ -93,11 +114,7 @@ export function SpaceSettingsPage() {
       {space !== undefined && space !== null && (
         <>
           <SpaceBreadcrumb space={space} current={t('space.settings')} />
-          {space.viewer.canManage ? (
-            <SettingsForm key={space.slug} space={space} />
-          ) : (
-            <Notice tone="info">{t('form.notOwner')}</Notice>
-          )}
+          <SettingsCards space={space} />
         </>
       )}
     </PageContainer>

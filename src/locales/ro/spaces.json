@@ -36,7 +36,9 @@
     "notFound": "Spațiul nu este aici",
     "notFoundNote": "Poate a fost șters sau nu este deschis contului tău.",
     "back": "Înapoi la spații",
-    "loadFailed": "Nu am putut încărca spațiul. Încearcă din nou peste puțin timp."
+    "loadFailed": "Nu am putut încărca spațiul. Încearcă din nou peste puțin timp.",
+    "membersLink": "Membri",
+    "logLink": "Jurnalul moderării"
   },
   "join": {
     "join": "Intră în spațiu",
@@ -48,6 +50,7 @@
     "noteOpen": "Oricine din grupa de vârstă a spațiului poate intra imediat.",
     "notePending": "{{owner}} îți va vedea cererea. Poți posta după ce te primește.",
     "noteMember": "Faci parte din acest spațiu.",
+    "noteModerator": "Ajuți la moderarea acestui spațiu.",
     "noteOwner": "Tu conduci acest spațiu.",
     "noteOtherGroup": "Spațiul primește membri din altă grupă de vârstă, așa că îl poți citi, dar nu poți intra.",
     "noteNotActive": "Contul tău nu poate intra încă în spații."
@@ -66,7 +69,8 @@
   "runs": {
     "title": "Cine îl conduce",
     "owner": "A creat spațiul",
-    "note": "Echipa noastră de moderare poate interveni în orice spațiu."
+    "note": "Echipa noastră de moderare poate interveni în orice spațiu.",
+    "moderator": "Moderează: {{powers}}"
   },
   "requests": {
     "title": "Cereri de intrare",
@@ -162,6 +166,87 @@
       "too_long": "Regulile sunt prea lungi. Folosește cel mult 2.000 de caractere.",
       "html": "Regulile nu pot conține etichete HTML.",
       "taken": "Alt spațiu are deja acest nume. Încearcă altul."
+    },
+    "not_allowed": "Nu poți face asta în acest spațiu.",
+    "member_missing": "Acest nume de utilizator nu este în spațiu. Verifică scrierea sau roagă persoana să intre mai întâi.",
+    "member_owner": "Cine a creat spațiul are deja toate drepturile.",
+    "member_age": "Persoana este în altă grupă de vârstă, așa că nu poate ajuta la conducerea acestui spațiu.",
+    "request_missing": "Cererea nu mai așteaptă.",
+    "reason_too_long": "Motivul poate avea cel mult 500 de caractere."
+  },
+  "moderators": {
+    "eyebrow": "Setările spațiului",
+    "title": "Moderare",
+    "intro": "Cei care moderează te ajută să conduci spațiul. Alege ce poate face fiecare. Doar tu poți adăuga sau scoate pe cineva din moderare, iar echipa noastră de moderare poate interveni în continuare în orice spațiu.",
+    "none": "Nu moderează nimeni încă.",
+    "loadFailed": "Nu am putut încărca lista celor care moderează.",
+    "appointed": "{{name}} moderează acum spațiul.",
+    "changed": "Drepturile contului {{name}} sunt salvate.",
+    "removed": "{{name}} nu mai moderează, dar rămâne în spațiu.",
+    "powersOf": "Ce poate face {{name}}",
+    "powersLegend": "Ce poate face",
+    "save": "Salvează drepturile",
+    "saveLabel": "Salvează drepturile pentru {{name}}",
+    "remove": "Scoate din moderare",
+    "removeLabel": "Scoate din moderare: {{name}}",
+    "addTitle": "Adaugă pe cineva la moderare",
+    "username": "Nume de utilizator",
+    "usernameHint": "Trebuie să fie deja în acest spațiu.",
+    "add": "Dă drept de moderare",
+    "powers": {
+      "posts": "Discuții",
+      "members": "Membri",
+      "settings": "Setări"
+    },
+    "powerWords": {
+      "posts": "discuții",
+      "members": "membri",
+      "settings": "setări"
+    },
+    "powerNotes": {
+      "posts": "Fixează sus și închide discuții, doar în acest spațiu.",
+      "members": "Răspunde la cererile de intrare și scoate oameni din spațiu.",
+      "settings": "Schimbă numele, descrierea, regulile și cine poate posta sau intra."
+    }
+  },
+  "members": {
+    "title": "Membri",
+    "intro": "Toți cei din spațiu. Cine e scos din spațiu poate cere din nou să intre.",
+    "member": "În spațiu",
+    "joined": "A intrat pe {{date}}",
+    "remove": "Scoate",
+    "removeLabel": "Scoate {{name}}",
+    "reason": "De ce scoți {{name}}? (opțional)",
+    "reasonHint": "Apare în jurnalul moderării spațiului. Persoana nu vede motivul.",
+    "confirm": "Da, scoate",
+    "confirmLabel": "Da, scoate {{name}}",
+    "removed": "{{name}} nu mai este în spațiu.",
+    "loadFailed": "Nu am putut încărca lista membrilor.",
+    "notAllowed": "Nu poți gestiona membrii acestui spațiu."
+  },
+  "log": {
+    "title": "Jurnalul moderării",
+    "intro": "Tot ce au făcut în acest spațiu cine l-a creat, cei care moderează și echipa noastră de moderare, de la cel mai nou. Doar cine a creat spațiul și echipa noastră de moderare îl pot citi.",
+    "empty": "Nu s-a întâmplat nimic încă.",
+    "loadFailed": "Nu am putut încărca jurnalul.",
+    "showMore": "Arată mai multe",
+    "notAllowed": "Doar cine a creat spațiul îi poate citi jurnalul moderării.",
+    "team": "Echipa de moderare",
+    "reason": "Motiv: „{{reason}}”",
+    "actions": {
+      "moderator_appointed": "{{actor}} a dat drept de moderare contului {{target}}: {{powers}}.",
+      "moderator_changed": "{{actor}} a schimbat ce poate face contul {{target}}: {{powers}}.",
+      "moderator_removed": "{{actor}} a scos din moderare contul {{target}}.",
+      "request_approved": "{{actor}} a primit în spațiu contul {{target}}.",
+      "request_declined": "{{actor}} a refuzat cererea de intrare a contului {{target}}.",
+      "request_age_changed": "{{actor}} a aprobat contul {{target}}, care nu mai este în grupa de vârstă a spațiului, așa că cererea a fost ștearsă.",
+      "member_removed": "{{actor}} a scos din spațiu contul {{target}}.",
+      "settings_changed": "{{actor}} a schimbat setările spațiului.",
+      "thread_made_sticky": "{{actor}} a fixat sus o discuție.",
+      "thread_sticky_removed": "{{actor}} nu mai ține fixată sus o discuție.",
+      "thread_locked": "{{actor}} a închis o discuție.",
+      "thread_unlocked": "{{actor}} a redeschis o discuție.",
+      "other": "{{actor}} a făcut o schimbare."
     }
   }
 }

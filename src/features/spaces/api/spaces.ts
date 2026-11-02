@@ -4,7 +4,8 @@
  * Who calls it: hooks/useSpaces.ts. What it calls next: space_list(), space_page(),
  * space_name_available(), create_space(), update_space(), join_space(), leave_space(),
  * space_join_requests() and decide_space_join_request() in
- * supabase/migrations/…_forums2_a_spaces.sql. The database applies the age rules (who may see,
+ * supabase/migrations/…_forums2_a_spaces.sql (the powers and "moderator" from
+ * …_forums2_b_space_moderators.sql, S1-E8-07; the moderators' own calls are in spaceModeration.ts). The database applies the age rules (who may see,
  * join and post) and never sends a user ID; this file only reads its answers.
  */
 import { personFrom, type ForumPerson } from '@/features/forums/api/forumThreads';
@@ -26,7 +27,17 @@ export type SpaceBanner = Enums<'space_banner'>;
 export const spaceBanners: SpaceBanner[] = ['plum', 'night', 'forest', 'gold'];
 
 /** The caller's place in a space. */
-export type SpaceMembership = 'owner' | 'member' | 'pending' | null;
+export type SpaceMembership = 'owner' | 'moderator' | 'member' | 'pending' | null;
+
+/**
+ * A job the owner hands a moderator (S1-E8-07 criterion 1): posts (pin and lock threads),
+ * members (requests, the member list, removing members) and settings. "mail" is kept for the
+ * moderators' mail, which comes later, and isn't offered yet.
+ */
+export type SpacePower = Enums<'space_power'>;
+
+/** The powers the owner can hand out today, in the order the screens list them. */
+export const spacePowers: SpacePower[] = ['posts', 'members', 'settings'];
 
 /** What the caller may do in a space (the database decides; the server checks again). */
 export interface SpaceViewer {
@@ -34,8 +45,14 @@ export interface SpaceViewer {
   canRead: boolean;
   canJoin: boolean;
   canPost: boolean;
-  /** The owner: settings and requests. */
+  /** The settings power: the owner, a moderator holding it, or our moderation team. */
   canManage: boolean;
+  /** Appoints moderators: the owner and our moderation team only. */
+  canAppoint: boolean;
+  /** Reads the space's log: the owner and our moderation team only (criterion 2). */
+  canReadLog: boolean;
+  /** Every power the caller holds; the owner holds them all. */
+  powers: SpacePower[];
 }
 
 /** A space as the screens show it. */
@@ -94,7 +111,13 @@ export type SpaceFailure =
   | 'age_unknown'
   | 'age'
   | 'not_owner'
+  | 'not_allowed'
   | 'owner_leaving'
+  | 'member_missing'
+  | 'member_owner'
+  | 'member_age'
+  | 'request_missing'
+  | 'reason_too_long'
   | 'missing'
   | 'too_many'
   | 'invalid'
@@ -128,6 +151,18 @@ const privilegeHints: Record<string, SpaceFailure> = {
   'space:age_unknown': 'age_unknown',
   'space:age': 'age',
   'space:not_owner': 'not_owner',
+  'space:not_allowed': 'not_allowed',
+};
+
+/** The 23514 and P0002 hints that aren't about a form field, and what they mean. */
+const otherHints: Record<string, SpaceFailure> = {
+  'space:owner': 'owner_leaving',
+  'space:missing': 'missing',
+  'member:missing': 'member_missing',
+  'member:owner': 'member_owner',
+  'member:age': 'member_age',
+  'request:missing': 'request_missing',
+  'reason:too_long': 'reason_too_long',
 };
 
 /**
@@ -149,23 +184,24 @@ export function fieldProblemFrom(hint: string): SpaceFieldProblem | undefined {
  * Turns a database error into a SpaceError.
  *
  * @param error - Postgres's code and hint
- * @returns the failure: by hint for 42501 and 23514, too_many for 54000, missing for P0002
+ * @returns the failure: by hint for 42501, 23514 and P0002, too_many for 54000
  */
 export function spaceErrorFrom(error: { code?: string; hint?: string | null }): SpaceError {
   const hint = error.hint ?? '';
+  // Step 1: not allowed (signed out, not active, not the owner, no such power).
   if (error.code === '42501') return new SpaceError(privilegeHints[hint] ?? 'not_active');
+  // Step 2: the spam limit, with how long to wait.
   if (error.code === '54000') {
     const minutes = Number(hint.replace('wait_minutes:', ''));
     return new SpaceError('too_many', { waitMinutes: minutes > 0 ? minutes : null });
   }
+  // Step 3: a refusal named by its hint ("member:age"), or a space that isn't there.
+  const named = otherHints[hint];
+  if (named !== undefined) return new SpaceError(named);
   if (error.code === 'P0002') return new SpaceError('missing');
-  if (error.code === '23514') {
-    if (hint === 'space:owner') return new SpaceError('owner_leaving');
-    const field = fieldProblemFrom(hint);
-    return field === undefined
-      ? new SpaceError('unreachable')
-      : new SpaceError('invalid', { field });
-  }
+  // Step 4: a form field's problem ("name:taken").
+  const field = error.code === '23514' ? fieldProblemFrom(hint) : undefined;
+  if (field !== undefined) return new SpaceError('invalid', { field });
   return new SpaceError('unreachable');
 }
 
@@ -192,7 +228,7 @@ function objectOf(value: Json | undefined): JsonObject {
  */
 function viewerFrom(value: Json | undefined): SpaceViewer {
   const viewer = objectOf(value);
-  const memberships: SpaceMembership[] = ['owner', 'member', 'pending'];
+  const memberships: SpaceMembership[] = ['owner', 'moderator', 'member', 'pending'];
   const membership = memberships.find((known) => known === viewer['membership']) ?? null;
   return {
     membership,
@@ -200,7 +236,22 @@ function viewerFrom(value: Json | undefined): SpaceViewer {
     canJoin: viewer['can_join'] === true,
     canPost: viewer['can_post'] === true,
     canManage: viewer['can_manage'] === true,
+    canAppoint: viewer['can_appoint'] === true,
+    canReadLog: viewer['can_read_log'] === true,
+    powers: powersFrom(viewer['powers']),
   };
+}
+
+/**
+ * Reads a list of powers, keeping only the ones the screens know.
+ *
+ * @param value - a JSON array of power names
+ * @returns the powers, in the database's order
+ */
+export function powersFrom(value: Json | undefined): SpacePower[] {
+  if (!Array.isArray(value)) return [];
+  const known: SpacePower[] = ['posts', 'members', 'settings', 'mail'];
+  return known.filter((power) => value.includes(power));
 }
 
 /**
@@ -386,7 +437,7 @@ export async function leaveSpace(client: AppSupabaseClient, slug: string): Promi
 }
 
 /**
- * Reads the requests waiting for the owner, oldest first.
+ * Reads the requests waiting for the owner or a moderator with the members power, oldest first.
  *
  * @param client - the Supabase client
  * @param slug - the space's address
@@ -410,7 +461,7 @@ export async function fetchJoinRequests(
 export type JoinRequestOutcome = 'approved' | 'declined' | 'age_changed';
 
 /**
- * The owner lets someone in, or says no.
+ * The owner (or a moderator with the members power) lets someone in, or says no.
  *
  * @param client - the Supabase client
  * @param decision - the space, the person's username and the answer

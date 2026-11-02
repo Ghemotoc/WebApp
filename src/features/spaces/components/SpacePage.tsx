@@ -8,7 +8,8 @@
  * threads with "New thread" (the forums' ThreadList on the space's own forum), and beside them
  * the owner's requests (owner only), the rules and who runs it. Where only members may read, a
  * reader outside it sees a note instead of the threads (criterion 5).
- * Not yet, as noted in docs/board-fixes.md: space moderators (part b), Share and the ad slot.
+ * Moderators (part b, S1-E8-07) show in "Who runs it", and the requests card shows for anyone
+ * holding the members power. Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
  * What it calls: useSpace → space_page().
  */
 import { useParams } from 'react-router';
