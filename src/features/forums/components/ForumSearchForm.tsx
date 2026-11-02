@@ -3,10 +3,12 @@
  * 5.1's search field).
  *
  * On the forum index it is the board's field and "Search". On the results page it also shows the
- * two filters the story asks for: a forum (its subforums included) and an author's username.
+ * two filters the story asks for: a forum (its subforums included) or a space (FORUMS-2c), and an
+ * author's username.
  * Submitting opens /forums/search with the search in the address, so the back button and a
  * shared link both work.
- * Who uses it: ForumsPage and ForumSearchPage. What it calls: the router.
+ * Who uses it: ForumsPage and ForumSearchPage. What it calls: the router, useForumIndex and
+ * useSpaceList.
  */
 import { useId, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
@@ -15,14 +17,42 @@ import { Button } from '@/components/ui/Button';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
+import { useSpaceList } from '@/features/spaces/hooks/useSpaces';
 
 import type { ForumSearchQuery } from '../api/forumSearch';
 import { useForumIndex } from '../hooks/useForumIndex';
-import { forumFilterOptions, forumSearchAddress } from '../lib/forumSearchAddress';
+import {
+  forumFilterOptions,
+  forumSearchAddress,
+  spaceFilterOptions,
+} from '../lib/forumSearchAddress';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 /** An empty search, for the forum index. */
 const emptySearch: ForumSearchQuery = { term: '', forumSlug: null, authorHandle: null };
+
+/** How many spaces the filter lists: the busiest first, as the spaces list orders them. */
+const listedSpaces = 50;
+
+/**
+ * The forum filter's choices: every forum, then the spaces the reader may see (FORUMS-2c).
+ *
+ * @param chosenSlug - the forum the search is filtered by now, or null
+ * @returns the options
+ */
+function useForumFilterOptions(chosenSlug: string | null) {
+  const { t } = useForumsTranslation();
+  const { entries } = useForumIndex();
+  const { spaces } = useSpaceList(listedSpaces);
+  const spaceChoices = (spaces ?? []).map((space) => ({
+    forumSlug: space.forumSlug,
+    name: space.name,
+  }));
+  return [
+    ...forumFilterOptions(entries ?? [], t('search.allForums')),
+    ...spaceFilterOptions(spaceChoices, (name) => t('search.spaceOption', { name }), chosenSlug),
+  ];
+}
 
 /**
  * The forum and author filters.
@@ -40,14 +70,14 @@ function SearchFilters({
 }) {
   const { t } = useForumsTranslation();
   const id = useId();
-  const { entries } = useForumIndex();
+  const options = useForumFilterOptions(search.forumSlug);
   return (
     <div className="flex flex-wrap items-end gap-4">
       <Select
         id={`${id}-forum`}
         label={t('search.forum')}
         isLabelVisible
-        options={forumFilterOptions(entries ?? [], t('search.allForums'))}
+        options={options}
         value={search.forumSlug ?? ''}
         onChange={(value) => onChange({ ...search, forumSlug: value === '' ? null : value })}
       />

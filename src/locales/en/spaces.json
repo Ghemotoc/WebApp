@@ -246,7 +246,24 @@
       "thread_sticky_removed": "{{actor}} took a thread off the top.",
       "thread_locked": "{{actor}} locked a thread.",
       "thread_unlocked": "{{actor}} unlocked a thread.",
-      "other": "{{actor}} made a change."
+      "other": "{{actor}} made a change.",
+      "banner_picture_changed": "{{actor}} changed the banner picture."
     }
+  },
+  "bannerPicture": {
+    "eyebrow": "Banner",
+    "title": "Banner picture",
+    "intro": "An optional picture across the top of your space. Until you add one, the space uses its colour.",
+    "none": "Your space uses its colour.",
+    "previewAlt": "Your banner picture",
+    "checking": "We’re checking your picture. Until it passes, everyone sees your space’s colour.",
+    "waiting_for_person": "A person on our team will look at your picture first. Until then, everyone sees your space’s colour.",
+    "visible": "Your banner picture is up.",
+    "removed": "Our moderation team took this picture down. Your space shows its colour.",
+    "upload": "Choose a banner picture",
+    "hint": "JPEG, PNG or WebP, up to 5 MB. A wide picture works best.",
+    "remove": "Use the colour instead",
+    "removeFailed": "We couldn’t take the picture off. Please try again.",
+    "removedNotice": "Your space uses its colour again."
   }
 }

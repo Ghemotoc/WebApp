@@ -246,7 +246,24 @@
       "thread_sticky_removed": "{{actor}} nu mai ține fixată sus o discuție.",
       "thread_locked": "{{actor}} a închis o discuție.",
       "thread_unlocked": "{{actor}} a redeschis o discuție.",
-      "other": "{{actor}} a făcut o schimbare."
+      "other": "{{actor}} a făcut o schimbare.",
+      "banner_picture_changed": "{{actor}} a schimbat imaginea de banner."
     }
+  },
+  "bannerPicture": {
+    "eyebrow": "Banner",
+    "title": "Imaginea de banner",
+    "intro": "O imagine opțională în partea de sus a spațiului. Până adaugi una, spațiul își folosește culoarea.",
+    "none": "Spațiul își folosește culoarea.",
+    "previewAlt": "Imaginea ta de banner",
+    "checking": "Îți verificăm imaginea. Până trece verificarea, toată lumea vede culoarea spațiului.",
+    "waiting_for_person": "Cineva din echipa noastră se va uita mai întâi la imagine. Până atunci, toată lumea vede culoarea spațiului.",
+    "visible": "Imaginea de banner este afișată.",
+    "removed": "Echipa de moderare a scos această imagine. Spațiul își arată culoarea.",
+    "upload": "Alege o imagine de banner",
+    "hint": "JPEG, PNG sau WebP, până la 5 MB. O imagine lată arată cel mai bine.",
+    "remove": "Folosește culoarea",
+    "removeFailed": "Nu am putut scoate imaginea. Încearcă din nou.",
+    "removedNotice": "Spațiul își folosește din nou culoarea."
   }
 }

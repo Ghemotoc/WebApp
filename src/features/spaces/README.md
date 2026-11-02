@@ -3,7 +3,8 @@
 Spaces people create and run: a list of spaces, one space's page with its threads, rules and
 owner, creating a space and changing its settings, joining and leaving, and the owner's
 requests to approve (bundle FORUMS-2, part a; story S1-E8-06; design/boards/Space.dc.html), and
-the moderators who help run a space, its members page and its moderation log (part b; S1-E8-07).
+the moderators who help run a space, its members page and its moderation log (part b; S1-E8-07),
+and banner pictures and the join notifications (part c).
 Each space owns one hidden forum, so its threads reuse the forums feature (`ThreadList`,
 `NewThreadForm`, `ThreadPage`).
 
@@ -30,3 +31,7 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   `SpaceAddModerator`, `SpacePowerChoices`); `SpaceToolLinks` on the header;
   `SpaceMembersPage.tsx` (`/spaces/:spaceSlug/members`, with `SpaceMemberRow`) and
   `SpaceLogPage.tsx` (`/spaces/:spaceSlug/log`, with `SpaceLogLine`).
+- `api/spaceBanner.ts` and `hooks/useSpaceBanner.ts` (part c): choosing an uploaded banner or the
+  colour (`set_space_banner_picture()`) and the picture's signed address; `SpaceBannerBand` on the
+  header and `SpaceBannerPictureCard` on the settings page. The join notifications are written by
+  a database trigger and worded in the notifications feature.

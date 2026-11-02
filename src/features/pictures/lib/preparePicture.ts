@@ -22,6 +22,8 @@ export const longestSideFor = {
   chapterPicture: 1600,
   // A character's portrait or mood picture in Story Atlas (S1-E17-11).
   atlasImage: 1600,
+  // A space's banner band, 168 px tall across a 1,440 px page on a sharp screen (FORUMS-2c).
+  spaceBanner: 2400,
 } as const;
 
 /** The quality for WebP and JPEG: small files that still look sharp. */

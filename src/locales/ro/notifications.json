@@ -59,7 +59,11 @@
     "dataExportReady": "copia datelor tale e gata de descărcat.",
     "storiesExportReady": "poveștile tale sunt gata de descărcat ca fișiere Word.",
     "readingReminder": "câteva minute de citit azi?",
-    "storyFinished": "a terminat {{story}} și îți mulțumește că ai scris-o."
+    "storyFinished": "a terminat {{story}} și îți mulțumește că ai scris-o.",
+    "spaceJoinRequest_one": "a cerut să intre în {{space}}.",
+    "spaceJoinRequest_few": "au cerut să intre în {{space}}.",
+    "spaceJoinRequest_other": "au cerut să intre în {{space}}.",
+    "spaceJoinApproved": "ai intrat în {{space}}. Acum poți posta acolo."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -109,7 +113,9 @@
     "downloadMyData": "Descarcă-ți datele",
     "downloadMyStories": "Descarcă-ți poveștile",
     "openLibrary": "Deschide biblioteca",
-    "openStory": "Deschide povestea"
+    "openStory": "Deschide povestea",
+    "seeRequests": "Vezi cererile",
+    "openSpace": "Deschide spațiul"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

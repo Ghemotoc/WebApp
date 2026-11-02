@@ -1,15 +1,15 @@
 /**
- * Uploaded pictures: uploading a cover, a profile picture, a picture in a chapter or a Story Atlas
- * picture, asking for its check, and reading a picture's state for the screens (stories S1-E10-05,
- * S1-E3-09 and S1-E17-11; CLAUDE.md
+ * Uploaded pictures: uploading a cover, a profile picture, a picture in a chapter, a Story Atlas
+ * picture or a space's banner, asking for its check, and reading a picture's state for the screens
+ * (stories S1-E10-05, S1-E3-09, S1-E17-11 and S1-E8-06; CLAUDE.md
  * rule 19: every uploaded picture is checked before anyone else sees it). Every file is prepared
  * first (lib/preparePicture.ts: location data removed, resized).
  *
  * Who calls it: the hooks in ../hooks (covers on cards, the story page and the teaser; the profile
  * picture; the upload fields in Story settings and Settings › Profile).
- * What it calls next: Supabase Storage (the private `covers`, `avatars`, `chapter-images` and
- * `atlas-images` buckets), the database functions register_picture(), register_chapter_picture(),
- * register_atlas_picture(),
+ * What it calls next: Supabase Storage (the private `covers`, `avatars`, `chapter-images`,
+ * `atlas-images` and `space-banners` buckets), the database functions register_picture(),
+ * register_chapter_picture(), register_atlas_picture(), register_space_banner(),
  * story_cover_picture(), profile_avatar_picture(), my_pending_pictures() and my_picture_states()
  * (…_s1_e10_05_picture_check.sql, …_s1_e3_09_chapter_pictures.sql), and POST /api/picture-check
  * (server/picture-check.ts), which runs the checks with the person's own sign-in.
@@ -37,9 +37,10 @@ export interface PictureView {
   url: string | null;
 }
 
-/** The buckets people upload to: covers, profile pictures, chapter pictures (S1-E3-09) and Story
- * Atlas pictures (S1-E17-11). */
-export type PictureBucket = 'covers' | 'avatars' | 'chapter-images' | 'atlas-images';
+/** The buckets people upload to: covers, profile pictures, chapter pictures (S1-E3-09), Story
+ * Atlas pictures (S1-E17-11) and space banners (FORUMS-2c). */
+export type PictureBucket =
+  'covers' | 'avatars' | 'chapter-images' | 'atlas-images' | 'space-banners';
 
 /** The picture types the buckets accept, and the largest file each takes (the bucket limits). */
 export const pictureTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
@@ -48,6 +49,7 @@ export const largestPictureBytes: Record<PictureBucket, number> = {
   avatars: 2 * 1024 * 1024,
   'chapter-images': 5 * 1024 * 1024,
   'atlas-images': 5 * 1024 * 1024,
+  'space-banners': 5 * 1024 * 1024,
 };
 
 /** Why an upload didn't work. */
@@ -67,15 +69,20 @@ export class PictureUploadError extends Error {
 /** Signed addresses last an hour; the queries refresh well before that. */
 const signedAddressSeconds = 60 * 60;
 
+/** A picture as the database describes it: its state and, when the caller may read it, its file. */
+export interface StoredPicture {
+  state: PictureState;
+  bucket: string | null;
+  path: string | null;
+}
+
 /**
  * Reads picture_state_json() from the database.
  *
  * @param json - {state, bucket, path} or null
  * @returns the state and where the file is, or null when there is no picture
  */
-export function pictureFromJson(
-  json: Json | null,
-): { state: PictureState; bucket: string | null; path: string | null } | null {
+export function pictureFromJson(json: Json | null): StoredPicture | null {
   if (json === null || typeof json !== 'object' || Array.isArray(json)) return null;
   const states: PictureState[] = ['visible', 'checking', 'waiting_for_person', 'removed'];
   const state = states.find((candidate) => candidate === json.state) ?? 'checking';
@@ -102,16 +109,29 @@ async function signedAddress(
 }
 
 /**
+ * Turns a picture the database described into what a screen draws, with a signed address.
+ *
+ * @param client - the shared Supabase client
+ * @param picture - the picture (from pictureFromJson()), or null
+ * @returns the view, or null when there is no picture
+ */
+export async function pictureViewOf(
+  client: AppSupabaseClient,
+  picture: StoredPicture | null,
+): Promise<PictureView | null> {
+  if (picture === null) return null;
+  // A removed picture is never drawn, even for its uploader.
+  if (picture.state === 'removed') return { state: 'removed', url: null };
+  return { state: picture.state, url: await signedAddress(client, picture.bucket, picture.path) };
+}
+
+/**
  * Turns the database's answer into what a screen draws.
  *
  * @returns the view, or null when there is no picture
  */
 async function viewFrom(client: AppSupabaseClient, json: Json | null): Promise<PictureView | null> {
-  const picture = pictureFromJson(json);
-  if (picture === null) return null;
-  // A removed picture is never drawn, even for its uploader.
-  if (picture.state === 'removed') return { state: 'removed', url: null };
-  return { state: picture.state, url: await signedAddress(client, picture.bucket, picture.path) };
+  return pictureViewOf(client, pictureFromJson(json));
 }
 
 /**
@@ -341,6 +361,34 @@ export async function uploadAtlasPicture(
   const registered = await client.rpc('register_atlas_picture', { target_path: path });
   if (registered.error !== null) throw registrationFailure(registered.error);
   // Step 3: the check, as for every other picture (CLAUDE.md rule 19).
+  const status = await requestPictureCheck(client, registered.data, upload.file.name);
+  return { pictureId: registered.data, status };
+}
+
+/**
+ * Uploads a banner picture for a space, registers it and asks for its check (FORUMS-2c;
+ * S1-E8-06). The space shows it only once the check passed (CLAUDE.md rule 19).
+ *
+ * @param client - the shared Supabase client
+ * @param upload - the space's ID (the folder in `space-banners`, never a person's ID) and the file
+ * @returns the picture's ID (for set_space_banner_picture()) and its status after the check
+ * @throws PictureUploadError as uploadPicture()
+ */
+export async function uploadSpaceBanner(
+  client: AppSupabaseClient,
+  upload: { spaceId: string; file: File },
+): Promise<{ pictureId: string; status: string }> {
+  // Step 1: the prepared file, in the space's folder.
+  const path = await storePicture(client, {
+    bucket: 'space-banners',
+    folder: upload.spaceId,
+    file: upload.file,
+    longestSide: longestSideFor.spaceBanner,
+  });
+  // Step 2: registered as pending; the hourly limit is counted here.
+  const registered = await client.rpc('register_space_banner', { target_path: path });
+  if (registered.error !== null) throw registrationFailure(registered.error);
+  // Step 3: the check, as for every other picture.
   const status = await requestPictureCheck(client, registered.data, upload.file.name);
   return { pictureId: registered.data, status };
 }
