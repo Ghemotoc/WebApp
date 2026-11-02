@@ -166,11 +166,8 @@ test.describe('forum signatures (FORUMS-2d, S1-E8-08)', () => {
    *
    * @param browser - the test's browser
    * @param address - the page
-   * @param checksDoodles - false for the profile: its avatar's open-book doodle sits on the
-   *   picture's top edge over the initials, as board 6.1 draws it, which writer-profile.spec.ts
-   *   doesn't check either (a follow-up in the pull request)
    */
-  async function checkEveryView(browser: Browser, address: string, checksDoodles: boolean) {
+  async function checkEveryView(browser: Browser, address: string) {
     const context = await browser.newContext();
     await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
     const page = await context.newPage();
@@ -179,7 +176,7 @@ test.describe('forum signatures (FORUMS-2d, S1-E8-08)', () => {
         `update public.profiles set locale = '${view.language}' where handle = 'adult_writer';`,
       );
       await checkScreen(page, view);
-      if (checksDoodles) await expectNoDoodleOverlap(page);
+      await expectNoDoodleOverlap(page);
     }
     await context.close();
   }
@@ -190,12 +187,12 @@ test.describe('forum signatures (FORUMS-2d, S1-E8-08)', () => {
     // 12 views in one signed-in browser take longer than one test's usual 30 s.
     test.setTimeout(240_000);
     runSql(`update public.feature_flags set is_enabled = true where key = 'picture_uploads';`);
-    await checkEveryView(browser, '/settings', true);
+    await checkEveryView(browser, '/settings');
   });
 
   test('axe: the profile with its signature card, every view', async ({ browser }) => {
     test.setTimeout(240_000);
     runSql(`update public.feature_flags set is_enabled = false where key = 'picture_uploads';`);
-    await checkEveryView(browser, '/u/adult_writer', false);
+    await checkEveryView(browser, '/u/adult_writer');
   });
 });

@@ -8,9 +8,10 @@
  * the numbers never shift. Each card is a real <article> named "Post 3 by poppyverse", with an id
  * (post-3) a permalink scrolls to. Part c draws a reply's quotes above its words, each linking
  * back to the quoted post (S1-E8-03). Under the words sits the author's forum signature, only from
- * 768 px up: phones hide it (S1-E8-08 criterion 2; Q25).
+ * 768 px up: phones hide it (S1-E8-08 criterion 2; Q25). Beside the name sits the author's rank
+ * (RankChip, S1-E8-09).
  * Who uses it: ThreadPage. What it calls: ForumQuoteBlock, ForumPostText, PostActions,
- * PostEditForm, PostHistory, SignatureBody.
+ * PostEditForm, PostHistory, RankChip, SignatureBody.
  */
 import { useId, useState } from 'react';
 import { Link } from 'react-router';
@@ -30,6 +31,7 @@ import { ForumQuoteBlock } from './ForumQuoteBlock';
 import { PostActions } from './PostActions';
 import { PostEditForm } from './PostEditForm';
 import { PostHistory } from './PostHistory';
+import { RankChip } from './RankChip';
 import { SignatureBody } from './SignatureBody';
 
 /** What one post needs. */
@@ -72,6 +74,8 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
               {name}
             </Link>
           )}
+          {/* The author's writer rank beside the name (S1-E8-09 criterion 5). */}
+          {post.authorRank !== null && <RankChip rank={post.authorRank} isCompact />}
           {post.author?.isStaff === true && <InfoPill tone="sky">{t('staff')}</InfoPill>}
           {post.isStarter && <InfoPill tone="plum">{t('person.starter')}</InfoPill>}
         </div>

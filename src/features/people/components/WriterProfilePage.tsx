@@ -6,16 +6,16 @@
  * followers list lead here.
  * What it shows: ProfileHeader (avatar, name, handle, join month, bio, numbers, Follow), then
  * ProfileStories and, when its owner lets the reader see it, ProfileLibrary (S1-E13-01) on the
- * left and, on the right, the forum signature (ProfileSignatureCard, S1-E8-08) and
- * ProfileSafetyCard (Report and Block); one column under 1024 px. The board's ad slot, forum
- * posts, rank and certificates come with their own stories (S1-E12-01, S1-E8, S1-E8-09,
- * S1-E2-11), so they aren't drawn yet.
+ * left and, on the right, the rank card (RankPanel, S1-E8-09), the forum signature
+ * (ProfileSignatureCard, S1-E8-08) and ProfileSafetyCard (Report and Block); one column under
+ * 1024 px. The board's ad slot, forum posts and certificates come with their own stories
+ * (S1-E12-01, S1-E8, S1-E2-11), so they aren't drawn yet.
  * No profile banners (Q50).
  * When the profile can't be shown (unknown username, removed, or this person blocks the
  * reader), the page says "This profile isn't available" and nothing more, so a block can't be
  * told from a missing profile.
  * What it calls: useWriterProfile → get_writer_profile() (ADR 0004: never the tables) and
- * useProfileSignature → profile_signature().
+ * useProfileSignature → profile_signature(), useProfileRank → profile_rank().
  */
 import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link, useParams } from 'react-router';
@@ -24,7 +24,9 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { ProfileSignatureCard } from '@/features/forums/components/ProfileSignatureCard';
+import { RankPanel } from '@/features/forums/components/RankPanel';
 import { useProfileSignature } from '@/features/forums/hooks/useForumSignatures';
+import { useProfileRank } from '@/features/forums/hooks/useWriterRank';
 
 import type { WriterProfile } from '../api/writerProfile';
 import { useWriterProfile } from '../hooks/useWriterProfile';
@@ -55,6 +57,24 @@ function ProfileUnavailable() {
 }
 
 /**
+ * Which forum cards the side column draws: the rank card (S1-E8-09) and the signature (S1-E8-08),
+ * each only when there is one and the reader isn't blocked by the person.
+ *
+ * @param profile - the profile on the page
+ * @returns whether to show each card
+ */
+function useForumCards(profile: WriterProfile) {
+  // The same reads the cards make (shared through the query cache), so the column is drawn only
+  // when it has something in it.
+  const hasSignature = (useProfileSignature(profile.handle).data ?? null) !== null;
+  const hasRank = (useProfileRank(profile.handle).data ?? null) !== null;
+  return {
+    showsSignature: hasSignature && !profile.iBlocked,
+    showsRank: hasRank && !profile.iBlocked,
+  };
+}
+
+/**
  * The right-hand column: the forum signature (S1-E8-08) and the safety card.
  *
  * @param props.profile - the profile
@@ -68,14 +88,13 @@ function ProfileSideColumn({
   profile: WriterProfile;
   isSignedIn: boolean;
 }) {
-  // The same read the card makes (shared through the query cache), so the column is drawn only
-  // when it has something in it.
-  const hasSignature = (useProfileSignature(profile.handle).data ?? null) !== null;
+  const { showsRank, showsSignature } = useForumCards(profile);
   const showsSafetyCard = !profile.isMe && isSignedIn;
-  const showsSignature = hasSignature && !profile.iBlocked;
-  if (!showsSafetyCard && !showsSignature) return null;
+  if (!showsSafetyCard && !showsSignature && !showsRank) return null;
   return (
     <div className="flex w-full flex-col gap-5 lg:max-w-[340px] lg:flex-[1_1_300px]">
+      {/* The rank card comes first, as on the board (S1-E8-09). */}
+      {showsRank && <RankPanel handle={profile.handle} name={profile.displayName} />}
       {showsSignature && (
         <ProfileSignatureCard handle={profile.handle} name={profile.displayName} />
       )}

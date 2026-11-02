@@ -285,5 +285,33 @@
       "sent": "Request sent. It is removed in 24 hours if nothing changes.",
       "reasonMissing": "Write why it needs changing."
     }
+  },
+  "rank": {
+    "chip": "Rank: {{rank}}",
+    "chipTitle": "Rank from published chapters and words",
+    "prefix": "Rank:",
+    "names": {
+      "new_writer": "New writer",
+      "writer": "Writer",
+      "storyteller": "Storyteller",
+      "novelist": "Novelist"
+    },
+    "rules": {
+      "new_writer": "first chapter",
+      "writer": "5 chapters",
+      "storyteller": "15 chapters or 30,000 words",
+      "novelist": "100,000 words"
+    },
+    "eyebrow": "Rank",
+    "explainer": "Ranks come from published chapters and words. Forum posts don’t count. Each rank has its own sticker on the profile picture.",
+    "ladderLabel": "The four ranks",
+    "current": "current rank",
+    "reached": "reached",
+    "notYet": "not reached yet",
+    "progressChapters": "{{have}} of {{need}} chapters to {{rank}}",
+    "progressWords": "{{have}} of {{need}} words to {{rank}}",
+    "progressLabel": "Progress to {{rank}}, {{percent}} per cent",
+    "top": "{{name}} has reached the top rank.",
+    "loadFailed": "We couldn’t load the rank. Try again later."
   }
 }

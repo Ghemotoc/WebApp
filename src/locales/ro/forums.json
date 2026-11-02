@@ -285,5 +285,33 @@
       "sent": "Cererea a fost trimisă. Dacă nu se schimbă nimic, e ștearsă în 24 de ore.",
       "reasonMissing": "Scrie de ce trebuie schimbată."
     }
+  },
+  "rank": {
+    "chip": "Rang: {{rank}}",
+    "chipTitle": "Rang după capitolele și cuvintele publicate",
+    "prefix": "Rang:",
+    "names": {
+      "new_writer": "Debut",
+      "writer": "Condei",
+      "storyteller": "Condei de povești",
+      "novelist": "Condei de roman"
+    },
+    "rules": {
+      "new_writer": "primul capitol",
+      "writer": "5 capitole",
+      "storyteller": "15 capitole sau 30.000 de cuvinte",
+      "novelist": "100.000 de cuvinte"
+    },
+    "eyebrow": "Rang",
+    "explainer": "Rangurile vin din capitolele și cuvintele publicate. Postările din forumuri nu contează. Fiecare rang are propriul autocolant pe poza de profil.",
+    "ladderLabel": "Cele patru ranguri",
+    "current": "rangul de acum",
+    "reached": "atins",
+    "notYet": "neatins încă",
+    "progressChapters": "{{have}} din {{need}} capitole până la {{rank}}",
+    "progressWords": "{{have}} din {{need}} de cuvinte până la {{rank}}",
+    "progressLabel": "Progres spre {{rank}}: {{percent}} la sută",
+    "top": "{{name}} a ajuns la cel mai înalt rang.",
+    "loadFailed": "Nu am putut încărca rangul. Încearcă din nou mai târziu."
   }
 }

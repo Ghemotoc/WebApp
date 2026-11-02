@@ -1,6 +1,7 @@
 /**
  * The doodle files the app has copied from design/assets/ so far (story S1-E3-01; the seasonal
- * ones, from bee to sunny face, came with S1-E11-11).
+ * ones, from bee to sunny face, came with S1-E11-11; the four rank stickers and the trophy with
+ * S1-E8-09).
  *
  * Who uses it: Doodle (src/components/ui/Doodle.tsx). Add a line here, and the file to
  * src/assets/doodles/ with a readable name, when a screen needs another doodle. Kept apart from
@@ -33,11 +34,16 @@ import owlReadingGlasses from '@/assets/doodles/owl-reading-glasses.svg';
 import padlock from '@/assets/doodles/padlock.svg';
 import pencilCup from '@/assets/doodles/pencil-cup.svg';
 import rainCloud from '@/assets/doodles/rain-cloud.svg';
+import rankCrown from '@/assets/doodles/rank-crown.svg';
+import rankOpenBookSparkles from '@/assets/doodles/rank-open-book-sparkles.svg';
+import rankPencil from '@/assets/doodles/rank-pencil.svg';
+import rankQuillAndInk from '@/assets/doodles/rank-quill-and-ink.svg';
 import rainbow from '@/assets/doodles/rainbow.svg';
 import rocket from '@/assets/doodles/rocket.svg';
 import sleepingCat from '@/assets/doodles/sleeping-cat.svg';
 import sunnyFace from '@/assets/doodles/sunny-face.svg';
 import toteBagOfBooks from '@/assets/doodles/tote-bag-of-books.svg';
+import trophy from '@/assets/doodles/trophy.svg';
 import typewriter from '@/assets/doodles/typewriter.svg';
 
 /** Each doodle's name and the file it comes from. */
@@ -69,11 +75,16 @@ export const doodleSources = {
   padlock,
   'pencil-cup': pencilCup,
   'rain-cloud': rainCloud,
+  'rank-crown': rankCrown,
+  'rank-open-book-sparkles': rankOpenBookSparkles,
+  'rank-pencil': rankPencil,
+  'rank-quill-and-ink': rankQuillAndInk,
   rainbow,
   rocket,
   'sleeping-cat': sleepingCat,
   'sunny-face': sunnyFace,
   'tote-bag-of-books': toteBagOfBooks,
+  trophy,
   typewriter,
 } as const;
 
