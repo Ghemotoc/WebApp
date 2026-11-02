@@ -1,7 +1,8 @@
 /**
  * What a "story_changed_by_staff" notification says (bundle ADMIN-2, part b1; story S1-E11-08
  * criterion 4): staff changed something about the writer's story that restricts nothing, such as
- * a corrected category or tag, comments switched, or the story or a chapter shown again. The row
+ * a corrected category or tag, comments switched, the story or a chapter shown again, or a removed
+ * passage put back by Restore (bundle ADMIN-2, part b2). The row
  * says what changed and quotes why; it never names the staff member. It leads to the story's
  * settings, where the writer can change it back or write to the moderators.
  *
@@ -40,8 +41,12 @@ function changedFieldsList(t: TFunction, fields: string[]): string {
 function whatChanged(t: TFunction, notification: AppNotification): string {
   const story = notification.story?.title ?? t('staffChangeFields.yourStory');
   const change = notification.staffChange;
+  const chapterNumber = notification.chapter?.position ?? 0;
+  if (change?.fields.includes('passage') === true) {
+    return t('what.staffPutBackPassage', { number: chapterNumber, story });
+  }
   if (change?.visibility === 'shown' && notification.chapter !== null) {
-    return t('what.staffShowedChapter', { number: notification.chapter.position, story });
+    return t('what.staffShowedChapter', { number: chapterNumber, story });
   }
   if (change?.visibility === 'shown') return t('what.staffShowedStory', { story });
   const fields = changedFieldsList(t, change?.fields ?? []);

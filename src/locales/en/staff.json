@@ -995,7 +995,7 @@
       "words_few": "{{count}} words published",
       "words_other": "{{count}} words published",
       "noChapters": "This story has no chapters yet.",
-      "noWordsNote": "Staff never see a chapter’s words here. A draft’s text opens only from a moderation case or a data request, and that is logged.",
+      "noWordsNote": "Staff never see a draft’s words here. Owners, admins and moderators can open a published chapter’s words to remove an unlawful passage, but nobody on the staff can type in them.",
       "writerAge": "Writer’s age group",
       "adult": "18 or over"
     },
@@ -1052,8 +1052,71 @@
         "nothing_changed": "Nothing changed: the story already has these settings.",
         "removed_by_case": "A moderation case removed this. Only that case or an appeal can bring it back.",
         "not_valid": "The story can’t be saved like this. A story about abuse or coercion needs the 16+ or 18+ rating and the writer’s content note, and a story can have at most 10 tags.",
-        "unreachable": "The change wasn’t saved. Check your connection and try again."
+        "unreachable": "The change wasn’t saved. Check your connection and try again.",
+        "text_changed": "Those words are no longer where they were: the writer has changed the chapter since. Open it again and select them afresh.",
+        "no_such_case": "There is no case with that reference that you can see. Check it, or leave the field empty.",
+        "cannot_restore": "These words are already back, so there is nothing to restore.",
+        "not_published": "This chapter has never been published, so it has no words to remove.",
+        "passage_too_long": "Select at most 20,000 characters at once.",
+        "no_such_version": "That version no longer exists."
       }
+    },
+    "history": {
+      "heading": "Version history",
+      "intro": "Every staff change to this story, newest first. Restore brings back what a change replaced, as a new version with its own reason, and tells the writer.",
+      "empty": "No staff changes yet.",
+      "meta": "{{date}} · {{who}}",
+      "unknownStaff": "a staff member",
+      "reason": "Reason: {{reason}}. {{text}}",
+      "restores": "Restores the change of {{date}}.",
+      "kinds": {
+        "settings": "Settings",
+        "visibility": "Who can find it",
+        "chapter_visibility": "Chapter {{number}}",
+        "passage": "Chapter {{number}}"
+      },
+      "change": "{{field}}: {{before}} → {{after}}",
+      "passageRemoved_one": "a passage of {{count}} character removed",
+      "passageRemoved_few": "a passage of {{count}} characters removed",
+      "passageRemoved_other": "a passage of {{count}} characters removed",
+      "passagePutBack": "the removed passage put back",
+      "yes": "yes",
+      "no": "no",
+      "noTags": "no tags",
+      "visibility": {
+        "shown": "shown",
+        "restricted": "restricted",
+        "hidden": "hidden",
+        "removed": "removed"
+      },
+      "restore": "Restore what this replaced",
+      "confirmRestore": "Restore",
+      "restoreExplain": "This puts back the values from before this change. The writer is told, with your reason.",
+      "showPassage": "Show the removed words",
+      "passageLabel": "The removed words (staff only)",
+      "passageCase": "Removed for case {{reference}}.",
+      "passageLogged": "Reading these words is in the audit log.",
+      "passageFailed": "The removed words couldn’t be shown. Your role or the case may not allow it."
+    },
+    "passage": {
+      "open": "Remove a passage from chapter {{number}}",
+      "heading": "Remove a passage from chapter {{number}}",
+      "loading": "Loading the chapter…",
+      "loadFailed": "The chapter couldn’t be loaded. Check your connection and try again.",
+      "textLabel": "Chapter {{number}}, read only",
+      "textHint": "You can’t type here: only the writer edits their words. Select the exact words to remove with the mouse, or with Shift and the arrow keys, then press “Use the selected words”.",
+      "useSelection": "Use the selected words",
+      "nothingSelected": "Select some words in the chapter first.",
+      "selected": "Selected words",
+      "selectedCount_one": "{{count}} character will be replaced by “{{marker}}”.",
+      "selectedCount_few": "{{count}} characters will be replaced by “{{marker}}”.",
+      "selectedCount_other": "{{count}} characters will be replaced by “{{marker}}”.",
+      "marker": "[Removed by the moderation team]",
+      "caseLabel": "Case reference (optional)",
+      "caseHint": "For example R-000123. Staff can then find the removed words from the case.",
+      "explain": "Use this only for illegal content or someone’s personal data. The rest of the chapter stays as it is, the original words are kept for staff and the writer gets a statement of reasons.",
+      "confirm": "Remove the passage",
+      "done": "Removed. The writer has been sent a statement of reasons."
     }
   }
 }

@@ -70,7 +70,8 @@
     "classArchived": "the class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: then the real names printed on them are deleted.",
     "staffChangedStory": "we changed {{fields}} of your story “{{story}}”.",
     "staffShowedStory": "your story “{{story}}” can be found again.",
-    "staffShowedChapter": "chapter {{number}} of “{{story}}” is shown again."
+    "staffShowedChapter": "chapter {{number}} of “{{story}}” is shown again.",
+    "staffPutBackPassage": "we put back the passage we removed from chapter {{number}} of “{{story}}”."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",

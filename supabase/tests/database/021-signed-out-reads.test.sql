@@ -149,6 +149,7 @@ select results_eq(
        ('rate_limit_events', 0::bigint),
        -- The counties are reference data for the onboarding drop-down (S1-E2-06).
        ('regions', 42::bigint),
+       ('removed_passages', 0::bigint),
        ('report_detail_requests', 0::bigint),
        ('report_reason_tiers', 0::bigint),
        ('reports', 0::bigint),

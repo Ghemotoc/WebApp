@@ -1956,3 +1956,11 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Tables: `story_revisions` (every staff change, before and after) and `story_restrictions` (restricted stories: still open from a link, left out of `listed_stories()`), both `kind: staff`.
 - The writer's side: `src/features/notifications/lib/staffChangeText.ts` says what changed and quotes why; never who on the staff.
 - Tests: `supabase/tests/database/239-staff-change-a-story.test.sql`, `e2e/staff-story-changes.spec.ts`.
+
+## A story's version history, Restore and removing a passage (S1-E11-08, part 08b; ADMIN-2b2)
+
+- Screen: the same `/staff/stories/:storyId`. `StaffStoryHistory` lists every staff change newest first (who, when, before and after, the reason); `ChapterPassageForm` under each published chapter opens its words in a read-only field.
+- Removing a passage: `PassageRemovalFields` → `lib/passageSelection.ts` (the selected words plus which copy of them) → `useChangeStaffStory` → `admin_remove_chapter_passage()` (migration `…_admin2_b2_history_and_passages.sql`) → `admin_passage_place()` finds that copy → `admin_swap_chapter_words()` puts the marker (setting `removed_passage_marker`, in the story's language) in the published words and the draft → `admin_record_story_change()` (a `passage` version with no words, the audit log, a statement of reasons) → the original goes into `removed_passages` (`kind: staff`).
+- Restore: `VersionRestoreForm` → `admin_restore_story_revision()`, which reuses the b1 functions with the version's "before" values (settings, story or chapter visibility) or `admin_put_back_passage()`, then sets `story_revisions.restores_revision_id`.
+- Reading a removed passage: `RemovedPassageReveal` → `admin_removed_passage()`, which logs the read; a safeguarding case's passage needs the safeguarding permission.
+- Tests: `supabase/tests/database/240-story-history-and-passages.test.sql`, `src/features/staff/lib/storyVersionText.test.ts`, `e2e/staff-story-history.spec.ts`.

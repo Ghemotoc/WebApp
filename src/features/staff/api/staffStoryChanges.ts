@@ -5,11 +5,15 @@
  * Staff may show, restrict or hide a story, hide one chapter or show it again, and change the
  * settings and details (rating, finished or ongoing, comments, category, language, content labels
  * and tags). They never edit the writer's words (decided 16 Oct 2026, late evening, Q14), so
- * nothing here sends a title, a blurb, a content note or a chapter's text.
+ * nothing here sends a title, a blurb or a content note. The one cut they may make is removing an
+ * exact unlawful passage, which the marker "[Removed by the moderation team]" replaces (part b2);
+ * Restore brings back what one earlier change replaced (part b2).
  *
  * Who calls it: hooks/useChangeStaffStory.ts.
  * What it calls next: admin_change_story_settings(), admin_set_story_visibility() and
- * admin_set_chapter_visibility() in supabase/migrations/…_admin2_b1_change_story.sql. Each one
+ * admin_set_chapter_visibility() in supabase/migrations/…_admin2_b1_change_story.sql, and
+ * admin_remove_chapter_passage() and admin_restore_story_revision() in
+ * supabase/migrations/…_admin2_b2_history_and_passages.sql. Each one
  * checks the caller's role (owner, admin, moderator), stores a version, writes the audit log with
  * the owner's user ID and tells the writer: a statement of reasons when content is restricted,
  * a notification otherwise.
@@ -56,6 +60,12 @@ export type StoryChangeFailure =
   | 'reason_needed'
   | 'nothing_changed'
   | 'removed_by_case'
+  | 'text_changed'
+  | 'no_such_case'
+  | 'cannot_restore'
+  | 'not_published'
+  | 'passage_too_long'
+  | 'no_such_version'
   | 'not_valid'
   | 'unreachable';
 
@@ -74,6 +84,12 @@ const namedFailures: StoryChangeFailure[] = [
   'reason_needed',
   'nothing_changed',
   'removed_by_case',
+  'text_changed',
+  'no_such_case',
+  'cannot_restore',
+  'not_published',
+  'passage_too_long',
+  'no_such_version',
 ];
 
 /**
@@ -182,6 +198,64 @@ export async function setStaffChapterVisibility(
   const { error } = await client.rpc('admin_set_chapter_visibility', {
     target_chapter_id: chapterId,
     wanted_visibility: visibility,
+    reason_code: reason.code,
+    reason_text: reason.text,
+  });
+  if (error !== null) throw storyChangeErrorFrom(error);
+}
+
+/** One passage staff selected in a chapter's words. */
+export interface ChapterPassage {
+  /** The exact words selected. */
+  text: string;
+  /** Which copy of those words, from 0, when they appear more than once. */
+  occurrence: number;
+  /** The case it is removed for (R-000123 and so on), or empty for none. */
+  caseReference: string;
+}
+
+/**
+ * Removes one exact passage from a published chapter; the marker takes its place and the writer
+ * gets a statement of reasons.
+ *
+ * @param client - the shared Supabase client
+ * @param chapterId - the chapter
+ * @param passage - the selected words, which copy and the case
+ * @param reason - why
+ * @throws StoryChangeError (text_changed when the writer changed those words since)
+ */
+export async function removeStaffChapterPassage(
+  client: AppSupabaseClient,
+  chapterId: string,
+  passage: ChapterPassage,
+  reason: StoryChangeReason,
+): Promise<void> {
+  const { error } = await client.rpc('admin_remove_chapter_passage', {
+    target_chapter_id: chapterId,
+    passage: passage.text,
+    occurrence: passage.occurrence,
+    case_reference: passage.caseReference,
+    reason_code: reason.code,
+    reason_text: reason.text,
+  });
+  if (error !== null) throw storyChangeErrorFrom(error);
+}
+
+/**
+ * Brings back what one earlier change replaced, as a new version; the writer is told.
+ *
+ * @param client - the shared Supabase client
+ * @param versionId - the earlier version
+ * @param reason - why
+ * @throws StoryChangeError (nothing_changed when the story already holds those values)
+ */
+export async function restoreStaffStoryVersion(
+  client: AppSupabaseClient,
+  versionId: string,
+  reason: StoryChangeReason,
+): Promise<void> {
+  const { error } = await client.rpc('admin_restore_story_revision', {
+    target_revision_id: versionId,
     reason_code: reason.code,
     reason_text: reason.text,
   });

@@ -368,4 +368,23 @@ describe('notificationText', () => {
       'chapter 15 of “The Salt Mine Choir” is shown again.',
     );
   });
+
+  it('a removed passage put back by Restore names the chapter (ADMIN-2b2)', () => {
+    const putBackRow: AppNotification = {
+      ...newChapter,
+      kind: 'story_changed_by_staff',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      staffChange: {
+        fields: ['passage'],
+        visibility: null,
+        reasonCode: 'other',
+        reasonText: 'Not spam after all.',
+      },
+    };
+    expect(notificationText(englishT(), putBackRow, null).what).toBe(
+      'we put back the passage we removed from chapter 15 of “The Salt Mine Choir”.',
+    );
+  });
 });
