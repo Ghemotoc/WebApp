@@ -171,17 +171,17 @@ export function useMembership(slug: string) {
 }
 
 /**
- * Reads the requests waiting for the owner.
+ * Reads the requests waiting for the owner or a moderator with the members power.
  *
  * @param slug - the space's address
- * @param isOwner - only the owner asks
+ * @param mayDecide - only someone holding the members power asks
  * @returns the query
  */
-export function useJoinRequests(slug: string, isOwner: boolean) {
+export function useJoinRequests(slug: string, mayDecide: boolean) {
   return useQuery({
     queryKey: [...spacesQueryKey, 'requests', slug],
     queryFn: async () => fetchJoinRequests(await requireClient(), slug),
-    enabled: isOwner,
+    enabled: mayDecide,
   });
 }
 

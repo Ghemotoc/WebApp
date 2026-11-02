@@ -124,8 +124,8 @@ select is(pg_temp.hint_of(format($$select public.reply_to_forum_thread(%s, 'Salu
 select is(public.join_space('cercul-fanteziei-zq') ->> 'status', 'pending', 'joining it asks the owner');
 select is(pg_temp.hint_of($$select public.start_forum_thread('space-cercul-fanteziei-zq', 'Întrebare zq', 'Pot?')$$),
   'space:pending', 'and posting waits until the owner lets them in');
-select is(pg_temp.hint_of($$select public.space_join_requests('cercul-fanteziei-zq')$$), 'space:not_owner',
-  'only the owner sees the requests');
+select is(pg_temp.hint_of($$select public.space_join_requests('cercul-fanteziei-zq')$$), 'space:not_allowed',
+  'only the owner (or a moderator with the members power, S1-E8-07) sees the requests');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(public.space_join_requests('cercul-fanteziei-zq') -> 0 -> 'person' ->> 'handle', 'teacher',

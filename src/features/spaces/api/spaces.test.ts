@@ -53,6 +53,9 @@ describe('spaceFrom', () => {
       canJoin: false,
       canPost: true,
       canManage: false,
+      canAppoint: false,
+      canReadLog: false,
+      powers: [],
     });
   });
 

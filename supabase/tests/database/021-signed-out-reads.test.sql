@@ -162,6 +162,7 @@ select results_eq(
        ('sign_in_failures', 0::bigint),
        -- Spaces and their members: read only through functions, by the age rules (FORUMS-2a).
        ('space_members', 0::bigint),
+       ('space_moderation_log', 0::bigint),
        ('spaces', 0::bigint),
        ('staff_languages', 0::bigint),
        ('staff_permissions', 0::bigint),

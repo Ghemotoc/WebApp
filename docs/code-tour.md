@@ -1844,3 +1844,12 @@ Read in this order; each file's header comment says what it is for and where thi
 - Who may read, join and post is decided in SQL, once: `space_may_read()`, `space_may_join()`, `space_may_post()` (from `age_band()`: under 16, or 16 and over). Posting is checked by the `refuse_space_writer` trigger on `forum_threads` and `forum_posts`, so no forum write function needed to change; its hints (`space:join`, `space:pending`, `space:age`) become plain words in `forumWriteErrorFrom()`.
 - `space_json()` leaves the age group out for anyone outside it, so an adult never learns a space is for under-16s.
 - Tests: `supabase/tests/database/227-spaces.test.sql`, `src/features/spaces/api/spaces.test.ts`, `e2e/spaces.spec.ts`.
+
+## Space moderators (S1-E8-07; FORUMS-2b)
+
+- Where it lives: `src/features/spaces/api/spaceModeration.ts`, `hooks/useSpaceModeration.ts`, `lib/spacePowers.ts`, `lib/spaceLogText.ts`, the Moderators card on the settings page (`SpaceModeratorsCard`, `SpaceModeratorRow`, `SpaceAddModerator`, `SpacePowerChoices`), `SpaceMembersPage` (`/spaces/<name>/members`) and `SpaceLogPage` (`/spaces/<name>/log`); `supabase/migrations/…_forums2_b_space_moderators.sql`. New table: `space_moderation_log`.
+- The one idea to know: a moderator is a `space_members` row with role `moderator` and a list of `powers` (`posts`, `members`, `settings`; `mail` later). One SQL function answers "may the caller do this here?": `space_may_act(space, power)`. It is true for the owner, a moderator holding the power and our moderation staff (`staff_may('moderation', 'act')`), so staff override any space (criterion 3).
+- How a click travels: "Make moderator" → `useSetSpaceModerator()` → `set_space_moderator()` (owner or staff only) → the row's role and powers → `log_space_action()` writes `space_moderation_log` (and `audit_log` when staff acted).
+- Pin and lock reuse the forums' `admin_*` functions: `forum_thread_for_moderation()` lets in someone with the posts power in the thread's space, and `log_thread_moderation()` writes the space's log instead of the audit log for a space thread.
+- The log is read by the owner and staff only (`space_log()` and the table's policy); staff show as "the moderation team", never by name.
+- Tests: `supabase/tests/database/228-space-moderators.test.sql`, `src/features/spaces/api/spaceModeration.test.ts`, `e2e/space-moderators.spec.ts`.

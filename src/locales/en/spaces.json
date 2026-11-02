@@ -36,7 +36,9 @@
     "notFound": "This space isn’t here",
     "notFoundNote": "It may have been removed, or it isn’t open to your account.",
     "back": "Back to the spaces",
-    "loadFailed": "We couldn’t load this space. Try again in a moment."
+    "loadFailed": "We couldn’t load this space. Try again in a moment.",
+    "membersLink": "Members",
+    "logLink": "Moderation log"
   },
   "join": {
     "join": "Join space",
@@ -48,6 +50,7 @@
     "noteOpen": "Anyone in this space’s age group can join straight away.",
     "notePending": "{{owner}} will see your request. You can post once you’re in.",
     "noteMember": "You’re a member of this space.",
+    "noteModerator": "You help moderate this space.",
     "noteOwner": "You run this space.",
     "noteOtherGroup": "This space takes members from another age group, so you can read it but not join.",
     "noteNotActive": "Your account can’t join spaces yet."
@@ -66,7 +69,8 @@
   "runs": {
     "title": "Who runs it",
     "owner": "Owner",
-    "note": "Our moderation team can take action in any space."
+    "note": "Our moderation team can take action in any space.",
+    "moderator": "Moderator: {{powers}}"
   },
   "requests": {
     "title": "Requests to join",
@@ -162,6 +166,87 @@
       "too_long": "The rules are too long. Keep them to 2,000 characters.",
       "html": "Rules can’t hold HTML tags.",
       "taken": "Another space has this name. Try another."
+    },
+    "not_allowed": "You can’t do this in this space.",
+    "member_missing": "That username isn’t a member of this space. Check the spelling, or ask them to join first.",
+    "member_owner": "The owner already has every power.",
+    "member_age": "This person is in another age group, so they can’t help run this space.",
+    "request_missing": "That request isn’t waiting any more.",
+    "reason_too_long": "Keep the reason to 500 characters."
+  },
+  "moderators": {
+    "eyebrow": "Space settings",
+    "title": "Moderators",
+    "intro": "Moderators help you run the space. Choose what each one can do. Only you can add or remove moderators, and our moderation team can still act in any space.",
+    "none": "No moderators yet.",
+    "loadFailed": "We couldn’t load the moderators.",
+    "appointed": "{{name}} is now a moderator.",
+    "changed": "{{name}}’s powers are saved.",
+    "removed": "{{name}} is no longer a moderator, but stays in the space.",
+    "powersOf": "What {{name}} can do",
+    "powersLegend": "What they can do",
+    "save": "Save powers",
+    "saveLabel": "Save powers for {{name}}",
+    "remove": "Remove as moderator",
+    "removeLabel": "Remove as moderator: {{name}}",
+    "addTitle": "Add a moderator",
+    "username": "Username",
+    "usernameHint": "They must already be a member of this space.",
+    "add": "Make moderator",
+    "powers": {
+      "posts": "Threads",
+      "members": "Members",
+      "settings": "Settings"
+    },
+    "powerWords": {
+      "posts": "threads",
+      "members": "members",
+      "settings": "settings"
+    },
+    "powerNotes": {
+      "posts": "Make threads sticky and lock them, in this space only.",
+      "members": "Answer requests to join and remove members.",
+      "settings": "Change the name, description, rules and who can post or join."
+    }
+  },
+  "members": {
+    "title": "Members",
+    "intro": "Everyone in the space. Removing someone takes them out; they can ask to join again.",
+    "member": "Member",
+    "joined": "Joined {{date}}",
+    "remove": "Remove",
+    "removeLabel": "Remove {{name}}",
+    "reason": "Why remove {{name}}? (optional)",
+    "reasonHint": "Goes in the space’s moderation log. They aren’t told the reason.",
+    "confirm": "Yes, remove",
+    "confirmLabel": "Yes, remove {{name}}",
+    "removed": "{{name}} is no longer in the space.",
+    "loadFailed": "We couldn’t load the members.",
+    "notAllowed": "You can’t manage this space’s members."
+  },
+  "log": {
+    "title": "Moderation log",
+    "intro": "Everything the owner, the moderators and our moderation team have done in this space, newest first. Only the owner and our moderation team can read it.",
+    "empty": "Nothing has happened yet.",
+    "loadFailed": "We couldn’t load the log.",
+    "showMore": "Show more",
+    "notAllowed": "Only the space’s owner can read its moderation log.",
+    "team": "The moderation team",
+    "reason": "Reason: “{{reason}}”",
+    "actions": {
+      "moderator_appointed": "{{actor}} made {{target}} a moderator: {{powers}}.",
+      "moderator_changed": "{{actor}} changed what {{target}} can do: {{powers}}.",
+      "moderator_removed": "{{actor}} took away {{target}}’s moderator powers.",
+      "request_approved": "{{actor}} let {{target}} in.",
+      "request_declined": "{{actor}} declined {{target}}’s request to join.",
+      "request_age_changed": "{{actor}} approved {{target}}, who is no longer in this space’s age group, so the request was removed.",
+      "member_removed": "{{actor}} removed {{target}} from the space.",
+      "settings_changed": "{{actor}} changed the space’s settings.",
+      "thread_made_sticky": "{{actor}} made a thread sticky.",
+      "thread_sticky_removed": "{{actor}} took a thread off the top.",
+      "thread_locked": "{{actor}} locked a thread.",
+      "thread_unlocked": "{{actor}} unlocked a thread.",
+      "other": "{{actor}} made a change."
     }
   }
 }

@@ -1,11 +1,13 @@
 /**
- * SpaceRequestsCard: "Requests to join" for the space's owner, each with Approve and Decline
- * (bundle FORUMS-2, part a; S1-E8-06 criterion 3: "the owner approves each request").
+ * SpaceRequestsCard: "Requests to join" for the space's owner and its moderators with the
+ * members power, each with Approve and Decline (bundle FORUMS-2, parts a and b; S1-E8-06
+ * criterion 3: "the owner approves each request"; S1-E8-07: the members power).
  *
  * The answer is said in a polite live region ("ilinca.r is in."). Someone who turned 16 while
  * waiting can't join an under-16 space any more, so their request is removed and the owner is
- * told why (criterion 6). Only the owner sees the card; the database checks again.
- * Who shows it: SpacePage, for the owner of a space where they approve each request.
+ * told why (criterion 6). Only those with the members power see the card; the database checks
+ * again.
+ * Who shows it: SpacePage, for a space where each request is approved.
  * What it calls: useJoinRequests → space_join_requests(); useDecideJoinRequest →
  * decide_space_join_request().
  */
@@ -76,15 +78,15 @@ function RequestRow({
  * Renders the card.
  *
  * @param props.space - the space
- * @returns the section with the requests, or nothing for anyone but the owner
+ * @returns the section with the requests, or nothing without the members power
  */
 export function SpaceRequestsCard({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
-  const isOwner = space.viewer.canManage;
-  const requests = useJoinRequests(space.slug, isOwner);
+  const mayDecide = space.viewer.powers.includes('members');
+  const requests = useJoinRequests(space.slug, mayDecide);
   const deciding = useDecideJoinRequest(space.slug);
   const [lastName, setLastName] = useState('');
-  if (!isOwner) return null;
+  if (!mayDecide) return null;
 
   /** Sends the owner's answer and remembers whose it was, for the message. */
   function decide(person: ForumPerson, approve: boolean) {

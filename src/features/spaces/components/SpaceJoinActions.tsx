@@ -32,6 +32,8 @@ function noteKeyFor(space: Space): string {
   const viewer = space.viewer;
   if (viewer.membership === 'owner') return 'join.noteOwner';
   if (viewer.membership === 'member') return 'join.noteMember';
+  // A moderator is a member too (S1-E8-07), and can leave like one.
+  if (viewer.membership === 'moderator') return 'join.noteModerator';
   if (viewer.membership === 'pending') return 'join.notePending';
   if (viewer.canJoin) return space.joining === 'open' ? 'join.noteOpen' : 'join.noteApprove';
   // The age group is left out for readers outside it, so a missing one means another group.
@@ -53,8 +55,9 @@ function MembershipButton({
 }) {
   const { t } = useSpacesTranslation();
   const viewer = space.viewer;
-  if (viewer.membership === 'member' || viewer.membership === 'pending') {
-    const label = viewer.membership === 'member' ? t('join.leave') : t('join.cancelRequest');
+  const isIn = viewer.membership === 'member' || viewer.membership === 'moderator';
+  if (isIn || viewer.membership === 'pending') {
+    const label = isIn ? t('join.leave') : t('join.cancelRequest');
     return (
       <Button
         variant="secondary"

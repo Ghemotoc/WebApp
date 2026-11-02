@@ -720,6 +720,23 @@ const writeRoutes: RouteObject[] = [
       return { Component: SpaceSettingsPage };
     },
   },
+  // A space's members and its moderation log (FORUMS-2b, S1-E8-07).
+  {
+    path: '/spaces/:spaceSlug/members',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { SpaceMembersPage } = await import('@/features/spaces/components/SpaceMembersPage');
+      return { Component: SpaceMembersPage };
+    },
+  },
+  {
+    path: '/spaces/:spaceSlug/log',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { SpaceLogPage } = await import('@/features/spaces/components/SpaceLogPage');
+      return { Component: SpaceLogPage };
+    },
+  },
   // The reader's library (S1-E4-03) and each shelf's See all page, which is a story list.
   {
     path: '/library',
