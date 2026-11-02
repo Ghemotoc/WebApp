@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- FORUMS-2a (#272, 2 Nov): run `supabase/staging-topups/FORUMS-2a.sql` once on staging (adds the two seed spaces; safe to run twice). Spaces are at /spaces.
 - FORUMS-1f (#271, 1 Nov): nothing by hand. Forum search is at /forums/search; try a word with or without diacritics.
 - FORUMS-1e (#270, 1 Nov): nothing by hand. Moderators can pin and lock threads (with a reason, shown on a locked thread as "the moderation team"), and "Don't bump" keeps a thread where it is. Please read the new Romanian texts.
 - FORUMS-1d (#269, 1 Nov): nothing by hand. Forums and threads with new posts get a dot, threads open at the first new post, "Mark all as read" and a "New for you" column. Please read the new Romanian texts.
