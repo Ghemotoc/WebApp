@@ -124,7 +124,7 @@ test.describe('data requests (S1-E11-09)', () => {
     await copy.getByRole('radio', { name: 'One ZIP of everything' }).check();
     await copy.getByRole('button', { name: 'Build and send the copy' }).click();
     await expect(copy.getByText(/The copy is sent/)).toBeVisible({ timeout: 30_000 });
-    const zipName = copy.getByText(/^D-\d{6}-copy\.zip$/);
+    const zipName = copy.getByText(/^D-\d{6}-copy\.zip$/).first();
     await expect(zipName).toBeVisible();
 
     // Step 3: support can open it, but only through the logged button.

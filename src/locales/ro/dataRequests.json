@@ -172,7 +172,9 @@
     "answerFailed": "Nu am putut salva răspunsul. Încearcă din nou.",
     "notWaiting": "Nu mai așteptăm un răspuns la această cerere.",
     "copyReady": "Copia ta e gata. Descarc-o până la {{date}}; după aceea se șterge.",
-    "download": "Descarcă {{name}}"
+    "download": "Descarcă",
+    "downloadLabel": "Descarcă {{name}}",
+    "fileLine": "{{name}}, {{size}}"
   },
   "copy": {
     "heading": "Copia",

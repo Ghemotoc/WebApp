@@ -172,7 +172,9 @@
     "answerFailed": "We couldn’t save your answer. Try again.",
     "notWaiting": "We’re no longer waiting for an answer on this request.",
     "copyReady": "Your copy is ready. Download it by {{date}}; after that it’s deleted.",
-    "download": "Download {{name}}"
+    "download": "Download",
+    "downloadLabel": "Download {{name}}",
+    "fileLine": "{{name}}, {{size}}"
   },
   "copy": {
     "heading": "The copy",

@@ -23,6 +23,8 @@ interface ExportDownloadButtonProps {
   label: string;
   /** The saved file's name, for example "my-data-2026-11-01.zip". */
   downloadName: string;
+  /** A fuller name for screen readers when several buttons share the same words. */
+  accessibleName?: string;
 }
 
 /**
@@ -30,7 +32,12 @@ interface ExportDownloadButtonProps {
  *
  * @returns the button
  */
-export function ExportDownloadButton({ fileName, label, downloadName }: ExportDownloadButtonProps) {
+export function ExportDownloadButton({
+  fileName,
+  label,
+  downloadName,
+  accessibleName,
+}: ExportDownloadButtonProps) {
   const { t } = useDataExportTranslation();
   const [hasFailed, setHasFailed] = useState(false);
 
@@ -48,7 +55,7 @@ export function ExportDownloadButton({ fileName, label, downloadName }: ExportDo
 
   return (
     <>
-      <Button size="md" onClick={() => void download()}>
+      <Button size="md" aria-label={accessibleName} onClick={() => void download()}>
         {label}
       </Button>
       {hasFailed && <Notice tone="error">{t('settings.downloadFailed')}</Notice>}
