@@ -6,7 +6,7 @@
  * Typed or pasted ş and ţ become ș and ț straight away (CLAUDE.md rule 4; S1-E1-04).
  * Who uses it: comments (S1-E6-01), reports (S1-E10-01) and staff notes.
  */
-import type { ChangeEvent, TextareaHTMLAttributes } from 'react';
+import type { ChangeEvent, Ref, TextareaHTMLAttributes } from 'react';
 
 import { normaliseTypedText } from '@/lib/romanian-text';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,8 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
   id: string;
   label: string;
   hint?: string;
+  /** Lets a form read the field, for example its selection (staff passage removal, ADMIN-2b2). */
+  ref?: Ref<HTMLTextAreaElement>;
 }
 
 /**

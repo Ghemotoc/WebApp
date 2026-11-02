@@ -13,6 +13,7 @@ import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import { listOf, numberOrNull, objectOf } from './marchNumbers';
+import { staffStoryHistoryFrom, type StaffStoryVersion } from './staffStoryHistory';
 
 /**
  * A story's status as staff see it: the writer's own state, or a staff decision (restricted is
@@ -79,6 +80,8 @@ export interface StaffStoryChapter {
   isHidden: boolean;
   /** Hidden or removed by staff, or null while it is shown (S1-E11-08). */
   moderatedState: 'hidden' | 'removed' | null;
+  /** True once it has been published, so staff can open its words to remove a passage. */
+  hasPublishedText: boolean;
   words: number;
   publishedAt: string | null;
 }
@@ -111,6 +114,8 @@ export interface StaffStoryOverview extends StaffStoryRow {
   settings: StaffStorySettings;
   visibility: StaffStoryVisibility;
   chapters: StaffStoryChapter[];
+  /** Every staff change, newest first (S1-E11-08, part 08b). */
+  history: StaffStoryVersion[];
 }
 
 /** Why a call failed. */
@@ -201,6 +206,7 @@ function staffStoryChapterFrom(chapter: Record<string, Json | undefined>): Staff
     status: String(chapter['status'] ?? ''),
     isHidden: chapter['is_hidden'] === true,
     moderatedState: moderatedStateOf(chapter['moderated_state']),
+    hasPublishedText: chapter['has_published_text'] === true,
     words: numberOrNull(chapter['words']) ?? 0,
     publishedAt: textOrNull(chapter['published_at']),
   };
@@ -297,7 +303,7 @@ export async function searchStaffStories(
 }
 
 /**
- * Reads one story's overview: its details and chapter list, never its words.
+ * Reads one story's overview: its details, chapter list and version history, never its words.
  *
  * @param client - the shared Supabase client
  * @param storyId - the story
@@ -322,5 +328,6 @@ export async function fetchStaffStory(
     settings: staffStorySettingsFrom(answer['settings']),
     visibility: visibilityOf(answer['visibility']),
     chapters: listOf(answer['chapters']).map(staffStoryChapterFrom),
+    history: staffStoryHistoryFrom(answer['history']),
   };
 }

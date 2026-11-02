@@ -995,7 +995,7 @@
       "words_few": "{{count}} cuvinte publicate",
       "words_other": "{{count}} de cuvinte publicate",
       "noChapters": "Povestea nu are încă niciun capitol.",
-      "noWordsNote": "Echipa nu vede niciodată aici cuvintele unui capitol. Textul unei ciorne se deschide doar dintr-un caz de moderare sau dintr-o cerere privind datele, iar asta se notează în jurnal.",
+      "noWordsNote": "Echipa nu vede niciodată aici cuvintele unei ciorne. Proprietarii, administratorii și moderatorii pot deschide cuvintele unui capitol publicat ca să elimine un pasaj ilegal, dar nimeni din echipă nu poate scrie în ele.",
       "writerAge": "Grupa de vârstă",
       "adult": "18 ani sau peste"
     },
@@ -1052,8 +1052,83 @@
         "nothing_changed": "Nu s-a schimbat nimic: povestea are deja aceste setări.",
         "removed_by_case": "Un caz de moderare a eliminat asta. Doar acel caz sau o contestație o poate aduce înapoi.",
         "not_valid": "Povestea nu poate fi salvată așa. O poveste despre abuz sau constrângere are nevoie de clasificarea 16+ sau 18+ și de avertismentul de conținut al persoanei care scrie, iar o poveste poate avea cel mult 10 etichete.",
-        "unreachable": "Schimbarea nu s-a salvat. Verifică conexiunea și încearcă din nou."
+        "unreachable": "Schimbarea nu s-a salvat. Verifică conexiunea și încearcă din nou.",
+        "text_changed": "Cuvintele acelea nu mai sunt unde erau: persoana care scrie a schimbat capitolul între timp. Deschide-l din nou și selectează-le iar.",
+        "no_such_case": "Nu există un caz cu această referință pe care să-l poți vedea. Verific-o sau lasă câmpul gol.",
+        "cannot_restore": "Cuvintele acestea sunt deja la loc, deci nu e nimic de restaurat.",
+        "not_published": "Capitolul nu a fost publicat niciodată, deci nu are cuvinte de eliminat.",
+        "passage_too_long": "Selectează cel mult 20.000 de caractere o dată.",
+        "no_such_version": "Versiunea aceea nu mai există."
       }
+    },
+    "history": {
+      "heading": "Istoricul versiunilor",
+      "intro": "Fiecare schimbare făcută de echipă la această poveste, cele mai noi primele. Restaurarea aduce înapoi ce a înlocuit o schimbare, ca versiune nouă cu motivul ei, și o anunță pe persoana care scrie.",
+      "empty": "Echipa nu a schimbat încă nimic.",
+      "meta": "{{date}} · {{who}}",
+      "unknownStaff": "cineva din echipă",
+      "reason": "Motiv: {{reason}}. {{text}}",
+      "restores": "Restaurează schimbarea din {{date}}.",
+      "kinds": {
+        "settings": "Setări",
+        "visibility": "Cine o poate găsi",
+        "chapter_visibility": "Capitolul {{number}}",
+        "passage": "Capitolul {{number}}"
+      },
+      "change": "{{field}}: {{before}} → {{after}}",
+      "passageRemoved_one": "un pasaj de {{count}} caracter eliminat",
+      "passageRemoved_few": "un pasaj de {{count}} caractere eliminat",
+      "passageRemoved_other": "un pasaj de {{count}} de caractere eliminat",
+      "passagePutBack": "pasajul eliminat pus la loc",
+      "yes": "da",
+      "no": "nu",
+      "noTags": "fără etichete",
+      "visibility": {
+        "shown": "vizibilă",
+        "restricted": "restricționată",
+        "hidden": "ascunsă",
+        "removed": "eliminată"
+      },
+      "restore": "Restaurează ce a înlocuit",
+      "confirmRestore": "Restaurează",
+      "restoreExplain": "Pune la loc valorile de dinaintea acestei schimbări. Persoana care scrie este anunțată, cu motivul tău.",
+      "showPassage": "Arată cuvintele eliminate",
+      "passageLabel": "Cuvintele eliminate (doar pentru echipă)",
+      "passageCase": "Eliminate pentru cazul {{reference}}.",
+      "passageLogged": "Citirea acestor cuvinte apare în jurnalul de audit.",
+      "passageFailed": "Cuvintele eliminate nu au putut fi afișate. Poate că rolul tău sau cazul nu permite asta.",
+      "fields": {
+        "rating": "Clasificare",
+        "completion_status": "Terminată sau în curs",
+        "comments_enabled": "Comentarii",
+        "category_slug": "Categorie",
+        "language_code": "Limbă",
+        "is_fan_fiction": "Fan fiction",
+        "is_parody": "Parodie",
+        "deals_with_abuse_or_coercion": "Abuz sau constrângere",
+        "tag_names": "Etichete",
+        "visibility": "Cine o poate găsi"
+      }
+    },
+    "passage": {
+      "open": "Elimină un pasaj din capitolul {{number}}",
+      "heading": "Elimină un pasaj din capitolul {{number}}",
+      "loading": "Se încarcă capitolul…",
+      "loadFailed": "Capitolul nu s-a putut încărca. Verifică conexiunea și încearcă din nou.",
+      "textLabel": "Capitolul {{number}}, doar pentru citire",
+      "textHint": "Nu poți scrie aici: doar persoana care scrie își editează cuvintele. Selectează exact cuvintele de eliminat cu mouse-ul sau cu Shift și săgețile, apoi apasă „Folosește cuvintele selectate”.",
+      "useSelection": "Folosește cuvintele selectate",
+      "nothingSelected": "Selectează mai întâi câteva cuvinte din capitol.",
+      "selected": "Cuvintele selectate",
+      "selectedCount_one": "{{count}} caracter va fi înlocuit cu „{{marker}}”.",
+      "selectedCount_few": "{{count}} caractere vor fi înlocuite cu „{{marker}}”.",
+      "selectedCount_other": "{{count}} de caractere vor fi înlocuite cu „{{marker}}”.",
+      "marker": "[Eliminat de echipa de moderare]",
+      "caseLabel": "Referința cazului (opțional)",
+      "caseHint": "De exemplu R-000123. Echipa poate găsi apoi cuvintele eliminate pornind de la caz.",
+      "explain": "Folosește asta doar pentru conținut ilegal sau datele personale ale cuiva. Restul capitolului rămâne cum este, cuvintele originale sunt păstrate pentru echipă, iar persoana care scrie primește o declarație de motive.",
+      "confirm": "Elimină pasajul",
+      "done": "Eliminat. Persoana care scrie a primit o declarație de motive."
     }
   }
 }

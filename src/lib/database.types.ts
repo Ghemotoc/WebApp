@@ -4332,6 +4332,101 @@ export type Database = {
         };
         Relationships: [];
       };
+      removed_passages: {
+        Row: {
+          case_id: string | null;
+          case_is_safeguarding: boolean;
+          chapter_id: string;
+          created_at: string;
+          id: string;
+          marker: string;
+          marker_starts_at: number;
+          put_back_at: string | null;
+          removed_by_user_id: string;
+          removed_text: string;
+          story_id: string;
+          story_revision_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          case_id?: string | null;
+          case_is_safeguarding?: boolean;
+          chapter_id: string;
+          created_at?: string;
+          id?: string;
+          marker: string;
+          marker_starts_at: number;
+          put_back_at?: string | null;
+          removed_by_user_id: string;
+          removed_text: string;
+          story_id: string;
+          story_revision_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          case_id?: string | null;
+          case_is_safeguarding?: boolean;
+          chapter_id?: string;
+          created_at?: string;
+          id?: string;
+          marker?: string;
+          marker_starts_at?: number;
+          put_back_at?: string | null;
+          removed_by_user_id?: string;
+          removed_text?: string;
+          story_id?: string;
+          story_revision_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'removed_passages_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'removed_passages_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'removed_passages_removed_by_user_id_fkey';
+            columns: ['removed_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'removed_passages_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'removed_passages_story_revision_id_fkey';
+            columns: ['story_revision_id'];
+            isOneToOne: true;
+            referencedRelation: 'story_revisions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'removed_passages_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       report_detail_requests: {
         Row: {
           answer: string | null;
@@ -6301,6 +6396,7 @@ export type Database = {
           id: string;
           reason_code: string;
           reason_text: string;
+          restores_revision_id: string | null;
           story_id: string;
           updated_at: string;
           user_id: string;
@@ -6317,6 +6413,7 @@ export type Database = {
           id?: string;
           reason_code: string;
           reason_text: string;
+          restores_revision_id?: string | null;
           story_id: string;
           updated_at?: string;
           user_id: string;
@@ -6332,6 +6429,7 @@ export type Database = {
           id?: string;
           reason_code?: string;
           reason_text?: string;
+          restores_revision_id?: string | null;
           story_id?: string;
           updated_at?: string;
           user_id?: string;
@@ -6349,6 +6447,13 @@ export type Database = {
             columns: ['chapter_id'];
             isOneToOne: false;
             referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_revisions_restores_revision_id_fkey';
+            columns: ['restores_revision_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_revisions';
             referencedColumns: ['id'];
           },
           {
@@ -6968,6 +7073,7 @@ export type Database = {
         Args: { changes: Json; reason_code: string; reason_text: string; target_story_id: string };
         Returns: Json;
       };
+      admin_chapter_text: { Args: { target_chapter_id: string }; Returns: Json };
       admin_claim_case: { Args: { target_case_id: string }; Returns: boolean };
       admin_class_spaces: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
@@ -7265,6 +7371,44 @@ export type Database = {
       admin_on_call_rota: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_open_teacher_proof: { Args: { check_id: string }; Returns: string };
       admin_order_timeline: { Args: { target_case_id: string }; Returns: Json };
+      admin_passage_case: {
+        Args: { case_reference: string };
+        Returns: {
+          claimed_at: string | null;
+          claimed_by_user_id: string | null;
+          created_at: string;
+          deadline_at: string;
+          decided_at: string | null;
+          decided_by_user_id: string | null;
+          decision: Database['public']['Enums']['moderation_action'] | null;
+          disabled_at: string | null;
+          id: string;
+          is_safeguarding: boolean;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          preserve_until: string | null;
+          received_at: string;
+          reference: string;
+          report_count: number;
+          reporter_under_18: boolean;
+          source: Database['public']['Enums']['case_source'];
+          status: Database['public']['Enums']['case_status'];
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason: Database['public']['Enums']['report_reason'] | null;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'cases';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_passage_place: {
+        Args: { full_text: string; occurrence: number; passage: string };
+        Returns: number;
+      };
       admin_pause_reporting: {
         Args: { note_text?: string; reporter_handle: string; source_case_id?: string };
         Returns: string;
@@ -7272,6 +7416,21 @@ export type Database = {
       admin_publish_classic: { Args: { target_story_id: string }; Returns: Json };
       admin_publish_cms_version: { Args: { version_id: string }; Returns: string };
       admin_publish_interface_text: { Args: { version_id: string }; Returns: string };
+      admin_put_back_passage: {
+        Args: {
+          reason_code: string;
+          reason_text: string;
+          removal: Omit<
+            Database['public']['Tables']['story_revisions']['Row'],
+            Database['public']['Tables']['story_revisions']['ComputedFields']
+          >;
+          story_row: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       admin_raise_story_rating: {
         Args: {
           new_rating: Database['public']['Enums']['story_rating'];
@@ -7298,6 +7457,17 @@ export type Database = {
       };
       admin_reject_tag: { Args: { reason: string; tag_id: string }; Returns: number };
       admin_release_case: { Args: { target_case_id: string }; Returns: boolean };
+      admin_remove_chapter_passage: {
+        Args: {
+          case_reference: string;
+          occurrence: number;
+          passage: string;
+          reason_code: string;
+          reason_text: string;
+          target_chapter_id: string;
+        };
+        Returns: string;
+      };
       admin_remove_cms_entry: {
         Args: {
           content_kind: string;
@@ -7330,6 +7500,7 @@ export type Database = {
         Args: { reason: string; teacher_handle: string };
         Returns: Json;
       };
+      admin_removed_passage: { Args: { target_revision_id: string }; Returns: Json };
       admin_reply_mail: {
         Args: { body: string; is_note?: boolean; thread_reference: string };
         Returns: boolean;
@@ -7355,6 +7526,10 @@ export type Database = {
       admin_restore_item: {
         Args: { reason_given: string; target_item_id: string };
         Returns: boolean;
+      };
+      admin_restore_story_revision: {
+        Args: { reason_code: string; reason_text: string; target_revision_id: string };
+        Returns: string;
       };
       admin_reveal_email: { Args: { target_user_id: string }; Returns: string };
       admin_revoke_certificate: { Args: { code: string; reason: string }; Returns: Json };
@@ -7597,6 +7772,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      admin_story_history_json: { Args: { target_story_id: string }; Returns: Json };
       admin_story_matches: {
         Args: {
           target: Omit<
@@ -7642,6 +7818,18 @@ export type Database = {
         Returns: string;
       };
       admin_story_visibility: { Args: { target_story_id: string }; Returns: string };
+      admin_swap_chapter_words: {
+        Args: {
+          chapter_row: Omit<
+            Database['public']['Tables']['chapters']['Row'],
+            Database['public']['Tables']['chapters']['ComputedFields']
+          >;
+          original: string;
+          replacement: string;
+          starts_at: number;
+        };
+        Returns: undefined;
+      };
       admin_teacher_checks: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -10060,6 +10248,7 @@ export type Database = {
         Returns: undefined;
       };
       remove_unchanged_customisations: { Args: Record<PropertyKey, never>; Returns: number };
+      removed_passage_marker: { Args: { language_code: string }; Returns: string };
       rename_bible_section: { Args: { section_id: string; section_name: string }; Returns: Json };
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };

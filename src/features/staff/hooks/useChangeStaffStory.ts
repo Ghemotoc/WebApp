@@ -1,9 +1,10 @@
 /**
- * useChangeStaffStory: the changes staff make to one story (bundle ADMIN-2, part b1; story
- * S1-E11-08, part 08a): its settings, its visibility and one chapter's visibility.
+ * useChangeStaffStory: the changes staff make to one story (bundle ADMIN-2, parts b1 and b2; story
+ * S1-E11-08): its settings, its visibility, one chapter's visibility, removing a passage from a
+ * chapter and Restore on an earlier version.
  *
  * Who calls it: StaffStoryPage, which passes it to StaffStorySettingsForm,
- * StaffStoryVisibilityForm and StaffStoryChapters. What it calls: api/staffStoryChanges.ts.
+ * StaffStoryVisibilityForm, StaffStoryChapters and StaffStoryHistory. What it calls: api/staffStoryChanges.ts.
  * After every change the story and the Stories list are read again, so the page shows what the
  * database now holds.
  */
@@ -11,9 +12,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
   changeStaffStorySettings,
+  removeStaffChapterPassage,
+  restoreStaffStoryVersion,
   setStaffChapterVisibility,
   setStaffStoryVisibility,
   StoryChangeError,
+  type ChapterPassage,
   type StaffStorySettingsChange,
   type StoryChangeFailure,
   type StoryChangeReason,
@@ -30,7 +34,9 @@ export type StaffStoryChange =
       chapterId: string;
       visibility: 'shown' | 'hidden';
       reason: StoryChangeReason;
-    };
+    }
+  | { kind: 'passage'; chapterId: string; passage: ChapterPassage; reason: StoryChangeReason }
+  | { kind: 'restore'; versionId: string; reason: StoryChangeReason };
 
 /**
  * Sends one change to the database.
@@ -45,6 +51,12 @@ async function sendChange(storyId: string, wanted: StaffStoryChange): Promise<vo
   }
   if (wanted.kind === 'visibility') {
     return setStaffStoryVisibility(client, storyId, wanted.visibility, wanted.reason);
+  }
+  if (wanted.kind === 'passage') {
+    return removeStaffChapterPassage(client, wanted.chapterId, wanted.passage, wanted.reason);
+  }
+  if (wanted.kind === 'restore') {
+    return restoreStaffStoryVersion(client, wanted.versionId, wanted.reason);
   }
   return setStaffChapterVisibility(client, wanted.chapterId, wanted.visibility, wanted.reason);
 }
@@ -74,6 +86,8 @@ export function useChangeStaffStory(storyId: string) {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['staff-story', storyId] });
       await queryClient.invalidateQueries({ queryKey: ['staff-stories'] });
+      // A removed or restored passage changes the chapter's words staff may have open.
+      await queryClient.invalidateQueries({ queryKey: ['staff-chapter-text'] });
     },
   });
   return {

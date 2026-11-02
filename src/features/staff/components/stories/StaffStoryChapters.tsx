@@ -3,7 +3,8 @@
  * S1-E11-07; board AdminStory 8.11's chapter list): number, title, status, words and when it was
  * published. A draft chapter shows no title, because unpublished words are the writer's; its text
  * opens only from a case or a data request (later parts), never from here. Staff who may change
- * stories also get "Hide chapter" or "Show chapter again" under each chapter (S1-E11-08).
+ * stories also get "Hide chapter" or "Show chapter again" under each chapter (S1-E11-08), and
+ * "Remove a passage" under each published one (bundle ADMIN-2, part b2).
  *
  * Who shows it: StaffStoryPage. What it reads: the chapters from useStaffStory; the changer from
  * useChangeStaffStory, or null for staff who only look.
@@ -16,6 +17,7 @@ import type { StaffStoryChapter } from '../../api/staffStories';
 import type { StaffStoryChanger } from '../../hooks/useChangeStaffStory';
 import { useStaffStoryWords } from '../../hooks/useStaffStoryWords';
 
+import { ChapterPassageForm } from './ChapterPassageForm';
 import { ChapterVisibilityForm } from './ChapterVisibilityForm';
 
 /**
@@ -25,9 +27,11 @@ import { ChapterVisibilityForm } from './ChapterVisibilityForm';
  */
 function ChapterLine({
   chapter,
+  storyLanguage,
   changer,
 }: {
   chapter: StaffStoryChapter;
+  storyLanguage: string;
   changer: StaffStoryChanger | null;
 }) {
   const { t } = useTranslation('staff');
@@ -51,6 +55,9 @@ function ChapterLine({
       {changer !== null && chapter.moderatedState !== 'removed' && (
         <ChapterVisibilityForm chapter={chapter} changer={changer} />
       )}
+      {changer !== null && chapter.hasPublishedText && chapter.moderatedState !== 'removed' && (
+        <ChapterPassageForm chapter={chapter} storyLanguage={storyLanguage} changer={changer} />
+      )}
     </li>
   );
 }
@@ -59,14 +66,17 @@ function ChapterLine({
  * Renders the chapter list.
  *
  * @param props.chapters - the story's chapters, in order
+ * @param props.storyLanguage - the story's language, for the removal marker
  * @param props.changer - the changes, or null for staff who only look
  * @returns the section
  */
 export function StaffStoryChapters({
   chapters,
+  storyLanguage,
   changer,
 }: {
   chapters: StaffStoryChapter[];
+  storyLanguage: string;
   changer: StaffStoryChanger | null;
 }) {
   const { t } = useTranslation('staff');
@@ -83,7 +93,12 @@ export function StaffStoryChapters({
       ) : (
         <ol className="m-0 list-none p-0">
           {chapters.map((chapter) => (
-            <ChapterLine key={chapter.id} chapter={chapter} changer={changer} />
+            <ChapterLine
+              key={chapter.id}
+              chapter={chapter}
+              storyLanguage={storyLanguage}
+              changer={changer}
+            />
           ))}
         </ol>
       )}

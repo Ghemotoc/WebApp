@@ -5,7 +5,8 @@
  * It shows who owns the story (username and short user ID), its settings and status, its reports
  * and its chapters, never its words. Staff who may change stories (owner, admin, moderator) also
  * get "Who can find it" (shown, restricted or hidden), "Settings and details" and a Hide button on
- * each chapter, each with a reason (bundle ADMIN-2, part b1; S1-E11-08). A writer under 18 shows
+ * each chapter, each with a reason (bundle ADMIN-2, part b1; S1-E11-08); then "Remove a passage"
+ * under each published chapter and the version history with Restore (part b2). A writer under 18 shows
  * as "under 18" only, never their age (S1-E11-08 criterion "a writer under 18").
  * Who shows it: the router, inside StaffLayout. What it calls: useStaffStory →
  * api/staffStories.ts → admin_story_overview(); useChangeStaffStory for the changes.
@@ -25,6 +26,7 @@ import { useStaffStoryWords } from '../../hooks/useStaffStoryWords';
 import { ShortUserId } from '../users/ShortUserId';
 
 import { StaffStoryChapters } from './StaffStoryChapters';
+import { StaffStoryHistory } from './StaffStoryHistory';
 import { StaffStorySettingsForm } from './StaffStorySettingsForm';
 import { StaffStoryVisibilityForm } from './StaffStoryVisibilityForm';
 
@@ -111,7 +113,12 @@ function StoryOverview({ story }: { story: StaffStoryOverview }) {
             />
           </>
         )}
-        <StaffStoryChapters chapters={story.chapters} changer={mayChange ? changer : null} />
+        <StaffStoryChapters
+          chapters={story.chapters}
+          storyLanguage={story.languageCode}
+          changer={mayChange ? changer : null}
+        />
+        <StaffStoryHistory history={story.history} changer={mayChange ? changer : null} />
       </div>
     </>
   );

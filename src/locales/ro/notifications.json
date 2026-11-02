@@ -70,7 +70,8 @@
     "classArchived": "spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: apoi numele reale tipărite pe ele se șterg.",
     "staffChangedStory": "am schimbat {{fields}} pentru povestea ta „{{story}}”.",
     "staffShowedStory": "povestea ta „{{story}}” poate fi găsită din nou.",
-    "staffShowedChapter": "capitolul {{number}} din „{{story}}” se vede din nou."
+    "staffShowedChapter": "capitolul {{number}} din „{{story}}” se vede din nou.",
+    "staffPutBackPassage": "am pus la loc pasajul pe care îl eliminasem din capitolul {{number}} al poveștii „{{story}}”."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
