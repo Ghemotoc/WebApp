@@ -203,7 +203,8 @@ select is((select count(*)::integer from storage.objects where bucket_id = 'expo
   'denied: exports_select_staff_opened: another staff member who didn''t open it can''t read it');
 select pg_temp.as_postgres();
 select is((select count(*)::integer from public.audit_log where action = 'data_request.file_opened'
-             and user_id = '00000000-0000-4000-8000-000000000011'), 1, 'opening a file is in the audit log');
+             and user_id = '00000000-0000-4000-8000-000000000011'
+             and target_id in (select export_id::text from opened_files)), 1, 'opening a file is in the audit log');
 update public.exports set expires_at = now() - interval '1 minute', ready_at = now() - interval '7 days 1 minute'
 where id = (select export_id from opened_files where display_name = 'rain.docx');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');

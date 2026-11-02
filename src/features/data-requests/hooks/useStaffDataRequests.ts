@@ -1,9 +1,10 @@
 /**
  * The staff hooks for data requests (bundle ADMIN-2, part c1; story S1-E11-09): the list, one
- * request, logging a new one and the actions on it (extend, ask the person to confirm, close).
+ * request, logging a new one and the actions on it (extend, ask the person to confirm, close;
+ * from part c3, ask the parent and send the parent the copy's link).
  *
  * Who calls it: StaffDataRequestsPage, NewDataRequestPage and StaffDataRequestPage.
- * What it calls: api/dataRequests.ts. After every change the request and the list are read again,
+ * What it calls: api/dataRequests.ts, and api/dataRequestParent.ts for the parent's path. After every change the request and the list are read again,
  * so the page shows what the database now holds.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -22,6 +23,7 @@ import {
   type DataRequestFailure,
   type NewDataRequest,
 } from '../api/dataRequests';
+import { postParentLink } from '../api/dataRequestParent';
 
 /** The query key every data request query starts with, so one change refreshes them all. */
 export const dataRequestsKey = 'staff-data-requests';
@@ -82,8 +84,13 @@ export function useStaffDataRequest(requestId: string) {
     queryFn: async () => fetchDataRequest(await requireClient(), requestId),
   });
   const action = useMutation({
-    mutationFn: async (wanted: DataRequestAction) =>
-      actOnDataRequest(await requireClient(), requestId, wanted),
+    mutationFn: async (wanted: DataRequestAction) => {
+      const client = await requireClient();
+      // The parent's path goes through our server, which signs the link it emails (part c3).
+      if (wanted.kind === 'askParent') return postParentLink(client, 'ask', requestId);
+      if (wanted.kind === 'sendParentCopy') return postParentLink(client, 'send', requestId);
+      return actOnDataRequest(client, requestId, wanted);
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [dataRequestsKey] }),
   });
   return {

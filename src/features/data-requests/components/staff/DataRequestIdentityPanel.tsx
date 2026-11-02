@@ -5,8 +5,9 @@
  * Data requests; nothing is ever sent to an address taken from the request.
  *
  * Who shows it: StaffDataRequestPage. What it calls: onAsk(), which useStaffDataRequest sends to
- * admin_ask_data_request_confirmation(). An under-16's check goes to the parent (part c2), so the
- * button isn't offered for them.
+ * admin_ask_data_request_confirmation(); onAskParent(), which goes through our server
+ * (server/data-request-parent.ts). An under-16's check goes to the parent or guardian who agreed
+ * to their account (part c3; S1-E11-09 criterion 5): "Ask the parent or guardian" instead.
  */
 import { Button } from '@/components/ui/Button';
 
@@ -21,6 +22,7 @@ interface DataRequestIdentityPanelProps {
   request: DataRequest;
   isActing: boolean;
   onAsk: () => void;
+  onAskParent: () => void;
 }
 
 /**
@@ -29,9 +31,25 @@ interface DataRequestIdentityPanelProps {
  * @returns the key of the explanation
  */
 function explanationKey(request: DataRequest): string {
-  if (request.identity === 'not_asked') return 'page.identityExplainAsk';
-  if (request.identity === 'asked') return 'page.identityExplainAsked';
-  return 'page.identityExplainDone';
+  const isParents = request.isUnder16 || request.goesToParent;
+  if (request.identity === 'not_asked') {
+    return isParents ? 'page.identityExplainParent' : 'page.identityExplainAsk';
+  }
+  if (request.identity === 'asked') {
+    return isParents ? 'page.identityExplainParentAsked' : 'page.identityExplainAsked';
+  }
+  return request.goesToParent ? 'page.identityExplainParentDone' : 'page.identityExplainDone';
+}
+
+/**
+ * The button's words: ask, or ask again, the person or their parent.
+ *
+ * @returns the key of the words
+ */
+function buttonKey(request: DataRequest): string {
+  const again = request.identity === 'asked';
+  if (request.isUnder16) return again ? 'page.askParentAgain' : 'page.askParent';
+  return again ? 'page.askAgain' : 'page.ask';
 }
 
 /**
@@ -43,11 +61,11 @@ export function DataRequestIdentityPanel({
   request,
   isActing,
   onAsk,
+  onAskParent,
 }: DataRequestIdentityPanelProps) {
   const { t } = useDataRequestsTranslation();
   const words = useDataRequestWords();
-  const mayAsk =
-    !request.isUnder16 && (request.identity === 'not_asked' || request.identity === 'asked');
+  const mayAsk = request.identity === 'not_asked' || request.identity === 'asked';
   return (
     <DataRequestSection id="data-request-identity" heading={t('page.identityHeading')}>
       <p className="m-0 font-semibold text-ink">{words.identity(request)}</p>
@@ -55,8 +73,13 @@ export function DataRequestIdentityPanel({
         <p className="m-0 text-body">{t(explanationKey(request))}</p>
       )}
       {mayAsk && (
-        <Button variant="secondary" className="self-start" disabled={isActing} onClick={onAsk}>
-          {request.identity === 'asked' ? t('page.askAgain') : t('page.ask')}
+        <Button
+          variant="secondary"
+          className="self-start"
+          disabled={isActing}
+          onClick={request.isUnder16 ? onAskParent : onAsk}
+        >
+          {t(buttonKey(request))}
         </Button>
       )}
     </DataRequestSection>

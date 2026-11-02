@@ -87,6 +87,16 @@
     "refusedSubject": "Your account won’t be activated",
     "refusedBody": "Your parent or guardian didn’t agree, so we won’t activate your {{productName}} account, and we’ve deleted it and its data. You can sign up again later and ask another parent or guardian."
   },
+  "dataRequestParent": {
+    "askSubject": "Did you ask for @{{handle}}’s data?",
+    "askBody": "We received a request ({{reference}}) for a copy of the data of the {{productName}} account @{{handle}}. You agreed to this account as its parent or guardian, so we check with you before we send anything.",
+    "askAction": "Tell us whether you or your child asked for it: {{link}}",
+    "askNotYou": "If nobody in your family asked, say so on the same page and we won’t send anything. We never send the data by email.",
+    "copySubject": "The copy of @{{handle}}’s data is ready",
+    "copyBody": "You confirmed request {{reference}}, so the copy of @{{handle}}’s data is ready until {{date}}.",
+    "copyAction": "Open it here: {{link}}",
+    "copyOnce": "The link works once: after you open it, you have one hour to download the files. Please don’t forward this email."
+  },
   "teacherCheck": {
     "linkSubject": "Confirm your school address for {{productName}}",
     "linkBody": "Someone asked for a Teacher badge on {{productName}} and gave this as their school address. Open the link to confirm it’s yours.",

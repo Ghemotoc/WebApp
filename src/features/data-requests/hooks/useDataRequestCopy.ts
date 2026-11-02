@@ -4,7 +4,8 @@
  *
  * Who calls it: DataRequestCopyPanel and DataRequestFiles.
  * What it calls: lib/runDataRequestCopy.ts (loaded only when a copy is built, with the Word and
- * ZIP libraries) and api/dataRequestCopy.ts. The Word files' words come from Download my data's
+ * ZIP libraries) and api/dataRequestCopy.ts. On the parent's path (part c3) the copy is followed
+ * by the one-time link to the parent, through api/dataRequestParent.ts. The Word files' words come from Download my data's
  * hooks, in the person's language, so the person reads their own files in it.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -18,6 +19,7 @@ import { formatRomaniaDate } from '@/lib/romania-time';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { openDataRequestFileAddress } from '../api/dataRequestCopy';
+import { postParentLink } from '../api/dataRequestParent';
 import { DataRequestError, type DataRequestDetail } from '../api/dataRequests';
 import type { DataRequestCopyFormat } from '../lib/runDataRequestCopy';
 
@@ -39,7 +41,8 @@ async function requireClient() {
  * Follows building and sending the copy, and opening a file.
  *
  * @param request - the request, with the person's language
- * @returns send(format), whether it runs and why it failed; openFile(file), and why it failed
+ * @returns send(format), whether it runs and why it failed; openFile(file), and why it failed;
+ *   resendParentLink(), whether it runs, whether it worked and why it failed
  */
 export function useDataRequestCopy(request: DataRequestDetail) {
   const queryClient = useQueryClient();
@@ -50,8 +53,9 @@ export function useDataRequestCopy(request: DataRequestDetail) {
     mutationFn: async (format: DataRequestCopyFormat) => {
       // The builders load only now, so the staff pages don't carry the Word and ZIP libraries.
       const { makeDataRequestCopy } = await import('../lib/runDataRequestCopy');
-      return makeDataRequestCopy({
-        client: await requireClient(),
+      const client = await requireClient();
+      const fileCount = await makeDataRequestCopy({
+        client,
         wordLabels,
         statusLabels,
         planText,
@@ -61,7 +65,14 @@ export function useDataRequestCopy(request: DataRequestDetail) {
         reference: request.reference,
         format,
       });
+      // On the parent's path the copy goes only to the parent, by a one-time link (part c3).
+      if (request.goesToParent) await postParentLink(client, 'send', request.id);
+      return fileCount;
     },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: [dataRequestsKey] }),
+  });
+  const resending = useMutation({
+    mutationFn: async () => postParentLink(await requireClient(), 'send', request.id),
     onSettled: () => queryClient.invalidateQueries({ queryKey: [dataRequestsKey] }),
   });
   const opening = useMutation({
@@ -82,5 +93,9 @@ export function useDataRequestCopy(request: DataRequestDetail) {
     sendFailure: dataRequestFailureOf(sending.error),
     openFile: opening.mutate,
     openFailure: dataRequestFailureOf(opening.error),
+    resendParentLink: () => resending.mutate(),
+    isResending: resending.isPending,
+    hasResent: resending.isSuccess,
+    resendFailure: dataRequestFailureOf(resending.error),
   };
 }

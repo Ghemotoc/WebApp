@@ -40,6 +40,13 @@
       "confirmed": "Confirmată de persoană",
       "denied": "Persoana spune că nu a fost ea"
     },
+    "parentIdentity": {
+      "not_needed": "Nu e nevoie: făcută din cont",
+      "not_asked": "Încă nu am întrebat",
+      "asked": "Așteptăm părintele sau tutorele",
+      "confirmed": "Confirmată de părinte sau tutore",
+      "denied": "Părintele sau tutorele spune că nu a cerut nimeni"
+    },
     "urgency": {
       "overdue": "Termen depășit",
       "dueToday": "Termenul e azi",
@@ -116,7 +123,12 @@
     "outcome": "Ce s-a făcut",
     "close": "Închide cererea",
     "closedNote": "Cererea e închisă și nu mai poate fi schimbată.",
-    "extendedFully": "Termenul are deja cel mai mult timp în plus permis de lege: încă două luni."
+    "extendedFully": "Termenul are deja cel mai mult timp în plus permis de lege: încă două luni.",
+    "identityExplainParent": "Persoana are sub 16 ani și cererea nu a venit din contul său, așa că verificăm cu părintele sau tutorele care a fost de acord cu contul. Primește un email la adresa din acel acord, cu un link prin care răspunde. Nu trimitem nimic la o adresă luată din cerere.",
+    "identityExplainParentAsked": "I-am scris părintelui sau tutorelui care a fost de acord cu contul. Răspunsul apare aici.",
+    "identityExplainParentDone": "Părintele sau tutorele a răspuns din linkul trimis la adresa din acordul său.",
+    "askParent": "Întreabă părintele sau tutorele",
+    "askParentAgain": "Scrie-i din nou părintelui sau tutorelui"
   },
   "failures": {
     "not_allowed": "Doar proprietarul, administratorii și echipa de asistență se ocupă de cererile privind datele.",
@@ -139,7 +151,10 @@
     "identity_not_checked": "Verifică mai întâi identitatea persoanei.",
     "bad_files": "Fișierele copiei nu au fost în regulă. Încearcă din nou să faci copia.",
     "no_file": "Un fișier nu a ajuns. Încearcă din nou să faci copia.",
-    "not_found": "Fișierul sau copia nu mai este acolo. Reîncarcă pagina."
+    "not_found": "Fișierul sau copia nu mai este acolo. Reîncarcă pagina.",
+    "not_under_16": "Persoana are 16 ani sau mai mult, așa că își confirmă singură cererea.",
+    "no_parent_on_record": "Niciun părinte sau tutore nu a fost de acord cu acest cont, așa că nu avem cui să scriem. Răspunde la cerere prin poștă sau roagă persoana să o facă din contul său.",
+    "parent_email_failed": "Emailul către părinte sau tutore nu a plecat. Încearcă din nou peste un minut."
   },
   "mine": {
     "heading": "Cereri privind datele",
@@ -179,6 +194,7 @@
   "copy": {
     "heading": "Copia",
     "intro": "Copia cuprinde tot ce a pus persoana aici și datele contului său, într-un fișier citibil de calculator (data.json), fiecare poveste și planul fiecărei povești ca fișier Word, plus biblioteca sa ca tabel. Se face în această filă, în limba persoanei, apoi persoana o descarcă din Setări, cu contul deschis, timp de șapte zile. Nu se trimite nimic la nicio altă adresă.",
+    "introParent": "Copia cuprinde tot ce a pus persoana aici și datele contului său, ca fișier citibil de calculator (data.json), fiecare poveste și planul fiecărei povești ca fișier Word și biblioteca sa ca tabel. Se face în această filă, în limba persoanei. La această cerere merge la părintele sau tutorele care a fost de acord cu contul: îi trimitem un link de unică folosință la adresa din acel acord, valabil șapte zile. Persoana nu e anunțată și nu vede fișierele.",
     "formatLabel": "Cum o trimiți",
     "formats": {
       "zip": "O singură arhivă ZIP cu tot",
@@ -189,7 +205,7 @@
     "sent": "Copia s-a trimis. Persoana are o notificare și un email și o poate descărca timp de șapte zile.",
     "blocked": {
       "not_a_copy": "Cererea nu este pentru o copie a datelor, așa că nu se trimite nicio copie.",
-      "parent_needed": "Persoana are sub 16 ani, iar cererea nu a venit din contul său, așa că o copie trece prin părintele sau tutorele său.",
+      "parent_needed": "Persoana are sub 16 ani și cererea nu a venit din contul său, așa că trece prin părintele sau tutorele său. Cere mai întâi confirmarea, la Verificarea identității.",
       "identity_denied": "Persoana ne-a spus că cererea nu a fost a sa, așa că nu se trimite nimic.",
       "identity_not_checked": "Verifică mai întâi identitatea: roag-o pe persoană să confirme că cererea e a sa."
     },
@@ -201,6 +217,56 @@
     "sentHeading": "Copii trimise",
     "sentLine_one": "Trimisă {{sent}}: {{count}} fișier, până la {{until}}",
     "sentLine_few": "Trimisă {{sent}}: {{count}} fișiere, până la {{until}}",
-    "sentLine_other": "Trimisă {{sent}}: {{count}} de fișiere, până la {{until}}"
+    "sentLine_other": "Trimisă {{sent}}: {{count}} de fișiere, până la {{until}}",
+    "sentToParent": "Copia e gata. I-am trimis părintelui sau tutorelui un link de unică folosință; persoana nu e anunțată.",
+    "blockedParent": {
+      "identity_denied": "Părintele sau tutorele ne-a spus că nu a cerut nimeni, așa că nu trimitem nimic.",
+      "identity_not_checked": "Așteaptă mai întâi ca părintele sau tutorele să confirme cererea."
+    },
+    "filesHeadingParent": "Fișiere care așteaptă părintele sau tutorele",
+    "parentLink": {
+      "heading": "Linkul părintelui",
+      "notSent": "Linkul către copie nu a fost trimis încă. Trimite-l mai jos.",
+      "sent": "Trimis pe {{sent}}. Încă nedeschis. Merge o singură dată: o oră de la prima deschidere.",
+      "opened": "Trimis pe {{sent}}, deschis prima dată pe {{opened}}. A mers o oră de atunci.",
+      "resend": "Trimite din nou linkul"
+    }
+  },
+  "parent": {
+    "documentTitle": "Cererea de date a copilului tău",
+    "eyebrow": "Pentru părinte sau tutore",
+    "loading": "Se încarcă…",
+    "loadFailed": "Nu am putut încărca pagina. Verifică conexiunea și încearcă din nou.",
+    "goneHeading": "Linkul nu mai merge",
+    "goneBody": "Poate l-a înlocuit un email mai nou sau cererea e închisă. Dacă ai nevoie de ajutor, scrie-ne.",
+    "checkHeading": "Ai cerut datele contului @{{handle}}?",
+    "checkIntro": "Pe {{date}} am primit cererea {{reference}} pentru {{what}} contului @{{handle}}. Ai fost de acord cu acest cont ca părinte sau tutore, așa că verificăm cu tine înainte să facem ceva.",
+    "what": {
+      "copy": "o copie a datelor",
+      "move": "o copie a datelor, ca să fie mutate în altă parte",
+      "correct": "corectarea datelor",
+      "delete": "ștergerea datelor",
+      "other": "ceva legat de datele"
+    },
+    "yes": "Da, noi am cerut",
+    "no": "Nu, nimeni din familie nu a cerut",
+    "answerFailed": "Răspunsul nu s-a salvat. Încearcă din nou.",
+    "confirmedHeading": "Mulțumim",
+    "confirmedBody": "Ai confirmat cererea {{reference}}. Îți scriem la aceeași adresă când am rezolvat-o, niciodată în altă parte.",
+    "deniedHeading": "Mulțumim că ne-ai spus",
+    "deniedBody": "Ne-ai spus că nimeni din familie nu a făcut cererea {{reference}}, așa că nu trimitem nimic. Dacă ai impresia că cineva încearcă să obțină datele copilului tău, scrie-ne.",
+    "copyHeading": "Copia datelor contului @{{handle}}",
+    "copyIntro": "Aceasta este copia pentru cererea {{reference}}: tot ce a pus @{{handle}} aici, ca fișier citibil de calculator (data.json), fiecare poveste ca fișier Word și biblioteca sa ca tabel.",
+    "copyOnce": "Linkul merge o singură dată: după ce apeși Deschide fișierele, ai o oră să le descarci. Folosește un dispozitiv în care ai încredere.",
+    "openButton": "Deschide fișierele",
+    "openFailed": "Fișierele nu s-au putut deschide. Încearcă din nou.",
+    "openUntil": "Poți descărca fișierele până la {{time}}.",
+    "fileLine": "{{name}}, {{size}}",
+    "download": "Descarcă",
+    "downloadLabel": "Descarcă {{name}}",
+    "used": "Linkul a fost deja folosit. Dacă mai ai nevoie de fișiere, scrie-ne și îți trimitem un link nou.",
+    "expired": "Fișierele nu mai sunt aici: rămân șapte zile. Dacă mai ai nevoie de ele, scrie-ne.",
+    "questions": "Întrebări?",
+    "contactUs": "Scrie-ne"
   }
 }

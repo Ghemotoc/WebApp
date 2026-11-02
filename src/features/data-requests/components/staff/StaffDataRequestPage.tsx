@@ -50,6 +50,7 @@ function OpenRequestActions({ one, request }: { one: OneRequest; request: DataRe
         request={request}
         isActing={one.isActing}
         onAsk={() => void one.act({ kind: 'ask' }).catch(() => undefined)}
+        onAskParent={() => void one.act({ kind: 'askParent' }).catch(() => undefined)}
       />
       {asksForACopy(request) && <DataRequestCopyPanel request={request} />}
       <DataRequestExtendForm

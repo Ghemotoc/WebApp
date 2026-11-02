@@ -21,10 +21,24 @@ export function useDataRequestWords() {
   return {
     type: (request: DataRequest) => t(`staff.types.${request.requestType}`),
     channel: (request: DataRequest) => t(`staff.channels.${request.channel}`),
-    identity: (request: DataRequest) => t(`staff.identity.${request.identity}`),
+    identity: (request: DataRequest) => identityWords(t, request),
     date: (calendarDate: string) => formatCalendarDate(calendarDate, i18n.language),
     urgency: (request: DataRequest) => urgencyWords(t, request),
   };
+}
+
+/**
+ * Where the identity check stands, saying so when the parent or guardian is the one checked
+ * (part c3): "Asked the parent or guardian", "Confirmed by the parent or guardian".
+ *
+ * @returns the words
+ */
+function identityWords(
+  t: ReturnType<typeof useDataRequestsTranslation>['t'],
+  request: DataRequest,
+): string {
+  if (request.goesToParent) return t(`staff.parentIdentity.${request.identity}`);
+  return t(`staff.identity.${request.identity}`);
 }
 
 /**

@@ -40,6 +40,13 @@
       "confirmed": "Confirmed by the person",
       "denied": "The person says it wasn’t them"
     },
+    "parentIdentity": {
+      "not_needed": "Not needed: made inside the account",
+      "not_asked": "Not asked yet",
+      "asked": "Waiting for the parent or guardian",
+      "confirmed": "Confirmed by the parent or guardian",
+      "denied": "The parent or guardian says nobody asked"
+    },
     "urgency": {
       "overdue": "Overdue",
       "dueToday": "Due today",
@@ -116,7 +123,12 @@
     "outcome": "What was done",
     "close": "Close the request",
     "closedNote": "This request is closed and can’t be changed.",
-    "extendedFully": "The deadline already has the most extra time the law allows: two more months."
+    "extendedFully": "The deadline already has the most extra time the law allows: two more months.",
+    "identityExplainParent": "This person is under 16 and the request didn’t come from inside their account, so we check with the parent or guardian who agreed to the account. They get an email at the address from that agreement with a link to answer. Nothing goes to an address taken from the request.",
+    "identityExplainParentAsked": "We emailed the parent or guardian who agreed to the account. Their answer will show here.",
+    "identityExplainParentDone": "The parent or guardian answered from the link we emailed to the address in their agreement.",
+    "askParent": "Ask the parent or guardian",
+    "askParentAgain": "Email the parent or guardian again"
   },
   "failures": {
     "not_allowed": "Only owner, admin and support staff handle data requests.",
@@ -139,7 +151,10 @@
     "identity_not_checked": "Check the person’s identity first.",
     "bad_files": "The copy’s files weren’t right. Try building it again.",
     "no_file": "A file didn’t arrive. Try building the copy again.",
-    "not_found": "That file or copy isn’t there any more. Reload the page."
+    "not_found": "That file or copy isn’t there any more. Reload the page.",
+    "not_under_16": "This person is 16 or over, so they confirm the request themselves.",
+    "no_parent_on_record": "No parent or guardian has agreed to this account, so there is nobody we may write to. Answer the request by post or ask the person to make it from inside their account.",
+    "parent_email_failed": "The email to the parent or guardian didn’t go. Try again in a minute."
   },
   "mine": {
     "heading": "Data requests",
@@ -179,6 +194,7 @@
   "copy": {
     "heading": "The copy",
     "intro": "The copy holds everything the person put here and their account data as a machine-readable file (data.json), every story and every story’s plan as a Word file, and their library as a spreadsheet. It is built in this tab, in the person’s language, then the person downloads it from Settings while signed in, for seven days. Nothing goes to any other address.",
+    "introParent": "The copy holds everything the person put here and their account data as a machine-readable file (data.json), every story and every story’s plan as a Word file, and their library as a spreadsheet. It is built in this tab, in the person’s language. On this request it goes to the parent or guardian who agreed to the account: we email them a one-time link at the address from that agreement, for seven days. The person isn’t told and doesn’t see the files.",
     "formatLabel": "How to send it",
     "formats": {
       "zip": "One ZIP of everything",
@@ -189,7 +205,7 @@
     "sent": "The copy is sent. The person has a notice and an email, and can download it for seven days.",
     "blocked": {
       "not_a_copy": "This request isn’t for a copy of the data, so no copy is sent.",
-      "parent_needed": "This person is under 16 and the request didn’t come from inside their account, so the copy goes through their parent or guardian.",
+      "parent_needed": "This person is under 16 and the request didn’t come from inside their account, so it goes through their parent or guardian. Ask them first, under Identity check.",
       "identity_denied": "The person told us this request wasn’t theirs, so nothing is sent.",
       "identity_not_checked": "Check the person’s identity first: ask them to confirm the request was theirs."
     },
@@ -201,6 +217,56 @@
     "sentHeading": "Copies sent",
     "sentLine_one": "Sent {{sent}}: {{count}} file, until {{until}}",
     "sentLine_few": "Sent {{sent}}: {{count}} files, until {{until}}",
-    "sentLine_other": "Sent {{sent}}: {{count}} files, until {{until}}"
+    "sentLine_other": "Sent {{sent}}: {{count}} files, until {{until}}",
+    "sentToParent": "The copy is ready. We emailed the parent or guardian a one-time link to it; the person isn’t told.",
+    "blockedParent": {
+      "identity_denied": "The parent or guardian told us nobody asked for this, so nothing is sent.",
+      "identity_not_checked": "Wait for the parent or guardian to confirm the request first."
+    },
+    "filesHeadingParent": "Files waiting for the parent or guardian",
+    "parentLink": {
+      "heading": "The parent’s link",
+      "notSent": "The link to the copy hasn’t been emailed yet. Send it below.",
+      "sent": "Emailed {{sent}}. Not opened yet. It works once: one hour from the first opening.",
+      "opened": "Emailed {{sent}}, first opened {{opened}}. It worked for one hour from then.",
+      "resend": "Send the link again"
+    }
+  },
+  "parent": {
+    "documentTitle": "Your child’s data request",
+    "eyebrow": "For a parent or guardian",
+    "loading": "Loading…",
+    "loadFailed": "We couldn’t load this page. Check your connection and try again.",
+    "goneHeading": "This link no longer works",
+    "goneBody": "A newer email may have replaced it, or the request is closed. If you need help, contact us.",
+    "checkHeading": "Did you ask for @{{handle}}’s data?",
+    "checkIntro": "On {{date}} we received request {{reference}} for {{what}} of the account @{{handle}}. You agreed to this account as its parent or guardian, so we check with you before we do anything.",
+    "what": {
+      "copy": "a copy of the data",
+      "move": "a copy of the data to move elsewhere",
+      "correct": "a correction of the data",
+      "delete": "the deletion of the data",
+      "other": "something about the data"
+    },
+    "yes": "Yes, we asked for it",
+    "no": "No, nobody in our family asked",
+    "answerFailed": "Your answer wasn’t saved. Try again.",
+    "confirmedHeading": "Thank you",
+    "confirmedBody": "You confirmed request {{reference}}. We’ll email you at this same address when we’ve dealt with it, never anywhere else.",
+    "deniedHeading": "Thank you for telling us",
+    "deniedBody": "You told us nobody in your family asked for request {{reference}}, so we won’t send anything. If you think someone is trying to get your child’s data, contact us.",
+    "copyHeading": "The copy of @{{handle}}’s data",
+    "copyIntro": "This is the copy for request {{reference}}: everything @{{handle}} put here as a machine-readable file (data.json), every story as a Word file and their library as a spreadsheet.",
+    "copyOnce": "The link works once: when you press Open the files, you have one hour to download them. Use a device you trust.",
+    "openButton": "Open the files",
+    "openFailed": "The files couldn’t be opened. Try again.",
+    "openUntil": "You can download the files until {{time}}.",
+    "fileLine": "{{name}}, {{size}}",
+    "download": "Download",
+    "downloadLabel": "Download {{name}}",
+    "used": "This link was already used. If you still need the files, contact us and we’ll send a new link.",
+    "expired": "The files are no longer here: they last seven days. If you still need them, contact us.",
+    "questions": "Questions?",
+    "contactUs": "Contact us"
   }
 }
