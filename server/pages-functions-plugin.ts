@@ -20,6 +20,7 @@
  * AGE_CHECK_SECRET, the same value the tests put in the local Vault),
  * /api/parent-consent/… (server/parent-consent.ts, S1-E2-03: signed with PARENTAL_CONSENT_SECRET,
  * the same value the tests put in the local Vault; the emails go to Mailpit),
+ * /api/data-request-parent/… (server/data-request-parent.ts, ADMIN-2c3: the same secret and Mailpit),
  * /api/teacher-check/… (server/teacher-check.ts, S1-E2-11: signed with TEACHER_CHECK_SECRET, the
  * same value the tests put in the local Vault; the link goes to Mailpit) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
@@ -47,6 +48,7 @@ import { brandDefaults } from '../src/config/brand.ts';
 import { handleAgeCheck } from './age-check.ts';
 import { handleCanva } from './canva.ts';
 import { handleContact, sendWithMailpit } from './contact.ts';
+import { handleDataRequestParent } from './data-request-parent.ts';
 import { handleDecisionEmails } from './decision-emails.ts';
 import { handleEmbed } from './embeds.ts';
 import { oembedLookup } from './embeds/oembed.ts';
@@ -265,7 +267,8 @@ function canvaOptions(environment: Record<string, string>) {
 
 /**
  * Picks the handler for the functions that stand in for an outside service locally (oEmbed for
- * music and video, Canva for covers, Yoti for the age check), so nothing leaves the machine.
+ * music and video, Canva for covers, Yoti for the age check), so nothing leaves the machine, then
+ * the ones that email a signed link (signedLinkHandlerFor()).
  *
  * @param url - the request's address
  * @param environment - the VITE_ values: the local Supabase's address and anon key
@@ -298,10 +301,35 @@ function outsideServiceHandlerFor(
         settings: { mode: 'stub' },
       });
   }
+  // The functions that email a signed link come last.
+  return signedLinkHandlerFor(url, environment);
+}
+
+/**
+ * Picks the handler for the functions that email a signed link (parental consent, a data
+ * request's parent path, the Teacher badge's school address): the local secrets the tests put in
+ * the local Vault, and Mailpit's inbox instead of Brevo.
+ *
+ * @param url - the request's address
+ * @param environment - the VITE_ values: the local Supabase's address and anon key
+ * @returns the function that answers it, or null for every other address
+ */
+function signedLinkHandlerFor(
+  url: string | undefined,
+  environment: Record<string, string>,
+): FunctionHandler | null {
   if ((url ?? '').startsWith('/api/parent-consent/')) {
     // Parental consent (S1-E2-03): the local Supabase, the local secret and Mailpit's inbox.
     return (request) =>
       handleParentConsent(withLocalOrigin(request), {
+        ...notificationEmailOptions(environment),
+        secret: process.env.PARENTAL_CONSENT_SECRET,
+      });
+  }
+  if ((url ?? '').startsWith('/api/data-request-parent/')) {
+    // A data request's parent path (ADMIN-2c3): the same secret as parental consent, and Mailpit.
+    return (request) =>
+      handleDataRequestParent(withLocalOrigin(request), {
         ...notificationEmailOptions(environment),
         secret: process.env.PARENTAL_CONSENT_SECRET,
       });

@@ -3,7 +3,8 @@
  * for a one-minute address that only the signed-in owner gets (criterion 3 of both stories), then
  * lets the browser download the file under a name that never holds the person's name or ID.
  * Who shows it: ExportStatus (Download ZIP), StoriesExportReady (Download Word files) and, for a
- * copy staff sent for a data request, MyDataRequestRow (S1-E11-09).
+ * copy staff sent for a data request, MyDataRequestRow and, signed out, the parent's page
+ * ParentCopyFiles (S1-E11-09; there policy exports_select_parent_link allows it, not the owner's).
  * What it calls: exportDownloadAddress().
  */
 import { useState } from 'react';

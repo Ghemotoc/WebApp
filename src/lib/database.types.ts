@@ -1897,6 +1897,7 @@ export type Database = {
           extended_at: string | null;
           extended_to: string | null;
           extension_reason: string | null;
+          goes_to_parent: boolean;
           handled_by_user_id: string;
           id: string;
           identity: Database['public']['Enums']['data_request_identity'];
@@ -1904,6 +1905,10 @@ export type Database = {
           identity_asked_at: string | null;
           note: string;
           outcome: string | null;
+          parent_check_token_hash: string | null;
+          parent_copy_opened_at: string | null;
+          parent_copy_sent_at: string | null;
+          parent_copy_token_hash: string | null;
           received_on: string;
           reference: string;
           request_type: Database['public']['Enums']['data_request_type'];
@@ -1912,9 +1917,14 @@ export type Database = {
           user_id: string;
           data_request_deadline: string | null;
           data_request_json: Json | null;
+          data_request_parent_copy_state: string | null;
           data_request_urgency: string | null;
         };
-        ComputedFields: 'data_request_deadline' | 'data_request_json' | 'data_request_urgency';
+        ComputedFields:
+          | 'data_request_deadline'
+          | 'data_request_json'
+          | 'data_request_parent_copy_state'
+          | 'data_request_urgency';
         Insert: {
           channel: Database['public']['Enums']['data_request_channel'];
           closed_at?: string | null;
@@ -1925,6 +1935,7 @@ export type Database = {
           extended_at?: string | null;
           extended_to?: string | null;
           extension_reason?: string | null;
+          goes_to_parent?: boolean;
           handled_by_user_id: string;
           id?: string;
           identity: Database['public']['Enums']['data_request_identity'];
@@ -1932,6 +1943,10 @@ export type Database = {
           identity_asked_at?: string | null;
           note?: string;
           outcome?: string | null;
+          parent_check_token_hash?: string | null;
+          parent_copy_opened_at?: string | null;
+          parent_copy_sent_at?: string | null;
+          parent_copy_token_hash?: string | null;
           received_on: string;
           reference?: string;
           request_type: Database['public']['Enums']['data_request_type'];
@@ -1949,6 +1964,7 @@ export type Database = {
           extended_at?: string | null;
           extended_to?: string | null;
           extension_reason?: string | null;
+          goes_to_parent?: boolean;
           handled_by_user_id?: string;
           id?: string;
           identity?: Database['public']['Enums']['data_request_identity'];
@@ -1956,6 +1972,10 @@ export type Database = {
           identity_asked_at?: string | null;
           note?: string;
           outcome?: string | null;
+          parent_check_token_hash?: string | null;
+          parent_copy_opened_at?: string | null;
+          parent_copy_sent_at?: string | null;
+          parent_copy_token_hash?: string | null;
           received_on?: string;
           reference?: string;
           request_type?: Database['public']['Enums']['data_request_type'];
@@ -7179,6 +7199,10 @@ export type Database = {
         Returns: string;
       };
       admin_ask_data_request_confirmation: { Args: { target_request_id: string }; Returns: Json };
+      admin_ask_data_request_parent: {
+        Args: { signature: string; target_request_id: string; token_hash: string };
+        Returns: Json;
+      };
       admin_assign_mail: {
         Args: { assignee_handle: string; thread_reference: string };
         Returns: boolean;
@@ -7292,6 +7316,7 @@ export type Database = {
           extended_at: string | null;
           extended_to: string | null;
           extension_reason: string | null;
+          goes_to_parent: boolean;
           handled_by_user_id: string;
           id: string;
           identity: Database['public']['Enums']['data_request_identity'];
@@ -7299,6 +7324,10 @@ export type Database = {
           identity_asked_at: string | null;
           note: string;
           outcome: string | null;
+          parent_check_token_hash: string | null;
+          parent_copy_opened_at: string | null;
+          parent_copy_sent_at: string | null;
+          parent_copy_token_hash: string | null;
           received_on: string;
           reference: string;
           request_type: Database['public']['Enums']['data_request_type'];
@@ -7326,6 +7355,7 @@ export type Database = {
           extended_at: string | null;
           extended_to: string | null;
           extension_reason: string | null;
+          goes_to_parent: boolean;
           handled_by_user_id: string;
           id: string;
           identity: Database['public']['Enums']['data_request_identity'];
@@ -7333,6 +7363,10 @@ export type Database = {
           identity_asked_at: string | null;
           note: string;
           outcome: string | null;
+          parent_check_token_hash: string | null;
+          parent_copy_opened_at: string | null;
+          parent_copy_sent_at: string | null;
+          parent_copy_token_hash: string | null;
           received_on: string;
           reference: string;
           request_type: Database['public']['Enums']['data_request_type'];
@@ -7913,6 +7947,10 @@ export type Database = {
         };
         Returns: Json;
       };
+      admin_send_data_request_parent_copy: {
+        Args: { signature: string; target_request_id: string; token_hash: string };
+        Returns: Json;
+      };
       admin_set_ai_undisclosed_label: {
         Args: { reason_given: string; target_story_id: string };
         Returns: string;
@@ -8284,6 +8322,7 @@ export type Database = {
         Args: { is_mine: boolean; request_reference: string };
         Returns: string;
       };
+      answer_data_request_parent: { Args: { is_ours: boolean; token: string }; Returns: Json };
       answer_message_request: {
         Args: { sender_handle: string; should_accept: boolean };
         Returns: Json;
@@ -8920,6 +8959,44 @@ export type Database = {
           why_left_out: string;
         }[];
       };
+      data_request_by_parent_token: {
+        Args: { raw_token: string };
+        Returns: {
+          channel: Database['public']['Enums']['data_request_channel'];
+          closed_at: string | null;
+          copies_sent: NonNullable<Json>;
+          created_at: string;
+          created_by_user_id: string;
+          due_on: string;
+          extended_at: string | null;
+          extended_to: string | null;
+          extension_reason: string | null;
+          goes_to_parent: boolean;
+          handled_by_user_id: string;
+          id: string;
+          identity: Database['public']['Enums']['data_request_identity'];
+          identity_answered_at: string | null;
+          identity_asked_at: string | null;
+          note: string;
+          outcome: string | null;
+          parent_check_token_hash: string | null;
+          parent_copy_opened_at: string | null;
+          parent_copy_sent_at: string | null;
+          parent_copy_token_hash: string | null;
+          received_on: string;
+          reference: string;
+          request_type: Database['public']['Enums']['data_request_type'];
+          state: Database['public']['Enums']['data_request_state'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'data_requests';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       data_request_deadline: {
         Args: {
           request: Omit<
@@ -8942,6 +9019,58 @@ export type Database = {
         };
         Returns: Json;
       };
+      data_request_parent_consent: {
+        Args: { person_id: string };
+        Returns: {
+          created_at: string;
+          decided_at: string | null;
+          id: string;
+          is_guardian_confirmed: boolean;
+          language: string;
+          parent_email: string;
+          privacy_version_id: string | null;
+          status: string;
+          terms_version_id: string | null;
+          token_hash: string;
+          updated_at: string;
+          user_id: string;
+          withdrawn_at: string | null;
+          withdrawn_by: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'parental_consents';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      data_request_parent_copy_state: {
+        Args: {
+          request: Omit<
+            Database['public']['Tables']['data_requests']['Row'],
+            Database['public']['Tables']['data_requests']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      data_request_parent_email: {
+        Args: {
+          consent: Omit<
+            Database['public']['Tables']['parental_consents']['Row'],
+            Database['public']['Tables']['parental_consents']['ComputedFields']
+          >;
+          request: Omit<
+            Database['public']['Tables']['data_requests']['Row'],
+            Database['public']['Tables']['data_requests']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      data_request_parent_is_signed: {
+        Args: { purpose: string; signature: string; target_request_id: string; token_hash: string };
+        Returns: boolean;
+      };
+      data_request_parent_link: { Args: { token: string }; Returns: Json };
       data_request_person_is_under_16: { Args: { person_id: string }; Returns: boolean };
       data_request_urgency: {
         Args: {
@@ -9058,6 +9187,7 @@ export type Database = {
         Returns: string;
       };
       export_library_of: { Args: { owner_id: string }; Returns: Json };
+      export_parent_link_open_allowed: { Args: { object_name: string }; Returns: boolean };
       export_row_for_owner: { Args: { stored_row: Json }; Returns: Json };
       export_staff_open_allowed: { Args: { object_name: string }; Returns: boolean };
       export_staff_upload_allowed: { Args: { object_name: string }; Returns: boolean };
@@ -10069,6 +10199,7 @@ export type Database = {
           tag_id: string;
         }[];
       };
+      open_data_request_parent_copy: { Args: { token: string }; Returns: Json };
       open_downvote_case: {
         Args: {
           target: Omit<

@@ -7,7 +7,8 @@
  * What it calls next: admin_open_data_request(), admin_data_requests(), admin_data_request(),
  * admin_extend_data_request(), admin_ask_data_request_confirmation() and
  * admin_close_data_request() in supabase/migrations/…_admin2_c1_data_requests.sql (and, from part
- * c2, the files and copies sent on admin_data_request(), …_admin2_c2_data_request_copy.sql). Each one
+ * c2, the files and copies sent on admin_data_request(), …_admin2_c2_data_request_copy.sql; from
+part c3, the parent's path, …_admin2_c3_data_request_parent.sql). Each one
  * checks that the caller is owner, admin or support in a staff session and writes the audit log;
  * this file only reads the answers and names the refusals.
  */
@@ -54,6 +55,9 @@ const dataRequestSchema = z.object({
   identity: z.enum(['not_needed', 'not_asked', 'asked', 'confirmed', 'denied']),
   identity_asked_at: z.string().nullable(),
   identity_answered_at: z.string().nullable(),
+  goes_to_parent: z.boolean(),
+  parent_copy_sent_at: z.string().nullable(),
+  parent_copy_opened_at: z.string().nullable(),
   state: z.enum(['open', 'closed']),
   outcome: z.string().nullable(),
   closed_at: z.string().nullable(),
@@ -84,6 +88,11 @@ export interface DataRequest {
   identity: DataRequestIdentity;
   identityAskedAt: string | null;
   identityAnsweredAt: string | null;
+  /** The request goes through the under-16's parent or guardian (part c3). */
+  goesToParent: boolean;
+  /** When the parent was last sent the one-time link to the copy, and when they first opened it. */
+  parentCopySentAt: string | null;
+  parentCopyOpenedAt: string | null;
   isOpen: boolean;
   outcome: string | null;
   closedAt: string | null;
@@ -158,6 +167,9 @@ export const dataRequestFailures = [
   'bad_files',
   'no_file',
   'not_found',
+  'not_under_16',
+  'no_parent_on_record',
+  'parent_email_failed',
   'refused',
   'unreachable',
 ] as const;
@@ -213,6 +225,9 @@ export function dataRequestFrom(value: Json | undefined): DataRequest {
     identity: row.identity,
     identityAskedAt: row.identity_asked_at,
     identityAnsweredAt: row.identity_answered_at,
+    goesToParent: row.goes_to_parent,
+    parentCopySentAt: row.parent_copy_sent_at,
+    parentCopyOpenedAt: row.parent_copy_opened_at,
     isOpen: row.state === 'open',
     outcome: row.outcome,
     closedAt: row.closed_at,
@@ -321,11 +336,18 @@ export async function openDataRequest(
   return dataRequestFrom(data);
 }
 
-/** One action staff take on an open request. */
-export type DataRequestAction =
+/** One action staff take on an open request, through a database function. */
+export type DataRequestDatabaseAction =
   | { kind: 'extend'; extraMonths: 1 | 2; reason: string }
   | { kind: 'ask' }
   | { kind: 'close'; outcome: string };
+
+/**
+ * Every action staff take on an open request: the database ones, plus the two on the parent's path
+ * (part c3), which go through our server because it signs the link it emails.
+ */
+export type DataRequestAction =
+  DataRequestDatabaseAction | { kind: 'askParent' } | { kind: 'sendParentCopy' };
 
 /**
  * Sends one action to the database. Extending and asking also tell the person (a notice they
@@ -340,7 +362,7 @@ export type DataRequestAction =
 export async function actOnDataRequest(
   client: AppSupabaseClient,
   requestId: string,
-  action: DataRequestAction,
+  action: DataRequestDatabaseAction,
 ): Promise<DataRequest> {
   const answer = await sendAction(client, requestId, action);
   if (answer.error !== null) throw dataRequestErrorFrom(answer.error);
@@ -352,7 +374,11 @@ export async function actOnDataRequest(
  *
  * @returns Supabase's answer
  */
-function sendAction(client: AppSupabaseClient, requestId: string, action: DataRequestAction) {
+function sendAction(
+  client: AppSupabaseClient,
+  requestId: string,
+  action: DataRequestDatabaseAction,
+) {
   if (action.kind === 'extend') {
     return client.rpc('admin_extend_data_request', {
       target_request_id: requestId,

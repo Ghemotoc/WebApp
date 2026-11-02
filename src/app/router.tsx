@@ -366,6 +366,16 @@ const parentConsentRoutes: RouteObject[] = [
       return { Component: ParentAnswerPage };
     },
   },
+  // A data request's link for an under-16's parent or guardian (ADMIN-2c3): works signed out.
+  {
+    path: '/data-request/parent',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { DataRequestParentPage } =
+        await import('@/features/data-requests/components/parent/DataRequestParentPage');
+      return { Component: DataRequestParentPage };
+    },
+  },
   // The Teacher badge's school email link (S1-E2-11): works signed out, on any device.
   {
     path: '/teacher-check/confirm',

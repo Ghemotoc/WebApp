@@ -17,6 +17,8 @@ import { useDataRequestsTranslation } from '../../registerDataRequestsTranslatio
 /** What the list needs. */
 interface DataRequestFilesProps {
   files: DataRequestFile[];
+  /** True on the parent's path (part c3): the files wait for the parent, not the person. */
+  forParent: boolean;
   onOpen: (file: { exportId: string; displayName: string }) => void;
 }
 
@@ -25,12 +27,14 @@ interface DataRequestFilesProps {
  *
  * @returns the list and its hint
  */
-export function DataRequestFiles({ files, onOpen }: DataRequestFilesProps) {
+export function DataRequestFiles({ files, forParent, onOpen }: DataRequestFilesProps) {
   const { t, i18n } = useDataRequestsTranslation();
   if (files.length === 0) return null;
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="m-0 text-base font-semibold text-heading">{t('copy.filesHeading')}</h3>
+      <h3 className="m-0 text-base font-semibold text-heading">
+        {t(forParent ? 'copy.filesHeadingParent' : 'copy.filesHeading')}
+      </h3>
       <p className="m-0 text-sm text-meta">{t('copy.openHint')}</p>
       <ul className="m-0 flex list-none flex-col p-0">
         {files.map((file) => (
