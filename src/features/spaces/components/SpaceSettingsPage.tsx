@@ -7,10 +7,11 @@
  * saving, for anyone holding the settings power (the owner, a moderator given it, or our
  * moderation team; part b, S1-E8-07), then the Banner picture card (part c) for the same people
  * while picture uploads are on. Under them, the Moderators card for the owner and our
- * moderation team (SpaceModeratorsCard). Anyone else is told only the owner can change it; the
+ * moderation team (SpaceModeratorsCard). In a class space (bundle CLASSES, part a; S1-E8-11), the
+ * class invite card for anyone holding the members power (ClassInviteCard). Anyone else is told only the owner can change it; the
  * database checks again. A new name keeps the space's address, so links to it still work.
  * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceBannerPictureCard;
- * SpaceModeratorsCard.
+ * SpaceModeratorsCard; ClassInviteCard.
  */
 import { useState } from 'react';
 import { useParams } from 'react-router';
@@ -22,6 +23,7 @@ import type { Space, SpaceSettings } from '../api/spaces';
 import { useSpace, useUpdateSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { ClassInviteCard } from './ClassInviteCard';
 import { SpaceBannerPictureCard } from './SpaceBannerPictureCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
@@ -72,6 +74,7 @@ function SettingsForm({ space }: { space: Space }) {
         initial={settingsOf(space)}
         ageGroup={space.ageGroup ?? '16_plus'}
         ownName={space.name}
+        isClass={space.kind === 'class'}
         submitLabel={t('form.save')}
         onSubmit={save}
         failure={updating.failure}
@@ -91,9 +94,13 @@ function SettingsForm({ space }: { space: Space }) {
 function SettingsCards({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
   const { canManage, canAppoint } = space.viewer;
-  if (!canManage && !canAppoint) return <Notice tone="info">{t('form.notOwner')}</Notice>;
+  const canInvite = space.kind === 'class' && space.viewer.canInvite;
+  if (!canManage && !canAppoint && !canInvite) {
+    return <Notice tone="info">{t('form.notOwner')}</Notice>;
+  }
   return (
     <>
+      {canInvite && <ClassInviteCard space={space} />}
       {canManage && <SettingsForm key={space.slug} space={space} />}
       {canManage && <SpaceBannerPictureCard space={space} />}
       {canAppoint && <SpaceModeratorsCard space={space} />}

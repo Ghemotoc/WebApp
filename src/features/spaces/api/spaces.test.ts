@@ -55,6 +55,8 @@ describe('spaceFrom', () => {
       canManage: false,
       canAppoint: false,
       canReadLog: false,
+      canInvite: false,
+      waitsForAccount: false,
       powers: [],
     });
   });

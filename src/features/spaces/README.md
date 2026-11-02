@@ -35,3 +35,8 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   colour (`set_space_banner_picture()`) and the picture's signed address; `SpaceBannerBand` on the
   header and `SpaceBannerPictureCard` on the settings page. The join notifications are written by
   a database trigger and worded in the notifications feature.
+- `api/classSpaces.ts` and `hooks/useClassSpaces.ts` (bundle CLASSES, part a; S1-E8-11): a
+  class space's invite code (`make_class_invite()`, `end_class_invite()`, `class_invite()`) and
+  joining with it (`class_invite_preview()`, `join_class_space()`); `ClassInviteCard` (with
+  `ClassInviteFields` and `NewClassInviteCode`) on the settings page and `JoinClassPage`
+  (`/class/:code`).

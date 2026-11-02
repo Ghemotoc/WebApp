@@ -1863,6 +1863,15 @@ Read in this order; each file's header comment says what it is for and where thi
 - The forum search filter lists spaces as "Space: <name>" with their hidden forum's slug; `search_forum_posts()` already filters by it. `forums_refuse_space_forum_change` keeps staff's forum tools off a space's forum.
 - Tests: `supabase/tests/database/229-space-banners-and-notifications.test.sql`, `src/features/notifications/lib/notificationText.test.ts`, `src/features/forums/lib/forumSearchAddress.test.ts`, `e2e/space-banners-and-notifications.spec.ts`.
 
+## Private class spaces and invite codes (S1-E8-11; CLASSES-a)
+
+- Where it lives: `src/features/spaces/api/classSpaces.ts`, `hooks/useClassSpaces.ts`, `ClassInviteCard` (with `ClassInviteFields` and `NewClassInviteCode`) on the settings page, `JoinClassPage` at `/class/<code>`; `supabase/migrations/…_classes_a_enums.sql` and `…_classes_a_class_spaces.sql`. No new table: `spaces.kind` (`open` or `class`) and `invites.space_id`.
+- The one idea to know: a class space is an ordinary space with `kind = 'class'`, so threads, posts, moderators and the log all work as before. The same access functions decide everything: `space_may_read()` lets in only staff, the owner and fully active members; `space_card_visible()` hides the card from everyone outside; `space_may_join()` refuses "Join" (only a code gets you in). `spaces_class_is_private` keeps it members-only even against a direct update.
+- Starting one: `create_class_space()`, for adults with the Teacher badge only (`profiles.teacher_badge_since`). The class option on the form comes in part b; for now tests call the function.
+- Invite codes live in the shared `invites` table (purpose `class_space`), stored as a hash only, so the teacher sees the code once. `make_class_invite()` ends the old code and makes a new one; `end_class_invite()` stops it; `class_invite()` says how many places are used, never the code. Each is in the space's log.
+- How a click travels: the student opens `/class/<code>` → `class_invite_preview()` (anyone; only the class's name, and only for a working code) → "Join the class" → `join_class_space()` → a `space_members` row and one place used → the class, or "You're in" while the account still waits (a parent's consent, for example).
+- Tests: `supabase/tests/database/232-class-spaces.test.sql`, `src/features/spaces/api/classSpaces.test.ts`, `e2e/class-spaces.spec.ts`.
+
 ## Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)
 
 - Where it lives: `src/features/forums/api/forumSignatures.ts`, `hooks/useForumSignatures.ts`, `lib/signatureLimits.ts`; the components `SignatureBody` (the shared drawing), `ProfileSignatureCard` (board 6.1), `SignatureSettingsSection` with `SignatureWordsForm` and `SignaturePictureControls` (Settings, `#forum-signature`), `ChangeRequestNotice` and `CustomisationChangeForm` (staff); `uploadSignaturePicture()` in `src/features/pictures/api/pictures.ts`; `src/lib/animated-picture.ts`; `supabase/migrations/…_forums2_d_signatures.sql`.

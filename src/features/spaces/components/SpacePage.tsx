@@ -9,7 +9,9 @@
  * the owner's requests (owner only), the rules and who runs it. Where only members may read, a
  * reader outside it sees a note instead of the threads (criterion 5).
  * Moderators (part b, S1-E8-07) show in "Who runs it", and the requests card shows for anyone
- * holding the members power. Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
+ * holding the members power. In a class space (bundle CLASSES, part a; S1-E8-11), a member whose
+ * account isn't fully active yet (a student waiting for a parent's consent) is told why they
+ * can't read, and there are no join requests: students join with the teacher's code. Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
  * What it calls: useSpace → space_page().
  */
 import { useParams } from 'react-router';
@@ -49,6 +51,9 @@ function postingNoteKey(space: Space): string | null {
 function SpaceThreads({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
   const { userId } = useSession();
+  if (space.viewer.waitsForAccount) {
+    return <Notice tone="info">{t('threads.waitsForAccount')}</Notice>;
+  }
   if (!space.viewer.canRead) return <Notice tone="info">{t('threads.readLocked')}</Notice>;
   const noteKey = postingNoteKey(space);
   return (
@@ -76,7 +81,9 @@ function SpaceContent({ space }: { space: Space }) {
           <SpaceThreads space={space} />
         </div>
         <aside className="flex flex-col gap-6">
-          {space.joining === 'approve' && <SpaceRequestsCard space={space} />}
+          {space.joining === 'approve' && space.kind === 'open' && (
+            <SpaceRequestsCard space={space} />
+          )}
           <SpaceRulesCard space={space} />
           <SpaceRunsCard space={space} />
         </aside>

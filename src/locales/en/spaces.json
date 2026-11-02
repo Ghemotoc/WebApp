@@ -21,7 +21,8 @@
     "anyoneReads": "Anyone can read",
     "membersRead": "Only members can read",
     "under16": "Members: under 16",
-    "sixteenPlus": "Members: 16 and over"
+    "sixteenPlus": "Members: 16 and over",
+    "classSpace": "Class space"
   },
   "space": {
     "eyebrow": "Space · run by members",
@@ -58,7 +59,8 @@
   "threads": {
     "membersOnly": "Only members can post here. Join to start a thread or reply.",
     "membersOnlyApprove": "Only members can post here. Join to start a thread or reply. The owner checks each request.",
-    "readLocked": "Only members can read this space’s threads. Join to read them."
+    "readLocked": "Only members can read this space’s threads. Join to read them.",
+    "waitsForAccount": "You’re in this class. You can read and post once your account is ready, for example when a parent has agreed."
   },
   "rules": {
     "eyebrow": "Set by the owner",
@@ -128,7 +130,9 @@
     "create": "Create space",
     "save": "Save changes",
     "saved": "Your changes are saved.",
-    "notOwner": "Only the owner can change this space."
+    "notOwner": "Only the owner can change this space.",
+    "classTitle": "A class space",
+    "classText": "Only the class reads and posts here. Students join with the code you give them, never by asking."
   },
   "newThread": {
     "eyebrow": "New thread",
@@ -172,7 +176,9 @@
     "member_owner": "The owner already has every power.",
     "member_age": "This person is in another age group, so they can’t help run this space.",
     "request_missing": "That request isn’t waiting any more.",
-    "reason_too_long": "Keep the reason to 500 characters."
+    "reason_too_long": "Keep the reason to 500 characters.",
+    "class_only": "This is a class space. Join it with the code your teacher gives you.",
+    "not_teacher": "Only teachers with the Teacher badge can start a class space."
   },
   "moderators": {
     "eyebrow": "Space settings",
@@ -247,7 +253,10 @@
       "thread_locked": "{{actor}} locked a thread.",
       "thread_unlocked": "{{actor}} unlocked a thread.",
       "other": "{{actor}} made a change.",
-      "banner_picture_changed": "{{actor}} changed the banner picture."
+      "banner_picture_changed": "{{actor}} changed the banner picture.",
+      "invite_made": "{{actor}} made a new class code.",
+      "invite_ended": "{{actor}} stopped the class code.",
+      "member_joined": "{{target}} joined with the class code."
     }
   },
   "bannerPicture": {
@@ -265,5 +274,65 @@
     "remove": "Use the colour instead",
     "removeFailed": "We couldn’t take the picture off. Please try again.",
     "removedNotice": "Your space uses its colour again."
+  },
+  "classInvite": {
+    "eyebrow": "Class invite",
+    "title": "Invite your class",
+    "intro": "Students join with a code. Anyone with the code can join, so share it only with your class.",
+    "resetNote": "Making a new code stops the old one straight away.",
+    "worksFor": "Works for",
+    "days": {
+      "7": "7 days",
+      "14": "14 days",
+      "30": "30 days",
+      "90": "90 days",
+      "365": "A year"
+    },
+    "places": "Number of places",
+    "placesHint": "How many people can join with this code, from 1 to 200.",
+    "placesOutOfRange": "Choose between 1 and 200 places.",
+    "made_one": "Here is the code for {{name}}. It works until {{expires}} for {{count, number}} person.",
+    "made_few": "Here is the code for {{name}}. It works until {{expires}} for {{count, number}} people.",
+    "made_other": "Here is the code for {{name}}. It works until {{expires}} for {{count, number}} people.",
+    "linkLabel": "Joining link",
+    "copy": "Copy the link",
+    "copied": "Copied",
+    "copyFailed": "We couldn’t copy it. Select the link and copy it yourself.",
+    "copyNow": "Copy or print it now.",
+    "notAgain": "We keep only a scrambled copy, so we can’t show this code again.",
+    "print": "Print",
+    "dismiss": "Done",
+    "none": "There is no working code. Make one to invite your class.",
+    "working_one": "A code works until {{until}}. {{used, number}} of {{count, number}} place used.",
+    "working_few": "A code works until {{until}}. {{used, number}} of {{count, number}} places used.",
+    "working_other": "A code works until {{until}}. {{used, number}} of {{count, number}} places used.",
+    "make": "Make a code",
+    "makeNew": "Make a new code",
+    "stop": "Stop the code",
+    "loadFailed": "We couldn’t load the invite. Try again.",
+    "failures": {
+      "signed_out": "Log in first.",
+      "not_allowed": "Only the teacher and the people who run this class can do this.",
+      "missing": "This class isn’t here any more.",
+      "ended": "This code doesn’t work any more. Ask your teacher for a new one.",
+      "days": "Choose how long the code works.",
+      "admits": "Choose between 1 and 200 places.",
+      "too_many": "You’ve done this a lot in the last hour. Try again later.",
+      "unreachable": "We couldn’t reach the server. Try again."
+    }
+  },
+  "joinClass": {
+    "eyebrow": "Class invite",
+    "title": "Join a class",
+    "checking": "Checking the code…",
+    "invited": "You’re invited to join {{name}}.",
+    "join": "Join the class",
+    "logIn": "Log in to join",
+    "signUp": "New here? You need an invitation to make an account first.",
+    "ended": "This code doesn’t work any more. Ask your teacher for a new one.",
+    "unknown": "We don’t know this code. Check it with your teacher.",
+    "joinedWaiting": "You’re in {{name}}. You can read and post once your account is ready.",
+    "openClass": "Open the class",
+    "loadFailed": "We couldn’t check the code. Try again."
   }
 }

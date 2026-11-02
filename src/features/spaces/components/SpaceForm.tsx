@@ -6,6 +6,9 @@
  * Age rules (S1-E8-06; the board's "Who can join" box): the space takes the age group of whoever
  * starts it, from age_band(). A 16+ space can be read by everybody (the database's
  * spaces_16_plus_read_by_everybody rule), so only an under-16 owner chooses who can read.
+ * A class space (bundle CLASSES, part a; S1-E8-11) is always private to its members, who post and
+ * join only with the teacher's code, so its form shows a note in place of the three choices and
+ * keeps the settings the database requires (spaces_class_is_private).
  * A refusal about the name shows under the name; any other shows above the buttons.
  * Who uses it: NewSpacePage and SpaceSettingsPage, which say what happens on "Create space" or
  * "Save changes". What it calls: SpaceNameField, SpaceBannerChoice, SpaceRadioGroup.
@@ -33,6 +36,8 @@ export interface SpaceFormProps {
   ageGroup: SpaceAgeGroup;
   /** The space's current name when changing it, else null. */
   ownName: string | null;
+  /** True for a class space: no choices about readers, posting or joining. */
+  isClass?: boolean;
   submitLabel: string;
   onSubmit: (settings: SpaceSettings) => Promise<unknown>;
   failure: SpaceError | null;
@@ -54,6 +59,22 @@ function WhoJoinsBox() {
       </h2>
       <p className="m-0 text-sm text-body">{t('form.whoJoinsText')}</p>
       <p className="m-0 text-sm text-body">{t('form.whoJoinsTurning16')}</p>
+    </section>
+  );
+}
+
+/** In a class space's form: why there are no choices (only the class reads and posts). */
+function ClassSpaceBox() {
+  const { t } = useSpacesTranslation();
+  return (
+    <section
+      aria-labelledby="space-class-note"
+      className="flex flex-col gap-2 rounded-[20px] bg-tint px-5 py-4"
+    >
+      <h2 id="space-class-note" className="m-0 text-base font-semibold text-heading">
+        {t('form.classTitle')}
+      </h2>
+      <p className="m-0 text-sm text-body">{t('form.classText')}</p>
     </section>
   );
 }
@@ -171,8 +192,10 @@ export function SpaceForm(props: SpaceFormProps) {
   /** Sends the settings; the page says what happens next and the refusal shows from failure. */
   function send(event: FormEvent) {
     event.preventDefault();
-    // A 16+ space is read by everybody (spaces_16_plus_read_by_everybody).
-    const readers = props.ageGroup === '16_plus' ? 'everybody' : settings.readers;
+    // A 16+ space is read by everybody (spaces_16_plus_read_by_everybody); a class space only
+    // by its members (spaces_class_is_private), so it keeps the settings it has.
+    let readers = settings.readers;
+    if (props.ageGroup === '16_plus' && props.isClass !== true) readers = 'everybody';
     void props.onSubmit({ ...settings, readers }).catch(() => undefined);
   }
 
@@ -186,8 +209,14 @@ export function SpaceForm(props: SpaceFormProps) {
       />
       <SpaceTexts settings={settings} change={change} />
       <SpaceBannerChoice value={settings.banner} onChange={(banner) => change({ banner })} />
-      <WhoJoinsBox />
-      <SpaceChoices settings={settings} ageGroup={props.ageGroup} change={change} />
+      {props.isClass === true ? (
+        <ClassSpaceBox />
+      ) : (
+        <>
+          <WhoJoinsBox />
+          <SpaceChoices settings={settings} ageGroup={props.ageGroup} change={change} />
+        </>
+      )}
       {general !== null && <Notice tone="error">{general}</Notice>}
       <div className="flex flex-wrap justify-end gap-3">
         <Link
