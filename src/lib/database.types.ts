@@ -5340,6 +5340,8 @@ export type Database = {
           blurb: string;
           card_colour: string | null;
           category_id: string;
+          class_only: boolean;
+          class_space_id: string | null;
           classic_author_id: string | null;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
@@ -5375,6 +5377,8 @@ export type Database = {
           blurb?: string;
           card_colour?: string | null;
           category_id: string;
+          class_only?: boolean;
+          class_space_id?: string | null;
           classic_author_id?: string | null;
           comments_enabled?: boolean;
           completion_status?: Database['public']['Enums']['completion_status'];
@@ -5409,6 +5413,8 @@ export type Database = {
           blurb?: string;
           card_colour?: string | null;
           category_id?: string;
+          class_only?: boolean;
+          class_space_id?: string | null;
           classic_author_id?: string | null;
           comments_enabled?: boolean;
           completion_status?: Database['public']['Enums']['completion_status'];
@@ -5443,6 +5449,13 @@ export type Database = {
             columns: ['category_id'];
             isOneToOne: false;
             referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'stories_class_space_id_fkey';
+            columns: ['class_space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
             referencedColumns: ['id'];
           },
           {
@@ -7682,6 +7695,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      class_space_stories: { Args: { slug: string }; Returns: Json };
       class_waiting_members: { Args: { slug: string }; Returns: Json };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
       classic_fix_is_small: {
@@ -8385,6 +8399,8 @@ export type Database = {
           blurb: string;
           card_colour: string | null;
           category_id: string;
+          class_only: boolean;
+          class_space_id: string | null;
           classic_author_id: string | null;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
@@ -8707,6 +8723,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      my_class_choices: { Args: Record<PropertyKey, never>; Returns: Json };
       my_conversations: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -9398,6 +9415,8 @@ export type Database = {
           blurb: string;
           card_colour: string | null;
           category_id: string;
+          class_only: boolean;
+          class_space_id: string | null;
           classic_author_id: string | null;
           comments_enabled: boolean;
           completion_status: Database['public']['Enums']['completion_status'];
@@ -9855,6 +9874,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      set_story_class: { Args: { class_slug?: string; story_slug: string }; Returns: Json };
       set_story_public_areas: { Args: { areas: string[]; story_slug: string }; Returns: Json };
       set_story_tags: {
         Args: { owner_id: string; tag_names: string[]; target_story_id: string };
@@ -10208,6 +10228,11 @@ export type Database = {
       story_card_json: { Args: { target_story_id: string }; Returns: Json };
       story_cast: { Args: { story_slug: string }; Returns: Json };
       story_chapter_progress: { Args: { story_slug: string }; Returns: Json };
+      story_class_allows: {
+        Args: { is_class_only: boolean; target_space_id: string; writer_id: string };
+        Returns: boolean;
+      };
+      story_class_share: { Args: { story_slug: string }; Returns: Json };
       story_classic_author: { Args: { target_story_id: string }; Returns: Json };
       story_comment_total: { Args: { target_story_id: string }; Returns: number };
       story_cover_picture: { Args: { story_slug: string }; Returns: Json };

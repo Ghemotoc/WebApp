@@ -739,6 +739,15 @@ const writeRoutes: RouteObject[] = [
       return { Component: SpaceSettingsPage };
     },
   },
+  // Every story shared only with a class, the See all of its shelf (bundle CLASSES, part c).
+  {
+    path: '/spaces/:spaceSlug/stories',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ClassStoriesPage } = await import('@/features/spaces/components/ClassStoriesPage');
+      return { Component: ClassStoriesPage };
+    },
+  },
   // A space's members and its moderation log (FORUMS-2b, S1-E8-07).
   {
     path: '/spaces/:spaceSlug/members',

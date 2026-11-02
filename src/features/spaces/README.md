@@ -45,3 +45,7 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   school year (`set_class_lock()`) and the members still waiting to read
   (`class_waiting_members()`); `ClassLockCard` and `ClassWaitingCard` on the settings page,
   `ClassAboutCard` beside a class's threads and `ClassCodeForm` on `/class`.
+- `api/classStories.ts` and `hooks/useClassStories.ts` (bundle CLASSES, part c; S1-E8-11):
+  sharing a story only with a class (`story_class_share()`, `set_story_class()`) and the class's
+  list (`class_space_stories()`); `StoryClassCard` in Story settings, `ClassStoriesCard` on the
+  class page and `ClassStoriesPage` at `/spaces/<slug>/stories`.

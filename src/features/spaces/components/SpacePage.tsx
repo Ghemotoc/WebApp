@@ -13,7 +13,8 @@
  * account isn't fully active yet (a student waiting for a parent's consent) is told why they
  * can't read, and there are no join requests: students join with the teacher's code. Part b adds
  * the "This space is locked." note above the threads of a locked class (nobody can post) and
- * ClassAboutCard in the side column. Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
+ * ClassAboutCard in the side column, and the stories shared only with the class above the threads
+ * (ClassStoriesCard, bundle CLASSES, part c). Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
  * What it calls: useSpace → space_page().
  */
 import { useParams } from 'react-router';
@@ -28,6 +29,7 @@ import { useSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { ClassAboutCard } from './ClassAboutCard';
+import { ClassStoriesCard } from './ClassStoriesCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceHeaderCard } from './SpaceHeaderCard';
 import { SpaceNotFound } from './SpaceNotFound';
@@ -88,6 +90,7 @@ function SpaceContent({ space }: { space: Space }) {
               {t('classSpace.lockedText')}
             </Notice>
           )}
+          {space.kind === 'class' && space.viewer.canRead && <ClassStoriesCard space={space} />}
           <SpaceThreads space={space} />
         </div>
         <aside className="flex flex-col gap-6">

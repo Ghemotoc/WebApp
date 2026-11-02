@@ -397,5 +397,29 @@
     "yearEndText": "At the end of the school year the space locks, so nobody can post any more. Every member can still read it for as long as they have an account, and you keep your own stories and drafts.",
     "locksOn": "It locks on {{date}}."
   },
-  "joinClassLink": "Join a class"
+  "joinClassLink": "Join a class",
+  "classStories": {
+    "eyebrow": "Your class",
+    "title": "Stories shared with the class",
+    "note": "Only {{name}} can read these until the writer makes them public. A teacher can never make a student’s story public.",
+    "empty": "No stories shared yet. To share one, open its Story settings and pick this class under “Who can read it”.",
+    "loadFailed": "We couldn’t load the class’s stories. Try again in a moment.",
+    "documentTitle": "Stories shared with {{name}}"
+  },
+  "storyClass": {
+    "legend": "Who can read it",
+    "intro": "You can share this story only with one of your classes. Then only you, the class and our moderation team can read it: it isn’t in any public list or on your profile. Only you can make it public again.",
+    "publicNow": "Right now everyone may read it, within its rating.",
+    "pick": "Your class",
+    "share": "Share only with this class",
+    "sharedWith": "Only {{name}} can read it now.",
+    "sharedWithDeleted": "Its class was deleted, so only you can read it now.",
+    "makePublic": "Make it public",
+    "saved": "Saved.",
+    "failures": {
+      "missing": "We couldn’t find this story among yours.",
+      "not_yours": "You can only share with a class you are in that isn’t locked.",
+      "unreachable": "We couldn’t reach the server. Try again in a moment."
+    }
+  }
 }
