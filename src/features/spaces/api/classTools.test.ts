@@ -1,6 +1,7 @@
 /**
  * Tests for a teacher's class tools on the screen side (bundle CLASSES, part b; story S1-E8-11):
- * starting a class space, the lock call, the waiting list and the lock date helpers. Supabase is
+ * starting a class space, the lock call, archiving (part d), the waiting list and the lock date
+ * helpers. Supabase is
  * a small fake here; the database rules are in supabase/tests/database/233-class-tools.test.sql.
  */
 import { describe, expect, it, vi } from 'vitest';
@@ -8,6 +9,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import {
+  archiveClassSpace,
   classToolErrorFrom,
   createClassSpace,
   fetchClassWaitingMembers,
@@ -83,6 +85,22 @@ describe('setClassLock', () => {
     const { client } = fakeClient({ error: { hint: 'space:not_allowed' } });
     await expect(setClassLock(client, { slug: 'x', locksAt: null })).rejects.toMatchObject({
       failure: 'not_allowed',
+    });
+  });
+});
+
+describe('archiveClassSpace', () => {
+  it('archives the class and reads that it is locked', async () => {
+    const { client, rpc } = fakeClient({ data: { is_archived: true, is_locked: true } });
+    const lock = await archiveClassSpace(client, 'class-9b');
+    expect(rpc).toHaveBeenCalledWith('archive_class_space', { slug: 'class-9b' });
+    expect(lock.isLocked).toBe(true);
+  });
+
+  it('throws "archived" when the class was archived already', async () => {
+    const { client } = fakeClient({ error: { hint: 'space:archived' } });
+    await expect(archiveClassSpace(client, 'class-9b')).rejects.toMatchObject({
+      failure: 'archived',
     });
   });
 });

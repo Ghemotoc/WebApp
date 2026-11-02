@@ -368,8 +368,10 @@
       "not_allowed": "Only the teacher and the people who run this class can do this.",
       "missing": "This class isn’t here any more.",
       "lock_date": "Choose a day within the next two years.",
-      "unreachable": "We couldn’t reach the server. Try again."
-    }
+      "unreachable": "We couldn’t reach the server. Try again.",
+      "archived": "This class is archived, so it stays locked."
+    },
+    "archivedNote": "The class is archived, so it stays locked for good."
   },
   "classWaiting": {
     "title": "Waiting to join",
@@ -395,7 +397,8 @@
     "step3Text": "The teacher writes the code on the board or shares the link. Students type it in Forums › Join a class.",
     "yearEndTitle": "When the school year ends",
     "yearEndText": "At the end of the school year the space locks, so nobody can post any more. Every member can still read it for as long as they have an account, and you keep your own stories and drafts.",
-    "locksOn": "It locks on {{date}}."
+    "locksOn": "It locks on {{date}}.",
+    "archivedTitle": "This class is archived."
   },
   "joinClassLink": "Join a class",
   "classStories": {
@@ -421,5 +424,16 @@
       "not_yours": "You can only share with a class you are in that isn’t locked.",
       "unreachable": "We couldn’t reach the server. Try again in a moment."
     }
+  },
+  "classArchive": {
+    "eyebrow": "Closing the class",
+    "title": "Archive the class",
+    "intro": "When the class is over, archive it. It locks now and for good: nobody can post, react, join or be invited, and nobody can unlock it again. Every member can still read it for as long as they have an account, and students keep their own stories and drafts.",
+    "archive": "Archive the class",
+    "confirmLabel": "Archive the class for good?",
+    "confirm": "Archive the class for good? Nobody can undo this.",
+    "yes": "Yes, archive it",
+    "cancel": "Cancel",
+    "archived": "This class is archived. Members can still read it, and nobody can post here."
   }
 }

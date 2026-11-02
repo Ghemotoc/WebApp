@@ -2,8 +2,8 @@
  * The teacher's class tools as React hooks: starting a class space, its lock and the members
  * still waiting to read (bundle CLASSES, part b; story S1-E8-11).
  *
- * Who calls it: NewSpacePage (the Class space choice), ClassLockCard and ClassWaitingCard (space
- * settings). What it calls: api/classTools.ts. After a change every forum and space read
+ * Who calls it: NewSpacePage (the Class space choice), ClassLockCard, ClassArchiveCard and
+ * ClassWaitingCard (space settings). What it calls: api/classTools.ts. After a change every forum and space read
  * refreshes, so the space page shows the lock at once.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -12,6 +12,7 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { forumsQueryKey } from '@/features/forums/hooks/useForumIndex';
 
 import {
+  archiveClassSpace,
   ClassToolError,
   createClassSpace,
   fetchClassWaitingMembers,
@@ -82,4 +83,23 @@ export function useClassWaitingMembers(slug: string) {
     queryKey: [...spacesQueryKey, 'class-waiting', slug],
     queryFn: async () => fetchClassWaitingMembers(await requireClient(), slug),
   });
+}
+
+/**
+ * Archives the class for good (CLASSES-d).
+ *
+ * @param slug - the class's address
+ * @returns archive(), the failure and isRunning
+ */
+export function useArchiveClass(slug: string) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async () => archiveClassSpace(await requireClient(), slug),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [forumsQueryKey] }),
+  });
+  return {
+    archive: mutation.mutateAsync,
+    failure: classToolFailureOf(mutation.error),
+    isRunning: mutation.isPending,
+  };
 }

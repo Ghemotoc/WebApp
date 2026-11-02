@@ -6,8 +6,8 @@
  * access (owner and admin, and moderators with the teacher checks permission; architecture
  * 1.8.3), and the page says so to anyone else.
  * What it calls: registerModerationTranslations (for ReasonForm), useTeacherChecks →
- * api/teacherChecks.ts. Plain components, no doodles. The class spaces and licences on the same
- * board come with S1-E8-11 and S1-E8-12.
+ * api/teacherChecks.ts. Plain components, no doodles. SchoolsTabs leads to Class spaces
+ * (CLASSES-d); licences on the same board come later.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -17,6 +17,8 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { registerModerationTranslations } from '@/features/moderation/registerModerationTranslations';
 
 import { useTeacherChecks } from '../../hooks/useTeacherChecks';
+
+import { SchoolsTabs } from './SchoolsTabs';
 
 import { TeacherCheckCard } from './TeacherCheckCard';
 import { TeachersList } from './TeachersList';
@@ -101,6 +103,7 @@ export function TeacherChecksPage() {
         </h1>
         <p className="m-0 text-body">{t('teacherChecks.intro')}</p>
       </div>
+      <SchoolsTabs />
       <div className="flex max-w-[860px] flex-col gap-6">
         <TeacherChecksBody checks={checks} />
       </div>

@@ -78,6 +78,10 @@ export interface Space {
   locksAt: string | null;
   /** True once a class space has locked: nobody posts or joins, members still read. */
   isLocked: boolean;
+  /** True once a class space is archived: locked for good (CLASSES-d, S1-E8-11 criterion 8). */
+  isArchived: boolean;
+  /** The school a class belongs to, printed on class certificates; null when unknown. */
+  schoolName: string | null;
   description: string;
   /** One rule a line, as the owner wrote them. */
   rules: string[];
@@ -317,6 +321,16 @@ function countFrom(value: Json | undefined): number {
 }
 
 /**
+ * A text value, or null when the database sent anything else.
+ *
+ * @param value - one field of the answer
+ * @returns the text, or null
+ */
+function textOrNull(value: Json | undefined): string | null {
+  return typeof value === 'string' ? value : null;
+}
+
+/**
  * Reads one space.
  *
  * @param value - space_json()'s answer
@@ -330,8 +344,10 @@ export function spaceFrom(value: Json | undefined): Space {
     forumSlug: String(row['forum_slug']),
     name: String(row['name']),
     kind: row['kind'] === 'class' ? 'class' : 'open',
-    locksAt: typeof row['locks_at'] === 'string' ? row['locks_at'] : null,
+    locksAt: textOrNull(row['locks_at']),
     isLocked: row['is_locked'] === true,
+    isArchived: row['is_archived'] === true,
+    schoolName: textOrNull(row['school_name']),
     description: String(row['description'] ?? ''),
     rules: rulesFrom(row['rules']),
     ageGroup: ageGroupFrom(row['age_group']),

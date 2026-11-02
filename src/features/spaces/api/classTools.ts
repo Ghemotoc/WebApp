@@ -1,10 +1,12 @@
 /**
  * The teacher's tools for a class space: starting one, its lock at the end of the school year,
- * and the members still waiting to read (bundle CLASSES, part b; story S1-E8-11).
+ * the members still waiting to read (bundle CLASSES, part b; story S1-E8-11) and archiving
+ * (part d).
  *
  * Who calls it: hooks/useClassTools.ts. What it calls next: create_class_space(),
- * set_class_lock() and class_waiting_members() in supabase/migrations/…_classes_a_class_spaces.sql
- * and …_classes_b_class_tools.sql. The database checks every rule (who holds which power, the
+ * set_class_lock(), class_waiting_members() and archive_class_space() in
+ * supabase/migrations/…_classes_a_class_spaces.sql, …_classes_b_class_tools.sql and
+ * …_classes_d_pilot_setup.sql. The database checks every rule (who holds which power, the
  * lock date); this file only reads its answers and turns refusals into ClassToolError.
  */
 import type { Json } from '@/lib/database.types';
@@ -29,7 +31,7 @@ export interface ClassLock {
 }
 
 /** Why the database refused a tool. */
-export type ClassToolFailure = 'not_allowed' | 'missing' | 'lock_date' | 'unreachable';
+export type ClassToolFailure = 'not_allowed' | 'missing' | 'lock_date' | 'archived' | 'unreachable';
 
 /** The error a refused call throws. */
 export class ClassToolError extends Error {
@@ -45,6 +47,7 @@ const failureForHint: Record<string, ClassToolFailure> = {
   'space:missing': 'missing',
   'space:not_class': 'missing',
   'lock:date': 'lock_date',
+  'space:archived': 'archived',
 };
 
 /**
@@ -121,6 +124,25 @@ function waitingMemberFrom(value: Json): WaitingMember {
     displayName: String(row['display_name'] ?? row['handle']),
     reason: reason === 'age_check' || reason === 'parental_consent' ? reason : 'account',
   };
+}
+
+/**
+ * Archives a class for good (CLASSES-d; S1-E8-11 criterion 8): it locks now if it hasn't yet,
+ * nobody unlocks it again, and every member still reads it.
+ *
+ * @param client - the Supabase client
+ * @param slug - the class's address
+ * @returns the lock after archiving
+ * @throws ClassToolError when refused (not_allowed, missing, archived)
+ */
+export async function archiveClassSpace(
+  client: AppSupabaseClient,
+  slug: string,
+): Promise<ClassLock> {
+  const { data, error } = await client.rpc('archive_class_space', { slug });
+  if (error) throw classToolErrorFrom(error);
+  const row = data !== null && typeof data === 'object' && !Array.isArray(data) ? data : {};
+  return { locksAt: null, isLocked: row['is_locked'] === true };
 }
 
 /**

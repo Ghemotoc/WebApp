@@ -49,3 +49,6 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   sharing a story only with a class (`story_class_share()`, `set_story_class()`) and the class's
   list (`class_space_stories()`); `StoryClassCard` in Story settings, `ClassStoriesCard` on the
   class page and `ClassStoriesPage` at `/spaces/<slug>/stories`.
+- `archiveClassSpace()` in `api/classTools.ts` and `useArchiveClass()` (bundle CLASSES, part d):
+  archiving a class for good; `ClassArchiveCard` in the class's settings. Staff set up pilot
+  classes from `src/features/staff/components/schools/ClassSpacesPage.tsx`.
