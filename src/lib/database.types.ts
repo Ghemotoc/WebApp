@@ -5491,8 +5491,10 @@ export type Database = {
           title: string;
           updated_at: string;
           user_id: string;
+          admin_story_row: Json | null;
+          admin_story_status: string | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'admin_story_row' | 'admin_story_status';
         Insert: {
           ai_disclosure?: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at?: string | null;
@@ -7257,6 +7259,20 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      admin_search_stories: {
+        Args: {
+          category_slug?: string;
+          language_code?: string;
+          only_minor_writers?: boolean;
+          only_open_reports?: boolean;
+          page_number?: number;
+          readable_by?: string;
+          search_text?: string;
+          story_status?: string;
+          wanted_rating?: Database['public']['Enums']['story_rating'];
+        };
+        Returns: Json;
+      };
       admin_set_ai_undisclosed_label: {
         Args: { reason_given: string; target_story_id: string };
         Returns: string;
@@ -7323,6 +7339,37 @@ export type Database = {
       admin_sign_out_everywhere: {
         Args: { reason_given: string; target_user_id: string };
         Returns: number;
+      };
+      admin_story_matches: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+          wanted: string;
+        };
+        Returns: boolean;
+      };
+      admin_story_overview: { Args: { target_story_id: string }; Returns: Json };
+      admin_story_owner_is_minor: { Args: { owner_id: string }; Returns: boolean };
+      admin_story_report_counts: { Args: { target_story_id: string }; Returns: Json };
+      admin_story_row: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      admin_story_status: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: string;
       };
       admin_teacher_checks: {
         Args: Record<PropertyKey, never>;
