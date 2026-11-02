@@ -86,7 +86,7 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
       <SpaceBannerBand space={space} />
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5 px-5 pb-8 md:px-10">
         <div className="flex min-w-0 flex-[1_1_520px] flex-col gap-3.5">
-          <span className="-mt-11">
+          <span className="relative z-10 -mt-11">
             <SpaceBadge name={space.name} banner={space.banner} size="large" />
           </span>
           <Eyebrow>{t('space.eyebrow')}</Eyebrow>
