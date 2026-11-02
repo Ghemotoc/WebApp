@@ -6379,6 +6379,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      writer_ranks: {
+        Row: {
+          chapter_count: number;
+          created_at: string;
+          rank: Database['public']['Enums']['writer_rank'];
+          updated_at: string;
+          user_id: string;
+          word_count: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          chapter_count: number;
+          created_at?: string;
+          rank: Database['public']['Enums']['writer_rank'];
+          updated_at?: string;
+          user_id: string;
+          word_count: number;
+        };
+        Update: {
+          chapter_count?: number;
+          created_at?: string;
+          rank?: Database['public']['Enums']['writer_rank'];
+          updated_at?: string;
+          user_id?: string;
+          word_count?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'writer_ranks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -9107,6 +9143,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      profile_rank: { Args: { wanted_handle: string }; Returns: Json };
       profile_signature: { Args: { wanted_handle: string }; Returns: Json };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
       public_character_json: {
@@ -9180,6 +9217,11 @@ export type Database = {
       purge_unfinished_social_sign_ups: { Args: Record<PropertyKey, never>; Returns: number };
       queue_daily_digests: { Args: Record<PropertyKey, never>; Returns: number };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      rank_for: {
+        Args: { chapter_count: number; word_count: number };
+        Returns: Database['public']['Enums']['writer_rank'];
+      };
+      rank_of: { Args: { person_id: string }; Returns: string };
       ranking_setting: { Args: { fallback: number; setting_key: string }; Returns: number };
       rating_allows: {
         Args: { story_rating: Database['public']['Enums']['story_rating'] };
@@ -9331,6 +9373,7 @@ export type Database = {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
       };
+      refresh_writer_rank: { Args: { person_id: string }; Returns: undefined };
       register_atlas_picture: { Args: { target_path: string }; Returns: string };
       register_chapter_embed: {
         Args: {
@@ -10445,6 +10488,7 @@ export type Database = {
       statement_ground: 'terms' | 'law';
       story_rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
       tag_status: 'waiting' | 'approved' | 'rejected';
+      writer_rank: 'new_writer' | 'writer' | 'storyteller' | 'novelist';
     };
     CompositeTypes: {
       audit_log_row: {
@@ -10770,6 +10814,7 @@ export const Constants = {
       statement_ground: ['terms', 'law'],
       story_rating: ['all_ages', '13_plus', '16_plus', '18_plus'],
       tag_status: ['waiting', 'approved', 'rejected'],
+      writer_rank: ['new_writer', 'writer', 'storyteller', 'novelist'],
     },
   },
 } as const;

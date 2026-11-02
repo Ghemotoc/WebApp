@@ -187,7 +187,8 @@ select results_eq(
        ('tags', (select count(*) from public.tags where status = 'approved')),
        ('teacher_checks', 0::bigint),
        ('username_approvals', 0::bigint),
-       ('username_word_lists', 0::bigint)
+       ('username_word_lists', 0::bigint),
+       ('writer_ranks', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
   'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories, tags and counties, nothing else'
 );

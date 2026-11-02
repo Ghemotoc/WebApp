@@ -49,3 +49,7 @@ The database half is `supabase/migrations/…_forums1_a_forum_categories.sql` an
   `ProfileSignatureCard.tsx`, `SignatureSettingsSection.tsx` with `SignatureWordsForm.tsx` and
   `SignaturePictureControls.tsx` (Settings), `ChangeRequestNotice.tsx` and
   `CustomisationChangeForm.tsx` (a moderator's request to change a signature or a banner).
+- Ranks (S1-E8-09, FORUMS-2e): `lib/writerRanks.ts`, `api/writerRanks.ts`,
+  `hooks/useWriterRank.ts`, and `components/RankChip.tsx` (on profiles and posts),
+  `ProfileRankChip.tsx`, `RankPanel.tsx` with `RankLadder.tsx` and `RankProgressBar.tsx`, and
+  `RankSticker.tsx` (the sticker on the profile picture).

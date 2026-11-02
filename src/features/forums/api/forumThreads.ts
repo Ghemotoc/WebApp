@@ -2,6 +2,7 @@
  * Forum threads and posts: reading a forum's threads and a thread's posts, and starting,
  * replying, editing and deleting (bundle FORUMS-1, part b; story S1-E8-02; board 5.2). Part c
  * adds each post's quotes (S1-E8-03); part d, whether a thread is new to the reader (S1-E8-04).
+ * FORUMS-2 adds each post's signature (S1-E8-08) and its author's rank (S1-E8-09).
  *
  * Who calls it: hooks/useForumThreads.ts. What it calls next: forum_thread_list(),
  * forum_thread(), start_forum_thread(), reply_to_forum_thread(), edit_forum_post(),
@@ -11,6 +12,8 @@
  */
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
+
+import { rankFrom, type WriterRank } from '../lib/writerRanks';
 
 import { signatureFrom, type ForumSignature } from './forumSignatures';
 
@@ -59,6 +62,8 @@ export interface ForumPost {
   hasHistory: boolean;
   /** Its author's forum signature (S1-E8-08), or null when they have none. */
   signature: ForumSignature | null;
+  /** Its author's writer rank (S1-E8-09), or null before their first published chapter. */
+  authorRank: WriterRank | null;
 }
 
 /** The space a thread lives in (FORUMS-2a, S1-E8-06): its address and name. */
@@ -232,6 +237,7 @@ export function postFrom(row: JsonObject): ForumPost {
     canDelete: row['can_delete'] === true,
     hasHistory: row['has_history'] === true,
     signature: signatureFrom(row['signature']),
+    authorRank: rankFrom(row['author_rank']),
   };
 }
 
