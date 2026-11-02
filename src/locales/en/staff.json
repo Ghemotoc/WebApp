@@ -75,7 +75,8 @@
     "settings": "Settings",
     "website": "Website",
     "schools": "Schools",
-    "forums": "Forums"
+    "forums": "Forums",
+    "stories": "Stories"
   },
   "shell": {
     "eyebrow": "Staff",
@@ -111,7 +112,8 @@
       "settings": "Feature flags, values and limits, the Discover mix, categories, reserved names, and markets and languages.",
       "website_cms": "The home page, notice banners, help pages and questions, for each market and language.",
       "schools": "Verify teachers and set up class spaces for pilot schools.",
-      "forums": "Categories, forums and subforums: names, order and pins."
+      "forums": "Categories, forums and subforums: names, order and pins.",
+      "stories": "Find any story by title, username or user ID, and open it to see its details and chapters."
     }
   },
   "auditLog": {
@@ -899,6 +901,100 @@
       "name_deleted": "We couldn’t revoke it. Try again.",
       "name_length": "We couldn’t revoke it. Try again.",
       "unreachable": "We couldn’t revoke it. Try again."
+    }
+  },
+  "stories": {
+    "documentTitle": "Stories · {{productName}}",
+    "eyebrow": "Staff · stories",
+    "heading": "Every story",
+    "intro": "Find any story and open it to see its details, its chapters and its reports. Staff never edit a writer’s words. Every change needs a reason, and the writer is told what changed and why.",
+    "oneOwnerPill": "Each story belongs to one user ID",
+    "auditPill": "Every action here goes to the audit log",
+    "searchFormLabel": "Search stories",
+    "searchLabel": "Title, username or user ID",
+    "searchHint": "An earlier username finds the writer’s stories too.",
+    "search": "Search",
+    "statusLabel": "Status",
+    "allStatuses": "All",
+    "categoryLabel": "Category",
+    "allCategories": "All categories",
+    "languageLabel": "Story language",
+    "allLanguages": "All languages",
+    "ratingLabel": "Rating",
+    "allRatings": "All ratings",
+    "audienceLabel": "Where it can be read",
+    "allAudiences": "Read anywhere",
+    "openReports": "Open reports",
+    "minorWriters": "Writers under 18",
+    "statuses": {
+      "draft": "Draft",
+      "published": "Published",
+      "hidden": "Hidden",
+      "removed": "Removed"
+    },
+    "audiences": {
+      "everyone": "Everyone",
+      "class": "One class only"
+    },
+    "noCategory": "No category",
+    "under18": "under 18",
+    "resultsHeading": "Stories",
+    "found_one": "{{count}} story found.",
+    "found_few": "{{count}} stories found.",
+    "found_other": "{{count}} stories found.",
+    "noneMatch": "No stories match. Clear a filter or search for a user ID.",
+    "openCount_one": "{{count}} open",
+    "openCount_few": "{{count}} open",
+    "openCount_other": "{{count}} open",
+    "closedCount_one": "{{count}} closed",
+    "closedCount_few": "{{count}} closed",
+    "closedCount_other": "{{count}} closed",
+    "columns": {
+      "story": "Story",
+      "owner": "Owner user ID",
+      "category": "Category",
+      "language": "Language",
+      "status": "Status",
+      "readBy": "Read by",
+      "rating": "Rating",
+      "chapters": "Chapters",
+      "updated": "Updated",
+      "reports": "Reports"
+    },
+    "listNote": "Open a story to see its details and chapters. There is no bulk action: each change is made on one story, with a reason the writer sees.",
+    "pagesLabel": "Pages of stories",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "pageOf": "Page {{page}} of {{count}}",
+    "notAllowed": "Your role doesn’t include Stories. Owners, admins, moderators and support staff can use it.",
+    "loadFailed": "The stories didn’t load. Check your connection and try again.",
+    "page": {
+      "documentTitle": "{{title}} · Stories",
+      "back": "Back to every story",
+      "loading": "Loading the story…",
+      "noSuchStory": "There is no story at this address. It may have been typed wrongly.",
+      "deletedByWriter": "The writer deleted this story. It no longer shows in the list, and staff can still open it for a case or a data request.",
+      "viewOnly": "Your role can look at stories but not change them.",
+      "writer": "Writer",
+      "comments": "Comments",
+      "commentsOn": "On",
+      "commentsOff": "Off",
+      "created": "Created",
+      "reportCounts": "{{open}} open, {{closed}} closed",
+      "blurbHeading": "Blurb",
+      "chaptersHeading": "Chapters",
+      "chapterTitle": "{{number}}. {{title}}",
+      "untitledDraft": "Unpublished chapter",
+      "chapterStatuses": {
+        "draft": "Draft",
+        "scheduled": "Scheduled",
+        "published": "Published"
+      },
+      "words_one": "{{count}} word published",
+      "words_few": "{{count}} words published",
+      "words_other": "{{count}} words published",
+      "noChapters": "This story has no chapters yet.",
+      "noWordsNote": "Staff never see a chapter’s words here. A draft’s text opens only from a moderation case or a data request, and that is logged."
     }
   }
 }

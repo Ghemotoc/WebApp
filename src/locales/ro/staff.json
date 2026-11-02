@@ -75,7 +75,8 @@
     "settings": "Setări",
     "website": "Site",
     "schools": "Școli",
-    "forums": "Forumuri"
+    "forums": "Forumuri",
+    "stories": "Povești"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -111,7 +112,8 @@
       "settings": "Comutatoare, valori și limite, rafturile din Descoperă, categorii, nume rezervate, piețe și limbi.",
       "website_cms": "Pagina principală, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă.",
       "schools": "Verifică profesorii și creează spații de clasă pentru școlile din pilot.",
-      "forums": "Categorii, forumuri și subforumuri: nume, ordine și fixare."
+      "forums": "Categorii, forumuri și subforumuri: nume, ordine și fixare.",
+      "stories": "Găsește orice poveste după titlu, nume de utilizator sau ID de utilizator și deschide-o ca să vezi detaliile și capitolele."
     }
   },
   "auditLog": {
@@ -899,6 +901,100 @@
       "name_deleted": "Nu am putut-o retrage. Încearcă din nou.",
       "name_length": "Nu am putut-o retrage. Încearcă din nou.",
       "unreachable": "Nu am putut-o retrage. Încearcă din nou."
+    }
+  },
+  "stories": {
+    "documentTitle": "Povești · {{productName}}",
+    "eyebrow": "Echipă · povești",
+    "heading": "Toate poveștile",
+    "intro": "Găsește orice poveste și deschide-o ca să-i vezi detaliile, capitolele și raportările. Echipa nu modifică niciodată cuvintele unei persoane care scrie. Fiecare schimbare are nevoie de un motiv, iar autorul sau autoarea află ce s-a schimbat și de ce.",
+    "oneOwnerPill": "Fiecare poveste aparține unui singur ID de utilizator",
+    "auditPill": "Fiecare acțiune de aici ajunge în jurnalul de audit",
+    "searchFormLabel": "Caută povești",
+    "searchLabel": "Titlu, nume de utilizator sau ID de utilizator",
+    "searchHint": "Și un nume de utilizator mai vechi găsește poveștile persoanei.",
+    "search": "Caută",
+    "statusLabel": "Stare",
+    "allStatuses": "Toate",
+    "categoryLabel": "Categorie",
+    "allCategories": "Toate categoriile",
+    "languageLabel": "Limba poveștii",
+    "allLanguages": "Toate limbile",
+    "ratingLabel": "Clasificare",
+    "allRatings": "Toate clasificările",
+    "audienceLabel": "Unde se poate citi",
+    "allAudiences": "Oriunde",
+    "openReports": "Raportări deschise",
+    "minorWriters": "Sub 18 ani",
+    "statuses": {
+      "draft": "Ciornă",
+      "published": "Publicată",
+      "hidden": "Ascunsă",
+      "removed": "Eliminată"
+    },
+    "audiences": {
+      "everyone": "Toată lumea",
+      "class": "Doar o clasă"
+    },
+    "noCategory": "Fără categorie",
+    "under18": "sub 18 ani",
+    "resultsHeading": "Povești",
+    "found_one": "S-a găsit {{count}} poveste.",
+    "found_few": "S-au găsit {{count}} povești.",
+    "found_other": "S-au găsit {{count}} de povești.",
+    "noneMatch": "Nicio poveste nu se potrivește. Scoate un filtru sau caută după ID-ul de utilizator.",
+    "openCount_one": "{{count}} deschisă",
+    "openCount_few": "{{count}} deschise",
+    "openCount_other": "{{count}} deschise",
+    "closedCount_one": "{{count}} închisă",
+    "closedCount_few": "{{count}} închise",
+    "closedCount_other": "{{count}} închise",
+    "columns": {
+      "story": "Poveste",
+      "owner": "ID-ul proprietarului",
+      "category": "Categorie",
+      "language": "Limbă",
+      "status": "Stare",
+      "readBy": "Citită de",
+      "rating": "Clasificare",
+      "chapters": "Capitole",
+      "updated": "Actualizată",
+      "reports": "Raportări"
+    },
+    "listNote": "Deschide o poveste ca să-i vezi detaliile și capitolele. Nu există acțiuni în bloc: fiecare schimbare se face pe o singură poveste, cu un motiv pe care îl vede persoana care a scris-o.",
+    "pagesLabel": "Paginile cu povești",
+    "previousPage": "Înapoi",
+    "nextPage": "Înainte",
+    "pageOf": "Pagina {{page}} din {{count}}",
+    "notAllowed": "Rolul tău nu include Poveștile. Le pot folosi proprietarii, administratorii, moderatorii și echipa de suport.",
+    "loadFailed": "Poveștile nu s-au încărcat. Verifică-ți conexiunea și încearcă din nou.",
+    "page": {
+      "documentTitle": "{{title}} · Povești",
+      "back": "Înapoi la toate poveștile",
+      "loading": "Se încarcă povestea…",
+      "noSuchStory": "Nu există nicio poveste la această adresă. Poate a fost scrisă greșit.",
+      "deletedByWriter": "Persoana care a scris povestea a șters-o. Nu mai apare în listă, dar echipa o poate deschide pentru un caz sau o cerere privind datele.",
+      "viewOnly": "Rolul tău poate vedea poveștile, dar nu le poate schimba.",
+      "writer": "Autor sau autoare",
+      "comments": "Comentarii",
+      "commentsOn": "Pornite",
+      "commentsOff": "Oprite",
+      "created": "Creată",
+      "reportCounts": "{{open}} deschise, {{closed}} închise",
+      "blurbHeading": "Descriere",
+      "chaptersHeading": "Capitole",
+      "chapterTitle": "{{number}}. {{title}}",
+      "untitledDraft": "Capitol nepublicat",
+      "chapterStatuses": {
+        "draft": "Ciornă",
+        "scheduled": "Programat",
+        "published": "Publicat"
+      },
+      "words_one": "{{count}} cuvânt publicat",
+      "words_few": "{{count}} cuvinte publicate",
+      "words_other": "{{count}} de cuvinte publicate",
+      "noChapters": "Povestea nu are încă niciun capitol.",
+      "noWordsNote": "Echipa nu vede niciodată aici cuvintele unui capitol. Textul unei ciorne se deschide doar dintr-un caz de moderare sau dintr-o cerere privind datele, iar asta se notează în jurnal."
     }
   }
 }

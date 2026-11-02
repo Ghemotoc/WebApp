@@ -205,6 +205,23 @@ const staffRoutes: RouteObject = {
       },
     },
     { path: 'invites', element: <Navigate to="/staff/users/invites" replace /> },
+    // Every story (S1-E11-07): owner, admin, moderator and support; one story's page beside it.
+    {
+      path: 'stories',
+      lazy: async () => {
+        const { StaffStoriesPage } =
+          await import('@/features/staff/components/stories/StaffStoriesPage');
+        return { Component: StaffStoriesPage };
+      },
+    },
+    {
+      path: 'stories/:storyId',
+      lazy: async () => {
+        const { StaffStoryPage } =
+          await import('@/features/staff/components/stories/StaffStoryPage');
+        return { Component: StaffStoryPage };
+      },
+    },
     // Classics: add, check and publish public-domain works (S1-E11-16): owner and admin.
     {
       path: 'classics',

@@ -75,7 +75,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.users',
     descriptionKey: 'home.areas.users',
   },
-  // Stories › Classics (S1-E11-16): owner and admin; the Stories list itself is S1-E11-07.
+  // Stories (S1-E11-07): every story, for owner, admin, moderator and support (view only).
+  {
+    area: 'stories',
+    href: '/staff/stories',
+    labelKey: 'nav.stories',
+    descriptionKey: 'home.areas.stories',
+  },
+  // Stories › Classics (S1-E11-16): owner and admin, beside the Stories list (S1-E11-07).
   {
     area: 'classics',
     href: '/staff/classics',

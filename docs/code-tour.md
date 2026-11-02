@@ -1940,3 +1940,10 @@ Notifications › Open my certificates → /certificates → my_certificates() �
 ```
 
 The account gate is the one place minors are held back: while `adults_only` is on (the March test) an under-18 reads every forum and their class but can't post, and kid_14_waiting waits for a parent. The epic check walks the twelve stories together in `e2e/epic-s1-e8.spec.ts` and `supabase/tests/database/237-epic-s1-e8.test.sql`; its report is `docs/epic-reports/S1-E8.md`.
+
+## Every story in the admin site (S1-E11-07; ADMIN-2a)
+
+- **Where it starts:** Staff › Stories, `/staff/stories` (`src/features/staff/components/stories/StaffStoriesPage.tsx`), and one story at `/staff/stories/:storyId` (`StaffStoryPage.tsx`).
+- **How a search travels:** the search box and filters write the address (`?q=…&status=…`, `src/features/staff/lib/staffStoryFilters.ts`), `useStaffStories` reads it and calls `searchStaffStories()` in `api/staffStories.ts`, which calls `admin_search_stories()` (`supabase/migrations/20261211100001_admin2_a_every_story.sql`). That function checks `staff_may('stories', 'view')` first, then matches the title, the writer's current username (look-alikes folded), an earlier username from the audit log (`profile.handle_changed`) or the user ID, applies the filters and returns 50 rows a page built by `admin_story_row()`.
+- **What staff never see here:** a year of birth (only "under 18", from `age_band_from_birth()`), an email or a chapter's words. A draft chapter shows no title. Changing a story is S1-E11-08 (ADMIN-2b), which adds its controls to the story page for those with `staff_may('story_changes')`.
+- **Tests:** `supabase/tests/database/238-every-story-in-admin.test.sql`, `src/features/staff/lib/staffStoryFilters.test.ts`, `e2e/staff-stories.spec.ts`.
