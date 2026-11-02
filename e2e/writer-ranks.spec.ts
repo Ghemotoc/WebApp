@@ -6,7 +6,7 @@
  * - a writer with 15 published chapters shows "Rank: Storyteller" beside their name, the rank
  *   card with the ladder and "41,200 of 100,000 words to Novelist", and the Storyteller sticker
  *   on their picture (criterion 2; board 6.1);
- * - their forum post shows the rank beside their name (criterion 5);
+ * - their forum post shows the rank beside their name, at phone width too (criterion 5);
  * - unpublishing chapters lowers the rank on the next visit (criterion 2);
  * - a writer with no published chapter shows no rank at all;
  * - the profile passes axe at 390, 768 and 1440 px, light and night, ro and en, and no doodle
@@ -101,6 +101,9 @@ test.describe('writer ranks (FORUMS-2e, S1-E8-09)', () => {
     const page = await openSignedOut(browser, startThread());
     const post = page.getByRole('article').first();
     await expect(post.getByTestId('rank-chip')).toHaveText('Rank: Storyteller');
+    // Criterion 5: at phone width the chip still sits next to the name.
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(post.getByTestId('rank-chip')).toBeVisible();
     await page.context().close();
   });
 
