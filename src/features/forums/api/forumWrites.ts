@@ -22,6 +22,9 @@ export type ForumWriteFailure =
   | 'locked'
   | 'quote_missing'
   | 'quote_too_many'
+  | 'space_join'
+  | 'space_pending'
+  | 'space_age'
   | 'invalid'
   | 'unreachable';
 
@@ -76,11 +79,33 @@ function checkFailureFrom(hint: string): ForumWriteError {
   return new ForumWriteError('invalid', { field });
 }
 
+/** The space refusals (FORUMS-2a, S1-E8-06): refuse_space_writer()'s hints. */
+const spaceHints: Record<string, ForumWriteFailure> = {
+  'space:join': 'space_join',
+  'space:pending': 'space_pending',
+  'space:age': 'space_age',
+};
+
+/**
+ * Turns a refusal with Postgres's insufficient_privilege code (42501) into an error.
+ *
+ * @param hint - the error's hint
+ * @returns signed_out or not_mine as named, a space refusal for a thread in a space, otherwise
+ *   not_active
+ */
+function privilegeFailureFrom(hint: string): ForumWriteError {
+  if (hint === 'signed_out' || hint === 'not_mine') return new ForumWriteError(hint);
+  // A space takes posts only from its members or its age group (S1-E8-06).
+  const spaceFailure = spaceHints[hint];
+  if (spaceFailure !== undefined) return new ForumWriteError(spaceFailure);
+  return new ForumWriteError('not_active');
+}
+
 /**
  * Turns a database error into a ForumWriteError.
  *
  * @param error - Postgres's code and hint
- * @returns signed_out, not_active or not_mine (42501, by hint), too_many with the minutes (54000,
+ * @returns signed_out, not_active, not_mine or a space refusal (42501, by hint), too_many with the minutes (54000,
  *   hint "wait_minutes:n"), gone (P0002), category or invalid (23514), otherwise unreachable
  */
 export function forumWriteErrorFrom(error: {
@@ -88,10 +113,7 @@ export function forumWriteErrorFrom(error: {
   hint?: string | null;
 }): ForumWriteError {
   const hint = error.hint ?? '';
-  if (error.code === '42501') {
-    if (hint === 'signed_out' || hint === 'not_mine') return new ForumWriteError(hint);
-    return new ForumWriteError('not_active');
-  }
+  if (error.code === '42501') return privilegeFailureFrom(hint);
   if (error.code === '54000') {
     const minutes = Number(hint.replace('wait_minutes:', ''));
     return new ForumWriteError('too_many', {

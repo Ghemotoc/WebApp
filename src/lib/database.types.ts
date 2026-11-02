@@ -2374,6 +2374,7 @@ export type Database = {
           parent_id: string | null;
           position: number;
           slug: string;
+          space_id: string | null;
           updated_at: string;
         };
         ComputedFields: never;
@@ -2388,6 +2389,7 @@ export type Database = {
           parent_id?: string | null;
           position?: number;
           slug: string;
+          space_id?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -2401,6 +2403,7 @@ export type Database = {
           parent_id?: string | null;
           position?: number;
           slug?: string;
+          space_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -2409,6 +2412,13 @@ export type Database = {
             columns: ['parent_id'];
             isOneToOne: false;
             referencedRelation: 'forums';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'forums_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: true;
+            referencedRelation: 'spaces';
             referencedColumns: ['id'];
           },
         ];
@@ -4734,6 +4744,135 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      space_members: {
+        Row: {
+          created_at: string;
+          id: string;
+          joined_at: string | null;
+          requested_at: string;
+          role: Database['public']['Enums']['space_member_role'];
+          space_id: string;
+          status: Database['public']['Enums']['space_member_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          joined_at?: string | null;
+          requested_at?: string;
+          role?: Database['public']['Enums']['space_member_role'];
+          space_id: string;
+          status?: Database['public']['Enums']['space_member_status'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          joined_at?: string | null;
+          requested_at?: string;
+          role?: Database['public']['Enums']['space_member_role'];
+          space_id?: string;
+          status?: Database['public']['Enums']['space_member_status'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'space_members_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'space_members_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      spaces: {
+        Row: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          banner: Database['public']['Enums']['space_banner'];
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+          space_card_visible: boolean | null;
+          space_json: Json | null;
+          space_latest_activity: string | null;
+          space_may_join: boolean | null;
+          space_may_post: boolean | null;
+          space_may_read: boolean | null;
+          space_viewer_json: Json | null;
+        };
+        ComputedFields:
+          | 'space_card_visible'
+          | 'space_json'
+          | 'space_latest_activity'
+          | 'space_may_join'
+          | 'space_may_post'
+          | 'space_may_read'
+          | 'space_viewer_json';
+        Insert: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          banner?: Database['public']['Enums']['space_banner'];
+          created_at?: string;
+          deleted_at?: string | null;
+          description: string;
+          id?: string;
+          joining?: Database['public']['Enums']['space_joining'];
+          name: string;
+          name_key: string;
+          posting?: Database['public']['Enums']['space_posting'];
+          readers?: Database['public']['Enums']['space_readers'];
+          rules?: string;
+          slug: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          age_group?: Database['public']['Enums']['space_age_group'];
+          banner?: Database['public']['Enums']['space_banner'];
+          created_at?: string;
+          deleted_at?: string | null;
+          description?: string;
+          id?: string;
+          joining?: Database['public']['Enums']['space_joining'];
+          name?: string;
+          name_key?: string;
+          posting?: Database['public']['Enums']['space_posting'];
+          readers?: Database['public']['Enums']['space_readers'];
+          rules?: string;
+          slug?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'spaces_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       staff_languages: {
         Row: {
@@ -7234,6 +7373,7 @@ export type Database = {
       check_handle: { Args: { candidate: string }; Returns: string };
       check_invite: { Args: { code: string }; Returns: string };
       check_pen_name: { Args: { candidate: string }; Returns: string };
+      check_space_text: { Args: { field: string; value: string }; Returns: string };
       check_story_basics: {
         Args: {
           category_slug: string;
@@ -7428,6 +7568,18 @@ export type Database = {
         Args: { new_user_id: string; sign_up_data: Json };
         Returns: undefined;
       };
+      create_space: {
+        Args: {
+          banner?: Database['public']['Enums']['space_banner'];
+          description: string;
+          joining?: Database['public']['Enums']['space_joining'];
+          name: string;
+          posting?: Database['public']['Enums']['space_posting'];
+          readers?: Database['public']['Enums']['space_readers'];
+          rules?: string;
+        };
+        Returns: Json;
+      };
       create_story: {
         Args: {
           blurb: string;
@@ -7472,6 +7624,10 @@ export type Database = {
           >;
         };
         Returns: undefined;
+      };
+      decide_space_join_request: {
+        Args: { approve: boolean; handle: string; slug: string };
+        Returns: Json;
       };
       decider_of_statement: {
         Args: {
@@ -7830,6 +7986,7 @@ export type Database = {
           owner_user_id: string;
         }[];
       };
+      join_space: { Args: { slug: string }; Returns: Json };
       jsonb_values_text: { Args: { document: Json }; Returns: string };
       keep_setting: { Args: { default_value: number; setting_key: string }; Returns: number };
       language_moderator_counts: {
@@ -7849,6 +8006,7 @@ export type Database = {
       latest_material_legal_version: { Args: { target_document_id: string }; Returns: string };
       latest_place_json: { Args: { target_story_id: string }; Returns: Json };
       launch_task: { Args: Record<PropertyKey, never>; Returns: Json };
+      leave_space: { Args: { slug: string }; Returns: undefined };
       legal_documents_to_accept: {
         Args: { target_user_id: string };
         Returns: {
@@ -8325,6 +8483,10 @@ export type Database = {
           starts_at: string;
         }[];
       };
+      my_space_age_group: {
+        Args: Record<PropertyKey, never>;
+        Returns: Database['public']['Enums']['space_age_group'];
+      };
       my_staff_areas: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -8519,6 +8681,32 @@ export type Database = {
         SetofOptions: {
           from: '*';
           to: 'forum_posts';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      owned_space_for_change: {
+        Args: { target_slug: string };
+        Returns: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          banner: Database['public']['Enums']['space_banner'];
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'spaces';
           isOneToOne: true;
           isSetofReturn: false;
         };
@@ -9094,6 +9282,7 @@ export type Database = {
       };
       require_safety_contacts_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_settings_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_space_starter: { Args: Record<PropertyKey, never>; Returns: string };
       require_tag_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_teacher_checks_access: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_website_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
@@ -9340,6 +9529,131 @@ export type Database = {
       sign_up_rule_of: { Args: { message: string }; Returns: string };
       sign_ups_by_age_group: { Args: Record<PropertyKey, never>; Returns: Json };
       signed_up_reader_count: { Args: { for_day: string }; Returns: number };
+      space_age_group_of_caller: {
+        Args: Record<PropertyKey, never>;
+        Returns: Database['public']['Enums']['space_age_group'];
+      };
+      space_age_group_of_person: {
+        Args: { person_id: string };
+        Returns: Database['public']['Enums']['space_age_group'];
+      };
+      space_card_visible: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      space_forum_id: { Args: { target_space_id: string }; Returns: string };
+      space_is_member: { Args: { target_space_id: string }; Returns: boolean };
+      space_join_requests: { Args: { slug: string }; Returns: Json };
+      space_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      space_latest_activity: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      space_list: { Args: { how_many?: number; skip?: number }; Returns: Json };
+      space_may_join: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      space_may_post: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      space_may_read: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      space_membership_of_caller: {
+        Args: { target_space_id: string };
+        Returns: {
+          created_at: string;
+          id: string;
+          joined_at: string | null;
+          requested_at: string;
+          role: Database['public']['Enums']['space_member_role'];
+          space_id: string;
+          status: Database['public']['Enums']['space_member_status'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'space_members';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      space_name_available: { Args: { name: string }; Returns: Json };
+      space_name_key: { Args: { name: string }; Returns: string };
+      space_of_forum: {
+        Args: { target_forum_id: string };
+        Returns: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          banner: Database['public']['Enums']['space_banner'];
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'spaces';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      space_page: { Args: { slug: string }; Returns: Json };
+      space_slug_for: { Args: { name: string }; Returns: string };
+      space_viewer_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -9568,6 +9882,19 @@ export type Database = {
       update_character_field: { Args: { changes: Json; field_id: string }; Returns: Json };
       update_my_story: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_published_chapter: { Args: { chapter_code: string }; Returns: Json };
+      update_space: {
+        Args: {
+          banner: Database['public']['Enums']['space_banner'];
+          description: string;
+          joining: Database['public']['Enums']['space_joining'];
+          name: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          slug: string;
+        };
+        Returns: Json;
+      };
       update_story_character: { Args: { changes: Json; character_id: string }; Returns: Json };
       update_story_event: { Args: { changes: Json; event_id: string }; Returns: Json };
       update_story_idea: { Args: { changes: Json; idea_id: string }; Returns: Json };
@@ -9593,6 +9920,10 @@ export type Database = {
       word_total: { Args: { any_text: string }; Returns: number };
       working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
       write_forum_names: { Args: { names: Json; target_forum_id: string }; Returns: undefined };
+      write_space_forum_names: {
+        Args: { name: string; target_space_id: string };
+        Returns: undefined;
+      };
       writer_chapter_insights: {
         Args: { chapter_code: string; story_slug: string };
         Returns: Json;
@@ -9733,7 +10064,8 @@ export type Database = {
         | 'atlas_item'
         | 'message'
         | 'forum_thread'
-        | 'forum_post';
+        | 'forum_post'
+        | 'space';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -9758,6 +10090,13 @@ export type Database = {
         | 'mushroom'
         | 'rain_cloud'
         | 'sunny_face';
+      space_age_group: 'under_16' | '16_plus';
+      space_banner: 'plum' | 'night' | 'forest' | 'gold';
+      space_joining: 'approve' | 'open';
+      space_member_role: 'owner' | 'member';
+      space_member_status: 'pending' | 'active';
+      space_posting: 'anyone' | 'members';
+      space_readers: 'members' | 'everybody';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
       statement_action:
@@ -10042,6 +10381,7 @@ export const Constants = {
         'message',
         'forum_thread',
         'forum_post',
+        'space',
       ],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [
@@ -10069,6 +10409,13 @@ export const Constants = {
         'rain_cloud',
         'sunny_face',
       ],
+      space_age_group: ['under_16', '16_plus'],
+      space_banner: ['plum', 'night', 'forest', 'gold'],
+      space_joining: ['approve', 'open'],
+      space_member_role: ['owner', 'member'],
+      space_member_status: ['pending', 'active'],
+      space_posting: ['anyone', 'members'],
+      space_readers: ['members', 'everybody'],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
       statement_action: [

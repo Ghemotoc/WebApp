@@ -51,7 +51,8 @@ select results_eq(
   $$ select slug from public.forums where level = 0 and is_pinned order by position $$,
   $$ values ('writing-craft'), ('reading'), ('essays-and-true-stories'), ('community') $$,
   'the four starting categories are pinned in the board''s order (Q45)');
-select is((select count(*)::integer from public.forums where level = 1), 11,
+-- Spaces' hidden forums are level 1 too (FORUMS-2a); they sit in no category.
+select is((select count(*)::integer from public.forums where level = 1 and space_id is null), 11,
   'the categories hold the board''s eleven forums');
 select results_eq(
   $$ select slug from public.forums

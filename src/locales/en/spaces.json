@@ -1,0 +1,167 @@
+{
+  "eyebrow": "Run by members",
+  "title": "Spaces",
+  "intro": "Members create and run spaces. The owner decides who can post.",
+  "create": "Create a space",
+  "seeAll_one": "See {{count, number}} space",
+  "seeAll_few": "See all {{count, number}} spaces",
+  "seeAll_other": "See all {{count, number}} spaces",
+  "empty": "No spaces yet. Start the first one.",
+  "loadFailed": "We couldn’t load the spaces. Try again in a moment.",
+  "showMore": "Show more spaces",
+  "row": {
+    "members_one": "{{count, number}} member · run by {{owner}}",
+    "members_few": "{{count, number}} members · run by {{owner}}",
+    "members_other": "{{count, number}} members · run by {{owner}}",
+    "ownerDeleted": "a deleted account"
+  },
+  "pills": {
+    "membersOnly": "Members-only posting",
+    "anyonePosts": "Anyone can post",
+    "anyoneReads": "Anyone can read",
+    "membersRead": "Only members can read",
+    "under16": "Members: under 16",
+    "sixteenPlus": "Members: 16 and over"
+  },
+  "space": {
+    "eyebrow": "Space · run by members",
+    "breadcrumb": "Where you are",
+    "forums": "Forums",
+    "members_one": "{{count, number}} member",
+    "members_few": "{{count, number}} members",
+    "members_other": "{{count, number}} members",
+    "owner": "Owner:",
+    "settings": "Space settings",
+    "reportLabel": "the space “{{name}}”",
+    "notFound": "This space isn’t here",
+    "notFoundNote": "It may have been removed, or it isn’t open to your account.",
+    "back": "Back to the spaces",
+    "loadFailed": "We couldn’t load this space. Try again in a moment."
+  },
+  "join": {
+    "join": "Join space",
+    "requestSent": "Request sent",
+    "leave": "Leave space",
+    "cancelRequest": "Take back request",
+    "logIn": "Log in to join",
+    "noteApprove": "The owner approves new members.",
+    "noteOpen": "Anyone in this space’s age group can join straight away.",
+    "notePending": "{{owner}} will see your request. You can post once you’re in.",
+    "noteMember": "You’re a member of this space.",
+    "noteOwner": "You run this space.",
+    "noteOtherGroup": "This space takes members from another age group, so you can read it but not join.",
+    "noteNotActive": "Your account can’t join spaces yet."
+  },
+  "threads": {
+    "membersOnly": "Only members can post here. Join to start a thread or reply.",
+    "membersOnlyApprove": "Only members can post here. Join to start a thread or reply. The owner checks each request.",
+    "readLocked": "Only members can read this space’s threads. Join to read them."
+  },
+  "rules": {
+    "eyebrow": "Set by the owner",
+    "title": "Space rules",
+    "none": "The owner hasn’t written any rules yet.",
+    "guidelines": "The community guidelines apply here too."
+  },
+  "runs": {
+    "title": "Who runs it",
+    "owner": "Owner",
+    "note": "Our moderation team can take action in any space."
+  },
+  "requests": {
+    "title": "Requests to join",
+    "none": "Nobody is waiting.",
+    "asked": "Asked {{date}}",
+    "approve": "Approve",
+    "decline": "Decline",
+    "approveLabel": "Approve {{name}}",
+    "declineLabel": "Decline {{name}}",
+    "approved": "{{name}} is in.",
+    "declined": "Request declined.",
+    "ageChanged": "{{name}} is no longer in this space’s age group, so the request was removed.",
+    "loadFailed": "We couldn’t load the requests."
+  },
+  "form": {
+    "eyebrow": "New space",
+    "title": "Create a space",
+    "editEyebrow": "Space settings",
+    "editTitle": "Change your space",
+    "intro16": "Anyone can create a space, and you become its owner. Because you’re 16 or over, your space is for members 16 and over, and anyone, with or without an account, can read it. You can change everything below later.",
+    "introUnder16": "Anyone can create a space, and you become its owner. Because you’re under 16, your space is for members under 16, and you choose who can read it. You can change everything below later.",
+    "introUnknown": "We need to know your age group before you can start a space.",
+    "logIn": "Log in to create a space.",
+    "name": "Name",
+    "nameHint": "Each name can only be used once. You can name a space after a book or an author.",
+    "nameAvailable": "This name is available.",
+    "nameChecking": "Checking the name…",
+    "description": "Description",
+    "rules": "Rules (optional)",
+    "rulesHint": "One rule a line. Shown at the top of your space. The community guidelines always apply as well.",
+    "banner": "Banner colour",
+    "banners": {
+      "plum": "Plum",
+      "night": "Night blue",
+      "forest": "Forest green",
+      "gold": "Gold"
+    },
+    "whoJoins": "Who can join",
+    "whoJoinsText": "Spaces keep age groups apart. A space started by someone under 16 takes only under-16s. A space started by someone 16 or over takes only people 16 and over.",
+    "whoJoinsTurning16": "When a member turns 16, they stay in the spaces they joined before, but they can’t start or join under-16 spaces.",
+    "readers": "Who can read",
+    "readersMembers": "Only members",
+    "readersMembersNote": "Only people in your space can read its threads.",
+    "readersEverybody": "Everybody",
+    "readersEverybodyNote": "Anyone can read it, but only under-16s can join or post.",
+    "posting": "Who can post",
+    "postingAnyone": "Anyone with an account",
+    "postingAnyoneNote": "Anyone in your space’s age group. Good for open discussion.",
+    "postingMembers": "Members only",
+    "postingMembersNote": "Readers can still read. Only members can start threads and reply.",
+    "joining": "How people join",
+    "joiningApprove": "I approve each request",
+    "joiningOpen": "Anyone can join straight away",
+    "cancel": "Cancel",
+    "create": "Create space",
+    "save": "Save changes",
+    "saved": "Your changes are saved.",
+    "notOwner": "Only the owner can change this space."
+  },
+  "newThread": {
+    "eyebrow": "New thread",
+    "heading": "New thread in {{space}}",
+    "cannotPost": "You can’t post in this space yet. Go back to the space to join it."
+  },
+  "failures": {
+    "signed_out": "Log in first.",
+    "not_active": "Your account can’t do this yet.",
+    "age_unknown": "We need to know your age group before you can start or join a space.",
+    "age": "This space is for another age group.",
+    "not_owner": "Only the space’s owner can do this.",
+    "owner_leaving": "You run this space, so you can’t leave it.",
+    "missing": "This space isn’t here any more.",
+    "too_many_one": "You’ve done this a lot in the last hour. Try again in {{count, number}} minute.",
+    "too_many_few": "You’ve done this a lot in the last hour. Try again in {{count, number}} minutes.",
+    "too_many_other": "You’ve done this a lot in the last hour. Try again in {{count, number}} minutes.",
+    "too_many_unknown": "You’ve done this a lot in the last hour. Try again later.",
+    "unreachable": "We couldn’t reach the server. Try again.",
+    "invalid": "Check the form and try again.",
+    "name": {
+      "empty": "Give your space a name.",
+      "too_long": "That name is too long. Keep it to 60 characters.",
+      "html": "A name can’t hold HTML tags.",
+      "taken": "Another space has this name. Try another."
+    },
+    "description": {
+      "empty": "Say in a line or two what your space is for.",
+      "too_long": "That description is too long. Keep it to 300 characters.",
+      "html": "A description can’t hold HTML tags.",
+      "taken": "Another space has this name. Try another."
+    },
+    "rules": {
+      "empty": "Write at least one rule, or leave the box empty.",
+      "too_long": "The rules are too long. Keep them to 2,000 characters.",
+      "html": "Rules can’t hold HTML tags.",
+      "taken": "Another space has this name. Try another."
+    }
+  }
+}

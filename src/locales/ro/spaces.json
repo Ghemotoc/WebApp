@@ -1,0 +1,167 @@
+{
+  "eyebrow": "Conduse de membri",
+  "title": "Spații",
+  "intro": "Membrii creează și conduc spațiile. Cine a creat spațiul decide cine poate posta.",
+  "create": "Creează un spațiu",
+  "seeAll_one": "Vezi {{count, number}} spațiu",
+  "seeAll_few": "Vezi toate cele {{count, number}} spații",
+  "seeAll_other": "Vezi toate cele {{count, number}} de spații",
+  "empty": "Încă nu există spații. Creează-l pe primul.",
+  "loadFailed": "Nu am putut încărca spațiile. Încearcă din nou peste puțin timp.",
+  "showMore": "Arată mai multe spații",
+  "row": {
+    "members_one": "{{count, number}} membru · condus de {{owner}}",
+    "members_few": "{{count, number}} membri · condus de {{owner}}",
+    "members_other": "{{count, number}} de membri · condus de {{owner}}",
+    "ownerDeleted": "un cont șters"
+  },
+  "pills": {
+    "membersOnly": "Postează doar membrii",
+    "anyonePosts": "Oricine poate posta",
+    "anyoneReads": "Oricine poate citi",
+    "membersRead": "Citesc doar membrii",
+    "under16": "Membri: sub 16 ani",
+    "sixteenPlus": "Membri: de la 16 ani"
+  },
+  "space": {
+    "eyebrow": "Spațiu · condus de membri",
+    "breadcrumb": "Unde te afli",
+    "forums": "Forumuri",
+    "members_one": "{{count, number}} membru",
+    "members_few": "{{count, number}} membri",
+    "members_other": "{{count, number}} de membri",
+    "owner": "Creat de:",
+    "settings": "Setările spațiului",
+    "reportLabel": "spațiul „{{name}}”",
+    "notFound": "Spațiul nu este aici",
+    "notFoundNote": "Poate a fost șters sau nu este deschis contului tău.",
+    "back": "Înapoi la spații",
+    "loadFailed": "Nu am putut încărca spațiul. Încearcă din nou peste puțin timp."
+  },
+  "join": {
+    "join": "Intră în spațiu",
+    "requestSent": "Cerere trimisă",
+    "leave": "Ieși din spațiu",
+    "cancelRequest": "Retrage cererea",
+    "logIn": "Intră în cont ca să te alături",
+    "noteApprove": "Cine a creat spațiul aprobă fiecare membru nou.",
+    "noteOpen": "Oricine din grupa de vârstă a spațiului poate intra imediat.",
+    "notePending": "{{owner}} îți va vedea cererea. Poți posta după ce te primește.",
+    "noteMember": "Faci parte din acest spațiu.",
+    "noteOwner": "Tu conduci acest spațiu.",
+    "noteOtherGroup": "Spațiul primește membri din altă grupă de vârstă, așa că îl poți citi, dar nu poți intra.",
+    "noteNotActive": "Contul tău nu poate intra încă în spații."
+  },
+  "threads": {
+    "membersOnly": "Aici postează doar membrii. Intră în spațiu ca să începi o discuție sau să răspunzi.",
+    "membersOnlyApprove": "Aici postează doar membrii. Intră în spațiu ca să începi o discuție sau să răspunzi. Cine a creat spațiul verifică fiecare cerere.",
+    "readLocked": "Doar membrii pot citi discuțiile acestui spațiu. Intră în spațiu ca să le citești."
+  },
+  "rules": {
+    "eyebrow": "Stabilite de cine a creat spațiul",
+    "title": "Regulile spațiului",
+    "none": "Încă nu există reguli.",
+    "guidelines": "Regulile comunității se aplică și aici."
+  },
+  "runs": {
+    "title": "Cine îl conduce",
+    "owner": "A creat spațiul",
+    "note": "Echipa noastră de moderare poate interveni în orice spațiu."
+  },
+  "requests": {
+    "title": "Cereri de intrare",
+    "none": "Nu așteaptă nimeni.",
+    "asked": "A cerut pe {{date}}",
+    "approve": "Aprobă",
+    "decline": "Refuză",
+    "approveLabel": "Aprobă {{name}}",
+    "declineLabel": "Refuză {{name}}",
+    "approved": "{{name}} face acum parte din spațiu.",
+    "declined": "Cererea a fost refuzată.",
+    "ageChanged": "{{name}} nu mai este în grupa de vârstă a spațiului, așa că cererea a fost ștearsă.",
+    "loadFailed": "Nu am putut încărca cererile."
+  },
+  "form": {
+    "eyebrow": "Spațiu nou",
+    "title": "Creează un spațiu",
+    "editEyebrow": "Setările spațiului",
+    "editTitle": "Schimbă spațiul",
+    "intro16": "Oricine poate crea un spațiu și îl conduce. Pentru că ai cel puțin 16 ani, spațiul tău este pentru membri de la 16 ani, iar oricine, cu sau fără cont, îl poate citi. Poți schimba mai târziu tot ce este mai jos.",
+    "introUnder16": "Oricine poate crea un spațiu și îl conduce. Pentru că ai sub 16 ani, spațiul tău este pentru membri sub 16 ani, iar tu alegi cine îl poate citi. Poți schimba mai târziu tot ce este mai jos.",
+    "introUnknown": "Avem nevoie de grupa ta de vârstă înainte să poți crea un spațiu.",
+    "logIn": "Intră în cont ca să creezi un spațiu.",
+    "name": "Nume",
+    "nameHint": "Fiecare nume poate fi folosit o singură dată. Poți numi un spațiu după o carte sau un autor.",
+    "nameAvailable": "Numele este liber.",
+    "nameChecking": "Verificăm numele…",
+    "description": "Descriere",
+    "rules": "Reguli (opțional)",
+    "rulesHint": "O regulă pe rând. Apar în partea de sus a spațiului. Regulile comunității se aplică oricum.",
+    "banner": "Culoarea bannerului",
+    "banners": {
+      "plum": "Prună",
+      "night": "Albastru de noapte",
+      "forest": "Verde de pădure",
+      "gold": "Auriu"
+    },
+    "whoJoins": "Cine poate intra",
+    "whoJoinsText": "Spațiile țin grupele de vârstă separat. Un spațiu creat de cineva sub 16 ani primește doar persoane sub 16 ani. Un spațiu creat de cineva de la 16 ani în sus primește doar persoane de la 16 ani.",
+    "whoJoinsTurning16": "Când un membru împlinește 16 ani, rămâne în spațiile în care intrase, dar nu mai poate crea sau intra în spații pentru sub 16 ani.",
+    "readers": "Cine poate citi",
+    "readersMembers": "Doar membrii",
+    "readersMembersNote": "Doar persoanele din spațiu îi pot citi discuțiile.",
+    "readersEverybody": "Oricine",
+    "readersEverybodyNote": "Oricine îl poate citi, dar doar persoanele sub 16 ani pot intra sau posta.",
+    "posting": "Cine poate posta",
+    "postingAnyone": "Oricine are cont",
+    "postingAnyoneNote": "Oricine din grupa de vârstă a spațiului. Potrivit pentru discuții deschise.",
+    "postingMembers": "Doar membrii",
+    "postingMembersNote": "Cititorii pot citi în continuare. Doar membrii pot începe discuții și răspunde.",
+    "joining": "Cum se intră",
+    "joiningApprove": "Aprob eu fiecare cerere",
+    "joiningOpen": "Oricine poate intra imediat",
+    "cancel": "Renunță",
+    "create": "Creează spațiul",
+    "save": "Salvează schimbările",
+    "saved": "Schimbările sunt salvate.",
+    "notOwner": "Doar cine a creat spațiul îl poate schimba."
+  },
+  "newThread": {
+    "eyebrow": "Discuție nouă",
+    "heading": "Discuție nouă în {{space}}",
+    "cannotPost": "Încă nu poți posta în acest spațiu. Întoarce-te la spațiu ca să intri în el."
+  },
+  "failures": {
+    "signed_out": "Intră mai întâi în cont.",
+    "not_active": "Contul tău nu poate face asta încă.",
+    "age_unknown": "Avem nevoie de grupa ta de vârstă înainte să poți crea sau intra într-un spațiu.",
+    "age": "Spațiul este pentru altă grupă de vârstă.",
+    "not_owner": "Doar cine a creat spațiul poate face asta.",
+    "owner_leaving": "Tu conduci acest spațiu, așa că nu poți ieși din el.",
+    "missing": "Spațiul nu mai este aici.",
+    "too_many_one": "Ai făcut asta de multe ori în ultima oră. Încearcă din nou peste {{count, number}} minut.",
+    "too_many_few": "Ai făcut asta de multe ori în ultima oră. Încearcă din nou peste {{count, number}} minute.",
+    "too_many_other": "Ai făcut asta de multe ori în ultima oră. Încearcă din nou peste {{count, number}} de minute.",
+    "too_many_unknown": "Ai făcut asta de multe ori în ultima oră. Încearcă din nou mai târziu.",
+    "unreachable": "Nu am putut ajunge la server. Încearcă din nou.",
+    "invalid": "Verifică formularul și încearcă din nou.",
+    "name": {
+      "empty": "Dă-i un nume spațiului.",
+      "too_long": "Numele este prea lung. Folosește cel mult 60 de caractere.",
+      "html": "Numele nu poate conține etichete HTML.",
+      "taken": "Alt spațiu are deja acest nume. Încearcă altul."
+    },
+    "description": {
+      "empty": "Spune în câteva cuvinte pentru ce este spațiul.",
+      "too_long": "Descrierea este prea lungă. Folosește cel mult 300 de caractere.",
+      "html": "Descrierea nu poate conține etichete HTML.",
+      "taken": "Alt spațiu are deja acest nume. Încearcă altul."
+    },
+    "rules": {
+      "empty": "Scrie cel puțin o regulă sau lasă câmpul gol.",
+      "too_long": "Regulile sunt prea lungi. Folosește cel mult 2.000 de caractere.",
+      "html": "Regulile nu pot conține etichete HTML.",
+      "taken": "Alt spațiu are deja acest nume. Încearcă altul."
+    }
+  }
+}

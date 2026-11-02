@@ -1835,3 +1835,12 @@ Read in this order; each file's header comment says what it is for and where thi
 - "Preview as a reader": `/plan/s/:storySlug/preview(/…)` (`PlanPreviewPage`) → `preview_story_plan()`, the same answer with each chapter guard shown by `PlanGuardPill`.
 - `[[Name]]` links on reader pages resolve only to public items: `ReaderLinksContext` (`hooks/useCrossLinks.ts`) gives `CrossLink` the public targets from `lib/publicPlanAreas.ts`.
 - Reporting: every public item is `atlas_item` in `reportable_type`, so `ReportButton` works on characters, relationships, custom sections, entries and events, and moderators hide or remove them one by one (`is_moderated_away('atlas_item', id)`).
+
+## Spaces people create (S1-E8-06; FORUMS-2a)
+
+- Where it lives: `src/features/spaces/` (`api/spaces.ts`, `hooks/useSpaces.ts`, `hooks/useSpaceNameCheck.ts`, `lib/spaceLook.ts`, `lib/spaceFailures.ts` and the pages in `components/`), and `supabase/migrations/…_forums2_a_spaces.sql`. Tables: `spaces` and `space_members`.
+- The one idea to know: every space owns one hidden forum (`forums.space_id`, address `space-<space>`), so its threads and posts are ordinary forum threads and posts. Quoting, read marks, sticky and locked, search and reporting all work in a space with no new code. `forum_index()`, `admin_list_forums()` and the public forum policies leave space forums out; `ForumPage` moves `/forums/space-<name>` to `/spaces/<name>`.
+- How a click travels: "Join space" (`SpaceJoinActions`) → `useMembership().join()` → `join_space()` → a `space_members` row, `active` for an open space and `pending` where the owner approves → the owner's `SpaceRequestsCard` → `decide_space_join_request()`.
+- Who may read, join and post is decided in SQL, once: `space_may_read()`, `space_may_join()`, `space_may_post()` (from `age_band()`: under 16, or 16 and over). Posting is checked by the `refuse_space_writer` trigger on `forum_threads` and `forum_posts`, so no forum write function needed to change; its hints (`space:join`, `space:pending`, `space:age`) become plain words in `forumWriteErrorFrom()`.
+- `space_json()` leaves the age group out for anyone outside it, so an adult never learns a space is for under-16s.
+- Tests: `supabase/tests/database/227-spaces.test.sql`, `src/features/spaces/api/spaces.test.ts`, `e2e/spaces.spec.ts`.

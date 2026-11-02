@@ -97,8 +97,10 @@ select results_eq(
        ('finished_thanks', 0::bigint),
        ('follows_stories', 0::bigint),
        ('follows_users', 0::bigint),
-       -- Forum categories, forums and subforums with their names: public (FORUMS-1a).
-       ('forum_names', (select count(*) from public.forum_names)),
+       -- Forum categories, forums and subforums with their names: public (FORUMS-1a), but never
+       -- a space's hidden forum (FORUMS-2a).
+       ('forum_names', (select count(*) from public.forum_names join public.forums on forums.id = forum_names.forum_id
+                        where forums.space_id is null and forums.deleted_at is null)),
        -- Forum threads, posts and earlier versions: read only through functions (FORUMS-1b).
        ('forum_post_revisions', 0::bigint),
        ('forum_posts', 0::bigint),
@@ -106,7 +108,7 @@ select results_eq(
        ('forum_read_marks', 0::bigint),
        ('forum_thread_reads', 0::bigint),
        ('forum_threads', 0::bigint),
-       ('forums', (select count(*) from public.forums where deleted_at is null)),
+       ('forums', (select count(*) from public.forums where deleted_at is null and space_id is null)),
        ('identity_link_requests', 0::bigint),
        ('interface_text_overrides', 0::bigint),
        ('invites', 0::bigint),
@@ -158,6 +160,9 @@ select results_eq(
        ('seasonal_occasions', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
        ('sign_in_failures', 0::bigint),
+       -- Spaces and their members: read only through functions, by the age rules (FORUMS-2a).
+       ('space_members', 0::bigint),
+       ('spaces', 0::bigint),
        ('staff_languages', 0::bigint),
        ('staff_permissions', 0::bigint),
        ('staff_role_areas', 0::bigint),

@@ -10,6 +10,8 @@
  * new post's permalink, so the page shows and scrolls to it. Part e adds "Don't bump" (the reply
  * leaves the thread's place in the forum's list) and, on a locked thread, LockedThreadNote in
  * place of the card (S1-E8-05 criteria 2 and 3).
+ * FORUMS-2a (S1-E8-06): in a space's thread, a reader who can't reply is told how to join the
+ * space (SpaceReplyNote) instead of "Your account can't write yet".
  * Who uses it: ThreadPage. What it calls: useReplyToThread → reply_to_forum_thread();
  * ForumQuoteBlock for the picked posts.
  */
@@ -21,7 +23,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 
-import type { ForumPost, ForumQuote, ForumThreadLock } from '../api/forumThreads';
+import type { ForumPost, ForumQuote, ForumThreadLock, ForumThreadSpace } from '../api/forumThreads';
 import { useReplyToThread } from '../hooks/useForumWrites';
 import { replyBoxId, type QuotePicks } from '../hooks/useQuotePicks';
 import { postAddress } from '../lib/forumAddresses';
@@ -31,6 +33,7 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 import { ForumQuoteBlock } from './ForumQuoteBlock';
 import { LockedThreadNote } from './LockedThreadNote';
 import { PostEditor } from './PostEditor';
+import { SpaceReplyNote } from './SpaceReplyNote';
 
 /** Where the reply goes and what it may quote. */
 export interface ReplyTarget {
@@ -183,21 +186,36 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
 }
 
 /**
+ * Why a signed-in reader can't reply: how to join the space, or that the account can't write yet.
+ *
+ * @param props.space - the thread's space, or null in the main forums
+ * @returns one line
+ */
+function CannotReplyNote({ space }: { space: ForumThreadSpace | null }) {
+  const { t } = useForumsTranslation();
+  if (space !== null) return <SpaceReplyNote space={space} />;
+  return <p className="m-0 text-base text-body">{t('reply.notActive')}</p>;
+}
+
+/**
  * Renders the card.
  *
  * @param props.target - the thread, its posts and the quote picks
  * @param props.canReply - whether the reader may write here
  * @param props.lock - the thread's lock, or null while it is open
+ * @param props.space - the thread's space, or null in the main forums
  * @returns the reply card, or the locked note on a locked thread
  */
 export function ReplyForm({
   target,
   canReply,
   lock,
+  space,
 }: {
   target: ReplyTarget;
   canReply: boolean;
   lock: ForumThreadLock | null;
+  space: ForumThreadSpace | null;
 }) {
   const { t } = useForumsTranslation();
   const { userId, isKnown } = useSession();
@@ -222,9 +240,7 @@ export function ReplyForm({
           {t('reply.logIn')}
         </Link>
       )}
-      {userId !== null && !canReply && (
-        <p className="m-0 text-base text-body">{t('reply.notActive')}</p>
-      )}
+      {userId !== null && !canReply && <CannotReplyNote space={space} />}
       {userId !== null && canReply && <ReplyFields target={target} />}
     </section>
   );
