@@ -64,9 +64,29 @@ export function useDataExportRun() {
   return useSyncExternalStore(subscribeToDataExportRun, dataExportRunState, dataExportRunState);
 }
 
-/** The Word files' words in the interface language; Download my stories uses them too. */
-export function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusLabels } {
-  const { t } = useDataExportTranslation();
+/**
+ * The dataExport texts in one language: the interface's, or a fixed one.
+ *
+ * @param language - the wanted language, or undefined for the interface language
+ * @returns a translate function for the "dataExport" namespace
+ */
+function useDataExportText(language?: string) {
+  const { t, i18n } = useDataExportTranslation();
+  return language === undefined ? t : i18n.getFixedT(language, 'dataExport');
+}
+
+/**
+ * The Word files' words; Download my stories and staff data requests use them too.
+ *
+ * @param language - the files' language; the interface language when left out (a staff copy for
+ *   a data request is written in the person's language, S1-E11-09)
+ * @returns the Word builder's labels and the status words
+ */
+export function useWordLabels(language?: string): {
+  wordLabels: WordLabels;
+  statusLabels: StatusLabels;
+} {
+  const t = useDataExportText(language);
   const wordLabels: WordLabels = {
     byLine: (name) => t('word.byLine', { name }),
     userId: t('word.userId'),
@@ -93,12 +113,13 @@ export function useWordLabels(): { wordLabels: WordLabels; statusLabels: StatusL
 }
 
 /**
- * The library spreadsheet's column and shelf names, in the interface language (IDEAS-1f).
+ * The library spreadsheet's column and shelf names (IDEAS-1f).
  *
+ * @param language - as for useWordLabels()
  * @returns the labels for library.csv
  */
-function useLibraryLabels(): LibraryCsvLabels {
-  const { t } = useDataExportTranslation();
+export function useLibraryLabels(language?: string): LibraryCsvLabels {
+  const t = useDataExportText(language);
   return {
     shelf: t('library.shelf'),
     title: t('library.title'),
@@ -117,11 +138,13 @@ function useLibraryLabels(): LibraryCsvLabels {
  * The words of a story's plan file: Story Atlas's own texts (so the file reads like the screens)
  * and the few of its own in dataExport.json (S1-E13-05).
  *
+ * @param language - as for useWordLabels()
  * @returns the two translators the plan builder takes
  */
-export function usePlanText(): Pick<PlanWords, 'atlas' | 'own'> {
-  const { t } = useDataExportTranslation();
-  const { t: atlasT } = useAtlasTranslation();
+export function usePlanText(language?: string): Pick<PlanWords, 'atlas' | 'own'> {
+  const t = useDataExportText(language);
+  const { t: interfaceAtlasT, i18n } = useAtlasTranslation();
+  const atlasT = language === undefined ? interfaceAtlasT : i18n.getFixedT(language, 'atlas');
   return { atlas: (key, values) => atlasT(key, values), own: (key, values) => t(key, values) };
 }
 

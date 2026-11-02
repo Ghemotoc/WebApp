@@ -237,6 +237,24 @@ describe('the notification email worker', () => {
     expect(email?.text).toContain('Settings, under Data requests');
   });
 
+  it('tells the person, always, that the copy of their data is ready, never sending it (S1-E11-09)', async () => {
+    const ready: EmailNotificationItem = {
+      ...followers,
+      kind: 'data_request_copy_ready',
+      actors: [],
+      actor_count: 0,
+      data_request: { reference: 'D-000009', deadline: '2027-02-28', extension_reason: null },
+    };
+    const [email] = await sendOnce([
+      claimed({ delivery: 'required', unsubscribe_key: null, items: [ready] }),
+    ]);
+    expect(email?.subject).toBe('Your copy of your data is ready');
+    expect(email?.text).toContain('(D-000009)');
+    expect(email?.text).toContain('seven days');
+    expect(email?.text).toContain('We never send your data by email.');
+    expect(email?.headers).toBeUndefined();
+  });
+
   it('uses the admins’ wording when there is an override', async () => {
     const overrides = new Map([
       ['email:notificationEmails.subjectDigest', 'Today on {{productName}}'],

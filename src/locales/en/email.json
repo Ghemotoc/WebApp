@@ -70,7 +70,9 @@
     "subjectDataRequestConfirm": "Was this request about your data yours?",
     "dataRequestConfirm": "We received a request about the data in your account ({{reference}}) by email or post, not from inside your account. Log in and open Settings, under Data requests, to tell us whether it was you. If it wasn’t, say so there: we won’t act on it.",
     "subjectDataRequestExtended": "We need more time for your data request",
-    "dataRequestExtended": "We need more time to answer your data request {{reference}}. We’ll answer by {{deadline}}. Why: {{reason}}"
+    "dataRequestExtended": "We need more time to answer your data request {{reference}}. We’ll answer by {{deadline}}. Why: {{reason}}",
+    "subjectDataRequestCopyReady": "Your copy of your data is ready",
+    "dataRequestCopyReady": "The copy of your data you asked for ({{reference}}) is ready. Log in and open Settings, under Data requests, to download it. It’s there for seven days, then it’s deleted. We never send your data by email."
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} asked you to agree to their {{productName}} account",

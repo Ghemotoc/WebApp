@@ -1,16 +1,19 @@
 /**
  * MyDataRequestRow: one of the person's own data requests on Settings: what it was for, when it
  * reached us, when we'll answer (and why we need longer, when we do), and, when the team asks,
- * "Was it you?" with Yes and No (bundle ADMIN-2, part c1; story S1-E11-09 criterion 4).
+ * "Was it you?" with Yes and No (bundle ADMIN-2, part c1; story S1-E11-09 criterion 4); and,
+ * once the team sends a copy, its files to download, signed in, for seven days (part c2).
  *
  * Who shows it: MyDataRequestsSection. What it calls: onAnswer(), which useMyDataRequests sends to
- * answer_data_request().
+ * answer_data_request(), and MyDataRequestFiles.
  */
 import { Button } from '@/components/ui/Button';
 
 import type { MyDataRequest } from '../api/myDataRequests';
 import { formatCalendarDate } from '../lib/dataRequestDates';
 import { useDataRequestsTranslation } from '../registerDataRequestsTranslations';
+
+import { MyDataRequestFiles } from './MyDataRequestFiles';
 
 /** What the row needs. */
 interface MyDataRequestRowProps {
@@ -84,6 +87,7 @@ export function MyDataRequestRow({ request, isAnswering, onAnswer }: MyDataReque
         <p className="m-0 text-body">{t('mine.extended', { reason: request.extensionReason })}</p>
       )}
       <IdentityQuestion request={request} isAnswering={isAnswering} onAnswer={onAnswer} />
+      <MyDataRequestFiles files={request.files} />
     </li>
   );
 }

@@ -75,7 +75,8 @@
     "staffShowedTitle": "readers can see the title of your story “{{story}}” again.",
     "staffShowedCover": "readers can see the cover of your story “{{story}}” again.",
     "dataRequestConfirm": "we received a request about your data ({{reference}}) by email or post, not from inside your account. Was it you?",
-    "dataRequestExtended": "we need more time to answer your data request {{reference}}. The new deadline and the reason are in Settings."
+    "dataRequestExtended": "we need more time to answer your data request {{reference}}. The new deadline and the reason are in Settings.",
+    "dataRequestCopyReady": "your copy for the data request {{reference}} is ready. Download it in Settings within seven days."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -133,7 +134,8 @@
     "openClassCertificates": "See the certificates",
     "openStorySettings": "Open the story’s settings",
     "answerDataRequest": "Answer",
-    "seeDataRequests": "See your data requests"
+    "seeDataRequests": "See your data requests",
+    "downloadDataRequestCopy": "Download it"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

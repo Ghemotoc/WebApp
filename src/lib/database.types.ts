@@ -1890,6 +1890,7 @@ export type Database = {
         Row: {
           channel: Database['public']['Enums']['data_request_channel'];
           closed_at: string | null;
+          copies_sent: NonNullable<Json>;
           created_at: string;
           created_by_user_id: string;
           due_on: string;
@@ -1917,6 +1918,7 @@ export type Database = {
         Insert: {
           channel: Database['public']['Enums']['data_request_channel'];
           closed_at?: string | null;
+          copies_sent?: NonNullable<Json>;
           created_at?: string;
           created_by_user_id: string;
           due_on: string;
@@ -1940,6 +1942,7 @@ export type Database = {
         Update: {
           channel?: Database['public']['Enums']['data_request_channel'];
           closed_at?: string | null;
+          copies_sent?: NonNullable<Json>;
           created_at?: string;
           created_by_user_id?: string;
           due_on?: string;
@@ -2068,6 +2071,8 @@ export type Database = {
           chapter_ids: string[] | null;
           content_fingerprint: string | null;
           created_at: string;
+          data_request_id: string | null;
+          display_name: string | null;
           expires_at: string | null;
           file_name: string;
           file_size: number | null;
@@ -2088,6 +2093,8 @@ export type Database = {
           chapter_ids?: string[] | null;
           content_fingerprint?: string | null;
           created_at?: string;
+          data_request_id?: string | null;
+          display_name?: string | null;
           expires_at?: string | null;
           file_name: string;
           file_size?: number | null;
@@ -2107,6 +2114,8 @@ export type Database = {
           chapter_ids?: string[] | null;
           content_fingerprint?: string | null;
           created_at?: string;
+          data_request_id?: string | null;
+          display_name?: string | null;
           expires_at?: string | null;
           file_name?: string;
           file_size?: number | null;
@@ -2123,6 +2132,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'exports_data_request_id_fkey';
+            columns: ['data_request_id'];
+            isOneToOne: false;
+            referencedRelation: 'data_requests';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'exports_story_id_fkey';
             columns: ['story_id'];
@@ -7264,11 +7280,46 @@ export type Database = {
         }[];
       };
       admin_data_request: { Args: { target_request_id: string }; Returns: Json };
+      admin_data_request_copy_target: {
+        Args: { target_request_id: string };
+        Returns: {
+          channel: Database['public']['Enums']['data_request_channel'];
+          closed_at: string | null;
+          copies_sent: NonNullable<Json>;
+          created_at: string;
+          created_by_user_id: string;
+          due_on: string;
+          extended_at: string | null;
+          extended_to: string | null;
+          extension_reason: string | null;
+          handled_by_user_id: string;
+          id: string;
+          identity: Database['public']['Enums']['data_request_identity'];
+          identity_answered_at: string | null;
+          identity_asked_at: string | null;
+          note: string;
+          outcome: string | null;
+          received_on: string;
+          reference: string;
+          request_type: Database['public']['Enums']['data_request_type'];
+          state: Database['public']['Enums']['data_request_state'];
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'data_requests';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      admin_data_request_export: { Args: { target_request_id: string }; Returns: Json };
       admin_data_request_target: {
         Args: { must_be_open: boolean; target_request_id: string };
         Returns: {
           channel: Database['public']['Enums']['data_request_channel'];
           closed_at: string | null;
+          copies_sent: NonNullable<Json>;
           created_at: string;
           created_by_user_id: string;
           due_on: string;
@@ -7386,6 +7437,7 @@ export type Database = {
           user_id: string;
         }[];
       };
+      admin_finish_data_request_copy: { Args: { target_request_id: string }; Returns: Json };
       admin_fix_classic_typo: {
         Args: { corrected_body: string; reason_given: string; target_chapter_code: string };
         Returns: Json;
@@ -7579,6 +7631,14 @@ export type Database = {
           target_user_id: string;
         };
         Returns: Json;
+      };
+      admin_open_data_request_copy: {
+        Args: { files: Json; target_request_id: string };
+        Returns: Json;
+      };
+      admin_open_data_request_file: {
+        Args: { target_export_id: string; target_request_id: string };
+        Returns: string;
       };
       admin_open_teacher_proof: { Args: { check_id: string }; Returns: string };
       admin_order_timeline: { Args: { target_case_id: string }; Returns: Json };
@@ -8869,6 +8929,10 @@ export type Database = {
         };
         Returns: string;
       };
+      data_request_files_json: {
+        Args: { target_request_id: string; with_file_name: boolean };
+        Returns: Json;
+      };
       data_request_json: {
         Args: {
           request: Omit<
@@ -8995,6 +9059,8 @@ export type Database = {
       };
       export_library_of: { Args: { owner_id: string }; Returns: Json };
       export_row_for_owner: { Args: { stored_row: Json }; Returns: Json };
+      export_staff_open_allowed: { Args: { object_name: string }; Returns: boolean };
+      export_staff_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       export_tables_of: { Args: { owner_id: string }; Returns: Json };
       export_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       finish_data_export: { Args: { export_id: string; story_count: number }; Returns: Json };
@@ -10698,6 +10764,8 @@ export type Database = {
           chapter_ids: string[] | null;
           content_fingerprint: string | null;
           created_at: string;
+          data_request_id: string | null;
+          display_name: string | null;
           expires_at: string | null;
           file_name: string;
           file_size: number | null;
@@ -11590,7 +11658,7 @@ export type Database = {
       data_request_type: 'copy' | 'move' | 'correct' | 'delete' | 'other';
       email_delivery: 'instant' | 'daily' | 'off';
       embed_service: 'youtube' | 'vimeo' | 'loom' | 'spotify' | 'apple_music';
-      export_kind: 'all_my_data' | 'my_stories';
+      export_kind: 'all_my_data' | 'my_stories' | 'data_request';
       export_state: 'building' | 'ready';
       forum_accent: 'plum' | 'sky' | 'blush' | 'sage' | 'gold';
       language_status: 'open' | 'ready' | 'closed';
@@ -11632,7 +11700,8 @@ export type Database = {
         | 'class_archived'
         | 'story_changed_by_staff'
         | 'data_request_confirm'
-        | 'data_request_extended';
+        | 'data_request_extended'
+        | 'data_request_copy_ready';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -11914,7 +11983,7 @@ export const Constants = {
       data_request_type: ['copy', 'move', 'correct', 'delete', 'other'],
       email_delivery: ['instant', 'daily', 'off'],
       embed_service: ['youtube', 'vimeo', 'loom', 'spotify', 'apple_music'],
-      export_kind: ['all_my_data', 'my_stories'],
+      export_kind: ['all_my_data', 'my_stories', 'data_request'],
       export_state: ['building', 'ready'],
       forum_accent: ['plum', 'sky', 'blush', 'sage', 'gold'],
       language_status: ['open', 'ready', 'closed'],
@@ -11965,6 +12034,7 @@ export const Constants = {
         'story_changed_by_staff',
         'data_request_confirm',
         'data_request_extended',
+        'data_request_copy_ready',
       ],
       picture_kind: [
         'cover',

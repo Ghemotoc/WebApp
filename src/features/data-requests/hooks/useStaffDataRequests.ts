@@ -18,12 +18,13 @@ import {
   openDataRequest,
   type DataRequest,
   type DataRequestAction,
+  type DataRequestDetail,
   type DataRequestFailure,
   type NewDataRequest,
 } from '../api/dataRequests';
 
 /** The query key every data request query starts with, so one change refreshes them all. */
-const dataRequestsKey = 'staff-data-requests';
+export const dataRequestsKey = 'staff-data-requests';
 
 /**
  * Gets the shared client.
@@ -75,7 +76,7 @@ export function useStaffDataRequests(onlyOpen: boolean) {
  */
 export function useStaffDataRequest(requestId: string) {
   const queryClient = useQueryClient();
-  const request = useQuery<DataRequest>({
+  const request = useQuery<DataRequestDetail>({
     queryKey: [dataRequestsKey, 'one', requestId],
     retry: false,
     queryFn: async () => fetchDataRequest(await requireClient(), requestId),

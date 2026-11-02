@@ -504,6 +504,7 @@ const teamTextFor: Partial<
   story_changed_by_staff: staffChangeText,
   data_request_confirm: dataRequestNoticeText,
   data_request_extended: dataRequestNoticeText,
+  data_request_copy_ready: dataRequestNoticeText,
 };
 
 /**

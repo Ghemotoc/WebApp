@@ -133,7 +133,13 @@
     "parent_needed": "Persoana are sub 16 ani: verificarea merge la părintele sau tutorele ei.",
     "outcome_needed": "Spune ce s-a făcut, în cel mult 2000 de caractere.",
     "refused": "Nu s-a salvat. Verifică câmpurile și încearcă din nou.",
-    "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
+    "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp.",
+    "not_a_copy": "Cererea nu este pentru o copie a datelor.",
+    "identity_denied": "Persoana ne-a spus că cererea nu a fost a sa.",
+    "identity_not_checked": "Verifică mai întâi identitatea persoanei.",
+    "bad_files": "Fișierele copiei nu au fost în regulă. Încearcă din nou să faci copia.",
+    "no_file": "Un fișier nu a ajuns. Încearcă din nou să faci copia.",
+    "not_found": "Fișierul sau copia nu mai este acolo. Reîncarcă pagina."
   },
   "mine": {
     "heading": "Cereri privind datele",
@@ -164,6 +170,37 @@
     "confirmed": "Ai confirmat că tu ai trimis-o.",
     "denied": "Ne-ai spus că nu tu ai trimis-o. Nu îi vom da curs și vom verifica ce s-a întâmplat.",
     "answerFailed": "Nu am putut salva răspunsul. Încearcă din nou.",
-    "notWaiting": "Nu mai așteptăm un răspuns la această cerere."
+    "notWaiting": "Nu mai așteptăm un răspuns la această cerere.",
+    "copyReady": "Copia ta e gata. Descarc-o până la {{date}}; după aceea se șterge.",
+    "download": "Descarcă",
+    "downloadLabel": "Descarcă {{name}}",
+    "fileLine": "{{name}}, {{size}}"
+  },
+  "copy": {
+    "heading": "Copia",
+    "intro": "Copia cuprinde tot ce a pus persoana aici și datele contului său, într-un fișier citibil de calculator (data.json), fiecare poveste și planul fiecărei povești ca fișier Word, plus biblioteca sa ca tabel. Se face în această filă, în limba persoanei, apoi persoana o descarcă din Setări, cu contul deschis, timp de șapte zile. Nu se trimite nimic la nicio altă adresă.",
+    "formatLabel": "Cum o trimiți",
+    "formats": {
+      "zip": "O singură arhivă ZIP cu tot",
+      "separate": "Fiecare fișier separat"
+    },
+    "send": "Fă și trimite copia",
+    "building": "Se face copia. Ține fila deschisă până se trimite.",
+    "sent": "Copia s-a trimis. Persoana are o notificare și un email și o poate descărca timp de șapte zile.",
+    "blocked": {
+      "not_a_copy": "Cererea nu este pentru o copie a datelor, așa că nu se trimite nicio copie.",
+      "parent_needed": "Persoana are sub 16 ani, iar cererea nu a venit din contul său, așa că o copie trece prin părintele sau tutorele său.",
+      "identity_denied": "Persoana ne-a spus că cererea nu a fost a sa, așa că nu se trimite nimic.",
+      "identity_not_checked": "Verifică mai întâi identitatea: roag-o pe persoană să confirme că cererea e a sa."
+    },
+    "filesHeading": "Fișiere care așteaptă persoana",
+    "openHint": "Nu trebuie să citești fișierele ca să le trimiți. Deschiderea unuia rămâne în jurnal.",
+    "fileLine": "{{size}}, până la {{date}}",
+    "open": "Deschide",
+    "openLabel": "Deschide {{name}} (rămâne în jurnal)",
+    "sentHeading": "Copii trimise",
+    "sentLine_one": "Trimisă {{sent}}: {{count}} fișier, până la {{until}}",
+    "sentLine_few": "Trimisă {{sent}}: {{count}} fișiere, până la {{until}}",
+    "sentLine_other": "Trimisă {{sent}}: {{count}} de fișiere, până la {{until}}"
   }
 }

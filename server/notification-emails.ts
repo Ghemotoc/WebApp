@@ -44,7 +44,8 @@ export interface EmailNotificationItem {
     | 'login_method_removed'
     | 'class_archived'
     | 'data_request_confirm'
-    | 'data_request_extended';
+    | 'data_request_extended'
+    | 'data_request_copy_ready';
   actors: { handle: string; display_name: string }[];
   actor_count: number;
   story: { slug: string; title: string } | null;
@@ -96,6 +97,7 @@ const lineKeys: Record<EmailNotificationItem['kind'], string> = {
   class_archived: 'classArchived',
   data_request_confirm: 'dataRequestConfirm',
   data_request_extended: 'dataRequestExtended',
+  data_request_copy_ready: 'dataRequestCopyReady',
 };
 
 /**
@@ -110,6 +112,7 @@ const accountKinds = new Set<EmailNotificationItem['kind']>([
   'class_archived',
   'data_request_confirm',
   'data_request_extended',
+  'data_request_copy_ready',
 ]);
 
 /** The subject of each kind that is always sent (delivery 'required'), by its email.json key. */
@@ -120,6 +123,7 @@ const requiredSubjectKeys: Partial<Record<EmailNotificationItem['kind'], string>
   class_archived: 'subjectClassArchived',
   data_request_confirm: 'subjectDataRequestConfirm',
   data_request_extended: 'subjectDataRequestExtended',
+  data_request_copy_ready: 'subjectDataRequestCopyReady',
 };
 
 /**

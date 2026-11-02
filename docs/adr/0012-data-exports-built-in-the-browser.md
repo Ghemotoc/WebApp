@@ -18,5 +18,5 @@ Our server functions run as Cloudflare Pages Functions on the free plan, which a
 - No service key and no new processor; nothing the person can change in their browser reaches anyone else's data, because every read and write is their own under row-level security.
 - A very large account builds on a slow phone more slowly; the Word files are built one story at a time.
 - If the tab closes halfway, the copy isn't made; asking again starts afresh (a copy still being built is replaced).
-- Staff requests (S1-E11-09a) will build the same ZIP in the staff member's browser from an admin version of `my_data_export()`.
+- Staff requests (S1-E11-09a) build the same ZIP in the staff member's browser from an admin version of `my_data_export()` (`admin_data_request_export()`, ADMIN-2c2, 2 Nov 2026), or the same files one by one; they are exports of kind `data_request`, owned by the person, who downloads them signed in. Staff upload them through their own storage policy and can open one only after the opening is logged.
 - **Alternatives, if Robert prefers a server job:** a Supabase Edge Function (2 s of processor time a request, needs a deploy pipeline), or Cloudflare's paid plan (30 s a request). Either would run the same `src/lib/word/` builder; only `runDataExport.ts` would move.
