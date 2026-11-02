@@ -362,7 +362,50 @@ function readingReminderText(t: TFunction): NotificationText {
   };
 }
 
-/** The moderation team's kinds and the function that words each one. */
+/**
+ * Someone asked to join a space the reader runs (FORUMS-2c; board 5.3): "ana and 2 others asked
+ * to join Fantasy writers' circle", with "See the requests", which opens the space at its list
+ * of requests. Requests to one space within a day share one row.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a space_join_request row
+ * @returns the row's words
+ */
+function spaceJoinRequestText(t: TFunction, notification: AppNotification): NotificationText {
+  const space = notification.space;
+  return {
+    who: whoDidIt(t, notification),
+    // The count picks "a cerut" or "au cerut" in Romanian.
+    what: t('what.spaceJoinRequest', { space: space?.name ?? '', count: notification.actorCount }),
+    quote: null,
+    grouped: null,
+    actionLabel: space === null ? null : t('actions.seeRequests'),
+    href: space === null ? null : `/spaces/${space.slug}#join-requests`,
+  };
+}
+
+/**
+ * The reader was let into a space they asked to join (FORUMS-2c; board 5.3: "You'll get a
+ * notification when you're in"). It never says who let them in, so a moderator's or a member of
+ * staff's name is never shown.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a space_join_approved row
+ * @returns the row's words
+ */
+function spaceJoinApprovedText(t: TFunction, notification: AppNotification): NotificationText {
+  const space = notification.space;
+  return {
+    who: t('who.yourAccount'),
+    what: t('what.spaceJoinApproved', { space: space?.name ?? '' }),
+    quote: null,
+    grouped: null,
+    actionLabel: space === null ? null : t('actions.openSpace'),
+    href: space === null ? null : `/spaces/${space.slug}`,
+  };
+}
+
+/** The kinds with words of their own (the team's, the account's and the spaces') and the function for each. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
 > = {
@@ -382,6 +425,8 @@ const teamTextFor: Partial<
   data_export_ready: dataExportReadyText,
   stories_export_ready: storiesExportReadyText,
   reading_reminder: readingReminderText,
+  space_join_request: spaceJoinRequestText,
+  space_join_approved: spaceJoinApprovedText,
 };
 
 /**

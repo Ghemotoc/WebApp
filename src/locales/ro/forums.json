@@ -215,7 +215,8 @@
       "reason_too_long": "Motivul trebuie să aibă sub 500 de caractere.",
       "gone": "Discuția nu mai există.",
       "unreachable": "Nu am putut salva. Verifică-ți conexiunea și încearcă din nou."
-    }
+    },
+    "reasonHintSpace": "Intră în jurnalul de moderare al spațiului, pe care îl pot citi proprietarul și echipa noastră de moderare. Când închizi discuția, toată lumea vede motivul."
   },
   "search": {
     "label": "Caută în discuții și mesaje",
@@ -232,7 +233,8 @@
     "showMore": "Arată mai multe rezultate",
     "kindThread": "Discuție",
     "kindPost": "Mesajul #{{number}}",
-    "where": "În {{forum}} · de {{name}} · {{date}}"
+    "where": "În {{forum}} · de {{name}} · {{date}}",
+    "spaceOption": "Spațiu: {{name}}"
   },
   "space": {
     "spaces": "Spații"

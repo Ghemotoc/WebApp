@@ -9,6 +9,7 @@
  * join and post) and never sends a user ID; this file only reads its answers.
  */
 import { personFrom, type ForumPerson } from '@/features/forums/api/forumThreads';
+import { pictureFromJson, type StoredPicture } from '@/features/pictures/api/pictures';
 import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
@@ -72,6 +73,11 @@ export interface Space {
   posting: SpacePosting;
   joining: SpaceJoining;
   banner: SpaceBanner;
+  /**
+   * The uploaded banner picture (FORUMS-2c), or null for the drawn colour. Its file is named only
+   * when the caller may read it: once it passed its check, or to its uploader and staff.
+   */
+  bannerPicture: StoredPicture | null;
   owner: ForumPerson;
   memberCount: number;
   threadCount: number;
@@ -309,6 +315,7 @@ export function spaceFrom(value: Json | undefined): Space {
     posting: row['posting'] === 'anyone' ? 'anyone' : 'members',
     joining: row['joining'] === 'open' ? 'open' : 'approve',
     banner: spaceBanners.find((banner) => banner === row['banner']) ?? 'plum',
+    bannerPicture: pictureFromJson(row['banner_picture'] ?? null),
     owner: personFrom(row['owner']),
     memberCount: countFrom(row['member_count']),
     threadCount: countFrom(row['thread_count']),

@@ -215,7 +215,8 @@
       "reason_too_long": "Keep the reason under 500 characters.",
       "gone": "This thread isn’t there any more.",
       "unreachable": "We couldn’t save that. Check your connection and try again."
-    }
+    },
+    "reasonHintSpace": "Goes in the space’s moderation log, which its owner and our moderation team can read. When you lock the thread, everyone sees the reason."
   },
   "search": {
     "label": "Search forum threads and posts",
@@ -232,7 +233,8 @@
     "showMore": "Show more results",
     "kindThread": "Thread",
     "kindPost": "Post #{{number}}",
-    "where": "In {{forum}} · by {{name}} · {{date}}"
+    "where": "In {{forum}} · by {{name}} · {{date}}",
+    "spaceOption": "Space: {{name}}"
   },
   "space": {
     "spaces": "Spaces"

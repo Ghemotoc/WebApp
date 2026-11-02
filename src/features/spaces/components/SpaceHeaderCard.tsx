@@ -1,5 +1,6 @@
 /**
- * SpaceHeaderCard: the space's header: its banner, badge, "Space · run by members", name,
+ * SpaceHeaderCard: the space's header: its banner (the drawn colour, or the uploaded picture once
+ * it passed its check, FORUMS-2c), badge, "Space · run by members", name,
  * description, pills, "214 members · Owner: inkwolf", the join buttons and Report (bundle
  * FORUMS-2, parts a and b; S1-E8-06 and S1-E8-07; design/boards/Space.dc.html's header).
  *
@@ -9,7 +10,7 @@
  * moderators also see the links to what their powers let them do (SpaceToolLinks).
  * Share comes with the share card (S1-E4-05) for spaces later, so it is left out here (noted in
  * docs/board-fixes.md).
- * Who shows it: SpacePage. What it calls: SpaceBadge, SpacePills, SpaceJoinActions,
+ * Who shows it: SpacePage. What it calls: SpaceBannerBand, SpaceBadge, SpacePills, SpaceJoinActions,
  * SpaceToolLinks, ReportButton.
  */
 import { Link } from 'react-router';
@@ -19,10 +20,10 @@ import { nameOf } from '@/features/forums/lib/forumPeople';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { Space } from '../api/spaces';
-import { bannerBackgrounds } from '../lib/spaceLook';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { SpaceBadge } from './SpaceBadge';
+import { SpaceBannerBand } from './SpaceBannerBand';
 import { SpaceJoinActions } from './SpaceJoinActions';
 import { SpacePills } from './SpacePills';
 import { SpaceToolLinks } from './SpaceToolLinks';
@@ -82,11 +83,7 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
       aria-labelledby="space-title"
       className="relative overflow-hidden rounded-[28px] border border-border bg-surface shadow-card"
     >
-      <div
-        aria-hidden="true"
-        className="h-[120px] md:h-[168px]"
-        style={{ background: bannerBackgrounds[space.banner] }}
-      />
+      <SpaceBannerBand space={space} />
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5 px-5 pb-8 md:px-10">
         <div className="flex min-w-0 flex-[1_1_520px] flex-col gap-3.5">
           <span className="-mt-11">

@@ -5,10 +5,12 @@
  * Who shows it: the router; "Space settings" on the space's header links here, for its owner.
  * What it shows: the same form as a new space, filled in, and "Your changes are saved." after
  * saving, for anyone holding the settings power (the owner, a moderator given it, or our
- * moderation team; part b, S1-E8-07). Under it, the Moderators card for the owner and our
+ * moderation team; part b, S1-E8-07), then the Banner picture card (part c) for the same people
+ * while picture uploads are on. Under them, the Moderators card for the owner and our
  * moderation team (SpaceModeratorsCard). Anyone else is told only the owner can change it; the
  * database checks again. A new name keeps the space's address, so links to it still work.
- * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceModeratorsCard.
+ * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceBannerPictureCard;
+ * SpaceModeratorsCard.
  */
 import { useState } from 'react';
 import { useParams } from 'react-router';
@@ -20,6 +22,7 @@ import type { Space, SpaceSettings } from '../api/spaces';
 import { useSpace, useUpdateSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { SpaceBannerPictureCard } from './SpaceBannerPictureCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
 import { SpaceFormCard } from './SpaceFormCard';
@@ -92,6 +95,7 @@ function SettingsCards({ space }: { space: Space }) {
   return (
     <>
       {canManage && <SettingsForm key={space.slug} space={space} />}
+      {canManage && <SpaceBannerPictureCard space={space} />}
       {canAppoint && <SpaceModeratorsCard space={space} />}
     </>
   );

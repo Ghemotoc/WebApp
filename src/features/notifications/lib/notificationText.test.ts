@@ -38,6 +38,7 @@ const newChapter: AppNotification = {
   reportReference: null,
   appeal: null,
   mail: null,
+  space: null,
   isRequired: false,
   isRead: false,
   at: '2026-10-25T07:00:00Z',
@@ -227,5 +228,55 @@ describe('notificationText', () => {
     expect(text.who).toBe('Moderation team:');
     expect(text.quote).toBe('My story vanished');
     expect(text.href).toBe('/moderator-mail/M-000012');
+  });
+
+  it('two requests to join a space share one row that opens the list of requests (FORUMS-2c)', () => {
+    const requestRow: AppNotification = {
+      ...newChapter,
+      kind: 'space_join_request',
+      category: 'follows',
+      actors: [
+        { handle: 'ana', displayName: 'Ana' },
+        { handle: 'corbu', displayName: 'corbu' },
+      ],
+      actorCount: 2,
+      story: null,
+      chapter: null,
+      space: { slug: 'fantasy-writers-circle', name: 'Fantasy writers’ circle' },
+    };
+    const text = notificationText(englishT(), requestRow, null);
+    expect(`${text.who} ${text.what}`).toBe('Ana and corbu asked to join Fantasy writers’ circle.');
+    expect(text.actionLabel).toBe('See the requests');
+    expect(text.href).toBe('/spaces/fantasy-writers-circle#join-requests');
+  });
+
+  it('being let into a space opens it and never names who let them in', () => {
+    const approvedRow: AppNotification = {
+      ...newChapter,
+      kind: 'space_join_approved',
+      category: 'follows',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      space: { slug: 'fantasy-writers-circle', name: 'Fantasy writers’ circle' },
+    };
+    const text = notificationText(englishT(), approvedRow, null);
+    expect(`${text.who} ${text.what}`).toBe(
+      'Your account: you’re in Fantasy writers’ circle. You can now post there.',
+    );
+    expect(text.href).toBe('/spaces/fantasy-writers-circle');
+  });
+
+  it('a space the reader can no longer see leaves the row without a link', () => {
+    const hiddenRow: AppNotification = {
+      ...newChapter,
+      kind: 'space_join_approved',
+      category: 'follows',
+      actors: [],
+      actorCount: 0,
+      space: null,
+    };
+    expect(notificationText(englishT(), hiddenRow, null).href).toBeNull();
   });
 });

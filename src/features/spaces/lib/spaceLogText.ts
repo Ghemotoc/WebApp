@@ -15,6 +15,7 @@ const knownActions = [
   'request_age_changed',
   'member_removed',
   'settings_changed',
+  'banner_picture_changed',
   'thread_made_sticky',
   'thread_sticky_removed',
   'thread_locked',

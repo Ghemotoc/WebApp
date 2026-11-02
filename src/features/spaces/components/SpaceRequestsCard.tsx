@@ -98,6 +98,7 @@ export function SpaceRequestsCard({ space }: { space: Space }) {
   const list = requests.data ?? [];
   return (
     <section
+      id="join-requests"
       aria-labelledby="space-requests-heading"
       className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-5"
     >

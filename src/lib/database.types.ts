@@ -3118,6 +3118,7 @@ export type Database = {
           kind: Database['public']['Enums']['notification_kind'];
           mail_thread_id: string | null;
           read_at: string | null;
+          space_id: string | null;
           statement_id: string | null;
           story_id: string | null;
           updated_at: string;
@@ -3141,6 +3142,7 @@ export type Database = {
           kind: Database['public']['Enums']['notification_kind'];
           mail_thread_id?: string | null;
           read_at?: string | null;
+          space_id?: string | null;
           statement_id?: string | null;
           story_id?: string | null;
           updated_at?: string;
@@ -3161,6 +3163,7 @@ export type Database = {
           kind?: Database['public']['Enums']['notification_kind'];
           mail_thread_id?: string | null;
           read_at?: string | null;
+          space_id?: string | null;
           statement_id?: string | null;
           story_id?: string | null;
           updated_at?: string;
@@ -3200,6 +3203,13 @@ export type Database = {
             columns: ['mail_thread_id'];
             isOneToOne: false;
             referencedRelation: 'moderator_mail_threads';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
             referencedColumns: ['id'];
           },
           {
@@ -4873,6 +4883,7 @@ export type Database = {
         Row: {
           age_group: Database['public']['Enums']['space_age_group'];
           banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
           created_at: string;
           deleted_at: string | null;
           description: string;
@@ -4909,6 +4920,7 @@ export type Database = {
         Insert: {
           age_group: Database['public']['Enums']['space_age_group'];
           banner?: Database['public']['Enums']['space_banner'];
+          banner_picture_id?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           description: string;
@@ -4926,6 +4938,7 @@ export type Database = {
         Update: {
           age_group?: Database['public']['Enums']['space_age_group'];
           banner?: Database['public']['Enums']['space_banner'];
+          banner_picture_id?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           description?: string;
@@ -4941,6 +4954,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'spaces_banner_picture_id_fkey';
+            columns: ['banner_picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'spaces_user_id_fkey';
             columns: ['user_id'];
@@ -8793,6 +8813,7 @@ export type Database = {
         Returns: {
           age_group: Database['public']['Enums']['space_age_group'];
           banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
           created_at: string;
           deleted_at: string | null;
           description: string;
@@ -9234,6 +9255,7 @@ export type Database = {
         };
         Returns: string;
       };
+      register_space_banner: { Args: { target_path: string }; Returns: string };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
       remove_space_member: {
@@ -9586,6 +9608,7 @@ export type Database = {
       };
       set_rank_badge_tags: { Args: { story_slug: string; tag_names: string[] }; Returns: Json };
       set_shows_online_status: { Args: { should_show: boolean }; Returns: undefined };
+      set_space_banner_picture: { Args: { picture_id?: string; slug: string }; Returns: Json };
       set_space_moderator: {
         Args: {
           handle: string;
@@ -9661,6 +9684,8 @@ export type Database = {
         Args: { person_id: string };
         Returns: Database['public']['Enums']['space_age_group'];
       };
+      space_banner_file_may_go: { Args: { object_name: string }; Returns: boolean };
+      space_banner_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       space_card_visible: {
         Args: {
           target: Omit<
@@ -9675,6 +9700,7 @@ export type Database = {
         Returns: {
           age_group: Database['public']['Enums']['space_age_group'];
           banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
           created_at: string;
           deleted_at: string | null;
           description: string;
@@ -9807,6 +9833,7 @@ export type Database = {
         Returns: {
           age_group: Database['public']['Enums']['space_age_group'];
           banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
           created_at: string;
           deleted_at: string | null;
           description: string;
@@ -10218,7 +10245,9 @@ export type Database = {
         | 'data_export_ready'
         | 'stories_export_ready'
         | 'reading_reminder'
-        | 'story_finished';
+        | 'story_finished'
+        | 'space_join_request'
+        | 'space_join_approved';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -10533,6 +10562,8 @@ export const Constants = {
         'stories_export_ready',
         'reading_reminder',
         'story_finished',
+        'space_join_request',
+        'space_join_approved',
       ],
       picture_kind: [
         'cover',

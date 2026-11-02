@@ -59,7 +59,11 @@
     "dataExportReady": "your copy of your data is ready to download.",
     "storiesExportReady": "your stories are ready to download as Word files.",
     "readingReminder": "a few minutes of reading today?",
-    "storyFinished": "finished {{story}} and says thank you for writing it."
+    "storyFinished": "finished {{story}} and says thank you for writing it.",
+    "spaceJoinRequest_one": "asked to join {{space}}.",
+    "spaceJoinRequest_few": "asked to join {{space}}.",
+    "spaceJoinRequest_other": "asked to join {{space}}.",
+    "spaceJoinApproved": "you’re in {{space}}. You can now post there."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -109,7 +113,9 @@
     "downloadMyData": "Download your data",
     "downloadMyStories": "Download your stories",
     "openLibrary": "Open your library",
-    "openStory": "Open the story"
+    "openStory": "Open the story",
+    "seeRequests": "See the requests",
+    "openSpace": "Open the space"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

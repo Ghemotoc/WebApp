@@ -2,7 +2,8 @@
  * The forum search page's address and the choices in its forum filter (bundle FORUMS-1, part f;
  * story S1-E8-10).
  *
- * Who calls it: ForumSearchForm (to open a search) and ForumSearchPage (to read one). The search
+ * Who calls it: ForumSearchForm (to open a search and list the forums and spaces to filter by) and
+ * ForumSearchPage (to read one). The search
  * lives in the address (/forums/search?q=…&forum=…&author=…) so the back button and a shared link
  * both work.
  */
@@ -65,6 +66,37 @@ export function forumFilterOptions(entries: ForumEntry[], allLabel: string): Sel
         options.push({ value: subforum.slug, label: `— — ${subforum.name}` });
       }
     }
+  }
+  return options;
+}
+
+/** A space as the forum filter lists it. */
+export interface SpaceFilterChoice {
+  /** The space's hidden forum ("space-…"), which the search filters by. */
+  forumSlug: string;
+  name: string;
+}
+
+/**
+ * The spaces' choices for the forum filter (bundle FORUMS-2, part c; S1-E8-10: "filter by
+ * forum", and a space is a forum of its own). Each reads "Space: <name>". A space chosen through
+ * a shared link that isn't in the list still gets a choice, so the filter shows what is searched.
+ *
+ * @param spaces - the spaces the reader may see
+ * @param labelFor - the words for one space ("Space: Fantasy writers' circle")
+ * @param chosenSlug - the forum the search is filtered by now, or null
+ * @returns the options, after the forums' own
+ */
+export function spaceFilterOptions(
+  spaces: SpaceFilterChoice[],
+  labelFor: (name: string) => string,
+  chosenSlug: string | null,
+): SelectOption[] {
+  const options = spaces.map((space) => ({ value: space.forumSlug, label: labelFor(space.name) }));
+  const isListed = options.some((option) => option.value === chosenSlug);
+  if (chosenSlug !== null && chosenSlug.startsWith('space-') && !isListed) {
+    // The address names a space beyond the first page: its address stands in for its name.
+    options.push({ value: chosenSlug, label: labelFor(chosenSlug.slice('space-'.length)) });
   }
   return options;
 }

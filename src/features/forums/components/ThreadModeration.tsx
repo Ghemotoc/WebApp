@@ -4,8 +4,9 @@
  *
  * Shown only when the server says the reader is moderation staff (can_moderate). The moderator
  * writes a reason, then makes the thread sticky (or removes sticky) and locks (or unlocks) it.
- * Every change needs a reason, which goes in the audit log; a lock's reason is also shown on the
- * thread for everyone. Staff tools use plain components, no doodles (CLAUDE.md, Designs).
+ * Every change needs a reason, which goes in the audit log (in a space, the space's moderation log,
+ * FORUMS-2b; the hint says which since FORUMS-2c); a lock's reason is also shown on the thread for
+ * everyone. Staff tools use plain components, no doodles (CLAUDE.md, Designs).
  * Who uses it: ThreadPage's side column. What it calls: useModerateThread →
  * admin_set_forum_thread_sticky(), admin_lock_forum_thread(), admin_unlock_forum_thread().
  */
@@ -58,7 +59,7 @@ export function ThreadModeration({ thread }: { thread: ForumThreadHeader }) {
       <Textarea
         id="moderation-reason"
         label={t('moderation.reason')}
-        hint={t('moderation.reasonHint')}
+        hint={t(thread.space === null ? 'moderation.reasonHint' : 'moderation.reasonHintSpace')}
         value={reason}
         maxLength={500}
         onChange={(event) => setReason(event.target.value)}

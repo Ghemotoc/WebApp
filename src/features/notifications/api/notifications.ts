@@ -33,7 +33,9 @@ export type NotificationKind =
   | 'data_export_ready'
   | 'stories_export_ready'
   | 'reading_reminder'
-  | 'story_finished';
+  | 'story_finished'
+  | 'space_join_request'
+  | 'space_join_approved';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
@@ -89,6 +91,8 @@ export interface AppNotification {
   appeal: NotificationAppeal | null;
   /** The thread the team answered, for moderator_mail_reply (S1-E10-11). */
   mail: NotificationMail | null;
+  /** The space a join request or approval is about, while the reader may see it (FORUMS-2c). */
+  space: { slug: string; name: string } | null;
   /** A moderation decision can't be switched off (criterion 4). */
   isRequired: boolean;
   isRead: boolean;
@@ -126,6 +130,7 @@ interface NotificationRow {
     statement_reference: string;
   } | null;
   mail?: { reference: string; subject: string } | null;
+  space?: { slug: string; name: string } | null;
   is_required: boolean;
   is_read: boolean;
   at: string;
@@ -177,6 +182,7 @@ function toNotification(row: NotificationRow): AppNotification {
     reportReference: row.report_reference ?? null,
     appeal: appealOf(row),
     mail: row.mail ?? null,
+    space: row.space ?? null,
     isRequired: row.is_required,
     isRead: row.is_read,
     at: row.at,
