@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #277 (CLASSES-a, class spaces and invite codes): nothing by hand.
 - #276 (10e ranks): nothing by hand. Please check the Romanian rank names (Debut, Condei, Condei de povești, Condei de roman); change them in Interface text if you like.
 - #275 FORUMS2-d (forum signatures, moderators’ 24-hour change requests): nothing by hand. Please read the new Romanian texts, and see the two questions in the PR (links in signatures aren’t clickable; a change request isn’t a sanction).
 - #274 FORUMS2-c (space banners, join notifications, search by space): nothing by hand.
