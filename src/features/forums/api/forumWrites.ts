@@ -25,6 +25,7 @@ export type ForumWriteFailure =
   | 'space_join'
   | 'space_pending'
   | 'space_age'
+  | 'space_locked'
   | 'invalid'
   | 'unreachable';
 
@@ -84,6 +85,8 @@ const spaceHints: Record<string, ForumWriteFailure> = {
   'space:join': 'space_join',
   'space:pending': 'space_pending',
   'space:age': 'space_age',
+  // A class space locked at the end of the school year (S1-E8-11, CLASSES-b).
+  'space:locked': 'space_locked',
 };
 
 /**

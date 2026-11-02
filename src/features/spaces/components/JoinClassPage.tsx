@@ -10,8 +10,10 @@
  * a plain note when the code has ended or is unknown. After joining, the student goes straight to
  * the class; a student whose account isn't ready yet (a parent still to agree) is told they are
  * in and will read once it is.
+ * With no code in the address (/class, bundle CLASSES, part b) it shows ClassCodeForm, where the
+ * student types the code the teacher wrote on the board.
  * What it calls: useClassInvitePreview → class_invite_preview(); useJoinClass →
- * join_class_space().
+ * join_class_space(); ClassCodeForm.
  */
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
@@ -24,6 +26,7 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { useClassInvitePreview, useJoinClass } from '../hooks/useClassSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { ClassCodeForm } from './ClassCodeForm';
 import { SpaceFormCard } from './SpaceFormCard';
 
 /** The look of the page's main link-buttons, shared so both match. */
@@ -136,7 +139,7 @@ function InviteBody({ code }: { code: string }) {
 /**
  * Renders the page.
  *
- * @returns the card with what the code opens
+ * @returns the card with what the code opens, or the form to type a code
  */
 export function JoinClassPage() {
   const { t } = useSpacesTranslation();
@@ -145,7 +148,7 @@ export function JoinClassPage() {
     <PageContainer className="flex flex-col gap-6 py-10">
       <SpaceFormCard eyebrow={t('joinClass.eyebrow')} title={t('joinClass.title')}>
         <div className="flex flex-col gap-4">
-          <InviteBody code={code} />
+          {code === '' ? <ClassCodeForm /> : <InviteBody key={code} code={code} />}
         </div>
       </SpaceFormCard>
     </PageContainer>

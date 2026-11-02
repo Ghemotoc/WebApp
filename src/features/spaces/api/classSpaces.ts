@@ -48,6 +48,7 @@ export type ClassInviteFailure =
   | 'not_allowed'
   | 'missing'
   | 'ended'
+  | 'locked'
   | 'days'
   | 'admits'
   | 'too_many'
@@ -68,6 +69,8 @@ const failureForHint: Record<string, ClassInviteFailure> = {
   'space:missing': 'missing',
   'space:not_class': 'missing',
   'invite:ended': 'ended',
+  // A class locked at the end of the school year makes no codes (CLASSES-b).
+  'space:locked': 'locked',
   'invite:days': 'days',
   'invite:admits': 'admits',
 };

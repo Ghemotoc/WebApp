@@ -1867,10 +1867,19 @@ Read in this order; each file's header comment says what it is for and where thi
 
 - Where it lives: `src/features/spaces/api/classSpaces.ts`, `hooks/useClassSpaces.ts`, `ClassInviteCard` (with `ClassInviteFields` and `NewClassInviteCode`) on the settings page, `JoinClassPage` at `/class/<code>`; `supabase/migrations/…_classes_a_enums.sql` and `…_classes_a_class_spaces.sql`. No new table: `spaces.kind` (`open` or `class`) and `invites.space_id`.
 - The one idea to know: a class space is an ordinary space with `kind = 'class'`, so threads, posts, moderators and the log all work as before. The same access functions decide everything: `space_may_read()` lets in only staff, the owner and fully active members; `space_card_visible()` hides the card from everyone outside; `space_may_join()` refuses "Join" (only a code gets you in). `spaces_class_is_private` keeps it members-only even against a direct update.
-- Starting one: `create_class_space()`, for adults with the Teacher badge only (`profiles.teacher_badge_since`). The class option on the form comes in part b; for now tests call the function.
+- Starting one: `create_class_space()`, for adults with the Teacher badge only (`profiles.teacher_badge_since`). Part b puts it on the new space form: a teacher with the badge sees "What kind of space?" and picks Class space (`NewSpacePage` → `useCreateClassSpace`).
 - Invite codes live in the shared `invites` table (purpose `class_space`), stored as a hash only, so the teacher sees the code once. `make_class_invite()` ends the old code and makes a new one; `end_class_invite()` stops it; `class_invite()` says how many places are used, never the code. Each is in the space's log.
 - How a click travels: the student opens `/class/<code>` → `class_invite_preview()` (anyone; only the class's name, and only for a working code) → "Join the class" → `join_class_space()` → a `space_members` row and one place used → the class, or "You're in" while the account still waits (a parent's consent, for example).
 - Tests: `supabase/tests/database/232-class-spaces.test.sql`, `src/features/spaces/api/classSpaces.test.ts`, `e2e/class-spaces.spec.ts`.
+
+### The end of the school year, the waiting list and typing a code (CLASSES-b)
+
+- Where it lives: `src/features/spaces/api/classTools.ts`, `hooks/useClassTools.ts`, `ClassLockCard` and `ClassWaitingCard` on the settings page, `ClassAboutCard` beside a class's threads, `ClassCodeForm` on `/class`; `supabase/migrations/…_classes_b_class_tools.sql`.
+- The lock: `spaces.locks_at`, set by `create_class_space()` to the next 1 July 00:00, Romanian time (`next_class_lock_at()`). Once that time passes, `space_is_locked()` is true and `space_may_post()` says no to everyone, so nobody starts a thread, replies or edits a post (`forum_posts_refuse_locked_edit`), the code stops working and nobody new joins. Members still read. Nothing runs on a timer: the time itself is the switch.
+- `set_class_lock()` (the settings power) changes the date, locks now (a time in the past) or unlocks (no time); each is in the space's log. The date field sends "YYYY-MM-DD 00:00:00 Europe/Bucharest" and Postgres works out summer or winter time.
+- `class_waiting_members()` (the members power) lists members who joined but can't read yet, with the reason from `account_state()` (age check, a parent's consent, account), never an age.
+- Typing a code: "Join a class" on the Forums page's Spaces card and on the Spaces page opens `/class`, where `ClassCodeForm` sends the student on to `/class/<code>`.
+- Tests: `supabase/tests/database/233-class-tools.test.sql`, `src/features/spaces/api/classTools.test.ts`, `e2e/class-tools.spec.ts`.
 
 ## Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)
 

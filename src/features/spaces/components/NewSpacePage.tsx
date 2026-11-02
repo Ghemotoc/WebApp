@@ -5,23 +5,30 @@
  * Who shows it: the router; "Create a space" on the forum index and on /spaces link here.
  * What it shows: signed out, a link to log in; with no known age group, why a space can't be
  * started yet; otherwise the intro for the owner's age group and the form. The new space opens
- * once it is made. The board's "What kind of space?" choice (open or class space) comes with
- * class spaces (bundle CLASSES); noted in docs/board-fixes.md.
- * What it calls: useMyAgeGroup → my_space_age_group(); useCreateSpace → create_space().
+ * once it is made. An adult with the Teacher badge is first asked "What kind of space?": an open
+ * space or a class space (bundle CLASSES, part b; S1-E8-11 criterion 2). Everyone else never sees
+ * the question, and every space they make is an open space.
+ * What it calls: useMyAgeGroup → my_space_age_group(); useCreateSpace → create_space();
+ * useMyTeacherCheck → my_teacher_check(); useCreateClassSpace → create_class_space().
  */
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 
-import type { SpaceAgeGroup, SpaceSettings } from '../api/spaces';
+import { useMyTeacherCheck } from '@/features/teacher-badge/hooks/useMyTeacherCheck';
+
+import type { SpaceAgeGroup, SpaceKind, SpaceSettings } from '../api/spaces';
+import { useCreateClassSpace } from '../hooks/useClassTools';
 import { useCreateSpace, useMyAgeGroup } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
 import { SpaceFormCard } from './SpaceFormCard';
+import { SpaceRadioGroup } from './SpaceRadioGroup';
 
 /**
  * A new space's starting settings. Under-16 spaces start readable by members only (a proposal:
@@ -43,19 +50,52 @@ function newSpaceDefaults(ageGroup: SpaceAgeGroup): SpaceSettings {
 }
 
 /**
+ * "What kind of space?", for a teacher only (S1-E8-11 criterion 2; board 5.3).
+ *
+ * @param props.value - the chosen kind
+ * @param props.onChange - the new choice
+ * @returns the radio group
+ */
+function SpaceKindChoice({
+  value,
+  onChange,
+}: {
+  value: SpaceKind;
+  onChange: (kind: SpaceKind) => void;
+}) {
+  const { t } = useSpacesTranslation();
+  return (
+    <SpaceRadioGroup
+      legend={t('form.kind')}
+      value={value}
+      onChange={onChange}
+      options={[
+        { value: 'open', label: t('form.kindOpen'), note: t('form.kindOpenNote') },
+        { value: 'class', label: t('form.kindClass'), note: t('form.kindClassNote') },
+      ]}
+    />
+  );
+}
+
+/**
  * The form, for a signed-in person whose age group is known.
  *
  * @param props.ageGroup - the owner's age group
- * @returns the card with the intro and the form
+ * @param props.isTeacher - whether they hold the Teacher badge (and so may start a class)
+ * @returns the card with the intro, the kind choice for a teacher, and the form
  */
-function NewSpaceForm({ ageGroup }: { ageGroup: SpaceAgeGroup }) {
+function NewSpaceForm({ ageGroup, isTeacher }: { ageGroup: SpaceAgeGroup; isTeacher: boolean }) {
   const { t } = useSpacesTranslation();
   const navigate = useNavigate();
   const creating = useCreateSpace();
+  const creatingClass = useCreateClassSpace();
+  const [kind, setKind] = useState<SpaceKind>('open');
+  const isClass = kind === 'class';
+  const running = isClass ? creatingClass : creating;
 
-  /** Starts the space, then opens it. */
+  /** Starts the space (or the class), then opens it. */
   async function create(settings: SpaceSettings) {
-    const slug = await creating.run(settings);
+    const slug = await running.run(settings);
     void navigate(`/spaces/${slug}`);
   }
 
@@ -65,14 +105,16 @@ function NewSpaceForm({ ageGroup }: { ageGroup: SpaceAgeGroup }) {
       title={t('form.title')}
       intro={ageGroup === 'under_16' ? t('form.introUnder16') : t('form.intro16')}
     >
+      {isTeacher && <SpaceKindChoice value={kind} onChange={setKind} />}
       <SpaceForm
         initial={newSpaceDefaults(ageGroup)}
         ageGroup={ageGroup}
         ownName={null}
-        submitLabel={t('form.create')}
+        isClass={isClass}
+        submitLabel={isClass ? t('form.createClass') : t('form.create')}
         onSubmit={create}
-        failure={creating.failure}
-        isRunning={creating.isRunning}
+        failure={running.failure}
+        isRunning={running.isRunning}
         cancelTo="/spaces"
       />
     </SpaceFormCard>
@@ -88,6 +130,7 @@ function NewSpaceBody() {
   const { t } = useSpacesTranslation();
   const { userId, isKnown } = useSession();
   const ageGroup = useMyAgeGroup();
+  const { teacherCheck } = useMyTeacherCheck();
   if (!isKnown) return null;
   if (userId === null)
     return (
@@ -105,7 +148,9 @@ function NewSpaceBody() {
         <Notice tone="info">{t('form.introUnknown')}</Notice>
       </SpaceFormCard>
     );
-  return <NewSpaceForm ageGroup={ageGroup.data} />;
+  // Only an adult teacher starts a class (S1-E2-11 gives the badge to adults only).
+  const isTeacher = teacherCheck?.isTeacher === true && ageGroup.data === '16_plus';
+  return <NewSpaceForm ageGroup={ageGroup.data} isTeacher={isTeacher} />;
 }
 
 /**

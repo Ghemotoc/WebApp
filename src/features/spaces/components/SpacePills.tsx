@@ -6,7 +6,8 @@
  * The age group is shown only to readers in that group: the database leaves it out for everyone
  * else (space_json(), a proposal in the pull request), so an adult never learns that a space
  * is for under-16s. A class space (bundle CLASSES, part a; S1-E8-11) starts with a "Class space"
- * pill and has no age group: it is for the people in the room.
+ * pill and has no age group: it is for the people in the room. A locked class (part b) has a
+ * neutral "Locked" pill after it.
  * Who shows it: SpaceHeaderCard and SpaceRow. What it calls: InfoPill.
  */
 import { InfoPill } from '@/components/ui/InfoPill';
@@ -28,6 +29,11 @@ export function SpacePills({ space }: { space: Space }) {
       {space.kind === 'class' && (
         <li>
           <InfoPill tone="sage">{t('pills.classSpace')}</InfoPill>
+        </li>
+      )}
+      {space.isLocked && (
+        <li>
+          <InfoPill tone="neutral">{t('pills.locked')}</InfoPill>
         </li>
       )}
       <li>

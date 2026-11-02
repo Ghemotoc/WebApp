@@ -163,7 +163,8 @@
     "locked": "Echipa de moderare a închis discuția, așa că nu mai primește răspunsuri.",
     "space_join": "Intră în acest spațiu ca să postezi aici.",
     "space_pending": "Proprietarul nu ți-a aprobat încă cererea. Vei putea posta după ce intri.",
-    "space_age": "Acest spațiu primește postări de la altă grupă de vârstă."
+    "space_age": "Acest spațiu primește postări de la altă grupă de vârstă.",
+    "space_locked": "Această clasă e închisă, așa că nimeni nu mai poate posta sau schimba postările. Poți citi în continuare totul."
   },
   "quote": {
     "wrote": "{{name}} a scris în",

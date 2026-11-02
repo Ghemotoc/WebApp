@@ -4985,6 +4985,7 @@ export type Database = {
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -4996,6 +4997,7 @@ export type Database = {
           space_acts_as_platform: boolean | null;
           space_card_visible: boolean | null;
           space_is_in_class: boolean | null;
+          space_is_locked: boolean | null;
           space_json: Json | null;
           space_latest_activity: string | null;
           space_may_join: boolean | null;
@@ -5008,6 +5010,7 @@ export type Database = {
           | 'space_acts_as_platform'
           | 'space_card_visible'
           | 'space_is_in_class'
+          | 'space_is_locked'
           | 'space_json'
           | 'space_latest_activity'
           | 'space_may_join'
@@ -5025,6 +5028,7 @@ export type Database = {
           id?: string;
           joining?: Database['public']['Enums']['space_joining'];
           kind?: Database['public']['Enums']['space_kind'];
+          locks_at?: string | null;
           name: string;
           name_key: string;
           posting?: Database['public']['Enums']['space_posting'];
@@ -5044,6 +5048,7 @@ export type Database = {
           id?: string;
           joining?: Database['public']['Enums']['space_joining'];
           kind?: Database['public']['Enums']['space_kind'];
+          locks_at?: string | null;
           name?: string;
           name_key?: string;
           posting?: Database['public']['Enums']['space_posting'];
@@ -7660,6 +7665,7 @@ export type Database = {
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -7676,6 +7682,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      class_waiting_members: { Args: { slug: string }; Returns: Json };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
       classic_fix_is_small: {
         Args: { corrected_text: string; live_text: string };
@@ -8915,6 +8922,7 @@ export type Database = {
         Returns: string;
       };
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
+      next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
       next_notice_reference: { Args: { notice_kind: string }; Returns: string };
       normalise_invite_code: { Args: { code: string }; Returns: string };
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
@@ -9034,6 +9042,7 @@ export type Database = {
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -9802,6 +9811,7 @@ export type Database = {
         Args: { character_id: string; parts: string[] };
         Returns: Json;
       };
+      set_class_lock: { Args: { new_locks_at?: string; slug: string }; Returns: Json };
       set_library_audience: {
         Args: { audience: Database['public']['Enums']['library_audience'] };
         Returns: undefined;
@@ -9938,6 +9948,7 @@ export type Database = {
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
@@ -9956,6 +9967,15 @@ export type Database = {
       };
       space_forum_id: { Args: { target_space_id: string }; Returns: string };
       space_is_in_class: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      space_is_locked: {
         Args: {
           target: Omit<
             Database['public']['Tables']['spaces']['Row'],
@@ -10081,6 +10101,7 @@ export type Database = {
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
           name: string;
           name_key: string;
           posting: Database['public']['Enums']['space_posting'];
