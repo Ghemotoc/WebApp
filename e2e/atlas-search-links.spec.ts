@@ -94,13 +94,13 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
   test('the top bar’s search finds the story’s items, grouped by type, with the match marked', async ({
     browser,
   }) => {
-    const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}/bible`);
+    const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}/world`);
     await expect(page.getByRole('searchbox', { name: 'Search this story' })).toBeVisible();
     await search(page, 'far');
     await expect(page).toHaveURL(new RegExp(`/plan/s/${slug}/search\\?q=far$`));
     await expect(page.locator('h2[id^="atlas-search-"]')).toHaveText([
       'Characters (1)',
-      'Bible entries (1)',
+      'Story world entries (1)',
       'Questions and ideas (1)',
       'Marketing notes (1)',
     ]);
@@ -145,7 +145,9 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
   test('a [[link]] in a bible entry opens its character, and an unknown name reads "not found yet"', async ({
     browser,
   }) => {
+    // The old /bible address on purpose: it must still open the entry, now under /world (ADMIN-2a2).
     const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}/bible/${entryId}`);
+    await expect(page).toHaveURL(new RegExp(`/plan/s/${slug}/world/${entryId}$`));
     const entry = page.getByRole('article', { name: 'Farul' });
     await expect(entry.getByTestId('atlas-cross-link-missing')).toHaveText(
       'Insula (not found yet)',
@@ -178,12 +180,12 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
     const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}/characters/${anaId}`);
     const mentions = page.getByTestId('atlas-mentions');
     await expect(mentions.getByRole('listitem')).toHaveText([
-      'Farulbible entry',
+      'Farulstory world entry',
       'Furtunachapter',
       'Plecareatimeline event',
     ]);
     await mentions.getByRole('link', { name: 'Farul' }).click();
-    await expect(page).toHaveURL(new RegExp(`/plan/s/${slug}/bible/${entryId}$`));
+    await expect(page).toHaveURL(new RegExp(`/plan/s/${slug}/world/${entryId}$`));
     await page.context().close();
   });
 

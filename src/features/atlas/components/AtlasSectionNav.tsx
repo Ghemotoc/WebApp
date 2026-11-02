@@ -29,7 +29,8 @@ const sectionPaths: Record<AtlasSection, string> = {
   glance: '',
   characters: '/characters',
   connections: '/connections',
-  bible: '/bible',
+  // The story's world (once the bible; renamed 2 Nov 2026, ADMIN-2a2).
+  bible: '/world',
   storyline: '/storyline',
   ideas: '/ideas',
   marketing: '/marketing',

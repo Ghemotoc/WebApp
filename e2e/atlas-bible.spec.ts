@@ -23,10 +23,10 @@ import { expectNoDoodleOverlap } from './support/doodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerStoryId = '00000000-0000-4000-9000-000000000001';
-const bibleAddress = '/plan/s/statia-meteo-seed01/bible';
+const bibleAddress = '/plan/s/statia-meteo-seed01/world';
 const suspendedUserId = '00000000-0000-4000-8000-000000000013';
 const axeEntryId = 'e2e17170-0000-4000-8000-000000000001';
-const axeBible = '/plan/s/atlas-bible-seed01/bible';
+const axeBible = '/plan/s/atlas-bible-seed01/world';
 
 /** Puts the writer's bible back to the seven defaults and removes this spec's story. */
 function cleanUp() {
@@ -101,7 +101,7 @@ const defaults = [
   'Glossary',
 ];
 
-test.describe('Story Atlas bible (S1-E17-17 and S1-E17-18)', () => {
+test.describe('Story Atlas story world, once the bible (S1-E17-17 and S1-E17-18)', () => {
   test.describe.configure({ mode: 'serial' });
   test.beforeAll(() => {
     cleanUp();
@@ -109,11 +109,20 @@ test.describe('Story Atlas bible (S1-E17-17 and S1-E17-18)', () => {
   });
   test.afterAll(cleanUp);
 
-  test('the bible starts with the default sections, which can be renamed, added and moved', async ({
+  test('an old /bible address still opens the story world (ADMIN-2a2)', async ({ browser }) => {
+    const page = await openAs(browser, 'adult_writer', '/plan/s/statia-meteo-seed01/bible?edit');
+    await expect(page).toHaveURL(/\/plan\/s\/statia-meteo-seed01\/world\?edit$/);
+    await expect(page.getByRole('heading', { name: 'Story world', level: 1 })).toBeVisible();
+  });
+
+  test('the story world starts with the default sections, which can be renamed, added and moved', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', bibleAddress);
-    await expect(page.getByRole('link', { name: 'Bible' })).toHaveAttribute('aria-current', 'page');
+    await expect(page.getByRole('link', { name: 'Story world' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
     await expect.poll(async () => contentsOrder(page)).toEqual(defaults);
     // Rename History, then empty the box to get the default name back.
     const history = page.getByRole('textbox', { name: 'Name of section 6' });
@@ -140,7 +149,7 @@ test.describe('Story Atlas bible (S1-E17-17 and S1-E17-18)', () => {
   }) => {
     const page = await openAs(browser, 'adult_writer', bibleAddress);
     await page.getByRole('button', { name: 'New entry in World and places' }).click();
-    await expect(page).toHaveURL(/\/bible\/[0-9a-f-]{36}\?edit$/);
+    await expect(page).toHaveURL(/\/world\/[0-9a-f-]{36}\?edit$/);
     await expect(page.getByRole('button', { name: 'Edit' })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -198,7 +207,7 @@ test.describe('Story Atlas bible (S1-E17-17 and S1-E17-18)', () => {
     await page.getByRole('button', { name: 'Keep it' }).click();
     await page.getByRole('button', { name: 'Delete entry' }).click();
     await page.getByRole('button', { name: 'Yes, delete' }).click();
-    await expect(page).toHaveURL(/\/bible$/);
+    await expect(page).toHaveURL(/\/world$/);
     await expect(page.getByRole('link', { name: 'Old harbour' })).toHaveCount(0);
     // Now empty, the section goes.
     await page.getByRole('button', { name: 'Delete Creatures' }).click();
@@ -208,7 +217,7 @@ test.describe('Story Atlas bible (S1-E17-17 and S1-E17-18)', () => {
   });
 
   for (const view of everyView([`${axeBible}/${axeEntryId}`, axeBible])) {
-    test(`the bible passes axe at ${view.address.endsWith('bible') ? 'sections' : 'entry'}, ${view.width} px, ${view.theme}, ${view.language}`, async ({
+    test(`the bible passes axe at ${view.address.endsWith('world') ? 'sections' : 'entry'}, ${view.width} px, ${view.theme}, ${view.language}`, async ({
       browser,
     }) => {
       runSql(

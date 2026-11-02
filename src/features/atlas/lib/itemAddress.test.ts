@@ -16,7 +16,7 @@ const item = (kind: AtlasItemReference['kind'], ref: string, chapter: string | n
 describe('itemAddress', () => {
   it('opens characters, entries and chapters on their own pages', () => {
     expect(itemAddress('farul', item('character', 'a1'))).toBe('/plan/s/farul/characters/a1');
-    expect(itemAddress('farul', item('entry', 'e1'))).toBe('/plan/s/farul/bible/e1');
+    expect(itemAddress('farul', item('entry', 'e1'))).toBe('/plan/s/farul/world/e1');
     expect(itemAddress('farul', item('chapter', 'c1'))).toBe('/write/s/farul/c/c1');
   });
 

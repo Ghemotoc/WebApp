@@ -35,7 +35,7 @@ export function itemAddress(slug: string, item: AtlasItemReference): string {
     case 'character':
       return `${plan}/characters/${item.ref}`;
     case 'entry':
-      return `${plan}/bible/${item.ref}`;
+      return `${plan}/world/${item.ref}`;
     case 'chapter':
       return `/write/s/${slug}/c/${item.ref}`;
     case 'scene':

@@ -515,9 +515,20 @@ const writeRoutes: RouteObject[] = [
       return { Component: ConnectionsPage };
     },
   },
-  // A story's bible (S1-E17-17 and 18): its sections and entries, and one entry when it is open.
+  // A story's world, once called its bible (S1-E17-17 and 18): its sections and entries, and one
+  // entry when it is open. Renamed "Story world" by Robert on 2 Nov 2026 (ADMIN-2a2); the old
+  // /bible address still works through OldBibleAddressRedirect.
   {
     path: '/plan/s/:storySlug/bible/:entryId?',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { OldBibleAddressRedirect } =
+        await import('@/features/atlas/components/OldBibleAddressRedirect');
+      return { Component: OldBibleAddressRedirect };
+    },
+  },
+  {
+    path: '/plan/s/:storySlug/world/:entryId?',
     HydrateFallback: () => null,
     lazy: async () => {
       const { BiblePage } = await import('@/features/atlas/components/BiblePage');

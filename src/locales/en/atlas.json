@@ -95,7 +95,7 @@
     "glance": "At a glance",
     "characters": "Characters",
     "connections": "Connections",
-    "bible": "Bible",
+    "bible": "Story world",
     "storyline": "Storyline",
     "ideas": "Ideas",
     "marketing": "Marketing",
@@ -297,8 +297,8 @@
     }
   },
   "bible": {
-    "heading": "Story bible",
-    "documentTitle": "Story bible of {{title}}: Story Atlas",
+    "heading": "Story world",
+    "documentTitle": "Story world of {{title}}: Story Atlas",
     "presets": {
       "premise": "Premise and themes",
       "world": "World and places",
@@ -318,7 +318,7 @@
       "createFailed": "The entry wasn’t made. Check your connection and try again."
     },
     "pick": "Choose an entry to read it, or manage the sections here.",
-    "entryNotFound": "That entry isn’t in this bible any more.",
+    "entryNotFound": "That entry isn’t in this story world any more.",
     "sections": {
       "heading": "Manage sections",
       "hint": "Drag a section, or use its Up and Down buttons, to change the order. Only an empty section can be deleted.",
@@ -624,9 +624,9 @@
       "character_one": "Characters ({{count}})",
       "character_few": "Characters ({{count}})",
       "character_other": "Characters ({{count}})",
-      "entry_one": "Bible entries ({{count}})",
-      "entry_few": "Bible entries ({{count}})",
-      "entry_other": "Bible entries ({{count}})",
+      "entry_one": "Story world entries ({{count}})",
+      "entry_few": "Story world entries ({{count}})",
+      "entry_other": "Story world entries ({{count}})",
       "chapter_one": "Chapters ({{count}})",
       "chapter_few": "Chapters ({{count}})",
       "chapter_other": "Chapters ({{count}})",
@@ -654,7 +654,7 @@
       "loadFailed": "We couldn’t load where this character is mentioned.",
       "kinds": {
         "character": "character",
-        "entry": "bible entry",
+        "entry": "story world entry",
         "chapter": "chapter",
         "scene": "scene",
         "idea": "note",
@@ -666,7 +666,7 @@
     "documentTitle": "What readers can see in {{title}}: Story Atlas",
     "heading": "What readers can see",
     "intro": "Everything in your plan is private until you turn an area on. An area you turn on shows with your story once it’s published, for every reader the story’s rating allows.",
-    "introItems": "To hold one thing back, tick “Keep private” on its own page: a character, a relationship, a section or entry of the bible, or an event. A character, entry or event can also wait until a reader reaches a chapter, so sharing it doesn’t spoil the story.",
+    "introItems": "To hold one thing back, tick “Keep private” on its own page: a character, a relationship, a section or entry of the story world, or an event. A character, entry or event can also wait until a reader reaches a chapter, so sharing it doesn’t spoil the story.",
     "notPublished": "Your story isn’t published yet, so readers can’t see any of this yet.",
     "previewLink": "Preview as a reader",
     "areas": {
@@ -675,14 +675,14 @@
         "characters": "Each character’s page, with only the parts of the sheet you open.",
         "relationship_map": "The map of how your characters are connected, with its list.",
         "family_tree": "The family tree.",
-        "bible": "Your story bible, as the story’s world, in reading mode.",
+        "bible": "Your story world, in reading mode.",
         "timeline": "The events on your timeline, in order."
       }
     },
     "item": {
       "heading": "What readers see",
       "characterHint": "Readers see this character while Characters, the map or the family tree is public, and only the parts of the sheet you open below.",
-      "entryHint": "Readers see this entry while the story bible is public.",
+      "entryHint": "Readers see this entry while the story world is public.",
       "settingsLink": "Choose what readers can see",
       "keepPrivate": "Keep private",
       "keepPrivateNamed": "Keep private: {{name}}",

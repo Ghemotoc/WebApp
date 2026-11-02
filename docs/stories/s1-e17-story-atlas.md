@@ -210,6 +210,8 @@ As a writer, I want a family tree built from the parent and partner relationship
 
 ##### S1-E17-17 Customisable bible sections (US-5.1)
 
+> Renamed 2 Nov 2026 (Robert, 15:35): writers and readers see the story bible as **Story world** (ro "Lumea poveștii"), at `/plan/s/<story>/world`. "Bible" stays as the name in code and in these stories.
+
 As a writer, I want to organise my world-building into sections I control, so that the bible fits any genre.
 
 - **Priority:** Must · **Size:** M · **Depends on:** S1-E17-01
