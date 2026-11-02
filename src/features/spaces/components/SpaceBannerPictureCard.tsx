@@ -7,12 +7,18 @@
  * passed. Until then the card shows a small preview and says where the check is, and the space
  * keeps its colour. "Use the colour instead" takes the picture off and deletes its file.
  * Uploads follow the picture check's switch (picture_uploads): while it is off the card isn't
- * shown. Who shows it: SpaceSettingsPage. What it calls: useSpaceBannerView, useSpaceBannerChange
- * and PictureUploadField from the pictures feature.
+ * shown. When a moderator asked for the picture to be changed (S1-E8-08, Q29), a notice at the top
+ * says why and by when. Who shows it: SpaceSettingsPage. What it calls: useSpaceBannerView,
+ * useSpaceBannerChange, PictureUploadField from the pictures feature, and
+ * useSpaceBannerChangeRequest, ChangeRequestNotice and (for our moderation team only)
+ * CustomisationChangeForm from the forums feature.
  */
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
+import { ChangeRequestNotice } from '@/features/forums/components/ChangeRequestNotice';
+import { CustomisationChangeForm } from '@/features/forums/components/CustomisationChangeForm';
+import { useSpaceBannerChangeRequest } from '@/features/forums/hooks/useForumSignatures';
 import { PictureUploadError } from '@/features/pictures/api/pictures';
 import { PictureUploadField } from '@/features/pictures/components/PictureUploadField';
 import type { UploadOutcome } from '@/features/pictures/hooks/usePictureUpload';
@@ -76,6 +82,7 @@ export function SpaceBannerPictureCard({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
   const { isOn } = useFeatureFlags();
   const { upload, remove } = useSpaceBannerChange(space);
+  const changeRequest = useSpaceBannerChangeRequest(space.slug, space.bannerPicture !== null).data;
   if (!isOn('picture_uploads', false)) return null;
   return (
     <SpaceFormCard
@@ -85,6 +92,9 @@ export function SpaceBannerPictureCard({ space }: { space: Space }) {
       headingLevel="h2"
       headingId="space-banner-picture-heading"
     >
+      {changeRequest != null && (
+        <ChangeRequestNotice request={changeRequest} messageKey="signature.bannerChangeRequested" />
+      )}
       <BannerPreview space={space} />
       <PictureUploadField
         label={t('bannerPicture.upload')}
@@ -102,6 +112,10 @@ export function SpaceBannerPictureCard({ space }: { space: Space }) {
         >
           {t('bannerPicture.remove')}
         </Button>
+      )}
+      {/* Our moderation team only (the form shows nothing to anyone else). */}
+      {space.bannerPicture !== null && (
+        <CustomisationChangeForm item="space_banner" reference={space.slug} />
       )}
       <div aria-live="polite">
         {remove.isError && <Notice tone="error">{t('bannerPicture.removeFailed')}</Notice>}

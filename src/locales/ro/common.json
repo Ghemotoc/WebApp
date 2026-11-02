@@ -127,7 +127,8 @@
       "too_many": "Ai încărcat multe imagini în ultima oră. Încearcă din nou peste {{minutes}} minute.",
       "not_allowed": "Nu poți încărca această imagine acum.",
       "unreachable": "Nu am putut încărca imaginea. Verifică-ți conexiunea și încearcă din nou.",
-      "rights_not_confirmed": "Bifează căsuța ca să confirmi că ai dreptul să folosești imaginea."
+      "rights_not_confirmed": "Bifează căsuța ca să confirmi că ai dreptul să folosești imaginea.",
+      "animated": "Imaginea din semnătură nu se poate mișca. Alege o imagine statică."
     },
     "coverLabel": "Încarcă o imagine",
     "coverHint": "JPEG, PNG sau WebP, până la 5 MB. Se potrivește cel mai bine o imagine înaltă (5 pe 8). Cititorii o văd după ce trece verificarea imaginilor.",

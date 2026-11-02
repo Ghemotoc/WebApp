@@ -473,7 +473,8 @@ select cron.schedule('remove-unchanged-customisations', '*/10 * * * *', 'select 
 
 /**
  * my_signature: the caller's own signature for Settings, with a moderator's open request.
- * Returns: {"signature": signature_json() or null, "change_request": {reason, due_at} or null}.
+ * Returns: {"signature": signature_json() or null, "picture_id": uuid or null, "change_request":
+ *   {reason, due_at} or null}.
  */
 create or replace function public.my_signature()
 returns jsonb
@@ -484,6 +485,9 @@ set search_path = ''
 as $$
   select jsonb_build_object(
     'signature', public.signature_json((select auth.uid())),
+    -- The picture's ID, so saving new words keeps the same picture.
+    'picture_id', (select profiles.signature_picture_id from public.profiles
+                   where profiles.id = (select auth.uid())),
     'change_request', (select jsonb_build_object('reason', requests.reason, 'due_at', requests.due_at)
                        from public.customisation_change_requests as requests
                        where requests.user_id = (select auth.uid()) and requests.item = 'signature'

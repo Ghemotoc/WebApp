@@ -39,6 +39,7 @@ const newChapter: AppNotification = {
   appeal: null,
   mail: null,
   space: null,
+  changeRequest: null,
   isRequired: false,
   isRead: false,
   at: '2026-10-25T07:00:00Z',
@@ -278,5 +279,49 @@ describe('notificationText', () => {
       space: null,
     };
     expect(notificationText(englishT(), hiddenRow, null).href).toBeNull();
+  });
+
+  it('a moderator’s request to change a signature quotes why and leads to Settings (S1-E8-08)', () => {
+    const requestRow: AppNotification = {
+      ...newChapter,
+      kind: 'customisation_change_requested',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      isRequired: true,
+      changeRequest: {
+        item: 'signature',
+        reason: 'No adverts, please.',
+        dueAt: '2026-10-26T07:00:00Z',
+        isOpen: true,
+        space: null,
+      },
+    };
+    const text = notificationText(englishT(), requestRow, null);
+    expect(text.who).toBe('Moderation team:');
+    expect(text.quote).toBe('No adverts, please.');
+    expect(text.href).toBe('/settings#forum-signature');
+  });
+
+  it('a request about a banner picture leads to the space’s settings', () => {
+    const requestRow: AppNotification = {
+      ...newChapter,
+      kind: 'customisation_change_requested',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      changeRequest: {
+        item: 'space_banner',
+        reason: 'Not suitable.',
+        dueAt: '2026-10-26T07:00:00Z',
+        isOpen: true,
+        space: { slug: 'fantasy-writers-circle', name: 'Fantasy writers’ circle' },
+      },
+    };
+    const text = notificationText(englishT(), requestRow, null);
+    expect(text.what).toContain('Fantasy writers’ circle');
+    expect(text.href).toBe('/spaces/fantasy-writers-circle/settings');
   });
 });

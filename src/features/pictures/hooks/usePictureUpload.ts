@@ -2,7 +2,8 @@
  * usePictureUpload: uploads one picture and keeps what the field should say about it (story
  * S1-E10-05).
  *
- * Who calls it: CoverUploadField (Story settings) and AvatarSettingsSection (Settings › Profile).
+ * Who calls it: CoverUploadField (Story settings) and AvatarSettingsSection (Settings › Profile);
+ * uploadOutcomeOf() also serves SignaturePictureControls (S1-E8-08).
  * What it calls: ../api/pictures.ts uploadPicture(), then refreshes the pictures on screen.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,6 +16,27 @@ import { PictureUploadError, uploadPicture, type PictureBucket } from '../api/pi
 export type UploadOutcome =
   | { kind: 'uploaded'; path: string; status: string }
   | { kind: 'failed'; failure: PictureUploadError['failure']; waitMinutes: number | null };
+
+/**
+ * What an upload field says, from an upload mutation's result or error (for uploads that don't use
+ * usePictureUpload, such as a space banner or a forum signature picture).
+ *
+ * @param status - the check's status after the upload, or undefined before one
+ * @param error - the upload's error, or null
+ * @returns the outcome, or null before any upload
+ */
+export function uploadOutcomeOf(
+  status: string | undefined,
+  error: Error | null,
+): UploadOutcome | null {
+  if (error !== null) {
+    if (error instanceof PictureUploadError) {
+      return { kind: 'failed', failure: error.failure, waitMinutes: error.waitMinutes };
+    }
+    return { kind: 'failed', failure: 'unreachable', waitMinutes: null };
+  }
+  return status === undefined ? null : { kind: 'uploaded', path: '', status };
+}
 
 /**
  * Keeps one upload at a time.

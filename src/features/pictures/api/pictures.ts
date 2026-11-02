@@ -1,21 +1,23 @@
 /**
  * Uploaded pictures: uploading a cover, a profile picture, a picture in a chapter, a Story Atlas
- * picture or a space's banner, asking for its check, and reading a picture's state for the screens
- * (stories S1-E10-05, S1-E3-09, S1-E17-11 and S1-E8-06; CLAUDE.md
+ * picture, a space's banner or a forum signature picture, asking for its check, and reading a picture's state for the screens
+ * (stories S1-E10-05, S1-E3-09, S1-E17-11, S1-E8-06 and S1-E8-08; CLAUDE.md
  * rule 19: every uploaded picture is checked before anyone else sees it). Every file is prepared
  * first (lib/preparePicture.ts: location data removed, resized).
  *
  * Who calls it: the hooks in ../hooks (covers on cards, the story page and the teaser; the profile
  * picture; the upload fields in Story settings and Settings › Profile).
  * What it calls next: Supabase Storage (the private `covers`, `avatars`, `chapter-images`,
- * `atlas-images` and `space-banners` buckets), the database functions register_picture(),
- * register_chapter_picture(), register_atlas_picture(), register_space_banner(),
+ * `atlas-images`, `space-banners` and `signature-pictures` buckets), the database functions
+ * register_picture(), register_chapter_picture(), register_atlas_picture(), register_space_banner(),
+ * register_signature_picture(),
  * story_cover_picture(), profile_avatar_picture(), my_pending_pictures() and my_picture_states()
  * (…_s1_e10_05_picture_check.sql, …_s1_e3_09_chapter_pictures.sql), and POST /api/picture-check
  * (server/picture-check.ts), which runs the checks with the person's own sign-in.
  * A picture is shown only through a signed address that lasts an hour; Storage refuses one for a
  * picture that hasn't passed, unless the caller is the uploader or moderation staff.
  */
+import { isAnimatedPicture } from '@/lib/animated-picture';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import { pictureCheckResponseSchema } from '@/schemas/pictureCheck';
@@ -38,9 +40,9 @@ export interface PictureView {
 }
 
 /** The buckets people upload to: covers, profile pictures, chapter pictures (S1-E3-09), Story
- * Atlas pictures (S1-E17-11) and space banners (FORUMS-2c). */
+ * Atlas pictures (S1-E17-11), space banners (FORUMS-2c) and signature pictures (S1-E8-08). */
 export type PictureBucket =
-  'covers' | 'avatars' | 'chapter-images' | 'atlas-images' | 'space-banners';
+  'covers' | 'avatars' | 'chapter-images' | 'atlas-images' | 'space-banners' | 'signature-pictures';
 
 /** The picture types the buckets accept, and the largest file each takes (the bucket limits). */
 export const pictureTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
@@ -50,11 +52,18 @@ export const largestPictureBytes: Record<PictureBucket, number> = {
   'chapter-images': 5 * 1024 * 1024,
   'atlas-images': 5 * 1024 * 1024,
   'space-banners': 5 * 1024 * 1024,
+  'signature-pictures': 1 * 1024 * 1024,
 };
 
-/** Why an upload didn't work. */
+/** Why an upload didn't work. animated: a signature picture that moves (S1-E8-08). */
 export type PictureUploadFailure =
-  'wrong_type' | 'too_big' | 'too_many' | 'not_allowed' | 'rights_not_confirmed' | 'unreachable';
+  | 'wrong_type'
+  | 'too_big'
+  | 'too_many'
+  | 'not_allowed'
+  | 'rights_not_confirmed'
+  | 'unreachable'
+  | 'animated';
 
 /** The error a failed upload throws; waitMinutes is set for too_many. */
 export class PictureUploadError extends Error {
@@ -226,7 +235,8 @@ export interface PictureUpload {
  * @param target - the bucket, the folder (the story's or chapter's ID, or null for a profile
  *   picture), the file and the longest side it may have
  * @returns the stored path
- * @throws PictureUploadError wrong_type, too_big or not_allowed (Storage refused it)
+ * @throws PictureUploadError wrong_type, too_big, animated (a moving signature picture) or
+ *   not_allowed (Storage refused it)
  */
 async function storePicture(
   client: AppSupabaseClient,
@@ -235,6 +245,13 @@ async function storePicture(
   const { bucket, folder, file, longestSide } = target;
   // Step 1: the file itself, before anything is sent.
   checkPictureFile(file, bucket);
+  // A signature takes one still picture (S1-E8-08 criterion 1): a moving one is refused in words,
+  // even though redrawing it below would keep only its first frame.
+  if (
+    bucket === 'signature-pictures' &&
+    isAnimatedPicture(new Uint8Array(await file.arrayBuffer()))
+  )
+    throw new PictureUploadError('animated');
   // Step 2: only its pixels, at the size it is shown (S1-E3-09 criterion 2).
   const prepared = await preparePicture(file, longestSide).catch((error: unknown) => {
     throw error instanceof PicturePreparationError ? new PictureUploadError('wrong_type') : error;
@@ -390,6 +407,34 @@ export async function uploadSpaceBanner(
   if (registered.error !== null) throw registrationFailure(registered.error);
   // Step 3: the check, as for every other picture.
   const status = await requestPictureCheck(client, registered.data, upload.file.name);
+  return { pictureId: registered.data, status };
+}
+
+/**
+ * Uploads a forum signature picture, registers it and asks for its check (S1-E8-08). It shows
+ * under the person's posts and on their profile only once the check passed (CLAUDE.md rule 19).
+ *
+ * @param client - the shared Supabase client
+ * @param file - the picture the person chose: a still JPEG, PNG or WebP of 1 MB or less
+ * @returns the picture's ID (for set_my_signature()) and its status after the check
+ * @throws PictureUploadError as uploadPicture(), plus animated for a moving picture
+ */
+export async function uploadSignaturePicture(
+  client: AppSupabaseClient,
+  file: File,
+): Promise<{ pictureId: string; status: string }> {
+  // Step 1: the prepared still file, under a random name (never the user ID, architecture 1.6).
+  const path = await storePicture(client, {
+    bucket: 'signature-pictures',
+    folder: null,
+    file,
+    longestSide: longestSideFor.signaturePicture,
+  });
+  // Step 2: registered as pending; the hourly limit is counted here.
+  const registered = await client.rpc('register_signature_picture', { target_path: path });
+  if (registered.error !== null) throw registrationFailure(registered.error);
+  // Step 3: the check, as for every other picture.
+  const status = await requestPictureCheck(client, registered.data, file.name);
   return { pictureId: registered.data, status };
 }
 

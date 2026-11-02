@@ -24,6 +24,8 @@ export const longestSideFor = {
   atlasImage: 1600,
   // A space's banner band, 168 px tall across a 1,440 px page on a sharp screen (FORUMS-2c).
   spaceBanner: 2400,
+  // A signature picture is drawn at 56 px; 400 keeps it sharp on any screen (S1-E8-08).
+  signaturePicture: 400,
 } as const;
 
 /** The quality for WebP and JPEG: small files that still look sharp. */

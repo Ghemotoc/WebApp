@@ -238,5 +238,52 @@
   },
   "space": {
     "spaces": "Spaces"
+  },
+  "signature": {
+    "eyebrow": "Forum signature",
+    "intro": "Shows under your forum posts on bigger screens and on your profile. Up to 300 characters, three lines and one still picture.",
+    "whereItShows": "Shows under {{handle}}’s forum posts on bigger screens. Up to 300 characters, three lines and one still picture.",
+    "pictureAlt": "{{name}}’s signature picture",
+    "previewAlt": "Your signature picture",
+    "wordsLabel": "Your signature",
+    "wordsHint": "Plain text, up to {{max}} characters and {{maxLines}} lines. Links aren’t clickable here.",
+    "count": "{{count}} of {{max}} characters, {{lines}} of {{maxLines}} lines",
+    "tooLong": "That’s {{count}} characters. A signature can have up to {{max}}.",
+    "tooManyLines": "That’s {{lines}} lines. A signature can have up to {{maxLines}}.",
+    "save": "Save signature",
+    "saving": "Saving…",
+    "saved": "Your signature is saved.",
+    "loadFailed": "We couldn’t load your signature. Try again in a moment.",
+    "failed": {
+      "too_long": "A signature can have up to 300 characters.",
+      "too_many_lines": "A signature can have up to three lines.",
+      "read_only": "Your account can’t change its signature right now.",
+      "nothing_to_change": "There’s nothing to change.",
+      "already_asked": "A request to change this is already open.",
+      "unreachable": "We couldn’t save that. Check your connection and try again."
+    },
+    "pictureLabel": "Choose a signature picture",
+    "pictureHint": "One still JPEG, PNG or WebP, up to 1 MB. Moving pictures aren’t allowed. Others see it once it passes our picture check.",
+    "pictureState": {
+      "visible": "Your picture passed the check.",
+      "checking": "Your picture is being checked. Until then only you can see it.",
+      "waiting_for_person": "A person on our moderation team will look at your picture before others can see it.",
+      "removed": "Your picture was removed by the moderation team."
+    },
+    "removePicture": "Remove picture",
+    "removePictureFailed": "We couldn’t remove the picture. Try again.",
+    "changeRequested": "A moderator asked you to change your signature by {{time}}: “{{reason}}” If it isn’t changed by then, it will be removed.",
+    "bannerChangeRequested": "A moderator asked for this banner picture to be changed by {{time}}: “{{reason}}” If it isn’t changed by then, it will be removed and the colour will show again.",
+    "staff": {
+      "title": "Ask for a change",
+      "signatureIntro": "Ask this person to change their forum signature. They are told why and have 24 hours; if nothing changes, it is removed and they get a statement of reasons.",
+      "bannerIntro": "Ask the space’s owner to change its banner picture. They are told why and have 24 hours; if nothing changes, it is removed and they get a statement of reasons.",
+      "reasonLabel": "Why it needs changing",
+      "reasonHint": "The person sees this. Up to 500 characters.",
+      "send": "Send the request",
+      "sending": "Sending…",
+      "sent": "Request sent. It is removed in 24 hours if nothing changes.",
+      "reasonMissing": "Write why it needs changing."
+    }
   }
 }

@@ -3,7 +3,7 @@
  *
  * Who shows it: the router, at /settings; the top bar links here while signed in.
  * What it shows today: "Signed in as …", the Account panel (username and pen name), "About you"
- * (the bio), "What you like" (the county, likes and adult messages from setup, S1-E2-06), the Email address panel (S1-E2-05, added 25 Oct 2026: only the owner sees it),
+ * (the bio), the profile picture, "Forum signature" (S1-E8-08), "What you like" (the county, likes and adult messages from setup, S1-E2-06), the Email address panel (S1-E2-05, added 25 Oct 2026: only the owner sees it),
  * Ways to log in (Google, Apple, Microsoft and passkeys, S1-E2-09, while their flags are on),
  * Privacy (who sees the profile and the library, online status, S1-E13-01), Notifications (the
  * notification emails, S1-E7-02), Messages (S1-E9-04), "Blocked accounts" (S1-E5-05), Canva
@@ -23,6 +23,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { CanvaSettingsSection } from '@/features/canva/components/CanvaSettingsSection';
 import { DeleteAccountSection } from '@/features/account-deletion/components/DeleteAccountSection';
 import { DownloadMyDataSection } from '@/features/data-export/components/DownloadMyDataSection';
+import { SignatureSettingsSection } from '@/features/forums/components/SignatureSettingsSection';
 import { MessageSettingsSection } from '@/features/messages/components/MessageSettingsSection';
 import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
@@ -42,6 +43,36 @@ import { EmailSettingsSection } from './EmailSettingsSection';
 import { LegalLinksSection } from './LegalLinksSection';
 import { LoginMethodsSection } from './LoginMethodsSection';
 import { SignedInDevicesSection } from './SignedInDevicesSection';
+
+/**
+ * The parts that need a username: names, bio, picture, forum signature and likes.
+ *
+ * @param props.account - useMyNames's result
+ * @param props.names - the person's names
+ * @param props.handle - their username
+ * @returns the sections
+ */
+function ProfileSections({
+  account,
+  names,
+  handle,
+}: {
+  account: ReturnType<typeof useMyNames>;
+  names: NonNullable<ReturnType<typeof useMyNames>['names']>;
+  handle: string;
+}) {
+  return (
+    <>
+      <AccountNamesSection account={account} names={names} />
+      <BioSettingsSection handle={handle} />
+      <AvatarSettingsSection handle={handle} />
+      {/* The line under one's forum posts (S1-E8-08). */}
+      <SignatureSettingsSection />
+      {/* The county, likes and (16 and 17) adult messages chosen in setup (S1-E2-06). */}
+      <LikesSettingsSection />
+    </>
+  );
+}
 
 /**
  * What goes under the heading: a wait, a message, or the panels.
@@ -74,11 +105,9 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
           })}
         </p>
       )}
-      {names.handle !== null && <AccountNamesSection account={account} names={names} />}
-      {names.handle !== null && <BioSettingsSection handle={names.handle} />}
-      {names.handle !== null && <AvatarSettingsSection handle={names.handle} />}
-      {/* The county, likes and (16 and 17) adult messages chosen in setup (S1-E2-06). */}
-      {names.handle !== null && <LikesSettingsSection />}
+      {names.handle !== null && (
+        <ProfileSections account={account} names={names} handle={names.handle} />
+      )}
       {/* The Teacher badge for adults (S1-E2-11): ask later, see where it stands. */}
       <TeacherBadgeSection />
       {/* Every signed-in account sees and can change its own address, minors included. */}
