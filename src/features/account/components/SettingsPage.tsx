@@ -7,7 +7,8 @@
  * Ways to log in (Google, Apple, Microsoft and passkeys, S1-E2-09, while their flags are on),
  * Privacy (who sees the profile and the library, online status, S1-E13-01), Notifications (the
  * notification emails, S1-E7-02), Messages (S1-E9-04), "Blocked accounts" (S1-E5-05), Canva
- * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05), Download my data (S1-E13-02),
+ * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05), Download my data (S1-E13-02), Data
+ * requests (S1-E11-09, once the person has one),
  * Delete account (S1-E13-03) and the Legal panel. The board's
  * other tabs (Language, My certificates) arrive with their stories, so only what works is shown
  * (docs/board-fixes.md).
@@ -23,6 +24,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { CanvaSettingsSection } from '@/features/canva/components/CanvaSettingsSection';
 import { DeleteAccountSection } from '@/features/account-deletion/components/DeleteAccountSection';
 import { DownloadMyDataSection } from '@/features/data-export/components/DownloadMyDataSection';
+import { MyDataRequestsSection } from '@/features/data-requests/components/MyDataRequestsSection';
 import { SignatureSettingsSection } from '@/features/forums/components/SignatureSettingsSection';
 import { MessageSettingsSection } from '@/features/messages/components/MessageSettingsSection';
 import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
@@ -128,6 +130,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       <SignedInDevicesSection />
       {/* A copy of everything about the account, as one ZIP (S1-E13-02). */}
       <DownloadMyDataSection />
+      {/* Requests about the person's data, and "Was it you?" (S1-E11-09; ADMIN-2c1). */}
+      <MyDataRequestsSection />
       {/* Close the account now, deleted for good 14 days later (S1-E13-03). */}
       <DeleteAccountSection />
       <LegalLinksSection />

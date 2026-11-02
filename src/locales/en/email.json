@@ -66,7 +66,11 @@
     "loginMethodAdded": "A new way to log in was connected to your account. You can see them all in Settings, under Ways to log in. If this wasn’t you, change your password and contact us.",
     "loginMethodRemoved": "A way to log in was disconnected from your account. You can see the ones left in Settings, under Ways to log in. If this wasn’t you, change your password and contact us.",
     "subjectClassArchived": "Your class space is archived: keep copies of its certificates",
-    "classArchived": "The class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: after that, the real names printed on them are deleted."
+    "classArchived": "The class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: after that, the real names printed on them are deleted.",
+    "subjectDataRequestConfirm": "Was this request about your data yours?",
+    "dataRequestConfirm": "We received a request about the data in your account ({{reference}}) by email or post, not from inside your account. Log in and open Settings, under Data requests, to tell us whether it was you. If it wasn’t, say so there: we won’t act on it.",
+    "subjectDataRequestExtended": "We need more time for your data request",
+    "dataRequestExtended": "We need more time to answer your data request {{reference}}. We’ll answer by {{deadline}}. Why: {{reason}}"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} asked you to agree to their {{productName}} account",

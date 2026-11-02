@@ -199,6 +199,44 @@ describe('the notification email worker', () => {
     expect(email?.headers).toBeUndefined();
   });
 
+  it('tells the person a data request needs more time, with the date and the reason (S1-E11-09)', async () => {
+    const extended: EmailNotificationItem = {
+      ...followers,
+      kind: 'data_request_extended',
+      actors: [],
+      actor_count: 0,
+      data_request: {
+        reference: 'D-000007',
+        deadline: '2027-04-28',
+        extension_reason: 'Many stories to gather.',
+      },
+    };
+    const [email] = await sendOnce([
+      claimed({ delivery: 'required', unsubscribe_key: null, items: [extended] }),
+    ]);
+    expect(email?.subject).toBe('We need more time for your data request');
+    expect(email?.text).toContain('data request D-000007');
+    expect(email?.text).toContain('by 28 April 2027');
+    expect(email?.text).toContain('Why: Many stories to gather.');
+    expect(email?.headers).toBeUndefined();
+  });
+
+  it('asks the person, always, whether a data request was theirs (S1-E11-09)', async () => {
+    const confirm: EmailNotificationItem = {
+      ...followers,
+      kind: 'data_request_confirm',
+      actors: [],
+      actor_count: 0,
+      data_request: { reference: 'D-000008', deadline: '2027-02-28', extension_reason: null },
+    };
+    const [email] = await sendOnce([
+      claimed({ delivery: 'required', unsubscribe_key: null, items: [confirm] }),
+    ]);
+    expect(email?.subject).toBe('Was this request about your data yours?');
+    expect(email?.text).toContain('(D-000008)');
+    expect(email?.text).toContain('Settings, under Data requests');
+  });
+
   it('uses the admins’ wording when there is an override', async () => {
     const overrides = new Map([
       ['email:notificationEmails.subjectDigest', 'Today on {{productName}}'],

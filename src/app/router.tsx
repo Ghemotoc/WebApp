@@ -222,6 +222,31 @@ const staffRoutes: RouteObject = {
         return { Component: StaffStoryPage };
       },
     },
+    // Data requests (S1-E11-09; ADMIN-2c1): owner, admin and support; a new one and one request.
+    {
+      path: 'data-requests',
+      lazy: async () => {
+        const { StaffDataRequestsPage } =
+          await import('@/features/data-requests/components/staff/StaffDataRequestsPage');
+        return { Component: StaffDataRequestsPage };
+      },
+    },
+    {
+      path: 'data-requests/new',
+      lazy: async () => {
+        const { NewDataRequestPage } =
+          await import('@/features/data-requests/components/staff/NewDataRequestPage');
+        return { Component: NewDataRequestPage };
+      },
+    },
+    {
+      path: 'data-requests/:requestId',
+      lazy: async () => {
+        const { StaffDataRequestPage } =
+          await import('@/features/data-requests/components/staff/StaffDataRequestPage');
+        return { Component: StaffDataRequestPage };
+      },
+    },
     // Classics: add, check and publish public-domain works (S1-E11-16): owner and admin.
     {
       path: 'classics',

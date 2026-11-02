@@ -76,7 +76,8 @@
     "website": "Site",
     "schools": "Școli",
     "forums": "Forumuri",
-    "stories": "Povești"
+    "stories": "Povești",
+    "dataRequests": "Cereri privind datele"
   },
   "shell": {
     "eyebrow": "Echipă",
@@ -113,7 +114,8 @@
       "website_cms": "Pagina principală, anunțurile, paginile de ajutor și întrebările, pentru fiecare piață și limbă.",
       "schools": "Verifică profesorii și creează spații de clasă pentru școlile din pilot.",
       "forums": "Categorii, forumuri și subforumuri: nume, ordine și fixare.",
-      "stories": "Găsește orice poveste după titlu, nume de utilizator sau ID de utilizator și deschide-o ca să vezi detaliile și capitolele."
+      "stories": "Găsește orice poveste după titlu, nume de utilizator sau ID de utilizator și deschide-o ca să vezi detaliile și capitolele.",
+      "data_requests": "Înregistrează și rezolvă cererile de a vedea, muta, corecta sau șterge datele cuiva, fiecare în termenul ei."
     }
   },
   "auditLog": {

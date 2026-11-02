@@ -42,7 +42,9 @@ export interface EmailNotificationItem {
     | 'moderation_decision'
     | 'login_method_added'
     | 'login_method_removed'
-    | 'class_archived';
+    | 'class_archived'
+    | 'data_request_confirm'
+    | 'data_request_extended';
   actors: { handle: string; display_name: string }[];
   actor_count: number;
   story: { slug: string; title: string } | null;
@@ -50,6 +52,8 @@ export interface EmailNotificationItem {
   comment_excerpt: string | null;
   /** The space a notice is about (an archived class, S1-E8-12), when the reader may see it. */
   space?: { slug: string; name: string } | null;
+  /** The data request a notice is about (S1-E11-09): reference, deadline (yyyy-mm-dd), reason. */
+  data_request?: { reference: string; deadline: string; extension_reason: string | null } | null;
 }
 
 /** One claimed email, as email_worker_claim() answers it. */
@@ -90,18 +94,22 @@ const lineKeys: Record<EmailNotificationItem['kind'], string> = {
   login_method_added: 'loginMethodAdded',
   login_method_removed: 'loginMethodRemoved',
   class_archived: 'classArchived',
+  data_request_confirm: 'dataRequestConfirm',
+  data_request_extended: 'dataRequestExtended',
 };
 
 /**
  * The kinds that are about the person's own account, never about other people, so their line has
- * no "who" and no plural form: decisions (S1-E10-04), ways to log in (S1-E2-09) and an archived
- * class (S1-E8-12).
+ * no "who" and no plural form: decisions (S1-E10-04), ways to log in (S1-E2-09), an archived
+ * class (S1-E8-12) and data requests (S1-E11-09).
  */
 const accountKinds = new Set<EmailNotificationItem['kind']>([
   'moderation_decision',
   'login_method_added',
   'login_method_removed',
   'class_archived',
+  'data_request_confirm',
+  'data_request_extended',
 ]);
 
 /** The subject of each kind that is always sent (delivery 'required'), by its email.json key. */
@@ -110,6 +118,8 @@ const requiredSubjectKeys: Partial<Record<EmailNotificationItem['kind'], string>
   login_method_added: 'subjectLoginMethod',
   login_method_removed: 'subjectLoginMethod',
   class_archived: 'subjectClassArchived',
+  data_request_confirm: 'subjectDataRequestConfirm',
+  data_request_extended: 'subjectDataRequestExtended',
 };
 
 /**
@@ -160,20 +170,62 @@ function whereOf(item: EmailNotificationItem, read: ReadText): string {
 }
 
 /**
+ * A calendar date ("2027-02-28") in words, in the email's language: "28 February 2027" or
+ * "28 februarie 2027". Empty when there is none.
+ *
+ * @param calendarDate - the date as yyyy-mm-dd, or undefined
+ * @param language - the email's language
+ * @returns the date in words
+ */
+function dateInWords(calendarDate: string | undefined, language: string): string {
+  if (calendarDate === undefined) return '';
+  // Noon UTC is the same calendar day in Bucharest in every season.
+  return new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'ro', {
+    timeZone: 'Europe/Bucharest',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(`${calendarDate}T12:00:00Z`));
+}
+
+/**
+ * The placeholders a data request's notice fills: the request, its deadline and why it moved
+ * (S1-E11-09). Empty for every other kind.
+ *
+ * @param item - the notification
+ * @param language - the email's language, for the date
+ * @returns the values by placeholder name
+ */
+function dataRequestValues(item: EmailNotificationItem, language: string) {
+  const dataRequest = item.data_request ?? null;
+  if (dataRequest === null) return { reference: '', deadline: '', reason: '' };
+  return {
+    reference: dataRequest.reference,
+    deadline: dateInWords(dataRequest.deadline, language),
+    reason: dataRequest.extension_reason ?? '',
+  };
+}
+
+/**
  * One notification as one sentence, with the comment's first words on the next line.
  *
  * @param item - the notification
  * @param read - the text reader
+ * @param language - the email's language, for dates ("ro" when not given)
  * @returns the line or lines
  */
-export function notificationLine(item: EmailNotificationItem, read: ReadText): string {
-  const where = whereOf(item, read);
+export function notificationLine(
+  item: EmailNotificationItem,
+  read: ReadText,
+  language = 'ro',
+): string {
   // Several people take the plural verb in Romanian ("au început"), so they have their own line.
   const isMany = !accountKinds.has(item.kind) && item.actor_count > 1;
   const line = read(`notificationEmails.${lineKeys[item.kind]}${isMany ? 'Many' : ''}`, {
     who: whoDidIt(item, read),
-    where,
+    where: whereOf(item, read),
     space: item.space?.name ?? '',
+    ...dataRequestValues(item, language),
   });
   if (item.comment_excerpt === null || item.comment_excerpt === '') return line;
   return `${line}\n“${item.comment_excerpt}”`;
@@ -228,7 +280,7 @@ export function composeNotificationEmail(
   siteUrl: string,
   read: ReadText,
 ): OutgoingEmail {
-  const lines = claimed.items.map((item) => notificationLine(item, read));
+  const lines = claimed.items.map((item) => notificationLine(item, read, claimed.language));
   const intro =
     claimed.delivery === 'daily'
       ? read('notificationEmails.digestIntro')

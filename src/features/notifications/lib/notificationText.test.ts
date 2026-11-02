@@ -41,6 +41,7 @@ const newChapter: AppNotification = {
   space: null,
   changeRequest: null,
   staffChange: null,
+  dataRequest: null,
   isRequired: false,
   isRead: false,
   at: '2026-10-25T07:00:00Z',
@@ -404,5 +405,47 @@ describe('notificationText', () => {
     expect(notificationText(englishT(), shownAgain('cover'), null).what).toBe(
       'readers can see the cover of your story “The Salt Mine Choir” again.',
     );
+  });
+
+  it('asking whether a data request was the person’s leads to Settings › Data requests', () => {
+    const askRow: AppNotification = {
+      ...newChapter,
+      kind: 'data_request_confirm',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      isRequired: true,
+      dataRequest: { reference: 'D-000007', deadline: '2027-02-28', extensionReason: null },
+    };
+    const text = notificationText(englishT(), askRow, null);
+    expect(text.who).toBe('Your account:');
+    expect(text.what).toContain('(D-000007)');
+    expect(text.what).toContain('Was it you?');
+    expect(text.actionLabel).toBe('Answer');
+    expect(text.href).toBe('/settings#data-requests');
+  });
+
+  it('an extended data request quotes the reason the team gave', () => {
+    const extendedRow: AppNotification = {
+      ...newChapter,
+      kind: 'data_request_extended',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      isRequired: true,
+      dataRequest: {
+        reference: 'D-000007',
+        deadline: '2027-04-28',
+        extensionReason: 'Many stories to gather.',
+      },
+    };
+    const text = notificationText(englishT(), extendedRow, null);
+    expect(text.what).toContain('D-000007');
+    expect(text.quote).toBe('Many stories to gather.');
+    expect(text.href).toBe('/settings#data-requests');
   });
 });

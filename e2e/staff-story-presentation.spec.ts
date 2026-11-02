@@ -89,7 +89,9 @@ test.describe('hiding a title or cover (S1-E11-08)', () => {
       'An insult.',
     );
     await section.getByRole('button', { name: 'Hide the title' }).click();
-    await expect(section.getByText(/Hidden: readers see “Title hidden by the moderation team”/)).toBeVisible();
+    await expect(
+      section.getByText(/Hidden: readers see “Title hidden by the moderation team”/),
+    ).toBeVisible();
     await expect(page.getByText('Title hidden from readers')).toBeVisible();
 
     // A reader sees the marker, never the title.
