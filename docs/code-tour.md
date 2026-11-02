@@ -1881,6 +1881,15 @@ Read in this order; each file's header comment says what it is for and where thi
 - Typing a code: "Join a class" on the Forums page's Spaces card and on the Spaces page opens `/class`, where `ClassCodeForm` sends the student on to `/class/<code>`.
 - Tests: `supabase/tests/database/233-class-tools.test.sql`, `src/features/spaces/api/classTools.test.ts`, `e2e/class-tools.spec.ts`.
 
+### Stories shared only with a class (CLASSES-c)
+
+- Where it lives: `src/features/spaces/api/classStories.ts`, `hooks/useClassStories.ts`, `StoryClassCard` ("Who can read it" in Story settings), `ClassStoriesCard` above a class's threads and `ClassStoriesPage` at `/spaces/<slug>/stories`; `supabase/migrations/…_classes_c_class_stories.sql`.
+- The data: `stories.class_only` and `stories.class_space_id`. If the class is deleted the link empties but `class_only` stays true, so the story never turns public by accident.
+- One gate, `story_class_allows()`, sits inside the shared reading helpers (`chapter_is_readable()`, `story_has_readable_chapter()`, `reader_visible_story()`, the cover picture), so every page and chapter read obeys it: only the writer, the class's fully active members and the moderation team read a class-only story. Public lists and profiles leave it out entirely, even for classmates; a new chapter only tells followers who are in the class.
+- `set_story_class()` takes only the writer's own story (`my_live_story_id()`), so a teacher can never make a student's story public. `my_class_choices()` offers only classes the writer is in and that aren't locked. `class_space_stories()` is the class page's list.
+- No ad or banner shows on class stories or class spaces (Robert, 2 Nov 2026); banners are still stubbed, so bundle 14 builds that rule into `pick_banner()`.
+- Tests: `supabase/tests/database/234-class-stories.test.sql`, `src/features/spaces/api/classStories.test.ts`, `e2e/class-stories.spec.ts`.
+
 ## Forum signatures and moderators' change requests (S1-E8-08; FORUMS-2d)
 
 - Where it lives: `src/features/forums/api/forumSignatures.ts`, `hooks/useForumSignatures.ts`, `lib/signatureLimits.ts`; the components `SignatureBody` (the shared drawing), `ProfileSignatureCard` (board 6.1), `SignatureSettingsSection` with `SignatureWordsForm` and `SignaturePictureControls` (Settings, `#forum-signature`), `ChangeRequestNotice` and `CustomisationChangeForm` (staff); `uploadSignaturePicture()` in `src/features/pictures/api/pictures.ts`; `src/lib/animated-picture.ts`; `supabase/migrations/…_forums2_d_signatures.sql`.

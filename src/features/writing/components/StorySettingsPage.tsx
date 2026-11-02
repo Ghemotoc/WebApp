@@ -8,7 +8,8 @@
  * (the basics, category and tags, the cover, with the current values), "Status and comments",
  * the save bar, and the delete card. The "Labels" section joins with S1-E3-06 and the chapters
  * with S1-E3-03. The writer can go back to the automatic cover from here (S1-E3-13), and pick the
- * rank badges the cover shows (CMS-1g, RankBadgePicker).
+ * rank badges the cover shows (CMS-1g, RankBadgePicker). A student shares the story only with
+ * their class, or makes it public again (StoryClassCard, bundle CLASSES, part c).
  * What it calls: useMyStories (the story), useStorySettingsForm (answers, checks,
  * update_my_story()), DeleteStoryControl (delete_my_story(), restore_my_story()).
  */
@@ -22,6 +23,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
+import { StoryClassCard } from '@/features/spaces/components/StoryClassCard';
 import { RankBadgePicker } from '@/features/tags/components/RankBadgePicker';
 
 import type { MyStory } from '../api/stories';
@@ -43,6 +45,23 @@ function SaveOutcome({ outcome }: { outcome: ReturnType<typeof useStorySettingsF
   if (outcome === 'saved') return <Notice tone="success">{t('settings.saved')}</Notice>;
   if (outcome === 'not_active') return <Notice tone="warning">{t('newStory.notActive')}</Notice>;
   return <Notice tone="error">{t('settings.saveFailed')}</Notice>;
+}
+
+/** The card at the bottom: delete the story (DeleteStoryControl). */
+function DeleteStoryCard({ story }: { story: MyStory }) {
+  const { t } = useTranslation('writing');
+  return (
+    <section
+      aria-labelledby="delete-story-heading"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
+    >
+      <Eyebrow>{t('deleteStory.eyebrow')}</Eyebrow>
+      <h2 id="delete-story-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
+        {t('deleteStory.heading')}
+      </h2>
+      <DeleteStoryControl story={story} />
+    </section>
+  );
 }
 
 /** The form for one story. */
@@ -72,6 +91,7 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
         set={form.set}
       />
       <RankBadgePicker slug={story.slug} />
+      <StoryClassCard slug={story.slug} />
       <CoverSection
         storyId={story.id}
         title={form.answers.title}
@@ -90,19 +110,7 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
           </Button>
         </div>
       </div>
-      <section
-        aria-labelledby="delete-story-heading"
-        className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
-      >
-        <Eyebrow>{t('deleteStory.eyebrow')}</Eyebrow>
-        <h2
-          id="delete-story-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
-        >
-          {t('deleteStory.heading')}
-        </h2>
-        <DeleteStoryControl story={story} />
-      </section>
+      <DeleteStoryCard story={story} />
     </form>
   );
 }

@@ -397,5 +397,29 @@
     "yearEndText": "La sfârșitul anului școlar spațiul se închide, așa că nimeni nu mai poate posta. Fiecare membru îl poate citi în continuare cât timp are cont și își păstrează poveștile și ciornele.",
     "locksOn": "Se închide pe {{date}}."
   },
-  "joinClassLink": "Intră într-o clasă"
+  "joinClassLink": "Intră într-o clasă",
+  "classStories": {
+    "eyebrow": "Clasa ta",
+    "title": "Povești împărtășite cu clasa",
+    "note": "Doar {{name}} le poate citi până când autorul le face publice. Un profesor nu poate face niciodată publică povestea unui elev.",
+    "empty": "Încă nu e nicio poveste împărtășită. Ca să împărtășești una, deschide Setările poveștii și alege clasa aceasta la „Cine o poate citi”.",
+    "loadFailed": "Nu am putut încărca poveștile clasei. Încearcă din nou peste puțin timp.",
+    "documentTitle": "Povești împărtășite cu {{name}}"
+  },
+  "storyClass": {
+    "legend": "Cine o poate citi",
+    "intro": "Poți împărtăși povestea aceasta doar cu una dintre clasele tale. Atunci doar tu, clasa și echipa noastră de moderare o pot citi: nu apare în nicio listă publică și nici pe profilul tău. Doar tu o poți face din nou publică.",
+    "publicNow": "Acum o poate citi oricine, în limita clasificării ei.",
+    "pick": "Clasa ta",
+    "share": "Împărtășește doar cu clasa aceasta",
+    "sharedWith": "Acum doar {{name}} o poate citi.",
+    "sharedWithDeleted": "Clasa ei a fost ștearsă, așa că acum doar tu o poți citi.",
+    "makePublic": "Fă-o publică",
+    "saved": "Salvat.",
+    "failures": {
+      "missing": "Nu am găsit povestea aceasta printre ale tale.",
+      "not_yours": "Poți împărtăși doar cu o clasă din care faci parte și care nu e blocată.",
+      "unreachable": "Nu am putut ajunge la server. Încearcă din nou peste puțin timp."
+    }
+  }
 }
