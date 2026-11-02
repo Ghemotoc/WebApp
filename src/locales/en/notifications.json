@@ -71,7 +71,9 @@
     "staffChangedStory": "we changed {{fields}} of your story “{{story}}”.",
     "staffShowedStory": "your story “{{story}}” can be found again.",
     "staffShowedChapter": "chapter {{number}} of “{{story}}” is shown again.",
-    "staffPutBackPassage": "we put back the passage we removed from chapter {{number}} of “{{story}}”."
+    "staffPutBackPassage": "we put back the passage we removed from chapter {{number}} of “{{story}}”.",
+    "staffShowedTitle": "readers can see the title of your story “{{story}}” again.",
+    "staffShowedCover": "readers can see the cover of your story “{{story}}” again."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -150,7 +152,9 @@
     "public_note": "a moderator added a note to your story.",
     "reporting_pause": "a moderator paused your reports for a while.",
     "rating_raised": "a moderator raised your story’s rating.",
-    "ai_label_added": "a moderator labelled your story as AI-written."
+    "ai_label_added": "a moderator labelled your story as AI-written.",
+    "title_hidden": "a moderator hid your story’s title.",
+    "cover_hidden": "a moderator hid your story’s cover."
   },
   "reportOutcomes": {
     "removed": "we checked your report {{reference}} and removed what you reported.",
@@ -215,6 +219,8 @@
     "deals_with_abuse_or_coercion": "the abuse or coercion label",
     "tag_names": "the tags",
     "visibility": "who can find it",
+    "title": "the title",
+    "cover": "the cover",
     "settings": "the settings",
     "list": "{{first}} and {{last}}",
     "yourStory": "your story"

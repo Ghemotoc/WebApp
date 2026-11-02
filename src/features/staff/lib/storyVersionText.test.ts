@@ -1,6 +1,6 @@
 /**
  * Tests for how a story's version history reads and for the selected passage (bundle ADMIN-2,
- * part b2; story S1-E11-08, part 08b).
+ * parts b2 and b3; story S1-E11-08, part 08b).
  */
 import { describe, expect, it } from 'vitest';
 
@@ -90,6 +90,20 @@ describe('a version in the history', () => {
       heading: 'Who can find it',
       lines: ['Who can find it: shown → hidden'],
     });
+  });
+
+  it('a hidden title reads as title and cover, shown to hidden, and can be restored (ADMIN-2b3)', () => {
+    const hideTitle: StaffStoryVersion = {
+      ...settingsVersion,
+      kind: 'presentation',
+      before: { title: 'shown' },
+      after: { title: 'hidden' },
+    };
+    expect(storyVersionText(englishT(), words, hideTitle)).toEqual({
+      heading: 'Title and cover',
+      lines: ['Title: shown → hidden'],
+    });
+    expect(canRestoreVersion(hideTitle)).toBe(true);
   });
 });
 

@@ -6,7 +6,8 @@
  * and its chapters, never its words. Staff who may change stories (owner, admin, moderator) also
  * get "Who can find it" (shown, restricted or hidden), "Settings and details" and a Hide button on
  * each chapter, each with a reason (bundle ADMIN-2, part b1; S1-E11-08); then "Remove a passage"
- * under each published chapter and the version history with Restore (part b2). A writer under 18 shows
+ * under each published chapter and the version history with Restore (part b2); and the cover, with
+ * "Title and cover" to hide either from readers (part b3). A writer under 18 shows
  * as "under 18" only, never their age (S1-E11-08 criterion "a writer under 18").
  * Who shows it: the router, inside StaffLayout. What it calls: useStaffStory →
  * api/staffStories.ts → admin_story_overview(); useChangeStaffStory for the changes.
@@ -15,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { InfoPill } from '@/components/ui/InfoPill';
 import { LabelRows } from '@/components/ui/LabelRows';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -26,7 +28,9 @@ import { useStaffStoryWords } from '../../hooks/useStaffStoryWords';
 import { ShortUserId } from '../users/ShortUserId';
 
 import { StaffStoryChapters } from './StaffStoryChapters';
+import { StaffStoryCover } from './StaffStoryCover';
 import { StaffStoryHistory } from './StaffStoryHistory';
+import { StaffStoryPresentationForm } from './StaffStoryPresentationForm';
 import { StaffStorySettingsForm } from './StaffStorySettingsForm';
 import { StaffStoryVisibilityForm } from './StaffStoryVisibilityForm';
 
@@ -88,9 +92,15 @@ function StoryOverview({ story }: { story: StaffStoryOverview }) {
     <>
       <title>{t('stories.page.documentTitle', { title: story.title })}</title>
       <h1 className="m-0 font-heading text-[34px] font-bold text-heading">{story.title}</h1>
+      {story.titleHidden && (
+        <div>
+          <InfoPill tone="blush">{t('stories.presentation.titleHiddenPill')}</InfoPill>
+        </div>
+      )}
       {story.deletedAt !== null && <Notice tone="info">{t('stories.page.deletedByWriter')}</Notice>}
       {!story.canChange && <p className="m-0 text-body">{t('stories.page.viewOnly')}</p>}
       <div className="flex max-w-[760px] flex-col gap-6">
+        <StaffStoryCover story={story} />
         <StoryDetails story={story} />
         {story.blurb !== '' && (
           <section aria-labelledby="story-blurb-heading" className="flex flex-col gap-2">
@@ -106,6 +116,7 @@ function StoryOverview({ story }: { story: StaffStoryOverview }) {
         {mayChange && (
           <>
             <StaffStoryVisibilityForm story={story} changer={changer} />
+            <StaffStoryPresentationForm story={story} changer={changer} />
             <StaffStorySettingsForm
               key={JSON.stringify(story.settings)}
               story={story}

@@ -71,7 +71,9 @@
     "staffChangedStory": "am schimbat {{fields}} pentru povestea ta „{{story}}”.",
     "staffShowedStory": "povestea ta „{{story}}” poate fi găsită din nou.",
     "staffShowedChapter": "capitolul {{number}} din „{{story}}” se vede din nou.",
-    "staffPutBackPassage": "am pus la loc pasajul pe care îl eliminasem din capitolul {{number}} al poveștii „{{story}}”."
+    "staffPutBackPassage": "am pus la loc pasajul pe care îl eliminasem din capitolul {{number}} al poveștii „{{story}}”.",
+    "staffShowedTitle": "cititorii pot vedea din nou titlul poveștii tale „{{story}}”.",
+    "staffShowedCover": "cititorii pot vedea din nou coperta poveștii tale „{{story}}”."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -150,7 +152,9 @@
     "public_note": "un moderator a adăugat o notă la povestea ta.",
     "reporting_pause": "un moderator ți-a oprit raportările pentru o vreme.",
     "rating_raised": "un moderator a ridicat clasificarea poveștii tale.",
-    "ai_label_added": "un moderator a etichetat povestea ta ca scrisă cu AI."
+    "ai_label_added": "un moderator a etichetat povestea ta ca scrisă cu AI.",
+    "title_hidden": "un moderator a ascuns titlul poveștii tale.",
+    "cover_hidden": "un moderator a ascuns coperta poveștii tale."
   },
   "reportOutcomes": {
     "removed": "am verificat raportarea ta {{reference}} și am eliminat ce ai raportat.",
@@ -215,6 +219,8 @@
     "deals_with_abuse_or_coercion": "marcajul de abuz sau constrângere",
     "tag_names": "etichetele",
     "visibility": "cine o poate găsi",
+    "title": "titlul",
+    "cover": "coperta",
     "settings": "setările",
     "list": "{{first}} și {{last}}",
     "yourStory": "povestea ta"

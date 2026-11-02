@@ -9,6 +9,11 @@
  * answers. Staff may see user IDs (architecture 1.6); the answers never carry a year of birth, an
  * email or a chapter's words (S1-E11-07, criterion 3).
  */
+import type {
+  CoverColourKey,
+  CoverDesignKey,
+  DrawnCoverChoice,
+} from '@/components/covers/coverDesigns';
 import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
@@ -102,9 +107,22 @@ export interface StaffStorySettings {
   tagNames: string[];
 }
 
+/** A story's cover as the staff page draws it (S1-E11-08 criterion 1). */
+export interface StaffStoryCover {
+  coverKind: 'automatic' | 'drawn' | 'upload';
+  /** The drawn design and colours, or null for an automatic or uploaded cover. */
+  drawnCover: DrawnCoverChoice | null;
+}
+
 /** One story's overview. */
 export interface StaffStoryOverview extends StaffStoryRow {
+  /** For the uploaded cover's picture, read separately (story_cover_picture()). */
+  slug: string;
   blurb: string;
+  cover: StaffStoryCover;
+  /** True while staff hide the title or the cover from readers (part b3). */
+  titleHidden: boolean;
+  coverHidden: boolean;
   createdAt: string;
   firstPublishedAt: string | null;
   deletedAt: string | null;
@@ -267,6 +285,40 @@ function visibilityOf(value: Json | undefined): StaffStoryVisibility {
 }
 
 /**
+ * A drawn cover's design and colours, or null when any of them is missing.
+ *
+ * @param cover - the cover object
+ * @returns the choice, or null
+ */
+function drawnCoverChoiceFrom(cover: Record<string, Json | undefined>): DrawnCoverChoice | null {
+  const design = textOrNull(cover['design']);
+  const background = textOrNull(cover['background']);
+  const accent = textOrNull(cover['accent']);
+  if (design === null || background === null || accent === null) return null;
+  return {
+    design: design as CoverDesignKey,
+    background: background as CoverColourKey,
+    accent: accent as CoverColourKey,
+  };
+}
+
+/**
+ * Reads the cover. A drawn cover missing its design or a colour reads as automatic, so the page
+ * always draws something.
+ *
+ * @param value - the cover object of admin_story_overview()
+ * @returns the cover
+ */
+function staffStoryCoverFrom(value: Json | undefined): StaffStoryCover {
+  const cover = objectOf(value);
+  const kind = cover['kind'];
+  if (kind === 'upload') return { coverKind: 'upload', drawnCover: null };
+  const drawnCover = drawnCoverChoiceFrom(cover);
+  if (kind === 'drawn' && drawnCover !== null) return { coverKind: 'drawn', drawnCover };
+  return { coverKind: 'automatic', drawnCover: null };
+}
+
+/**
  * Searches every story (50 a page, the latest update first).
  *
  * @param client - the shared Supabase client
@@ -319,7 +371,11 @@ export async function fetchStaffStory(
   const answer = objectOf(data);
   return {
     ...staffStoryRowFrom(data),
+    slug: String(answer['slug'] ?? ''),
     blurb: String(answer['blurb'] ?? ''),
+    cover: staffStoryCoverFrom(answer['cover']),
+    titleHidden: answer['title_hidden'] === true,
+    coverHidden: answer['cover_hidden'] === true,
     createdAt: String(answer['created_at']),
     firstPublishedAt: textOrNull(answer['first_published_at']),
     deletedAt: textOrNull(answer['deleted_at']),
