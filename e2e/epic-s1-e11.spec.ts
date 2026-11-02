@@ -135,7 +135,8 @@ test.describe('epic S1-E11 journeys', () => {
     await expect(owner.getByRole('table')).not.toContainText('example.com');
 
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a; SAFE-4 added moderator mail,
-    // appeals and the safety contacts; CMS-1a added Settings; CMS-1b added Website).
+    // appeals and the safety contacts; CMS-1a added Settings; CMS-1b added Website; ADMIN-2a added
+    // Stories and ADMIN-2c1 Data requests).
     expect(await menuLinks(owner)).toEqual([
       'Moderation',
       'Moderator mail',
@@ -144,7 +145,9 @@ test.describe('epic S1-E11 journeys', () => {
       'Safety contacts',
       'On call',
       'Users',
+      'Stories',
       'Classics',
+      'Data requests',
       'Schools',
       'Roles',
       'Website',
@@ -162,11 +165,18 @@ test.describe('epic S1-E11 journeys', () => {
       'Safety contacts',
       'On call',
       'Users',
+      'Stories',
       'Schools',
       'Metrics',
     ]);
     const support = await openAs(browser, 'support', '/staff');
-    expect(await menuLinks(support)).toEqual(['Safety contacts', 'On call', 'Users']);
+    expect(await menuLinks(support)).toEqual([
+      'Safety contacts',
+      'On call',
+      'Users',
+      'Stories',
+      'Data requests',
+    ]);
     const editor = await openAs(browser, 'editor', '/staff/users/invites');
     await expect(editor.getByText('Only an owner or admin can make invite links.')).toBeVisible();
   });

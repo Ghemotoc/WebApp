@@ -75,11 +75,12 @@ test.describe('data requests (S1-E11-09)', () => {
     await expect(
       staff.getByRole('heading', { level: 1, name: /Data request D-\d{6}/ }),
     ).toBeVisible();
-    await expect(staff.getByText('Not asked yet')).toBeVisible();
+    const identity = staff.getByRole('region', { name: 'Identity check' });
+    await expect(identity.getByText('Not asked yet')).toBeVisible();
 
     // Step 2: support ask the person to confirm it was theirs.
     await staff.getByRole('button', { name: 'Ask them to confirm' }).click();
-    await expect(staff.getByText('Waiting for the person')).toBeVisible();
+    await expect(identity.getByText('Waiting for the person')).toBeVisible();
 
     // Step 3: the person follows the notice to Settings and says yes.
     const person = await openAs(browser, 'adult_writer', '/notifications');
@@ -92,7 +93,7 @@ test.describe('data requests (S1-E11-09)', () => {
 
     // Step 4: support see the answer, extend by a month and close the request.
     await staff.reload();
-    await expect(staff.getByText('Confirmed by the person')).toBeVisible();
+    await expect(identity.getByText('Confirmed by the person')).toBeVisible();
     await staff.getByLabel('Why (the person reads this)').fill('Many stories to gather.');
     await staff.getByRole('button', { name: 'Extend the deadline' }).click();
     await expect(staff.getByText('Many stories to gather.')).toBeVisible();

@@ -89,7 +89,7 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.classics',
     descriptionKey: 'home.areas.classics',
   },
-  // Data requests (S1-E11-09; ADMIN-2c1): owner, admin and support, after Stories (architecture
+  // Data requests (S1-E11-09; ADMIN-2c1): owner, admin and support, after Stories and Classics (architecture
   // 1.8.2: "Support tickets, Data requests").
   {
     area: 'data_requests',

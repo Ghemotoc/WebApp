@@ -70,7 +70,10 @@ export function DataRequestDetails({ request }: { request: DataRequest }) {
     { label: t('page.rows.dueOn'), value: words.date(request.dueOn) },
     { label: t('page.rows.status'), value: <DataRequestUrgencyPill request={request} /> },
     { label: t('page.rows.identity'), value: words.identity(request) },
-    { label: t('page.rows.handledBy'), value: request.handledByHandle ?? '' },
+    {
+      label: t('page.rows.handledBy'),
+      value: request.handledByHandle === null ? '' : `@${request.handledByHandle}`,
+    },
     { label: t('page.rows.note'), value: request.note === '' ? t('page.noNote') : request.note },
     ...optionalRows(request),
   ];
