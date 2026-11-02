@@ -71,7 +71,7 @@ function ReadyLine({ copy, onStart }: { copy: DataExport; onStart: () => void })
           </span>
         </span>
         <ExportDownloadButton
-          copy={copy}
+          fileName={copy.file_name}
           label={t('settings.download')}
           downloadName={t('settings.downloadName', {
             date: (copy.ready_at ?? copy.created_at).slice(0, 10),

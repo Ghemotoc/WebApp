@@ -6,7 +6,8 @@
  * Who calls it: hooks/useStaffDataRequests.ts.
  * What it calls next: admin_open_data_request(), admin_data_requests(), admin_data_request(),
  * admin_extend_data_request(), admin_ask_data_request_confirmation() and
- * admin_close_data_request() in supabase/migrations/…_admin2_c1_data_requests.sql. Each one
+ * admin_close_data_request() in supabase/migrations/…_admin2_c1_data_requests.sql (and, from part
+ * c2, the files and copies sent on admin_data_request(), …_admin2_c2_data_request_copy.sql). Each one
  * checks that the caller is owner, admin or support in a staff session and writes the audit log;
  * this file only reads the answers and names the refusals.
  */
@@ -91,6 +92,51 @@ export interface DataRequest {
   createdAt: string;
 }
 
+/** The shape of the extras admin_data_request() adds for one request's page (part c2). */
+const dataRequestDetailSchema = z.object({
+  language: z.string().nullable(),
+  files: z.array(
+    z.object({
+      export_id: z.string(),
+      display_name: z.string(),
+      file_size: z.number().nullable(),
+      expires_at: z.string(),
+    }),
+  ),
+  copies_sent: z.array(
+    z.object({
+      sent_at: z.string(),
+      expires_at: z.string(),
+      files: z.array(z.object({ name: z.string(), size: z.number().nullable() })),
+    }),
+  ),
+});
+
+/** One ready file of a copy, as staff see it: its name, size and last day, never its contents. */
+export interface DataRequestFile {
+  exportId: string;
+  /** "rain.docx": the name the person sees. */
+  displayName: string;
+  /** Bytes, taken from storage. */
+  fileSize: number | null;
+  expiresAt: string;
+}
+
+/** One copy sent, as the request's log keeps it: when, until when, and which files. */
+export interface DataRequestCopySent {
+  sentAt: string;
+  expiresAt: string;
+  files: { name: string; size: number | null }[];
+}
+
+/** One request with what its own page adds: the person's language, the files and the copies sent. */
+export interface DataRequestDetail extends DataRequest {
+  /** The person's language ('ro' or 'en'), so the Word files are written in it. */
+  language: string;
+  files: DataRequestFile[];
+  copiesSent: DataRequestCopySent[];
+}
+
 /** Why a call failed: the database's hints, then "refused", "not_allowed" and "unreachable". */
 export const dataRequestFailures = [
   'not_allowed',
@@ -106,6 +152,12 @@ export const dataRequestFailures = [
   'already_answered',
   'parent_needed',
   'outcome_needed',
+  'not_a_copy',
+  'identity_denied',
+  'identity_not_checked',
+  'bad_files',
+  'no_file',
+  'not_found',
   'refused',
   'unreachable',
 ] as const;
@@ -193,16 +245,46 @@ export async function fetchDataRequests(
  *
  * @param client - the shared Supabase client
  * @param requestId - the request
- * @returns the request
+ * @returns the request with its files and copies sent
  * Errors: throws DataRequestError (not_allowed, no_such_request).
  */
 export async function fetchDataRequest(
   client: AppSupabaseClient,
   requestId: string,
-): Promise<DataRequest> {
+): Promise<DataRequestDetail> {
   const { data, error } = await client.rpc('admin_data_request', { target_request_id: requestId });
   if (error !== null) throw dataRequestErrorFrom(error);
-  return dataRequestFrom(data);
+  return dataRequestDetailFrom(data);
+}
+
+/**
+ * Reads one request with its page's extras.
+ *
+ * @param value - admin_data_request()'s answer
+ * @returns the request, its language, files and copies sent
+ * Errors: throws DataRequestError('unreachable') when the answer has another shape.
+ */
+export function dataRequestDetailFrom(value: Json | undefined): DataRequestDetail {
+  const request = dataRequestFrom(value);
+  const parsed = dataRequestDetailSchema.safeParse(value);
+  if (!parsed.success) throw new DataRequestError('unreachable');
+  const extras = parsed.data;
+  return {
+    ...request,
+    // A profile without a language reads the copy in Romanian, the app's first language.
+    language: extras.language ?? 'ro',
+    files: extras.files.map((file) => ({
+      exportId: file.export_id,
+      displayName: file.display_name,
+      fileSize: file.file_size,
+      expiresAt: file.expires_at,
+    })),
+    copiesSent: extras.copies_sent.map((copy) => ({
+      sentAt: copy.sent_at,
+      expiresAt: copy.expires_at,
+      files: copy.files,
+    })),
+  };
 }
 
 /** What staff fill in to log a new request. */

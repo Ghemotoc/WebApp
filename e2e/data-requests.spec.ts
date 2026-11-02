@@ -10,10 +10,12 @@
  *   requests and answers "Yes, it was me"; the staff page then says it was confirmed;
  * - support extend the deadline by one month with a reason and close the request with what was
  *   done; a closed request can't be changed;
+ * - part c2: support build and send a copy of a request made in the app as one ZIP; they see its
+ *   name and size and open it (logged); the person downloads it from Settings › Data requests;
  * - a moderator has no Data requests menu item and is refused at its address;
  * - the list and one request pass axe and don't scroll sideways at 390, 768 and 1440 px.
- * Test data: requests about adult_writer made here, removed afterwards with their notices; the
- * audit log keeps its rows, as nobody may change it.
+ * Test data: requests about adult_writer made here, removed afterwards with their notices, copies
+ * and files; the audit log keeps its rows, as nobody may change it.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
@@ -24,6 +26,7 @@ import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './su
 const adultWriterId = '00000000-0000-4000-8000-000000000001';
 const supportId = '00000000-0000-4000-8000-000000000011';
 const axeRequestId = '00000000-0000-4000-9e00-000000000c01';
+const copyRequestId = '00000000-0000-4000-9e00-000000000c02';
 const stamp = 'e2e data requests';
 
 /** Opens an address in English as a persona, in a fresh browser context. */
@@ -44,10 +47,13 @@ async function openAs(
 /** Removes the requests this spec made and their notices, and puts the languages back. */
 function cleanUp() {
   runSql(`
+    select set_config('storage.allow_delete_query', 'true', false);
+    delete from storage.objects where bucket_id = 'exports' and name in (
+      select file_name from public.exports where kind = 'data_request');
     delete from public.notifications where user_id = '${adultWriterId}'
-      and kind in ('data_request_confirm', 'data_request_extended');
+      and kind in ('data_request_confirm', 'data_request_extended', 'data_request_copy_ready');
     delete from public.email_outbox where user_id = '${adultWriterId}';
-    delete from public.data_requests where note like '${stamp}%' or id = '${axeRequestId}';
+    delete from public.data_requests where note like '${stamp}%' or id in ('${axeRequestId}', '${copyRequestId}');
     update public.profiles set locale = 'ro' where handle in ('support', 'moderator', 'adult_writer');`);
 }
 
@@ -102,6 +108,40 @@ test.describe('data requests (S1-E11-09)', () => {
     await expect(staff.getByText('This request is closed and can’t be changed.')).toBeVisible();
   });
 
+  test('support send a copy as one ZIP and the person downloads it from Settings', async ({
+    browser,
+  }) => {
+    // Step 1: a request for a copy made inside the account, so it needs no identity check.
+    runSql(`insert into public.data_requests (id, user_id, request_type, channel, received_on,
+        due_on, identity, note, created_by_user_id, handled_by_user_id)
+      values ('${copyRequestId}', '${adultWriterId}', 'copy', 'in_app', current_date,
+        (current_date + interval '1 month')::date, 'not_needed', '${stamp}: copy', '${supportId}',
+        '${supportId}');`);
+    const staff = await openAs(browser, 'support', `/staff/data-requests/${copyRequestId}`);
+
+    // Step 2: support build and send it as one ZIP, built in this tab.
+    const copy = staff.getByRole('region', { name: 'The copy' });
+    await copy.getByRole('radio', { name: 'One ZIP of everything' }).check();
+    await copy.getByRole('button', { name: 'Build and send the copy' }).click();
+    await expect(copy.getByText(/The copy is sent/)).toBeVisible({ timeout: 30_000 });
+    const zipName = copy.getByText(/^D-\d{6}-copy\.zip$/);
+    await expect(zipName).toBeVisible();
+
+    // Step 3: support can open it, but only through the logged button.
+    const staffDownload = staff.waitForEvent('download');
+    await copy.getByRole('button', { name: /^Open D-\d{6}-copy\.zip \(logged\)$/ }).click();
+    expect((await staffDownload).suggestedFilename()).toMatch(/^D-\d{6}-copy\.zip$/);
+
+    // Step 4: the person follows the notice to Settings and downloads the ZIP, signed in.
+    const person = await openAs(browser, 'adult_writer', '/notifications');
+    await person.getByRole('link', { name: 'Download it' }).first().click();
+    await expect(person).toHaveURL(/\/settings#data-requests$/);
+    const panel = person.getByRole('region', { name: 'Data requests' });
+    const personDownload = person.waitForEvent('download');
+    await panel.getByRole('button', { name: /^Download D-\d{6}-copy\.zip$/ }).click();
+    expect((await personDownload).suggestedFilename()).toMatch(/^D-\d{6}-copy\.zip$/);
+  });
+
   test('a moderator has no Data requests area', async ({ browser }) => {
     const page = await openAs(browser, 'moderator', '/staff');
     const menu = page.getByRole('navigation', { name: 'Staff' });
@@ -118,13 +158,22 @@ test.describe('data requests (S1-E11-09)', () => {
     test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {
-      // An open request by post, so the list and the page show every panel.
+      // An open request for a copy by post, with a file waiting and a copy sent, so the list and
+      // the page show every panel.
       runSql(`insert into public.data_requests (id, user_id, request_type, channel, received_on,
-          due_on, identity, note, created_by_user_id, handled_by_user_id)
-        values ('${axeRequestId}', '${adultWriterId}', 'delete', 'post', current_date - 3,
+          due_on, identity, note, created_by_user_id, handled_by_user_id, copies_sent)
+        values ('${axeRequestId}', '${adultWriterId}', 'copy', 'post', current_date - 3,
           (current_date - 3 + interval '1 month')::date, 'not_asked', '${stamp}: axe',
-          '${supportId}', '${supportId}')
+          '${supportId}', '${supportId}', jsonb_build_array(jsonb_build_object('sent_at', now(),
+            'expires_at', now() + interval '7 days', 'files',
+            '[{"name": "a-very-long-story-name-that-wraps-on-a-phone-screen.docx", "size": 34567}]'::jsonb)))
         on conflict (id) do nothing;
+        insert into public.exports (user_id, kind, data_request_id, display_name, file_name, state,
+            file_size, ready_at, expires_at)
+          select '${adultWriterId}', 'data_request', '${axeRequestId}',
+            'a-very-long-story-name-that-wraps-on-a-phone-screen.docx',
+            gen_random_uuid()::text || '.docx', 'ready', 34567, now(), now() + interval '7 days'
+          where not exists (select 1 from public.exports where data_request_id = '${axeRequestId}');
         update public.profiles set locale = '${view.language}' where handle = 'support';`);
       await useSessionInBrowser(page.context(), (await signInPersona('support')).session);
       await checkScreen(page, view);

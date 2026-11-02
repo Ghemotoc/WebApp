@@ -133,7 +133,13 @@
     "parent_needed": "This person is under 16: the check goes to their parent or guardian.",
     "outcome_needed": "Say what was done, in at most 2000 characters.",
     "refused": "That wasn’t saved. Check the fields and try again.",
-    "unreachable": "We couldn’t reach the database. Try again in a moment."
+    "unreachable": "We couldn’t reach the database. Try again in a moment.",
+    "not_a_copy": "This request isn’t for a copy of the data.",
+    "identity_denied": "The person told us this request wasn’t theirs.",
+    "identity_not_checked": "Check the person’s identity first.",
+    "bad_files": "The copy’s files weren’t right. Try building it again.",
+    "no_file": "A file didn’t arrive. Try building the copy again.",
+    "not_found": "That file or copy isn’t there any more. Reload the page."
   },
   "mine": {
     "heading": "Data requests",
@@ -164,6 +170,35 @@
     "confirmed": "You confirmed it was you.",
     "denied": "You told us it wasn’t you. We won’t act on it, and we’ll look into it.",
     "answerFailed": "We couldn’t save your answer. Try again.",
-    "notWaiting": "We’re no longer waiting for an answer on this request."
+    "notWaiting": "We’re no longer waiting for an answer on this request.",
+    "copyReady": "Your copy is ready. Download it by {{date}}; after that it’s deleted.",
+    "download": "Download {{name}}"
+  },
+  "copy": {
+    "heading": "The copy",
+    "intro": "The copy holds everything the person put here and their account data as a machine-readable file (data.json), every story and every story’s plan as a Word file, and their library as a spreadsheet. It is built in this tab, in the person’s language, then the person downloads it from Settings while signed in, for seven days. Nothing goes to any other address.",
+    "formatLabel": "How to send it",
+    "formats": {
+      "zip": "One ZIP of everything",
+      "separate": "Each file on its own"
+    },
+    "send": "Build and send the copy",
+    "building": "Building the copy. Keep this tab open until it’s sent.",
+    "sent": "The copy is sent. The person has a notice and an email, and can download it for seven days.",
+    "blocked": {
+      "not_a_copy": "This request isn’t for a copy of the data, so no copy is sent.",
+      "parent_needed": "This person is under 16 and the request didn’t come from inside their account, so the copy goes through their parent or guardian.",
+      "identity_denied": "The person told us this request wasn’t theirs, so nothing is sent.",
+      "identity_not_checked": "Check the person’s identity first: ask them to confirm the request was theirs."
+    },
+    "filesHeading": "Files waiting for the person",
+    "openHint": "You don’t need to read the files to send them. Opening one is logged.",
+    "fileLine": "{{size}}, until {{date}}",
+    "open": "Open",
+    "openLabel": "Open {{name}} (logged)",
+    "sentHeading": "Copies sent",
+    "sentLine_one": "Sent {{sent}}: {{count}} file, until {{until}}",
+    "sentLine_few": "Sent {{sent}}: {{count}} files, until {{until}}",
+    "sentLine_other": "Sent {{sent}}: {{count}} files, until {{until}}"
   }
 }

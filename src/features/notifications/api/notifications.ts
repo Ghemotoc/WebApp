@@ -41,7 +41,8 @@ export type NotificationKind =
   | 'class_archived'
   | 'story_changed_by_staff'
   | 'data_request_confirm'
-  | 'data_request_extended';
+  | 'data_request_extended'
+  | 'data_request_copy_ready';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';

@@ -70,7 +70,9 @@
     "subjectDataRequestConfirm": "Tu ai trimis această cerere privind datele tale?",
     "dataRequestConfirm": "Am primit o cerere privind datele din contul tău ({{reference}}) prin email sau poștă, nu din contul tău. Intră în cont și deschide Setări, la Cereri privind datele, ca să ne spui dacă tu ai trimis-o. Dacă nu, spune-ne acolo: nu îi vom da curs.",
     "subjectDataRequestExtended": "Avem nevoie de mai mult timp pentru cererea ta privind datele",
-    "dataRequestExtended": "Avem nevoie de mai mult timp ca să răspundem la cererea ta privind datele {{reference}}. Îți răspundem până pe {{deadline}}. Motivul: {{reason}}"
+    "dataRequestExtended": "Avem nevoie de mai mult timp ca să răspundem la cererea ta privind datele {{reference}}. Îți răspundem până pe {{deadline}}. Motivul: {{reason}}",
+    "subjectDataRequestCopyReady": "Copia datelor tale e gata",
+    "dataRequestCopyReady": "Copia datelor tale pe care ai cerut-o ({{reference}}) e gata. Intră în cont și deschide Setări, la Cereri privind datele, ca s-o descarci. Rămâne acolo șapte zile, apoi se șterge. Nu îți trimitem niciodată datele prin email."
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} te roagă să fii de acord cu contul său {{productName}}",

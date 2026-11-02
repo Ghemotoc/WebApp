@@ -104,7 +104,7 @@ export function StoriesExportReady({ copy, story, wasReused }: StoriesExportRead
         {wasReused && <span className="text-sm">{t('stories.reused')}</span>}
       </span>
       <ExportDownloadButton
-        copy={copy}
+        fileName={copy.file_name}
         label={t(`stories.download.${kind}`)}
         downloadName={downloadName}
       />

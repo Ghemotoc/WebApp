@@ -1,7 +1,7 @@
 /**
- * Settings › Data requests: the signed-in person's own data requests, and their answer when the
+ * Settings › Data requests: the signed-in person's own data requests, their answer when the
  * team asks whether a request made by email or post was theirs (bundle ADMIN-2, part c1; story
- * S1-E11-09 criterion 4; GDPR art. 12(6)).
+ * S1-E11-09 criterion 4; GDPR art. 12(6)) and the files of a copy the team sent (part c2).
  *
  * Signing in to the account is the identity check: the answer comes from the account itself, so
  * nothing is ever sent to an address taken from the request.
@@ -26,7 +26,26 @@ const myDataRequestSchema = z.object({
   extension_reason: z.string().nullable(),
   identity: z.enum(['not_needed', 'not_asked', 'asked', 'confirmed', 'denied']),
   state: z.enum(['open', 'closed']),
+  // Part c2: the files of a copy staff sent, while they last.
+  files: z.array(
+    z.object({
+      file_name: z.string(),
+      display_name: z.string(),
+      file_size: z.number().nullable(),
+      expires_at: z.string(),
+    }),
+  ),
 });
+
+/** One file of a copy staff sent for the person's request (part c2). */
+export interface MyDataRequestFile {
+  /** The random name in the exports bucket; the download asks Storage for it, signed in. */
+  fileName: string;
+  /** "rain.docx": the name the file is saved under. */
+  displayName: string;
+  fileSize: number | null;
+  expiresAt: string;
+}
 
 /** One of the person's own requests. */
 export interface MyDataRequest {
@@ -40,6 +59,8 @@ export interface MyDataRequest {
   extensionReason: string | null;
   identity: DataRequestIdentity;
   isOpen: boolean;
+  /** The copy's files, downloadable signed in for seven days (S1-E11-09). */
+  files: MyDataRequestFile[];
 }
 
 /** The error a refused or failed call throws. */
@@ -71,6 +92,12 @@ export async function fetchMyDataRequests(client: AppSupabaseClient): Promise<My
     extensionReason: row.extension_reason,
     identity: row.identity,
     isOpen: row.state === 'open',
+    files: row.files.map((file) => ({
+      fileName: file.file_name,
+      displayName: file.display_name,
+      fileSize: file.file_size,
+      expiresAt: file.expires_at,
+    })),
   }));
 }
 

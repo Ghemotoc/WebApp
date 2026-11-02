@@ -448,4 +448,24 @@ describe('notificationText', () => {
     expect(text.quote).toBe('Many stories to gather.');
     expect(text.href).toBe('/settings#data-requests');
   });
+
+  it('a data request’s copy being ready leads to Settings to download it (part c2)', () => {
+    const readyRow: AppNotification = {
+      ...newChapter,
+      kind: 'data_request_copy_ready',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      isRequired: true,
+      dataRequest: { reference: 'D-000009', deadline: '2027-02-28', extensionReason: null },
+    };
+    const text = notificationText(englishT(), readyRow, null);
+    expect(text.who).toBe('Your account:');
+    expect(text.what).toContain('D-000009');
+    expect(text.what).toContain('within seven days');
+    expect(text.actionLabel).toBe('Download it');
+    expect(text.href).toBe('/settings#data-requests');
+  });
 });
