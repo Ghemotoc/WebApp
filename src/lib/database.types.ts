@@ -6338,13 +6338,6 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'story_revisions_audit_log_id_fkey';
-            columns: ['audit_log_id'];
-            isOneToOne: false;
-            referencedRelation: 'audit_log';
-            referencedColumns: ['id'];
-          },
-          {
             foreignKeyName: 'story_revisions_changed_by_user_id_fkey';
             columns: ['changed_by_user_id'];
             isOneToOne: false;

@@ -41,7 +41,9 @@ create table public.story_revisions (
   -- Only the fields that changed, before and after.
   before_values jsonb not null,
   after_values jsonb not null,
-  audit_log_id uuid references public.audit_log (id),
+  -- The matching audit log row. No foreign key: the audit log takes none, so its append-only
+  -- trigger stays the only thing that answers a truncate (test 013).
+  audit_log_id uuid,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
