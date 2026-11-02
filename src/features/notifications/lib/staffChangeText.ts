@@ -32,6 +32,25 @@ function changedFieldsList(t: TFunction, fields: string[]): string {
 }
 
 /**
+ * The line for a change that brought something back: a removed passage put back, or the story
+ * or one chapter shown again; null for any other change.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a story_changed_by_staff row
+ * @param story - the story's title, or "your story"
+ * @returns the line, or null
+ */
+function broughtBackLine(t: TFunction, notification: AppNotification, story: string) {
+  const change = notification.staffChange;
+  const number = notification.chapter?.position ?? 0;
+  if (change === null) return null;
+  if (change.fields.includes('passage')) return t('what.staffPutBackPassage', { number, story });
+  if (change.visibility !== 'shown') return null;
+  if (notification.chapter !== null) return t('what.staffShowedChapter', { number, story });
+  return t('what.staffShowedStory', { story });
+}
+
+/**
  * What happened, in one line.
  *
  * @param t - the notifications translation function
@@ -40,16 +59,9 @@ function changedFieldsList(t: TFunction, fields: string[]): string {
  */
 function whatChanged(t: TFunction, notification: AppNotification): string {
   const story = notification.story?.title ?? t('staffChangeFields.yourStory');
-  const change = notification.staffChange;
-  const chapterNumber = notification.chapter?.position ?? 0;
-  if (change?.fields.includes('passage') === true) {
-    return t('what.staffPutBackPassage', { number: chapterNumber, story });
-  }
-  if (change?.visibility === 'shown' && notification.chapter !== null) {
-    return t('what.staffShowedChapter', { number: chapterNumber, story });
-  }
-  if (change?.visibility === 'shown') return t('what.staffShowedStory', { story });
-  const fields = changedFieldsList(t, change?.fields ?? []);
+  const broughtBack = broughtBackLine(t, notification, story);
+  if (broughtBack !== null) return broughtBack;
+  const fields = changedFieldsList(t, notification.staffChange?.fields ?? []);
   return t('what.staffChangedStory', { fields, story });
 }
 

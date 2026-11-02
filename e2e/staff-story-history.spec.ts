@@ -89,8 +89,8 @@ test.describe('story history and removing a passage (S1-E11-08)', () => {
     // Select the exact words, as a mouse or Shift and the arrow keys would.
     const start = chapterText.indexOf(passage);
     await words.evaluate(
-      (field: HTMLTextAreaElement, range) => field.setSelectionRange(range[0], range[1]),
-      [start, start + passage.length],
+      (field: HTMLTextAreaElement, range) => field.setSelectionRange(range.from, range.to),
+      { from: start, to: start + passage.length },
     );
     await page.getByRole('button', { name: 'Use the selected words' }).click();
     await expect(page.locator('blockquote', { hasText: passage })).toBeVisible();
