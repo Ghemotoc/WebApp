@@ -18,18 +18,19 @@ Bundle 11 CLASSES, part b: teachers start a class space from the form, the class
 - **Typing a code.** "Join a class" on the Forums page's Spaces card and on the Spaces page opens `/class`, a form for the code the teacher wrote on the board. Spaces and lower case are fine.
 
 ## How it was tested
-- Database: `233-class-tools.test.sql` (24 tests):
+- Database: `233-class-tools.test.sql` (25 tests):
   - the default lock date;
   - lock now, unlock and change the date, each logged;
   - a date more than two years ahead and an open space are refused;
   - only the settings power may lock;
   - a locked class refuses new threads, replies, edits, codes and joins, while members still read;
-  - the waiting list with its reasons, for the members power only.
+  - the waiting list with its reasons, for the members power only;
+  - the waiting list function is volatile, because a read-only call from the app was refused (found by the end-to-end test).
 - Unit: `classTools.test.ts`: refusals, the calls and the lock date helpers (summer time included).
 - End to end: `e2e/class-tools.spec.ts`:
   - the teacher starts a class from the form;
   - a student types the code from Forums › Join a class;
-  - the teacher sees who waits and why;
+  - the teacher sees who waits and why (while the test is adults-only, an under-18 shows as "Account not ready yet");
   - lock and unlock, with posting stopping and coming back;
   - axe and the doodle check at 390, 768 and 1440 px, light and night, ro and en.
   - The class, space and forum specs run too.
