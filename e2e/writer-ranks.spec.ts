@@ -11,8 +11,8 @@
  * - a writer with no published chapter shows no rank at all;
  * - the profile passes axe at 390, 768 and 1440 px, light and night, ro and en, and no doodle
  *   touches text or a control (the avatar's initials keep a line height of 1 since this part).
- * Test data: one story "Ranguri e2e" with 15 published chapters by adult_writer, and one thread
- * "Ranguri e2e" they start here. Both are removed before and after.
+ * Test data: one story "Ranguri e2e" with 15 published chapters by the support persona, and one
+ * thread "Ranguri e2e" they start here. Both are removed before and after.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
@@ -20,8 +20,11 @@ import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessib
 import { runSql } from './support/database';
 import { expectNoDoodleOverlap } from './support/doodles';
 
-/** adult_writer's user ID (the seed's). */
-const writerId = '00000000-0000-4000-8000-000000000001';
+/**
+ * The support persona's user ID (the seed's). No other spec writes as support, so the rank's
+ * numbers stay exact while the other shards publish chapters for adult_writer at the same time.
+ */
+const writerId = '00000000-0000-4000-8000-000000000011';
 const storyId = '23100000-0000-4000-9000-00000000e2e1';
 const title = 'Ranguri e2e';
 
@@ -31,11 +34,11 @@ function cleanUp() {
     delete from public.chapters where story_id = '${storyId}';
     delete from public.stories where id = '${storyId}';
     delete from public.forum_threads where title = '${title}';
-    update public.profiles set locale = 'ro' where handle in ('adult_writer', 'teacher');`);
+    update public.profiles set locale = 'ro' where handle = 'support';`);
 }
 
 /**
- * Gives adult_writer a story with 15 published chapters and 41,200 words in all, so they are a
+ * Gives support a story with 15 published chapters and 41,200 words in all, so they are a
  * Storyteller on their way to Novelist. The database's triggers work the rank out.
  */
 function publishChapters() {
@@ -52,7 +55,7 @@ function publishChapters() {
          lateral (select case when step = 1 then 3204 else 2714 end as words) as sizes;`);
 }
 
-/** Starts adult_writer's thread, as adult_writer, and answers its address. */
+/** Starts the writer's thread, as the writer, and answers its address. */
 function startThread(): string {
   const number =
     runSql(`select set_config('request.jwt.claims', '{"sub": "${writerId}", "role": "authenticated"}', false);
@@ -74,16 +77,22 @@ async function openSignedOut(browser: Browser, address: string): Promise<Page> {
 
 test.describe('writer ranks (FORUMS-2e, S1-E8-09)', () => {
   test.describe.configure({ mode: 'serial' });
-  test.beforeAll(() => {
-    cleanUp();
-    publishChapters();
-  });
+  test.beforeAll(cleanUp);
   test.afterAll(cleanUp);
+
+  test('a writer with no published chapter has no rank', async ({ browser }) => {
+    const page = await openSignedOut(browser, '/u/support');
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.getByTestId('rank-chip')).toHaveCount(0);
+    await expect(page.getByText('The four ranks')).toHaveCount(0);
+    await page.context().close();
+  });
 
   test('the profile shows the rank, the ladder and the way to the next rank', async ({
     browser,
   }) => {
-    const page = await openSignedOut(browser, '/u/adult_writer');
+    publishChapters();
+    const page = await openSignedOut(browser, '/u/support');
     await expect(page.getByTestId('rank-chip')).toHaveText('Rank: Storyteller');
     const card = page.getByRole('region', { name: 'Storyteller' });
     await expect(card.getByText('Forum posts don’t count.', { exact: false })).toBeVisible();
@@ -110,19 +119,11 @@ test.describe('writer ranks (FORUMS-2e, S1-E8-09)', () => {
   test('unpublishing chapters lowers the rank', async ({ browser }) => {
     runSql(`update public.chapters set status = 'draft'
       where story_id = '${storyId}' and position > 4;`);
-    const page = await openSignedOut(browser, '/u/adult_writer');
+    const page = await openSignedOut(browser, '/u/support');
     await expect(page.getByTestId('rank-chip')).toHaveText('Rank: New writer');
     await expect(page.getByText('4 of 5 chapters to Writer')).toBeVisible();
     await page.context().close();
     runSql(`update public.chapters set status = 'published' where story_id = '${storyId}';`);
-  });
-
-  test('a writer with no published chapter has no rank', async ({ browser }) => {
-    const page = await openSignedOut(browser, '/u/teacher');
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.getByTestId('rank-chip')).toHaveCount(0);
-    await expect(page.getByText('The four ranks')).toHaveCount(0);
-    await page.context().close();
   });
 
   test('axe: the profile with its rank, every view', async ({ browser }) => {
@@ -130,7 +131,7 @@ test.describe('writer ranks (FORUMS-2e, S1-E8-09)', () => {
     test.setTimeout(240_000);
     const context = await browser.newContext();
     const page = await context.newPage();
-    for (const view of everyView(['/u/adult_writer'])) {
+    for (const view of everyView(['/u/support'])) {
       await checkScreen(page, view);
       await expect(page.getByTestId('rank-chip')).toBeVisible();
       await expectNoDoodleOverlap(page);
