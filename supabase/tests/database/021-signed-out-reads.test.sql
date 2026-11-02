@@ -83,6 +83,7 @@ select results_eq(
        ('compliance_log_entries', 0::bigint),
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
+       ('customisation_change_requests', 0::bigint),
        -- Private messages are the two people's only (S1-E9-01).
        ('conversation_members', 0::bigint),
        ('conversations', 0::bigint),

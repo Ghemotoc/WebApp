@@ -35,7 +35,8 @@ export type NotificationKind =
   | 'reading_reminder'
   | 'story_finished'
   | 'space_join_request'
-  | 'space_join_approved';
+  | 'space_join_approved'
+  | 'customisation_change_requested';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
@@ -59,6 +60,17 @@ export interface NotificationAppeal {
 export interface NotificationMail {
   reference: string;
   subject: string;
+}
+
+/** A moderator's request to change a signature or a space's banner (S1-E8-08). */
+export interface NotificationChangeRequest {
+  item: 'signature' | 'space_banner';
+  reason: string;
+  dueAt: string;
+  /** False once it was changed in time or removed. */
+  isOpen: boolean;
+  /** The space, for a banner. */
+  space: { slug: string; name: string } | null;
 }
 
 /** One notification as the page draws it. */
@@ -93,6 +105,8 @@ export interface AppNotification {
   mail: NotificationMail | null;
   /** The space a join request or approval is about, while the reader may see it (FORUMS-2c). */
   space: { slug: string; name: string } | null;
+  /** What a moderator asked to change, for customisation_change_requested (S1-E8-08). */
+  changeRequest: NotificationChangeRequest | null;
   /** A moderation decision can't be switched off (criterion 4). */
   isRequired: boolean;
   isRead: boolean;
@@ -131,9 +145,34 @@ interface NotificationRow {
   } | null;
   mail?: { reference: string; subject: string } | null;
   space?: { slug: string; name: string } | null;
+  change_request?: {
+    item: NotificationChangeRequest['item'];
+    reason: string;
+    due_at: string;
+    is_open: boolean;
+    space: { slug: string; name: string } | null;
+  } | null;
   is_required: boolean;
   is_read: boolean;
   at: string;
+}
+
+/**
+ * A moderator's change request in the page's shape (S1-E8-08).
+ *
+ * @param row - the database's row
+ * @returns the request, or null for other kinds
+ */
+function changeRequestOf(row: NotificationRow): NotificationChangeRequest | null {
+  const request = row.change_request;
+  if (request === null || request === undefined) return null;
+  return {
+    item: request.item,
+    reason: request.reason,
+    dueAt: request.due_at,
+    isOpen: request.is_open,
+    space: request.space,
+  };
 }
 
 /**
@@ -183,6 +222,7 @@ function toNotification(row: NotificationRow): AppNotification {
     appeal: appealOf(row),
     mail: row.mail ?? null,
     space: row.space ?? null,
+    changeRequest: changeRequestOf(row),
     isRequired: row.is_required,
     isRead: row.is_read,
     at: row.at,

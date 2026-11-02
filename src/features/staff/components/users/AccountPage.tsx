@@ -4,7 +4,8 @@
  *
  * What it shows, top to bottom: the username and pen name; the label rows (short user ID with
  * Copy, status, masked email with "Show (logged)", age group and age check, roles); the Actions
- * panel (owner, admin, moderator); the sanctions history with Lift; the open cases; the newest
+ * panel (owner, admin, moderator); "Ask for a change" to the person's forum signature (S1-E8-08,
+ * moderation staff); the sanctions history with Lift; the open cases; the newest
  * audit rows (owner and admin); and the private messages line. Each part shows only for a role
  * that may see it (architecture 1.8.3), and the database checks every one again.
  * Private messages (story criterion 3): this page reads no message, ever; a moderator sees one
@@ -18,6 +19,7 @@ import { Link, useParams } from 'react-router';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { CustomisationChangeForm } from '@/features/forums/components/CustomisationChangeForm';
 import { AccountSanctions } from '@/features/moderation/components/AccountSanctions';
 import { registerModerationTranslations } from '@/features/moderation/registerModerationTranslations';
 
@@ -46,6 +48,9 @@ function AccountSections({ account, userId }: { account: Account; userId: string
     <>
       <AccountSummaryRows summary={summary} account={account} />
       {summary.mayAct && <AccountActions summary={summary} actions={actions} />}
+      {summary.handle !== null && (
+        <CustomisationChangeForm item="signature" reference={summary.handle} />
+      )}
       {summary.mayViewSanctions && (
         <AccountSanctions
           heading={t('users.sanctionsHeading')}

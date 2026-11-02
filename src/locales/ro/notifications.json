@@ -63,7 +63,9 @@
     "spaceJoinRequest_one": "a cerut să intre în {{space}}.",
     "spaceJoinRequest_few": "au cerut să intre în {{space}}.",
     "spaceJoinRequest_other": "au cerut să intre în {{space}}.",
-    "spaceJoinApproved": "ai intrat în {{space}}. Acum poți posta acolo."
+    "spaceJoinApproved": "ai intrat în {{space}}. Acum poți posta acolo.",
+    "signatureChangeRequested": "te rugăm să-ți schimbi semnătura de pe forum în 24 de ore, altfel va fi ștearsă.",
+    "bannerChangeRequested": "te rugăm să schimbi imaginea de banner a spațiului {{space}} în 24 de ore, altfel va fi ștearsă."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -115,7 +117,8 @@
     "openLibrary": "Deschide biblioteca",
     "openStory": "Deschide povestea",
     "seeRequests": "Vezi cererile",
-    "openSpace": "Deschide spațiul"
+    "openSpace": "Deschide spațiul",
+    "changeIt": "Modifică"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

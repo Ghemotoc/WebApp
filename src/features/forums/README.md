@@ -44,3 +44,8 @@ The database half is `supabase/migrations/…_forums1_a_forum_categories.sql` an
   `lib/spaceForums.ts` finds the space from the address, `NewThreadForm` is shared with the
   space's new-thread page, `ForumBreadcrumb` and `SpaceReplyNote` show the way through the space.
   The space screens themselves are in `src/features/spaces/`.
+- Signatures (S1-E8-08, FORUMS-2d): `api/forumSignatures.ts`, `hooks/useForumSignatures.ts`,
+  `lib/signatureLimits.ts`, and `components/SignatureBody.tsx` (under posts and on profiles),
+  `ProfileSignatureCard.tsx`, `SignatureSettingsSection.tsx` with `SignatureWordsForm.tsx` and
+  `SignaturePictureControls.tsx` (Settings), `ChangeRequestNotice.tsx` and
+  `CustomisationChangeForm.tsx` (a moderator's request to change a signature or a banner).

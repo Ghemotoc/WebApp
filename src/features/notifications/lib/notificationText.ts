@@ -405,6 +405,35 @@ function spaceJoinApprovedText(t: TFunction, notification: AppNotification): Not
   };
 }
 
+/**
+ * A moderator asked the reader to change their forum signature or a space's banner picture within
+ * 24 hours (S1-E8-08 criterion 3; Q29). The row quotes the reason and leads to the place to change
+ * it: Settings › Forum signature, or the space's settings. It never names the moderator.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a customisation_change_requested row
+ * @returns the row's words
+ */
+function changeRequestText(t: TFunction, notification: AppNotification): NotificationText {
+  const request = notification.changeRequest;
+  const signatureRow: NotificationText = {
+    who: t('who.moderationTeam'),
+    what: t('what.signatureChangeRequested'),
+    quote: request?.reason ?? null,
+    grouped: null,
+    actionLabel: t('actions.changeIt'),
+    href: '/settings#forum-signature',
+  };
+  // A banner picture is changed on its space's settings page.
+  const space = request?.space ?? null;
+  if (request?.item !== 'space_banner' || space === null) return signatureRow;
+  return {
+    ...signatureRow,
+    what: t('what.bannerChangeRequested', { space: space.name }),
+    href: `/spaces/${space.slug}/settings`,
+  };
+}
+
 /** The kinds with words of their own (the team's, the account's and the spaces') and the function for each. */
 const teamTextFor: Partial<
   Record<AppNotification['kind'], (t: TFunction, notification: AppNotification) => NotificationText>
@@ -427,6 +456,7 @@ const teamTextFor: Partial<
   reading_reminder: readingReminderText,
   space_join_request: spaceJoinRequestText,
   space_join_approved: spaceJoinApprovedText,
+  customisation_change_requested: changeRequestText,
 };
 
 /**

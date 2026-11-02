@@ -7,9 +7,10 @@
  * words in 15 px, then the actions. A deleted or removed post keeps its number with a marker, so
  * the numbers never shift. Each card is a real <article> named "Post 3 by poppyverse", with an id
  * (post-3) a permalink scrolls to. Part c draws a reply's quotes above its words, each linking
- * back to the quoted post (S1-E8-03).
+ * back to the quoted post (S1-E8-03). Under the words sits the author's forum signature, only from
+ * 768 px up: phones hide it (S1-E8-08 criterion 2; Q25).
  * Who uses it: ThreadPage. What it calls: ForumQuoteBlock, ForumPostText, PostActions,
- * PostEditForm, PostHistory.
+ * PostEditForm, PostHistory, SignatureBody.
  */
 import { useId, useState } from 'react';
 import { Link } from 'react-router';
@@ -29,6 +30,7 @@ import { ForumQuoteBlock } from './ForumQuoteBlock';
 import { PostActions } from './PostActions';
 import { PostEditForm } from './PostEditForm';
 import { PostHistory } from './PostHistory';
+import { SignatureBody } from './SignatureBody';
 
 /** What one post needs. */
 export interface ForumPostCardProps {
@@ -120,6 +122,16 @@ function PostBody({ post, forumSlug, threadNumber }: ForumPostCardProps) {
         />
       ))}
       <ForumPostText text={post.body ?? ''} />
+      {/* Q25: signatures are hidden at phone width, so threads stay short there. */}
+      {post.signature !== null && (
+        <div className="hidden md:block" data-testid="post-signature">
+          <SignatureBody
+            signature={post.signature}
+            name={nameOf(post.author, t('person.deleted'))}
+            size="post"
+          />
+        </div>
+      )}
     </div>
   );
 }

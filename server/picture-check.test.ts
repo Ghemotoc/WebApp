@@ -6,7 +6,7 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { bearerToken, handlePictureCheck } from './picture-check';
+import { bearerToken, handlePictureCheck, withStillPictureRule } from './picture-check';
 import { checkWithStub } from './picture-check/stub';
 import { hmacHex } from './signup-context';
 
@@ -91,5 +91,45 @@ describe('the picture check handler', () => {
     const response = await handlePictureCheck(post({ pictureId }), options);
     expect(await response.json()).toEqual({ status: 'approved' });
     expect(calls).toHaveLength(1);
+  });
+});
+
+describe('the still picture rule for signatures (S1-E8-08)', () => {
+  /** The smallest animated WebP shape: RIFF, WEBP and an ANIM chunk. */
+  const letters = (text: string) => [...text].map((letter) => letter.charCodeAt(0));
+  const movingWebp = new Uint8Array([
+    ...letters('RIFF'),
+    0,
+    0,
+    0,
+    0,
+    ...letters('WEBP'),
+    ...letters('ANIM'),
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+  ]);
+  const passed = {
+    outcome: 'passed',
+    flags: {},
+    isKnownAbuseMatch: false,
+    provider: 'stub',
+  } as const;
+
+  it('a moving signature picture is held for a person, even when the services pass it', () => {
+    const verdict = withStillPictureRule(passed, { bucket: 'signature-pictures' }, movingWebp);
+    expect(verdict.outcome).toBe('flagged');
+    expect(verdict.flags).toEqual({ animated: true });
+  });
+
+  it('a moving picture in another bucket, or an unanswered check, is left as it was', () => {
+    expect(withStillPictureRule(passed, { bucket: 'covers' }, movingWebp)).toEqual(passed);
+    const unavailable = { ...passed, outcome: 'unavailable' } as const;
+    expect(withStillPictureRule(unavailable, { bucket: 'signature-pictures' }, movingWebp)).toEqual(
+      unavailable,
+    );
   });
 });

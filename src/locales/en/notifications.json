@@ -63,7 +63,9 @@
     "spaceJoinRequest_one": "asked to join {{space}}.",
     "spaceJoinRequest_few": "asked to join {{space}}.",
     "spaceJoinRequest_other": "asked to join {{space}}.",
-    "spaceJoinApproved": "you’re in {{space}}. You can now post there."
+    "spaceJoinApproved": "you’re in {{space}}. You can now post there.",
+    "signatureChangeRequested": "please change your forum signature within 24 hours, or it will be removed.",
+    "bannerChangeRequested": "please change the banner picture of {{space}} within 24 hours, or it will be removed."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -115,7 +117,8 @@
     "openLibrary": "Open your library",
     "openStory": "Open the story",
     "seeRequests": "See the requests",
-    "openSpace": "Open the space"
+    "openSpace": "Open the space",
+    "changeIt": "Change it"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

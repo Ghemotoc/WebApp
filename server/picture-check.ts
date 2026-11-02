@@ -9,6 +9,8 @@
  *    nobody can check someone else's picture; a picture that isn't pending is answered as it is;
  * 3. downloads the file from Storage with the same token (the uploader and staff may read it);
  * 4. runs the checks through the adapter (server/picture-check/: the stub or the real services);
+ *    a signature picture that moves is held for a moderator even when the services pass it
+ *    (S1-E8-08: one still picture; the app refuses one before upload, this catches the rest);
  * 5. signs the verdict with PICTURE_CHECK_SECRET and saves it through record_picture_check(),
  *    which refuses anything not signed with the same secret (Vault: picture_check_secret).
  * Nothing about the picture or the person is logged (CLAUDE.md rule 12).
@@ -16,6 +18,8 @@
  * locally; the upload screens call POST /api/picture-check straight after an upload.
  */
 import { pictureCheckRequestSchema } from '../src/schemas/pictureCheck';
+
+import { isAnimatedPicture } from '../src/lib/animated-picture';
 
 import type { CheckPicture, PictureVerdict } from './picture-check/index';
 import { hmacHex } from './signup-context';
@@ -104,6 +108,26 @@ async function saveVerdict(
 }
 
 /**
+ * Holds a moving signature picture for a person to look at (S1-E8-08 criterion 1). The app redraws
+ * every picture as a still before uploading it, so a moving file here came some other way.
+ *
+ * @param verdict - the services' verdict
+ * @param picture - the bucket the file is in
+ * @param bytes - the stored file
+ * @returns the verdict, flagged with "animated" when a signature picture moves
+ */
+export function withStillPictureRule(
+  verdict: PictureVerdict,
+  picture: { bucket: string },
+  bytes: Uint8Array,
+): PictureVerdict {
+  if (picture.bucket !== 'signature-pictures' || !isAnimatedPicture(bytes)) return verdict;
+  // An unavailable answer stays unavailable: the picture is tried again and held then.
+  if (verdict.outcome === 'unavailable') return verdict;
+  return { ...verdict, outcome: 'flagged', flags: { ...verdict.flags, animated: true } };
+}
+
+/**
  * The caller's sign-in token from the Authorization header.
  *
  * @param request - the request
@@ -148,7 +172,11 @@ export async function handlePictureCheck(
   const file = await downloadPicture(options, token, picture);
   if (file === null) return json({ error: 'unavailable' }, 503);
   // Step 4 and 5: the check, then the signed save.
-  const verdict = await options.checkPicture({ ...file, originalName: parsed.data.originalName });
+  const servicesVerdict = await options.checkPicture({
+    ...file,
+    originalName: parsed.data.originalName,
+  });
+  const verdict = withStillPictureRule(servicesVerdict, picture, file.bytes);
   const status = await saveVerdict(
     { ...options, secret: options.secret },
     token,

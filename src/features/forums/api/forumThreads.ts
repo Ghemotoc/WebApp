@@ -12,6 +12,8 @@
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
+import { signatureFrom, type ForumSignature } from './forumSignatures';
+
 /** A person as the forums show them; null for a deleted account. */
 export type ForumPerson = { handle: string; displayName: string; isStaff: boolean } | null;
 
@@ -55,6 +57,8 @@ export interface ForumPost {
   canDelete: boolean;
   /** Moderators only: the post has earlier versions to read. */
   hasHistory: boolean;
+  /** Its author's forum signature (S1-E8-08), or null when they have none. */
+  signature: ForumSignature | null;
 }
 
 /** The space a thread lives in (FORUMS-2a, S1-E8-06): its address and name. */
@@ -227,6 +231,7 @@ export function postFrom(row: JsonObject): ForumPost {
     canEdit: row['can_edit'] === true,
     canDelete: row['can_delete'] === true,
     hasHistory: row['has_history'] === true,
+    signature: signatureFrom(row['signature']),
   };
 }
 

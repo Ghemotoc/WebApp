@@ -1698,6 +1698,71 @@ export type Database = {
           },
         ];
       };
+      customisation_change_requests: {
+        Row: {
+          created_at: string;
+          due_at: string;
+          id: string;
+          item: string;
+          outcome: string | null;
+          reason: string;
+          requested_by_user_id: string | null;
+          resolved_at: string | null;
+          space_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          due_at?: string;
+          id?: string;
+          item: string;
+          outcome?: string | null;
+          reason: string;
+          requested_by_user_id?: string | null;
+          resolved_at?: string | null;
+          space_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          due_at?: string;
+          id?: string;
+          item?: string;
+          outcome?: string | null;
+          reason?: string;
+          requested_by_user_id?: string | null;
+          resolved_at?: string | null;
+          space_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'customisation_change_requests_requested_by_user_id_fkey';
+            columns: ['requested_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'customisation_change_requests_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'customisation_change_requests_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       daily_metrics: {
         Row: {
           created_at: string;
@@ -3108,6 +3173,7 @@ export type Database = {
           actor_user_ids: string[];
           appeal_id: string | null;
           case_id: string | null;
+          change_request_id: string | null;
           chapter_id: string | null;
           comment_id: string | null;
           created_at: string;
@@ -3132,6 +3198,7 @@ export type Database = {
           actor_user_ids?: string[];
           appeal_id?: string | null;
           case_id?: string | null;
+          change_request_id?: string | null;
           chapter_id?: string | null;
           comment_id?: string | null;
           created_at?: string;
@@ -3153,6 +3220,7 @@ export type Database = {
           actor_user_ids?: string[];
           appeal_id?: string | null;
           case_id?: string | null;
+          change_request_id?: string | null;
           chapter_id?: string | null;
           comment_id?: string | null;
           created_at?: string;
@@ -3182,6 +3250,13 @@ export type Database = {
             columns: ['case_id'];
             isOneToOne: false;
             referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_change_request_id_fkey';
+            columns: ['change_request_id'];
+            isOneToOne: false;
+            referencedRelation: 'customisation_change_requests';
             referencedColumns: ['id'];
           },
           {
@@ -3580,6 +3655,8 @@ export type Database = {
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
           shows_online_status: boolean;
+          signature: string | null;
+          signature_picture_id: string | null;
           teacher_badge_since: string | null;
           updated_at: string;
           age_check_can_ask_manual: boolean | null;
@@ -3630,6 +3707,8 @@ export type Database = {
           profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
           region_code?: string | null;
           shows_online_status?: boolean;
+          signature?: string | null;
+          signature_picture_id?: string | null;
           teacher_badge_since?: string | null;
           updated_at?: string;
         };
@@ -3663,6 +3742,8 @@ export type Database = {
           profile_visible_to?: Database['public']['Enums']['profile_audience'] | null;
           region_code?: string | null;
           shows_online_status?: boolean;
+          signature?: string | null;
+          signature_picture_id?: string | null;
           teacher_badge_since?: string | null;
           updated_at?: string;
         };
@@ -3680,6 +3761,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'regions';
             referencedColumns: ['code'];
+          },
+          {
+            foreignKeyName: 'profiles_signature_picture_id_fkey';
+            columns: ['signature_picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
           },
         ];
       };
@@ -6856,6 +6944,10 @@ export type Database = {
         Args: { body: string; is_note?: boolean; thread_reference: string };
         Returns: boolean;
       };
+      admin_request_customisation_change: {
+        Args: { item: string; reason: string; reference: string };
+        Returns: string;
+      };
       admin_request_report_details: {
         Args: { question: string; report_reference: string };
         Returns: undefined;
@@ -7307,6 +7399,8 @@ export type Database = {
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
           shows_online_status: boolean;
+          signature: string | null;
+          signature_picture_id: string | null;
           teacher_badge_since: string | null;
           updated_at: string;
         };
@@ -8356,6 +8450,8 @@ export type Database = {
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
           shows_online_status: boolean;
+          signature: string | null;
+          signature_picture_id: string | null;
           teacher_badge_since: string | null;
           updated_at: string;
         };
@@ -8606,6 +8702,7 @@ export type Database = {
           starts_at: string;
         }[];
       };
+      my_signature: { Args: Record<PropertyKey, never>; Returns: Json };
       my_space_age_group: {
         Args: Record<PropertyKey, never>;
         Returns: Database['public']['Enums']['space_age_group'];
@@ -8988,6 +9085,8 @@ export type Database = {
           profile_visible_to: Database['public']['Enums']['profile_audience'] | null;
           region_code: string | null;
           shows_online_status: boolean;
+          signature: string | null;
+          signature_picture_id: string | null;
           teacher_badge_since: string | null;
           updated_at: string;
         }[];
@@ -9008,6 +9107,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      profile_signature: { Args: { wanted_handle: string }; Returns: Json };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
       public_character_json: {
         Args: {
@@ -9255,6 +9355,7 @@ export type Database = {
         };
         Returns: string;
       };
+      register_signature_picture: { Args: { target_path: string }; Returns: string };
       register_space_banner: { Args: { target_path: string }; Returns: string };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
@@ -9262,6 +9363,7 @@ export type Database = {
         Args: { handle: string; reason?: string; slug: string };
         Returns: undefined;
       };
+      remove_unchanged_customisations: { Args: Record<PropertyKey, never>; Returns: number };
       rename_bible_section: { Args: { section_id: string; section_name: string }; Returns: Json };
       rename_chapter: { Args: { chapter_code: string; title: string }; Returns: Json };
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
@@ -9593,6 +9695,7 @@ export type Database = {
       set_my_handle: { Args: { new_handle: string }; Returns: string };
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
+      set_my_signature: { Args: { picture_id?: string; signature_text: string }; Returns: Json };
       set_notification_email: {
         Args: {
           delivery: Database['public']['Enums']['email_delivery'];
@@ -9666,6 +9769,8 @@ export type Database = {
       };
       sign_up_rule_of: { Args: { message: string }; Returns: string };
       sign_ups_by_age_group: { Args: Record<PropertyKey, never>; Returns: Json };
+      signature_json: { Args: { person_id: string }; Returns: Json };
+      signature_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       signed_up_reader_count: { Args: { for_day: string }; Returns: number };
       space_acts_as_platform: {
         Args: {
@@ -9684,6 +9789,7 @@ export type Database = {
         Args: { person_id: string };
         Returns: Database['public']['Enums']['space_age_group'];
       };
+      space_banner_change_request: { Args: { slug: string }; Returns: Json };
       space_banner_file_may_go: { Args: { object_name: string }; Returns: boolean };
       space_banner_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       space_card_visible: {
@@ -10247,7 +10353,8 @@ export type Database = {
         | 'reading_reminder'
         | 'story_finished'
         | 'space_join_request'
-        | 'space_join_approved';
+        | 'space_join_approved'
+        | 'customisation_change_requested';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -10255,7 +10362,8 @@ export type Database = {
         | 'drawing'
         | 'quote_card'
         | 'space_banner'
-        | 'atlas_image';
+        | 'atlas_image'
+        | 'signature_picture';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
@@ -10564,6 +10672,7 @@ export const Constants = {
         'story_finished',
         'space_join_request',
         'space_join_approved',
+        'customisation_change_requested',
       ],
       picture_kind: [
         'cover',
@@ -10573,6 +10682,7 @@ export const Constants = {
         'quote_card',
         'space_banner',
         'atlas_image',
+        'signature_picture',
       ],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       profile_audience: ['everyone', 'members', 'people_i_follow'],
