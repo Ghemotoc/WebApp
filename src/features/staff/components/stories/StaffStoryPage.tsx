@@ -3,10 +3,12 @@
  * story S1-E11-07; board AdminStory 8.11, the details and chapter list).
  *
  * It shows who owns the story (username and short user ID), its settings and status, its reports
- * and its chapters, never its words. Changing a story (hide, restrict, fix its details, remove an
- * unlawful passage) is S1-E11-08, which adds its controls here for staff who may act.
+ * and its chapters, never its words. Staff who may change stories (owner, admin, moderator) also
+ * get "Who can find it" (shown, restricted or hidden), "Settings and details" and a Hide button on
+ * each chapter, each with a reason (bundle ADMIN-2, part b1; S1-E11-08). A writer under 18 shows
+ * as "under 18" only, never their age (S1-E11-08 criterion "a writer under 18").
  * Who shows it: the router, inside StaffLayout. What it calls: useStaffStory →
- * api/staffStories.ts → admin_story_overview().
+ * api/staffStories.ts → admin_story_overview(); useChangeStaffStory for the changes.
  */
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
@@ -17,11 +19,14 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import type { StaffStoryOverview } from '../../api/staffStories';
+import { useChangeStaffStory } from '../../hooks/useChangeStaffStory';
 import { useStaffStory } from '../../hooks/useStaffStory';
 import { useStaffStoryWords } from '../../hooks/useStaffStoryWords';
 import { ShortUserId } from '../users/ShortUserId';
 
 import { StaffStoryChapters } from './StaffStoryChapters';
+import { StaffStorySettingsForm } from './StaffStorySettingsForm';
+import { StaffStoryVisibilityForm } from './StaffStoryVisibilityForm';
 
 /**
  * The details as label rows (DoD: a fine line between label and value rows).
@@ -42,6 +47,10 @@ function StoryDetails({ story }: { story: StaffStoryOverview }) {
       ),
     },
     { label: t('stories.columns.owner'), value: <ShortUserId userId={story.ownerUserId} /> },
+    {
+      label: t('stories.page.writerAge'),
+      value: story.ownerIsMinor ? t('stories.under18') : t('stories.page.adult'),
+    },
     { label: t('stories.columns.status'), value: words.status(story.status) },
     { label: t('stories.columns.readBy'), value: words.audience(story.readableBy) },
     { label: t('stories.columns.rating'), value: words.rating(story.rating) },
@@ -71,6 +80,8 @@ function StoryDetails({ story }: { story: StaffStoryOverview }) {
  */
 function StoryOverview({ story }: { story: StaffStoryOverview }) {
   const { t } = useTranslation('staff');
+  const changer = useChangeStaffStory(story.id);
+  const mayChange = story.canChange && story.deletedAt === null;
   return (
     <>
       <title>{t('stories.page.documentTitle', { title: story.title })}</title>
@@ -90,7 +101,17 @@ function StoryOverview({ story }: { story: StaffStoryOverview }) {
             <p className="m-0 text-body whitespace-pre-line">{story.blurb}</p>
           </section>
         )}
-        <StaffStoryChapters chapters={story.chapters} />
+        {mayChange && (
+          <>
+            <StaffStoryVisibilityForm story={story} changer={changer} />
+            <StaffStorySettingsForm
+              key={JSON.stringify(story.settings)}
+              story={story}
+              changer={changer}
+            />
+          </>
+        )}
+        <StaffStoryChapters chapters={story.chapters} changer={mayChange ? changer : null} />
       </div>
     </>
   );

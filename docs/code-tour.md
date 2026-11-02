@@ -1948,3 +1948,11 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - **How a search travels:** the search box and filters write the address (`?q=…&status=…`, `src/features/staff/lib/staffStoryFilters.ts`), `useStaffStories` reads it and calls `searchStaffStories()` in `api/staffStories.ts`, which calls `admin_search_stories()` (`supabase/migrations/20261211100001_admin2_a_every_story.sql`). That function checks `staff_may('stories', 'view')` first, then matches the title, the writer's current username (look-alikes folded), an earlier username from the audit log (`profile.handle_changed`) or the user ID, applies the filters and returns 50 rows a page built by `admin_story_row()`.
 - **What staff never see here:** a year of birth (only "under 18", from `age_band_from_birth()`), an email or a chapter's words. A draft chapter shows no title. Changing a story is S1-E11-08 (ADMIN-2b), which adds its controls to the story page for those with `staff_may('story_changes')`.
 - **Tests:** `supabase/tests/database/238-every-story-in-admin.test.sql`, `src/features/staff/lib/staffStoryFilters.test.ts`, `e2e/staff-stories.spec.ts`.
+
+## Staff change a story (S1-E11-08, part 08a; ADMIN-2b1)
+
+- Screen: `/staff/stories/:storyId` (`src/features/staff/components/stories/StaffStoryPage.tsx`). Owner, admin and moderator get "Who can find it", "Settings and details" and a Hide button on each chapter; support only looks.
+- One click: `StaffStorySettingsForm` → `useChangeStaffStory` → `api/staffStoryChanges.ts` → `admin_change_story_settings()` (migration `…_admin2_b1_change_story.sql`) → `admin_story_change_target()` checks the role and the reason → the writer's own checks (`check_story_basics()`, `check_story_labels()`, `set_story_tags()`) → `admin_record_story_change()` writes `story_revisions` and the audit log, then a statement of reasons (hide, restrict, raised rating) or a `story_changed_by_staff` notification.
+- Tables: `story_revisions` (every staff change, before and after) and `story_restrictions` (restricted stories: still open from a link, left out of `listed_stories()`), both `kind: staff`.
+- The writer's side: `src/features/notifications/lib/staffChangeText.ts` says what changed and quotes why; never who on the staff.
+- Tests: `supabase/tests/database/239-staff-change-a-story.test.sql`, `e2e/staff-story-changes.spec.ts`.

@@ -12,6 +12,8 @@ import { paragraphHash } from '@/lib/paragraph-link';
 
 import type { AppNotification } from '../api/notifications';
 
+import { staffChangeText } from './staffChangeText';
+
 /** A row's words and link. */
 export interface NotificationText {
   who: string;
@@ -498,6 +500,7 @@ const teamTextFor: Partial<
   customisation_change_requested: changeRequestText,
   certificate_issued: certificateIssuedText,
   class_archived: classArchivedText,
+  story_changed_by_staff: staffChangeText,
 };
 
 /**

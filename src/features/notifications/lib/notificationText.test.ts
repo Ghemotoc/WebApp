@@ -40,6 +40,7 @@ const newChapter: AppNotification = {
   mail: null,
   space: null,
   changeRequest: null,
+  staffChange: null,
   isRequired: false,
   isRead: false,
   at: '2026-10-25T07:00:00Z',
@@ -323,5 +324,48 @@ describe('notificationText', () => {
     const text = notificationText(englishT(), requestRow, null);
     expect(text.what).toContain('Fantasy writers’ circle');
     expect(text.href).toBe('/spaces/fantasy-writers-circle/settings');
+  });
+
+  it('a staff change to a story says what changed and why, never who on the staff', () => {
+    const changeRow: AppNotification = {
+      ...newChapter,
+      kind: 'story_changed_by_staff',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      chapter: null,
+      staffChange: {
+        fields: ['category_slug', 'tag_names', 'comments_enabled'],
+        visibility: null,
+        reasonCode: 'story_details',
+        reasonText: 'This is a short story, not a poem.',
+      },
+    };
+    const text = notificationText(englishT(), changeRow, null);
+    expect(text.who).toBe('Moderation team:');
+    expect(text.what).toBe(
+      'we changed the category, the tags and the comments setting of your story “The Salt Mine Choir”.',
+    );
+    expect(text.quote).toBe('This is a short story, not a poem.');
+    expect(text.href).toBe('/write/s/salt-mine-choir/settings');
+  });
+
+  it('a chapter shown again by staff names the chapter', () => {
+    const shownRow: AppNotification = {
+      ...newChapter,
+      kind: 'story_changed_by_staff',
+      category: 'staff',
+      actors: [],
+      actorCount: 0,
+      staffChange: {
+        fields: ['visibility'],
+        visibility: 'shown',
+        reasonCode: 'other',
+        reasonText: 'Fixed.',
+      },
+    };
+    expect(notificationText(englishT(), shownRow, null).what).toBe(
+      'chapter 15 of “The Salt Mine Choir” is shown again.',
+    );
   });
 });

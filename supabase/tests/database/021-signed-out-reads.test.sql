@@ -184,6 +184,8 @@ select results_eq(
        ('story_marketing', 0::bigint),
        ('story_plan_acts', 0::bigint),
        ('story_plans', 0::bigint),
+       ('story_restrictions', 0::bigint),
+       ('story_revisions', 0::bigint),
        ('story_scores', 0::bigint),
        ('story_tags', 0::bigint),
        ('tag_names', (select count(*) from public.tag_names)),

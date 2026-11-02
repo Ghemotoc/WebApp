@@ -67,7 +67,10 @@
     "signatureChangeRequested": "te rugăm să-ți schimbi semnătura de pe forum în 24 de ore, altfel va fi ștearsă.",
     "bannerChangeRequested": "te rugăm să schimbi imaginea de banner a spațiului {{space}} în 24 de ore, altfel va fi ștearsă.",
     "certificateIssued": "ai primit o diplomă semnată în {{space}}. O găsești în Diplomele mele.",
-    "classArchived": "spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: apoi numele reale tipărite pe ele se șterg."
+    "classArchived": "spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: apoi numele reale tipărite pe ele se șterg.",
+    "staffChangedStory": "am schimbat {{fields}} pentru povestea ta „{{story}}”.",
+    "staffShowedStory": "povestea ta „{{story}}” poate fi găsită din nou.",
+    "staffShowedChapter": "capitolul {{number}} din „{{story}}” se vede din nou."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -122,7 +125,8 @@
     "openSpace": "Deschide spațiul",
     "changeIt": "Modifică",
     "openCertificates": "Deschide diplomele mele",
-    "openClassCertificates": "Vezi diplomele"
+    "openClassCertificates": "Vezi diplomele",
+    "openStorySettings": "Deschide setările poveștii"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",
@@ -198,5 +202,20 @@
     "unknown": "Acest link nu mai merge. Conectează-te și schimbă emailurile din Setări.",
     "failed": "Nu am putut face asta. Verifică-ți conexiunea și încearcă din nou.",
     "missingKey": "Linkului îi lipsește cheia. Deschide din nou linkul din email."
+  },
+  "staffChangeFields": {
+    "rating": "clasificarea",
+    "completion_status": "starea",
+    "comments_enabled": "setarea comentariilor",
+    "category_slug": "categoria",
+    "language_code": "limba",
+    "is_fan_fiction": "marcajul de fan fiction",
+    "is_parody": "marcajul de parodie",
+    "deals_with_abuse_or_coercion": "marcajul de abuz sau constrângere",
+    "tag_names": "etichetele",
+    "visibility": "cine o poate găsi",
+    "settings": "setările",
+    "list": "{{first}} și {{last}}",
+    "yourStory": "povestea ta"
   }
 }

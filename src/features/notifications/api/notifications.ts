@@ -38,7 +38,8 @@ export type NotificationKind =
   | 'space_join_approved'
   | 'customisation_change_requested'
   | 'certificate_issued'
-  | 'class_archived';
+  | 'class_archived'
+  | 'story_changed_by_staff';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
@@ -75,6 +76,19 @@ export interface NotificationChangeRequest {
   space: { slug: string; name: string } | null;
 }
 
+/**
+ * What staff changed about the writer's story, and why (S1-E11-08): the changed fields (for
+ * example "category_slug", "visibility"), their new values and the reason the writer reads. Never
+ * which staff member made the change.
+ */
+export interface NotificationStaffChange {
+  fields: string[];
+  /** The new visibility ('shown' or 'hidden') when the change was to who can find it. */
+  visibility: string | null;
+  reasonCode: string;
+  reasonText: string;
+}
+
 /** One notification as the page draws it. */
 export interface AppNotification {
   id: string;
@@ -109,6 +123,8 @@ export interface AppNotification {
   space: { slug: string; name: string } | null;
   /** What a moderator asked to change, for customisation_change_requested (S1-E8-08). */
   changeRequest: NotificationChangeRequest | null;
+  /** What staff changed about the writer's story, for story_changed_by_staff (S1-E11-08). */
+  staffChange: NotificationStaffChange | null;
   /** A moderation decision can't be switched off (criterion 4). */
   isRequired: boolean;
   isRead: boolean;
@@ -154,6 +170,12 @@ interface NotificationRow {
     is_open: boolean;
     space: { slug: string; name: string } | null;
   } | null;
+  staff_change?: {
+    fields: string[];
+    after: Record<string, unknown>;
+    reason_code: string;
+    reason_text: string;
+  } | null;
   is_required: boolean;
   is_read: boolean;
   at: string;
@@ -174,6 +196,24 @@ function changeRequestOf(row: NotificationRow): NotificationChangeRequest | null
     dueAt: request.due_at,
     isOpen: request.is_open,
     space: request.space,
+  };
+}
+
+/**
+ * A staff change in the page's shape (S1-E11-08).
+ *
+ * @param row - the database's row
+ * @returns the change, or null for other kinds
+ */
+function staffChangeOf(row: NotificationRow): NotificationStaffChange | null {
+  const change = row.staff_change;
+  if (change === null || change === undefined) return null;
+  const visibility = change.after['visibility'];
+  return {
+    fields: change.fields,
+    visibility: typeof visibility === 'string' ? visibility : null,
+    reasonCode: change.reason_code,
+    reasonText: change.reason_text,
   };
 }
 
@@ -225,6 +265,7 @@ function toNotification(row: NotificationRow): AppNotification {
     mail: row.mail ?? null,
     space: row.space ?? null,
     changeRequest: changeRequestOf(row),
+    staffChange: staffChangeOf(row),
     isRequired: row.is_required,
     isRead: row.is_read,
     at: row.at,

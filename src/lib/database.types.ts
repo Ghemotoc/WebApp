@@ -3286,6 +3286,7 @@ export type Database = {
           space_id: string | null;
           statement_id: string | null;
           story_id: string | null;
+          story_revision_id: string | null;
           updated_at: string;
           user_id: string;
           notification_is_shown: boolean | null;
@@ -3311,6 +3312,7 @@ export type Database = {
           space_id?: string | null;
           statement_id?: string | null;
           story_id?: string | null;
+          story_revision_id?: string | null;
           updated_at?: string;
           user_id: string;
         };
@@ -3333,6 +3335,7 @@ export type Database = {
           space_id?: string | null;
           statement_id?: string | null;
           story_id?: string | null;
+          story_revision_id?: string | null;
           updated_at?: string;
           user_id?: string;
         };
@@ -3398,6 +3401,13 @@ export type Database = {
             columns: ['story_id'];
             isOneToOne: false;
             referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_story_revision_id_fkey';
+            columns: ['story_revision_id'];
+            isOneToOne: false;
+            referencedRelation: 'story_revisions';
             referencedColumns: ['id'];
           },
           {
@@ -5492,9 +5502,10 @@ export type Database = {
           updated_at: string;
           user_id: string;
           admin_story_row: Json | null;
+          admin_story_settings_json: Json | null;
           admin_story_status: string | null;
         };
-        ComputedFields: 'admin_story_row' | 'admin_story_status';
+        ComputedFields: 'admin_story_row' | 'admin_story_settings_json' | 'admin_story_status';
         Insert: {
           ai_disclosure?: Database['public']['Enums']['ai_disclosure'];
           ai_undisclosed_labelled_at?: string | null;
@@ -6212,6 +6223,157 @@ export type Database = {
           },
         ];
       };
+      story_restrictions: {
+        Row: {
+          created_at: string;
+          id: string;
+          lifted_at: string | null;
+          lifted_by_user_id: string | null;
+          reason: string;
+          restricted_by_user_id: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          lifted_at?: string | null;
+          lifted_by_user_id?: string | null;
+          reason: string;
+          restricted_by_user_id: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          lifted_at?: string | null;
+          lifted_by_user_id?: string | null;
+          reason?: string;
+          restricted_by_user_id?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_restrictions_lifted_by_user_id_fkey';
+            columns: ['lifted_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_restrictions_restricted_by_user_id_fkey';
+            columns: ['restricted_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_restrictions_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_restrictions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_revisions: {
+        Row: {
+          after_values: NonNullable<Json>;
+          audit_log_id: string | null;
+          before_values: NonNullable<Json>;
+          change_kind: string;
+          changed_by_user_id: string;
+          chapter_id: string | null;
+          created_at: string;
+          id: string;
+          reason_code: string;
+          reason_text: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          after_values: NonNullable<Json>;
+          audit_log_id?: string | null;
+          before_values: NonNullable<Json>;
+          change_kind: string;
+          changed_by_user_id: string;
+          chapter_id?: string | null;
+          created_at?: string;
+          id?: string;
+          reason_code: string;
+          reason_text: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          after_values?: NonNullable<Json>;
+          audit_log_id?: string | null;
+          before_values?: NonNullable<Json>;
+          change_kind?: string;
+          changed_by_user_id?: string;
+          chapter_id?: string | null;
+          created_at?: string;
+          id?: string;
+          reason_code?: string;
+          reason_text?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_revisions_audit_log_id_fkey';
+            columns: ['audit_log_id'];
+            isOneToOne: false;
+            referencedRelation: 'audit_log';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_revisions_changed_by_user_id_fkey';
+            columns: ['changed_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_revisions_chapter_id_fkey';
+            columns: ['chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_revisions_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_revisions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_scores: {
         Row: {
           computed_at: string;
@@ -6725,6 +6887,16 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_apply_story_settings: {
+        Args: {
+          changes: Json;
+          story_row: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: undefined;
+      };
       admin_approve_username: {
         Args: {
           approved_name: string;
@@ -6799,6 +6971,10 @@ export type Database = {
       admin_case_statements: { Args: { target_case_id: string }; Returns: Json };
       admin_case_support_contacts: { Args: { target_case_id: string }; Returns: Json };
       admin_certificate: { Args: { code: string }; Returns: Json };
+      admin_change_story_settings: {
+        Args: { changes: Json; reason_code: string; reason_text: string; target_story_id: string };
+        Returns: Json;
+      };
       admin_claim_case: { Args: { target_case_id: string }; Returns: boolean };
       admin_class_spaces: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
@@ -6873,6 +7049,15 @@ export type Database = {
           tell_uploader: boolean;
         };
         Returns: string;
+      };
+      admin_end_story_visibility_state: {
+        Args: {
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          leaving_state: string;
+          reason_text: string;
+        };
+        Returns: undefined;
       };
       admin_export_audit_log: {
         Args: {
@@ -7102,6 +7287,22 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_record_story_change: {
+        Args: {
+          change_kind: string;
+          reason_code: string;
+          reason_text: string;
+          statement_action: Database['public']['Enums']['statement_action'];
+          story_row: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+          target_chapter_id: string;
+          values_after: Json;
+          values_before: Json;
+        };
+        Returns: string;
+      };
       admin_reject_tag: { Args: { reason: string; tag_id: string }; Returns: number };
       admin_release_case: { Args: { target_case_id: string }; Returns: boolean };
       admin_remove_cms_entry: {
@@ -7286,6 +7487,15 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_set_chapter_visibility: {
+        Args: {
+          reason_code: string;
+          reason_text: string;
+          target_chapter_id: string;
+          wanted_visibility: string;
+        };
+        Returns: string;
+      };
       admin_set_class_school: { Args: { school_name: string; slug: string }; Returns: Json };
       admin_set_classic_chapters: {
         Args: { chapter_list: Json; target_story_id: string };
@@ -7336,9 +7546,63 @@ export type Database = {
         Args: { language_codes: string[]; target_user_id: string };
         Returns: number;
       };
+      admin_set_story_visibility: {
+        Args: {
+          reason_code: string;
+          reason_text: string;
+          target_story_id: string;
+          wanted_visibility: string;
+        };
+        Returns: string;
+      };
       admin_sign_out_everywhere: {
         Args: { reason_given: string; target_user_id: string };
         Returns: number;
+      };
+      admin_story_change_target: {
+        Args: { reason_code: string; reason_text: string; target_story_id: string };
+        Returns: {
+          ai_disclosure: Database['public']['Enums']['ai_disclosure'];
+          ai_undisclosed_labelled_at: string | null;
+          blurb: string;
+          card_colour: string | null;
+          category_id: string;
+          class_only: boolean;
+          class_space_id: string | null;
+          classic_author_id: string | null;
+          comments_enabled: boolean;
+          completion_status: Database['public']['Enums']['completion_status'];
+          content_note: string;
+          cover_accent: string | null;
+          cover_background: string | null;
+          cover_design: string | null;
+          cover_kind: Database['public']['Enums']['cover_kind'];
+          cover_square_path: string | null;
+          cover_tall_path: string | null;
+          created_at: string;
+          deals_with_abuse_or_coercion: boolean;
+          deleted_at: string | null;
+          first_published_at: string | null;
+          id: string;
+          is_fan_fiction: boolean;
+          is_parody: boolean;
+          language_code: string;
+          last_chapter_published_at: string | null;
+          picture_sharing_enabled: boolean;
+          quote_cards_enabled: boolean;
+          rank_badge_tag_ids: string[] | null;
+          rating: Database['public']['Enums']['story_rating'];
+          slug: string;
+          title: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'stories';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       admin_story_matches: {
         Args: {
@@ -7352,8 +7616,21 @@ export type Database = {
       };
       admin_story_overview: { Args: { target_story_id: string }; Returns: Json };
       admin_story_owner_is_minor: { Args: { owner_id: string }; Returns: boolean };
+      admin_story_reason_ground: {
+        Args: { reason_code: string };
+        Returns: Database['public']['Enums']['statement_ground'];
+      };
       admin_story_report_counts: { Args: { target_story_id: string }; Returns: Json };
       admin_story_row: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      admin_story_settings_json: {
         Args: {
           target: Omit<
             Database['public']['Tables']['stories']['Row'],
@@ -7371,6 +7648,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_story_visibility: { Args: { target_story_id: string }; Returns: string };
       admin_teacher_checks: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -8550,6 +8828,7 @@ export type Database = {
       };
       is_staff_session: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_story_list_kind: { Args: { list_kind: string }; Returns: boolean };
+      is_story_restricted: { Args: { target_story_id: string }; Returns: boolean };
       is_under_18_or_unknown: { Args: { person_id: string }; Returns: boolean };
       issue_class_certificates: {
         Args: { programme_name: string; results: Json; slug: string };
@@ -9237,6 +9516,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      notification_staff_change_json: { Args: { target_revision_id: string }; Returns: Json };
       notify: {
         Args: {
           about: Json;
@@ -10831,7 +11111,8 @@ export type Database = {
         | 'space_join_approved'
         | 'customisation_change_requested'
         | 'certificate_issued'
-        | 'class_archived';
+        | 'class_archived'
+        | 'story_changed_by_staff';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -11155,6 +11436,7 @@ export const Constants = {
         'customisation_change_requested',
         'certificate_issued',
         'class_archived',
+        'story_changed_by_staff',
       ],
       picture_kind: [
         'cover',

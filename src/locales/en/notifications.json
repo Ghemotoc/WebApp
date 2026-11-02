@@ -67,7 +67,10 @@
     "signatureChangeRequested": "please change your forum signature within 24 hours, or it will be removed.",
     "bannerChangeRequested": "please change the banner picture of {{space}} within 24 hours, or it will be removed.",
     "certificateIssued": "your teacher signed a certificate for you in {{space}}. It’s in My certificates.",
-    "classArchived": "the class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: then the real names printed on them are deleted."
+    "classArchived": "the class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: then the real names printed on them are deleted.",
+    "staffChangedStory": "we changed {{fields}} of your story “{{story}}”.",
+    "staffShowedStory": "your story “{{story}}” can be found again.",
+    "staffShowedChapter": "chapter {{number}} of “{{story}}” is shown again."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -122,7 +125,8 @@
     "openSpace": "Open the space",
     "changeIt": "Change it",
     "openCertificates": "Open my certificates",
-    "openClassCertificates": "See the certificates"
+    "openClassCertificates": "See the certificates",
+    "openStorySettings": "Open the story’s settings"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",
@@ -198,5 +202,20 @@
     "unknown": "This link doesn’t work any more. Log in and change your emails in Settings.",
     "failed": "We couldn’t do that. Check your connection and try again.",
     "missingKey": "This link is missing its key. Open the link from the email again."
+  },
+  "staffChangeFields": {
+    "rating": "the rating",
+    "completion_status": "the status",
+    "comments_enabled": "the comments setting",
+    "category_slug": "the category",
+    "language_code": "the language",
+    "is_fan_fiction": "the fan fiction label",
+    "is_parody": "the parody label",
+    "deals_with_abuse_or_coercion": "the abuse or coercion label",
+    "tag_names": "the tags",
+    "visibility": "who can find it",
+    "settings": "the settings",
+    "list": "{{first}} and {{last}}",
+    "yourStory": "your story"
   }
 }
