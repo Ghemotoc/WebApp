@@ -5,7 +5,9 @@
  * space_name_available(), create_space(), update_space(), join_space(), leave_space(),
  * space_join_requests() and decide_space_join_request() in
  * supabase/migrations/…_forums2_a_spaces.sql (the powers and "moderator" from
- * …_forums2_b_space_moderators.sql, S1-E8-07; the moderators' own calls are in spaceModeration.ts). The database applies the age rules (who may see,
+ * …_forums2_b_space_moderators.sql, S1-E8-07; the moderators' own calls are in spaceModeration.ts;
+ * a class space's kind and invite card from …_classes_a_class_spaces.sql, S1-E8-11, whose own
+ * calls are in classSpaces.ts). The database applies the age rules (who may see,
  * join and post) and never sends a user ID; this file only reads its answers.
  */
 import { personFrom, type ForumPerson } from '@/features/forums/api/forumThreads';
@@ -23,6 +25,8 @@ export type SpacePosting = Enums<'space_posting'>;
 export type SpaceJoining = Enums<'space_joining'>;
 /** The drawn banner colour (board 5.3). */
 export type SpaceBanner = Enums<'space_banner'>;
+/** An open space (S1-E8-06) or a private class space joined by invite code (S1-E8-11). */
+export type SpaceKind = Enums<'space_kind'>;
 
 /** The banner colours in the board's order. */
 export const spaceBanners: SpaceBanner[] = ['plum', 'night', 'forest', 'gold'];
@@ -52,6 +56,10 @@ export interface SpaceViewer {
   canAppoint: boolean;
   /** Reads the space's log: the owner and our moderation team only (criterion 2). */
   canReadLog: boolean;
+  /** A class space's invite card (S1-E8-11): the teacher, moderators with the members power, staff. */
+  canInvite: boolean;
+  /** A class member who can't read yet: their age check or a parent's consent is still to come. */
+  waitsForAccount: boolean;
   /** Every power the caller holds; the owner holds them all. */
   powers: SpacePower[];
 }
@@ -64,6 +72,8 @@ export interface Space {
   /** The hidden forum that holds its threads ("space-…"). */
   forumSlug: string;
   name: string;
+  /** 'class' for a private class space (S1-E8-11), 'open' for every other space. */
+  kind: SpaceKind;
   description: string;
   /** One rule a line, as the owner wrote them. */
   rules: string[];
@@ -127,6 +137,8 @@ export type SpaceFailure =
   | 'missing'
   | 'too_many'
   | 'invalid'
+  | 'class_only'
+  | 'not_teacher'
   | 'unreachable';
 
 /** A field the database found a problem with ("name:taken", "rules:too_long"…). */
@@ -158,6 +170,9 @@ const privilegeHints: Record<string, SpaceFailure> = {
   'space:age': 'age',
   'space:not_owner': 'not_owner',
   'space:not_allowed': 'not_allowed',
+  // S1-E8-11: a class space takes its teacher's code; only teachers start one.
+  'space:class': 'class_only',
+  'space:not_teacher': 'not_teacher',
 };
 
 /** The 23514 and P0002 hints that aren't about a form field, and what they mean. */
@@ -244,6 +259,8 @@ function viewerFrom(value: Json | undefined): SpaceViewer {
     canManage: viewer['can_manage'] === true,
     canAppoint: viewer['can_appoint'] === true,
     canReadLog: viewer['can_read_log'] === true,
+    canInvite: viewer['can_invite'] === true,
+    waitsForAccount: viewer['waits_for_account'] === true,
     powers: powersFrom(viewer['powers']),
   };
 }
@@ -308,6 +325,7 @@ export function spaceFrom(value: Json | undefined): Space {
     slug: String(row['slug']),
     forumSlug: String(row['forum_slug']),
     name: String(row['name']),
+    kind: row['kind'] === 'class' ? 'class' : 'open',
     description: String(row['description'] ?? ''),
     rules: rulesFrom(row['rules']),
     ageGroup: ageGroupFrom(row['age_group']),

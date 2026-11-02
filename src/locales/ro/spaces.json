@@ -21,7 +21,8 @@
     "anyoneReads": "Oricine poate citi",
     "membersRead": "Citesc doar membrii",
     "under16": "Membri: sub 16 ani",
-    "sixteenPlus": "Membri: de la 16 ani"
+    "sixteenPlus": "Membri: de la 16 ani",
+    "classSpace": "Spațiul unei clase"
   },
   "space": {
     "eyebrow": "Spațiu · condus de membri",
@@ -58,7 +59,8 @@
   "threads": {
     "membersOnly": "Aici postează doar membrii. Intră în spațiu ca să începi o discuție sau să răspunzi.",
     "membersOnlyApprove": "Aici postează doar membrii. Intră în spațiu ca să începi o discuție sau să răspunzi. Cine a creat spațiul verifică fiecare cerere.",
-    "readLocked": "Doar membrii pot citi discuțiile acestui spațiu. Intră în spațiu ca să le citești."
+    "readLocked": "Doar membrii pot citi discuțiile acestui spațiu. Intră în spațiu ca să le citești.",
+    "waitsForAccount": "Ești în această clasă. Poți citi și posta după ce contul tău e gata, de exemplu după ce un părinte și-a dat acordul."
   },
   "rules": {
     "eyebrow": "Stabilite de cine a creat spațiul",
@@ -128,7 +130,9 @@
     "create": "Creează spațiul",
     "save": "Salvează schimbările",
     "saved": "Schimbările sunt salvate.",
-    "notOwner": "Doar cine a creat spațiul îl poate schimba."
+    "notOwner": "Doar cine a creat spațiul îl poate schimba.",
+    "classTitle": "Spațiul unei clase",
+    "classText": "Aici citește și postează doar clasa. Elevii intră cu codul pe care li-l dai, niciodată cu o cerere."
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
@@ -172,7 +176,9 @@
     "member_owner": "Cine a creat spațiul are deja toate drepturile.",
     "member_age": "Persoana este în altă grupă de vârstă, așa că nu poate ajuta la conducerea acestui spațiu.",
     "request_missing": "Cererea nu mai așteaptă.",
-    "reason_too_long": "Motivul poate avea cel mult 500 de caractere."
+    "reason_too_long": "Motivul poate avea cel mult 500 de caractere.",
+    "class_only": "Acesta este spațiul unei clase. Intri cu codul primit de la profesor.",
+    "not_teacher": "Doar profesorii cu insigna de profesor pot crea spațiul unei clase."
   },
   "moderators": {
     "eyebrow": "Setările spațiului",
@@ -247,7 +253,10 @@
       "thread_locked": "{{actor}} a închis o discuție.",
       "thread_unlocked": "{{actor}} a redeschis o discuție.",
       "other": "{{actor}} a făcut o schimbare.",
-      "banner_picture_changed": "{{actor}} a schimbat imaginea de banner."
+      "banner_picture_changed": "{{actor}} a schimbat imaginea de banner.",
+      "invite_made": "{{actor}} a făcut un cod nou pentru clasă.",
+      "invite_ended": "{{actor}} a oprit codul clasei.",
+      "member_joined": "{{target}} a intrat cu codul clasei."
     }
   },
   "bannerPicture": {
@@ -265,5 +274,65 @@
     "remove": "Folosește culoarea",
     "removeFailed": "Nu am putut scoate imaginea. Încearcă din nou.",
     "removedNotice": "Spațiul își folosește din nou culoarea."
+  },
+  "classInvite": {
+    "eyebrow": "Invitație pentru clasă",
+    "title": "Invită-ți clasa",
+    "intro": "Elevii intră cu un cod. Oricine are codul poate intra, așa că dă-l doar clasei tale.",
+    "resetNote": "Un cod nou îl oprește imediat pe cel vechi.",
+    "worksFor": "Funcționează timp de",
+    "days": {
+      "7": "7 zile",
+      "14": "14 zile",
+      "30": "30 de zile",
+      "90": "90 de zile",
+      "365": "Un an"
+    },
+    "places": "Număr de locuri",
+    "placesHint": "Câte persoane pot intra cu acest cod, între 1 și 200.",
+    "placesOutOfRange": "Alege între 1 și 200 de locuri.",
+    "made_one": "Acesta este codul pentru {{name}}. Funcționează până pe {{expires}} pentru {{count, number}} persoană.",
+    "made_few": "Acesta este codul pentru {{name}}. Funcționează până pe {{expires}} pentru {{count, number}} persoane.",
+    "made_other": "Acesta este codul pentru {{name}}. Funcționează până pe {{expires}} pentru {{count, number}} de persoane.",
+    "linkLabel": "Linkul de intrare",
+    "copy": "Copiază linkul",
+    "copied": "Copiat",
+    "copyFailed": "Nu l-am putut copia. Selectează linkul și copiază-l tu.",
+    "copyNow": "Copiază-l sau tipărește-l acum.",
+    "notAgain": "Păstrăm doar o copie amestecată, așa că nu mai putem arăta codul.",
+    "print": "Tipărește",
+    "dismiss": "Gata",
+    "none": "Nu există niciun cod activ. Fă unul ca să-ți inviți clasa.",
+    "working_one": "Un cod funcționează până pe {{until}}. {{used, number}} din {{count, number}} loc folosit.",
+    "working_few": "Un cod funcționează până pe {{until}}. {{used, number}} din {{count, number}} locuri folosite.",
+    "working_other": "Un cod funcționează până pe {{until}}. {{used, number}} din {{count, number}} de locuri folosite.",
+    "make": "Fă un cod",
+    "makeNew": "Fă un cod nou",
+    "stop": "Oprește codul",
+    "loadFailed": "Nu am putut încărca invitația. Încearcă din nou.",
+    "failures": {
+      "signed_out": "Mai întâi intră în cont.",
+      "not_allowed": "Doar profesorul și cei care conduc clasa pot face asta.",
+      "missing": "Această clasă nu mai există.",
+      "ended": "Acest cod nu mai funcționează. Cere-i profesorului unul nou.",
+      "days": "Alege cât timp funcționează codul.",
+      "admits": "Alege între 1 și 200 de locuri.",
+      "too_many": "Ai făcut asta de multe ori în ultima oră. Încearcă mai târziu.",
+      "unreachable": "Nu am putut ajunge la server. Încearcă din nou."
+    }
+  },
+  "joinClass": {
+    "eyebrow": "Invitație pentru clasă",
+    "title": "Intră într-o clasă",
+    "checking": "Verificăm codul…",
+    "invited": "Ai o invitație să intri în {{name}}.",
+    "join": "Intră în clasă",
+    "logIn": "Intră în cont ca să te alături",
+    "signUp": "Prima dată aici? Ai nevoie mai întâi de o invitație ca să-ți faci cont.",
+    "ended": "Acest cod nu mai funcționează. Cere-i profesorului unul nou.",
+    "unknown": "Nu cunoaștem acest cod. Verifică-l cu profesorul.",
+    "joinedWaiting": "Ești în {{name}}. Poți citi și posta după ce contul tău e gata.",
+    "openClass": "Deschide clasa",
+    "loadFailed": "Nu am putut verifica codul. Încearcă din nou."
   }
 }

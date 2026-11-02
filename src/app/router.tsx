@@ -712,6 +712,16 @@ const writeRoutes: RouteObject[] = [
       return { Component: SpaceNewThreadPage };
     },
   },
+  // A class invite link (bundle CLASSES, part a; S1-E8-11): under /class/ so a code never
+  // clashes with a space's address.
+  {
+    path: '/class/:code',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { JoinClassPage } = await import('@/features/spaces/components/JoinClassPage');
+      return { Component: JoinClassPage };
+    },
+  },
   {
     path: '/spaces/:spaceSlug/settings',
     HydrateFallback: () => null,
