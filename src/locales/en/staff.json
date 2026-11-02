@@ -1096,7 +1096,19 @@
       "passageLabel": "The removed words (staff only)",
       "passageCase": "Removed for case {{reference}}.",
       "passageLogged": "Reading these words is in the audit log.",
-      "passageFailed": "The removed words couldn’t be shown. Your role or the case may not allow it."
+      "passageFailed": "The removed words couldn’t be shown. Your role or the case may not allow it.",
+      "fields": {
+        "rating": "Rating",
+        "completion_status": "Finished or ongoing",
+        "comments_enabled": "Comments",
+        "category_slug": "Category",
+        "language_code": "Language",
+        "is_fan_fiction": "Fan fiction",
+        "is_parody": "Parody",
+        "deals_with_abuse_or_coercion": "Abuse or coercion",
+        "tag_names": "Tags",
+        "visibility": "Who can find it"
+      }
     },
     "passage": {
       "open": "Remove a passage from chapter {{number}}",

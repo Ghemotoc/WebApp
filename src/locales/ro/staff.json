@@ -1096,7 +1096,19 @@
       "passageLabel": "Cuvintele eliminate (doar pentru echipă)",
       "passageCase": "Eliminate pentru cazul {{reference}}.",
       "passageLogged": "Citirea acestor cuvinte apare în jurnalul de audit.",
-      "passageFailed": "Cuvintele eliminate nu au putut fi afișate. Poate că rolul tău sau cazul nu permite asta."
+      "passageFailed": "Cuvintele eliminate nu au putut fi afișate. Poate că rolul tău sau cazul nu permite asta.",
+      "fields": {
+        "rating": "Clasificare",
+        "completion_status": "Terminată sau în curs",
+        "comments_enabled": "Comentarii",
+        "category_slug": "Categorie",
+        "language_code": "Limbă",
+        "is_fan_fiction": "Fan fiction",
+        "is_parody": "Parodie",
+        "deals_with_abuse_or_coercion": "Abuz sau constrângere",
+        "tag_names": "Etichete",
+        "visibility": "Cine o poate găsi"
+      }
     },
     "passage": {
       "open": "Elimină un pasaj din capitolul {{number}}",

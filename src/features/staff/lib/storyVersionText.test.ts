@@ -5,7 +5,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { createI18n } from '@/lib/i18n';
-import { registerNotificationsTranslations } from '@/features/notifications/registerNotificationsTranslations';
 
 import type { StaffStoryVersion } from '../api/staffStoryHistory';
 import { registerStaffTranslations } from '../registerStaffTranslations';
@@ -17,7 +16,6 @@ import { canRestoreVersion, storyVersionText, type VersionWords } from './storyV
 function englishT() {
   const i18n = createI18n('en');
   registerStaffTranslations(i18n);
-  registerNotificationsTranslations(i18n);
   return i18n.getFixedT('en', 'staff');
 }
 
@@ -47,7 +45,7 @@ describe('a version in the history', () => {
   it('a settings change lists each field before and after', () => {
     expect(storyVersionText(englishT(), words, settingsVersion)).toEqual({
       heading: 'Settings',
-      lines: ['the category: category poetry → category fiction', 'the comments setting: yes → no'],
+      lines: ['Category: category poetry → category fiction', 'Comments: yes → no'],
     });
   });
 
@@ -90,7 +88,7 @@ describe('a version in the history', () => {
     };
     expect(storyVersionText(englishT(), words, hide)).toEqual({
       heading: 'Who can find it',
-      lines: ['who can find it: shown → hidden'],
+      lines: ['Who can find it: shown → hidden'],
     });
   });
 });

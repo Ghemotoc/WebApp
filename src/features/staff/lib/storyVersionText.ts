@@ -1,6 +1,6 @@
 /**
  * What one version in a story's history says (bundle ADMIN-2, part b2; story S1-E11-08, part 08b):
- * "Settings", then one line per changed field, such as "the category: Poetry → Fiction";
+ * "Settings", then one line per changed field, such as "Category: Poetry → Fiction";
  * "Who can find it: shown → hidden"; "Chapter 2: a passage of 14 characters removed".
  *
  * A removed passage's words are never part of a version (support can read the history), so the
@@ -74,7 +74,7 @@ function valueText(t: TFunction, words: VersionWords, field: string, value: Json
 function fieldLines(t: TFunction, words: VersionWords, version: StaffStoryVersion): string[] {
   return Object.keys(version.after).map((field) =>
     t('stories.history.change', {
-      field: t(`notifications:staffChangeFields.${field}`, { defaultValue: field }),
+      field: t(`stories.history.fields.${field}`, { defaultValue: field }),
       before: valueText(t, words, field, version.before[field]),
       after: valueText(t, words, field, version.after[field]),
     }),
