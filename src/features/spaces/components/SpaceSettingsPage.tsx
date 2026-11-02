@@ -8,10 +8,12 @@
  * moderation team; part b, S1-E8-07), then the Banner picture card (part c) for the same people
  * while picture uploads are on. Under them, the Moderators card for the owner and our
  * moderation team (SpaceModeratorsCard). In a class space (bundle CLASSES, part a; S1-E8-11), the
- * class invite card for anyone holding the members power (ClassInviteCard). Anyone else is told only the owner can change it; the
+ * class invite card for anyone holding the members power (ClassInviteCard). Part b adds, in a
+ * class space, the members still waiting to read (ClassWaitingCard, same power) and the lock at the
+ * end of the school year (ClassLockCard, the settings power). Anyone else is told only the owner can change it; the
  * database checks again. A new name keeps the space's address, so links to it still work.
  * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceBannerPictureCard;
- * SpaceModeratorsCard; ClassInviteCard.
+ * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard.
  */
 import { useState } from 'react';
 import { useParams } from 'react-router';
@@ -24,6 +26,8 @@ import { useSpace, useUpdateSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { ClassInviteCard } from './ClassInviteCard';
+import { ClassLockCard } from './ClassLockCard';
+import { ClassWaitingCard } from './ClassWaitingCard';
 import { SpaceBannerPictureCard } from './SpaceBannerPictureCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
@@ -86,10 +90,29 @@ function SettingsForm({ space }: { space: Space }) {
 }
 
 /**
- * The settings form and the Moderators card, each for whoever may use it.
+ * A class space's own cards: the invite code and who is waiting (the members power) and the lock
+ * (the settings power). Nothing for an open space.
  *
  * @param props.space - the space
- * @returns the cards, or "only the owner" for someone who may use neither
+ * @returns the cards the viewer may use
+ */
+function ClassCards({ space }: { space: Space }) {
+  if (space.kind !== 'class') return null;
+  const { canInvite, canManage } = space.viewer;
+  return (
+    <>
+      {canInvite && <ClassInviteCard space={space} />}
+      {canInvite && <ClassWaitingCard space={space} />}
+      {canManage && <ClassLockCard space={space} />}
+    </>
+  );
+}
+
+/**
+ * The class cards, the settings form and the Moderators card, each for whoever may use it.
+ *
+ * @param props.space - the space
+ * @returns the cards, or "only the owner" for someone who may use none
  */
 function SettingsCards({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
@@ -100,7 +123,7 @@ function SettingsCards({ space }: { space: Space }) {
   }
   return (
     <>
-      {canInvite && <ClassInviteCard space={space} />}
+      <ClassCards space={space} />
       {canManage && <SettingsForm key={space.slug} space={space} />}
       {canManage && <SpaceBannerPictureCard space={space} />}
       {canAppoint && <SpaceModeratorsCard space={space} />}

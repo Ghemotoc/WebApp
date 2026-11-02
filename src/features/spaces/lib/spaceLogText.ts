@@ -24,6 +24,10 @@ const knownActions = [
   'invite_made',
   'invite_ended',
   'member_joined',
+  // A class space's lock at the end of the school year (bundle CLASSES, part b; S1-E8-11).
+  'class_locked',
+  'class_unlocked',
+  'lock_date_changed',
 ];
 
 /**

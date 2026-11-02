@@ -163,7 +163,8 @@
     "locked": "A moderator has locked this thread, so it takes no more replies.",
     "space_join": "Join this space to post here.",
     "space_pending": "The owner hasn’t let you in yet. You can post once you’re in.",
-    "space_age": "This space takes posts from another age group."
+    "space_age": "This space takes posts from another age group.",
+    "space_locked": "This class is locked, so nobody can post or change posts here any more. You can still read everything."
   },
   "quote": {
     "wrote": "{{name}} wrote in",

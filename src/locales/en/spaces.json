@@ -22,7 +22,8 @@
     "membersRead": "Only members can read",
     "under16": "Members: under 16",
     "sixteenPlus": "Members: 16 and over",
-    "classSpace": "Class space"
+    "classSpace": "Class space",
+    "locked": "Locked"
   },
   "space": {
     "eyebrow": "Space · run by members",
@@ -132,7 +133,13 @@
     "saved": "Your changes are saved.",
     "notOwner": "Only the owner can change this space.",
     "classTitle": "A class space",
-    "classText": "Only the class reads and posts here. Students join with the code you give them, never by asking."
+    "classText": "Only the class reads and posts here. Students join with the code you give them, never by asking.",
+    "kind": "What kind of space?",
+    "kindOpen": "Open space",
+    "kindOpenNote": "People in your age group can find it and join.",
+    "kindClass": "Class space",
+    "kindClassNote": "Private, for your class only. Students join with a code you give them, whatever their ages.",
+    "createClass": "Create the class space"
   },
   "newThread": {
     "eyebrow": "New thread",
@@ -256,7 +263,10 @@
       "banner_picture_changed": "{{actor}} changed the banner picture.",
       "invite_made": "{{actor}} made a new class code.",
       "invite_ended": "{{actor}} stopped the class code.",
-      "member_joined": "{{target}} joined with the class code."
+      "member_joined": "{{target}} joined with the class code.",
+      "class_locked": "{{actor}} locked the class space.",
+      "class_unlocked": "{{actor}} unlocked the class space.",
+      "lock_date_changed": "{{actor}} changed when the class space locks."
     }
   },
   "bannerPicture": {
@@ -318,7 +328,8 @@
       "days": "Choose how long the code works.",
       "admits": "Choose between 1 and 200 places.",
       "too_many": "You’ve done this a lot in the last hour. Try again later.",
-      "unreachable": "We couldn’t reach the server. Try again."
+      "unreachable": "We couldn’t reach the server. Try again.",
+      "locked": "This class is locked, so the code doesn’t work any more."
     }
   },
   "joinClass": {
@@ -333,6 +344,58 @@
     "unknown": "We don’t know this code. Check it with your teacher.",
     "joinedWaiting": "You’re in {{name}}. You can read and post once your account is ready.",
     "openClass": "Open the class",
-    "loadFailed": "We couldn’t check the code. Try again."
-  }
+    "loadFailed": "We couldn’t check the code. Try again.",
+    "code": "Class code",
+    "codeHint": "Your teacher gives you the code, on the board or as a link.",
+    "codeEmpty": "Type the code your teacher gave you.",
+    "check": "Check the code",
+    "enterIntro": "Type the code to join your class."
+  },
+  "classLock": {
+    "eyebrow": "End of the school year",
+    "title": "When the class locks",
+    "intro": "At the end of the school year the space locks, so nobody can post any more. Every member can still read it for as long as they have an account.",
+    "locksOn": "The space locks on {{date}}.",
+    "noDate": "The space has no lock date.",
+    "locked": "The space is locked. Nobody can post here, and the class code no longer works.",
+    "date": "Lock date",
+    "dateHint": "Any day up to two years from today. The space locks at the start of that day, Romanian time.",
+    "saveDate": "Save the date",
+    "lockNow": "Lock the space now",
+    "unlock": "Unlock the space",
+    "saved": "Saved.",
+    "failures": {
+      "not_allowed": "Only the teacher and the people who run this class can do this.",
+      "missing": "This class isn’t here any more.",
+      "lock_date": "Choose a day within the next two years.",
+      "unreachable": "We couldn’t reach the server. Try again."
+    }
+  },
+  "classWaiting": {
+    "title": "Waiting to join",
+    "intro": "Students can see and post once their account is fully active. That means the age check is done and, for under-16s, a parent or guardian has given consent.",
+    "empty": "Nobody is waiting.",
+    "loadFailed": "We couldn’t load who is waiting.",
+    "reasons": {
+      "age_check": "Age check not finished",
+      "parental_consent": "Waiting for parent or guardian consent",
+      "account": "Account not ready yet"
+    }
+  },
+  "classSpace": {
+    "eyebrow": "About class spaces",
+    "lockedTitle": "This space is locked.",
+    "lockedText": "Class spaces lock at the end of the school year, and nobody can post here any more. You can still read everything in it for as long as you have an account, and you keep your own stories and drafts.",
+    "howTitle": "How a class space starts",
+    "step1Title": "The teacher gets a Teacher badge",
+    "step1Text": "They ask for it in Settings with a school email or a letter from the school. Our staff check it.",
+    "step2Title": "They create a space and pick “Class space”",
+    "step2Text": "Same form as any space. The class space is private and comes with an invite code.",
+    "step3Title": "Students join with the code",
+    "step3Text": "The teacher writes the code on the board or shares the link. Students type it in Forums › Join a class.",
+    "yearEndTitle": "When the school year ends",
+    "yearEndText": "At the end of the school year the space locks, so nobody can post any more. Every member can still read it for as long as they have an account, and you keep your own stories and drafts.",
+    "locksOn": "It locks on {{date}}."
+  },
+  "joinClassLink": "Join a class"
 }

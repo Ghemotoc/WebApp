@@ -22,7 +22,8 @@
     "membersRead": "Citesc doar membrii",
     "under16": "Membri: sub 16 ani",
     "sixteenPlus": "Membri: de la 16 ani",
-    "classSpace": "Spațiul unei clase"
+    "classSpace": "Spațiul unei clase",
+    "locked": "Închis"
   },
   "space": {
     "eyebrow": "Spațiu · condus de membri",
@@ -132,7 +133,13 @@
     "saved": "Schimbările sunt salvate.",
     "notOwner": "Doar cine a creat spațiul îl poate schimba.",
     "classTitle": "Spațiul unei clase",
-    "classText": "Aici citește și postează doar clasa. Elevii intră cu codul pe care li-l dai, niciodată cu o cerere."
+    "classText": "Aici citește și postează doar clasa. Elevii intră cu codul pe care li-l dai, niciodată cu o cerere.",
+    "kind": "Ce fel de spațiu?",
+    "kindOpen": "Spațiu deschis",
+    "kindOpenNote": "Persoanele din grupa ta de vârstă îl pot găsi și i se pot alătura.",
+    "kindClass": "Spațiul unei clase",
+    "kindClassNote": "Privat, doar pentru clasa ta. Elevii intră cu un cod pe care li-l dai, oricare le-ar fi vârsta.",
+    "createClass": "Creează spațiul clasei"
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
@@ -256,7 +263,10 @@
       "banner_picture_changed": "{{actor}} a schimbat imaginea de banner.",
       "invite_made": "{{actor}} a făcut un cod nou pentru clasă.",
       "invite_ended": "{{actor}} a oprit codul clasei.",
-      "member_joined": "{{target}} a intrat cu codul clasei."
+      "member_joined": "{{target}} a intrat cu codul clasei.",
+      "class_locked": "{{actor}} a închis spațiul clasei.",
+      "class_unlocked": "{{actor}} a redeschis spațiul clasei.",
+      "lock_date_changed": "{{actor}} a schimbat data la care se închide spațiul clasei."
     }
   },
   "bannerPicture": {
@@ -318,7 +328,8 @@
       "days": "Alege cât timp funcționează codul.",
       "admits": "Alege între 1 și 200 de locuri.",
       "too_many": "Ai făcut asta de multe ori în ultima oră. Încearcă mai târziu.",
-      "unreachable": "Nu am putut ajunge la server. Încearcă din nou."
+      "unreachable": "Nu am putut ajunge la server. Încearcă din nou.",
+      "locked": "Această clasă e închisă, așa că acest cod nu mai funcționează."
     }
   },
   "joinClass": {
@@ -333,6 +344,58 @@
     "unknown": "Nu cunoaștem acest cod. Verifică-l cu profesorul.",
     "joinedWaiting": "Ești în {{name}}. Poți citi și posta după ce contul tău e gata.",
     "openClass": "Deschide clasa",
-    "loadFailed": "Nu am putut verifica codul. Încearcă din nou."
-  }
+    "loadFailed": "Nu am putut verifica codul. Încearcă din nou.",
+    "code": "Codul clasei",
+    "codeHint": "Codul îl primești de la profesor, pe tablă sau ca link.",
+    "codeEmpty": "Scrie codul primit de la profesor.",
+    "check": "Verifică codul",
+    "enterIntro": "Scrie codul ca să intri în clasa ta."
+  },
+  "classLock": {
+    "eyebrow": "Sfârșitul anului școlar",
+    "title": "Când se închide clasa",
+    "intro": "La sfârșitul anului școlar spațiul se închide, așa că nimeni nu mai poate posta. Fiecare membru îl poate citi în continuare cât timp are cont.",
+    "locksOn": "Spațiul se închide pe {{date}}.",
+    "noDate": "Spațiul nu are o dată de închidere.",
+    "locked": "Spațiul e închis. Nimeni nu mai poate posta aici, iar codul clasei nu mai funcționează.",
+    "date": "Data închiderii",
+    "dateHint": "Orice zi din următorii doi ani. Spațiul se închide la începutul acelei zile, ora României.",
+    "saveDate": "Salvează data",
+    "lockNow": "Închide spațiul acum",
+    "unlock": "Redeschide spațiul",
+    "saved": "Am salvat.",
+    "failures": {
+      "not_allowed": "Doar profesorul și cei care conduc această clasă pot face asta.",
+      "missing": "Această clasă nu mai există.",
+      "lock_date": "Alege o zi din următorii doi ani.",
+      "unreachable": "Nu am putut ajunge la server. Încearcă din nou."
+    }
+  },
+  "classWaiting": {
+    "title": "Așteaptă să intre",
+    "intro": "Elevii pot vedea și posta după ce contul lor e complet activ: verificarea vârstei e gata și, pentru cei sub 16 ani, un părinte sau tutore și-a dat acordul.",
+    "empty": "Nu așteaptă nimeni.",
+    "loadFailed": "Nu am putut încărca lista celor care așteaptă.",
+    "reasons": {
+      "age_check": "Verificarea vârstei nu e gata",
+      "parental_consent": "Așteaptă acordul unui părinte sau tutore",
+      "account": "Contul nu e gata încă"
+    }
+  },
+  "classSpace": {
+    "eyebrow": "Despre spațiile claselor",
+    "lockedTitle": "Acest spațiu e închis.",
+    "lockedText": "Spațiile claselor se închid la sfârșitul anului școlar și nimeni nu mai poate posta aici. Poți citi în continuare tot ce e în el cât timp ai cont și îți păstrezi poveștile și ciornele.",
+    "howTitle": "Cum începe spațiul unei clase",
+    "step1Title": "Profesorul primește insigna de Profesor",
+    "step1Text": "O cere din Setări, cu o adresă de e-mail de la școală sau cu o scrisoare de la școală. Echipa noastră o verifică.",
+    "step2Title": "Creează un spațiu și alege „Spațiul unei clase”",
+    "step2Text": "Același formular ca pentru orice spațiu. Spațiul clasei e privat și vine cu un cod de invitație.",
+    "step3Title": "Elevii intră cu codul",
+    "step3Text": "Profesorul scrie codul pe tablă sau trimite linkul. Elevii îl scriu în Forumuri › Intră într-o clasă.",
+    "yearEndTitle": "Când se termină anul școlar",
+    "yearEndText": "La sfârșitul anului școlar spațiul se închide, așa că nimeni nu mai poate posta. Fiecare membru îl poate citi în continuare cât timp are cont și își păstrează poveștile și ciornele.",
+    "locksOn": "Se închide pe {{date}}."
+  },
+  "joinClassLink": "Intră într-o clasă"
 }

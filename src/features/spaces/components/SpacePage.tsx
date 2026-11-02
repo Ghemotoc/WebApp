@@ -11,7 +11,9 @@
  * Moderators (part b, S1-E8-07) show in "Who runs it", and the requests card shows for anyone
  * holding the members power. In a class space (bundle CLASSES, part a; S1-E8-11), a member whose
  * account isn't fully active yet (a student waiting for a parent's consent) is told why they
- * can't read, and there are no join requests: students join with the teacher's code. Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
+ * can't read, and there are no join requests: students join with the teacher's code. Part b adds
+ * the "This space is locked." note above the threads of a locked class (nobody can post) and
+ * ClassAboutCard in the side column. Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
  * What it calls: useSpace → space_page().
  */
 import { useParams } from 'react-router';
@@ -25,6 +27,7 @@ import type { Space } from '../api/spaces';
 import { useSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { ClassAboutCard } from './ClassAboutCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceHeaderCard } from './SpaceHeaderCard';
 import { SpaceNotFound } from './SpaceNotFound';
@@ -39,7 +42,8 @@ import { SpaceRunsCard } from './SpaceRunsCard';
  * @returns the line's key, or null when the reader may post or the space takes anyone's posts
  */
 function postingNoteKey(space: Space): string | null {
-  if (space.viewer.canPost || space.posting === 'anyone') return null;
+  // A locked class has its own note above the threads.
+  if (space.viewer.canPost || space.posting === 'anyone' || space.isLocked) return null;
   return space.joining === 'approve' ? 'threads.membersOnlyApprove' : 'threads.membersOnly';
 }
 
@@ -72,12 +76,18 @@ function SpaceThreads({ space }: { space: Space }) {
  * @returns the breadcrumb, the header and the two columns
  */
 function SpaceContent({ space }: { space: Space }) {
+  const { t } = useSpacesTranslation();
   return (
     <>
       <SpaceBreadcrumb current={space.name} />
       <SpaceHeaderCard space={space} />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <div className="flex min-w-0 flex-col gap-6">
+          {space.isLocked && (
+            <Notice tone="info" title={t('classSpace.lockedTitle')}>
+              {t('classSpace.lockedText')}
+            </Notice>
+          )}
           <SpaceThreads space={space} />
         </div>
         <aside className="flex flex-col gap-6">
@@ -86,6 +96,7 @@ function SpaceContent({ space }: { space: Space }) {
           )}
           <SpaceRulesCard space={space} />
           <SpaceRunsCard space={space} />
+          {space.kind === 'class' && <ClassAboutCard space={space} />}
         </aside>
       </div>
     </>

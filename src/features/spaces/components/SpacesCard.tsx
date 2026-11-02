@@ -56,9 +56,15 @@ export function SpacesCard() {
         </ul>
       )}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-4 md:px-6">
-        <Link to="/spaces/new" className={cardLink}>
-          {t('create')}
-        </Link>
+        <div className="flex flex-wrap items-center gap-4">
+          <Link to="/spaces/new" className={cardLink}>
+            {t('create')}
+          </Link>
+          {/* Board ClassSpace: students type their teacher's code in Forums › Join a class. */}
+          <Link to="/class" className={cardLink}>
+            {t('joinClassLink')}
+          </Link>
+        </div>
         {list.total > 0 && (
           <Link to="/spaces" className={cardLink}>
             {t('seeAll', { count: list.total })}

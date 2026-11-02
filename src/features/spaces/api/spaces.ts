@@ -74,6 +74,10 @@ export interface Space {
   name: string;
   /** 'class' for a private class space (S1-E8-11), 'open' for every other space. */
   kind: SpaceKind;
+  /** When a class space locks (CLASSES-b, S1-E8-11), or null; always null for an open space. */
+  locksAt: string | null;
+  /** True once a class space has locked: nobody posts or joins, members still read. */
+  isLocked: boolean;
   description: string;
   /** One rule a line, as the owner wrote them. */
   rules: string[];
@@ -326,6 +330,8 @@ export function spaceFrom(value: Json | undefined): Space {
     forumSlug: String(row['forum_slug']),
     name: String(row['name']),
     kind: row['kind'] === 'class' ? 'class' : 'open',
+    locksAt: typeof row['locks_at'] === 'string' ? row['locks_at'] : null,
+    isLocked: row['is_locked'] === true,
     description: String(row['description'] ?? ''),
     rules: rulesFrom(row['rules']),
     ageGroup: ageGroupFrom(row['age_group']),

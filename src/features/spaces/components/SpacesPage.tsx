@@ -38,12 +38,19 @@ function SpacesHeader() {
         {t('title')}
       </h1>
       <p className="m-0 text-base leading-relaxed text-body">{t('intro')}</p>
-      <div className="mt-2">
+      <div className="mt-2 flex flex-wrap items-center gap-4">
         <Link
           to="/spaces/new"
           className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
         >
           {t('create')}
+        </Link>
+        {/* A student with a class code types it on /class (bundle CLASSES, part b). */}
+        <Link
+          to="/class"
+          className="inline-flex min-h-6 items-center text-sm font-semibold text-link underline"
+        >
+          {t('joinClassLink')}
         </Link>
       </div>
       <Doodle
