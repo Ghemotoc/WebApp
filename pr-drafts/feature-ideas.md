@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 2 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-02.md)
+
+10 ideas, IDEA-20261102-1 to 10: rank notification, rank on story cards, printable class sheet with QR code, class link as sign-up invitation, who has replied in a class thread, space welcome note, hand a space over, mark a thread answered, a note with a join request, start a thread from a passage.
+
 ### Sent 1 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-01.md)
 
 12 ideas, IDEA-20261101-1 to 12: Download my data guide, download before deleting, sample EPUB, About the writer page, retention periods in Privacy settings, quiet hours for message emails, a kind No thanks for requests, teens see their parent's consent, furthest place for read-through, Canva cover templates, settings notice a new Canva cover, picture links show the picture. Three of the 31 Oct leftovers below went out in this one; "Where readers stop" was already IDEA-20261031-5.
