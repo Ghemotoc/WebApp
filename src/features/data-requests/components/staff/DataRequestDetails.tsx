@@ -1,11 +1,13 @@
 /**
  * DataRequestDetails: one data request's facts as label rows: the person and their user ID, what
  * they asked for, how and when it reached us, the deadline and any extension, the identity check,
- * who last handled it, the team's note and, once closed, what was done (bundle ADMIN-2, part c1;
+ * who last handled it (the person links to their account in Users), the team's note and, once closed, what was done (bundle ADMIN-2, part c1;
  * story S1-E11-09 criterion "a request is closed": the log keeps all of this, never the files).
  *
  * Who shows it: StaffDataRequestPage. Staff may see user IDs (architecture 1.6).
  */
+import { Link } from 'react-router';
+
 import { LabelRows, type LabelRow } from '@/components/ui/LabelRows';
 import { ShortUserId } from '@/features/staff/components/users/ShortUserId';
 
@@ -54,7 +56,12 @@ export function DataRequestDetails({ request }: { request: DataRequest }) {
   const rows: LabelRow[] = [
     {
       label: t('page.rows.person'),
-      value: request.handle === null ? t('staff.noHandle') : `@${request.handle}`,
+      // The account's page in Users, as the board's "Open in Users" (screen 8.12).
+      value: (
+        <Link to={`/staff/users/${request.userId}`} className="text-link underline">
+          {request.handle === null ? t('staff.noHandle') : `@${request.handle}`}
+        </Link>
+      ),
     },
     { label: t('page.rows.userId'), value: <ShortUserId userId={request.userId} /> },
     { label: t('page.rows.type'), value: words.type(request) },
