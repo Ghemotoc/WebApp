@@ -1,0 +1,103 @@
+/**
+ * SpacePage: one space, at /spaces/:spaceSlug (bundle FORUMS-2, part a; story S1-E8-06;
+ * design/boards/Space.dc.html).
+ *
+ * Who shows it: the router; every space row, the forum index's Spaces card and a space thread's
+ * breadcrumb link here. Anyone can read a space the database lets them see.
+ * What it shows, as on the board: the breadcrumb, the header (SpaceHeaderCard), the space's
+ * threads with "New thread" (the forums' ThreadList on the space's own forum), and beside them
+ * the owner's requests (owner only), the rules and who runs it. Where only members may read, a
+ * reader outside it sees a note instead of the threads (criterion 5).
+ * Not yet, as noted in docs/board-fixes.md: space moderators (part b), Share and the ad slot.
+ * What it calls: useSpace → space_page().
+ */
+import { useParams } from 'react-router';
+
+import { Notice } from '@/components/ui/Notice';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { useSession } from '@/features/auth/hooks/useSession';
+import { ThreadList } from '@/features/forums/components/ThreadList';
+
+import type { Space } from '../api/spaces';
+import { useSpace } from '../hooks/useSpaces';
+import { useSpacesTranslation } from '../registerSpacesTranslations';
+
+import { SpaceBreadcrumb } from './SpaceBreadcrumb';
+import { SpaceHeaderCard } from './SpaceHeaderCard';
+import { SpaceNotFound } from './SpaceNotFound';
+import { SpaceRequestsCard } from './SpaceRequestsCard';
+import { SpaceRulesCard } from './SpaceRulesCard';
+import { SpaceRunsCard } from './SpaceRunsCard';
+
+/**
+ * The line under "Threads" for a reader who can't post (members-only posting, criterion 4).
+ *
+ * @param space - the space
+ * @returns the line's key, or null when the reader may post or the space takes anyone's posts
+ */
+function postingNoteKey(space: Space): string | null {
+  if (space.viewer.canPost || space.posting === 'anyone') return null;
+  return space.joining === 'approve' ? 'threads.membersOnlyApprove' : 'threads.membersOnly';
+}
+
+/**
+ * The threads, or why the reader can't read them.
+ *
+ * @returns the thread list or a note
+ */
+function SpaceThreads({ space }: { space: Space }) {
+  const { t } = useSpacesTranslation();
+  const { userId } = useSession();
+  if (!space.viewer.canRead) return <Notice tone="info">{t('threads.readLocked')}</Notice>;
+  const noteKey = postingNoteKey(space);
+  return (
+    <ThreadList
+      forumSlug={space.forumSlug}
+      startAddress={`/spaces/${space.slug}/new`}
+      note={noteKey === null ? undefined : t(noteKey)}
+      canStart={userId === null || space.viewer.canPost}
+    />
+  );
+}
+
+/**
+ * The space, once it has loaded.
+ *
+ * @returns the breadcrumb, the header and the two columns
+ */
+function SpaceContent({ space }: { space: Space }) {
+  return (
+    <>
+      <SpaceBreadcrumb current={space.name} />
+      <SpaceHeaderCard space={space} />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <div className="flex min-w-0 flex-col gap-6">
+          <SpaceThreads space={space} />
+        </div>
+        <aside className="flex flex-col gap-6">
+          {space.joining === 'approve' && <SpaceRequestsCard space={space} />}
+          <SpaceRulesCard space={space} />
+          <SpaceRunsCard space={space} />
+        </aside>
+      </div>
+    </>
+  );
+}
+
+/**
+ * Renders the page.
+ *
+ * @returns the space, a "not here" note, or a load error
+ */
+export function SpacePage() {
+  const { t } = useSpacesTranslation();
+  const { spaceSlug = '' } = useParams();
+  const read = useSpace(spaceSlug);
+  return (
+    <PageContainer className="flex flex-col gap-6 py-10">
+      {read.isError && <Notice tone="error">{t('space.loadFailed')}</Notice>}
+      {read.data === null && <SpaceNotFound />}
+      {read.data !== undefined && read.data !== null && <SpaceContent space={read.data} />}
+    </PageContainer>
+  );
+}

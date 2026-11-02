@@ -11,8 +11,9 @@
  * Part d (S1-E8-04) adds, for a signed-in reader, "Mark all as read", the dots' legend and the
  * "New for you" card.
  * Part f adds the search field under the heading (ForumSearchForm, S1-E8-10).
- * Not yet, as noted in docs/board-fixes.md: Spaces (bundle FORUMS-2) and the ad
- * slots (S1-E12-01).
+ * Bundle FORUMS-2, part a adds the Spaces card in the side column (SpacesCard, S1-E8-06).
+ * Not yet, as noted in docs/board-fixes.md: Your class (bundle CLASSES) and the ad slots
+ * (S1-E12-01).
  * What it calls: useForumIndex → forum_index(); lib/forumTree.ts puts it in order;
  * MarkReadButton, UnreadLegend and NewForYou.
  */
@@ -22,6 +23,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useSession } from '@/features/auth/hooks/useSession';
+import { SpacesCard } from '@/features/spaces/components/SpacesCard';
 
 import { useForumIndex } from '../hooks/useForumIndex';
 import { buildForumTree, type ForumCategory } from '../lib/forumTree';
@@ -123,6 +125,7 @@ export function ForumsPage() {
         </div>
         <aside className="flex flex-col gap-6">
           <NewForYou />
+          <SpacesCard />
           <ForumRulesCard />
         </aside>
       </div>

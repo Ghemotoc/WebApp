@@ -64,7 +64,7 @@ export function ThreadHeader({ thread, path }: { thread: ForumThreadHeader; path
   const { t } = useForumsTranslation();
   return (
     <header className="relative flex flex-col gap-3">
-      <ForumBreadcrumb path={path} current={thread.title} />
+      <ForumBreadcrumb path={path} current={thread.title} space={thread.space} />
       <h1 className="m-0 max-w-[820px] text-[clamp(32px,4vw,48px)] leading-tight font-extrabold break-words">
         {thread.title}
       </h1>

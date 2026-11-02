@@ -124,7 +124,10 @@
     "removeQuotes": "Elimină citatele",
     "quotesLabel": "Postările pe care le citezi",
     "noBump": "Nu o urca",
-    "noBumpNote": "Răspunsul tău nu va muta discuția în capul listei."
+    "noBumpNote": "Răspunsul tău nu va muta discuția în capul listei.",
+    "joinSpace": "Intră în <space>{{space}}</space> ca să răspunzi aici.",
+    "pendingSpace": "Ai cerut să intri în <space>{{space}}</space>. Vei putea răspunde după ce proprietarul te primește.",
+    "otherAgeGroup": "Doar cei din grupa de vârstă a spațiului <space>{{space}}</space> pot răspunde aici."
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
@@ -157,7 +160,10 @@
     },
     "quote_missing": "O postare pe care ai citat-o nu mai există. Elimină citatele și încearcă din nou.",
     "quote_too_many": "Poți cita cel mult 10 postări într-un răspuns.",
-    "locked": "Echipa de moderare a închis discuția, așa că nu mai primește răspunsuri."
+    "locked": "Echipa de moderare a închis discuția, așa că nu mai primește răspunsuri.",
+    "space_join": "Intră în acest spațiu ca să postezi aici.",
+    "space_pending": "Proprietarul nu ți-a aprobat încă cererea. Vei putea posta după ce intri.",
+    "space_age": "Acest spațiu primește postări de la altă grupă de vârstă."
   },
   "quote": {
     "wrote": "{{name}} a scris în",
@@ -227,5 +233,8 @@
     "kindThread": "Discuție",
     "kindPost": "Mesajul #{{number}}",
     "where": "În {{forum}} · de {{name}} · {{date}}"
+  },
+  "space": {
+    "spaces": "Spații"
   }
 }

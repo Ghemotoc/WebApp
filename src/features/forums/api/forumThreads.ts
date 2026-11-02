@@ -57,6 +57,12 @@ export interface ForumPost {
   hasHistory: boolean;
 }
 
+/** The space a thread lives in (FORUMS-2a, S1-E8-06): its address and name. */
+export interface ForumThreadSpace {
+  slug: string;
+  name: string;
+}
+
 /** A thread's heading and side panel. */
 export interface ForumThreadHeader {
   id: string;
@@ -78,6 +84,8 @@ export interface ForumThreadHeader {
   canReply: boolean;
   /** Moderation staff: shows Make sticky, Lock and Unlock (the server checks again). */
   canModerate: boolean;
+  /** The space whose forum holds the thread, or null for a thread in the main forums. */
+  space: ForumThreadSpace | null;
 }
 
 /** Why a thread is locked; never who locked it (the page says "the moderation team"). */
@@ -223,6 +231,19 @@ export function postFrom(row: JsonObject): ForumPost {
 }
 
 /**
+ * Reads the space a thread lives in (FORUMS-2a): forum_thread_header_json() gives {slug, name}
+ * for a thread in a space's forum and null otherwise.
+ *
+ * @param value - the header's "space" field
+ * @returns the space, or null
+ */
+function spaceOfThread(value: Json | undefined): ForumThreadSpace | null {
+  const space = objectOf(value);
+  if (typeof space['slug'] !== 'string' || typeof space['name'] !== 'string') return null;
+  return { slug: space['slug'], name: space['name'] };
+}
+
+/**
  * Reads a thread's heading.
  *
  * @param row - forum_thread_header_json()'s answer
@@ -245,6 +266,7 @@ function headerFrom(row: JsonObject): ForumThreadHeader {
     lock: lockFrom(row['lock']),
     canReply: row['can_reply'] === true,
     canModerate: row['can_moderate'] === true,
+    space: spaceOfThread(row['space']),
   };
 }
 

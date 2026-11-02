@@ -7,10 +7,11 @@
  * (ThreadList, part b, S1-E8-02). A category's address shows its forums the same way; threads
  * live in the forums inside it. Part d adds "Mark as read" for the forum and those inside it
  * (MarkReadButton, S1-E8-04).
+ * A space's forum (FORUMS-2a, S1-E8-06) moves to the space's page, /spaces/<name>.
  * What it calls: useForumIndex (the same read as the index, so moving between them is instant);
  * lib/forumTree.ts finds the forum, its path and its children; ForumBreadcrumb and ThreadList.
  */
-import { Link, useParams } from 'react-router';
+import { Link, Navigate, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -18,6 +19,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import type { ForumEntry } from '../api/forumIndex';
 import { useForumIndex } from '../hooks/useForumIndex';
 import { childrenOf, forumPath } from '../lib/forumTree';
+import { spaceSlugOfForum } from '../lib/spaceForums';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumBreadcrumb } from './ForumBreadcrumb';
@@ -92,6 +94,9 @@ export function ForumPage() {
   const { forumSlug = '' } = useParams();
   const { entries, loadFailed } = useForumIndex();
   const path = entries === null ? [] : forumPath(entries, forumSlug);
+  // A space's forum has no page of its own: its threads show on the space's page (S1-E8-06).
+  const spaceSlug = spaceSlugOfForum(forumSlug);
+  if (spaceSlug !== null) return <Navigate to={`/spaces/${spaceSlug}`} replace />;
   return (
     <PageContainer className="flex flex-col gap-6 py-10">
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}

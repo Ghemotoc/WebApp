@@ -77,7 +77,8 @@
     "atlas_item": "something from your story’s world",
     "message": "your message",
     "forum_thread": "your forum thread",
-    "forum_post": "your forum post"
+    "forum_post": "your forum post",
+    "space": "your space"
   },
   "decisions": {
     "no_action": "a moderator checked a report about {{item}} and took no action, so nothing changes.",

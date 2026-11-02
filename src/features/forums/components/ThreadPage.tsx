@@ -10,7 +10,9 @@
  * each post's buttons change and the reply card sends (S1-E8-03). Part d marks the thread read
  * up to the last post on screen for a signed-in reader (useMarkThreadRead, S1-E8-04). Part e
  * shows the locked note instead of the reply box, and the moderator tools to moderation staff
- * (ThreadModeration, S1-E8-05).
+ * (ThreadModeration, S1-E8-05). FORUMS-2a: a thread in a space lives at
+ * /forums/space-<space>/<n>, its breadcrumb goes through the space and its reply card says how to
+ * join (S1-E8-06).
  * What it calls: useForumThread → forum_thread(); useForumIndex for the breadcrumb;
  * useQuotePicks.
  */
@@ -106,6 +108,7 @@ function ThreadPosts({
         target={{ forumSlug: thread.forumSlug, threadNumber, posts: read.posts, quotePicks }}
         canReply={thread.canReply}
         lock={thread.lock}
+        space={thread.space}
       />
     </div>
   );

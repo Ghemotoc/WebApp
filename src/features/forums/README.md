@@ -40,3 +40,7 @@ S1-E8-02; board 5.2 Forum thread).
 
 The database half is `supabase/migrations/…_forums1_a_forum_categories.sql` and
 `…_forums1_b_threads_and_posts.sql`, `…_forums1_c_quotes.sql` and `…_forums1_d_read_and_unread.sql`.
+- Spaces (S1-E8-06, FORUMS-2a): a space's threads live in its own hidden forum (`space-<name>`);
+  `lib/spaceForums.ts` finds the space from the address, `NewThreadForm` is shared with the
+  space's new-thread page, `ForumBreadcrumb` and `SpaceReplyNote` show the way through the space.
+  The space screens themselves are in `src/features/spaces/`.

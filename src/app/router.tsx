@@ -676,6 +676,50 @@ const writeRoutes: RouteObject[] = [
       return { Component: ThreadPage };
     },
   },
+  // Spaces people create (FORUMS-2a, S1-E8-06): the list, a new space, one space, its settings
+  // and a new thread in it. A static path wins over /spaces/:spaceSlug, and no space may take
+  // "new" as its address (the spaces_slug_not_new constraint).
+  {
+    path: '/spaces',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { SpacesPage } = await import('@/features/spaces/components/SpacesPage');
+      return { Component: SpacesPage };
+    },
+  },
+  {
+    path: '/spaces/new',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { NewSpacePage } = await import('@/features/spaces/components/NewSpacePage');
+      return { Component: NewSpacePage };
+    },
+  },
+  {
+    path: '/spaces/:spaceSlug',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { SpacePage } = await import('@/features/spaces/components/SpacePage');
+      return { Component: SpacePage };
+    },
+  },
+  {
+    path: '/spaces/:spaceSlug/new',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { SpaceNewThreadPage } =
+        await import('@/features/spaces/components/SpaceNewThreadPage');
+      return { Component: SpaceNewThreadPage };
+    },
+  },
+  {
+    path: '/spaces/:spaceSlug/settings',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { SpaceSettingsPage } = await import('@/features/spaces/components/SpaceSettingsPage');
+      return { Component: SpaceSettingsPage };
+    },
+  },
   // The reader's library (S1-E4-03) and each shelf's See all page, which is a story list.
   {
     path: '/library',

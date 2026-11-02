@@ -77,7 +77,8 @@
     "atlas_item": "ceva din lumea poveștii tale",
     "message": "mesajul tău",
     "forum_thread": "discuția ta de pe forum",
-    "forum_post": "mesajul tău de pe forum"
+    "forum_post": "mesajul tău de pe forum",
+    "space": "spațiul tău"
   },
   "decisions": {
     "no_action": "un moderator a verificat o raportare despre {{item}} și nu a luat nicio măsură, așa că nu se schimbă nimic.",

@@ -11,7 +11,8 @@
       "atlas_item": "Report this from the story’s world",
       "message": "Report this message",
       "forum_thread": "Report this thread",
-      "forum_post": "Report this post"
+      "forum_post": "Report this post",
+      "space": "Report this space"
     },
     "anonymous": "{{item}}. They won’t see who reported it.",
     "whatIsWrong": "What’s wrong?",
