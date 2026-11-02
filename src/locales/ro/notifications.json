@@ -65,7 +65,9 @@
     "spaceJoinRequest_other": "au cerut să intre în {{space}}.",
     "spaceJoinApproved": "ai intrat în {{space}}. Acum poți posta acolo.",
     "signatureChangeRequested": "te rugăm să-ți schimbi semnătura de pe forum în 24 de ore, altfel va fi ștearsă.",
-    "bannerChangeRequested": "te rugăm să schimbi imaginea de banner a spațiului {{space}} în 24 de ore, altfel va fi ștearsă."
+    "bannerChangeRequested": "te rugăm să schimbi imaginea de banner a spațiului {{space}} în 24 de ore, altfel va fi ștearsă.",
+    "certificateIssued": "ai primit o diplomă semnată în {{space}}. O găsești în Diplomele mele.",
+    "classArchived": "spațiul clasei „{{space}}” a fost arhivat. Salvează-ți copii ale diplomelor în 30 de zile: apoi numele reale tipărite pe ele se șterg."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -118,7 +120,9 @@
     "openStory": "Deschide povestea",
     "seeRequests": "Vezi cererile",
     "openSpace": "Deschide spațiul",
-    "changeIt": "Modifică"
+    "changeIt": "Modifică",
+    "openCertificates": "Deschide diplomele mele",
+    "openClassCertificates": "Vezi diplomele"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

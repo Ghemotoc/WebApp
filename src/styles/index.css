@@ -325,3 +325,29 @@
 .tmc-atlas-progress::-moz-progress-bar {
   background: var(--primary);
 }
+
+/* Writing certificates (S1-E8-12): printing a certificate's page prints only the certificate, as
+   one A4 page with white paper and black ink; everything else on the page is hidden. The
+   browser's "Save as PDF" keeps it as real, tagged text. */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+  body:has(.certificate-sheet) * {
+    visibility: hidden;
+  }
+  body:has(.certificate-sheet) .certificate-sheet,
+  body:has(.certificate-sheet) .certificate-sheet * {
+    visibility: visible;
+  }
+  .certificate-sheet {
+    position: absolute;
+    inset: 0;
+    border: none;
+    background: #fff;
+    color: #000;
+    min-height: 100%;
+    justify-content: space-between;
+  }
+}

@@ -65,7 +65,9 @@
     "spaceJoinRequest_other": "asked to join {{space}}.",
     "spaceJoinApproved": "you’re in {{space}}. You can now post there.",
     "signatureChangeRequested": "please change your forum signature within 24 hours, or it will be removed.",
-    "bannerChangeRequested": "please change the banner picture of {{space}} within 24 hours, or it will be removed."
+    "bannerChangeRequested": "please change the banner picture of {{space}} within 24 hours, or it will be removed.",
+    "certificateIssued": "your teacher signed a certificate for you in {{space}}. It’s in My certificates.",
+    "classArchived": "the class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: then the real names printed on them are deleted."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -118,7 +120,9 @@
     "openStory": "Open the story",
     "seeRequests": "See the requests",
     "openSpace": "Open the space",
-    "changeIt": "Change it"
+    "changeIt": "Change it",
+    "openCertificates": "Open my certificates",
+    "openClassCertificates": "See the certificates"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

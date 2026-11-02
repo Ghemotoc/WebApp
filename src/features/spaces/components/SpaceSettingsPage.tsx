@@ -13,13 +13,15 @@
  * end of the school year (ClassLockCard, the settings power) and archiving it for good (ClassArchiveCard, CLASSES-d). Anyone else is told only the owner can change it; the
  * database checks again. A new name keeps the space's address, so links to it still work.
  * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceBannerPictureCard;
- * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard; ClassArchiveCard.
+ * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard; ClassArchiveCard; and the
+ * teacher's ClassCertificatesCard (CLASSES-e, S1-E8-12).
  */
 import { useState } from 'react';
 import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { ClassCertificatesCard } from '@/features/certificates/components/ClassCertificatesCard';
 
 import type { Space, SpaceSettings } from '../api/spaces';
 import { useSpace, useUpdateSpace } from '../hooks/useSpaces';
@@ -106,6 +108,7 @@ function ClassCards({ space }: { space: Space }) {
       {canInvite && <ClassWaitingCard space={space} />}
       {canManage && <ClassLockCard space={space} />}
       {canManage && <ClassArchiveCard space={space} />}
+      {space.viewer.membership === 'owner' && <ClassCertificatesCard slug={space.slug} />}
     </>
   );
 }

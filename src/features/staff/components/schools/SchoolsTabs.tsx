@@ -1,18 +1,20 @@
 /**
- * SchoolsTabs: the tabs of the Schools area, Verify teachers and Class spaces (story S1-E2-11;
- * bundle CLASSES, part d, S1-E8-11 criterion 10; board AdminSchools 8.9).
+ * SchoolsTabs: the tabs of the Schools area, Verify teachers, Class spaces and Certificates (story
+ * S1-E2-11; bundle CLASSES, part d, S1-E8-11 criterion 10, and part e, S1-E8-12 criterion 7;
+ * board AdminSchools 8.9).
  *
- * Who shows it: TeacherChecksPage and ClassSpacesPage. Both tabs need the same Schools access, so
- * whoever sees one sees both. The tabs are links (each tab is its own address), marked with
+ * Who shows it: TeacherChecksPage, ClassSpacesPage and StaffCertificatesPage. Every tab needs the
+ * same Schools access, so whoever sees one sees them all. The tabs are links (each tab is its own address), marked with
  * aria-current, not an ARIA tab widget, like UsersTabs.
  */
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 
-/** The two tabs: their addresses and texts. */
+/** The tabs: their addresses and texts. */
 const schoolsTabs = [
   { href: '/staff/schools/teachers', labelKey: 'schoolsTabs.teachers' },
   { href: '/staff/schools/classes', labelKey: 'schoolsTabs.classes' },
+  { href: '/staff/schools/certificates', labelKey: 'schoolsTabs.certificates' },
 ] as const;
 
 /**

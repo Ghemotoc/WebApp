@@ -64,7 +64,9 @@
     "required": "This email is about your account and safety, so we always send it.",
     "subjectLoginMethod": "A change to how you log in to {{productName}}",
     "loginMethodAdded": "A new way to log in was connected to your account. You can see them all in Settings, under Ways to log in. If this wasn’t you, change your password and contact us.",
-    "loginMethodRemoved": "A way to log in was disconnected from your account. You can see the ones left in Settings, under Ways to log in. If this wasn’t you, change your password and contact us."
+    "loginMethodRemoved": "A way to log in was disconnected from your account. You can see the ones left in Settings, under Ways to log in. If this wasn’t you, change your password and contact us.",
+    "subjectClassArchived": "Your class space is archived: keep copies of its certificates",
+    "classArchived": "The class space “{{space}}” is archived. Save your own copies of its certificates within 30 days: after that, the real names printed on them are deleted."
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} asked you to agree to their {{productName}} account",
