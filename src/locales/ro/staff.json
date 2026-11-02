@@ -929,6 +929,7 @@
     "statuses": {
       "draft": "Ciornă",
       "published": "Publicată",
+      "restricted": "Restricționată",
       "hidden": "Ascunsă",
       "removed": "Eliminată"
     },
@@ -994,7 +995,65 @@
       "words_few": "{{count}} cuvinte publicate",
       "words_other": "{{count}} de cuvinte publicate",
       "noChapters": "Povestea nu are încă niciun capitol.",
-      "noWordsNote": "Echipa nu vede niciodată aici cuvintele unui capitol. Textul unei ciorne se deschide doar dintr-un caz de moderare sau dintr-o cerere privind datele, iar asta se notează în jurnal."
+      "noWordsNote": "Echipa nu vede niciodată aici cuvintele unui capitol. Textul unei ciorne se deschide doar dintr-un caz de moderare sau dintr-o cerere privind datele, iar asta se notează în jurnal.",
+      "writerAge": "Grupa de vârstă",
+      "adult": "18 ani sau peste"
+    },
+    "change": {
+      "visibilityHeading": "Cine o poate găsi",
+      "visibilityLabel": "Cine poate găsi povestea",
+      "visibility": {
+        "shown": "Vizibilă",
+        "restricted": "Restricționată",
+        "hidden": "Ascunsă"
+      },
+      "visibilityExplain": {
+        "shown": "Vizibilă așa cum a publicat-o persoana care scrie.",
+        "restricted": "Se deschide în continuare din linkul ei, din biblioteci și de pe profilul persoanei care scrie, dar nu mai apare în Descoperă, pe rafturi, în căutare sau la etichete. Persoana care scrie primește o motivare a deciziei.",
+        "hidden": "O văd doar persoana care scrie și echipa. Persoana care scrie primește o motivare a deciziei și poate face contestație."
+      },
+      "removedByCase": "Un caz de moderare a eliminat această poveste. Doar acel caz sau o contestație o poate aduce înapoi.",
+      "saveVisibility": "Salvează cine o poate găsi",
+      "settingsHeading": "Setări și detalii",
+      "settingsIntro": "Corectează o setare greșită. Nu poți schimba titlul, descrierea, avertismentul de conținut sau vreun cuvânt: doar persoana care scrie poate. O clasificare ridicată îi trimite persoanei care scrie o motivare a deciziei; orice altă schimbare îi trimite o notificare cu ce s-a schimbat și de ce.",
+      "commentsOn": "Comentarii permise",
+      "commentsHint": "Cititorii pot comenta capitolele.",
+      "abuseHint": "Atunci are nevoie de clasificarea 16+ sau 18+ și de avertismentul de conținut scris de persoana care scrie. Dacă nu există, cere-i să-l adauge.",
+      "tagsLabel": "Etichete",
+      "tagsHint": "Desparte etichetele prin virgule, cel mult 10. O etichetă nouă așteaptă aprobarea echipei înainte să apară.",
+      "saveSettings": "Salvează setările",
+      "reasonLabel": "Motiv",
+      "pickReason": "Alege un motiv",
+      "reasonText": "De ce, în câteva cuvinte",
+      "reasonHint": "Persoana care scrie citește asta în notificare, așa că scrie pentru ea. Ajunge și în jurnalul de audit.",
+      "reasonMissing": "Alege un motiv și spune de ce în câteva cuvinte.",
+      "reasons": {
+        "rating_rules": "Clasificarea e greșită",
+        "story_details": "Un detaliu e greșit (categorie, etichete, limbă sau marcaje)",
+        "community_rules": "Încalcă regulile comunității",
+        "illegal_content": "Conținut ilegal",
+        "personal_data": "Datele personale ale cuiva",
+        "copyright": "Drepturi de autor",
+        "writer_asked": "Persoana care scrie ne-a cerut",
+        "other": "Altceva"
+      },
+      "chapter": {
+        "hidden": "Ascunde capitolul {{number}}",
+        "shown": "Arată din nou capitolul {{number}}",
+        "confirm_hidden": "Ascunde capitolul {{number}}",
+        "confirm_shown": "Arată din nou capitolul {{number}}"
+      },
+      "cancel": "Anulează",
+      "saved": "Salvat. Persoana care scrie a aflat ce s-a schimbat și de ce.",
+      "failures": {
+        "not_allowed": "Rolul tău nu poate schimba povești. Pot proprietarii, administratorii și moderatorii.",
+        "no_such_story": "Povestea sau capitolul nu mai există. Poate că persoana care scrie l-a șters.",
+        "reason_needed": "Alege un motiv și spune de ce în câteva cuvinte.",
+        "nothing_changed": "Nu s-a schimbat nimic: povestea are deja aceste setări.",
+        "removed_by_case": "Un caz de moderare a eliminat asta. Doar acel caz sau o contestație o poate aduce înapoi.",
+        "not_valid": "Povestea nu poate fi salvată așa. O poveste despre abuz sau constrângere are nevoie de clasificarea 16+ sau 18+ și de avertismentul de conținut al persoanei care scrie, iar o poveste poate avea cel mult 10 etichete.",
+        "unreachable": "Schimbarea nu s-a salvat. Verifică conexiunea și încearcă din nou."
+      }
     }
   }
 }

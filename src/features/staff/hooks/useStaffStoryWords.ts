@@ -16,6 +16,7 @@ import type { StaffStoryAudience, StaffStoryStatus } from '../api/staffStories';
 const statusTones: Record<StaffStoryStatus, PillTone> = {
   draft: 'gold',
   published: 'sage',
+  restricted: 'gold',
   hidden: 'blush',
   removed: 'blush',
 };

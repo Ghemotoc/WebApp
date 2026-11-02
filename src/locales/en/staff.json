@@ -929,6 +929,7 @@
     "statuses": {
       "draft": "Draft",
       "published": "Published",
+      "restricted": "Restricted",
       "hidden": "Hidden",
       "removed": "Removed"
     },
@@ -994,7 +995,65 @@
       "words_few": "{{count}} words published",
       "words_other": "{{count}} words published",
       "noChapters": "This story has no chapters yet.",
-      "noWordsNote": "Staff never see a chapter’s words here. A draft’s text opens only from a moderation case or a data request, and that is logged."
+      "noWordsNote": "Staff never see a chapter’s words here. A draft’s text opens only from a moderation case or a data request, and that is logged.",
+      "writerAge": "Writer’s age group",
+      "adult": "18 or over"
+    },
+    "change": {
+      "visibilityHeading": "Who can find it",
+      "visibilityLabel": "Who can find this story",
+      "visibility": {
+        "shown": "Shown",
+        "restricted": "Restricted",
+        "hidden": "Hidden"
+      },
+      "visibilityExplain": {
+        "shown": "Shown as the writer published it.",
+        "restricted": "It still opens from its link, in libraries and on the writer’s profile, but Discover, shelves, search and tags leave it out. The writer gets a statement of reasons.",
+        "hidden": "Only the writer and staff can see it. The writer gets a statement of reasons and can appeal."
+      },
+      "removedByCase": "A moderation case removed this story. Only that case or an appeal can bring it back.",
+      "saveVisibility": "Save who can find it",
+      "settingsHeading": "Settings and details",
+      "settingsIntro": "Fix a setting the writer got wrong. You can’t change the title, the blurb, the content note or any words: only the writer can. A raised rating sends the writer a statement of reasons; any other change sends them a notification saying what changed and why.",
+      "commentsOn": "Comments on",
+      "commentsHint": "Readers can comment on the chapters.",
+      "abuseHint": "It then needs the 16+ or 18+ rating and the writer’s own content note. If there is no note, ask the writer to add one.",
+      "tagsLabel": "Tags",
+      "tagsHint": "Separate tags with commas, at most 10. A new tag waits for staff before it shows.",
+      "saveSettings": "Save settings",
+      "reasonLabel": "Reason",
+      "pickReason": "Pick a reason",
+      "reasonText": "Why, in a few words",
+      "reasonHint": "The writer reads this in their notice, so write it for them. It also goes to the audit log.",
+      "reasonMissing": "Pick a reason and say why in a few words.",
+      "reasons": {
+        "rating_rules": "The rating is wrong",
+        "story_details": "A detail is wrong (category, tags, language or labels)",
+        "community_rules": "It breaks our community guidelines",
+        "illegal_content": "Illegal content",
+        "personal_data": "Someone’s personal data",
+        "copyright": "Copyright",
+        "writer_asked": "The writer asked us",
+        "other": "Something else"
+      },
+      "chapter": {
+        "hidden": "Hide chapter {{number}}",
+        "shown": "Show chapter {{number}} again",
+        "confirm_hidden": "Hide chapter {{number}}",
+        "confirm_shown": "Show chapter {{number}} again"
+      },
+      "cancel": "Cancel",
+      "saved": "Saved. The writer has been told what changed and why.",
+      "failures": {
+        "not_allowed": "Your role can’t change stories. Owners, admins and moderators can.",
+        "no_such_story": "This story or chapter no longer exists. The writer may have deleted it.",
+        "reason_needed": "Pick a reason and say why in a few words.",
+        "nothing_changed": "Nothing changed: the story already has these settings.",
+        "removed_by_case": "A moderation case removed this. Only that case or an appeal can bring it back.",
+        "not_valid": "The story can’t be saved like this. A story about abuse or coercion needs the 16+ or 18+ rating and the writer’s content note, and a story can have at most 10 tags.",
+        "unreachable": "The change wasn’t saved. Check your connection and try again."
+      }
     }
   }
 }

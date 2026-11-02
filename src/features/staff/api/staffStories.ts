@@ -14,8 +14,17 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 
 import { listOf, numberOrNull, objectOf } from './marchNumbers';
 
-/** A story's status as staff see it: the writer's own state, or a moderator's decision. */
-export const staffStoryStatuses = ['draft', 'published', 'hidden', 'removed'] as const;
+/**
+ * A story's status as staff see it: the writer's own state, or a staff decision (restricted is
+ * S1-E11-08: still opens from its link, left out of lists).
+ */
+export const staffStoryStatuses = [
+  'draft',
+  'published',
+  'restricted',
+  'hidden',
+  'removed',
+] as const;
 export type StaffStoryStatus = (typeof staffStoryStatuses)[number];
 
 /** Where a story can be read today: by everyone, or only inside one class (S1-E8-11). */
@@ -68,8 +77,26 @@ export interface StaffStoryChapter {
   title: string | null;
   status: string;
   isHidden: boolean;
+  /** Hidden or removed by staff, or null while it is shown (S1-E11-08). */
+  moderatedState: 'hidden' | 'removed' | null;
   words: number;
   publishedAt: string | null;
+}
+
+/** Who can find a story: shown, restricted (out of lists), hidden or removed (S1-E11-08). */
+export type StaffStoryVisibility = 'shown' | 'restricted' | 'hidden' | 'removed';
+
+/** The settings staff may change (S1-E11-08); never the title, blurb, content note or words. */
+export interface StaffStorySettings {
+  rating: Enums<'story_rating'>;
+  completionStatus: Enums<'completion_status'>;
+  commentsEnabled: boolean;
+  categorySlug: string | null;
+  languageCode: string;
+  isFanFiction: boolean;
+  isParody: boolean;
+  dealsWithAbuseOrCoercion: boolean;
+  tagNames: string[];
 }
 
 /** One story's overview. */
@@ -79,8 +106,10 @@ export interface StaffStoryOverview extends StaffStoryRow {
   firstPublishedAt: string | null;
   deletedAt: string | null;
   commentsEnabled: boolean;
-  /** True for staff who may change stories (part b); support staff only look. */
+  /** True for staff who may change stories (S1-E11-08); support staff only look. */
   canChange: boolean;
+  settings: StaffStorySettings;
+  visibility: StaffStoryVisibility;
   chapters: StaffStoryChapter[];
 }
 
@@ -171,9 +200,64 @@ function staffStoryChapterFrom(chapter: Record<string, Json | undefined>): Staff
     title: textOrNull(chapter['title']),
     status: String(chapter['status'] ?? ''),
     isHidden: chapter['is_hidden'] === true,
+    moderatedState: moderatedStateOf(chapter['moderated_state']),
     words: numberOrNull(chapter['words']) ?? 0,
     publishedAt: textOrNull(chapter['published_at']),
   };
+}
+
+/**
+ * A list of texts; anything else in it is left out.
+ *
+ * @param value - a JSON array of texts
+ * @returns the texts
+ */
+function textList(value: Json | undefined): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === 'string');
+}
+
+/**
+ * A chapter's moderated state, or null while it is shown.
+ *
+ * @param value - the moderated_state field
+ * @returns 'hidden', 'removed' or null
+ */
+function moderatedStateOf(value: Json | undefined): StaffStoryChapter['moderatedState'] {
+  if (value === 'hidden' || value === 'removed') return value;
+  return null;
+}
+
+/**
+ * Reads the settings staff may change.
+ *
+ * @param value - the settings object of admin_story_overview()
+ * @returns the settings
+ */
+export function staffStorySettingsFrom(value: Json | undefined): StaffStorySettings {
+  const settings = objectOf(value);
+  return {
+    rating: String(settings['rating']) as Enums<'story_rating'>,
+    completionStatus: settings['completion_status'] === 'completed' ? 'completed' : 'ongoing',
+    commentsEnabled: settings['comments_enabled'] === true,
+    categorySlug: textOrNull(settings['category_slug']),
+    languageCode: String(settings['language_code'] ?? ''),
+    isFanFiction: settings['is_fan_fiction'] === true,
+    isParody: settings['is_parody'] === true,
+    dealsWithAbuseOrCoercion: settings['deals_with_abuse_or_coercion'] === true,
+    tagNames: textList(settings['tag_names']),
+  };
+}
+
+/**
+ * Reads the visibility; anything unknown counts as hidden, the most careful reading.
+ *
+ * @param value - the visibility field
+ * @returns the visibility
+ */
+function visibilityOf(value: Json | undefined): StaffStoryVisibility {
+  if (value === 'shown' || value === 'restricted' || value === 'removed') return value;
+  return 'hidden';
 }
 
 /**
@@ -235,6 +319,8 @@ export async function fetchStaffStory(
     deletedAt: textOrNull(answer['deleted_at']),
     commentsEnabled: answer['comments_enabled'] === true,
     canChange: answer['can_change'] === true,
+    settings: staffStorySettingsFrom(answer['settings']),
+    visibility: visibilityOf(answer['visibility']),
     chapters: listOf(answer['chapters']).map(staffStoryChapterFrom),
   };
 }
