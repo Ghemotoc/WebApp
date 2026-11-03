@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #301 (12h2): to have answers to support emails land in their tickets, set `SUPPORT_INBOUND_KEY` on Cloudflare, point Brevo's inbound parsing at `/api/support-inbound?key=…` and forward the support inbox to Brevo's inbound address (docs/runbooks/contact-form.md, section 5). Sending needs nothing new once the notification emails' worker is set up.
 - #300 (12h1): to save Contact us messages as tickets on staging, set `SUPPORT_TICKET_SECRET` in Cloudflare Pages and the same value in Supabase Vault as `support_ticket_secret` (docs/runbooks/contact-form.md, section 3). Until then the form works as before.
 - #299 (12g): nothing to set. Profile pictures uploaded on staging before this stop showing (their files stay in the `avatars` bucket until the retention jobs clear them).
 - #298 (12f2): nothing new to set: it uses `IP_SCRAMBLE_SECRET` (from #296) and `SIGNUP_CONTEXT_SECRET` (S1-E2-10) in Cloudflare Pages. Ask the lawyer about the privacy notice sentence on the returning-user check.
