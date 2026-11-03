@@ -9,7 +9,8 @@
  * - a Featured stories block picked by hand shows the story to visitors (criterion 6);
  * - the visitor sees the picture with its alt text.
  * Test data: the page /c/pictures-e2e and one published chapter, deleted afterwards (the audit log
- * keeps its rows). The local picture check signs with a test value, never a real secret.
+ * keeps its rows; the small picture file stays in the local bucket, because Storage refuses direct
+ * deletes). The local picture check signs with a test value, never a real secret.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
@@ -27,7 +28,6 @@ const tinyPng = Buffer.from(
 const cleanUpSql = `
   delete from public.landing_page_versions where page_id in (select id from public.landing_pages where slug = 'pictures-e2e');
   delete from public.picture_checks where kind = 'landing_picture';
-  delete from storage.objects where bucket_id = 'landing-pictures';
   delete from public.landing_pages where slug = 'pictures-e2e';
   delete from public.chapters where code = 'lpe2e001';
   update public.feature_flags set is_enabled = false where key = 'picture_uploads';`;
