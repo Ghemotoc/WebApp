@@ -32,6 +32,7 @@ export const landingBlockKinds = [
   'rules',
   'questions',
   'featured',
+  'remind_me',
 ] as const;
 export type LandingBlockKind = (typeof landingBlockKinds)[number];
 
@@ -82,6 +83,10 @@ export const landingFieldRules: Record<
   ],
   questions: [{ field: 'heading', longest: 80, isRequired: true }],
   featured: [
+    { field: 'heading', longest: 80, isRequired: true },
+    { field: 'intro', longest: 300, isRequired: false },
+  ],
+  remind_me: [
     { field: 'heading', longest: 80, isRequired: true },
     { field: 'intro', longest: 300, isRequired: false },
   ],
@@ -156,6 +161,17 @@ const storedPictureSchema = z.object({
   path: z.string().nullable(),
 });
 
+/**
+ * A Remind me block's state for the reader (landing_reminder_json(), part a2b): when entries open,
+ * whether they are open already and whether this reader asked to be reminded.
+ */
+export const landingReminderSchema = z.object({
+  opens_on: z.string().nullable(),
+  is_open: z.boolean(),
+  is_set: z.boolean(),
+});
+export type LandingReminder = z.infer<typeof landingReminderSchema>;
+
 /** The public read of /c/<slug> (landing_page()). */
 export const publicLandingPageSchema = z.object({
   slug: z.string(),
@@ -168,5 +184,7 @@ export const publicLandingPageSchema = z.object({
   pictures: z.record(z.string(), storedPictureSchema).default({}),
   /** Part a2a: each Featured block's story cards (story_card_json()), by block ID. */
   featured: z.record(z.string(), z.array(z.record(z.string(), z.unknown()))).default({}),
+  /** Part a2b: the Remind me state for this reader, or null when the page has no such block. */
+  reminder: landingReminderSchema.nullable().default(null),
 });
 export type PublicLandingPage = z.infer<typeof publicLandingPageSchema>;

@@ -16,7 +16,8 @@
     "how_to_enter": "How to enter",
     "rules": "Rules",
     "questions": "Questions and answers",
-    "featured": "Featured stories"
+    "featured": "Featured stories",
+    "remind_me": "Remind me"
   },
   "languages": {
     "ro": "Română",
@@ -149,7 +150,9 @@
       "picture_not_allowed": "Only a Hero or Text block can have a picture.",
       "stories_how_many": "Pick between 1 and 12 stories.",
       "stories_unknown": "One of these addresses isn’t a story. Check each line.",
-      "tag_unknown": "There is no tag with that name."
+      "tag_unknown": "There is no tag with that name.",
+      "one_remind_me": "a page can have one Remind me block",
+      "remind_me_needs_dates": "a Remind me block needs a Key dates block on the page"
     },
     "failures": {
       "take_down_before_show_from": "The take-down date must come after the “show from” date.",
@@ -208,5 +211,16 @@
   "featured": {
     "previewNote": "The stories appear here once the page is published: only stories rated for the youngest readers the page is for.",
     "none": "No stories to show yet."
+  },
+  "remindMe": {
+    "offer": "Entries open on {{date}}. We’ll send you one notification that day, nothing else.",
+    "isSet": "We’ll remind you on {{date}}, with one notification.",
+    "ask": "Remind me",
+    "cancel": "Don’t remind me",
+    "open": "Entries are open.",
+    "signIn": "Entries open on {{date}}. Log in and we’ll remind you that day.",
+    "signInLink": "Log in",
+    "failed": "We couldn’t save that. Try again.",
+    "previewNote": "Signed-in readers can ask here for one notification on the day entries open."
   }
 }

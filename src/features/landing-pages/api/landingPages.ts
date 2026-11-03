@@ -24,18 +24,22 @@ import {
   landingContentSchema,
   landingPageTypes,
   publicLandingPageSchema,
+  landingReminderSchema,
   type LandingContent,
   type LandingPageType,
+  type LandingReminder,
   type PublicLandingPage,
 } from '@/schemas/landingPages';
 
 /**
- * What a page shows beside its words: the pictures by ID, and each Featured block's stories by
- * block ID (null in the editor's preview, which has no published cards yet).
+ * What a page shows beside its words: the pictures by ID, each Featured block's stories by block
+ * ID (null in the editor's preview, which has no published cards yet) and, from part a2b, the
+ * Remind me state with the page's address (null in the preview, where nobody can tap it).
  */
 export interface LandingExtras {
   pictures: Record<string, PictureView>;
   featured: Record<string, ListedStory[]> | null;
+  reminder: { pageSlug: string; state: LandingReminder | null } | null;
 }
 
 /** A page as a visitor gets it: the published version and its extras. */
@@ -124,7 +128,11 @@ export async function fetchPublicLandingPage(
   const pictures = await pictureViewsFromJson(client, parsed.data.pictures as unknown as Json);
   return {
     page: parsed.data,
-    extras: { pictures, featured: featuredStoriesFrom(parsed.data.featured) },
+    extras: {
+      pictures,
+      featured: featuredStoriesFrom(parsed.data.featured),
+      reminder: { pageSlug: parsed.data.slug, state: parsed.data.reminder },
+    },
   };
 }
 
@@ -291,4 +299,26 @@ export async function restoreLandingVersion(
 export async function archiveLandingPage(client: AppSupabaseClient, pageId: string): Promise<void> {
   const { error } = await client.rpc('admin_archive_landing_page', { target_page_id: pageId });
   if (error) throw websiteErrorFrom(error);
+}
+
+/**
+ * Asks for, or cancels, the one notification when a page's entries open (part a2b, criterion 8).
+ *
+ * @param client - the signed-in reader's Supabase client
+ * @param slug - the page's address part after /c/
+ * @param wanted - true to ask, false to cancel
+ * @returns the Remind me state after the change
+ * @throws WebsiteContentError (reason sign_in, no_reminder or already_open)
+ */
+export async function setLandingReminder(
+  client: AppSupabaseClient,
+  slug: string,
+  wanted: boolean,
+): Promise<LandingReminder> {
+  const { data, error } = await client.rpc('set_landing_reminder', {
+    page_slug: slug,
+    wanted,
+  });
+  if (error) throw websiteErrorFrom(error);
+  return landingReminderSchema.parse(data);
 }

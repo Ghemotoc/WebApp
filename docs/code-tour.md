@@ -1594,6 +1594,13 @@ A landing page is a page at its own address, `/c/<name>`, for a contest, a campa
 - **The public read:** `landing_page()` now also returns `pictures` (only visible ones, `landing_page_pictures()`) and `featured` (cards per block id); `fetchPublicLandingPage()` returns them as `extras`.
 - **Tests:** `supabase/tests/database/262-landing-pictures-featured.test.sql`, `e2e/landing-pictures-featured.spec.ts`.
 
+### Remind me (CONTESTS-13a2b)
+
+- **The block:** a `remind_me` block (heading and optional intro) needs a Key dates block on the page, one per page (`landing_page_problems()`). `landing_page()` returns `reminder` ({opens_on, is_open, is_set} for this reader, `landing_reminder_json()`), so `usePublicLandingPage()` keeps its cache per signed-in person.
+- **How one tap travels:** `RemindMeBlock` → `useLandingReminder()` → `setLandingReminder()` → `set_landing_reminder(slug, wanted)`, which asks a visitor to log in (hint `sign_in`), refuses once entries are open (`already_open`) and adds or removes the reader's one row in `landing_page_reminders` (RLS: a reader reads their own; nobody writes directly).
+- **The job:** `send_landing_reminders()` runs every hour (pg_cron `send-landing-reminders`). On the day entries open (Romanian time) it calls `notify()` once per reminder with the kind `landing_entries_open` and marks it sent; no email (the kind has no email default). `notification_json()` adds `landing_page` (address and both titles), and `landingEntriesOpenText()` names the page in the reader's language and links to `/c/<slug>`.
+- **Tests:** `supabase/tests/database/263-landing-remind-me.test.sql`, `e2e/landing-remind-me.spec.ts`.
+
 ## Tags: approval and names in each language (CMS-1e)
 
 A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.

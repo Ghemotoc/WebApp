@@ -67,7 +67,7 @@ export function LandingPreview({ content, pageType, pictures }: LandingPreviewPr
           language={language}
           hasEnded={false}
           pageType={pageType}
-          extras={{ pictures, featured: null }}
+          extras={{ pictures, featured: null, reminder: null }}
           isPreview
         />
       </div>

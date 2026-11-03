@@ -43,7 +43,8 @@ export type NotificationKind =
   | 'data_request_confirm'
   | 'data_request_extended'
   | 'data_request_copy_ready'
-  | 'picture_opened_by_staff';
+  | 'picture_opened_by_staff'
+  | 'landing_entries_open';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
@@ -100,6 +101,12 @@ export interface NotificationDataRequest {
   extensionReason: string | null;
 }
 
+/** A landing page a notification is about, with its title in Romanian and English. */
+export interface NotificationLandingPage {
+  slug: string;
+  titles: { ro: string; en: string };
+}
+
 /** One notification as the page draws it. */
 export interface AppNotification {
   id: string;
@@ -141,6 +148,11 @@ export interface AppNotification {
    * yyyy-mm-dd and, after an extension, why the team needs more time.
    */
   dataRequest: NotificationDataRequest | null;
+  /**
+   * The landing page whose entries opened, for landing_entries_open (S1-E11-14; CONTESTS-13a2b):
+   * its address and its title in each language, or null once the page is archived.
+   */
+  landingPage: NotificationLandingPage | null;
   /** A moderation decision can't be switched off (criterion 4). */
   isRequired: boolean;
   isRead: boolean;
@@ -193,6 +205,7 @@ interface NotificationRow {
     reason_text: string;
   } | null;
   data_request?: { reference: string; deadline: string; extension_reason: string | null } | null;
+  landing_page?: { slug: string; title_ro: string | null; title_en: string | null } | null;
   is_required: boolean;
   is_read: boolean;
   at: string;
@@ -232,6 +245,18 @@ function staffChangeOf(row: NotificationRow): NotificationStaffChange | null {
     reasonCode: change.reason_code,
     reasonText: change.reason_text,
   };
+}
+
+/**
+ * A landing page in the page's shape (CONTESTS-13a2b).
+ *
+ * @param row - the database's row
+ * @returns the page, or null for other kinds and archived pages
+ */
+function landingPageOf(row: NotificationRow): NotificationLandingPage | null {
+  const page = row.landing_page;
+  if (page === null || page === undefined) return null;
+  return { slug: page.slug, titles: { ro: page.title_ro ?? '', en: page.title_en ?? '' } };
 }
 
 /**
@@ -300,6 +325,7 @@ function toNotification(row: NotificationRow): AppNotification {
     changeRequest: changeRequestOf(row),
     staffChange: staffChangeOf(row),
     dataRequest: dataRequestOf(row),
+    landingPage: landingPageOf(row),
     isRequired: row.is_required,
     isRead: row.is_read,
     at: row.at,

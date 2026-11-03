@@ -125,6 +125,8 @@ select results_eq(
        ('invites', 0::bigint),
        ('jobs', 0::bigint),
        -- Landing pages: staff only; visitors read the live page through landing_page() (S1-E11-14).
+       -- A reader's own Remind me requests (CONTESTS-13a2b).
+       ('landing_page_reminders', 0::bigint),
        ('landing_page_versions', 0::bigint),
        ('landing_pages', 0::bigint),
        ('languages', (select count(*) from public.languages)),

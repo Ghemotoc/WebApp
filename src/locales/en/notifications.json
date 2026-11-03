@@ -37,7 +37,8 @@
     "many_few": "{{first}}, {{second}} and {{count}} others",
     "parentOrGuardian": "Your parent or guardian",
     "yourAccount": "Your account:",
-    "yourLibrary": "Your library:"
+    "yourLibrary": "Your library:",
+    "reminder": "Your reminder:"
   },
   "chapterOfStory": "Chapter {{position}} of {{story}}",
   "what": {
@@ -77,7 +78,9 @@
     "dataRequestConfirm": "we received a request about your data ({{reference}}) by email or post, not from inside your account. Was it you?",
     "dataRequestExtended": "we need more time to answer your data request {{reference}}. The new deadline and the reason are in Settings.",
     "dataRequestCopyReady": "your copy for the data request {{reference}} is ready. Download it in Settings within seven days.",
-    "pictureOpenedByStaff": "opened the original file of an uploaded picture. Every opening is in the audit log."
+    "pictureOpenedByStaff": "opened the original file of an uploaded picture. Every opening is in the audit log.",
+    "landingEntriesOpen": "entries are open for “{{title}}”.",
+    "landingEntriesOpenGone": "entries are open for a page you asked about, which has since been taken down."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -137,7 +140,8 @@
     "answerDataRequest": "Answer",
     "seeDataRequests": "See your data requests",
     "downloadDataRequestCopy": "Download it",
-    "openAuditLog": "Open the audit log"
+    "openAuditLog": "Open the audit log",
+    "openLandingPage": "Open the page"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",
@@ -232,5 +236,6 @@
     "settings": "the settings",
     "list": "{{first}} and {{last}}",
     "yourStory": "your story"
-  }
+  },
+  "pageLanguage": "en"
 }

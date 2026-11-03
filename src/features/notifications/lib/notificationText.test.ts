@@ -42,6 +42,7 @@ const newChapter: AppNotification = {
   changeRequest: null,
   staffChange: null,
   dataRequest: null,
+  landingPage: null,
   isRequired: false,
   isRead: false,
   at: '2026-10-25T07:00:00Z',
@@ -467,5 +468,24 @@ describe('notificationText', () => {
     expect(text.what).toContain('within seven days');
     expect(text.actionLabel).toBe('Download it');
     expect(text.href).toBe('/settings#data-requests');
+  });
+
+  it('entries opening names the landing page in the reader’s language and links to it (CONTESTS-13a2b)', () => {
+    const openRow: AppNotification = {
+      ...newChapter,
+      kind: 'landing_entries_open',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      landingPage: {
+        slug: 'iarna',
+        titles: { ro: 'Concursul de iarnă', en: 'The winter contest' },
+      },
+    };
+    const text = notificationText(englishT(), openRow, null);
+    expect(text.what).toContain('The winter contest');
+    expect(text.href).toBe('/c/iarna');
+    expect(text.actionLabel).toBe('Open the page');
   });
 });
