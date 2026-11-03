@@ -2,7 +2,7 @@
  * usePictureUpload: uploads one picture and keeps what the field should say about it (story
  * S1-E10-05).
  *
- * Who calls it: CoverUploadField (Story settings) and AvatarSettingsSection (Settings › Profile);
+ * Who calls it: CoverUploadField (Story settings; avatars are drawn, not uploaded, since ADMIN-2g);
  * uploadOutcomeOf() also serves SignaturePictureControls (S1-E8-08).
  * What it calls: ../api/pictures.ts uploadPicture(), then refreshes the pictures on screen.
  */
@@ -47,14 +47,13 @@ export function uploadOutcomeOf(
 export function usePictureUpload(target: {
   bucket: PictureBucket;
   folder: string | null;
-  kind: 'cover' | 'avatar';
+  kind: 'cover';
 }) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (file: File) => uploadPicture(await requireClient(), { ...target, file }),
     onSuccess: () => {
       // The new picture's state shows wherever the person's pictures are drawn.
-      void queryClient.invalidateQueries({ queryKey: ['avatar-picture'] });
       void queryClient.invalidateQueries({ queryKey: ['story-cover-picture'] });
     },
   });

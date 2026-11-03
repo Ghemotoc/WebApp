@@ -132,9 +132,6 @@
     "coverLabel": "Upload a picture",
     "coverHint": "JPEG, PNG or WebP, up to 5 MB. A tall picture (5 by 8) fits best. Readers see it once it passes our picture check.",
     "coverPreview": "Your uploaded cover",
-    "avatarLabel": "Upload a profile picture",
-    "avatarHint": "JPEG, PNG or WebP, up to 2 MB. Others see it once it passes our picture check.",
-    "avatarHeading": "Profile picture",
     "chapter": {
       "figureLabel": "Picture in this chapter",
       "beingChecked": "Picture being checked",

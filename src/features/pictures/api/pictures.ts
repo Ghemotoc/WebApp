@@ -11,7 +11,7 @@
  * `atlas-images`, `space-banners` and `signature-pictures` buckets), the database functions
  * register_picture(), register_chapter_picture(), register_atlas_picture(), register_space_banner(),
  * register_signature_picture(),
- * story_cover_picture(), profile_avatar_picture(), my_pending_pictures() and my_picture_states()
+ * story_cover_picture(), my_pending_pictures() and my_picture_states()
  * (…_s1_e10_05_picture_check.sql, …_s1_e3_09_chapter_pictures.sql), and POST /api/picture-check
  * (server/picture-check.ts), which runs the checks with the person's own sign-in.
  * A picture is shown only through a signed address that lasts an hour; Storage refuses one for a
@@ -151,23 +151,6 @@ export async function fetchStoryCoverPicture(
 ): Promise<PictureView | null> {
   const { data, error } = await client.rpc('story_cover_picture', { story_slug: storySlug });
   if (error !== null) throw new Error(`Could not read the cover: ${error.message}`);
-  return viewFrom(client, data);
-}
-
-/**
- * A profile's picture (for one's own profile, the newest one still in its check).
- *
- * @param client - the shared Supabase client
- * @param handle - the username, without "@"
- * @returns the view, or null when there is none
- * Errors: throws when the database can't be reached.
- */
-export async function fetchAvatarPicture(
-  client: AppSupabaseClient,
-  handle: string,
-): Promise<PictureView | null> {
-  const { data, error } = await client.rpc('profile_avatar_picture', { profile_handle: handle });
-  if (error !== null) throw new Error(`Could not read the profile picture: ${error.message}`);
   return viewFrom(client, data);
 }
 

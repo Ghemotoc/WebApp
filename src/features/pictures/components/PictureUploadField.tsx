@@ -9,7 +9,7 @@
  * - refused: the reason in plain words, with the minutes to wait for the hourly limit.
  * Under the hint, PictureRulesNote says which pictures are allowed (drawings and illustrations
  * only, no photos; bundle ADMIN-2, part e1), and the file input is described by both.
- * Who uses it: CoverUploadField, AvatarSettingsSection, CharacterPictureSection,
+ * Who uses it: CoverUploadField, CharacterPictureSection,
  * SpaceBannerPictureCard and SignaturePictureControls. What it calls: PictureRulesNote; the caller
  * passes the upload outcome from usePictureUpload.
  */

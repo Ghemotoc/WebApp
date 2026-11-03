@@ -1,0 +1,9 @@
+# Avatars
+
+The drawn avatar: a person builds it in Settings › Profile and it shows over their initials on their profile and in messages. Built by bundle ADMIN-2, part g (Robert's brief of 2 Nov 2026, section 7). Avatars are never uploaded (Robert, 2 Nov 2026): they are built here or are the initials, so they need no picture check. The art is DiceBear's Open Peeps (CC0), drawn in the browser; why is in `docs/adr/0013-avatar-builder-art.md`.
+
+- `lib/avatarOptions.ts`: every choice the builder offers, part by part, and where it starts (no facial hair, no accessory: nothing assumes a gender). `lib/randomRecipe.ts`: "Surprise me". `lib/drawAvatar.ts`: a recipe to an SVG `data:` address; the art loads only when the first avatar is drawn.
+- `api/avatarRecipe.ts`: `profile_avatar_recipe()` and `set_my_avatar_recipe()` (`…_admin2_g_avatar_builder.sql`; the database checks the shape with `avatar_recipe_valid()`). The recipe's shape is the zod schema `src/schemas/avatarRecipe.ts`.
+- `hooks/useAvatarRecipe.ts` (a profile's recipe; saving one's own), `hooks/useAvatarDraft.ts` (the draft and Undo), `hooks/useAvatarDrawing.ts` (draws a recipe once and keeps it).
+- `components/AvatarBuilderSection.tsx` (Settings: preview, `AvatarPartPickers`, `AvatarBuilderActions`), `AvatarDrawing.tsx` (one drawn avatar), `AvatarImage.tsx` (a profile's avatar over its initials, used by `ProfileAvatar` and `ChatAvatar`).
+- Text: the `avatars` namespace in `src/locales/{ro,en}/avatars.json`, registered when an avatar component first renders (`registerAvatarTranslations.ts`); staff can override it from Interface text.

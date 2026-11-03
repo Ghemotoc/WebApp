@@ -54,7 +54,7 @@ We collect as little as we can. Here is everything.
 What you give us:
 
 - Your account: email address, password (we store it in a scrambled form nobody can read, not even us), year of birth, and your birth month only if we need it to work out whether you are under or over 13 or 16. We never ask for your full date of birth or your legal name.
-- Your profile: username, pen name if you add one, bio and picture if you add them, interface language, the county or region you pick (optional) and the categories and tags you like.
+- Your profile: username, pen name if you add one, bio if you add one, the drawn avatar you build (the choices you made, never a photo; nothing is uploaded), interface language, the county or region you pick (optional) and the categories and tags you like.
 - Your birthday, if you add one: the month, and the day if you like, never the year. Only you see it, and we use it only to wish you a happy birthday. You can remove it in Settings at any time.
 - What you make: stories, chapters, drafts, comments, forum posts, private messages, pictures and drawings. Also the ratings and labels you give your stories.
 - What you do: likes, follows, your library and where you are in a story, and private downvotes (only our staff can see these). Reads are counted per day as totals, not as a list of who read what.

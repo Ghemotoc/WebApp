@@ -29,7 +29,7 @@ import { SignatureSettingsSection } from '@/features/forums/components/Signature
 import { MessageSettingsSection } from '@/features/messages/components/MessageSettingsSection';
 import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
-import { AvatarSettingsSection } from '@/features/pictures/components/AvatarSettingsSection';
+import { AvatarBuilderSection } from '@/features/avatars/components/AvatarBuilderSection';
 import { PrivacySettingsSection } from '@/features/privacy/components/PrivacySettingsSection';
 import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
 import { TeacherBadgeSection } from '@/features/teacher-badge/components/TeacherBadgeSection';
@@ -67,7 +67,7 @@ function ProfileSections({
     <>
       <AccountNamesSection account={account} names={names} />
       <BioSettingsSection handle={handle} />
-      <AvatarSettingsSection handle={handle} />
+      <AvatarBuilderSection handle={handle} />
       {/* The line under one's forum posts (S1-E8-08). */}
       <SignatureSettingsSection />
       {/* The county, likes and (16 and 17) adult messages chosen in setup (S1-E2-06). */}

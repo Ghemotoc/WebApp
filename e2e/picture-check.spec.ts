@@ -6,12 +6,15 @@
  * local server's /api/picture-check always uses the stub provider: a file passes unless its name
  * ends in _fail, _gore, _match or _down.
  * What it proves (with the picture_uploads flag switched on for the test):
- * - adult_writer uploads a profile picture; it passes the check and shows on their profile;
+ * - adult_writer uploads a cover for a 16+ story; it passes the check (profile pictures can't be
+ *   uploaded since ADMIN-2g, so the check is shown on a cover; a cover in an All ages or 13+ story
+ *   waits for a moderator as well, ADMIN-2e1, so the story is set to 16+ for the test);
  * - a picture the check flags waits for a person: the writer is told, others never see it, and a
  *   moderation case opens with the picture blurred until the moderator chooses to see it;
- * - Settings with the upload field passes axe at 390, 768 and 1440 px.
+ * - Story settings with the upload field passes axe at 390, 768 and 1440 px.
  * Test data: seed personas; the checks and the case made here are removed afterwards (the files
- * stay in the local avatars bucket: Storage refuses deletes from SQL, and nothing reads them).
+ * stay in the local covers bucket: Storage refuses deletes from SQL, and nothing reads them); the
+ * story's rating and cover are put back.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
@@ -21,6 +24,9 @@ import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './su
 
 /** adult_writer's user ID. */
 const writerId = '00000000-0000-4000-8000-000000000001';
+/** adult_writer's second seed story, whose settings hold the cover upload. */
+const storySlug = 'the-girl-who-fixed-radios-seed02';
+const settingsAddress = `/write/s/${storySlug}/settings`;
 
 /** A 1 by 1 pixel PNG, enough for the stub check. */
 const tinyPng = Buffer.from(
@@ -51,13 +57,15 @@ test.describe('the picture check (S1-E10-05)', () => {
     runSql(`
       update public.feature_flags set is_enabled = true where key = 'picture_uploads';
       delete from vault.secrets where name = 'picture_check_secret';
-      select vault.create_secret('local-e2e-picture-secret', 'picture_check_secret');`);
+      select vault.create_secret('local-e2e-picture-secret', 'picture_check_secret');
+      update public.stories set rating = '16_plus' where slug = '${storySlug}';`);
   });
   test.afterAll(() => {
     runSql(`
       update public.feature_flags set is_enabled = false where key = 'picture_uploads';
       delete from vault.secrets where name = 'picture_check_secret';
-      update public.profiles set avatar_picture_id = null where id = '${writerId}';
+      update public.stories set rating = 'all_ages', cover_kind = 'automatic', cover_tall_path = null,
+        cover_square_path = null where slug = '${storySlug}';
       delete from public.notifications where case_id in (select case_id from public.picture_checks where user_id = '${writerId}');
       delete from public.case_actions where case_id in (select case_id from public.picture_checks where user_id = '${writerId}');
       with removed as (delete from public.picture_checks where user_id = '${writerId}' returning case_id)
@@ -66,10 +74,10 @@ test.describe('the picture check (S1-E10-05)', () => {
       update public.profiles set locale = 'ro' where handle in ('adult_writer', 'moderator');`);
   });
 
-  test('a picture that passes shows on the profile', async ({ browser }) => {
-    const page = await openAs(browser, 'adult_writer', '/settings');
+  test('a picture that passes the check becomes the cover', async ({ browser }) => {
+    const page = await openAs(browser, 'adult_writer', settingsAddress);
     await page
-      .getByLabel('Upload a profile picture')
+      .getByLabel('Upload a picture')
       .setInputFiles({ name: 'me.png', mimeType: 'image/png', buffer: tinyPng });
     await expect(page.getByText('Your picture passed the check.')).toBeVisible();
     expect(
@@ -80,9 +88,9 @@ test.describe('the picture check (S1-E10-05)', () => {
   });
 
   test('a flagged picture waits for a person and opens a blurred case', async ({ browser }) => {
-    const page = await openAs(browser, 'adult_writer', '/settings');
+    const page = await openAs(browser, 'adult_writer', settingsAddress);
     await page
-      .getByLabel('Upload a profile picture')
+      .getByLabel('Upload a picture')
       .setInputFiles({ name: 'me_fail.png', mimeType: 'image/png', buffer: tinyPng });
     await expect(
       page.getByText(/will look at your picture before others can see it/),
@@ -96,8 +104,8 @@ test.describe('the picture check (S1-E10-05)', () => {
     await expect(moderatorPage.getByRole('button', { name: 'Show the picture' })).toBeVisible();
   });
 
-  for (const view of everyView(['/settings'])) {
-    test(`axe: Settings with the upload field at ${view.width} px, ${view.theme}, ${view.language}`, async ({
+  for (const view of everyView([settingsAddress])) {
+    test(`axe: Story settings with the upload field at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {
       runSql(

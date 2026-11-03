@@ -5,7 +5,7 @@
  * Decorative: the name is always written beside it, so it is hidden from screen readers.
  * Who shows it: ChatListItem and ChatPanel. What it calls: AvatarImage (S1-E5-05).
  */
-import { AvatarImage } from '@/features/pictures/components/AvatarImage';
+import { AvatarImage } from '@/features/avatars/components/AvatarImage';
 import { initialsOf } from '@/features/people/lib/formatting';
 
 /**

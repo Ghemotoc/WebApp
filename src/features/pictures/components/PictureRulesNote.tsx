@@ -6,7 +6,7 @@
  * It says the rule in one sentence, then lists the allowed kinds from the public setting
  * picture_allowed_kinds (so a later change is a list edit on Staff › Settings), and ends with what
  * is never allowed. The words are interface text, so admins can reword them (S1-E11-18).
- * Who shows it: CoverUploadField, PictureInsertDialog, DrawingInsertDialog, AvatarSettingsSection,
+ * Who shows it: CoverUploadField, PictureInsertDialog, DrawingInsertDialog,
  * CharacterPictureSection, SpaceBannerPictureCard and SignaturePictureControls.
  * What it calls: usePublicSettings.
  */

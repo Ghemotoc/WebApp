@@ -60,6 +60,11 @@ const reviewedHosts: Record<string, string> = {
   'open.spotify.com': 'the Spotify player; only after play (ADR 0008)',
   'embed.music.apple.com': 'the Apple Music player; only after play (ADR 0008)',
   'music.apple.com': 'a writer’s clean source link for moderators; never loaded',
+  // The avatar builder (ADMIN-2g, ADR 0013): DiceBear writes the Open Peeps art's source,
+  // designer and CC0 licence into each drawn SVG's metadata; none is ever loaded.
+  'www.openpeeps.com': 'the Open Peeps art’s source in each avatar’s SVG metadata; never loaded',
+  'twitter.com': 'the Open Peeps designer’s page in each avatar’s SVG metadata; never loaded',
+  'creativecommons.org': 'the CC0 licence link in each avatar’s SVG metadata; never loaded',
   // Story Atlas (S1-E17): the writer's Markdown help shows a sample link; never loaded.
   'example.com': 'the sample link in the Atlas text help; never loaded',
   localhost: 'a placeholder base address inside React Router and the local Supabase in development',

@@ -4131,6 +4131,7 @@ export type Database = {
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
           avatar_picture_id: string | null;
+          avatar_recipe: Json | null;
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
@@ -4183,6 +4184,7 @@ export type Database = {
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
           avatar_picture_id?: string | null;
+          avatar_recipe?: Json | null;
           bio?: string;
           birth_month?: number | null;
           birth_year?: number | null;
@@ -4218,6 +4220,7 @@ export type Database = {
           age_check_result?: Database['public']['Enums']['age_check_result'];
           age_checked_at?: string | null;
           avatar_picture_id?: string | null;
+          avatar_recipe?: Json | null;
           bio?: string;
           birth_month?: number | null;
           birth_year?: number | null;
@@ -8757,6 +8760,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      avatar_recipe_valid: { Args: { recipe: Json }; Returns: boolean };
       avatar_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       banned_account_items: {
         Args: { target_user_id: string };
@@ -8811,6 +8815,7 @@ export type Database = {
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
           avatar_picture_id: string | null;
+          avatar_recipe: Json | null;
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
@@ -10211,6 +10216,7 @@ export type Database = {
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
           avatar_picture_id: string | null;
+          avatar_recipe: Json | null;
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
@@ -10904,6 +10910,7 @@ export type Database = {
         Returns: Database['public']['Enums']['profile_audience'];
       };
       profile_avatar_picture: { Args: { profile_handle: string }; Returns: Json };
+      profile_avatar_recipe: { Args: { profile_handle: string }; Returns: Json };
       profile_for_handle: {
         Args: { wanted_handle: string };
         Returns: {
@@ -10912,6 +10919,7 @@ export type Database = {
           age_check_result: Database['public']['Enums']['age_check_result'];
           age_checked_at: string | null;
           avatar_picture_id: string | null;
+          avatar_recipe: Json | null;
           bio: string;
           birth_month: number | null;
           birth_year: number | null;
@@ -11627,6 +11635,7 @@ export type Database = {
         Args: { audience: Database['public']['Enums']['message_audience'] };
         Returns: undefined;
       };
+      set_my_avatar_recipe: { Args: { recipe: Json }; Returns: Json };
       set_my_bio: { Args: { new_bio: string }; Returns: string };
       set_my_birthday: { Args: { wanted_day?: number; wanted_month?: number }; Returns: Json };
       set_my_handle: { Args: { new_handle: string }; Returns: string };
