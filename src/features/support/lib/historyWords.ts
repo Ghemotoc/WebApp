@@ -29,6 +29,8 @@ export function valueWords(change: string, value: Json | null, t: TFunction): st
   if (typeof value !== 'string') return t('staff.history.nobody');
   // A merge names the other ticket by its number (part h4a).
   if (change === 'merged_into' || change === 'merged_from') return `#${value}`;
+  // A report or a data request is named by its reference (part h4b).
+  if (change === 'converted_to_report' || change === 'data_request_opened') return value;
   const prefix = valueKeyPrefixes[change];
   if (prefix !== undefined) return t(`${prefix}.${value}`);
   return `@${value}`;
