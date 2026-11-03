@@ -33,7 +33,8 @@ export interface SignUpContext {
 }
 
 /** Why a sign-up didn't work, in words the form can turn into a message. */
-export type SignUpFailure = 'refused' | 'weak_password' | 'too_many_attempts' | 'unreachable';
+export type SignUpFailure =
+  'refused' | 'disposable_email' | 'weak_password' | 'too_many_attempts' | 'unreachable';
 
 /** The error a failed sign-up throws, with the reason. */
 export class SignUpError extends Error {
@@ -85,6 +86,20 @@ export function signUpData(answers: SignUpDataAnswers, context: SignUpContext) {
 }
 
 /**
+ * Throws when the email's domain hands out throwaway addresses (email_domain_allowed(), from the
+ * public list in content/disposable-email-domains/; Robert's brief of 2 Nov 2026, section 6).
+ *
+ * @param client - the shared Supabase client
+ * @param email - the address typed on the form
+ * Errors: throws SignUpError('disposable_email') for a throwaway domain. If the question itself
+ *   fails, the sign-up goes on: the sign-up trigger asks the same question and refuses it there.
+ */
+async function refuseThrowawayEmail(client: AppSupabaseClient, email: string): Promise<void> {
+  const { data: isAllowed, error } = await client.rpc('email_domain_allowed', { email });
+  if (error === null && isAllowed === false) throw new SignUpError('disposable_email');
+}
+
+/**
  * Signs a new person up.
  *
  * @param client - the shared Supabase client
@@ -98,9 +113,12 @@ export async function signUp(
   answers: SignUpAnswers,
   context: SignUpContext,
 ): Promise<void> {
-  // Step 1: the data the sign-up trigger checks.
+  // Step 1: a throwaway email address can't make an account (bundle ADMIN-2, part f1). Asking
+  // first lets the form say so in plain words; the sign-up trigger refuses it anyway.
+  await refuseThrowawayEmail(client, answers.email);
+  // Step 2: the data the sign-up trigger checks.
   const data = signUpData(answers, context);
-  // Step 2: a password, or a link emailed each time.
+  // Step 3: a password, or a link emailed each time.
   const { error } =
     answers.method === 'password'
       ? await client.auth.signUp({

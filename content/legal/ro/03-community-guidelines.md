@@ -54,7 +54,7 @@ Niciodată permise și raportate autorităților acolo unde legea o cere:
 - conținutul care sprijină sau laudă terorismul ori grupările extremiste violente;
 - amenințările reale că vei răni pe cineva sau planurile de a face asta.
 
-Imagini. Nicio imagine nud sau sexuală nicăieri pe Ghemotoc. Fiecare imagine este verificată când este încărcată, iar o imagine semnalată așteaptă un moderator. [Fondatorul confirmă: nicio imagine nud sau sexuală nici măcar în poveștile 18+]
+Imagini. Nu încărca niciodată fotografii, oameni reali sau vedete. Imaginile sexuale sunt permise doar ca desene, în poveștile 18+. Dacă încarci o imagine sexuală cu cineva sub 18 ani, inclusiv cu tine, o ștergem imediat, îți închidem contul definitiv și o raportăm acolo unde cere legea. [de verificat de avocat]
 
 Informații private. Nu împărți adresa, numărul de telefon, emailul, școala, numele real sau fotografiile cuiva fără permisiunea lui. Asta include și datele tale dacă ai sub 18 ani: ține-le departe de profilul tău și de postările publice.
 
@@ -134,6 +134,8 @@ Ce putem face depinde de cât de grav este și dacă s-a mai întâmplat:
 - îți dăm un avertisment;
 - îți suspendăm contul pentru o vreme: te poți conecta în continuare, poți citi și îți poți descărca datele, dar nu poți posta, comenta sau trimite mesaje;
 - îți închidem contul. Nu te poți înscrie din nou cu aceeași adresă de email.
+
+Închis definitiv. Dacă îți închidem contul pentru că ai încălcat regulile, rămâne închis. Nu ai voie să îți faci alt cont sau să folosești contul altcuiva. Blocăm adresa de email pe care ai folosit-o și putem închide orice cont nou despre care credem în mod rezonabil că este al tău. Îți spunem mereu de ce și cum poți contesta. [de verificat de avocat]
 
 Pentru lucrurile cele mai grave, cum ar fi conținutul sexual care implică un copil sau amenințările reale, închidem contul imediat și putem anunța poliția.
 

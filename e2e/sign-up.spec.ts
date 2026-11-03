@@ -9,6 +9,7 @@
  *   the username chosen on the form (S1-E2-04) is saved with it, so it is active at once;
  * - a 9-character password is refused and a mismatched confirmation is shown before sending;
  * - pasting into the password fields works (WCAG 2.2, 3.3.8);
+ * - a throwaway email address is refused before anything is sent (bundle ADMIN-2, part f1);
  * - the sign-up screens pass axe and don't scroll sideways at 390, 768 and 1440 px.
  * Test data: synthetic @example.com addresses, removed after each test (seed personas untouched).
  */
@@ -155,6 +156,15 @@ test('a leaked password is refused (the check answers from a fixed list in tests
   await fillSignUp(page, address, 'Password1234');
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page.getByText(/so someone could guess it/)).toBeVisible();
+  expect(runSql(`select count(*) from auth.users where email = '${address}'`)).toBe('0');
+});
+
+test('a throwaway email address is refused in plain words (ADMIN-2f1)', async ({ page }) => {
+  const address = `sign-up-${Date.now()}@mailinator.com`;
+  await openInEnglish(page, `/join/${workingInvite}`);
+  await fillSignUp(page, address, 'a long and private passphrase');
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page.getByText(/hands out throwaway addresses/)).toBeVisible();
   expect(runSql(`select count(*) from auth.users where email = '${address}'`)).toBe('0');
 });
 

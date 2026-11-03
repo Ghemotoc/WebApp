@@ -138,7 +138,7 @@ Ce nu facem niciodată. Nu îți vindem datele. Nu le folosim ca să alegem recl
 **Pe scurt** (ca pe planșă)
 
 - Yoti, pentru verificarea vârstei.
-- Sightengine și Arachnid Shield, care verifică fiecare imagine când este încărcată.
+- Arachnid Shield, care verifică fiecare imagine când este încărcată.
 - [Lista companiilor care găzduiesc și trimit lucruri pentru noi]
 - Nu îți folosim datele ca să alegem reclame.
 
@@ -155,7 +155,6 @@ Echipa noastră. Doar cei din echipă care au nevoie pentru munca lor, iar fieca
 Companiile care lucrează pentru noi. Aceste companii folosesc datele doar după instrucțiunile noastre, cu un contract care le protejează (un acord de prelucrare a datelor):
 
 - Yoti (verificarea vârstei). Yoti prelucrează selfie-ul sau actul în centrele sale de date din Regatul Unit, șterge fotografia și actul când verificarea s-a terminat și păstrează rezultatul până la 6 luni.
-- Sightengine (verificarea imaginilor pentru nuditate și violență explicită). [Unde prelucrează Sightengine imaginile: de confirmat]
 - Arachnid Shield, administrat de Canadian Centre for Child Protection (verificarea imaginilor față de imagini cunoscute cu abuz sexual asupra copiilor). Imaginile sunt verificate în Canada.
 - Supabase (baza noastră de date, conectarea și stocarea fișierelor), în UE (Irlanda).
 - Cloudflare (găzduirea site-ului, prin Cloudflare Pages).

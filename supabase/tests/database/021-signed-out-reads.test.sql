@@ -95,6 +95,8 @@ select results_eq(
        ('copied_work_notes', 0::bigint),
        ('daily_metrics', 0::bigint),
        ('data_requests', 0::bigint),
+       -- Throwaway email domains: staff who may view the settings only (ADMIN-2f1).
+       ('disposable_email_domains', 0::bigint),
        -- Notification emails: each person's own (S1-E7-02).
        ('email_outbox', 0::bigint),
        ('email_unsubscribe_keys', 0::bigint),

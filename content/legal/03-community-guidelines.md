@@ -54,7 +54,7 @@ Never allowed, and reported to the authorities where the law says so:
 - content that supports or praises terrorism or violent extremist groups;
 - real threats to hurt someone, or plans to do so.
 
-Pictures. No nude or sexual pictures anywhere on Ghemotoc. Every picture is checked when it’s uploaded, and a flagged picture waits for a moderator. [Founder to confirm: no nude or sexual pictures even in 18+ stories]
+Pictures. Never upload photographs, real people or celebrities. Sexual pictures are allowed only as drawings in 18+ stories. If you upload a sexual picture of anyone under 18, yourself included, we remove it at once, close your account for good and report it where the law requires. [lawyer to check]
 
 Private information. Don’t share anyone’s address, phone number, email, school, real name or photos without their permission. That includes your own if you’re under 18: keep it off your profile and out of public posts.
 
@@ -135,6 +135,8 @@ What we may do depends on how serious it is and whether it has happened before:
 - suspend your account for a time: you can still sign in, read and download your data, but you can’t post, comment or message;
 - close your account. You can’t sign up again with the same email address.
 
+Closed for good. If we close your account for breaking the rules, it stays closed. You may not create another account or use someone else’s. We block the email address you used, and we may close any new account we reasonably believe is yours. We always tell you why and how to appeal. [lawyer to check]
+
 For the most serious things, like sexual content involving a child or real threats, we close the account straight away and may tell the police.
 
 If you keep sending reports that turn out to be groundless, we may pause your reporting for a while.
@@ -151,7 +153,7 @@ We always tell you what we did and why, and whether any automatic tool was invol
 - Section 2 (Keep people safe): Sexual content involving minors: Romanian Criminal Code provisions on child sexual abuse material (not researched in the files; L4). The board says “anyone under 18”; whether the rule extends to fictional characters is a policy choice for the founder, so it is marked.
 - Section 2 (Keep people safe): Grooming wording follows DSA art. 28 and the Commission Guidelines C/2025/5519 on contact risks (research A2).
 - Section 2 (Keep people safe): Terrorist content: Regulation (EU) 2021/784. Self-harm line: proposed default; Ofcom’s codes treat self-harm encouragement as primary priority content in the UK (research H1).
-- Section 2 (Keep people safe): No nude pictures even in 18+ stories is a proposed default, flagged for the founder.
+- Section 2 (Keep people safe): Pictures: drawings only, sexual drawings only in 18+ stories (Robert, 2 Nov 2026, bundle-12 brief, sections 2 and 6).
 - Section 3 (Post your own work): Ratings and hiding: S1-E3-06 (Q17). Descriptions are a first draft because the exact wording is on the lawyer’s list (L14); Romanian rules on content harmful to minors were not researched.
 - Section 3 (Post your own work): Labels: fan fiction and parody (Q87), AI (Q24). Copied-work report: S1-E10-08.
 - Section 3 (Post your own work): Law 8/1996 art. 35(1)(b) and 35(4) quotation; art. 37(b) parody (research A3).
@@ -166,5 +168,4 @@ We always tell you what we did and why, and whether any automatic tool was invol
 
 Every placeholder in the full text, in order. Each needs the founder or the lawyer before launch.
 
-- Section 2 (Keep people safe): [Founder to confirm: no nude or sexual pictures even in 18+ stories]
 - Section 3 (Post your own work): [Rating descriptions are a draft: lawyer to confirm]
