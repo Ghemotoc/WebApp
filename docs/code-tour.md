@@ -347,7 +347,7 @@ Under-18s start on the most private value of each choice; the database fills the
 the "ready" notification → /settings#download-my-data
 ```
 
-The Word builder in `src/lib/word/` knows nothing about the database: a caller turns rows into a `WordStory`, translates the labels and loads the pictures. S1-E11-09a and S1-E13-05 reuse it. A new user table must be added to `data_export_tables()` (test `210` fails until it is). Tests: `210`, `src/lib/word/storyToWord.test.ts`, `src/features/data-export/lib/*.test.ts`, `e2e/download-my-data.spec.ts`.
+The Word builder in `src/lib/word/` knows nothing about the database: a caller turns rows into a `WordStory`, translates the labels and loads the pictures. S1-E11-09a and S1-E13-05 reuse it. Its twin, the PDF builder in `src/lib/pdf/` (ADMIN-2d: `storyToPdf()`, `planToPdf()`, `chapterTextToPdf()`), takes the very same `WordStory`, `WordPlan` and labels, so a story reads the same in both files; `loadPdfMake.ts` loads pdfmake and its fonts only when the first PDF is built, and blocks every web address while it builds. `buildWordFiles()` and `buildPlanFiles()` take the kinds to make (`['word']`, `['pdf']` or both): Download my data and staff copies make both (`stories/<slug>.docx` and `stories/<slug>.pdf`). A new user table must be added to `data_export_tables()` (test `210` fails until it is). Tests: `210`, `src/lib/word/storyToWord.test.ts`, `src/features/data-export/lib/*.test.ts`, `e2e/download-my-data.spec.ts`.
 
 ## Download my stories (S1-E13-05)
 
@@ -359,13 +359,13 @@ The Word builder in `src/lib/word/` knows nothing about the database: a caller t
       request_stories_export(story, chapters, three choices) → 'reused' (same choices, and
         stories_fingerprint() unchanged in the last 24 hours) or 'new' with a .docx, .json or .zip
       → my_data_export() → documentForChoice() (only STORY_TABLES and CHAPTER_TABLES, chosen rows)
-      → buildWordFiles() (storyToWord) + buildPlanFiles() (plansFrom() → planToWord()) + JSON
+      → buildWordFiles() (storyToWord / storyToPdf) + buildPlanFiles() (plansFrom() → planToWord() / planToPdf()) + JSON
       → one file as it is, or buildWordZip() → delete older files → upload → finish_data_export()
-  ready line (StoriesExportReady) → "Download Word file", "Download JSON file" or "Download ZIP"
+  ready line (StoriesExportReady) → "Download Word file", "Download PDF", "Download JSON file" or "Download ZIP"
 the "ready" notification (stories_export_ready) → /settings#download-my-stories (useScrollToHash)
 ```
 
-It reuses Download my data's table, bucket, storage policies and finishing function: `exports.kind` is `my_stories`, `exports.story_id` names the one story (null for all) and `chapter_ids`, `include_chapters`, `include_plan` and `include_data` hold the choices. One copy of each kind is kept. Download my data's ZIP now holds each story's plan too (`stories/<slug>-plan.docx`). **A new table that holds a story's content goes into `STORY_TABLES` (`lib/storiesForData.ts`), `stories_fingerprint()` and, if it is part of the plan, `planForWord.ts`.** Tests: `213`, `src/features/data-export/lib/{runStoriesExport,planForWord}.test.ts`, `e2e/download-my-stories.spec.ts`.
+It reuses Download my data's table, bucket, storage policies and finishing function: `exports.kind` is `my_stories`, `exports.story_id` names the one story (null for all) and `chapter_ids`, `include_chapters`, `include_plan`, `include_data` and `document_format` (`word`, `pdf` or `both`, ADMIN-2d; "Format" in `DocumentFormatChoice`) hold the choices. One copy of each kind is kept. Download my data's ZIP now holds each story's plan too (`stories/<slug>-plan.docx`). **A new table that holds a story's content goes into `STORY_TABLES` (`lib/storiesForData.ts`), `stories_fingerprint()` and, if it is part of the plan, `planForWord.ts`.** Tests: `213`, `src/features/data-export/lib/{runStoriesExport,planForWord}.test.ts`, `e2e/download-my-stories.spec.ts`.
 
 ### The EPUB of a completed story (S1-E13-05, PRIVACY part f)
 

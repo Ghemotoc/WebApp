@@ -2,14 +2,14 @@
  * useDownloadChoices: what the writer has chosen in Settings › Download my stories, and the check
  * before "Get my files" (story S1-E13-05; Robert, 1 Nov 2026, 06:27 and 06:29).
  *
- * It keeps the story (or all), the three tick boxes, "All chapters" or "Only the chapters I
- * choose" and the ticked chapters, and turns them into the choices request_stories_export()
- * takes. The database checks the same rules again (stories_export_choice_problem()).
+ * It keeps the story (or all), the three tick boxes, the format (Word, PDF or both; ADMIN-2d),
+ * "All chapters" or "Only the chapters I choose" and the ticked chapters, and turns them into the
+ * choices request_stories_export() takes. The database checks the same rules again (stories_export_choice_problem()).
  * Who calls it: DownloadMyStoriesBlock. What it calls: nothing.
  */
 import { useState } from 'react';
 
-import type { StoriesExportChoices } from '../api/dataExport';
+import type { DocumentFormat, StoriesExportChoices } from '../api/dataExport';
 import type { FileChoices } from '../components/StoriesFileChoices';
 
 /** The value of "All my stories" in the drop-down. */
@@ -24,6 +24,11 @@ export interface DownloadChoices {
   setStory: (story: string) => void;
   files: FileChoices;
   setFiles: (files: FileChoices) => void;
+  /** Word files, PDF files or both, for the chapters and the plan. */
+  documentFormat: DocumentFormat;
+  setDocumentFormat: (format: DocumentFormat) => void;
+  /** True when the chapters or the plan are ticked, so the format choice shows. */
+  showsFormatChoice: boolean;
   onlyChosenChapters: boolean;
   setOnlyChosenChapters: (onlyChosen: boolean) => void;
   chosenChapterIds: Set<string>;
@@ -43,6 +48,8 @@ const defaultFiles: FileChoices = { includeChapters: true, includePlan: true, in
 export function useDownloadChoices(): DownloadChoices {
   const [story, setStoryValue] = useState(ALL_STORIES);
   const [files, setFiles] = useState<FileChoices>(defaultFiles);
+  // Word stays the default: it is the file a writer edits, and the accessible one (ADMIN-2d).
+  const [documentFormat, setDocumentFormat] = useState<DocumentFormat>('word');
   const [onlyChosenChapters, setOnlyChosenChapters] = useState(false);
   const [chosenChapterIds, setChosenChapterIds] = useState<Set<string>>(new Set());
 
@@ -58,6 +65,9 @@ export function useDownloadChoices(): DownloadChoices {
     setStory,
     files,
     setFiles,
+    documentFormat,
+    setDocumentFormat,
+    showsFormatChoice: files.includeChapters || files.includePlan,
     onlyChosenChapters,
     setOnlyChosenChapters,
     chosenChapterIds,
@@ -86,7 +96,8 @@ export function choiceProblem(choices: DownloadChoices): ChoiceProblem {
 /**
  * The choices as request_stories_export() takes them.
  *
- * @returns the story (null for all), the chapters (null for every one) and the three files
+ * @returns the story (null for all), the chapters (null for every one), the three files and the
+ *   format
  */
 export function requestChoices(choices: DownloadChoices): StoriesExportChoices {
   const onlyChosen = choices.showsChapterChoice && choices.onlyChosenChapters;
@@ -94,5 +105,6 @@ export function requestChoices(choices: DownloadChoices): StoriesExportChoices {
     storyId: choices.story === ALL_STORIES ? null : choices.story,
     chapterIds: onlyChosen ? [...choices.chosenChapterIds].sort() : null,
     ...choices.files,
+    documentFormat: choices.documentFormat,
   };
 }

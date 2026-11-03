@@ -28,6 +28,7 @@ export type DataExport = Pick<
   | 'include_chapters'
   | 'include_plan'
   | 'include_data'
+  | 'document_format'
   | 'state'
   | 'file_name'
   | 'file_size'
@@ -43,10 +44,31 @@ export type DataExportState = Database['public']['Enums']['export_state'];
 /** What a copy holds: all of the person's data, or their stories as Word files. */
 export type DataExportKind = Database['public']['Enums']['export_kind'];
 
-/** The file types the bucket takes: a ZIP, or one Word or JSON file for one story. */
+/** The file types the bucket takes: a ZIP, or one Word, PDF or JSON file for one story. */
 export const ZIP_TYPE = 'application/zip';
 export const WORD_TYPE = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+export const PDF_TYPE = 'application/pdf';
 export const JSON_TYPE = 'application/json';
+
+/**
+ * The documents a writer can ask for (ADMIN-2d; Robert, 2 Nov 2026: PDF wherever Word is offered):
+ * Word files, PDF files or both. The database checks the same three (exports.document_format).
+ */
+export type DocumentFormat = 'word' | 'pdf' | 'both';
+
+/** One kind of document file the builders make. */
+export type DocumentKind = 'word' | 'pdf';
+
+/**
+ * The kinds of document file a format asks for, Word first.
+ *
+ * @param format - 'word', 'pdf' or 'both'
+ * @returns the kinds, in the order they are built
+ */
+export function documentKindsOf(format: DocumentFormat): DocumentKind[] {
+  if (format === 'both') return ['word', 'pdf'];
+  return [format];
+}
 
 /**
  * What the writer chose in Download my stories (Robert, 1 Nov 2026, 06:27 and 06:29): one story
@@ -57,12 +79,14 @@ export interface StoriesExportChoices {
   storyId: string | null;
   /** The chosen chapters' IDs, or null for every chapter. */
   chapterIds: string[] | null;
-  /** The chapters as a Word file. */
+  /** The chapters as documents (Word, PDF or both). */
   includeChapters: boolean;
-  /** The plan from Story Atlas as a Word file. */
+  /** The plan from Story Atlas as documents (Word, PDF or both). */
   includePlan: boolean;
   /** The machine-readable copy (JSON). */
   includeData: boolean;
+  /** The chapters and the plan as Word files, PDF files or both (ADMIN-2d). */
+  documentFormat: DocumentFormat;
 }
 
 /** The parts of a story row the Word files and the EPUB use (the data file keeps every field). */
@@ -190,6 +214,7 @@ export async function requestStoriesExport(
     include_chapters: choices.includeChapters,
     include_plan: choices.includePlan,
     include_data: choices.includeData,
+    document_format: choices.documentFormat,
   });
   if (error !== null) throw new Error(`Could not start the files: ${error.message}`);
   const answer = data as { outcome: 'reused' | 'new'; export_id: string; file_name?: string };
@@ -265,7 +290,7 @@ export async function fetchMyDataExports(
   const { data, error } = await client
     .from('exports')
     .select(
-      'id, kind, story_id, chapter_ids, include_chapters, include_plan, include_data, state, file_name, file_size, story_count, created_at, ready_at, expires_at',
+      'id, kind, story_id, chapter_ids, include_chapters, include_plan, include_data, document_format, state, file_name, file_size, story_count, created_at, ready_at, expires_at',
     )
     .eq('kind', kind)
     .order('created_at', { ascending: false });

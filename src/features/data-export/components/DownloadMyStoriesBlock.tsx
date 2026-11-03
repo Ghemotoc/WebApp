@@ -4,7 +4,8 @@
  * and 06:29: the plan from Story Atlas, chosen chapters and a JSON copy).
  *
  * Top to bottom: the heading and intro, the Story drop-down (all my stories, or one, drafts
- * marked), "What to include" (the chapters, the plan, the JSON copy), for one story "All
+ * marked), "What to include" (the chapters, the plan, the JSON copy), "Format" (Word, PDF or both,
+ * ADMIN-2d) while the chapters or the plan are ticked, for one story "All
  * chapters" or "Only the chapters I choose", then "Get my files" and the line about the
  * notification and the seven days. Below it: "We're making your files…" while they are made, the
  * ready line once they are, or a plain line after a failure; then, when one Completed story is
@@ -39,6 +40,7 @@ import {
 import { useDataExportTranslation } from '../registerDataExportTranslations';
 
 import { ChapterChoice } from './ChapterChoice';
+import { DocumentFormatChoice } from './DocumentFormatChoice';
 import { EpubSection } from './EpubSection';
 import { StoriesExportReady } from './StoriesExportReady';
 import { StoriesFileChoices } from './StoriesFileChoices';
@@ -139,6 +141,9 @@ function StoriesForm({ stories }: { stories: LiveStory[] }) {
     <>
       <StoryPicker stories={stories} choices={choices} />
       <StoriesFileChoices choices={choices.files} onChange={choices.setFiles} />
+      {choices.showsFormatChoice && (
+        <DocumentFormatChoice value={choices.documentFormat} onChange={choices.setDocumentFormat} />
+      )}
       {choices.showsChapterChoice && (
         <ChapterChoice
           storyId={choices.story}

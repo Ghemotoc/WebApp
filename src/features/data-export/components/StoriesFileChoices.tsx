@@ -1,7 +1,8 @@
 /**
  * StoriesFileChoices: "What to include" in Settings › Download my stories (story S1-E13-05;
- * Robert, 1 Nov 2026, 06:27 and 06:29): the chapters as a Word file, the plan from Story Atlas as
- * a Word file and a machine-readable copy (JSON). Each is a real checkbox with its hint.
+ * Robert, 1 Nov 2026, 06:27 and 06:29): the chapters, the plan from Story Atlas and a
+ * machine-readable copy (JSON). Each is a real checkbox with its hint; the chapters and the plan
+ * come as Word, PDF or both, chosen below in DocumentFormatChoice (ADMIN-2d).
  * Who shows it: DownloadMyStoriesBlock, which keeps what is ticked. What it calls: nothing.
  */
 import { useDataExportTranslation } from '../registerDataExportTranslations';

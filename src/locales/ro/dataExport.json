@@ -1,7 +1,7 @@
 {
   "settings": {
     "heading": "Descarcă-mi datele",
-    "intro": "Primești o copie a tot ce ține de contul tău într-un singur fișier ZIP: un fișier de date (JSON) pe care îl pot citi alte aplicații și fiecare poveste ca fișier Word (.docx).",
+    "intro": "Primești o copie a tot ce ține de contul tău într-un singur fișier ZIP: un fișier de date (JSON) pe care îl pot citi alte aplicații și fiecare poveste ca fișier Word (.docx) și ca PDF.",
     "includesLabel": "Ce conține",
     "includes": {
       "stories": "Povești și capitole, inclusiv ciornele",
@@ -11,15 +11,15 @@
       "account": "Contul tău: numele de utilizator, pseudonimul, anul nașterii, adresa de email și verificarea vârstei",
       "settings": "Setările tale, acordurile date și raportările pe care le-ai făcut"
     },
-    "everythingNote": "Tot ce e mai sus se află în fișierul de date. Poveștile tale sunt și ca fișiere Word, ca să le poți deschide, modifica sau trimite mai departe.",
+    "everythingNote": "Tot ce e mai sus se află în fișierul de date. Poveștile tale sunt și ca fișiere Word și PDF, ca să le poți deschide, modifica, tipări sau trimite mai departe.",
     "request": "Cere-mi datele",
     "requestHint": "Îți spunem când e gata. Prin lege avem la dispoziție cel mult o lună.",
     "preparing": "Îți pregătim fișierul pe acest dispozitiv. Poți folosi în continuare aplicația, dar ține această filă deschisă până e gata. Îți trimitem o notificare când e gata.",
     "readyTitle": "Fișierul tău e gata.",
     "readyBody": "Linkul merge doar cu contul tău conectat și nu mai funcționează din {{date}}.",
-    "readySize_one": "{{count}} poveste ca fișier Word · {{size}}",
-    "readySize_few": "{{count}} povești ca fișiere Word · {{size}}",
-    "readySize_other": "{{count}} de povești ca fișiere Word · {{size}}",
+    "readySize_one": "{{count}} poveste ca fișier Word și PDF · {{size}}",
+    "readySize_few": "{{count}} povești ca fișiere Word și PDF · {{size}}",
+    "readySize_other": "{{count}} de povești ca fișiere Word și PDF · {{size}}",
     "download": "Descarcă ZIP-ul",
     "downloadFailed": "Nu am putut deschide fișierul. Conectează-te din nou și mai încearcă o dată.",
     "makeNewCopy": "Fă o copie nouă",
@@ -31,15 +31,15 @@
   },
   "stories": {
     "heading": "Descarcă-mi poveștile",
-    "intro": "Primește-ți poveștile ca fișiere Word (.docx) pe care le poți edita, tipări sau trimite unui agent: toate capitolele, și ciornele, cu datele lor. Poți adăuga planul fiecărei povești din Story Atlas și o copie pe care o pot citi programele.",
+    "intro": "Primește-ți poveștile ca fișiere Word (.docx) pe care le poți edita sau ca PDF-uri gata de tipărit ori de trimis unui agent: toate capitolele, și ciornele, cu datele lor. Poți adăuga planul fiecărei povești din Story Atlas și o copie pe care o pot citi programele.",
     "storyLabel": "Poveste",
     "allOption_one": "Toate poveștile mele ({{count}})",
     "allOption_few": "Toate poveștile mele ({{count}})",
     "allOption_other": "Toate poveștile mele ({{count}})",
     "draftOption": "{{title}} (ciornă)",
     "get": "Primește fișierele",
-    "hint": "Îți spunem când sunt gata. Linkul funcționează doar dacă te-ai conectat și expiră după șapte zile. Un singur fișier vine așa cum e; mai multe vin într-o arhivă ZIP. PDF vine mai târziu.",
-    "none": "Încă n-ai început nicio poveste. După ce începi una, o poți descărca aici ca fișier Word.",
+    "hint": "Îți spunem când sunt gata. Linkul funcționează doar dacă te-ai conectat și expiră după șapte zile. Un singur fișier vine așa cum e; mai multe vin într-o arhivă ZIP.",
+    "none": "Încă n-ai început nicio poveste. După ce începi una, o poți descărca aici ca fișier Word sau PDF.",
     "preparing": "Îți facem fișierele pe acest dispozitiv. Poți folosi aplicația mai departe, dar ține fila deschisă până sunt gata. Îți trimitem o notificare când sunt gata.",
     "readyTitle": "Fișierele tale sunt gata.",
     "reused": "Nu s-a schimbat nimic de când le-ai făcut acum puțin timp, așa că le ai din nou aici.",
@@ -48,12 +48,19 @@
     "loadFailed": "Nu am putut încărca poveștile tale. Reîncarcă pagina ca să încerci din nou.",
     "include": {
       "legend": "Ce să includem",
-      "chapters": "Capitolele, ca fișier Word",
+      "chapters": "Capitolele",
       "chaptersHint": "Toate capitolele în ordine, și ciornele, cu datele lor. Pentru o singură poveste poți alege capitolele.",
-      "plan": "Planul din Story Atlas, ca fișier Word",
+      "plan": "Planul din Story Atlas",
       "planHint": "Pe scurt, personaje, legături, lumea poveștii, firul poveștii, planurile capitolelor, idei și marketing.",
       "data": "O copie pe care o pot citi programele (JSON)",
       "dataHint": "Aceleași povești și planuri ca date pe care le poate citi un program, de exemplu ca să le muți la alt serviciu."
+    },
+    "format": {
+      "legend": "Format",
+      "word": "Word (.docx)",
+      "pdf": "PDF",
+      "both": "Amândouă",
+      "hint": "Pentru capitole și plan. Word e cel pe care îl poți edita și cel mai ușor de citit cu un cititor de ecran; PDF arată la fel pe orice dispozitiv, gata de tipărit sau de trimis."
     },
     "chapters": {
       "legend": "Capitole",
@@ -72,16 +79,22 @@
       "allStories_one": "{{count}} poveste",
       "allStories_few": "{{count}} povești",
       "allStories_other": "{{count}} de povești",
-      "chapters": "capitolele ca fișier Word",
-      "chosenChapters_one": "{{count}} capitol ales ca fișier Word",
-      "chosenChapters_few": "{{count}} capitole alese ca fișier Word",
-      "chosenChapters_other": "{{count}} de capitole alese ca fișier Word",
-      "plan": "planul ca fișier Word",
+      "chapters": "capitolele {{format}}",
+      "chosenChapters_one": "{{count}} capitol ales {{format}}",
+      "chosenChapters_few": "{{count}} capitole alese {{format}}",
+      "chosenChapters_other": "{{count}} de capitole alese {{format}}",
+      "plan": "planul {{format}}",
+      "as": {
+        "word": "ca fișier Word",
+        "pdf": "ca PDF",
+        "both": "ca fișier Word și PDF"
+      },
       "data": "o copie JSON",
       "inZip": "într-o arhivă ZIP"
     },
     "download": {
       "docx": "Descarcă fișierul Word",
+      "pdf": "Descarcă PDF-ul",
       "json": "Descarcă fișierul JSON",
       "zip": "Descarcă ZIP"
     }

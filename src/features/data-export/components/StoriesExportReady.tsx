@@ -25,9 +25,10 @@ interface StoriesExportReadyProps {
 }
 
 /** The kind of file the copy was saved as, from its name. */
-function fileKindOf(copy: DataExport): 'zip' | 'docx' | 'json' {
+function fileKindOf(copy: DataExport): 'zip' | 'docx' | 'pdf' | 'json' {
   if (copy.file_name.endsWith('.json')) return 'json';
   if (copy.file_name.endsWith('.docx')) return 'docx';
+  if (copy.file_name.endsWith('.pdf')) return 'pdf';
   return 'zip';
 }
 
@@ -39,7 +40,8 @@ function downloadNameOf(
 ) {
   const kind = fileKindOf(copy);
   if (story === null) return allName;
-  if (kind === 'docx' && !copy.include_chapters) return `${story.slug}-plan.docx`;
+  const isDocument = kind === 'docx' || kind === 'pdf';
+  if (isDocument && !copy.include_chapters) return `${story.slug}-plan.${kind}`;
   return `${story.slug}.${kind}`;
 }
 
@@ -47,14 +49,16 @@ function downloadNameOf(
 function holdsParts(copy: DataExport, t: TFunction): string[] {
   const parts: string[] = [];
   const chosenCount = copy.chapter_ids?.length ?? null;
+  // "as a Word file", "as a PDF" or "as a Word file and a PDF" (ADMIN-2d).
+  const format = t(`stories.holds.as.${copy.document_format}`);
   if (copy.include_chapters) {
     parts.push(
       chosenCount === null
-        ? t('stories.holds.chapters')
-        : t('stories.holds.chosenChapters', { count: chosenCount }),
+        ? t('stories.holds.chapters', { format })
+        : t('stories.holds.chosenChapters', { count: chosenCount, format }),
     );
   }
-  if (copy.include_plan) parts.push(t('stories.holds.plan'));
+  if (copy.include_plan) parts.push(t('stories.holds.plan', { format }));
   if (copy.include_data) parts.push(t('stories.holds.data'));
   return parts;
 }

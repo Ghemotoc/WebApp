@@ -118,17 +118,19 @@ export function wordInputFrom(document: DataExportDocument, labels: StatusLabels
 }
 
 /**
- * A safe file name for a story's Word file inside the ZIP: its slug, which is already letters,
- * digits and dashes, with a number added when two would clash.
+ * A safe file name for a story's document inside the ZIP: its slug, which is already letters,
+ * digits and dashes, with a number added when two would clash. A story's Word and PDF files get
+ * the same name with their own ending ("rain.docx" and "rain.pdf"; ADMIN-2d).
  *
  * @param slug - the story's slug
  * @param taken - the names used so far (one is added)
- * @returns "stories/<slug>.docx"
+ * @param ending - "docx" (the default) or "pdf"
+ * @returns "stories/<slug>.<ending>"
  */
-export function wordFileName(slug: string, taken: Set<string>): string {
+export function wordFileName(slug: string, taken: Set<string>, ending = 'docx'): string {
   const base = slug.replace(/[^a-z0-9-]/gi, '-') || 'story';
-  let name = `stories/${base}.docx`;
-  for (let copy = 2; taken.has(name); copy += 1) name = `stories/${base}-${copy}.docx`;
+  let name = `stories/${base}.${ending}`;
+  for (let copy = 2; taken.has(name); copy += 1) name = `stories/${base}-${copy}.${ending}`;
   taken.add(name);
   return name;
 }

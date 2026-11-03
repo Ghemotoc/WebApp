@@ -4,7 +4,7 @@
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
  * - criterion 1: adult_writer asks for their data in Settings; the browser builds one ZIP with
- *   data.json and a Word file per story, and Settings says the file is ready;
+ *   data.json and a Word file and a PDF per story, and Settings says the file is ready;
  * - criterion 2: the downloaded ZIP's data file holds the user ID and the account's email;
  * - IDEAS-1f: it holds the library shelves with titles and full links, and library.csv;
  * - criterion 3: the person gets the "ready" notification, the line says when the link stops
@@ -57,6 +57,13 @@ function seedStory() {
     values ('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-9000-000000000003', 'saved');`);
 }
 
+/** The first five bytes of a file inside the ZIP, as text ("%PDF-" for a PDF). */
+async function firstBytesOf(zip: JSZip, path: string): Promise<string> {
+  const bytes = await zip.file(path)?.async('uint8array');
+  if (bytes === undefined) return '';
+  return new TextDecoder('latin1').decode(bytes.subarray(0, 5));
+}
+
 test.describe('Download my data', () => {
   test.beforeAll(() => {
     resetExports();
@@ -103,6 +110,8 @@ test.describe('Download my data', () => {
       (await zip.file(`stories/${storySlug}.docx`)?.async('uint8array')) ?? new Uint8Array(),
     );
     expect(await word.file('word/document.xml')?.async('string')).toContain('Țara de sub ape');
+    // The same story as a PDF beside it (ADMIN-2d).
+    expect(await firstBytesOf(zip, `stories/${storySlug}.pdf`)).toBe('%PDF-');
     // Step 5 (IDEAS-1f): the library shelves, with titles and full links, also as a spreadsheet.
     const saved = data.library.find(
       (entry: { title: string }) => entry.title === 'Scrisori din cutia poștală',

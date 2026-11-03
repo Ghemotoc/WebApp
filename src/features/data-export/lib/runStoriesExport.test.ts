@@ -128,13 +128,17 @@ function fakeClient(requestAnswer: Record<string, string>) {
 }
 
 /** The choices: one story or all, every chapter, the chapters only unless more is given. */
-function choicesFor(storyId: string | null, more: Partial<StoriesExportChoices> = {}) {
+function choicesFor(
+  storyId: string | null,
+  more: Partial<StoriesExportChoices> = {},
+): StoriesExportChoices {
   return {
     storyId,
     chapterIds: null,
     includeChapters: true,
     includePlan: false,
     includeData: false,
+    documentFormat: 'word',
     ...more,
   };
 }
@@ -222,6 +226,30 @@ describe('makeStoriesExport with more files', () => {
     );
     const word = await JSZip.loadAsync(fake.uploaded()?.bytes ?? new Uint8Array());
     expect(await word.file('word/document.xml')?.async('string')).toContain('The plan of vantul');
+  });
+});
+
+describe('makeStoriesExport in PDF', () => {
+  it('uploads one story as a single PDF when the writer chose PDF', async () => {
+    const fake = fakeClient({ outcome: 'new', export_id: 'new', file_name: 'new.pdf' });
+    await makeStoriesExport(runOptions(fake.client, choicesFor('s1', { documentFormat: 'pdf' })));
+    expect(fake.uploaded()?.type).toBe('application/pdf');
+    const head = new TextDecoder().decode(fake.uploaded()?.bytes.slice(0, 5));
+    expect(head).toBe('%PDF-');
+  });
+
+  it('puts the Word file and the PDF of the chapters and the plan side by side in one ZIP', async () => {
+    const fake = fakeClient({ outcome: 'new', export_id: 'new', file_name: 'new.zip' });
+    await makeStoriesExport(
+      runOptions(fake.client, choicesFor('s2', { includePlan: true, documentFormat: 'both' })),
+    );
+    const zip = await JSZip.loadAsync(fake.uploaded()?.bytes ?? new Uint8Array());
+    expect(Object.keys(zip.files).sort()).toEqual([
+      'vantul-plan.docx',
+      'vantul-plan.pdf',
+      'vantul.docx',
+      'vantul.pdf',
+    ]);
   });
 });
 

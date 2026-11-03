@@ -156,7 +156,7 @@ describe('makeDataRequestCopy', () => {
     ]);
   });
 
-  it('sends one ZIP with the data file, every story and plan in Word and the library', async () => {
+  it('sends one ZIP with the data file, every story and plan in Word and PDF and the library', async () => {
     const fake = fakeClient();
     await makeDataRequestCopy(runOptions(fake.client, 'zip'));
     const upload = fake.uploads.get('random-0.zip');
@@ -167,7 +167,9 @@ describe('makeDataRequestCopy', () => {
       'library.csv',
       'stories/',
       'stories/ploaia-plan.docx',
+      'stories/ploaia-plan.pdf',
       'stories/ploaia.docx',
+      'stories/ploaia.pdf',
     ]);
     const data = JSON.parse((await zip.file('data.json')?.async('string')) ?? '{}');
     expect(data.user_id).toBe('person-1');
@@ -176,21 +178,25 @@ describe('makeDataRequestCopy', () => {
 
   it('sends each file on its own, with the type that matches its ending', async () => {
     const fake = fakeClient();
-    await expect(makeDataRequestCopy(runOptions(fake.client, 'separate'))).resolves.toBe(4);
+    await expect(makeDataRequestCopy(runOptions(fake.client, 'separate'))).resolves.toBe(6);
     const opened = fake.client.rpc as unknown as { mock: { calls: unknown[][] } };
     expect(opened.mock.calls[1]?.[1]).toEqual({
       target_request_id: 'request-1',
       files: [
         { display_name: 'data.json' },
         { display_name: 'ploaia.docx' },
+        { display_name: 'ploaia.pdf' },
         { display_name: 'ploaia-plan.docx' },
+        { display_name: 'ploaia-plan.pdf' },
         { display_name: 'library.csv' },
       ],
     });
     expect([...fake.uploads.values()].map((upload) => upload.type)).toEqual([
       'application/json',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/pdf',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/pdf',
       'text/csv',
     ]);
   });

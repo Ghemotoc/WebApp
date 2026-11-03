@@ -3,6 +3,7 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
+ * - ADMIN-2d: the same story's chapters as a PDF download as a real PDF in the story's language;
  * - criterion 1: adult_writer picks one story and gets one Word file with its title in it, then
  *   picks "All my stories" and gets one ZIP with a Word file per story;
  * - the choices (Robert, 1 Nov 2026, 06:27 and 06:29): each story's plan from Story Atlas and a
@@ -76,7 +77,7 @@ test.describe('Download my stories', () => {
     await block
       .getByLabel('Story', { exact: true })
       .selectOption('00000000-0000-4000-9000-000000000002');
-    await block.getByLabel('The plan from Story Atlas, as a Word file').uncheck();
+    await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
     await block.getByRole('button', { name: 'Get my files' }).click();
     await expect(block.getByText('Your files are ready.')).toBeVisible({ timeout: 30_000 });
     await expect(
@@ -136,7 +137,7 @@ test.describe('Download my stories', () => {
     await block
       .getByLabel('Story', { exact: true })
       .selectOption('00000000-0000-4000-9000-000000000002');
-    await block.getByLabel('The plan from Story Atlas, as a Word file').uncheck();
+    await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
     await block.getByLabel('Only the chapters I choose').check();
     await block.getByRole('button', { name: 'Get my files' }).click();
     await expect(
@@ -161,19 +162,43 @@ test.describe('Download my stories', () => {
 
   test('a writer who ticks nothing is asked to tick something', async ({ browser }) => {
     const { context, block } = await openBlock(browser, 'adult_writer');
-    await block.getByLabel('The chapters, as a Word file').uncheck();
-    await block.getByLabel('The plan from Story Atlas, as a Word file').uncheck();
+    await block.getByLabel('The chapters', { exact: true }).uncheck();
+    await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
     await block.getByRole('button', { name: 'Get my files' }).click();
     await expect(block.getByText('Tick at least one thing to include.')).toBeVisible();
     await context.close();
   });
 
+  test('a writer downloads one story’s chapters as a PDF (ADMIN-2d)', async ({ browser }) => {
+    test.setTimeout(60_000);
+    const { context, page, block } = await openBlock(browser, 'adult_writer');
+    // Step 1: one story, chapters only, as a PDF.
+    await block
+      .getByLabel('Story', { exact: true })
+      .selectOption('00000000-0000-4000-9000-000000000002');
+    await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
+    await block.getByLabel('PDF', { exact: true }).check();
+    await block.getByRole('button', { name: 'Get my files' }).click();
+    await expect(block.getByText('“The Girl Who Fixed Radios”: the chapters as a PDF')).toBeVisible(
+      { timeout: 30_000 },
+    );
+    // Step 2: it downloads as a real PDF named after the story.
+    const downloadStarted = page.waitForEvent('download');
+    await block.getByRole('button', { name: 'Download PDF' }).click();
+    const download = await downloadStarted;
+    expect(download.suggestedFilename()).toBe('the-girl-who-fixed-radios-seed02.pdf');
+    const bytes = await readFile((await download.path()) ?? '');
+    expect(bytes.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+    expect(bytes.toString('latin1')).toContain('/Lang (en-GB)');
+    await context.close();
+  });
+
   test('the "ready" notification opens the block in Settings', async ({ browser }) => {
-    // The three downloads above each sent one.
+    // The four downloads above each sent one.
     expect(
       runSql(`select count(*) from public.notifications where kind = 'stories_export_ready'
         and user_id = '00000000-0000-4000-8000-000000000001';`).trim(),
-    ).toBe('3');
+    ).toBe('4');
     const { context, page } = await openBlock(browser, 'adult_writer');
     await page.goto('/notifications');
     await page.getByRole('link', { name: 'Download your stories' }).first().click();
