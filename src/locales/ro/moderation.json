@@ -60,7 +60,8 @@
     "report": "Raportare",
     "authority_order": "Ordin de eliminare",
     "picture_check": "Verificare de imagine",
-    "downvotes": "Voturi negative private"
+    "downvotes": "Voturi negative private",
+    "picture_review": "Imagine care așteaptă un moderator"
   },
   "statuses": {
     "open": "Deschis",
@@ -382,7 +383,13 @@
     "kind": "Tip",
     "kinds": {
       "cover": "Coperta poveștii",
-      "avatar": "Poza de profil"
+      "avatar": "Poza de profil",
+      "chapter_picture": "Imagine din capitol",
+      "drawing": "Desen",
+      "quote_card": "Card cu citat",
+      "space_banner": "Banner de spațiu",
+      "atlas_image": "Imagine din lumea poveștii",
+      "signature_picture": "Imagine de semnătură"
     },
     "status": "Stare",
     "statuses": {
@@ -472,5 +479,56 @@
     "loadFailed": "Nu am putut încărca mesajele. Încearcă din nou peste câteva clipe.",
     "loggedHint": "Mesajele private apar doar într-un caz despre unul dintre ele și, de fiecare dată când le deschizi, acest lucru se notează în jurnalul de audit.",
     "decisionHint": "Dacă elimini elementul, dispare doar mesajul raportat; conversația și celelalte mesaje rămân."
+  },
+  "pictures": {
+    "documentTitle": "Imagini de verificat · {{productName}}",
+    "heading": "Imagini de verificat",
+    "intro": "Fiecare imagine dintr-o poveste pentru toate vârstele sau 13+ și fiecare imagine de la cineva sub 16 ani așteaptă aici după verificarea automată. Nimeni altcineva nu o vede până nu decizi.",
+    "guidance": "Aprobă desenele și ilustrațiile potrivite pentru ratingul poveștii. Fără fotografii, persoane reale sau vedete. Dacă un personaj ar putea părea sub 18 ani, apasă Respinge.",
+    "notAllowed": "Doar echipa de moderare poate verifica imaginile.",
+    "loading": "Se încarcă imaginile…",
+    "none": "Nicio imagine nu așteaptă.",
+    "listLabel": "Imagini care așteaptă o decizie",
+    "alt": "Imaginea încărcată de @{{handle}}",
+    "uploader": "Încărcată de",
+    "ageGroup": "Grupa de vârstă",
+    "noStory": "Nu e într-o poveste",
+    "waitingSince": "Așteaptă din",
+    "approve": "Aprobă",
+    "approveNote": "Aprobată în Imagini de verificat.",
+    "raise": "Aprobă și crește ratingul",
+    "raiseQuestion": "Ce arată imaginea?",
+    "raiseChoices": {
+      "18_plus": "Nuditate, conținut erotic sau explicit desenat, cu adulți: povestea devine 18+",
+      "16_plus": "Sugestiv, fără nuditate: povestea devine cel puțin 16+"
+    },
+    "raiseSubmit": "Aprobă și crește",
+    "raiseMessage": "O imagine din povestea ta cere un rating mai mare, așa că am crescut povestea la {{rating}}. Când echipa schimbă ratingul, el doar crește.",
+    "ratings": {
+      "all_ages": "Toate vârstele",
+      "13_plus": "13+",
+      "16_plus": "16+",
+      "18_plus": "18+"
+    },
+    "reject": "Respinge",
+    "rejectQuestion": "Ce arată imaginea?",
+    "rejectChoose": "Alege una",
+    "rejectNote": "Notă pentru echipă",
+    "rejectNoteHint": "O citește doar echipa.",
+    "rejectPreview": "Persoana care a încărcat-o va citi:",
+    "rejectIncomplete": "Alege ce arată imaginea și scrie o notă.",
+    "rejectSubmit": "Respinge și șterge",
+    "rejectMessage": "Imaginea ta nu a fost aprobată pentru că nu respectă regulile comunității (arată: {{reason}}), așa că am șters-o. Poți încărca altă imagine oricând. Citește regulile aici: {{link}}",
+    "cancel": "Renunță",
+    "reasons": {
+      "photograph": "o fotografie",
+      "photographic_sexual_image": "o imagine sexuală fotografică",
+      "real_person": "o persoană reală",
+      "celebrity": "o vedetă",
+      "sexual_image_of_minor": "o imagine sexuală cu un minor",
+      "gore": "violență explicită (gore)",
+      "hate": "ură",
+      "other": "altceva ce regulile nu permit"
+    }
   }
 }

@@ -22,6 +22,7 @@ import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
+import { approveWaitingPictures } from './support/pictures';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
 const chapterId = 'e2e00511-0000-4000-8000-000000000001';
@@ -123,7 +124,7 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
     await page.context().close();
   });
 
-  test('mouse and keyboard both draw; Undo and Clear work; the drawing goes in as a checked picture', async ({
+  test('mouse and keyboard both draw; Undo and Clear work; the drawing waits for a moderator like any picture', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', editorAddress);
@@ -151,7 +152,8 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
 
     // Criterion 2: a picture like any other, checked, with its alt text in the stored Markdown.
     const figure = page.getByRole('figure', { name: 'Picture in this chapter' });
-    await expect(figure.getByText('Checked', { exact: true })).toBeVisible();
+    // The seed story is All ages, so the drawing waits for a moderator (ADMIN-2e1b).
+    await expect(figure.getByText('Waiting for a person', { exact: true })).toBeVisible();
     await page.getByRole('textbox', { name: 'Chapter title' }).focus();
     await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
       /Saved at \d/,
@@ -160,7 +162,8 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
     expect(body).toMatch(/!\[A storm cloud over the station\]\(picture:[0-9a-f-]{36}\)/);
     expect(
       runSql(`select status from public.picture_checks where chapter_id = '${chapterId}'`),
-    ).toBe('passed');
+    ).toBe('held');
+    expect(approveWaitingPictures(`chapter_id = '${chapterId}'`)).toBe('1');
     await page.context().close();
   });
 

@@ -136,7 +136,9 @@
       "march_target_writers": "Writers publishing",
       "march_target_readers": "Readers",
       "march_target_return_rate": "Return rate (%)",
-      "rank_badge_min_stories": "Rank badges: fewest stories a tag needs before a cover shows a rank in it"
+      "rank_badge_min_stories": "Rank badges: fewest stories a tag needs before a cover shows a rank in it",
+      "picture_allowed_kinds": "Kinds of picture allowed (shown on every upload screen)",
+      "picture_reject_reasons": "Reasons for rejecting a picture (labels in interface text)"
     }
   },
   "discover": {

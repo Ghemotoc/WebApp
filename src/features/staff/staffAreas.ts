@@ -32,6 +32,13 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.moderation',
     descriptionKey: 'home.areas.moderation',
   },
+  // Pictures to check (ADMIN-2e1b): pictures that wait for a moderator before anyone sees them.
+  {
+    area: 'moderation',
+    href: '/staff/pictures',
+    labelKey: 'nav.pictures',
+    descriptionKey: 'home.areas.pictures',
+  },
   // Moderator mail (S1-E10-11): the team's shared inbox, for everyone who acts on moderation.
   {
     area: 'moderation',

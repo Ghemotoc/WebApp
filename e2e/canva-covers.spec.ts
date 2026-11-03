@@ -24,6 +24,7 @@ import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser } from './support/personas';
+import { approveWaitingPictures } from './support/pictures';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
 const storyId = '00000000-0000-4000-9000-000000000002';
@@ -125,7 +126,8 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
     await tab.getByRole('link', { name: 'Return' }).click();
     // Criteria 2 and 3: back, uploaded through the picture check and saved as the cover.
     await expect(tab.getByText('Your Canva cover is saved.')).toBeVisible();
-    await expect(tab.getByText('Readers can see it now.')).toBeVisible();
+    // The seed story is All ages, so the cover waits for a moderator (ADMIN-2e1b).
+    await expect(tab.getByText(/up to two days when a person/)).toBeVisible();
     expect(
       runSql(
         `select cover_kind || ' ' || (cover_tall_path like '${storyId}/%')::text from public.stories where id = '${storyId}'`,
@@ -135,7 +137,8 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
       runSql(
         `select status from public.picture_checks where story_id = '${storyId}' order by created_at desc limit 1`,
       ),
-    ).toBe('passed');
+    ).toBe('held');
+    expect(approveWaitingPictures(`story_id = '${storyId}'`)).toBe('1');
     await page.context().close();
   });
 

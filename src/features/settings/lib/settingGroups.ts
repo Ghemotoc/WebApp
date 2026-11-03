@@ -25,6 +25,7 @@ export const settingGroups: { id: string; keys: string[] }[] = [
       'handle_change_days',
       'pen_name_change_days',
       'classics_account_handle',
+      'picture_allowed_kinds',
     ],
   },
   {
@@ -67,6 +68,7 @@ export const settingGroups: { id: string; keys: string[] }[] = [
       'case_claim_minutes',
       'suspension_default_days',
       'suspension_day_choices',
+      'picture_reject_reasons',
       'on_call_escalation_minutes',
       'safety_contact_warning_days',
       'staff_session_hours',

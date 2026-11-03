@@ -3830,10 +3830,16 @@ export type Database = {
           story_id: string | null;
           updated_at: string;
           user_id: string;
+          open_picture_review_case: string | null;
+          picture_needs_person: boolean | null;
           picture_state_json: Json | null;
           show_passed_avatar: undefined | null;
         };
-        ComputedFields: 'picture_state_json' | 'show_passed_avatar';
+        ComputedFields:
+          | 'open_picture_review_case'
+          | 'picture_needs_person'
+          | 'picture_state_json'
+          | 'show_passed_avatar';
         Insert: {
           attempts?: number;
           bucket: string;
@@ -7221,6 +7227,14 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_approve_picture: {
+        Args: {
+          new_rating?: Database['public']['Enums']['story_rating'];
+          note_text: string;
+          target_case_id: string;
+        };
+        Returns: boolean;
+      };
       admin_approve_username: {
         Args: {
           approved_name: string;
@@ -7750,6 +7764,8 @@ export type Database = {
         Args: { note_text?: string; reporter_handle: string; source_case_id?: string };
         Returns: string;
       };
+      admin_picture_reject_reasons: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_pictures_to_check: { Args: Record<PropertyKey, never>; Returns: Json[] };
       admin_publish_classic: { Args: { target_story_id: string }; Returns: Json };
       admin_publish_cms_version: { Args: { version_id: string }; Returns: string };
       admin_publish_interface_text: { Args: { version_id: string }; Returns: string };
@@ -7791,6 +7807,15 @@ export type Database = {
           values_before: Json;
         };
         Returns: string;
+      };
+      admin_reject_picture: {
+        Args: {
+          message_to_person: string;
+          note_text: string;
+          reason_key: string;
+          target_case_id: string;
+        };
+        Returns: boolean;
       };
       admin_reject_tag: { Args: { reason: string; tag_id: string }; Returns: number };
       admin_release_case: { Args: { target_case_id: string }; Returns: boolean };
@@ -10257,6 +10282,15 @@ export type Database = {
         };
         Returns: string;
       };
+      open_picture_review_case: {
+        Args: {
+          picture: Omit<
+            Database['public']['Tables']['picture_checks']['Row'],
+            Database['public']['Tables']['picture_checks']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       open_story_languages: { Args: Record<PropertyKey, never>; Returns: string[] };
       order_timeline_json: {
         Args: {
@@ -10373,7 +10407,50 @@ export type Database = {
       parental_consent_request: { Args: { token: string }; Returns: Json };
       picture_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       picture_is_visible: { Args: { bucket: string; path: string }; Returns: boolean };
+      picture_needs_person: {
+        Args: {
+          picture: Omit<
+            Database['public']['Tables']['picture_checks']['Row'],
+            Database['public']['Tables']['picture_checks']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       picture_reader_may_see: { Args: { bucket: string; path: string }; Returns: boolean };
+      picture_review_case: {
+        Args: { target_case_id: string };
+        Returns: {
+          claimed_at: string | null;
+          claimed_by_user_id: string | null;
+          created_at: string;
+          deadline_at: string;
+          decided_at: string | null;
+          decided_by_user_id: string | null;
+          decision: Database['public']['Enums']['moderation_action'] | null;
+          disabled_at: string | null;
+          id: string;
+          is_safeguarding: boolean;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          preserve_until: string | null;
+          received_at: string;
+          reference: string;
+          report_count: number;
+          reporter_under_18: boolean;
+          source: Database['public']['Enums']['case_source'];
+          status: Database['public']['Enums']['case_status'];
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason: Database['public']['Enums']['report_reason'] | null;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'cases';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       picture_state_json: {
         Args: {
           picture: Omit<
@@ -10569,6 +10646,17 @@ export type Database = {
       purge_unfinished_social_sign_ups: { Args: Record<PropertyKey, never>; Returns: number };
       queue_daily_digests: { Args: Record<PropertyKey, never>; Returns: number };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      raise_rating_for_picture: {
+        Args: {
+          new_rating: Database['public']['Enums']['story_rating'];
+          picture: Omit<
+            Database['public']['Tables']['picture_checks']['Row'],
+            Database['public']['Tables']['picture_checks']['ComputedFields']
+          >;
+          reason_given: string;
+        };
+        Returns: undefined;
+      };
       rank_for: {
         Args: { chapter_count: number; word_count: number };
         Returns: Database['public']['Enums']['writer_rank'];
@@ -11809,7 +11897,7 @@ export type Database = {
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
       appeal_status: 'open' | 'upheld' | 'overturned';
       audit_actor: 'person' | 'system';
-      case_source: 'report' | 'authority_order' | 'picture_check' | 'downvotes';
+      case_source: 'report' | 'authority_order' | 'picture_check' | 'downvotes' | 'picture_review';
       case_status: 'open' | 'decided';
       case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
       certificate_result: 'participant' | 'finalist' | 'winner';
@@ -12134,7 +12222,7 @@ export const Constants = {
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
       appeal_status: ['open', 'upheld', 'overturned'],
       audit_actor: ['person', 'system'],
-      case_source: ['report', 'authority_order', 'picture_check', 'downvotes'],
+      case_source: ['report', 'authority_order', 'picture_check', 'downvotes', 'picture_review'],
       case_status: ['open', 'decided'],
       case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
       certificate_result: ['participant', 'finalist', 'winner'],
