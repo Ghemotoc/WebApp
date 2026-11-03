@@ -135,6 +135,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.website',
     descriptionKey: 'home.areas.website_cms',
   },
+  // Contests (S1-E11-15; CONTESTS-13b1): owner and admin, beside the landing pages that present
+  // them (proposal).
+  {
+    area: 'contests',
+    href: '/staff/contests',
+    labelKey: 'nav.contests',
+    descriptionKey: 'home.areas.contests',
+  },
   // Content settings, markets and languages (S1-E11-03, S1-E11-05), after the areas staff use
   // every day and before the numbers (architecture 1.8.2).
   {

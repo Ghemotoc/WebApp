@@ -1,0 +1,156 @@
+{
+  "card": {
+    "legend": "Concursuri",
+    "intro": "Înscrie povestea într-un concurs de scris care primește înscrieri acum. Toate drepturile asupra poveștii rămân ale tale.",
+    "closesOn": "Înscrierile se încheie pe {{date}}.",
+    "wordLimit": "Limită de cuvinte: {{limit}}.",
+    "about": "Despre {{name}}",
+    "enter": "Înscrie-te în {{name}}",
+    "entered": "Povestea este înscrisă.",
+    "withdraw": "Retrage-te din {{name}}",
+    "otherStory": "Ai înscris „{{title}}” în acest concurs. Fiecare persoană înscrie o singură poveste.",
+    "cantEnter": "Povestea nu poate fi înscrisă încă:",
+    "problems": {
+      "not_active": "Contul tău nu poate participa încă la concursuri.",
+      "not_readable": "Cititorii nu o pot deschide încă. Publică mai întâi un capitol.",
+      "class_only": "Este vizibilă doar pentru clasa ta.",
+      "language": "Este scrisă într-o limbă pe care concursul nu o primește.",
+      "rating": "Concursul este deschis și celor sub 16 ani, așa că primește doar povești pentru toate vârstele sau 13+.",
+      "word_limit": "Capitolele publicate depășesc limita de cuvinte."
+    },
+    "entrySaved": "Povestea ta este înscrisă. Mult succes!",
+    "withdrawn": "Ai retras înscrierea. Te poți înscrie din nou până se încheie înscrierile.",
+    "failures": {
+      "already_entered": "Ai deja o poveste în acest concurs. Retrage-o mai întâi ca să înscrii alta.",
+      "closed": "Înscrierile s-au încheiat, așa că înscrierea nu mai poate fi schimbată.",
+      "no_contest": "Concursul nu mai primește înscrierea ta.",
+      "no_story": "Nu am găsit povestea.",
+      "no_entry": "Nu ai nicio înscriere în acest concurs.",
+      "not_active": "Contul tău nu poate participa încă la concursuri.",
+      "not_readable": "Cititorii nu pot deschide încă povestea. Publică mai întâi un capitol.",
+      "class_only": "Povestea este vizibilă doar pentru clasa ta.",
+      "language": "Concursul nu primește povești în această limbă.",
+      "rating": "Concursul primește doar povești pentru toate vârstele sau 13+.",
+      "word_limit": "Povestea depășește limita de cuvinte.",
+      "failed": "N-a mers. Încearcă din nou peste câteva momente."
+    }
+  },
+  "staff": {
+    "documentTitle": "Concursuri",
+    "eyebrow": "Concursuri",
+    "heading": "Concursuri",
+    "intro": "Pregătește concursurile de scris. Un concurs se deschide doar după ce regulamentul complet este publicat în română și engleză și are link pe pagina de prezentare.",
+    "listHeading": "Toate concursurile",
+    "empty": "Încă nu există concursuri.",
+    "loadFailed": "Concursurile nu s-au putut încărca. Încearcă din nou peste câteva momente.",
+    "unnamed": "Concurs fără nume",
+    "noDates": "Fără date încă",
+    "window": "între {{from}} și {{to}}",
+    "columns": {
+      "name": "Nume",
+      "page": "Pagina de prezentare",
+      "entries": "Înscrieri",
+      "status": "Stare"
+    },
+    "status": {
+      "draft": "Ciornă",
+      "open": "Deschis"
+    },
+    "new": {
+      "heading": "Concurs nou",
+      "page": "Pagina de prezentare",
+      "create": "Creează concursul",
+      "noPages": "Fiecare concurs are propria pagină de prezentare de tip concurs. Creeaz-o mai întâi:",
+      "landingPagesLink": "Site › Pagini de prezentare",
+      "failures": {
+        "not_allowed": "Doar proprietarul și administratorii pot organiza concursuri.",
+        "not_a_contest_page": "Alege o pagină de prezentare de tip concurs.",
+        "already_has_contest": "Pagina are deja un concurs.",
+        "failed": "Concursul nu s-a putut crea. Încearcă din nou peste câteva momente."
+      }
+    },
+    "editor": {
+      "documentTitle": "Concurs",
+      "back": "Toate concursurile",
+      "notFound": "Concursul nu există.",
+      "pageLink": "Pagina de prezentare: /c/{{slug}}.",
+      "draft": "Ciornă: participanții nu îl văd încă.",
+      "openSince": "Deschis din {{date}}. Participanții se pot înscrie din ziua în care încep înscrierile până în ziua în care se încheie.",
+      "counter": "{{used}} din {{longest}} de caractere",
+      "sections": {
+        "names": "Nume",
+        "dates": "Date",
+        "who": "Cine se poate înscrie",
+        "entry": "Ce se poate înscrie",
+        "prize": "Premiu și juriu",
+        "rules": "Regulament"
+      },
+      "fields": {
+        "name_ro": "Numele în română",
+        "name_en": "Numele în engleză",
+        "entries_open_on": "Încep înscrierile",
+        "entries_close_on": "Se încheie înscrierile",
+        "results_on": "Rezultate",
+        "datesHint": "Zile după ora României. Înscrierile se primesc și în prima, și în ultima zi.",
+        "age_groups": "Grupe de vârstă",
+        "markets": "Piețe",
+        "languages": "Limbile poveștilor",
+        "what_counts_ro": "Ce se poate înscrie, în română",
+        "what_counts_en": "Ce se poate înscrie, în engleză",
+        "word_limit": "Limită de cuvinte (opțional)",
+        "word_limitHint": "Se numără cuvintele din capitolele publicate ale poveștii.",
+        "prize_ro": "Premiul, în română",
+        "prize_en": "Premiul, în engleză",
+        "prize_delivered_by": "Cine oferă premiul",
+        "judges": "Juriul",
+        "judgesHint": "Echipa noastră și eventualii jurați parteneri, numiți. Nu există vot public, iar sponsorul nu are niciun cuvânt în rezultat.",
+        "rules_page_key": "Adresa paginii de ajutor cu regulamentul",
+        "rulesHint": "Pagina de ajutor cu regulamentul complet, la /help/ și această adresă. Public-o în română și engleză și pune linkul în blocul Regulament al paginii de prezentare."
+      },
+      "ageGroups": {
+        "13_to_15": "13–15 ani",
+        "16_to_17": "16–17 ani",
+        "18_plus": "18 ani și peste"
+      },
+      "save": "Salvează",
+      "saving": "Se salvează…",
+      "saved": "Salvat.",
+      "openHeading": "Deschidere",
+      "ready": "Totul este pregătit. După deschidere, participanții se pot înscrie din ziua în care încep înscrierile.",
+      "notReady": "Înainte de deschidere:",
+      "open": "Deschide concursul",
+      "problems": {
+        "name_ro": "Adaugă numele în română.",
+        "name_en": "Adaugă numele în engleză.",
+        "dates_missing": "Adaugă cele trei date.",
+        "dates_order": "Înscrierile se încheie în ziua în care încep sau mai târziu, iar rezultatele vin după încheierea înscrierilor.",
+        "age_groups": "Alege cel puțin o grupă de vârstă.",
+        "markets": "Alege cel puțin o piață.",
+        "languages": "Alege cel puțin o limbă a poveștilor.",
+        "what_counts": "Spune ce se poate înscrie, în ambele limbi.",
+        "prize": "Descrie premiul, în ambele limbi.",
+        "prize_delivered_by": "Spune cine oferă premiul.",
+        "judges": "Numește juriul.",
+        "rules_page": "Adaugă adresa paginii de ajutor cu regulamentul.",
+        "rules_not_published": "Publică pagina de ajutor cu regulamentul în română și engleză, în fiecare piață a concursului.",
+        "landing_not_contest": "Pagina de prezentare trebuie să fie de tip concurs.",
+        "landing_not_live": "Publică pagina de prezentare, ca să fie vizibilă azi.",
+        "rules_not_linked": "Pune linkul către regulament în blocul Regulament al paginii de prezentare.",
+        "other": "Mai trebuie reparat ceva."
+      },
+      "failures": {
+        "too_long": "Un câmp este mai lung decât se poate.",
+        "bad_age_group": "Alege grupele de vârstă din listă.",
+        "bad_market": "Alege piețele din listă.",
+        "bad_language": "Alege limbile din listă.",
+        "bad_word_limit": "Limita trebuie să fie între 100 și 500.000 de cuvinte.",
+        "bad_rules_page": "Adresa regulamentului poate conține doar litere mici, cifre și cratime.",
+        "breaks_open_contest": "Concursul este deschis, așa că trebuie să rămână complet. Schimbarea ar lăsa:",
+        "not_ready": "Concursul nu este gata de deschidere. Rezolvă lista de mai sus.",
+        "already_open": "Concursul este deja deschis.",
+        "not_allowed": "Doar proprietarul și administratorii pot organiza concursuri.",
+        "failed": "N-a mers. Încearcă din nou peste câteva momente."
+      }
+    }
+  }
+}

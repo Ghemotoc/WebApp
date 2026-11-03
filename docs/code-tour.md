@@ -1607,6 +1607,17 @@ A landing page is a page at its own address, `/c/<name>`, for a contest, a campa
 - **Links from the CMS:** `cms_link_problems()` accepts `/c/<name>` in a notice, a help page or an answer while that landing page exists and isn't archived.
 - **Tests:** `server/landing-preview.test.ts`, `supabase/tests/database/264-landing-page-links.test.sql`, `e2e/landing-link-preview.spec.ts`.
 
+## Contests (S1-E11-15; CONTESTS-13b1)
+
+A contest belongs to one landing page of type contest (S1-E11-14): the page tells visitors about it, the contest row holds what the database needs to take entries. Owner and admins run them from Staff › Contests; writers enter from a story's settings.
+
+- **Where it starts (staff):** `/staff/contests` is `StaffContestsPage` (`src/features/contests/`). `NewContestForm` → `useStaffContests().create()` → `admin_create_contest(landing_slug)`, which refuses a page that isn't a contest page or already has one. `/staff/contests/:contestId` is `ContestEditorPage`: `ContestForm` → `admin_save_contest(id, details)` (names, entry window, results day, age groups, markets, languages, what counts, word limit, prize, who delivers it, judges and the rules help page). `ContestOpenPanel` shows `admin_contest_problems()` and calls `admin_open_contest()`.
+- **What opening needs:** `contest_problems()` = `contest_detail_problems()` (every detail filled in, dates in order) plus `contest_landing_problems()` (the page is live, its Rules block links to `/help/<key>`, and that help page is published in Romanian and English for every contest market). An open contest can still be saved, but never into a state with problems (hint `breaks_open_contest`).
+- **Where it starts (writers):** `StoryContestCard` in `StorySettingsPage` → `useStoryContests(slug)` → `contest_entry_options(story_slug)`, the open contests taking entries today with this story's problems (`contest_story_problems()`: not readable, class only, language, rating, word limit) and the writer's entry, if any. Enter → `enter_contest()`; Withdraw → `withdraw_contest_entry()`, only while entries are open.
+- **Rules in the database:** entries open from `entries_open_on` to `entries_close_on`, both days included, in Romanian time (`contest_takes_entries_today()`); the writer's age group and country must be among the contest's (`contest_writer_fits()`); when 13 to 15 is one of the groups, only All ages and 13+ stories may enter; one valid entry per writer per contest (partial unique index `contest_entries_one_per_writer`).
+- **Tables:** `contests` (staff read only, `contests_select_staff`) and `contest_entries` (the writer reads their own, staff read all; written only through the functions). `contest_entries` is in `data_export_tables()` and `account_deletion_rules()`.
+- **Tests:** `supabase/tests/database/265-contests.test.sql`, `e2e/contests.spec.ts`.
+
 ## Tags: approval and names in each language (CMS-1e)
 
 A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.

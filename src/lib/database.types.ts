@@ -1848,6 +1848,168 @@ export type Database = {
           },
         ];
       };
+      contest_entries: {
+        Row: {
+          contest_id: string;
+          created_at: string;
+          entered_at: string;
+          id: string;
+          status: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+          withdrawn_at: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          contest_id: string;
+          created_at?: string;
+          entered_at?: string;
+          id?: string;
+          status?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+          withdrawn_at?: string | null;
+        };
+        Update: {
+          contest_id?: string;
+          created_at?: string;
+          entered_at?: string;
+          id?: string;
+          status?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+          withdrawn_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'contest_entries_contest_id_fkey';
+            columns: ['contest_id'];
+            isOneToOne: false;
+            referencedRelation: 'contests';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'contest_entries_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'contest_entries_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      contests: {
+        Row: {
+          age_groups: string[];
+          created_at: string;
+          entries_close_on: string | null;
+          entries_open_on: string | null;
+          id: string;
+          judges: string;
+          landing_page_id: string;
+          language_codes: string[];
+          market_codes: string[];
+          name_en: string;
+          name_ro: string;
+          opened_at: string | null;
+          prize_delivered_by: string;
+          prize_en: string;
+          prize_ro: string;
+          results_on: string | null;
+          rules_page_key: string | null;
+          updated_at: string;
+          user_id: string | null;
+          what_counts_en: string;
+          what_counts_ro: string;
+          word_limit: number | null;
+          contest_detail_problems: string[] | null;
+          contest_landing_problems: string[] | null;
+          contest_problems: string[] | null;
+          contest_rules_are_published: boolean | null;
+          contest_takes_entries_today: boolean | null;
+          contest_writer_fits: boolean | null;
+        };
+        ComputedFields:
+          | 'contest_detail_problems'
+          | 'contest_landing_problems'
+          | 'contest_problems'
+          | 'contest_rules_are_published'
+          | 'contest_takes_entries_today'
+          | 'contest_writer_fits';
+        Insert: {
+          age_groups?: string[];
+          created_at?: string;
+          entries_close_on?: string | null;
+          entries_open_on?: string | null;
+          id?: string;
+          judges?: string;
+          landing_page_id: string;
+          language_codes?: string[];
+          market_codes?: string[];
+          name_en?: string;
+          name_ro?: string;
+          opened_at?: string | null;
+          prize_delivered_by?: string;
+          prize_en?: string;
+          prize_ro?: string;
+          results_on?: string | null;
+          rules_page_key?: string | null;
+          updated_at?: string;
+          user_id?: string | null;
+          what_counts_en?: string;
+          what_counts_ro?: string;
+          word_limit?: number | null;
+        };
+        Update: {
+          age_groups?: string[];
+          created_at?: string;
+          entries_close_on?: string | null;
+          entries_open_on?: string | null;
+          id?: string;
+          judges?: string;
+          landing_page_id?: string;
+          language_codes?: string[];
+          market_codes?: string[];
+          name_en?: string;
+          name_ro?: string;
+          opened_at?: string | null;
+          prize_delivered_by?: string;
+          prize_en?: string;
+          prize_ro?: string;
+          results_on?: string | null;
+          rules_page_key?: string | null;
+          updated_at?: string;
+          user_id?: string | null;
+          what_counts_en?: string;
+          what_counts_ro?: string;
+          word_limit?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'contests_landing_page_id_fkey';
+            columns: ['landing_page_id'];
+            isOneToOne: true;
+            referencedRelation: 'landing_pages';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'contests_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       conversation_members: {
         Row: {
           conversation_id: string;
@@ -8121,6 +8283,7 @@ export type Database = {
       };
       admin_compliance_log: { Args: { for_export?: boolean }; Returns: Json };
       admin_confirm_safety_contact: { Args: { target_contact_id: string }; Returns: boolean };
+      admin_contest_problems: { Args: { target_contest_id: string }; Returns: string[] };
       admin_convert_ticket_to_report: {
         Args: {
           content_address: string;
@@ -8134,6 +8297,7 @@ export type Database = {
         Args: { description: string; name: string; school_name: string; teacher_handle: string };
         Returns: Json;
       };
+      admin_create_contest: { Args: { landing_slug: string }; Returns: string };
       admin_create_invite: {
         Args: { admits?: number; private_note?: string; valid_days?: number };
         Returns: {
@@ -8517,6 +8681,7 @@ export type Database = {
         }[];
       };
       admin_on_call_rota: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_open_contest: { Args: { target_contest_id: string }; Returns: undefined };
       admin_open_data_request: {
         Args: {
           channel: Database['public']['Enums']['data_request_channel'];
@@ -8770,6 +8935,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_save_contest: { Args: { details: Json; target_contest_id: string }; Returns: string[] };
       admin_save_forum: {
         Args: {
           accent: Database['public']['Enums']['forum_accent'];
@@ -9880,6 +10046,113 @@ export type Database = {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
       };
+      contest_detail_problems: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+        };
+        Returns: string[];
+      };
+      contest_details_from_json: {
+        Args: {
+          current_row: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+          details: Json;
+        };
+        Returns: {
+          age_groups: string[];
+          created_at: string;
+          entries_close_on: string | null;
+          entries_open_on: string | null;
+          id: string;
+          judges: string;
+          landing_page_id: string;
+          language_codes: string[];
+          market_codes: string[];
+          name_en: string;
+          name_ro: string;
+          opened_at: string | null;
+          prize_delivered_by: string;
+          prize_en: string;
+          prize_ro: string;
+          results_on: string | null;
+          rules_page_key: string | null;
+          updated_at: string;
+          user_id: string | null;
+          what_counts_en: string;
+          what_counts_ro: string;
+          word_limit: number | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'contests';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      contest_entry_options: { Args: { story_slug: string }; Returns: Json };
+      contest_landing_problems: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+        };
+        Returns: string[];
+      };
+      contest_problems: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+        };
+        Returns: string[];
+      };
+      contest_rules_are_published: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      contest_story_problems: {
+        Args: {
+          story: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+          target: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+        };
+        Returns: string[];
+      };
+      contest_takes_entries_today: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      contest_writer_fits: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       conversation_between: {
         Args: { first_user_id: string; second_user_id: string };
         Returns: {
@@ -10196,6 +10469,10 @@ export type Database = {
       end_class_invite: { Args: { slug: string }; Returns: boolean };
       end_live_class_invites: { Args: { target_space_id: string }; Returns: number };
       end_my_session: { Args: { target_session_id: string }; Returns: boolean };
+      enter_contest: {
+        Args: { story_slug: string; target_contest_id: string };
+        Returns: undefined;
+      };
       erase_closed_account: { Args: { target_user_id: string }; Returns: undefined };
       erase_unchecked_account: { Args: { target_user_id: string }; Returns: undefined };
       erase_unchecked_accounts: { Args: Record<PropertyKey, never>; Returns: number };
@@ -12053,6 +12330,7 @@ export type Database = {
         Returns: undefined;
       };
       require_compliance_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
+      require_contest_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_forum_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_forum_writer: { Args: Record<PropertyKey, never>; Returns: string };
       require_live_profile: { Args: Record<PropertyKey, never>; Returns: string };
@@ -13076,6 +13354,7 @@ export type Database = {
       };
       who_is_online: { Args: { wanted_handles: string[] }; Returns: string[] };
       with_comma_below: { Args: { value: string }; Returns: string };
+      withdraw_contest_entry: { Args: { target_contest_id: string }; Returns: undefined };
       word_total: { Args: { any_text: string }; Returns: number };
       working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
       write_class_certificate: {
