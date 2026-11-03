@@ -116,7 +116,7 @@ export function ParagraphThread({ id, address, place, onClose }: ParagraphThread
       {thread !== null && thread.comments.length > 0 && (
         <div className="divide-y divide-hairline">
           {thread.comments.map((comment) => (
-            <CommentItem key={comment.id} address={address} comment={comment} />
+            <CommentItem key={comment.id} address={address} comment={comment} isInParagraphThread />
           ))}
         </div>
       )}

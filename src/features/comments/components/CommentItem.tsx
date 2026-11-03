@@ -32,6 +32,8 @@ export interface CommentItemProps {
   address: ChapterAddress;
   comment: ChapterComment;
   isReply?: boolean;
+  /** True inside a paragraph's thread (S1-E6-06), where replies have the shorter limit. */
+  isInParagraphThread?: boolean;
 }
 
 /**
@@ -89,7 +91,12 @@ function ParagraphLabel({ paragraph }: { paragraph: ChapterComment['paragraph'] 
  *
  * @returns the comment
  */
-export function CommentItem({ address, comment, isReply = false }: CommentItemProps) {
+export function CommentItem({
+  address,
+  comment,
+  isReply = false,
+  isInParagraphThread = false,
+}: CommentItemProps) {
   const { t } = useCommentsTranslation();
   const [isReplying, setIsReplying] = useState(false);
   const name = comment.author.displayName;
@@ -126,6 +133,7 @@ export function CommentItem({ address, comment, isReply = false }: CommentItemPr
               address={address}
               replyTo={{ commentId: comment.id, authorName: name }}
               onDone={() => setIsReplying(false)}
+              isOnParagraph={isInParagraphThread || comment.paragraph !== null}
             />
           </div>
         )}

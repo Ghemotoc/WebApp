@@ -13,6 +13,7 @@ values; the page links to those log lines (`/staff/audit-log?action=settings.`).
   editors (`discover_shelves`, `rate_limits`).
 - `components/CategoriesSection.tsx`: the order of the categories.
 - `components/ReservedNamesSection.tsx` and `NameWordsSection.tsx`: the name rules (S1-E2-04).
+- `components/NudgeWordsSection.tsx`, `hooks/useNudgeWords.ts`, `api/nudgeWords.ts` (ADMIN-2d3): the kind-words nudge lists, Romanian and English, which the comment box checks in the browser before sending; `admin_add_nudge_word()` and `admin_remove_nudge_word()` (owner and admin, logged).
 - `components/MarketsSection.tsx`, `LanguagesList.tsx` and `MarketsList.tsx`: markets and languages
   (S1-E11-05); `lib/marketNames.ts` holds what the two lists share.
 - `api/` and `hooks/`: one file per kind of data. `hooks/settingsFailure.ts` turns an error into

@@ -29,6 +29,7 @@ import { DiscoverMixEditor } from './DiscoverMixEditor';
 import { FlagsSection } from './FlagsSection';
 import { MarketsSection } from './MarketsSection';
 import { NameWordsSection } from './NameWordsSection';
+import { NudgeWordsSection } from './NudgeWordsSection';
 import { RateLimitsEditor } from './RateLimitsEditor';
 import { ReservedNamesSection } from './ReservedNamesSection';
 import { SettingsFailureNotice } from './SettingsFailureNotice';
@@ -43,6 +44,7 @@ const sectionIds = [
   ['categories', 'categories'],
   ['names', 'names'],
   ['words', 'words'],
+  ['nudge', 'nudge'],
   ['markets', 'markets'],
 ] as const;
 
@@ -140,6 +142,7 @@ function SettingsSections({ canOpenMarket }: { canOpenMarket: boolean }) {
       )}
       <CategoriesSection />
       <NameRuleSections />
+      <NudgeWordsSection />
       <MarketsSection canOpenMarket={canOpenMarket} />
     </>
   );

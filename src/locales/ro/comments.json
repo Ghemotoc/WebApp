@@ -32,10 +32,11 @@
     "too_many_other": "Ai publicat multe comentarii. Așteaptă {{count}} de minute până la următorul.",
     "too_many_unknown": "Ai publicat multe comentarii. Așteaptă puțin până la următorul.",
     "comments_off": "Scriitorul a oprit comentariile la această poveste.",
-    "refused": "Nu se poate publica. Un comentariu are nevoie de câteva cuvinte, cel mult 2.000 de caractere și fără HTML.",
+    "refused": "Nu se poate publica. Un comentariu are nevoie de câteva cuvinte, cel mult {{limit}} de caractere și fără HTML.",
     "gone": "Comentariul acela nu mai există.",
     "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou.",
-    "too_many_links": "Conturile noi pot pune un singur link într-un comentariu în prima zi. Scoate un link și publică din nou."
+    "too_many_links": "Conturile noi pot pune un singur link într-un comentariu în prima zi. Scoate un link și publică din nou.",
+    "too_long": "Un comentariu la un paragraf poate avea cel mult {{limit}} de caractere. Scurtează-l și publică din nou."
   },
   "comment": {
     "writer": "Scriitor",
@@ -94,5 +95,11 @@
     "earlierTitle_other": "{{count}} de comentarii la o versiune mai veche",
     "earlierNote": "Scriitorul a schimbat aceste paragrafe după ce au fost lăsate comentariile.",
     "close": "Închide"
+  },
+  "nudge": {
+    "question": "Aici ne susținem unii pe alții. Vrei totuși să trimiți asta?",
+    "explain": "Unele dintre aceste cuvinte pot răni. Le poți schimba sau poți trimite comentariul așa cum e.",
+    "edit": "Modifică",
+    "sendAnyway": "Trimite oricum"
   }
 }

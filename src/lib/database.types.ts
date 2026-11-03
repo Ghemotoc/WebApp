@@ -1398,6 +1398,31 @@ export type Database = {
           },
         ];
       };
+      comment_nudge_words: {
+        Row: {
+          created_at: string;
+          id: string;
+          language: string;
+          phrase: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          language: string;
+          phrase: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          language?: string;
+          phrase?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       comment_reactions: {
         Row: {
           comment_id: string;
@@ -7146,6 +7171,10 @@ export type Database = {
         Args: { how_it_matches: string; new_word: string; word_language: string };
         Returns: string;
       };
+      admin_add_nudge_word: {
+        Args: { new_phrase: string; word_language: string };
+        Returns: string;
+      };
       admin_add_reserved_name: {
         Args: { how_it_matches: string; new_name: string };
         Returns: string;
@@ -7786,6 +7815,7 @@ export type Database = {
         Returns: undefined;
       };
       admin_remove_name_word: { Args: { target_word_id: string }; Returns: boolean };
+      admin_remove_nudge_word: { Args: { target_word_id: string }; Returns: boolean };
       admin_remove_occasion: { Args: { occasion_id: string }; Returns: undefined };
       admin_remove_on_call_shift: {
         Args: { reason_given: string; shift_id: string };

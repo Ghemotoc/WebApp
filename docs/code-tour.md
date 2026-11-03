@@ -1197,6 +1197,11 @@ ChapterComments (reading) ─lazy→ CommentsSection (src/features/comments/)
   │     newest first, each with its replies; readable_chapter(), blocks, moderated_items, comments_enabled
   │  CommentComposer → usePostComment → post_comment(): the account gate, the limit (5 an hour on the
   │     first day, 60 after: wait_minutes in the error's hint), check_comment_text(), a 'comment_posted' job
+  │     (lengths: comment_max_characters 3,000; paragraph_comment_max_characters 500 for a paragraph and
+  │     its thread, applied by the comments_too_long_for_a_paragraph trigger; useCommentLimit shows them)
+  │     Before sending: useKindWordsNudge checks the text against comment_nudge_words in the browser and,
+  │     on a match, KindWordsNudge asks "Still want to send this?" (Edit / Send anyway). Nothing is kept
+  │     or sent about it (rule 19); staff edit the lists on Staff › Settings (NudgeWordsSection).
   ▼  CommentItem → CommentBody (spoiler cover, markers) · CommentActions: CommentReactions · Reply
                    · Delete → delete_comment()
                    · ReportButton (itemType "comment"; reportable_item_owner() and _summary() have the branch)

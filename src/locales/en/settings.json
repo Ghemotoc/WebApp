@@ -35,6 +35,7 @@
     "categories": "Categories",
     "names": "Reserved names",
     "words": "Username word lists",
+    "nudge": "Kind-words nudge",
     "markets": "Markets and languages"
   },
   "flags": {
@@ -86,7 +87,8 @@
     "names": {
       "teaser_length": "Teaser length for signed-out visitors (words)",
       "chapter_max_characters": "Longest chapter (characters)",
-      "comment_max_characters": "Longest comment (characters)",
+      "comment_max_characters": "Longest comment on a chapter (characters)",
+      "paragraph_comment_max_characters": "Longest comment on a paragraph (characters)",
       "comment_page_size": "Comments per page",
       "ai_label_confirmed_reports": "Confirmed AI reports before a label",
       "handle_change_days": "Days between username changes",
@@ -210,6 +212,13 @@
       "ro": "Română",
       "en": "English"
     }
+  },
+  "nudge": {
+    "intro": "When a comment holds one of these words or phrases, the comment box asks “We’re a supportive place. Still want to send this?” before sending. It is only a nudge, in the commenter’s own browser: nothing is blocked, kept, logged or reported. Phrases match as whole words, ignoring capitals and accents, and both lists are checked whatever the comment’s language.",
+    "search": "Find a phrase",
+    "empty": "No phrase on this list matches.",
+    "listLabel": "Phrases on the list",
+    "addLabel": "Word or phrase to add (up to 60 characters)"
   },
   "markets": {
     "intro": "Romania opens first. Other countries open later, one by one, each after its legal check. A language opens only when moderators who read it are on the rota.",

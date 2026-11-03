@@ -19,6 +19,7 @@ export const settingGroups: { id: string; keys: string[] }[] = [
       'teaser_length',
       'chapter_max_characters',
       'comment_max_characters',
+      'paragraph_comment_max_characters',
       'comment_page_size',
       'ai_label_confirmed_reports',
       'handle_change_days',
