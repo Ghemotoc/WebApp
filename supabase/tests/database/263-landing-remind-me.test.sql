@@ -3,9 +3,8 @@
 -- What it proves:
 -- - publishing is refused for a Remind me block without a Key dates block, and for two of them;
 -- - a visitor who isn't signed in can't ask (the page shows a sign-in link); a signed-in reader
---   sets the reminder once
---   (asking twice changes nothing) and cancels it; nobody can ask once entries are open, or on a
---   page without the block;
+--   sets the reminder once (asking twice changes nothing) and cancels it; nobody can ask once
+--   entries are open, or on a page without the block;
 -- - landing_page() tells each reader whether they asked, and when entries open;
 -- - landing_page_reminders_select_own: a reader reads their own reminder (allowed), not someone
 --   else's (denied); nobody writes the table directly;
