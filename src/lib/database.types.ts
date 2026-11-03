@@ -8805,6 +8805,8 @@ export type Database = {
           channel: Database['public']['Enums']['support_ticket_channel'];
           created_at: string;
           email_only: boolean;
+          first_replied_at: string;
+          first_reply_due_at: string;
           last_message_at: string;
           message_count: number;
           number: number;
@@ -8815,6 +8817,7 @@ export type Database = {
         }[];
       };
       admin_support_ticket: { Args: { ticket_number: number }; Returns: Json };
+      admin_support_view_counts: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_swap_chapter_words: {
         Args: {
           chapter_row: Omit<
@@ -9058,6 +9061,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      auto_solve_support_tickets: { Args: Record<PropertyKey, never>; Returns: number };
       avatar_recipe_valid: { Args: { recipe: Json }; Returns: boolean };
       avatar_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       banned_account_items: {
@@ -12590,6 +12594,7 @@ export type Database = {
         Args: { email_ids: string[]; worker_key: string };
         Returns: number;
       };
+      support_first_reply_due: { Args: { arrived_at: string }; Returns: string };
       support_message_email_state: { Args: { message_id: string }; Returns: string };
       support_payload_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       support_ticket_address: {

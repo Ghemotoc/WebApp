@@ -7,7 +7,8 @@
  * handler claims them (support_email_worker_claim()), writes each in the person's language with
  * the admins' wording laid over email.json ("supportTickets"), sends it from the support inbox
  * with "[#1042]" in the subject, our own Message-ID and In-Reply-To/References pointing at the
- * person's last email, then marks what left (support_email_worker_mark_sent()).
+ * person's last email, then marks what left (support_email_worker_mark_sent()). Part h3a adds the
+ * polite email when a ticket left waiting for the person is solved automatically.
  * In (handleSupportInbound): Brevo's inbound parsing posts each email to the support inbox to
  * POST /api/support-inbound?key=<SUPPORT_INBOUND_KEY>. The handler checks the key, keeps only
  * the parts a ticket needs, signs them with SUPPORT_TICKET_SECRET (the same value is in Vault as
@@ -38,7 +39,7 @@ type ReadText = (field: string, values?: Record<string, string | number>) => str
 /** One due email, as support_email_worker_claim() answers it. */
 export interface ClaimedSupportEmail {
   email_id: string;
-  kind: 'acknowledgement' | 'staff_reply';
+  kind: 'acknowledgement' | 'staff_reply' | 'auto_solved';
   to: string;
   language: string;
   both_languages: boolean;
@@ -149,6 +150,29 @@ export function threadingHeaders(
   return headers;
 }
 
+/** The supportTickets texts each kind of email uses. */
+const emailKeys: Record<ClaimedSupportEmail['kind'], { subject: string; inApp: string }> = {
+  acknowledgement: { subject: 'acknowledgementSubject', inApp: 'acknowledgementInApp' },
+  staff_reply: { subject: 'replySubject', inApp: 'replyInApp' },
+  auto_solved: { subject: 'autoSolvedSubject', inApp: 'replyInApp' },
+};
+
+/**
+ * The first part of an email: the acknowledgement, the staff words with how to answer, or the
+ * note that a waiting ticket was solved (part h3a).
+ *
+ * @returns the paragraphs
+ */
+function mainParts(
+  claimed: ClaimedSupportEmail,
+  read: ReadText,
+  values: Record<string, string | number>,
+): string[] {
+  if (claimed.kind === 'acknowledgement') return [read('acknowledgementBody', values)];
+  if (claimed.kind === 'auto_solved') return [read('autoSolvedBody', values)];
+  return [claimed.body ?? '', read('replyHowToAnswer', values)];
+}
+
 /**
  * The body of one email in one language.
  *
@@ -159,15 +183,9 @@ export function threadingHeaders(
  */
 function bodyIn(claimed: ClaimedSupportEmail, read: ReadText, link: string): string {
   const values = { number: claimed.number, subject: claimed.subject, link };
-  const parts =
-    claimed.kind === 'acknowledgement'
-      ? [read('acknowledgementBody', values)]
-      : [claimed.body ?? '', read('replyHowToAnswer', values)];
+  const parts = mainParts(claimed, read, values);
   // Only someone with an account can open the ticket in the app.
-  if (claimed.has_account) {
-    const inAppKey = claimed.kind === 'acknowledgement' ? 'acknowledgementInApp' : 'replyInApp';
-    parts.push(read(inAppKey, values));
-  }
+  if (claimed.has_account) parts.push(read(emailKeys[claimed.kind].inApp, values));
   parts.push(read('safetyLine'), read('signOff'));
   return parts.join('\n\n');
 }
@@ -190,7 +208,7 @@ export function composeSupportEmail(
 ): OutgoingEmail {
   const main = claimed.language === 'en' ? readers.en : readers.ro;
   const link = claimed.has_account ? `${siteUrl}/support/${String(claimed.number)}` : '';
-  const subjectKey = claimed.kind === 'acknowledgement' ? 'acknowledgementSubject' : 'replySubject';
+  const subjectKey = emailKeys[claimed.kind].subject;
   const bodies = [bodyIn(claimed, main, link)];
   // A staff answer is written once, in the language staff chose: only the acknowledgement doubles.
   if (claimed.both_languages && claimed.kind === 'acknowledgement') {

@@ -173,6 +173,18 @@
         "tags": "Etichetele din {{before}} în {{after}}"
       }
     },
-    "followUpOf": "Continuă tichetul închis #{{number}}"
+    "followUpOf": "Continuă tichetul închis #{{number}}",
+    "views": {
+      "label": "Vizualizări",
+      "mine": "Tichetele mele",
+      "unassigned": "Nealocate",
+      "all_open": "Toate deschise",
+      "pending_on_user": "Așteaptă persoana",
+      "solved": "Rezolvate"
+    },
+    "timer": {
+      "due": "Răspuns până la {{date}}",
+      "overdue": "Primul răspuns întârziat din {{date}}"
+    }
   }
 }

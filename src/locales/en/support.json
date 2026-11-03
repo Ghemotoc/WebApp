@@ -173,6 +173,18 @@
         "tags": "Tags from {{before}} to {{after}}"
       }
     },
-    "followUpOf": "Follows up the closed ticket #{{number}}"
+    "followUpOf": "Follows up the closed ticket #{{number}}",
+    "views": {
+      "label": "Views",
+      "mine": "My tickets",
+      "unassigned": "Unassigned",
+      "all_open": "All open",
+      "pending_on_user": "Pending on user",
+      "solved": "Solved"
+    },
+    "timer": {
+      "due": "Answer by {{date}}",
+      "overdue": "First answer overdue since {{date}}"
+    }
   }
 }

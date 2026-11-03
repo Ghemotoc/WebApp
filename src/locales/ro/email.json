@@ -113,6 +113,8 @@
     "replyHowToAnswer": "Ca să răspunzi, răspunde la acest email și păstrează [#{{number}}] în subiect.",
     "replyInApp": "Toată conversația este și la Cererile tale de asistență: {{link}}",
     "safetyLine": "Dacă tu sau altcineva sunteți în pericol, sună la 112. Ca să raportezi ceva pe {{productName}}, folosește Raportează de lângă acel lucru, nu acest email.",
-    "signOff": "Echipa de asistență {{productName}}"
+    "signOff": "Echipa de asistență {{productName}}",
+    "autoSolvedSubject": "Am marcat cererea ta ca rezolvată [#{{number}}] · {{productName}}",
+    "autoSolvedBody": "Nu am mai primit vești de la tine despre #{{number}}: „{{subject}}”, așa că am marcat-o ca rezolvată.\n\nDacă mai ai nevoie de ajutor, răspunde la acest email și păstrează [#{{number}}] în subiect. Cererea se redeschide și echipa noastră o preia din nou."
   }
 }
