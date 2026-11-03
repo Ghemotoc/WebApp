@@ -30,7 +30,13 @@ describe('a support ticket history line', () => {
 });
 
 describe('the under-16 banner', () => {
-  const someone = { handle: 'a', userId: 'x', emailOnly: false, maskedEmail: null };
+  const someone = {
+    handle: 'a',
+    displayName: 'A',
+    userId: 'x',
+    emailOnly: false,
+    maskedEmail: null,
+  };
 
   it('shows for the 13 to 15 group', () => {
     expect(isUnder16({ ...someone, ageGroup: '13_to_15' })).toBe(true);

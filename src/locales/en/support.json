@@ -185,6 +185,32 @@
     "timer": {
       "due": "Answer by {{date}}",
       "overdue": "First answer overdue since {{date}}"
+    },
+    "canned": {
+      "documentTitle": "Canned replies",
+      "heading": "Canned replies",
+      "intro": "Ready answers to insert into a ticket and edit before sending. {{name}} becomes the person’s name and {{number}} the ticket’s number, in the ticket’s language.",
+      "listLabel": "Canned replies",
+      "empty": "No canned replies yet.",
+      "add": "Add a canned reply",
+      "titleLabel": "Title (only staff see it)",
+      "bodyRoLabel": "Words in Romanian",
+      "bodyEnLabel": "Words in English",
+      "placeholdersHint": "You can use {{name}} and {{number}}.",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "editNamed": "Edit “{{title}}”",
+      "delete": "Delete",
+      "deleteNamed": "Delete “{{title}}”",
+      "deleteConfirm": "Delete it",
+      "keep": "Keep it",
+      "back": "Back to support tickets",
+      "pickerLabel": "Canned reply",
+      "pickerNone": "Choose one",
+      "insert": "Insert",
+      "inserted": "“{{title}}” is in the box: check it and edit it before sending.",
+      "manageLink": "Manage canned replies"
     }
   }
 }

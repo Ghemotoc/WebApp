@@ -4,7 +4,8 @@
  *
  * Every ticket not yet solved or closed to start with, most urgent and longest waiting first,
  * with filters for the status and who it is assigned to. Part h3a adds the saved views with their
- * counts above the filters and the first-reply timer on each row. Plain components, no doodles (staff screens). The database refuses anyone without the
+ * counts above the filters and the first-reply timer on each row; part h3b links to the canned
+ * replies. Plain components, no doodles (staff screens). The database refuses anyone without the
  * support_tickets area (owner, admin, support), and the page says so.
  * Who shows it: the router, inside StaffLayout. What it calls: useSupportInbox.
  */
@@ -176,6 +177,12 @@ export function StaffSupportInboxPage() {
           {t('staff.heading')}
         </h1>
         <p className="m-0 text-body">{t('staff.intro')}</p>
+        <Link
+          to="/staff/support/canned"
+          className="w-fit text-sm font-semibold text-link underline"
+        >
+          {t('staff.canned.manageLink')}
+        </Link>
       </div>
       <SupportViewChips
         filters={state.filters}

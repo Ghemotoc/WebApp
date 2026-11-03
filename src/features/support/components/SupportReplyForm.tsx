@@ -2,16 +2,19 @@
  * SupportReplyForm: one text box and a send button, for answering in a support ticket (story
  * S1-E11-13; bundle ADMIN-2h1). Staff get a second button for an internal note (criterion 5).
  *
+ * Part h3b lets staff insert a canned reply into the box (renderTools), to edit before sending.
+ *
  * Who shows it: MySupportTicketPage and StaffSupportTicketPage. What it calls: the onSend it is
  * given; the box empties once the message is saved.
  */
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
 
 import { supportLimits, type SupportFailure } from '../api/supportTickets';
+import { withInsertedText } from '../lib/fillCannedReply';
 import { useSupportTranslation } from '../registerSupportTranslations';
 
 /** What the form needs. */
@@ -27,6 +30,30 @@ export interface SupportReplyFormProps {
   noteLabel?: string;
   /** False when only a note may be added (a closed ticket, for staff). */
   allowsReply?: boolean;
+  /**
+   * Staff only: tools drawn above the box (the canned reply picker, part h3b). They get insert(),
+   * which puts words into the box and moves the focus there.
+   */
+  renderTools?: (insert: (text: string) => void) => ReactNode;
+}
+
+/**
+ * Why the last send was refused, announced to screen readers; empty when nothing went wrong.
+ *
+ * @returns the live region
+ */
+function FailureLine({
+  failure,
+  waitMinutes,
+}: Pick<SupportReplyFormProps, 'failure' | 'waitMinutes'>) {
+  const { t } = useSupportTranslation();
+  return (
+    <div aria-live="polite">
+      {failure !== null && (
+        <Notice tone="error">{t(`failures.${failure}`, { minutes: waitMinutes ?? 60 })}</Notice>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -35,7 +62,6 @@ export interface SupportReplyFormProps {
  * @returns the form
  */
 export function SupportReplyForm(props: SupportReplyFormProps) {
-  const { t } = useSupportTranslation();
   const [body, setBody] = useState('');
   const allowsReply = props.allowsReply ?? true;
   const isEmpty = body.trim() === '';
@@ -49,6 +75,13 @@ export function SupportReplyForm(props: SupportReplyFormProps) {
       .catch(() => undefined);
   }
 
+  /** Adds inserted words to the box, keeping what is there, and focuses it for editing. */
+  function insert(text: string) {
+    setBody((current) => withInsertedText(current, text).slice(0, supportLimits.body));
+    // Found by its id, not a ref, because insert() is handed to other components while rendering.
+    document.getElementById(props.id)?.focus();
+  }
+
   return (
     <form
       noValidate
@@ -58,6 +91,7 @@ export function SupportReplyForm(props: SupportReplyFormProps) {
         if (allowsReply) void send(false);
       }}
     >
+      {props.renderTools?.(insert)}
       <Textarea
         id={props.id}
         label={props.label}
@@ -66,13 +100,7 @@ export function SupportReplyForm(props: SupportReplyFormProps) {
         value={body}
         onChange={(event) => setBody(event.target.value)}
       />
-      <div aria-live="polite">
-        {props.failure !== null && (
-          <Notice tone="error">
-            {t(`failures.${props.failure}`, { minutes: props.waitMinutes ?? 60 })}
-          </Notice>
-        )}
-      </div>
+      <FailureLine failure={props.failure} waitMinutes={props.waitMinutes} />
       <div className="flex flex-wrap gap-3">
         {allowsReply && (
           <Button type="submit" disabled={props.isBusy || isEmpty}>

@@ -7070,6 +7070,48 @@ export type Database = {
           },
         ];
       };
+      support_canned_replies: {
+        Row: {
+          body_en: string;
+          body_ro: string;
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          title: string;
+          updated_at: string;
+          updated_by_user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          body_en: string;
+          body_ro: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          title: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Update: {
+          body_en?: string;
+          body_ro?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          title?: string;
+          updated_at?: string;
+          updated_by_user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'support_canned_replies_updated_by_user_id_fkey';
+            columns: ['updated_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       support_ticket_emails: {
         Row: {
           attempts: number;
@@ -8010,6 +8052,7 @@ export type Database = {
         Args: { check_id: string; decision: string; reason: string };
         Returns: Json;
       };
+      admin_delete_canned_reply: { Args: { reply_id: string }; Returns: boolean };
       admin_delete_forum: { Args: { forum_id: string; reason: string }; Returns: undefined };
       admin_describe_abuse_image: {
         Args: { description_text: string; evidence_id: string };
@@ -8492,6 +8535,10 @@ export type Database = {
           label: string;
           last_checked_on: string;
         }[];
+      };
+      admin_save_canned_reply: {
+        Args: { body_en: string; body_ro: string; reply_id: string; title: string };
+        Returns: string;
       };
       admin_save_classic_work: { Args: { details: Json; target_story_id?: string }; Returns: Json };
       admin_save_cms_draft: {
