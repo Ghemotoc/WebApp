@@ -7,7 +7,8 @@
  * under-16 banner), the ticket's fields and its history. Opening the page is logged; so is every
  * change, without the words. Plain components, no doodles (staff screens).
  * Part h2 adds whether each answer was emailed and the link to the closed ticket a follow-up
- * continues. Part h3b adds the canned reply picker above the reply box.
+ * continues. Part h3b adds the canned reply picker above the reply box; part h4a the spam and
+ * merge actions, and a line saying a ticket is spam or where it was merged.
  * Who shows it: the router, inside StaffLayout. What it calls: useStaffTicket.
  */
 import { Link, useParams } from 'react-router';
@@ -23,6 +24,7 @@ import { useSupportTranslation } from '../registerSupportTranslations';
 import { CannedReplyPicker } from './CannedReplyPicker';
 import { RequesterPanel } from './RequesterPanel';
 import { SupportReplyForm } from './SupportReplyForm';
+import { TicketActionsPanel } from './TicketActionsPanel';
 import { TicketFieldsPanel } from './TicketFieldsPanel';
 import { TicketHistory } from './TicketHistory';
 import { TicketMessageList, type TicketMessageItem } from './TicketMessageList';
@@ -83,16 +85,19 @@ function Conversation({
   const { t } = useSupportTranslation();
   const items = useMessageItems(ticket.messages);
   const isClosed = ticket.status === 'closed';
+  // A spam ticket takes notes only: nothing is ever sent to a spammer (part h4a).
+  const allowsReply = !isClosed && !ticket.isSpam;
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <TicketMessageList messages={items} label={t('staff.messages.label')} />
       {isClosed && <p className="m-0 text-body">{t('staff.reply.closed')}</p>}
+      {ticket.isSpam && <p className="m-0 text-body">{t('staff.reply.spam')}</p>}
       <SupportReplyForm
         id="staff-support-reply"
         label={t('staff.reply.label')}
         sendLabel={t('staff.reply.send')}
         noteLabel={t('staff.reply.addNote')}
-        allowsReply={!isClosed}
+        allowsReply={allowsReply}
         isBusy={state.isChanging}
         failure={state.failure}
         waitMinutes={state.waitMinutes}
@@ -109,6 +114,27 @@ function Conversation({
         )}
       />
     </div>
+  );
+}
+
+/**
+ * Lines under the title for a spam ticket and a merged one (part h4a).
+ *
+ * @returns the lines, or nothing
+ */
+function TicketStateLinks({ ticket }: { ticket: StaffTicket }) {
+  const { t } = useSupportTranslation();
+  return (
+    <>
+      {ticket.isSpam && <p className="m-0 text-sm font-semibold text-body">{t('staff.isSpam')}</p>}
+      {ticket.mergedInto !== null && (
+        <p className="m-0 text-sm text-body">
+          <Link to={`/staff/support/${String(ticket.mergedInto)}`}>
+            {t('staff.mergedInto', { number: ticket.mergedInto })}
+          </Link>
+        </p>
+      )}
+    </>
   );
 }
 
@@ -137,6 +163,7 @@ function LoadedTicket({
             channel: t(`staff.channels.${ticket.channel}`),
           })}
         </p>
+        <TicketStateLinks ticket={ticket} />
         {ticket.followUpOf !== null && (
           <p className="m-0 text-sm text-body">
             <Link to={`/staff/support/${String(ticket.followUpOf)}`}>
@@ -166,6 +193,7 @@ function LoadedTicket({
             isBusy={state.isChanging}
             onSave={(changes) => state.change({ kind: 'fields', changes })}
           />
+          <TicketActionsPanel ticket={ticket} isBusy={state.isChanging} onChange={state.change} />
           <TicketHistory history={ticket.history} />
         </div>
       </div>

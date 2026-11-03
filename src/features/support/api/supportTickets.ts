@@ -63,6 +63,8 @@ export interface MyTicket {
   subject: string;
   status: TicketStatus;
   category: TicketCategory;
+  /** After staff merged it: the request the messages live in now (part h4a), or null. */
+  mergedInto: number | null;
   messages: MyTicketMessage[];
 }
 
@@ -134,6 +136,7 @@ export function myTicketFromJson(json: Json | null): MyTicket | null {
     subject: textOf(ticket, 'subject') ?? '',
     status: statusOf(ticket.status),
     category: categoryOf(ticket.category),
+    mergedInto: typeof ticket.merged_into === 'number' ? ticket.merged_into : null,
     messages: messages.flatMap((entry) => {
       const message = objectOf(entry);
       if (message === null) return [];

@@ -55,7 +55,8 @@
     "send": "Send",
     "closed": "This request is closed. If you need more help, ask again and mention #{{number}}.",
     "notFound": "We couldn’t find this request on your account.",
-    "loadFailed": "We couldn’t load this request. Check your connection and try again."
+    "loadFailed": "We couldn’t load this request. Check your connection and try again.",
+    "mergedInto": "This request continues as #{{number}}: we joined it with another one about the same thing."
   },
   "failures": {
     "refused": "Please fill in every field.",
@@ -156,7 +157,8 @@
       "label": "Answer the person, or add a note",
       "send": "Send answer",
       "addNote": "Add an internal note",
-      "closed": "This ticket is closed: you can add notes, not answers."
+      "closed": "This ticket is closed: you can add notes, not answers.",
+      "spam": "This ticket is marked as spam: you can add notes, not answers."
     },
     "history": {
       "heading": "History",
@@ -170,7 +172,11 @@
         "priority": "Priority from {{before}} to {{after}}",
         "category": "Category from {{before}} to {{after}}",
         "assignee": "Assigned from {{before}} to {{after}}",
-        "tags": "Tags from {{before}} to {{after}}"
+        "tags": "Tags from {{before}} to {{after}}",
+        "spam_marked": "Marked as spam",
+        "spam_cleared": "Marked as not spam",
+        "merged_into": "Merged into {{after}}",
+        "merged_from": "{{after}} merged into this ticket"
       }
     },
     "followUpOf": "Follows up the closed ticket #{{number}}",
@@ -180,7 +186,8 @@
       "unassigned": "Unassigned",
       "all_open": "All open",
       "pending_on_user": "Pending on user",
-      "solved": "Solved"
+      "solved": "Solved",
+      "spam": "Spam"
     },
     "timer": {
       "due": "Answer by {{date}}",
@@ -211,6 +218,23 @@
       "insert": "Insert",
       "inserted": "“{{title}}” is in the box: check it and edit it before sending.",
       "manageLink": "Manage canned replies"
+    },
+    "isSpam": "Marked as spam: it shows only in the Spam view, nothing is emailed, and later emails from this sender come here too.",
+    "mergedInto": "Merged into #{{number}}: the messages are there now.",
+    "actions": {
+      "heading": "Actions",
+      "mergeLabel": "Merge into ticket number",
+      "mergeHint": "Every message of #{{number}} moves to that ticket, from the same person; they get an email with the new number.",
+      "merge": "Merge",
+      "markSpam": "Mark as spam",
+      "notSpam": "Not spam",
+      "failures": {
+        "refused": "That didn’t work: only open tickets from the same person can be merged.",
+        "not_found": "There’s no ticket with that number.",
+        "not_allowed": "Only support staff can do this.",
+        "too_many": "Too many changes at once. Try again in a moment.",
+        "unreachable": "We couldn’t reach the server. Check your connection and try again."
+      }
     }
   }
 }

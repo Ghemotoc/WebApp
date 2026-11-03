@@ -2,7 +2,8 @@
 -- (story S1-E11-13, part 13b; bundle ADMIN-2h3a).
 -- What it proves:
 -- - the first answer is due a working day later, Monday to Friday in Romanian time;
--- - each saved view counts the right tickets; a moderator can't read the counts;
+-- - each saved view counts the right tickets (Spam joined in part h4a); a moderator can't read
+--   the counts;
 -- - the inbox gives each ticket its due time and first answer;
 -- - a ticket left pending on the person for 7 days is solved by the system with a polite email,
 --   and one waiting 3 days is left alone.
@@ -44,7 +45,7 @@ update public.support_ticket_emails set sent_at = now() where sent_at is null;
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');
 select is(public.admin_support_view_counts(),
-  '{"mine": 1, "unassigned": 3, "all_open": 4, "pending_on_user": 2, "solved": 1}'::jsonb,
+  '{"mine": 1, "unassigned": 3, "all_open": 4, "pending_on_user": 2, "solved": 1, "spam": 0}'::jsonb,
   'each view counts its tickets for the support persona');
 select ok((select first_reply_due_at is not null and first_replied_at is null
            from public.admin_support_inbox() where number = 900002),

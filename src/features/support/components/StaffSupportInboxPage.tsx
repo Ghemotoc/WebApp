@@ -104,6 +104,8 @@ function InboxFiltersRow({
     { value: '', label: t('staff.openStatuses') },
     ...ticketStatuses.map((value) => ({ value, label: t(`statuses.${value}`) })),
     { value: 'all', label: t('staff.allStatuses') },
+    // Spam is kept apart from every other choice (part h4a).
+    { value: 'spam', label: t('staff.views.spam') },
   ];
   return (
     <div

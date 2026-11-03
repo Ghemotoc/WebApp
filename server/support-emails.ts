@@ -39,7 +39,7 @@ type ReadText = (field: string, values?: Record<string, string | number>) => str
 /** One due email, as support_email_worker_claim() answers it. */
 export interface ClaimedSupportEmail {
   email_id: string;
-  kind: 'acknowledgement' | 'staff_reply' | 'auto_solved';
+  kind: 'acknowledgement' | 'staff_reply' | 'auto_solved' | 'merged';
   to: string;
   language: string;
   both_languages: boolean;
@@ -49,6 +49,8 @@ export interface ClaimedSupportEmail {
   message_token: string;
   in_reply_to: string | null;
   has_account: boolean;
+  /** For a 'merged' email: the ticket the person's messages live in now (part h4a). */
+  merged_into?: number | null;
 }
 
 /** What the outgoing handler needs from its surroundings. */
@@ -155,11 +157,12 @@ const emailKeys: Record<ClaimedSupportEmail['kind'], { subject: string; inApp: s
   acknowledgement: { subject: 'acknowledgementSubject', inApp: 'acknowledgementInApp' },
   staff_reply: { subject: 'replySubject', inApp: 'replyInApp' },
   auto_solved: { subject: 'autoSolvedSubject', inApp: 'replyInApp' },
+  merged: { subject: 'mergedSubject', inApp: 'replyInApp' },
 };
 
 /**
- * The first part of an email: the acknowledgement, the staff words with how to answer, or the
- * note that a waiting ticket was solved (part h3a).
+ * The first part of an email: the acknowledgement, the staff words with how to answer, the
+ * note that a waiting ticket was solved (part h3a), or the new number after a merge (part h4a).
  *
  * @returns the paragraphs
  */
@@ -170,6 +173,7 @@ function mainParts(
 ): string[] {
   if (claimed.kind === 'acknowledgement') return [read('acknowledgementBody', values)];
   if (claimed.kind === 'auto_solved') return [read('autoSolvedBody', values)];
+  if (claimed.kind === 'merged') return [read('mergedBody', values)];
   return [claimed.body ?? '', read('replyHowToAnswer', values)];
 }
 
@@ -182,7 +186,12 @@ function mainParts(
  * @returns the text
  */
 function bodyIn(claimed: ClaimedSupportEmail, read: ReadText, link: string): string {
-  const values = { number: claimed.number, subject: claimed.subject, link };
+  const values = {
+    number: claimed.number,
+    subject: claimed.subject,
+    link,
+    mergedInto: claimed.merged_into ?? claimed.number,
+  };
   const parts = mainParts(claimed, read, values);
   // Only someone with an account can open the ticket in the app.
   if (claimed.has_account) parts.push(read(emailKeys[claimed.kind].inApp, values));
@@ -207,7 +216,9 @@ export function composeSupportEmail(
   sender: EmailSender,
 ): OutgoingEmail {
   const main = claimed.language === 'en' ? readers.en : readers.ro;
-  const link = claimed.has_account ? `${siteUrl}/support/${String(claimed.number)}` : '';
+  // After a merge the conversation lives under the ticket that stayed, so the link goes there.
+  const linkNumber = claimed.merged_into ?? claimed.number;
+  const link = claimed.has_account ? `${siteUrl}/support/${String(linkNumber)}` : '';
   const subjectKey = emailKeys[claimed.kind].subject;
   const bodies = [bodyIn(claimed, main, link)];
   // A staff answer is written once, in the language staff chose: only the acknowledgement doubles.
@@ -216,7 +227,11 @@ export function composeSupportEmail(
   }
   return {
     to: claimed.to,
-    subject: main(subjectKey, { number: claimed.number, subject: claimed.subject }),
+    subject: main(subjectKey, {
+      number: claimed.number,
+      subject: claimed.subject,
+      mergedInto: linkNumber,
+    }),
     text: bodies.join('\n\n— English —\n\n'),
     replyTo: sender.email,
     headers: threadingHeaders(claimed, sender),
