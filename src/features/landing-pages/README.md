@@ -1,8 +1,8 @@
 # Landing pages
 
 Pages at `/c/<name>` for contests, campaigns and information, built by admins from fixed blocks in
-Romanian and English (story S1-E11-14). Built in bundle CONTESTS-13a1; pictures, featured stories,
-Remind me and the link preview arrive in 13a2, contests themselves in 13b.
+Romanian and English (story S1-E11-14). Built in bundle CONTESTS-13a1; pictures and featured stories
+in 13a2a; Remind me and the link preview arrive in 13a2b, contests themselves in 13b.
 
 - `api/landingPages.ts`: the one way the app reads and writes landing pages: `landing_page()` for
   visitors, the tables and `admin_*_landing_page*` functions for staff.
@@ -11,6 +11,9 @@ Remind me and the link preview arrive in 13a2, contests themselves in 13b.
 - `components/LandingPageScreen.tsx` (the route), `LandingPageView.tsx` and `LandingBlockView.tsx`
   (the page, also used by the editor's preview).
 - `components/staff/`: the Landing pages tab of Staff › Website and its editor.
+- `hooks/useLandingPictures.ts`, `components/LandingPicture.tsx`, `components/FeaturedStoriesBlock.tsx`
+  and `components/staff/BlockPictureField.tsx`, `FeaturedFields.tsx`: pictures and featured stories
+  (part 13a2a).
 - `lib/blocks.ts`: adding, moving and changing blocks without a server; `lib/problemLabels.ts`:
   names the fields the server says to fix.
 

@@ -30,6 +30,11 @@ export function newBlock(kind: LandingBlockKind, id: string): LandingBlock {
   if (kind === 'key_dates') block.dates = { entries_open: '', entries_close: '', results: '' };
   if (kind === 'who_can_enter') block.age_groups = [];
   if (kind === 'rules') block.link = '';
+  if (kind === 'featured') {
+    block.mode = 'hand';
+    block.story_slugs = [];
+    block.tag = '';
+  }
   if (kind === 'questions') {
     block.ro.items = [{ question: '', answer: '' }];
     block.en.items = [{ question: '', answer: '' }];
@@ -200,4 +205,38 @@ export function withQuestionPart(
     position === place.index ? { ...item, [place.part]: value } : item,
   );
   return { ...block, [place.language]: { ...block[place.language], items } };
+}
+
+/**
+ * Puts a picture in a Hero or Text block, or takes it out (null). Its alt text stays in each
+ * language, so swapping the picture keeps what the admin wrote.
+ *
+ * @returns the new block
+ */
+export function withPicture(block: LandingBlock, pictureId: string | null): LandingBlock {
+  if (pictureId !== null) return { ...block, picture_id: pictureId };
+  // A copy without the picture's ID; the alt text stays in each language.
+  const withoutPicture = { ...block };
+  delete withoutPicture.picture_id;
+  return withoutPicture;
+}
+
+/**
+ * Reads the story addresses an admin typed for a Featured block, one per line: a full link
+ * ("https://…/s/statia-meteo"), a path ("/s/statia-meteo") or just the name ("statia-meteo").
+ *
+ * @param text - what the admin typed
+ * @returns the story names, in order, without blanks or repeats
+ */
+export function storySlugsFromText(text: string): string[] {
+  const slugs: string[] = [];
+  for (const line of text.split('\n')) {
+    // Step 1: the part after "/s/" when there is one, otherwise the whole line.
+    const trimmed = line.trim();
+    const afterStoryPath = trimmed.split('/s/')[1] ?? trimmed;
+    // Step 2: only the story's own name, without a chapter, a query or a slash.
+    const slug = (afterStoryPath.split(/[/?#]/)[0] ?? '').toLowerCase();
+    if (slug !== '' && !slugs.includes(slug)) slugs.push(slug);
+  }
+  return slugs;
 }

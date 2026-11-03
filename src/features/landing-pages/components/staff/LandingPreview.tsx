@@ -10,6 +10,7 @@
 import { useState } from 'react';
 
 import { Chip } from '@/components/ui/Chip';
+import type { PictureView } from '@/features/pictures/api/pictures';
 import {
   landingLanguages,
   type LandingContent,
@@ -27,6 +28,8 @@ type PreviewWidth = keyof typeof widths;
 interface LandingPreviewProps {
   content: LandingContent;
   pageType: string;
+  /** The page's pictures as the admin may see them, ready or not (part a2a). */
+  pictures: Record<string, PictureView>;
 }
 
 /**
@@ -34,7 +37,7 @@ interface LandingPreviewProps {
  *
  * @returns the preview section
  */
-export function LandingPreview({ content, pageType }: LandingPreviewProps) {
+export function LandingPreview({ content, pageType, pictures }: LandingPreviewProps) {
   const { t } = useLandingPageTranslation();
   const [width, setWidth] = useState<PreviewWidth>('desktop');
   const [language, setLanguage] = useState<LandingLanguage>('ro');
@@ -64,6 +67,8 @@ export function LandingPreview({ content, pageType }: LandingPreviewProps) {
           language={language}
           hasEnded={false}
           pageType={pageType}
+          extras={{ pictures, featured: null }}
+          isPreview
         />
       </div>
     </section>

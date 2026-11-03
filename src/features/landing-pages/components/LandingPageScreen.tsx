@@ -47,15 +47,17 @@ export function LandingPageScreen() {
     );
   }
   if (page.data === null) return <NotFoundPage />;
-  const hero = page.data.content.blocks.find((block) => block.kind === 'hero');
+  const { page: published, extras } = page.data;
+  const hero = published.content.blocks.find((block) => block.kind === 'hero');
   return (
     <PageContainer className="pt-8 pb-12">
       <title>{hero === undefined ? t('documentTitle') : wordsOf(hero, language, 'title')}</title>
       <LandingPageView
-        content={page.data.content}
+        content={published.content}
         language={language}
-        hasEnded={page.data.state === 'ended'}
-        pageType={page.data.type}
+        hasEnded={published.state === 'ended'}
+        pageType={published.type}
+        extras={extras}
       />
     </PageContainer>
   );

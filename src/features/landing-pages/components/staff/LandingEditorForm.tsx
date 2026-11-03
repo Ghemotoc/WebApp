@@ -15,6 +15,7 @@ import { landingThemes, type LandingContent } from '@/schemas/landingPages';
 
 import type { LandingDraftInput } from '../../api/landingPages';
 import type { LandingEditorState } from '../../hooks/useLandingPageEditor';
+import { useLandingPictureStates } from '../../hooks/useLandingPictures';
 import { addBlock, moveBlock, removeBlock, updateBlock } from '../../lib/blocks';
 import { problemFor } from '../../lib/problemLabels';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
@@ -42,6 +43,8 @@ export function LandingEditorForm({ initial, pageType, today, state }: LandingEd
   const { t } = useLandingPageTranslation();
   const [draft, setDraft] = useState<LandingDraftInput>(initial);
   const problems = state.failure?.problems ?? [];
+  // Part a2a: the page's pictures and their check states, for the fields and the preview.
+  const pictures = useLandingPictureStates(draft.pageId).data ?? {};
   /** Replaces the content, keeping the dates. */
   const setContent = (content: LandingContent) => setDraft((current) => ({ ...current, content }));
   const pageProblem = problemFor(problems, 'blocks');
@@ -71,6 +74,8 @@ export function LandingEditorForm({ initial, pageType, today, state }: LandingEd
         {draft.content.blocks.map((block, index) => (
           <BlockCard
             key={block.id}
+            pageId={draft.pageId}
+            pictures={pictures}
             content={draft.content}
             index={index}
             problems={problems}
@@ -84,7 +89,7 @@ export function LandingEditorForm({ initial, pageType, today, state }: LandingEd
         content={draft.content}
         onAdd={(block) => setContent(addBlock(draft.content, block))}
       />
-      <LandingPreview content={draft.content} pageType={pageType} />
+      <LandingPreview content={draft.content} pageType={pageType} pictures={pictures} />
       <LandingPublishBar
         draft={draft}
         today={today}

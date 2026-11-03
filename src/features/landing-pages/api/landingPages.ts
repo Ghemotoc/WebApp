@@ -8,8 +8,15 @@
  * landing_page_versions tables (RLS lets only owner and admin read them) and the
  * admin_*_landing_page* functions in …_contests_a1_landing_pages.sql, which check the role and
  * write the audit log. Errors become a WebsiteContentError, so the editor shows the same field
- * list as the rest of the CMS.
+ * list as the rest of the CMS. Part a2a: pictures become signed addresses here (only for pictures
+ * the caller may see, pictures/api/pictures.ts) and Featured stories become story cards.
  */
+import {
+  type ListedStory,
+  type ListedStoryRow,
+  toListedStory,
+} from '@/features/discovery/api/storyLists';
+import { pictureViewsFromJson, type PictureView } from '@/features/pictures/api/pictures';
 import { websiteErrorFrom } from '@/features/website/api/websiteContentStore';
 import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -21,6 +28,21 @@ import {
   type LandingPageType,
   type PublicLandingPage,
 } from '@/schemas/landingPages';
+
+/**
+ * What a page shows beside its words: the pictures by ID, and each Featured block's stories by
+ * block ID (null in the editor's preview, which has no published cards yet).
+ */
+export interface LandingExtras {
+  pictures: Record<string, PictureView>;
+  featured: Record<string, ListedStory[]> | null;
+}
+
+/** A page as a visitor gets it: the published version and its extras. */
+export interface VisitorLandingPage {
+  page: PublicLandingPage;
+  extras: LandingExtras;
+}
 
 /** One page in the staff list. */
 export interface StaffLandingPage {
@@ -66,7 +88,23 @@ function contentFrom(content: Json): LandingContent {
 }
 
 /**
- * Reads the public page at /c/<slug>.
+ * Turns each Featured block's rows from story_card_json() into story cards.
+ *
+ * @param featured - the rows by block ID
+ * @returns the cards by block ID
+ */
+function featuredStoriesFrom(
+  featured: PublicLandingPage['featured'],
+): Record<string, ListedStory[]> {
+  const stories: Record<string, ListedStory[]> = {};
+  for (const [blockId, rows] of Object.entries(featured)) {
+    stories[blockId] = rows.map((row) => toListedStory(row as unknown as ListedStoryRow));
+  }
+  return stories;
+}
+
+/**
+ * Reads the public page at /c/<slug>, with its pictures' signed addresses and its story cards.
  *
  * @param client - the Supabase client (signed in or not)
  * @param slug - the address part after /c/
@@ -76,13 +114,37 @@ function contentFrom(content: Json): LandingContent {
 export async function fetchPublicLandingPage(
   client: AppSupabaseClient,
   slug: string,
-): Promise<PublicLandingPage | null> {
+): Promise<VisitorLandingPage | null> {
   const { data, error } = await client.rpc('landing_page', { page_slug: slug });
   if (error) throw websiteErrorFrom(error);
   if (data === null) return null;
   // A page that doesn't parse is treated as missing rather than drawn half-broken.
   const parsed = publicLandingPageSchema.safeParse(data);
-  return parsed.success ? parsed.data : null;
+  if (!parsed.success) return null;
+  const pictures = await pictureViewsFromJson(client, parsed.data.pictures as unknown as Json);
+  return {
+    page: parsed.data,
+    extras: { pictures, featured: featuredStoriesFrom(parsed.data.featured) },
+  };
+}
+
+/**
+ * Reads the check state of every picture uploaded for one page, for the editor (part a2a).
+ *
+ * @param client - the staff member's Supabase client
+ * @param pageId - the page
+ * @returns the pictures by ID, with a signed address where the staff member may see the file
+ * @throws WebsiteContentError (not_allowed for anyone but owner and admin)
+ */
+export async function fetchLandingPictureStates(
+  client: AppSupabaseClient,
+  pageId: string,
+): Promise<Record<string, PictureView>> {
+  const { data, error } = await client.rpc('admin_landing_picture_states', {
+    target_page_id: pageId,
+  });
+  if (error) throw websiteErrorFrom(error);
+  return pictureViewsFromJson(client, data);
 }
 
 /**

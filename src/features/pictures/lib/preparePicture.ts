@@ -26,6 +26,8 @@ export const longestSideFor = {
   spaceBanner: 2400,
   // A signature picture is drawn at 56 px; 400 keeps it sharp on any screen (S1-E8-08).
   signaturePicture: 400,
+  // A landing page's hero or text picture across a 1,440 px page on a sharp screen (S1-E11-14).
+  landingPicture: 2400,
 } as const;
 
 /** The quality for WebP and JPEG: small files that still look sharp. */

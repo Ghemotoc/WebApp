@@ -6,14 +6,20 @@
  * block an h2 (criterion 4, one heading order). Long text is the CMS's safe Markdown subset
  * (CmsMarkdown: no raw HTML, links get rel="nofollow ugc noopener"). No countdowns and no "only
  * today": copy aimed at minors must not pressure them (story legal notes).
+ * Part a2a: a Text block may carry a picture (LandingPicture), and Featured stories draws a
+ * shelf of story cards (FeaturedStoriesBlock).
  * Who shows it: LandingPageView. What it calls: CmsMarkdown and the shared formatters.
  */
 import { CmsMarkdown } from '@/features/website/components/CmsMarkdown';
 import { formatRomaniaDate } from '@/lib/romania-time';
 import type { LandingBlock, LandingLanguage } from '@/schemas/landingPages';
 
+import type { LandingExtras } from '../api/landingPages';
 import { wordsOf } from '../lib/blocks';
 import { useLandingPageTranslation } from '../registerLandingPageTranslations';
+
+import { FeaturedStoriesBlock } from './FeaturedStoriesBlock';
+import { LandingPicture } from './LandingPicture';
 
 /** What a block needs: the block and the language the visitor reads. */
 interface BlockProps {
@@ -21,18 +27,31 @@ interface BlockProps {
   language: LandingLanguage;
 }
 
+/** What the block view needs: also the page's pictures and story cards, and whether it is the
+ * editor's preview. */
+interface LandingBlockViewProps extends BlockProps {
+  extras: LandingExtras;
+  isPreview?: boolean;
+}
+
 /**
  * A block's heading and its Markdown text.
  *
  * @returns the section
  */
-function TextSection({ block, language }: BlockProps) {
+function TextSection({ block, language, extras, isPreview }: LandingBlockViewProps) {
   const body = wordsOf(block, language, 'body');
   return (
     <section className="flex flex-col gap-3">
       <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
+      <LandingPicture
+        block={block}
+        language={language}
+        pictures={extras.pictures}
+        isPreview={isPreview}
+      />
       {body !== '' && <CmsMarkdown markdown={body} language={language} />}
     </section>
   );
@@ -165,12 +184,17 @@ function Questions({ block, language }: BlockProps) {
  *
  * @returns the block, or nothing for the hero
  */
-export function LandingBlockView({ block, language }: BlockProps) {
+export function LandingBlockView(props: LandingBlockViewProps) {
+  const { block, language, extras } = props;
   if (block.kind === 'key_dates') return <KeyDates block={block} language={language} />;
   if (block.kind === 'who_can_enter') return <WhoCanEnter block={block} language={language} />;
   if (block.kind === 'rules') return <Rules block={block} language={language} />;
   if (block.kind === 'questions') return <Questions block={block} language={language} />;
   if (block.kind === 'hero') return null;
-  // text, prize and how to enter are a heading and Markdown text.
-  return <TextSection block={block} language={language} />;
+  if (block.kind === 'featured') {
+    const stories = extras.featured === null ? null : (extras.featured[block.id] ?? []);
+    return <FeaturedStoriesBlock block={block} language={language} stories={stories} />;
+  }
+  // text, prize and how to enter are a heading and Markdown text (a text block's picture too).
+  return <TextSection {...props} />;
 }

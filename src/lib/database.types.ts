@@ -8282,6 +8282,7 @@ export type Database = {
         Returns: boolean;
       };
       admin_import_classics: { Args: { list_rows: Json }; Returns: Json };
+      admin_landing_picture_states: { Args: { target_page_id: string }; Returns: Json };
       admin_lift_sanction: {
         Args: { reason_given: string; target_sanction_id: string };
         Returns: boolean;
@@ -10506,6 +10507,8 @@ export type Database = {
           longest: number;
         }[];
       };
+      landing_featured_cards: { Args: { content: Json }; Returns: Json };
+      landing_featured_problems: { Args: { block: Json; block_path: string }; Returns: string[] };
       landing_page: { Args: { page_slug: string }; Returns: Json };
       landing_page_live_version: {
         Args: { target_page_id: string };
@@ -10528,8 +10531,11 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      landing_page_pictures: { Args: { content: Json }; Returns: Json };
       landing_page_problems: { Args: { content: Json; page_type: string }; Returns: string[] };
       landing_page_slug_problem: { Args: { wanted_slug: string }; Returns: string };
+      landing_picture_problems: { Args: { block: Json; block_path: string }; Returns: string[] };
+      landing_picture_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       landing_text_problem: {
         Args: {
           block: Json;
@@ -10540,6 +10546,10 @@ export type Database = {
           longest: number;
         };
         Returns: string;
+      };
+      landing_youngest_ratings: {
+        Args: { content: Json };
+        Returns: Database['public']['Enums']['story_rating'][];
       };
       language_moderator_counts: {
         Args: Record<PropertyKey, never>;
@@ -11857,6 +11867,7 @@ export type Database = {
         Returns: string;
       };
       register_chapter_picture: { Args: { target_path: string }; Returns: string };
+      register_landing_picture: { Args: { target_path: string }; Returns: string };
       register_picture: {
         Args: {
           picture_kind: Database['public']['Enums']['picture_kind'];
@@ -13158,7 +13169,8 @@ export type Database = {
         | 'quote_card'
         | 'space_banner'
         | 'atlas_image'
-        | 'signature_picture';
+        | 'signature_picture'
+        | 'landing_picture';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
@@ -13513,6 +13525,7 @@ export const Constants = {
         'space_banner',
         'atlas_image',
         'signature_picture',
+        'landing_picture',
       ],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       profile_audience: ['everyone', 'members', 'people_i_follow'],

@@ -8,8 +8,8 @@
  * (landing_block_field_rules() and landing_page_problems() in …_contests_a1_landing_pages.sql),
  * so the counter and the server agree.
  * Why fixed blocks: there is no free HTML, no script and no colour of the admin's own (criterion
- * 2). Pictures, featured stories and Remind me arrive in part a2; the sponsor block waits for
- * sponsor campaigns (bundle 14).
+ * 2). Part a2a adds pictures in the Hero and Text blocks and the Featured stories block; Remind me
+ * arrives in part a2b; the sponsor block waits for sponsor campaigns (bundle 14).
  */
 import { z } from 'zod';
 
@@ -31,6 +31,7 @@ export const landingBlockKinds = [
   'how_to_enter',
   'rules',
   'questions',
+  'featured',
 ] as const;
 export type LandingBlockKind = (typeof landingBlockKinds)[number];
 
@@ -80,7 +81,22 @@ export const landingFieldRules: Record<
     { field: 'link_label', longest: 80, isRequired: true },
   ],
   questions: [{ field: 'heading', longest: 80, isRequired: true }],
+  featured: [
+    { field: 'heading', longest: 80, isRequired: true },
+    { field: 'intro', longest: 300, isRequired: false },
+  ],
 };
+
+/** The blocks that may carry a picture, and the longest its alt text may be (part a2a). */
+export const landingPictureKinds: readonly LandingBlockKind[] = ['hero', 'text'];
+export const landingAltLongest = 200;
+
+/** The most stories a Featured block picks by hand or shows (part a2a). */
+export const landingMostFeatured = 12;
+
+/** How a Featured block picks its stories. */
+export const landingFeaturedModes = ['hand', 'tag'] as const;
+export type LandingFeaturedMode = (typeof landingFeaturedModes)[number];
 
 /** The limits of one question and its answer. */
 export const landingQuestionLimits = { question: 200, answer: 1000 } as const;
@@ -117,6 +133,12 @@ export const landingBlockSchema = z.object({
   age_groups: z.array(z.enum(landingAgeGroups)).optional(),
   /** rules only: one of our pages ("/help/contest-rules") or an https address. */
   link: z.string().optional(),
+  /** hero and text only: an uploaded picture; its alt text is "alt" in each language. */
+  picture_id: z.string().optional(),
+  /** featured only: by hand (story addresses) or by tag. */
+  mode: z.enum(landingFeaturedModes).optional(),
+  story_slugs: z.array(z.string()).optional(),
+  tag: z.string().optional(),
 });
 export type LandingBlock = z.infer<typeof landingBlockSchema>;
 
@@ -127,6 +149,13 @@ export const landingContentSchema = z.object({
 });
 export type LandingContent = z.infer<typeof landingContentSchema>;
 
+/** A picture as picture_state_json() describes it. */
+const storedPictureSchema = z.object({
+  state: z.string(),
+  bucket: z.string().nullable(),
+  path: z.string().nullable(),
+});
+
 /** The public read of /c/<slug> (landing_page()). */
 export const publicLandingPageSchema = z.object({
   slug: z.string(),
@@ -135,5 +164,9 @@ export const publicLandingPageSchema = z.object({
   show_from: z.string(),
   take_down_on: z.string().nullable(),
   content: landingContentSchema,
+  /** Part a2a: the pictures the visitor may see, by picture ID. */
+  pictures: z.record(z.string(), storedPictureSchema).default({}),
+  /** Part a2a: each Featured block's story cards (story_card_json()), by block ID. */
+  featured: z.record(z.string(), z.array(z.record(z.string(), z.unknown()))).default({}),
 });
 export type PublicLandingPage = z.infer<typeof publicLandingPageSchema>;
