@@ -100,6 +100,9 @@ export default defineConfig({
       // The sign-up country token's secret for local tests only (S1-E2-10); e2e/country.spec.ts
       // puts the same value in the local database's Vault. Never a real secret.
       SIGNUP_CONTEXT_SECRET: 'local-e2e-signup-secret',
+      // The key that scrambles IP addresses, for local tests only (bundle ADMIN-2, parts e2b and
+      // f2); a test sends CF-Connecting-IP itself. Never a real secret.
+      IP_SCRAMBLE_SECRET: 'local-e2e-ip-secret',
       // The public report form's signing secret for local tests only (S1-E10-02); e2e/public-notice
       // puts the same value in the local database's Vault. Never a real secret.
       NOTICE_SECRET: 'local-e2e-notice-secret',

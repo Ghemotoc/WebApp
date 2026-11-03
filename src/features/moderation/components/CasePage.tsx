@@ -10,7 +10,8 @@
  * has claimed the case (S1-E10-03b, ClaimControl) and, for a picture-check case, the picture and
  * what was flagged (S1-E10-05, CasePicturePanel); for a music or video card, its link (S1-E3-10,
  * CaseEmbedPanel); for a private message, it and up to 20 messages before it (S1-E9-02,
- * CaseMessagePanel). Not yet: the records panel and the reporter panel. Plain components, no doodles.
+ * CaseMessagePanel); for a profile, the accounts linked as a possible returning user (ADMIN-2f2,
+ * CaseAccountLinks). Not yet: the records panel and the reporter panel. Plain components, no doodles.
  * Who shows it: the router, inside StaffLayout. The database refuses anyone outside moderation
  * staff, and hides a safeguarding case from staff without the permission (Q6): to them the page
  * says there is no case here.
@@ -31,6 +32,7 @@ import { useSanctions } from '../hooks/useSanctions';
 import { registerModerationTranslations } from '../registerModerationTranslations';
 
 import { AccountSanctions } from './AccountSanctions';
+import { CaseAccountLinks } from './CaseAccountLinks';
 import { CaseDecisions } from './CaseDecisions';
 import { CaseNotices } from './CaseNotices';
 import { CaseEmbedPanel } from './CaseEmbedPanel';
@@ -66,6 +68,9 @@ function summaryText(theCase: QueueCase, t: TFunction<'moderation'>, language: s
   }
   if (theCase.source === 'picture_check') {
     return t('case.summaryPicture', { what: theCase.itemSummary, when });
+  }
+  if (theCase.source === 'returning_user') {
+    return t('case.summaryReturning', { what: theCase.itemSummary, when });
   }
   return t('case.summary', { what: theCase.itemSummary, count: theCase.reportCount, when });
 }
@@ -186,6 +191,7 @@ function CaseBody({
           {theCase.itemType === 'picture' && <CasePicturePanel caseId={theCase.id} />}
           {theCase.itemType === 'embed' && <CaseEmbedPanel caseId={theCase.id} />}
           {theCase.itemType === 'message' && <CaseMessagePanel caseId={theCase.id} />}
+          {theCase.itemType === 'profile' && <CaseAccountLinks caseId={theCase.id} />}
           <CaseReports
             reports={caseState.reports}
             sanctions={sanctions}

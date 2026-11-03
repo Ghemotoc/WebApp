@@ -8,8 +8,9 @@
  * the secret SIGNUP_CONTEXT_SECRET. The sign-up form sends the token with the sign-up, and the
  * sign-up trigger checks it with the same secret (kept in Supabase Vault) before storing the code.
  * A token lasts 10 minutes.
- * Never stored, never logged: the IP address (Cloudflare reads it to find the country; we never
- * see it here). Only the country code reaches the database (CLAUDE.md rule 12).
+ * Never stored, never logged: the IP address. Cloudflare reads it to find the country; since
+ * bundle ADMIN-2 part f2 the caller also hands in a token with the address scrambled
+ * (server/signup-ip.ts), and only that scrambled value reaches the database (CLAUDE.md rule 12).
  * Who calls it: functions/api/signup-context.ts on Cloudflare Pages and
  * server/pages-functions-plugin.ts locally (with a fake country, LOCAL_FAKE_COUNTRY).
  */
@@ -26,6 +27,11 @@ export interface SignupContext {
   country: string | null;
   /** The signed token for the sign-up, or null when there is no country or no secret. */
   token: string | null;
+  /**
+   * The signed token with the visitor's scrambled IP address (bundle ADMIN-2, part f2;
+   * server/signup-ip.ts), or null when there is no address or no secret.
+   */
+  ipToken: string | null;
 }
 
 /**
@@ -88,12 +94,13 @@ export async function makeSignupToken(
  * @param options.secret - SIGNUP_CONTEXT_SECRET; without it no token is made (the country then
  *   counts as unknown, which the invited test still admits, Q6b)
  * @param options.now - the current time (passed in so tests are exact)
- * @returns 200 with JSON { country, token }, never cached
+ * @param options.ipToken - the scrambled IP token the caller made (server/signup-ip.ts), or null
+ * @returns 200 with JSON { country, token, ipToken }, never cached
  * Errors: none thrown; nothing is logged.
  */
 export async function handleSignupContext(
   request: Request,
-  options: { cloudflareCountry?: string; secret?: string; now: Date },
+  options: { cloudflareCountry?: string; secret?: string; now: Date; ipToken?: string | null },
 ): Promise<Response> {
   // Step 1: the country, and a token only when there is both a country and a secret.
   const country = countryOfConnection(request, options.cloudflareCountry);
@@ -102,7 +109,7 @@ export async function handleSignupContext(
   const token =
     country === null || secret === '' ? null : await makeSignupToken(country, issuedAt, secret);
   // Step 2: answer; a country is about this visitor right now, so nothing may cache it.
-  const body: SignupContext = { country, token };
+  const body: SignupContext = { country, token, ipToken: options.ipToken ?? null };
   return new Response(JSON.stringify(body), {
     status: 200,
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },

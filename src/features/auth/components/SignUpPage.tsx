@@ -61,6 +61,7 @@ function useSignUpContext(
       privacyVersionId: privacyVersion.id,
       locale: i18n.language,
       signupToken: market.token,
+      signupIpToken: market.ipToken,
       country: market.country,
       marketMinimumAge: market.minimumAge,
     },

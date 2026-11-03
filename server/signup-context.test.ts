@@ -55,10 +55,10 @@ describe('the token', () => {
     const unknown = (await (
       await handleSignupContext(requestFrom('XX'), { secret: 's', now })
     ).json()) as Record<string, unknown>;
-    expect(unknown).toEqual({ country: null, token: null });
+    expect(unknown).toEqual({ country: null, token: null, ipToken: null });
     const noSecret = (await (
       await handleSignupContext(requestFrom('RO'), { now })
     ).json()) as Record<string, unknown>;
-    expect(noSecret).toEqual({ country: 'RO', token: null });
+    expect(noSecret).toEqual({ country: 'RO', token: null, ipToken: null });
   });
 });

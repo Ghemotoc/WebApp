@@ -65,6 +65,7 @@ import { handlePictureCheck } from './picture-check.ts';
 import { pictureChecker } from './picture-check/index.ts';
 import { overridesFromDatabase } from './send-email.ts';
 import { handleSignupContext } from './signup-context.ts';
+import { makeSignupIpToken } from './signup-ip.ts';
 import {
   fetchFromHaveIBeenPwned,
   handlePasswordCheck,
@@ -384,13 +385,22 @@ function handlerFor(
   if (url === '/api/signup-context') {
     // A test can ask for another country with the X-Fake-Country header; this file never runs on
     // Cloudflare, where only the real connection counts.
-    return (request) =>
-      handleSignupContext(request, {
+    // A test can send CF-Connecting-IP itself to stand in for Cloudflare's address (part f2).
+    return async (request) => {
+      const now = new Date();
+      const ipToken = await makeSignupIpToken(request, {
+        scrambleSecret: process.env.IP_SCRAMBLE_SECRET,
+        signingSecret: process.env.SIGNUP_CONTEXT_SECRET,
+        now,
+      });
+      return handleSignupContext(request, {
         cloudflareCountry:
           request.headers.get('X-Fake-Country') ?? process.env.LOCAL_FAKE_COUNTRY ?? 'RO',
         secret: process.env.SIGNUP_CONTEXT_SECRET,
-        now: new Date(),
+        now,
+        ipToken,
       });
+    };
   }
   return null;
 }

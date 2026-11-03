@@ -464,6 +464,88 @@ export type Database = {
           },
         ];
       };
+      case_account_links: {
+        Row: {
+          case_id: string;
+          created_at: string;
+          id: string;
+          linked_by_user_id: string | null;
+          linked_user_id: string;
+          reason: string;
+          remove_reason: string | null;
+          removed_at: string | null;
+          removed_by_user_id: string | null;
+          source: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          case_id: string;
+          created_at?: string;
+          id?: string;
+          linked_by_user_id?: string | null;
+          linked_user_id: string;
+          reason: string;
+          remove_reason?: string | null;
+          removed_at?: string | null;
+          removed_by_user_id?: string | null;
+          source: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          case_id?: string;
+          created_at?: string;
+          id?: string;
+          linked_by_user_id?: string | null;
+          linked_user_id?: string;
+          reason?: string;
+          remove_reason?: string | null;
+          removed_at?: string | null;
+          removed_by_user_id?: string | null;
+          source?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'case_account_links_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'case_account_links_linked_by_user_id_fkey';
+            columns: ['linked_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'case_account_links_linked_user_id_fkey';
+            columns: ['linked_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'case_account_links_removed_by_user_id_fkey';
+            columns: ['removed_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'case_account_links_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       case_actions: {
         Row: {
           action: Database['public']['Enums']['moderation_action'];
@@ -5379,6 +5461,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      sign_up_ips: {
+        Row: {
+          created_at: string;
+          id: string;
+          ip_period: string;
+          ip_scrambled: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          ip_period: string;
+          ip_scrambled: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          ip_period?: string;
+          ip_scrambled?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'sign_up_ips_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       space_members: {
         Row: {
           created_at: string;
@@ -7431,6 +7546,7 @@ export type Database = {
         Args: { reason_given: string; target_case_id: string };
         Returns: Json;
       };
+      admin_case_account_links: { Args: { target_case_id: string }; Returns: Json };
       admin_case_actions: {
         Args: { target_case_id: string };
         Returns: {
@@ -7716,6 +7832,10 @@ export type Database = {
       admin_lift_sanction: {
         Args: { reason_given: string; target_sanction_id: string };
         Returns: boolean;
+      };
+      admin_link_returning_user: {
+        Args: { other_handle: string; reason_given: string; target_case_id: string };
+        Returns: string;
       };
       admin_list_classic_authors: {
         Args: Record<PropertyKey, never>;
@@ -8442,6 +8562,10 @@ export type Database = {
           handle: string;
         }[];
       };
+      admin_unlink_returning_user: {
+        Args: { link_id: string; reason_given: string };
+        Returns: boolean;
+      };
       admin_unlock_forum_thread: {
         Args: { reason: string; thread_number: number };
         Returns: undefined;
@@ -8727,6 +8851,40 @@ export type Database = {
       cancel_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
       cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
       cancel_social_sign_up: { Args: Record<PropertyKey, never>; Returns: undefined };
+      case_for_links: {
+        Args: { must_act: boolean; target_case_id: string };
+        Returns: {
+          claimed_at: string | null;
+          claimed_by_user_id: string | null;
+          created_at: string;
+          deadline_at: string;
+          decided_at: string | null;
+          decided_by_user_id: string | null;
+          decision: Database['public']['Enums']['moderation_action'] | null;
+          disabled_at: string | null;
+          id: string;
+          is_safeguarding: boolean;
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+          preserve_until: string | null;
+          received_at: string;
+          reference: string;
+          report_count: number;
+          reporter_under_18: boolean;
+          source: Database['public']['Enums']['case_source'];
+          status: Database['public']['Enums']['case_status'];
+          tier: Database['public']['Enums']['case_tier'];
+          top_reason: Database['public']['Enums']['report_reason'] | null;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'cases';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       case_item_content: {
         Args: {
           target: Omit<
@@ -9483,6 +9641,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      flag_possible_returning_user: { Args: { new_user_id: string }; Returns: string };
       fold_look_alike_characters: { Args: { name: string }; Returns: string };
       fold_old_daily_totals: { Args: Record<PropertyKey, never>; Returns: number };
       follow_story: { Args: { should_follow: boolean; story_slug: string }; Returns: Json };
@@ -11015,6 +11174,12 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      recently_banned_ip_matches: {
+        Args: { new_user_id: string };
+        Returns: {
+          banned_user_id: string;
+        }[];
+      };
       record_abuse_image_evidence: {
         Args: {
           described_by: string;
@@ -11063,6 +11228,7 @@ export type Database = {
         Args: { accepted_version_id: string; document_slug: string; new_user_id: string };
         Returns: undefined;
       };
+      record_sign_up_ips: { Args: { new_user_id: string; token: string }; Returns: undefined };
       refresh_writer_rank: { Args: { person_id: string }; Returns: undefined };
       register_atlas_picture: { Args: { target_path: string }; Returns: string };
       register_chapter_embed: {
@@ -12085,6 +12251,13 @@ export type Database = {
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
+      verified_signup_ips: {
+        Args: { token: string };
+        Returns: {
+          ip_period: string;
+          ip_scrambled: string;
+        }[];
+      };
       verify_certificate: { Args: { code: string }; Returns: Json };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
       website_content: {
@@ -12174,7 +12347,13 @@ export type Database = {
       ai_disclosure: 'no_ai' | 'ai_brainstorming' | 'partly_ai_written';
       appeal_status: 'open' | 'upheld' | 'overturned';
       audit_actor: 'person' | 'system';
-      case_source: 'report' | 'authority_order' | 'picture_check' | 'downvotes' | 'picture_review';
+      case_source:
+        | 'report'
+        | 'authority_order'
+        | 'picture_check'
+        | 'downvotes'
+        | 'picture_review'
+        | 'returning_user';
       case_status: 'open' | 'decided';
       case_tier: 'one_hour' | 'same_day' | 'two_days' | 'seven_days';
       certificate_result: 'participant' | 'finalist' | 'winner';
@@ -12500,7 +12679,14 @@ export const Constants = {
       ai_disclosure: ['no_ai', 'ai_brainstorming', 'partly_ai_written'],
       appeal_status: ['open', 'upheld', 'overturned'],
       audit_actor: ['person', 'system'],
-      case_source: ['report', 'authority_order', 'picture_check', 'downvotes', 'picture_review'],
+      case_source: [
+        'report',
+        'authority_order',
+        'picture_check',
+        'downvotes',
+        'picture_review',
+        'returning_user',
+      ],
       case_status: ['open', 'decided'],
       case_tier: ['one_hour', 'same_day', 'two_days', 'seven_days'],
       certificate_result: ['participant', 'finalist', 'winner'],
