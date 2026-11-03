@@ -97,6 +97,9 @@ test.describe('liking a chapter (S1-E6-03)', () => {
     test(`the reader with Like and Report passes axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       browser,
     }) => {
+      // The profile's language wins over the browser's, and the tests above set it to English,
+      // so the view's language goes on the profile too.
+      runSql(`update public.profiles set locale = '${view.language}' where handle = 'teacher';`);
       const context = await browser.newContext();
       await useSessionInBrowser(context, (await signInPersona('teacher')).session);
       const page = await context.newPage();

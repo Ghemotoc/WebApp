@@ -46,31 +46,31 @@ grant select, insert on test_requests to authenticated;
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
 select throws_ok($$ select public.admin_open_data_request('00000000-0000-4000-8000-000000000001',
-  'copy', 'email', current_date, '') $$, '42501', null, 'a moderator can''t log a data request');
+  'copy', 'email', public.romania_today(), '') $$, '42501', null, 'a moderator can''t log a data request');
 select throws_ok($$ select public.admin_data_requests(false) $$, '42501', null,
   'a moderator can''t list data requests');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000012');
 select throws_ok($$ select public.admin_open_data_request('00000000-0000-4000-8000-000000000001',
-  'copy', 'email', current_date, '') $$, '42501', null, 'the content editor can''t log a data request');
+  'copy', 'email', public.romania_today(), '') $$, '42501', null, 'the content editor can''t log a data request');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select throws_ok($$ select public.admin_open_data_request('00000000-0000-4000-8000-000000000001',
-  'copy', 'email', current_date, '') $$, '42501', null, 'a member can''t use the staff function');
+  'copy', 'email', public.romania_today(), '') $$, '42501', null, 'a member can''t use the staff function');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');
 select throws_ok($$ select public.admin_open_data_request('00000000-0000-4000-8000-0000000000ff',
-  'copy', 'email', current_date, '') $$, '23514', null, 'a request needs an account that exists');
+  'copy', 'email', public.romania_today(), '') $$, '23514', null, 'a request needs an account that exists');
 select throws_ok($$ select public.admin_open_data_request('00000000-0000-4000-8000-000000000001',
-  'copy', 'email', current_date + 1, '') $$, '23514', null, 'the date received can''t be in the future');
+  'copy', 'email', public.romania_today() + 1, '') $$, '23514', null, 'the date received can''t be in the future, in Romanian time');
 select throws_ok($$ select public.admin_open_data_request('00000000-0000-4000-8000-000000000001',
-  'copy', 'email', current_date, repeat('x', 2001)) $$, '23514', null, 'a note over 2000 characters is refused');
+  'copy', 'email', public.romania_today(), repeat('x', 2001)) $$, '23514', null, 'a note over 2000 characters is refused');
 
 -- Support log a request by email for a copy, received today.
 insert into test_requests
 select 'by_email', (opened ->> 'id')::uuid, opened ->> 'reference'
 from (select public.admin_open_data_request('00000000-0000-4000-8000-000000000001', 'copy', 'email',
-        current_date, 'Asked by email from the account''s address.') as opened) as made;
+        public.romania_today(), 'Asked by email from the account''s address.') as opened) as made;
 select is((select public.admin_data_request(id) ->> 'due_on' from test_requests where name = 'by_email'),
-  ((current_date + interval '1 month')::date)::text, 'support log a request, due one month from receipt');
+  ((public.romania_today() + interval '1 month')::date)::text, 'support log a request, due one month from receipt');
 select is((select public.admin_data_request(id) ->> 'identity' from test_requests where name = 'by_email'),
   'not_asked', 'a request by email still needs the identity check');
 select ok((select reference from test_requests where name = 'by_email') ~ '^D-[0-9]{6}$',
@@ -90,14 +90,14 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000008');
 insert into test_requests
 select 'in_app', (opened ->> 'id')::uuid, opened ->> 'reference'
 from (select public.admin_open_data_request('00000000-0000-4000-8000-000000000001', 'correct', 'in_app',
-        current_date, '') as opened) as made;
+        public.romania_today(), '') as opened) as made;
 select is((select public.admin_data_request(id) ->> 'identity' from test_requests where name = 'in_app'),
   'not_needed', 'the owner log a request made in the app, which needs no identity check');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000011');
 insert into test_requests
 select 'under_16', (opened ->> 'id')::uuid, opened ->> 'reference'
 from (select public.admin_open_data_request('00000000-0000-4000-8000-000000000003', 'copy', 'email',
-        current_date, '') as opened) as made;
+        public.romania_today(), '') as opened) as made;
 
 -- Support can't read the audit log (architecture 1.8.3), so the log is checked as the server.
 select pg_temp.as_postgres();
@@ -133,12 +133,12 @@ select throws_ok($$ select public.admin_extend_data_request((select id from test
   1, 'Many stories.') $$, '23514', null, 'after the first month the deadline can''t be extended');
 select is((select public.admin_extend_data_request(id, 1, 'Many stories to gather.') ->> 'deadline'
            from test_requests where name = 'by_email'),
-  ((current_date + interval '2 months')::date)::text, 'support extend a request by one more month');
+  ((public.romania_today() + interval '2 months')::date)::text, 'support extend a request by one more month');
 select throws_ok($$ select public.admin_extend_data_request((select id from test_requests where name = 'by_email'),
   1, 'Again.') $$, '23514', null, 'a second extension must go further than the first');
 select is((select public.admin_extend_data_request(id, 2, 'Many stories to gather.') ->> 'deadline'
            from test_requests where name = 'by_email'),
-  ((current_date + interval '3 months')::date)::text, 'support extend it to two more months in all');
+  ((public.romania_today() + interval '3 months')::date)::text, 'support extend it to two more months in all');
 
 select pg_temp.as_postgres();
 select is((select count(*)::integer from public.notifications
@@ -201,7 +201,7 @@ select is((select public.admin_close_data_request(id, 'Sent the copy.') ->> 'sta
   'closed', 'support close a request with what was done');
 select is((select row(user_id, request_type, received_on, identity, handled_by_user_id)::text
            from public.data_requests where id = (select id from test_requests where name = 'by_email')),
-  row('00000000-0000-4000-8000-000000000001'::uuid, 'copy'::public.data_request_type, current_date,
+  row('00000000-0000-4000-8000-000000000001'::uuid, 'copy'::public.data_request_type, public.romania_today(),
       'confirmed'::public.data_request_identity, '00000000-0000-4000-8000-000000000011'::uuid)::text,
   'a closed request keeps the user ID, type, dates, identity check and who handled it');
 select throws_ok($$ select public.admin_extend_data_request((select id from test_requests where name = 'by_email'),
