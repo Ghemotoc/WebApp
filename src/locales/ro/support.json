@@ -185,6 +185,32 @@
     "timer": {
       "due": "Răspuns până la {{date}}",
       "overdue": "Primul răspuns întârziat din {{date}}"
+    },
+    "canned": {
+      "documentTitle": "Răspunsuri pregătite",
+      "heading": "Răspunsuri pregătite",
+      "intro": "Răspunsuri gata scrise, de pus într-un tichet și de modificat înainte de trimitere. {{name}} devine numele persoanei, iar {{number}} numărul tichetului, în limba tichetului.",
+      "listLabel": "Răspunsuri pregătite",
+      "empty": "Nu există încă răspunsuri pregătite.",
+      "add": "Adaugă un răspuns pregătit",
+      "titleLabel": "Titlu (îl vede doar echipa)",
+      "bodyRoLabel": "Textul în română",
+      "bodyEnLabel": "Textul în engleză",
+      "placeholdersHint": "Poți folosi {{name}} și {{number}}.",
+      "save": "Salvează",
+      "cancel": "Renunță",
+      "edit": "Modifică",
+      "editNamed": "Modifică „{{title}}”",
+      "delete": "Șterge",
+      "deleteNamed": "Șterge „{{title}}”",
+      "deleteConfirm": "Da, șterge",
+      "keep": "Păstrează",
+      "back": "Înapoi la tichete",
+      "pickerLabel": "Răspuns pregătit",
+      "pickerNone": "Alege unul",
+      "insert": "Inserează",
+      "inserted": "„{{title}}” e în casetă: verifică-l și modifică-l înainte de trimitere.",
+      "manageLink": "Gestionează răspunsurile pregătite"
     }
   }
 }

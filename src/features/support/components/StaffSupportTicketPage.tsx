@@ -7,7 +7,7 @@
  * under-16 banner), the ticket's fields and its history. Opening the page is logged; so is every
  * change, without the words. Plain components, no doodles (staff screens).
  * Part h2 adds whether each answer was emailed and the link to the closed ticket a follow-up
- * continues.
+ * continues. Part h3b adds the canned reply picker above the reply box.
  * Who shows it: the router, inside StaffLayout. What it calls: useStaffTicket.
  */
 import { Link, useParams } from 'react-router';
@@ -20,6 +20,7 @@ import type { StaffTicket, StaffTicketMessage } from '../api/staffSupportTickets
 import { useStaffTicket } from '../hooks/useStaffSupport';
 import { useSupportTranslation } from '../registerSupportTranslations';
 
+import { CannedReplyPicker } from './CannedReplyPicker';
 import { RequesterPanel } from './RequesterPanel';
 import { SupportReplyForm } from './SupportReplyForm';
 import { TicketFieldsPanel } from './TicketFieldsPanel';
@@ -96,6 +97,16 @@ function Conversation({
         failure={state.failure}
         waitMinutes={state.waitMinutes}
         onSend={(body, isNote) => state.change({ kind: 'reply', body, isNote })}
+        renderTools={(insert) => (
+          <CannedReplyPicker
+            insert={insert}
+            ticket={{
+              number: ticket.number,
+              language: ticket.language,
+              displayName: ticket.requester.displayName,
+            }}
+          />
+        )}
       />
     </div>
   );

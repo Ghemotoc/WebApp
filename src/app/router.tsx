@@ -112,6 +112,15 @@ const staffRoutes: RouteObject = {
         return { Component: StaffSupportInboxPage };
       },
     },
+    // Canned replies (S1-E11-13; ADMIN-2h3b): the list support staff insert into tickets.
+    {
+      path: 'support/canned',
+      lazy: async () => {
+        const { CannedRepliesPage } =
+          await import('@/features/support/components/CannedRepliesPage');
+        return { Component: CannedRepliesPage };
+      },
+    },
     {
       path: 'support/:number',
       lazy: async () => {

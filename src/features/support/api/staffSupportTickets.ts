@@ -101,6 +101,8 @@ export interface TicketHistoryEntry {
 /** The person asking, as the panel shows them. */
 export interface TicketRequester {
   handle: string | null;
+  /** Their pen name, or their username; empty for an email-only ticket (part h3b). */
+  displayName: string | null;
   /** Staff may see the user ID (architecture 1.6); empty for an email-only ticket. */
   userId: string | null;
   emailOnly: boolean;
@@ -116,6 +118,8 @@ export interface StaffTicket {
   priority: TicketPriority;
   category: TicketCategory;
   channel: TicketChannel;
+  /** The language the person writes in, so a canned reply uses it (part h3b). */
+  language: 'ro' | 'en';
   tags: string[];
   assignedHandle: string | null;
   /** The closed ticket this one follows up (criterion 7), or null. */
@@ -167,6 +171,7 @@ function requesterFrom(value: Json | undefined): TicketRequester {
   const requester = objectOf(value) ?? {};
   return {
     handle: textOf(requester, 'handle'),
+    displayName: textOf(requester, 'display_name'),
     userId: textOf(requester, 'user_id'),
     emailOnly: requester.email_only === true,
     maskedEmail: textOf(requester, 'masked_email'),
@@ -190,6 +195,7 @@ export function staffTicketFromJson(json: Json | null): StaffTicket | null {
     priority: (textOf(ticket, 'priority') ?? 'normal') as TicketPriority,
     category: categoryOf(ticket.category),
     channel: (textOf(ticket, 'channel') ?? 'in_app') as TicketChannel,
+    language: textOf(ticket, 'language') === 'en' ? 'en' : 'ro',
     tags: Array.isArray(ticket.tags) ? ticket.tags.filter((tag) => typeof tag === 'string') : [],
     assignedHandle: textOf(ticket, 'assigned_handle'),
     followUpOf: typeof ticket.follow_up_of === 'number' ? ticket.follow_up_of : null,
