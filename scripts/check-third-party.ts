@@ -44,6 +44,12 @@ const reviewedHosts: Record<string, string> = {
     'a link in the ZIP library’s error message when a file isn’t a ZIP; never loaded',
   'rolldown.rs':
     'a link in the bundler’s error message for require() inside the Word and ZIP libraries; never loaded',
+  // The PDF builder (ADMIN-2d, pdfmake and the PDFKit inside it): XML namespaces written into a
+  // PDF's metadata and links in password-handling error messages; the library is set to load no
+  // web address at all (src/lib/pdf/loadPdfMake.ts).
+  'ns.adobe.com': 'PDF metadata (XMP) namespaces (pdfmake); never loaded',
+  'www.aiim.org': 'PDF/A and PDF/UA metadata namespaces (pdfmake); never loaded',
+  'tools.ietf.org': 'links in the PDF library’s password error messages; never loaded',
   // Music and video players (S1-E3-10; ADR 0008): loaded in an iframe only after the reader
   // presses play, never on page load. The source links are shown to moderators, never loaded.
   'www.youtube-nocookie.com': 'the YouTube player, privacy-enhanced; only after play (ADR 0008)',
