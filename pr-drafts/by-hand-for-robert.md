@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #306 (12i, admin epic check round two): nothing to set. Bundle 12 ADMIN-2 is done.
 - #305 (12h4b): nothing to set. One question added to docs/for-the-lawyer.md: staff notes on support tickets in a data access request.
 - #304 (12h4a): nothing to set.
 - #303 (12h3b): nothing to set. Read the Romanian of the three starting canned replies when you can.
