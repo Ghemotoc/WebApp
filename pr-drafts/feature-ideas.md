@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 3 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-03.md; doc tab "3 Nov 2026")
+
+12 ideas, IDEA-20261103-1 to 12: read a chapter aloud, diacritics check, one story in two languages, content notes before a chapter, footnotes, private margin notes, classroom reading mode, school reading list shelf, end-of-chapter writer's note, late-night break note, private daily word goal, writing prompt of the week.
+
 ### Sent 2 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-02.md)
 
 10 ideas, IDEA-20261102-1 to 10: rank notification, rank on story cards, printable class sheet with QR code, class link as sign-up invitation, who has replied in a class thread, space welcome note, hand a space over, mark a thread answered, a note with a join request, start a thread from a passage.
