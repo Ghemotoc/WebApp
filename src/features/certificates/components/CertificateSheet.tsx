@@ -96,7 +96,7 @@ function CertificateSignatures({
       </div>
       {!certificate.isContest && (
         <div className="flex flex-col gap-1 border-t border-ink pt-2">
-        <p className="m-0 text-xs text-body">{signedOn}</p>
+          <p className="m-0 text-xs text-body">{signedOn}</p>
           <p className="m-0 font-semibold text-ink">{certificate.teacherName}</p>
           <p className="m-0 text-sm text-body">{teacherRole}</p>
         </div>
@@ -191,9 +191,7 @@ export function CertificateSheet({
         <p className="m-0 font-heading text-[clamp(24px,4vw,36px)] font-bold break-words text-ink">
           {awardedName}
         </p>
-        <p className="m-0 max-w-[52ch] text-body">
-          {reasonSentence(certificate, language, t)}
-        </p>
+        <p className="m-0 max-w-[52ch] text-body">{reasonSentence(certificate, language, t)}</p>
       </div>
       <CertificateSignatures certificate={certificate} language={language} />
       <CertificateFooter certificate={certificate} language={language} />

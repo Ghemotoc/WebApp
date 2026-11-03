@@ -277,7 +277,9 @@ test.describe('Contests (S1-E11-15)', () => {
     await writer.getByRole('link', { name: 'Open “The trial contest”' }).click();
 
     // Step 3: no real-name form (CLAUDE.md rule 5), one signature and the contest's sentence.
-    await expect(writer.getByRole('heading', { level: 1, name: 'The trial contest' })).toBeVisible();
+    await expect(
+      writer.getByRole('heading', { level: 1, name: 'The trial contest' }),
+    ).toBeVisible();
     await expect(writer.getByLabel('Name to print')).toHaveCount(0);
     await expect(
       writer.getByText('for winning the writing contest “The trial contest”.'),

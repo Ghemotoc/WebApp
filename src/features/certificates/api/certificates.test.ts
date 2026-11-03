@@ -92,7 +92,10 @@ describe('the student’s certificates', () => {
     const { client } = fakeClient({ data: [contestRow] });
     const [certificate] = await listMyCertificates(client);
     expect(certificate?.isContest).toBe(true);
-    expect(certificate?.contestName).toEqual({ ro: 'Concursul de toamnă', en: 'The autumn contest' });
+    expect(certificate?.contestName).toEqual({
+      ro: 'Concursul de toamnă',
+      en: 'The autumn contest',
+    });
     expect(certificate?.schoolName).toBeNull();
   });
 
