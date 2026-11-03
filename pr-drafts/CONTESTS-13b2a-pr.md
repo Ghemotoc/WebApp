@@ -20,7 +20,15 @@ Bundle 13 CONTESTS, part b2a: the staff entries list and disqualifying an entry 
 
 ## Local check run
 
-LOCALRUN
+Run on the branch head (Node 24, local Supabase), after rebasing onto main with #311:
+
+- lint, prettier, typecheck, types:check, i18n:check, migrations:check, third-party check: pass
+- `npm test` (Vitest): 221 files, 1389 tests, all pass
+- `npx supabase db reset && npx supabase test db`: 176 files, 4240 tests, all pass
+- `wrangler pages functions build`: compiles
+- `npx playwright test e2e/contests.spec.ts e2e/appeals-and-mail.spec.ts e2e/statements.spec.ts e2e/story-settings.spec.ts`: 94 passed
+
+The full end-to-end run comes once at the end of bundle 13 (Robert's choice, 30 Oct 2026). GitHub Actions is blocked by billing, so this pull request is merged on local checks and Cloudflare's build (Robert's choice, 2 Nov 2026, 15:20 UTC).
 
 ## By hand
 
