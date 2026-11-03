@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- ADMIN-2d3 (#292): nothing on staging. Please read the first kind-words lists on Staff › Settings › Kind-words nudge (my drafts) and trim or add. Two questions in the pull request: the nudge shows inline under the comment rather than as a pop-up window, and a few words on the list can also be friendly.
 - ADMIN-2d (#291): nothing by hand. Download my stories now has a Format choice (Word, PDF or both), and Download my data and staff copies hold a PDF beside each Word file. One question in the pull request: keep pdfmake (MIT) as the PDF library? Optional: read the new Romanian lines in `dataExport.json`.
 - ADMIN-2c3 (#290): nothing by hand. The record of processing should mention that a parent's email from the consent record is used for under-16s' data requests. Three questions in the pull request: the one-hour window after the parent first opens the copy, hiding the copy from the child, and what to do for an under-16 with no agreed parent.
 - ADMIN-2c2 (#289): nothing by hand. Two questions in the pull request: staff copies leave out pictures not yet checked, and the ZIP's name.
