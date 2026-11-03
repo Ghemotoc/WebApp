@@ -27,7 +27,7 @@ The rule counts requests at Cloudflare's edge and keeps no log we read; the func
 
 Open `/contact` on staging, send a message as a visitor with your own email: the acknowledgement arrives with a reference `C-2026-….`, and the support inbox gets the message with `[C-2026-…] Question` in the subject. Reply from the inbox: the reply goes to the sender (reply-to).
 
-## 3. Saving messages as support tickets (S1-E11-13, bundle ADMIN-2h1)
+## 4. Saving messages as support tickets (S1-E11-13, bundle ADMIN-2h1)
 
 Each message also becomes a numbered support ticket in the admin site (Staff → Support tickets), and the reference the person sees is the ticket number (#1042). Until this is set, the form keeps working with the old C- reference and nothing is saved.
 
@@ -35,3 +35,17 @@ Each message also becomes a numbered support ticket in the admin site (Staff →
 2. Cloudflare: Workers & Pages → the Pages project → Settings → Variables and Secrets → Add → type Secret, name `SUPPORT_TICKET_SECRET`, that value (Production, and Preview if wanted). `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are already there for the front end.
 3. Supabase (the same project): SQL editor → `select vault.create_secret('<the same value>', 'support_ticket_secret');`.
 4. Redeploy, send one test message from `/contact` and check it shows a `#` number and appears under Staff → Support tickets.
+
+## 5. Support emails in and out (S1-E11-13, bundle ADMIN-2h2)
+
+Out needs nothing new: the acknowledgements and staff answers use the notification emails' worker (`EMAIL_WORKER_KEY` and `BREVO_API_KEY` on Cloudflare, `email_worker_url` and `email_worker_key` in the Vault, `docs/runbooks/scheduled-jobs.md`). `run-support-email-worker` calls the same address with `/api/support-emails` at the end, every minute while emails are due. They come from the support inbox with `[#1042]` in the subject, and answers go back to it.
+
+In needs three steps, so a person's answer lands back in their ticket instead of only in the mailbox:
+
+1. Make another long random value (`openssl rand -hex 32`) and add it on Cloudflare as the Secret `SUPPORT_INBOUND_KEY` (section 4 already set `SUPPORT_TICKET_SECRET`, which signs each email for the database). Redeploy.
+2. Brevo: Transactional → Settings → Inbound parsing (Brevo's own help names the current menu) → add an inbound domain or address on a subdomain you control (for example `inbox.<domain>`, with the MX records Brevo shows), and set the webhook to `https://<site>/api/support-inbound?key=<that value>`.
+3. Google Workspace: forward a copy of everything sent to the support inbox to that Brevo address (Gmail → Settings → Forwarding, or an admin routing rule), so staff still see the mailbox while tickets fill in.
+
+Check it: write to the support inbox from a personal address. A ticket marked "Email only" appears under Staff → Support tickets, and you get an acknowledgement in Romanian and English with `[#…]` in the subject. Answer it from the ticket page ("Waiting to be emailed" turns to "Emailed" within a minute), then reply to that email: the reply joins the same ticket, marked "by email".
+
+Automatic replies (out-of-office, mailing lists) are saved but never acknowledged, and one address gets at most 3 acknowledgements an hour, so two auto-responders can't answer each other forever. Until steps 1 to 3 are done, emails to the inbox stay only in the mailbox, as before.

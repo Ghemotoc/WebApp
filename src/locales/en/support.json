@@ -147,7 +147,10 @@
       "member": "@{{handle}}",
       "emailSender": "The person (by email)",
       "teamBy": "@{{handle}} for the support team",
-      "note": "Internal note by @{{handle}} (only staff see this)"
+      "note": "Internal note by @{{handle}} (only staff see this)",
+      "emailed": "Emailed",
+      "emailWaiting": "Waiting to be emailed",
+      "byEmail": "by email"
     },
     "reply": {
       "label": "Answer the person, or add a note",
@@ -169,6 +172,7 @@
         "assignee": "Assigned from {{before}} to {{after}}",
         "tags": "Tags from {{before}} to {{after}}"
       }
-    }
+    },
+    "followUpOf": "Follows up the closed ticket #{{number}}"
   }
 }

@@ -5,7 +5,8 @@
  * It draws what it is given: who wrote each message, as the reader is told, and the tone (the
  * person's own, the team's tinted, an internal note dashed). The member's page names "You" and
  * "The support team" only; the staff page names usernames and marks notes. Plain text, kept as
- * written (line breaks shown), never HTML.
+ * written (line breaks shown), never HTML. The staff page adds a short detail after the time: how a
+ * message came in or whether an answer was emailed (part h2).
  * Who shows it: MySupportTicketPage and StaffSupportTicketPage.
  */
 import { useSupportTranslation } from '../registerSupportTranslations';
@@ -16,6 +17,8 @@ export interface TicketMessageItem {
   tone: 'person' | 'team' | 'note';
   body: string;
   at: string;
+  /** A short extra word after the time, such as "Emailed" (staff page, part h2). */
+  detail?: string;
 }
 
 /** The background for each tone: the team's tinted, a note dashed, the person's plain. */
@@ -42,6 +45,7 @@ function MessageItem({ message }: { message: TicketMessageItem }) {
     >
       <p className="m-0 text-sm text-meta">
         <span className="font-semibold text-heading">{message.author}</span> · {when}
+        {message.detail !== undefined && ` · ${message.detail}`}
       </p>
       <p className="m-0 whitespace-pre-line break-words text-body">{message.body}</p>
     </li>

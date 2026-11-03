@@ -7070,6 +7070,61 @@ export type Database = {
           },
         ];
       };
+      support_ticket_emails: {
+        Row: {
+          attempts: number;
+          claimed_at: string | null;
+          created_at: string;
+          id: string;
+          kind: string;
+          message_id: string | null;
+          message_token: string;
+          sent_at: string | null;
+          ticket_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempts?: number;
+          claimed_at?: string | null;
+          created_at?: string;
+          id?: string;
+          kind: string;
+          message_id?: string | null;
+          message_token?: string;
+          sent_at?: string | null;
+          ticket_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          attempts?: number;
+          claimed_at?: string | null;
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          message_id?: string | null;
+          message_token?: string;
+          sent_at?: string | null;
+          ticket_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'support_ticket_emails_message_id_fkey';
+            columns: ['message_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_ticket_messages';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'support_ticket_emails_ticket_id_fkey';
+            columns: ['ticket_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_tickets';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       support_ticket_events: {
         Row: {
           actor_user_id: string | null;
@@ -7125,6 +7180,7 @@ export type Database = {
           body: string;
           channel: Database['public']['Enums']['support_ticket_channel'];
           created_at: string;
+          email_message_id: string | null;
           id: string;
           kind: Database['public']['Enums']['support_message_kind'];
           ticket_id: string;
@@ -7136,6 +7192,7 @@ export type Database = {
           body: string;
           channel: Database['public']['Enums']['support_ticket_channel'];
           created_at?: string;
+          email_message_id?: string | null;
           id?: string;
           kind: Database['public']['Enums']['support_message_kind'];
           ticket_id: string;
@@ -7146,6 +7203,7 @@ export type Database = {
           body?: string;
           channel?: Database['public']['Enums']['support_ticket_channel'];
           created_at?: string;
+          email_message_id?: string | null;
           id?: string;
           kind?: Database['public']['Enums']['support_message_kind'];
           ticket_id?: string;
@@ -7176,6 +7234,7 @@ export type Database = {
           closed_at: string | null;
           created_at: string;
           first_replied_at: string | null;
+          follow_up_of_ticket_id: string | null;
           id: string;
           language: string;
           last_message_at: string;
@@ -7188,8 +7247,9 @@ export type Database = {
           subject: string;
           tags: string[];
           updated_at: string;
+          support_ticket_address: string | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'support_ticket_address';
         Insert: {
           assigned_to_user_id?: string | null;
           category?: Database['public']['Enums']['support_ticket_category'];
@@ -7197,6 +7257,7 @@ export type Database = {
           closed_at?: string | null;
           created_at?: string;
           first_replied_at?: string | null;
+          follow_up_of_ticket_id?: string | null;
           id?: string;
           language?: string;
           last_message_at?: string;
@@ -7217,6 +7278,7 @@ export type Database = {
           closed_at?: string | null;
           created_at?: string;
           first_replied_at?: string | null;
+          follow_up_of_ticket_id?: string | null;
           id?: string;
           language?: string;
           last_message_at?: string;
@@ -7236,6 +7298,13 @@ export type Database = {
             columns: ['assigned_to_user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'support_tickets_follow_up_of_ticket_id_fkey';
+            columns: ['follow_up_of_ticket_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_tickets';
             referencedColumns: ['id'];
           },
           {
@@ -7599,6 +7668,17 @@ export type Database = {
           >;
         };
         Returns: undefined;
+      };
+      add_email_to_support_ticket: {
+        Args: {
+          body: string;
+          email_message_id: string;
+          ticket: Omit<
+            Database['public']['Tables']['support_tickets']['Row'],
+            Database['public']['Tables']['support_tickets']['ComputedFields']
+          >;
+        };
+        Returns: number;
       };
       add_reading_minute: { Args: Record<PropertyKey, never>; Returns: number };
       add_story_event: {
@@ -11423,6 +11503,7 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      receive_support_email: { Args: { payload: string; signature: string }; Returns: Json };
       recently_banned_ip_matches: {
         Args: { new_user_id: string };
         Returns: {
@@ -11681,6 +11762,7 @@ export type Database = {
           closed_at: string | null;
           created_at: string;
           first_replied_at: string | null;
+          follow_up_of_ticket_id: string | null;
           id: string;
           language: string;
           last_message_at: string;
@@ -11751,6 +11833,7 @@ export type Database = {
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       run_retention_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       run_storage_sweep: { Args: Record<PropertyKey, never>; Returns: boolean };
+      run_support_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
       safeguarding_evidence_target: {
         Args: { evidence_id: string };
         Returns: {
@@ -12256,6 +12339,17 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      start_email_support_ticket: {
+        Args: {
+          body: string;
+          email_message_id: string;
+          follow_up_of: string;
+          is_automatic: boolean;
+          sender: string;
+          subject: string;
+        };
+        Returns: Json;
+      };
       start_forum_thread: {
         Args: { body: string; forum_slug: string; title: string };
         Returns: Json;
@@ -12474,7 +12568,69 @@ export type Database = {
       };
       submit_teacher_proof: { Args: { proof_path: string }; Returns: Json };
       support_assignee_id: { Args: { assignee_handle: string }; Returns: string };
+      support_email_json: {
+        Args: {
+          address: string;
+          queued: Omit<
+            Database['public']['Tables']['support_ticket_emails']['Row'],
+            Database['public']['Tables']['support_ticket_emails']['ComputedFields']
+          >;
+          ticket: Omit<
+            Database['public']['Tables']['support_tickets']['Row'],
+            Database['public']['Tables']['support_tickets']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      support_email_worker_claim: {
+        Args: { batch_size?: number; worker_key: string };
+        Returns: Json;
+      };
+      support_email_worker_mark_sent: {
+        Args: { email_ids: string[]; worker_key: string };
+        Returns: number;
+      };
+      support_message_email_state: { Args: { message_id: string }; Returns: string };
       support_payload_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
+      support_ticket_address: {
+        Args: {
+          ticket: Omit<
+            Database['public']['Tables']['support_tickets']['Row'],
+            Database['public']['Tables']['support_tickets']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
+      support_ticket_for_email: {
+        Args: { email_sender: string; email_subject: string; thread_headers: string };
+        Returns: {
+          assigned_to_user_id: string | null;
+          category: Database['public']['Enums']['support_ticket_category'];
+          channel: Database['public']['Enums']['support_ticket_channel'];
+          closed_at: string | null;
+          created_at: string;
+          first_replied_at: string | null;
+          follow_up_of_ticket_id: string | null;
+          id: string;
+          language: string;
+          last_message_at: string;
+          number: number;
+          priority: Database['public']['Enums']['support_ticket_priority'];
+          requester_email: string | null;
+          requester_user_id: string | null;
+          solved_at: string | null;
+          status: Database['public']['Enums']['support_ticket_status'];
+          subject: string;
+          tags: string[];
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'support_tickets';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       support_ticket_history: { Args: { target_ticket_id: string }; Returns: Json };
       tag_for_name: {
         Args: { include_waiting?: boolean; preferred_language?: string; typed_name: string };

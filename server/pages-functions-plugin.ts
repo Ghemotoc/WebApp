@@ -64,6 +64,7 @@ import { handleTeacherCheck } from './teacher-check.ts';
 import { handlePictureCheck } from './picture-check.ts';
 import { pictureChecker } from './picture-check/index.ts';
 import { overridesFromDatabase } from './send-email.ts';
+import { handleSupportEmails, handleSupportInbound } from './support-emails.ts';
 import { handleSignupContext } from './signup-context.ts';
 import { makeSignupIpToken } from './signup-ip.ts';
 import {
@@ -176,6 +177,34 @@ function notificationEmailOptions(environment: Record<string, string>): Notifica
 }
 
 /**
+ * Picks the handler for the support ticket emails (S1-E11-13, ADMIN-2h2): the worker that sends
+ * them and the inbound webhook Brevo calls on Cloudflare.
+ *
+ * @param url - the request's address
+ * @param environment - the VITE_ values: the local Supabase's address and anon key
+ * @returns the function that answers it, or null for every other address
+ */
+function supportHandlerFor(
+  url: string | undefined,
+  environment: Record<string, string>,
+): ((request: Request) => Promise<Response>) | null {
+  if (url === '/api/support-emails') {
+    // The same worker options as the notification emails: the seeded key, Mailpit.
+    return (request) => handleSupportEmails(request, notificationEmailOptions(environment));
+  }
+  if ((url ?? '').startsWith('/api/support-inbound')) {
+    return (request) =>
+      handleSupportInbound(request, {
+        supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+        anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+        inboundKey: process.env.SUPPORT_INBOUND_KEY,
+        ticketSecret: process.env.SUPPORT_TICKET_SECRET,
+      });
+  }
+  return null;
+}
+
+/**
  * Picks the handler for the functions that read or write the local database.
  *
  * @param url - the request's address
@@ -237,7 +266,8 @@ function databaseHandlerFor(
         sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
       });
   }
-  return null;
+  // The support ticket emails (ADMIN-2h2) read and write the database too.
+  return supportHandlerFor(url, environment);
 }
 
 /**

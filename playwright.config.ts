@@ -112,6 +112,9 @@ export default defineConfig({
       // Support tickets' signing secret for local tests only (S1-E11-13); e2e/support-tickets puts
       // the same value in the local database's Vault. Never a real secret.
       SUPPORT_TICKET_SECRET: 'local-e2e-support-secret',
+      // The key in the support inbound webhook's address, for local tests only (ADMIN-2h2). On
+      // Cloudflare it is SUPPORT_INBOUND_KEY, set by hand. Never a real secret.
+      SUPPORT_INBOUND_KEY: 'local-e2e-inbound-key',
       // The age check's signing secret for local tests only (S1-E2-08); e2e/age-check puts the
       // same value in the local database's Vault. Never a real secret.
       AGE_CHECK_SECRET: 'local-e2e-age-secret',

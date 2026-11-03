@@ -6,6 +6,8 @@
  * they never see, and beside them: who is asking (age group only, the email behind "Show", the
  * under-16 banner), the ticket's fields and its history. Opening the page is logged; so is every
  * change, without the words. Plain components, no doodles (staff screens).
+ * Part h2 adds whether each answer was emailed and the link to the closed ticket a follow-up
+ * continues.
  * Who shows it: the router, inside StaffLayout. What it calls: useStaffTicket.
  */
 import { Link, useParams } from 'react-router';
@@ -25,33 +27,43 @@ import { TicketHistory } from './TicketHistory';
 import { TicketMessageList, type TicketMessageItem } from './TicketMessageList';
 
 /**
+ * The short detail after a message's time: whether an answer was emailed, or that the person
+ * wrote by email (part h2).
+ *
+ * @returns the words, or undefined for nothing to add
+ */
+function useMessageDetail(): (message: StaffTicketMessage) => string | undefined {
+  const { t } = useSupportTranslation();
+  return (message) => {
+    if (message.emailed === 'sent') return t('staff.messages.emailed');
+    if (message.emailed === 'waiting') return t('staff.messages.emailWaiting');
+    if (message.kind === 'from_requester' && message.channel === 'email') {
+      return t('staff.messages.byEmail');
+    }
+    return undefined;
+  };
+}
+
+/**
  * The messages as staff see them: usernames, notes marked.
  *
  * @returns the items to draw
  */
 function useMessageItems(messages: StaffTicketMessage[]): TicketMessageItem[] {
   const { t } = useSupportTranslation();
+  const detailOf = useMessageDetail();
   return messages.map((message) => {
     const handle = message.authorHandle ?? '';
+    const shared = { body: message.body, at: message.at, detail: detailOf(message) };
     if (message.kind === 'internal_note')
-      return {
-        author: t('staff.messages.note', { handle }),
-        tone: 'note',
-        body: message.body,
-        at: message.at,
-      };
+      return { ...shared, author: t('staff.messages.note', { handle }), tone: 'note' };
     if (message.kind === 'staff_reply')
-      return {
-        author: t('staff.messages.teamBy', { handle }),
-        tone: 'team',
-        body: message.body,
-        at: message.at,
-      };
+      return { ...shared, author: t('staff.messages.teamBy', { handle }), tone: 'team' };
     const author =
       message.authorHandle === null
         ? t('staff.messages.emailSender')
         : t('staff.messages.member', { handle });
-    return { author, tone: 'person', body: message.body, at: message.at };
+    return { ...shared, author, tone: 'person' };
   });
 }
 
@@ -114,6 +126,13 @@ function LoadedTicket({
             channel: t(`staff.channels.${ticket.channel}`),
           })}
         </p>
+        {ticket.followUpOf !== null && (
+          <p className="m-0 text-sm text-body">
+            <Link to={`/staff/support/${String(ticket.followUpOf)}`}>
+              {t('staff.followUpOf', { number: ticket.followUpOf })}
+            </Link>
+          </p>
+        )}
       </div>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <Conversation ticket={ticket} state={state} />
