@@ -14,6 +14,7 @@ import type { LandingExtras } from '../api/landingPages';
 import { wordsOf } from '../lib/blocks';
 import { useLandingPageTranslation } from '../registerLandingPageTranslations';
 
+import { ContestResultsBlock } from './ContestResultsBlock';
 import { LandingBlockView } from './LandingBlockView';
 import { LandingPicture } from './LandingPicture';
 
@@ -95,6 +96,8 @@ export function LandingPageView({
             isPreview={isPreview}
           />
         ))}
+        {/* Step 4: a contest's published results (contests part b2b). */}
+        {extras.results != null && <ContestResultsBlock results={extras.results} />}
       </div>
     </article>
   );

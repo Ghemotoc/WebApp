@@ -67,6 +67,8 @@ export interface StaffContest extends ContestDetails {
   id: string;
   pageSlug: string;
   openedAt: string | null;
+  /** When the results went public on the landing page (part 13b2b), or null. */
+  resultsPublishedAt: string | null;
 }
 
 /** A contest landing page that has no contest yet, for "New contest". */
@@ -85,6 +87,7 @@ export interface ContestChoices {
 interface ContestRow extends Omit<ContestDetails, 'age_groups'> {
   id: string;
   opened_at: string | null;
+  results_published_at: string | null;
   age_groups: string[];
   landing_pages: { slug: string } | null;
 }
@@ -102,12 +105,13 @@ function toStaffContest(row: ContestRow): StaffContest {
     age_groups: row.age_groups as ContestAgeGroup[],
     pageSlug: row.landing_pages?.slug ?? '',
     openedAt: row.opened_at,
+    resultsPublishedAt: row.results_published_at,
   };
 }
 
 /** The columns the editor reads. */
 const contestColumns =
-  'id, opened_at, name_ro, name_en, entries_open_on, entries_close_on, results_on, age_groups, market_codes, language_codes, what_counts_ro, what_counts_en, word_limit, prize_ro, prize_en, prize_delivered_by, judges, rules_page_key, landing_pages(slug)';
+  'id, opened_at, results_published_at, name_ro, name_en, entries_open_on, entries_close_on, results_on, age_groups, market_codes, language_codes, what_counts_ro, what_counts_en, word_limit, prize_ro, prize_en, prize_delivered_by, judges, rules_page_key, landing_pages(slug)';
 
 /**
  * Every contest, newest entry window first, for Staff › Contests.

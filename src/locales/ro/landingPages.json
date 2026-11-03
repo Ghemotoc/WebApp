@@ -222,5 +222,11 @@
     "signInLink": "Intră în cont",
     "failed": "Nu am putut salva. Încearcă din nou.",
     "previewNote": "Cititorii cu cont pot cere aici o singură notificare în ziua în care încep înscrierile."
+  },
+  "results": {
+    "heading": "Rezultate",
+    "winners": "Înscrieri câștigătoare",
+    "finalists": "Înscrieri din finală",
+    "with": " cu "
   }
 }

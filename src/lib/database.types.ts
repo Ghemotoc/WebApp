@@ -1850,12 +1850,15 @@ export type Database = {
       };
       contest_entries: {
         Row: {
+          award: string | null;
           contest_id: string;
           created_at: string;
           disqualified_at: string | null;
           disqualified_by_user_id: string | null;
           entered_at: string;
           id: string;
+          prize_parent_consent: boolean;
+          prize_sent_at: string | null;
           statement_id: string | null;
           status: string;
           story_id: string;
@@ -1865,12 +1868,15 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
+          award?: string | null;
           contest_id: string;
           created_at?: string;
           disqualified_at?: string | null;
           disqualified_by_user_id?: string | null;
           entered_at?: string;
           id?: string;
+          prize_parent_consent?: boolean;
+          prize_sent_at?: string | null;
           statement_id?: string | null;
           status?: string;
           story_id: string;
@@ -1879,12 +1885,15 @@ export type Database = {
           withdrawn_at?: string | null;
         };
         Update: {
+          award?: string | null;
           contest_id?: string;
           created_at?: string;
           disqualified_at?: string | null;
           disqualified_by_user_id?: string | null;
           entered_at?: string;
           id?: string;
+          prize_parent_consent?: boolean;
+          prize_sent_at?: string | null;
           statement_id?: string | null;
           status?: string;
           story_id?: string;
@@ -1948,6 +1957,7 @@ export type Database = {
           prize_en: string;
           prize_ro: string;
           results_on: string | null;
+          results_published_at: string | null;
           rules_page_key: string | null;
           updated_at: string;
           user_id: string | null;
@@ -1955,6 +1965,7 @@ export type Database = {
           what_counts_ro: string;
           word_limit: number | null;
           contest_detail_problems: string[] | null;
+          contest_entries_have_closed: boolean | null;
           contest_landing_problems: string[] | null;
           contest_problems: string[] | null;
           contest_rules_are_published: boolean | null;
@@ -1963,6 +1974,7 @@ export type Database = {
         };
         ComputedFields:
           | 'contest_detail_problems'
+          | 'contest_entries_have_closed'
           | 'contest_landing_problems'
           | 'contest_problems'
           | 'contest_rules_are_published'
@@ -1985,6 +1997,7 @@ export type Database = {
           prize_en?: string;
           prize_ro?: string;
           results_on?: string | null;
+          results_published_at?: string | null;
           rules_page_key?: string | null;
           updated_at?: string;
           user_id?: string | null;
@@ -2009,6 +2022,7 @@ export type Database = {
           prize_en?: string;
           prize_ro?: string;
           results_on?: string | null;
+          results_published_at?: string | null;
           rules_page_key?: string | null;
           updated_at?: string;
           user_id?: string | null;
@@ -8648,6 +8662,10 @@ export type Database = {
         }[];
       };
       admin_march_numbers: { Args: { days?: number }; Returns: Json };
+      admin_mark_contest_prize_sent: {
+        Args: { parent_consent_on_file: boolean; target_entry_id: string };
+        Returns: undefined;
+      };
       admin_mark_decision_emails_sent: { Args: { notice_ids: string[] }; Returns: number };
       admin_mark_safeguarding: {
         Args: { reason_given: string; target_case_id: string };
@@ -8783,6 +8801,7 @@ export type Database = {
       admin_pictures_to_check: { Args: Record<PropertyKey, never>; Returns: Json[] };
       admin_publish_classic: { Args: { target_story_id: string }; Returns: Json };
       admin_publish_cms_version: { Args: { version_id: string }; Returns: string };
+      admin_publish_contest_results: { Args: { target_contest_id: string }; Returns: undefined };
       admin_publish_interface_text: { Args: { version_id: string }; Returns: string };
       admin_publish_landing_page: { Args: { version_id: string }; Returns: string };
       admin_put_back_passage: {
@@ -9074,6 +9093,10 @@ export type Database = {
       admin_set_classic_chapters: {
         Args: { chapter_list: Json; target_story_id: string };
         Returns: Json;
+      };
+      admin_set_contest_placing: {
+        Args: { target_entry_id: string; wanted_placing: string };
+        Returns: undefined;
       };
       admin_set_evidence_hold: {
         Args: { evidence_id: string; reason_given: string; should_hold: boolean };
@@ -10108,6 +10131,7 @@ export type Database = {
           prize_en: string;
           prize_ro: string;
           results_on: string | null;
+          results_published_at: string | null;
           rules_page_key: string | null;
           updated_at: string;
           user_id: string | null;
@@ -10121,6 +10145,15 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      contest_entries_have_closed: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
       };
       contest_entry_options: { Args: { story_slug: string }; Returns: Json };
       contest_landing_problems: {
@@ -10141,6 +10174,7 @@ export type Database = {
         };
         Returns: string[];
       };
+      contest_results_json: { Args: { content: Json; target_page_id: string }; Returns: Json };
       contest_rules_are_published: {
         Args: {
           target: Omit<

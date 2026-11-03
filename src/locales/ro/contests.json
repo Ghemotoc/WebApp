@@ -168,6 +168,8 @@
         "words": "Cuvinte",
         "entered": "Înscrisă",
         "status": "Stare",
+        "placing": "Rezultat",
+        "prize": "Premiu",
         "action": "Acțiune"
       },
       "ratings": {
@@ -194,6 +196,41 @@
         "not_valid": "Doar o înscriere validă poate fi descalificată.",
         "no_entry": "Nu am găsit această înscriere.",
         "not_allowed": "Doar proprietarul și administratorii pot descalifica înscrieri.",
+        "failed": "Nu a funcționat. Încearcă din nou peste puțin timp."
+      }
+    },
+    "results": {
+      "heading": "Rezultate",
+      "afterClose": "Alege înscrierile câștigătoare și pe cele din finală după ce înscrierile se încheie, pe {{date}}.",
+      "howTheyShow": "Alege în tabel înscrierile câștigătoare și pe cele din finală. Decide echipa noastră, împreună cu juriul partener numit; nu există vot public, iar sponsorul nu are niciun cuvânt de spus. Pagina de prezentare arată doar pseudonimele, niciodată vârsta, școala sau numele real.",
+      "publish": "Publică rezultatele",
+      "needWinner": "Alege cel puțin o înscriere câștigătoare ca să poți publica rezultatele.",
+      "publishedOn": "Rezultate publicate pe {{date}}. Pagina de prezentare arată înscrierile câștigătoare și pe cele din finală, după pseudonim.",
+      "placingFor": "Rezultat pentru {{name}}",
+      "placings": {
+        "none": "Fără loc",
+        "finalist": "În finală",
+        "winner": "Câștigă"
+      },
+      "parentConsent": "Avem acordul unui părinte sau tutore pentru datele de livrare",
+      "markPrizeSent": "Marchează premiul trimis: {{name}}",
+      "prizeSentOn": "Trimis pe {{date}}",
+      "done": {
+        "placing": "Rezultatul a fost salvat.",
+        "publish": "Rezultatele sunt publicate pe pagina de prezentare.",
+        "prize": "Premiul este marcat ca trimis."
+      },
+      "failures": {
+        "entries_open": "Înscrierile sunt încă deschise. Alege rezultatele după ce se încheie.",
+        "not_valid": "Doar o înscriere validă poate primi un rezultat.",
+        "bad_placing": "Alege Câștigă, În finală sau Fără loc.",
+        "no_winner": "Alege mai întâi cel puțin o înscriere câștigătoare.",
+        "already_published": "Rezultatele sunt deja publicate.",
+        "not_a_winner": "Doar o înscriere câștigătoare primește premiu.",
+        "not_published": "Publică mai întâi rezultatele.",
+        "already_sent": "Premiul este deja marcat ca trimis.",
+        "parent_consent_needed": "Această persoană are sub 16 ani. Confirmă mai întâi că avem acordul unui părinte sau tutore.",
+        "not_allowed": "Doar proprietarul și administratorii pot stabili rezultatele concursurilor.",
         "failed": "Nu a funcționat. Încearcă din nou peste puțin timp."
       }
     }

@@ -1625,6 +1625,13 @@ A contest belongs to one landing page of type contest (S1-E11-14): the page tell
 - **The appeal:** the writer appeals from My reports and decisions like any decision (S1-E10-07). `decider_of_statement()` names the admin who disqualified, and `undo_decision_for_appeal()` makes the entry valid again when a moderator overturns it. A disqualified entry still holds the writer's one place, so `contest_entry_options()` returns it and `StoryContestCard` links to the decision.
 - **Tests:** `supabase/tests/database/266-contest-entries-disqualify.test.sql`, `e2e/contests.spec.ts`.
 
+### Judging, results and prizes (CONTESTS-13b2b)
+
+- **Judging:** once entries close (`contest_entries_have_closed()`), the Placing column (`PlacingControl` in `EntryJudging.tsx`) → `useContestEntries().judge({ kind: 'placing' })` → `admin_set_contest_placing()` stores `contest_entries.award` (winner or finalist). Only owner and admins choose; there is no public vote.
+- **Publishing:** `ContestResultsPanel` → `admin_publish_contest_results()` (needs a winner) sets `contests.results_published_at`. `landing_page()` then returns `results` from `contest_results_json()`: pen names only, winners first, a story link only when `listed_stories()` lets the visitor see it. `LandingPageView` shows them with `ContestResultsBlock`.
+- **Prizes:** `PrizeControl` → `admin_mark_contest_prize_sent(entry, parent_consent_on_file)`, which refuses a winner under 16 (or of unknown age) until staff confirm a parent's or guardian's consent is on file. Only the date and that confirmation are stored, never the delivery details.
+- **Tests:** `supabase/tests/database/267-contest-results.test.sql`, `e2e/contests.spec.ts`.
+
 ## Tags: approval and names in each language (CMS-1e)
 
 A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.
