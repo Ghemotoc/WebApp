@@ -375,6 +375,12 @@ function handlerFor(
       handleContact(request, {
         supportEmail: process.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
         productName: process.env.VITE_BRAND_NAME ?? brandDefaults.productName,
+        // Support tickets (S1-E11-13): the local Supabase and the local secret.
+        tickets: {
+          supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+          anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+          secret: process.env.SUPPORT_TICKET_SECRET,
+        },
         sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
       });
   }

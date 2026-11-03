@@ -1,0 +1,9 @@
+# Support
+
+Support tickets: every request for help as one numbered ticket (#1001 and up), answered from the admin site. Built by S1-E11-13 (bundle ADMIN-2h1, part 13a). The helpdesk product is OPEN, so tickets live in our own tables; email in and out comes in part h2, views, timers and canned replies in h3, merge, reports, data requests, spam and retention in h4.
+
+- Member side: `/support` (`MySupportPage`), `/support/new` (`NewSupportRequestPage`) and `/support/:number` (`MySupportTicketPage`); Settings shows `SupportRequestsSection`. Members never see internal notes or which person on the team answered.
+- Staff side (owner, admin and support; the `support_tickets` area): `/staff/support` (`StaffSupportInboxPage`) and `/staff/support/:number` (`StaffSupportTicketPage` with `RequesterPanel`, `TicketFieldsPanel` and `TicketHistory`). The panel shows the age group only; the email is behind a logged "Show"; someone under 16 gets the safeguarding banner.
+- `api/supportTickets.ts` (member: `create_my_support_ticket()`, `reply_my_support_ticket()`, `my_support_tickets()`, `my_support_ticket()`) and `api/staffSupportTickets.ts` (staff: `admin_support_inbox()`, `admin_support_ticket()`, `admin_update_support_ticket()`, `admin_reply_support_ticket()`, `admin_reveal_ticket_email()`); `hooks/useMySupport.ts` and `hooks/useStaffSupport.ts`; `lib/` holds the small pure helpers and their tests.
+- Contact us messages become tickets in `server/contact.ts` (`submit_contact_ticket()`, signed with `SUPPORT_TICKET_SECRET`).
+- Text: `src/locales/{ro,en}/support.json`, loaded with the pages (`registerSupportTranslations.ts`). The database side: `…_admin2_h1_support_enums.sql` and `…_admin2_h1_support_tickets.sql`.

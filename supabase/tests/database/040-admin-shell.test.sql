@@ -90,8 +90,8 @@ select results_eq(
 select pg_temp.sign_in_as((select support from ids));
 select results_eq(
   $$ select area, access from public.my_staff_areas() order by area $$,
-  $$ values ('data_requests', 'act'), ('on_call_rota', 'view'), ('reveal_email', 'act'), ('safety_contacts', 'act'), ('stories', 'view'), ('users', 'view') $$,
-  'support sees users, stories and the on-call rota to view, and acts on data requests, revealing an email and the safety contacts (S1-E10-13b)');
+  $$ values ('data_requests', 'act'), ('on_call_rota', 'view'), ('reveal_email', 'act'), ('safety_contacts', 'act'), ('stories', 'view'), ('support_tickets', 'act'), ('users', 'view') $$,
+  'support sees users, stories and the on-call rota to view, and acts on data requests, revealing an email, the safety contacts (S1-E10-13b) and support tickets (S1-E11-13)');
 select pg_temp.sign_in_as((select editor from ids));
 select is_empty($$ select * from public.my_staff_areas() $$,
   'a content editor has no area yet (decided 17 Oct 2026, 19:19)');

@@ -1,0 +1,174 @@
+{
+  "eyebrow": "Ajutor",
+  "signedOut": "Intră în cont ca să vezi cererile tale de ajutor. Fără cont, folosește formularul Contactează-ne.",
+  "logIn": "Intră în cont",
+  "contactUs": "Contactează-ne",
+  "back": "Înapoi la cererile tale de ajutor",
+  "statuses": {
+    "new": "Nouă",
+    "open": "Deschisă",
+    "pending_on_user": "Așteaptă răspunsul tău",
+    "on_hold": "În așteptare",
+    "solved": "Rezolvată",
+    "closed": "Închisă"
+  },
+  "categories": {
+    "account": "Contul tău",
+    "writing": "Scris",
+    "reading": "Citit",
+    "safety_question": "O întrebare despre siguranță",
+    "school_or_university": "Școală sau universitate",
+    "bug": "Ceva nu merge",
+    "other": "Altceva"
+  },
+  "list": {
+    "documentTitle": "Cererile tale de ajutor",
+    "title": "Cererile tale de ajutor",
+    "intro": "Cere ajutor echipei de suport pentru cont, scris, citit sau orice altceva. O persoană răspunde la fiecare cerere.",
+    "write": "Cere ajutor",
+    "empty": "Încă nu ai cerut ajutor.",
+    "loadFailed": "Nu am putut încărca cererile tale. Verifică conexiunea și încearcă din nou.",
+    "meta": "#{{number}} · {{status}} · {{date}}",
+    "answered": "Ți-am răspuns"
+  },
+  "new": {
+    "documentTitle": "Cere ajutor",
+    "title": "Cere ajutor",
+    "intro": "Spune-ne ce s-a întâmplat. Te rugăm să nu scrii parole sau datele private ale altcuiva.",
+    "safety": "Dacă cineva e în pericol chiar acum, sună la 112. Ca să raportezi ceva ce ai văzut aici, folosește butonul Raportează de lângă acel lucru.",
+    "category": "Despre ce este vorba?",
+    "subject": "Subiect",
+    "body": "Mesajul tău",
+    "bodyHint": "Până la 4.000 de caractere.",
+    "send": "Trimite",
+    "sending": "Se trimite…",
+    "sent": "Trimis. Cererea ta este #{{number}}. Îți răspundem aici.",
+    "open": "Deschide cererea"
+  },
+  "ticket": {
+    "documentTitle": "Cererea de ajutor #{{number}}",
+    "meta": "#{{number}} · {{status}}",
+    "messagesLabel": "Mesaje",
+    "you": "Tu",
+    "team": "Echipa de suport",
+    "replyLabel": "Răspunsul tău",
+    "send": "Trimite",
+    "closed": "Această cerere este închisă. Dacă mai ai nevoie de ajutor, cere din nou și pomenește #{{number}}.",
+    "notFound": "Nu am găsit această cerere în contul tău.",
+    "loadFailed": "Nu am putut încărca această cerere. Verifică conexiunea și încearcă din nou."
+  },
+  "failures": {
+    "refused": "Te rugăm să completezi toate câmpurile.",
+    "too_many": "Ai trimis multe cereri în ultima oră. Încearcă din nou peste {{minutes}} minute.",
+    "not_found": "Nu am găsit această cerere în contul tău.",
+    "not_allowed": "Nu poți face asta.",
+    "unreachable": "Nu am putut trimite. Verifică conexiunea și încearcă din nou."
+  },
+  "settings": {
+    "heading": "Cererile tale de ajutor",
+    "intro": "Cere ajutor echipei de suport și citește răspunsurile într-un singur loc.",
+    "open": "Vezi cererile tale de ajutor"
+  },
+  "staff": {
+    "documentTitle": "Tichete de suport",
+    "eyebrow": "Echipă · suport",
+    "heading": "Tichete de suport",
+    "intro": "Fiecare cerere venită pe email, prin Contactează-ne sau din aplicație, ca un tichet numerotat. Răspunsurile pleacă de la echipa de suport; notele interne rămân la echipă.",
+    "filtersLabel": "Restrânge lista",
+    "status": "Stare",
+    "openStatuses": "Încă nerezolvate",
+    "allStatuses": "Toate",
+    "assigned": "Atribuit",
+    "assignedAll": "Oricui sau nimănui",
+    "assignedMine": "Mie",
+    "assignedNobody": "Nimănui",
+    "listLabel": "Tichete",
+    "empty": "Niciun tichet nu se potrivește acestor filtre.",
+    "loading": "Se încarcă tichetele…",
+    "loadFailed": "Nu am putut încărca tichetele. Încearcă din nou peste puțin timp.",
+    "notAllowed": "Doar echipa de suport poate citi tichetele de suport.",
+    "notFound": "Nu există niciun tichet cu acest număr.",
+    "rowMeta": "#{{number}} · {{who}} · {{channel}} · {{count}} mesaje · {{date}}",
+    "fromHandle": "de la @{{handle}}",
+    "fromEmail": "doar email",
+    "unassigned": "Neatribuit",
+    "assignedToYou": "Atribuit ție",
+    "assignedTo": "Atribuit lui @{{handle}}",
+    "ticketMeta": "#{{number}} · venit prin {{channel}}",
+    "back": "Înapoi la tichete",
+    "channels": {
+      "email": "email",
+      "contact_form": "Contactează-ne",
+      "in_app": "aplicație"
+    },
+    "priorities": {
+      "low": "Mică",
+      "normal": "Normală",
+      "high": "Mare",
+      "urgent": "Urgentă"
+    },
+    "fields": {
+      "heading": "Tichet",
+      "status": "Stare",
+      "priority": "Prioritate",
+      "category": "Categorie",
+      "assignee": "Atribuit lui",
+      "assigneeHint": "Numele de utilizator al cuiva din echipa de suport, sau gol pentru nimeni.",
+      "tags": "Etichete",
+      "tagsHint": "Cuvinte cu litere mici, despărțite prin virgulă: de exemplu ciorne, autentificare.",
+      "save": "Salvează schimbările",
+      "saved": "Salvat.",
+      "failed": "Nu am putut salva. Verifică numele de utilizator și etichetele, apoi încearcă din nou."
+    },
+    "requester": {
+      "heading": "Cine cere ajutor",
+      "account": "Cont",
+      "openAccount": "Deschide @{{handle}} în Utilizatori",
+      "emailOnly": "Doar email: niciun cont nu folosește această adresă.",
+      "ageGroup": "Grupa de vârstă",
+      "email": "Email",
+      "showEmail": "Arată emailul",
+      "emailHint": "Afișarea adresei se scrie în jurnalul de audit.",
+      "emailFailed": "Nu am putut arăta emailul. Încearcă din nou peste puțin timp.",
+      "ageGroups": {
+        "under_13": "Sub 13",
+        "13_to_15": "13–15",
+        "16_to_17": "16–17",
+        "18_plus": "18 sau peste",
+        "unknown": "Încă necunoscută"
+      }
+    },
+    "under16": {
+      "title": "Această persoană are sub 16 ani",
+      "body": "Răspunde doar în acest tichet, niciodată prin mesaj privat. Folosește cuvinte simple și blânde și nu cere mai multe date personale decât îți trebuie. Dacă persoana ar putea fi în pericol, anunță imediat echipa de protecție."
+    },
+    "messages": {
+      "label": "Mesaje",
+      "member": "@{{handle}}",
+      "emailSender": "Persoana (prin email)",
+      "teamBy": "@{{handle}} pentru echipa de suport",
+      "note": "Notă internă de la @{{handle}} (doar echipa o vede)"
+    },
+    "reply": {
+      "label": "Răspunde persoanei sau adaugă o notă",
+      "send": "Trimite răspunsul",
+      "addNote": "Adaugă o notă internă",
+      "closed": "Acest tichet este închis: poți adăuga note, nu răspunsuri."
+    },
+    "history": {
+      "heading": "Istoric",
+      "system": "Sistemul",
+      "nobody": "nimeni",
+      "none": "niciuna",
+      "line": "{{who}}: {{what}}",
+      "changes": {
+        "created": "Tichet creat",
+        "status": "Starea din {{before}} în {{after}}",
+        "priority": "Prioritatea din {{before}} în {{after}}",
+        "category": "Categoria din {{before}} în {{after}}",
+        "assignee": "Atribuirea din {{before}} în {{after}}",
+        "tags": "Etichetele din {{before}} în {{after}}"
+      }
+    }
+  }
+}

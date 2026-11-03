@@ -8,7 +8,7 @@
  * Privacy (who sees the profile and the library, online status, S1-E13-01), Notifications (the
  * notification emails, S1-E7-02), Messages (S1-E9-04), "Blocked accounts" (S1-E5-05), Canva
  * (S1-E3-12, while it applies), Signed-in devices (S1-E2-05), Download my data (S1-E13-02), Data
- * requests (S1-E11-09, once the person has one),
+ * requests (S1-E11-09, once the person has one), Your support requests (S1-E11-13),
  * Delete account (S1-E13-03) and the Legal panel. The board's
  * other tabs (Language, My certificates) arrive with their stories, so only what works is shown
  * (docs/board-fixes.md).
@@ -32,6 +32,7 @@ import { NotificationEmailsSection } from '@/features/notifications/components/N
 import { AvatarBuilderSection } from '@/features/avatars/components/AvatarBuilderSection';
 import { PrivacySettingsSection } from '@/features/privacy/components/PrivacySettingsSection';
 import { ReportQuestionsSection } from '@/features/reporting/components/ReportQuestionsSection';
+import { SupportRequestsSection } from '@/features/support/components/SupportRequestsSection';
 import { TeacherBadgeSection } from '@/features/teacher-badge/components/TeacherBadgeSection';
 
 import { useMyNames } from '../hooks/useMyNames';
@@ -130,6 +131,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       <SignedInDevicesSection />
       {/* A copy of everything about the account, as one ZIP (S1-E13-02). */}
       <DownloadMyDataSection />
+      {/* Asking the support team for help, and their answers (S1-E11-13; ADMIN-2h1). */}
+      <SupportRequestsSection />
       {/* Requests about the person's data, and "Was it you?" (S1-E11-09; ADMIN-2c1). */}
       <MyDataRequestsSection />
       {/* Close the account now, deleted for good 14 days later (S1-E13-03). */}

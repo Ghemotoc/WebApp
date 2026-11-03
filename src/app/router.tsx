@@ -102,6 +102,24 @@ const staffRoutes: RouteObject = {
         return { Component: StaffMailThreadPage };
       },
     },
+    // Support tickets (S1-E11-13; ADMIN-2h1): the inbox and one ticket, for owner, admin and
+    // support.
+    {
+      path: 'support',
+      lazy: async () => {
+        const { StaffSupportInboxPage } =
+          await import('@/features/support/components/StaffSupportInboxPage');
+        return { Component: StaffSupportInboxPage };
+      },
+    },
+    {
+      path: 'support/:number',
+      lazy: async () => {
+        const { StaffSupportTicketPage } =
+          await import('@/features/support/components/StaffSupportTicketPage');
+        return { Component: StaffSupportTicketPage };
+      },
+    },
     // Tags writers add, waiting for approval, and tags missing a name (CMS-1e): owner, admin and
     // moderator.
     {
@@ -466,6 +484,39 @@ const certificateRoutes: RouteObject[] = [
       const { VerifyCertificatePage } =
         await import('@/features/certificates/components/VerifyCertificatePage');
       return { Component: VerifyCertificatePage };
+    },
+  },
+];
+
+/**
+ * Your support requests (S1-E11-13; ADMIN-2h1): the list, asking for help and one request.
+ * Settings links to the list. Each is loaded when opened.
+ */
+const supportRoutes: RouteObject[] = [
+  {
+    path: '/support',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { MySupportPage } = await import('@/features/support/components/MySupportPage');
+      return { Component: MySupportPage };
+    },
+  },
+  {
+    path: '/support/new',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { NewSupportRequestPage } =
+        await import('@/features/support/components/NewSupportRequestPage');
+      return { Component: NewSupportRequestPage };
+    },
+  },
+  {
+    path: '/support/:number',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { MySupportTicketPage } =
+        await import('@/features/support/components/MySupportTicketPage');
+      return { Component: MySupportTicketPage };
     },
   },
 ];
@@ -1037,6 +1088,7 @@ function pageRoutes(): RouteObject[] {
     },
     ...certificateRoutes,
     ...moderatorMailRoutes,
+    ...supportRoutes,
     ...messagesRoutes,
     // Lane A: writing and reading (S1-E3, S1-E4).
     ...writeRoutes,

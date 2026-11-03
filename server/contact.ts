@@ -1,7 +1,10 @@
 /**
  * The Contact us form's server side: turns a message into two emails, one to the support inbox
  * and one acknowledgement to the sender, with a reference (story S1-E14-04; decided 23 Oct 2026,
- * Q10; DSA art. 12: a user-friendly contact point, not solely automated).
+ * Q10; DSA art. 12: a user-friendly contact point, not solely automated). Since S1-E11-13
+ * (bundle ADMIN-2h1) the message is also saved as a support ticket, and the reference is the
+ * ticket's number (#1042), when SUPPORT_TICKET_SECRET is set; without it, or if the database
+ * can't be reached, the old reference (C-<year>-<4 digits>, never stored) keeps the form working.
  *
  * What it does: checks the message against the shared schema (src/schemas/contact.ts), drops a
  * bot that filled the hidden "website" field (Q10d), makes a reference (C-<year>-<4 digits>,
@@ -14,6 +17,8 @@
  * Who calls it: functions/api/contact.ts on Cloudflare, the Vite plugin locally.
  */
 import { contactRequestSchema, type ContactRequest } from '../src/schemas/contact';
+
+import { hmacHex } from './signup-context';
 
 /** One email to send. */
 export interface OutgoingEmail {
@@ -41,6 +46,12 @@ export interface ContactOptions {
   supportEmail: string;
   productName: string;
   sendEmail: SendEmail;
+  /**
+   * Where support tickets are saved (S1-E11-13): the database, as the front end reads it, and the
+   * secret that signs each message (SUPPORT_TICKET_SECRET; the same value is in Supabase Vault as
+   * support_ticket_secret). Left out, or with an empty secret, no ticket is saved.
+   */
+  tickets?: { supabaseUrl: string; anonKey: string; secret: string | undefined };
   /** Picks the 4-digit part of the reference; passed in so tests are exact. */
   randomDigits?: () => string;
   now?: Date;
@@ -93,6 +104,51 @@ export function makeContactReference(now: Date, randomDigits: () => string): str
 }
 
 /**
+ * Saves the message as a support ticket through submit_contact_ticket(), signed so the database
+ * knows it came through this server (S1-E11-13 criterion 1).
+ *
+ * @param message - the checked message
+ * @param tickets - the database and the secret
+ * @param now - the current time, sent so the database can refuse an old copy
+ * @returns the ticket's reference ("#1042"), or null when it couldn't be saved
+ * Errors: none thrown; a failure falls back to the old reference so the person is still answered.
+ */
+export async function saveContactTicket(
+  message: ContactRequest,
+  tickets: NonNullable<ContactOptions['tickets']>,
+  now: Date,
+): Promise<string | null> {
+  // Step 1: without the secret nothing can be saved.
+  if (tickets.secret === undefined || tickets.secret === '' || tickets.supabaseUrl === '')
+    return null;
+  // Step 2: the fields the database reads, signed exactly as sent.
+  const payload = JSON.stringify({
+    topic: message.topic,
+    message: message.message,
+    email: message.email,
+    language: message.language,
+    sentAt: now.toISOString(),
+  });
+  try {
+    const response = await fetch(`${tickets.supabaseUrl}/rest/v1/rpc/submit_contact_ticket`, {
+      method: 'POST',
+      headers: {
+        apikey: tickets.anonKey,
+        Authorization: `Bearer ${tickets.anonKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ payload, signature: await hmacHex(payload, tickets.secret) }),
+    });
+    if (!response.ok) return null;
+    // Step 3: the number the person quotes.
+    const ticketNumber = (await response.json()) as unknown;
+    return typeof ticketNumber === 'number' ? `#${String(ticketNumber)}` : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * The email staff receive: the topic in the subject, the message, and who wrote (username and
  * user ID for a signed-in person; never the year of birth or the age check).
  *
@@ -123,7 +179,8 @@ export function staffEmail(
  *
  * @param request - the request with the form's JSON
  * @param options - the inbox, the product name, how to send, and (for tests) the clock and digits
- * @returns 200 with { reference }; 400 for a message that fails the schema; 200 with a made-up
+ * @returns 200 with { reference } (the ticket number when saved); 400 for a message that fails the
+ *   schema; 200 with a made-up
  *   reference for a bot that filled the honeypot (it learns nothing); 502 when sending fails
  * Errors: none thrown; nothing is logged (CLAUDE.md rule 12).
  */
@@ -139,10 +196,14 @@ export async function handleContact(request: Request, options: ContactOptions): 
   const parsed = contactRequestSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return json({ error: 'invalid' }, 400);
   const message = parsed.data;
-  const reference = makeContactReference(now, randomDigits);
-  // Step 2: a bot that filled the hidden field gets a reference and nothing is sent (Q10d).
-  if (message.website !== undefined && message.website !== '') return json({ reference }, 200);
-  // Step 3: the two emails, from the product's own address.
+  // Step 2: a bot that filled the hidden field gets a reference and nothing is saved or sent (Q10d).
+  if (message.website !== undefined && message.website !== '')
+    return json({ reference: makeContactReference(now, randomDigits) }, 200);
+  // Step 3: the support ticket, whose number is the reference (S1-E11-13), or the old reference.
+  const ticketReference =
+    options.tickets === undefined ? null : await saveContactTicket(message, options.tickets, now);
+  const reference = ticketReference ?? makeContactReference(now, randomDigits);
+  // Step 4: the two emails, from the product's own address.
   const from: EmailSender = { name: `${options.productName} team`, email: options.supportEmail };
   const acknowledgement = acknowledgements[message.language];
   try {

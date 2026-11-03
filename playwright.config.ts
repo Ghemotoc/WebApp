@@ -109,6 +109,9 @@ export default defineConfig({
       // The picture check's signing secret for local tests only (S1-E10-05); e2e/picture-check
       // puts the same value in the local database's Vault. Never a real secret.
       PICTURE_CHECK_SECRET: 'local-e2e-picture-secret',
+      // Support tickets' signing secret for local tests only (S1-E11-13); e2e/support-tickets puts
+      // the same value in the local database's Vault. Never a real secret.
+      SUPPORT_TICKET_SECRET: 'local-e2e-support-secret',
       // The age check's signing secret for local tests only (S1-E2-08); e2e/age-check puts the
       // same value in the local database's Vault. Never a real secret.
       AGE_CHECK_SECRET: 'local-e2e-age-secret',
