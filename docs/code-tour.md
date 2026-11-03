@@ -771,6 +771,16 @@ Story settings › Cover / Settings › Profile picture (only while the picture_
        pending (a service down) → usePendingPictureRetry tries again, at most 5 times
 ```
 
+**Pictures that wait for a moderator (ADMIN-2e1b).** Once the check passes, a picture in an All ages or 13+ story, or any picture from someone under 16, is held instead (`picture_needs_person()` inside `record_picture_check()`) with a `picture_review` case. Lowering a story to All ages or 13+ holds its live pictures again (trigger `stories_send_pictures_to_review`). A moderator decides on Moderation › Pictures to check:
+
+```
+/staff/pictures → PicturesToCheckPage → hooks/usePicturesToCheck → api/picturesToCheck.ts
+  rpc admin_pictures_to_check()      the waiting pictures (signed addresses, no download)
+  rpc admin_approve_picture()        green; yellow first raises the story (admin_raise_story_rating)
+  rpc admin_reject_picture()         red: a reason, the statement of reasons, then decide_case()
+    → the case is decided → apply_picture_decision() shows or removes the picture
+```
+
 **Pictures in chapters (S1-E3-09).** The same check, for a picture inside a chapter:
 
 ```

@@ -60,7 +60,8 @@
     "report": "Report",
     "authority_order": "Removal order",
     "picture_check": "Picture check",
-    "downvotes": "Private downvotes"
+    "downvotes": "Private downvotes",
+    "picture_review": "Picture waiting for a moderator"
   },
   "statuses": {
     "open": "Open",
@@ -382,7 +383,13 @@
     "kind": "Kind",
     "kinds": {
       "cover": "Story cover",
-      "avatar": "Profile picture"
+      "avatar": "Profile picture",
+      "chapter_picture": "Chapter picture",
+      "drawing": "Drawing",
+      "quote_card": "Quote card",
+      "space_banner": "Space banner",
+      "atlas_image": "Story world picture",
+      "signature_picture": "Signature picture"
     },
     "status": "Status",
     "statuses": {
@@ -472,5 +479,56 @@
     "loadFailed": "We couldn’t load the messages. Try again in a moment.",
     "loggedHint": "Private messages are shown only in a case about one, and every time you open them it’s written in the audit log.",
     "decisionHint": "Removing the item takes away the reported message only; the chat and the other messages stay."
+  },
+  "pictures": {
+    "documentTitle": "Pictures to check · {{productName}}",
+    "heading": "Pictures to check",
+    "intro": "Every picture in an All ages or 13+ story, and every picture from someone under 16, waits here after the automatic check. Nobody else sees it until you decide.",
+    "guidance": "Approve drawings and illustrations that fit the story’s rating. No photographs, real people or celebrities. If a character could look under 18, press Reject.",
+    "notAllowed": "Only the moderation team can check pictures.",
+    "loading": "Loading the pictures…",
+    "none": "No pictures are waiting.",
+    "listLabel": "Pictures waiting for a decision",
+    "alt": "The picture uploaded by @{{handle}}",
+    "uploader": "Uploaded by",
+    "ageGroup": "Age group",
+    "noStory": "Not in a story",
+    "waitingSince": "Waiting since",
+    "approve": "Approve",
+    "approveNote": "Approved on Pictures to check.",
+    "raise": "Approve and raise the rating",
+    "raiseQuestion": "What does the picture show?",
+    "raiseChoices": {
+      "18_plus": "Nudity, erotic or explicit drawn content of adults: the story becomes 18+",
+      "16_plus": "Suggestive, no nudity: the story becomes at least 16+"
+    },
+    "raiseSubmit": "Approve and raise",
+    "raiseMessage": "A picture in your story needs a higher rating, so we raised the story to {{rating}}. Ratings only go up when staff change them.",
+    "ratings": {
+      "all_ages": "All ages",
+      "13_plus": "13+",
+      "16_plus": "16+",
+      "18_plus": "18+"
+    },
+    "reject": "Reject",
+    "rejectQuestion": "What does this image show?",
+    "rejectChoose": "Choose one",
+    "rejectNote": "Note for the team",
+    "rejectNoteHint": "Only staff read this.",
+    "rejectPreview": "The uploader will read:",
+    "rejectIncomplete": "Choose what the image shows and write a note.",
+    "rejectSubmit": "Reject and remove",
+    "rejectMessage": "Your picture wasn’t approved because it doesn’t follow our community guidelines (it shows: {{reason}}), so we’ve removed it. You’re welcome to upload another picture. Read our guidelines here: {{link}}",
+    "cancel": "Cancel",
+    "reasons": {
+      "photograph": "a photograph",
+      "photographic_sexual_image": "a photographic sexual image",
+      "real_person": "a real person",
+      "celebrity": "a celebrity",
+      "sexual_image_of_minor": "a sexual image of a minor",
+      "gore": "gore",
+      "hate": "hate",
+      "other": "something else our guidelines don’t allow"
+    }
   }
 }

@@ -10,7 +10,7 @@
  *   ADMIN-2, part e1);
  * - the stored file has no location or camera data and is at most 1,600 px wide, though the
  *   chosen JPEG carried both and was 2,400 px wide (criterion 2);
- * - a clean picture shows to readers at once; a flagged one shows "Picture being checked" and
+ * - a clean picture in this All ages story waits for a moderator, then shows to readers; a flagged one shows "Picture being checked" and
  *   its file is never sent (criterion 3);
  * - a reader can report a picture from the button under it (criterion 4);
  * - with the flag off there is no Insert button;
@@ -26,6 +26,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
+import { approveWaitingPictures } from './support/pictures';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
@@ -188,7 +189,8 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
       'Map of the hills',
     );
     const figures = page.getByRole('figure', { name: 'Picture in this chapter' });
-    await expect(figures.first().getByText('Checked', { exact: true })).toBeVisible();
+    // The seed story is All ages, so even a clean picture waits for a moderator (ADMIN-2e1b).
+    await expect(figures.first().getByText('Waiting for a person')).toBeVisible();
 
     // Criterion 2: the stored file is a new one: no Exif, no GPS marker, at most 1,600 px wide.
     const stored = await pictureBytes(page, 'Map of the hills');
@@ -218,7 +220,7 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
       runSql(
         `select string_agg(status::text, ',' order by created_at) from public.picture_checks where chapter_id = '${chapterId}'`,
       ),
-    ).toBe('passed,held');
+    ).toBe('held,held');
     await page.context().close();
   });
 
@@ -227,6 +229,8 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
   }) => {
     runSql(`select set_config('request.jwt.claims', '{"sub": "${writerId}", "role": "authenticated"}', false);
       select public.publish_chapter('${chapterCode}');`);
+    // A moderator approves the clean picture on Pictures to check; the flagged one stays held.
+    expect(approveWaitingPictures(`chapter_id = '${chapterId}'`)).toBe('1');
     const page = await openAs(browser, 'teen_17', readerAddress);
     await expect(page.getByRole('img', { name: 'Map of the hills' })).toBeVisible();
     await expect(page.getByText('Picture being checked')).toHaveCount(1);

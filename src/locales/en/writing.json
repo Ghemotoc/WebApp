@@ -453,7 +453,7 @@
     "working": "One moment. We’re talking to Canva…",
     "cancelled": "You didn’t connect Canva, so nothing was shared with Canva. You can try again any time from your story’s settings.",
     "saved": "Your Canva cover is saved.",
-    "savedChecking": "You can see it now. Readers see it once our picture check has looked at it, usually within a few minutes. You can close this tab.",
+    "savedChecking": "You can see it now. Readers see it once it has been checked. That takes a few minutes, or up to two days when a person on our moderation team looks at it. You can close this tab.",
     "savedVisible": "Readers can see it now. You can close this tab.",
     "design": "Design it in Canva",
     "newTab": "(opens a new tab)",

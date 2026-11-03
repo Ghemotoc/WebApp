@@ -11,7 +11,7 @@
  *   picked from the chapters, and long boxes grow with the text (S1-E17-09);
  * - a field of the writer's own shows on every sheet; removing it hides it and keeps its value,
  *   and bringing it back shows the value again (S1-E17-10);
- * - with uploads on, a picture shows once its check passed, with alt text, and Remove brings the
+ * - with uploads on, a picture shows once a moderator approved it (the seed story is All ages), with alt text, and Remove brings the
  *   initials back (S1-E17-11);
  * - Delete asks twice, and the at-a-glance page counts the cast (S1-E17-13, S1-E17-06);
  * - the page passes axe, doesn't scroll sideways and has no doodle over text at 390, 768 and
@@ -26,6 +26,7 @@ import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessib
 import { runSql } from './support/database';
 import { expectNoDoodleOverlap } from './support/doodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
+import { approveWaitingPictures } from './support/pictures';
 
 const writerStoryId = '00000000-0000-4000-9000-000000000001';
 const castAddress = '/plan/s/statia-meteo-seed01/characters';
@@ -194,7 +195,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await page.context().close();
   });
 
-  test('a picture shows once its check passed, and Remove brings the initials back', async ({
+  test('a picture shows once a moderator approved it, and Remove brings the initials back', async ({
     browser,
   }) => {
     // The local server signs check results with PICTURE_CHECK_SECRET (playwright.config.ts); the
@@ -211,7 +212,9 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
       mimeType: 'image/png',
       buffer: tinyPng,
     });
-    await expect(pictureCard.getByText('Your picture passed the check.')).toBeVisible();
+    // The seed story is All ages, so the portrait waits for a moderator (ADMIN-2e1b).
+    await expect(pictureCard.getByText(/will look at your picture before others/)).toBeVisible();
+    expect(approveWaitingPictures("kind = 'atlas_image'")).toBe('1');
     await pictureCard
       .getByRole('textbox', { name: 'Describe the picture' })
       .fill('Ana on the cliff');

@@ -159,6 +159,12 @@ insert into payloads values (json_build_object('pictureId', (select id from name
   'outcome', 'passed', 'provider', 'stub', 'flags', json_build_object('nudity', 0.01))::text);
 select lives_ok($$ select public.record_picture_check((select body from payloads), pg_temp.signed((select body from payloads))) $$,
   'the picture check records that the portrait passed');
+-- The seed story is All ages, so the portrait also waits for a moderator (ADMIN-2e1b), who
+-- approves it on Pictures to check.
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select public.admin_approve_picture((select case_id from public.picture_checks
+  where id = (select id from named where label = 'portrait')), 'Drawn portrait.');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(public.story_cast('statia-meteo-seed01') #>> '{characters,0,picture,state}', 'visible',
   'once it passed, it shows on the sheet');
 select is((select count(*)::integer from storage.objects where bucket_id = 'atlas-images'), 2,

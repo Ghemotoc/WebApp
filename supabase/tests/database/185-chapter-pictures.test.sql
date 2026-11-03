@@ -4,8 +4,9 @@
 --   (criterion 1; the rights tick box was removed on 2 Nov 2026, bundle ADMIN-2 part e1);
 -- - the chapter text may hold only the writer's own chapter pictures, each with alt text, and a
 --   picture's address and alt text are not counted as words (criterion 1; rule 8);
--- - the picture check decides who sees it: a clean picture shows to readers, a flagged one is
---   "being checked" with no file for anyone but the writer and staff (criterion 3);
+-- - the picture check decides who sees it: a clean picture in this All ages story waits for a
+--   moderator and shows to readers once approved (ADMIN-2e1b), a flagged one is "being checked"
+--   with no file for anyone but the writer and staff (criterion 3);
 -- - readers can report a chapter picture, and its summary and notification name the chapter
 --   (criterion 4);
 -- - policies chapter_images_insert_own, chapter_images_select_visible and
@@ -123,11 +124,16 @@ insert into payloads values
   ('flagged', json_build_object('pictureId', (select id from named where label = 'flagged'), 'outcome', 'flagged',
      'provider', 'stub', 'flags', json_build_object('gore', 0.97))::text);
 select is(public.record_picture_check((select body from payloads where label = 'clean'),
-    pg_temp.signed((select body from payloads where label = 'clean')))::text, 'passed',
-  'a clean chapter picture passes straight away');
+    pg_temp.signed((select body from payloads where label = 'clean')))::text, 'held',
+  'a clean chapter picture in an All ages story waits for a moderator (ADMIN-2e1b)');
 select is(public.record_picture_check((select body from payloads where label = 'flagged'),
     pg_temp.signed((select body from payloads where label = 'flagged')))::text, 'held',
   'a flagged one is held for a person');
+-- A moderator (…10) approves the clean one on Pictures to check, so readers see it below.
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select public.admin_approve_picture((select case_id from public.picture_checks
+  where id = (select id from named where label = 'clean')), 'Hand-drawn map.');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 
 /* ---------- 3. The text (criterion 1, rule 8) ---------- */
 

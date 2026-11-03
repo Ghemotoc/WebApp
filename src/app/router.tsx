@@ -121,6 +121,16 @@ const staffRoutes: RouteObject = {
         return { Component: ForumsAdminPage };
       },
     },
+    // Moderation › Pictures to check (ADMIN-2e1b): the moderation team approves or rejects
+    // pictures that wait for a person before anyone else sees them.
+    {
+      path: 'pictures',
+      lazy: async () => {
+        const { PicturesToCheckPage } =
+          await import('@/features/moderation/components/PicturesToCheckPage');
+        return { Component: PicturesToCheckPage };
+      },
+    },
     // Appeals against moderation decisions (S1-E10-07): owner, admin and moderator.
     {
       path: 'appeals',
