@@ -20,7 +20,15 @@ Bundle 13 CONTESTS, part a2b: Remind me on landing pages (S1-E11-14 criterion 8)
 
 ## Local check run
 
-LOCALRUN
+Run on the branch head (Node 24, local Supabase), after rebasing onto main with #308:
+
+- lint, prettier, typecheck, types:check, i18n:check, migrations:check, third-party check: pass
+- `npm test` (Vitest): 220 files, 1379 tests, all pass
+- `npx supabase db reset && npx supabase test db`: 173 files, 4174 tests, all pass
+- `wrangler pages functions build`: compiles
+- `npx playwright test e2e/landing-remind-me.spec.ts e2e/landing-pictures-featured.spec.ts e2e/notifications.spec.ts`: 28 passed
+
+The full end-to-end run comes once at the end of bundle 13 (Robert's choice, 30 Oct 2026). GitHub Actions is still blocked by billing, so this merges on the local run and the Cloudflare build.
 
 GitHub Actions is blocked by billing, so this pull request is merged on local checks and Cloudflare's build (Robert's choice, 2 Nov 2026, 15:20 UTC).
 
