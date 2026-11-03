@@ -61,7 +61,11 @@ function dayFromToday(days: number): string {
 }
 
 /** Opens an address in English as a persona. */
-async function openAs(browser: Browser, persona: SignInPersonaName, address: string): Promise<Page> {
+async function openAs(
+  browser: Browser,
+  persona: SignInPersonaName,
+  address: string,
+): Promise<Page> {
   runSql(`update public.profiles set locale = 'en' where handle = '${persona}';`);
   const context = await browser.newContext();
   await useSessionInBrowser(context, (await signInPersona(persona)).session);
@@ -83,7 +87,10 @@ async function fillDetails(page: Page): Promise<void> {
   await page.getByLabel('Entries close').fill(dayFromToday(10));
   await page.getByLabel('Results').fill(dayFromToday(20));
   await page.getByRole('checkbox', { name: '18 and over' }).check();
-  await page.getByRole('group', { name: 'Markets' }).getByRole('checkbox').first().check();
+  await page
+    .getByRole('group', { name: 'Markets' })
+    .getByRole('checkbox', { name: 'Romania' })
+    .check();
   await page.getByRole('checkbox', { name: 'Romanian' }).check();
   await page.getByLabel('What counts, in Română').fill('O povestire');
   await page.getByLabel('What counts, in English').fill('A short story');
@@ -118,8 +125,12 @@ test.describe('Contests (S1-E11-15)', () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByText('Saved.', { exact: true })).toBeVisible();
     await expect(page.getByText('Everything is in place.', { exact: false })).toBeVisible();
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze();
-    expect(results.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? ''))).toEqual([]);
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+    expect(
+      results.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? '')),
+    ).toEqual([]);
 
     // Step 3: open it.
     await page.getByRole('button', { name: 'Open the contest' }).click();
@@ -133,8 +144,12 @@ test.describe('Contests (S1-E11-15)', () => {
     await expect(page.getByRole('group', { name: 'Contests' })).toBeVisible();
     await page.getByRole('button', { name: 'Enter The trial contest' }).click();
     await expect(page.getByText('This story is entered.')).toBeVisible();
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze();
-    expect(results.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? ''))).toEqual([]);
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+    expect(
+      results.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? '')),
+    ).toEqual([]);
 
     // Step 2: withdraw before entries close.
     await page.getByRole('button', { name: 'Withdraw from The trial contest' }).click();
