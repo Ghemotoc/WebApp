@@ -14,11 +14,17 @@ Bundle 12 ADMIN-2, last part: the admin epic check, round two (S1-E11-QA), and t
 ## How it was tested
 
 - The two new tests pass on their own and in the runs below.
-- The bundle's full e2e run: FULLRUN
+- The bundle's full e2e run: every spec file on one local database. The parallel first pass clashed where specs share seed personas, so every file then ran again one worker at a time after a fresh reset: all 643 tests of the last pass and the earlier pass pass except two. `writer-ranks` › axe, every view, failed on a language left by another file and passes when run alone (5 passed). `reader-performance` › first paragraph within 2 seconds on a throttled phone measured about 2.8 s; it fails on main too on this machine (known since #210).
 
 ## Local check run
 
-LOCALRUN
+Run on the branch head before opening (Node 24, local Supabase):
+
+- lint, prettier, typecheck, types:check, i18n:check, migrations:check, third-party check: pass
+- `npm test` (Vitest): 219 files, 1365 tests, all pass
+- `npx supabase db reset && npx supabase test db`: 170 files, 4098 tests, all pass
+- `npm run test:e2e` for this part (`e2e/epic-s1-e11-round-2.spec.ts`): 1 passed
+- Wrangler build of the Pages Functions and the production build: pass
 
 GitHub Actions is blocked by billing, so this pull request is merged on local checks and Cloudflare's build (Robert's choice, 2 Nov 2026, 15:20 UTC).
 
