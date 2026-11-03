@@ -96,6 +96,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.classics',
     descriptionKey: 'home.areas.classics',
   },
+  // Support tickets (S1-E11-13; ADMIN-2h1): owner, admin and support, just before Data requests
+  // (architecture 1.8.2: "Support tickets, Data requests").
+  {
+    area: 'support_tickets',
+    href: '/staff/support',
+    labelKey: 'nav.supportTickets',
+    descriptionKey: 'home.areas.support_tickets',
+  },
   // Data requests (S1-E11-09; ADMIN-2c1): owner, admin and support, after Stories and Classics (architecture
   // 1.8.2: "Support tickets, Data requests").
   {

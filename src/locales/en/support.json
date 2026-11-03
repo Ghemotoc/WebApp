@@ -1,0 +1,174 @@
+{
+  "eyebrow": "Help",
+  "signedOut": "Log in to see your support requests. Without an account, use the Contact us form.",
+  "logIn": "Log in",
+  "contactUs": "Contact us",
+  "back": "Back to your support requests",
+  "statuses": {
+    "new": "New",
+    "open": "Open",
+    "pending_on_user": "Waiting for your answer",
+    "on_hold": "On hold",
+    "solved": "Solved",
+    "closed": "Closed"
+  },
+  "categories": {
+    "account": "Your account",
+    "writing": "Writing",
+    "reading": "Reading",
+    "safety_question": "A safety question",
+    "school_or_university": "School or university",
+    "bug": "Something isn’t working",
+    "other": "Something else"
+  },
+  "list": {
+    "documentTitle": "Your support requests",
+    "title": "Your support requests",
+    "intro": "Ask our support team for help with your account, writing, reading or anything else. A person answers every request.",
+    "write": "Ask for help",
+    "empty": "You haven’t asked for help yet.",
+    "loadFailed": "We couldn’t load your requests. Check your connection and try again.",
+    "meta": "#{{number}} · {{status}} · {{date}}",
+    "answered": "We answered"
+  },
+  "new": {
+    "documentTitle": "Ask for help",
+    "title": "Ask for help",
+    "intro": "Tell us what happened. Please don’t include passwords or someone else’s private details.",
+    "safety": "If someone is in danger right now, call 112. To report something you saw here, use Report on it instead.",
+    "category": "What is it about?",
+    "subject": "Subject",
+    "body": "Your message",
+    "bodyHint": "Up to 4,000 characters.",
+    "send": "Send",
+    "sending": "Sending…",
+    "sent": "Sent. Your request is #{{number}}. We’ll answer you here.",
+    "open": "Open your request"
+  },
+  "ticket": {
+    "documentTitle": "Support request #{{number}}",
+    "meta": "#{{number}} · {{status}}",
+    "messagesLabel": "Messages",
+    "you": "You",
+    "team": "The support team",
+    "replyLabel": "Your answer",
+    "send": "Send",
+    "closed": "This request is closed. If you need more help, ask again and mention #{{number}}.",
+    "notFound": "We couldn’t find this request on your account.",
+    "loadFailed": "We couldn’t load this request. Check your connection and try again."
+  },
+  "failures": {
+    "refused": "Please fill in every field.",
+    "too_many": "You’ve sent a lot of requests in the last hour. Try again in {{minutes}} minutes.",
+    "not_found": "We couldn’t find this request on your account.",
+    "not_allowed": "You can’t do this.",
+    "unreachable": "We couldn’t send it. Check your connection and try again."
+  },
+  "settings": {
+    "heading": "Your support requests",
+    "intro": "Ask our support team for help and read their answers in one place.",
+    "open": "See your support requests"
+  },
+  "staff": {
+    "documentTitle": "Support tickets",
+    "eyebrow": "Staff · support",
+    "heading": "Support tickets",
+    "intro": "Every request from email, Contact us and the app, as one numbered ticket. Answers go out from the support team; internal notes stay with staff.",
+    "filtersLabel": "Narrow the inbox",
+    "status": "Status",
+    "openStatuses": "Not yet solved",
+    "allStatuses": "All",
+    "assigned": "Assigned",
+    "assignedAll": "Anyone or nobody",
+    "assignedMine": "To me",
+    "assignedNobody": "To nobody",
+    "listLabel": "Tickets",
+    "empty": "No ticket matches these filters.",
+    "loading": "Loading the inbox…",
+    "loadFailed": "We couldn’t load the tickets. Try again in a moment.",
+    "notAllowed": "Only support staff can read support tickets.",
+    "notFound": "There is no ticket with this number.",
+    "rowMeta": "#{{number}} · {{who}} · {{channel}} · {{count}} messages · {{date}}",
+    "fromHandle": "from @{{handle}}",
+    "fromEmail": "email only",
+    "unassigned": "Not assigned",
+    "assignedToYou": "Assigned to you",
+    "assignedTo": "Assigned to @{{handle}}",
+    "ticketMeta": "#{{number}} · arrived by {{channel}}",
+    "back": "Back to the inbox",
+    "channels": {
+      "email": "email",
+      "contact_form": "Contact us",
+      "in_app": "the app"
+    },
+    "priorities": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "fields": {
+      "heading": "Ticket",
+      "status": "Status",
+      "priority": "Priority",
+      "category": "Category",
+      "assignee": "Assigned to",
+      "assigneeHint": "A support team member’s username, or empty for nobody.",
+      "tags": "Tags",
+      "tagsHint": "Lower-case words, separated by commas: for example drafts, login.",
+      "save": "Save changes",
+      "saved": "Saved.",
+      "failed": "We couldn’t save this. Check the username and the tags, then try again."
+    },
+    "requester": {
+      "heading": "Who is asking",
+      "account": "Account",
+      "openAccount": "Open @{{handle}} in Users",
+      "emailOnly": "Email only: no account uses this address.",
+      "ageGroup": "Age group",
+      "email": "Email",
+      "showEmail": "Show email",
+      "emailHint": "Showing the address is written in the audit log.",
+      "emailFailed": "We couldn’t show the email. Try again in a moment.",
+      "ageGroups": {
+        "under_13": "Under 13",
+        "13_to_15": "13 to 15",
+        "16_to_17": "16 to 17",
+        "18_plus": "18 and over",
+        "unknown": "Not known yet"
+      }
+    },
+    "under16": {
+      "title": "This person is under 16",
+      "body": "Answer only in this ticket, never by private message. Keep your words simple and kind, and ask for no more personal details than you need. If they might be at risk, tell the safeguarding team straight away."
+    },
+    "messages": {
+      "label": "Messages",
+      "member": "@{{handle}}",
+      "emailSender": "The person (by email)",
+      "teamBy": "@{{handle}} for the support team",
+      "note": "Internal note by @{{handle}} (only staff see this)"
+    },
+    "reply": {
+      "label": "Answer the person, or add a note",
+      "send": "Send answer",
+      "addNote": "Add an internal note",
+      "closed": "This ticket is closed: you can add notes, not answers."
+    },
+    "history": {
+      "heading": "History",
+      "system": "The system",
+      "nobody": "nobody",
+      "none": "none",
+      "line": "{{who}}: {{what}}",
+      "changes": {
+        "created": "Ticket created",
+        "status": "Status from {{before}} to {{after}}",
+        "priority": "Priority from {{before}} to {{after}}",
+        "category": "Category from {{before}} to {{after}}",
+        "assignee": "Assigned from {{before}} to {{after}}",
+        "tags": "Tags from {{before}} to {{after}}"
+      }
+    }
+  }
+}

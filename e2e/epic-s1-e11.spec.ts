@@ -148,6 +148,7 @@ test.describe('epic S1-E11 journeys', () => {
       'Users',
       'Stories',
       'Classics',
+      'Support tickets',
       'Data requests',
       'Schools',
       'Roles',
@@ -177,6 +178,7 @@ test.describe('epic S1-E11 journeys', () => {
       'On call',
       'Users',
       'Stories',
+      'Support tickets',
       'Data requests',
     ]);
     const editor = await openAs(browser, 'editor', '/staff/users/invites');

@@ -80,6 +80,7 @@
     "schools": "Schools",
     "forums": "Forums",
     "stories": "Stories",
+    "supportTickets": "Support tickets",
     "dataRequests": "Data requests",
     "pictures": "Pictures to check"
   },
@@ -119,6 +120,7 @@
       "schools": "Verify teachers and set up class spaces for pilot schools.",
       "forums": "Categories, forums and subforums: names, order and pins.",
       "stories": "Find any story by title, username or user ID, and open it to see its details and chapters.",
+      "support_tickets": "Every support request from email, Contact us and the app, as a numbered ticket.",
       "data_requests": "Log and answer requests to see, move, correct or delete someone’s data, each within its deadline.",
       "pictures": "Pictures in All ages and 13+ stories, and pictures from under-16s, waiting for a moderator."
     },

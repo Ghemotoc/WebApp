@@ -33,8 +33,12 @@ export const contactRequestSchema = z.object({
 });
 export type ContactRequest = z.infer<typeof contactRequestSchema>;
 
-/** The answer: the reference the person quotes, made by the function and not stored (Q10c). */
+/**
+ * The answer: the reference the person quotes. Since S1-E11-13 it is the support ticket's number
+ * (#1042); before the ticket secret is set it is the old reference, made by the function and not
+ * stored (Q10c).
+ */
 export const contactResponseSchema = z.object({
-  reference: z.string().regex(/^C-\d{4}-\d{4}$/),
+  reference: z.string().regex(/^(C-\d{4}-\d{4}|#\d+)$/),
 });
 export type ContactResponse = z.infer<typeof contactResponseSchema>;

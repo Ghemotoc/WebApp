@@ -26,3 +26,12 @@ The rule counts requests at Cloudflare's edge and keeps no log we read; the func
 ## 3. Check it worked
 
 Open `/contact` on staging, send a message as a visitor with your own email: the acknowledgement arrives with a reference `C-2026-….`, and the support inbox gets the message with `[C-2026-…] Question` in the subject. Reply from the inbox: the reply goes to the sender (reply-to).
+
+## 3. Saving messages as support tickets (S1-E11-13, bundle ADMIN-2h1)
+
+Each message also becomes a numbered support ticket in the admin site (Staff → Support tickets), and the reference the person sees is the ticket number (#1042). Until this is set, the form keeps working with the old C- reference and nothing is saved.
+
+1. Make a long random value (for example `openssl rand -hex 32`) and keep it in the password manager.
+2. Cloudflare: Workers & Pages → the Pages project → Settings → Variables and Secrets → Add → type Secret, name `SUPPORT_TICKET_SECRET`, that value (Production, and Preview if wanted). `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are already there for the front end.
+3. Supabase (the same project): SQL editor → `select vault.create_secret('<the same value>', 'support_ticket_secret');`.
+4. Redeploy, send one test message from `/contact` and check it shows a `#` number and appears under Staff → Support tickets.

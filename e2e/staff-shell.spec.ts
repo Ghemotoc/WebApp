@@ -75,6 +75,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Users',
       'Stories',
       'Classics',
+      'Support tickets',
       'Data requests',
       'Schools',
       'Roles',
@@ -99,6 +100,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Users',
       'Stories',
       'Classics',
+      'Support tickets',
       'Data requests',
       'Schools',
       'Roles',
@@ -136,6 +138,7 @@ test.describe('admin shell (S1-E11-01)', () => {
       'On call',
       'Users',
       'Stories',
+      'Support tickets',
       'Data requests',
     ]);
 

@@ -7070,6 +7070,183 @@ export type Database = {
           },
         ];
       };
+      support_ticket_events: {
+        Row: {
+          actor_user_id: string | null;
+          change: string;
+          created_at: string;
+          id: string;
+          ticket_id: string;
+          updated_at: string;
+          value_after: Json | null;
+          value_before: Json | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          actor_user_id?: string | null;
+          change: string;
+          created_at?: string;
+          id?: string;
+          ticket_id: string;
+          updated_at?: string;
+          value_after?: Json | null;
+          value_before?: Json | null;
+        };
+        Update: {
+          actor_user_id?: string | null;
+          change?: string;
+          created_at?: string;
+          id?: string;
+          ticket_id?: string;
+          updated_at?: string;
+          value_after?: Json | null;
+          value_before?: Json | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'support_ticket_events_actor_user_id_fkey';
+            columns: ['actor_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'support_ticket_events_ticket_id_fkey';
+            columns: ['ticket_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_tickets';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      support_ticket_messages: {
+        Row: {
+          author_user_id: string | null;
+          body: string;
+          channel: Database['public']['Enums']['support_ticket_channel'];
+          created_at: string;
+          id: string;
+          kind: Database['public']['Enums']['support_message_kind'];
+          ticket_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          author_user_id?: string | null;
+          body: string;
+          channel: Database['public']['Enums']['support_ticket_channel'];
+          created_at?: string;
+          id?: string;
+          kind: Database['public']['Enums']['support_message_kind'];
+          ticket_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          author_user_id?: string | null;
+          body?: string;
+          channel?: Database['public']['Enums']['support_ticket_channel'];
+          created_at?: string;
+          id?: string;
+          kind?: Database['public']['Enums']['support_message_kind'];
+          ticket_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'support_ticket_messages_author_user_id_fkey';
+            columns: ['author_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'support_ticket_messages_ticket_id_fkey';
+            columns: ['ticket_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_tickets';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      support_tickets: {
+        Row: {
+          assigned_to_user_id: string | null;
+          category: Database['public']['Enums']['support_ticket_category'];
+          channel: Database['public']['Enums']['support_ticket_channel'];
+          closed_at: string | null;
+          created_at: string;
+          first_replied_at: string | null;
+          id: string;
+          language: string;
+          last_message_at: string;
+          number: number;
+          priority: Database['public']['Enums']['support_ticket_priority'];
+          requester_email: string | null;
+          requester_user_id: string | null;
+          solved_at: string | null;
+          status: Database['public']['Enums']['support_ticket_status'];
+          subject: string;
+          tags: string[];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          assigned_to_user_id?: string | null;
+          category?: Database['public']['Enums']['support_ticket_category'];
+          channel: Database['public']['Enums']['support_ticket_channel'];
+          closed_at?: string | null;
+          created_at?: string;
+          first_replied_at?: string | null;
+          id?: string;
+          language?: string;
+          last_message_at?: string;
+          number?: number;
+          priority?: Database['public']['Enums']['support_ticket_priority'];
+          requester_email?: string | null;
+          requester_user_id?: string | null;
+          solved_at?: string | null;
+          status?: Database['public']['Enums']['support_ticket_status'];
+          subject: string;
+          tags?: string[];
+          updated_at?: string;
+        };
+        Update: {
+          assigned_to_user_id?: string | null;
+          category?: Database['public']['Enums']['support_ticket_category'];
+          channel?: Database['public']['Enums']['support_ticket_channel'];
+          closed_at?: string | null;
+          created_at?: string;
+          first_replied_at?: string | null;
+          id?: string;
+          language?: string;
+          last_message_at?: string;
+          number?: number;
+          priority?: Database['public']['Enums']['support_ticket_priority'];
+          requester_email?: string | null;
+          requester_user_id?: string | null;
+          solved_at?: string | null;
+          status?: Database['public']['Enums']['support_ticket_status'];
+          subject?: string;
+          tags?: string[];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'support_tickets_assigned_to_user_id_fkey';
+            columns: ['assigned_to_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'support_tickets_requester_user_id_fkey';
+            columns: ['requester_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       tag_names: {
         Row: {
           created_at: string;
@@ -7366,6 +7543,7 @@ export type Database = {
           why: string;
         }[];
       };
+      account_for_email: { Args: { address: string }; Returns: string };
       account_is_new: { Args: { target_user_id: string }; Returns: boolean };
       account_set_up_before_now: { Args: { target_user_id: string }; Returns: boolean };
       account_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -8177,6 +8355,10 @@ export type Database = {
         Args: { body: string; is_note?: boolean; thread_reference: string };
         Returns: boolean;
       };
+      admin_reply_support_ticket: {
+        Args: { body: string; is_note?: boolean; ticket_number: number };
+        Returns: boolean;
+      };
       admin_request_customisation_change: {
         Args: { item: string; reason: string; reference: string };
         Returns: string;
@@ -8204,6 +8386,7 @@ export type Database = {
         Returns: string;
       };
       admin_reveal_email: { Args: { target_user_id: string }; Returns: string };
+      admin_reveal_ticket_email: { Args: { ticket_number: number }; Returns: string };
       admin_revoke_certificate: { Args: { code: string; reason: string }; Returns: Json };
       admin_revoke_invite: {
         Args: { reason_given: string; target_invite_id: string };
@@ -8533,6 +8716,25 @@ export type Database = {
         Returns: string;
       };
       admin_story_visibility: { Args: { target_story_id: string }; Returns: string };
+      admin_support_inbox: {
+        Args: { assigned_filter?: string; status_filter?: string };
+        Returns: {
+          assigned_handle: string;
+          assigned_to_me: boolean;
+          category: Database['public']['Enums']['support_ticket_category'];
+          channel: Database['public']['Enums']['support_ticket_channel'];
+          created_at: string;
+          email_only: boolean;
+          last_message_at: string;
+          message_count: number;
+          number: number;
+          priority: Database['public']['Enums']['support_ticket_priority'];
+          requester_handle: string;
+          status: Database['public']['Enums']['support_ticket_status'];
+          subject: string;
+        }[];
+      };
+      admin_support_ticket: { Args: { ticket_number: number }; Returns: Json };
       admin_swap_chapter_words: {
         Args: {
           chapter_row: Omit<
@@ -8590,6 +8792,10 @@ export type Database = {
       admin_unpublish_classic: {
         Args: { reason_given: string; target_story_id: string };
         Returns: Json;
+      };
+      admin_update_support_ticket: {
+        Args: { changes: Json; ticket_number: number };
+        Returns: boolean;
       };
       admin_user_account: {
         Args: { target_user_id: string };
@@ -8716,6 +8922,18 @@ export type Database = {
       };
       answer_report_detail_request: {
         Args: { answer_text: string; target_request_id: string };
+        Returns: undefined;
+      };
+      apply_support_change: {
+        Args: {
+          after_value: Json;
+          before_value: Json;
+          field: string;
+          ticket: Omit<
+            Database['public']['Tables']['support_tickets']['Row'],
+            Database['public']['Tables']['support_tickets']['ComputedFields']
+          >;
+        };
         Returns: undefined;
       };
       archive_class_space: { Args: { slug: string }; Returns: Json };
@@ -9299,6 +9517,7 @@ export type Database = {
       compute_daily_metrics: { Args: { for_day?: string }; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
       confirm_teacher_email: { Args: { token: string }; Returns: Json };
+      contact_topic_subject: { Args: { language: string; topic: string }; Returns: string };
       content_is_held_for_moderation: {
         Args: { item_id: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: boolean;
@@ -9350,6 +9569,14 @@ export type Database = {
         Returns: Json;
       };
       create_monthly_safety_checks: { Args: Record<PropertyKey, never>; Returns: number };
+      create_my_support_ticket: {
+        Args: {
+          body: string;
+          category?: Database['public']['Enums']['support_ticket_category'];
+          subject: string;
+        };
+        Returns: Json;
+      };
       create_profile_from_sign_up: {
         Args: { new_user_id: string; sign_up_data: Json };
         Returns: undefined;
@@ -10175,6 +10402,7 @@ export type Database = {
       };
       marketing_email_allowed: { Args: { target_user_id: string }; Returns: boolean };
       mask_email: { Args: { address: string }; Returns: string };
+      masked_email: { Args: { address: string }; Returns: string };
       may_keep_writing: { Args: { other_id: string; writer_id: string }; Returns: boolean };
       may_review_pictures: { Args: Record<PropertyKey, never>; Returns: boolean };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
@@ -10576,6 +10804,19 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      my_support_ticket: { Args: { ticket_number: number }; Returns: Json };
+      my_support_tickets: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          category: Database['public']['Enums']['support_ticket_category'];
+          created_at: string;
+          last_message_at: string;
+          number: number;
+          status: Database['public']['Enums']['support_ticket_status'];
+          subject: string;
+          team_replied_last: boolean;
+        }[];
       };
       my_teacher_check: { Args: Record<PropertyKey, never>; Returns: Json };
       my_unread_notification_count: { Args: Record<PropertyKey, never>; Returns: number };
@@ -11237,6 +11478,15 @@ export type Database = {
         Returns: undefined;
       };
       record_sign_up_ips: { Args: { new_user_id: string; token: string }; Returns: undefined };
+      record_support_event: {
+        Args: {
+          after_value: Json;
+          before_value: Json;
+          target_ticket_id: string;
+          what_changed: string;
+        };
+        Returns: undefined;
+      };
       refresh_writer_rank: { Args: { person_id: string }; Returns: undefined };
       register_atlas_picture: { Args: { target_path: string }; Returns: string };
       register_chapter_embed: {
@@ -11274,6 +11524,7 @@ export type Database = {
       renumber_story_chapters: { Args: { target_story_id: string }; Returns: undefined };
       replace_sent_teacher_link: { Args: { target_user_id: string }; Returns: undefined };
       reply_moderator_mail: { Args: { body: string; thread_reference: string }; Returns: boolean };
+      reply_my_support_ticket: { Args: { body: string; ticket_number: number }; Returns: boolean };
       reply_to_forum_thread: {
         Args: { body: string; bump?: boolean; quoted_posts?: string[]; thread_number: number };
         Returns: Json;
@@ -11421,6 +11672,35 @@ export type Database = {
       require_safety_contacts_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_settings_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_space_starter: { Args: Record<PropertyKey, never>; Returns: string };
+      require_support_ticket_for_staff: {
+        Args: { ticket_number: number };
+        Returns: {
+          assigned_to_user_id: string | null;
+          category: Database['public']['Enums']['support_ticket_category'];
+          channel: Database['public']['Enums']['support_ticket_channel'];
+          closed_at: string | null;
+          created_at: string;
+          first_replied_at: string | null;
+          id: string;
+          language: string;
+          last_message_at: string;
+          number: number;
+          priority: Database['public']['Enums']['support_ticket_priority'];
+          requester_email: string | null;
+          requester_user_id: string | null;
+          solved_at: string | null;
+          status: Database['public']['Enums']['support_ticket_status'];
+          subject: string;
+          tags: string[];
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'support_tickets';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       require_tag_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_teacher_checks_access: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_website_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
@@ -12184,6 +12464,7 @@ export type Database = {
       storyline_chapters_json: { Args: { target_story_id: string }; Returns: Json };
       strip_combining_marks: { Args: { name: string }; Returns: string };
       submit_appeal: { Args: { explanation: string; statement_reference: string }; Returns: Json };
+      submit_contact_ticket: { Args: { payload: string; signature: string }; Returns: number };
       submit_public_notice: {
         Args: { payload: string; signature: string };
         Returns: {
@@ -12192,6 +12473,9 @@ export type Database = {
         }[];
       };
       submit_teacher_proof: { Args: { proof_path: string }; Returns: Json };
+      support_assignee_id: { Args: { assignee_handle: string }; Returns: string };
+      support_payload_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
+      support_ticket_history: { Args: { target_ticket_id: string }; Returns: Json };
       tag_for_name: {
         Args: { include_waiting?: boolean; preferred_language?: string; typed_name: string };
         Returns: string;
@@ -12516,6 +12800,18 @@ export type Database = {
         | 'cover_hidden';
       statement_ground: 'terms' | 'law';
       story_rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
+      support_message_kind: 'from_requester' | 'staff_reply' | 'internal_note';
+      support_ticket_category:
+        | 'account'
+        | 'writing'
+        | 'reading'
+        | 'safety_question'
+        | 'school_or_university'
+        | 'bug'
+        | 'other';
+      support_ticket_channel: 'email' | 'contact_form' | 'in_app';
+      support_ticket_priority: 'low' | 'normal' | 'high' | 'urgent';
+      support_ticket_status: 'new' | 'open' | 'pending_on_user' | 'on_hold' | 'solved' | 'closed';
       tag_status: 'waiting' | 'approved' | 'rejected';
       writer_rank: 'new_writer' | 'writer' | 'storyteller' | 'novelist';
     };
@@ -12864,6 +13160,19 @@ export const Constants = {
       ],
       statement_ground: ['terms', 'law'],
       story_rating: ['all_ages', '13_plus', '16_plus', '18_plus'],
+      support_message_kind: ['from_requester', 'staff_reply', 'internal_note'],
+      support_ticket_category: [
+        'account',
+        'writing',
+        'reading',
+        'safety_question',
+        'school_or_university',
+        'bug',
+        'other',
+      ],
+      support_ticket_channel: ['email', 'contact_form', 'in_app'],
+      support_ticket_priority: ['low', 'normal', 'high', 'urgent'],
+      support_ticket_status: ['new', 'open', 'pending_on_user', 'on_hold', 'solved', 'closed'],
       tag_status: ['waiting', 'approved', 'rejected'],
       writer_rank: ['new_writer', 'writer', 'storyteller', 'novelist'],
     },

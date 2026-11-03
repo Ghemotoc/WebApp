@@ -48,8 +48,10 @@ test.describe('contact form (S1-E14-04)', () => {
     await form.getByRole('button', { name: 'Send message' }).click();
     const sent = page.getByRole('status', { name: 'Message sent' });
     await expect(sent).toBeVisible();
-    const reference = /C-\d{4}-\d{4}/.exec((await sent.innerText()) ?? '')?.[0] ?? '';
-    expect(reference).toMatch(/^C-\d{4}-\d{4}$/);
+    // The ticket number (#1042) once the ticket secret is set (S1-E11-13), the old C- reference
+    // until then; e2e/support-tickets.spec.ts sets the secret, and the two may run together.
+    const reference = /C-\d{4}-\d{4}|#\d+/.exec((await sent.innerText()) ?? '')?.[0] ?? '';
+    expect(reference).toMatch(/^(C-\d{4}-\d{4}|#\d+)$/);
 
     const acknowledgement = await waitForEmail(`visitor-${stamp}@example.com`, 15_000, reference);
     expect(acknowledgement.Subject).toContain(`We've received your message (${reference})`);

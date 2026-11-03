@@ -80,6 +80,7 @@
     "schools": "Școli",
     "forums": "Forumuri",
     "stories": "Povești",
+    "supportTickets": "Tichete de suport",
     "dataRequests": "Cereri privind datele",
     "pictures": "Imagini de verificat"
   },
@@ -119,6 +120,7 @@
       "schools": "Verifică profesorii și creează spații de clasă pentru școlile din pilot.",
       "forums": "Categorii, forumuri și subforumuri: nume, ordine și fixare.",
       "stories": "Găsește orice poveste după titlu, nume de utilizator sau ID de utilizator și deschide-o ca să vezi detaliile și capitolele.",
+      "support_tickets": "Fiecare cerere de ajutor venită pe email, prin Contactează-ne sau din aplicație, ca tichet numerotat.",
       "data_requests": "Înregistrează și rezolvă cererile de a vedea, muta, corecta sau șterge datele cuiva, fiecare în termenul ei.",
       "pictures": "Imaginile din poveștile pentru toate vârstele și 13+ și imaginile de la cei sub 16 ani, care așteaptă un moderator."
     },
