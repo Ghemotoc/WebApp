@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #295 (12e2a): run `supabase/staging-topups/ADMIN-2e2a.sql` on staging (Picture review for the owner, admin and moderator personas), and tick **Picture review** on Staff › Roles for each real moderator who should check pictures (18 or over, not interns). Add a chief of legal later in the `picture_open_alert_handles` setting if wanted.
 - **Pictures to check (#294):** nothing on staging. Two questions in the pull request: the rejection email is the standard decision email (your text sits in the notification as the statement of reasons), and covers staff upload for classics also wait for a moderator. Optional: read the Romanian `pictures` lines in moderation.json.
 - **Picture rules (#293):** optional, read the new Romanian lines (`pictures.rules` in common.json, `labels.ratingUnderSixteen` in writing.json) and say whether "AI pictures that don’t look like photos" is the wording you want in the allowed list.
 - ADMIN-2d3 (#292): nothing on staging. Please read the first kind-words lists on Staff › Settings › Kind-words nudge (my drafts) and trim or add. Two questions in the pull request: the nudge shows inline under the comment rather than as a pop-up window, and a few words on the list can also be friendly.
