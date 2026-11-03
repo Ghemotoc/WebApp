@@ -2128,6 +2128,22 @@ export type Database = {
           },
         ];
       };
+      disposable_email_domains: {
+        Row: {
+          created_at: string;
+          domain: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          domain: string;
+        };
+        Update: {
+          created_at?: string;
+          domain?: string;
+        };
+        Relationships: [];
+      };
       email_outbox: {
         Row: {
           attempts: number;
@@ -3311,6 +3327,7 @@ export type Database = {
           restore_reason: string | null;
           restored_at: string | null;
           restored_by_user_id: string | null;
+          sanction_id: string | null;
           state: Database['public']['Enums']['moderated_state'];
           updated_at: string;
           user_id: string;
@@ -3327,6 +3344,7 @@ export type Database = {
           restore_reason?: string | null;
           restored_at?: string | null;
           restored_by_user_id?: string | null;
+          sanction_id?: string | null;
           state: Database['public']['Enums']['moderated_state'];
           updated_at?: string;
           user_id: string;
@@ -3342,6 +3360,7 @@ export type Database = {
           restore_reason?: string | null;
           restored_at?: string | null;
           restored_by_user_id?: string | null;
+          sanction_id?: string | null;
           state?: Database['public']['Enums']['moderated_state'];
           updated_at?: string;
           user_id?: string;
@@ -3366,6 +3385,13 @@ export type Database = {
             columns: ['restored_by_user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'moderated_items_sanction_id_fkey';
+            columns: ['sanction_id'];
+            isOneToOne: false;
+            referencedRelation: 'sanctions';
             referencedColumns: ['id'];
           },
           {
@@ -5176,8 +5202,9 @@ export type Database = {
           starts_at: string;
           updated_at: string;
           user_id: string;
+          hide_banned_account: number | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'hide_banned_account';
         Insert: {
           applied_by_user_id: string;
           case_id?: string | null;
@@ -8607,6 +8634,13 @@ export type Database = {
         };
       };
       avatar_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      banned_account_items: {
+        Args: { target_user_id: string };
+        Returns: {
+          item_id: string;
+          item_type: Database['public']['Enums']['reportable_type'];
+        }[];
+      };
       banned_email_hash: { Args: { email: string }; Returns: string };
       begin_age_check: {
         Args: { signature: string; threshold: number; yoti_session_id: string };
@@ -9380,6 +9414,7 @@ export type Database = {
         Args: { kind: Database['public']['Enums']['notification_kind']; target_user_id: string };
         Returns: string;
       };
+      email_domain_allowed: { Args: { email: string }; Returns: boolean };
       email_worker_act_as: {
         Args: { saved_claims?: string; target_user_id: string };
         Returns: undefined;
@@ -9633,6 +9668,15 @@ export type Database = {
         }[];
       };
       hidden_title_marker: { Args: { language_code: string }; Returns: string };
+      hide_banned_account: {
+        Args: {
+          ban: Omit<
+            Database['public']['Tables']['sanctions']['Row'],
+            Database['public']['Tables']['sanctions']['ComputedFields']
+          >;
+        };
+        Returns: number;
+      };
       insert_class_space: {
         Args: {
           banner: Database['public']['Enums']['space_banner'];
@@ -10390,6 +10434,7 @@ export type Database = {
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
       normalise_tag: { Args: { tag_name: string }; Returns: string };
+      normalised_email: { Args: { email: string }; Returns: string };
       note_i_am_online: { Args: Record<PropertyKey, never>; Returns: undefined };
       note_safety_contact_gap: { Args: { wanted_country_code: string }; Returns: undefined };
       notification_category: {

@@ -119,7 +119,9 @@ Our own team moderates Ghemotoc, in Romanian and English. We don’t use outside
 
 Reports. Anyone can report a story, chapter, comment, profile, space, thread, post, picture or message, with or without an account. A person on our team reads every report. We don’t scan your writing automatically and we don’t hold anything back before it is published: we act on reports. The most serious reports, such as anything that puts a child at risk, are dealt with first. How reports work, and what a good report includes, is in our Notice and action policy.
 
-Pictures. Every picture is checked automatically when it is uploaded. Sightengine checks for nudity and gore. Arachnid Shield checks for known child sexual abuse images. If either check flags a picture, it stays hidden (readers see “Picture being checked”) until a moderator decides. The checks only hold a picture back. A person makes every decision.
+Pictures. Never upload photographs, real people or celebrities. Sexual pictures are allowed only as drawings in 18+ stories. If you upload a sexual picture of anyone under 18, yourself included, we remove it at once, close your account for good and report it where the law requires. [lawyer to check]
+
+Every picture is checked automatically when it is uploaded: Arachnid Shield checks for known child sexual abuse images. A moderator looks at every picture in an All ages or 13+ story, and at every picture a writer under 16 uploads, before anyone else sees it (readers see “Picture being checked”). The automatic check only holds a picture back. A person makes every decision.
 
 What we may do. If something breaks the law, these terms or the Community guidelines, we may:
 
@@ -259,6 +261,8 @@ Leaving. You can delete your account at any time from Settings, on any device or
 
 If we suspend or close your account. We may suspend or close an account that seriously or repeatedly breaks these terms or the Community guidelines, or the law. We tell you why and how to appeal. While your account is suspended, you can still sign in, read and download your data, but you can’t post, comment or message. If we close your account, you can’t sign up again with the same email address.
 
+Closed for good. If we close your account for breaking the rules, it stays closed. You may not create another account or use someone else’s. We block the email address you used, and we may close any new account we reasonably believe is yours. We always tell you why and how to appeal. [lawyer to check]
+
 If we close Ghemotoc. If we ever have to stop running Ghemotoc, we will tell you at least [number] days before, so you can download your data and your stories.
 
 ## 10. Our responsibility, complaints and the law
@@ -303,7 +307,7 @@ The law. These terms are governed by [Romanian law / Swedish law: depends on whe
 - Section 3 (You’re responsible for what you post): Quotation and parody exceptions: Law 8/1996 art. 35(1)(b), 35(4) and art. 37(b) (research A3). Users must be told about the exceptions where art. 17 of Directive 2019/790 applies (Law 8/1996 art. 128^3, as inserted by Law 69/2022); whether Ghemotoc is an online content-sharing service provider is L19.
 - Section 3 (You’re responsible for what you post): Picture rights confirmation: S1-E3-09. Alt text required: S1-E3-09.
 - Section 3 (You’re responsible for what you post): Scraping and bot clause is a proposed default, not a recorded decision.
-- Section 4 (How moderation works): In-house, report-based moderation, no vendors, no pre-publication hold, no text screening (Q42, Q43). Picture check by Sightengine and Arachnid Shield, held for a human (S1-E10-05).
+- Section 4 (How moderation works): In-house, report-based moderation, no vendors, no pre-publication hold, no text screening (Q42, Q43). Picture check by Arachnid Shield, held for a human (S1-E10-05); Sightengine dropped on 2 Nov 2026. Pictures and Closed for good paragraphs: Robert’s brief of 2 Nov 2026 (bundle 12, sections 4 and 6).
 - Section 4 (How moderation works): What staff may change: section 1.8.5 (Q14); the marker wording is from 1.8.5. Raise, never lower, a rating: S1-E3-06. Copied-work note: S1-E10-08. Hiding covers and titles: 1.8.5.
 - Section 4 (How moderation works): DSA art. 14(1) (moderation tools, human review, complaint handling must be in the terms) and art. 14(3) (plain language for minors). DSA art. 17 statement of reasons, applies to every hosting provider. Art. 14(4) proportionality supports cutting one passage.
 - Section 4 (How moderation works): Appeals within six months, different moderator where possible: S1-E10-07 (DSA art. 20 does not bind micro and small platforms under art. 19; applied as good practice).

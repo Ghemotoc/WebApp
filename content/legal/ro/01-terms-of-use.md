@@ -119,7 +119,9 @@ Propria noastră echipă moderează Ghemotoc, în română și engleză. Nu folo
 
 Raportări. Oricine poate raporta o poveste, un capitol, un comentariu, un profil, un spațiu, o discuție, o postare, o imagine sau un mesaj, cu sau fără cont. Un om din echipa noastră citește fiecare raportare. Nu îți scanăm automat textele și nu oprim nimic înainte să fie publicat: acționăm pe baza raportărilor. Raportările cele mai grave, cum ar fi orice pune un copil în pericol, sunt tratate primele. Cum funcționează raportările și ce cuprinde o raportare bună sunt explicate în Politica noastră de notificare și acțiune.
 
-Imagini. Fiecare imagine este verificată automat când este încărcată. Sightengine verifică dacă are nuditate sau violență explicită. Arachnid Shield verifică dacă este o imagine cunoscută cu abuz sexual asupra copiilor. Dacă oricare verificare semnalează o imagine, aceasta rămâne ascunsă (cititorii văd „Imagine în verificare”) până decide un moderator. Verificările doar opresc o imagine. Fiecare decizie o ia un om.
+Imagini. Nu încărca niciodată fotografii, oameni reali sau vedete. Imaginile sexuale sunt permise doar ca desene, în poveștile 18+. Dacă încarci o imagine sexuală cu cineva sub 18 ani, inclusiv cu tine, o ștergem imediat, îți închidem contul definitiv și o raportăm acolo unde cere legea. [de verificat de avocat]
+
+Fiecare imagine este verificată automat când este încărcată: Arachnid Shield verifică dacă este o imagine cunoscută cu abuz sexual asupra copiilor. Un moderator se uită la fiecare imagine dintr-o poveste „Toate vârstele” sau 13+ și la fiecare imagine încărcată de un scriitor sub 16 ani, înainte să o vadă altcineva (cititorii văd „Imagine în verificare”). Verificarea automată doar oprește o imagine. Fiecare decizie o ia un om.
 
 Ce putem face. Dacă ceva încalcă legea, acești termeni sau Regulile comunității, putem:
 
@@ -258,6 +260,8 @@ Numele de utilizator și pseudonimul. Îți alegi un nume de utilizator și poț
 Plecarea. Îți poți șterge contul oricând din Setări, de pe orice dispozitiv sau de pe site. Îl oprim imediat și îl ștergem definitiv după 14 zile, dacă nu te răzgândești înainte. Poveștile, capitolele și comentariile tale sunt șterse odată cu el. Postările tale de pe forum rămân și apar sub „Utilizator șters”. Înainte să pleci, îți poți descărca datele și poveștile.
 
 Dacă îți suspendăm sau închidem contul. Putem suspenda sau închide un cont care încalcă grav sau în mod repetat acești termeni, Regulile comunității sau legea. Îți spunem de ce și cum poți contesta. Cât timp contul tău este suspendat, te poți conecta în continuare, poți citi și îți poți descărca datele, dar nu poți posta, comenta sau trimite mesaje. Dacă îți închidem contul, nu te poți înscrie din nou cu aceeași adresă de email.
+
+Închis definitiv. Dacă îți închidem contul pentru că ai încălcat regulile, rămâne închis. Nu ai voie să îți faci alt cont sau să folosești contul altcuiva. Blocăm adresa de email pe care ai folosit-o și putem închide orice cont nou despre care credem în mod rezonabil că este al tău. Îți spunem mereu de ce și cum poți contesta. [de verificat de avocat]
 
 Dacă închidem Ghemotoc. Dacă va trebui vreodată să oprim Ghemotoc, îți vom spune cu cel puțin [număr] zile înainte, ca să-ți poți descărca datele și poveștile.
 

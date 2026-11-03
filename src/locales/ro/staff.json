@@ -341,7 +341,7 @@
       "explain": {
         "warning": "Avertismentul rămâne în istoricul contului. Nu oprește persoana să facă ceva.",
         "suspension": "Contul devine doar pentru citit până se termină suspendarea.",
-        "ban": "Persoana nu se mai poate conecta, toate sesiunile se închid, iar emailul ei nu mai poate fi folosit la înscriere.",
+        "ban": "Contul se închide definitiv: persoana nu se mai poate conecta, toate sesiunile se închid, iar emailul ei nu mai poate fi folosit la înscriere. Profilul, poveștile, comentariile și postările ei de pe forum se ascund pentru toți, în afară de echipă, și se păstrează ca dovezi, nu se șterg. Ridicarea interdicției le aduce înapoi.",
         "reset_pen_name": "Pseudonimul e șters și se vede numele de utilizator. Persoana poate alege imediat alt pseudonim; cel vechi rămâne în jurnalul de audit.",
         "sign_out_everywhere": "Toate dispozitivele conectate la acest cont sunt deconectate. O pagină deja deschisă mai merge până la o oră.",
         "approve_username": "Folosește asta când verificarea cuvintelor a refuzat din greșeală un nume nevinovat. Persoana salvează apoi singură numele.",

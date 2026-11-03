@@ -341,7 +341,7 @@
       "explain": {
         "warning": "A warning is a record on the account. It doesn’t stop the person doing anything.",
         "suspension": "The account becomes read-only until the suspension ends.",
-        "ban": "The person can’t sign in again, every session ends, and their email can’t be used to sign up again.",
+        "ban": "The account is closed for good: the person can’t sign in again, every session ends, and their email can’t be used to sign up again. Their profile, stories, comments and forum posts are hidden from everyone but staff and kept as evidence, never deleted. Lifting the ban brings them back.",
         "reset_pen_name": "The pen name is removed and the username shows instead. The person can choose a new pen name straight away; the old one stays in the audit log.",
         "sign_out_everywhere": "Every device signed in to this account is signed out. A page already open keeps working for up to an hour.",
         "approve_username": "Use this when the word checks refused a harmless name by mistake. The person then saves the name themselves.",

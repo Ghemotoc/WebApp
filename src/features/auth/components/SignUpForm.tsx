@@ -32,6 +32,7 @@ import { TermsCheckbox } from './TermsCheckbox';
 /** The message key for each way a sign-up can fail. */
 const failureMessages: Record<SignUpFailure, string> = {
   refused: 'signUp.errors.refused',
+  disposable_email: 'signUp.errors.disposableEmail',
   weak_password: 'signUp.errors.weakPassword',
   too_many_attempts: 'signUp.errors.tooManyAttempts',
   unreachable: 'signUp.errors.unreachable',
