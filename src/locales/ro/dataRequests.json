@@ -193,8 +193,8 @@
   },
   "copy": {
     "heading": "Copia",
-    "intro": "Copia cuprinde tot ce a pus persoana aici și datele contului său, într-un fișier citibil de calculator (data.json), fiecare poveste și planul fiecărei povești ca fișier Word, plus biblioteca sa ca tabel. Se face în această filă, în limba persoanei, apoi persoana o descarcă din Setări, cu contul deschis, timp de șapte zile. Nu se trimite nimic la nicio altă adresă.",
-    "introParent": "Copia cuprinde tot ce a pus persoana aici și datele contului său, ca fișier citibil de calculator (data.json), fiecare poveste și planul fiecărei povești ca fișier Word și biblioteca sa ca tabel. Se face în această filă, în limba persoanei. La această cerere merge la părintele sau tutorele care a fost de acord cu contul: îi trimitem un link de unică folosință la adresa din acel acord, valabil șapte zile. Persoana nu e anunțată și nu vede fișierele.",
+    "intro": "Copia cuprinde tot ce a pus persoana aici și datele contului său, într-un fișier citibil de calculator (data.json), fiecare poveste și planul fiecărei povești ca fișier Word și PDF, plus biblioteca sa ca tabel. Se face în această filă, în limba persoanei, apoi persoana o descarcă din Setări, cu contul deschis, timp de șapte zile. Nu se trimite nimic la nicio altă adresă.",
+    "introParent": "Copia cuprinde tot ce a pus persoana aici și datele contului său, ca fișier citibil de calculator (data.json), fiecare poveste și planul fiecărei povești ca fișier Word și PDF și biblioteca sa ca tabel. Se face în această filă, în limba persoanei. La această cerere merge la părintele sau tutorele care a fost de acord cu contul: îi trimitem un link de unică folosință la adresa din acel acord, valabil șapte zile. Persoana nu e anunțată și nu vede fișierele.",
     "formatLabel": "Cum o trimiți",
     "formats": {
       "zip": "O singură arhivă ZIP cu tot",
@@ -256,7 +256,7 @@
     "deniedHeading": "Mulțumim că ne-ai spus",
     "deniedBody": "Ne-ai spus că nimeni din familie nu a făcut cererea {{reference}}, așa că nu trimitem nimic. Dacă ai impresia că cineva încearcă să obțină datele copilului tău, scrie-ne.",
     "copyHeading": "Copia datelor contului @{{handle}}",
-    "copyIntro": "Aceasta este copia pentru cererea {{reference}}: tot ce a pus @{{handle}} aici, ca fișier citibil de calculator (data.json), fiecare poveste ca fișier Word și biblioteca sa ca tabel.",
+    "copyIntro": "Aceasta este copia pentru cererea {{reference}}: tot ce a pus @{{handle}} aici, ca fișier citibil de calculator (data.json), fiecare poveste ca fișier Word și PDF, plus biblioteca sa ca tabel.",
     "copyOnce": "Linkul merge o singură dată: după ce apeși Deschide fișierele, ai o oră să le descarci. Folosește un dispozitiv în care ai încredere.",
     "openButton": "Deschide fișierele",
     "openFailed": "Fișierele nu s-au putut deschide. Încearcă din nou.",

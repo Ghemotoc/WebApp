@@ -9,9 +9,9 @@
  *   2. my_data_export() answers the writer's data, narrowed to the chosen stories and chapters
  *      (documentForChoice());
  *   3. the files the writer ticked are made with the same builders as Download my data: the
- *      chapters as a Word file per story (buildWordFiles(): drafts included, with the dates and
- *      the user ID, as S1-E11-09 asks), the plan from Story Atlas as a Word file per story
- *      (buildPlanFiles()) and the machine-readable copy (JSON);
+ *      chapters as a Word file, a PDF or both per story (buildWordFiles(): drafts included, with
+ *      the dates and the user ID, as S1-E11-09 asks; the format is ADMIN-2d's), the plan from
+ *      Story Atlas the same way (buildPlanFiles()) and the machine-readable copy (JSON);
  *   4. one file for one story is uploaded as it is; anything more as one ZIP;
  *   5. the older copy's file is deleted, then finish_data_export() marks the new one ready for
  *      seven days and sends the stories_export_ready notification.
@@ -24,7 +24,9 @@ import {
   fetchDataExportDocument,
   fetchMyDataExports,
   finishDataExport,
+  documentKindsOf,
   JSON_TYPE,
+  PDF_TYPE,
   requestStoriesExport,
   uploadExportFile,
   WORD_TYPE,
@@ -72,7 +74,7 @@ function jsonFile(document: DataExportDocument, storyId: string | null): ZipEntr
 /**
  * Every file the writer ticked, for the chosen stories.
  *
- * @returns the files, the chapters' Word files first, then the plans', then the JSON copy
+ * @returns the files, the chapters' documents first, then the plans', then the JSON copy
  */
 async function chosenFiles(
   document: DataExportDocument,
@@ -80,19 +82,22 @@ async function chosenFiles(
 ): Promise<ZipEntry[]> {
   const { choices } = options;
   const taken = new Set<string>();
+  const kinds = documentKindsOf(choices.documentFormat);
   const files: ZipEntry[] = [];
   if (choices.includeChapters) {
     const input = wordInputFrom(document, options.statusLabels);
-    files.push(...(await buildWordFiles(input, options, taken)));
+    files.push(...(await buildWordFiles(input, options, taken, kinds)));
   }
-  if (choices.includePlan) files.push(...(await buildPlanFiles(document, options, taken)));
+  if (choices.includePlan) files.push(...(await buildPlanFiles(document, options, taken, kinds)));
   if (choices.includeData) files.push(jsonFile(document, choices.storyId));
   return files;
 }
 
 /** The file type of a single file, by its name. */
 function typeOfSingleFile(fileName: string): string {
-  return fileName.endsWith('.json') ? JSON_TYPE : WORD_TYPE;
+  if (fileName.endsWith('.json')) return JSON_TYPE;
+  if (fileName.endsWith('.pdf')) return PDF_TYPE;
+  return WORD_TYPE;
 }
 
 /**
@@ -116,7 +121,8 @@ export async function makeStoriesExport(
   const files = await chosenFiles(document, options);
   const firstFile = files[0];
   if (firstFile === undefined) throw new Error('There was nothing to put in the files.');
-  // Step 4: one file is saved as it is, as the database named it (.docx or .json); more is a ZIP.
+  // Step 4: one file is saved as it is, as the database named it (.docx, .pdf or .json); more is
+  // a ZIP.
   const isZip = opened.fileName.endsWith('.zip');
   const bytes = isZip ? await buildWordZip(files) : firstFile.bytes;
   const fileType = isZip ? ZIP_TYPE : typeOfSingleFile(firstFile.fileName);

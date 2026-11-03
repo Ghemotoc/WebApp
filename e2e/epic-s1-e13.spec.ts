@@ -171,7 +171,7 @@ test.describe('epic S1-E13 journeys', () => {
     const block = page.locator('#download-my-stories');
     // Step 1: the story's chapters as a Word file (S1-E13-05, criterion 1).
     await block.getByLabel('Story', { exact: true }).selectOption(storyId);
-    await block.getByLabel('The plan from Story Atlas, as a Word file').uncheck();
+    await block.getByLabel('The plan from Story Atlas', { exact: true }).uncheck();
     await block.getByRole('button', { name: 'Get my files' }).click();
     await expect(block.getByText('Your files are ready.')).toBeVisible({ timeout: 30_000 });
     // Step 2: the EPUB from the same block, saved straight to the device (PRIVACY part f).

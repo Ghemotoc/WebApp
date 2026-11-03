@@ -153,7 +153,7 @@ describe('makeDataExport', () => {
     ]);
   });
 
-  it('uploads one ZIP with the data file and every story and its plan as Word files', async () => {
+  it('uploads one ZIP with the data file and every story and its plan as Word files and PDFs', async () => {
     const fake = fakeClient();
     await makeDataExport(runOptions(fake.client));
     const zip = await JSZip.loadAsync(fake.uploadedZip() ?? new Uint8Array());
@@ -162,7 +162,9 @@ describe('makeDataExport', () => {
       'library.csv',
       'stories/',
       'stories/ploaia-plan.docx',
+      'stories/ploaia-plan.pdf',
       'stories/ploaia.docx',
+      'stories/ploaia.pdf',
     ]);
     const data = JSON.parse((await zip.file('data.json')?.async('string')) ?? '{}');
     expect(data.user_id).toBe('user-1');

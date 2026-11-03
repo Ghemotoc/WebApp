@@ -5,8 +5,9 @@
  *
  * The steps, in this order:
  *   1. admin_data_request_export() answers the person's data file (logged by the database);
- *   2. every story becomes a Word file and every plan a second one, with the same builder as
- *      Download my data, in the person's language; the library becomes library.csv;
+ *   2. every story becomes a Word file and a PDF, and every plan the same two, with the same
+ *      builders as Download my data, in the person's language (ADMIN-2d: PDF beside Word); the
+ *      library becomes library.csv;
  *   3. staff chose one ZIP of everything, or each file on its own (S1-E11-09: "one file per story
  *      or one zip of all");
  *   4. admin_open_data_request_copy() opens one export per file, under random names;
@@ -14,7 +15,8 @@
  *   6. admin_finish_data_request_copy() marks them ready for seven days, logs which files were
  *      sent and tells the person, who downloads them signed in.
  * Who calls it: useDataRequestCopy(), which loads this file (and the Word and ZIP libraries with
- * it) only when a copy is built, so the staff pages stay small.
+ * it) only when a copy is built, so the staff pages stay small; the PDF library loads with the
+ * first PDF.
  * What it calls: api/dataRequestCopy.ts and the Download my data builders it reuses.
  */
 import { brand } from '@/config/brand';
@@ -25,6 +27,7 @@ import {
 } from '@/features/data-export/lib/buildExportZip';
 import {
   JSON_TYPE,
+  PDF_TYPE,
   WORD_TYPE,
   ZIP_TYPE,
   type DataExportDocument,
@@ -35,6 +38,7 @@ import {
   type LibraryCsvLabels,
 } from '@/features/data-export/lib/libraryForExport';
 import {
+  BOTH_DOCUMENT_KINDS,
   buildPlanFiles,
   buildWordFiles,
   type DataExportRunOptions,
@@ -64,7 +68,7 @@ export interface DataRequestCopyOptions extends DataExportRunOptions {
 const CSV_TYPE = 'text/csv';
 
 /**
- * Every file of the copy before packing: the Word files, the plans and library.csv.
+ * Every file of the copy before packing: the Word and PDF files, the plans and library.csv.
  *
  * @returns the files, with their paths inside a ZIP ("stories/rain.docx")
  */
@@ -74,8 +78,8 @@ async function buildCopyFiles(
 ): Promise<ZipEntry[]> {
   const input = wordInputFrom(document, options.statusLabels);
   const taken = new Set<string>();
-  const wordFiles = await buildWordFiles(input, options, taken);
-  const planFiles = await buildPlanFiles(document, options, taken);
+  const wordFiles = await buildWordFiles(input, options, taken, BOTH_DOCUMENT_KINDS);
+  const planFiles = await buildPlanFiles(document, options, taken, BOTH_DOCUMENT_KINDS);
   const libraryFile = libraryCsvFile(document, options.libraryLabels);
   const extraFiles = libraryFile === null ? [] : [libraryFile];
   return [...wordFiles, ...planFiles, ...extraFiles];
@@ -105,10 +109,11 @@ export function separateFileName(zipPath: string): string {
 /**
  * The media type for a file, by its ending.
  *
- * @returns ZIP, Word, JSON or CSV
+ * @returns ZIP, Word, PDF, JSON or CSV
  */
 export function copyFileType(fileName: string): string {
   if (fileName.endsWith('.docx')) return WORD_TYPE;
+  if (fileName.endsWith('.pdf')) return PDF_TYPE;
   if (fileName.endsWith('.json')) return JSON_TYPE;
   if (fileName.endsWith('.csv')) return CSV_TYPE;
   return ZIP_TYPE;

@@ -193,8 +193,8 @@
   },
   "copy": {
     "heading": "The copy",
-    "intro": "The copy holds everything the person put here and their account data as a machine-readable file (data.json), every story and every story’s plan as a Word file, and their library as a spreadsheet. It is built in this tab, in the person’s language, then the person downloads it from Settings while signed in, for seven days. Nothing goes to any other address.",
-    "introParent": "The copy holds everything the person put here and their account data as a machine-readable file (data.json), every story and every story’s plan as a Word file, and their library as a spreadsheet. It is built in this tab, in the person’s language. On this request it goes to the parent or guardian who agreed to the account: we email them a one-time link at the address from that agreement, for seven days. The person isn’t told and doesn’t see the files.",
+    "intro": "The copy holds everything the person put here and their account data as a machine-readable file (data.json), every story and every story’s plan as a Word file and a PDF, and their library as a spreadsheet. It is built in this tab, in the person’s language, then the person downloads it from Settings while signed in, for seven days. Nothing goes to any other address.",
+    "introParent": "The copy holds everything the person put here and their account data as a machine-readable file (data.json), every story and every story’s plan as a Word file and a PDF, and their library as a spreadsheet. It is built in this tab, in the person’s language. On this request it goes to the parent or guardian who agreed to the account: we email them a one-time link at the address from that agreement, for seven days. The person isn’t told and doesn’t see the files.",
     "formatLabel": "How to send it",
     "formats": {
       "zip": "One ZIP of everything",
@@ -256,7 +256,7 @@
     "deniedHeading": "Thank you for telling us",
     "deniedBody": "You told us nobody in your family asked for request {{reference}}, so we won’t send anything. If you think someone is trying to get your child’s data, contact us.",
     "copyHeading": "The copy of @{{handle}}’s data",
-    "copyIntro": "This is the copy for request {{reference}}: everything @{{handle}} put here as a machine-readable file (data.json), every story as a Word file and their library as a spreadsheet.",
+    "copyIntro": "This is the copy for request {{reference}}: everything @{{handle}} put here as a machine-readable file (data.json), every story as a Word file and a PDF and their library as a spreadsheet.",
     "copyOnce": "The link works once: when you press Open the files, you have one hour to download them. Use a device you trust.",
     "openButton": "Open the files",
     "openFailed": "The files couldn’t be opened. Try again.",

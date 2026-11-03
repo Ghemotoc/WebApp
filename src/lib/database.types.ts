@@ -2093,6 +2093,7 @@ export type Database = {
           created_at: string;
           data_request_id: string | null;
           display_name: string | null;
+          document_format: string;
           expires_at: string | null;
           file_name: string;
           file_size: number | null;
@@ -2115,6 +2116,7 @@ export type Database = {
           created_at?: string;
           data_request_id?: string | null;
           display_name?: string | null;
+          document_format?: string;
           expires_at?: string | null;
           file_name: string;
           file_size?: number | null;
@@ -2136,6 +2138,7 @@ export type Database = {
           created_at?: string;
           data_request_id?: string | null;
           display_name?: string | null;
+          document_format?: string;
           expires_at?: string | null;
           file_name?: string;
           file_size?: number | null;
@@ -9181,6 +9184,7 @@ export type Database = {
       export_file_extension: {
         Args: {
           choices: boolean[];
+          document_format: string;
           kind: Database['public']['Enums']['export_kind'];
           story_id: string;
         };
@@ -10780,6 +10784,7 @@ export type Database = {
         Args: {
           chosen_chapter_ids?: string[];
           chosen_story_id?: string;
+          document_format?: string;
           include_chapters?: boolean;
           include_data?: boolean;
           include_plan?: boolean;
@@ -10897,6 +10902,7 @@ export type Database = {
           created_at: string;
           data_request_id: string | null;
           display_name: string | null;
+          document_format: string;
           expires_at: string | null;
           file_name: string;
           file_size: number | null;

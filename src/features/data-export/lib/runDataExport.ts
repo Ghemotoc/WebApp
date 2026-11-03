@@ -5,9 +5,10 @@
  *   1. request_data_export() opens a copy under a random file name;
  *   2. my_data_export() answers the data file, and the library's addresses become full links;
  *   3. the chapter pictures are loaded and drawn as PNG (pictureForWord());
- *   4. every story becomes a Word file through the shared Word builder (src/lib/word/), and its
- *      plan from Story Atlas a second one (planToWord(); Robert, 1 Nov 2026, 06:27);
- *   5. the data file, the Word files and the library as a spreadsheet (library.csv, IDEAS-1f) go
+ *   4. every story becomes a Word file through the shared Word builder (src/lib/word/) and a PDF
+ *      through the shared PDF builder (src/lib/pdf/; ADMIN-2d, Robert, 2 Nov 2026), and its plan
+ *      from Story Atlas the same two again (Robert, 1 Nov 2026, 06:27);
+ *   5. the data file, the Word and PDF files and the library as a spreadsheet (library.csv, IDEAS-1f) go
  *      into one ZIP (buildExportZip());
  *   6. the older copies' files are deleted, so only one copy of the person's data is kept;
  *   7. the ZIP is uploaded to the private exports bucket;
@@ -16,17 +17,27 @@
  * when the Settings panel closes), and the panel shows its state through exportRunStore.ts. If the
  * tab closes halfway, asking again starts afresh.
  * Who calls it: startDataExport() in exportRunStore.ts, which loads this file (and the Word and
- * ZIP libraries with it) only when a copy is asked for, so Settings stays small.
+ * ZIP libraries with it) only when a copy is asked for, so Settings stays small; the PDF library
+ * loads only once the first PDF is built.
  * What it calls: api/dataExport.ts and the libs beside it.
  */
 import { brand } from '@/config/brand';
 import type { AppSupabaseClient } from '@/lib/supabase';
+import { planToPdf } from '@/lib/pdf/planToPdf';
+import { storyToPdf } from '@/lib/pdf/storyToPdf';
 import { planToWord } from '@/lib/word/planToWord';
 import { storyToWord } from '@/lib/word/storyToWord';
-import type { WordDateFormatter, WordLabels, WordPicture } from '@/lib/word/wordTypes';
+import type {
+  WordDateFormatter,
+  WordLabels,
+  WordPicture,
+  WordPlan,
+  WordStory,
+} from '@/lib/word/wordTypes';
 
 import {
   type DataExportDocument,
+  type DocumentKind,
   deleteExportFiles,
   downloadPicture,
   fetchDataExportDocument,
@@ -74,43 +85,80 @@ async function loadPictures(
   return loaded;
 }
 
+/** Every document kind, as Download my data and staff copies hold them (ADMIN-2d). */
+export const BOTH_DOCUMENT_KINDS: DocumentKind[] = ['word', 'pdf'];
+
+/** A file's ending for each document kind. */
+const endingOf: Record<DocumentKind, string> = { word: 'docx', pdf: 'pdf' };
+
 /**
- * One Word file per story, named after its slug. Download my stories (runStoriesExport.ts) uses
- * it too, so both copies hold exactly the same Word files.
+ * One story's document of one kind, from the shared builders.
+ *
+ * @returns the file's bytes
+ */
+function storyDocument(
+  kind: DocumentKind,
+  story: WordStory,
+  builderOptions: Parameters<typeof storyToWord>[1],
+): Promise<Uint8Array> {
+  return kind === 'word' ? storyToWord(story, builderOptions) : storyToPdf(story, builderOptions);
+}
+
+/**
+ * One story's plan of one kind, from the shared builders.
+ *
+ * @returns the file's bytes
+ */
+function planDocument(kind: DocumentKind, plan: WordPlan, labels: WordLabels): Promise<Uint8Array> {
+  return kind === 'word' ? planToWord(plan, { labels }) : planToPdf(plan, { labels });
+}
+
+/**
+ * One document per story and kind (a Word file, a PDF or both), named after its slug. Download my
+ * stories (runStoriesExport.ts) and staff copies use it too, so every copy holds the same files.
  *
  * @param taken - the names used so far in the same ZIP (the stories' are added)
+ * @param kinds - which documents to make; Word only when left out
  * @returns the files for the ZIP
  */
 export async function buildWordFiles(
   input: WordInput,
   options: DataExportRunOptions,
   taken: Set<string> = new Set<string>(),
+  kinds: DocumentKind[] = ['word'],
 ): Promise<ZipEntry[]> {
+  // Step 1: the pictures once, for every file.
   const pictures = await loadPictures(input, options);
+  const builderOptions = {
+    labels: options.wordLabels,
+    formatDate: options.formatDate,
+    assets: { pictures, embeds: input.embeds },
+  };
+  // Step 2: each story in each kind, Word before PDF.
   const files: ZipEntry[] = [];
   for (const entry of input.stories) {
-    const bytes = await storyToWord(entry.story, {
-      labels: options.wordLabels,
-      formatDate: options.formatDate,
-      assets: { pictures, embeds: input.embeds },
-    });
-    files.push({ fileName: wordFileName(entry.slug, taken), bytes });
+    for (const kind of kinds) {
+      const bytes = await storyDocument(kind, entry.story, builderOptions);
+      files.push({ fileName: wordFileName(entry.slug, taken, endingOf[kind]), bytes });
+    }
   }
   return files;
 }
 
 /**
- * One Word file per story's plan from Story Atlas, named "<slug>-plan.docx" (Robert, 1 Nov 2026,
- * 06:27). Download my stories uses it too.
+ * One document per story's plan from Story Atlas and kind, named "<slug>-plan.docx" and
+ * "<slug>-plan.pdf" (Robert, 1 Nov 2026, 06:27; ADMIN-2d). Download my stories uses it too.
  *
  * @param document - the data file, whole or narrowed to the chosen stories
  * @param taken - the names used so far in the same ZIP (the plan's are added)
+ * @param kinds - which documents to make; Word only when left out
  * @returns the files for the ZIP
  */
 export async function buildPlanFiles(
   document: DataExportDocument,
   options: DataExportRunOptions,
   taken: Set<string>,
+  kinds: DocumentKind[] = ['word'],
 ): Promise<ZipEntry[]> {
   const plans = plansFrom(document, {
     ...options.planText,
@@ -119,8 +167,10 @@ export async function buildPlanFiles(
   });
   const files: ZipEntry[] = [];
   for (const entry of plans) {
-    const bytes = await planToWord(entry.plan, { labels: options.wordLabels });
-    files.push({ fileName: wordFileName(`${entry.slug}-plan`, taken), bytes });
+    for (const kind of kinds) {
+      const bytes = await planDocument(kind, entry.plan, options.wordLabels);
+      files.push({ fileName: wordFileName(`${entry.slug}-plan`, taken, endingOf[kind]), bytes });
+    }
   }
   return files;
 }
@@ -144,7 +194,7 @@ async function olderFileNames(client: AppSupabaseClient, newExportId: string): P
  * Makes one copy, every step in order.
  *
  * @param options - the client and the translated words
- * @returns how many Word files the ZIP holds
+ * @returns how many stories the ZIP holds (each as a Word file and a PDF)
  * @throws Error with a plain message at the first step that fails
  */
 export async function makeDataExport(options: DataExportOptions): Promise<number> {
@@ -152,11 +202,11 @@ export async function makeDataExport(options: DataExportOptions): Promise<number
   // to the website (IDEAS-1f).
   const opened = await requestDataExport(options.client);
   const document = withLibraryLinks(await fetchDataExportDocument(options.client), brand.siteUrl);
-  // Steps 3 to 5: the Word files and the ZIP, built here in the browser (ADR 0012).
+  // Steps 3 to 5: the Word and PDF files and the ZIP, built here in the browser (ADR 0012).
   const input = wordInputFrom(document, options.statusLabels);
   const taken = new Set<string>();
-  const wordFiles = await buildWordFiles(input, options, taken);
-  const planFiles = await buildPlanFiles(document, options, taken);
+  const wordFiles = await buildWordFiles(input, options, taken, BOTH_DOCUMENT_KINDS);
+  const planFiles = await buildPlanFiles(document, options, taken, BOTH_DOCUMENT_KINDS);
   // The library as a spreadsheet too, when there is one (IDEAS-1f).
   const libraryFile = libraryCsvFile(document, options.libraryLabels);
   const extraFiles = libraryFile === null ? [] : [libraryFile];
@@ -165,6 +215,7 @@ export async function makeDataExport(options: DataExportOptions): Promise<number
   await deleteExportFiles(options.client, await olderFileNames(options.client, opened.exportId));
   // Steps 7 and 8: save the ZIP, then mark it ready and notify.
   await uploadExportFile(options.client, opened.fileName, zip);
-  await finishDataExport(options.client, opened.exportId, wordFiles.length);
-  return wordFiles.length;
+  const storyCount = input.stories.length;
+  await finishDataExport(options.client, opened.exportId, storyCount);
+  return storyCount;
 }
