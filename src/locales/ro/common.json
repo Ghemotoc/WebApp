@@ -132,9 +132,6 @@
     "coverLabel": "Încarcă o imagine",
     "coverHint": "JPEG, PNG sau WebP, până la 5 MB. Se potrivește cel mai bine o imagine înaltă (5 pe 8). Cititorii o văd după ce trece verificarea imaginilor.",
     "coverPreview": "Coperta ta încărcată",
-    "avatarLabel": "Încarcă o poză de profil",
-    "avatarHint": "JPEG, PNG sau WebP, până la 2 MB. Ceilalți o văd după ce trece verificarea imaginilor.",
-    "avatarHeading": "Poza de profil",
     "chapter": {
       "figureLabel": "Imagine din acest capitol",
       "beingChecked": "Imagine în verificare",

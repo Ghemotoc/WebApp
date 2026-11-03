@@ -10,7 +10,7 @@
  * Who uses it: ProfileHeader.
  */
 import { RankSticker } from '@/features/forums/components/RankSticker';
-import { AvatarImage } from '@/features/pictures/components/AvatarImage';
+import { AvatarImage } from '@/features/avatars/components/AvatarImage';
 
 import { initialsOf } from '../lib/formatting';
 

@@ -17,7 +17,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(43);
+select plan(41);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -73,16 +73,12 @@ select pg_temp.sign_out();
 select is((select count(*)::integer from storage.objects where name = '11111111-1111-4111-8111-111111111111.png'), 0,
   'denied: pictures_select_visible: a signed-out visitor can''t read a pending picture');
 
-/* ---------- 2. Uploading a profile picture ---------- */
+/* ---------- 2. Profile pictures can't be uploaded (ADMIN-2g) ---------- */
 
+-- Avatars are built or initials only since ADMIN-2g (Robert, 2 Nov 2026): no insert policy is left.
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
-select lives_ok($$ insert into storage.objects (bucket_id, name) values ('avatars', '44444444-4444-4444-8444-444444444444.webp') $$,
-  'allowed: avatars_insert_own: a member adds a profile picture under a random name while uploads are on');
-select throws_ok($$ insert into storage.objects (bucket_id, name) values ('avatars', '00000000-0000-4000-8000-000000000001.png') $$,
-  '42501', null, 'denied: avatars_insert_own: a name that isn''t a fresh random ID is refused');
-select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
-select throws_ok($$ insert into storage.objects (bucket_id, name) values ('avatars', '55555555-5555-4555-8555-555555555555.png') $$,
-  '42501', null, 'denied: avatars_insert_own: an account that may not write can''t upload');
+select throws_ok($$ insert into storage.objects (bucket_id, name) values ('avatars', '44444444-4444-4444-8444-444444444444.webp') $$,
+  '42501', null, 'a member can''t upload a profile picture any more');
 
 /* ---------- 3. The signed result ---------- */
 
