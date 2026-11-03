@@ -80,7 +80,9 @@
     "dataRequestCopyReady": "your copy for the data request {{reference}} is ready. Download it in Settings within seven days.",
     "pictureOpenedByStaff": "opened the original file of an uploaded picture. Every opening is in the audit log.",
     "landingEntriesOpen": "entries are open for “{{title}}”.",
-    "landingEntriesOpenGone": "entries are open for a page you asked about, which has since been taken down."
+    "landingEntriesOpenGone": "entries are open for a page you asked about, which has since been taken down.",
+    "contestCertificateIssued": "you have a certificate from “{{title}}”. It’s in My certificates.",
+    "certificateIssuedPlain": "you have a new certificate. It’s in My certificates."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",

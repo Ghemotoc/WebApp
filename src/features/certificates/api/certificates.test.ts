@@ -73,6 +73,32 @@ describe('the student’s certificates', () => {
     expect(certificate?.result).toBe('winner');
   });
 
+  it('a class certificate is not a contest one', async () => {
+    const { client } = fakeClient({ data: [ownRow] });
+    const [certificate] = await listMyCertificates(client);
+    expect(certificate?.isContest).toBe(false);
+    expect(certificate?.contestName).toBeNull();
+  });
+
+  it('a contest certificate carries the contest’s name in both languages', async () => {
+    const contestRow = {
+      ...ownRow,
+      class_name: null,
+      teacher_name: null,
+      school_name: null,
+      is_contest: true,
+      contest_name: { ro: 'Concursul de toamnă', en: 'The autumn contest' },
+    };
+    const { client } = fakeClient({ data: [contestRow] });
+    const [certificate] = await listMyCertificates(client);
+    expect(certificate?.isContest).toBe(true);
+    expect(certificate?.contestName).toEqual({
+      ro: 'Concursul de toamnă',
+      en: 'The autumn contest',
+    });
+    expect(certificate?.schoolName).toBeNull();
+  });
+
   it('saving a name sends only the certificate and the name', async () => {
     const { client, rpc } = fakeClient({ data: { printed_name: 'Ana Popescu' } });
     await expect(

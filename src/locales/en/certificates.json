@@ -70,7 +70,12 @@
     "checkTitle": "Check this certificate",
     "issued": "Issued {{date}}",
     "footerSchool": "Class programme run by {{school}} with {{productName}} as partner. Co-signed by {{productName}} and the teacher leading the class.",
-    "footer": "Class programme with {{productName}}. Co-signed by {{productName}} and the teacher leading the class."
+    "footer": "Class programme with {{productName}}. Co-signed by {{productName}} and the teacher leading the class.",
+    "forContestWinner": "for winning the writing contest “{{programme}}”.",
+    "forContestFinalist": "for reaching the final of the writing contest “{{programme}}”.",
+    "forContestParticipant": "for taking part in the writing contest “{{programme}}”.",
+    "contestLabel": "Writing contest",
+    "contestFooter": "Writing contest run by {{productName}}. Signed by {{productName}}."
   },
   "verify": {
     "documentTitle": "Check a certificate",

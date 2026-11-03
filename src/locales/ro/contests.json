@@ -218,7 +218,11 @@
       "done": {
         "placing": "Rezultatul a fost salvat.",
         "publish": "Rezultatele sunt publicate pe pagina de prezentare.",
-        "prize": "Premiul este marcat ca trimis."
+        "prize": "Premiul este marcat ca trimis.",
+        "certificates_zero": "Nicio diplomă nu trebuia emisă sau schimbată.",
+        "certificates_one": "{{count}} diplomă emisă sau actualizată.",
+        "certificates_few": "{{count}} diplome emise sau actualizate.",
+        "certificates_other": "{{count}} de diplome emise sau actualizate."
       },
       "failures": {
         "entries_open": "Înscrierile sunt încă deschise. Alege rezultatele după ce se încheie.",
@@ -231,8 +235,11 @@
         "already_sent": "Premiul este deja marcat ca trimis.",
         "parent_consent_needed": "Această persoană are sub 16 ani. Confirmă mai întâi că avem acordul unui părinte sau tutore.",
         "not_allowed": "Doar proprietarul și administratorii pot stabili rezultatele concursurilor.",
-        "failed": "Nu a funcționat. Încearcă din nou peste puțin timp."
-      }
+        "failed": "Nu a funcționat. Încearcă din nou peste puțin timp.",
+        "no_contest": "Concursul nu mai există."
+      },
+      "certificatesHint": "Fiecare înscriere validă primește o diplomă în Diplomele mele: cele câștigătoare și cele din finală după loc, celelalte pentru participare. Diploma arată doar pseudonimul. Dacă schimbi un loc mai târziu, emite-le din nou: se actualizează doar diplomele schimbate.",
+      "issueCertificates": "Emite diplomele"
     }
   }
 }

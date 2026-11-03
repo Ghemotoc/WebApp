@@ -26,8 +26,15 @@ import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
-/** Removes this spec's contest, pages, chapter and the disqualification's statement. */
+/**
+ * Removes this spec's contest, its certificates, pages, chapter and the disqualification's
+ * statement.
+ */
 const cleanUpSql = `
+  delete from public.notifications where kind = 'certificate_issued' and landing_page_id in (
+    select id from public.landing_pages where slug = 'concurs-e2e');
+  delete from public.certificates where contest_id in (select contests.id from public.contests
+    join public.landing_pages on landing_pages.id = contests.landing_page_id where landing_pages.slug = 'concurs-e2e');
   delete from public.notifications where statement_id in (
     select id from public.statements_of_reasons where action = 'contest_disqualified');
   delete from public.statements_of_reasons where action = 'contest_disqualified';
@@ -252,5 +259,37 @@ test.describe('Contests (S1-E11-15)', () => {
       visitor.getByRole('region', { name: 'Results' }).locator('a[href="/s/statia-meteo-seed01"]'),
     ).toBeVisible();
     await context.close();
+  });
+
+  test('an admin issues certificates and the winner prints theirs with the pen name only', async ({
+    browser,
+  }) => {
+    // Step 1: the results are out (the test before), so the admin issues the certificates.
+    const admin = await openAs(browser, 'admin', '/staff/contests');
+    await admin.getByRole('link', { name: 'The trial contest' }).click();
+    await admin.getByRole('button', { name: 'Issue certificates' }).click();
+    await expect(admin.getByText('1 certificate issued or updated.')).toBeVisible();
+    await admin.context().close();
+
+    // Step 2: the winner finds it under My certificates, marked as a writing contest.
+    const writer = await openAs(browser, 'adult_writer', '/certificates');
+    await expect(writer.getByText('Writing contest')).toBeVisible();
+    await writer.getByRole('link', { name: 'Open “The trial contest”' }).click();
+
+    // Step 3: no real-name form (CLAUDE.md rule 5), one signature and the contest's sentence.
+    await expect(
+      writer.getByRole('heading', { level: 1, name: 'The trial contest' }),
+    ).toBeVisible();
+    await expect(writer.getByLabel('Name to print')).toHaveCount(0);
+    await expect(
+      writer.getByText('for winning the writing contest “The trial contest”.'),
+    ).toBeVisible();
+    const results = await new AxeBuilder({ page: writer })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+    expect(
+      results.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? '')),
+    ).toEqual([]);
+    await writer.context().close();
   });
 });

@@ -12,7 +12,8 @@ tells visitors about it.
   disqualifying an entry (part 13b2a), shown by `components/staff/ContestEntriesSection.tsx` and
   `DisqualifyForm.tsx`; judging, publishing and prizes (part 13b2b) in `ContestResultsPanel.tsx`
   and `EntryJudging.tsx`. The public results are drawn by the landing page's
-  `ContestResultsBlock`.
+  `ContestResultsBlock`. "Issue certificates" in the same panel gives every valid entry a
+  certificate (part 13b2c); the certificate itself is drawn by `src/features/certificates/`.
 - `hooks/useStaffContests.ts` (the staff list and one contest's editor) and
   `hooks/useStoryContests.ts` (the card in a story's settings).
 - `components/StoryContestCard.tsx`: the Contests card in a story's settings.

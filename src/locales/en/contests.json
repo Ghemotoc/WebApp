@@ -218,7 +218,11 @@
       "done": {
         "placing": "Placing saved.",
         "publish": "The results are published on the landing page.",
-        "prize": "The prize is marked as sent."
+        "prize": "The prize is marked as sent.",
+        "certificates_zero": "No certificate needed issuing or changing.",
+        "certificates_one": "{{count}} certificate issued or updated.",
+        "certificates_few": "{{count}} certificates issued or updated.",
+        "certificates_other": "{{count}} certificates issued or updated."
       },
       "failures": {
         "entries_open": "Entries are still open. Choose results once they close.",
@@ -231,8 +235,11 @@
         "already_sent": "This prize is already marked as sent.",
         "parent_consent_needed": "This winner is under 16. Confirm that a parent’s or guardian’s consent is on file first.",
         "not_allowed": "Only the owner and admins can judge contests.",
-        "failed": "That didn’t work. Try again in a moment."
-      }
+        "failed": "That didn’t work. Try again in a moment.",
+        "no_contest": "This contest no longer exists."
+      },
+      "certificatesHint": "Every valid entry gets a certificate under My certificates: winners and finalists by their placing, everyone else for taking part. It prints the pen name only. If you change a placing later, issue them again: only the changed certificates are updated.",
+      "issueCertificates": "Issue certificates"
     }
   }
 }

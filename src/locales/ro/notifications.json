@@ -80,7 +80,9 @@
     "dataRequestCopyReady": "copia pentru cererea ta privind datele {{reference}} e gata. Descarc-o din Setări în cel mult șapte zile.",
     "pictureOpenedByStaff": "a deschis fișierul original al unei imagini încărcate. Fiecare deschidere apare în jurnalul de audit.",
     "landingEntriesOpen": "au început înscrierile pentru „{{title}}”.",
-    "landingEntriesOpenGone": "au început înscrierile pentru o pagină despre care ai întrebat, dar care a fost scoasă între timp."
+    "landingEntriesOpenGone": "au început înscrierile pentru o pagină despre care ai întrebat, dar care a fost scoasă între timp.",
+    "contestCertificateIssued": "ai primit o diplomă de la „{{title}}”. O găsești în Diplomele mele.",
+    "certificateIssuedPlain": "ai primit o diplomă nouă. O găsești în Diplomele mele."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",

@@ -1632,6 +1632,12 @@ A contest belongs to one landing page of type contest (S1-E11-14): the page tell
 - **Prizes:** `PrizeControl` → `admin_mark_contest_prize_sent(entry, parent_consent_on_file)`, which refuses a winner under 16 (or of unknown age) until staff confirm a parent's or guardian's consent is on file. Only the date and that confirmation are stored, never the delivery details.
 - **Tests:** `supabase/tests/database/267-contest-results.test.sql`, `e2e/contests.spec.ts`.
 
+### Contest certificates (CONTESTS-13b2c)
+
+- **Issuing:** once the results are published, "Issue certificates" in `ContestResultsPanel` → `useContestEntries().judge({ kind: 'certificates' })` → `admin_issue_contest_certificates()`. Every valid entry gets one row in `certificates` with `contest_id` set (winner, finalist or participant) through `write_contest_certificate()`; running it again only changes a certificate whose placing changed. Each writer gets a `certificate_issued` notification pointing at the contest's landing page (`certificateIssuedWhat()` in `notificationText.ts`).
+- **The writer:** `my_certificates()` adds `is_contest` and `contest_name` (both languages). `CertificateSheet` prints the contest's name in the sheet's language, our signature only and the contest footer; `CertificatePage` hides `PrintedNameForm`, because a real name is stored only with a class certificate (CLAUDE.md rule 5). The check page (`verify_certificate()`) works as for any certificate.
+- **Tests:** `supabase/tests/database/268-contest-certificates.test.sql`, `e2e/contests.spec.ts`, `src/features/certificates/api/certificates.test.ts`.
+
 ## Tags: approval and names in each language (CMS-1e)
 
 A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.

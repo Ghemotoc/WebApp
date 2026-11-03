@@ -11,8 +11,11 @@
  * language, and the sheet says so with lang. The browser prints it as an A4 page (index.css,
  * "certificate-sheet"); its "Save as PDF" keeps the text as real, tagged text, not a picture
  * (proposal: a server-made PDF comes with S1-E11-09b).
+ * A contest certificate (S1-E11-15 criterion 9; CONTESTS-13b2c) names the contest in the sheet's
+ * language, has no school, class or teacher and only our signature.
  * Who shows it: CertificatePage. Decorative: none (no doodles; the boards' QR code is left out).
  */
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import { brand } from '@/config/brand';
@@ -28,8 +31,41 @@ const reasonKeys = {
   participant: 'sheet.forParticipant',
 } as const;
 
+/** The same sentence for a writing contest, which has no class (CONTESTS-13b2c). */
+const contestReasonKeys = {
+  winner: 'sheet.forContestWinner',
+  finalist: 'sheet.forContestFinalist',
+  participant: 'sheet.forContestParticipant',
+} as const;
+
 /**
- * The two signatures: ours first, then the teacher's.
+ * The sentence under the name: what the person did, in which programme or contest.
+ *
+ * @param certificate - the certificate
+ * @param language - the language the sheet prints in
+ * @param t - the certificates translation function, fixed to that language
+ * @returns the sentence
+ */
+function reasonSentence(
+  certificate: MyCertificate,
+  language: CertificateLanguage,
+  t: TFunction,
+): string {
+  // A contest prints its name in the sheet's language; a class prints the programme and class.
+  if (certificate.isContest && certificate.contestName !== null) {
+    return t(contestReasonKeys[certificate.result], {
+      programme: certificate.contestName[language],
+    });
+  }
+  return t(reasonKeys[certificate.result], {
+    programme: certificate.programmeName,
+    className: certificate.className,
+  });
+}
+
+/**
+ * The signatures: ours first, then the teacher's for a class certificate. A contest is ours alone.
+
  *
  * @param props.certificate - the certificate
  * @param props.language - its language
@@ -58,11 +94,13 @@ function CertificateSignatures({
         <p className="m-0 font-semibold text-ink">{certificate.signatoryName}</p>
         <p className="m-0 text-sm text-body">{t('sheet.companyRole')}</p>
       </div>
-      <div className="flex flex-col gap-1 border-t border-ink pt-2">
-        <p className="m-0 text-xs text-body">{signedOn}</p>
-        <p className="m-0 font-semibold text-ink">{certificate.teacherName}</p>
-        <p className="m-0 text-sm text-body">{teacherRole}</p>
-      </div>
+      {!certificate.isContest && (
+        <div className="flex flex-col gap-1 border-t border-ink pt-2">
+          <p className="m-0 text-xs text-body">{signedOn}</p>
+          <p className="m-0 font-semibold text-ink">{certificate.teacherName}</p>
+          <p className="m-0 text-sm text-body">{teacherRole}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -86,20 +124,23 @@ function CertificateFooter({
   const t = i18n.getFixedT(language, 'certificates');
   const school = certificate.schoolName;
   const year = new Date(certificate.signedAt).getFullYear();
+  // What ran the programme: a contest, a class at a school or a class.
+  let footerText = t('sheet.footer');
+  if (certificate.isContest) footerText = t('sheet.contestFooter');
+  else if (school !== null) footerText = t('sheet.footerSchool', { school });
   return (
     <footer className="flex flex-col gap-3 border-t border-border pt-4 text-sm text-body">
       <div className="flex flex-wrap justify-between gap-4">
         <p className="m-0">
-          {t('sheet.programmeLabel')} · {t(`results.${certificate.result}`)} · {year}
+          {t(certificate.isContest ? 'sheet.contestLabel' : 'sheet.programmeLabel')} ·{' '}
+          {t(`results.${certificate.result}`)} · {year}
         </p>
         <p className="m-0">
           {t('sheet.checkTitle')}: {brand.siteDomain}/verify · <strong>{certificate.code}</strong> ·{' '}
           {t('sheet.issued', { date: certificateDate(certificate.signedAt, language) })}
         </p>
       </div>
-      <p className="m-0 text-xs">
-        {school === null ? t('sheet.footer') : t('sheet.footerSchool', { school })}
-      </p>
+      <p className="m-0 text-xs">{footerText}</p>
     </footer>
   );
 }
@@ -150,12 +191,7 @@ export function CertificateSheet({
         <p className="m-0 font-heading text-[clamp(24px,4vw,36px)] font-bold break-words text-ink">
           {awardedName}
         </p>
-        <p className="m-0 max-w-[52ch] text-body">
-          {t(reasonKeys[certificate.result], {
-            programme: certificate.programmeName,
-            className: certificate.className,
-          })}
-        </p>
+        <p className="m-0 max-w-[52ch] text-body">{reasonSentence(certificate, language, t)}</p>
       </div>
       <CertificateSignatures certificate={certificate} language={language} />
       <CertificateFooter certificate={certificate} language={language} />

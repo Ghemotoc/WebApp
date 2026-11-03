@@ -440,8 +440,27 @@ function changeRequestText(t: TFunction, notification: AppNotification): Notific
 }
 
 /**
- * A teacher signed a certificate for the reader in their class (CLASSES-e; S1-E8-12 criterion 1).
- * It leads to My certificates.
+ * A teacher signed a certificate for the reader in their class (CLASSES-e; S1-E8-12 criterion 1),
+ * or staff issued one for a contest the reader entered (CONTESTS-13b2c; S1-E11-15 criterion 9),
+ * named by its landing page's title. It leads to My certificates.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a certificate_issued row
+ * @returns the sentence saying where the certificate came from
+ */
+function certificateIssuedWhat(t: TFunction, notification: AppNotification): string {
+  // A class certificate names the class; a contest names its page; otherwise a plain sentence.
+  if (notification.space !== null) {
+    return t('what.certificateIssued', { space: notification.space.name });
+  }
+  const page = notification.landingPage;
+  if (page === null) return t('what.certificateIssuedPlain');
+  const title = t('pageLanguage') === 'ro' ? page.titles.ro : page.titles.en;
+  return t('what.contestCertificateIssued', { title });
+}
+
+/**
+ * The certificate_issued row: its words and the link to My certificates.
  *
  * @param t - the notifications translation function
  * @param notification - a certificate_issued row
@@ -450,7 +469,7 @@ function changeRequestText(t: TFunction, notification: AppNotification): Notific
 function certificateIssuedText(t: TFunction, notification: AppNotification): NotificationText {
   return {
     who: t('who.yourAccount'),
-    what: t('what.certificateIssued', { space: notification.space?.name ?? '' }),
+    what: certificateIssuedWhat(t, notification),
     quote: null,
     grouped: null,
     actionLabel: t('actions.openCertificates'),
