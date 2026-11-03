@@ -51,6 +51,7 @@ None.
 
 ## Follow-ups
 
+- The reader's 2-second first-paragraph test fails on this machine late at night for main before bundle 13 too (about 2.0 to 2.2 s with the CPU throttled 4 times). The CHECK bundle should measure it on a quiet machine and either trim what the reader loads first or agree a budget with Robert.
 - A few other functions still count days by the database's UTC date (safety contacts' monthly check, the moderation queue's deadlines, sanctions' end dates, the reading streak and claiming). None refuses anything at night the way data requests did, but they could be a day out between 00:00 and 02:00 Romanian time; worth moving them to `romania_today()` in the CHECK bundle.
 - Staff › Schools › Certificates shows a contest certificate with empty class and teacher fields; a "Contest" label there would read better.
 
