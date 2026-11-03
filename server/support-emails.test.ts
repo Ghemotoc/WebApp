@@ -50,7 +50,9 @@ afterEach(() => {
 describe('writing support emails', () => {
   it('an acknowledgement has the number in the subject and links to the ticket', () => {
     const email = composeSupportEmail(claimed(), readers, 'https://site.test', sender);
-    expect(email.subject).toBe('en:acknowledgementSubject{"number":1042,"subject":"Lost drafts"}');
+    expect(email.subject).toBe(
+      'en:acknowledgementSubject{"number":1042,"subject":"Lost drafts","mergedInto":1042}',
+    );
     expect(email.text).toContain('https://site.test/support/1042');
     expect(email.replyTo).toBe('hello@example.test');
   });
@@ -95,9 +97,25 @@ describe('writing support emails', () => {
       'https://site.test',
       sender,
     );
-    expect(email.subject).toBe('en:autoSolvedSubject{"number":1042,"subject":"Lost drafts"}');
+    expect(email.subject).toBe(
+      'en:autoSolvedSubject{"number":1042,"subject":"Lost drafts","mergedInto":1042}',
+    );
     expect(email.text).toContain('en:autoSolvedBody');
     expect(email.text).toContain('en:replyInApp');
+  });
+
+  it('after a merge, says the new number and links to the ticket that stayed (part h4a)', () => {
+    const email = composeSupportEmail(
+      claimed({ kind: 'merged', merged_into: 1050 }),
+      readers,
+      'https://site.test',
+      sender,
+    );
+    expect(email.subject).toBe(
+      'en:mergedSubject{"number":1042,"subject":"Lost drafts","mergedInto":1050}',
+    );
+    expect(email.text).toContain('en:mergedBody');
+    expect(email.text).toContain('https://site.test/support/1050');
   });
 
   it('sets our Message-ID and threads under the person’s last email', () => {

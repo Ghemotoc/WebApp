@@ -4,8 +4,9 @@
  *
  * The messages ("You" and "The support team", never which person on the team, and never an
  * internal note), then a box to answer: answering a solved request, or one waiting for the
- * person, opens it again (criterion 7). A closed request says to ask again. A number that isn't
- * theirs reads as "not found".
+ * person, opens it again (criterion 7). A closed request says to ask again; one staff merged
+ * into another links to it (part h4a, criterion 9). A number that isn't theirs reads as "not
+ * found".
  * Who shows it: the router. What it calls: useMyTicket.
  */
 import { Link, useParams } from 'react-router';
@@ -61,9 +62,17 @@ function LoadedTicket({
         </p>
       </div>
       <TicketMessageList messages={items} label={t('ticket.messagesLabel')} />
-      {ticket.status === 'closed' ? (
+      {ticket.mergedInto !== null && (
+        <p className="m-0 text-body">
+          <Link to={`/support/${String(ticket.mergedInto)}`}>
+            {t('ticket.mergedInto', { number: ticket.mergedInto })}
+          </Link>
+        </p>
+      )}
+      {ticket.status === 'closed' && ticket.mergedInto === null && (
         <p className="m-0 text-body">{t('ticket.closed', { number: ticket.number })}</p>
-      ) : (
+      )}
+      {ticket.status !== 'closed' && (
         <SupportReplyForm
           id="support-reply"
           label={t('ticket.replyLabel')}

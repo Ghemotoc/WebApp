@@ -55,7 +55,8 @@
     "send": "Trimite",
     "closed": "Această cerere este închisă. Dacă mai ai nevoie de ajutor, cere din nou și pomenește #{{number}}.",
     "notFound": "Nu am găsit această cerere în contul tău.",
-    "loadFailed": "Nu am putut încărca această cerere. Verifică conexiunea și încearcă din nou."
+    "loadFailed": "Nu am putut încărca această cerere. Verifică conexiunea și încearcă din nou.",
+    "mergedInto": "Această cerere continuă ca #{{number}}: am unit-o cu alta despre același lucru."
   },
   "failures": {
     "refused": "Te rugăm să completezi toate câmpurile.",
@@ -156,7 +157,8 @@
       "label": "Răspunde persoanei sau adaugă o notă",
       "send": "Trimite răspunsul",
       "addNote": "Adaugă o notă internă",
-      "closed": "Acest tichet este închis: poți adăuga note, nu răspunsuri."
+      "closed": "Acest tichet este închis: poți adăuga note, nu răspunsuri.",
+      "spam": "Acest tichet e marcat ca spam: poți adăuga note, nu răspunsuri."
     },
     "history": {
       "heading": "Istoric",
@@ -170,7 +172,11 @@
         "priority": "Prioritatea din {{before}} în {{after}}",
         "category": "Categoria din {{before}} în {{after}}",
         "assignee": "Atribuirea din {{before}} în {{after}}",
-        "tags": "Etichetele din {{before}} în {{after}}"
+        "tags": "Etichetele din {{before}} în {{after}}",
+        "spam_marked": "Marcat ca spam",
+        "spam_cleared": "Marcat ca nefiind spam",
+        "merged_into": "Unit cu {{after}}",
+        "merged_from": "{{after}} a fost unit cu acest tichet"
       }
     },
     "followUpOf": "Continuă tichetul închis #{{number}}",
@@ -180,7 +186,8 @@
       "unassigned": "Nealocate",
       "all_open": "Toate deschise",
       "pending_on_user": "Așteaptă persoana",
-      "solved": "Rezolvate"
+      "solved": "Rezolvate",
+      "spam": "Spam"
     },
     "timer": {
       "due": "Răspuns până la {{date}}",
@@ -211,6 +218,23 @@
       "insert": "Inserează",
       "inserted": "„{{title}}” e în casetă: verifică-l și modifică-l înainte de trimitere.",
       "manageLink": "Gestionează răspunsurile pregătite"
+    },
+    "isSpam": "Marcat ca spam: apare doar în vizualizarea Spam, nu se trimite niciun email, iar emailurile următoare de la acest expeditor ajung tot aici.",
+    "mergedInto": "Unit cu #{{number}}: mesajele sunt acum acolo.",
+    "actions": {
+      "heading": "Acțiuni",
+      "mergeLabel": "Unește cu tichetul numărul",
+      "mergeHint": "Toate mesajele din #{{number}} se mută în acel tichet, de la aceeași persoană; persoana primește un email cu noul număr.",
+      "merge": "Unește",
+      "markSpam": "Marchează ca spam",
+      "notSpam": "Nu e spam",
+      "failures": {
+        "refused": "Nu a mers: se pot uni doar tichete deschise de la aceeași persoană.",
+        "not_found": "Nu există niciun tichet cu acest număr.",
+        "not_allowed": "Doar echipa de asistență poate face asta.",
+        "too_many": "Prea multe modificări deodată. Încearcă din nou peste puțin timp.",
+        "unreachable": "Nu am putut ajunge la server. Verifică-ți conexiunea și încearcă din nou."
+      }
     }
   }
 }

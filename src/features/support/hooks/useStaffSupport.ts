@@ -14,6 +14,8 @@ import {
   fetchStaffTicket,
   fetchSupportInbox,
   fetchSupportViewCounts,
+  markTicketSpam,
+  mergeTickets,
   replyAsSupport,
   revealTicketEmail,
   updateStaffTicket,
@@ -46,7 +48,10 @@ export function useSupportInbox() {
 
 /** One staff change to a ticket. */
 export type StaffTicketChange =
-  { kind: 'fields'; changes: TicketChanges } | { kind: 'reply'; body: string; isNote: boolean };
+  | { kind: 'fields'; changes: TicketChanges }
+  | { kind: 'reply'; body: string; isNote: boolean }
+  | { kind: 'spam'; spam: boolean }
+  | { kind: 'merge'; into: number };
 
 /**
  * Makes one change to a ticket.
@@ -56,6 +61,8 @@ export type StaffTicketChange =
 async function applyChange(ticketNumber: number, change: StaffTicketChange): Promise<void> {
   const client = await requireClient();
   if (change.kind === 'fields') return updateStaffTicket(client, ticketNumber, change.changes);
+  if (change.kind === 'spam') return markTicketSpam(client, ticketNumber, change.spam);
+  if (change.kind === 'merge') return mergeTickets(client, ticketNumber, change.into);
   return replyAsSupport(client, ticketNumber, change.body, change.isNote);
 }
 

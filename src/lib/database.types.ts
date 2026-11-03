@@ -7278,8 +7278,11 @@ export type Database = {
           first_replied_at: string | null;
           follow_up_of_ticket_id: string | null;
           id: string;
+          is_spam: boolean;
           language: string;
           last_message_at: string;
+          marked_spam_at: string | null;
+          merged_into_ticket_id: string | null;
           number: number;
           priority: Database['public']['Enums']['support_ticket_priority'];
           requester_email: string | null;
@@ -7301,8 +7304,11 @@ export type Database = {
           first_replied_at?: string | null;
           follow_up_of_ticket_id?: string | null;
           id?: string;
+          is_spam?: boolean;
           language?: string;
           last_message_at?: string;
+          marked_spam_at?: string | null;
+          merged_into_ticket_id?: string | null;
           number?: number;
           priority?: Database['public']['Enums']['support_ticket_priority'];
           requester_email?: string | null;
@@ -7322,8 +7328,11 @@ export type Database = {
           first_replied_at?: string | null;
           follow_up_of_ticket_id?: string | null;
           id?: string;
+          is_spam?: boolean;
           language?: string;
           last_message_at?: string;
+          marked_spam_at?: string | null;
+          merged_into_ticket_id?: string | null;
           number?: number;
           priority?: Database['public']['Enums']['support_ticket_priority'];
           requester_email?: string | null;
@@ -7345,6 +7354,13 @@ export type Database = {
           {
             foreignKeyName: 'support_tickets_follow_up_of_ticket_id_fkey';
             columns: ['follow_up_of_ticket_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_tickets';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'support_tickets_merged_into_ticket_id_fkey';
+            columns: ['merged_into_ticket_id'];
             isOneToOne: false;
             referencedRelation: 'support_tickets';
             referencedColumns: ['id'];
@@ -8257,6 +8273,11 @@ export type Database = {
       admin_mark_safeguarding: {
         Args: { reason_given: string; target_case_id: string };
         Returns: boolean;
+      };
+      admin_mark_support_spam: { Args: { spam: boolean; ticket_number: number }; Returns: boolean };
+      admin_merge_support_tickets: {
+        Args: { source_number: number; target_number: number };
+        Returns: number;
       };
       admin_metrics_overview: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_moderation_queue: {
@@ -11815,8 +11836,11 @@ export type Database = {
           first_replied_at: string | null;
           follow_up_of_ticket_id: string | null;
           id: string;
+          is_spam: boolean;
           language: string;
           last_message_at: string;
+          marked_spam_at: string | null;
+          merged_into_ticket_id: string | null;
           number: number;
           priority: Database['public']['Enums']['support_ticket_priority'];
           requester_email: string | null;
@@ -12644,6 +12668,10 @@ export type Database = {
       support_first_reply_due: { Args: { arrived_at: string }; Returns: string };
       support_message_email_state: { Args: { message_id: string }; Returns: string };
       support_payload_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
+      support_sender_is_spam: {
+        Args: { sender: string; sender_account: string };
+        Returns: boolean;
+      };
       support_ticket_address: {
         Args: {
           ticket: Omit<
@@ -12664,8 +12692,11 @@ export type Database = {
           first_replied_at: string | null;
           follow_up_of_ticket_id: string | null;
           id: string;
+          is_spam: boolean;
           language: string;
           last_message_at: string;
+          marked_spam_at: string | null;
+          merged_into_ticket_id: string | null;
           number: number;
           priority: Database['public']['Enums']['support_ticket_priority'];
           requester_email: string | null;

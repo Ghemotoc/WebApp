@@ -6,7 +6,8 @@
  * Who calls it: hooks/useStaffSupport.ts (StaffSupportInboxPage, StaffSupportTicketPage).
  * What it calls next: admin_support_inbox(), admin_support_view_counts() (part h3a),
  * admin_support_ticket(), admin_update_support_ticket(),
- * admin_reply_support_ticket() and admin_reveal_ticket_email(). Each checks the caller holds the
+ * admin_reply_support_ticket(), admin_reveal_ticket_email(), admin_mark_support_spam() and
+ * admin_merge_support_tickets() (part h4a). Each checks the caller holds the
  * support_tickets area (owner, admin and support) and writes the audit log, never the words.
  */
 import type { Enums, Json } from '@/lib/database.types';
@@ -36,7 +37,8 @@ export const ticketPriorities: TicketPriority[] = ['low', 'normal', 'high', 'urg
 
 /** What the inbox can be narrowed by: a status, "all", or empty for everything not finished. */
 export interface SupportInboxFilters {
-  status: TicketStatus | 'all' | '';
+  /** 'spam' is the Spam view (part h4a); every other choice leaves spam out. */
+  status: TicketStatus | 'all' | 'spam' | '';
   assigned: 'mine' | 'nobody' | '';
 }
 
@@ -60,8 +62,9 @@ export interface StaffTicketSummary {
   firstRepliedAt: string | null;
 }
 
-/** The inbox's saved views (criterion 6); Spam comes with part h4. */
-export type SupportViewName = 'mine' | 'unassigned' | 'all_open' | 'pending_on_user' | 'solved';
+/** The inbox's saved views (criterion 6); Spam joined in part h4a. */
+export type SupportViewName =
+  'mine' | 'unassigned' | 'all_open' | 'pending_on_user' | 'solved' | 'spam';
 
 /** Each view as the filters it sets, in the order the inbox shows them. */
 export const supportViews: { name: SupportViewName; filters: SupportInboxFilters }[] = [
@@ -70,6 +73,7 @@ export const supportViews: { name: SupportViewName; filters: SupportInboxFilters
   { name: 'all_open', filters: { status: '', assigned: '' } },
   { name: 'pending_on_user', filters: { status: 'pending_on_user', assigned: '' } },
   { name: 'solved', filters: { status: 'solved', assigned: '' } },
+  { name: 'spam', filters: { status: 'spam', assigned: '' } },
 ];
 
 /** How many tickets each view holds. */
@@ -124,6 +128,10 @@ export interface StaffTicket {
   assignedHandle: string | null;
   /** The closed ticket this one follows up (criterion 7), or null. */
   followUpOf: number | null;
+  /** Marked as spam: in the Spam view only, and it can't be answered (part h4a). */
+  isSpam: boolean;
+  /** The ticket this one was merged into (part h4a), or null. */
+  mergedInto: number | null;
   requester: TicketRequester;
   messages: StaffTicketMessage[];
   history: TicketHistoryEntry[];
@@ -146,6 +154,11 @@ function objectsOf(value: Json | undefined): Record<string, Json | undefined>[] 
     const record = objectOf(entry);
     return record === null ? [] : [record];
   });
+}
+
+/** Reads another ticket's number (a follow-up's or a merge's), or null for none. */
+function ticketNumberOf(value: Json | undefined): number | null {
+  return typeof value === 'number' ? value : null;
 }
 
 /** Reads an answer's email state; anything unknown is "not emailed". */
@@ -198,7 +211,9 @@ export function staffTicketFromJson(json: Json | null): StaffTicket | null {
     language: textOf(ticket, 'language') === 'en' ? 'en' : 'ro',
     tags: Array.isArray(ticket.tags) ? ticket.tags.filter((tag) => typeof tag === 'string') : [],
     assignedHandle: textOf(ticket, 'assigned_handle'),
-    followUpOf: typeof ticket.follow_up_of === 'number' ? ticket.follow_up_of : null,
+    followUpOf: ticketNumberOf(ticket.follow_up_of),
+    isSpam: ticket.is_spam === true,
+    mergedInto: ticketNumberOf(ticket.merged_into),
     requester: requesterFrom(ticket.requester),
     messages: objectsOf(ticket.messages).map(messageFrom),
     history: objectsOf(ticket.history).map((entry) => ({
@@ -266,6 +281,7 @@ export async function fetchSupportViewCounts(
     all_open: countOf('all_open'),
     pending_on_user: countOf('pending_on_user'),
     solved: countOf('solved'),
+    spam: countOf('spam'),
   };
 }
 
@@ -333,4 +349,41 @@ export async function revealTicketEmail(
   });
   if (error !== null) throw supportErrorFrom(error);
   return data;
+}
+
+/**
+ * Marks a ticket as spam, or takes the mark off; marking cancels its emails still waiting.
+ *
+ * @throws SupportError
+ */
+export async function markTicketSpam(
+  client: AppSupabaseClient,
+  ticketNumber: number,
+  spam: boolean,
+): Promise<void> {
+  const { error } = await client.rpc('admin_mark_support_spam', {
+    ticket_number: ticketNumber,
+    spam,
+  });
+  if (error !== null) throw supportErrorFrom(error);
+}
+
+/**
+ * Merges this ticket into another from the same person; the person is emailed the new number.
+ *
+ * @param sourceNumber - the ticket that goes (closed, pointing to the other)
+ * @param targetNumber - the ticket that stays and gets every message
+ * @throws SupportError('refused') for the same ticket, a closed or spam ticket or someone else's,
+ *   ('not_found') for an unknown number
+ */
+export async function mergeTickets(
+  client: AppSupabaseClient,
+  sourceNumber: number,
+  targetNumber: number,
+): Promise<void> {
+  const { error } = await client.rpc('admin_merge_support_tickets', {
+    source_number: sourceNumber,
+    target_number: targetNumber,
+  });
+  if (error !== null) throw supportErrorFrom(error);
 }
