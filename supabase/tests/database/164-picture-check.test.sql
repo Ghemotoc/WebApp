@@ -140,10 +140,10 @@ select is(public.record_picture_check((select body from payloads where label = '
 reset role;
 insert into named select 'match_case', case_id from public.picture_checks where id = (select id from named where label = 'match');
 select results_eq(
-  $$ select item_type::text, source::text, tier::text, is_safeguarding, preserve_until > now() + interval '5 months'
+  $$ select item_type::text, source::text, tier::text, is_safeguarding, preserve_until is null
      from public.cases where id = (select id from named where label = 'match_case') $$,
   $$ values ('picture', 'picture_check', 'same_day', true, true) $$,
-  'the match opens a same-day safeguarding picture case, preserved six months');
+  'the match opens a same-day safeguarding picture case; the file isn''t preserved, only its evidence (ADMIN-2e2b)');
 select is(public.reportable_item_summary('picture', (select id from named where label = 'match')), 'Profile picture of @adult_writer',
   'the queue says what the picture is');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');

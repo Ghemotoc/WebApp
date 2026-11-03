@@ -8,7 +8,8 @@
  * (…_admin2_e1b_pictures_to_check.sql). Each checks the caller may act on moderation; the
  * decisions write the audit log and the statement of reasons in the same transaction. Each picture
  * is read through a signed address made with the moderator's own sign-in, which Storage allows
- * for moderation staff only.
+ * for picture reviewers only. After rejecting a sexual image of a minor, the page deletes the
+ * file with the same sign-in (bundle ADMIN-2, part e2b): the image is never kept.
  */
 import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -34,6 +35,8 @@ export interface PictureToCheck {
   waitingSince: string;
   /** A signed address that lasts ten minutes; null when Storage refused. */
   url: string | null;
+  /** Where the file is, so a suspected abuse image can be deleted at once. */
+  file: { bucket: string; path: string };
 }
 
 /** A JSON object's fields, or an empty object for anything else. */
@@ -71,9 +74,8 @@ function storyOf(value: Json | undefined): PictureToCheck['story'] {
 async function pictureFrom(client: AppSupabaseClient, row: Json): Promise<PictureToCheck> {
   const fields = fieldsOf(row);
   // Ten minutes: long enough to look, short enough that a copied address soon stops working.
-  const signed = await client.storage
-    .from(textOf(fields, 'bucket'))
-    .createSignedUrl(textOf(fields, 'path'), 600);
+  const file = { bucket: textOf(fields, 'bucket'), path: textOf(fields, 'path') };
+  const signed = await client.storage.from(file.bucket).createSignedUrl(file.path, 600);
   const ownerAgeBand = textOf(fields, 'ownerAgeBand');
   return {
     caseId: textOf(fields, 'caseId'),
@@ -86,6 +88,7 @@ async function pictureFrom(client: AppSupabaseClient, row: Json): Promise<Pictur
     ownerAgeBand: ownerAgeBand === '' ? null : (ownerAgeBand as AgeBand),
     waitingSince: textOf(fields, 'waitingSince'),
     url: signed.error === null ? signed.data.signedUrl : null,
+    file,
   };
 }
 
@@ -118,7 +121,35 @@ export async function fetchRejectReasons(client: AppSupabaseClient): Promise<str
 /** What a moderator decided about one picture. */
 export type PictureDecision =
   | { kind: 'approve'; caseId: string; note: string; newRating: StoryRating | null }
-  | { kind: 'reject'; caseId: string; reason: string; message: string; note: string };
+  | {
+      kind: 'reject';
+      caseId: string;
+      file: PictureToCheck['file'];
+      reason: string;
+      message: string;
+      note: string;
+      /** Only for a sexual image of a minor: the words for the police and the account message. */
+      policeDescription: string | null;
+      accountMessage: string | null;
+    };
+
+/**
+ * Deletes a suspected abuse image's file with the moderator's own sign-in (brief section 4: the
+ * image is never kept). If Storage doesn't answer, the storage sweep the database started deletes
+ * it instead, so the moderator isn't asked to do anything.
+ *
+ * @param client - the shared Supabase client
+ * @param file - where the file is
+ * @returns true when Storage deleted it
+ */
+async function deleteAbuseImage(
+  client: AppSupabaseClient,
+  file: PictureToCheck['file'],
+): Promise<boolean> {
+  const { error } = await client.storage.from(file.bucket).remove([file.path]);
+  // Not an error for the moderator: the sweep is the fallback (storage_files_to_sweep lists it).
+  return error === null;
+}
 
 /**
  * Sends a decision: approve (green, or yellow with a new rating) or reject (red).
@@ -144,6 +175,15 @@ export async function decidePicture(
           reason_key: decision.reason,
           message_to_person: decision.message,
           note_text: decision.note,
+          ...(decision.policeDescription === null
+            ? {}
+            : {
+                police_description: decision.policeDescription,
+                account_message: decision.accountMessage ?? '',
+              }),
         });
   if (error !== null) throw new ModerationError(failureFromCode(error.code));
+  // A suspected abuse image's file goes now that its evidence is kept.
+  if (decision.kind === 'reject' && decision.policeDescription !== null)
+    await deleteAbuseImage(client, decision.file);
 }

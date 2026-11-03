@@ -287,7 +287,7 @@
       "emergency": "If a life is at risk, call 112 first, then carry on here.",
       "contacts": "Give the person the helpline below in your message, in their language.",
       "evidence": "Build the evidence pack if the police or a helpline will need it.",
-      "refer": "Log every referral to an authority below, with their reference.",
+      "refer": "Report a child sexual abuse image to the police first; they pass it on (for example to DIICOT). Log every referral to an authority below, with their reference.",
       "decide": "Decide the case. The decision and the statement of reasons follow the usual rules."
     },
     "contactsHeading": "Support contacts for the person ({{country}})",
@@ -378,7 +378,7 @@
     "alt": "The uploaded picture this case is about",
     "show": "Show the picture",
     "hide": "Blur the picture",
-    "matchHidden": "This picture matched known child sexual abuse material. It is never shown here: follow the safeguarding steps. The file is kept as evidence.",
+    "matchHidden": "This picture matched known child sexual abuse material. It is never shown, and its file has been deleted. Follow the safeguarding steps; the evidence is kept in the safeguarding section.",
     "unreadable": "We couldn't open the picture. Try again in a moment.",
     "kind": "Kind",
     "kinds": {
@@ -531,6 +531,43 @@
       "hate": "hate",
       "other": "something else our guidelines don’t allow"
     },
-    "openedNote": "Opening a picture here is in the audit log, and the owner is told."
+    "openedNote": "Opening a picture here is in the audit log, and the owner is told.",
+    "policeDescription": "Describe the image in a few words for the police.",
+    "policeDescriptionHint": "The image is deleted at once, so this is what the police will read. Say plainly what it shows.",
+    "minorWarning": "This deletes the image at once; it is never kept. We keep the evidence for 5 years: the case, the account, the times, the file’s fingerprint and your description. The account is closed for good and the case moves to safeguarding, where it is reported to the police.",
+    "describeMissing": "Describe the image for the police.",
+    "rejectMessageMinor": "We removed your picture because it is a sexual image of someone under 18, which is against the law and our community guidelines: {{link}}",
+    "closeAccountMessage": "We closed your account for good because a sexual image of someone under 18 was uploaded from it. This breaks the law and our community guidelines: {{link}}. You may not create another account. You can appeal this decision."
+  },
+  "abuseEvidence": {
+    "heading": "Evidence about the image",
+    "intro": "The image was deleted and is never kept. This is what we keep, for 5 years, or longer under a legal hold. The evidence pack carries all of it for the police, the scrambled IP address included.",
+    "source": "Found by",
+    "sources": {
+      "moderator": "A picture reviewer",
+      "known_image_match": "Arachnid Shield, matching a known image"
+    },
+    "uploadedAt": "Uploaded",
+    "reportedAt": "Found",
+    "hash": "File fingerprint (SHA-256)",
+    "ip": "Scrambled IP address",
+    "ipKept": "Kept (scrambled with the key for {{period}})",
+    "notRecorded": "Not recorded",
+    "description": "Description for the police",
+    "keepUntil": "Kept until",
+    "legalHold": "Legal hold",
+    "holdOn": "On: {{reason}}",
+    "holdOff": "Off",
+    "accountClosed": "The account is closed for good.",
+    "accountOpen": "The account is still open. Close it once you have checked the case.",
+    "accountStaff": "This is a staff account. Remove its role on Staff › Roles first, then close it here.",
+    "describe": "Change the description",
+    "describeLabel": "Describe the image in a few words for the police",
+    "setHold": "Put a legal hold on it",
+    "liftHold": "Lift the legal hold",
+    "holdReason": "Why? For example, the police’s request and its date",
+    "close": "Close the account for good",
+    "closeNote": "Note for the team",
+    "confirm": "Save"
   }
 }

@@ -11,6 +11,8 @@
  * - ARACHNID_SHIELD_USERNAME and ARACHNID_SHIELD_PASSWORD: the check on every picture;
  * - PICTURE_CHECK_SIGHTENGINE, SIGHTENGINE_API_USER and SIGHTENGINE_API_SECRET: not set, because
  *   Sightengine isn't used (Robert, 2 Nov 2026, 08:19); "on" with the two keys would add it;
+ * - IP_SCRAMBLE_SECRET: scrambles the uploader's IP address with a monthly key before it is kept
+ *   (server/scrambled-ip.ts; ADMIN-2e2b); unset, no IP address is kept at all;
  * - VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY: the database, as the front end reads it.
  * The caller's own sign-in token does the reading and saving; there is no service key here.
  */
@@ -28,6 +30,7 @@ interface PagesContext {
     SIGHTENGINE_API_SECRET?: string;
     ARACHNID_SHIELD_USERNAME?: string;
     ARACHNID_SHIELD_PASSWORD?: string;
+    IP_SCRAMBLE_SECRET?: string;
     VITE_SUPABASE_URL?: string;
     VITE_SUPABASE_ANON_KEY?: string;
   };
@@ -44,6 +47,7 @@ export const onRequestPost = (context: PagesContext): Promise<Response> =>
     supabaseUrl: context.env.VITE_SUPABASE_URL ?? '',
     anonKey: context.env.VITE_SUPABASE_ANON_KEY ?? '',
     secret: context.env.PICTURE_CHECK_SECRET,
+    ipSecret: context.env.IP_SCRAMBLE_SECRET,
     checkPicture: pictureChecker({
       mode: context.env.PICTURE_CHECK,
       sightengineMode: context.env.PICTURE_CHECK_SIGHTENGINE,

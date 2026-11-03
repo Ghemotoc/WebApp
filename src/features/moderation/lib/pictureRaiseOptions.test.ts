@@ -20,6 +20,7 @@ function pictureWith(changes: Partial<PictureToCheck>): PictureToCheck {
     ownerAgeBand: '18_plus',
     waitingSince: '2026-11-03T08:00:00Z',
     url: null,
+    file: { bucket: 'covers', path: 'story/cover.png' },
     ...changes,
   };
 }

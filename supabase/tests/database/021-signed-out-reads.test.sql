@@ -47,6 +47,8 @@ $$;
 select results_eq(
   $$ select table_name, visible_rows from pg_temp.rows_visible_to_anon() order by table_name $$,
   $$ select * from (values
+       -- Evidence about suspected child abuse images: safeguarding staff only (ADMIN-2e2b).
+       ('abuse_image_evidence', 0::bigint),
        -- Delete my account: each person's own requests (S1-E13-03).
        ('account_deletions', 0::bigint),
        ('age_check_attempts', 0::bigint),

@@ -12,7 +12,13 @@
  *    a signature picture that moves is held for a moderator even when the services pass it
  *    (S1-E8-08: one still picture; the app refuses one before upload, this catches the rest);
  * 5. signs the verdict with PICTURE_CHECK_SECRET and saves it through record_picture_check(),
- *    which refuses anything not signed with the same secret (Vault: picture_check_secret).
+ *    which refuses anything not signed with the same secret (Vault: picture_check_secret). The
+ *    verdict carries the file's SHA-256 hash and the uploader's IP address scrambled with this
+ *    month's key (server/scrambled-ip.ts; IP_SCRAMBLE_SECRET): the evidence about a suspected
+ *    child sexual abuse image keeps both (bundle ADMIN-2, part e2b; Robert's brief of 2 Nov 2026,
+ *    section 4). The database keeps the scrambled IP only when the uploader sent the request;
+ * 6. when Arachnid Shield matched the picture, deletes the file straight away with the same token
+ *    (the image is never kept; the nightly storage sweep deletes it if this call fails).
  * Nothing about the picture or the person is logged (CLAUDE.md rule 12).
  * Who calls it: functions/api/picture-check.ts on Cloudflare, server/pages-functions-plugin.ts
  * locally; the upload screens call POST /api/picture-check straight after an upload.
@@ -22,6 +28,7 @@ import { pictureCheckRequestSchema } from '../src/schemas/pictureCheck';
 import { isAnimatedPicture } from '../src/lib/animated-picture';
 
 import type { CheckPicture, PictureVerdict } from './picture-check/index';
+import { scrambleIp, visitorIp, type ScrambledIp } from './scrambled-ip';
 import { hmacHex } from './signup-context';
 
 /** What the handler needs from its surroundings. */
@@ -30,7 +37,15 @@ export interface PictureCheckOptions {
   anonKey: string;
   /** PICTURE_CHECK_SECRET; without it nothing can be saved (503). */
   secret: string | undefined;
+  /** IP_SCRAMBLE_SECRET; without it no IP address is kept at all. */
+  ipSecret?: string;
   checkPicture: CheckPicture;
+}
+
+/** What is signed and saved: the services' verdict plus the file's hash and the scrambled IP. */
+interface SignedVerdict extends PictureVerdict {
+  fileSha256: string;
+  uploaderIp: ScrambledIp | null;
 }
 
 /** The parts of the picture's row the handler reads. */
@@ -87,6 +102,36 @@ async function downloadPicture(
 }
 
 /**
+ * The file's SHA-256 hash, as hex: the fingerprint the police can match (brief section 4).
+ *
+ * @param bytes - the stored file
+ * @returns 64 hex characters
+ */
+export async function sha256Hex(bytes: Uint8Array<ArrayBuffer>): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Deletes a matched picture's file at once, as the caller (the uploader may delete a file whose
+ * evidence is kept). A failure is left to the storage sweep, which lists the file straight away.
+ *
+ * @returns true when Storage deleted it
+ */
+async function deletePicture(
+  options: PictureCheckOptions,
+  token: string,
+  picture: PictureRow,
+): Promise<boolean> {
+  const address = `${options.supabaseUrl}/storage/v1/object/${picture.bucket}/${picture.path}`;
+  const response = await fetch(address, {
+    method: 'DELETE',
+    headers: headersFor(options, token),
+  }).catch(() => null);
+  return response !== null && response.ok;
+}
+
+/**
  * Saves the signed verdict through record_picture_check(), as the caller.
  *
  * @returns the picture's status afterwards, or null when the database refused or didn't answer
@@ -95,7 +140,7 @@ async function saveVerdict(
   options: PictureCheckOptions & { secret: string },
   token: string,
   pictureId: string,
-  verdict: PictureVerdict,
+  verdict: SignedVerdict,
 ): Promise<string | null> {
   const payload = JSON.stringify({ pictureId, ...verdict });
   const response = await fetch(`${options.supabaseUrl}/rest/v1/rpc/record_picture_check`, {
@@ -125,6 +170,38 @@ export function withStillPictureRule(
   // An unavailable answer stays unavailable: the picture is tried again and held then.
   if (verdict.outcome === 'unavailable') return verdict;
   return { ...verdict, outcome: 'flagged', flags: { ...verdict.flags, animated: true } };
+}
+
+/**
+ * Steps 3 to 6 for a pending picture: the file, the check, the signed save and, for a match,
+ * deleting the file.
+ *
+ * @returns the picture's status, or null when the file or the database can't be reached
+ */
+async function checkAndSave(
+  request: Request,
+  options: PictureCheckOptions & { secret: string },
+  token: string,
+  picture: PictureRow & { id: string; originalName: string },
+): Promise<string | null> {
+  // Step 3: the file, as the caller.
+  const file = await downloadPicture(options, token, picture);
+  if (file === null) return null;
+  // Step 4: the services, then the rule for moving signature pictures.
+  const servicesVerdict = await options.checkPicture({
+    ...file,
+    originalName: picture.originalName,
+  });
+  const verdict = withStillPictureRule(servicesVerdict, picture, file.bytes);
+  // Step 5: the hash and the scrambled IP join the verdict, which is signed and saved.
+  const status = await saveVerdict(options, token, picture.id, {
+    ...verdict,
+    fileSha256: await sha256Hex(file.bytes),
+    uploaderIp: await scrambleIp(visitorIp(request), options.ipSecret, new Date()),
+  });
+  // Step 6: a known abuse image is never kept.
+  if (status !== null && verdict.isKnownAbuseMatch) await deletePicture(options, token, picture);
+  return status;
 }
 
 /**
@@ -168,21 +245,12 @@ export async function handlePictureCheck(
   const picture = await readPicture(options, token, parsed.data.pictureId);
   if (picture === null) return json({ error: 'not_found' }, 404);
   if (picture.status !== 'pending') return json({ status: picture.status }, 200);
-  // Step 3: the file, as the caller.
-  const file = await downloadPicture(options, token, picture);
-  if (file === null) return json({ error: 'unavailable' }, 503);
-  // Step 4 and 5: the check, then the signed save.
-  const servicesVerdict = await options.checkPicture({
-    ...file,
+  // Steps 3 to 6: the file, the check, the signed save and a match's file deleted.
+  const status = await checkAndSave(request, { ...options, secret: options.secret }, token, {
+    ...picture,
+    id: parsed.data.pictureId,
     originalName: parsed.data.originalName,
   });
-  const verdict = withStillPictureRule(servicesVerdict, picture, file.bytes);
-  const status = await saveVerdict(
-    { ...options, secret: options.secret },
-    token,
-    parsed.data.pictureId,
-    verdict,
-  );
   if (status === null) return json({ error: 'unavailable' }, 503);
   return json({ status }, 200);
 }

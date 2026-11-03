@@ -7,6 +7,9 @@
  * language: it is their statement of reasons (DSA art. 17), so it names the rule and links the
  * community guidelines; the notification around it says how to appeal. The message is interface
  * text that admins can change (S1-E11-18).
+ * "Sexual image of a minor" (bundle ADMIN-2, part e2b; brief section 4) also asks for a few words
+ * for the police (MinorImageFields) and sends the message that closes the account for good, in
+ * the uploader's language; the picture is then deleted at once and never kept.
  * Who shows it: PictureDecisionButtons. What it calls: onDecide (usePicturesToCheck).
  */
 import { useState, type FormEvent } from 'react';
@@ -19,6 +22,11 @@ import { Textarea } from '@/components/ui/Textarea';
 import { brand } from '@/config/brand';
 
 import type { PictureDecision, PictureToCheck } from '../api/picturesToCheck';
+
+import { MinorImageFields } from './MinorImageFields';
+
+/** The reason that keeps the evidence and closes the account (brief section 4). */
+const minorReason = 'sexual_image_of_minor';
 
 /** What the form needs. */
 export interface RejectPictureFormProps {
@@ -43,7 +51,10 @@ function messageFor(
   getFixedT: ReturnType<typeof useTranslation>['i18n']['getFixedT'],
 ): string {
   const inUploaderLanguage = getFixedT(picture.uploaderLocale, 'moderation');
-  return inUploaderLanguage('pictures.rejectMessage', {
+  // A sexual image of a minor is against the law: no invitation to upload another one.
+  const template =
+    reason === minorReason ? 'pictures.rejectMessageMinor' : 'pictures.rejectMessage';
+  return inUploaderLanguage(template, {
     reason: inUploaderLanguage(`pictures.reasons.${reason}`, { defaultValue: reason }),
     link: `${brand.siteUrl}/legal/guidelines`,
   });
@@ -93,6 +104,68 @@ function RejectFeedback(props: { message: string; language: string; isIncomplete
   );
 }
 
+/** What the moderator typed. */
+interface RejectFields {
+  reason: string;
+  note: string;
+  policeDescription: string;
+}
+
+/**
+ * The decision to send, or null when something required is missing.
+ *
+ * @param picture - the picture
+ * @param fields - what the moderator typed
+ * @param message - the uploader's message for the picture
+ * @param getFixedT - i18next's getFixedT, for the account message in the uploader's language
+ * @returns the decision, or null
+ */
+function decisionFrom(
+  picture: PictureToCheck,
+  fields: RejectFields,
+  message: string,
+  getFixedT: ReturnType<typeof useTranslation>['i18n']['getFixedT'],
+): PictureDecision | null {
+  const isMinor = fields.reason === minorReason;
+  if (fields.reason === '' || fields.note.trim() === '') return null;
+  if (isMinor && fields.policeDescription.trim() === '') return null;
+  // Only a minor's picture closes the account, with its own message in the uploader's language.
+  const accountMessage = isMinor
+    ? getFixedT(picture.uploaderLocale, 'moderation')('pictures.closeAccountMessage', {
+        link: `${brand.siteUrl}/legal/guidelines`,
+      })
+    : null;
+  return {
+    kind: 'reject',
+    caseId: picture.caseId,
+    file: picture.file,
+    reason: fields.reason,
+    message,
+    note: fields.note.trim(),
+    policeDescription: isMinor ? fields.policeDescription.trim() : null,
+    accountMessage,
+  };
+}
+
+/**
+ * The send and cancel buttons.
+ *
+ * @returns the button row
+ */
+function RejectButtons(props: { isDeciding: boolean; onCancel: () => void }) {
+  const { t } = useTranslation('moderation');
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Button type="submit" variant="destructive" disabled={props.isDeciding}>
+        {t('pictures.rejectSubmit')}
+      </Button>
+      <Button variant="secondary" onClick={props.onCancel}>
+        {t('pictures.cancel')}
+      </Button>
+    </div>
+  );
+}
+
 /**
  * Renders the form.
  *
@@ -103,16 +176,16 @@ export function RejectPictureForm(props: RejectPictureFormProps) {
   const { picture } = props;
   const [reason, setReason] = useState('');
   const [note, setNote] = useState('');
+  const [policeDescription, setPoliceDescription] = useState('');
   const [isIncomplete, setIsIncomplete] = useState(false);
   const message = reason === '' ? '' : messageFor(picture, reason, i18n.getFixedT);
-  /** Sends the decision once a reason and a note are there. */
+  /** Sends the decision once everything required is there. */
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (reason === '' || note.trim() === '') {
-      setIsIncomplete(true);
-      return;
-    }
-    props.onDecide({ kind: 'reject', caseId: picture.caseId, reason, message, note: note.trim() });
+    const fields = { reason, note, policeDescription };
+    const decision = decisionFrom(picture, fields, message, i18n.getFixedT);
+    setIsIncomplete(decision === null);
+    if (decision !== null) props.onDecide(decision);
   }
   const idPrefix = `reject-${picture.caseId}`;
   return (
@@ -130,6 +203,14 @@ export function RejectPictureForm(props: RejectPictureFormProps) {
         onChange={setReason}
         options={reasonOptions(props.reasons, t)}
       />
+      {reason === minorReason && (
+        <MinorImageFields
+          id={`${idPrefix}-police`}
+          value={policeDescription}
+          isMissing={isIncomplete && policeDescription.trim() === ''}
+          onChange={setPoliceDescription}
+        />
+      )}
       <Textarea
         id={`${idPrefix}-note`}
         label={t('pictures.rejectNote')}
@@ -142,16 +223,9 @@ export function RejectPictureForm(props: RejectPictureFormProps) {
       <RejectFeedback
         message={message}
         language={picture.uploaderLocale}
-        isIncomplete={isIncomplete}
+        isIncomplete={isIncomplete && (reason === '' || note.trim() === '')}
       />
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" variant="destructive" disabled={props.isDeciding}>
-          {t('pictures.rejectSubmit')}
-        </Button>
-        <Button variant="secondary" onClick={props.onCancel}>
-          {t('pictures.cancel')}
-        </Button>
-      </div>
+      <RejectButtons isDeciding={props.isDeciding} onCancel={props.onCancel} />
     </form>
   );
 }

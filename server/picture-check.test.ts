@@ -2,11 +2,12 @@
  * Unit tests for the picture check handler (story S1-E10-05).
  * Who runs it: `npm test`. The database and Storage are a fake fetch, so these tests check the
  * handler's own rules: the schema, the caller's token used for every call, a picture that isn't
- * pending left alone, and the signed verdict. The database's own checks are in pgTAP test 164.
+ * pending left alone, and the signed verdict with the file's hash and the scrambled IP; a match's
+ * file deleted at once (ADMIN-2e2b). The database's own checks are in pgTAP tests 164 and 250.
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { bearerToken, handlePictureCheck, withStillPictureRule } from './picture-check';
+import { bearerToken, handlePictureCheck, sha256Hex, withStillPictureRule } from './picture-check';
 import { checkWithStub } from './picture-check/stub';
 import { hmacHex } from './signup-context';
 
@@ -18,10 +19,11 @@ const options = {
   checkPicture: checkWithStub,
 };
 
-/** A request as the upload screen sends it. */
-function post(body: unknown, token: string | null = 'person-token'): Request {
+/** A request as the upload screen sends it, through Cloudflare when an address is given. */
+function post(body: unknown, token: string | null = 'person-token', address?: string): Request {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (token !== null) headers.Authorization = `Bearer ${token}`;
+  if (address !== undefined) headers['CF-Connecting-IP'] = address;
   return new Request('http://localhost/api/picture-check', {
     method: 'POST',
     headers,
@@ -84,6 +86,48 @@ describe('the picture check handler', () => {
       provider: 'stub',
     });
     expect(saved.signature).toBe(await hmacHex(saved.payload, 'test-secret'));
+  });
+
+  it("signs the file's hash and the scrambled IP, never the address itself (ADMIN-2e2b)", async () => {
+    const calls = fakeBackend();
+    await handlePictureCheck(
+      post({ pictureId, originalName: 'cover.png' }, 'person-token', '203.0.113.7'),
+      {
+        ...options,
+        ipSecret: 'ip-secret',
+      },
+    );
+    const saved = JSON.parse(String(calls[2]?.init?.body)) as { payload: string };
+    const payload = JSON.parse(saved.payload) as {
+      fileSha256: string;
+      uploaderIp: { value: string; period: string };
+    };
+    expect(payload.fileSha256).toBe(await sha256Hex(new Uint8Array([1])));
+    expect(payload.uploaderIp.value).toMatch(/^[0-9a-f]{64}$/);
+    expect(saved.payload).not.toContain('203.0.113.7');
+  });
+
+  it('keeps no IP address without the secret', async () => {
+    const calls = fakeBackend();
+    await handlePictureCheck(post({ pictureId }, 'person-token', '203.0.113.7'), options);
+    const saved = JSON.parse(String(calls[2]?.init?.body)) as { payload: string };
+    expect(JSON.parse(saved.payload)).toMatchObject({ uploaderIp: null });
+  });
+
+  it("deletes a matched picture's file at once, as the caller (ADMIN-2e2b)", async () => {
+    const calls = fakeBackend();
+    await handlePictureCheck(post({ pictureId, originalName: 'cover_match.png' }), options);
+    const deletion = calls.find((call) => call.init?.method === 'DELETE');
+    expect(deletion?.address).toBe('http://db/storage/v1/object/covers/story/x.png');
+    expect((deletion?.init?.headers as Record<string, string>).Authorization).toBe(
+      'Bearer person-token',
+    );
+  });
+
+  it("never deletes a picture that didn't match", async () => {
+    const calls = fakeBackend();
+    await handlePictureCheck(post({ pictureId, originalName: 'cover_fail.png' }), options);
+    expect(calls.some((call) => call.init?.method === 'DELETE')).toBe(false);
   });
 
   it('leaves a picture that is no longer pending as it is', async () => {

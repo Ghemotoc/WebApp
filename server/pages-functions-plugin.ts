@@ -204,6 +204,8 @@ function databaseHandlerFor(
         supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
         anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
         secret: process.env.PICTURE_CHECK_SECRET,
+        // Unset locally, so no IP address is kept (server/scrambled-ip.ts).
+        ipSecret: process.env.IP_SCRAMBLE_SECRET,
         checkPicture: pictureChecker({
           mode: 'stub',
           sightengine: { apiUser: '', apiSecret: '' },

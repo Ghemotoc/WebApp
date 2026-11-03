@@ -22,9 +22,12 @@ the reason. After that only safeguarding staff see it.
    say why. It downloads a file with the content, the account's details (including the email),
    the reports and every timestamp. Building it is logged as a sensitive read. Hand it over
    through the authority's own channel, then **delete your copy**: we never keep it.
-5. **Log every referral.** Under "Referrals to authorities": the authority, their reference and a
+5. **Report a child sexual abuse image to the police first.** They pass it on (for example to
+   DIICOT, the prosecutors for organised crime). **[lawyer to check]**: who we must tell, and
+   whether a national hotline report is also expected. Then log the referral.
+6. **Log every referral.** Under "Referrals to authorities": the authority, their reference and a
    short note. This is our record that we told them.
-6. **Decide the case.** The usual Decision panel: the action, the note for the log, and what we tell
+7. **Decide the case.** The usual Decision panel: the action, the note for the log, and what we tell
    the person. Remember the person may be a child: plain, kind words, and the helpline.
 
 ## Who to call
@@ -32,3 +35,22 @@ the reason. After that only safeguarding staff see it.
 - Emergency: 112 (anywhere in the EU).
 - The contacts on the case page come from `content/safety-contacts.json` (S1-E10-13a). If a
   country is missing, the gap is noted for the next update of that list.
+
+## A suspected child sexual abuse image (ADMIN-2e2b)
+
+Robert's brief of 2 Nov 2026, section 4. It starts in one of two ways:
+
+- **A picture reviewer presses red with "Sexual image of a minor".** The form asks for a few words
+  for the police. The picture's file is deleted at once, the evidence is kept, the case moves to
+  safeguarding and the uploader's account is closed for good, with a statement of reasons.
+- **Arachnid Shield matches a known image.** The file is deleted at once and the evidence is kept,
+  with a stand-in description. The case opens in safeguarding, same day. A person closes the
+  account: **Close the account for good** in "Evidence about the image" on the case page.
+
+The image is never kept, and there is no quarantine bucket. "Evidence about the image" on the case
+page shows what is kept: the times, the file's SHA-256 fingerprint, whether a scrambled IP address
+is kept, the description, and how long it is kept (5 years). Rewrite the description in plain
+words (**Change the description**). If the police ask for the evidence within the 5 years, put a
+**legal hold** on it with their request and its date; the nightly purge then leaves it. The
+evidence pack carries all of it, the scrambled IP address and the month of its key included.
+**[lawyer to check]**: the 5 years, the legal hold and handing over the scrambled IP.
