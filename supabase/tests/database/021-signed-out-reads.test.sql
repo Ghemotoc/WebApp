@@ -124,6 +124,9 @@ select results_eq(
        ('interface_text_overrides', 0::bigint),
        ('invites', 0::bigint),
        ('jobs', 0::bigint),
+       -- Landing pages: staff only; visitors read the live page through landing_page() (S1-E11-14).
+       ('landing_page_versions', 0::bigint),
+       ('landing_pages', 0::bigint),
        ('languages', (select count(*) from public.languages)),
        -- A reader's library and places are theirs only (S1-E4-03).
        ('library_entries', 0::bigint),

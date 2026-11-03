@@ -1,0 +1,166 @@
+{
+  "documentTitle": "Landing page",
+  "loading": "Loading the page…",
+  "loadFailed": "We couldn’t load this page. Check your connection and try again.",
+  "types": {
+    "contest": "Contest",
+    "campaign": "Campaign",
+    "information": "Information"
+  },
+  "kinds": {
+    "hero": "Hero",
+    "text": "Text",
+    "key_dates": "Key dates",
+    "who_can_enter": "Who can enter",
+    "prize": "Prize",
+    "how_to_enter": "How to enter",
+    "rules": "Rules",
+    "questions": "Questions and answers"
+  },
+  "languages": {
+    "ro": "Română",
+    "en": "English"
+  },
+  "dates": {
+    "entriesOpen": "Entries open",
+    "entriesClose": "Entries close",
+    "results": "Results"
+  },
+  "ageGroupsLabel": "Who can enter",
+  "ageGroups": {
+    "13_to_15": "13 to 15",
+    "16_to_17": "16 to 17",
+    "18_and_over": "18 and over"
+  },
+  "ended": {
+    "contest": "This contest has ended.",
+    "campaign": "This campaign has ended.",
+    "information": "This page is no longer up to date."
+  },
+  "list": {
+    "intro": "Landing pages live at their own address and are built from fixed blocks in Romanian and English. Only the owner and admins can make and publish them.",
+    "newHeading": "New landing page",
+    "address": "Address",
+    "addressHint": "The page will be at {{site}}/c/ and this name: lowercase letters, numbers and hyphens.",
+    "type": "Type",
+    "create": "Create page",
+    "heading": "Landing pages",
+    "empty": "There are no landing pages yet.",
+    "archived": "archived",
+    "edit": "Edit",
+    "editLabel": "Edit /c/{{slug}}",
+    "failures": {
+      "bad_address": "Use 2 to 60 lowercase letters, numbers and hyphens, starting with a letter or number.",
+      "reserved": "That name is reserved. Pick another.",
+      "taken": "Another page already uses that address.",
+      "bad_type": "Pick contest, campaign or information.",
+      "not_allowed": "Only the owner and admins can make landing pages.",
+      "unreachable": "We couldn’t reach the server. Try again."
+    }
+  },
+  "editor": {
+    "back": "Back to landing pages",
+    "heading": "/c/{{slug}} ({{type}})",
+    "openPage": "Open /c/{{slug}}",
+    "theme": "Theme",
+    "themes": {
+      "plum": "Plum",
+      "gold": "Gold",
+      "sage": "Sage",
+      "sky": "Sky"
+    },
+    "blocks": "Blocks",
+    "blockName": "Block {{number}}: {{kind}}",
+    "up": "Up",
+    "down": "Down",
+    "remove": "Remove",
+    "moveUp": "Move {{block}} up",
+    "moveDown": "Move {{block}} down",
+    "removeBlock": "Remove {{block}}",
+    "addKind": "Block to add",
+    "addBlock": "Add a block",
+    "full": "A page holds at most {{most}} blocks.",
+    "questionIn": "Question {{number}}, {{language}}",
+    "addQuestion": "Add a question",
+    "removeQuestion": "Remove question {{number}}",
+    "datesLegend": "Key dates",
+    "linkHint": "One of our own pages, such as /help/contest-rules, or an address starting with https://.",
+    "preview": "Preview",
+    "widths": {
+      "phone": "Phone",
+      "desktop": "Desktop"
+    },
+    "showFrom": "Show from",
+    "takeDownOn": "Take down on (optional)",
+    "datesHint": "The page goes live at 00:00 Romanian time on the “show from” date. From the take-down date it stays at its address and says it has ended.",
+    "saveDraft": "Save draft",
+    "publish": "Publish",
+    "schedule": "Schedule",
+    "fixFields": "Fix these before publishing:",
+    "fields": {
+      "theme": "Theme",
+      "blocks": "Blocks",
+      "takeDown": "Take down on",
+      "title": "Title",
+      "intro": "Introduction",
+      "heading": "Heading",
+      "body": "Text",
+      "note": "Note",
+      "link_label": "Link text",
+      "link": "Rules address",
+      "question": "Question",
+      "answer": "Answer",
+      "dates": "Key dates",
+      "age_groups": "Who can enter",
+      "items": "Questions"
+    },
+    "problems": {
+      "empty": "fill this in",
+      "too_long": "this is too long",
+      "count": "a page needs between 2 and 30 blocks",
+      "unequal": "add at least one question, with the same number in both languages",
+      "hero_first": "the page needs one Hero block, at the top",
+      "contest_needs_dates_and_rules": "a contest page needs a Key dates block and a Rules block",
+      "unknown": "pick one from the list",
+      "unknown_kind": "this block can’t be used; remove it",
+      "bad_date": "a date isn’t valid",
+      "out_of_order": "the dates must go entries open, entries close, results",
+      "bad_link": "use one of our pages or an https:// address",
+      "before_show_from": "the take-down date must come after the “show from” date",
+      "invalid": "check this",
+      "dates_empty": "Choose all three dates.",
+      "dates_bad_date": "One of the dates isn’t valid.",
+      "dates_out_of_order": "Entries open, then close, then the results come out.",
+      "link_empty": "Add the address of the rules.",
+      "link_bad_link": "Use one of our pages or an https:// address.",
+      "age_groups": "Pick at least one age group.",
+      "items": "Add at least one question, in both languages."
+    },
+    "failures": {
+      "take_down_before_show_from": "The take-down date must come after the “show from” date.",
+      "not_allowed": "Only the owner and admins can change landing pages.",
+      "not_found": "This page or version no longer exists. Reload and try again.",
+      "invalid": "Something on the page isn’t valid. Check it and try again.",
+      "unreachable": "We couldn’t reach the server. Try again."
+    },
+    "outcomes": {
+      "save": "Draft saved. Nothing has changed on the page yet.",
+      "publish": "Published. The page shows this version from {{date}}.",
+      "restore": "That version is now the draft. Publish it to put it back on the page.",
+      "archive": "The page is archived."
+    },
+    "history": {
+      "heading": "Published versions",
+      "none": "Nothing has been published yet.",
+      "version": "From {{date}}, published {{published}}",
+      "takenDown": "Taken down on {{date}}",
+      "restore": "Restore",
+      "restoreLabel": "Restore the version from {{date}}"
+    },
+    "archive": "Archive this page",
+    "archiveQuestion": "Archive /c/{{slug}}? The address stops working for good.",
+    "archiveConfirm": "Yes, archive it",
+    "archiveCancel": "Keep it",
+    "archived": "This page is archived. Its address no longer works."
+  }
+}

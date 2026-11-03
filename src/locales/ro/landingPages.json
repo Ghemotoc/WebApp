@@ -1,0 +1,166 @@
+{
+  "documentTitle": "Pagină de prezentare",
+  "loading": "Se încarcă pagina…",
+  "loadFailed": "Nu am putut încărca pagina. Verifică conexiunea și încearcă din nou.",
+  "types": {
+    "contest": "Concurs",
+    "campaign": "Campanie",
+    "information": "Informații"
+  },
+  "kinds": {
+    "hero": "Antet",
+    "text": "Text",
+    "key_dates": "Date importante",
+    "who_can_enter": "Cine poate participa",
+    "prize": "Premiu",
+    "how_to_enter": "Cum participi",
+    "rules": "Regulament",
+    "questions": "Întrebări și răspunsuri"
+  },
+  "languages": {
+    "ro": "Română",
+    "en": "English"
+  },
+  "dates": {
+    "entriesOpen": "Înscrierile încep",
+    "entriesClose": "Înscrierile se încheie",
+    "results": "Rezultatele"
+  },
+  "ageGroupsLabel": "Cine poate participa",
+  "ageGroups": {
+    "13_to_15": "13–15 ani",
+    "16_to_17": "16–17 ani",
+    "18_and_over": "18 ani și peste"
+  },
+  "ended": {
+    "contest": "Concursul s-a încheiat.",
+    "campaign": "Campania s-a încheiat.",
+    "information": "Pagina nu mai este actuală."
+  },
+  "list": {
+    "intro": "Paginile de prezentare au adresa lor și se construiesc din blocuri fixe, în română și în engleză. Doar proprietarul și administratorii le pot crea și publica.",
+    "newHeading": "Pagină de prezentare nouă",
+    "address": "Adresa",
+    "addressHint": "Pagina va fi la {{site}}/c/ și acest nume: litere mici, cifre și cratime.",
+    "type": "Tipul",
+    "create": "Creează pagina",
+    "heading": "Pagini de prezentare",
+    "empty": "Încă nu există pagini de prezentare.",
+    "archived": "arhivată",
+    "edit": "Editează",
+    "editLabel": "Editează /c/{{slug}}",
+    "failures": {
+      "bad_address": "Folosește între 2 și 60 de litere mici, cifre și cratime, începând cu o literă sau o cifră.",
+      "reserved": "Numele este rezervat. Alege altul.",
+      "taken": "Adresa este deja folosită de altă pagină.",
+      "bad_type": "Alege concurs, campanie sau informații.",
+      "not_allowed": "Doar proprietarul și administratorii pot crea pagini de prezentare.",
+      "unreachable": "Nu am putut contacta serverul. Încearcă din nou."
+    }
+  },
+  "editor": {
+    "back": "Înapoi la paginile de prezentare",
+    "heading": "/c/{{slug}} ({{type}})",
+    "openPage": "Deschide /c/{{slug}}",
+    "theme": "Tema",
+    "themes": {
+      "plum": "Prună",
+      "gold": "Auriu",
+      "sage": "Salvie",
+      "sky": "Cer"
+    },
+    "blocks": "Blocuri",
+    "blockName": "Blocul {{number}}: {{kind}}",
+    "up": "Sus",
+    "down": "Jos",
+    "remove": "Elimină",
+    "moveUp": "Mută {{block}} mai sus",
+    "moveDown": "Mută {{block}} mai jos",
+    "removeBlock": "Elimină {{block}}",
+    "addKind": "Blocul de adăugat",
+    "addBlock": "Adaugă un bloc",
+    "full": "O pagină are cel mult {{most}} de blocuri.",
+    "questionIn": "Întrebarea {{number}}, {{language}}",
+    "addQuestion": "Adaugă o întrebare",
+    "removeQuestion": "Elimină întrebarea {{number}}",
+    "datesLegend": "Date importante",
+    "linkHint": "Una dintre paginile noastre, de exemplu /help/contest-rules, sau o adresă care începe cu https://.",
+    "preview": "Previzualizare",
+    "widths": {
+      "phone": "Telefon",
+      "desktop": "Desktop"
+    },
+    "showFrom": "Afișează de la",
+    "takeDownOn": "Scoate pe (opțional)",
+    "datesHint": "Pagina apare la ora 00:00, ora României, în data „Afișează de la”. Din data scoaterii rămâne la adresa ei și spune că s-a încheiat.",
+    "saveDraft": "Salvează ciorna",
+    "publish": "Publică",
+    "schedule": "Programează",
+    "fixFields": "Corectează înainte de publicare:",
+    "fields": {
+      "theme": "Tema",
+      "blocks": "Blocuri",
+      "takeDown": "Scoate pe",
+      "title": "Titlul",
+      "intro": "Introducerea",
+      "heading": "Titlul secțiunii",
+      "body": "Textul",
+      "note": "Nota",
+      "link_label": "Textul linkului",
+      "link": "Adresa regulamentului",
+      "question": "Întrebarea",
+      "answer": "Răspunsul",
+      "dates": "Date importante",
+      "age_groups": "Cine poate participa",
+      "items": "Întrebările"
+    },
+    "problems": {
+      "empty": "completează câmpul",
+      "too_long": "textul este prea lung",
+      "count": "o pagină are între 2 și 30 de blocuri",
+      "unequal": "adaugă cel puțin o întrebare, cu același număr în ambele limbi",
+      "hero_first": "pagina are nevoie de un singur bloc Antet, sus",
+      "contest_needs_dates_and_rules": "o pagină de concurs are nevoie de un bloc Date importante și de un bloc Regulament",
+      "unknown": "alege din listă",
+      "unknown_kind": "blocul nu poate fi folosit; elimină-l",
+      "bad_date": "o dată nu este validă",
+      "out_of_order": "datele trebuie să fie în ordinea: încep înscrierile, se încheie înscrierile, rezultatele",
+      "bad_link": "folosește una dintre paginile noastre sau o adresă https://",
+      "before_show_from": "data scoaterii trebuie să fie după data „Afișează de la”",
+      "invalid": "verifică acest câmp",
+      "dates_empty": "Alege toate cele trei date.",
+      "dates_bad_date": "Una dintre date nu este validă.",
+      "dates_out_of_order": "Întâi încep înscrierile, apoi se încheie, apoi apar rezultatele.",
+      "link_empty": "Adaugă adresa regulamentului.",
+      "link_bad_link": "Folosește una dintre paginile noastre sau o adresă https://.",
+      "age_groups": "Alege cel puțin o grupă de vârstă.",
+      "items": "Adaugă cel puțin o întrebare, în ambele limbi."
+    },
+    "failures": {
+      "take_down_before_show_from": "Data scoaterii trebuie să fie după data „Afișează de la”.",
+      "not_allowed": "Doar proprietarul și administratorii pot modifica paginile de prezentare.",
+      "not_found": "Pagina sau versiunea nu mai există. Reîncarcă și încearcă din nou.",
+      "invalid": "Ceva de pe pagină nu este valid. Verifică și încearcă din nou.",
+      "unreachable": "Nu am putut contacta serverul. Încearcă din nou."
+    },
+    "outcomes": {
+      "save": "Ciorna a fost salvată. Pe pagină nu s-a schimbat încă nimic.",
+      "publish": "Publicată. Pagina arată această versiune din {{date}}.",
+      "restore": "Versiunea este acum ciorna. Public-o ca să revină pe pagină.",
+      "archive": "Pagina a fost arhivată."
+    },
+    "history": {
+      "heading": "Versiuni publicate",
+      "none": "Încă nu s-a publicat nimic.",
+      "version": "Din {{date}}, publicată {{published}}",
+      "takenDown": "Scoasă pe {{date}}",
+      "restore": "Restaurează",
+      "restoreLabel": "Restaurează versiunea din {{date}}"
+    },
+    "archive": "Arhivează pagina",
+    "archiveQuestion": "Arhivezi /c/{{slug}}? Adresa nu va mai funcționa niciodată.",
+    "archiveConfirm": "Da, arhivează",
+    "archiveCancel": "Păstreaz-o",
+    "archived": "Pagina este arhivată. Adresa ei nu mai funcționează."
+  }
+}
