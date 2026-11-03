@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #305 (12h4b): nothing to set. One question added to docs/for-the-lawyer.md: staff notes on support tickets in a data access request.
 - #304 (12h4a): nothing to set.
 - #303 (12h3b): nothing to set. Read the Romanian of the three starting canned replies when you can.
 - #302 (12h3a): nothing to set.
