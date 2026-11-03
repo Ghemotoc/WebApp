@@ -1,0 +1,156 @@
+{
+  "card": {
+    "legend": "Contests",
+    "intro": "Enter this story in a writing contest that’s taking entries now. You keep every right in your story.",
+    "closesOn": "Entries close on {{date}}.",
+    "wordLimit": "Word limit: {{limit}}.",
+    "about": "About {{name}}",
+    "enter": "Enter {{name}}",
+    "entered": "This story is entered.",
+    "withdraw": "Withdraw from {{name}}",
+    "otherStory": "You entered “{{title}}” in this contest. Each writer enters one story.",
+    "cantEnter": "This story can’t be entered yet:",
+    "problems": {
+      "not_active": "Your account can’t take part in contests yet.",
+      "not_readable": "Readers can’t open it yet. Publish a chapter first.",
+      "class_only": "It’s shared only with your class.",
+      "language": "It’s written in a language this contest doesn’t take.",
+      "rating": "This contest is open to writers under 16, so it takes only stories rated All ages or 13+.",
+      "word_limit": "Its published chapters are longer than the word limit."
+    },
+    "entrySaved": "Your story is entered. Good luck!",
+    "withdrawn": "Your entry is withdrawn. You can enter again until entries close.",
+    "failures": {
+      "already_entered": "You already have a story in this contest. Withdraw it first to enter another.",
+      "closed": "Entries have closed, so the entry can’t be changed.",
+      "no_contest": "This contest isn’t taking entries from you any more.",
+      "no_story": "We couldn’t find this story.",
+      "no_entry": "You have no entry in this contest.",
+      "not_active": "Your account can’t take part in contests yet.",
+      "not_readable": "Readers can’t open this story yet. Publish a chapter first.",
+      "class_only": "This story is shared only with your class.",
+      "language": "This contest doesn’t take stories in this language.",
+      "rating": "This contest takes only stories rated All ages or 13+.",
+      "word_limit": "This story is longer than the word limit.",
+      "failed": "That didn’t work. Try again in a moment."
+    }
+  },
+  "staff": {
+    "documentTitle": "Contests",
+    "eyebrow": "Contests",
+    "heading": "Contests",
+    "intro": "Set up writing contests. A contest opens only when its full rules are published in Romanian and English and linked from its landing page.",
+    "listHeading": "All contests",
+    "empty": "No contests yet.",
+    "loadFailed": "The contests couldn’t be loaded. Try again in a moment.",
+    "unnamed": "Untitled contest",
+    "noDates": "No dates yet",
+    "window": "{{from}} to {{to}}",
+    "columns": {
+      "name": "Name",
+      "page": "Landing page",
+      "entries": "Entries",
+      "status": "Status"
+    },
+    "status": {
+      "draft": "Draft",
+      "open": "Open"
+    },
+    "new": {
+      "heading": "New contest",
+      "page": "Landing page",
+      "create": "Create contest",
+      "noPages": "Every contest has its own contest landing page. Make one first:",
+      "landingPagesLink": "Website › Landing pages",
+      "failures": {
+        "not_allowed": "Only the owner and admins can run contests.",
+        "not_a_contest_page": "Pick a contest landing page.",
+        "already_has_contest": "That page already has a contest.",
+        "failed": "The contest couldn’t be created. Try again in a moment."
+      }
+    },
+    "editor": {
+      "documentTitle": "Contest",
+      "back": "All contests",
+      "notFound": "This contest doesn’t exist.",
+      "pageLink": "Landing page: /c/{{slug}}.",
+      "draft": "Draft: writers don’t see it yet.",
+      "openSince": "Open since {{date}}. Writers can enter from the day entries open until the day they close.",
+      "counter": "{{used}} of {{longest}} characters",
+      "sections": {
+        "names": "Name",
+        "dates": "Dates",
+        "who": "Who can enter",
+        "entry": "What counts as an entry",
+        "prize": "Prize and judges",
+        "rules": "Rules"
+      },
+      "fields": {
+        "name_ro": "Name in Română",
+        "name_en": "Name in English",
+        "entries_open_on": "Entries open",
+        "entries_close_on": "Entries close",
+        "results_on": "Results",
+        "datesHint": "Days in Romanian time. Entries are taken on the first and the last day too.",
+        "age_groups": "Age groups",
+        "markets": "Markets",
+        "languages": "Story languages",
+        "what_counts_ro": "What counts, in Română",
+        "what_counts_en": "What counts, in English",
+        "word_limit": "Word limit (optional)",
+        "word_limitHint": "Counts the words of the story’s published chapters.",
+        "prize_ro": "Prize, in Română",
+        "prize_en": "Prize, in English",
+        "prize_delivered_by": "Who delivers the prize",
+        "judges": "Judges",
+        "judgesHint": "Our staff plus any named partner judges. There is no public vote and a sponsor has no say in the result.",
+        "rules_page_key": "Address of the rules help page",
+        "rulesHint": "The help page with the full contest rules, at /help/ and this address. Publish it in Română and English and link it from the landing page’s Rules block."
+      },
+      "ageGroups": {
+        "13_to_15": "13 to 15",
+        "16_to_17": "16 to 17",
+        "18_plus": "18 and over"
+      },
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved.",
+      "openHeading": "Opening",
+      "ready": "Everything is in place. Opening lets writers enter from the day entries open.",
+      "notReady": "Before it can open:",
+      "open": "Open the contest",
+      "problems": {
+        "name_ro": "Add the name in Română.",
+        "name_en": "Add the name in English.",
+        "dates_missing": "Add the three dates.",
+        "dates_order": "Entries must close on or after the day they open, and results come after entries close.",
+        "age_groups": "Pick at least one age group.",
+        "markets": "Pick at least one market.",
+        "languages": "Pick at least one story language.",
+        "what_counts": "Say what counts as an entry, in both languages.",
+        "prize": "Describe the prize, in both languages.",
+        "prize_delivered_by": "Say who delivers the prize.",
+        "judges": "Name the judges.",
+        "rules_page": "Add the address of the rules help page.",
+        "rules_not_published": "Publish the rules help page in Română and English, in every market of the contest.",
+        "landing_not_contest": "The landing page must be a contest page.",
+        "landing_not_live": "Publish the landing page so it’s live today.",
+        "rules_not_linked": "Link the rules help page from the landing page’s Rules block.",
+        "other": "Something else needs fixing."
+      },
+      "failures": {
+        "too_long": "A field is longer than it may be.",
+        "bad_age_group": "Pick age groups from the list.",
+        "bad_market": "Pick markets from the list.",
+        "bad_language": "Pick languages from the list.",
+        "bad_word_limit": "The word limit must be between 100 and 500,000 words.",
+        "bad_rules_page": "The rules page address may hold only lowercase letters, digits and hyphens.",
+        "breaks_open_contest": "The contest is open, so it must stay complete. This change would leave:",
+        "not_ready": "The contest isn’t ready to open yet. Fix the list above.",
+        "already_open": "The contest is already open.",
+        "not_allowed": "Only the owner and admins can run contests.",
+        "failed": "That didn’t work. Try again in a moment."
+      }
+    }
+  }
+}

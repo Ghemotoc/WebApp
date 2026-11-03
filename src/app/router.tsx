@@ -176,6 +176,23 @@ const staffRoutes: RouteObject = {
         return { Component: SafetyContactsAdminPage };
       },
     },
+    // Contests (S1-E11-15; CONTESTS-13b1): owner and admin; the list and one contest's editor.
+    {
+      path: 'contests',
+      lazy: async () => {
+        const { StaffContestsPage } =
+          await import('@/features/contests/components/staff/StaffContestsPage');
+        return { Component: StaffContestsPage };
+      },
+    },
+    {
+      path: 'contests/:contestId',
+      lazy: async () => {
+        const { ContestEditorPage } =
+          await import('@/features/contests/components/staff/ContestEditorPage');
+        return { Component: ContestEditorPage };
+      },
+    },
     // The website CMS (S1-E11-06, S1-E11-10, S1-E11-12): owner and admin; the area picks the tab.
     {
       path: 'website/:area?',

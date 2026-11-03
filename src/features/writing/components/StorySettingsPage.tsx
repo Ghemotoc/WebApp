@@ -9,7 +9,8 @@
  * the save bar, and the delete card. The "Labels" section joins with S1-E3-06 and the chapters
  * with S1-E3-03. The writer can go back to the automatic cover from here (S1-E3-13), and pick the
  * rank badges the cover shows (CMS-1g, RankBadgePicker). A student shares the story only with
- * their class, or makes it public again (StoryClassCard, bundle CLASSES, part c).
+ * their class, or makes it public again (StoryClassCard, bundle CLASSES, part c). A writer enters
+ * the story in an open contest (StoryContestCard, S1-E11-15).
  * What it calls: useMyStories (the story), useStorySettingsForm (answers, checks,
  * update_my_story()), DeleteStoryControl (delete_my_story(), restore_my_story()).
  */
@@ -23,6 +24,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
+import { StoryContestCard } from '@/features/contests/components/StoryContestCard';
 import { StoryClassCard } from '@/features/spaces/components/StoryClassCard';
 import { RankBadgePicker } from '@/features/tags/components/RankBadgePicker';
 
@@ -92,6 +94,7 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
       />
       <RankBadgePicker slug={story.slug} />
       <StoryClassCard slug={story.slug} />
+      <StoryContestCard slug={story.slug} />
       <CoverSection
         storyId={story.id}
         title={form.answers.title}

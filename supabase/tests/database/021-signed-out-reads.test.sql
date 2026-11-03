@@ -91,6 +91,9 @@ select results_eq(
        ('confusable_characters', 0::bigint),
        ('consents', 0::bigint),
        ('customisation_change_requests', 0::bigint),
+       -- Contests and entries: staff, and a writer's own entries (CONTESTS-13b1).
+       ('contest_entries', 0::bigint),
+       ('contests', 0::bigint),
        -- Private messages are the two people's only (S1-E9-01).
        ('conversation_members', 0::bigint),
        ('conversations', 0::bigint),
