@@ -12602,7 +12602,7 @@ export type Database = {
         Returns: string;
       };
       support_ticket_for_email: {
-        Args: { sender: string; subject: string; thread_headers: string };
+        Args: { email_sender: string; email_subject: string; thread_headers: string };
         Returns: {
           assigned_to_user_id: string | null;
           category: Database['public']['Enums']['support_ticket_category'];
