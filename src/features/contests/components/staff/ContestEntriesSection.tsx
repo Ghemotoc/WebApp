@@ -29,7 +29,9 @@ function EntryStatus({ entry }: { entry: StaffContestEntry }) {
   const status = t(`staff.entries.status.${entry.status}`);
   if (entry.statement_reference === null) return <>{status}</>;
   // A reinstated entry keeps the reference of the decision its appeal overturned.
-  return <>{t('staff.entries.statusWithReference', { status, reference: entry.statement_reference })}</>;
+  return (
+    <>{t('staff.entries.statusWithReference', { status, reference: entry.statement_reference })}</>
+  );
 }
 
 /** One row of the table. */
