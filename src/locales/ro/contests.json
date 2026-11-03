@@ -8,6 +8,8 @@
     "enter": "Înscrie-te în {{name}}",
     "entered": "Povestea este înscrisă.",
     "withdraw": "Retrage-te din {{name}}",
+    "disqualified": "„{{title}}” a fost descalificată din acest concurs (decizia {{reference}}). Poți citi motivul și poți face contestație timp de șase luni.",
+    "readDecision": "Citește decizia și fă contestație",
     "otherStory": "Ai înscris „{{title}}” în acest concurs. Fiecare persoană înscrie o singură poveste.",
     "cantEnter": "Povestea nu poate fi înscrisă încă:",
     "problems": {
@@ -150,6 +152,49 @@
         "already_open": "Concursul este deja deschis.",
         "not_allowed": "Doar proprietarul și administratorii pot organiza concursuri.",
         "failed": "N-a mers. Încearcă din nou peste câteva momente."
+      }
+    },
+    "entries": {
+      "heading": "Înscrieri",
+      "intro": "Fiecare înscriere arată doar pseudonimul și grupa de vârstă, niciodată anul nașterii. Echipa nu schimbă niciodată textul unei înscrieri.",
+      "empty": "Nu există încă înscrieri.",
+      "loadFailed": "Nu am putut încărca înscrierile. Încearcă din nou peste puțin timp.",
+      "unknownAge": "Necunoscută",
+      "columns": {
+        "writer": "Pseudonim",
+        "age": "Grupa de vârstă",
+        "story": "Poveste",
+        "rating": "Clasificare",
+        "words": "Cuvinte",
+        "entered": "Înscrisă",
+        "status": "Stare",
+        "action": "Acțiune"
+      },
+      "ratings": {
+        "all_ages": "Toate vârstele",
+        "13_plus": "13+",
+        "16_plus": "16+",
+        "18_plus": "18+"
+      },
+      "status": {
+        "valid": "Validă",
+        "withdrawn": "Retrasă",
+        "disqualified": "Descalificată"
+      },
+      "statusWithReference": "{{status}} ({{reference}})",
+      "disqualifyEntry": "Descalifică înscrierea: {{name}}",
+      "disqualifyHeading": "Descalifică înscrierea: {{name}}",
+      "reason": "De ce încalcă înscrierea regulamentul",
+      "reasonHint": "Persoana care a scris povestea citește acest text în motivarea deciziei și poate face contestație. {{count}} din {{limit}} caractere.",
+      "disqualify": "Descalifică",
+      "cancel": "Renunță",
+      "disqualified": "Înscrierea este descalificată. Persoana care a scris povestea a primit motivarea {{reference}} și poate face contestație.",
+      "failures": {
+        "reason_needed": "Scrie de ce încalcă înscrierea regulamentul.",
+        "not_valid": "Doar o înscriere validă poate fi descalificată.",
+        "no_entry": "Nu am găsit această înscriere.",
+        "not_allowed": "Doar proprietarul și administratorii pot descalifica înscrieri.",
+        "failed": "Nu a funcționat. Încearcă din nou peste puțin timp."
       }
     }
   }

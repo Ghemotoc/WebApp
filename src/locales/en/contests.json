@@ -8,6 +8,8 @@
     "enter": "Enter {{name}}",
     "entered": "This story is entered.",
     "withdraw": "Withdraw from {{name}}",
+    "disqualified": "“{{title}}” was disqualified from this contest (decision {{reference}}). You can read why and appeal for six months.",
+    "readDecision": "Read the decision and appeal",
     "otherStory": "You entered “{{title}}” in this contest. Each writer enters one story.",
     "cantEnter": "This story can’t be entered yet:",
     "problems": {
@@ -149,6 +151,49 @@
         "not_ready": "The contest isn’t ready to open yet. Fix the list above.",
         "already_open": "The contest is already open.",
         "not_allowed": "Only the owner and admins can run contests.",
+        "failed": "That didn’t work. Try again in a moment."
+      }
+    },
+    "entries": {
+      "heading": "Entries",
+      "intro": "Each entry shows the writer’s pen name and age group only, never their year of birth. Staff never change an entry’s words.",
+      "empty": "No entries yet.",
+      "loadFailed": "We couldn’t load the entries. Try again in a moment.",
+      "unknownAge": "Not known",
+      "columns": {
+        "writer": "Writer",
+        "age": "Age group",
+        "story": "Story",
+        "rating": "Rating",
+        "words": "Words",
+        "entered": "Entered",
+        "status": "Status",
+        "action": "Action"
+      },
+      "ratings": {
+        "all_ages": "All ages",
+        "13_plus": "13+",
+        "16_plus": "16+",
+        "18_plus": "18+"
+      },
+      "status": {
+        "valid": "Valid",
+        "withdrawn": "Withdrawn",
+        "disqualified": "Disqualified"
+      },
+      "statusWithReference": "{{status}} ({{reference}})",
+      "disqualifyEntry": "Disqualify {{name}}’s entry",
+      "disqualifyHeading": "Disqualify {{name}}’s entry",
+      "reason": "Why the entry breaks the rules",
+      "reasonHint": "The writer reads this in their statement of reasons and can appeal it. {{count}} of {{limit}} characters.",
+      "disqualify": "Disqualify",
+      "cancel": "Cancel",
+      "disqualified": "The entry is disqualified. The writer has the statement of reasons {{reference}} and can appeal it.",
+      "failures": {
+        "reason_needed": "Write why the entry breaks the rules.",
+        "not_valid": "Only a valid entry can be disqualified.",
+        "no_entry": "We couldn’t find this entry.",
+        "not_allowed": "Only the owner and admins can disqualify entries.",
         "failed": "That didn’t work. Try again in a moment."
       }
     }

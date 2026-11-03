@@ -166,7 +166,8 @@
     "rating_raised": "a moderator raised your story’s rating.",
     "ai_label_added": "a moderator labelled your story as AI-written.",
     "title_hidden": "a moderator hid your story’s title.",
-    "cover_hidden": "a moderator hid your story’s cover."
+    "cover_hidden": "a moderator hid your story’s cover.",
+    "contest_disqualified": "staff disqualified your contest entry."
   },
   "reportOutcomes": {
     "removed": "we checked your report {{reference}} and removed what you reported.",

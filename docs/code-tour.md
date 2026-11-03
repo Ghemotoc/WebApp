@@ -1618,6 +1618,13 @@ A contest belongs to one landing page of type contest (S1-E11-14): the page tell
 - **Tables:** `contests` (staff read only, `contests_select_staff`) and `contest_entries` (the writer reads their own, staff read all; written only through the functions). `contest_entries` is in `data_export_tables()` and `account_deletion_rules()`.
 - **Tests:** `supabase/tests/database/265-contests.test.sql`, `e2e/contests.spec.ts`.
 
+### Entries and disqualifying (CONTESTS-13b2a)
+
+- **The list:** once a contest is open, `ContestEditorPage` shows `ContestEntriesSection` → `useContestEntries()` → `fetchContestEntries()` → `admin_contest_entries(id)`: each entry by pen name and age group only (never the user ID or year of birth), with the story, rating, published words, date and status.
+- **How one click travels:** Disqualify → `DisqualifyForm` (a reason is required) → `disqualifyContestEntry()` → `admin_disqualify_contest_entry(entry, reason)`, which issues a statement of reasons (`issue_statement_of_reasons()`, action `contest_disqualified`, ground key `contest_rules`), notifies the writer, sets `contest_entries.statement_id` and writes the audit log.
+- **The appeal:** the writer appeals from My reports and decisions like any decision (S1-E10-07). `decider_of_statement()` names the admin who disqualified, and `undo_decision_for_appeal()` makes the entry valid again when a moderator overturns it. A disqualified entry still holds the writer's one place, so `contest_entry_options()` returns it and `StoryContestCard` links to the decision.
+- **Tests:** `supabase/tests/database/266-contest-entries-disqualify.test.sql`, `e2e/contests.spec.ts`.
+
 ## Tags: approval and names in each language (CMS-1e)
 
 A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.

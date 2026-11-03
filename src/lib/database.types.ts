@@ -1852,8 +1852,11 @@ export type Database = {
         Row: {
           contest_id: string;
           created_at: string;
+          disqualified_at: string | null;
+          disqualified_by_user_id: string | null;
           entered_at: string;
           id: string;
+          statement_id: string | null;
           status: string;
           story_id: string;
           updated_at: string;
@@ -1864,8 +1867,11 @@ export type Database = {
         Insert: {
           contest_id: string;
           created_at?: string;
+          disqualified_at?: string | null;
+          disqualified_by_user_id?: string | null;
           entered_at?: string;
           id?: string;
+          statement_id?: string | null;
           status?: string;
           story_id: string;
           updated_at?: string;
@@ -1875,8 +1881,11 @@ export type Database = {
         Update: {
           contest_id?: string;
           created_at?: string;
+          disqualified_at?: string | null;
+          disqualified_by_user_id?: string | null;
           entered_at?: string;
           id?: string;
+          statement_id?: string | null;
           status?: string;
           story_id?: string;
           updated_at?: string;
@@ -1889,6 +1898,20 @@ export type Database = {
             columns: ['contest_id'];
             isOneToOne: false;
             referencedRelation: 'contests';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'contest_entries_disqualified_by_user_id_fkey';
+            columns: ['disqualified_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'contest_entries_statement_id_fkey';
+            columns: ['statement_id'];
+            isOneToOne: false;
+            referencedRelation: 'statements_of_reasons';
             referencedColumns: ['id'];
           },
           {
@@ -8283,6 +8306,7 @@ export type Database = {
       };
       admin_compliance_log: { Args: { for_export?: boolean }; Returns: Json };
       admin_confirm_safety_contact: { Args: { target_contact_id: string }; Returns: boolean };
+      admin_contest_entries: { Args: { target_contest_id: string }; Returns: Json };
       admin_contest_problems: { Args: { target_contest_id: string }; Returns: string[] };
       admin_convert_ticket_to_report: {
         Args: {
@@ -8423,6 +8447,10 @@ export type Database = {
       admin_describe_abuse_image: {
         Args: { description_text: string; evidence_id: string };
         Returns: boolean;
+      };
+      admin_disqualify_contest_entry: {
+        Args: { reason: string; target_entry_id: string };
+        Returns: string;
       };
       admin_due_decision_emails: {
         Args: Record<PropertyKey, never>;
@@ -13588,7 +13616,8 @@ export type Database = {
         | 'rating_raised'
         | 'ai_label_added'
         | 'title_hidden'
-        | 'cover_hidden';
+        | 'cover_hidden'
+        | 'contest_disqualified';
       statement_ground: 'terms' | 'law';
       story_rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
       support_message_kind: 'from_requester' | 'staff_reply' | 'internal_note';
@@ -13950,6 +13979,7 @@ export const Constants = {
         'ai_label_added',
         'title_hidden',
         'cover_hidden',
+        'contest_disqualified',
       ],
       statement_ground: ['terms', 'law'],
       story_rating: ['all_ages', '13_plus', '16_plus', '18_plus'],
