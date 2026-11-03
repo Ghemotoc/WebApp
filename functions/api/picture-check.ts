@@ -8,8 +8,9 @@
  * - PICTURE_CHECK: "real" to use the services; unset or "stub" uses the stand-in;
  * - PICTURE_CHECK_SECRET: signs each verdict; the same value is in Supabase Vault as
  *   picture_check_secret;
- * - SIGHTENGINE_API_USER and SIGHTENGINE_API_SECRET; ARACHNID_SHIELD_USERNAME and
- *   ARACHNID_SHIELD_PASSWORD: the two services;
+ * - ARACHNID_SHIELD_USERNAME and ARACHNID_SHIELD_PASSWORD: the check on every picture;
+ * - PICTURE_CHECK_SIGHTENGINE, SIGHTENGINE_API_USER and SIGHTENGINE_API_SECRET: not set, because
+ *   Sightengine isn't used (Robert, 2 Nov 2026, 08:19); "on" with the two keys would add it;
  * - VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY: the database, as the front end reads it.
  * The caller's own sign-in token does the reading and saving; there is no service key here.
  */
@@ -22,6 +23,7 @@ interface PagesContext {
   env: {
     PICTURE_CHECK?: string;
     PICTURE_CHECK_SECRET?: string;
+    PICTURE_CHECK_SIGHTENGINE?: string;
     SIGHTENGINE_API_USER?: string;
     SIGHTENGINE_API_SECRET?: string;
     ARACHNID_SHIELD_USERNAME?: string;
@@ -44,6 +46,7 @@ export const onRequestPost = (context: PagesContext): Promise<Response> =>
     secret: context.env.PICTURE_CHECK_SECRET,
     checkPicture: pictureChecker({
       mode: context.env.PICTURE_CHECK,
+      sightengineMode: context.env.PICTURE_CHECK_SIGHTENGINE,
       sightengine: {
         apiUser: context.env.SIGHTENGINE_API_USER ?? '',
         apiSecret: context.env.SIGHTENGINE_API_SECRET ?? '',

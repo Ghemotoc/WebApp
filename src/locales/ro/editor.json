@@ -157,15 +157,12 @@
     "fileHint": "JPEG, PNG sau WebP, până la 5 MB. Scoatem datele despre locație și cameră și o aducem la mărimea potrivită pentru citit.",
     "altLabel": "Text alternativ",
     "altHint": "Descrie imaginea pentru cititorii care folosesc un cititor de ecran.",
-    "rightsLabel": "Am dreptul să folosesc această imagine",
-    "rightsHint": "Ai făcut-o tu sau cine o deține te lasă s-o folosești. Dacă cineva ne arată că e a lui, o putem scoate.",
     "checkNote": "Fiecare imagine trece prin verificarea imaginilor înainte s-o vadă cititorii.",
     "add": "Adaugă imaginea",
     "cancel": "Renunță",
     "uploading": "Îți încărcăm și verificăm imaginea…",
     "missingFile": "Alege o imagine.",
-    "missingAlt": "Scrie un text alternativ pentru imagine.",
-    "missingRights": "Bifează căsuța ca să confirmi că ai dreptul să folosești imaginea."
+    "missingAlt": "Scrie un text alternativ pentru imagine."
   },
   "picture": {
     "label": "Imagine din acest capitol",
@@ -259,7 +256,6 @@
     "lineCount_few": "{{count}} linii desenate",
     "lineCount_other": "{{count}} de linii desenate",
     "altHint": "Descrie desenul pentru cititorii care folosesc un cititor de ecran.",
-    "rightsHint": "L-ai desenat tu sau proprietarul îți permite să-l folosești. Dacă cineva ne arată că e al lui, îl putem scoate.",
     "savedNote": "Se salvează în capitol ca imagine. Trece prin verificarea noastră a imaginilor înainte să-l vadă cititorii.",
     "missingInk": "Desenează ceva mai întâi.",
     "uploading": "Îți salvăm și verificăm desenul…",

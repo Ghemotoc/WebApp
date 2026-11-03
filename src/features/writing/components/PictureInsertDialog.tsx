@@ -3,8 +3,9 @@
  * criterion 1; board 4.3).
  *
  * What it does: a native <dialog> (focus stays inside, Escape closes) with the picture file
- * (JPEG, PNG or WebP up to 5 MB), its alt text (required, 300 characters) and the "I have the
- * right to use this picture" box. "Add the picture" refuses until all three are there, then
+ * (JPEG, PNG or WebP up to 5 MB), its alt text (required, 300 characters) and the line on which
+ * pictures are allowed (drawings and illustrations only; there is no rights tick box since bundle
+ * ADMIN-2, part e1). "Add the picture" refuses until both fields are there, then
  * uploads it (metadata removed and resized first, its picture check straight after) and puts it
  * in the chapter where the cursor was. A refusal says why in plain words and keeps what was
  * filled in.
@@ -18,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
+import { PictureRulesNote } from '@/features/pictures/components/PictureRulesNote';
 import { useChapterPictureUpload } from '@/features/pictures/hooks/useChapterPictures';
 import { MAXIMUM_ALT_TEXT_LENGTH } from '@/lib/chapter-pictures';
 
@@ -25,7 +27,6 @@ import { useNativeDialog } from '../hooks/useNativeDialog';
 import { insertChapterPicture } from '../lib/chapterPictureNode';
 import { pictureFailureMessage } from '../lib/pictureFailure';
 
-import { LabelCheckbox } from './LabelCheckbox';
 import { PictureFileField } from './PictureFileField';
 
 /** What the dialog needs. */
@@ -41,18 +42,16 @@ export interface PictureInsertDialogProps {
 interface PictureForm {
   file: File | null;
   alt: string;
-  rightsConfirmed: boolean;
 }
 
 /** Which fields are missing, after the writer pressed "Add the picture". */
 interface MissingFields {
   file: boolean;
   alt: boolean;
-  rights: boolean;
 }
 
 /** An empty form. */
-const emptyForm: PictureForm = { file: null, alt: '', rightsConfirmed: false };
+const emptyForm: PictureForm = { file: null, alt: '' };
 
 /**
  * Which fields still need something.
@@ -63,9 +62,8 @@ function missingFieldsOf(form: PictureForm): MissingFields | null {
   const missing = {
     file: form.file === null,
     alt: form.alt.trim() === '',
-    rights: !form.rightsConfirmed,
   };
-  return missing.file || missing.alt || missing.rights ? missing : null;
+  return missing.file || missing.alt ? missing : null;
 }
 
 /**
@@ -94,9 +92,7 @@ function usePictureInsert(props: PictureInsertDialogProps) {
     const stillMissing = missingFieldsOf(form);
     setMissing(stillMissing);
     if (stillMissing !== null || form.file === null) return;
-    const uploaded = await uploading
-      .upload({ chapterId, file: form.file, rightsConfirmed: form.rightsConfirmed })
-      .catch(() => null);
+    const uploaded = await uploading.upload({ chapterId, file: form.file }).catch(() => null);
     // A refusal stays on screen (uploading.error); the form keeps what was filled in.
     if (uploaded === null) return;
     insertChapterPicture(editor, { pictureId: uploaded.pictureId, alt: form.alt.trim() });
@@ -114,7 +110,7 @@ interface PictureFieldsProps {
   onChange: (form: PictureForm) => void;
 }
 
-/** The file, the alt text, the rights box and the note on the picture check. */
+/** The file, the alt text, the picture rules and the note on the picture check. */
 function PictureFields({ form, missing, isUploading, onChange }: PictureFieldsProps) {
   const { t } = useTranslation('editor');
   return (
@@ -135,14 +131,7 @@ function PictureFields({ form, missing, isUploading, onChange }: PictureFieldsPr
         hint={t('pictureDialog.altHint')}
         errorMessage={missing?.alt === true ? t('pictureDialog.missingAlt') : undefined}
       />
-      <LabelCheckbox
-        id="chapter-picture-rights"
-        label={t('pictureDialog.rightsLabel')}
-        hint={t('pictureDialog.rightsHint')}
-        isChecked={form.rightsConfirmed}
-        onChange={(isChecked) => onChange({ ...form, rightsConfirmed: isChecked })}
-      />
-      {missing?.rights === true && <Notice tone="error">{t('pictureDialog.missingRights')}</Notice>}
+      <PictureRulesNote />
       <p className="m-0 text-sm text-body">{t('pictureDialog.checkNote')}</p>
     </>
   );

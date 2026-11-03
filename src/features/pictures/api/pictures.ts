@@ -57,13 +57,7 @@ export const largestPictureBytes: Record<PictureBucket, number> = {
 
 /** Why an upload didn't work. animated: a signature picture that moves (S1-E8-08). */
 export type PictureUploadFailure =
-  | 'wrong_type'
-  | 'too_big'
-  | 'too_many'
-  | 'not_allowed'
-  | 'rights_not_confirmed'
-  | 'unreachable'
-  | 'animated';
+  'wrong_type' | 'too_big' | 'too_many' | 'not_allowed' | 'unreachable' | 'animated';
 
 /** The error a failed upload throws; waitMinutes is set for too_many. */
 export class PictureUploadError extends Error {
@@ -275,7 +269,6 @@ async function storePicture(
 function registrationFailure(error: { code: string; hint?: string }): PictureUploadError {
   if (error.code === '54000')
     return new PictureUploadError('too_many', waitMinutesFrom(error.hint));
-  if (error.hint === 'rights_not_confirmed') return new PictureUploadError('rights_not_confirmed');
   return new PictureUploadError(error.code === '' ? 'unreachable' : 'not_allowed');
 }
 
@@ -317,39 +310,32 @@ export interface ChapterPictureUpload {
   /** The chapter's row ID, the folder in `chapter-images`. */
   chapterId: string;
   file: File;
-  /** The "I have the right to use this picture" box. */
-  rightsConfirmed: boolean;
 }
 
 /**
- * Uploads a picture for a chapter, registers it with the rights confirmation and asks for its
- * check (S1-E3-09).
+ * Uploads a picture for a chapter, registers it and asks for its check (S1-E3-09). There is no
+ * rights tick box any more (Robert, 2 Nov 2026; bundle ADMIN-2, part e1).
  *
  * @param client - the shared Supabase client
- * @param upload - the chapter, the file and the confirmation
+ * @param upload - the chapter and the file
  * @returns the picture's ID (for the text) and its status after the check
- * @throws PictureUploadError as uploadPicture(), plus rights_not_confirmed
+ * @throws PictureUploadError as uploadPicture()
  */
 export async function uploadChapterPicture(
   client: AppSupabaseClient,
   upload: ChapterPictureUpload,
 ): Promise<{ pictureId: string; status: string }> {
-  // Step 1: the confirmation first, so nothing is sent without it.
-  if (!upload.rightsConfirmed) throw new PictureUploadError('rights_not_confirmed');
-  // Step 2: the prepared file, in the chapter's folder.
+  // Step 1: the prepared file, in the chapter's folder.
   const path = await storePicture(client, {
     bucket: 'chapter-images',
     folder: upload.chapterId,
     file: upload.file,
     longestSide: longestSideFor.chapterPicture,
   });
-  // Step 3: registered as pending, with the confirmation; the hourly limit is counted here.
-  const registered = await client.rpc('register_chapter_picture', {
-    target_path: path,
-    rights_confirmed: true,
-  });
+  // Step 2: registered as pending; the hourly limit is counted here.
+  const registered = await client.rpc('register_chapter_picture', { target_path: path });
   if (registered.error !== null) throw registrationFailure(registered.error);
-  // Step 4: the check, as for every other picture.
+  // Step 3: the check, as for every other picture.
   const status = await requestPictureCheck(client, registered.data, upload.file.name);
   return { pictureId: registered.data, status };
 }

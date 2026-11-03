@@ -127,13 +127,11 @@
       "too_many": "Ai încărcat multe imagini în ultima oră. Încearcă din nou peste {{minutes}} minute.",
       "not_allowed": "Nu poți încărca această imagine acum.",
       "unreachable": "Nu am putut încărca imaginea. Verifică-ți conexiunea și încearcă din nou.",
-      "rights_not_confirmed": "Bifează căsuța ca să confirmi că ai dreptul să folosești imaginea.",
       "animated": "Imaginea din semnătură nu se poate mișca. Alege o imagine statică."
     },
     "coverLabel": "Încarcă o imagine",
     "coverHint": "JPEG, PNG sau WebP, până la 5 MB. Se potrivește cel mai bine o imagine înaltă (5 pe 8). Cititorii o văd după ce trece verificarea imaginilor.",
     "coverPreview": "Coperta ta încărcată",
-    "coverRights": "Încarcă doar o imagine făcută de tine sau pe care ai dreptul s-o folosești.",
     "avatarLabel": "Încarcă o poză de profil",
     "avatarHint": "JPEG, PNG sau WebP, până la 2 MB. Ceilalți o văd după ce trece verificarea imaginilor.",
     "avatarHeading": "Poza de profil",
@@ -144,6 +142,16 @@
       "removed": "[Eliminat de echipa de moderare]",
       "reportLabel": "imaginea „{{alt}}”",
       "notLoaded": "Nu am putut încărca imaginea. Verifică-ți conexiunea și reîncarcă pagina."
+    },
+    "rules": {
+      "headline": "Doar desene și ilustrații, fără fotografii.",
+      "allowed": "Sunt permise: {{kinds}}.",
+      "never": "Niciodată fotografii, oameni reali sau persoane celebre.",
+      "kinds": {
+        "drawing": "desene",
+        "illustration": "ilustrații",
+        "non_photographic_ai": "imagini făcute cu AI care nu arată ca fotografii"
+      }
     }
   },
   "website": {

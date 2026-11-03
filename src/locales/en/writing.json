@@ -235,6 +235,7 @@
     "required": "(required)",
     "ratingNoteAllAges": "Anyone can find and read it. Pick 13+, 16+ or 18+ if your story isn’t right for younger readers; it’s then hidden from anyone younger.",
     "ratingNoteHidden": "Hidden from anyone under {{age}}, in search, on Discover and on your profile. Readers see the rating before they open the story.",
+    "ratingUnderSixteen": "Writers under 16 can rate a story All ages or 13+.",
     "guide": {
       "all_ages": {
         "who": "For every reader, children included",

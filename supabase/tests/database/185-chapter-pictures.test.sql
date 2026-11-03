@@ -1,7 +1,7 @@
 -- Database tests for pictures in chapters (story S1-E3-09; CLAUDE.md rules 1, 6, 8, 19).
 -- What it proves:
--- - a writer uploads a picture only into their own chapter's folder, only while uploads are on,
---   and must confirm they may use it (criterion 1; legal: notice and action);
+-- - a writer uploads a picture only into their own chapter's folder, only while uploads are on
+--   (criterion 1; the rights tick box was removed on 2 Nov 2026, bundle ADMIN-2 part e1);
 -- - the chapter text may hold only the writer's own chapter pictures, each with alt text, and a
 --   picture's address and alt text are not counted as words (criterion 1; rule 8);
 -- - the picture check decides who sees it: a clean picture shows to readers, a flagged one is
@@ -16,7 +16,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(29);
+select plan(27);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -88,28 +88,20 @@ update storage.objects set owner_id = '00000000-0000-4000-8000-000000000001'
 where bucket_id = 'chapter-images' and name like '18500000-%';
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
-select is(
-  pg_temp.refusal($$ select public.register_chapter_picture(
-    '18500000-0000-4000-8000-000000000001/11111111-1111-4111-8111-185000000001.webp', false) $$),
-  '23514:rights_not_confirmed',
-  'a picture isn''t added until the writer confirms they have the right to use it');
 insert into named values
-  ('clean', public.register_chapter_picture('18500000-0000-4000-8000-000000000001/11111111-1111-4111-8111-185000000001.webp', true)),
-  ('flagged', public.register_chapter_picture('18500000-0000-4000-8000-000000000001/22222222-2222-4222-8222-185000000002.webp', true));
+  ('clean', public.register_chapter_picture('18500000-0000-4000-8000-000000000001/11111111-1111-4111-8111-185000000001.webp')),
+  ('flagged', public.register_chapter_picture('18500000-0000-4000-8000-000000000001/22222222-2222-4222-8222-185000000002.webp'));
 select is(
-  (select status::text || ' ' || kind::text || ' ' || (rights_confirmed_at is not null)::text
+  (select status::text || ' ' || kind::text
    from public.picture_checks where id = (select id from named where label = 'clean')),
-  'pending chapter_picture true',
-  'a registered chapter picture starts pending, with the rights confirmation kept');
+  'pending chapter_picture',
+  'a registered chapter picture starts pending, with no rights tick box (Robert, 2 Nov 2026)');
 select is(
   (select chapter_id from public.picture_checks where id = (select id from named where label = 'clean')),
   '18500000-0000-4000-8000-000000000001'::uuid,
   'and it knows its chapter');
 
 select pg_temp.as_postgres();
-select throws_ok($$ insert into public.picture_checks (user_id, bucket, path, kind)
-    values ('00000000-0000-4000-8000-000000000001', 'chapter-images', 'x/y.webp', 'chapter_picture') $$,
-  '23514', null, 'no chapter picture is ever stored without the rights confirmation');
 
 -- blocker uploads a profile picture of their own, used below as "someone else's picture".
 insert into storage.objects (bucket_id, name, owner_id) values
@@ -117,7 +109,7 @@ insert into storage.objects (bucket_id, name, owner_id) values
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000015');
 insert into named values ('other', public.register_picture('avatars', '66666666-6666-4666-8666-185000000006.png', 'avatar'));
 select throws_ok($$ select public.register_chapter_picture(
-    '18500000-0000-4000-8000-000000000001/33333333-3333-4333-8333-185000000003.webp', true) $$,
+    '18500000-0000-4000-8000-000000000001/33333333-3333-4333-8333-185000000003.webp') $$,
   '23514', null, 'nobody can register a picture in someone else''s chapter');
 
 /* ---------- 2. The check (criterion 3) ---------- */

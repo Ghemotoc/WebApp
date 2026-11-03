@@ -175,4 +175,16 @@ describe('merging the two answers', () => {
       'unavailable',
     );
   });
+
+  it('asks Arachnid Shield alone unless Sightengine is switched on (Robert, 2 Nov 2026)', async () => {
+    const settings = {
+      mode: 'real',
+      sightengine: { apiUser: '', apiSecret: '' },
+      arachnid: { username: '', password: '' },
+    };
+    expect((await pictureChecker(settings)(file('a.png'))).provider).toBe('arachnid');
+    expect(
+      (await pictureChecker({ ...settings, sightengineMode: 'on' })(file('a.png'))).provider,
+    ).toBe('sightengine+arachnid');
+  });
 });

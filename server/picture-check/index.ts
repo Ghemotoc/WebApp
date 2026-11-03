@@ -4,9 +4,13 @@
  * anyone else sees it).
  *
  * Who calls it: server/picture-check.ts (the POST /api/picture-check handler).
- * What it calls: the stub (stub.ts) when PICTURE_CHECK is "stub" or unset, otherwise the two real
- * services, Sightengine (sightengine.ts: nudity and gore) and Arachnid Shield (arachnid.ts: known
- * child sexual abuse material), and merges their answers into one verdict.
+ * What it calls: the stub (stub.ts) when PICTURE_CHECK is "stub" or unset, otherwise Arachnid
+ * Shield (arachnid.ts: known child sexual abuse material) on every picture. Sightengine
+ * (sightengine.ts: nudity and gore) is off: Robert decided on 2 Nov 2026, 08:19 that it isn't
+ * used, because a moderator looks at every picture in an All ages or 13+ story and every picture
+ * from an under-16 (bundle ADMIN-2, part e1). It stays here, switched on only by
+ * PICTURE_CHECK_SIGHTENGINE = "on", so it could come back without new code. The answers are merged
+ * into one verdict.
  * Nothing here logs the picture, its name or who uploaded it (CLAUDE.md rule 12).
  */
 import { checkWithArachnidShield, type ArachnidCredentials } from './arachnid';
@@ -43,6 +47,8 @@ export type CheckPicture = (file: PictureFile) => Promise<PictureVerdict>;
 export interface PictureCheckSettings {
   /** "real" uses the services; anything else, or nothing, uses the stub. */
   mode: string | undefined;
+  /** "on" adds Sightengine to Arachnid Shield; anything else, or nothing, leaves it off. */
+  sightengineMode?: string | undefined;
   sightengine: SightengineCredentials;
   arachnid: ArachnidCredentials;
 }
@@ -78,11 +84,17 @@ export function mergeAnswers(answers: Record<string, ServiceAnswer>): PictureVer
  * Picks the checker for these settings.
  *
  * @param settings - the mode and the services' credentials
- * @returns a function that checks one file; with mode "real" and missing credentials, every check
- *   is unavailable, so nothing is ever shown unchecked
+ * @returns a function that checks one file: the stub, Arachnid Shield alone, or both services
+ *   when Sightengine is switched on; with mode "real" and missing credentials, every check is
+ *   unavailable, so nothing is ever shown unchecked
  */
 export function pictureChecker(settings: PictureCheckSettings): CheckPicture {
   if (settings.mode !== 'real') return checkWithStub;
+  if (settings.sightengineMode !== 'on') {
+    // The decided set-up (Robert, 2 Nov 2026): Arachnid Shield alone.
+    return async (file) =>
+      mergeAnswers({ arachnid: await checkWithArachnidShield(file, settings.arachnid) });
+  }
   return async (file) => {
     // Both services run at once; each turns its own failure into "unavailable".
     const [sightengine, arachnid] = await Promise.all([

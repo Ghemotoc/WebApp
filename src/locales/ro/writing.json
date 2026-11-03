@@ -235,6 +235,7 @@
     "required": "(obligatoriu)",
     "ratingNoteAllAges": "Oricine o poate găsi și citi. Alege 13+, 16+ sau 18+ dacă povestea nu e potrivită pentru cititorii mai mici; atunci e ascunsă de oricine e mai mic.",
     "ratingNoteHidden": "Ascunsă de oricine are sub {{age}} ani, în căutare, pe Descoperă și pe profilul tău. Cititorii văd clasificarea înainte să deschidă povestea.",
+    "ratingUnderSixteen": "Scriitorii sub 16 ani pot alege pentru o poveste doar Toate vârstele sau 13+.",
     "guide": {
       "all_ages": {
         "who": "Pentru orice cititor, inclusiv copii",
