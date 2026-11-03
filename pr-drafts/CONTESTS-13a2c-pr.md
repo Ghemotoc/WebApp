@@ -19,7 +19,15 @@ Bundle 13 CONTESTS, part a2c: shared landing pages get a link preview, and the C
 
 ## Local check run
 
-LOCALRUN
+Run on the branch head (Node 24, local Supabase), stacked on 13a2b (#309):
+
+- lint, prettier, typecheck, types:check, i18n:check, migrations:check, third-party check: pass
+- `npm test` (Vitest): 221 files, 1387 tests, all pass (8 new in server/landing-preview.test.ts)
+- `npx supabase db reset && npx supabase test db`: 174 files, 4179 tests, all pass
+- `wrangler pages functions build`: compiles, with the new functions/c/[[path]].ts
+- `npx playwright test e2e/landing-link-preview.spec.ts e2e/teaser.spec.ts e2e/landing-pages.spec.ts`: 36 passed
+
+The full end-to-end run comes once at the end of bundle 13 (Robert's choice, 30 Oct 2026). GitHub Actions is still blocked by billing, so this merges on the local run and the Cloudflare build.
 
 GitHub Actions is blocked by billing, so this pull request is merged on local checks and Cloudflare's build (Robert's choice, 2 Nov 2026, 15:20 UTC).
 
