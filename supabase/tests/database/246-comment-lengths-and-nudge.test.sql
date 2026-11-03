@@ -88,7 +88,7 @@ select is(pg_temp.error_hint(format($$ select public.post_comment('statia-meteo-
 
 select ok((select count(*) from public.comment_nudge_words where language = 'en') > 0
   and (select count(*) from public.comment_nudge_words where language = 'ro') > 0,
-  'allowed: anyone signed in reads both lists (comment_nudge_words_select_signed_in)');
+  'allowed: comment_nudge_words_select_signed_in, anyone signed in reads both lists');
 select throws_ok($$ insert into public.comment_nudge_words (language, phrase) values ('en', 'meanie') $$,
   '42501', null, 'a member can''t add to the list directly');
 select throws_ok($$ select public.admin_add_nudge_word('en', 'meanie') $$,
@@ -96,7 +96,7 @@ select throws_ok($$ select public.admin_add_nudge_word('en', 'meanie') $$,
 
 select pg_temp.sign_out();
 select throws_ok($$ select count(*) from public.comment_nudge_words $$,
-  '42501', null, 'denied: a signed-out visitor can''t read the list');
+  '42501', null, 'denied: comment_nudge_words_select_signed_in, a signed-out visitor can''t read the list');
 
 /* ---------- 5. Staff edit the list ---------- */
 
