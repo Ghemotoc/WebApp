@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #298 (12f2): nothing new to set: it uses `IP_SCRAMBLE_SECRET` (from #296) and `SIGNUP_CONTEXT_SECRET` (S1-E2-10) in Cloudflare Pages. Ask the lawyer about the privacy notice sentence on the returning-user check.
 - #297 (12f1): ask the lawyer about the Pictures and Closed for good wording and how long a banned account is kept. Banned email hashes made on staging from an address with capitals, a +tag or Gmail dots no longer match; ban such an account again if it comes back.
 - #296 (12e2b): set `IP_SCRAMBLE_SECRET` in Cloudflare Pages (a long random value; keep a copy in the password manager, since the police can only match an address with it). Ask the lawyer about the [lawyer to check] points: the 5 years and legal hold, keeping the scrambled IP with the evidence, reporting to the police first, and telling the person why.
 - #295 (12e2a): run `supabase/staging-topups/ADMIN-2e2a.sql` on staging (Picture review for the owner, admin and moderator personas), and tick **Picture review** on Staff › Roles for each real moderator who should check pictures (18 or over, not interns). Add a chief of legal later in the `picture_open_alert_handles` setting if wanted.
