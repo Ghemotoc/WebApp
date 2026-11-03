@@ -28,7 +28,9 @@ const decidedKinds = ['drawing', 'illustration', 'non_photographic_ai'] as const
  */
 function kindsPhrase(kinds: readonly string[], label: (kind: string) => string, language: string) {
   const words = kinds.map(label);
-  return new Intl.ListFormat(language, { type: 'conjunction' }).format(words);
+  // British English lists have no comma before "and" (house style), which en-GB gives and en doesn't.
+  const listLanguage = language === 'en' ? 'en-GB' : language;
+  return new Intl.ListFormat(listLanguage, { type: 'conjunction' }).format(words);
 }
 
 /**
