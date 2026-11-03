@@ -25,6 +25,7 @@
  * same value the tests put in the local Vault; the link goes to Mailpit) and
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
+ * GET /c/… (server/landing-preview.ts, S1-E11-14: a landing page's Open Graph tags, the same way).
  * Stand-ins:
  * - with PASSWORD_CHECK_STUB=1 (set by playwright.config.ts) the leaked-password check answers
  *   from a fixed list instead of the internet, so tests don't depend on an outside service: the
@@ -52,6 +53,7 @@ import { handleDataRequestParent } from './data-request-parent.ts';
 import { handleDecisionEmails } from './decision-emails.ts';
 import { handleEmbed } from './embeds.ts';
 import { oembedLookup } from './embeds/oembed.ts';
+import { fetchLandingPreview, handleLandingLink, parseLandingAddress } from './landing-preview.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
 import { handleNotice } from './notice.ts';
 import {
@@ -122,28 +124,47 @@ async function sendWebResponse(response: Response, nodeResponse: ServerResponse)
 type ReadIndexHtml = (url: string) => Promise<string>;
 
 /**
- * The handler for a shared story or chapter address, with the local Supabase as the database.
+ * The handler for a shared story or chapter address, or a landing page at /c/<name> (part
+ * CONTESTS-13a2c), with the local Supabase as the database.
  *
  * @param readIndexHtml - how this server reads index.html
  * @param environment - the VITE_ values (the shell's win over the .env files, as in Vite)
  * @returns the function that answers GET /s/…
  */
 function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<string, string>) {
-  return (request: Request) =>
-    handleSharedLink(request, {
-      fetchIndexHtml: async () =>
-        new Response(await readIndexHtml(new URL(request.url).pathname), {
-          headers: { 'Content-Type': 'text/html' },
-        }),
-      findPreview: (address) =>
-        fetchLinkPreview(
-          {
-            supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
-            anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
-          },
-          address,
-        ),
+  const settings = {
+    supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+    anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+  };
+  return (request: Request) => {
+    const fetchIndexHtml = async () =>
+      new Response(await readIndexHtml(new URL(request.url).pathname), {
+        headers: { 'Content-Type': 'text/html' },
+      });
+    // A landing page at /c/<name> has a preview of its own (S1-E11-14; CONTESTS-13a2c).
+    if (parseLandingAddress(new URL(request.url).pathname) !== null) {
+      return handleLandingLink(request, {
+        fetchIndexHtml,
+        findPreview: (slug) => fetchLandingPreview(settings, slug),
+      });
+    }
+    return handleSharedLink(request, {
+      fetchIndexHtml,
+      findPreview: (address) => fetchLinkPreview(settings, address),
     });
+  };
+}
+
+/**
+ * Whether an address gets a link preview: a shared story or chapter (S1-E4-04) or a landing page
+ * (S1-E11-14). The query, if any, is ignored as on Cloudflare.
+ *
+ * @param url - the request's address
+ * @returns true for /s/… and /c/<name>
+ */
+function isPreviewAddress(url: string | undefined): boolean {
+  const pathname = (url ?? '').split('?')[0] ?? '';
+  return parseSharedAddress(pathname) !== null || parseLandingAddress(pathname) !== null;
 }
 
 /** A handler that answers one function's address. */
@@ -392,7 +413,8 @@ function handlerFor(
   environment: Record<string, string>,
 ): ((request: Request) => Promise<Response>) | null {
   // A shared story or chapter (S1-E4-04); the query, if any, is ignored as on Cloudflare.
-  if (parseSharedAddress((url ?? '').split('?')[0] ?? '') !== null) return sharedLink;
+  // A shared landing page (S1-E11-14) is answered by the same handler.
+  if (isPreviewAddress(url)) return sharedLink;
   if (url === '/api/password-check') {
     const fetchRange =
       process.env.PASSWORD_CHECK_STUB === '1' ? fetchFromStub : fetchFromHaveIBeenPwned;
@@ -454,7 +476,9 @@ function pagesFunctionsMiddleware(
 ): Connect.NextHandleFunction {
   return (request, response, next) => {
     // Only page loads: the app's own files and data calls under /s/ don't exist, but be safe.
-    if (request.method !== 'GET' && request.url?.startsWith('/s/')) return next();
+    const isPagePath =
+      request.url?.startsWith('/s/') === true || request.url?.startsWith('/c/') === true;
+    if (request.method !== 'GET' && isPagePath) return next();
     const handler = handlerFor(request.url, sharedLink, environment);
     if (handler === null) return next();
     void toWebRequest(request)

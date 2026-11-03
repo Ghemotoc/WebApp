@@ -2,7 +2,7 @@
 
 Pages at `/c/<name>` for contests, campaigns and information, built by admins from fixed blocks in
 Romanian and English (story S1-E11-14). Built in bundle CONTESTS-13a1; pictures and featured stories
-in 13a2a; Remind me in 13a2b; the link preview arrives in 13a2c, contests themselves in 13b.
+in 13a2a; Remind me in 13a2b; the link preview (`server/landing-preview.ts`) and CMS links to /c/ in 13a2c, contests themselves in 13b.
 
 - `api/landingPages.ts`: the one way the app reads and writes landing pages: `landing_page()` for
   visitors, the tables and `admin_*_landing_page*` functions for staff.
