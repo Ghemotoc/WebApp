@@ -80,6 +80,7 @@ select results_eq(
        ('cms_versions', 0::bigint),
        ('comment_downvotes', 0::bigint),
        ('comment_reactions', 0::bigint),
+       ('comment_nudge_words', 0::bigint),
        ('comments', 0::bigint),
        -- The compliance log is for the owner and admins (S1-E11-04).
        ('compliance_log_entries', 0::bigint),

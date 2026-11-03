@@ -35,6 +35,7 @@
     "categories": "Categorii",
     "names": "Nume rezervate",
     "words": "Liste de cuvinte pentru nume",
+    "nudge": "Îndemn la cuvinte blânde",
     "markets": "Piețe și limbi"
   },
   "flags": {
@@ -86,7 +87,8 @@
     "names": {
       "teaser_length": "Lungimea fragmentului pentru vizitatorii neconectați (cuvinte)",
       "chapter_max_characters": "Cel mai lung capitol (caractere)",
-      "comment_max_characters": "Cel mai lung comentariu (caractere)",
+      "comment_max_characters": "Cel mai lung comentariu la un capitol (caractere)",
+      "paragraph_comment_max_characters": "Cel mai lung comentariu la un paragraf (caractere)",
       "comment_page_size": "Comentarii pe pagină",
       "ai_label_confirmed_reports": "Raportări confirmate de text AI înainte de etichetă",
       "handle_change_days": "Zile între schimbările numelui de utilizator",
@@ -210,6 +212,13 @@
       "ro": "Română",
       "en": "English"
     }
+  },
+  "nudge": {
+    "intro": "Când un comentariu conține unul dintre aceste cuvinte sau expresii, caseta de comentariu întreabă „Aici ne susținem unii pe alții. Vrei totuși să trimiți asta?” înainte de trimitere. E doar un îndemn, în browserul celui care scrie: nimic nu e blocat, păstrat, înregistrat sau raportat. Expresiile se potrivesc ca vorbe întregi, fără să conteze majusculele și diacriticele, și ambele liste sunt verificate oricare ar fi limba comentariului.",
+    "search": "Caută o expresie",
+    "empty": "Nicio expresie de pe listă nu se potrivește.",
+    "listLabel": "Expresii de pe listă",
+    "addLabel": "Cuvânt sau expresie de adăugat (cel mult 60 de caractere)"
   },
   "markets": {
     "intro": "România se deschide prima. Alte țări se deschid mai târziu, una câte una, fiecare după verificarea ei juridică. O limbă se deschide doar când sunt de serviciu moderatori care o citesc.",

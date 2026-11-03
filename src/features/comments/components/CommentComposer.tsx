@@ -3,27 +3,31 @@
  * (story S1-E6-01; board 3.5).
  *
  * Board values: a white card (24 px corners) with the label, a 3-row text box (16 px corners,
- * #FAF8F5, at most 2,000 characters), "Hide as a spoiler", the "0 / 2,000" counter, the solid
- * "Post comment" button and "Be kind. Every report is read by a person." The counter is linked to
- * the box with aria-describedby, so a screen reader hears it with the field. A refusal is said in
- * plain words, the limit with the minutes to wait (criterion 4).
+ * #FAF8F5), "Hide as a spoiler", the "0 / 3,000" counter, the solid "Post comment" button and
+ * "Be kind. Every report is read by a person." The counter is linked to the box with
+ * aria-describedby, so a screen reader hears it with the field. A refusal is said in plain words,
+ * the limit with the minutes to wait (criterion 4).
  * The same box, without the card, posts a comment on one paragraph in its thread (S1-E6-06).
+ * Lengths (Robert, 2 Nov 2026): 3,000 characters on the whole chapter and its replies, 500 on a
+ * paragraph and every reply in its thread, from the public settings (useCommentLimit).
+ * Before sending, a comment with a word from the nudge lists shows KindWordsNudge ("Still want to
+ * send this?"), which never blocks it (bundle ADMIN-2, part d3; CLAUDE.md rule 19).
  * Who uses it: CommentsSection (a new comment), CommentItem (a reply) and ParagraphThread (a
  * comment on a paragraph).
- * What it calls: usePostComment → post_comment().
+ * What it calls: useCommentComposer → post_comment(); useCommentLimit; KindWordsNudge.
  */
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useRef } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import { cn } from '@/lib/utils';
 
 import type { CommentError } from '../api/comments';
-import { usePostComment } from '../hooks/useCommentActions';
+import { useCommentComposer, type CommentComposerState } from '../hooks/useCommentComposer';
+import { useCommentLimit } from '../hooks/useCommentLimit';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
 
-/** The longest comment (canvas 3.5; the database setting comment_max_characters). */
-export const longestComment = 2000;
+import { KindWordsNudge } from './KindWordsNudge';
 
 /** What the composer needs. */
 export interface CommentComposerProps {
@@ -34,55 +38,31 @@ export interface CommentComposerProps {
   onDone?: () => void;
   /** For a comment on one paragraph (S1-E6-06): its number, from 1. */
   paragraph?: number;
+  /** For a reply: true when the comment answered is on a paragraph, so the shorter limit applies. */
+  isOnParagraph?: boolean;
 }
 
 /**
  * The words for a failed post.
  *
  * @param failure - the error
+ * @param limit - the box's character limit, named by the length refusals
  * @returns the translation key and its values
  */
-function failureText(failure: CommentError): [string, Record<string, unknown>] {
+function failureText(failure: CommentError, limit: string): [string, Record<string, unknown>] {
+  if (failure.failure === 'refused' || failure.failure === 'too_long') {
+    return [`failures.${failure.failure}`, { limit }];
+  }
   if (failure.failure !== 'too_many') return [`failures.${failure.failure}`, {}];
   if (failure.waitMinutes === null) return ['failures.too_many_unknown', {}];
   return ['failures.too_many', { count: failure.waitMinutes }];
 }
 
-/**
- * The composer's state: the text, the spoiler mark and the post.
- *
- * @param props - the composer's props
- * @returns the fields, their setters, send() and the post's progress
- */
-function useComposer({ address, replyTo, onDone, paragraph }: CommentComposerProps) {
-  const [text, setText] = useState('');
-  const [isSpoiler, setIsSpoiler] = useState(false);
-  const [justPosted, setJustPosted] = useState(false);
-  const posting = usePostComment(address);
-
-  /** Sends the comment; on success the box empties and the list reads again. */
-  async function send(event: FormEvent) {
-    event.preventDefault();
-    try {
-      const where = paragraph === undefined ? {} : { paragraph };
-      await posting.post({ body: text, isSpoiler, replyTo: replyTo?.commentId ?? null, ...where });
-      setText('');
-      setIsSpoiler(false);
-      setJustPosted(true);
-      onDone?.();
-    } catch {
-      // The failure is shown under the form from posting.failure; nothing else to do here.
-      setJustPosted(false);
-    }
-  }
-
-  return { text, setText, isSpoiler, setIsSpoiler, justPosted, posting, send };
-}
-
 /** What the line under the text box needs. */
 interface ComposerControlsProps {
-  composer: ReturnType<typeof useComposer>;
+  composer: CommentComposerState;
   counterId: string;
+  limit: string;
   isReply: boolean;
   onCancel?: () => void;
 }
@@ -92,9 +72,14 @@ interface ComposerControlsProps {
  *
  * @returns the line under the text box
  */
-function ComposerControls({ composer, counterId, isReply, onCancel }: ComposerControlsProps) {
-  const { t, i18n } = useCommentsTranslation();
-  const limit = new Intl.NumberFormat(i18n.language).format(longestComment);
+function ComposerControls({
+  composer,
+  counterId,
+  limit,
+  isReply,
+  onCancel,
+}: ComposerControlsProps) {
+  const { t } = useCommentsTranslation();
   const count = composer.text.length;
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -124,6 +109,34 @@ function ComposerControls({ composer, counterId, isReply, onCancel }: ComposerCo
 }
 
 /**
+ * Under the form: a refusal in plain words, the "Your comment is up." status for screen readers
+ * and, on the full box, "Be kind. Every report is read by a person."
+ *
+ * @returns the feedback lines
+ */
+function ComposerFeedback(props: {
+  composer: CommentComposerState;
+  limit: string;
+  isCompact: boolean;
+}) {
+  const { t } = useCommentsTranslation();
+  const failure = props.composer.posting.failure;
+  return (
+    <>
+      {failure !== null && (
+        <p role="alert" className="m-0 text-sm text-destructive">
+          {t(...failureText(failure, props.limit))}
+        </p>
+      )}
+      <p role="status" className="sr-only">
+        {props.composer.justPosted ? t('composer.posted') : ''}
+      </p>
+      {!props.isCompact && <p className="m-0 text-[13px] text-meta">{t('composer.kind')}</p>}
+    </>
+  );
+}
+
+/**
  * The label above the text box.
  *
  * @param props - the composer's props
@@ -142,18 +155,27 @@ function labelText(props: CommentComposerProps): [string, Record<string, unknown
  * @returns the composer
  */
 export function CommentComposer(props: CommentComposerProps) {
-  const { t } = useCommentsTranslation();
+  const { t, i18n } = useCommentsTranslation();
   const fieldId = useId();
   const counterId = useId();
-  const composer = useComposer(props);
-  const replyTo = props.replyTo;
-  const isReply = replyTo !== undefined;
+  const textBoxRef = useRef<HTMLTextAreaElement>(null);
+  const composer = useCommentComposer({
+    textBoxRef,
+    address: props.address,
+    replyToId: props.replyTo?.commentId,
+    paragraph: props.paragraph,
+    onDone: props.onDone,
+  });
+  const limitNumber = useCommentLimit(
+    props.paragraph !== undefined || props.isOnParagraph === true,
+  );
+  const limit = new Intl.NumberFormat(i18n.language).format(limitNumber);
+  const isReply = props.replyTo !== undefined;
   // A reply and a paragraph's comment sit inside a card already, so they get no card of their own.
   const isCompact = isReply || props.paragraph !== undefined;
-  const failure = composer.posting.failure;
   return (
     <form
-      onSubmit={composer.send}
+      onSubmit={(event) => void composer.send(event)}
       className={cn(
         'flex flex-col gap-3',
         !isCompact && 'rounded-[24px] border border-border bg-surface px-6 py-5',
@@ -164,29 +186,30 @@ export function CommentComposer(props: CommentComposerProps) {
       </label>
       <textarea
         id={fieldId}
+        ref={textBoxRef}
         rows={isCompact ? 2 : 3}
-        maxLength={longestComment}
+        maxLength={limitNumber}
         value={composer.text}
         onChange={(event) => composer.setText(event.target.value)}
         placeholder={isCompact ? undefined : t('composer.placeholder')}
         aria-describedby={counterId}
         className="w-full resize-y rounded-2xl border border-control-border bg-paper px-[18px] py-3.5 text-base leading-normal text-ink"
       />
+      {composer.isNudgeShown && (
+        <KindWordsNudge
+          onEdit={composer.editAgain}
+          onSendAnyway={() => void composer.sendAnyway()}
+          isSending={composer.posting.isPosting}
+        />
+      )}
       <ComposerControls
         composer={composer}
         counterId={counterId}
+        limit={limit}
         isReply={isReply}
         onCancel={props.onDone}
       />
-      {failure !== null && (
-        <p role="alert" className="m-0 text-sm text-destructive">
-          {t(...failureText(failure))}
-        </p>
-      )}
-      <p role="status" className="sr-only">
-        {composer.justPosted ? t('composer.posted') : ''}
-      </p>
-      {!isCompact && <p className="m-0 text-[13px] text-meta">{t('composer.kind')}</p>}
+      <ComposerFeedback composer={composer} limit={limit} isCompact={isCompact} />
     </form>
   );
 }

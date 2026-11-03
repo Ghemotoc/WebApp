@@ -1,6 +1,6 @@
 -- Database tests for comments on a chapter (story S1-E6-01; CLAUDE.md rules 1, 6, 8, 15 and 18).
 -- What it proves:
--- - a member comments; the comment (up to 2,000 characters) shows with its replies one level
+-- - a member comments; the comment (up to 3,000 characters) shows with its replies one level
 --   deep; a reply to a reply is refused (criterion 1);
 -- - a spoiler is marked, so the screen can hide it behind "Show spoiler" (criterion 2);
 -- - the story's writer deletes any comment on their own story; a third member can't; the author
@@ -70,10 +70,10 @@ select is(public.chapter_comments('statia-meteo-seed01', 'comma001') #>> '{comme
   'with the author''s username');
 select ok(public.chapter_comments('statia-meteo-seed01', 'comma001')::text not like '%00000000-0000-4000-8000-%',
   'and never a user ID');
-select is(public.post_comment('statia-meteo-seed01', 'comma001', repeat('a', 2000)) ? 'id', true,
-  '2,000 characters is allowed');
-select throws_ok($$ select public.post_comment('statia-meteo-seed01', 'comma001', repeat('a', 2001)) $$,
-  '23514', null, '2,001 characters is refused');
+select is(public.post_comment('statia-meteo-seed01', 'comma001', repeat('a', 3000)) ? 'id', true,
+  '3,000 characters is allowed (Robert, 2 Nov 2026)');
+select throws_ok($$ select public.post_comment('statia-meteo-seed01', 'comma001', repeat('a', 3001)) $$,
+  '23514', null, '3,001 characters is refused');
 select throws_ok($$ select public.post_comment('statia-meteo-seed01', 'comma001', '   ') $$, '23514', null,
   'an empty comment is refused');
 select throws_ok($$ select public.post_comment('statia-meteo-seed01', 'comma001', 'Hi <script>alert(1)</script>') $$,
