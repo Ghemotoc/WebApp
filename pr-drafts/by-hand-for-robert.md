@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #304 (12h4a): nothing to set.
 - #303 (12h3b): nothing to set. Read the Romanian of the three starting canned replies when you can.
 - #302 (12h3a): nothing to set.
 - #301 (12h2): to have answers to support emails land in their tickets, set `SUPPORT_INBOUND_KEY` on Cloudflare, point Brevo's inbound parsing at `/api/support-inbound?key=…` and forward the support inbox to Brevo's inbound address (docs/runbooks/contact-form.md, section 5). Sending needs nothing new once the notification emails' worker is set up.
