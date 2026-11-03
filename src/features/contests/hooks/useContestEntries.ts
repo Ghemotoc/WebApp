@@ -1,7 +1,8 @@
 /**
  * useContestEntries: one contest's entries in Staff › Contests: disqualifying an entry (story
  * S1-E11-15 criteria 5 and 6; bundle CONTESTS-13b2a), choosing winners and finalists, publishing
- * the results and marking prizes as sent (criteria 7, 8 and 10; part 13b2b).
+ * the results and marking prizes as sent (criteria 7, 8 and 10; part 13b2b) and issuing
+ * certificates (criterion 9; part 13b2c).
  *
  * Who calls it: ContestEntriesSection and ContestResultsPanel, inside ContestEditorPage.
  * What it calls: api/contestEntries.ts. After every change the entries and the contest are read
@@ -15,6 +16,7 @@ import type { ContestPlacing } from '@/schemas/contests';
 import {
   disqualifyContestEntry,
   fetchContestEntries,
+  issueContestCertificates,
   markContestPrizeSent,
   publishContestResults,
   setContestPlacing,
@@ -28,11 +30,15 @@ export interface DisqualifyRequest {
   reason: string;
 }
 
-/** One judging change: a placing, publishing the results or a prize sent. */
+/**
+ * One judging change: a placing, publishing the results, a prize sent or issuing certificates
+ * (issued is how many were made or changed, filled in once the database answers).
+ */
 export type JudgingChange =
   | { kind: 'placing'; entryId: string; placing: ContestPlacing | null }
   | { kind: 'publish' }
-  | { kind: 'prize'; entryId: string; parentConsentOnFile: boolean };
+  | { kind: 'prize'; entryId: string; parentConsentOnFile: boolean }
+  | { kind: 'certificates'; issued: number };
 
 /**
  * Sends one judging change to the database.
@@ -47,6 +53,9 @@ async function sendJudgingChange(contestId: string, change: JudgingChange): Prom
     await setContestPlacing(client, change.entryId, change.placing);
   } else if (change.kind === 'publish') {
     await publishContestResults(client, contestId);
+  } else if (change.kind === 'certificates') {
+    // The count comes back from the database, so the screen can say how many were issued.
+    return { kind: 'certificates', issued: await issueContestCertificates(client, contestId) };
   } else {
     await markContestPrizeSent(client, change.entryId, change.parentConsentOnFile);
   }

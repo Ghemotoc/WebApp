@@ -43,7 +43,9 @@ function CertificateRow({ certificate }: { certificate: MyCertificate }) {
         </Link>
       </h2>
       <p className="m-0 text-body">
-        {[certificate.className, certificate.schoolName].filter(Boolean).join(' · ')}
+        {certificate.isContest
+          ? t('sheet.contestLabel')
+          : [certificate.className, certificate.schoolName].filter(Boolean).join(' · ')}
       </p>
       <p className="m-0 text-sm text-body">
         {t('my.signed', { date: certificateDate(certificate.signedAt, language) })}

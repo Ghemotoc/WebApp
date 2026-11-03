@@ -4,10 +4,13 @@
  *
  * Before entries close it says when judging starts. After, it explains how results show (winners
  * and finalists by pen name only, never age, school or real name) and offers "Publish results"
- * once at least one winner is chosen; the server checks again. Once published it says when. The
- * outcome of every judging change (placing, publishing, prize) is announced here.
+ * once at least one winner is chosen; the server checks again. Once published it says when and
+ * offers "Issue certificates" (criterion 9; part 13b2c): every valid entry gets one, by pen name
+ * only. The outcome of every judging change (placing, publishing, prize, certificates) is
+ * announced here.
  * Who shows it: ContestEntriesSection, above the table.
- * What it calls: judge({ kind: 'publish' }) from useContestEntries().
+ * What it calls: judge({ kind: 'publish' }) and judge({ kind: 'certificates' }) from
+ * useContestEntries().
  */
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
@@ -20,6 +23,37 @@ import { useContestTranslation } from '../../registerContestTranslations';
 
 /** The entries' state and actions from the hook. */
 type ContestEntries = ReturnType<typeof useContestEntries>;
+
+/**
+ * Once the results are out: when they were published, and "Issue certificates". Issuing again is
+ * safe: only certificates whose placing changed are touched (the database decides).
+ */
+function PublishedState({
+  publishedAt,
+  entries,
+}: {
+  publishedAt: string;
+  entries: ContestEntries;
+}) {
+  const { t, i18n } = useContestTranslation();
+  const date = formatRomaniaDateTime(new Date(publishedAt), i18n.language);
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="m-0 text-sm text-body">{t('staff.results.publishedOn', { date })}</p>
+      <p className="m-0 text-sm text-body">{t('staff.results.certificatesHint')}</p>
+      <div>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={entries.isRunning}
+          onClick={() => entries.judge({ kind: 'certificates', issued: 0 })}
+        >
+          {t('staff.results.issueCertificates')}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 /** The panel's main line and, when it can, the Publish button. */
 function ResultsState({
@@ -37,8 +71,7 @@ function ResultsState({
     return <p className="m-0 text-sm text-body">{t('staff.results.afterClose', { date })}</p>;
   }
   if (contest.resultsPublishedAt !== null) {
-    const date = formatRomaniaDateTime(new Date(contest.resultsPublishedAt), i18n.language);
-    return <p className="m-0 text-sm text-body">{t('staff.results.publishedOn', { date })}</p>;
+    return <PublishedState publishedAt={contest.resultsPublishedAt} entries={entries} />;
   }
   const hasWinner = (entries.entries.data ?? []).some(
     (entry) => entry.status === 'valid' && entry.placing === 'winner',
@@ -73,7 +106,11 @@ function JudgingNotice({ entries }: { entries: ContestEntries }) {
     );
   }
   if (entries.lastJudging === null) return null;
-  return <Notice tone="success">{t(`staff.results.done.${entries.lastJudging.kind}`)}</Notice>;
+  // "count" only matters for certificates ("2 certificates issued"); the other texts ignore it.
+  const count = entries.lastJudging.kind === 'certificates' ? entries.lastJudging.issued : 0;
+  return (
+    <Notice tone="success">{t(`staff.results.done.${entries.lastJudging.kind}`, { count })}</Notice>
+  );
 }
 
 /**

@@ -37,6 +37,13 @@ export interface MyCertificate {
   nameDeletedOn: string | null;
   /** Who signs first for the company (the settings table). */
   signatoryName: string;
+  /**
+   * True for a certificate from a writing contest (S1-E11-15; CONTESTS-13b2c): no class, no
+   * teacher and never a real name, only the pen name (CLAUDE.md rule 5).
+   */
+  isContest: boolean;
+  /** The contest's name in both languages, so the sheet prints the one it is in; null for a class. */
+  contestName: { ro: string; en: string } | null;
 }
 
 /** What anyone sees when they check a code. Never a name. */
@@ -139,6 +146,20 @@ export function resultOrNull(value: Json | undefined): CertificateResult | null 
 }
 
 /**
+ * Reads a contest's name in both languages from my_certificates() (CONTESTS-13b2c).
+ *
+ * @param value - the contest_name field
+ * @returns both names, or null for a class certificate
+ */
+function contestNameFrom(value: Json | undefined): { ro: string; en: string } | null {
+  const names = objectOf(value);
+  const romanian = textOrNull(names['ro']);
+  const english = textOrNull(names['en']);
+  if (romanian === null || english === null) return null;
+  return { ro: romanian, en: english };
+}
+
+/**
  * Reads one certificate from my_certificates().
  *
  * @param value - one element of the answer
@@ -160,6 +181,8 @@ export function myCertificateFrom(value: Json): MyCertificate {
     penName: String(row['pen_name'] ?? ''),
     nameDeletedOn: textOrNull(row['name_deleted_on']),
     signatoryName: String(row['signatory_name'] ?? ''),
+    isContest: row['is_contest'] === true,
+    contestName: contestNameFrom(row['contest_name']),
   };
 }
 

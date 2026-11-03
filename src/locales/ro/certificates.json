@@ -70,7 +70,12 @@
     "checkTitle": "Verifică această diplomă",
     "issued": "Emisă pe {{date}}",
     "footerSchool": "Program al clasei organizat de {{school}}, cu {{productName}} ca partener. Semnată de {{productName}} și de cadrul didactic care coordonează clasa.",
-    "footer": "Program al clasei cu {{productName}}. Semnată de {{productName}} și de cadrul didactic care coordonează clasa."
+    "footer": "Program al clasei cu {{productName}}. Semnată de {{productName}} și de cadrul didactic care coordonează clasa.",
+    "forContestWinner": "pentru câștigarea concursului de scriere „{{programme}}”.",
+    "forContestFinalist": "pentru calificarea în finala concursului de scriere „{{programme}}”.",
+    "forContestParticipant": "pentru participarea la concursul de scriere „{{programme}}”.",
+    "contestLabel": "Concurs de scriere",
+    "contestFooter": "Concurs de scriere organizat de {{productName}}. Semnată de {{productName}}."
   },
   "verify": {
     "documentTitle": "Verifică o diplomă",

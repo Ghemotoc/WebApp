@@ -4,7 +4,9 @@
  *
  * What it shows: a link back to My certificates, the printed-name form, the language the
  * certificate prints in (Romanian or English), "Print or save as PDF" and the certificate itself.
- * A revoked certificate shows a note instead and can't be printed.
+ * A revoked certificate shows a note instead and can't be printed. A contest certificate has no
+ * printed-name form: a real name is stored only with a class certificate (CLAUDE.md rule 5;
+ * CONTESTS-13b2c), so it always prints the pen name.
  * Who shows it: the router; My certificates links here. Only the student reaches it: the list comes
  * from my_certificates(), which answers only their own.
  * What it calls: useMyCertificates(), PrintedNameForm, CertificateSheet and window.print().
@@ -45,7 +47,7 @@ function PrintableCertificate({ certificate }: { certificate: MyCertificate }) {
   );
   return (
     <>
-      <PrintedNameForm certificate={certificate} />
+      {!certificate.isContest && <PrintedNameForm certificate={certificate} />}
       <div className="flex flex-wrap items-center gap-4">
         <Select
           id="certificate-language"

@@ -728,8 +728,9 @@ export type Database = {
       };
       certificates: {
         Row: {
-          class_name: string;
+          class_name: string | null;
           code: string;
+          contest_id: string | null;
           created_at: string;
           id: string;
           printed_name: string | null;
@@ -741,7 +742,7 @@ export type Database = {
           school_name: string | null;
           signed_at: string;
           space_id: string | null;
-          teacher_name: string;
+          teacher_name: string | null;
           teacher_user_id: string | null;
           updated_at: string;
           user_id: string;
@@ -750,8 +751,9 @@ export type Database = {
         };
         ComputedFields: 'certificate_name_deleted_on' | 'certificate_status';
         Insert: {
-          class_name: string;
+          class_name?: string | null;
           code: string;
+          contest_id?: string | null;
           created_at?: string;
           id?: string;
           printed_name?: string | null;
@@ -763,14 +765,15 @@ export type Database = {
           school_name?: string | null;
           signed_at?: string;
           space_id?: string | null;
-          teacher_name: string;
+          teacher_name?: string | null;
           teacher_user_id?: string | null;
           updated_at?: string;
           user_id: string;
         };
         Update: {
-          class_name?: string;
+          class_name?: string | null;
           code?: string;
+          contest_id?: string | null;
           created_at?: string;
           id?: string;
           printed_name?: string | null;
@@ -782,12 +785,19 @@ export type Database = {
           school_name?: string | null;
           signed_at?: string;
           space_id?: string | null;
-          teacher_name?: string;
+          teacher_name?: string | null;
           teacher_user_id?: string | null;
           updated_at?: string;
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'certificates_contest_id_fkey';
+            columns: ['contest_id'];
+            isOneToOne: false;
+            referencedRelation: 'contests';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'certificates_revoked_by_user_id_fkey';
             columns: ['revoked_by_user_id'];
@@ -8541,6 +8551,7 @@ export type Database = {
         Returns: boolean;
       };
       admin_import_classics: { Args: { list_rows: Json }; Returns: Json };
+      admin_issue_contest_certificates: { Args: { target_contest_id: string }; Returns: Json };
       admin_landing_picture_states: { Args: { target_page_id: string }; Returns: Json };
       admin_lift_sanction: {
         Args: { reason_given: string; target_sanction_id: string };
@@ -13429,6 +13440,19 @@ export type Database = {
           student_id: string;
           teacher_display: string;
           wanted_result: Database['public']['Enums']['certificate_result'];
+        };
+        Returns: string;
+      };
+      write_contest_certificate: {
+        Args: {
+          contest: Omit<
+            Database['public']['Tables']['contests']['Row'],
+            Database['public']['Tables']['contests']['ComputedFields']
+          >;
+          entry: Omit<
+            Database['public']['Tables']['contest_entries']['Row'],
+            Database['public']['Tables']['contest_entries']['ComputedFields']
+          >;
         };
         Returns: string;
       };

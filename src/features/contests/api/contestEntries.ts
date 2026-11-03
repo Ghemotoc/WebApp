@@ -119,3 +119,27 @@ export async function markContestPrizeSent(
   });
   if (error !== null) throw contestErrorFrom(error);
 }
+
+/**
+ * Issues a certificate to every valid entry once the results are published: winners and
+ * finalists by their placing, the rest as participants (part 13b2c; S1-E11-15 criterion 9).
+ * Running it again changes only certificates whose placing changed.
+ *
+ * @param client - the signed-in admin's client
+ * @param contestId - the contest
+ * @returns how many certificates were made or changed
+ * Errors: a ContestError (not_published, no_contest, not_allowed).
+ */
+export async function issueContestCertificates(
+  client: AppSupabaseClient,
+  contestId: string,
+): Promise<number> {
+  const { data, error } = await client.rpc('admin_issue_contest_certificates', {
+    target_contest_id: contestId,
+  });
+  if (error !== null) throw contestErrorFrom(error);
+  // The answer is { issued }; anything else counts as none.
+  const answer = data !== null && typeof data === 'object' && !Array.isArray(data) ? data : {};
+  const issued = answer['issued'];
+  return typeof issued === 'number' ? issued : 0;
+}

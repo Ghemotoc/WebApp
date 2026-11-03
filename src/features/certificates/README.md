@@ -19,5 +19,9 @@ Certificate-Participation and Certificate-Winner). Contests (S1-E12-02) will iss
   `ClassCertificatesCard` in a class's settings.
 - The staff screen lives with the rest of Schools: `src/features/staff/components/schools/
   StaffCertificatesPage.tsx`.
+- Contest certificates (CONTESTS-13b2c; S1-E11-15 criterion 9) use the same list, page and sheet:
+  `isContest` and `contestName` switch the sheet to the contest's sentence and one signature, and
+  the page leaves out `PrintedNameForm` (a real name only on a class certificate). Staff issue them
+  from Staff › Contests (`src/features/contests/`).
 - Texts: the `certificates` namespace (`src/locales/*/certificates.json`), registered by
   `registerCertificatesTranslations.ts` when a certificate screen first renders.
