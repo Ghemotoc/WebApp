@@ -7,6 +7,8 @@
  * and its status (Valid, Withdrawn, Disqualified with the statement's reference). Staff never edit
  * an entry's words (architecture 1.8.5), so the only action is Disqualify on a valid entry, which
  * opens DisqualifyForm under the table. Plain staff components, no doodles.
+ * Part 13b2b adds judging: ContestResultsPanel above the table, and a Placing and a Prize column
+ * (EntryJudging.tsx) once entries close.
  * Who shows it: ContestEditorPage, once the contest is open.
  * What it calls: useContestEntries().
  */
@@ -15,13 +17,28 @@ import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { formatRomaniaDate } from '@/lib/romania-time';
+import { formatRomaniaDate, romaniaNowFields } from '@/lib/romania-time';
 import type { StaffContestEntry } from '@/schemas/contests';
 
+import type { StaffContest } from '../../api/contests';
 import { useContestEntries } from '../../hooks/useContestEntries';
 import { useContestTranslation } from '../../registerContestTranslations';
 
+import { ContestResultsPanel } from './ContestResultsPanel';
 import { DisqualifyForm } from './DisqualifyForm';
+import { PlacingControl, PrizeControl } from './EntryJudging';
+
+/** The entries' state and actions from the hook. */
+type ContestEntries = ReturnType<typeof useContestEntries>;
+
+/** What every row needs besides its entry. */
+interface RowContext {
+  entries: ContestEntries;
+  /** True once entries have closed: judging is open. */
+  canJudge: boolean;
+  resultsPublished: boolean;
+  onDisqualify: (entry: StaffContestEntry) => void;
+}
 
 /** The status cell: the status, plus the statement's reference for a disqualified entry. */
 function EntryStatus({ entry }: { entry: StaffContestEntry }) {
@@ -35,13 +52,7 @@ function EntryStatus({ entry }: { entry: StaffContestEntry }) {
 }
 
 /** One row of the table. */
-function EntryRow({
-  entry,
-  onDisqualify,
-}: {
-  entry: StaffContestEntry;
-  onDisqualify: (entry: StaffContestEntry) => void;
-}) {
+function EntryRow({ entry, context }: { entry: StaffContestEntry; context: RowContext }) {
   const { t, i18n } = useContestTranslation();
   return (
     <tr className="border-t border-hairline align-top">
@@ -64,9 +75,19 @@ function EntryRow({
       <td className="py-3 pr-4 text-body">
         <EntryStatus entry={entry} />
       </td>
+      <td className="py-3 pr-4 text-body">
+        <PlacingControl entry={entry} entries={context.entries} canJudge={context.canJudge} />
+      </td>
+      <td className="py-3 pr-4 text-body">
+        <PrizeControl
+          entry={entry}
+          entries={context.entries}
+          resultsPublished={context.resultsPublished}
+        />
+      </td>
       <td className="py-3">
         {entry.status === 'valid' && (
-          <Button type="button" variant="secondary" onClick={() => onDisqualify(entry)}>
+          <Button type="button" variant="secondary" onClick={() => context.onDisqualify(entry)}>
             {t('staff.entries.disqualifyEntry', { name: entry.pen_name })}
           </Button>
         )}
@@ -76,16 +97,21 @@ function EntryRow({
 }
 
 /** The column headings, in the order EntryRow fills them. */
-const columnKeys = ['writer', 'age', 'story', 'rating', 'words', 'entered', 'status', 'action'];
+const columnKeys = [
+  'writer',
+  'age',
+  'story',
+  'rating',
+  'words',
+  'entered',
+  'status',
+  'placing',
+  'prize',
+  'action',
+];
 
 /** The table of entries. */
-function EntriesTable({
-  entries,
-  onDisqualify,
-}: {
-  entries: StaffContestEntry[];
-  onDisqualify: (entry: StaffContestEntry) => void;
-}) {
+function EntriesTable({ list, context }: { list: StaffContestEntry[]; context: RowContext }) {
   const { t } = useContestTranslation();
   return (
     <div className="overflow-x-auto">
@@ -101,8 +127,8 @@ function EntriesTable({
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => (
-            <EntryRow key={entry.id} entry={entry} onDisqualify={onDisqualify} />
+          {list.map((entry) => (
+            <EntryRow key={entry.id} entry={entry} context={context} />
           ))}
         </tbody>
       </table>
@@ -111,31 +137,35 @@ function EntriesTable({
 }
 
 /** The list, a plain message, or nothing while it loads. */
-function EntriesBody({
-  entries,
-  onDisqualify,
-}: {
-  entries: ReturnType<typeof useContestEntries>;
-  onDisqualify: (entry: StaffContestEntry) => void;
-}) {
+function EntriesBody({ context }: { context: RowContext }) {
   const { t } = useContestTranslation();
+  const entries = context.entries;
   if (entries.entries.isError) return <Notice tone="error">{t('staff.entries.loadFailed')}</Notice>;
   const list = entries.entries.data;
   if (list === undefined) return null;
   if (list.length === 0) return <p className="m-0 text-sm text-body">{t('staff.entries.empty')}</p>;
-  return <EntriesTable entries={list} onDisqualify={onDisqualify} />;
+  return <EntriesTable list={list} context={context} />;
 }
 
 /**
  * Renders the section.
  *
- * @param props.contestId - the contest
+ * @param props.contest - the open contest
  * @returns the Entries section
  */
-export function ContestEntriesSection({ contestId }: { contestId: string }) {
+export function ContestEntriesSection({ contest }: { contest: StaffContest }) {
   const { t } = useContestTranslation();
-  const entries = useContestEntries(contestId);
+  const entries = useContestEntries(contest.id);
   const [chosen, setChosen] = useState<StaffContestEntry | null>(null);
+  // Judging opens the day after the last entry day, in Romanian time (as the database decides).
+  const today = romaniaNowFields(new Date()).date;
+  const entriesClosed = contest.entries_close_on !== null && contest.entries_close_on < today;
+  const context: RowContext = {
+    entries,
+    canJudge: entriesClosed,
+    resultsPublished: contest.resultsPublishedAt !== null,
+    onDisqualify: setChosen,
+  };
   const done = chosen === null && entries.statementReference !== null;
   return (
     <section
@@ -149,7 +179,8 @@ export function ContestEntriesSection({ contestId }: { contestId: string }) {
         {t('staff.entries.heading')}
       </h2>
       <p className="m-0 text-sm text-body">{t('staff.entries.intro')}</p>
-      <EntriesBody entries={entries} onDisqualify={setChosen} />
+      <ContestResultsPanel contest={contest} entries={entries} entriesClosed={entriesClosed} />
+      <EntriesBody context={context} />
       {chosen !== null && (
         <DisqualifyForm entry={chosen} entries={entries} onClose={() => setChosen(null)} />
       )}

@@ -1,6 +1,6 @@
 /**
  * The contest contract: who can enter, the editor's fields and what a story's settings card
- * reads (story S1-E11-15; bundle CONTESTS-13b1), and the staff entries list (part 13b2a).
+ * reads (story S1-E11-15; bundle CONTESTS-13b1), the staff entries list (part 13b2a) and placings (part 13b2b).
  *
  * Who uses it: the contest store (src/features/contests/api/contests.ts) parses every answer from
  * the database with these schemas, and the staff editor uses the limits for its counters. The
@@ -87,6 +87,10 @@ export const contestEntryOptionsSchema = z.array(contestEntryOptionSchema);
 /** The statuses an entry can have (criterion 5). */
 export const contestEntryStatuses = ['valid', 'withdrawn', 'disqualified'] as const;
 
+/** The results staff can choose for an entry; none means a participant (criterion 7). */
+export const contestPlacings = ['winner', 'finalist'] as const;
+export type ContestPlacing = (typeof contestPlacings)[number];
+
 /** The longest reason staff can give when disqualifying an entry (the database's limit). */
 export const disqualifyReasonLimit = 2000;
 
@@ -105,6 +109,10 @@ export const staffContestEntrySchema = z.object({
   entered_at: z.string(),
   status: z.enum(contestEntryStatuses),
   statement_reference: z.string().nullable(),
+  // Part 13b2b: the result staff chose, the prize and whether it needs a parent's consent.
+  placing: z.enum(contestPlacings).nullable(),
+  prize_sent_at: z.string().nullable(),
+  needs_parent_consent: z.boolean(),
 });
 export type StaffContestEntry = z.infer<typeof staffContestEntrySchema>;
 

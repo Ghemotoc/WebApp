@@ -1,6 +1,6 @@
 /**
- * Contests in a real browser: setting one up, opening it, entering and withdrawing (story
- * S1-E11-15 criteria 1 to 3, 5 and 6; bundles CONTESTS-13b1 and 13b2a).
+ * Contests in a real browser: setting one up, opening it, entering, withdrawing, disqualifying and
+ * judging (story S1-E11-15 criteria 1 to 3 and 5 to 10; bundles CONTESTS-13b1, 13b2a and 13b2b).
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
@@ -11,6 +11,9 @@
  *   story and withdraws it (criterion 3);
  * - an admin disqualifies the entry with a reason, and the writer's card points to the decision
  *   (criteria 5 and 6, part 13b2a);
+ * - once entries close, an admin chooses the winner, publishes the results and marks the prize as
+ *   sent, and a visitor sees the winner by pen name on the landing page (criteria 7, 8 and 10,
+ *   part 13b2b);
  * - every screen passes axe.
  * Test data: the landing page /c/concurs-e2e (live, with a Rules block linking to the help page
  * regulament-e2e), that help page in Romanian and English, and one published chapter of the seed
@@ -201,5 +204,53 @@ test.describe('Contests (S1-E11-15)', () => {
     await expect(writer.getByText(/was disqualified from this contest/)).toBeVisible();
     await expect(writer.getByRole('link', { name: 'Read the decision and appeal' })).toBeVisible();
     await writer.context().close();
+  });
+
+  test('an admin chooses a winner, publishes the results and marks the prize as sent', async ({
+    browser,
+  }) => {
+    // Step 1: entries closed yesterday, and the entry from the test before is valid again.
+    runSql(`
+      update public.contests set entries_open_on = public.romania_today() - 10,
+        entries_close_on = public.romania_today() - 1
+      where landing_page_id = (select id from public.landing_pages where slug = 'concurs-e2e');
+      update public.contest_entries set status = 'valid', disqualified_at = null, disqualified_by_user_id = null
+      where status = 'disqualified' and contest_id in (select contests.id from public.contests
+        join public.landing_pages on landing_pages.id = contests.landing_page_id where landing_pages.slug = 'concurs-e2e');`);
+
+    // Step 2: the admin chooses the winner and publishes the results.
+    const admin = await openAs(browser, 'admin', '/staff/contests');
+    await admin.getByRole('link', { name: 'The trial contest' }).click();
+    await admin.getByLabel(/^Placing for /).selectOption('winner');
+    await expect(admin.getByText('Placing saved.')).toBeVisible();
+    await admin.getByRole('button', { name: 'Publish results' }).click();
+    await expect(admin.getByText('The results are published on the landing page.')).toBeVisible();
+
+    // Step 3: the prize goes out; the adult winner needs no parent's consent box.
+    await expect(admin.getByText(/consent for the delivery details is on file/)).toHaveCount(0);
+    await admin.getByRole('button', { name: /^Mark .+’s prize as sent$/ }).click();
+    await expect(admin.getByText(/^Sent on /)).toBeVisible();
+    const results = await new AxeBuilder({ page: admin })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+    expect(
+      results.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? '')),
+    ).toEqual([]);
+    await admin.context().close();
+
+    // Step 4: a visitor sees the winner by pen name, with a link to the story.
+    const context = await browser.newContext();
+    await context.addInitScript(([key, value]) => localStorage.setItem(key, value), [
+      LANGUAGE_STORAGE_KEY,
+      'en',
+    ] as const);
+    const visitor = await context.newPage();
+    await visitor.goto('/c/concurs-e2e');
+    await expect(visitor.getByRole('heading', { level: 2, name: 'Results' })).toBeVisible();
+    await expect(visitor.getByRole('heading', { level: 3, name: 'Winners' })).toBeVisible();
+    await expect(
+      visitor.getByRole('region', { name: 'Results' }).locator('a[href="/s/statia-meteo-seed01"]'),
+    ).toBeVisible();
+    await context.close();
   });
 });

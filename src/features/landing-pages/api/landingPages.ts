@@ -28,18 +28,22 @@ import {
   type LandingContent,
   type LandingPageType,
   type LandingReminder,
+  type LandingResult,
   type PublicLandingPage,
 } from '@/schemas/landingPages';
 
 /**
  * What a page shows beside its words: the pictures by ID, each Featured block's stories by block
  * ID (null in the editor's preview, which has no published cards yet) and, from part a2b, the
- * Remind me state with the page's address (null in the preview, where nobody can tap it).
+ * Remind me state with the page's address (null in the preview, where nobody can tap it) and,
+ * from contests part b2b, the contest's published results.
  */
 export interface LandingExtras {
   pictures: Record<string, PictureView>;
   featured: Record<string, ListedStory[]> | null;
   reminder: { pageSlug: string; state: LandingReminder | null } | null;
+  /** Contests part b2b: the published results; absent or null when there are none. */
+  results?: LandingResult[] | null;
 }
 
 /** A page as a visitor gets it: the published version and its extras. */
@@ -132,6 +136,7 @@ export async function fetchPublicLandingPage(
       pictures,
       featured: featuredStoriesFrom(parsed.data.featured),
       reminder: { pageSlug: parsed.data.slug, state: parsed.data.reminder },
+      results: parsed.data.results,
     },
   };
 }

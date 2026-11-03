@@ -15,6 +15,8 @@ in 13a2a; Remind me in 13a2b; the link preview (`server/landing-preview.ts`) and
   and `components/staff/BlockPictureField.tsx`, `FeaturedFields.tsx`: pictures and featured stories
   (part 13a2a).
 - `hooks/useLandingReminder.ts` and `components/RemindMeBlock.tsx`: Remind me (part 13a2b).
+- `components/ContestResultsBlock.tsx`: a contest's published winners and finalists by pen name
+  (contests part 13b2b).
 - `lib/blocks.ts`: adding, moving and changing blocks without a server; `lib/problemLabels.ts`:
   names the fields the server says to fix.
 

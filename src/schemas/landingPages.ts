@@ -172,6 +172,17 @@ export const landingReminderSchema = z.object({
 });
 export type LandingReminder = z.infer<typeof landingReminderSchema>;
 
+/**
+ * One published contest result (contest_results_json(), contests part 13b2b): winner or finalist,
+ * the writer's pen name only, and the story when the visitor may open it (S1-E11-15 criterion 8).
+ */
+export const landingResultSchema = z.object({
+  placing: z.enum(['winner', 'finalist']),
+  pen_name: z.string(),
+  story: z.object({ slug: z.string(), title: z.string() }).nullable(),
+});
+export type LandingResult = z.infer<typeof landingResultSchema>;
+
 /** The public read of /c/<slug> (landing_page()). */
 export const publicLandingPageSchema = z.object({
   slug: z.string(),
@@ -186,5 +197,7 @@ export const publicLandingPageSchema = z.object({
   featured: z.record(z.string(), z.array(z.record(z.string(), z.unknown()))).default({}),
   /** Part a2b: the Remind me state for this reader, or null when the page has no such block. */
   reminder: landingReminderSchema.nullable().default(null),
+  /** Contests part b2b: the contest's published results, or null. */
+  results: z.array(landingResultSchema).nullable().default(null),
 });
 export type PublicLandingPage = z.infer<typeof publicLandingPageSchema>;

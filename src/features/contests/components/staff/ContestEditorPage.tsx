@@ -33,7 +33,7 @@ function EditorBody({ editor }: { editor: ReturnType<typeof useContestEditor> })
   return (
     <>
       <ContestOpenPanel contest={editor.contest} editor={editor} />
-      {editor.contest.openedAt !== null && <ContestEntriesSection contestId={editor.contest.id} />}
+      {editor.contest.openedAt !== null && <ContestEntriesSection contest={editor.contest} />}
       <ContestForm key={editor.contest.id} contest={editor.contest} editor={editor} />
     </>
   );

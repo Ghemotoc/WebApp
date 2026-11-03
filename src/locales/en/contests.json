@@ -168,6 +168,8 @@
         "words": "Words",
         "entered": "Entered",
         "status": "Status",
+        "placing": "Placing",
+        "prize": "Prize",
         "action": "Action"
       },
       "ratings": {
@@ -194,6 +196,41 @@
         "not_valid": "Only a valid entry can be disqualified.",
         "no_entry": "We couldn’t find this entry.",
         "not_allowed": "Only the owner and admins can disqualify entries.",
+        "failed": "That didn’t work. Try again in a moment."
+      }
+    },
+    "results": {
+      "heading": "Results",
+      "afterClose": "Choose winners and finalists once entries close on {{date}}.",
+      "howTheyShow": "Choose winners and finalists in the table. Our staff decide, with any named partner judges; there is no public vote and a sponsor has no say. The landing page shows them by pen name only, never age, school or real name.",
+      "publish": "Publish results",
+      "needWinner": "Choose at least one winner to publish the results.",
+      "publishedOn": "Results published on {{date}}. The landing page shows the winners and finalists by pen name.",
+      "placingFor": "Placing for {{name}}",
+      "placings": {
+        "none": "None",
+        "finalist": "Finalist",
+        "winner": "Winner"
+      },
+      "parentConsent": "A parent’s or guardian’s consent for the delivery details is on file",
+      "markPrizeSent": "Mark {{name}}’s prize as sent",
+      "prizeSentOn": "Sent on {{date}}",
+      "done": {
+        "placing": "Placing saved.",
+        "publish": "The results are published on the landing page.",
+        "prize": "The prize is marked as sent."
+      },
+      "failures": {
+        "entries_open": "Entries are still open. Choose results once they close.",
+        "not_valid": "Only a valid entry can place.",
+        "bad_placing": "Choose winner, finalist or none.",
+        "no_winner": "Choose at least one winner first.",
+        "already_published": "The results are already published.",
+        "not_a_winner": "Only a winner gets a prize.",
+        "not_published": "Publish the results first.",
+        "already_sent": "This prize is already marked as sent.",
+        "parent_consent_needed": "This winner is under 16. Confirm that a parent’s or guardian’s consent is on file first.",
+        "not_allowed": "Only the owner and admins can judge contests.",
         "failed": "That didn’t work. Try again in a moment."
       }
     }
