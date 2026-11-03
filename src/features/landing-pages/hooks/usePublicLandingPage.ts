@@ -3,10 +3,11 @@
  * bundle CONTESTS-13a1).
  *
  * Who calls it: LandingPageScreen. What it calls: fetchPublicLandingPage() in api/landingPages.ts
- * with the visitor's client, signed in or not.
+ * with the visitor's client, signed in or not, and useSession() for whose Remind me it is.
  */
 import { useQuery } from '@tanstack/react-query';
 
+import { useSession } from '@/features/auth/hooks/useSession';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchPublicLandingPage } from '../api/landingPages';
@@ -21,8 +22,12 @@ const pageFreshMilliseconds = 60 * 1000;
  * @returns the query: data is the page, or null when there is none to show
  */
 export function usePublicLandingPage(slug: string) {
+  // The Remind me state is the reader's own, so the cache is kept per signed-in person and the
+  // read waits until Supabase knows who that is (part a2b).
+  const session = useSession();
   return useQuery({
-    queryKey: ['landing-page', slug],
+    queryKey: ['landing-page', slug, session.userId],
+    enabled: session.isKnown,
     staleTime: pageFreshMilliseconds,
     retry: 1,
     queryFn: async () => {

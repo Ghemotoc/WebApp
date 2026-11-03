@@ -7,7 +7,7 @@
  * (CmsMarkdown: no raw HTML, links get rel="nofollow ugc noopener"). No countdowns and no "only
  * today": copy aimed at minors must not pressure them (story legal notes).
  * Part a2a: a Text block may carry a picture (LandingPicture), and Featured stories draws a
- * shelf of story cards (FeaturedStoriesBlock).
+ * shelf of story cards (FeaturedStoriesBlock). Part a2b: Remind me (RemindMeBlock).
  * Who shows it: LandingPageView. What it calls: CmsMarkdown and the shared formatters.
  */
 import { CmsMarkdown } from '@/features/website/components/CmsMarkdown';
@@ -20,6 +20,7 @@ import { useLandingPageTranslation } from '../registerLandingPageTranslations';
 
 import { FeaturedStoriesBlock } from './FeaturedStoriesBlock';
 import { LandingPicture } from './LandingPicture';
+import { RemindMeBlock } from './RemindMeBlock';
 
 /** What a block needs: the block and the language the visitor reads. */
 interface BlockProps {
@@ -194,6 +195,9 @@ export function LandingBlockView(props: LandingBlockViewProps) {
   if (block.kind === 'featured') {
     const stories = extras.featured === null ? null : (extras.featured[block.id] ?? []);
     return <FeaturedStoriesBlock block={block} language={language} stories={stories} />;
+  }
+  if (block.kind === 'remind_me') {
+    return <RemindMeBlock block={block} language={language} reminder={extras.reminder} />;
   }
   // text, prize and how to enter are a heading and Markdown text (a text block's picture too).
   return <TextSection {...props} />;

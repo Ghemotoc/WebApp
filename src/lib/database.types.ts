@@ -3132,6 +3132,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      landing_page_reminders: {
+        Row: {
+          created_at: string;
+          id: string;
+          notified_at: string | null;
+          page_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          notified_at?: string | null;
+          page_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          notified_at?: string | null;
+          page_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'landing_page_reminders_page_id_fkey';
+            columns: ['page_id'];
+            isOneToOne: false;
+            referencedRelation: 'landing_pages';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'landing_page_reminders_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       landing_page_versions: {
         Row: {
           content: NonNullable<Json>;
@@ -3752,6 +3795,7 @@ export type Database = {
           id: string;
           is_required: boolean;
           kind: Database['public']['Enums']['notification_kind'];
+          landing_page_id: string | null;
           mail_thread_id: string | null;
           read_at: string | null;
           space_id: string | null;
@@ -3779,6 +3823,7 @@ export type Database = {
           id?: string;
           is_required?: boolean;
           kind: Database['public']['Enums']['notification_kind'];
+          landing_page_id?: string | null;
           mail_thread_id?: string | null;
           read_at?: string | null;
           space_id?: string | null;
@@ -3803,6 +3848,7 @@ export type Database = {
           id?: string;
           is_required?: boolean;
           kind?: Database['public']['Enums']['notification_kind'];
+          landing_page_id?: string | null;
           mail_thread_id?: string | null;
           read_at?: string | null;
           space_id?: string | null;
@@ -3853,6 +3899,13 @@ export type Database = {
             columns: ['data_request_id'];
             isOneToOne: false;
             referencedRelation: 'data_requests';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'notifications_landing_page_id_fkey';
+            columns: ['landing_page_id'];
+            isOneToOne: false;
+            referencedRelation: 'landing_pages';
             referencedColumns: ['id'];
           },
           {
@@ -10507,6 +10560,7 @@ export type Database = {
           longest: number;
         }[];
       };
+      landing_entries_open_on: { Args: { content: Json }; Returns: string };
       landing_featured_cards: { Args: { content: Json }; Returns: Json };
       landing_featured_problems: { Args: { block: Json; block_path: string }; Returns: string[] };
       landing_page: { Args: { page_slug: string }; Returns: Json };
@@ -10536,6 +10590,7 @@ export type Database = {
       landing_page_slug_problem: { Args: { wanted_slug: string }; Returns: string };
       landing_picture_problems: { Args: { block: Json; block_path: string }; Returns: string[] };
       landing_picture_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      landing_reminder_json: { Args: { content: Json; target_page_id: string }; Returns: Json };
       landing_text_problem: {
         Args: {
           block: Json;
@@ -12248,6 +12303,7 @@ export type Database = {
         Returns: string[];
       };
       send_finished_thanks: { Args: { story_slug: string }; Returns: Json };
+      send_landing_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       send_message: { Args: { body: string; recipient_handle: string }; Returns: Json };
       send_moderator_mail: {
         Args: { body: string; statement_reference?: string; subject: string };
@@ -12274,6 +12330,7 @@ export type Database = {
         Returns: Json;
       };
       set_class_lock: { Args: { new_locks_at?: string; slug: string }; Returns: Json };
+      set_landing_reminder: { Args: { page_slug: string; wanted: boolean }; Returns: Json };
       set_library_audience: {
         Args: { audience: Database['public']['Enums']['library_audience'] };
         Returns: undefined;
@@ -13160,7 +13217,8 @@ export type Database = {
         | 'data_request_confirm'
         | 'data_request_extended'
         | 'data_request_copy_ready'
-        | 'picture_opened_by_staff';
+        | 'picture_opened_by_staff'
+        | 'landing_entries_open';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -13515,6 +13573,7 @@ export const Constants = {
         'data_request_extended',
         'data_request_copy_ready',
         'picture_opened_by_staff',
+        'landing_entries_open',
       ],
       picture_kind: [
         'cover',

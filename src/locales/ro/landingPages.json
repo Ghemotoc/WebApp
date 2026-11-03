@@ -16,7 +16,8 @@
     "how_to_enter": "Cum participi",
     "rules": "Regulament",
     "questions": "Întrebări și răspunsuri",
-    "featured": "Povești recomandate"
+    "featured": "Povești recomandate",
+    "remind_me": "Amintește-mi"
   },
   "languages": {
     "ro": "Română",
@@ -149,7 +150,9 @@
       "picture_not_allowed": "Doar un bloc Antet sau Text poate avea o imagine.",
       "stories_how_many": "Alege între 1 și 12 povești.",
       "stories_unknown": "Una dintre adrese nu este a unei povești. Verifică fiecare rând.",
-      "tag_unknown": "Nu există nicio etichetă cu acest nume."
+      "tag_unknown": "Nu există nicio etichetă cu acest nume.",
+      "one_remind_me": "o pagină poate avea un singur bloc „Amintește-mi”",
+      "remind_me_needs_dates": "un bloc „Amintește-mi” are nevoie de un bloc „Date importante” pe pagină"
     },
     "failures": {
       "take_down_before_show_from": "Data scoaterii trebuie să fie după data „Afișează de la”.",
@@ -208,5 +211,16 @@
   "featured": {
     "previewNote": "Poveștile apar aici după publicare: doar povești potrivite pentru cei mai tineri cititori cărora li se adresează pagina.",
     "none": "Încă nu sunt povești de arătat."
+  },
+  "remindMe": {
+    "offer": "Înscrierile încep pe {{date}}. În ziua aceea îți trimitem o singură notificare, nimic altceva.",
+    "isSet": "Îți amintim pe {{date}}, printr-o singură notificare.",
+    "ask": "Amintește-mi",
+    "cancel": "Nu-mi mai aminti",
+    "open": "Înscrierile au început.",
+    "signIn": "Înscrierile încep pe {{date}}. Intră în cont și îți amintim în ziua aceea.",
+    "signInLink": "Intră în cont",
+    "failed": "Nu am putut salva. Încearcă din nou.",
+    "previewNote": "Cititorii cu cont pot cere aici o singură notificare în ziua în care încep înscrierile."
   }
 }

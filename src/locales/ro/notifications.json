@@ -37,7 +37,8 @@
     "moderationTeam": "Echipa de moderare:",
     "parentOrGuardian": "Părintele sau tutorele tău",
     "yourAccount": "Contul tău:",
-    "yourLibrary": "Biblioteca ta:"
+    "yourLibrary": "Biblioteca ta:",
+    "reminder": "Mementoul tău:"
   },
   "chapterOfStory": "capitolul {{position}} din {{story}}",
   "what": {
@@ -77,7 +78,9 @@
     "dataRequestConfirm": "am primit o cerere privind datele tale ({{reference}}) prin email sau poștă, nu din contul tău. Tu ai trimis-o?",
     "dataRequestExtended": "avem nevoie de mai mult timp ca să răspundem la cererea ta privind datele {{reference}}. Noul termen și motivul sunt în Setări.",
     "dataRequestCopyReady": "copia pentru cererea ta privind datele {{reference}} e gata. Descarc-o din Setări în cel mult șapte zile.",
-    "pictureOpenedByStaff": "a deschis fișierul original al unei imagini încărcate. Fiecare deschidere apare în jurnalul de audit."
+    "pictureOpenedByStaff": "a deschis fișierul original al unei imagini încărcate. Fiecare deschidere apare în jurnalul de audit.",
+    "landingEntriesOpen": "au început înscrierile pentru „{{title}}”.",
+    "landingEntriesOpenGone": "au început înscrierile pentru o pagină despre care ai întrebat, dar care a fost scoasă între timp."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -137,7 +140,8 @@
     "answerDataRequest": "Răspunde",
     "seeDataRequests": "Vezi cererile tale privind datele",
     "downloadDataRequestCopy": "Descarc-o",
-    "openAuditLog": "Deschide jurnalul de audit"
+    "openAuditLog": "Deschide jurnalul de audit",
+    "openLandingPage": "Deschide pagina"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",
@@ -232,5 +236,6 @@
     "settings": "setările",
     "list": "{{first}} și {{last}}",
     "yourStory": "povestea ta"
-  }
+  },
+  "pageLanguage": "ro"
 }
