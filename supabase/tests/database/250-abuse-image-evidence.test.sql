@@ -9,13 +9,14 @@
 -- - an Arachnid Shield match keeps the evidence and no longer preserves the file; a safeguarding
 --   moderator closes the account and describes the image from the case page;
 -- - only the uploader or the rejecting reviewer may reach the file to delete it;
--- - the legal hold, the 5-year purge and the 30-day blanking of scrambled IPs;
+-- - the legal hold, the 5-year purge and the 30-day blanking of scrambled IPs; an account with
+--   evidence is never deleted;
 -- - the evidence's read policy, and the evidence pack carries it.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(30);
+select plan(31);
 
 -- A fresh password sign-in, as Supabase's tokens carry it in "amr": staff changes need one.
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
@@ -205,6 +206,11 @@ select is((select count(*)::integer from public.abuse_image_evidence where legal
   'but keeps evidence under a legal hold');
 update public.picture_checks set created_at = now() - interval '31 days' where id = (select id from named where label = 'cover');
 select is(public.blank_old_scrambled_ips() >= 1, true, 'scrambled IPs older than 30 days are blanked');
+insert into public.account_deletions (user_id, requested_at, delete_after)
+  values ('00000000-0000-4000-8000-000000000015', now() - interval '15 days', now() - interval '1 day');
+select public.purge_closed_accounts();
+select is((select count(*)::integer from public.profiles where id = '00000000-0000-4000-8000-000000000015'), 1,
+  'an account with evidence is never deleted by the nightly purge: it stays closed');
 
 select * from finish();
 rollback;

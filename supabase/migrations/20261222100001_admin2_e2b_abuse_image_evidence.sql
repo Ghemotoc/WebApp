@@ -803,3 +803,34 @@ begin
   return total_removed;
 end;
 $$;
+
+/**
+ * purge_closed_accounts: as in S1-E13-03, except an account with evidence about a suspected child
+ * sexual abuse image is never deleted: it stays closed and its evidence stays (brief sections 4
+ * and 6; ADMIN-2e2b). Its deletion request waits, so the nightly run never stops on it.
+ */
+create or replace function public.purge_closed_accounts()
+returns integer
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  request record;
+  deleted_count integer := 0;
+begin
+  for request in
+    select account_deletions.id, account_deletions.user_id from public.account_deletions
+    where account_deletions.delete_after <= now()
+      and account_deletions.cancelled_at is null and account_deletions.completed_at is null
+      and not exists (select 1 from public.abuse_image_evidence
+                      where abuse_image_evidence.user_id = account_deletions.user_id)
+    order by account_deletions.delete_after
+  loop
+    perform public.delete_account_data(request.user_id);
+    update public.account_deletions set completed_at = now() where account_deletions.id = request.id;
+    deleted_count := deleted_count + 1;
+  end loop;
+  return deleted_count;
+end;
+$$;
