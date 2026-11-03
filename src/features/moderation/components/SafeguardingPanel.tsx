@@ -6,7 +6,8 @@
  * Only staff with the safeguarding permission see a safeguarding case at all (Q6), so everyone
  * who sees this panel may use it. Building the evidence pack asks why, is logged as a sensitive
  * read and downloads a JSON file to hand to the authority; the file holds the account's email,
- * so it is never kept in the app. Plain staff components, no doodles.
+ * so it is never kept in the app. A case about a suspected child abuse image also shows what is
+ * kept about it (AbuseImageEvidencePanel, ADMIN-2e2b). Plain staff components, no doodles.
  * Who shows it: CasePage, only for a safeguarding case. What it calls: useSafeguarding.
  */
 import { useState } from 'react';
@@ -18,6 +19,7 @@ import type { Json } from '@/lib/database.types';
 
 import { useSafeguarding } from '../hooks/useSafeguarding';
 
+import { AbuseImageEvidencePanel } from './AbuseImageEvidencePanel';
 import { ReasonForm } from './ReasonForm';
 import { ReferralLog } from './ReferralLog';
 import { SupportContactsList } from './SupportContactsList';
@@ -112,6 +114,7 @@ export function SafeguardingPanel({ caseId, reference }: { caseId: string; refer
         <Notice tone="error">{t(`failures.${safeguarding.contactsFailure}`)}</Notice>
       )}
       {safeguarding.contacts !== null && <SupportContactsList contacts={safeguarding.contacts} />}
+      <AbuseImageEvidencePanel caseId={caseId} />
       <EvidencePack safeguarding={safeguarding} reference={reference} />
       <ReferralLog safeguarding={safeguarding} />
     </section>

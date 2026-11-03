@@ -3,6 +3,102 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      abuse_image_evidence: {
+        Row: {
+          case_id: string | null;
+          case_reference: string;
+          created_at: string;
+          described_by_user_id: string | null;
+          description: string;
+          file_sha256: string | null;
+          id: string;
+          keep_until: string;
+          legal_hold: boolean;
+          legal_hold_reason: string | null;
+          picture_id: string | null;
+          picture_kind: Database['public']['Enums']['picture_kind'];
+          reported_at: string;
+          source: string;
+          updated_at: string;
+          uploaded_at: string;
+          uploader_ip_period: string | null;
+          uploader_ip_scrambled: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          case_id?: string | null;
+          case_reference: string;
+          created_at?: string;
+          described_by_user_id?: string | null;
+          description: string;
+          file_sha256?: string | null;
+          id?: string;
+          keep_until: string;
+          legal_hold?: boolean;
+          legal_hold_reason?: string | null;
+          picture_id?: string | null;
+          picture_kind: Database['public']['Enums']['picture_kind'];
+          reported_at?: string;
+          source: string;
+          updated_at?: string;
+          uploaded_at: string;
+          uploader_ip_period?: string | null;
+          uploader_ip_scrambled?: string | null;
+          user_id: string;
+        };
+        Update: {
+          case_id?: string | null;
+          case_reference?: string;
+          created_at?: string;
+          described_by_user_id?: string | null;
+          description?: string;
+          file_sha256?: string | null;
+          id?: string;
+          keep_until?: string;
+          legal_hold?: boolean;
+          legal_hold_reason?: string | null;
+          picture_id?: string | null;
+          picture_kind?: Database['public']['Enums']['picture_kind'];
+          reported_at?: string;
+          source?: string;
+          updated_at?: string;
+          uploaded_at?: string;
+          uploader_ip_period?: string | null;
+          uploader_ip_scrambled?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'abuse_image_evidence_case_id_fkey';
+            columns: ['case_id'];
+            isOneToOne: false;
+            referencedRelation: 'cases';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'abuse_image_evidence_described_by_user_id_fkey';
+            columns: ['described_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'abuse_image_evidence_picture_id_fkey';
+            columns: ['picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'abuse_image_evidence_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       account_deletions: {
         Row: {
           cancelled_at: string | null;
@@ -3819,6 +3915,7 @@ export type Database = {
           checked_at: string | null;
           created_at: string;
           deleted_at: string | null;
+          file_sha256: string | null;
           flags: NonNullable<Json>;
           id: string;
           kind: Database['public']['Enums']['picture_kind'];
@@ -3829,6 +3926,8 @@ export type Database = {
           status: Database['public']['Enums']['picture_status'];
           story_id: string | null;
           updated_at: string;
+          uploader_ip_period: string | null;
+          uploader_ip_scrambled: string | null;
           user_id: string;
           open_picture_review_case: string | null;
           picture_needs_person: boolean | null;
@@ -3848,6 +3947,7 @@ export type Database = {
           checked_at?: string | null;
           created_at?: string;
           deleted_at?: string | null;
+          file_sha256?: string | null;
           flags?: NonNullable<Json>;
           id?: string;
           kind: Database['public']['Enums']['picture_kind'];
@@ -3858,6 +3958,8 @@ export type Database = {
           status?: Database['public']['Enums']['picture_status'];
           story_id?: string | null;
           updated_at?: string;
+          uploader_ip_period?: string | null;
+          uploader_ip_scrambled?: string | null;
           user_id: string;
         };
         Update: {
@@ -3868,6 +3970,7 @@ export type Database = {
           checked_at?: string | null;
           created_at?: string;
           deleted_at?: string | null;
+          file_sha256?: string | null;
           flags?: NonNullable<Json>;
           id?: string;
           kind?: Database['public']['Enums']['picture_kind'];
@@ -3878,6 +3981,8 @@ export type Database = {
           status?: Database['public']['Enums']['picture_status'];
           story_id?: string | null;
           updated_at?: string;
+          uploader_ip_period?: string | null;
+          uploader_ip_scrambled?: string | null;
           user_id?: string;
         };
         Relationships: [
@@ -7102,6 +7207,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      abuse_image_file_may_go: { Args: { bucket: string; path: string }; Returns: boolean };
       accept_current_legal_versions: {
         Args: { document_slugs: string[]; reading_language?: string };
         Returns: number;
@@ -7186,6 +7292,7 @@ export type Database = {
         Args: { idea_body: string; idea_kind: string; story_slug: string };
         Returns: Json;
       };
+      admin_abuse_image_evidence: { Args: { target_case_id: string }; Returns: Json };
       admin_account_open_cases: {
         Args: { target_user_id: string };
         Returns: {
@@ -7363,6 +7470,10 @@ export type Database = {
       admin_class_spaces: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_classic_chapter: { Args: { target_chapter_code: string }; Returns: Json };
       admin_classic_suggestions: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_close_account_for_abuse_image: {
+        Args: { account_message: string; note_text: string; target_case_id: string };
+        Returns: boolean;
+      };
       admin_close_data_request: {
         Args: { outcome: string; target_request_id: string };
         Returns: Json;
@@ -7496,6 +7607,10 @@ export type Database = {
         Returns: Json;
       };
       admin_delete_forum: { Args: { forum_id: string; reason: string }; Returns: undefined };
+      admin_describe_abuse_image: {
+        Args: { description_text: string; evidence_id: string };
+        Returns: boolean;
+      };
       admin_due_decision_emails: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -7852,8 +7967,10 @@ export type Database = {
       };
       admin_reject_picture: {
         Args: {
+          account_message?: string;
           message_to_person: string;
           note_text: string;
+          police_description?: string;
           reason_key: string;
           target_case_id: string;
         };
@@ -8077,6 +8194,10 @@ export type Database = {
       admin_set_classic_chapters: {
         Args: { chapter_list: Json; target_story_id: string };
         Returns: Json;
+      };
+      admin_set_evidence_hold: {
+        Args: { evidence_id: string; reason_given: string; should_hold: boolean };
+        Returns: boolean;
       };
       admin_set_flag: { Args: { flag_key: string; turn_on: boolean }; Returns: boolean };
       admin_set_forum_thread_sticky: {
@@ -8509,6 +8630,7 @@ export type Database = {
         Returns: string;
       };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
+      blank_old_scrambled_ips: { Args: Record<PropertyKey, never>; Returns: number };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
       browse_stories: {
         Args: {
@@ -8862,6 +8984,17 @@ export type Database = {
       clean_certificate_code: { Args: { typed: string }; Returns: string };
       clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
       clear_my_sign_in_failures: { Args: Record<PropertyKey, never>; Returns: undefined };
+      close_account_for_abuse_image: {
+        Args: {
+          account_message: string;
+          found_case: Omit<
+            Database['public']['Tables']['cases']['Row'],
+            Database['public']['Tables']['cases']['ComputedFields']
+          >;
+          note_text: string;
+        };
+        Returns: boolean;
+      };
       close_finished_safety_checks: { Args: { target_country: string }; Returns: undefined };
       cms_content_problems: {
         Args: {
@@ -10455,6 +10588,7 @@ export type Database = {
       parental_consent_request: { Args: { token: string }; Returns: Json };
       picture_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       picture_is_visible: { Args: { bucket: string; path: string }; Returns: boolean };
+      picture_item_content: { Args: { picture_id: string }; Returns: Json };
       picture_needs_person: {
         Args: {
           picture: Omit<
@@ -10672,6 +10806,7 @@ export type Database = {
         Args: { chapter_codes: string[]; target_story_id: string };
         Returns: string[];
       };
+      purge_abuse_image_evidence: { Args: Record<PropertyKey, never>; Returns: number };
       purge_class_certificate_names: { Args: Record<PropertyKey, never>; Returns: number };
       purge_closed_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_deleted_chapters: { Args: Record<PropertyKey, never>; Returns: number };
@@ -10834,6 +10969,22 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      record_abuse_image_evidence: {
+        Args: {
+          described_by: string;
+          description_text: string;
+          found_by: string;
+          found_case: Omit<
+            Database['public']['Tables']['cases']['Row'],
+            Database['public']['Tables']['cases']['ComputedFields']
+          >;
+          picture: Omit<
+            Database['public']['Tables']['picture_checks']['Row'],
+            Database['public']['Tables']['picture_checks']['ComputedFields']
+          >;
+        };
+        Returns: string;
       };
       record_age_check_result: {
         Args: {
@@ -11101,6 +11252,36 @@ export type Database = {
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       run_retention_jobs: { Args: Record<PropertyKey, never>; Returns: number };
       run_storage_sweep: { Args: Record<PropertyKey, never>; Returns: boolean };
+      safeguarding_evidence_target: {
+        Args: { evidence_id: string };
+        Returns: {
+          case_id: string | null;
+          case_reference: string;
+          created_at: string;
+          described_by_user_id: string | null;
+          description: string;
+          file_sha256: string | null;
+          id: string;
+          keep_until: string;
+          legal_hold: boolean;
+          legal_hold_reason: string | null;
+          picture_id: string | null;
+          picture_kind: Database['public']['Enums']['picture_kind'];
+          reported_at: string;
+          source: string;
+          updated_at: string;
+          uploaded_at: string;
+          uploader_ip_period: string | null;
+          uploader_ip_scrambled: string | null;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'abuse_image_evidence';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       safety_contact_values: {
         Args: {
           target: Omit<

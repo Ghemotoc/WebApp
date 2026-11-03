@@ -287,7 +287,7 @@
       "emergency": "Dacă o viață este în pericol, sună întâi la 112, apoi continuă aici.",
       "contacts": "Dă-i persoanei linia de ajutor de mai jos în mesajul tău, în limba ei.",
       "evidence": "Pregătește pachetul de probe dacă poliția sau o linie de ajutor va avea nevoie de el.",
-      "refer": "Notează mai jos fiecare sesizare către o autoritate, cu referința ei.",
+      "refer": "O imagine de abuz sexual asupra unui copil se sesizează întâi poliției, care o transmite mai departe (de exemplu la DIICOT). Notează mai jos fiecare sesizare către o autoritate, cu referința ei.",
       "decide": "Decide cazul. Decizia și motivarea urmează regulile obișnuite."
     },
     "contactsHeading": "Contacte de sprijin pentru persoană ({{country}})",
@@ -378,7 +378,7 @@
     "alt": "Imaginea încărcată la care se referă cazul",
     "show": "Arată imaginea",
     "hide": "Estompează imaginea",
-    "matchHidden": "Imaginea s-a potrivit cu materiale cunoscute de abuz sexual asupra copiilor. Nu se arată niciodată aici: urmează pașii de protecție. Fișierul se păstrează ca probă.",
+    "matchHidden": "Imaginea s-a potrivit cu materiale cunoscute de abuz sexual asupra copiilor. Nu se arată niciodată, iar fișierul a fost șters. Urmează pașii de protecție; dovezile se păstrează în secțiunea Protecția copilului.",
     "unreadable": "Nu am putut deschide imaginea. Încearcă din nou peste puțin timp.",
     "kind": "Tip",
     "kinds": {
@@ -531,6 +531,43 @@
       "hate": "ură",
       "other": "altceva ce regulile nu permit"
     },
-    "openedNote": "Deschiderea unei imagini aici apare în jurnalul de audit, iar proprietarul este anunțat."
+    "openedNote": "Deschiderea unei imagini aici apare în jurnalul de audit, iar proprietarul este anunțat.",
+    "policeDescription": "Descrie imaginea în câteva cuvinte, pentru poliție.",
+    "policeDescriptionHint": "Imaginea se șterge imediat, așa că poliția va citi doar ce scrii aici. Spune simplu ce arată.",
+    "minorWarning": "Imaginea se șterge imediat și nu se păstrează. Păstrăm dovezile 5 ani: cazul, contul, orele, amprenta fișierului și descrierea ta. Contul se închide definitiv, iar cazul trece la Protecția copilului, de unde se face sesizarea la poliție.",
+    "describeMissing": "Descrie imaginea pentru poliție.",
+    "rejectMessageMinor": "Am șters imaginea ta pentru că este o imagine sexuală cu o persoană sub 18 ani, ceea ce încalcă legea și regulile comunității noastre: {{link}}",
+    "closeAccountMessage": "Am închis definitiv contul tău pentru că de pe el s-a încărcat o imagine sexuală cu o persoană sub 18 ani. Asta încalcă legea și regulile comunității noastre: {{link}}. Nu ai voie să îți faci alt cont. Poți contesta această decizie."
+  },
+  "abuseEvidence": {
+    "heading": "Dovezi despre imagine",
+    "intro": "Imaginea a fost ștearsă și nu se păstrează. Iată ce păstrăm, 5 ani sau mai mult dacă există o păstrare legală. Pachetul de probe le conține pe toate pentru poliție, inclusiv adresa IP amestecată.",
+    "source": "Găsită de",
+    "sources": {
+      "moderator": "Un verificator de imagini",
+      "known_image_match": "Arachnid Shield, potrivire cu o imagine cunoscută"
+    },
+    "uploadedAt": "Încărcată",
+    "reportedAt": "Găsită",
+    "hash": "Amprenta fișierului (SHA-256)",
+    "ip": "Adresa IP amestecată",
+    "ipKept": "Păstrată (amestecată cu cheia pentru {{period}})",
+    "notRecorded": "Nu s-a înregistrat",
+    "description": "Descrierea pentru poliție",
+    "keepUntil": "Se păstrează până la",
+    "legalHold": "Păstrare legală",
+    "holdOn": "Da: {{reason}}",
+    "holdOff": "Nu",
+    "accountClosed": "Contul este închis definitiv.",
+    "accountOpen": "Contul este încă deschis. Închide-l după ce ai verificat cazul.",
+    "accountStaff": "Este un cont de echipă. Scoate-i întâi rolul din Echipă › Roluri, apoi închide-l aici.",
+    "describe": "Schimbă descrierea",
+    "describeLabel": "Descrie imaginea în câteva cuvinte, pentru poliție",
+    "setHold": "Pune o păstrare legală",
+    "liftHold": "Ridică păstrarea legală",
+    "holdReason": "De ce? De exemplu, cererea poliției și data ei",
+    "close": "Închide contul definitiv",
+    "closeNote": "Notă pentru echipă",
+    "confirm": "Salvează"
   }
 }

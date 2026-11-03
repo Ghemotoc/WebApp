@@ -226,10 +226,11 @@ Safety
 - Content removed after an order to remove terrorist content: kept for 6 months, as the law requires, unless an authority asks for longer.
 - Content under an open legal case: kept until the case ends.
 - Evidence kept for the police in a child safety case: [OPEN: to be set with the lawyer]
+- A suspected sexual image of a child: the image itself is deleted at once and never kept. We keep the evidence for 5 years: the case, the account, when it was uploaded and found, the file’s fingerprint (a SHA-256 hash), the scrambled IP address it was uploaded from and a moderator’s short description for the police. We keep it longer only if the police ask for it within that time. [lawyer to check]
 
 Security
 
-- IP addresses: scrambled, then deleted after 30 days.
+- IP addresses: scrambled, then deleted after 30 days, except the scrambled address a suspected sexual image of a child was uploaded from, which is kept with its evidence (above). [lawyer to check]
 - The list of devices you’re signed in on: [OPEN: to be set]
 
 Requests and support

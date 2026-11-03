@@ -226,10 +226,11 @@ Siguranță
 - Conținutul eliminat după un ordin de eliminare a conținutului terorist: păstrat 6 luni, cum cere legea, dacă o autoritate nu cere mai mult.
 - Conținutul dintr-un proces în desfășurare: păstrat până se termină procesul.
 - Dovezile păstrate pentru poliție într-un caz de siguranță a unui copil: [DESCHIS: de stabilit cu avocatul]
+- O imagine sexuală suspectă cu un copil: imaginea în sine se șterge imediat și nu se păstrează. Păstrăm dovezile 5 ani: cazul, contul, când a fost încărcată și găsită, amprenta fișierului (un hash SHA-256), adresa IP amestecată de pe care a fost încărcată și o scurtă descriere a unui moderator pentru poliție. O păstrăm mai mult doar dacă poliția ne-o cere în acest timp. [de verificat de avocat]
 
 Securitate
 
-- Adresele IP: amestecate, apoi șterse după 30 de zile.
+- Adresele IP: amestecate, apoi șterse după 30 de zile, cu excepția adresei amestecate de pe care a fost încărcată o imagine sexuală suspectă cu un copil, care se păstrează împreună cu dovezile ei (mai sus). [de verificat de avocat]
 - Lista dispozitivelor pe care ești conectat: [DESCHIS: de stabilit]
 
 Cereri și suport
