@@ -1601,6 +1601,12 @@ A landing page is a page at its own address, `/c/<name>`, for a contest, a campa
 - **The job:** `send_landing_reminders()` runs every hour (pg_cron `send-landing-reminders`). On the day entries open (Romanian time) it calls `notify()` once per reminder with the kind `landing_entries_open` and marks it sent; no email (the kind has no email default). `notification_json()` adds `landing_page` (address and both titles), and `landingEntriesOpenText()` names the page in the reader's language and links to `/c/<slug>`.
 - **Tests:** `supabase/tests/database/263-landing-remind-me.test.sql`, `e2e/landing-remind-me.spec.ts`.
 
+### Link previews and links to landing pages (CONTESTS-13a2c)
+
+- **Shared links:** `functions/c/[[path]].ts` on Cloudflare (and `server/pages-functions-plugin.ts` locally) hands `/c/<name>` to `handleLandingLink()` in `server/landing-preview.ts`, which reads the public `landing_page()` and writes the hero's Romanian title and introduction, the Open Graph and Twitter tags and the theme's picture from `public/link-previews/` into index.html. A page with nothing live gets noindex; if the database can't be reached the page goes out unchanged.
+- **Links from the CMS:** `cms_link_problems()` accepts `/c/<name>` in a notice, a help page or an answer while that landing page exists and isn't archived.
+- **Tests:** `server/landing-preview.test.ts`, `supabase/tests/database/264-landing-page-links.test.sql`, `e2e/landing-link-preview.spec.ts`.
+
 ## Tags: approval and names in each language (CMS-1e)
 
 A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.
