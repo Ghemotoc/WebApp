@@ -103,7 +103,8 @@ test.describe('Landing pages (S1-E11-14)', () => {
     await addBlock(page, 'Text');
     await page.getByRole('button', { name: 'Move Block 4: Text up' }).click();
     await expect(page.getByRole('heading', { name: 'Block 3: Text' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Move Block 3: Text up' })).toBeDisabled();
+    // The hero stays at the top, so the block under it can't move above it.
+    await expect(page.getByRole('button', { name: 'Move Block 2: Key dates up' })).toBeDisabled();
     await page.getByRole('button', { name: 'Remove Block 3: Text' }).click();
     await expect(page.getByRole('heading', { name: 'Block 3: Rules' })).toBeVisible();
     // Step 3: the English link text is left empty, so Publish names it.
