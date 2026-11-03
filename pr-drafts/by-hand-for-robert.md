@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #307 (13a1, landing pages core): nothing to set. Read the Romanian in src/locales/ro/landingPages.json and the theme names (Prună, Auriu, Salvie, Cer) when you can.
 - #306 (12i, admin epic check round two): nothing to set. Bundle 12 ADMIN-2 is done.
 - #305 (12h4b): nothing to set. One question added to docs/for-the-lawyer.md: staff notes on support tickets in a data access request.
 - #304 (12h4a): nothing to set.
