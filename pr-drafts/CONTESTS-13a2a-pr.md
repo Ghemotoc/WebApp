@@ -20,7 +20,13 @@ Bundle 13 CONTESTS, part a2a: pictures and featured stories on landing pages (S1
 
 ## Local check run
 
-LOCALRUN
+Run on the branch head before opening (Node 24, local Supabase), then rebased onto main after #307 (this branch's own base):
+
+- lint, prettier, typecheck, types:check, i18n:check, migrations:check, third-party check: pass
+- `npm test` (Vitest): 220 files, 1378 tests, all pass
+- `npx supabase db reset && npx supabase test db`: 172 files, 4151 tests, all pass
+- `npm run test:e2e` for this part and the one before (`e2e/landing-pictures-featured.spec.ts`, `e2e/landing-pages.spec.ts`): 29 passed (the pictures spec first stopped on a Storage clean-up step, now removed, and passed when run again)
+- Wrangler build of the Pages Functions and the production build: pass
 
 GitHub Actions is blocked by billing, so this pull request is merged on local checks and Cloudflare's build (Robert's choice, 2 Nov 2026, 15:20 UTC).
 
