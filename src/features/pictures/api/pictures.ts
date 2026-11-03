@@ -40,9 +40,16 @@ export interface PictureView {
 }
 
 /** The buckets people upload to: covers, profile pictures, chapter pictures (S1-E3-09), Story
- * Atlas pictures (S1-E17-11), space banners (FORUMS-2c) and signature pictures (S1-E8-08). */
+ * Atlas pictures (S1-E17-11), space banners (FORUMS-2c), signature pictures (S1-E8-08) and
+ * landing page pictures (S1-E11-14, CONTESTS-13a2a). */
 export type PictureBucket =
-  'covers' | 'avatars' | 'chapter-images' | 'atlas-images' | 'space-banners' | 'signature-pictures';
+  | 'covers'
+  | 'avatars'
+  | 'chapter-images'
+  | 'atlas-images'
+  | 'space-banners'
+  | 'signature-pictures'
+  | 'landing-pictures';
 
 /** The picture types the buckets accept, and the largest file each takes (the bucket limits). */
 export const pictureTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
@@ -53,6 +60,7 @@ export const largestPictureBytes: Record<PictureBucket, number> = {
   'atlas-images': 5 * 1024 * 1024,
   'space-banners': 5 * 1024 * 1024,
   'signature-pictures': 1 * 1024 * 1024,
+  'landing-pictures': 5 * 1024 * 1024,
 };
 
 /** Why an upload didn't work. animated: a signature picture that moves (S1-E8-08). */
@@ -373,6 +381,35 @@ export async function uploadSpaceBanner(
   });
   // Step 2: registered as pending; the hourly limit is counted here.
   const registered = await client.rpc('register_space_banner', { target_path: path });
+  if (registered.error !== null) throw registrationFailure(registered.error);
+  // Step 3: the check, as for every other picture.
+  const status = await requestPictureCheck(client, registered.data, upload.file.name);
+  return { pictureId: registered.data, status };
+}
+
+/**
+ * Uploads a picture for a landing page's Hero or Text block, registers it and asks for its check
+ * (S1-E11-14 criterion 5). A landing page is for every age, so after the check a moderator approves
+ * it too; the page can't be published until then (CLAUDE.md rule 19).
+ *
+ * @param client - the shared Supabase client
+ * @param upload - the page's ID (the folder in `landing-pictures`) and the file
+ * @returns the picture's ID (kept in the block) and its status after the check
+ * @throws PictureUploadError as uploadPicture()
+ */
+export async function uploadLandingPicture(
+  client: AppSupabaseClient,
+  upload: { pageId: string; file: File },
+): Promise<{ pictureId: string; status: string }> {
+  // Step 1: the prepared file, in the page's folder.
+  const path = await storePicture(client, {
+    bucket: 'landing-pictures',
+    folder: upload.pageId,
+    file: upload.file,
+    longestSide: longestSideFor.landingPicture,
+  });
+  // Step 2: registered as pending; owner and admin only, and the hourly limit is counted here.
+  const registered = await client.rpc('register_landing_picture', { target_path: path });
   if (registered.error !== null) throw registrationFailure(registered.error);
   // Step 3: the check, as for every other picture.
   const status = await requestPictureCheck(client, registered.data, upload.file.name);

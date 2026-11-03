@@ -10,7 +10,12 @@
  */
 import { CountedField } from '@/features/website/components/staff/CountedField';
 import type { FieldProblem } from '@/features/website/api/websiteContentStore';
-import { landingFieldRules, type LandingBlock, type LandingLanguage } from '@/schemas/landingPages';
+import {
+  landingAltLongest,
+  landingFieldRules,
+  type LandingBlock,
+  type LandingLanguage,
+} from '@/schemas/landingPages';
 
 import { withWords, wordsOf } from '../../lib/blocks';
 import { problemFor } from '../../lib/problemLabels';
@@ -63,6 +68,19 @@ export function BlockLanguageColumn({
           />
         );
       })}
+      {/* Part a2a: a block with a picture needs its alt text in this language (criterion 5). */}
+      {block.picture_id !== undefined && (
+        <CountedField
+          id={`landing-b${index}-${language}-alt`}
+          label={t('editor.fields.alt')}
+          hint={t('editor.picture.altHint')}
+          lang={language}
+          value={wordsOf(block, language, 'alt')}
+          limit={landingAltLongest}
+          serverProblem={problemFor(problems, `blocks.${index}.${language}.alt`)}
+          onChange={(value) => onChange(withWords(block, language, 'alt', value))}
+        />
+      )}
     </fieldset>
   );
 }

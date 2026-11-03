@@ -1587,6 +1587,13 @@ A landing page is a page at its own address, `/c/<name>`, for a contest, a campa
 - **Tables:** `landing_pages` (address, type, archived) and `landing_page_versions` (one draft per page, published versions with "show from" and "take down on"). `c` is a reserved name, so no username can take the address.
 - **Tests:** `supabase/tests/database/261-landing-pages.test.sql`, `e2e/landing-pages.spec.ts`, `src/features/landing-pages/lib/blocks.test.ts`.
 
+### Pictures and featured stories (CONTESTS-13a2a)
+
+- **Pictures:** a Hero or Text block may hold one picture. `BlockPictureField` → `useLandingPictureUpload()` → `uploadLandingPicture()` puts it in the private `landing-pictures` bucket (only owner and admins may upload, `landing_picture_upload_allowed()`), then `register_landing_picture()` starts the usual picture check. A landing picture always waits for a moderator (`picture_needs_person()`), and `landing_picture_problems()` refuses to publish until it is approved and has alt text in both languages. The editor polls `admin_landing_picture_states()` every 15 seconds while a picture isn't ready.
+- **Featured stories:** a `featured` block picks 1 to 12 stories by address or one approved tag. `landing_featured_cards()` reads them through `listed_stories()` (moderation, restriction, class-only, blocks and the reader's rating) and then keeps only ratings for the youngest group the page is for (`landing_youngest_ratings()`, 13 to 15 when there is no Who can enter block). `FeaturedStoriesBlock` draws them as a `Shelf`.
+- **The public read:** `landing_page()` now also returns `pictures` (only visible ones, `landing_page_pictures()`) and `featured` (cards per block id); `fetchPublicLandingPage()` returns them as `extras`.
+- **Tests:** `supabase/tests/database/262-landing-pictures-featured.test.sql`, `e2e/landing-pictures-featured.spec.ts`.
+
 ## Tags: approval and names in each language (CMS-1e)
 
 A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.

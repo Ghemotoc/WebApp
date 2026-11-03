@@ -10,10 +10,12 @@
  */
 import type { LandingContent, LandingLanguage, LandingTheme } from '@/schemas/landingPages';
 
+import type { LandingExtras } from '../api/landingPages';
 import { wordsOf } from '../lib/blocks';
 import { useLandingPageTranslation } from '../registerLandingPageTranslations';
 
 import { LandingBlockView } from './LandingBlockView';
+import { LandingPicture } from './LandingPicture';
 
 /** Each theme's band: a pastel tint with dark text of the same hue (pill system). */
 const themeBands: Record<LandingTheme, string> = {
@@ -31,6 +33,10 @@ interface LandingPageViewProps {
   hasEnded: boolean;
   /** The page's type, for the ended note ("This contest has ended"). */
   pageType: string;
+  /** The pictures and story cards (part a2a). */
+  extras: LandingExtras;
+  /** True in the editor's preview. */
+  isPreview?: boolean;
 }
 
 /**
@@ -38,7 +44,14 @@ interface LandingPageViewProps {
  *
  * @returns the article
  */
-export function LandingPageView({ content, language, hasEnded, pageType }: LandingPageViewProps) {
+export function LandingPageView({
+  content,
+  language,
+  hasEnded,
+  pageType,
+  extras,
+  isPreview = false,
+}: LandingPageViewProps) {
   const { t } = useLandingPageTranslation();
   // Step 1: the hero is the first block; the checks before publishing make sure there is one.
   const hero = content.blocks.find((block) => block.kind === 'hero');
@@ -62,11 +75,25 @@ export function LandingPageView({ content, language, hasEnded, pageType }: Landi
           {hero === undefined ? '' : wordsOf(hero, language, 'title')}
         </h1>
         {intro !== '' && <p className="m-0 max-w-[640px] text-lg">{intro}</p>}
+        {hero !== undefined && (
+          <LandingPicture
+            block={hero}
+            language={language}
+            pictures={extras.pictures}
+            isPreview={isPreview}
+          />
+        )}
       </header>
       {/* Step 3: every other block, in the order the admin set. */}
-      <div className="flex max-w-[760px] flex-col gap-10">
+      <div className="flex max-w-[760px] min-w-0 flex-col gap-10">
         {rest.map((block) => (
-          <LandingBlockView key={block.id} block={block} language={language} />
+          <LandingBlockView
+            key={block.id}
+            block={block}
+            language={language}
+            extras={extras}
+            isPreview={isPreview}
+          />
         ))}
       </div>
     </article>

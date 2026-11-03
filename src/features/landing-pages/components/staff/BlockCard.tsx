@@ -9,19 +9,29 @@
  * QuestionItemsFields and BlockSharedFields.
  */
 import { Button } from '@/components/ui/Button';
+import type { PictureView } from '@/features/pictures/api/pictures';
 import type { FieldProblem } from '@/features/website/api/websiteContentStore';
-import { landingLanguages, type LandingBlock, type LandingContent } from '@/schemas/landingPages';
+import {
+  landingLanguages,
+  landingPictureKinds,
+  type LandingBlock,
+  type LandingContent,
+} from '@/schemas/landingPages';
 
 import { canMove } from '../../lib/blocks';
 import { problemFor } from '../../lib/problemLabels';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
 
 import { BlockLanguageColumn } from './BlockLanguageColumn';
+import { BlockPictureField } from './BlockPictureField';
 import { BlockSharedFields } from './BlockSharedFields';
 import { QuestionItemsFields } from './QuestionItemsFields';
 
 /** What the card needs. */
 interface BlockCardProps {
+  pageId: string;
+  /** The page's uploaded pictures and their check states (part a2a). */
+  pictures: Record<string, PictureView>;
   content: LandingContent;
   index: number;
   problems: readonly FieldProblem[];
@@ -105,6 +115,16 @@ export function BlockCard(props: BlockCardProps) {
           />
         ))}
       </div>
+      {landingPictureKinds.includes(block.kind) && (
+        <BlockPictureField
+          pageId={props.pageId}
+          block={block}
+          index={index}
+          pictures={props.pictures}
+          problems={problems}
+          onChange={onChange}
+        />
+      )}
       {block.kind === 'questions' && (
         <QuestionItemsFields block={block} index={index} problems={problems} onChange={onChange} />
       )}

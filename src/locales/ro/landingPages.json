@@ -15,7 +15,8 @@
     "prize": "Premiu",
     "how_to_enter": "Cum participi",
     "rules": "Regulament",
-    "questions": "Întrebări și răspunsuri"
+    "questions": "Întrebări și răspunsuri",
+    "featured": "Povești recomandate"
   },
   "languages": {
     "ro": "Română",
@@ -112,7 +113,12 @@
       "answer": "Răspunsul",
       "dates": "Date importante",
       "age_groups": "Cine poate participa",
-      "items": "Întrebările"
+      "items": "Întrebările",
+      "alt": "Descrierea imaginii (text alternativ)",
+      "picture": "Imaginea",
+      "stories": "Poveștile",
+      "tag": "Eticheta",
+      "mode": "Cum se aleg poveștile"
     },
     "problems": {
       "empty": "completează câmpul",
@@ -134,7 +140,16 @@
       "link_empty": "Adaugă adresa regulamentului.",
       "link_bad_link": "Folosește una dintre paginile noastre sau o adresă https://.",
       "age_groups": "Alege cel puțin o grupă de vârstă.",
-      "items": "Adaugă cel puțin o întrebare, în ambele limbi."
+      "items": "Adaugă cel puțin o întrebare, în ambele limbi.",
+      "not_checked": "imaginea nu este încă aprobată",
+      "not_allowed": "doar un bloc Antet sau Text poate avea o imagine",
+      "how_many": "alege între 1 și 12 povești",
+      "picture_not_checked": "Imaginea nu este încă aprobată. Publică după ce un moderator o aprobă.",
+      "picture_unknown": "Imaginea nu mai există. Încarc-o din nou.",
+      "picture_not_allowed": "Doar un bloc Antet sau Text poate avea o imagine.",
+      "stories_how_many": "Alege între 1 și 12 povești.",
+      "stories_unknown": "Una dintre adrese nu este a unei povești. Verifică fiecare rând.",
+      "tag_unknown": "Nu există nicio etichetă cu acest nume."
     },
     "failures": {
       "take_down_before_show_from": "Data scoaterii trebuie să fie după data „Afișează de la”.",
@@ -161,6 +176,37 @@
     "archiveQuestion": "Arhivezi /c/{{slug}}? Adresa nu va mai funcționa niciodată.",
     "archiveConfirm": "Da, arhivează",
     "archiveCancel": "Păstreaz-o",
-    "archived": "Pagina este arhivată. Adresa ei nu mai funcționează."
+    "archived": "Pagina este arhivată. Adresa ei nu mai funcționează.",
+    "picture": {
+      "label": "Imagine (opțional)",
+      "hint": "Un desen sau o ilustrație: JPEG, PNG sau WebP, până la 5 MB. Este verificată, apoi un moderator o aprobă înainte ca pagina să poată fi publicată.",
+      "remove": "Elimină imaginea",
+      "altHint": "Spune ce arată imaginea, pentru cei care nu o pot vedea."
+    },
+    "featured": {
+      "legend": "Ce povești",
+      "mode": "Alege poveștile",
+      "modes": {
+        "hand": "Manual",
+        "tag": "După etichetă"
+      },
+      "stories": "Adresele poveștilor",
+      "storiesHint": "Câte una pe rând, de exemplu /s/numele-povestii. Cel mult {{most}}.",
+      "count": "{{count}} din {{most}} povești",
+      "tag": "Numele etichetei",
+      "filterNote": "Vizitatorii văd doar povești potrivite pentru cei mai tineri cititori din „Cine poate participa” (13–15 ani dacă pagina nu are acest bloc), iar o poveste ascunsă de moderare dispare imediat."
+    }
+  },
+  "picture": {
+    "states": {
+      "visible": "Imaginea este gata.",
+      "checking": "Imaginea se verifică.",
+      "waiting_for_person": "Imaginea așteaptă aprobarea unui moderator.",
+      "removed": "Imaginea a fost eliminată de echipa de moderare."
+    }
+  },
+  "featured": {
+    "previewNote": "Poveștile apar aici după publicare: doar povești potrivite pentru cei mai tineri cititori cărora li se adresează pagina.",
+    "none": "Încă nu sunt povești de arătat."
   }
 }

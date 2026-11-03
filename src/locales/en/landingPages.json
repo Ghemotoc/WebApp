@@ -15,7 +15,8 @@
     "prize": "Prize",
     "how_to_enter": "How to enter",
     "rules": "Rules",
-    "questions": "Questions and answers"
+    "questions": "Questions and answers",
+    "featured": "Featured stories"
   },
   "languages": {
     "ro": "Română",
@@ -112,7 +113,12 @@
       "answer": "Answer",
       "dates": "Key dates",
       "age_groups": "Who can enter",
-      "items": "Questions"
+      "items": "Questions",
+      "alt": "Picture description (alt text)",
+      "picture": "Picture",
+      "stories": "Stories",
+      "tag": "Tag",
+      "mode": "How stories are picked"
     },
     "problems": {
       "empty": "fill this in",
@@ -134,7 +140,16 @@
       "link_empty": "Add the address of the rules.",
       "link_bad_link": "Use one of our pages or an https:// address.",
       "age_groups": "Pick at least one age group.",
-      "items": "Add at least one question, in both languages."
+      "items": "Add at least one question, in both languages.",
+      "not_checked": "the picture isn’t approved yet",
+      "not_allowed": "only a Hero or Text block can have a picture",
+      "how_many": "pick between 1 and 12 stories",
+      "picture_not_checked": "The picture isn’t approved yet. Publish once a moderator approves it.",
+      "picture_unknown": "This picture no longer exists. Upload it again.",
+      "picture_not_allowed": "Only a Hero or Text block can have a picture.",
+      "stories_how_many": "Pick between 1 and 12 stories.",
+      "stories_unknown": "One of these addresses isn’t a story. Check each line.",
+      "tag_unknown": "There is no tag with that name."
     },
     "failures": {
       "take_down_before_show_from": "The take-down date must come after the “show from” date.",
@@ -161,6 +176,37 @@
     "archiveQuestion": "Archive /c/{{slug}}? The address stops working for good.",
     "archiveConfirm": "Yes, archive it",
     "archiveCancel": "Keep it",
-    "archived": "This page is archived. Its address no longer works."
+    "archived": "This page is archived. Its address no longer works.",
+    "picture": {
+      "label": "Picture (optional)",
+      "hint": "A drawing or illustration: JPEG, PNG or WebP, up to 5 MB. It is checked, then a moderator approves it before the page can be published.",
+      "remove": "Remove picture",
+      "altHint": "Say what the picture shows, for people who can’t see it."
+    },
+    "featured": {
+      "legend": "Which stories",
+      "mode": "Pick stories",
+      "modes": {
+        "hand": "By hand",
+        "tag": "By tag"
+      },
+      "stories": "Story addresses",
+      "storiesHint": "One per line, for example /s/the-name-of-the-story. At most {{most}}.",
+      "count": "{{count}} of {{most}} stories",
+      "tag": "Tag name",
+      "filterNote": "Visitors see only stories rated for the youngest readers in Who can enter (13 to 15 when the page has no such block), and a story hidden by moderation drops off at once."
+    }
+  },
+  "picture": {
+    "states": {
+      "visible": "Picture ready.",
+      "checking": "Picture being checked.",
+      "waiting_for_person": "Picture waiting for a moderator to approve it.",
+      "removed": "Picture removed by the moderation team."
+    }
+  },
+  "featured": {
+    "previewNote": "The stories appear here once the page is published: only stories rated for the youngest readers the page is for.",
+    "none": "No stories to show yet."
   }
 }

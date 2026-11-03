@@ -2,6 +2,7 @@
  * BlockSharedFields: the fields of a block that are the same in both languages: the key dates,
  * the age groups who can enter and the Rules link (story S1-E11-14; bundle CONTESTS-13a1).
  *
+ * Part a2a adds how a Featured stories block picks its stories (FeaturedFields).
  * Dates are plain dates in Romanian time, shown without a countdown (no countdown timers, plan
  * 13a1). The Rules link is one of our own pages ("/help/contest-rules") or an https address; the
  * database checks it before publishing.
@@ -14,6 +15,8 @@ import { landingAgeGroups, type LandingBlock } from '@/schemas/landingPages';
 
 import { problemFor } from '../../lib/problemLabels';
 import { useLandingPageTranslation } from '../../registerLandingPageTranslations';
+
+import { FeaturedFields } from './FeaturedFields';
 
 /** What the fields need. */
 interface BlockSharedFieldsProps {
@@ -132,5 +135,6 @@ export function BlockSharedFields(props: BlockSharedFieldsProps) {
   if (props.block.kind === 'key_dates') return <KeyDatesFields {...props} />;
   if (props.block.kind === 'who_can_enter') return <AgeGroupFields {...props} />;
   if (props.block.kind === 'rules') return <RulesLinkField {...props} />;
+  if (props.block.kind === 'featured') return <FeaturedFields {...props} />;
   return null;
 }

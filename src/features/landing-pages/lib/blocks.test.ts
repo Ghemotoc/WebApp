@@ -14,6 +14,8 @@ import {
   questionsOf,
   removeBlock,
   removeQuestion,
+  storySlugsFromText,
+  withPicture,
   withQuestionPart,
   withWords,
   wordsOf,
@@ -90,5 +92,16 @@ describe('editing landing page blocks', () => {
     );
     expect(questionsOf(block, 'en')[0]?.question).toBe('Who can enter?');
     expect(questionsOf(block, 'ro')[0]?.question).toBe('');
+  });
+
+  it('reads story addresses typed as links, paths or names, one per line', () => {
+    const text = 'https://example.org/s/statia-meteo/ch1\n/s/Scrisori\n\nstatia-meteo\nradios?x=1';
+    expect(storySlugsFromText(text)).toEqual(['statia-meteo', 'scrisori', 'radios']);
+  });
+
+  it('puts a picture in a block and takes it out again', () => {
+    const withOne = withPicture(newBlock('text', 't'), 'p1');
+    expect(withOne.picture_id).toBe('p1');
+    expect('picture_id' in withPicture(withOne, null)).toBe(false);
   });
 });
