@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #310 (13a2c, landing page link previews): nothing to set. Share a /c/ link in WhatsApp once a page is live to see the preview.
 - #309 (13a2b, Remind me on landing pages): nothing to set. Read the Romanian in src/locales/ro/landingPages.json (remindMe) and notifications.json (landingEntriesOpen) when you can.
 - #308 (13a2a, landing page pictures and featured stories): nothing to set. Pictures on landing pages wait in Moderation › Pictures to check like any other.
 - #307 (13a1, landing pages core): nothing to set. Read the Romanian in src/locales/ro/landingPages.json and the theme names (Prună, Auriu, Salvie, Cer) when you can.
