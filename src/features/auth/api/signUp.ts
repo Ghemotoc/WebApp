@@ -26,6 +26,8 @@ export interface SignUpContext {
   locale: string;
   /** The signed country token from /api/signup-context, or null when unknown (S1-E2-10). */
   signupToken: string | null;
+  /** The signed scrambled IP token from /api/signup-context, or null (bundle ADMIN-2, part f2). */
+  signupIpToken: string | null;
   /** The visitor's country, for the words of a refusal only; the database reads the token. */
   country: string | null;
   /** The country's minimum age (13; 16 in Australia, Q19). */
@@ -82,6 +84,9 @@ export function signUpData(answers: SignUpDataAnswers, context: SignUpContext) {
     handle: answers.handle,
     // The country, signed by our Pages Function; the trigger checks it (S1-E2-10).
     signup_context: context.signupToken,
+    // The scrambled IP address, signed; the trigger keeps it 30 days to spot a returning banned
+    // account for a moderator, never to block anyone (bundle ADMIN-2, part f2).
+    signup_ip: context.signupIpToken,
   };
 }
 

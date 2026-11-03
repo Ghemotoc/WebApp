@@ -14,6 +14,11 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 export interface SignupCountry {
   country: string | null;
   token: string | null;
+  /**
+   * The visitor's IP address scrambled and signed (bundle ADMIN-2, part f2), or null. The form
+   * passes it on untouched; only the database reads it.
+   */
+  ipToken: string | null;
 }
 
 /** One market: whether it is open and its minimum age. */
@@ -32,14 +37,15 @@ export interface Market {
 export async function fetchSignupCountry(): Promise<SignupCountry> {
   try {
     const response = await fetch('/api/signup-context', { cache: 'no-store' });
-    if (!response.ok) return { country: null, token: null };
+    if (!response.ok) return { country: null, token: null, ipToken: null };
     const body = (await response.json()) as Partial<SignupCountry>;
     return {
       country: typeof body.country === 'string' ? body.country : null,
       token: typeof body.token === 'string' ? body.token : null,
+      ipToken: typeof body.ipToken === 'string' ? body.ipToken : null,
     };
   } catch {
-    return { country: null, token: null };
+    return { country: null, token: null, ipToken: null };
   }
 }
 

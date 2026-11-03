@@ -176,6 +176,7 @@ describe('the sign-up form', () => {
       locale: 'en',
       // No Pages Function in unit tests: the country is unknown, which the invited test admits.
       signupToken: null,
+      signupIpToken: null,
       country: null,
       marketMinimumAge: 13,
     });

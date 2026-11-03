@@ -45,7 +45,9 @@ describe('the token', () => {
     });
     expect(response.headers.get('Cache-Control')).toBe('no-store');
     const body = (await response.json()) as Record<string, unknown>;
-    expect(Object.keys(body).sort()).toEqual(['country', 'token']);
+    // The IP token (ADMIN-2f2) carries only scrambled values; without one it is null.
+    expect(Object.keys(body).sort()).toEqual(['country', 'ipToken', 'token']);
+    expect(body.ipToken).toBeNull();
     expect(body.country).toBe('RO');
     expect(String(body.token)).toMatch(/^v1\.RO\.\d+\.[0-9a-f]{64}$/);
   });
@@ -55,10 +57,10 @@ describe('the token', () => {
     const unknown = (await (
       await handleSignupContext(requestFrom('XX'), { secret: 's', now })
     ).json()) as Record<string, unknown>;
-    expect(unknown).toEqual({ country: null, token: null });
+    expect(unknown).toEqual({ country: null, token: null, ipToken: null });
     const noSecret = (await (
       await handleSignupContext(requestFrom('RO'), { now })
     ).json()) as Record<string, unknown>;
-    expect(noSecret).toEqual({ country: 'RO', token: null });
+    expect(noSecret).toEqual({ country: 'RO', token: null, ipToken: null });
   });
 });

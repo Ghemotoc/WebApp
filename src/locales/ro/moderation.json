@@ -61,7 +61,8 @@
     "authority_order": "Ordin de eliminare",
     "picture_check": "Verificare de imagine",
     "downvotes": "Voturi negative private",
-    "picture_review": "Imagine care așteaptă un moderator"
+    "picture_review": "Imagine care așteaptă un moderator",
+    "returning_user": "Posibil utilizator care revine"
   },
   "statuses": {
     "open": "Deschis",
@@ -162,7 +163,8 @@
     },
     "summary": "{{what}}. Raportări: {{count}}, prima primită {{when}}. Raportările despre același lucru sunt grupate aici.",
     "statementsHeading": "Motivarea deciziei",
-    "noStatement": "Nu s-a trimis nicio motivare: fie decizia a fost „Fără acțiune”, fie ordinul autorității a cerut să nu fie anunțată persoana care a încărcat conținutul."
+    "noStatement": "Nu s-a trimis nicio motivare: fie decizia a fost „Fără acțiune”, fie ordinul autorității a cerut să nu fie anunțată persoana care a încărcat conținutul.",
+    "summaryReturning": "{{what}}. Semnalat {{when}}: contul s-a înregistrat de pe același IP amestecat ca un cont interzis în ultimele 30 de zile. Nu a fost blocat nimeni; decide dacă este aceeași persoană."
   },
   "failures": {
     "not_allowed": "Nu poți face asta. Doar echipa de moderare poate, iar cazurile de protecția copilului cer permisiunea de protecție.",
@@ -569,5 +571,28 @@
     "close": "Închide contul definitiv",
     "closeNote": "Notă pentru echipă",
     "confirm": "Salvează"
+  },
+  "accountLinks": {
+    "heading": "Posibil utilizator care revine",
+    "intro": "Conturi care credem că pot aparține aceleiași persoane. O potrivire a IP-ului amestecat de la înregistrare adaugă una automat; poți lega un alt cont despre care crezi că e aceeași persoană sau poți șterge o legătură greșită. Doar echipa de moderare vede asta.",
+    "none": "Niciun cont legat.",
+    "sources": {
+      "sign_up_ip": "Același IP la înregistrare",
+      "moderator": "Legat de un moderator"
+    },
+    "bannedSince": "Interzis din {{when}}",
+    "byCheck": "Găsit de verificarea la înregistrare, {{when}}",
+    "byModerator": "Legat de @{{handle}}, {{when}}",
+    "remove": "Șterge legătura cu @{{handle}}",
+    "removeReason": "De ce este greșită legătura? (obligatoriu)",
+    "removeConfirm": "Șterge legătura",
+    "link": "Leagă alt cont",
+    "handleLabel": "Numele de utilizator al celuilalt cont",
+    "handleHint": "Cu sau fără @.",
+    "handleMissing": "Scrie numele de utilizator al celuilalt cont.",
+    "reasonLabel": "De ce crezi că este aceeași persoană? (obligatoriu)",
+    "linkConfirm": "Leagă contul",
+    "refused": "Nu am putut schimba legătura: verifică dacă numele de utilizator există, nu este contul acestui caz, nu e deja legat și dacă ai scris un motiv.",
+    "automaticReason": "S-a înregistrat de pe aceeași adresă IP amestecată ca acest cont, interzis în ultimele 30 de zile."
   }
 }

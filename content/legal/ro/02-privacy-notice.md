@@ -66,7 +66,7 @@ Ce primim de la alții:
 - Yoti: rezultatul verificării vârstei („13 ani sau peste”, „18 ani sau peste” sau nereușită), cum s-a făcut (estimare din selfie, act de identitate sau verificare făcută de un om) și data. Niciodată fotografia, actul sau o vârstă estimată.
 - Părintele sau tutorele tău, dacă ai sub 16 ani: adresa lui de email și răspunsul lui, cu data și versiunea acestei note pe care a văzut-o.
 - Google, Apple sau Microsoft, dacă te conectezi cu ele: adresa ta de email și, doar dacă permiți, numele tău. Ele nu ne spun vârsta ta.
-- Conexiunea ta: când te înscrii, îți citim țara din conexiunea la internet și păstrăm doar codul țării. Pentru siguranță îți păstrăm adresa IP doar într-o formă amestecată, timp de 30 de zile.
+- Conexiunea ta: când te înscrii, îți citim țara din conexiunea la internet și păstrăm doar codul țării. Pentru siguranță îți păstrăm adresa IP doar într-o formă amestecată, timp de 30 de zile. Dacă un cont nou se înscrie de pe aceeași adresă amestecată ca un cont interzis în ultimele 30 de zile, un moderator se uită la el; nimeni nu este blocat din cauza asta, pentru că școlile și familiile folosesc aceeași conexiune. [de verificat de avocat]
 - Alți oameni: raportări despre tine sau conținutul tău și, într-un spațiu de clasă, ce adaugă profesorul tău.
 - Autorități: ordinele și cererile pe care ni le trimit.
 

@@ -26,6 +26,8 @@ const tokenRefresh = 4 * 60_000;
 export interface SignUpMarket {
   country: string | null;
   token: string | null;
+  /** The signed scrambled IP token for the returning-user check (bundle ADMIN-2, part f2). */
+  ipToken: string | null;
   /** The market's minimum age (13 unless the market says otherwise, for example 16 in Australia). */
   minimumAge: number;
   /** True once it is known that sign-up isn't open from here. */
@@ -66,7 +68,7 @@ export function useSignUpMarket(isInvitedTest: boolean): SignUpMarket {
   });
 
   // Step 1: the visitor's market, once both answers are in.
-  const answer = signupCountry.data ?? { country: null, token: null };
+  const answer = signupCountry.data ?? { country: null, token: null, ipToken: null };
   const market = marketOf(markets.data ?? [], answer.country);
   const isLoaded = signupCountry.isSuccess && markets.isSuccess;
   // Step 2: closed only once sign-up is public and the market is unknown or closed.
@@ -74,6 +76,7 @@ export function useSignUpMarket(isInvitedTest: boolean): SignUpMarket {
   return {
     country: answer.country,
     token: answer.token,
+    ipToken: answer.ipToken,
     minimumAge: market === undefined ? 13 : market.minimumAge,
     isClosed: !isInvitedTest && isLoaded && !isOpenHere,
   };

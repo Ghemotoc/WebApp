@@ -58,6 +58,8 @@ select results_eq(
        ('banned_email_hashes', 0::bigint),
        ('blocks', 0::bigint),
        ('case_actions', 0::bigint),
+       -- Possible returning user links: moderation staff only (ADMIN-2f2).
+       ('case_account_links', 0::bigint),
        ('cases', 0::bigint),
        ('categories', (select count(*) from public.categories)),
        -- Music and video cards reach readers only through get_chapter() (S1-E3-10).
@@ -171,6 +173,8 @@ select results_eq(
        ('seasonal_occasions', 0::bigint),
        ('settings', (select count(*) from public.settings where is_public)),
        ('sign_in_failures', 0::bigint),
+       -- Scrambled sign-up IPs: moderation staff only (ADMIN-2f2).
+       ('sign_up_ips', 0::bigint),
        -- Spaces and their members: read only through functions, by the age rules (FORUMS-2a).
        ('space_members', 0::bigint),
        ('space_moderation_log', 0::bigint),

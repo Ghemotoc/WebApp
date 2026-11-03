@@ -61,7 +61,8 @@
     "authority_order": "Removal order",
     "picture_check": "Picture check",
     "downvotes": "Private downvotes",
-    "picture_review": "Picture waiting for a moderator"
+    "picture_review": "Picture waiting for a moderator",
+    "returning_user": "Possible returning user"
   },
   "statuses": {
     "open": "Open",
@@ -162,7 +163,8 @@
     },
     "summary": "{{what}}. Reports: {{count}}, the first received {{when}}. Reports about the same item are grouped here.",
     "statementsHeading": "Statement of reasons",
-    "noStatement": "No statement was sent: either the decision was “No action”, or the authority’s order said not to tell the uploader."
+    "noStatement": "No statement was sent: either the decision was “No action”, or the authority’s order said not to tell the uploader.",
+    "summaryReturning": "{{what}}. Flagged {{when}}: this account signed up from the same scrambled IP as an account banned in the last 30 days. Nobody was blocked; decide whether it is the same person."
   },
   "failures": {
     "not_allowed": "You can’t do this. Only moderation staff can, and safeguarding cases need the safeguarding permission.",
@@ -569,5 +571,28 @@
     "close": "Close the account for good",
     "closeNote": "Note for the team",
     "confirm": "Save"
+  },
+  "accountLinks": {
+    "heading": "Possible returning user",
+    "intro": "Accounts we think may belong to the same person. A match on the scrambled sign-up IP adds one automatically; you can link another account you believe is the same person, or remove a wrong link. Only moderation staff see this.",
+    "none": "No linked accounts.",
+    "sources": {
+      "sign_up_ip": "Same sign-up IP",
+      "moderator": "Linked by a moderator"
+    },
+    "bannedSince": "Banned since {{when}}",
+    "byCheck": "Found by the sign-up check, {{when}}",
+    "byModerator": "Linked by @{{handle}}, {{when}}",
+    "remove": "Remove the link to @{{handle}}",
+    "removeReason": "Why is this link wrong? (required)",
+    "removeConfirm": "Remove link",
+    "link": "Link another account",
+    "handleLabel": "The other account’s username",
+    "handleHint": "With or without the @.",
+    "handleMissing": "Write the other account’s username.",
+    "reasonLabel": "Why do you think it is the same person? (required)",
+    "linkConfirm": "Link account",
+    "refused": "We couldn’t change the link: check the username exists, isn’t this case’s own account and isn’t already linked, and that you wrote a reason.",
+    "automaticReason": "Signed up from the same scrambled IP address as this account, banned in the last 30 days."
   }
 }
