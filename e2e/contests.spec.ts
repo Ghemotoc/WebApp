@@ -1,6 +1,6 @@
 /**
  * Contests in a real browser: setting one up, opening it, entering and withdrawing (story
- * S1-E11-15 criteria 1 to 3; bundle CONTESTS-13b1).
+ * S1-E11-15 criteria 1 to 3, 5 and 6; bundles CONTESTS-13b1 and 13b2a).
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
@@ -9,7 +9,9 @@
  *   and 2);
  * - a writer sees "Enter <contest>" in their story's settings while entries are open, enters the
  *   story and withdraws it (criterion 3);
- * - both screens pass axe.
+ * - an admin disqualifies the entry with a reason, and the writer's card points to the decision
+ *   (criteria 5 and 6, part 13b2a);
+ * - every screen passes axe.
  * Test data: the landing page /c/concurs-e2e (live, with a Rules block linking to the help page
  * regulament-e2e), that help page in Romanian and English, and one published chapter of the seed
  * story, all made by SQL and deleted afterwards (the audit log keeps its rows).
@@ -21,8 +23,11 @@ import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
-/** Removes this spec's contest, pages and chapter. */
+/** Removes this spec's contest, pages, chapter and the disqualification's statement. */
 const cleanUpSql = `
+  delete from public.notifications where statement_id in (
+    select id from public.statements_of_reasons where action = 'contest_disqualified');
+  delete from public.statements_of_reasons where action = 'contest_disqualified';
   delete from public.contests where landing_page_id in (select id from public.landing_pages where slug = 'concurs-e2e');
   delete from public.landing_page_versions where page_id in (select id from public.landing_pages where slug = 'concurs-e2e');
   delete from public.landing_pages where slug = 'concurs-e2e';
@@ -156,5 +161,45 @@ test.describe('Contests (S1-E11-15)', () => {
     await expect(page.getByText(/Your entry is withdrawn/)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Enter The trial contest' })).toBeVisible();
     await page.context().close();
+  });
+
+  test('an admin disqualifies an entry with a reason and the writer sees the decision', async ({
+    browser,
+  }) => {
+    // Step 1: the writer enters again.
+    const writer = await openAs(browser, 'adult_writer', '/write/s/statia-meteo-seed01/settings');
+    await writer.getByRole('button', { name: 'Enter The trial contest' }).click();
+    await expect(writer.getByText('This story is entered.')).toBeVisible();
+
+    // Step 2: the admin sees the entry by pen name and age group, and disqualifies it.
+    const admin = await openAs(browser, 'admin', '/staff/contests');
+    await admin.getByRole('link', { name: 'The trial contest' }).click();
+    const entries = admin.getByRole('region', { name: 'Entries' });
+    // The withdrawn entry from the test before stays in the list as Withdrawn.
+    await expect(entries.getByRole('cell', { name: 'Withdrawn', exact: true })).toBeVisible();
+    const validRow = entries.getByRole('row').filter({ hasText: 'Valid' });
+    await expect(validRow.getByRole('cell', { name: '18 and over' })).toBeVisible();
+    await validRow.getByRole('button', { name: /^Disqualify .+’s entry$/ }).click();
+    await admin
+      .getByLabel('Why the entry breaks the rules')
+      .fill('The story was published before the contest opened.');
+    const results = await new AxeBuilder({ page: admin })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+    expect(
+      results.violations.filter((issue) => ['serious', 'critical'].includes(issue.impact ?? '')),
+    ).toEqual([]);
+    await admin.getByRole('button', { name: 'Disqualify', exact: true }).click();
+    await expect(
+      admin.getByText(/The entry is disqualified\. The writer has the statement/),
+    ).toBeVisible();
+    await expect(entries.getByRole('cell', { name: /^Disqualified \(S-\d{6}\)$/ })).toBeVisible();
+    await admin.context().close();
+
+    // Step 3: the writer's card says so and points to the decision.
+    await writer.reload();
+    await expect(writer.getByText(/was disqualified from this contest/)).toBeVisible();
+    await expect(writer.getByRole('link', { name: 'Read the decision and appeal' })).toBeVisible();
+    await writer.context().close();
   });
 });

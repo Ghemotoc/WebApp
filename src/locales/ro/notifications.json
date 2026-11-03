@@ -166,7 +166,8 @@
     "rating_raised": "un moderator a ridicat clasificarea poveștii tale.",
     "ai_label_added": "un moderator a etichetat povestea ta ca scrisă cu AI.",
     "title_hidden": "un moderator a ascuns titlul poveștii tale.",
-    "cover_hidden": "un moderator a ascuns coperta poveștii tale."
+    "cover_hidden": "un moderator a ascuns coperta poveștii tale.",
+    "contest_disqualified": "echipa a descalificat înscrierea ta în concurs."
   },
   "reportOutcomes": {
     "removed": "am verificat raportarea ta {{reference}} și am eliminat ce ai raportat.",

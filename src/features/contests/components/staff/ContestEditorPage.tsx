@@ -4,9 +4,10 @@
  *
  * What it shows: the way back to the list, the contest's name and landing page, whether it is a
  * draft or open, the opening panel and the form with every detail. Plain staff components, no
- * doodles. Entries, judging and results join in part 13b2.
+ * doodles. Once the contest is open, the entries list with Disqualify follows (part 13b2a);
+ * results and certificates join in part 13b2b.
  * Who shows it: the router, at /staff/contests/:contestId (owner and admin; the server refuses
- * everyone else). What it calls: useContestEditor().
+ * everyone else). What it calls: useContestEditor(); ContestEntriesSection reads the entries.
  */
 import { Link, useParams } from 'react-router';
 
@@ -19,6 +20,7 @@ import { useContestEditor } from '../../hooks/useStaffContests';
 import { contestNameIn } from '../../lib/contestWords';
 import { useContestTranslation } from '../../registerContestTranslations';
 
+import { ContestEntriesSection } from './ContestEntriesSection';
 import { ContestForm } from './ContestForm';
 import { ContestOpenPanel } from './ContestOpenPanel';
 
@@ -31,6 +33,7 @@ function EditorBody({ editor }: { editor: ReturnType<typeof useContestEditor> })
   return (
     <>
       <ContestOpenPanel contest={editor.contest} editor={editor} />
+      {editor.contest.openedAt !== null && <ContestEntriesSection contestId={editor.contest.id} />}
       <ContestForm key={editor.contest.id} contest={editor.contest} editor={editor} />
     </>
   );

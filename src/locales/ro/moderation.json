@@ -460,7 +460,8 @@
       "rating_raised": "Clasificare ridicată",
       "ai_label_added": "Etichetă IA adăugată",
       "title_hidden": "Titlu ascuns",
-      "cover_hidden": "Copertă ascunsă"
+      "cover_hidden": "Copertă ascunsă",
+      "contest_disqualified": "Înscriere descalificată din concurs"
     }
   },
   "embed": {

@@ -26,7 +26,8 @@
       "rating_raised": "We raised your story's rating",
       "ai_label_added": "We labelled your story as AI-written",
       "title_hidden": "We hid your story’s title",
-      "cover_hidden": "We hid your story’s cover"
+      "cover_hidden": "We hid your story’s cover",
+      "contest_disqualified": "We disqualified your contest entry"
     },
     "meta": "Decided {{date}} · {{reference}}",
     "about": "About",
@@ -45,7 +46,8 @@
       "rating_raised": "We raised the story's rating, so younger readers no longer see it. The words are unchanged.",
       "ai_label_added": "We added the label \"AI-written, not disclosed\" to the story. The words are unchanged.",
       "title_hidden": "Readers see “Title hidden by the moderation team” instead of the title until you change it. Your story is still there to read, and the words are unchanged.",
-      "cover_hidden": "Readers see the automatic cover instead of yours until you pick another one. Your story is still there to read, and the words are unchanged."
+      "cover_hidden": "Readers see the automatic cover instead of yours until you pick another one. Your story is still there to read, and the words are unchanged.",
+      "contest_disqualified": "Your story is no longer in the contest. The story itself is unchanged and readers can still open it."
     },
     "why": "Why",
     "noFacts": "The moderator didn't add more details. Write to us if you'd like to know more.",
@@ -69,7 +71,8 @@
       "authority_order": "a removal order from a competent authority (Regulation (EU) 2021/784)",
       "picture_check": "pictures that aren't allowed",
       "community_rules": "our community guidelines",
-      "rating_rules": "story ratings"
+      "rating_rules": "story ratings",
+      "contest_rules": "the contest’s rules"
     },
     "howFound": "How we found it",
     "foundByPerson": "Someone reported it, or our team saw it. A moderator read it and decided. No automated tools made this decision.",

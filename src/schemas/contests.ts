@@ -1,6 +1,6 @@
 /**
  * The contest contract: who can enter, the editor's fields and what a story's settings card
- * reads (story S1-E11-15; bundle CONTESTS-13b1).
+ * reads (story S1-E11-15; bundle CONTESTS-13b1), and the staff entries list (part 13b2a).
  *
  * Who uses it: the contest store (src/features/contests/api/contests.ts) parses every answer from
  * the database with these schemas, and the staff editor uses the limits for its counters. The
@@ -72,6 +72,9 @@ export const contestEntryOptionSchema = z.object({
       story_slug: z.string(),
       story_title: z.string(),
       is_this_story: z.boolean(),
+      // Part 13b2a: a disqualified entry still holds the writer's one place.
+      status: z.enum(['valid', 'disqualified']),
+      statement_reference: z.string().nullable(),
     })
     .nullable(),
   problems: z.array(z.enum(contestStoryProblemCodes)),
@@ -80,6 +83,33 @@ export type ContestEntryOption = z.infer<typeof contestEntryOptionSchema>;
 
 /** The whole list for one story. */
 export const contestEntryOptionsSchema = z.array(contestEntryOptionSchema);
+
+/** The statuses an entry can have (criterion 5). */
+export const contestEntryStatuses = ['valid', 'withdrawn', 'disqualified'] as const;
+
+/** The longest reason staff can give when disqualifying an entry (the database's limit). */
+export const disqualifyReasonLimit = 2000;
+
+/**
+ * One entry in Staff › Contests, as admin_contest_entries() returns it: the pen name and age group
+ * only, never the user ID or the year of birth (criterion 5).
+ */
+export const staffContestEntrySchema = z.object({
+  id: z.string().uuid(),
+  pen_name: z.string(),
+  age_group: z.string(),
+  story_title: z.string(),
+  story_slug: z.string(),
+  rating: z.string(),
+  words: z.number().int(),
+  entered_at: z.string(),
+  status: z.enum(contestEntryStatuses),
+  statement_reference: z.string().nullable(),
+});
+export type StaffContestEntry = z.infer<typeof staffContestEntrySchema>;
+
+/** One contest's whole entries list. */
+export const staffContestEntriesSchema = z.array(staffContestEntrySchema);
 
 /** The fields the staff editor saves, in admin_save_contest()'s shape. */
 export interface ContestDetails {

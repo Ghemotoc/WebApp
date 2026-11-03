@@ -5,8 +5,9 @@
  *
  * What it shows: nothing when no contest takes this writer's entries today. Otherwise one block
  * per contest: its name, the closing day, a link to its page, and either "Enter <contest>", the
- * entered state with "Withdraw entry", the other story already entered (one entry per writer), or
- * why this story can't be entered. Changes save at once, apart from the form's Save button, so
+ * entered state with "Withdraw entry", the other story already entered (one entry per writer),
+ * a disqualified entry with a link to the decision (part 13b2a), or why this story can't be
+ * entered. Changes save at once, apart from the form's Save button, so
  * every button is type="button" (the card sits inside the settings form).
  * Who shows it: StorySettingsPage, after the class card.
  * What it calls: useStoryContests() → contest_entry_options(), enter_contest(),
@@ -26,6 +27,24 @@ import { useContestTranslation } from '../registerContestTranslations';
 /** The card's state from the hook. */
 type StoryContests = ReturnType<typeof useStoryContests>;
 
+/** A disqualified entry: which story, and where to read the decision and appeal it. */
+function DisqualifiedEntry({ option }: { option: ContestEntryOption }) {
+  const { t } = useContestTranslation();
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="m-0 text-sm text-body">
+        {t('card.disqualified', {
+          title: option.entry?.story_title ?? '',
+          reference: option.entry?.statement_reference ?? '',
+        })}
+      </p>
+      <Link to="/my-reports" className="w-fit text-sm font-semibold text-link underline">
+        {t('card.readDecision')}
+      </Link>
+    </div>
+  );
+}
+
 /** The action part of one contest: enter, withdraw, or why not. */
 function ContestAction({
   option,
@@ -36,6 +55,11 @@ function ContestAction({
 }) {
   const { t, i18n } = useContestTranslation();
   const name = contestNameIn(option, i18n.language);
+  // Step 0: staff disqualified the writer's entry; it still holds their one place, so the card
+  // points to the decision, which they can appeal (criterion 6, part 13b2a).
+  if (option.entry?.status === 'disqualified') {
+    return <DisqualifiedEntry option={option} />;
+  }
   // Step 1: this story is the writer's entry: they may withdraw it while entries are open.
   if (option.entry?.is_this_story === true) {
     return (

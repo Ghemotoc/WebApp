@@ -45,7 +45,7 @@ export class ContestError extends Error {
  * @param error - the error Supabase returned
  * @returns the ContestError to throw
  */
-function contestErrorFrom(error: {
+export function contestErrorFrom(error: {
   code?: string;
   message: string;
   hint?: string;
