@@ -55,11 +55,17 @@ export interface StaffTicketSummary {
   lastMessageAt: string;
 }
 
+/** Whether a staff answer left by email (part h2); null for anything that isn't emailed. */
+export type EmailState = 'sent' | 'waiting' | null;
+
 /** One message as staff see it. */
 export interface StaffTicketMessage {
   kind: TicketMessageKind;
   authorHandle: string | null;
   body: string;
+  /** How it came in or went out: the app, Contact us or email. */
+  channel: TicketChannel;
+  emailed: EmailState;
   at: string;
 }
 
@@ -92,6 +98,8 @@ export interface StaffTicket {
   channel: TicketChannel;
   tags: string[];
   assignedHandle: string | null;
+  /** The closed ticket this one follows up (criterion 7), or null. */
+  followUpOf: number | null;
   requester: TicketRequester;
   messages: StaffTicketMessage[];
   history: TicketHistoryEntry[];
@@ -114,6 +122,24 @@ function objectsOf(value: Json | undefined): Record<string, Json | undefined>[] 
     const record = objectOf(entry);
     return record === null ? [] : [record];
   });
+}
+
+/** Reads an answer's email state; anything unknown is "not emailed". */
+function emailStateOf(value: Json | undefined): EmailState {
+  if (value === 'sent' || value === 'waiting') return value;
+  return null;
+}
+
+/** Reads one message. */
+function messageFrom(message: Record<string, Json | undefined>): StaffTicketMessage {
+  return {
+    kind: (textOf(message, 'kind') ?? 'from_requester') as TicketMessageKind,
+    authorHandle: textOf(message, 'author_handle'),
+    body: textOf(message, 'body') ?? '',
+    channel: (textOf(message, 'channel') ?? 'in_app') as TicketChannel,
+    emailed: emailStateOf(message.emailed),
+    at: textOf(message, 'at') ?? '',
+  };
 }
 
 /** Reads the person's panel. */
@@ -146,13 +172,9 @@ export function staffTicketFromJson(json: Json | null): StaffTicket | null {
     channel: (textOf(ticket, 'channel') ?? 'in_app') as TicketChannel,
     tags: Array.isArray(ticket.tags) ? ticket.tags.filter((tag) => typeof tag === 'string') : [],
     assignedHandle: textOf(ticket, 'assigned_handle'),
+    followUpOf: typeof ticket.follow_up_of === 'number' ? ticket.follow_up_of : null,
     requester: requesterFrom(ticket.requester),
-    messages: objectsOf(ticket.messages).map((message) => ({
-      kind: (textOf(message, 'kind') ?? 'from_requester') as TicketMessageKind,
-      authorHandle: textOf(message, 'author_handle'),
-      body: textOf(message, 'body') ?? '',
-      at: textOf(message, 'at') ?? '',
-    })),
+    messages: objectsOf(ticket.messages).map(messageFrom),
     history: objectsOf(ticket.history).map((entry) => ({
       change: textOf(entry, 'change') ?? '',
       before: entry.before ?? null,

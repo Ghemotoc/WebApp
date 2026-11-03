@@ -147,7 +147,10 @@
       "member": "@{{handle}}",
       "emailSender": "Persoana (prin email)",
       "teamBy": "@{{handle}} pentru echipa de suport",
-      "note": "Notă internă de la @{{handle}} (doar echipa o vede)"
+      "note": "Notă internă de la @{{handle}} (doar echipa o vede)",
+      "emailed": "Trimis pe email",
+      "emailWaiting": "Așteaptă să fie trimis pe email",
+      "byEmail": "pe email"
     },
     "reply": {
       "label": "Răspunde persoanei sau adaugă o notă",
@@ -169,6 +172,7 @@
         "assignee": "Atribuirea din {{before}} în {{after}}",
         "tags": "Etichetele din {{before}} în {{after}}"
       }
-    }
+    },
+    "followUpOf": "Continuă tichetul închis #{{number}}"
   }
 }

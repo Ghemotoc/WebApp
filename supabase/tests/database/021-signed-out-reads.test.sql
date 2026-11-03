@@ -201,6 +201,7 @@ select results_eq(
        ('story_scores', 0::bigint),
        ('story_tags', 0::bigint),
        -- Support tickets: support staff only, members through functions (ADMIN-2h1).
+       ('support_ticket_emails', 0::bigint),
        ('support_ticket_events', 0::bigint),
        ('support_ticket_messages', 0::bigint),
        ('support_tickets', 0::bigint),

@@ -104,5 +104,15 @@
     "linkBody": "Someone asked for a Teacher badge on {{productName}} and gave this as their school address. Open the link to confirm it’s yours.",
     "linkAction": "Confirm your school address: {{link}}",
     "linkNotYou": "Didn’t ask for this? Ignore this email and nothing changes. The link stops working after a while."
+  },
+  "supportTickets": {
+    "acknowledgementSubject": "We’ve received your request [#{{number}}] · {{productName}}",
+    "acknowledgementBody": "Thank you for writing to us. Your request is #{{number}}: “{{subject}}”.\n\nA person on our support team reads every request. We usually answer within one working day, and always within one month.\n\nTo add something, reply to this email and keep [#{{number}}] in the subject.",
+    "acknowledgementInApp": "You can also read and answer it under Your support requests: {{link}}",
+    "replySubject": "Re: {{subject}} [#{{number}}]",
+    "replyHowToAnswer": "To answer, reply to this email and keep [#{{number}}] in the subject.",
+    "replyInApp": "You can also read the whole conversation under Your support requests: {{link}}",
+    "safetyLine": "If you or someone else is in danger, call 112. To report something on {{productName}}, use Report on it, not this email.",
+    "signOff": "The support team at {{productName}}"
   }
 }

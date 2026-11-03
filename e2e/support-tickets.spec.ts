@@ -13,7 +13,8 @@
  * - a moderator can't read the inbox;
  * - asking for help and the ticket page pass axe and don't scroll sideways at 390, 768 and
  *   1440 px, light and night, ro and en.
- * Test data: seed personas; the tickets made here are removed afterwards, the Vault secret too.
+ * Test data: seed personas; the tickets made here are removed afterwards. The local Vault secret
+ * stays, because e2e/support-emails.spec.ts may be using it at the same time.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
@@ -54,13 +55,15 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
     // The server signs Contact us tickets with SUPPORT_TICKET_SECRET (playwright.config.ts); the
     // database checks them against the same value in its Vault. Never a real secret.
     runSql(`
-      delete from vault.secrets where name = 'support_ticket_secret';
-      select vault.create_secret('local-e2e-support-secret', 'support_ticket_secret');
+      do $$ begin
+        if not exists (select 1 from vault.secrets where name = 'support_ticket_secret') then
+          perform vault.create_secret('local-e2e-support-secret', 'support_ticket_secret');
+        end if;
+      end $$;
       delete from public.rate_limit_events where user_id = '00000000-0000-4000-8000-000000000001';`);
   });
   test.afterAll(() => {
     runSql(`
-      delete from vault.secrets where name = 'support_ticket_secret';
       delete from public.support_tickets where subject like '%${stamp}%'
         or id in (select ticket_id from public.support_ticket_messages where body like '%${stamp}%');
       update public.profiles set locale = 'ro' where handle in ('adult_writer', 'support', 'moderator');`);

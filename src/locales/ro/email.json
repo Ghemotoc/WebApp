@@ -104,5 +104,15 @@
     "linkBody": "Cineva a cerut o insignă de Profesor pe {{productName}} și a dat această adresă ca adresă de la școală. Deschide linkul ca să confirmi că este a ta.",
     "linkAction": "Confirmă adresa de la școală: {{link}}",
     "linkNotYou": "Nu ai cerut asta? Ignoră acest email și nu se schimbă nimic. Linkul nu mai funcționează după o vreme."
+  },
+  "supportTickets": {
+    "acknowledgementSubject": "Am primit cererea ta [#{{number}}] · {{productName}}",
+    "acknowledgementBody": "Îți mulțumim că ne-ai scris. Cererea ta este #{{number}}: „{{subject}}”.\n\nO persoană din echipa de asistență citește fiecare cerere. De obicei răspundem într-o zi lucrătoare și întotdeauna în cel mult o lună.\n\nCa să adaugi ceva, răspunde la acest email și păstrează [#{{number}}] în subiect.",
+    "acknowledgementInApp": "O poți citi și îi poți răspunde și la Cererile tale de asistență: {{link}}",
+    "replySubject": "Re: {{subject}} [#{{number}}]",
+    "replyHowToAnswer": "Ca să răspunzi, răspunde la acest email și păstrează [#{{number}}] în subiect.",
+    "replyInApp": "Toată conversația este și la Cererile tale de asistență: {{link}}",
+    "safetyLine": "Dacă tu sau altcineva sunteți în pericol, sună la 112. Ca să raportezi ceva pe {{productName}}, folosește Raportează de lângă acel lucru, nu acest email.",
+    "signOff": "Echipa de asistență {{productName}}"
   }
 }
