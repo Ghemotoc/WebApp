@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- **Pictures to check (#294):** nothing on staging. Two questions in the pull request: the rejection email is the standard decision email (your text sits in the notification as the statement of reasons), and covers staff upload for classics also wait for a moderator. Optional: read the Romanian `pictures` lines in moderation.json.
 - **Picture rules (#293):** optional, read the new Romanian lines (`pictures.rules` in common.json, `labels.ratingUnderSixteen` in writing.json) and say whether "AI pictures that don’t look like photos" is the wording you want in the allowed list.
 - ADMIN-2d3 (#292): nothing on staging. Please read the first kind-words lists on Staff › Settings › Kind-words nudge (my drafts) and trim or add. Two questions in the pull request: the nudge shows inline under the comment rather than as a pop-up window, and a few words on the list can also be friendly.
 - ADMIN-2d (#291): nothing by hand. Download my stories now has a Format choice (Word, PDF or both), and Download my data and staff copies hold a PDF beside each Word file. One question in the pull request: keep pdfmake (MIT) as the PDF library? Optional: read the new Romanian lines in `dataExport.json`.
