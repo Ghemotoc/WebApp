@@ -4,7 +4,8 @@
  * Who shows it: the router, inside StaffLayout. What it shows: one card per area the person may
  * open today (the same list as the menu), and a plain note when none is open to them: a role
  * with no area yet (the content editor, decided 17 Oct 2026, 19:19) or a staff session older than
- * 12 hours (the database ends it; signing in again starts a new one).
+ * 12 hours (the database ends it; signing in again starts a new one). Owners, and anyone named
+ * in picture_open_alert_handles, also see who opened uploaded pictures this week (ADMIN-2e2a).
  * Plain components, no doodles (CLAUDE.md, Designs).
  */
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,8 @@ import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useMyStaffAccess } from '../hooks/useMyStaffAccess';
 import { pagesForAreas } from '../staffAreas';
+
+import { PictureOpeningsPanel } from './PictureOpeningsPanel';
 
 /**
  * Renders the page.
@@ -34,6 +37,7 @@ export function StaffHomePage() {
         <h1 className="m-0 font-heading text-[34px] font-bold text-heading">{t('home.heading')}</h1>
         <p className="m-0 text-body">{t('home.intro')}</p>
       </div>
+      <PictureOpeningsPanel />
       {pages.length === 0 ? (
         <p className="m-0 max-w-[720px] text-body">{t('home.noAreas')}</p>
       ) : (

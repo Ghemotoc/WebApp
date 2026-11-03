@@ -76,7 +76,8 @@
     "staffShowedCover": "readers can see the cover of your story “{{story}}” again.",
     "dataRequestConfirm": "we received a request about your data ({{reference}}) by email or post, not from inside your account. Was it you?",
     "dataRequestExtended": "we need more time to answer your data request {{reference}}. The new deadline and the reason are in Settings.",
-    "dataRequestCopyReady": "your copy for the data request {{reference}} is ready. Download it in Settings within seven days."
+    "dataRequestCopyReady": "your copy for the data request {{reference}} is ready. Download it in Settings within seven days.",
+    "pictureOpenedByStaff": "opened the original file of an uploaded picture. Every opening is in the audit log."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -135,7 +136,8 @@
     "openStorySettings": "Open the story’s settings",
     "answerDataRequest": "Answer",
     "seeDataRequests": "See your data requests",
-    "downloadDataRequestCopy": "Download it"
+    "downloadDataRequestCopy": "Download it",
+    "openAuditLog": "Open the audit log"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",

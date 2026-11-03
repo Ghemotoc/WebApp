@@ -23,7 +23,9 @@ export interface CasePicture {
   attempts: number;
   checkedAt: string | null;
   story: { slug: string; title: string } | null;
-  /** A signed address that lasts ten minutes; null when Storage refused. */
+  /** False for staff without the picture review permission: no file for them (ADMIN-2e2a). */
+  canSee: boolean;
+  /** A signed address that lasts ten minutes; null when Storage refused or canSee is false. */
   url: string | null;
 }
 
@@ -81,11 +83,14 @@ function pictureDetailsFrom(data: Record<string, Json | undefined>): Omit<CasePi
     attempts: typeof data.attempts === 'number' ? data.attempts : 0,
     checkedAt: textOf(data, 'checked_at'),
     story: storyOf(data.story),
+    canSee: data.canSee === true,
   };
 }
 
 /**
- * The picture a picture case is about, with a short-lived address to look at it.
+ * The picture a picture case is about, with a short-lived address to look at it. The database
+ * gives the address's bucket and path only to picture reviewers, and logs and alerts each time it
+ * does (bundle ADMIN-2, part e2a).
  *
  * @param client - the shared Supabase client
  * @param caseId - the case's ID
@@ -99,6 +104,8 @@ export async function fetchCasePicture(
   const { data, error } = await client.rpc('admin_case_picture', { target_case_id: caseId });
   if (error !== null) throw new ModerationError(failureFromCode(error.code));
   if (data === null || typeof data !== 'object' || Array.isArray(data)) return null;
+  // Only picture reviewers get the file's address (and the database logged that it handed it out).
+  if (data.canSee !== true) return { ...pictureDetailsFrom(data), url: null };
   // Ten minutes: long enough to look, short enough that a copied address soon stops working.
   const signed = await client.storage
     .from(textOf(data, 'bucket') ?? '')

@@ -70,6 +70,7 @@ export function PicturesToCheckPage() {
         </h1>
         <p className="m-0 text-body">{t('pictures.intro')}</p>
         <p className="m-0 text-body">{t('pictures.guidance')}</p>
+        <p className="m-0 text-meta">{t('pictures.openedNote')}</p>
       </div>
       <div aria-live="polite">
         {state.decisionFailure !== null && (

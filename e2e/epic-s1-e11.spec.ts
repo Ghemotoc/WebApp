@@ -136,9 +136,10 @@ test.describe('epic S1-E11 journeys', () => {
 
     // Step 5: each role's menu (S1-E11-01 × S1-E2-07a × S1-E10-03a; SAFE-4 added moderator mail,
     // appeals and the safety contacts; CMS-1a added Settings; CMS-1b added Website; ADMIN-2a added
-    // Stories and ADMIN-2c1 Data requests).
+    // Stories, ADMIN-2c1 Data requests and ADMIN-2e1b Pictures to check).
     expect(await menuLinks(owner)).toEqual([
       'Moderation',
+      'Pictures to check',
       'Moderator mail',
       'Tags',
       'Appeals',
@@ -159,6 +160,7 @@ test.describe('epic S1-E11 journeys', () => {
     const moderator = await openAs(browser, 'moderator', '/staff');
     expect(await menuLinks(moderator)).toEqual([
       'Moderation',
+      'Pictures to check',
       'Moderator mail',
       'Tags',
       'Appeals',

@@ -6,7 +6,8 @@
  * harmful material by accident (moderator wellbeing). For a known-abuse match the picture is never
  * shown here at all: the case is safeguarding and the evidence pack holds it (S1-E10-10).
  * The decision is the usual one: "No action" approves the picture, anything else removes it.
- * Plain components, no doodles (DoD).
+ * Only staff with the picture review permission see the file (bundle ADMIN-2, part e2a); others
+ * read what was flagged. Plain components, no doodles (DoD).
  * Who shows it: CasePage, when the case is about a picture. What it calls: useCasePicture.
  */
 import { useState } from 'react';
@@ -28,6 +29,7 @@ function PictureView({ picture, isMatch }: { picture: CasePicture; isMatch: bool
   const { t } = useTranslation('moderation');
   const [isShown, setIsShown] = useState(false);
   if (isMatch) return <p className="m-0 text-body">{t('picture.matchHidden')}</p>;
+  if (!picture.canSee) return <p className="m-0 text-body">{t('picture.reviewersOnly')}</p>;
   if (picture.url === null) return <p className="m-0 text-body">{t('picture.unreadable')}</p>;
   return (
     <div className="flex flex-col items-start gap-3">

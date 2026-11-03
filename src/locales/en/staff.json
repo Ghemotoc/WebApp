@@ -15,7 +15,7 @@
     "remove": "Remove {{role}}",
     "removeLabel": "Remove {{role}} from @{{handle}}",
     "permissions": "Permissions",
-    "permissionsHint": "Ticking or unticking uses the reason above.",
+    "permissionsHint": "Ticking or unticking uses the reason above. Marking someone an intern takes picture review away.",
     "noHandle": "(no username yet)",
     "changing": "Saving…",
     "changed": "Saved. It’s in the audit log.",
@@ -29,7 +29,8 @@
       "last_owner": "The last owner can’t be removed. Give the owner role to someone else first.",
       "not_staff": "Permissions are only for staff. Give this account a role first.",
       "refused": "That wasn’t saved. Check the account and the reason, then try again.",
-      "unreachable": "We couldn’t reach our server. Check your connection and try again."
+      "unreachable": "We couldn’t reach our server. Check your connection and try again.",
+      "picture_review_not_allowed": "Picture review is only for staff aged 18 or over who aren’t interns."
     },
     "reasonMissing": "Write a reason first.",
     "staffAccountNote": "A staff account can’t publish, comment, post or message as a member. Use a separate writer account for that.",
@@ -45,7 +46,8 @@
     "alreadyStaff": "already: {{roles}}",
     "showEmail": "Show email",
     "showEmailFor": "Show the email of {{name}}",
-    "accountMissing": "Find and pick the account first."
+    "accountMissing": "Find and pick the account first.",
+    "intern": "Intern (never reviews pictures)"
   },
   "roleNames": {
     "owner": "Owner",
@@ -57,7 +59,8 @@
   "permissionNames": {
     "safeguarding": "Safeguarding",
     "teacher_checks": "Teacher checks",
-    "on_call": "On call for removal orders"
+    "on_call": "On call for removal orders",
+    "picture_review": "Picture review (18 or over, never interns)"
   },
   "nav": {
     "moderation": "Moderation",
@@ -118,6 +121,15 @@
       "stories": "Find any story by title, username or user ID, and open it to see its details and chapters.",
       "data_requests": "Log and answer requests to see, move, correct or delete someone’s data, each within its deadline.",
       "pictures": "Pictures in All ages and 13+ stories, and pictures from under-16s, waiting for a moderator."
+    },
+    "pictureOpenings": {
+      "heading": "Uploaded pictures opened by staff",
+      "intro": "The last seven days. You’re told by email too. The audit log names every picture.",
+      "none": "Nobody opened an uploaded picture this week.",
+      "row_one": "{{count}} picture, last on {{last}}",
+      "row_few": "{{count}} pictures, last on {{last}}",
+      "row_other": "{{count}} pictures, last on {{last}}",
+      "auditLog": "Open the audit log"
     }
   },
   "auditLog": {

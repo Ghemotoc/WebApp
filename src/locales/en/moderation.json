@@ -404,7 +404,8 @@
     "provider": "Checked by",
     "noProvider": "Not checked yet",
     "story": "Story",
-    "decisionHint": "No action approves the picture and shows it. Any other decision removes it, and the uploader gets a statement of reasons."
+    "decisionHint": "No action approves the picture and shows it. Any other decision removes it, and the uploader gets a statement of reasons.",
+    "reviewersOnly": "Only staff with the picture review permission can see this picture. You can still read what the check flagged."
   },
   "appeals": {
     "documentTitle": "Appeals · {{productName}}",
@@ -485,7 +486,7 @@
     "heading": "Pictures to check",
     "intro": "Every picture in an All ages or 13+ story, and every picture from someone under 16, waits here after the automatic check. Nobody else sees it until you decide.",
     "guidance": "Approve drawings and illustrations that fit the story’s rating. No photographs, real people or celebrities. If a character could look under 18, press Reject.",
-    "notAllowed": "Only the moderation team can check pictures.",
+    "notAllowed": "Only staff with the picture review permission can check pictures. An owner or admin gives it on Staff › Roles.",
     "loading": "Loading the pictures…",
     "none": "No pictures are waiting.",
     "listLabel": "Pictures waiting for a decision",
@@ -529,6 +530,7 @@
       "gore": "gore",
       "hate": "hate",
       "other": "something else our guidelines don’t allow"
-    }
+    },
+    "openedNote": "Opening a picture here is in the audit log, and the owner is told."
   }
 }

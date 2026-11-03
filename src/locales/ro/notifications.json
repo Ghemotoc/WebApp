@@ -76,7 +76,8 @@
     "staffShowedCover": "cititorii pot vedea din nou coperta poveștii tale „{{story}}”.",
     "dataRequestConfirm": "am primit o cerere privind datele tale ({{reference}}) prin email sau poștă, nu din contul tău. Tu ai trimis-o?",
     "dataRequestExtended": "avem nevoie de mai mult timp ca să răspundem la cererea ta privind datele {{reference}}. Noul termen și motivul sunt în Setări.",
-    "dataRequestCopyReady": "copia pentru cererea ta privind datele {{reference}} e gata. Descarc-o din Setări în cel mult șapte zile."
+    "dataRequestCopyReady": "copia pentru cererea ta privind datele {{reference}} e gata. Descarc-o din Setări în cel mult șapte zile.",
+    "pictureOpenedByStaff": "a deschis fișierul original al unei imagini încărcate. Fiecare deschidere apare în jurnalul de audit."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -135,7 +136,8 @@
     "openStorySettings": "Deschide setările poveștii",
     "answerDataRequest": "Răspunde",
     "seeDataRequests": "Vezi cererile tale privind datele",
-    "downloadDataRequestCopy": "Descarc-o"
+    "downloadDataRequestCopy": "Descarc-o",
+    "openAuditLog": "Deschide jurnalul de audit"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",

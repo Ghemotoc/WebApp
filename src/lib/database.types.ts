@@ -5480,6 +5480,46 @@ export type Database = {
           },
         ];
       };
+      staff_interns: {
+        Row: {
+          created_at: string;
+          id: string;
+          marked_by_user_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          marked_by_user_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          marked_by_user_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'staff_interns_marked_by_user_id_fkey';
+            columns: ['marked_by_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'staff_interns_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       staff_languages: {
         Row: {
           created_at: string;
@@ -7589,6 +7629,7 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: {
           handle: string;
+          is_intern: boolean;
           permissions: Database['public']['Enums']['staff_permission'][];
           roles: Database['public']['Enums']['staff_role'][];
           user_id: string;
@@ -7792,6 +7833,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_recent_picture_openings: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_record_story_change: {
         Args: {
           change_kind: string;
@@ -8040,6 +8082,10 @@ export type Database = {
       admin_set_forum_thread_sticky: {
         Args: { is_sticky: boolean; reason: string; thread_number: number };
         Returns: undefined;
+      };
+      admin_set_intern: {
+        Args: { reason_given: string; should_be_intern: boolean; target_user_id: string };
+        Returns: boolean;
       };
       admin_set_language_status: {
         Args: { language_code: string; new_status: Database['public']['Enums']['language_status'] };
@@ -9535,6 +9581,7 @@ export type Database = {
         Returns: boolean;
       };
       is_personal_email_domain: { Args: { domain: string }; Returns: boolean };
+      is_picture_reviewer: { Args: { person_id: string }; Returns: boolean };
       is_school_domain_trusted: { Args: { domain: string }; Returns: boolean };
       is_social_provider: { Args: { provider: string }; Returns: boolean };
       is_staff: {
@@ -9788,6 +9835,7 @@ export type Database = {
       marketing_email_allowed: { Args: { target_user_id: string }; Returns: boolean };
       mask_email: { Args: { address: string }; Returns: string };
       may_keep_writing: { Args: { other_id: string; writer_id: string }; Returns: boolean };
+      may_review_pictures: { Args: Record<PropertyKey, never>; Returns: boolean };
       may_see_case: { Args: { case_is_safeguarding: boolean }; Returns: boolean };
       may_see_march_numbers: { Args: Record<PropertyKey, never>; Returns: boolean };
       message_age_group: {
@@ -10416,6 +10464,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      picture_open_alert_recipients: { Args: Record<PropertyKey, never>; Returns: string[] };
       picture_reader_may_see: { Args: { bucket: string; path: string }; Returns: boolean };
       picture_review_case: {
         Args: { target_case_id: string };
@@ -10808,6 +10857,7 @@ export type Database = {
         Args: { payload: string; signature: string };
         Returns: Database['public']['Enums']['picture_status'];
       };
+      record_picture_opened: { Args: { picture_id: string; place: string }; Returns: undefined };
       record_retention_run: {
         Args: { removed_count: number; run_job_name: string };
         Returns: undefined;
@@ -10989,6 +11039,7 @@ export type Database = {
         Args: { removed_role: Database['public']['Enums']['staff_role']; target_user_id: string };
         Returns: undefined;
       };
+      require_picture_reviewer: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_role_change_allowed: {
         Args: { reason_given: string; target_user_id: string };
         Returns: undefined;
@@ -11957,7 +12008,8 @@ export type Database = {
         | 'story_changed_by_staff'
         | 'data_request_confirm'
         | 'data_request_extended'
-        | 'data_request_copy_ready';
+        | 'data_request_copy_ready'
+        | 'picture_opened_by_staff';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -12033,7 +12085,7 @@ export type Database = {
       space_posting: 'anyone' | 'members';
       space_power: 'posts' | 'members' | 'settings' | 'mail';
       space_readers: 'members' | 'everybody';
-      staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call';
+      staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call' | 'picture_review';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
       statement_action:
         | 'hide'
@@ -12291,6 +12343,7 @@ export const Constants = {
         'data_request_confirm',
         'data_request_extended',
         'data_request_copy_ready',
+        'picture_opened_by_staff',
       ],
       picture_kind: [
         'cover',
@@ -12372,7 +12425,7 @@ export const Constants = {
       space_posting: ['anyone', 'members'],
       space_power: ['posts', 'members', 'settings', 'mail'],
       space_readers: ['members', 'everybody'],
-      staff_permission: ['safeguarding', 'teacher_checks', 'on_call'],
+      staff_permission: ['safeguarding', 'teacher_checks', 'on_call', 'picture_review'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
       statement_action: [
         'hide',
