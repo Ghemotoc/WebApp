@@ -2,7 +2,8 @@
 -- CONTESTS-13a2b; CLAUDE.md rules 1 and 15).
 -- What it proves:
 -- - publishing is refused for a Remind me block without a Key dates block, and for two of them;
--- - a visitor who isn't signed in is asked to sign in; a signed-in reader sets the reminder once
+-- - a visitor who isn't signed in can't ask (the page shows a sign-in link); a signed-in reader
+--   sets the reminder once
 --   (asking twice changes nothing) and cancels it; nobody can ask once entries are open, or on a
 --   page without the block;
 -- - landing_page() tells each reader whether they asked, and when entries open;
@@ -84,8 +85,9 @@ select public.admin_publish_landing_page(id) from kept where label = 'draft';
 /* ---------- 2. Asking ---------- */
 
 select pg_temp.as_visitor();
-select is(pg_temp.hint_of($$ select public.set_landing_reminder('iarna-test', true) $$), 'sign_in',
-  'a visitor who isn''t signed in is asked to sign in');
+-- Visitors can't call the function at all; the page shows them a sign-in link instead.
+select throws_ok($$ select public.set_landing_reminder('iarna-test', true) $$, '42501', null,
+  'a visitor who isn''t signed in can''t set a reminder');
 select is(public.landing_page('iarna-test') #>> '{reminder,is_set}', 'false',
   'a visitor sees the reminder as not set');
 select is(public.landing_page('iarna-test') #>> '{reminder,opens_on}', (public.romania_today() + 3)::text,
@@ -96,7 +98,7 @@ select is(public.set_landing_reminder('iarna-test', true) ->> 'is_set', 'true', 
 select is(public.set_landing_reminder('IARNA-test', true) ->> 'is_set', 'true',
   'asking again, in any letter case, keeps it set');
 select is((select count(*)::integer from public.landing_page_reminders), 1,
-  'landing_page_reminders_select_own allows: the reader reads their one reminder');
+  'allowed: landing_page_reminders_select_own, the reader reads their one reminder');
 select is(public.landing_page('iarna-test') #>> '{reminder,is_set}', 'true', 'the page shows it is set');
 select throws_ok(
   $$ insert into public.landing_page_reminders (user_id, page_id)
@@ -109,7 +111,7 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
 select public.set_landing_reminder('iarna-test', true);
 select is((select count(*)::integer from public.landing_page_reminders
            where user_id = '00000000-0000-4000-8000-000000000001'), 0,
-  'landing_page_reminders_select_own denies: another reader''s reminder is hidden');
+  'denied: landing_page_reminders_select_own, another reader''s reminder is hidden');
 select is(public.set_landing_reminder('iarna-test', false) ->> 'is_set', 'false', 'a reader cancels the reminder');
 select public.set_landing_reminder('iarna-test', true);
 

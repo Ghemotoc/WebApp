@@ -8,7 +8,7 @@
  * today": copy aimed at minors must not pressure them (story legal notes).
  * Who shows it: LandingBlockView. What it calls: useLandingReminder() and useSession().
  */
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
