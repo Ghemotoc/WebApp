@@ -19,6 +19,7 @@ import { SignUpPage } from '@/features/auth/components/SignUpPage';
 import { ErrorPage } from '@/features/errors/components/ErrorPage';
 import { LegalCentrePage } from '@/features/legal/components/LegalCentrePage';
 import { prefetchChapter } from '@/features/reading/api/chapterPrefetch';
+import { LandingPageScreen } from '@/features/landing-pages/components/LandingPageScreen';
 import { HelpCentrePage } from '@/features/website/components/HelpCentrePage';
 import { HelpPageView } from '@/features/website/components/HelpPageView';
 import { WebsiteHomePage } from '@/features/website/components/WebsiteHomePage';
@@ -1051,6 +1052,8 @@ function pageRoutes(): RouteObject[] {
     // Help: the CMS help pages and questions for the visitor's market and language (S1-E11-12).
     { path: '/help', element: <HelpCentrePage /> },
     { path: '/help/:slug', element: <HelpPageView /> },
+    // S1-E11-14: a landing page for a contest, campaign or information, from the CMS.
+    { path: '/c/:slug', element: <LandingPageScreen /> },
     // The Legal centre (S1-E14-01): /legal opens the terms; each document has its own address.
     { path: '/legal', element: <Navigate to="/legal/terms" replace /> },
     { path: '/legal/:documentSlug', element: <LegalCentrePage /> },

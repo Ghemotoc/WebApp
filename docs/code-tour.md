@@ -1577,6 +1577,16 @@ A small drawing beside Discover's heading changes with the season and on special
 - **The year view:** `OccasionYearView` uses `occasionCovers()`, the same rule as the database's `occasion_covers()`, to list each month's occasions and count any day with no doodle.
 - **Tests:** `supabase/tests/database/174-seasonal-occasions.test.sql`, `e2e/seasonal-doodles.spec.ts`, `src/features/seasonal/lib/seasonalCalendar.test.ts`.
 
+## Landing pages (S1-E11-14; CONTESTS-13a1)
+
+A landing page is a page at its own address, `/c/<name>`, for a contest, a campaign or some information. Admins build it from fixed blocks (hero, text, key dates, who can enter, prize, how to enter, rules, questions and answers) in Romanian and English side by side; there is no free HTML and no colour of their own, only four brand themes.
+
+- **Where it starts (visitors):** `/c/:slug` is `LandingPageScreen` (`src/features/landing-pages/`). `usePublicLandingPage()` → `fetchPublicLandingPage()` → `landing_page(slug)`, which returns the live version (never a draft or a scheduled one) with `state` "live", or "ended" from its take-down date; an archived page, or one with nothing live, is Not found. `LandingPageView` draws the theme band and the one h1, then `LandingBlockView` for each block, in the visitor's interface language.
+- **Where it starts (staff):** `/staff/website/landing-pages` is `LandingPagesTab` inside `WebsiteAdminPage` (owner and admins only). `NewLandingPageForm` → `admin_create_landing_page()` (refuses a badly formed, reserved or taken address). `?page=<id>` opens `LandingPageEditor`: the form (`LandingEditorForm`, `BlockCard` with Up, Down and Remove, `BlockLanguageColumn` for each language, `BlockSharedFields`, `QuestionItemsFields`, `AddBlockRow`), a phone and desktop `LandingPreview`, `LandingPublishBar` and `LandingVersionHistory`.
+- **How one click travels:** Publish → `useLandingPageEditor().act({ kind: 'publish', draft })` → `admin_save_landing_page_draft()` then `admin_publish_landing_page()`, which asks `landing_page_problems()` for what is missing (a hero first, every required field in both languages, a contest's key dates and Rules link, dates in order) and refuses with the list as the hint, which `labelOfField()` turns into "Block 3: Rules, English: Link text". The limits live twice, in `src/schemas/landingPages.ts` (`landingFieldRules`) and `landing_block_field_rules()`, so the counters and the server agree. Each create, publish, restore and archive writes `landing_page.*` to `audit_log`.
+- **Tables:** `landing_pages` (address, type, archived) and `landing_page_versions` (one draft per page, published versions with "show from" and "take down on"). `c` is a reserved name, so no username can take the address.
+- **Tests:** `supabase/tests/database/261-landing-pages.test.sql`, `e2e/landing-pages.spec.ts`, `src/features/landing-pages/lib/blocks.test.ts`.
+
 ## Tags: approval and names in each language (CMS-1e)
 
 A tag is one idea with a name in each language (Fantasy, Fantezie). A name nobody used before waits for the moderation team; readers see approved tags only.

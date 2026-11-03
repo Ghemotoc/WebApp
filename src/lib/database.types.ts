@@ -3132,6 +3132,100 @@ export type Database = {
         };
         Relationships: [];
       };
+      landing_page_versions: {
+        Row: {
+          content: NonNullable<Json>;
+          created_at: string;
+          id: string;
+          page_id: string;
+          published_at: string | null;
+          show_from: string | null;
+          status: string;
+          take_down_on: string | null;
+          updated_at: string;
+          user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          content?: NonNullable<Json>;
+          created_at?: string;
+          id?: string;
+          page_id: string;
+          published_at?: string | null;
+          show_from?: string | null;
+          status?: string;
+          take_down_on?: string | null;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          content?: NonNullable<Json>;
+          created_at?: string;
+          id?: string;
+          page_id?: string;
+          published_at?: string | null;
+          show_from?: string | null;
+          status?: string;
+          take_down_on?: string | null;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'landing_page_versions_page_id_fkey';
+            columns: ['page_id'];
+            isOneToOne: false;
+            referencedRelation: 'landing_pages';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'landing_page_versions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      landing_pages: {
+        Row: {
+          archived_at: string | null;
+          created_at: string;
+          id: string;
+          page_type: string;
+          slug: string;
+          updated_at: string;
+          user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          created_at?: string;
+          id?: string;
+          page_type: string;
+          slug: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          archived_at?: string | null;
+          created_at?: string;
+          id?: string;
+          page_type?: string;
+          slug?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'landing_pages_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       languages: {
         Row: {
           code: string;
@@ -7875,6 +7969,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_archive_landing_page: { Args: { target_page_id: string }; Returns: undefined };
       admin_ask_data_request_confirmation: { Args: { target_request_id: string }; Returns: Json };
       admin_ask_data_request_parent: {
         Args: { signature: string; target_request_id: string; token_hash: string };
@@ -7993,6 +8088,10 @@ export type Database = {
           expires_at: string;
           invite_id: string;
         }[];
+      };
+      admin_create_landing_page: {
+        Args: { new_page_type: string; new_slug: string };
+        Returns: string;
       };
       admin_data_request: { Args: { target_request_id: string }; Returns: Json };
       admin_data_request_copy_target: {
@@ -8438,6 +8537,7 @@ export type Database = {
       admin_publish_classic: { Args: { target_story_id: string }; Returns: Json };
       admin_publish_cms_version: { Args: { version_id: string }; Returns: string };
       admin_publish_interface_text: { Args: { version_id: string }; Returns: string };
+      admin_publish_landing_page: { Args: { version_id: string }; Returns: string };
       admin_put_back_passage: {
         Args: {
           reason_code: string;
@@ -8566,6 +8666,7 @@ export type Database = {
         Args: { reason_given: string; target_item_id: string };
         Returns: boolean;
       };
+      admin_restore_landing_page_version: { Args: { version_id: string }; Returns: string };
       admin_restore_story_revision: {
         Args: { reason_code: string; reason_text: string; target_revision_id: string };
         Returns: string;
@@ -8636,6 +8737,15 @@ export type Database = {
           new_show_from?: string;
           new_text: string;
           text_key: string;
+        };
+        Returns: string;
+      };
+      admin_save_landing_page_draft: {
+        Args: {
+          new_content: Json;
+          new_show_from?: string;
+          new_take_down_on?: string;
+          target_page_id: string;
         };
         Returns: string;
       };
@@ -10383,6 +10493,54 @@ export type Database = {
       join_space: { Args: { slug: string }; Returns: Json };
       jsonb_values_text: { Args: { document: Json }; Returns: string };
       keep_setting: { Args: { default_value: number; setting_key: string }; Returns: number };
+      landing_block_extra_problems: {
+        Args: { block: Json; block_path: string };
+        Returns: string[];
+      };
+      landing_block_field_rules: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          block_kind: string;
+          field_name: string;
+          is_required: boolean;
+          longest: number;
+        }[];
+      };
+      landing_page: { Args: { page_slug: string }; Returns: Json };
+      landing_page_live_version: {
+        Args: { target_page_id: string };
+        Returns: {
+          content: NonNullable<Json>;
+          created_at: string;
+          id: string;
+          page_id: string;
+          published_at: string | null;
+          show_from: string | null;
+          status: string;
+          take_down_on: string | null;
+          updated_at: string;
+          user_id: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'landing_page_versions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      landing_page_problems: { Args: { content: Json; page_type: string }; Returns: string[] };
+      landing_page_slug_problem: { Args: { wanted_slug: string }; Returns: string };
+      landing_text_problem: {
+        Args: {
+          block: Json;
+          field_name: string;
+          field_path: string;
+          is_required: boolean;
+          language_code: string;
+          longest: number;
+        };
+        Returns: string;
+      };
       language_moderator_counts: {
         Args: Record<PropertyKey, never>;
         Returns: {
