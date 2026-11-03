@@ -8,7 +8,8 @@
  * change, without the words. Plain components, no doodles (staff screens).
  * Part h2 adds whether each answer was emailed and the link to the closed ticket a follow-up
  * continues. Part h3b adds the canned reply picker above the reply box; part h4a the spam and
- * merge actions, and a line saying a ticket is spam or where it was merged.
+ * merge actions, and a line saying a ticket is spam or where it was merged; part h4b Convert to
+ * report and Open data request (TicketLinksPanel).
  * Who shows it: the router, inside StaffLayout. What it calls: useStaffTicket.
  */
 import { Link, useParams } from 'react-router';
@@ -25,6 +26,7 @@ import { CannedReplyPicker } from './CannedReplyPicker';
 import { RequesterPanel } from './RequesterPanel';
 import { SupportReplyForm } from './SupportReplyForm';
 import { TicketActionsPanel } from './TicketActionsPanel';
+import { TicketLinksPanel } from './TicketLinksPanel';
 import { TicketFieldsPanel } from './TicketFieldsPanel';
 import { TicketHistory } from './TicketHistory';
 import { TicketMessageList, type TicketMessageItem } from './TicketMessageList';
@@ -194,6 +196,7 @@ function LoadedTicket({
             onSave={(changes) => state.change({ kind: 'fields', changes })}
           />
           <TicketActionsPanel ticket={ticket} isBusy={state.isChanging} onChange={state.change} />
+          <TicketLinksPanel ticket={ticket} />
           <TicketHistory history={ticket.history} />
         </div>
       </div>

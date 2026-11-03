@@ -176,7 +176,9 @@
         "spam_marked": "Marked as spam",
         "spam_cleared": "Marked as not spam",
         "merged_into": "Merged into {{after}}",
-        "merged_from": "{{after}} merged into this ticket"
+        "merged_from": "{{after}} merged into this ticket",
+        "converted_to_report": "Sent to the moderation team as {{after}}",
+        "data_request_opened": "Data request {{after}} opened"
       }
     },
     "followUpOf": "Follows up the closed ticket #{{number}}",
@@ -232,6 +234,56 @@
         "refused": "That didn’t work: only open tickets from the same person can be merged.",
         "not_found": "There’s no ticket with that number.",
         "not_allowed": "Only support staff can do this.",
+        "too_many": "Too many changes at once. Try again in a moment.",
+        "unreachable": "We couldn’t reach the server. Check your connection and try again."
+      }
+    },
+    "links": {
+      "heading": "Moderation and data requests",
+      "startedLabel": "Started from this ticket",
+      "noticeLine": "Report {{reference}} sent to the moderation team",
+      "requestLine": "Data request {{reference}} ({{type}}), due {{due}}",
+      "convertHeading": "Convert to report",
+      "address": "Address of what is reported (optional)",
+      "addressHint": "A story, chapter or profile on our site. Leave it empty for a worry with no address, such as a child’s safety.",
+      "reason": "Reason",
+      "explanation": "What the ticket says is wrong",
+      "convert": "Convert to report",
+      "convertedToCase": "Sent as {{reference}}: it’s in the moderation queue.",
+      "convertedUnmatched": "Sent as {{reference}}: the moderation team checks it by hand, because the address points to nothing we host.",
+      "reasons": {
+        "threat_to_minor": "A child may be in danger",
+        "child_sexual_content": "Child sexual abuse material",
+        "self_harm": "Self-harm or suicide",
+        "terrorism": "Terrorism",
+        "illegal_content": "Something else illegal",
+        "harassment": "Harassment or bullying",
+        "hate": "Hate",
+        "copyright": "Copyright",
+        "other": "Something else harmful"
+      },
+      "convertFailures": {
+        "refused": "That didn’t work: write what the ticket says is wrong. A spam ticket can’t become a report.",
+        "not_found": "This ticket no longer exists.",
+        "not_allowed": "Only support staff can do this.",
+        "too_many": "Too many changes at once. Try again in a moment.",
+        "unreachable": "We couldn’t reach the server. Check your connection and try again."
+      },
+      "requestHeading": "Open data request",
+      "requestType": "What the person asks for",
+      "openRequest": "Open data request",
+      "requestTypes": {
+        "copy": "A copy of their data",
+        "move": "Their data to take elsewhere",
+        "correct": "A correction",
+        "delete": "Deletion",
+        "other": "Something else"
+      },
+      "noAccount": "This person has no account, so a data request can’t be opened here: answer it by email.",
+      "requestFailures": {
+        "refused": "That didn’t work: this person has no account, so answer by email.",
+        "not_found": "This ticket no longer exists.",
+        "not_allowed": "Only owner, admin and support staff handle data requests.",
         "too_many": "Too many changes at once. Try again in a moment.",
         "unreachable": "We couldn’t reach the server. Check your connection and try again."
       }

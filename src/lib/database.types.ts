@@ -2116,6 +2116,7 @@ export type Database = {
           reference: string;
           request_type: Database['public']['Enums']['data_request_type'];
           state: Database['public']['Enums']['data_request_state'];
+          support_ticket_id: string | null;
           updated_at: string;
           user_id: string;
           data_request_deadline: string | null;
@@ -2154,6 +2155,7 @@ export type Database = {
           reference?: string;
           request_type: Database['public']['Enums']['data_request_type'];
           state?: Database['public']['Enums']['data_request_state'];
+          support_ticket_id?: string | null;
           updated_at?: string;
           user_id: string;
         };
@@ -2183,6 +2185,7 @@ export type Database = {
           reference?: string;
           request_type?: Database['public']['Enums']['data_request_type'];
           state?: Database['public']['Enums']['data_request_state'];
+          support_ticket_id?: string | null;
           updated_at?: string;
           user_id?: string;
         };
@@ -2199,6 +2202,13 @@ export type Database = {
             columns: ['handled_by_user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'data_requests_support_ticket_id_fkey';
+            columns: ['support_ticket_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_tickets';
             referencedColumns: ['id'];
           },
           {
@@ -4301,6 +4311,8 @@ export type Database = {
           reason: Database['public']['Enums']['report_reason'] | null;
           received_at: string;
           reference: string;
+          support_ticket_id: string | null;
+          support_ticket_number: number | null;
           updated_at: string;
           attach_notice_to_case: string | null;
         };
@@ -4331,6 +4343,8 @@ export type Database = {
           reason?: Database['public']['Enums']['report_reason'] | null;
           received_at?: string;
           reference: string;
+          support_ticket_id?: string | null;
+          support_ticket_number?: number | null;
           updated_at?: string;
         };
         Update: {
@@ -4359,6 +4373,8 @@ export type Database = {
           reason?: Database['public']['Enums']['report_reason'] | null;
           received_at?: string;
           reference?: string;
+          support_ticket_id?: string | null;
+          support_ticket_number?: number | null;
           updated_at?: string;
         };
         Relationships: [
@@ -4374,6 +4390,13 @@ export type Database = {
             columns: ['owner_user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'public_notices_support_ticket_id_fkey';
+            columns: ['support_ticket_id'];
+            isOneToOne: false;
+            referencedRelation: 'support_tickets';
             referencedColumns: ['id'];
           },
         ];
@@ -7950,6 +7973,15 @@ export type Database = {
       };
       admin_compliance_log: { Args: { for_export?: boolean }; Returns: Json };
       admin_confirm_safety_contact: { Args: { target_contact_id: string }; Returns: boolean };
+      admin_convert_ticket_to_report: {
+        Args: {
+          content_address: string;
+          explanation: string;
+          reason: Database['public']['Enums']['report_reason'];
+          ticket_number: number;
+        };
+        Returns: Json;
+      };
       admin_create_class_space: {
         Args: { description: string; name: string; school_name: string; teacher_handle: string };
         Returns: Json;
@@ -7991,6 +8023,7 @@ export type Database = {
           reference: string;
           request_type: Database['public']['Enums']['data_request_type'];
           state: Database['public']['Enums']['data_request_state'];
+          support_ticket_id: string | null;
           updated_at: string;
           user_id: string;
         };
@@ -8030,6 +8063,7 @@ export type Database = {
           reference: string;
           request_type: Database['public']['Enums']['data_request_type'];
           state: Database['public']['Enums']['data_request_state'];
+          support_ticket_id: string | null;
           updated_at: string;
           user_id: string;
         };
@@ -8349,6 +8383,13 @@ export type Database = {
         Returns: string;
       };
       admin_open_teacher_proof: { Args: { check_id: string }; Returns: string };
+      admin_open_ticket_data_request: {
+        Args: {
+          request_type: Database['public']['Enums']['data_request_type'];
+          ticket_number: number;
+        };
+        Returns: Json;
+      };
       admin_order_timeline: { Args: { target_case_id: string }; Returns: Json };
       admin_passage_case: {
         Args: { case_reference: string };
@@ -8918,6 +8959,7 @@ export type Database = {
           handle: string;
         }[];
       };
+      admin_ticket_links: { Args: { ticket_number: number }; Returns: Json };
       admin_unlink_returning_user: {
         Args: { link_id: string; reason_given: string };
         Returns: boolean;
@@ -9804,6 +9846,7 @@ export type Database = {
           reference: string;
           request_type: Database['public']['Enums']['data_request_type'];
           state: Database['public']['Enums']['data_request_state'];
+          support_ticket_id: string | null;
           updated_at: string;
           user_id: string;
         };
@@ -10010,6 +10053,7 @@ export type Database = {
       export_row_for_owner: { Args: { stored_row: Json }; Returns: Json };
       export_staff_open_allowed: { Args: { object_name: string }; Returns: boolean };
       export_staff_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      export_support_tickets_of: { Args: { owner_id: string }; Returns: Json };
       export_tables_of: { Args: { owner_id: string }; Returns: Json };
       export_upload_allowed: { Args: { object_name: string }; Returns: boolean };
       finish_data_export: { Args: { export_id: string; story_count: number }; Returns: Json };
@@ -11429,6 +11473,7 @@ export type Database = {
       purge_old_public_notices: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_reading_minutes: { Args: Record<PropertyKey, never>; Returns: number };
       purge_old_staff_records: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_old_support_tickets: { Args: Record<PropertyKey, never>; Returns: number };
       purge_rate_limit_events: { Args: Record<PropertyKey, never>; Returns: number };
       purge_sent_emails: { Args: Record<PropertyKey, never>; Returns: number };
       purge_unconfirmed_accounts: { Args: Record<PropertyKey, never>; Returns: number };

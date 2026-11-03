@@ -176,7 +176,9 @@
         "spam_marked": "Marcat ca spam",
         "spam_cleared": "Marcat ca nefiind spam",
         "merged_into": "Unit cu {{after}}",
-        "merged_from": "{{after}} a fost unit cu acest tichet"
+        "merged_from": "{{after}} a fost unit cu acest tichet",
+        "converted_to_report": "Trimis echipei de moderare ca {{after}}",
+        "data_request_opened": "Cererea privind datele {{after}} a fost deschisă"
       }
     },
     "followUpOf": "Continuă tichetul închis #{{number}}",
@@ -232,6 +234,56 @@
         "refused": "Nu a mers: se pot uni doar tichete deschise de la aceeași persoană.",
         "not_found": "Nu există niciun tichet cu acest număr.",
         "not_allowed": "Doar echipa de asistență poate face asta.",
+        "too_many": "Prea multe modificări deodată. Încearcă din nou peste puțin timp.",
+        "unreachable": "Nu am putut ajunge la server. Verifică-ți conexiunea și încearcă din nou."
+      }
+    },
+    "links": {
+      "heading": "Moderare și cereri privind datele",
+      "startedLabel": "Pornite din acest tichet",
+      "noticeLine": "Raportul {{reference}} trimis echipei de moderare",
+      "requestLine": "Cererea privind datele {{reference}} ({{type}}), termen {{due}}",
+      "convertHeading": "Transformă în raport",
+      "address": "Adresa a ceea ce se raportează (opțional)",
+      "addressHint": "O poveste, un capitol sau un profil de pe site. Lasă gol pentru o îngrijorare fără adresă, cum ar fi siguranța unui copil.",
+      "reason": "Motiv",
+      "explanation": "Ce spune tichetul că e în neregulă",
+      "convert": "Transformă în raport",
+      "convertedToCase": "Trimis ca {{reference}}: e în coada de moderare.",
+      "convertedUnmatched": "Trimis ca {{reference}}: echipa de moderare îl verifică manual, pentru că adresa nu duce la nimic de pe site.",
+      "reasons": {
+        "threat_to_minor": "Un copil poate fi în pericol",
+        "child_sexual_content": "Material cu abuz sexual asupra copiilor",
+        "self_harm": "Autovătămare sau sinucidere",
+        "terrorism": "Terorism",
+        "illegal_content": "Altceva ilegal",
+        "harassment": "Hărțuire sau bullying",
+        "hate": "Ură",
+        "copyright": "Drepturi de autor",
+        "other": "Altceva dăunător"
+      },
+      "convertFailures": {
+        "refused": "Nu a mers: scrie ce spune tichetul că e în neregulă. Un tichet spam nu poate deveni raport.",
+        "not_found": "Tichetul nu mai există.",
+        "not_allowed": "Doar echipa de asistență poate face asta.",
+        "too_many": "Prea multe modificări deodată. Încearcă din nou peste puțin timp.",
+        "unreachable": "Nu am putut ajunge la server. Verifică-ți conexiunea și încearcă din nou."
+      },
+      "requestHeading": "Deschide o cerere privind datele",
+      "requestType": "Ce cere persoana",
+      "openRequest": "Deschide cererea",
+      "requestTypes": {
+        "copy": "O copie a datelor",
+        "move": "Datele, ca să le ducă în altă parte",
+        "correct": "O corectare",
+        "delete": "Ștergere",
+        "other": "Altceva"
+      },
+      "noAccount": "Această persoană nu are cont, deci cererea nu se poate deschide aici: răspunde-i prin email.",
+      "requestFailures": {
+        "refused": "Nu a mers: această persoană nu are cont, deci răspunde-i prin email.",
+        "not_found": "Tichetul nu mai există.",
+        "not_allowed": "Doar proprietarul, administratorii și echipa de asistență se ocupă de cererile privind datele.",
         "too_many": "Prea multe modificări deodată. Încearcă din nou peste puțin timp.",
         "unreachable": "Nu am putut ajunge la server. Verifică-ți conexiunea și încearcă din nou."
       }
