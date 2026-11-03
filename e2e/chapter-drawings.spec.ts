@@ -7,7 +7,7 @@
  * What it proves (with the picture_uploads flag switched on for the test):
  * - Insert › Drawing opens a sketch pad with pen, eraser, three brand colours, Undo and Clear
  *   (criterion 1);
- * - an empty sheet, missing alt text and the unticked rights box are refused;
+ * - an empty sheet and missing alt text are refused, and the dialog says which pictures are allowed;
  * - a mouse drag and the arrow keys both draw; Undo takes a line away and Clear empties the sheet;
  * - the finished drawing is saved as a picture with its alt text and goes through the picture
  *   check like any picture (criterion 2): the editor shows it as checked and readers see it;
@@ -114,9 +114,8 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
     await dialog.getByRole('button', { name: 'Insert drawing' }).click();
     await expect(dialog.getByText('Draw something first.')).toBeVisible();
     await expect(dialog.getByText('Write alt text for the picture.')).toBeVisible();
-    await expect(
-      dialog.getByText('Tick the box to confirm you have the right to use this picture.'),
-    ).toBeVisible();
+    await expect(dialog.getByText('Drawings and illustrations only, no photos.')).toBeVisible();
+    await expect(dialog.getByRole('checkbox')).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Cancel' }).click();
     expect(
       runSql(`select count(*) from public.picture_checks where chapter_id = '${chapterId}'`),
@@ -147,7 +146,6 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
     await dragAcross(page);
 
     await dialog.getByRole('textbox', { name: 'Alt text' }).fill('A storm cloud over the station');
-    await dialog.getByRole('checkbox', { name: 'I have the right to use this picture' }).check();
     await dialog.getByRole('button', { name: 'Insert drawing' }).click();
     await expect(dialog).toBeHidden();
 

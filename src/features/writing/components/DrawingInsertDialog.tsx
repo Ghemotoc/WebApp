@@ -3,9 +3,10 @@
  * and 2; board 4.3, "Sketch pad").
  *
  * What it does: a native <dialog> (focus stays inside, Escape closes) with the drawing tools (pen,
- * eraser, three brand colours, Undo, Clear), the sheet, and the same two things every chapter
- * picture needs: alt text and "I have the right to use this picture" (S1-E3-09). "Insert drawing"
- * refuses an empty sheet or a missing field; otherwise it turns the sheet into a PNG and sends it
+ * eraser, three brand colours, Undo, Clear), the sheet, the alt text every chapter picture needs
+ * (S1-E3-09) and the line on which pictures are allowed (bundle ADMIN-2, part e1, which also
+ * removed the rights tick box). "Insert drawing" refuses an empty sheet or missing alt text;
+ * otherwise it turns the sheet into a PNG and sends it
  * through the picture upload of S1-E3-09 (metadata removed, resized, then the picture check), and
  * the drawing goes in the chapter where the cursor was, as a picture (criterion 2).
  * Who uses it: ChapterInsertControls. What it calls: useSketchPad, useChapterPictureUpload, then
@@ -18,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
+import { PictureRulesNote } from '@/features/pictures/components/PictureRulesNote';
 import { useChapterPictureUpload } from '@/features/pictures/hooks/useChapterPictures';
 import { MAXIMUM_ALT_TEXT_LENGTH } from '@/lib/chapter-pictures';
 
@@ -27,7 +29,6 @@ import { insertChapterPicture } from '../lib/chapterPictureNode';
 import { pictureFailureMessage } from '../lib/pictureFailure';
 import { hasInk } from '../lib/sketchPad';
 
-import { LabelCheckbox } from './LabelCheckbox';
 import { SketchPadCanvas } from './SketchPadCanvas';
 import { SketchTools } from './SketchTools';
 
@@ -44,7 +45,6 @@ export interface DrawingInsertDialogProps {
 interface MissingParts {
   ink: boolean;
   alt: boolean;
-  rights: boolean;
 }
 
 /**
@@ -72,7 +72,6 @@ function useDrawingInsert(props: DrawingInsertDialogProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pad = useSketchPad();
   const [alt, setAlt] = useState('');
-  const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const [missing, setMissing] = useState<MissingParts | null>(null);
   const uploading = useChapterPictureUpload();
 
@@ -80,26 +79,24 @@ function useDrawingInsert(props: DrawingInsertDialogProps) {
   function close() {
     pad.reset();
     setAlt('');
-    setRightsConfirmed(false);
     setMissing(null);
     uploading.reset();
     onClose();
   }
 
-  /** Insert: ink, alt text and the rights box first; then the file, the upload and the picture. */
+  /** Insert: ink and alt text first; then the file, the upload and the picture. */
   async function submit(event: FormEvent) {
     event.preventDefault();
     const stillMissing = {
       ink: !hasInk(pad.strokes),
       alt: alt.trim() === '',
-      rights: !rightsConfirmed,
     };
-    const isComplete = !stillMissing.ink && !stillMissing.alt && !stillMissing.rights;
+    const isComplete = !stillMissing.ink && !stillMissing.alt;
     setMissing(isComplete ? null : stillMissing);
     if (!isComplete || canvasRef.current === null) return;
     const file = await drawingFile(canvasRef.current);
     if (file === null) return;
-    const uploaded = await uploading.upload({ chapterId, file, rightsConfirmed }).catch(() => null);
+    const uploaded = await uploading.upload({ chapterId, file }).catch(() => null);
     // A refusal stays on screen (uploading.error); the drawing and the fields are kept.
     if (uploaded === null) return;
     insertChapterPicture(editor, { pictureId: uploaded.pictureId, alt: alt.trim() });
@@ -111,8 +108,6 @@ function useDrawingInsert(props: DrawingInsertDialogProps) {
     pad,
     alt,
     setAlt,
-    rightsConfirmed,
-    setRightsConfirmed,
     missing,
     uploading,
     submit,
@@ -120,13 +115,11 @@ function useDrawingInsert(props: DrawingInsertDialogProps) {
   };
 }
 
-/** The alt text, the rights box and the note on the picture check. */
+/** The alt text, the picture rules and the note on the picture check. */
 function DrawingFields(props: {
   alt: string;
-  rightsConfirmed: boolean;
   missing: MissingParts | null;
   onAltChange: (alt: string) => void;
-  onRightsChange: (isChecked: boolean) => void;
 }) {
   const { t } = useTranslation('editor');
   return (
@@ -141,16 +134,7 @@ function DrawingFields(props: {
         hint={t('drawingDialog.altHint')}
         errorMessage={props.missing?.alt === true ? t('pictureDialog.missingAlt') : undefined}
       />
-      <LabelCheckbox
-        id="chapter-drawing-rights"
-        label={t('pictureDialog.rightsLabel')}
-        hint={t('drawingDialog.rightsHint')}
-        isChecked={props.rightsConfirmed}
-        onChange={props.onRightsChange}
-      />
-      {props.missing?.rights === true && (
-        <Notice tone="error">{t('pictureDialog.missingRights')}</Notice>
-      )}
+      <PictureRulesNote />
       <p className="m-0 text-sm text-body">{t('drawingDialog.savedNote')}</p>
     </>
   );
@@ -222,13 +206,7 @@ export function DrawingInsertDialog(props: DrawingInsertDialogProps) {
           canvasRef={drawing.canvasRef}
           isInkMissing={drawing.missing?.ink === true}
         />
-        <DrawingFields
-          alt={drawing.alt}
-          rightsConfirmed={drawing.rightsConfirmed}
-          missing={drawing.missing}
-          onAltChange={drawing.setAlt}
-          onRightsChange={drawing.setRightsConfirmed}
-        />
+        <DrawingFields alt={drawing.alt} missing={drawing.missing} onAltChange={drawing.setAlt} />
         <div aria-live="polite">
           {uploading.isUploading && (
             <p className="m-0 text-sm text-body">{t('drawingDialog.uploading')}</p>

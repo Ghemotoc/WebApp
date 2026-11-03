@@ -5,8 +5,9 @@
  * local server's /api/picture-check uses the stub provider: a file passes unless its name ends in
  * _fail, _gore, _match or _down.
  * What it proves (with the picture_uploads flag switched on for the test):
- * - Insert › Picture asks for the file, the alt text and the rights confirmation before anything
- *   is inserted (criterion 1);
+ * - Insert › Picture asks for the file and the alt text before anything is inserted, and says
+ *   drawings and illustrations only, no photos (criterion 1; no rights tick box since bundle
+ *   ADMIN-2, part e1);
  * - the stored file has no location or camera data and is at most 1,600 px wide, though the
  *   chosen JPEG carried both and was 2,400 px wide (criterion 2);
  * - a clean picture shows to readers at once; a flagged one shows "Picture being checked" and
@@ -110,7 +111,6 @@ async function addPicture(
   const dialog = page.getByRole('dialog', { name: 'Add a picture' });
   await dialog.getByLabel('Picture', { exact: true }).setInputFiles(file);
   await dialog.getByRole('textbox', { name: 'Alt text' }).fill(alt);
-  await dialog.getByRole('checkbox', { name: 'I have the right to use this picture' }).check();
   await dialog.getByRole('button', { name: 'Add the picture' }).click();
   await expect(dialog).toBeHidden();
 }
@@ -152,7 +152,7 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
   });
   test.afterAll(cleanUp);
 
-  test('Insert › Picture needs the file, the alt text and the rights confirmation', async ({
+  test('Insert › Picture needs the file and the alt text, and says which pictures are allowed', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', editorAddress);
@@ -168,9 +168,8 @@ test.describe('pictures in chapters (S1-E3-09)', () => {
     await dialog.getByRole('button', { name: 'Add the picture' }).click();
     await expect(dialog.getByText('Choose a picture.')).toBeVisible();
     await expect(dialog.getByText('Write alt text for the picture.')).toBeVisible();
-    await expect(
-      dialog.getByText('Tick the box to confirm you have the right to use this picture.'),
-    ).toBeVisible();
+    await expect(dialog.getByText('Drawings and illustrations only, no photos.')).toBeVisible();
+    await expect(dialog.getByRole('checkbox')).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Cancel' }).click();
     // Nothing was uploaded or inserted.
     expect(

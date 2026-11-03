@@ -8299,6 +8299,10 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['age_band'];
       };
+      age_band_of: {
+        Args: { person_id: string };
+        Returns: Database['public']['Enums']['age_band'];
+      };
       age_check_attempt_history: { Args: { target_user_id: string }; Returns: Json };
       age_check_can_ask_manual: {
         Args: {
@@ -10738,10 +10742,7 @@ export type Database = {
         };
         Returns: string;
       };
-      register_chapter_picture: {
-        Args: { rights_confirmed: boolean; target_path: string };
-        Returns: string;
-      };
+      register_chapter_picture: { Args: { target_path: string }; Returns: string };
       register_picture: {
         Args: {
           picture_kind: Database['public']['Enums']['picture_kind'];

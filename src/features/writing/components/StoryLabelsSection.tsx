@@ -6,7 +6,8 @@
  * Rating chips (required) with the note that changes with the choice and the four-row guide,
  * the rule line, and "Did you use AI?" (required) with its hint. Not on the board, from the
  * decisions: "Deals with abuse or coercion" and the content note, because a story with that
- * theme must be 16+ or 18+ and carry a note (17 Oct 2026, 10:36; CLAUDE.md rule 18).
+ * theme must be 16+ or 18+ and carry a note (17 Oct 2026, 10:36; CLAUDE.md rule 18). A writer
+ * under 16 sees only the All ages and 13+ chips (useRatingsIMayGive; Robert, 2 Nov 2026).
  * Who uses it: NewStoryPage and StorySettingsPage. The database checks the same rules again
  * (check_story_labels(); architecture 1.1, principle 3).
  */
@@ -18,12 +19,12 @@ import {
   aiDisclosures,
   MAXIMUM_CONTENT_NOTE_LENGTH,
   ratingMinimumAge,
-  storyRatings,
   type AiDisclosure,
   type StoryRating,
 } from '@/schemas/story';
 
 import type { SetStoryAnswer, StoryAnswers, StoryFieldErrors } from '../hooks/storyAnswers';
+import { useRatingsIMayGive } from '../hooks/useRatingsIMayGive';
 
 import { FormSection } from './FormSection';
 import { LabelCheckbox } from './LabelCheckbox';
@@ -70,17 +71,20 @@ function LabelTicks({ answers, set }: { answers: StoryAnswers; set: SetStoryAnsw
 function RatingChoice({ answers, errors, set }: StoryLabelsSectionProps) {
   const { t } = useTranslation('writing');
   const chosen = answers.rating;
+  // A writer under 16 sees only All ages and 13+ (Robert, 2 Nov 2026; bundle ADMIN-2, part e1).
+  const { ratings, isLimited } = useRatingsIMayGive();
   // The note follows the choice: All ages says anyone can read it; the rest say who is kept out.
   let note = t('labels.ratingNoteAllAges');
   if (chosen !== null && chosen !== 'all_ages') {
     note = t('labels.ratingNoteHidden', { age: ratingMinimumAge[chosen] });
   }
+  if (isLimited) note = `${note} ${t('labels.ratingUnderSixteen')}`;
   return (
     <div className="flex flex-col gap-3">
       <ChoiceChips
         label={`${t('labels.rating')} ${t('labels.required')}`}
         isLabelVisible
-        options={storyRatings.map((rating) => ({ value: rating, label: t(`rating.${rating}`) }))}
+        options={ratings.map((rating) => ({ value: rating, label: t(`rating.${rating}`) }))}
         value={chosen ?? ''}
         onChange={(value) => set('rating', value as StoryRating)}
         descriptionId="story-rating-note"

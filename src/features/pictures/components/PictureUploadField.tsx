@@ -7,7 +7,10 @@
  * - held: "A person on our team will look at it first";
  * - still pending (a service was down): "We'll check it as soon as we can";
  * - refused: the reason in plain words, with the minutes to wait for the hourly limit.
- * Who uses it: CoverUploadField and AvatarSettingsSection. What it calls: nothing; the caller
+ * Under the hint, PictureRulesNote says which pictures are allowed (drawings and illustrations
+ * only, no photos; bundle ADMIN-2, part e1), and the file input is described by both.
+ * Who uses it: CoverUploadField, AvatarSettingsSection, CharacterPictureSection,
+ * SpaceBannerPictureCard and SignaturePictureControls. What it calls: PictureRulesNote; the caller
  * passes the upload outcome from usePictureUpload.
  */
 import { useId } from 'react';
@@ -16,6 +19,8 @@ import { useTranslation } from 'react-i18next';
 import { Notice } from '@/components/ui/Notice';
 
 import type { UploadOutcome } from '../hooks/usePictureUpload';
+
+import { PictureRulesNote } from './PictureRulesNote';
 
 /** What the field needs. */
 export interface PictureUploadFieldProps {
@@ -68,6 +73,7 @@ export function PictureUploadField({
   const { t } = useTranslation();
   const inputId = useId();
   const hintId = useId();
+  const rulesId = useId();
   const message = outcome === null ? null : outcomeMessage(outcome);
   return (
     <div className="flex flex-col gap-2">
@@ -78,7 +84,7 @@ export function PictureUploadField({
         id={inputId}
         type="file"
         accept="image/jpeg,image/png,image/webp"
-        aria-describedby={hintId}
+        aria-describedby={`${hintId} ${rulesId}`}
         disabled={isUploading}
         className="min-h-11 text-sm text-body file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"
         onChange={(event) => {
@@ -91,6 +97,7 @@ export function PictureUploadField({
       <p id={hintId} className="m-0 text-[13px] text-meta">
         {hint}
       </p>
+      <PictureRulesNote id={rulesId} />
       <div aria-live="polite">
         {isUploading && <p className="m-0 text-sm text-body">{t('pictures.uploading')}</p>}
         {!isUploading && message !== null && (

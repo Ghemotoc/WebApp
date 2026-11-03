@@ -83,7 +83,6 @@ export function CoverUploadField({ storyId, onUploaded }: CoverUploadFieldProps)
             upload(file);
           }}
         />
-        <p className="m-0 text-[13px] text-meta">{t('pictures.coverRights')}</p>
       </div>
     </div>
   );

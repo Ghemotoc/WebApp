@@ -157,15 +157,12 @@
     "fileHint": "JPEG, PNG or WebP, up to 5 MB. We remove the location and camera data and make it the right size for reading.",
     "altLabel": "Alt text",
     "altHint": "Describe the picture for readers who use a screen reader.",
-    "rightsLabel": "I have the right to use this picture",
-    "rightsHint": "You made it, or its owner lets you use it. If someone shows us it’s theirs, we may take it down.",
     "checkNote": "Every picture goes through our picture check before readers see it.",
     "add": "Add the picture",
     "cancel": "Cancel",
     "uploading": "Uploading and checking your picture…",
     "missingFile": "Choose a picture.",
-    "missingAlt": "Write alt text for the picture.",
-    "missingRights": "Tick the box to confirm you have the right to use this picture."
+    "missingAlt": "Write alt text for the picture."
   },
   "picture": {
     "label": "Picture in this chapter",
@@ -259,7 +256,6 @@
     "lineCount_few": "{{count}} lines drawn",
     "lineCount_other": "{{count}} lines drawn",
     "altHint": "Describe the drawing for readers who use a screen reader.",
-    "rightsHint": "You drew it yourself, or its owner lets you use it. If someone shows us it’s theirs, we may take it down.",
     "savedNote": "Saved into the chapter as a picture. It goes through our picture check before readers see it.",
     "missingInk": "Draw something first.",
     "uploading": "Saving and checking your drawing…",

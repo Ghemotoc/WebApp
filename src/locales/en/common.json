@@ -127,13 +127,11 @@
       "too_many": "You've uploaded a lot of pictures in the last hour. Try again in {{minutes}} minutes.",
       "not_allowed": "You can't upload this picture right now.",
       "unreachable": "We couldn't upload your picture. Check your connection and try again.",
-      "rights_not_confirmed": "Tick the box to confirm you have the right to use this picture.",
       "animated": "A signature picture can’t move. Choose a still picture."
     },
     "coverLabel": "Upload a picture",
     "coverHint": "JPEG, PNG or WebP, up to 5 MB. A tall picture (5 by 8) fits best. Readers see it once it passes our picture check.",
     "coverPreview": "Your uploaded cover",
-    "coverRights": "Only upload a picture you made or have the right to use.",
     "avatarLabel": "Upload a profile picture",
     "avatarHint": "JPEG, PNG or WebP, up to 2 MB. Others see it once it passes our picture check.",
     "avatarHeading": "Profile picture",
@@ -144,6 +142,16 @@
       "removed": "[Removed by the moderation team]",
       "reportLabel": "the picture “{{alt}}”",
       "notLoaded": "We couldn’t load this picture. Check your connection and refresh the page."
+    },
+    "rules": {
+      "headline": "Drawings and illustrations only, no photos.",
+      "allowed": "Allowed: {{kinds}}.",
+      "never": "Never photographs, real people or celebrities.",
+      "kinds": {
+        "drawing": "drawings",
+        "illustration": "illustrations",
+        "non_photographic_ai": "AI pictures that don’t look like photos"
+      }
     }
   },
   "website": {
