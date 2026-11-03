@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #314 (13b2c, contest certificates): nothing to set. Read the Romanian in certificates.json (the contest sentences), contests.json (staff.results) and notifications.json when you can.
 - #313 (13b2b, contest results and prizes): nothing to set. Read the Romanian in contests.json (staff.results) and landingPages.json (results) when you can.
 - #312 (13b2a, contest entries and disqualifying): nothing to set. Read the Romanian in contests.json (staff.entries) and statements.json (contest_disqualified) when you can.
 - #311 (13b1, contests set-up and entries): nothing to set. Two decision rows are proposals (owner and admins only; one entry per writer; the 13 to 15 rating rule). Read the Romanian in src/locales/ro/contests.json when you can.
