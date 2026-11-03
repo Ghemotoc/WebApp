@@ -13,6 +13,7 @@ import { paragraphHash } from '@/lib/paragraph-link';
 import type { AppNotification } from '../api/notifications';
 
 import { dataRequestNoticeText } from './dataRequestNoticeText';
+import { pictureOpenedText } from './pictureOpenedText';
 import { staffChangeText } from './staffChangeText';
 
 /** A row's words and link. */
@@ -505,6 +506,7 @@ const teamTextFor: Partial<
   data_request_confirm: dataRequestNoticeText,
   data_request_extended: dataRequestNoticeText,
   data_request_copy_ready: dataRequestNoticeText,
+  picture_opened_by_staff: pictureOpenedText,
 };
 
 /**

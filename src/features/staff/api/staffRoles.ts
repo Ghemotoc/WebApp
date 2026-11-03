@@ -3,7 +3,8 @@
  *
  * Who calls it: hooks/useStaffRoles.ts.
  * What it calls next: the audited database functions in …_s1_e2_07a_staff_roles.sql:
- * admin_list_staff(), admin_grant_role(), admin_remove_role() and admin_set_permission(). Each
+ * admin_list_staff(), admin_grant_role(), admin_remove_role(), admin_set_permission() and
+ * admin_set_intern() (bundle ADMIN-2, part e2a). Each
  * checks the caller's role and staff session itself and writes the audit log; this file only
  * passes the answers on. The account to grant a role to is picked from admin_find_accounts()
  * (api/accountSearch.ts, S1-E11-01b), so a grant carries a user ID, never a typed name.
@@ -23,6 +24,8 @@ export interface StaffMember {
   handle: string | null;
   roles: StaffRole[];
   permissions: StaffPermission[];
+  /** Marked as an intern: never a picture reviewer (bundle ADMIN-2, part e2a). */
+  isIntern: boolean;
 }
 
 /**
@@ -38,6 +41,7 @@ export const staffChangeFailures = [
   'no_such_account',
   'last_owner',
   'not_staff',
+  'picture_review_not_allowed',
   'refused',
   'unreachable',
 ] as const;
@@ -92,6 +96,7 @@ export async function listStaff(client: AppSupabaseClient): Promise<StaffMember[
     handle: member.handle,
     roles: member.roles,
     permissions: member.permissions,
+    isIntern: member.is_intern,
   }));
 }
 
@@ -105,7 +110,8 @@ export type StaffChange =
       permission: StaffPermission;
       shouldHold: boolean;
       reason: string;
-    };
+    }
+  | { kind: 'set_intern'; userId: string; isIntern: boolean; reason: string };
 
 /**
  * Makes one change.
@@ -129,6 +135,12 @@ export async function applyStaffChange(
     result = await client.rpc('admin_remove_role', {
       target_user_id: change.userId,
       removed_role: change.role,
+      reason_given: change.reason,
+    });
+  } else if (change.kind === 'set_intern') {
+    result = await client.rpc('admin_set_intern', {
+      target_user_id: change.userId,
+      should_be_intern: change.isIntern,
       reason_given: change.reason,
     });
   } else {

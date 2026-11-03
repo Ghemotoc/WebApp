@@ -72,7 +72,9 @@
     "subjectDataRequestExtended": "We need more time for your data request",
     "dataRequestExtended": "We need more time to answer your data request {{reference}}. We’ll answer by {{deadline}}. Why: {{reason}}",
     "subjectDataRequestCopyReady": "Your copy of your data is ready",
-    "dataRequestCopyReady": "The copy of your data you asked for ({{reference}}) is ready. Log in and open Settings, under Data requests, to download it. It’s there for seven days, then it’s deleted. We never send your data by email."
+    "dataRequestCopyReady": "The copy of your data you asked for ({{reference}}) is ready. Log in and open Settings, under Data requests, to download it. It’s there for seven days, then it’s deleted. We never send your data by email.",
+    "pictureOpenedByStaff": "{{who}} opened the original file of an uploaded picture. Every picture they opened is in the audit log on the staff site.",
+    "subjectPictureOpenedByStaff": "A staff member opened an uploaded picture"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} asked you to agree to their {{productName}} account",

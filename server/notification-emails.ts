@@ -45,7 +45,8 @@ export interface EmailNotificationItem {
     | 'class_archived'
     | 'data_request_confirm'
     | 'data_request_extended'
-    | 'data_request_copy_ready';
+    | 'data_request_copy_ready'
+    | 'picture_opened_by_staff';
   actors: { handle: string; display_name: string }[];
   actor_count: number;
   story: { slug: string; title: string } | null;
@@ -98,6 +99,7 @@ const lineKeys: Record<EmailNotificationItem['kind'], string> = {
   data_request_confirm: 'dataRequestConfirm',
   data_request_extended: 'dataRequestExtended',
   data_request_copy_ready: 'dataRequestCopyReady',
+  picture_opened_by_staff: 'pictureOpenedByStaff',
 };
 
 /**
@@ -124,6 +126,7 @@ const requiredSubjectKeys: Partial<Record<EmailNotificationItem['kind'], string>
   data_request_confirm: 'subjectDataRequestConfirm',
   data_request_extended: 'subjectDataRequestExtended',
   data_request_copy_ready: 'subjectDataRequestCopyReady',
+  picture_opened_by_staff: 'subjectPictureOpenedByStaff',
 };
 
 /**

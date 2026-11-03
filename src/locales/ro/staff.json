@@ -15,7 +15,7 @@
     "remove": "Elimină {{role}}",
     "removeLabel": "Elimină {{role}} de la @{{handle}}",
     "permissions": "Permisiuni",
-    "permissionsHint": "Bifarea sau debifarea folosește motivul de mai sus.",
+    "permissionsHint": "Bifarea sau debifarea folosește motivul de mai sus. Marcarea cuiva ca stagiar îi ia verificarea imaginilor.",
     "noHandle": "(încă fără nume de utilizator)",
     "changing": "Se salvează…",
     "changed": "Salvat. Apare în jurnalul de audit.",
@@ -29,7 +29,8 @@
       "last_owner": "Ultimul proprietar nu poate fi eliminat. Dă mai întâi rolul de proprietar altcuiva.",
       "not_staff": "Permisiunile sunt doar pentru echipă. Dă mai întâi un rol acestui cont.",
       "refused": "Schimbarea nu a fost salvată. Verifică contul și motivul, apoi încearcă din nou.",
-      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou."
+      "unreachable": "Nu am putut ajunge la serverul nostru. Verifică-ți conexiunea și încearcă din nou.",
+      "picture_review_not_allowed": "Verificarea imaginilor este doar pentru membrii echipei de 18 ani sau peste care nu sunt stagiari."
     },
     "reasonMissing": "Scrie mai întâi un motiv.",
     "staffAccountNote": "Un cont de echipă nu poate publica, comenta, posta sau trimite mesaje ca membru. Folosește un cont separat de scriitor pentru asta.",
@@ -45,7 +46,8 @@
     "alreadyStaff": "are deja: {{roles}}",
     "showEmail": "Arată emailul",
     "showEmailFor": "Arată emailul pentru {{name}}",
-    "accountMissing": "Găsește și alege mai întâi contul."
+    "accountMissing": "Găsește și alege mai întâi contul.",
+    "intern": "Stagiar (nu verifică niciodată imagini)"
   },
   "roleNames": {
     "owner": "Proprietar",
@@ -57,7 +59,8 @@
   "permissionNames": {
     "safeguarding": "Protecția copiilor",
     "teacher_checks": "Verificarea profesorilor",
-    "on_call": "De serviciu pentru ordinele de eliminare"
+    "on_call": "De serviciu pentru ordinele de eliminare",
+    "picture_review": "Verificarea imaginilor (18 ani sau peste, niciodată stagiari)"
   },
   "nav": {
     "moderation": "Moderare",
@@ -118,6 +121,15 @@
       "stories": "Găsește orice poveste după titlu, nume de utilizator sau ID de utilizator și deschide-o ca să vezi detaliile și capitolele.",
       "data_requests": "Înregistrează și rezolvă cererile de a vedea, muta, corecta sau șterge datele cuiva, fiecare în termenul ei.",
       "pictures": "Imaginile din poveștile pentru toate vârstele și 13+ și imaginile de la cei sub 16 ani, care așteaptă un moderator."
+    },
+    "pictureOpenings": {
+      "heading": "Imagini încărcate deschise de echipă",
+      "intro": "Ultimele șapte zile. Primești și un e-mail. Jurnalul de audit numește fiecare imagine.",
+      "none": "Nimeni din echipă nu a deschis o imagine încărcată săptămâna aceasta.",
+      "row_one": "{{count}} imagine, ultima pe {{last}}",
+      "row_few": "{{count}} imagini, ultima pe {{last}}",
+      "row_other": "{{count}} de imagini, ultima pe {{last}}",
+      "auditLog": "Deschide jurnalul de audit"
     }
   },
   "auditLog": {

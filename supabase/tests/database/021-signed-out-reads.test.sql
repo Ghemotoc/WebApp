@@ -171,6 +171,7 @@ select results_eq(
        ('space_members', 0::bigint),
        ('space_moderation_log', 0::bigint),
        ('spaces', 0::bigint),
+       ('staff_interns', 0::bigint),
        ('staff_languages', 0::bigint),
        ('staff_permissions', 0::bigint),
        ('staff_role_areas', 0::bigint),

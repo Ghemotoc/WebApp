@@ -213,6 +213,15 @@ values
 -- someone to refuse.
 insert into public.staff_permissions (user_id, permission, granted_by_user_id)
 values ('00000000-0000-4000-8000-000000000008', 'on_call', '00000000-0000-4000-8000-000000000008');
+
+-- The owner, admin and moderator personas review pictures (ADMIN-2e2a: only holders of the
+-- picture review permission see uploaded pictures before readers do and decide picture cases).
+-- support and editor don't, so the tests have staff to refuse.
+insert into public.staff_permissions (user_id, permission, granted_by_user_id)
+values
+  ('00000000-0000-4000-8000-000000000008', 'picture_review', '00000000-0000-4000-8000-000000000008'),
+  ('00000000-0000-4000-8000-000000000009', 'picture_review', '00000000-0000-4000-8000-000000000008'),
+  ('00000000-0000-4000-8000-000000000010', 'picture_review', '00000000-0000-4000-8000-000000000008');
 insert into public.on_call_rota (user_id, starts_at, ends_at, created_by_user_id)
 values ('00000000-0000-4000-8000-000000000008', now() - interval '1 hour', now() + interval '30 days',
         '00000000-0000-4000-8000-000000000008');

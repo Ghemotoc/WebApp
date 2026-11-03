@@ -66,6 +66,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     const ownerPage = await openAs(browser, 'owner', '/staff');
     expect(await menuLinks(ownerPage)).toEqual([
       'Moderation',
+      'Pictures to check',
       'Moderator mail',
       'Tags',
       'Appeals',
@@ -89,6 +90,7 @@ test.describe('admin shell (S1-E11-01)', () => {
     const adminPage = await openAs(browser, 'admin', '/staff');
     expect(await menuLinks(adminPage)).toEqual([
       'Moderation',
+      'Pictures to check',
       'Moderator mail',
       'Tags',
       'Appeals',
@@ -107,12 +109,13 @@ test.describe('admin shell (S1-E11-01)', () => {
       'Audit log',
     ]);
 
-    // A moderator gets the queue (S1-E10-03a), moderator mail (S1-E10-11), appeals (S1-E10-07),
+    // A moderator gets the queue (S1-E10-03a) with Pictures to check (ADMIN-2e1b), moderator mail (S1-E10-11), appeals (S1-E10-07),
     // reads the safety contacts (S1-E10-13b), has Users (S1-E11-02) and, with the seed's teacher
     // checks permission, Schools (S1-E2-11).
     const moderatorPage = await openAs(browser, 'moderator', '/staff');
     expect(await menuLinks(moderatorPage)).toEqual([
       'Moderation',
+      'Pictures to check',
       'Moderator mail',
       'Tags',
       'Appeals',

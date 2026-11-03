@@ -42,7 +42,8 @@ export function StaffMemberCard({ member, isChanging, onChange }: StaffMemberCar
   function send(change: StaffChange) {
     if (reason.trim() === '') return setReasonMissing(true);
     setReasonMissing(false);
-    void onChange(change).catch(() => undefined);
+    // The reason goes without spaces at either end, whichever control sent the change.
+    void onChange({ ...change, reason: change.reason.trim() }).catch(() => undefined);
   }
 
   return (
@@ -67,9 +68,7 @@ export function StaffMemberCard({ member, isChanging, onChange }: StaffMemberCar
             variant="secondary"
             disabled={isChanging}
             aria-label={t('roles.removeLabel', { role: t(`roleNames.${role}`), handle })}
-            onClick={() =>
-              send({ kind: 'remove_role', userId: member.userId, role, reason: reason.trim() })
-            }
+            onClick={() => send({ kind: 'remove_role', userId: member.userId, role, reason })}
           >
             {t('roles.remove', { role: t(`roleNames.${role}`) })}
           </Button>
@@ -79,13 +78,10 @@ export function StaffMemberCard({ member, isChanging, onChange }: StaffMemberCar
         member={member}
         isChanging={isChanging}
         onToggle={(permission, shouldHold) =>
-          send({
-            kind: 'set_permission',
-            userId: member.userId,
-            permission,
-            shouldHold,
-            reason: reason.trim(),
-          })
+          send({ kind: 'set_permission', userId: member.userId, permission, shouldHold, reason })
+        }
+        onInternToggle={(isIntern) =>
+          send({ kind: 'set_intern', userId: member.userId, isIntern, reason })
         }
       />
       <StaffLanguages userId={member.userId} handle={handle} />

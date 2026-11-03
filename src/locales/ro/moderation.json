@@ -404,7 +404,8 @@
     "provider": "Verificată de",
     "noProvider": "Încă neverificată",
     "story": "Povestea",
-    "decisionHint": "Fără acțiune aprobă imaginea și o arată. Orice altă decizie o elimină, iar cel care a încărcat-o primește o motivare a deciziei."
+    "decisionHint": "Fără acțiune aprobă imaginea și o arată. Orice altă decizie o elimină, iar cel care a încărcat-o primește o motivare a deciziei.",
+    "reviewersOnly": "Doar membrii echipei cu permisiunea de verificare a imaginilor pot vedea această imagine. Poți citi în continuare ce a semnalat verificarea."
   },
   "appeals": {
     "documentTitle": "Contestații · {{productName}}",
@@ -485,7 +486,7 @@
     "heading": "Imagini de verificat",
     "intro": "Fiecare imagine dintr-o poveste pentru toate vârstele sau 13+ și fiecare imagine de la cineva sub 16 ani așteaptă aici după verificarea automată. Nimeni altcineva nu o vede până nu decizi.",
     "guidance": "Aprobă desenele și ilustrațiile potrivite pentru ratingul poveștii. Fără fotografii, persoane reale sau vedete. Dacă un personaj ar putea părea sub 18 ani, apasă Respinge.",
-    "notAllowed": "Doar echipa de moderare poate verifica imaginile.",
+    "notAllowed": "Doar membrii echipei cu permisiunea de verificare a imaginilor pot verifica imagini. Un proprietar sau un administrator o acordă în Echipă › Roluri.",
     "loading": "Se încarcă imaginile…",
     "none": "Nicio imagine nu așteaptă.",
     "listLabel": "Imagini care așteaptă o decizie",
@@ -529,6 +530,7 @@
       "gore": "violență explicită (gore)",
       "hate": "ură",
       "other": "altceva ce regulile nu permit"
-    }
+    },
+    "openedNote": "Deschiderea unei imagini aici apare în jurnalul de audit, iar proprietarul este anunțat."
   }
 }

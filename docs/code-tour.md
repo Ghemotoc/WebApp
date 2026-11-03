@@ -781,6 +781,16 @@ Story settings › Cover / Settings › Profile picture (only while the picture_
     → the case is decided → apply_picture_decision() shows or removes the picture
 ```
 
+**Who reviews pictures, and the opening alert (ADMIN-2e2a).** Only staff with the `picture_review` permission (18 or over, never an intern: `is_picture_reviewer()`) use Pictures to check, decide a picture case anywhere (`apply_picture_decision()` refuses others) or read a waiting picture's file (`picture_reader_may_see()`, which every picture bucket's storage policy asks). Owners and admins tick it, and the Intern box, on Staff › Roles (`admin_set_permission()`, `admin_set_intern()`). Every time a staff screen is handed a picture's file:
+
+```
+admin_pictures_to_check() / admin_case_picture()
+  → record_picture_opened()   audit log 'picture.opened' (once per 10 minutes per picture and person)
+     → notify(picture_opened_by_staff) to every owner and the usernames in picture_open_alert_handles
+        (one row per staff member per hour; always emailed)
+  /staff home → PictureOpeningsPanel → admin_recent_picture_openings() (the last seven days)
+```
+
 **Pictures in chapters (S1-E3-09).** The same check, for a picture inside a chapter:
 
 ```
