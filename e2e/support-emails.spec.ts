@@ -11,7 +11,9 @@
  *   and the answer, and shows "Emailed" (criterion 3);
  * - the person's emailed answer lands in the same ticket, "by email", and opens it again;
  * - an email from an unknown address starts an "email only" ticket, acknowledged in both languages;
- * - the inbound webhook refuses a wrong key.
+ * - the inbound webhook refuses a wrong key;
+ * - the inbox shows its saved views with counts and the first-reply timer (part h3a);
+ * - a ticket left waiting for the person is solved with a polite email (part h3a).
  * Test data: teen_17 and the support persona; the tickets made here are removed afterwards.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
@@ -169,6 +171,42 @@ test.describe('support ticket emails (S1-E11-13, ADMIN-2h2)', () => {
     expect(email.Subject).toContain('Am primit cererea ta');
     expect(email.Text).toContain('— English —');
     expect(email.Text).not.toContain('/support/');
+  });
+
+  test('the inbox shows saved views with counts and the first-reply timer', async ({ browser }) => {
+    runSql(`update public.profiles set locale = 'en' where handle = 'support';`);
+    const context = await browser.newContext();
+    await useSessionInBrowser(context, (await signInPersona('support')).session);
+    await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
+    const page = await context.newPage();
+    await page.goto('/staff/support');
+    const views = page.getByRole('group', { name: 'Views' });
+    await expect(views.getByRole('button', { name: /^All open \(\d+\)$/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await views.getByRole('button', { name: /^Unassigned/ }).click();
+    await expect(views.getByRole('button', { name: /^Unassigned/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    const strangerRow = page.getByRole('listitem').filter({ hasText: `Is it free? ${stamp}` });
+    await expect(strangerRow.getByText(/^Answer by /)).toBeVisible();
+  });
+
+  test('a ticket left waiting for the person is solved with a polite email', async ({
+    request,
+  }) => {
+    runSql(`
+      update public.support_tickets set status = 'pending_on_user', last_message_at = now() - interval '8 days'
+      where subject = '${subject}';
+      select public.auto_solve_support_tickets();`);
+    expect(runSql(`select status from public.support_tickets where subject = '${subject}'`)).toBe(
+      'solved',
+    );
+    await runWorker(request);
+    const email = await waitForEmail(memberEmail, 15_000, 'marcat');
+    expect(email.Subject).toContain(`[#${ticketNumber()}]`);
   });
 
   test('the inbound webhook refuses a wrong key', async ({ request }) => {

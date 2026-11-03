@@ -113,6 +113,8 @@
     "replyHowToAnswer": "To answer, reply to this email and keep [#{{number}}] in the subject.",
     "replyInApp": "You can also read the whole conversation under Your support requests: {{link}}",
     "safetyLine": "If you or someone else is in danger, call 112. To report something on {{productName}}, use Report on it, not this email.",
-    "signOff": "The support team at {{productName}}"
+    "signOff": "The support team at {{productName}}",
+    "autoSolvedSubject": "We’ve marked your request as solved [#{{number}}] · {{productName}}",
+    "autoSolvedBody": "We haven’t heard back from you about #{{number}}: “{{subject}}”, so we’ve marked it as solved.\n\nIf you still need help, just reply to this email and keep [#{{number}}] in the subject. The request opens again and our team picks it up."
   }
 }

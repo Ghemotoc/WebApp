@@ -13,6 +13,7 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import {
   fetchStaffTicket,
   fetchSupportInbox,
+  fetchSupportViewCounts,
   replyAsSupport,
   revealTicketEmail,
   updateStaffTicket,
@@ -34,7 +35,13 @@ export function useSupportInbox() {
     retry: false,
     queryFn: async () => fetchSupportInbox(await requireClient(), filters),
   });
-  return { filters, setFilters, inbox, ...supportFailureOf(inbox.error) };
+  // The saved views' counts (part h3a); read again with the inbox.
+  const counts = useQuery({
+    queryKey: ['staff-support', 'view-counts', filters],
+    retry: false,
+    queryFn: async () => fetchSupportViewCounts(await requireClient()),
+  });
+  return { filters, setFilters, inbox, counts, ...supportFailureOf(inbox.error) };
 }
 
 /** One staff change to a ticket. */

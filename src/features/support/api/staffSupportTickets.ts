@@ -4,7 +4,8 @@
  * architecture 1.8.2: "Support tickets").
  *
  * Who calls it: hooks/useStaffSupport.ts (StaffSupportInboxPage, StaffSupportTicketPage).
- * What it calls next: admin_support_inbox(), admin_support_ticket(), admin_update_support_ticket(),
+ * What it calls next: admin_support_inbox(), admin_support_view_counts() (part h3a),
+ * admin_support_ticket(), admin_update_support_ticket(),
  * admin_reply_support_ticket() and admin_reveal_ticket_email(). Each checks the caller holds the
  * support_tickets area (owner, admin and support) and writes the audit log, never the words.
  */
@@ -53,7 +54,26 @@ export interface StaffTicketSummary {
   assignedToMe: boolean;
   messageCount: number;
   lastMessageAt: string;
+  /** When the first answer is due (working days after it arrived, part h3a). */
+  firstReplyDueAt: string;
+  /** When staff first answered, or null. */
+  firstRepliedAt: string | null;
 }
+
+/** The inbox's saved views (criterion 6); Spam comes with part h4. */
+export type SupportViewName = 'mine' | 'unassigned' | 'all_open' | 'pending_on_user' | 'solved';
+
+/** Each view as the filters it sets, in the order the inbox shows them. */
+export const supportViews: { name: SupportViewName; filters: SupportInboxFilters }[] = [
+  { name: 'mine', filters: { status: '', assigned: 'mine' } },
+  { name: 'unassigned', filters: { status: '', assigned: 'nobody' } },
+  { name: 'all_open', filters: { status: '', assigned: '' } },
+  { name: 'pending_on_user', filters: { status: 'pending_on_user', assigned: '' } },
+  { name: 'solved', filters: { status: 'solved', assigned: '' } },
+];
+
+/** How many tickets each view holds. */
+export type SupportViewCounts = Record<SupportViewName, number>;
 
 /** Whether a staff answer left by email (part h2); null for anything that isn't emailed. */
 export type EmailState = 'sent' | 'waiting' | null;
@@ -213,7 +233,34 @@ export async function fetchSupportInbox(
     assignedToMe: row.assigned_to_me,
     messageCount: row.message_count,
     lastMessageAt: row.last_message_at,
+    firstReplyDueAt: row.first_reply_due_at,
+    // The generated types say string, but it is empty until staff answer.
+    firstRepliedAt: (row.first_replied_at as string | null) ?? null,
   }));
+}
+
+/**
+ * The count of each saved view.
+ *
+ * @throws SupportError('not_allowed') for anyone without the support_tickets area
+ */
+export async function fetchSupportViewCounts(
+  client: AppSupabaseClient,
+): Promise<SupportViewCounts> {
+  const { data, error } = await client.rpc('admin_support_view_counts');
+  if (error !== null) throw supportErrorFrom(error);
+  const counts = objectOf(data) ?? {};
+  const countOf = (name: SupportViewName) => {
+    const value = counts[name];
+    return typeof value === 'number' ? value : 0;
+  };
+  return {
+    mine: countOf('mine'),
+    unassigned: countOf('unassigned'),
+    all_open: countOf('all_open'),
+    pending_on_user: countOf('pending_on_user'),
+    solved: countOf('solved'),
+  };
 }
 
 /**

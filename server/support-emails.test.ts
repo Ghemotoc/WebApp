@@ -88,6 +88,18 @@ describe('writing support emails', () => {
     expect(email.text.match(/Your drafts are safe\./g)).toHaveLength(1);
   });
 
+  it('the auto-solved email says so and how to reopen it (part h3a)', () => {
+    const email = composeSupportEmail(
+      claimed({ kind: 'auto_solved' }),
+      readers,
+      'https://site.test',
+      sender,
+    );
+    expect(email.subject).toBe('en:autoSolvedSubject{"number":1042,"subject":"Lost drafts"}');
+    expect(email.text).toContain('en:autoSolvedBody');
+    expect(email.text).toContain('en:replyInApp');
+  });
+
   it('sets our Message-ID and threads under the person’s last email', () => {
     const email = composeSupportEmail(
       claimed({ in_reply_to: '<m1@example.test>' }),

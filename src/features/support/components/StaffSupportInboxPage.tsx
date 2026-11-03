@@ -3,8 +3,8 @@
  * bundle ADMIN-2h1; architecture 1.8.2: "Support tickets").
  *
  * Every ticket not yet solved or closed to start with, most urgent and longest waiting first,
- * with filters for the status and who it is assigned to (the saved views and counts come in part
- * h3). Plain components, no doodles (staff screens). The database refuses anyone without the
+ * with filters for the status and who it is assigned to. Part h3a adds the saved views with their
+ * counts above the filters and the first-reply timer on each row. Plain components, no doodles (staff screens). The database refuses anyone without the
  * support_tickets area (owner, admin, support), and the page says so.
  * Who shows it: the router, inside StaffLayout. What it calls: useSupportInbox.
  */
@@ -20,6 +20,9 @@ import { ticketStatuses } from '../api/supportTickets';
 import type { StaffTicketSummary, SupportInboxFilters } from '../api/staffSupportTickets';
 import { useSupportInbox } from '../hooks/useStaffSupport';
 import { useSupportTranslation } from '../registerSupportTranslations';
+
+import { FirstReplyPill } from './FirstReplyPill';
+import { SupportViewChips } from './SupportViewChips';
 
 /**
  * Who a ticket is assigned to, in words.
@@ -60,6 +63,7 @@ function InboxRow({ ticket }: { ticket: StaffTicketSummary }) {
           {ticket.subject}
         </Link>
         <div className="flex flex-wrap gap-2">
+          <FirstReplyPill ticket={ticket} />
           <InfoPill tone={ticket.priority === 'urgent' ? 'blush' : 'neutral'}>
             {t(`staff.priorities.${ticket.priority}`)}
           </InfoPill>
@@ -173,6 +177,11 @@ export function StaffSupportInboxPage() {
         </h1>
         <p className="m-0 text-body">{t('staff.intro')}</p>
       </div>
+      <SupportViewChips
+        filters={state.filters}
+        counts={state.counts.data}
+        onChoose={state.setFilters}
+      />
       <InboxFiltersRow filters={state.filters} onChange={state.setFilters} />
       <InboxList state={state} />
     </PageContainer>
