@@ -2,6 +2,7 @@
 
 Newest at the top. One line each.
 
+- #315 (13b2d, admin epic check round three): nothing to set. It fixed a night-time bug: from 00:00 to 02:00 Romanian time a new data request was refused as "in the future". The reader's 2-second timing test fails on this machine at night for main before bundle 13 too; the CHECK bundle will look at it.
 - #314 (13b2c, contest certificates): nothing to set. Read the Romanian in certificates.json (the contest sentences), contests.json (staff.results) and notifications.json when you can.
 - #313 (13b2b, contest results and prizes): nothing to set. Read the Romanian in contests.json (staff.results) and landingPages.json (results) when you can.
 - #312 (13b2a, contest entries and disqualifying): nothing to set. Read the Romanian in contests.json (staff.entries) and statements.json (contest_disqualified) when you can.
