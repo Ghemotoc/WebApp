@@ -192,6 +192,8 @@ select results_eq(
        ('sign_in_failures', 0::bigint),
        -- Scrambled sign-up IPs: moderation staff only (ADMIN-2f2).
        ('sign_up_ips', 0::bigint),
+       -- Notes with requests to join a space: each writer's own (IDEAS-3d).
+       ('space_join_notes', 0::bigint),
        -- Spaces and their members: read only through functions, by the age rules (FORUMS-2a).
        ('space_members', 0::bigint),
        ('space_moderation_log', 0::bigint),
