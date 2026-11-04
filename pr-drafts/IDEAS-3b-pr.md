@@ -34,7 +34,15 @@ Bundle 14d IDEAS-3, part b of 6: classes. These are ideas 3 and 5 from the 2 Nov
 
 ## Local check run
 
-LOCALRUN
+Fast checks, run locally on this branch (GitHub Actions is blocked by billing):
+
+- Lint, Prettier, `tsc -b`, `types:check`, `i18n:check` and `migrations:check`: passed.
+- Vitest: 1,458 of 1,459 tests passed. The one failure was the brand-value check: the new QR test's example link named the product. It now uses `site.example`, and the check and the QR tests pass (9 of 9).
+- Database (`supabase test db`): 195 files, 4,504 tests passed.
+- Wrangler compile, the build with and without env, and `third-party:check`: passed.
+- e2e (class-invite-sheet, class-spaces, class-tools, class-stories, forum-threads, spaces): 88 of 89 passed.
+  - The one failure was `class-stories.spec`, and it is not from this part. Since NEW-1 (#327), story settings has two groups named "Who can read it", so the spec's locator matched both.
+  - The spec now picks the class card by its text, and it passes (4 of 4).
 
 ## By hand
 
