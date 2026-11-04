@@ -25,7 +25,13 @@ Bundle 14c IDEAS-2, part c1: an email when a private message arrives, with quiet
 
 ## Local check run
 
-LOCALRUN
+Fast checks, run locally on this branch (GitHub Actions is blocked by billing):
+
+- Lint, Prettier, `tsc -b`, `types:check`, `i18n:check` and `migrations:check`: passed.
+- Vitest: 228 files, 1,442 tests passed.
+- Database (`supabase test db`): 190 files, 4,450 tests passed, including the new `280-message-emails`.
+- Wrangler compile and the build with and without env, plus `third-party:check`: passed.
+- e2e (message-emails, message-settings, messages, messaging-rules, messages-block-and-report, notifications, notification-emails): 90 passed and 1 failed. The failure was the new test's selector: `getByLabel('From')` also matched two other Settings controls whose labels contain "from". The test now finds the time fields by their ids, and `message-emails.spec.ts` passes 5 of 5.
 
 ## By hand
 
