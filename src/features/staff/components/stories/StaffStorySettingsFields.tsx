@@ -1,7 +1,8 @@
 /**
  * StaffStorySettingsFields: the settings staff may change on a story, as form fields (bundle
  * ADMIN-2, part b1; story S1-E11-08; board AdminStory 8.11): rating, finished or ongoing,
- * category, language, comments, the three content labels and the tags.
+ * category, language, comments, the three content labels and the tags; since SPONSORS-f also why
+ * a 16+ or 18+ story has its rating (StaffRatingReasons).
  *
  * Never the title, blurb, content note or a chapter's words: those are the writer's (Q14). The
  * labels use the writer's own words from the writing namespace, so staff and writers see the same.
@@ -18,6 +19,8 @@ import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOption
 import type { StaffStorySettings } from '../../api/staffStories';
 import { useStaffStoryWords } from '../../hooks/useStaffStoryWords';
 import { staffStoryRatings } from '../../lib/staffStoryFilters';
+
+import { StaffRatingReasons } from './StaffRatingReasons';
 
 /** What the fields need. */
 export interface StaffStorySettingsFieldsProps {
@@ -181,6 +184,7 @@ export function StaffStorySettingsFields(props: StaffStorySettingsFieldsProps) {
         <RatingAndStatus settings={props.settings} onChange={props.onChange} />
         <CategoryAndLanguage settings={props.settings} onChange={props.onChange} />
       </div>
+      <StaffRatingReasons settings={props.settings} onChange={props.onChange} />
       <SettingsTicks settings={props.settings} onChange={props.onChange} />
       <TextInput
         id="story-settings-tags"

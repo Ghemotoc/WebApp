@@ -52,11 +52,11 @@ const plainFields = [
 ] as const;
 
 /**
- * True when two tag lists differ; a new order alone isn't a change.
+ * True when two lists of names differ; a new order alone isn't a change (tags, rating reasons).
  *
- * @returns whether the tags changed
+ * @returns whether the list changed
  */
-function tagsDiffer(saved: string[], wanted: string[]): boolean {
+function listsDiffer(saved: string[], wanted: string[]): boolean {
   return [...saved].sort().join('\n') !== [...wanted].sort().join('\n');
 }
 
@@ -78,7 +78,11 @@ export function settingsChange(
     if (wanted[field] !== saved[field] && wanted[field] !== null) change[field] = wanted[field];
   }
   // Step 2: the whole tag list, when the set of tags changed.
-  if (tagsDiffer(saved.tagNames, wanted.tagNames)) change['tagNames'] = wanted.tagNames;
+  if (listsDiffer(saved.tagNames, wanted.tagNames)) change['tagNames'] = wanted.tagNames;
+  // Step 3: the rating reasons, the same way (SPONSORS-f). The database empties them below 16+.
+  if (listsDiffer(saved.ratingReasons, wanted.ratingReasons)) {
+    change['ratingReasons'] = wanted.ratingReasons;
+  }
   return change as StaffStorySettingsChange;
 }
 

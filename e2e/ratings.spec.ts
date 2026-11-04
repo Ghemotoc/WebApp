@@ -4,8 +4,8 @@
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
  * - the new story form refuses to save without a rating and an AI answer, and a story about
- *   abuse or coercion without 16+ or 18+ and a content note; with them it saves, and the
- *   preview and the card show the pills;
+ *   abuse or coercion without 16+ or 18+, a reason for the rating and a content note; with them
+ *   it saves, and the preview and the card show the pills;
  * - once its chapter is published (in SQL, as the Publish button does since S1-E3-03), a 16+ story shows its
  *   rating row and content note to teen_17 and is "not available" to kid_14_ok and to a
  *   signed-out visitor (who counts as under 16);
@@ -81,6 +81,9 @@ test.describe('ratings and labels (S1-E3-06)', () => {
     await expect(
       page.getByText('Add a content note for a story about abuse or coercion.'),
     ).toBeVisible();
+    // 16+ also asks why (SPONSORS-f).
+    await expect(page.getByText('Tick at least one reason why it is 16+ or 18+.')).toBeVisible();
+    await page.getByRole('checkbox', { name: 'Dark themes' }).check();
     await page
       .getByRole('textbox', { name: 'Content note' })
       .fill('Violență în familie, povestită din perspectiva unui copil.');
@@ -103,6 +106,9 @@ test.describe('ratings and labels (S1-E3-06)', () => {
         `select rating || ' ' || is_fan_fiction || ' ' || deals_with_abuse_or_coercion || ' ' || ai_disclosure from public.stories where title = '${storyTitle}'`,
       ),
     ).toBe('16_plus true true no_ai');
+    expect(
+      runSql(`select rating_reasons::text from public.stories where title = '${storyTitle}'`),
+    ).toBe('{dark_themes}');
   });
 
   test('a published 16+ story opens for teen_17 and is hidden from kid_14_ok and visitors', async ({

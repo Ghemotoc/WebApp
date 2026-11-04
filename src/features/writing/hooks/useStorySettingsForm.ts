@@ -64,6 +64,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     dealsWithAbuseOrCoercion: story.dealsWithAbuseOrCoercion,
     contentNote: story.contentNote,
     aiDisclosure: story.aiDisclosure,
+    ratingReasons: story.ratingReasons,
   };
 }
 

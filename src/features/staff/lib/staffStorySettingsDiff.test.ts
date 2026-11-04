@@ -16,6 +16,7 @@ const saved: StaffStorySettings = {
   isFanFiction: false,
   isParody: false,
   dealsWithAbuseOrCoercion: false,
+  ratingReasons: [],
   tagNames: ['family', 'mystery'],
 };
 
@@ -33,6 +34,24 @@ describe('the settings staff changed', () => {
 
   it('treats the same tags in another order as no change', () => {
     expect(settingsChange(saved, { ...saved, tagNames: ['mystery', 'family'] })).toEqual({});
+  });
+
+  it('sends the rating reasons when staff add one, but not for a new order alone', () => {
+    const rated: StaffStorySettings = {
+      ...saved,
+      rating: '16_plus',
+      ratingReasons: ['dark_themes'],
+    };
+    expect(
+      settingsChange(rated, { ...rated, ratingReasons: ['graphic_violence', 'dark_themes'] }),
+    ).toEqual({ ratingReasons: ['graphic_violence', 'dark_themes'] });
+    const both: StaffStorySettings = {
+      ...rated,
+      ratingReasons: ['graphic_violence', 'dark_themes'],
+    };
+    expect(
+      settingsChange(both, { ...both, ratingReasons: ['dark_themes', 'graphic_violence'] }),
+    ).toEqual({});
   });
 
   it('sends the whole tag list when one tag goes', () => {

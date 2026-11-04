@@ -6855,6 +6855,7 @@ export type Database = {
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
+          rating_reasons: Database['public']['Enums']['story_rating_reason'][];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -6896,6 +6897,7 @@ export type Database = {
             quote_cards_enabled: boolean;
             rank_badge_tag_ids: string[] | null;
             rating: Database['public']['Enums']['story_rating'];
+            rating_reasons: Database['public']['Enums']['story_rating_reason'][];
             slug: string;
             title: string;
             title_hidden_at: string | null;
@@ -6941,6 +6943,7 @@ export type Database = {
           quote_cards_enabled?: boolean;
           rank_badge_tag_ids?: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
+          rating_reasons?: Database['public']['Enums']['story_rating_reason'][];
           slug: string;
           title: string;
           title_hidden_at?: string | null;
@@ -6979,6 +6982,7 @@ export type Database = {
           quote_cards_enabled?: boolean;
           rank_badge_tag_ids?: string[] | null;
           rating?: Database['public']['Enums']['story_rating'];
+          rating_reasons?: Database['public']['Enums']['story_rating_reason'][];
           slug?: string;
           title?: string;
           title_hidden_at?: string | null;
@@ -9706,6 +9710,7 @@ export type Database = {
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
+          rating_reasons: Database['public']['Enums']['story_rating_reason'][];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -11587,6 +11592,7 @@ export type Database = {
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
+          rating_reasons: Database['public']['Enums']['story_rating_reason'][];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -12166,6 +12172,7 @@ export type Database = {
         Args: { slot_format: Database['public']['Enums']['ad_format']; used_keys: string[] };
         Returns: Json;
       };
+      network_ads_barred: { Args: { context: Json }; Returns: boolean };
       new_certificate_code: { Args: Record<PropertyKey, never>; Returns: string };
       next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
       next_notice_reference: { Args: { notice_kind: string }; Returns: string };
@@ -12745,6 +12752,7 @@ export type Database = {
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
+          rating_reasons: Database['public']['Enums']['story_rating_reason'][];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -13809,6 +13817,7 @@ export type Database = {
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
+          rating_reasons: Database['public']['Enums']['story_rating_reason'][];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -13870,6 +13879,10 @@ export type Database = {
           stories_in_tag: number;
           tag_rank: number;
         }[];
+      };
+      story_rating_reasons_from: {
+        Args: { labels: Json };
+        Returns: Database['public']['Enums']['story_rating_reason'][];
       };
       story_search_document: { Args: { target_story_id: string }; Returns: unknown };
       story_search_rank: {
@@ -14368,6 +14381,14 @@ export type Database = {
         | 'contest_disqualified';
       statement_ground: 'terms' | 'law';
       story_rating: 'all_ages' | '13_plus' | '16_plus' | '18_plus';
+      story_rating_reason:
+        | 'sexual_content'
+        | 'nudity'
+        | 'graphic_violence'
+        | 'strong_language'
+        | 'drugs'
+        | 'self_harm'
+        | 'dark_themes';
       support_message_kind: 'from_requester' | 'staff_reply' | 'internal_note';
       support_ticket_category:
         | 'account'
@@ -14743,6 +14764,15 @@ export const Constants = {
       ],
       statement_ground: ['terms', 'law'],
       story_rating: ['all_ages', '13_plus', '16_plus', '18_plus'],
+      story_rating_reason: [
+        'sexual_content',
+        'nudity',
+        'graphic_violence',
+        'strong_language',
+        'drugs',
+        'self_harm',
+        'dark_themes',
+      ],
       support_message_kind: ['from_requester', 'staff_reply', 'internal_note'],
       support_ticket_category: [
         'account',

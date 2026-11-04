@@ -53,6 +53,7 @@ export interface StaffStorySettingsChange {
   isFanFiction?: boolean;
   isParody?: boolean;
   dealsWithAbuseOrCoercion?: boolean;
+  ratingReasons?: Enums<'story_rating_reason'>[];
   tagNames?: string[];
 }
 
@@ -128,6 +129,7 @@ export function settingsChangeJson(change: StaffStorySettingsChange): Json {
     is_fan_fiction: change.isFanFiction,
     is_parody: change.isParody,
     deals_with_abuse_or_coercion: change.dealsWithAbuseOrCoercion,
+    rating_reasons: change.ratingReasons,
     tag_names: change.tagNames,
   };
   const sent: Record<string, Json> = {};
