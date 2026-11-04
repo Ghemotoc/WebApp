@@ -10450,6 +10450,7 @@ export type Database = {
       check_story_labels: { Args: { labels: Json }; Returns: undefined };
       class_certificates: { Args: { slug: string }; Returns: Json };
       class_invite: { Args: { slug: string }; Returns: Json };
+      class_invite_opens_sign_up: { Args: { code: string }; Returns: boolean };
       class_invite_preview: { Args: { code: string }; Returns: Json };
       class_invite_row: {
         Args: { code: string };
@@ -14252,6 +14253,7 @@ export type Database = {
       update_story_marketing: { Args: { changes: Json; story_slug: string }; Returns: Json };
       update_story_plan: { Args: { changes: Json; story_slug: string }; Returns: Json };
       use_platform_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
+      use_sign_up_invite: { Args: { code: string; new_user_id: string }; Returns: undefined };
       username_skeleton: { Args: { name: string }; Returns: string };
       verified_signup_country: { Args: { token: string }; Returns: string };
       verified_signup_ips: {
