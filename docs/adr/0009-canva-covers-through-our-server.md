@@ -24,3 +24,9 @@ A writer can design a story's cover in their own Canva account and bring it stra
 - The Canva API's addresses, scopes and the return token's claims were written from Canva's documentation and must be checked against it before go-live (the story's "check before relying on it").
 - A real export over 5 MB would be refused by the cover bucket's limit; if Canva's PNGs run that large, export as JPG instead (follow-up).
 - Changing `CANVA_TOKEN_KEY` makes every stored connection unreadable; writers then simply connect again. The ciphertext's `v1.` prefix leaves room for a key change later.
+
+## Update, 4 Nov 2026: cover templates (IDEAS-2e)
+
+- The start page lets the writer pick a blank design or one of three templates (Classic, Bold, Handwritten). The choice rides in the tab's trip, so it survives the consent page, and goes to `POST /api/canva/design` as `template` with the pen name.
+- Our server fills the template through Canva's autofill of brand templates (`POST /v1/autofills`, then the job), filling text fields named `title` and `pen_name`. A template whose ID isn't set, or that Canva can't fill, opens the blank cover, so the writer can always start.
+- Canva has offered brand templates and autofill only to Canva Enterprise. Whether writers' own accounts can use our templates must be checked at GO-LIVE; if they can't, the templates stay unset and everyone gets the blank cover, as before.

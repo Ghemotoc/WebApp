@@ -4,6 +4,8 @@
  * ADR 0009; docs/mocks.md).
  * Who uses it: server/canva.ts picks the version with canvaService() (index.ts).
  */
+import type { CanvaTemplateKey } from '../../src/schemas/canva';
+
 import type { CanvaReturn } from './jwt';
 
 /** The writer's tokens, in plain text only inside one request. */
@@ -14,7 +16,17 @@ export interface CanvaTokens {
   expiresAt: Date;
 }
 
-/** A new blank design. */
+/** What a new design starts from (IDEAS-2e). */
+export interface CanvaDesignStart {
+  /** The design's name, and the title a template places. */
+  title: string;
+  /** Blank, or one of our cover templates. */
+  template: CanvaTemplateKey;
+  /** The name a template places under the title. */
+  penName: string;
+}
+
+/** A new design. */
 export interface CanvaDesign {
   designId: string;
   /** Where the writer edits it; good for a short while only, so it is used at once. */
@@ -33,8 +45,11 @@ export interface CanvaService {
   }) => Promise<CanvaTokens | null>;
   /** New tokens for an expired access token. */
   refresh: (refreshToken: string) => Promise<CanvaTokens | null>;
-  /** A blank cover-sized design in the writer's Canva account. */
-  createDesign: (accessToken: string, title: string) => Promise<CanvaDesign | null>;
+  /**
+   * A cover-sized design in the writer's Canva account: blank, or filled from one of our
+   * templates with the title and pen name (IDEAS-2e).
+   */
+  createDesign: (accessToken: string, start: CanvaDesignStart) => Promise<CanvaDesign | null>;
   /** Checks the token Canva sends back on Return. */
   verifyReturn: (correlationJwt: string) => Promise<CanvaReturn | null>;
   /** Exports the design's first page as a PNG. */

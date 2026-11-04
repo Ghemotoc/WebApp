@@ -15,6 +15,7 @@ import {
   canvaDesignResponseSchema,
   canvaFailureSchema,
   type CanvaFailure,
+  type CanvaTemplateKey,
 } from '@/schemas/canva';
 
 import { startCanvaTrip } from '../lib/canvaTrip';
@@ -55,21 +56,24 @@ async function postToCanva(client: AppSupabaseClient, route: string, body: unkno
 }
 
 /**
- * Asks for a new blank cover design (criterion 1), or for Canva's consent page first when the
- * writer hasn't connected (criterion 4).
+ * Asks for a new cover design, blank or from a template with the title and pen name placed
+ * (criterion 1; IDEAS-2e), or for Canva's consent page first when the writer hasn't connected
+ * (criterion 4).
  *
- * @param story - the story's ID and title
+ * @param story - the story's ID and title, and the template and pen name to start from
  * @returns the address to send the tab to
  * @throws CanvaError
  */
 export async function openCanvaDesign(
   client: AppSupabaseClient,
-  story: { storyId: string; storyTitle: string },
+  story: { storyId: string; storyTitle: string; template: CanvaTemplateKey; penName: string },
 ): Promise<string> {
   const { trip, codeChallenge } = await startCanvaTrip(story);
   const response = await postToCanva(client, 'design', {
     storyId: story.storyId,
     storyTitle: story.storyTitle,
+    template: story.template,
+    penName: story.penName,
     codeChallenge,
     state: trip.state,
   });
