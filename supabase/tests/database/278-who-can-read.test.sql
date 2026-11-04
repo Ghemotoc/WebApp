@@ -61,6 +61,10 @@ delete from public.library_entries
 where story_id = '00000000-0000-4000-9000-000000000001' and user_id = '00000000-0000-4000-8000-000000000015';
 delete from public.follows_stories
 where story_id = '00000000-0000-4000-9000-000000000001' and user_id = '00000000-0000-4000-8000-000000000015';
+-- The seed has teen_17 following both the writer and this story; keep only the writer follow,
+-- so teen_17 stands for "follows the writer, not the story".
+delete from public.follows_stories
+where story_id = '00000000-0000-4000-9000-000000000001' and user_id = '00000000-0000-4000-8000-000000000002';
 
 /* ---------- 1. The setting ---------- */
 
