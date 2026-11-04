@@ -37,7 +37,9 @@ from public.writer_ranks where writer_ranks.user_id = profiles.id;
 
 /**
  * announce_writer_rank: sends the rank_reached notification when a writer reaches a rank higher
- *   than any they were told about before, and remembers it.
+ *   than any they were told about before, and remembers it. New writer, the rank every first
+ *   chapter gives, is remembered but never announced: the idea is a milestone worked for ("from
+ *   Writer to Storyteller", IDEA-20261102-1), and a first chapter already has its own moment.
  * Inputs: person_id, reached (the rank just saved). Returns: nothing.
  * Internal: refresh_writer_rank() calls it.
  */
@@ -53,7 +55,7 @@ begin
   update public.profiles set highest_rank_notified = reached
   where profiles.id = person_id
     and (profiles.highest_rank_notified is null or profiles.highest_rank_notified < reached);
-  if not found then
+  if not found or reached = 'new_writer' then
     return;
   end if;
   -- Step 2: one quiet in-app row with no actor; it can be switched off like other story news.

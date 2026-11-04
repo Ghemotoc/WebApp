@@ -1,8 +1,9 @@
 -- Database tests for the quiet "You're now a Storyteller" notification (bundle IDEAS-3, part a;
 -- idea IDEA-20261102-1).
 -- What it proves:
--- - reaching a rank sends the writer one rank_reached notification with that rank, under the
---   stories filter, linking to their own profile (criterion 1);
+-- - reaching a rank above New writer sends the writer one rank_reached notification with that
+--   rank, under the stories filter, linking to their own profile (criterion 1); New writer, the
+--   rank of a first chapter, is never announced;
 -- - a rank that drops (a story hidden by a moderator) and comes back is not announced again,
 --   while a higher rank still is (criterion 2);
 -- - the row names nobody else and is not a required notice;
@@ -67,18 +68,18 @@ values ('28400000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-0000000
 /* ---------- 1. A new rank is announced once (criterion 1) ---------- */
 
 select pg_temp.publish(1, 1000);
-select is(pg_temp.announced(), 'new_writer', 'the first published chapter announces New writer');
+select is(pg_temp.announced(), '', 'the first published chapter (New writer) announces nothing: it isn''t a milestone worked for');
 select pg_temp.publish(1, 1000);
-select is(pg_temp.announced(), 'new_writer', 'another chapter at the same rank announces nothing');
+select is(pg_temp.announced(), '', 'another chapter at the same rank announces nothing');
 select pg_temp.publish(1, 30000);
-select is(pg_temp.announced(), 'new_writer,storyteller',
+select is(pg_temp.announced(), 'storyteller',
   'reaching Storyteller (30,000 words, skipping Writer) announces Storyteller once');
 
 -- What the writer sees.
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((select count(*)::integer from jsonb_array_elements(public.my_notifications() -> 'notifications') as row_json
            where row_json ->> 'kind' = 'rank_reached'),
-  2, 'the writer sees both rows, each carrying its rank for the sticker');
+  1, 'the writer sees the row, carrying its rank for the sticker');
 select is(pg_temp.rank_row('storyteller') ->> 'own_handle',
   (select handle from public.profiles where id = '00000000-0000-4000-8000-000000000001')::text,
   'and the writer''s own handle, for the link to their profile');
@@ -99,10 +100,10 @@ select is((select rank::text from public.writer_ranks where user_id = '00000000-
   null, 'hiding the story takes the rank away');
 update public.moderated_items set restored_at = now(), restored_by_user_id = '00000000-0000-4000-8000-000000000010'
 where item_id = '28400000-0000-4000-9000-000000000001';
-select is(pg_temp.announced(), 'new_writer,storyteller',
+select is(pg_temp.announced(), 'storyteller',
   'restoring it brings Storyteller back without a second notification');
 select pg_temp.publish(3, 25000);
-select is(pg_temp.announced(), 'new_writer,storyteller,novelist', 'a higher rank, Novelist, is still announced');
+select is(pg_temp.announced(), 'storyteller,novelist', 'a higher rank, Novelist, is still announced');
 
 /* ---------- 3. The rank pill on story cards (IDEA-20261102-2) ---------- */
 
