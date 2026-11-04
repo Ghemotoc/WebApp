@@ -18,5 +18,8 @@ non-personalised ad network.
 - `components/SponsoredByLine.tsx` and `hooks/useSponsorCredit.ts`: "Sponsored by <sponsor>" on a
   category's list (`StoryListHeader`) and a contest's page (`LandingPageScreen`), read with
   `fetchSponsorCredit()` from `sponsor_credit()`. It never changes what a list holds or its order.
+- `hooks/useSponsorCounting.ts`: one impression each time a sponsor's ad or line appears and one
+  click each time its link is followed, through `recordSponsorEvent()` (part c, S1-E12-03). Only
+  the campaign's key is sent.
 - `lib/whyThisAd.ts`: the "Why this ad?" sentence from the page's category, tag and language.
 - `registerAdsTranslations.ts`: the `ads` locale namespace (`src/locales/*/ads.json`).

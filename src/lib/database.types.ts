@@ -501,6 +501,36 @@ export type Database = {
           },
         ];
       };
+      campaign_daily_stats: {
+        Row: {
+          campaign_id: string;
+          clicks: number;
+          counted_on: string;
+          impressions: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          campaign_id: string;
+          clicks?: number;
+          counted_on: string;
+          impressions?: number;
+        };
+        Update: {
+          campaign_id?: string;
+          clicks?: number;
+          counted_on?: string;
+          impressions?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'campaign_daily_stats_campaign_id_fkey';
+            columns: ['campaign_id'];
+            isOneToOne: false;
+            referencedRelation: 'sponsor_campaigns';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       canva_connections: {
         Row: {
           access_expires_at: string;
@@ -9467,6 +9497,7 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: number;
       };
+      admin_sponsor_campaign_report: { Args: { target_campaign_id: string }; Returns: Json };
       admin_sponsor_campaigns: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_story_change_target: {
         Args: { reason_code: string; reason_text: string; target_story_id: string };
@@ -12588,6 +12619,7 @@ export type Database = {
         Returns: undefined;
       };
       record_sign_up_ips: { Args: { new_user_id: string; token: string }; Returns: undefined };
+      record_sponsor_event: { Args: { ad_key: string; event_kind: string }; Returns: undefined };
       record_support_event: {
         Args: {
           after_value: Json;

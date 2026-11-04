@@ -107,3 +107,16 @@ export interface CampaignFields {
   starts_on: string;
   ends_on: string;
 }
+
+/** One day of a campaign's report: the day and its two totals (S1-E12-03). */
+export const campaignReportDaySchema = z.object({
+  day: z.string(),
+  impressions: z.number().int(),
+  clicks: z.number().int(),
+});
+
+/** A campaign's report: every day of its run so far, oldest first. */
+export const campaignReportSchema = z.array(campaignReportDaySchema);
+
+/** One day of a campaign's report. */
+export type CampaignReportDay = z.infer<typeof campaignReportDaySchema>;

@@ -9,6 +9,8 @@
  *   copies with one button;
  * - "Why this ad?" names the sponsor who paid and says a person checked it;
  * - a sponsored category says "Sponsored by" under its heading;
+ * - part c (S1-E12-03): showing the ad and following its link add to today's totals, and an admin
+ *   sees them in the campaign's Report and downloads them as a CSV of daily totals;
  * - Discover with the sponsor's ad and the sponsored category pass axe and never scroll sideways
  *   at 390, 768 and 1440 px, in light and night mode and both languages (CLAUDE.md rule 21).
  * Test data: the sponsor "E2E Press" and two approved campaigns written straight into the
@@ -19,6 +21,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { signInPersona, useSessionInBrowser } from './support/personas';
 
 /** The test sponsor's name. */
 const sponsorName = 'E2E Press';
@@ -27,7 +30,18 @@ const sponsorName = 'E2E Press';
 const cleanUpSql = `
   delete from public.sponsor_campaigns where sponsor_id in (select id from public.sponsors where name = '${sponsorName}');
   delete from public.sponsors where name = '${sponsorName}';
-  delete from public.chapters where code = 'spone2e1';`;
+  delete from public.chapters where code = 'spone2e1';
+  update public.profiles set locale = 'ro' where handle = 'admin';`;
+
+/** Today's totals of the test banner, as "impressions|clicks", or "" before anything counted. */
+function bannerTotalsToday(): string {
+  return runSql(`
+    select stats.impressions || '|' || stats.clicks from public.campaign_daily_stats as stats
+    join public.sponsor_campaigns on sponsor_campaigns.id = stats.campaign_id
+    join public.sponsors on sponsors.id = sponsor_campaigns.sponsor_id
+    where sponsors.name = '${sponsorName}' and sponsor_campaigns.name = 'Banner'
+      and stats.counted_on = public.romania_today();`).trim();
+}
 
 /**
  * A published chapter, the sponsor, an approved Discover banner with a discount code and an
@@ -86,6 +100,53 @@ test.describe('Sponsored ads (S1-E12-02)', () => {
     await expect(
       ad.getByText(new RegExp(`A sponsor, ${sponsorName}, paid for this ad`)),
     ).toBeVisible();
+  });
+
+  test('showing and following the ad are counted, and an admin downloads the daily totals', async ({
+    browser,
+  }) => {
+    // Step 1: a visitor sees the ad and follows its link; the new tab opens the sponsor's site.
+    const visitor = await browser.newContext();
+    const page = await visitor.newPage();
+    await openInEnglish(page, '/discover');
+    const ad = page
+      .getByRole('complementary', { name: 'Advertisement' })
+      .filter({ hasText: 'New books every week.' });
+    await expect(ad).toBeVisible();
+    await visitor.route('https://press.example/**', (route) => route.fulfill({ body: 'ok' }));
+    const sponsorTab = visitor.waitForEvent('page');
+    await ad.getByRole('link', { name: /Visit the site/ }).click();
+    await (await sponsorTab).close();
+    await expect.poll(() => bannerTotalsToday().split('|')[1] ?? '').toMatch(/^[1-9]/);
+    await visitor.close();
+
+    // Step 2: the admin opens the campaign's report and downloads it.
+    runSql(`update public.profiles set locale = 'en' where handle = 'admin';`);
+    const staff = await browser.newContext({ acceptDownloads: true });
+    await useSessionInBrowser(staff, (await signInPersona('admin')).session);
+    await staff.addInitScript(([key, value]) => localStorage.setItem(key, value), [
+      LANGUAGE_STORAGE_KEY,
+      'en',
+    ] as const);
+    const staffPage = await staff.newPage();
+    const campaignId = runSql(`select sponsor_campaigns.id from public.sponsor_campaigns
+      join public.sponsors on sponsors.id = sponsor_id
+      where sponsors.name = '${sponsorName}' and sponsor_campaigns.name = 'Banner';`).trim();
+    await staffPage.goto(`/staff/sponsors/campaigns/${campaignId}`);
+    await expect(staffPage.getByRole('heading', { name: 'Report' })).toBeVisible();
+    await expect(staffPage.getByRole('row', { name: /^Total/ })).toBeVisible();
+    const download = staffPage.waitForEvent('download');
+    await staffPage.getByRole('button', { name: 'Download CSV' }).click();
+    const file = await download;
+    expect(file.suggestedFilename()).toMatch(/^sponsor-report-banner-\d{4}-\d{2}-\d{2}\.csv$/);
+    const chunks: Buffer[] = [];
+    for await (const chunk of await file.createReadStream()) chunks.push(chunk as Buffer);
+    const lines = Buffer.concat(chunks).toString('utf8').trim().split('\n');
+    expect(lines[0]).toBe('day,impressions,clicks');
+    // Two days of the run so far: yesterday (nothing) and today (what the visitor did).
+    expect(lines).toHaveLength(3);
+    expect(lines[2]).toMatch(/^\d{4}-\d{2}-\d{2},[1-9]\d*,[1-9]\d*$/);
+    await staff.close();
   });
 
   test('a sponsored category says who sponsors it under its heading', async ({ page }) => {

@@ -15,6 +15,9 @@ reader pages comes in part b3 (in `src/features/ads/`).
   ("Live" is an approved campaign inside its dates).
 - `lib/campaignFields.ts`: the editor's empty values, a saved campaign's values and tags typed as
   text.
+- `hooks/useCampaignReport.ts`, `lib/campaignReportCsv.ts` and `components/staff/CampaignReport.tsx`:
+  a campaign's impressions and clicks per day and its CSV (part c, story S1-E12-03). The counting
+  itself happens on reader pages, in `src/features/ads/hooks/useSponsorCounting.ts`.
 - `components/staff/`: `StaffSponsorsPage` (principles, review queue, campaigns, sponsors, never
   advertised) and `CampaignEditorPage` (the campaign form, the creative upload and "End
   campaign").

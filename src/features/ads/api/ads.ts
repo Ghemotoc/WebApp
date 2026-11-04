@@ -5,7 +5,9 @@
  * supabase/migrations/…_sponsors_a1_ad_slots.sql, which chooses every ad on the server from the
  * page's context alone (category, tag, language) and never from anything about the reader.
  * Part b3 adds fetchSponsorCredit(), which reads the "Sponsored by" line of a category or a
- * contest's page from sponsor_credit().
+ * contest's page from sponsor_credit(). Part c adds recordSponsorEvent(), which counts a
+ * sponsor's impression or click in record_sponsor_event() (totals per day, nothing about the
+ * reader).
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 import {
@@ -84,4 +86,24 @@ export async function fetchSponsorCredit(
   });
   if (error !== null) throw new Error(`The sponsor could not be read: ${error.message}`);
   return sponsorCreditSchema.parse(data);
+}
+
+/** What can be counted for a sponsor: being shown, or its link being followed. */
+export type SponsorEventKind = 'impression' | 'click';
+
+/**
+ * Counts one impression or click of a sponsor's ad or "Sponsored by" line (S1-E12-03 criterion 1).
+ *
+ * @param client - the Supabase client (signed in or not: nothing about the caller is kept)
+ * @param adKey - the ad's key, 'campaign:<ID>'
+ * @param kind - 'impression' or 'click'
+ * @throws Error when the database can't be reached
+ */
+export async function recordSponsorEvent(
+  client: AppSupabaseClient,
+  adKey: string,
+  kind: SponsorEventKind,
+): Promise<void> {
+  const { error } = await client.rpc('record_sponsor_event', { ad_key: adKey, event_kind: kind });
+  if (error !== null) throw new Error(`The sponsor's ${kind} was not counted: ${error.message}`);
 }

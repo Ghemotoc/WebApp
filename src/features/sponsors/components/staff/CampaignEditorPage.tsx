@@ -5,8 +5,9 @@
  * At /staff/sponsors/campaigns/new it starts an empty campaign; after the first save it moves to
  * the campaign's own address, where the picture can be added. An ended campaign is shown read-only
  * in the list and can't change here. Plain staff components, no doodles.
+ * Every saved campaign, an ended one included, shows its daily report below (part c; S1-E12-03).
  * Who shows it: the router (owner and admin; the server refuses everyone else). What it calls:
- * useSponsorsData(), CampaignForm and EndCampaignForm.
+ * useSponsorsData(), CampaignForm, EndCampaignForm and CampaignReport.
  */
 import { Link, useNavigate, useParams } from 'react-router';
 
@@ -20,6 +21,7 @@ import { useSponsorsData } from '../../hooks/useSponsorsAdmin';
 import { useSponsorTranslation } from '../../registerSponsorTranslations';
 
 import { CampaignForm } from './CampaignForm';
+import { CampaignReport } from './CampaignReport';
 import { EndCampaignForm } from './EndCampaignForm';
 
 /** Everything the form offers, once loaded; "error" when a read failed; null while loading. */
@@ -48,6 +50,26 @@ function editorBlockerKey(
   return null;
 }
 
+/**
+ * The line shown instead of the form; an ended campaign can't change, but its report still
+ * matters to the sponsor, so it shows below.
+ */
+function BlockedEditor({
+  messageKey,
+  campaign,
+}: {
+  messageKey: string;
+  campaign: StaffCampaign | null;
+}) {
+  const { t } = useSponsorTranslation();
+  return (
+    <div className="flex flex-col gap-8">
+      <Notice tone="info">{t(messageKey)}</Notice>
+      {campaign !== null && <CampaignReport campaign={campaign} />}
+    </div>
+  );
+}
+
 /** The form, once every list it offers has loaded. */
 function CampaignEditorBody({ campaignId }: { campaignId: string }) {
   const { t } = useSponsorTranslation();
@@ -60,7 +82,7 @@ function CampaignEditorBody({ campaignId }: { campaignId: string }) {
   const isNew = campaignId === 'new';
   const campaign = isNew ? null : (reads.campaigns.find((one) => one.id === campaignId) ?? null);
   const blockerKey = editorBlockerKey(campaign, isNew, reads.sponsors.length);
-  if (blockerKey !== null) return <Notice tone="info">{t(blockerKey)}</Notice>;
+  if (blockerKey !== null) return <BlockedEditor messageKey={blockerKey} campaign={campaign} />;
   return (
     <div className="flex flex-col gap-8">
       <CampaignForm
@@ -74,6 +96,7 @@ function CampaignEditorBody({ campaignId }: { campaignId: string }) {
         }
       />
       {campaign !== null && <EndCampaignForm campaignId={campaign.id} />}
+      {campaign !== null && <CampaignReport campaign={campaign} />}
     </div>
   );
 }
