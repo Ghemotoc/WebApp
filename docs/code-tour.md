@@ -2161,3 +2161,8 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Staff change them in `StaffRatingReasons` (Staff › Stories › a story › Settings) through `admin_change_story_settings()`, versioned and logged like any setting.
 - One click on a story page: `page_ads()` → `fill_ad_slot()` asks `network_ads_barred()`; a story with sexual content, nudity or graphic violence ticked skips the network step, so our own ads fill the slot. Sponsors are not affected.
 - Migration `…_sponsors_f_rating_reasons.sql`. Tests: `supabase/tests/database/276-rating-reasons.test.sql`, `src/schemas/story.test.ts`, `src/features/staff/lib/staffStorySettingsDiff.test.ts`.
+
+## Epic check: banners and sponsor slots (S1-E12-QA)
+
+- The epic in one journey: staff approve a campaign (`StaffSponsorsPage`, `admin_review_sponsor_campaign()`) → book it into a slot (`PlacementsSection` → `admin_book_ad_slot()` → `ad_bookings`) → a reader opens the page (`PageAdSlot` → `usePageAds()` → `page_ads()` → `fill_ad_slot()`: booked sponsor, campaign by placement, staff house ad, landing page, the network unless `network_ads_barred()` or `ads_are_barred()`, built-in house ad) → `AdBox` shows it and `record_sponsor_event()` counts the view and click in `campaign_daily_stats` → the admin reads `admin_sponsor_campaign_report()` on the campaign's page.
+- Tests walking the epic: `supabase/tests/database/277-epic-s1-e12.test.sql` and `e2e/epic-s1-e12.spec.ts`; each story's own tests are listed in its section above.
