@@ -14,7 +14,7 @@ Bundle 14 SPONSORS, part a1: the ad slots of public pages, filled by the server 
 
 ## How it was tested
 
-- Database test 270 (13 tests): anyone reads the catalogue and nobody writes it; a third slot or a second one in the same place is refused; Discover gets two different ads with our live landing page first; the classics page never advertises the classics; a signed-in teenager gets exactly what a signed-out visitor gets; "Why this ad?" echoes only category, tag and language even when more is sent; a class space, a class-only story and a non-public page get no slot.
+- Database test 270 (13 tests, with the allowed and denied markers for `ad_slots_select_all`): anyone reads the catalogue and nobody writes it; a third slot or a second one in the same place is refused; Discover gets two different ads with our live landing page first; the classics page never advertises the classics; a signed-in teenager gets exactly what a signed-out visitor gets; "Why this ad?" echoes only category, tag and language even when more is sent; a class space, a class-only story and a non-public page get no slot. Test 021 lists `ad_slots` among what a signed-out visitor may read.
 - e2e `e2e/ads.spec.ts`: a visitor sees "From us" on the story page and opens "Why this ad?" by keyboard; Discover has one wide slot; a class-only story shows none, even to its writer; the story page with its ad passes axe and doesn't scroll sideways at 390, 768 and 1440 px, light and night, Romanian and English.
 - Vitest: the "Why this ad?" sentences, what the page sends (empty values left out), and the chapter reader drawing the slot.
 
