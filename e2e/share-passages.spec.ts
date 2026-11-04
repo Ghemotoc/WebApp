@@ -13,6 +13,9 @@
  * - with the writer's switches off, neither appears and the preview goes back to the blurb; the
  *   new "Sharing pictures" switch saves from story settings (third criterion);
  * - a 16+ story offers neither and its preview never shows the passage (fourth criterion);
+ * - a link to the passed picture previews with the picture itself, from /api/picture-preview/…;
+ *   with the picture switch off it keeps the cover colour and that address answers 404
+ *   (IDEAS-2f, idea IDEA-20261101-12);
  * - the highlighted reader and the picture card pass axe and fit at 390, 768 and 1440 px.
  * Test data: adult_writer's story "Farul" with one chapter of three paragraphs and a picture;
  *   blocked reads it (no other reader spec signs in as blocked while this runs). All removed
@@ -143,6 +146,13 @@ async function previewDescription(page: Page, path: string): Promise<string> {
   return /<meta property="og:description" content="([^"]*)">/.exec(html)?.[1] ?? '';
 }
 
+/** The og:image a chat app would read for an address, as a visitor (IDEAS-2f). */
+async function previewImage(page: Page, path: string): Promise<string> {
+  const response = await page.request.get(path);
+  const html = await response.text();
+  return /<meta property="og:image" content="([^"]*)">/.exec(html)?.[1] ?? '';
+}
+
 /** Runs axe and checks nothing scrolls sideways at the page's width. */
 async function expectAccessibleAndFitting(page: Page, width: number) {
   await page.setViewportSize({ width, height: 900 });
@@ -209,6 +219,15 @@ test.describe('share a passage or a picture (S1-E4-11)', () => {
     expect(await previewDescription(page, `${chapterPath}/p2`)).toContain(`„${paragraphs[1]}”`);
     expect(await previewDescription(page, `${chapterPath}/p3`)).toContain(`Imagine: ${pictureAlt}`);
     expect(await previewDescription(page, chapterPath)).toContain('Un paznic și un far.');
+    // IDEAS-2f criterion 1: a link to the passed picture shows the picture itself, from our
+    // own address, which answers with the picture file.
+    const image = await previewImage(page, `${chapterPath}/p3`);
+    expect(image).toMatch(new RegExp(`/api/picture-preview/${storySlug}/${chapterCode}/3$`));
+    const picture = await page.request.get(new URL(image).pathname);
+    expect(picture.status()).toBe(200);
+    expect(picture.headers()['content-type']).toBe('image/png');
+    // A paragraph keeps the cover colour's square.
+    expect(await previewImage(page, `${chapterPath}/p2`)).toContain('/link-previews/');
     await page.close();
   });
 
@@ -242,6 +261,11 @@ test.describe('share a passage or a picture (S1-E4-11)', () => {
     await expect(page.getByRole('button', { name: 'Copy link to this passage' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /Share picture/ })).toHaveCount(0);
     expect(await previewDescription(page, `${chapterPath}/p2`)).toContain('Un paznic și un far.');
+    // IDEAS-2f criterion 2: a picture that may not be shared keeps the cover colour, and its
+    // preview address answers nothing.
+    expect(await previewImage(page, `${chapterPath}/p3`)).toContain('/link-previews/');
+    const refused = await page.request.get(`/api/picture-preview/${storySlug}/${chapterCode}/3`);
+    expect(refused.status()).toBe(404);
     setStory('quote_cards_enabled = true, picture_sharing_enabled = true');
     await page.context().close();
   });

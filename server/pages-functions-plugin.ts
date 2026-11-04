@@ -12,6 +12,7 @@
  * tests put in the local Vault; its emails go to Mailpit too) and
  * POST /api/picture-check (server/picture-check.ts, S1-E10-05: always the stub locally, signed
  * with PICTURE_CHECK_SECRET, the same value the tests put in the local Vault),
+ * GET /api/picture-preview/… (server/picture-preview.ts, IDEAS-2f: a shared picture's preview),
  * POST /api/embed (server/embeds.ts, S1-E3-10: always the oEmbed stand-in locally, so nothing
  * leaves the machine),
  * /api/canva/… (server/canva.ts, S1-E3-12: always the Canva stand-in locally, with its own token
@@ -55,6 +56,7 @@ import { handleEmbed } from './embeds.ts';
 import { oembedLookup } from './embeds/oembed.ts';
 import { fetchLandingPreview, handleLandingLink, parseLandingAddress } from './landing-preview.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
+import { handlePicturePreview } from './picture-preview.ts';
 import { handleNotice } from './notice.ts';
 import {
   handleNotificationEmails,
@@ -287,8 +289,27 @@ function databaseHandlerFor(
         sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
       });
   }
-  // The support ticket emails (ADMIN-2h2) read and write the database too.
-  return supportHandlerFor(url, environment);
+  // The support ticket emails (ADMIN-2h2) and shared pictures (IDEAS-2f) read the database too.
+  return picturePreviewHandlerFor(url, environment) ?? supportHandlerFor(url, environment);
+}
+
+/**
+ * The handler for a shared picture's preview file (IDEAS-2f), with the local Supabase.
+ *
+ * @param url - the request's address
+ * @param environment - the VITE_ values
+ * @returns the function that answers /api/picture-preview/…, or null for every other address
+ */
+function picturePreviewHandlerFor(
+  url: string | undefined,
+  environment: Record<string, string>,
+): FunctionHandler | null {
+  if (!(url ?? '').startsWith('/api/picture-preview/')) return null;
+  return (request) =>
+    handlePicturePreview(request, {
+      supabaseUrl: environment.VITE_SUPABASE_URL ?? '',
+      anonKey: environment.VITE_SUPABASE_ANON_KEY ?? '',
+    });
 }
 
 /**

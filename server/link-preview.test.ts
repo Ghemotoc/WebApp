@@ -28,6 +28,7 @@ const chapterPreview: LinkPreview = {
   chapterTitle: 'Caietele bunicii',
   isChapter: true,
   passage: null,
+  picture: null,
 };
 
 /** A host that serves indexHtml and answers with the given preview (or throws). */
@@ -181,6 +182,23 @@ describe('the page a shared link serves', () => {
     expect(html).not.toContain('<script>alert(1)</script>');
     expect(html).toContain('&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;');
     expect(html).toContain('\\u003cscript>alert(1)\\u003c/script>');
+  });
+
+  it('shows a shared picture itself in the preview, through our own address (IDEAS-2f)', async () => {
+    const withPicture: LinkPreview = {
+      ...chapterPreview,
+      picture: {
+        address: { storySlug: 'statia-meteo', chapterCode: 'ab12cd34', blockNumber: 3 },
+        alt: 'Un far "în" ceață',
+      },
+    };
+    const { html } = await open('/s/statia-meteo/ab12cd34/p3', withPicture);
+    expect(html).toContain(
+      '<meta property="og:image" content="https://example.com/api/picture-preview/statia-meteo/ab12cd34/3">',
+    );
+    expect(html).toContain('<meta property="og:image:alt" content="Un far &quot;în&quot; ceață">');
+    expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
+    expect(html).not.toContain('link-previews/sky.png');
   });
 
   it('marks an unknown or hidden address noindex and adds no preview', async () => {
