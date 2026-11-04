@@ -85,7 +85,7 @@ export function NotificationRow({ notification, ownHandle, onOpen }: Notificatio
         isUnread ? 'bg-tint/40' : 'bg-surface',
       )}
     >
-      <NotificationIcon category={notification.category} />
+      <NotificationIcon category={notification.category} writerRank={notification.writerRank} />
       {text.href === null ? (
         <div className={wordsClasses}>
           <RowWords text={text} notification={notification} />
