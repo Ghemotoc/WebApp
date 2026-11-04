@@ -15,6 +15,7 @@ Bundle 14d IDEAS-3, part b of 6: classes. These are ideas 3 and 5 from the 2 Nov
   - The thread page's side column shows the panel to the teacher, closed until they open it. Students and visitors never see it.
   - There is no new table, column or policy. The teacher already sees every post and member, so the panel only does the counting.
 - `docs/code-tour.md` has a section on this part.
+- A test fix outside this part: `e2e/class-stories.spec.ts` picks the class card by its text. Since NEW-1 (#327), story settings has a second group also named "Who can read it".
 
 ## Tests
 
