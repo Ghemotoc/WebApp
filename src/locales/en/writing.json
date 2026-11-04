@@ -504,7 +504,8 @@
       "disconnect": "Disconnect Canva",
       "disconnectFailed": "We couldn’t disconnect Canva. Please try again.",
       "loadFailed": "We couldn’t check whether Canva is connected. Please try again."
-    }
+    },
+    "arrived": "Your new cover from Canva is here, and it’s already saved."
   },
   "insights": {
     "eyebrow": "Only you see this",

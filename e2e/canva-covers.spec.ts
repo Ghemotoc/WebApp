@@ -10,7 +10,8 @@
  * - a writer who hasn't connected goes to the consent page first, and saying no there shares
  *   nothing (criterion 4);
  * - after Allow, a blank design opens; Return brings it back, it goes through the picture check
- *   and becomes the story's cover (criteria 1 to 3);
+ *   and becomes the story's cover (criteria 1 to 3); back in the settings tab, the new cover
+ *   shows by itself, labelled as waiting for its check (IDEAS-2d, idea IDEA-20261101-11);
  * - Settings shows the connection and Disconnect removes it;
  * - with canva_covers off, neither the button nor the Settings section shows;
  * - the pages pass axe and fit at 390 (Romanian), 768 and 1440 px.
@@ -138,6 +139,14 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
         `select status from public.picture_checks where story_id = '${storyId}' order by created_at desc limit 1`,
       ),
     ).toBe('held');
+    // IDEAS-2d: back in the settings tab, the new cover shows by itself, waiting for its check.
+    await page.bringToFront();
+    await page.evaluate(() =>
+      document.dispatchEvent(new Event('visibilitychange', { bubbles: true })),
+    );
+    const arrived = page.getByRole('status').filter({ hasText: 'Your new cover from Canva' });
+    await expect(arrived).toBeVisible();
+    await expect(arrived.getByText(/Waiting for a/)).toBeVisible();
     expect(approveWaitingPictures(`story_id = '${storyId}'`)).toBe('1');
     await page.context().close();
   });

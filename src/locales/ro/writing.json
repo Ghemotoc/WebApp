@@ -504,7 +504,8 @@
       "disconnect": "Deconectează Canva",
       "disconnectFailed": "Nu am putut deconecta Canva. Încearcă din nou.",
       "loadFailed": "Nu am putut verifica dacă Canva e conectat. Încearcă din nou."
-    }
+    },
+    "arrived": "Coperta nouă din Canva a ajuns aici și este deja salvată."
   },
   "insights": {
     "eyebrow": "Doar tu vezi asta",

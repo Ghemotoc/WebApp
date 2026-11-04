@@ -27,6 +27,9 @@ export function useMyStories() {
     queryKey: myStoriesKey(userId),
     enabled: userId !== null,
     queryFn: async () => fetchMyStories(await requireClient()),
+    // Read again when the tab gets focus, so a cover saved in another tab (Canva) shows up in
+    // Story settings by itself (IDEAS-2d, useArrivingCover).
+    refetchOnWindowFocus: true,
   });
   return {
     stories: stories.data ?? [],

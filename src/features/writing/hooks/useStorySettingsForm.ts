@@ -6,10 +6,11 @@
  * check the answers, then api/stories.ts → update_my_story(); on success the writer's story
  * list is refreshed and "Saved." shows.
  * It starts from the story as saved, so the sections (shared with the new story form) show the
- * current values and the writer changes only what they want.
+ * current values and the writer changes only what they want. A cover saved from another tab,
+ * such as one made in Canva, replaces the form's cover by itself (useArrivingCover, IDEAS-2d).
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -22,6 +23,7 @@ import {
 import { updateMyStory, type MyStory, type SettingsOutcome } from '../api/stories';
 
 import { toStoryFieldErrors, type StoryAnswers, type StoryFieldErrors } from './storyAnswers';
+import { useArrivingCover } from './useArrivingCover';
 import { myStoriesKey } from './useMyStories';
 
 /**
@@ -74,7 +76,7 @@ function answersFrom(story: MyStory): StoryAnswers {
  *
  * @param story - the story being edited
  * @returns answers, set, errors, outcome (null | 'saved' | 'not_active' | 'not_found' |
- *   'save_failed'), save, isSaving
+ *   'save_failed'), save, isSaving, and arrivedCoverPath (a cover saved from another tab, or null)
  */
 export function useStorySettingsForm(story: MyStory) {
   const [answers, setAnswers] = useState<StoryAnswers>(() => answersFrom(story));
@@ -102,6 +104,12 @@ export function useStorySettingsForm(story: MyStory) {
     setOutcome(null);
   }
 
+  // A cover saved from another tab (made in Canva) comes into the form by itself (IDEAS-2d).
+  const setCover = useCallback((cover: StoryCoverChoice) => {
+    setAnswers((current) => ({ ...current, cover }));
+  }, []);
+  const arrivedCoverPath = useArrivingCover(story, answers.cover, setCover);
+
   /** Checks every answer; saves only when all are right. */
   function submit() {
     const result = storySettingsSchema.safeParse(answers);
@@ -112,5 +120,13 @@ export function useStorySettingsForm(story: MyStory) {
     save.mutate(result.data);
   }
 
-  return { answers, set, errors, outcome, submit, isSaving: save.isPending };
+  return {
+    answers,
+    set,
+    errors,
+    outcome,
+    submit,
+    isSaving: save.isPending,
+    arrivedCoverPath,
+  };
 }

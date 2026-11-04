@@ -5186,6 +5186,7 @@ export type Database = {
           chapter_id: string;
           created_at: string;
           device_kind: string;
+          furthest_percent: number;
           id: string;
           percent: number;
           story_id: string;
@@ -5197,6 +5198,7 @@ export type Database = {
           chapter_id: string;
           created_at?: string;
           device_kind: string;
+          furthest_percent?: number;
           id?: string;
           percent: number;
           story_id: string;
@@ -5207,6 +5209,7 @@ export type Database = {
           chapter_id?: string;
           created_at?: string;
           device_kind?: string;
+          furthest_percent?: number;
           id?: string;
           percent?: number;
           story_id?: string;
