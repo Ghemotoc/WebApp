@@ -141,7 +141,7 @@ Names are suggestions for Claude Code. Every table has row-level security.
 **The user ID (decided 16 Oct 2026, late evening)**
 
 - **Created automatically at sign-up.** Supabase Auth gives every new account a random UUID and the same value becomes `profiles.id`. Email, Google, Apple and Microsoft sign-ups all get one the same way.
-- **Never changes and is never reused**, even after the account is deleted. A trigger refuses any change to `profiles.id` and to the owner column of any row.
+- **Never changes and is never reused**, even after the account is deleted. A trigger refuses any change to `profiles.id` and to the owner column of any row. One exception: a space's owner (`spaces.user_id`) changes when one of its moderators accepts the owner's offer to hand it over (decided 4 Nov 2026, 12:53; IDEA-20261102-7).
 - **Everything points to it.** Every story, chapter, comment, reaction, post, message, report, appeal, certificate, export and data request has a `user_id` column (not null, references `profiles.id`). Other people in a row get role names such as `reporter_user_id` or `target_user_id`. CI fails a new user-content table without it (S1-E1-02).
 - **The handle and pen name can change; the ID can't.** Earlier handles stay in the audit log so staff can still find old work.
 - **Never shown publicly:** not on any screen, in a URL, a link preview, a share card or a public view. Public views carry the handle and pen name instead, and actions on another person (follow, block, message) go through functions that take a handle or a story ID. Staff see the ID in the admin site (shortened, with a copy button) and the user sees it in their own exports.

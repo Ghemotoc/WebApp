@@ -67,6 +67,21 @@ export interface SpaceViewer {
   welcomeNote: string | null;
   /** True for a member who hasn't pressed "Got it" on the welcome note yet. */
   showWelcome: boolean;
+  /** The owner, who may offer the space to one of its moderators (IDEAS-3e). */
+  canHandOver: boolean;
+  /** The open offer, for the owner and the moderator it is for (IDEAS-3e); null otherwise. */
+  handover: SpaceHandover | null;
+}
+
+/** An open offer to hand a space over (IDEAS-3e, idea IDEA-20261102-7). */
+export interface SpaceHandover {
+  /** The moderator it is offered to. */
+  to: ForumPerson;
+  /** The owner who offered it. */
+  from: ForumPerson;
+  offeredAt: string;
+  /** The reader is the moderator it is offered to, and may accept or decline. */
+  isForMe: boolean;
 }
 
 /** A space as the screens show it. */
@@ -160,6 +175,10 @@ export type SpaceFailure =
   | 'invalid'
   | 'class_only'
   | 'not_teacher'
+  | 'handover_missing'
+  | 'handover_not_moderator'
+  | 'handover_age'
+  | 'handover_not_teacher'
   | 'unreachable';
 
 /** A field the database found a problem with ("name:taken", "rules:too_long"…). */
@@ -206,6 +225,11 @@ const otherHints: Record<string, SpaceFailure> = {
   'member:age': 'member_age',
   'request:missing': 'request_missing',
   'reason:too_long': 'reason_too_long',
+  // IDEAS-3e: an offer that is gone, or a moderator who can't take the space over.
+  'handover:missing': 'handover_missing',
+  'handover:not_moderator': 'handover_not_moderator',
+  'handover:age': 'handover_age',
+  'handover:not_teacher': 'handover_not_teacher',
 };
 
 /**
@@ -286,6 +310,25 @@ function viewerFrom(value: Json | undefined): SpaceViewer {
     powers: powersFrom(viewer['powers']),
     welcomeNote: typeof viewer['welcome_note'] === 'string' ? viewer['welcome_note'] : null,
     showWelcome: viewer['show_welcome'] === true,
+    canHandOver: viewer['can_hand_over'] === true,
+    handover: handoverFrom(viewer['handover']),
+  };
+}
+
+/**
+ * Reads the open offer to hand the space over (IDEAS-3e).
+ *
+ * @param value - space_handover_json()'s answer: null when there is none for this reader
+ * @returns the offer, or null
+ */
+function handoverFrom(value: Json | undefined): SpaceHandover | null {
+  const handover = objectOf(value);
+  if (typeof handover['offered_at'] !== 'string') return null;
+  return {
+    to: personFrom(handover['to']),
+    from: personFrom(handover['from']),
+    offeredAt: handover['offered_at'],
+    isForMe: handover['is_for_me'] === true,
   };
 }
 

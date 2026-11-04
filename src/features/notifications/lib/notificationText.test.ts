@@ -274,6 +274,24 @@ describe('notificationText', () => {
     expect(text.href).toBe('/spaces/fantasy-writers-circle');
   });
 
+  it('an offer to take a space over names who offered it and opens the space (IDEAS-3e)', () => {
+    const offerRow: AppNotification = {
+      ...newChapter,
+      kind: 'space_handover_offered',
+      category: 'follows',
+      actors: [{ handle: 'ana', displayName: 'Ana' }],
+      actorCount: 1,
+      story: null,
+      chapter: null,
+      space: { slug: 'fantasy-writers-circle', name: 'Fantasy writers’ circle' },
+    };
+    const text = notificationText(englishT(), offerRow, null);
+    expect(`${text.who} ${text.what}`).toBe(
+      'Ana offered you Fantasy writers’ circle. Open it to accept or decline.',
+    );
+    expect(text.href).toBe('/spaces/fantasy-writers-circle');
+  });
+
   it('a space the reader can no longer see leaves the row without a link', () => {
     const hiddenRow: AppNotification = {
       ...newChapter,

@@ -84,7 +84,8 @@
     "landingEntriesOpenGone": "au început înscrierile pentru o pagină despre care ai întrebat, dar care a fost scoasă între timp.",
     "contestCertificateIssued": "ai primit o diplomă de la „{{title}}”. O găsești în Diplomele mele.",
     "certificateIssuedPlain": "ai primit o diplomă nouă. O găsești în Diplomele mele.",
-    "rankReached": "acum ai rangul {{rank}}. Felicitări!"
+    "rankReached": "acum ai rangul {{rank}}. Felicitări!",
+    "spaceHandoverOffered": "ți-a oferit {{space}}. Deschide-l ca să accepți sau să refuzi."
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",

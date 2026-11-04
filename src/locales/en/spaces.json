@@ -195,7 +195,11 @@
     "join_note": {
       "too_long": "Your note is too long. Keep it to 200 characters.",
       "html": "A note can’t hold HTML tags."
-    }
+    },
+    "handover_missing": "This offer isn’t open any more.",
+    "handover_not_moderator": "Only one of the space’s moderators can take it over.",
+    "handover_age": "This person is in another age group, so they can’t run this space.",
+    "handover_not_teacher": "A class can only be handed to a teacher with the Teacher badge."
   },
   "moderators": {
     "eyebrow": "Space settings",
@@ -279,7 +283,11 @@
       "lock_date_changed": "{{actor}} changed when the class space locks.",
       "class_archived": "{{actor}} archived the class space.",
       "certificates_issued": "{{actor}} signed certificates.",
-      "welcome_note_changed": "{{actor}} changed the welcome note."
+      "welcome_note_changed": "{{actor}} changed the welcome note.",
+      "handover_offered": "{{actor}} offered the space to {{target}}.",
+      "handover_cancelled": "{{actor}} took back the offer of the space to {{target}}.",
+      "handover_declined": "{{actor}} declined the space offered by {{target}}.",
+      "handover_accepted": "{{actor}} accepted the space from {{target}} and is now its owner. {{target}} stays on as a moderator with every power."
     }
   },
   "bannerPicture": {
@@ -490,5 +498,19 @@
     "hint_other": "{{count}} of {{limit}} characters. Say why you’d like to join.",
     "send": "Send request",
     "cancel": "Cancel"
+  },
+  "handover": {
+    "eyebrow": "Owner",
+    "title": "Hand over this space",
+    "intro": "Offer the space to one of its moderators. Nothing changes until they accept: then they become the owner, and you stay on as a moderator with every power.",
+    "label": "The moderator to offer it to",
+    "offer": "Offer the space",
+    "none": "Only a moderator can take the space over. Make someone a moderator first.",
+    "offered": "You offered this space to {{name}} on {{time}}. It becomes theirs when they accept.",
+    "cancel": "Take back the offer",
+    "offerTitle": "{{name}} offered you {{space}}",
+    "offerText": "If you accept, you become the owner and {{name}} stays on as a moderator with every power.",
+    "accept": "Accept and become the owner",
+    "decline": "Decline"
   }
 }

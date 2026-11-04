@@ -195,7 +195,11 @@
     "join_note": {
       "too_long": "Mesajul tău e prea lung. Folosește cel mult 200 de caractere.",
       "html": "Mesajul nu poate conține etichete HTML."
-    }
+    },
+    "handover_missing": "Oferta nu mai este valabilă.",
+    "handover_not_moderator": "Doar unul dintre moderatorii spațiului îl poate prelua.",
+    "handover_age": "Persoana este în altă grupă de vârstă, așa că nu poate conduce acest spațiu.",
+    "handover_not_teacher": "O clasă poate fi predată doar unui profesor cu insigna de profesor."
   },
   "moderators": {
     "eyebrow": "Setările spațiului",
@@ -279,7 +283,11 @@
       "lock_date_changed": "{{actor}} a schimbat data la care se închide spațiul clasei.",
       "class_archived": "{{actor}} a arhivat spațiul clasei.",
       "certificates_issued": "{{actor}} a semnat diplome.",
-      "welcome_note_changed": "{{actor}} a schimbat mesajul de bun venit."
+      "welcome_note_changed": "{{actor}} a schimbat mesajul de bun venit.",
+      "handover_offered": "{{actor}} a oferit spațiul contului {{target}}.",
+      "handover_cancelled": "{{actor}} a retras oferta făcută contului {{target}}.",
+      "handover_declined": "{{actor}} a refuzat spațiul oferit de {{target}}.",
+      "handover_accepted": "{{actor}} a preluat spațiul de la {{target}} și acum este proprietarul lui. {{target}} rămâne moderator cu toate drepturile."
     }
   },
   "bannerPicture": {
@@ -490,5 +498,19 @@
     "hint_other": "{{count}} din {{limit}} de caractere. Spune de ce vrei să intri.",
     "send": "Trimite cererea",
     "cancel": "Renunță"
+  },
+  "handover": {
+    "eyebrow": "Proprietar",
+    "title": "Predă acest spațiu",
+    "intro": "Oferă spațiul unuia dintre moderatori. Nu se schimbă nimic până nu acceptă: atunci devine proprietar, iar tu rămâi moderator cu toate drepturile.",
+    "label": "Moderatorul căruia îi oferi spațiul",
+    "offer": "Oferă spațiul",
+    "none": "Doar un moderator poate prelua spațiul. Mai întâi fă pe cineva moderator.",
+    "offered": "Ai oferit acest spațiu contului {{name}} pe {{time}}. Spațiul trece la acest cont când acceptă.",
+    "cancel": "Retrage oferta",
+    "offerTitle": "{{name}} ți-a oferit {{space}}",
+    "offerText": "Dacă accepți, devii proprietar, iar {{name}} rămâne moderator cu toate drepturile.",
+    "accept": "Acceptă și devino proprietar",
+    "decline": "Refuză"
   }
 }

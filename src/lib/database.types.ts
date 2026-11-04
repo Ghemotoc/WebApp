@@ -6361,6 +6361,8 @@ export type Database = {
           created_at: string;
           deleted_at: string | null;
           description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
@@ -6378,6 +6380,7 @@ export type Database = {
           check_certificate_class: undefined | null;
           space_acts_as_platform: boolean | null;
           space_card_visible: boolean | null;
+          space_handover_json: Json | null;
           space_is_in_class: boolean | null;
           space_is_locked: boolean | null;
           space_json: Json | null;
@@ -6392,6 +6395,7 @@ export type Database = {
           | 'check_certificate_class'
           | 'space_acts_as_platform'
           | 'space_card_visible'
+          | 'space_handover_json'
           | 'space_is_in_class'
           | 'space_is_locked'
           | 'space_json'
@@ -6409,6 +6413,8 @@ export type Database = {
           created_at?: string;
           deleted_at?: string | null;
           description: string;
+          handover_offered_at?: string | null;
+          handover_to_user_id?: string | null;
           id?: string;
           joining?: Database['public']['Enums']['space_joining'];
           kind?: Database['public']['Enums']['space_kind'];
@@ -6432,6 +6438,8 @@ export type Database = {
           created_at?: string;
           deleted_at?: string | null;
           description?: string;
+          handover_offered_at?: string | null;
+          handover_to_user_id?: string | null;
           id?: string;
           joining?: Database['public']['Enums']['space_joining'];
           kind?: Database['public']['Enums']['space_kind'];
@@ -6453,6 +6461,13 @@ export type Database = {
             columns: ['banner_picture_id'];
             isOneToOne: false;
             referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'spaces_handover_to_user_id_fkey';
+            columns: ['handover_to_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
           {
@@ -10129,6 +10144,7 @@ export type Database = {
         Args: { answer_text: string; target_request_id: string };
         Returns: undefined;
       };
+      answer_space_handover: { Args: { accept: boolean; slug: string }; Returns: Json };
       apply_support_change: {
         Args: {
           after_value: Json;
@@ -10289,6 +10305,7 @@ export type Database = {
       cancel_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
       cancel_schedule: { Args: { chapter_code: string }; Returns: Json };
       cancel_social_sign_up: { Args: Record<PropertyKey, never>; Returns: undefined };
+      cancel_space_handover: { Args: { slug: string }; Returns: Json };
       case_for_links: {
         Args: { must_act: boolean; target_case_id: string };
         Returns: {
@@ -10561,6 +10578,8 @@ export type Database = {
           created_at: string;
           deleted_at: string | null;
           description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
@@ -11482,6 +11501,8 @@ export type Database = {
           created_at: string;
           deleted_at: string | null;
           description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
@@ -12431,6 +12452,7 @@ export type Database = {
         Args: { ends_on: string; every_year: boolean; on_date: string; starts_on: string };
         Returns: boolean;
       };
+      offer_space_handover: { Args: { handle: string; slug: string }; Returns: Json };
       on_call_gaps: { Args: { from_time: string; to_time: string }; Returns: Json };
       on_call_now: { Args: { at_time?: string }; Returns: string };
       onboarding_is_due: { Args: { target_user_id: string }; Returns: boolean };
@@ -12511,6 +12533,8 @@ export type Database = {
           created_at: string;
           deleted_at: string | null;
           description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
@@ -13648,6 +13672,40 @@ export type Database = {
         };
         Returns: boolean;
       };
+      space_for_handover_answer: {
+        Args: { target_slug: string };
+        Returns: {
+          age_group: Database['public']['Enums']['space_age_group'];
+          archived_at: string | null;
+          banner: Database['public']['Enums']['space_banner'];
+          banner_picture_id: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
+          id: string;
+          joining: Database['public']['Enums']['space_joining'];
+          kind: Database['public']['Enums']['space_kind'];
+          locks_at: string | null;
+          name: string;
+          name_key: string;
+          posting: Database['public']['Enums']['space_posting'];
+          readers: Database['public']['Enums']['space_readers'];
+          rules: string;
+          school_name: string | null;
+          slug: string;
+          updated_at: string;
+          user_id: string;
+          welcome_note: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'spaces';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       space_for_power: {
         Args: { target_slug: string; wanted: Database['public']['Enums']['space_power'] };
         Returns: {
@@ -13658,6 +13716,8 @@ export type Database = {
           created_at: string;
           deleted_at: string | null;
           description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
@@ -13681,6 +13741,25 @@ export type Database = {
         };
       };
       space_forum_id: { Args: { target_space_id: string }; Returns: string };
+      space_handover_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      space_handover_refusal: {
+        Args: {
+          person_id: string;
+          target: Omit<
+            Database['public']['Tables']['spaces']['Row'],
+            Database['public']['Tables']['spaces']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       space_is_in_class: {
         Args: {
           target: Omit<
@@ -13825,6 +13904,8 @@ export type Database = {
           created_at: string;
           deleted_at: string | null;
           description: string;
+          handover_offered_at: string | null;
+          handover_to_user_id: string | null;
           id: string;
           joining: Database['public']['Enums']['space_joining'];
           kind: Database['public']['Enums']['space_kind'];
@@ -14566,7 +14647,8 @@ export type Database = {
         | 'data_request_copy_ready'
         | 'picture_opened_by_staff'
         | 'landing_entries_open'
-        | 'rank_reached';
+        | 'rank_reached'
+        | 'space_handover_offered';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -14945,6 +15027,7 @@ export const Constants = {
         'picture_opened_by_staff',
         'landing_entries_open',
         'rank_reached',
+        'space_handover_offered',
       ],
       picture_kind: [
         'cover',
