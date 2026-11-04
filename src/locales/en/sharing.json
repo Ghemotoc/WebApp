@@ -8,7 +8,9 @@
     "passageLink": "Copy link to this passage",
     "passageCopied": "Link copied. Whoever opens it reads from this passage.",
     "passageCopyFailed": "Your browser didn’t let us copy the link.",
-    "passageTooLong": "Select five paragraphs or fewer to share a link to them."
+    "passageTooLong": "Select five paragraphs or fewer to share a link to them.",
+    "discuss": "Discuss in the forums",
+    "discussFrom": "From chapter {{number}} of “{{title}}”"
   },
   "dialog": {
     "eyebrow": "Share",

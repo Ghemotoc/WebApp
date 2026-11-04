@@ -3201,6 +3201,7 @@ export type Database = {
       };
       forum_threads: {
         Row: {
+          answer_post_id: string | null;
           bumped_at: string;
           created_at: string;
           deleted_at: string | null;
@@ -3216,6 +3217,18 @@ export type Database = {
           title: string;
           updated_at: string;
           user_id: string;
+          forum_answer_post: {
+            body: string;
+            created_at: string;
+            deleted_at: string | null;
+            edited_at: string | null;
+            id: string;
+            post_number: number;
+            quoted_post_ids: string[];
+            thread_id: string;
+            updated_at: string;
+            user_id: string;
+          } | null;
           forum_first_unread_post: number | null;
           forum_thread_header_json: Json | null;
           forum_thread_is_shown: boolean | null;
@@ -3223,12 +3236,14 @@ export type Database = {
           forum_unread_post_count: number | null;
         };
         ComputedFields:
+          | 'forum_answer_post'
           | 'forum_first_unread_post'
           | 'forum_thread_header_json'
           | 'forum_thread_is_shown'
           | 'forum_thread_summary_json'
           | 'forum_unread_post_count';
         Insert: {
+          answer_post_id?: string | null;
           bumped_at?: string;
           created_at?: string;
           deleted_at?: string | null;
@@ -3246,6 +3261,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
+          answer_post_id?: string | null;
           bumped_at?: string;
           created_at?: string;
           deleted_at?: string | null;
@@ -3263,6 +3279,13 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'forum_threads_answer_post_id_fkey';
+            columns: ['answer_post_id'];
+            isOneToOne: false;
+            referencedRelation: 'forum_posts';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'forum_threads_forum_id_fkey';
             columns: ['forum_id'];
@@ -11213,6 +11236,32 @@ export type Database = {
       forget_character_picture: { Args: { old_picture_id: string }; Returns: Json };
       forget_old_activity: { Args: Record<PropertyKey, never>; Returns: number };
       forum_and_children: { Args: { top_forum_id: string }; Returns: string[] };
+      forum_answer_post: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['forum_threads']['Row'],
+            Database['public']['Tables']['forum_threads']['ComputedFields']
+          >;
+        };
+        Returns: {
+          body: string;
+          created_at: string;
+          deleted_at: string | null;
+          edited_at: string | null;
+          id: string;
+          post_number: number;
+          quoted_post_ids: string[];
+          thread_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        SetofOptions: {
+          from: 'forum_threads';
+          to: 'forum_posts';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       forum_as_json: { Args: { target_forum_id: string }; Returns: Json };
       forum_first_unread_post: {
         Args: {
@@ -11300,6 +11349,7 @@ export type Database = {
       forum_thread_for_moderation: {
         Args: { reason: string; thread_number: number };
         Returns: {
+          answer_post_id: string | null;
           bumped_at: string;
           created_at: string;
           deleted_at: string | null;
@@ -11837,6 +11887,10 @@ export type Database = {
         Returns: Database['public']['Enums']['age_check_result'];
       };
       mark_conversation_read: { Args: { other_handle: string }; Returns: undefined };
+      mark_forum_thread_answer: {
+        Args: { post_number?: number; thread_number: number };
+        Returns: Json;
+      };
       mark_forum_thread_read: {
         Args: { thread_number: number; up_to_post: number };
         Returns: undefined;
@@ -12532,6 +12586,10 @@ export type Database = {
         Returns: boolean;
       };
       parental_consent_request: { Args: { token: string }; Returns: Json };
+      passage_discussion_allowed: {
+        Args: { chapter_code: string; story_slug: string };
+        Returns: boolean;
+      };
       picture_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       picture_is_visible: { Args: { bucket: string; path: string }; Returns: boolean };
       picture_item_content: { Args: { picture_id: string }; Returns: Json };

@@ -44,7 +44,8 @@
     "categoryNote": "Threads go in the forums inside this category.",
     "replies_few": "{{count, number}} replies",
     "pinned": "Pinned",
-    "locked": "Locked"
+    "locked": "Locked",
+    "answered": "Answered"
   },
   "person": {
     "deleted": "Deleted account",
@@ -314,5 +315,21 @@
     "progressLabel": "Progress to {{rank}}, {{percent}} per cent",
     "top": "{{name}} has reached the top rank.",
     "loadFailed": "We couldn’t load the rank. Try again later."
+  },
+  "answer": {
+    "pill": "Answer",
+    "mark": "This answered it",
+    "markLabel": "This answered it: reply #{{number}}",
+    "unmark": "Not the answer",
+    "unmarkLabel": "Not the answer: take the mark off reply #{{number}}",
+    "noteLabel": "The answer to this thread",
+    "noteLead": "Answered:",
+    "noteLink": "see reply #{{number}} by {{name}}",
+    "failures": {
+      "not_starter": "Only the person who started the thread can mark the answer.",
+      "not_reply": "That reply can’t be the answer. Pick a reply by someone else.",
+      "gone": "This thread isn’t here any more.",
+      "unreachable": "We couldn’t save that. Check your connection and try again."
+    }
   }
 }

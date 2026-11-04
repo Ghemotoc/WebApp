@@ -9,7 +9,8 @@
  * (post-3) a permalink scrolls to. Part c draws a reply's quotes above its words, each linking
  * back to the quoted post (S1-E8-03). Under the words sits the author's forum signature, only from
  * 768 px up: phones hide it (S1-E8-08 criterion 2; Q25). Beside the name sits the author's rank
- * (RankChip, S1-E8-09).
+ * (RankChip, S1-E8-09). IDEAS-3f adds an "Answer" pill on the reply the thread's starter marked
+ * "This answered it" (IDEA-20261102-8).
  * Who uses it: ThreadPage. What it calls: ForumQuoteBlock, ForumPostText, PostActions,
  * PostEditForm, PostHistory, RankChip, SignatureBody.
  */
@@ -78,6 +79,10 @@ function PostHeader({ post, forumSlug, threadNumber }: ForumPostCardProps) {
           {post.authorRank !== null && <RankChip rank={post.authorRank} isCompact />}
           {post.author?.isStaff === true && <InfoPill tone="sky">{t('staff')}</InfoPill>}
           {post.isStarter && <InfoPill tone="plum">{t('person.starter')}</InfoPill>}
+          {/* IDEAS-3f: the reply that answered the thread, while everyone can read it. */}
+          {post.isAnswer && post.state === 'live' && (
+            <InfoPill tone="sage">{t('answer.pill')}</InfoPill>
+          )}
         </div>
         <p className="m-0 text-xs text-meta">
           <time dateTime={post.createdAt}>{created}</time>
@@ -175,6 +180,7 @@ export function ForumPostCard(props: ForumPostCardProps) {
           post={post}
           authorName={name}
           forumSlug={props.forumSlug}
+          threadNumber={props.threadNumber}
           isConfirmingDelete={mode === 'deleting'}
           onEdit={() => setMode('editing')}
           onAskDelete={(asking) => setMode(asking ? 'deleting' : 'reading')}

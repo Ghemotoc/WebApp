@@ -2,7 +2,8 @@
  * Forum threads and posts: reading a forum's threads and a thread's posts, and starting,
  * replying, editing and deleting (bundle FORUMS-1, part b; story S1-E8-02; board 5.2). Part c
  * adds each post's quotes (S1-E8-03); part d, whether a thread is new to the reader (S1-E8-04).
- * FORUMS-2 adds each post's signature (S1-E8-08) and its author's rank (S1-E8-09).
+ * FORUMS-2 adds each post's signature (S1-E8-08) and its author's rank (S1-E8-09). IDEAS-3f adds
+ * the reply the thread's starter marked "This answered it" (IDEA-20261102-8).
  *
  * Who calls it: hooks/useForumThreads.ts. What it calls next: forum_thread_list(),
  * forum_thread(), start_forum_thread(), reply_to_forum_thread(), edit_forum_post(),
@@ -64,6 +65,10 @@ export interface ForumPost {
   signature: ForumSignature | null;
   /** Its author's writer rank (S1-E8-09), or null before their first published chapter. */
   authorRank: WriterRank | null;
+  /** The thread's starter marked this reply "This answered it" (IDEAS-3f). */
+  isAnswer: boolean;
+  /** The reader is the thread's starter and may mark this reply, or take the mark away. */
+  canMarkAnswer: boolean;
 }
 
 /** The space a thread lives in (FORUMS-2a, S1-E8-06): its address and name. */
@@ -95,6 +100,14 @@ export interface ForumThreadHeader {
   canModerate: boolean;
   /** The space whose forum holds the thread, or null for a thread in the main forums. */
   space: ForumThreadSpace | null;
+  /** The reply that answered it, linked at the top (IDEAS-3f); null when none is marked. */
+  answer: ForumThreadAnswer | null;
+}
+
+/** The reply a thread's starter marked as the answer: its number and who wrote it. */
+export interface ForumThreadAnswer {
+  number: number;
+  author: ForumPerson;
 }
 
 /** Why a thread is locked; never who locked it (the page says "the moderation team"). */
@@ -129,6 +142,8 @@ export interface ForumThreadSummary {
   isSticky: boolean;
   /** Locked: readable, no replies (S1-E8-05). */
   isLocked: boolean;
+  /** Its starter marked a reply that answered it (IDEAS-3f, criterion 1). */
+  isAnswered: boolean;
 }
 
 /** One read of a forum's list. */
@@ -238,6 +253,8 @@ export function postFrom(row: JsonObject): ForumPost {
     hasHistory: row['has_history'] === true,
     signature: signatureFrom(row['signature']),
     authorRank: rankFrom(row['author_rank']),
+    isAnswer: row['is_answer'] === true,
+    canMarkAnswer: row['can_mark_answer'] === true,
   };
 }
 
@@ -278,7 +295,20 @@ function headerFrom(row: JsonObject): ForumThreadHeader {
     canReply: row['can_reply'] === true,
     canModerate: row['can_moderate'] === true,
     space: spaceOfThread(row['space']),
+    answer: answerFrom(row['answer']),
   };
+}
+
+/**
+ * Reads the thread's marked answer (IDEAS-3f).
+ *
+ * @param value - the header's "answer" field: {number, author}, or null when none is marked
+ * @returns the answer, or null
+ */
+function answerFrom(value: Json | undefined): ForumThreadAnswer | null {
+  const answer = objectOf(value);
+  if (typeof answer['number'] !== 'number') return null;
+  return { number: answer['number'], author: personFrom(answer['author']) };
 }
 
 /**
@@ -313,6 +343,7 @@ function summaryFrom(row: JsonObject): ForumThreadSummary {
     firstUnreadPost: typeof row['first_unread_post'] === 'number' ? row['first_unread_post'] : null,
     isSticky: row['is_sticky'] === true,
     isLocked: row['is_locked'] === true,
+    isAnswered: row['is_answered'] === true,
   };
 }
 

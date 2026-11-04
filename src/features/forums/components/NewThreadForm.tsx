@@ -3,7 +3,8 @@
  * S1-E8-02; moved to its own file in FORUMS-2a so a space's new-thread page uses it too, S1-E8-06).
  *
  * A refusal is said in plain words under the field it is about, or above the buttons. On success
- * the reader lands on the new thread.
+ * the reader lands on the new thread. IDEAS-3f lets the page fill the post in first: a passage
+ * quoted from a chapter with its link (IDEA-20261102-10).
  * Who shows it: NewThreadPage (a forum) and SpaceNewThreadPage (a space).
  * What it calls: useStartThread → start_forum_thread().
  */
@@ -26,6 +27,8 @@ export interface NewThreadFormProps {
   forumSlug: string;
   /** Where "Cancel" goes back to. */
   cancelTo: string;
+  /** Words already in the post, such as a chapter passage (IDEAS-3f); empty when none. */
+  initialBody?: string;
 }
 
 /**
@@ -33,13 +36,13 @@ export interface NewThreadFormProps {
  *
  * @returns the title, the editor, the refusal and the buttons
  */
-export function NewThreadForm({ forumSlug, cancelTo }: NewThreadFormProps) {
+export function NewThreadForm({ forumSlug, cancelTo, initialBody = '' }: NewThreadFormProps) {
   const { t } = useForumsTranslation();
   const navigate = useNavigate();
   const titleId = useId();
   const bodyId = useId();
   const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+  const [body, setBody] = useState(initialBody);
   const starting = useStartThread();
   const messages = failureMessages(starting.failure, t);
 

@@ -44,7 +44,8 @@
     "logInToStart": "Intră în cont ca să începi o discuție",
     "categoryNote": "Discuțiile se poartă în forumurile din această categorie.",
     "pinned": "Fixată",
-    "locked": "Închisă"
+    "locked": "Închisă",
+    "answered": "Are răspuns"
   },
   "person": {
     "deleted": "Cont șters",
@@ -314,5 +315,21 @@
     "progressLabel": "Progres spre {{rank}}: {{percent}} la sută",
     "top": "{{name}} a ajuns la cel mai înalt rang.",
     "loadFailed": "Nu am putut încărca rangul. Încearcă din nou mai târziu."
+  },
+  "answer": {
+    "pill": "Răspuns",
+    "mark": "Mi-a răspuns la întrebare",
+    "markLabel": "Mi-a răspuns la întrebare: răspunsul #{{number}}",
+    "unmark": "Nu e răspunsul",
+    "unmarkLabel": "Nu e răspunsul: scoate semnul de pe răspunsul #{{number}}",
+    "noteLabel": "Răspunsul la această discuție",
+    "noteLead": "Are răspuns:",
+    "noteLink": "vezi răspunsul #{{number}} de la {{name}}",
+    "failures": {
+      "not_starter": "Doar cine a început discuția poate alege răspunsul.",
+      "not_reply": "Acest mesaj nu poate fi răspunsul. Alege un răspuns scris de altcineva.",
+      "gone": "Discuția nu mai e aici.",
+      "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou."
+    }
   }
 }
