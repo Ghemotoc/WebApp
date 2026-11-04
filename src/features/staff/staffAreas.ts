@@ -143,6 +143,14 @@ export const staffAreaPages: StaffAreaPage[] = [
     labelKey: 'nav.contests',
     descriptionKey: 'home.areas.contests',
   },
+  // Sponsors (S1-E12-02; SPONSORS-b2): owner and admin (architecture 1.8.3), after Contests as
+  // on the board's menu.
+  {
+    area: 'sponsors',
+    href: '/staff/sponsors',
+    labelKey: 'nav.sponsors',
+    descriptionKey: 'home.areas.sponsors',
+  },
   // Content settings, markets and languages (S1-E11-03, S1-E11-05), after the areas staff use
   // every day and before the numbers (architecture 1.8.2).
   {

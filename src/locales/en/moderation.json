@@ -391,7 +391,9 @@
       "quote_card": "Quote card",
       "space_banner": "Space banner",
       "atlas_image": "Story world picture",
-      "signature_picture": "Signature picture"
+      "signature_picture": "Signature picture",
+      "landing_picture": "Landing page picture",
+      "sponsor_creative": "Sponsor picture"
     },
     "status": "Status",
     "statuses": {

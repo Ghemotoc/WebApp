@@ -28,6 +28,8 @@ export const longestSideFor = {
   signaturePicture: 400,
   // A landing page's hero or text picture across a 1,440 px page on a sharp screen (S1-E11-14).
   landingPicture: 2400,
+  // A sponsor's banner, at most 970 px wide on a sharp screen (S1-E12-02; board AdFormats).
+  sponsorCreative: 1940,
 } as const;
 
 /** The quality for WebP and JPEG: small files that still look sharp. */
