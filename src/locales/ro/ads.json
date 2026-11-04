@@ -16,6 +16,9 @@
     "landing": {
       "action": "Vezi pagina"
     },
+    "staff": {
+      "action": "Vezi pagina"
+    },
     "write": {
       "title": "Orice poveste începe cu un rând. Scrie-l pe al tău.",
       "action": "Începe să scrii"

@@ -4,7 +4,8 @@
  * Who uses it: src/features/ads/api/ads.ts reads page_ads() through pageAdsSchema. The database's
  * enums (ad_format, ad_label) are generated into src/lib/database.types.ts; these schemas only
  * check the JSON page_ads() returns. Part b1 adds a sponsor's fields to the ad and the
- * "Sponsored by" credit (sponsor_credit()); part d adds the ad network's account and ad unit.
+ * "Sponsored by" credit (sponsor_credit()); part d adds the ad network's account and ad unit;
+ * part e1 adds the link of a house ad staff wrote.
  */
 import { z } from 'zod';
 
@@ -34,8 +35,8 @@ const sponsorText = z.string().nullable().optional();
 export const slotAdSchema = z.object({
   key: z.string(),
   label: z.enum(['sponsored', 'ad', 'house']),
-  // landing (one of our landing pages), a built-in house ad (write, classics or forums) or
-  // sponsor (a live sponsor campaign, part b1).
+  // landing (one of our landing pages), a built-in house ad (write, classics or forums), staff
+  // (a house ad staff wrote, part e1), sponsor (a live sponsor campaign, part b1) or network.
   kind: z.string(),
   page_slug: z.string().nullable(),
   title_ro: z.string().nullable(),
@@ -51,6 +52,8 @@ export const slotAdSchema = z.object({
   picture_path: sponsorText,
   link_url: sponsorText,
   discount_code: sponsorText,
+  // Where a house ad staff wrote leads: a path on our own site (S1-E12-05), only on kind staff.
+  link_path: sponsorText,
   // The ad network's account and ad unit (S1-E12-04; ADR 0014), only on a network ad.
   publisher_id: sponsorText,
   slot_id: sponsorText,

@@ -51,6 +51,8 @@ select results_eq(
        ('abuse_image_evidence', 0::bigint),
        -- Delete my account: each person's own requests (S1-E13-03).
        ('account_deletions', 0::bigint),
+       -- Slot bookings and our own house ads: owner and admin only (SPONSORS-e1).
+       ('ad_bookings', 0::bigint),
        -- The ad slot catalogue: which slots exist, no personal data (SPONSORS-a1, S1-E12-01).
        ('ad_blocked_categories', (select count(*) from public.ad_blocked_categories)),
        ('ad_slots', 16::bigint),
@@ -128,6 +130,8 @@ select results_eq(
        ('forum_thread_reads', 0::bigint),
        ('forum_threads', 0::bigint),
        ('forums', (select count(*) from public.forums where deleted_at is null and space_id is null)),
+       -- Our own house ads: owner and admin only (SPONSORS-e1).
+       ('house_ads', 0::bigint),
        ('identity_link_requests', 0::bigint),
        ('interface_text_overrides', 0::bigint),
        ('invites', 0::bigint),

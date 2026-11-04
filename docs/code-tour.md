@@ -2140,3 +2140,10 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Server: `page_ads()` fills each slot with a sponsor, then `landing_house_ad_for_slot()`, then `network_ad_for_slot()` (only a wide slot, once per page, only while the `ad_network` flag is on and the publisher ID and ad unit settings are set), then `house_ad_for_slot()`.
 - Browser: `AdBox` → `NetworkAdCreative`, which waits until the slot is in view, then `lib/adNetwork.ts` adds the AdSense script once and asks for one non-personalised ad. If the script fails, our "Start writing" ad shows instead.
 - Migration `…_sponsors_d_ad_network.sql`. Tests: `supabase/tests/database/274-ad-network.test.sql`, `src/features/ads/lib/whyThisAd.test.ts`, `e2e/ad-network.spec.ts`.
+
+## Booking sponsors into slots and our own house ads (S1-E12-05; SPONSORS-e1)
+
+- Tables: `ad_bookings` (an approved campaign in one slot for some days, with the categories, tags and languages it matches) and `house_ads` (our own ads in Română and English, leading to a path on our own site). Only owner and admin read them.
+- Staff functions, each logged in the audit log: `admin_book_ad_slot()`, `admin_change_ad_booking()` and `admin_cancel_ad_booking()` (a clash with another booking of the same slot is refused, naming the campaign; `require_free_ad_slot()` locks the slot so two admins can't both pass), `admin_save_house_ad()`, `admin_archive_house_ad()`, `admin_house_ads()` and `admin_ad_placements()` (each slot against the next six weeks: booked, house, network or free).
+- One click on a public page: `usePageAds()` → `page_ads()` → `fill_ad_slot()` for each slot: `booked_sponsor_ad_for_slot()` (a booked slot never goes to another sponsor that day, `ad_slot_is_booked()`), else a campaign by its placement, then `staff_house_ad_for_slot()`, `landing_house_ad_for_slot()`, `network_ad_for_slot()` and `house_ad_for_slot()`. In the browser, `HouseAdCreative` draws a staff house ad (kind `staff`) with its own words and link.
+- Migration `…_sponsors_e1_bookings.sql`. Tests: `supabase/tests/database/275-ad-bookings.test.sql`, `src/features/ads/components/HouseAdCreative.test.tsx`.
