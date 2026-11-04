@@ -16,6 +16,9 @@
     "landing": {
       "action": "Take a look"
     },
+    "staff": {
+      "action": "Take a look"
+    },
     "write": {
       "title": "Every story starts with one line. Write yours.",
       "action": "Start writing"

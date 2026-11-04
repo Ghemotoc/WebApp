@@ -183,6 +183,74 @@ export type Database = {
           },
         ];
       };
+      ad_bookings: {
+        Row: {
+          campaign_id: string;
+          cancelled_at: string | null;
+          created_at: string;
+          ends_on: string;
+          id: string;
+          slot_key: string;
+          starts_on: string;
+          target_categories: string[];
+          target_languages: string[];
+          target_tags: string[];
+          updated_at: string;
+          user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          campaign_id: string;
+          cancelled_at?: string | null;
+          created_at?: string;
+          ends_on: string;
+          id?: string;
+          slot_key: string;
+          starts_on: string;
+          target_categories?: string[];
+          target_languages?: string[];
+          target_tags?: string[];
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          campaign_id?: string;
+          cancelled_at?: string | null;
+          created_at?: string;
+          ends_on?: string;
+          id?: string;
+          slot_key?: string;
+          starts_on?: string;
+          target_categories?: string[];
+          target_languages?: string[];
+          target_tags?: string[];
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'ad_bookings_campaign_id_fkey';
+            columns: ['campaign_id'];
+            isOneToOne: false;
+            referencedRelation: 'sponsor_campaigns';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'ad_bookings_slot_key_fkey';
+            columns: ['slot_key'];
+            isOneToOne: false;
+            referencedRelation: 'ad_slots';
+            referencedColumns: ['slot_key'];
+          },
+          {
+            foreignKeyName: 'ad_bookings_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       ad_slots: {
         Row: {
           created_at: string;
@@ -3257,6 +3325,70 @@ export type Database = {
             columns: ['space_id'];
             isOneToOne: true;
             referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      house_ads: {
+        Row: {
+          archived_at: string | null;
+          created_at: string;
+          ends_on: string;
+          id: string;
+          link_path: string;
+          slot_key: string | null;
+          starts_on: string;
+          text_en: string;
+          text_ro: string;
+          title_en: string;
+          title_ro: string;
+          updated_at: string;
+          user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          created_at?: string;
+          ends_on: string;
+          id?: string;
+          link_path: string;
+          slot_key?: string | null;
+          starts_on: string;
+          text_en?: string;
+          text_ro?: string;
+          title_en: string;
+          title_ro: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          archived_at?: string | null;
+          created_at?: string;
+          ends_on?: string;
+          id?: string;
+          link_path?: string;
+          slot_key?: string | null;
+          starts_on?: string;
+          text_en?: string;
+          text_ro?: string;
+          title_en?: string;
+          title_ro?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'house_ads_slot_key_fkey';
+            columns: ['slot_key'];
+            isOneToOne: false;
+            referencedRelation: 'ad_slots';
+            referencedColumns: ['slot_key'];
+          },
+          {
+            foreignKeyName: 'house_ads_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
         ];
@@ -8365,6 +8497,34 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      ad_booking_clash: {
+        Args: {
+          first_day: string;
+          last_day: string;
+          leave_out_id: string;
+          wanted_slot_key: string;
+        };
+        Returns: string;
+      };
+      ad_booking_targets: {
+        Args: { fields: Json };
+        Returns: {
+          categories: string[];
+          languages: string[];
+          tags: string[];
+        }[];
+      };
+      ad_network_is_ready: { Args: Record<PropertyKey, never>; Returns: boolean };
+      ad_placement_week: {
+        Args: {
+          network_ready: boolean;
+          slot_format: Database['public']['Enums']['ad_format'];
+          wanted_slot_key: string;
+          week_start: string;
+        };
+        Returns: Json;
+      };
+      ad_slot_is_booked: { Args: { wanted_slot_key: string }; Returns: boolean };
       add_bible_section: { Args: { section_name: string; story_slug: string }; Returns: Json };
       add_chapter_scene: { Args: { chapter_code: string; scene_title: string }; Returns: Json };
       add_chapter_share: { Args: { target_chapter_id: string }; Returns: undefined };
@@ -8442,6 +8602,7 @@ export type Database = {
         }[];
       };
       admin_acknowledge_on_call_alert: { Args: { alert_id: string }; Returns: boolean };
+      admin_ad_placements: { Args: { week_count?: number }; Returns: Json };
       admin_add_ad_blocked_category: {
         Args: { label_en: string; label_ro: string; new_key: string };
         Returns: undefined;
@@ -8518,6 +8679,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_archive_house_ad: { Args: { target_house_ad_id: string }; Returns: undefined };
       admin_archive_landing_page: { Args: { target_page_id: string }; Returns: undefined };
       admin_ask_data_request_confirmation: { Args: { target_request_id: string }; Returns: Json };
       admin_ask_data_request_parent: {
@@ -8528,9 +8690,14 @@ export type Database = {
         Args: { assignee_handle: string; thread_reference: string };
         Returns: boolean;
       };
+      admin_book_ad_slot: { Args: { fields: Json; target_campaign_id: string }; Returns: string };
       admin_build_evidence_pack: {
         Args: { reason_given: string; target_case_id: string };
         Returns: Json;
+      };
+      admin_cancel_ad_booking: {
+        Args: { reason: string; target_booking_id: string };
+        Returns: undefined;
       };
       admin_case_account_links: { Args: { target_case_id: string }; Returns: Json };
       admin_case_actions: {
@@ -8590,6 +8757,10 @@ export type Database = {
       admin_case_statements: { Args: { target_case_id: string }; Returns: Json };
       admin_case_support_contacts: { Args: { target_case_id: string }; Returns: Json };
       admin_certificate: { Args: { code: string }; Returns: Json };
+      admin_change_ad_booking: {
+        Args: { fields: Json; target_booking_id: string };
+        Returns: undefined;
+      };
       admin_change_story_settings: {
         Args: { changes: Json; reason_code: string; reason_text: string; target_story_id: string };
         Returns: Json;
@@ -8841,6 +9012,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      admin_house_ads: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_import_classics: { Args: { list_rows: Json }; Returns: Json };
       admin_issue_contest_certificates: { Args: { target_contest_id: string }; Returns: Json };
       admin_landing_picture_states: { Args: { target_page_id: string }; Returns: Json };
@@ -9311,6 +9483,7 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_save_house_ad: { Args: { fields: Json; target_house_ad_id: string }; Returns: string };
       admin_save_interface_text: {
         Args: {
           brand_names: string[];
@@ -9913,6 +10086,10 @@ export type Database = {
       };
       birth_year_needs_month: { Args: { birth_year: number; on_date: string }; Returns: boolean };
       blank_old_scrambled_ips: { Args: Record<PropertyKey, never>; Returns: number };
+      booked_sponsor_ad_for_slot: {
+        Args: { context: Json; used_keys: string[]; wanted_slot_key: string };
+        Returns: Json;
+      };
       bootstrap_first_owner: { Args: { target_user_id: string }; Returns: undefined };
       browse_stories: {
         Args: {
@@ -10886,6 +11063,16 @@ export type Database = {
       export_support_tickets_of: { Args: { owner_id: string }; Returns: Json };
       export_tables_of: { Args: { owner_id: string }; Returns: Json };
       export_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      fill_ad_slot: {
+        Args: {
+          context: Json;
+          slot_format: Database['public']['Enums']['ad_format'];
+          used_keys: string[];
+          wanted_page_key: string;
+          wanted_slot_key: string;
+        };
+        Returns: Json;
+      };
       finish_data_export: { Args: { export_id: string; story_count: number }; Returns: Json };
       finish_onboarding: { Args: Record<PropertyKey, never>; Returns: undefined };
       finish_social_sign_up: { Args: { sign_up_data: Json }; Returns: Json };
@@ -12786,6 +12973,15 @@ export type Database = {
       require_contest_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_forum_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_forum_writer: { Args: Record<PropertyKey, never>; Returns: string };
+      require_free_ad_slot: {
+        Args: {
+          first_day: string;
+          last_day: string;
+          leave_out_id: string;
+          wanted_slot_key: string;
+        };
+        Returns: undefined;
+      };
       require_live_profile: { Args: Record<PropertyKey, never>; Returns: string };
       require_mail_thread_for_staff: {
         Args: { thread_reference: string };
@@ -13493,6 +13689,10 @@ export type Database = {
         Returns: string[];
       };
       sponsor_review_checks: { Args: Record<PropertyKey, never>; Returns: string[] };
+      staff_house_ad_for_slot: {
+        Args: { used_keys: string[]; wanted_page_key: string; wanted_slot_key: string };
+        Returns: Json;
+      };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
