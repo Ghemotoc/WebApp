@@ -14,7 +14,7 @@
  *   back; left unticked, there is no such page;
  * - axe on the dialog and no sideways scroll at 390, 768 and 1440 px.
  * Test data: three published chapters of adult_writer's seed story "Stația meteo" (Ongoing) and a
- * bio, made here and removed at the start and the end.
+ * bio, made here; the chapters are removed and the seed's bio put back at the start and the end.
  */
 import { readFile } from 'node:fs/promises';
 
@@ -29,11 +29,17 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 const storyId = '00000000-0000-4000-9000-000000000001';
 const writerId = '00000000-0000-4000-8000-000000000001';
 
+/** adult_writer's own bio from the seed, read once so it is put back as it was. */
+let seededBio: string | null = null;
+
 /** Removes the chapters made here and puts the bio and language back. */
 function cleanUp() {
+  seededBio ??= runSql(
+    `select quote_literal(bio) from public.profiles where handle = 'adult_writer';`,
+  ).trim();
   runSql(`
     delete from public.chapters where code in ('smpl0001', 'smpl0002', 'smpl0003');
-    update public.profiles set locale = 'ro', bio = null where handle = 'adult_writer';`);
+    update public.profiles set locale = 'ro', bio = ${seededBio} where handle = 'adult_writer';`);
 }
 
 /** Three published chapters of the ongoing seed story, and a public bio. */
