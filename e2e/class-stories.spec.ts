@@ -116,7 +116,11 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
 
   test('a student shares their story only with the class', async ({ browser }) => {
     const page = await openAs(browser, 'pending_check', `/write/s/${storySlug()}/settings`);
-    const card = page.getByRole('group', { name: 'Who can read it' });
+    // Story settings has two groups with this name since NEW-1 (#327): Public, Unlisted or
+    // Private, and this class card. The class card is the one about sharing with a class.
+    const card = page
+      .getByRole('group', { name: 'Who can read it' })
+      .filter({ hasText: 'one of your classes' });
     await expect(card).toBeVisible();
     await card.getByLabel('Your class').selectOption({ label: className });
     await card.getByRole('button', { name: 'Share only with this class' }).click();
@@ -170,7 +174,11 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
 
   test('the student makes it public again, and the outsider reads it', async ({ browser }) => {
     const page = await openAs(browser, 'pending_check', `/write/s/${storySlug()}/settings`);
-    const card = page.getByRole('group', { name: 'Who can read it' });
+    // Story settings has two groups with this name since NEW-1 (#327): Public, Unlisted or
+    // Private, and this class card. The class card is the one about sharing with a class.
+    const card = page
+      .getByRole('group', { name: 'Who can read it' })
+      .filter({ hasText: 'one of your classes' });
     await card.getByRole('button', { name: 'Make it public' }).click();
     await expect(
       card.getByText('Right now everyone may read it, within its rating.'),

@@ -10506,6 +10506,7 @@ export type Database = {
         };
       };
       class_space_stories: { Args: { slug: string }; Returns: Json };
+      class_thread_replies: { Args: { target_thread_id: string }; Returns: Json };
       class_waiting_members: { Args: { slug: string }; Returns: Json };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
       classic_fix_is_small: {

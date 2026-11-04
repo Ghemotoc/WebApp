@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
+import { ClassRepliesPanel } from '@/features/spaces/components/ClassRepliesPanel';
 
 import type { ForumPost } from '../api/forumThreads';
 import { useForumIndex } from '../hooks/useForumIndex';
@@ -164,6 +165,8 @@ function ThreadContent({
         <div className="flex flex-col gap-4">
           <ThreadSidePanel thread={thread} />
           <ThreadModeration thread={thread} />
+          {/* IDEAS-3b: the class's teacher sees who has replied; everyone else sees nothing. */}
+          <ClassRepliesPanel threadId={thread.id} isInSpace={thread.space !== null} />
           <PageAdSlot pageKey="thread" position={2} isSpaceReserved={false} />
         </div>
       </div>

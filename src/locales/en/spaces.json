@@ -332,7 +332,11 @@
       "too_many": "You’ve done this a lot in the last hour. Try again later.",
       "unreachable": "We couldn’t reach the server. Try again.",
       "locked": "This class is locked, so the code doesn’t work any more."
-    }
+    },
+    "qrLabel": "QR code to join the class",
+    "sheetLabel": "Class invite sheet",
+    "sheetIntro": "Join our class",
+    "sheetUntil": "This code works until {{expires}}."
   },
   "joinClass": {
     "eyebrow": "Class invite",
@@ -437,5 +441,20 @@
     "yes": "Yes, archive it",
     "cancel": "Cancel",
     "archived": "This class is archived. Members can still read it, and nobody can post here."
+  },
+  "classReplies": {
+    "title": "Who has replied",
+    "summary": "{{replied}} of {{total}} in the class have posted here.",
+    "show": "Show who has replied",
+    "hide": "Hide the lists",
+    "replied_one": "Replied ({{count, number}})",
+    "replied_few": "Replied ({{count, number}})",
+    "replied_other": "Replied ({{count, number}})",
+    "notYet_one": "Not yet ({{count, number}})",
+    "notYet_few": "Not yet ({{count, number}})",
+    "notYet_other": "Not yet ({{count, number}})",
+    "nobodyYet": "Nobody has replied yet.",
+    "everyone": "Everyone in the class has replied.",
+    "loadFailed": "We couldn’t load who has replied. Refresh the page to try again."
   }
 }
