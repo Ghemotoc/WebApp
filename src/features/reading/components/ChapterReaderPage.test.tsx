@@ -1,15 +1,15 @@
 /**
- * The chapter reader's banner slot (story S1-E4-01b; S1-E4-01 criterion: "the banner slot sits
- * only below the chapter text, never inside it").
+ * The chapter reader's ad slot (story S1-E4-01b; S1-E4-01 criterion: "the banner slot sits only
+ * below the chapter text, never inside it"; S1-E12-01, filled by page_ads() since SPONSORS-a1).
  */
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { PageAdSlot } from '@/schemas/ads';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 import type { ReaderChapter } from '../api/chapter';
-import type { ChapterBanner } from '../hooks/useChapterBanner';
 
 import { ChapterReaderPage } from './ChapterReaderPage';
 
@@ -40,11 +40,14 @@ const chapter: ReaderChapter = {
   embeds: {},
 };
 
-let banner: ChapterBanner | null = null;
+/** What page_ads() answers for the chapter page in each test. */
+let slots: PageAdSlot[] = [];
 vi.mock('../hooks/useChapter', () => ({
   useChapter: () => ({ chapter, isLoaded: true, loadFailed: false }),
 }));
-vi.mock('../hooks/useChapterBanner', () => ({ useChapterBanner: () => ({ banner }) }));
+vi.mock('@/features/ads/hooks/usePageAds', () => ({
+  usePageAds: () => ({ isPending: false, data: slots }),
+}));
 vi.mock('../hooks/useRecordRead', () => ({ useRecordRead: () => undefined }));
 // The Like button and the comments read the database; this test is about the banner slot only.
 vi.mock('./LikeButton', () => ({ LikeButton: () => null }));
@@ -62,21 +65,36 @@ function renderReader() {
   );
 }
 
-describe('the chapter reader’s banner slot', () => {
+describe('the chapter reader’s ad slot', () => {
   beforeEach(() => {
-    banner = null;
+    slots = [];
   });
 
-  it('shows nothing at all while no banner is chosen (until S1-E12-01)', () => {
+  it('shows nothing at all where the page has no ad (a class-only story)', () => {
     const { container } = renderReader();
     expect(screen.getByText('Primul paragraf.')).toBeInTheDocument();
     expect(container.querySelector('[data-ad]')).toBeNull();
   });
 
   it('puts a banner below the chapter, after its text, never inside it', () => {
-    banner = { labelKind: 'sponsored', text: 'Luna cărților de mister' };
+    slots = [
+      {
+        slot_key: 'chapter_end',
+        position: 1,
+        format: 'wide',
+        matched: { language: 'ro' },
+        ad: {
+          key: 'house:write',
+          label: 'house',
+          kind: 'write',
+          page_slug: null,
+          title_ro: null,
+          title_en: null,
+        },
+      },
+    ];
     const { container } = renderReader();
-    const slot = container.querySelector('[data-ad="banner"]');
+    const slot = container.querySelector('[data-ad="wide"]');
     const text = container.querySelector('.tmc-chapter-text');
     const article = container.querySelector('article');
     if (slot === null || text === null || article === null) throw new Error('missing part');
@@ -84,6 +102,10 @@ describe('the chapter reader’s banner slot', () => {
     expect(article.contains(slot)).toBe(false);
     expect(text.contains(slot)).toBe(false);
     expect(article.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(screen.getByText('Sponsored')).toBeInTheDocument();
+    expect(screen.getByText('From us')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Start writing' })).toHaveAttribute(
+      'href',
+      '/write/new',
+    );
   });
 });
