@@ -2209,3 +2209,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - `/canva/start` (`CanvaStartPage`) now shows `CanvaTemplatePicker`: a blank design or the Classic, Bold or Handwritten template, each sketched with the story's title and the pen name. `useCanvaStart()` keeps the choice and `openCanvaDesign()` sends it as `template` and `penName`; the tab's trip (`lib/canvaTrip.ts`) remembers it across Canva's consent page.
 - `server/canva.ts` passes it to `createDesign()`. The real service (`server/canva/real.ts`) fills the brand template named by `CANVA_TEMPLATE_*` through Canva's autofill and falls back to the blank cover; the stand-in's editor names the template it started from.
 - Tests: `server/canva/real.test.ts`, `e2e/canva-covers.spec.ts`.
+
+## Picture links show the picture in chat previews (IDEAS-2f)
+
+- A link to one picture in a chapter (`/s/<story>/<chapter>/p3`) → `server/link-preview.ts` asks `get_shared_picture()`; when the picture may be shared (under 16+, the writer's "Sharing pictures" switch on, its check passed), og:image is `/api/picture-preview/<story>/<chapter>/<block>` with `summary_large_image`, otherwise the cover colour's square as before.
+- `/api/picture-preview/…` (`functions/api/picture-preview/[[path]].ts` → `server/picture-preview.ts`) asks `get_shared_picture()` again on every fetch and reads the file from `chapter-images` as a visitor, through the existing `chapter_images_select_visible` policy; it answers 404 for anything else and lets chat apps keep the picture for an hour at most.
+- Migration `…_ideas2_f_picture_previews.sql`. Tests: `supabase/tests/database/283-picture-previews.test.sql`, `server/picture-preview.test.ts`, `server/link-preview.test.ts`, `e2e/share-passages.spec.ts`.

@@ -22,7 +22,9 @@
  * What it calls: the Supabase REST endpoint /rest/v1/rpc/get_link_preview with the public anon key.
  * A link to a spot in a chapter (/s/<story>/<chapter>/p3-5, S1-E4-11) shows the passage instead of
  * the blurb, from get_shared_passage() (server/shared-passage.ts); for 16+ and 18+ it never has
- * one, and the preview stays the title and the rating.
+ * one, and the preview stays the title and the rating. A link to one picture that may be shared
+ * shows the picture itself as og:image, served by /api/picture-preview/… (server/picture-
+ * preview.ts, IDEAS-2f); a picture still in its check or removed keeps the cover colour.
  * Never logged: the request, the visitor or any user text (CLAUDE.md rule 12).
  */
 // The wording comes from the app's own locale files (CLAUDE.md rule 4). Nothing else from src/
@@ -36,6 +38,11 @@ import romanianReading from '../src/locales/ro/reading.json';
 import { parseSpot, type SpotRange } from '../src/lib/chapter-blocks.ts';
 
 import { linkPreviewPalette } from './link-preview-palette.ts';
+import {
+  fetchSharedPicture,
+  picturePreviewUrl,
+  type PicturePreviewAddress,
+} from './picture-preview.ts';
 import { fetchSharedPassage } from './shared-passage.ts';
 
 /**
@@ -65,6 +72,11 @@ export interface LinkPreview {
   isChapter: boolean;
   /** The shared passage as one plain line (S1-E4-11), or null. */
   passage: string | null;
+  /**
+   * For a link to one picture that may be shared: its spot and alt text, so the preview shows
+   * the picture itself (IDEAS-2f); null otherwise, and the preview keeps the cover colour.
+   */
+  picture: { address: PicturePreviewAddress; alt: string } | null;
 }
 
 /** Where the database is: the same public values the app is built with. */
@@ -173,6 +185,8 @@ export async function fetchLinkPreview(
           spot: address.spot,
           pictureWords: previewWords(row.language_code).picture,
         });
+  // Step 4: a link to one picture that may be shared shows the picture itself (IDEAS-2f).
+  const picture = await findSharedPicture(settings, address, row.hides_text);
   return {
     slug: row.slug,
     title: row.title,
@@ -185,7 +199,31 @@ export async function fetchLinkPreview(
     chapterTitle: row.chapter?.title ?? null,
     isChapter: address.chapterCode !== null,
     passage,
+    picture,
   };
+}
+
+/**
+ * The picture a one-block spot link points to, when it may be shared.
+ *
+ * @param hidesText - true for 16+ and 18+ stories, which never share a picture (Q6)
+ * @returns its spot and alt text, or null for a story, a chapter, a longer passage or text
+ * Errors: throws when the database answers with an error or can't be reached.
+ */
+async function findSharedPicture(
+  settings: DatabaseSettings,
+  address: SharedAddress,
+  hidesText: boolean,
+): Promise<LinkPreview['picture']> {
+  if (hidesText || address.chapterCode === null || address.spot === null) return null;
+  if (address.spot.first !== address.spot.last) return null;
+  const spot: PicturePreviewAddress = {
+    storySlug: address.storySlug,
+    chapterCode: address.chapterCode,
+    blockNumber: address.spot.first,
+  };
+  const picture = await fetchSharedPicture(settings, spot);
+  return picture === null ? null : { address: spot, alt: picture.alt };
 }
 
 /**
@@ -285,6 +323,32 @@ function structuredData(preview: LinkPreview, pageUrl: string): string {
 }
 
 /**
+ * The preview's picture tags: the shared picture itself for a link to a picture that may be
+ * shared (IDEAS-2f), otherwise the plain square in the cover's colour.
+ *
+ * @param preview - the story's preview
+ * @param origin - the site's origin
+ * @returns the og:image and twitter:card tags
+ */
+function imageTagsFor(preview: LinkPreview, origin: string): string[] {
+  if (preview.picture !== null) {
+    const image = picturePreviewUrl(origin, preview.picture.address);
+    return [
+      `<meta property="og:image" content="${escapeHtml(image)}">`,
+      `<meta property="og:image:alt" content="${escapeHtml(preview.picture.alt)}">`,
+      `<meta name="twitter:card" content="summary_large_image">`,
+    ];
+  }
+  const image = `${origin}/link-previews/${previewColour(preview)}.png`;
+  return [
+    `<meta property="og:image" content="${escapeHtml(image)}">`,
+    `<meta property="og:image:width" content="${PREVIEW_IMAGE_SIDE}">`,
+    `<meta property="og:image:height" content="${PREVIEW_IMAGE_SIDE}">`,
+    `<meta name="twitter:card" content="summary">`,
+  ];
+}
+
+/**
  * Everything the preview adds to the page's <head>.
  *
  * @param preview - the story's preview
@@ -296,7 +360,6 @@ export function headTagsFor(
   page: { url: string; siteName: string; origin: string },
 ): string {
   const { title, description } = previewText(preview);
-  const image = `${page.origin}/link-previews/${previewColour(preview)}.png`;
   const tags = [
     `<meta name="description" content="${escapeHtml(description)}">`,
     `<meta property="og:type" content="${preview.isChapter ? 'article' : 'book'}">`,
@@ -304,10 +367,7 @@ export function headTagsFor(
     `<meta property="og:title" content="${escapeHtml(title)}">`,
     `<meta property="og:description" content="${escapeHtml(description)}">`,
     `<meta property="og:url" content="${escapeHtml(page.url)}">`,
-    `<meta property="og:image" content="${escapeHtml(image)}">`,
-    `<meta property="og:image:width" content="${PREVIEW_IMAGE_SIDE}">`,
-    `<meta property="og:image:height" content="${PREVIEW_IMAGE_SIDE}">`,
-    `<meta name="twitter:card" content="summary">`,
+    ...imageTagsFor(preview, page.origin),
     `<meta name="twitter:title" content="${escapeHtml(title)}">`,
     `<meta name="twitter:description" content="${escapeHtml(description)}">`,
   ];
