@@ -86,7 +86,9 @@
     "approved": "{{name}} face acum parte din spațiu.",
     "declined": "Cererea a fost refuzată.",
     "ageChanged": "{{name}} nu mai este în grupa de vârstă a spațiului, așa că cererea a fost ștearsă.",
-    "loadFailed": "Nu am putut încărca cererile."
+    "loadFailed": "Nu am putut încărca cererile.",
+    "noteLabel": "Mesaj de la {{name}}",
+    "noteReportLabel": "mesajul de la {{name}}"
   },
   "form": {
     "eyebrow": "Spațiu nou",
@@ -185,7 +187,15 @@
     "request_missing": "Cererea nu mai așteaptă.",
     "reason_too_long": "Motivul poate avea cel mult 500 de caractere.",
     "class_only": "Acesta este spațiul unei clase. Intri cu codul primit de la profesor.",
-    "not_teacher": "Doar profesorii cu insigna de profesor pot crea spațiul unei clase."
+    "not_teacher": "Doar profesorii cu insigna de profesor pot crea spațiul unei clase.",
+    "welcome": {
+      "too_long": "Mesajul de bun venit e prea lung. Folosește cel mult 500 de caractere.",
+      "html": "Mesajul de bun venit nu poate conține etichete HTML."
+    },
+    "join_note": {
+      "too_long": "Mesajul tău e prea lung. Folosește cel mult 200 de caractere.",
+      "html": "Mesajul nu poate conține etichete HTML."
+    }
   },
   "moderators": {
     "eyebrow": "Setările spațiului",
@@ -268,7 +278,8 @@
       "class_unlocked": "{{actor}} a redeschis spațiul clasei.",
       "lock_date_changed": "{{actor}} a schimbat data la care se închide spațiul clasei.",
       "class_archived": "{{actor}} a arhivat spațiul clasei.",
-      "certificates_issued": "{{actor}} a semnat diplome."
+      "certificates_issued": "{{actor}} a semnat diplome.",
+      "welcome_note_changed": "{{actor}} a schimbat mesajul de bun venit."
     }
   },
   "bannerPicture": {
@@ -458,5 +469,26 @@
     "nobodyYet": "Încă n-a răspuns nimeni.",
     "everyone": "Toată clasa a răspuns.",
     "loadFailed": "Nu am putut încărca cine a răspuns. Reîncarcă pagina ca să încerci din nou."
+  },
+  "welcome": {
+    "eyebrow": "Pentru membrii noi",
+    "title": "Mesaj de bun venit",
+    "intro": "Fiecare membru nou îl vede o singură dată, sus în spațiu, până apasă „Am înțeles”. Lasă câmpul gol dacă nu vrei un mesaj.",
+    "label": "Mesaj de bun venit",
+    "hint_one": "{{count}} din {{limit}} de caractere. Doar text, fără HTML.",
+    "hint_few": "{{count}} din {{limit}} de caractere. Doar text, fără HTML.",
+    "hint_other": "{{count}} din {{limit}} de caractere. Doar text, fără HTML.",
+    "save": "Salvează mesajul de bun venit",
+    "saved": "Mesajul de bun venit a fost salvat.",
+    "noteTitle": "Bun venit în {{space}}",
+    "gotIt": "Am înțeles"
+  },
+  "joinNote": {
+    "label": "Un mesaj pentru cei care conduc spațiul (opțional)",
+    "hint_one": "{{count}} din {{limit}} de caractere. Spune de ce vrei să intri.",
+    "hint_few": "{{count}} din {{limit}} de caractere. Spune de ce vrei să intri.",
+    "hint_other": "{{count}} din {{limit}} de caractere. Spune de ce vrei să intri.",
+    "send": "Trimite cererea",
+    "cancel": "Renunță"
   }
 }

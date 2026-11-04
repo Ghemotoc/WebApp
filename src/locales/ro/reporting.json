@@ -12,7 +12,8 @@
       "message": "Raportează acest mesaj",
       "forum_thread": "Raportează discuția",
       "forum_post": "Raportează mesajul",
-      "space": "Raportează spațiul"
+      "space": "Raportează spațiul",
+      "space_join_note": "Raportează mesajul"
     },
     "anonymous": "{{item}}. Nu va vedea cine a raportat.",
     "whatIsWrong": "Ce nu e în regulă?",

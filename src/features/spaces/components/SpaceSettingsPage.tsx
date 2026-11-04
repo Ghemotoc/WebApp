@@ -14,7 +14,8 @@
  * database checks again. A new name keeps the space's address, so links to it still work.
  * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceBannerPictureCard;
  * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard; ClassArchiveCard; and the
- * teacher's ClassCertificatesCard (CLASSES-e, S1-E8-12).
+ * teacher's ClassCertificatesCard (CLASSES-e, S1-E8-12); SpaceWelcomeNoteCard → set_space_welcome_note(),
+ * the welcome note new members see once (bundle 14d IDEAS-3, part d), for the settings power.
  */
 import { useState } from 'react';
 import { useParams } from 'react-router';
@@ -37,6 +38,7 @@ import { SpaceForm } from './SpaceForm';
 import { SpaceFormCard } from './SpaceFormCard';
 import { SpaceModeratorsCard } from './SpaceModeratorsCard';
 import { SpaceNotFound } from './SpaceNotFound';
+import { SpaceWelcomeNoteCard } from './SpaceWelcomeNoteCard';
 
 /**
  * A space's settings as the form holds them (the rules one a line).
@@ -130,6 +132,7 @@ function SettingsCards({ space }: { space: Space }) {
     <>
       <ClassCards space={space} />
       {canManage && <SettingsForm key={space.slug} space={space} />}
+      {canManage && <SpaceWelcomeNoteCard key={`welcome-${space.slug}`} space={space} />}
       {canManage && <SpaceBannerPictureCard space={space} />}
       {canAppoint && <SpaceModeratorsCard space={space} />}
     </>

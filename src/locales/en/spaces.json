@@ -86,7 +86,9 @@
     "approved": "{{name}} is in.",
     "declined": "Request declined.",
     "ageChanged": "{{name}} is no longer in this space’s age group, so the request was removed.",
-    "loadFailed": "We couldn’t load the requests."
+    "loadFailed": "We couldn’t load the requests.",
+    "noteLabel": "Note from {{name}}",
+    "noteReportLabel": "the note from {{name}}"
   },
   "form": {
     "eyebrow": "New space",
@@ -185,7 +187,15 @@
     "request_missing": "That request isn’t waiting any more.",
     "reason_too_long": "Keep the reason to 500 characters.",
     "class_only": "This is a class space. Join it with the code your teacher gives you.",
-    "not_teacher": "Only teachers with the Teacher badge can start a class space."
+    "not_teacher": "Only teachers with the Teacher badge can start a class space.",
+    "welcome": {
+      "too_long": "The welcome note is too long. Keep it to 500 characters.",
+      "html": "A welcome note can’t hold HTML tags."
+    },
+    "join_note": {
+      "too_long": "Your note is too long. Keep it to 200 characters.",
+      "html": "A note can’t hold HTML tags."
+    }
   },
   "moderators": {
     "eyebrow": "Space settings",
@@ -268,7 +278,8 @@
       "class_unlocked": "{{actor}} unlocked the class space.",
       "lock_date_changed": "{{actor}} changed when the class space locks.",
       "class_archived": "{{actor}} archived the class space.",
-      "certificates_issued": "{{actor}} signed certificates."
+      "certificates_issued": "{{actor}} signed certificates.",
+      "welcome_note_changed": "{{actor}} changed the welcome note."
     }
   },
   "bannerPicture": {
@@ -458,5 +469,26 @@
     "nobodyYet": "Nobody has replied yet.",
     "everyone": "Everyone in the class has replied.",
     "loadFailed": "We couldn’t load who has replied. Refresh the page to try again."
+  },
+  "welcome": {
+    "eyebrow": "For new members",
+    "title": "Welcome note",
+    "intro": "Each new member sees this once, at the top of the space, until they press “Got it”. Leave it empty for no note.",
+    "label": "Welcome note",
+    "hint_one": "{{count}} of {{limit}} characters. Plain text, no HTML.",
+    "hint_few": "{{count}} of {{limit}} characters. Plain text, no HTML.",
+    "hint_other": "{{count}} of {{limit}} characters. Plain text, no HTML.",
+    "save": "Save welcome note",
+    "saved": "Your welcome note is saved.",
+    "noteTitle": "Welcome to {{space}}",
+    "gotIt": "Got it"
+  },
+  "joinNote": {
+    "label": "A note for the people who run the space (optional)",
+    "hint_one": "{{count}} of {{limit}} characters. Say why you’d like to join.",
+    "hint_few": "{{count}} of {{limit}} characters. Say why you’d like to join.",
+    "hint_other": "{{count}} of {{limit}} characters. Say why you’d like to join.",
+    "send": "Send request",
+    "cancel": "Cancel"
   }
 }

@@ -52,3 +52,8 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
 - `archiveClassSpace()` in `api/classTools.ts` and `useArchiveClass()` (bundle CLASSES, part d):
   archiving a class for good; `ClassArchiveCard` in the class's settings. Staff set up pilot
   classes from `src/features/staff/components/schools/ClassSpacesPage.tsx`.
+- `api/spaceWelcome.ts` and `hooks/useSpaceWelcome.ts` (bundle 14d IDEAS-3, part d): the welcome
+  note new members see once (`set_space_welcome_note()`, `dismiss_space_welcome()`);
+  `SpaceWelcomeNoteCard` on the settings page and `SpaceWelcomeNote` at the top of the space.
+  `SpaceJoinRequestForm` sends an optional note with a request to join (`join_space(slug, note)`);
+  `SpaceRequestsCard` shows it with its own Report button (`space_join_note`).

@@ -12,7 +12,8 @@
       "message": "Report this message",
       "forum_thread": "Report this thread",
       "forum_post": "Report this post",
-      "space": "Report this space"
+      "space": "Report this space",
+      "space_join_note": "Report this note"
     },
     "anonymous": "{{item}}. They won’t see who reported it.",
     "whatIsWrong": "What’s wrong?",

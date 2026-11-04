@@ -11,7 +11,7 @@ import { spaceSlugOfForum } from '@/features/forums/lib/spaceForums';
 import { spaceFailureText } from '../lib/spaceFailures';
 import { spaceInitials } from '../lib/spaceLook';
 
-import { rulesFrom, spaceErrorFrom, spaceFrom } from './spaces';
+import { joinNoteFrom, rulesFrom, spaceErrorFrom, spaceFrom } from './spaces';
 
 /** A space as space_json() gives it, for a member of a 16+ space. */
 const memberAnswer = {
@@ -36,6 +36,8 @@ const memberAnswer = {
     can_join: false,
     can_post: true,
     can_manage: false,
+    welcome_note: 'Read the rules first.',
+    show_welcome: true,
   },
 };
 
@@ -58,6 +60,8 @@ describe('spaceFrom', () => {
       canInvite: false,
       waitsForAccount: false,
       powers: [],
+      welcomeNote: 'Read the rules first.',
+      showWelcome: true,
     });
   });
 
@@ -70,6 +74,24 @@ describe('spaceFrom', () => {
 
   it('falls back to the plum banner for a banner it doesn’t know', () => {
     expect(spaceFrom({ ...memberAnswer, banner: 'neon' }).banner).toBe('plum');
+  });
+});
+
+describe('the notes for joining (IDEAS-3d)', () => {
+  it('reads the note with a request, and none when it is missing or hidden', () => {
+    expect(joinNoteFrom({ id: 'n01', text: 'I write poems.' })).toEqual({
+      id: 'n01',
+      text: 'I write poems.',
+    });
+    expect(joinNoteFrom(null)).toBeNull();
+    expect(joinNoteFrom({ id: 'n01' })).toBeNull();
+  });
+
+  it('says plainly when a welcome note or a request note is too long or holds HTML', () => {
+    const tooLong = spaceErrorFrom({ code: '23514', hint: 'welcome:too_long' });
+    expect(spaceFailureText(tooLong)).toEqual(['failures.welcome.too_long', {}]);
+    const html = spaceErrorFrom({ code: '23514', hint: 'join_note:html' });
+    expect(spaceFailureText(html)).toEqual(['failures.join_note.html', {}]);
   });
 });
 

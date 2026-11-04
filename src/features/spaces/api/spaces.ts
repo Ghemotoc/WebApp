@@ -7,7 +7,8 @@
  * supabase/migrations/…_forums2_a_spaces.sql (the powers and "moderator" from
  * …_forums2_b_space_moderators.sql, S1-E8-07; the moderators' own calls are in spaceModeration.ts;
  * a class space's kind and invite card from …_classes_a_class_spaces.sql, S1-E8-11, whose own
- * calls are in classSpaces.ts). The database applies the age rules (who may see,
+ * calls are in classSpaces.ts; the note with a request to join from …_ideas3_d_joining_spaces.sql,
+ * IDEAS-3d, whose welcome note calls are in spaceWelcome.ts). The database applies the age rules (who may see,
  * join and post) and never sends a user ID; this file only reads its answers.
  */
 import { personFrom, type ForumPerson } from '@/features/forums/api/forumThreads';
@@ -62,6 +63,10 @@ export interface SpaceViewer {
   waitsForAccount: boolean;
   /** Every power the caller holds; the owner holds them all. */
   powers: SpacePower[];
+  /** The welcome note, for members and the people who run the space (IDEAS-3d); null otherwise. */
+  welcomeNote: string | null;
+  /** True for a member who hasn't pressed "Got it" on the welcome note yet. */
+  showWelcome: boolean;
 }
 
 /** A space as the screens show it. */
@@ -114,6 +119,14 @@ export interface SpaceListPage {
 export interface SpaceJoinRequest {
   person: ForumPerson;
   requestedAt: string;
+  /** The note sent with the request (IDEAS-3d), with its ID for the Report button; or null. */
+  note: SpaceJoinNote | null;
+}
+
+/** A note with a request to join: its own ID (never a person's) and its words. */
+export interface SpaceJoinNote {
+  id: string;
+  text: string;
 }
 
 /** The settings a space is started or changed with. */
@@ -151,7 +164,8 @@ export type SpaceFailure =
 
 /** A field the database found a problem with ("name:taken", "rules:too_long"…). */
 export interface SpaceFieldProblem {
-  field: 'name' | 'description' | 'rules';
+  /** The space's own fields, the welcome note and the note with a request to join (IDEAS-3d). */
+  field: 'name' | 'description' | 'rules' | 'welcome' | 'join_note';
   problem: 'empty' | 'too_long' | 'html' | 'taken';
 }
 
@@ -202,7 +216,7 @@ const otherHints: Record<string, SpaceFailure> = {
  */
 export function fieldProblemFrom(hint: string): SpaceFieldProblem | undefined {
   const [field, problem] = hint.split(':');
-  const fields = ['name', 'description', 'rules'];
+  const fields = ['name', 'description', 'rules', 'welcome', 'join_note'];
   const problems = ['empty', 'too_long', 'html', 'taken'];
   if (field === undefined || problem === undefined) return undefined;
   if (!fields.includes(field) || !problems.includes(problem)) return undefined;
@@ -270,6 +284,8 @@ function viewerFrom(value: Json | undefined): SpaceViewer {
     canInvite: viewer['can_invite'] === true,
     waitsForAccount: viewer['waits_for_account'] === true,
     powers: powersFrom(viewer['powers']),
+    welcomeNote: typeof viewer['welcome_note'] === 'string' ? viewer['welcome_note'] : null,
+    showWelcome: viewer['show_welcome'] === true,
   };
 }
 
@@ -459,14 +475,19 @@ export async function updateSpace(
  *
  * @param client - the Supabase client
  * @param slug - the space's address
+ * @param note - an optional note for a space that approves each request (IDEAS-3d), at most 200
+ *   characters; the database ignores it when joining an open space
  * @returns 'active' when in, 'pending' while the owner decides
- * @throws SpaceError when refused
+ * @throws SpaceError when refused (a note that is too long or holds HTML: 'invalid', join_note)
  */
 export async function joinSpace(
   client: AppSupabaseClient,
   slug: string,
+  note = '',
 ): Promise<'active' | 'pending'> {
-  const { data, error } = await client.rpc('join_space', { slug });
+  const trimmed = note.trim();
+  const args = trimmed === '' ? { slug } : { slug, note: trimmed };
+  const { data, error } = await client.rpc('join_space', args);
   if (error) throw spaceErrorFrom(error);
   return objectOf(data)['status'] === 'active' ? 'active' : 'pending';
 }
@@ -501,7 +522,22 @@ export async function fetchJoinRequests(
   return rows.map((row) => ({
     person: personFrom(row['person']),
     requestedAt: String(row['requested_at']),
+    note: joinNoteFrom(row['note']),
   }));
+}
+
+/**
+ * Reads the note sent with a request.
+ *
+ * @param value - the request's "note" ({"id", "text"} or null)
+ * @returns the note, or null when there is none (or our moderators hid it)
+ */
+export function joinNoteFrom(value: Json | undefined): SpaceJoinNote | null {
+  const note = objectOf(value);
+  const id = textOrNull(note['id']);
+  const text = textOrNull(note['text']);
+  if (id === null || text === null) return null;
+  return { id, text };
 }
 
 /** What became of a request. */

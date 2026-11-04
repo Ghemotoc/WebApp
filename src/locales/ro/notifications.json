@@ -103,7 +103,8 @@
     "message": "mesajul tău",
     "forum_thread": "discuția ta de pe forum",
     "forum_post": "mesajul tău de pe forum",
-    "space": "spațiul tău"
+    "space": "spațiul tău",
+    "space_join_note": "mesajul tău cu cererea de a intra într-un spațiu"
   },
   "decisions": {
     "no_action": "un moderator a verificat o raportare despre {{item}} și nu a luat nicio măsură, așa că nu se schimbă nimic.",
