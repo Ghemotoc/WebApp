@@ -6,7 +6,9 @@
  * The answer is said in a polite live region ("ilinca.r is in."). Someone who turned 16 while
  * waiting can't join an under-16 space any more, so their request is removed and the owner is
  * told why (criterion 6). Only those with the members power see the card; the database checks
- * again.
+ * again. A request may carry a short note from the person asking (bundle 14d IDEAS-3, part d;
+ * idea IDEA-20261102-9): it shows under their name, quoted, with its own Report button, so it
+ * can be reported like any other text (criterion 2; CLAUDE.md rule 6).
  * Who shows it: SpacePage, for a space where each request is approved.
  * What it calls: useJoinRequests → space_join_requests(); useDecideJoinRequest →
  * decide_space_join_request().
@@ -18,8 +20,9 @@ import { Notice } from '@/components/ui/Notice';
 import type { ForumPerson } from '@/features/forums/api/forumThreads';
 import { threadDay } from '@/features/forums/lib/forumDates';
 import { nameOf } from '@/features/forums/lib/forumPeople';
+import { ReportButton } from '@/features/reporting/components/ReportButton';
 
-import type { JoinRequestOutcome, Space, SpaceJoinRequest } from '../api/spaces';
+import type { JoinRequestOutcome, Space, SpaceJoinNote, SpaceJoinRequest } from '../api/spaces';
 import { useDecideJoinRequest, useJoinRequests } from '../hooks/useSpaces';
 import { spaceFailureText } from '../lib/spaceFailures';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
@@ -30,6 +33,32 @@ const outcomeKeys: Record<JoinRequestOutcome, string> = {
   declined: 'requests.declined',
   age_changed: 'requests.ageChanged',
 };
+
+/**
+ * The note sent with a request, quoted, with its Report button.
+ *
+ * @param props.note - the note
+ * @param props.name - who sent it, for the labels
+ * @returns the quote and the button
+ */
+function RequestNote({ note, name }: { note: SpaceJoinNote; name: string }) {
+  const { t } = useSpacesTranslation();
+  return (
+    <div className="flex flex-col items-start gap-1">
+      <blockquote
+        aria-label={t('requests.noteLabel', { name })}
+        className="m-0 border-l-2 border-border pl-3 text-sm break-words whitespace-pre-line text-body"
+      >
+        {note.text}
+      </blockquote>
+      <ReportButton
+        itemType="space_join_note"
+        itemReference={note.id}
+        itemLabel={t('requests.noteReportLabel', { name })}
+      />
+    </div>
+  );
+}
 
 /**
  * One request: the person, when they asked, and the two buttons.
@@ -53,6 +82,7 @@ function RequestRow({
       <span className="text-[13px] text-meta">
         {t('requests.asked', { date: threadDay(request.requestedAt, i18n.language) })}
       </span>
+      {request.note !== null && <RequestNote note={request.note} name={name} />}
       <div className="flex flex-wrap gap-2">
         <Button
           aria-label={t('requests.approveLabel', { name })}

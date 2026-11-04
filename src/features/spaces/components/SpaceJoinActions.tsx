@@ -6,7 +6,8 @@
  * What the reader sees depends on the database's answer (space_viewer_json()): signed out, a
  * link to log in; the owner, "You run this space"; a member, "Leave space"; a pending request,
  * "Take back request"; someone who may join, "Join space" with how joining works here; anyone
- * else, why they can't join. The note is a polite live region, so a screen reader hears the
+ * else, why they can't join. In a space that approves each request, "Join space" opens a short
+ * note to send with it (SpaceJoinRequestForm; bundle 14d IDEAS-3, part d). The note is a polite live region, so a screen reader hears the
  * change after a click.
  * Who shows it: SpaceHeaderCard. What it calls: useMembership → join_space(), leave_space().
  */
@@ -21,6 +22,8 @@ import type { Space } from '../api/spaces';
 import { useMembership } from '../hooks/useSpaces';
 import { spaceFailureText } from '../lib/spaceFailures';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
+
+import { SpaceJoinRequestForm } from './SpaceJoinRequestForm';
 
 /**
  * The line under the buttons, for a signed-in reader.
@@ -69,6 +72,7 @@ function MembershipButton({
     );
   }
   if (!viewer.canJoin) return null;
+  if (space.joining === 'approve') return <SpaceJoinRequestForm membership={membership} />;
   return (
     <Button
       onClick={() => void membership.join().catch(() => undefined)}

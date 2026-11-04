@@ -102,7 +102,7 @@ export function useMyAgeGroup() {
  *
  * @returns the function to call on success
  */
-function useRefreshSpaces() {
+export function useRefreshSpaces() {
   const queryClient = useQueryClient();
   return () => queryClient.invalidateQueries({ queryKey: [forumsQueryKey] });
 }
@@ -145,26 +145,29 @@ export function useUpdateSpace(slug: string) {
   };
 }
 
+/** What a membership change asks for: to join (with an optional note, IDEAS-3d) or to leave. */
+type MembershipChange = { wanted: 'join'; note: string } | { wanted: 'leave' };
+
 /**
  * Joins or leaves a space (leaving also takes back a request).
  *
  * @param slug - the space's address
- * @returns join(), leave(), the failure and isRunning
+ * @returns join(note?), leave(), the failure and isRunning
  */
 export function useMembership(slug: string) {
   const refresh = useRefreshSpaces();
   const mutation = useMutation({
-    mutationFn: async (wanted: 'join' | 'leave') => {
+    mutationFn: async (change: MembershipChange) => {
       const client = await requireClient();
-      if (wanted === 'join') return joinSpace(client, slug);
+      if (change.wanted === 'join') return joinSpace(client, slug, change.note);
       await leaveSpace(client, slug);
       return null;
     },
     onSuccess: refresh,
   });
   return {
-    join: () => mutation.mutateAsync('join'),
-    leave: () => mutation.mutateAsync('leave'),
+    join: (note = '') => mutation.mutateAsync({ wanted: 'join', note }),
+    leave: () => mutation.mutateAsync({ wanted: 'leave' }),
     failure: spaceFailureOf(mutation.error),
     isRunning: mutation.isPending,
   };

@@ -89,6 +89,8 @@ test.describe('space banners and join notifications (FORUMS-2c)', () => {
   test('a request reaches the owner, and being let in reaches the person', async ({ browser }) => {
     const asker = await openAs(browser, 'blocker', spaceAddress);
     await asker.getByRole('button', { name: 'Join space' }).click();
+    // A space that approves requests takes an optional note first (IDEAS-3d).
+    await asker.getByRole('button', { name: 'Send request' }).click();
     await expect(asker.getByRole('button', { name: 'Take back request' })).toBeVisible();
 
     const owner = await openAs(browser, 'teacher', '/notifications');

@@ -14,7 +14,8 @@
  * can't read, and there are no join requests: students join with the teacher's code. Part b adds
  * the "This space is locked." note above the threads of a locked class (nobody can post) and
  * ClassAboutCard in the side column, and the stories shared only with the class above the threads
- * (ClassStoriesCard, bundle CLASSES, part c). Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
+ * (ClassStoriesCard, bundle CLASSES, part c). The owner's welcome note shows at the top for a
+ * new member until "Got it" (SpaceWelcomeNote; bundle 14d IDEAS-3, part d). Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
  * What it calls: useSpace → space_page().
  */
 import { useParams } from 'react-router';
@@ -37,6 +38,7 @@ import { SpaceNotFound } from './SpaceNotFound';
 import { SpaceRequestsCard } from './SpaceRequestsCard';
 import { SpaceRulesCard } from './SpaceRulesCard';
 import { SpaceRunsCard } from './SpaceRunsCard';
+import { SpaceWelcomeNote } from './SpaceWelcomeNote';
 
 /**
  * The line under "Threads" for a reader who can't post (members-only posting, criterion 4).
@@ -86,6 +88,7 @@ function SpaceContent({ space }: { space: Space }) {
       <SpaceHeaderCard space={space} />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <div className="flex min-w-0 flex-col gap-6">
+          <SpaceWelcomeNote space={space} />
           {space.isLocked && (
             <Notice
               tone="info"

@@ -90,6 +90,8 @@ test.describe('spaces people create (FORUMS-2a, S1-E8-06)', () => {
     await expect(page.getByText(/Only members can post here/)).toBeVisible();
     await expect(page.getByRole('link', { name: 'Start a thread' })).toHaveCount(0);
     await page.getByRole('button', { name: 'Join space' }).click();
+    // A space that approves requests takes an optional note first (IDEAS-3d).
+    await page.getByRole('button', { name: 'Send request' }).click();
     await expect(page.getByRole('button', { name: 'Take back request' })).toBeVisible();
     await expect(page.getByText(/will see your request/)).toBeVisible();
     await page.context().close();

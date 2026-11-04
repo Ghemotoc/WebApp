@@ -113,7 +113,7 @@ select is((select count(*)::integer from jsonb_array_elements(public.space_moder
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is((public.space_page('fantasy-writers-circle') -> 'viewer') - 'can_read' - 'can_join' - 'can_post',
-  '{"membership": "moderator", "can_manage": false, "can_appoint": false, "can_read_log": false, "can_invite": false, "waits_for_account": false, "powers": ["posts", "members"]}'::jsonb,
+  '{"membership": "moderator", "can_manage": false, "can_appoint": false, "can_read_log": false, "can_invite": false, "waits_for_account": false, "powers": ["posts", "members"], "welcome_note": null, "show_welcome": false}'::jsonb,
   'the space tells a moderator what they may do');
 select is(pg_temp.hint_of($$select public.set_space_moderator('fantasy-writers-circle', 'blocker', array['posts']::public.space_power[])$$),
   'space:not_owner', 'a moderator can''t appoint moderators');

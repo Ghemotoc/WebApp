@@ -6155,6 +6155,52 @@ export type Database = {
           },
         ];
       };
+      space_join_notes: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          note: string;
+          space_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          note: string;
+          space_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          note?: string;
+          space_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'space_join_notes_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'space_join_notes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       space_members: {
         Row: {
           created_at: string;
@@ -6167,8 +6213,10 @@ export type Database = {
           status: Database['public']['Enums']['space_member_status'];
           updated_at: string;
           user_id: string;
+          welcome_seen_at: string | null;
+          space_join_note_for: Json | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'space_join_note_for';
         Insert: {
           created_at?: string;
           id?: string;
@@ -6180,6 +6228,7 @@ export type Database = {
           status?: Database['public']['Enums']['space_member_status'];
           updated_at?: string;
           user_id: string;
+          welcome_seen_at?: string | null;
         };
         Update: {
           created_at?: string;
@@ -6192,6 +6241,7 @@ export type Database = {
           status?: Database['public']['Enums']['space_member_status'];
           updated_at?: string;
           user_id?: string;
+          welcome_seen_at?: string | null;
         };
         Relationships: [
           {
@@ -6301,6 +6351,7 @@ export type Database = {
           slug: string;
           updated_at: string;
           user_id: string;
+          welcome_note: string | null;
           check_certificate_class: undefined | null;
           space_acts_as_platform: boolean | null;
           space_card_visible: boolean | null;
@@ -6348,6 +6399,7 @@ export type Database = {
           slug: string;
           updated_at?: string;
           user_id: string;
+          welcome_note?: string | null;
         };
         Update: {
           age_group?: Database['public']['Enums']['space_age_group'];
@@ -6370,6 +6422,7 @@ export type Database = {
           slug?: string;
           updated_at?: string;
           user_id?: string;
+          welcome_note?: string | null;
         };
         Relationships: [
           {
@@ -10498,6 +10551,7 @@ export type Database = {
           slug: string;
           updated_at: string;
           user_id: string;
+          welcome_note: string | null;
         };
         SetofOptions: {
           from: '*';
@@ -11055,6 +11109,7 @@ export type Database = {
       delete_story_event: { Args: { event_id: string }; Returns: Json };
       delete_story_idea: { Args: { idea_id: string }; Returns: Json };
       disconnect_canva: { Args: Record<PropertyKey, never>; Returns: boolean };
+      dismiss_space_welcome: { Args: { slug: string }; Returns: undefined };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       downvote_comment: {
         Args: { comment_id: string; should_downvote: boolean };
@@ -11390,6 +11445,7 @@ export type Database = {
           slug: string;
           updated_at: string;
           user_id: string;
+          welcome_note: string | null;
         };
         SetofOptions: {
           from: '*';
@@ -11476,7 +11532,7 @@ export type Database = {
         }[];
       };
       join_class_space: { Args: { code: string }; Returns: Json };
-      join_space: { Args: { slug: string }; Returns: Json };
+      join_space: { Args: { note?: string; slug: string }; Returns: Json };
       jsonb_values_text: { Args: { document: Json }; Returns: string };
       keep_setting: { Args: { default_value: number; setting_key: string }; Returns: number };
       landing_block_extra_problems: {
@@ -12414,6 +12470,7 @@ export type Database = {
           slug: string;
           updated_at: string;
           user_id: string;
+          welcome_note: string | null;
         };
         SetofOptions: {
           from: '*';
@@ -13450,6 +13507,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      set_space_welcome_note: { Args: { note: string; slug: string }; Returns: Json };
       set_story_class: { Args: { class_slug?: string; story_slug: string }; Returns: Json };
       set_story_public_areas: { Args: { areas: string[]; story_slug: string }; Returns: Json };
       set_story_tags: {
@@ -13555,6 +13613,7 @@ export type Database = {
           slug: string;
           updated_at: string;
           user_id: string;
+          welcome_note: string | null;
         };
         SetofOptions: {
           from: '*';
@@ -13583,6 +13642,15 @@ export type Database = {
         Returns: boolean;
       };
       space_is_member: { Args: { target_space_id: string }; Returns: boolean };
+      space_join_note_for: {
+        Args: {
+          request: Omit<
+            Database['public']['Tables']['space_members']['Row'],
+            Database['public']['Tables']['space_members']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       space_join_requests: { Args: { slug: string }; Returns: Json };
       space_json: {
         Args: {
@@ -13654,6 +13722,7 @@ export type Database = {
           status: Database['public']['Enums']['space_member_status'];
           updated_at: string;
           user_id: string;
+          welcome_seen_at: string | null;
         };
         SetofOptions: {
           from: '*';
@@ -13676,6 +13745,7 @@ export type Database = {
           status: Database['public']['Enums']['space_member_status'];
           updated_at: string;
           user_id: string;
+          welcome_seen_at: string | null;
         };
         SetofOptions: {
           from: '*';
@@ -13710,6 +13780,7 @@ export type Database = {
           slug: string;
           updated_at: string;
           user_id: string;
+          welcome_note: string | null;
         };
         SetofOptions: {
           from: '*';
@@ -14481,7 +14552,8 @@ export type Database = {
         | 'message'
         | 'forum_thread'
         | 'forum_post'
-        | 'space';
+        | 'space'
+        | 'space_join_note';
       revision_reason: 'published' | 'edited' | 'restored';
       safety_contact_kind:
         | 'emergency'
@@ -14862,6 +14934,7 @@ export const Constants = {
         'forum_thread',
         'forum_post',
         'space',
+        'space_join_note',
       ],
       revision_reason: ['published', 'edited', 'restored'],
       safety_contact_kind: [
