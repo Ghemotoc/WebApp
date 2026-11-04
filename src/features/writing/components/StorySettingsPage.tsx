@@ -39,6 +39,7 @@ import { DeleteStoryControl } from './DeleteStoryControl';
 import { StoryBasicsSection } from './StoryBasicsSection';
 import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryStatusSection } from './StoryStatusSection';
+import { StoryVisibilitySection } from './StoryVisibilitySection';
 
 /** The message under the save button for each outcome. */
 function SaveOutcome({ outcome }: { outcome: ReturnType<typeof useStorySettingsForm>['outcome'] }) {
@@ -104,6 +105,7 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
         canUpload
       />
       <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
+      <StoryVisibilitySection answers={form.answers} set={form.set} />
       <StoryStatusSection answers={form.answers} set={form.set} />
       <div className="flex flex-col gap-3 rounded-card bg-tint p-5">
         <SaveOutcome outcome={form.outcome} />

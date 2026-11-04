@@ -40,6 +40,8 @@ function emptyAnswers(): StoryAnswers {
     tags: [],
     cover: { kind: 'automatic' },
     completionStatus: 'ongoing',
+    // NEW-1: a new story is public; the writer can change it in the story's settings.
+    visibility: 'public',
     commentsEnabled: true,
     quoteCardsEnabled: true,
     pictureSharingEnabled: true,

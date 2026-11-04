@@ -27,6 +27,7 @@ import {
   type StoryRating,
   type StoryRatingReason,
   type StorySettingsInput,
+  type StoryVisibility,
 } from '@/schemas/story';
 
 /** A category as the form shows it: its key (translated by the screen) and its order. */
@@ -62,6 +63,8 @@ export interface MyStory {
   createdAt: string;
   /** Ongoing or Completed (S1-E3-05). */
   completionStatus: 'ongoing' | 'completed';
+  /** Who can read it: public, unlisted or private (NEW-1). */
+  visibility: StoryVisibility;
   commentsEnabled: boolean;
   /** Whether readers may make quote cards and passage links from its chapters (S1-E4-07, S1-E4-11). */
   quoteCardsEnabled: boolean;
@@ -202,7 +205,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, comments_enabled, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, visibility, comments_enabled, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // Only live chapters, in order; the deleted ones wait for the purge (S1-E3-04 shows undo).
     .is('chapters.deleted_at', null)
@@ -233,6 +236,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     firstPublishedAt: row.first_published_at,
     createdAt: row.created_at,
     completionStatus: row.completion_status,
+    visibility: row.visibility,
     commentsEnabled: row.comments_enabled,
     quoteCardsEnabled: row.quote_cards_enabled,
     pictureSharingEnabled: row.picture_sharing_enabled,
@@ -299,6 +303,31 @@ export async function updateMyStory(
     },
   });
   if (error !== null) throw new Error(`Could not save the story settings: ${error.message}`);
+  const outcome = toSettingsOutcome(data);
+  // NEW-1: who can read it is saved by its own function, once the rest has saved.
+  if (outcome !== 'ok') return outcome;
+  return setMyStoryVisibility(client, slug, settings.visibility);
+}
+
+/**
+ * Saves who can read the writer's own story (NEW-1): public, unlisted or private.
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's public address
+ * @param visibility - the writer's choice
+ * @returns the outcome
+ * Errors: throws when the database refuses the value or can't be reached.
+ */
+export async function setMyStoryVisibility(
+  client: AppSupabaseClient,
+  slug: string,
+  visibility: StoryVisibility,
+): Promise<SettingsOutcome> {
+  const { data, error } = await client.rpc('set_my_story_visibility', {
+    story_slug: slug,
+    wanted: visibility,
+  });
+  if (error !== null) throw new Error(`Could not save who can read the story: ${error.message}`);
   return toSettingsOutcome(data);
 }
 
