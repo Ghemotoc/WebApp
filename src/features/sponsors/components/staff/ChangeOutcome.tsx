@@ -4,7 +4,7 @@
  *
  * Who shows it: every section of Staff › Sponsors, under its own buttons. What it calls:
  * lib/sponsorWords.ts for the error's words. A failed save of an incomplete campaign also lists
- * what to fix.
+ * what to fix; a refused booking names the booking already in the slot (part e2).
  */
 import { Notice } from '@/components/ui/Notice';
 
@@ -30,7 +30,7 @@ export function ChangeOutcome({ successText, isDone, failure }: ChangeOutcomePro
   if (failure !== null) {
     return (
       <Notice tone="error">
-        {t(errorKeyOf(failure))}
+        {t(errorKeyOf(failure), { clash: failure.clashWith ?? '' })}
         {failure.problems.length > 0 && (
           <ul className="mt-2 mb-0 pl-5">
             {failure.problems.map((code) => (

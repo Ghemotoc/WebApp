@@ -2,9 +2,9 @@
  * StaffSponsorsPage: Staff › Sponsors (story S1-E12-02; bundle SPONSORS-b2; board AdminSponsors).
  *
  * What it shows, top to bottom: the four rules sponsors follow, every campaign with "New
- * campaign", the review queue, the sponsors and what we never advertise. Plain staff
- * components, no doodles (Definition of Done, design rules). Slot booking and reports arrive in
- * parts e and c.
+ * campaign", the review queue, Placements (the slot inventory, booking and our own house ads,
+ * part e2), the sponsors and what we never advertise. Plain staff components, no doodles
+ * (Definition of Done, design rules). Each campaign's report is on its own page (part c).
  * Who shows it: the router, at /staff/sponsors (owner and admin; the server refuses everyone
  * else). What it calls: useSponsorsData() and the sections in this folder.
  */
@@ -19,6 +19,7 @@ import { useSponsorTranslation } from '../../registerSponsorTranslations';
 
 import { BlockedCategoriesSection } from './BlockedCategoriesSection';
 import { CampaignList } from './CampaignList';
+import { PlacementsSection } from './placements/PlacementsSection';
 import { ReviewQueue } from './ReviewQueue';
 import { SponsorPrinciples } from './SponsorPrinciples';
 import { SponsorsSection } from './SponsorsSection';
@@ -66,6 +67,7 @@ export function StaffSponsorsPage() {
       <div className="flex max-w-[960px] flex-col gap-10">
         <CampaignsSection />
         {campaigns.data !== undefined && <ReviewQueue campaigns={campaigns.data} />}
+        <PlacementsSection />
         {sponsors.isError && <Notice tone="error">{t('loadFailed')}</Notice>}
         {sponsors.data !== undefined && <SponsorsSection sponsors={sponsors.data} />}
         {blocked.isError && <Notice tone="error">{t('loadFailed')}</Notice>}
