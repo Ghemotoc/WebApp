@@ -2115,3 +2115,10 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - The creative is uploaded to the private `sponsor-creatives` bucket under the campaign's ID and recorded by `register_sponsor_creative()`; `picture_needs_person()` sends every one to a moderator.
 - On the pages: `page_ads()` fills each slot with `sponsor_ad_for_slot()` (a live campaign whose placement covers the slot, see `sponsor_placement_slots()`, and which matches the page's context) before `house_ad_for_slot()`. `sponsor_credit('category' | 'contest', key)` gives the "Sponsored by" line; nothing that lists or ranks stories reads it.
 - Migrations `…_sponsors_b1_enums.sql` and `…_sponsors_b1_campaigns.sql`. Tests: `supabase/tests/database/271-sponsor-campaigns.test.sql`, `src/schemas/ads.test.ts`. The staff screens come in part b2 and the sponsored ad's look in part b3.
+
+## Staff › Sponsors (S1-E12-02; SPONSORS-b2)
+
+- Routes `/staff/sponsors` (`StaffSponsorsPage`) and `/staff/sponsors/campaigns/:campaignId` (`CampaignEditorPage`, `new` for a new campaign), in the staff menu after Contests for staff with the sponsors area.
+- One click: "Approve" on a review card → `ReviewQueue` → `useSponsorChanges()` → `api/sponsors.ts` `reviewCampaign()` → `admin_review_sponsor_campaign()` (checks the role, every review check and the picture, writes the audit log) → `sponsor_campaigns`; the lists are read again and the card leaves the queue.
+- The creative: `CampaignCreativeUpload` → `uploadSponsorCreative()` (`src/features/pictures/api/pictures.ts`) → the `sponsor-creatives` bucket → `register_sponsor_creative()` → the picture check, so a moderator sees it before approval is possible.
+- Folder guide: `src/features/sponsors/README.md`. Test: `e2e/sponsors-admin.spec.ts`.

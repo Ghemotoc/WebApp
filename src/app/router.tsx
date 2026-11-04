@@ -193,6 +193,24 @@ const staffRoutes: RouteObject = {
         return { Component: ContestEditorPage };
       },
     },
+    // Sponsors (S1-E12-02; SPONSORS-b2): owner and admin; campaigns, the review queue, sponsors
+    // and what we never advertise, and one campaign's editor ("new" starts one).
+    {
+      path: 'sponsors',
+      lazy: async () => {
+        const { StaffSponsorsPage } =
+          await import('@/features/sponsors/components/staff/StaffSponsorsPage');
+        return { Component: StaffSponsorsPage };
+      },
+    },
+    {
+      path: 'sponsors/campaigns/:campaignId',
+      lazy: async () => {
+        const { CampaignEditorPage } =
+          await import('@/features/sponsors/components/staff/CampaignEditorPage');
+        return { Component: CampaignEditorPage };
+      },
+    },
     // The website CMS (S1-E11-06, S1-E11-10, S1-E11-12): owner and admin; the area picks the tab.
     {
       path: 'website/:area?',
