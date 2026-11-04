@@ -86,12 +86,12 @@ test.describe('Message emails with quiet hours (IDEAS-2c1)', () => {
     await expect(quiet).not.toBeChecked();
     // Step 2: on, from 23:00 to 08:00, saved.
     await quiet.check();
-    await page.getByLabel('From').fill('23:00');
-    await page.getByLabel('Until').fill('08:00');
+    await page.locator('#message-quiet-from').fill('23:00');
+    await page.locator('#message-quiet-until').fill('08:00');
     await page.getByRole('button', { name: 'Save email choices' }).click();
     await expect(page.getByText('Saved.')).toBeVisible();
     await page.reload();
-    await expect(page.getByLabel('From')).toHaveValue('23:00');
+    await expect(page.locator('#message-quiet-from')).toHaveValue('23:00');
     expect(
       runSql(
         `select message_quiet_hours_on, to_char(message_quiet_until, 'HH24:MI') from public.profiles where handle = 'adult_writer';`,
@@ -118,10 +118,10 @@ test.describe('Message emails with quiet hours (IDEAS-2c1)', () => {
     const quiet = page.getByLabel('Quiet hours: hold these emails until morning');
     await expect(quiet).toBeChecked();
     await expect(quiet).toBeDisabled();
-    await expect(page.getByLabel('From')).toHaveValue('21:00');
+    await expect(page.locator('#message-quiet-from')).toHaveValue('21:00');
     await expect(page.getByText(/Under 18, quiet hours stay on/)).toBeVisible();
     // Step 2: starting them at 23:00 is refused in plain words.
-    await page.getByLabel('From').fill('23:00');
+    await page.locator('#message-quiet-from').fill('23:00');
     await page.getByRole('button', { name: 'Save email choices' }).click();
     await expect(page.getByText(/Quiet hours need to start by 22:00/)).toBeVisible();
     await page.context().close();
