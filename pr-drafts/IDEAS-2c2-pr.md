@@ -23,7 +23,13 @@ Bundle 14c IDEAS-2, part c2: a kind "No thanks" for message requests, and teens 
 
 ## Local check run
 
-LOCALRUN
+Fast checks, run locally on this branch (GitHub Actions is blocked by billing):
+
+- Lint, Prettier, `tsc -b`, `types:check`, `i18n:check` and `migrations:check`: passed.
+- Vitest: 228 files, 1,442 tests passed.
+- Database (`supabase test db`): 191 files, 4,464 tests passed, including the new `281-no-thanks`.
+- Wrangler compile and the build with and without env, plus `third-party:check`: passed.
+- e2e (no-thanks-and-consent, parent-consent, messages, message-settings, message-emails, messaging-rules, messages-block-and-report, privacy-settings): 128 passed.
 
 ## By hand
 
