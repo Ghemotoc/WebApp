@@ -141,6 +141,48 @@ export type Database = {
           },
         ];
       };
+      ad_blocked_categories: {
+        Row: {
+          category_key: string;
+          created_at: string;
+          id: string;
+          is_fixed: boolean;
+          label_en: string;
+          label_ro: string;
+          updated_at: string;
+          user_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          category_key: string;
+          created_at?: string;
+          id?: string;
+          is_fixed?: boolean;
+          label_en: string;
+          label_ro: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          category_key?: string;
+          created_at?: string;
+          id?: string;
+          is_fixed?: boolean;
+          label_en?: string;
+          label_ro?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'ad_blocked_categories_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       ad_slots: {
         Row: {
           created_at: string;
@@ -6143,6 +6185,183 @@ export type Database = {
           },
         ];
       };
+      sponsor_campaigns: {
+        Row: {
+          alt_en: string;
+          alt_ro: string;
+          category_slug: string | null;
+          contest_id: string | null;
+          created_at: string;
+          discount_code: string;
+          ends_on: string | null;
+          id: string;
+          link_url: string;
+          name: string;
+          picture_id: string | null;
+          placement: Database['public']['Enums']['sponsor_placement'];
+          review_checks: string[];
+          review_note: string;
+          reviewed_at: string | null;
+          reviewer_user_id: string | null;
+          sponsor_id: string;
+          starts_on: string | null;
+          state: Database['public']['Enums']['sponsor_campaign_state'];
+          submitted_at: string | null;
+          target_categories: string[];
+          target_languages: string[];
+          target_tags: string[];
+          text_en: string;
+          text_ro: string;
+          updated_at: string;
+          user_id: string | null;
+          sponsor_campaign_is_live: boolean | null;
+          sponsor_campaign_problems: string[] | null;
+          sponsor_creative_problems: string[] | null;
+        };
+        ComputedFields:
+          'sponsor_campaign_is_live' | 'sponsor_campaign_problems' | 'sponsor_creative_problems';
+        Insert: {
+          alt_en?: string;
+          alt_ro?: string;
+          category_slug?: string | null;
+          contest_id?: string | null;
+          created_at?: string;
+          discount_code?: string;
+          ends_on?: string | null;
+          id?: string;
+          link_url?: string;
+          name?: string;
+          picture_id?: string | null;
+          placement: Database['public']['Enums']['sponsor_placement'];
+          review_checks?: string[];
+          review_note?: string;
+          reviewed_at?: string | null;
+          reviewer_user_id?: string | null;
+          sponsor_id: string;
+          starts_on?: string | null;
+          state?: Database['public']['Enums']['sponsor_campaign_state'];
+          submitted_at?: string | null;
+          target_categories?: string[];
+          target_languages?: string[];
+          target_tags?: string[];
+          text_en?: string;
+          text_ro?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          alt_en?: string;
+          alt_ro?: string;
+          category_slug?: string | null;
+          contest_id?: string | null;
+          created_at?: string;
+          discount_code?: string;
+          ends_on?: string | null;
+          id?: string;
+          link_url?: string;
+          name?: string;
+          picture_id?: string | null;
+          placement?: Database['public']['Enums']['sponsor_placement'];
+          review_checks?: string[];
+          review_note?: string;
+          reviewed_at?: string | null;
+          reviewer_user_id?: string | null;
+          sponsor_id?: string;
+          starts_on?: string | null;
+          state?: Database['public']['Enums']['sponsor_campaign_state'];
+          submitted_at?: string | null;
+          target_categories?: string[];
+          target_languages?: string[];
+          target_tags?: string[];
+          text_en?: string;
+          text_ro?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'sponsor_campaigns_category_slug_fkey';
+            columns: ['category_slug'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['slug'];
+          },
+          {
+            foreignKeyName: 'sponsor_campaigns_contest_id_fkey';
+            columns: ['contest_id'];
+            isOneToOne: false;
+            referencedRelation: 'contests';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sponsor_campaigns_picture_id_fkey';
+            columns: ['picture_id'];
+            isOneToOne: false;
+            referencedRelation: 'picture_checks';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sponsor_campaigns_reviewer_user_id_fkey';
+            columns: ['reviewer_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sponsor_campaigns_sponsor_id_fkey';
+            columns: ['sponsor_id'];
+            isOneToOne: false;
+            referencedRelation: 'sponsors';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'sponsor_campaigns_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      sponsors: {
+        Row: {
+          archived_at: string | null;
+          created_at: string;
+          id: string;
+          name: string;
+          updated_at: string;
+          user_id: string | null;
+          website_url: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          created_at?: string;
+          id?: string;
+          name: string;
+          updated_at?: string;
+          user_id?: string | null;
+          website_url?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+          user_id?: string | null;
+          website_url?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'sponsors_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       staff_interns: {
         Row: {
           created_at: string;
@@ -8193,6 +8412,10 @@ export type Database = {
         }[];
       };
       admin_acknowledge_on_call_alert: { Args: { alert_id: string }; Returns: boolean };
+      admin_add_ad_blocked_category: {
+        Args: { label_en: string; label_ro: string; new_key: string };
+        Returns: undefined;
+      };
       admin_add_classic_author: { Args: { author_name: string; died: number }; Returns: string };
       admin_add_name_word: {
         Args: { how_it_matches: string; new_word: string; word_language: string };
@@ -8530,6 +8753,10 @@ export type Database = {
           tell_uploader: boolean;
         };
         Returns: string;
+      };
+      admin_end_sponsor_campaign: {
+        Args: { reason: string; target_campaign_id: string };
+        Returns: undefined;
       };
       admin_end_story_visibility_state: {
         Args: {
@@ -8902,6 +9129,10 @@ export type Database = {
       };
       admin_reject_tag: { Args: { reason: string; tag_id: string }; Returns: number };
       admin_release_case: { Args: { target_case_id: string }; Returns: boolean };
+      admin_remove_ad_blocked_category: {
+        Args: { reason: string; target_key: string };
+        Returns: undefined;
+      };
       admin_remove_chapter_passage: {
         Args: {
           case_reference: string;
@@ -8984,6 +9215,15 @@ export type Database = {
       };
       admin_reveal_email: { Args: { target_user_id: string }; Returns: string };
       admin_reveal_ticket_email: { Args: { ticket_number: number }; Returns: string };
+      admin_review_sponsor_campaign: {
+        Args: {
+          confirmed_checks: string[];
+          decision: string;
+          note: string;
+          target_campaign_id: string;
+        };
+        Returns: undefined;
+      };
       admin_revoke_certificate: { Args: { code: string; reason: string }; Returns: Json };
       admin_revoke_invite: {
         Args: { reason_given: string; target_invite_id: string };
@@ -9076,6 +9316,14 @@ export type Database = {
         Returns: string;
       };
       admin_save_safety_contact: { Args: { contact: Json }; Returns: string };
+      admin_save_sponsor: {
+        Args: { sponsor_name: string; target_sponsor_id: string; website: string };
+        Returns: string;
+      };
+      admin_save_sponsor_campaign: {
+        Args: { fields: Json; target_campaign_id: string };
+        Returns: Json;
+      };
       admin_search_audit_log: {
         Args: {
           action_prefix?: string;
@@ -9219,6 +9467,7 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: number;
       };
+      admin_sponsor_campaigns: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_story_change_target: {
         Args: { reason_code: string; reason_text: string; target_story_id: string };
         Returns: {
@@ -9331,6 +9580,7 @@ export type Database = {
         Returns: string;
       };
       admin_story_visibility: { Args: { target_story_id: string }; Returns: string };
+      admin_submit_sponsor_campaign: { Args: { target_campaign_id: string }; Returns: undefined };
       admin_support_inbox: {
         Args: { assigned_filter?: string; status_filter?: string };
         Returns: {
@@ -10824,6 +11074,7 @@ export type Database = {
           title_ro: string;
         }[];
       };
+      house_ad_for_slot: { Args: { used_keys: string[]; wanted_page_key: string }; Returns: Json };
       insert_class_space: {
         Args: {
           banner: Database['public']['Enums']['space_banner'];
@@ -11125,6 +11376,47 @@ export type Database = {
           to: 'stories';
           isOneToOne: false;
           isSetofReturn: true;
+        };
+      };
+      locked_sponsor_campaign: {
+        Args: {
+          allowed_states: Database['public']['Enums']['sponsor_campaign_state'][];
+          target_campaign_id: string;
+        };
+        Returns: {
+          alt_en: string;
+          alt_ro: string;
+          category_slug: string | null;
+          contest_id: string | null;
+          created_at: string;
+          discount_code: string;
+          ends_on: string | null;
+          id: string;
+          link_url: string;
+          name: string;
+          picture_id: string | null;
+          placement: Database['public']['Enums']['sponsor_placement'];
+          review_checks: string[];
+          review_note: string;
+          reviewed_at: string | null;
+          reviewer_user_id: string | null;
+          sponsor_id: string;
+          starts_on: string | null;
+          state: Database['public']['Enums']['sponsor_campaign_state'];
+          submitted_at: string | null;
+          target_categories: string[];
+          target_languages: string[];
+          target_tags: string[];
+          text_en: string;
+          text_ro: string;
+          updated_at: string;
+          user_id: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'sponsor_campaigns';
+          isOneToOne: true;
+          isSetofReturn: false;
         };
       };
       log_account_change: {
@@ -12330,6 +12622,7 @@ export type Database = {
       };
       register_signature_picture: { Args: { target_path: string }; Returns: string };
       register_space_banner: { Args: { target_path: string }; Returns: string };
+      register_sponsor_creative: { Args: { target_path: string }; Returns: string };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
       remove_space_member: {
@@ -12492,6 +12785,17 @@ export type Database = {
       require_safety_contacts_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_settings_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_space_starter: { Args: Record<PropertyKey, never>; Returns: string };
+      require_sponsor_approval_ready: {
+        Args: {
+          campaign: Omit<
+            Database['public']['Tables']['sponsor_campaigns']['Row'],
+            Database['public']['Tables']['sponsor_campaigns']['ComputedFields']
+          >;
+          confirmed_checks: string[];
+        };
+        Returns: undefined;
+      };
+      require_sponsor_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       require_support_ticket_for_staff: {
         Args: { ticket_number: number };
         Returns: {
@@ -13061,6 +13365,94 @@ export type Database = {
         };
         Returns: Json;
       };
+      sponsor_ad_for_slot: {
+        Args: {
+          context: Json;
+          used_keys: string[];
+          wanted_page_key: string;
+          wanted_slot_key: string;
+        };
+        Returns: Json;
+      };
+      sponsor_campaign_from_json: {
+        Args: {
+          campaign: Omit<
+            Database['public']['Tables']['sponsor_campaigns']['Row'],
+            Database['public']['Tables']['sponsor_campaigns']['ComputedFields']
+          >;
+          fields: Json;
+        };
+        Returns: {
+          alt_en: string;
+          alt_ro: string;
+          category_slug: string | null;
+          contest_id: string | null;
+          created_at: string;
+          discount_code: string;
+          ends_on: string | null;
+          id: string;
+          link_url: string;
+          name: string;
+          picture_id: string | null;
+          placement: Database['public']['Enums']['sponsor_placement'];
+          review_checks: string[];
+          review_note: string;
+          reviewed_at: string | null;
+          reviewer_user_id: string | null;
+          sponsor_id: string;
+          starts_on: string | null;
+          state: Database['public']['Enums']['sponsor_campaign_state'];
+          submitted_at: string | null;
+          target_categories: string[];
+          target_languages: string[];
+          target_tags: string[];
+          text_en: string;
+          text_ro: string;
+          updated_at: string;
+          user_id: string | null;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'sponsor_campaigns';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      sponsor_campaign_is_live: {
+        Args: {
+          campaign: Omit<
+            Database['public']['Tables']['sponsor_campaigns']['Row'],
+            Database['public']['Tables']['sponsor_campaigns']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      sponsor_campaign_problems: {
+        Args: {
+          campaign: Omit<
+            Database['public']['Tables']['sponsor_campaigns']['Row'],
+            Database['public']['Tables']['sponsor_campaigns']['ComputedFields']
+          >;
+        };
+        Returns: string[];
+      };
+      sponsor_creative_problems: {
+        Args: {
+          campaign: Omit<
+            Database['public']['Tables']['sponsor_campaigns']['Row'],
+            Database['public']['Tables']['sponsor_campaigns']['ComputedFields']
+          >;
+        };
+        Returns: string[];
+      };
+      sponsor_creative_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      sponsor_credit: { Args: { credit_key: string; credit_kind: string }; Returns: Json };
+      sponsor_link_problem: { Args: { link: string }; Returns: string };
+      sponsor_placement_slots: {
+        Args: { placement: Database['public']['Enums']['sponsor_placement'] };
+        Returns: string[];
+      };
+      sponsor_review_checks: { Args: Record<PropertyKey, never>; Returns: string[] };
       staff_may: { Args: { target_area: string; wanted_access?: string }; Returns: boolean };
       staff_session_started_at: { Args: Record<PropertyKey, never>; Returns: string };
       staff_signed_in_recently: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -13642,7 +14034,8 @@ export type Database = {
         | 'space_banner'
         | 'atlas_image'
         | 'signature_picture'
-        | 'landing_picture';
+        | 'landing_picture'
+        | 'sponsor_creative';
       picture_status: 'pending' | 'passed' | 'held' | 'approved' | 'removed';
       profile_audience: 'everyone' | 'members' | 'people_i_follow';
       reaction_kind: 'heart' | 'fire' | 'laugh' | 'wow' | 'sad' | 'star';
@@ -13709,6 +14102,14 @@ export type Database = {
       space_posting: 'anyone' | 'members';
       space_power: 'posts' | 'members' | 'settings' | 'mail';
       space_readers: 'members' | 'everybody';
+      sponsor_campaign_state: 'draft' | 'in_review' | 'approved' | 'sent_back' | 'ended';
+      sponsor_placement:
+        | 'chapter_banner'
+        | 'list_banner'
+        | 'discover_banner'
+        | 'category'
+        | 'contest'
+        | 'featured_slot';
       staff_permission: 'safeguarding' | 'teacher_checks' | 'on_call' | 'picture_review';
       staff_role: 'owner' | 'admin' | 'moderator' | 'support' | 'content_editor';
       statement_action:
@@ -14002,6 +14403,7 @@ export const Constants = {
         'atlas_image',
         'signature_picture',
         'landing_picture',
+        'sponsor_creative',
       ],
       picture_status: ['pending', 'passed', 'held', 'approved', 'removed'],
       profile_audience: ['everyone', 'members', 'people_i_follow'],
@@ -14073,6 +14475,15 @@ export const Constants = {
       space_posting: ['anyone', 'members'],
       space_power: ['posts', 'members', 'settings', 'mail'],
       space_readers: ['members', 'everybody'],
+      sponsor_campaign_state: ['draft', 'in_review', 'approved', 'sent_back', 'ended'],
+      sponsor_placement: [
+        'chapter_banner',
+        'list_banner',
+        'discover_banner',
+        'category',
+        'contest',
+        'featured_slot',
+      ],
       staff_permission: ['safeguarding', 'teacher_checks', 'on_call', 'picture_review'],
       staff_role: ['owner', 'admin', 'moderator', 'support', 'content_editor'],
       statement_action: [

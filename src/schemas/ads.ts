@@ -3,8 +3,8 @@
  *
  * Who uses it: src/features/ads/api/ads.ts reads page_ads() through pageAdsSchema. The database's
  * enums (ad_format, ad_label) are generated into src/lib/database.types.ts; these schemas only
- * check the JSON page_ads() returns. The ad network (part d) and sponsors (part b) add to the
- * ad's fields later.
+ * check the JSON page_ads() returns. Part b1 adds a sponsor's fields to the ad and the
+ * "Sponsored by" credit (sponsor_credit()); the ad network (part d) adds its own later.
  */
 import { z } from 'zod';
 
@@ -27,15 +27,30 @@ export const adPageKeys = [
 /** One public page with ad slots. */
 export type AdPageKey = (typeof adPageKeys)[number];
 
+/** A text field only a sponsor's ad carries; missing or null on our own ads. */
+const sponsorText = z.string().nullable().optional();
+
 /** The ad filling a slot: who placed it (label), what it is and where it leads. */
 export const slotAdSchema = z.object({
   key: z.string(),
   label: z.enum(['sponsored', 'ad', 'house']),
-  // landing (one of our landing pages) or a built-in house ad: write, classics or forums.
+  // landing (one of our landing pages), a built-in house ad (write, classics or forums) or
+  // sponsor (a live sponsor campaign, part b1).
   kind: z.string(),
   page_slug: z.string().nullable(),
   title_ro: z.string().nullable(),
   title_en: z.string().nullable(),
+  // A sponsor's creative (S1-E12-02): its name, one line and the picture's alt text in both
+  // languages, the checked picture's place in storage, its link and an optional discount code.
+  sponsor_name: sponsorText,
+  text_ro: sponsorText,
+  text_en: sponsorText,
+  alt_ro: sponsorText,
+  alt_en: sponsorText,
+  picture_bucket: sponsorText,
+  picture_path: sponsorText,
+  link_url: sponsorText,
+  discount_code: sponsorText,
 });
 
 /** One slot of a page, in the order the page draws them. */
@@ -73,3 +88,14 @@ export interface AdPageContext {
   /** Only to keep class-only stories free of ads (Q70). */
   storySlug?: string | null;
 }
+
+/** What sponsor_credit() returns for a sponsored category or contest: the line's sponsor. */
+export const sponsorCreditSchema = z
+  .object({
+    sponsor_name: z.string(),
+    link_url: z.string().nullable(),
+  })
+  .nullable();
+
+/** "Sponsored by <sponsor>", or null when nobody sponsors it (S1-E12-02 criterion 3). */
+export type SponsorCredit = z.infer<typeof sponsorCreditSchema>;
