@@ -10,7 +10,8 @@
  * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
  * 1.7.11), which opens the one report dialog for this story. Not shown to the story's owner, who
  * can't report their own story (the database refuses it too).
- * A public-domain classic shows its real author instead of the writer card (S1-E5-06).
+ * A public-domain classic shows its real author instead of the writer card (S1-E5-06). The
+ * writer card shows the writer's gold rank pill under the handle (IDEAS-3a).
  * Who uses it: StoryPage.
  */
 import type { TFunction } from 'i18next';
@@ -25,6 +26,7 @@ import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { ratingMinimumAge } from '@/schemas/story';
 
 import type { ClassicAuthor, StoryPageData } from '../api/storyPage';
+import { ProfileRankChip } from '@/features/forums/components/ProfileRankChip';
 
 /**
  * Where a classic's text comes from: the source edition as a link, and the translator (S1-E11-16
@@ -96,6 +98,8 @@ function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOw
       </div>
       <h2 className="m-0 font-heading text-[22px] font-bold text-heading">{writer.displayName}</h2>
       <p className="m-0 text-[13px] text-meta">@{writer.handle}</p>
+      {/* IDEAS-3a: the writer's gold rank pill, as on their profile (profile_rank()). */}
+      <ProfileRankChip handle={writer.handle} />
       {writer.bio !== '' && (
         <p className="m-0 text-[15px] leading-normal break-words text-body">{writer.bio}</p>
       )}

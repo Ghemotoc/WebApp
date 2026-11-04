@@ -4269,6 +4269,7 @@ export type Database = {
           story_revision_id: string | null;
           updated_at: string;
           user_id: string;
+          writer_rank: Database['public']['Enums']['writer_rank'] | null;
           notification_is_shown: boolean | null;
           notification_json: Json | null;
         };
@@ -4297,6 +4298,7 @@ export type Database = {
           story_revision_id?: string | null;
           updated_at?: string;
           user_id: string;
+          writer_rank?: Database['public']['Enums']['writer_rank'] | null;
         };
         Update: {
           actor_count?: number;
@@ -4322,6 +4324,7 @@ export type Database = {
           story_revision_id?: string | null;
           updated_at?: string;
           user_id?: string;
+          writer_rank?: Database['public']['Enums']['writer_rank'] | null;
         };
         Relationships: [
           {
@@ -4766,6 +4769,7 @@ export type Database = {
           handle_changed_at: string | null;
           handle_skeleton: string | null;
           handle_slug: string | null;
+          highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at: string | null;
           library_visible_to: Database['public']['Enums']['library_audience'];
@@ -4825,6 +4829,7 @@ export type Database = {
           handle_changed_at?: string | null;
           handle_skeleton?: string | null;
           handle_slug?: string | null;
+          highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at?: string | null;
           library_visible_to?: Database['public']['Enums']['library_audience'];
@@ -4865,6 +4870,7 @@ export type Database = {
           handle_changed_at?: string | null;
           handle_skeleton?: string | null;
           handle_slug?: string | null;
+          highest_rank_notified?: Database['public']['Enums']['writer_rank'] | null;
           id?: string;
           last_active_at?: string | null;
           library_visible_to?: Database['public']['Enums']['library_audience'];
@@ -10025,6 +10031,10 @@ export type Database = {
         };
         Returns: boolean;
       };
+      announce_writer_rank: {
+        Args: { person_id: string; reached: Database['public']['Enums']['writer_rank'] };
+        Returns: undefined;
+      };
       another_appeals_decider_exists: { Args: Record<PropertyKey, never>; Returns: boolean };
       answer_data_request: {
         Args: { is_mine: boolean; request_reference: string };
@@ -10170,6 +10180,7 @@ export type Database = {
           handle_changed_at: string | null;
           handle_skeleton: string | null;
           handle_slug: string | null;
+          highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at: string | null;
           library_visible_to: Database['public']['Enums']['library_audience'];
@@ -11861,6 +11872,7 @@ export type Database = {
           handle_changed_at: string | null;
           handle_skeleton: string | null;
           handle_slug: string | null;
+          highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at: string | null;
           library_visible_to: Database['public']['Enums']['library_audience'];
@@ -12597,6 +12609,7 @@ export type Database = {
           handle_changed_at: string | null;
           handle_skeleton: string | null;
           handle_slug: string | null;
+          highest_rank_notified: Database['public']['Enums']['writer_rank'] | null;
           id: string;
           last_active_at: string | null;
           library_visible_to: Database['public']['Enums']['library_audience'];
@@ -13949,6 +13962,16 @@ export type Database = {
       };
       story_bible: { Args: { story_slug: string }; Returns: Json };
       story_card_json: { Args: { target_story_id: string }; Returns: Json };
+      story_card_writer_rank: {
+        Args: {
+          target_story_id: string;
+          writer: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       story_cast: { Args: { story_slug: string }; Returns: Json };
       story_chapter_progress: { Args: { story_slug: string }; Returns: Json };
       story_class_allows: {
@@ -14410,7 +14433,8 @@ export type Database = {
         | 'data_request_extended'
         | 'data_request_copy_ready'
         | 'picture_opened_by_staff'
-        | 'landing_entries_open';
+        | 'landing_entries_open'
+        | 'rank_reached';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -14787,6 +14811,7 @@ export const Constants = {
         'data_request_copy_ready',
         'picture_opened_by_staff',
         'landing_entries_open',
+        'rank_reached',
       ],
       picture_kind: [
         'cover',

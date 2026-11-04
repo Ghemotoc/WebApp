@@ -14,6 +14,7 @@ import type {
 } from '@/components/covers/coverDesigns';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { StoryRating } from '@/schemas/story';
+import type { WriterRank } from '@/features/forums/lib/writerRanks';
 
 /** The lists the database knows (browse_stories()'s list_kind). */
 export type ListKind =
@@ -75,7 +76,8 @@ export interface ListedStory {
   slug: string;
   title: string;
   blurb: string;
-  writer: { handle: string; displayName: string };
+  /** rank: the writer's rank for the card's pill, or null (IDEAS-3a; story_card_writer_rank()). */
+  writer: { handle: string; displayName: string; rank: WriterRank | null };
   categorySlug: string;
   languageCode: string;
   completionStatus: CompletionStatus;
@@ -99,7 +101,7 @@ export interface ListedStoryRow {
   slug: string;
   title: string;
   blurb: string;
-  writer: { handle: string; display_name: string };
+  writer: { handle: string; display_name: string; rank?: WriterRank | null };
   category_slug: string;
   language_code: string;
   completion_status: CompletionStatus;
@@ -142,7 +144,11 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
     slug: row.slug,
     title: row.title,
     blurb: row.blurb,
-    writer: { handle: row.writer.handle, displayName: row.writer.display_name },
+    writer: {
+      handle: row.writer.handle,
+      displayName: row.writer.display_name,
+      rank: row.writer.rank ?? null,
+    },
     categorySlug: row.category_slug,
     languageCode: row.language_code,
     completionStatus: row.completion_status,

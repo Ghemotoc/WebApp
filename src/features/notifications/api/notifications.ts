@@ -7,6 +7,7 @@
  * mark_notifications_read() (…_s1_e7_01_notifications.sql). The database decides what the reader
  * may see (blocks, ratings, moderation) and answers usernames, never a user ID (architecture 1.6).
  */
+import type { Enums } from '@/lib/database.types';
 import type { ParagraphLinkPlace } from '@/lib/paragraph-link';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
@@ -44,7 +45,8 @@ export type NotificationKind =
   | 'data_request_extended'
   | 'data_request_copy_ready'
   | 'picture_opened_by_staff'
-  | 'landing_entries_open';
+  | 'landing_entries_open'
+  | 'rank_reached';
 
 /** The board's filter chips (All is every category). */
 export type NotificationCategory = 'replies' | 'follows' | 'stories' | 'staff';
@@ -153,6 +155,12 @@ export interface AppNotification {
    * its address and its title in each language, or null once the page is archived.
    */
   landingPage: NotificationLandingPage | null;
+  /**
+   * For rank_reached (IDEAS-3a): the rank the writer reached, for its sticker, and their own
+   * handle, for the link to their profile.
+   */
+  writerRank: Enums<'writer_rank'> | null;
+  ownHandle: string | null;
   /** A moderation decision can't be switched off (criterion 4). */
   isRequired: boolean;
   isRead: boolean;
@@ -206,6 +214,8 @@ interface NotificationRow {
   } | null;
   data_request?: { reference: string; deadline: string; extension_reason: string | null } | null;
   landing_page?: { slug: string; title_ro: string | null; title_en: string | null } | null;
+  writer_rank?: Enums<'writer_rank'> | null;
+  own_handle?: string | null;
   is_required: boolean;
   is_read: boolean;
   at: string;
@@ -326,6 +336,8 @@ function toNotification(row: NotificationRow): AppNotification {
     staffChange: staffChangeOf(row),
     dataRequest: dataRequestOf(row),
     landingPage: landingPageOf(row),
+    writerRank: row.writer_rank ?? null,
+    ownHandle: row.own_handle ?? null,
     isRequired: row.is_required,
     isRead: row.is_read,
     at: row.at,

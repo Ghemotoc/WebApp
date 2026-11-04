@@ -38,7 +38,8 @@
     "parentOrGuardian": "Your parent or guardian",
     "yourAccount": "Your account:",
     "yourLibrary": "Your library:",
-    "reminder": "Your reminder:"
+    "reminder": "Your reminder:",
+    "rank": "Your rank:"
   },
   "chapterOfStory": "Chapter {{position}} of {{story}}",
   "what": {
@@ -82,7 +83,8 @@
     "landingEntriesOpen": "entries are open for “{{title}}”.",
     "landingEntriesOpenGone": "entries are open for a page you asked about, which has since been taken down.",
     "contestCertificateIssued": "you have a certificate from “{{title}}”. It’s in My certificates.",
-    "certificateIssuedPlain": "you have a new certificate. It’s in My certificates."
+    "certificateIssuedPlain": "you have a new certificate. It’s in My certificates.",
+    "rankReached": "you’re now a {{rank}}. Well done."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",
@@ -143,7 +145,8 @@
     "seeDataRequests": "See your data requests",
     "downloadDataRequestCopy": "Download it",
     "openAuditLog": "Open the audit log",
-    "openLandingPage": "Open the page"
+    "openLandingPage": "Open the page",
+    "seeMyRank": "See your rank"
   },
   "alwaysOn": "Always on",
   "unread": "Unread",
@@ -240,5 +243,11 @@
     "list": "{{first}} and {{last}}",
     "yourStory": "your story"
   },
-  "pageLanguage": "en"
+  "pageLanguage": "en",
+  "rankNames": {
+    "new_writer": "New writer",
+    "writer": "Writer",
+    "storyteller": "Storyteller",
+    "novelist": "Novelist"
+  }
 }
