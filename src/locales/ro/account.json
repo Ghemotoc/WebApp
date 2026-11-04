@@ -270,7 +270,9 @@
     "notice": {
       "heading": "Roagă un părinte sau tutore",
       "body": "Ai sub 16 ani, așa că un părinte sau tutore trebuie să fie de acord înainte să poți publica, comenta, posta sau trimite mesaje.",
-      "action": "Roagă-l"
+      "action": "Roagă-l",
+      "withdrawnBody": "De acum contul tău poate doar citi. Poți în continuare să citești povești, să-ți păstrezi biblioteca, să raportezi orice te îngrijorează și să-ți descarci datele, iar poveștile tale rămân salvate. Nu poți publica, comenta, posta sau trimite mesaje decât dacă un părinte sau tutore își dă din nou acordul.",
+      "withdrawnAction": "Ce poți face în continuare"
     },
     "parent": {
       "documentTitle": "Părinte sau tutore",
@@ -309,6 +311,21 @@
       "goneHeading": "Linkul nu mai funcționează",
       "goneBody": "Poate l-a înlocuit un email mai nou sau contul a fost șters. Dacă crezi că e o greșeală, scrie-ne.",
       "loading": "Se încarcă…"
+    },
+    "summary": {
+      "heading": "La ce și-a dat acordul părintele sau tutorele tău",
+      "agreedOn": "Părintele sau tutorele tău și-a dat acordul pe {{date}}.",
+      "coversIntro": "Acordul lor înseamnă:",
+      "coversWrite": "Poți publica povești, comenta și posta pe forumuri.",
+      "coversMessages": "Poți trimite și primi mesaje private, după regulile pentru vârsta ta: adulții nu pot scrie niciodată cuiva sub 16 ani.",
+      "coversData": "Păstrăm emailul, numele de utilizator, pseudonimul, anul nașterii și rezultatul verificării vârstei, niciodată numele tău real.",
+      "coversWithdraw": "Își pot retrage acordul oricând. Dacă fac asta, contul tău poate doar citi și îți spunem aici.",
+      "withdrawnOn": "Părintele sau tutorele tău și-a retras acordul pe {{date}}.",
+      "stillIntro": "Deocamdată contul tău poate doar citi. Poți în continuare:",
+      "stillRead": "să citești povești și să-ți păstrezi biblioteca;",
+      "stillKept": "să-ți găsești poveștile, salvate cum erau;",
+      "stillReport": "să raportezi orice te îngrijorează și să blochezi pe oricine;",
+      "stillData": "să-ți descarci datele sau să-ți ștergi contul, mai jos."
     }
   },
   "onboarding": {

@@ -22,7 +22,8 @@
     "removed": "[Removed by the moderation team]",
     "unread": "new messages",
     "waiting": "Waiting for them to accept",
-    "loadFailed": "We couldn’t load your chats. Try again in a moment."
+    "loadFailed": "We couldn’t load your chats. Try again in a moment.",
+    "saidNoThanks": "Said no thanks for now"
   },
   "rules": {
     "minors": "Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on.",
@@ -46,14 +47,18 @@
     "composerLabel": "Message to {{name}}",
     "send": "Send",
     "textOnly": "Text only. You can’t send pictures or files.",
-    "reportLabel": "the message from {{name}} at {{time}}"
+    "reportLabel": "the message from {{name}} at {{time}}",
+    "noThanksReply": "{{name}} replied: “Thanks for writing, but I’d rather not chat right now.”",
+    "noThanksAgain": "You can send a new request from {{date}}."
   },
   "request": {
     "title": "{{name}} wants to message you",
     "explain": "They can’t send more until you accept. If you delete the request, they won’t be told.",
     "accept": "Accept request",
     "delete": "Delete request",
-    "deleted": "Request deleted. {{name}} won’t be told."
+    "deleted": "Request deleted. {{name}} won’t be told.",
+    "noThanks": "No thanks",
+    "noThanksExplain": "“No thanks” sends them a short, kind reply for you, and they can’t ask again for 30 days."
   },
   "block": {
     "button": "Block",

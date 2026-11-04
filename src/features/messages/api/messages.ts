@@ -4,7 +4,7 @@
  *
  * Who calls it: the hooks in ../hooks (the /messages pages and the top bar's Messages link).
  * What it calls next: my_conversations(), conversation_with(), send_message(),
- * answer_message_request(), mark_conversation_read(), unread_message_count() and
+ * answer_message_request(), say_no_thanks_to_request() (IDEAS-2), mark_conversation_read(), unread_message_count() and
  * my_message_settings() (…_s1_e9_01_private_messages.sql); set_message_audience() and
  * delete_conversation() (…_s1_e9_04_message_settings_and_retention.sql) and
  * set_adults_may_message() (S1-E2-06); the email choices are read by api/messageEmails.ts (IDEAS-2). Every rule is in the database; a
@@ -28,6 +28,8 @@ export interface ConversationSummary {
   status: ConversationStatus;
   /** A request waiting for the caller's answer: it belongs under "Requests". */
   isRequestToMe: boolean;
+  /** The other person said "No thanks" to the caller's request (IDEAS-2 idea 7). */
+  saidNoThanks: boolean;
   /** The last message's first words, or null when staff removed it. */
   lastMessagePreview: string | null;
   lastMessageFromMe: boolean;
@@ -53,6 +55,10 @@ export interface Conversation {
   isRequestToMe: boolean;
   /** The caller's own request isn't accepted yet, so they can't send more. */
   isWaiting: boolean;
+  /** The other person answered the caller's request with "No thanks" (IDEAS-2 idea 7). */
+  saidNoThanks: boolean;
+  /** After "No thanks": when the caller may write again (30 days on), or null. */
+  askAgainFrom: string | null;
   canSend: boolean;
   iFollow: boolean;
   theyFollow: boolean;
@@ -153,6 +159,8 @@ export function conversationFromJson(json: Json | null): Conversation | null {
     status: statusOf(json.status),
     isRequestToMe: json.is_request_to_me === true,
     isWaiting: json.is_waiting === true,
+    saidNoThanks: json.said_no_thanks === true,
+    askAgainFrom: textOf(json, 'ask_again_from'),
     canSend: json.can_send === true,
     iFollow: json.i_follow === true,
     theyFollow: json.they_follow === true,
@@ -175,6 +183,7 @@ export async function fetchConversations(
     otherDisplayName: row.other_display_name,
     status: row.status,
     isRequestToMe: row.is_request_to_me,
+    saidNoThanks: row.said_no_thanks,
     lastMessagePreview: row.last_message_preview,
     lastMessageFromMe: row.last_message_from_me,
     lastMessageAt: row.last_message_at,
@@ -214,20 +223,26 @@ export async function sendMessage(
   return isRecord(data) ? statusOf(data.status) : null;
 }
 
+/** How the recipient answers a request: accept, delete (never told) or "No thanks" (IDEAS-2). */
+export type RequestAnswer = 'accept' | 'delete' | 'no_thanks';
+
 /**
- * Accepts or deletes a request from this person.
+ * Accepts or deletes a request from this person, or answers it with "No thanks".
  *
  * @throws MessagesError
  */
 export async function answerRequest(
   client: AppSupabaseClient,
   handle: string,
-  shouldAccept: boolean,
+  answer: RequestAnswer,
 ): Promise<void> {
-  const { error } = await client.rpc('answer_message_request', {
-    sender_handle: handle,
-    should_accept: shouldAccept,
-  });
+  const { error } =
+    answer === 'no_thanks'
+      ? await client.rpc('say_no_thanks_to_request', { sender_handle: handle })
+      : await client.rpc('answer_message_request', {
+          sender_handle: handle,
+          should_accept: answer === 'accept',
+        });
   if (error !== null) throw messagesErrorFrom(error);
 }
 

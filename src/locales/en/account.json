@@ -270,7 +270,9 @@
     "notice": {
       "heading": "Ask a parent or guardian",
       "body": "You’re under 16, so a parent or guardian needs to agree before you can publish, comment, post or send messages.",
-      "action": "Ask them"
+      "action": "Ask them",
+      "withdrawnBody": "Your account is read-only from now on. You can still read stories, keep your library, report anything that worries you and download your data, and your own stories stay saved. You can’t publish, comment, post or send messages unless a parent or guardian agrees again.",
+      "withdrawnAction": "What you can still do"
     },
     "parent": {
       "documentTitle": "Parent or guardian",
@@ -309,6 +311,21 @@
       "goneHeading": "This link no longer works",
       "goneBody": "A newer email may have replaced it, or the account was deleted. If you think this is wrong, write to us.",
       "loading": "Loading…"
+    },
+    "summary": {
+      "heading": "What your parent or guardian agreed to",
+      "agreedOn": "Your parent or guardian agreed on {{date}}.",
+      "coversIntro": "Their yes covers this:",
+      "coversWrite": "You can publish stories, comment and post in the forums.",
+      "coversMessages": "You can send and get private messages, within the rules for your age: adults can never message anyone under 16.",
+      "coversData": "We keep your email, username, pen name, year of birth and age check result, and never your real name.",
+      "coversWithdraw": "They can withdraw their yes at any time. If they do, your account becomes read-only and we tell you here.",
+      "withdrawnOn": "Your parent or guardian withdrew their consent on {{date}}.",
+      "stillIntro": "Your account is read-only for now. You can still:",
+      "stillRead": "read stories and keep your library;",
+      "stillKept": "find your own stories, saved as they were;",
+      "stillReport": "report anything that worries you, and block anyone;",
+      "stillData": "download your data or delete your account, below."
     }
   },
   "onboarding": {

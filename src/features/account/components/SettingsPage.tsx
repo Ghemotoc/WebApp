@@ -27,6 +27,7 @@ import { DownloadMyDataSection } from '@/features/data-export/components/Downloa
 import { MyDataRequestsSection } from '@/features/data-requests/components/MyDataRequestsSection';
 import { SignatureSettingsSection } from '@/features/forums/components/SignatureSettingsSection';
 import { MessageSettingsSection } from '@/features/messages/components/MessageSettingsSection';
+import { ParentConsentSummary } from '@/features/parent-consent/components/ParentConsentSummary';
 import { LikesSettingsSection } from '@/features/onboarding/components/LikesSettingsSection';
 import { NotificationEmailsSection } from '@/features/notifications/components/NotificationEmailsSection';
 import { AvatarBuilderSection } from '@/features/avatars/components/AvatarBuilderSection';
@@ -118,6 +119,8 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
       {/* Google, Apple, Microsoft and passkeys (S1-E2-09); hidden while their flags are off. */}
       <LoginMethodsSection />
       <BirthdaySettingsSection />
+      {/* What a parent or guardian agreed to, for a member who needed it (IDEAS-2 idea 8). */}
+      <ParentConsentSummary />
       {/* Who sees the profile and the library, and online status (S1-E13-01). */}
       <PrivacySettingsSection />
       {/* What we email, per kind (S1-E7-02); every email's footer links to it. */}

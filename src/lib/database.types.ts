@@ -2284,17 +2284,20 @@ export type Database = {
           id: string;
           last_message_at: string;
           recipient_user_id: string;
+          said_no_thanks_at: string | null;
           status: Database['public']['Enums']['conversation_status'];
           updated_at: string;
           user_id: string;
+          no_thanks_pause_ends: string | null;
         };
-        ComputedFields: never;
+        ComputedFields: 'no_thanks_pause_ends';
         Insert: {
           accepted_at?: string | null;
           created_at?: string;
           id?: string;
           last_message_at?: string;
           recipient_user_id: string;
+          said_no_thanks_at?: string | null;
           status?: Database['public']['Enums']['conversation_status'];
           updated_at?: string;
           user_id: string;
@@ -2305,6 +2308,7 @@ export type Database = {
           id?: string;
           last_message_at?: string;
           recipient_user_id?: string;
+          said_no_thanks_at?: string | null;
           status?: Database['public']['Enums']['conversation_status'];
           updated_at?: string;
           user_id?: string;
@@ -10769,6 +10773,7 @@ export type Database = {
           id: string;
           last_message_at: string;
           recipient_user_id: string;
+          said_no_thanks_at: string | null;
           status: Database['public']['Enums']['conversation_status'];
           updated_at: string;
           user_id: string;
@@ -12010,6 +12015,7 @@ export type Database = {
           last_message_preview: string;
           other_display_name: string;
           other_handle: string;
+          said_no_thanks: boolean;
           status: Database['public']['Enums']['conversation_status'];
         }[];
       };
@@ -12237,6 +12243,15 @@ export type Database = {
       new_certificate_code: { Args: Record<PropertyKey, never>; Returns: string };
       next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
       next_notice_reference: { Args: { notice_kind: string }; Returns: string };
+      no_thanks_pause_ends: {
+        Args: {
+          chat: Omit<
+            Database['public']['Tables']['conversations']['Row'],
+            Database['public']['Tables']['conversations']['ComputedFields']
+          >;
+        };
+        Returns: string;
+      };
       normalise_invite_code: { Args: { code: string }; Returns: string };
       normalise_pen_name: { Args: { typed_name: string }; Returns: string };
       normalise_romanian_letters: { Args: { input_text: string }; Returns: string };
@@ -13290,6 +13305,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      say_no_thanks_to_request: { Args: { sender_handle: string }; Returns: Json };
       schedule_chapter: { Args: { chapter_code: string; publish_at: string }; Returns: Json };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
       scrub_route_path: { Args: { raw_path: string }; Returns: string };
@@ -13803,6 +13819,7 @@ export type Database = {
           id: string;
           last_message_at: string;
           recipient_user_id: string;
+          said_no_thanks_at: string | null;
           status: Database['public']['Enums']['conversation_status'];
           updated_at: string;
           user_id: string;

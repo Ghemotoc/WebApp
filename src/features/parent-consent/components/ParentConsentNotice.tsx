@@ -8,6 +8,8 @@
  * the notice stays hidden.
  * Who shows it: AppLayout, under AgeCheckNotice, on every page except the consent pages.
  * What it calls: useMyParentConsent. Signed out, or with nothing to ask, it shows nothing.
+ * After a parent or guardian withdraws their consent, the notice says so in plain words instead:
+ * what changed, what still works and where to read more (bundle IDEAS-2, idea IDEA-20261101-8).
  */
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
@@ -27,6 +29,7 @@ export function ParentConsentNotice() {
   const { consent } = useMyParentConsent();
   if (consent == null || !consent.needsConsent || pathname.startsWith('/parent-consent'))
     return null;
+  const isWithdrawn = consent.status === 'withdrawn';
 
   return (
     <PageContainer className="pt-6">
@@ -38,14 +41,16 @@ export function ParentConsentNotice() {
           id="parent-consent-notice-title"
           className="m-0 font-heading text-[24px] font-bold text-heading"
         >
-          {t('parentConsent.notice.heading')}
+          {t(isWithdrawn ? 'parentConsent.withdrawnHeading' : 'parentConsent.notice.heading')}
         </h2>
-        <p className="m-0 text-body">{t('parentConsent.notice.body')}</p>
+        <p className="m-0 text-body">
+          {t(isWithdrawn ? 'parentConsent.notice.withdrawnBody' : 'parentConsent.notice.body')}
+        </p>
         <Link
-          to="/parent-consent"
+          to={isWithdrawn ? '/settings#parent-consent' : '/parent-consent'}
           className="inline-flex h-11 items-center self-start rounded-full bg-primary px-5 text-sm font-semibold text-on-primary no-underline hover:opacity-90"
         >
-          {t('parentConsent.notice.action')}
+          {t(isWithdrawn ? 'parentConsent.notice.withdrawnAction' : 'parentConsent.notice.action')}
         </Link>
       </section>
     </PageContainer>
