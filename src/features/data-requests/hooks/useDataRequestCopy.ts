@@ -11,6 +11,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
+  useExportGuideWords,
   useLibraryLabels,
   usePlanText,
   useWordLabels,
@@ -49,6 +50,7 @@ export function useDataRequestCopy(request: DataRequestDetail) {
   const { wordLabels, statusLabels } = useWordLabels(request.language);
   const planText = usePlanText(request.language);
   const libraryLabels = useLibraryLabels(request.language);
+  const guideWords = useExportGuideWords(request.language);
   const sending = useMutation({
     mutationFn: async (format: DataRequestCopyFormat) => {
       // The builders load only now, so the staff pages don't carry the Word and ZIP libraries.
@@ -60,6 +62,7 @@ export function useDataRequestCopy(request: DataRequestDetail) {
         statusLabels,
         planText,
         libraryLabels,
+        guideWords,
         formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), request.language),
         requestId: request.id,
         reference: request.reference,

@@ -119,6 +119,27 @@ function fakeClient(options: { refuse?: string } = {}) {
   return { client, calls, uploads };
 }
 
+/** The guide's words for the tests: English, with every table described the same way (IDEAS-2a). */
+const guideWords = (madeAt: string) => ({
+  fileName: 'READ ME FIRST.txt',
+  title: 'Your data, explained',
+  intro: `Made on ${madeAt.slice(0, 10)}.`,
+  filesHeading: 'The files',
+  files: { data: 'data.json', stories: 'stories/', plans: 'plans', library: 'library.csv' },
+  partsHeading: 'Inside data.json',
+  parts: {
+    format: 'format',
+    user_id: 'user_id',
+    account: 'account',
+    library: 'library',
+    tables: 'tables',
+  },
+  tablesHeading: 'The groups',
+  tableLine: (tableName: string) => `about ${tableName}`,
+  empty: '(empty)',
+  help: 'Write to us.',
+});
+
 /** The run's options with the fake client. */
 function runOptions(client: AppSupabaseClient, format: DataRequestCopyFormat) {
   return {
@@ -138,6 +159,7 @@ function runOptions(client: AppSupabaseClient, format: DataRequestCopyFormat) {
       added: 'Adăugată',
       shelves: { reading: 'Citesc', saved: 'Pentru mai târziu', finished: 'Terminate' },
     },
+    guideWords,
     requestId: 'request-1',
     reference: 'D-000007',
     format,
@@ -162,7 +184,9 @@ describe('makeDataRequestCopy', () => {
     const upload = fake.uploads.get('random-0.zip');
     expect(upload?.type).toBe('application/zip');
     const zip = await JSZip.loadAsync(upload?.bytes ?? new Uint8Array());
+    expect(Object.keys(zip.files)[0]).toBe('READ ME FIRST.txt');
     expect(Object.keys(zip.files).sort()).toEqual([
+      'READ ME FIRST.txt',
       'data.json',
       'library.csv',
       'stories/',

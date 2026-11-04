@@ -4,6 +4,8 @@
  * Word file, no HTML copy; ADMIN-2d: and as a PDF).
  *
  * Inside the ZIP:
+ *   READ ME FIRST.txt    first, in the person's language: what each file and folder holds
+ *                        (IDEAS-2a; exportGuide.ts; the name is translated too);
  *   data.json            everything about the account (GDPR art. 20: structured, commonly used
  *                        and machine-readable), pretty-printed so a person can read it too;
  *   stories/<slug>.docx  one Word file per story (GDPR art. 15(3): a commonly used electronic form);
@@ -14,6 +16,8 @@
  * Who calls it: runDataExport(). What it calls: JSZip, in the browser (ADR 0012).
  */
 import JSZip from 'jszip';
+
+import type { GuideFile } from './exportGuide';
 
 /** One file for the ZIP: a Word file, a PDF, or the library spreadsheet. */
 export interface ZipEntry {
@@ -30,19 +34,23 @@ export const DATA_FILE_NAME = 'data.json';
  *
  * @param document - the data file's contents (my_data_export()'s answer)
  * @param wordFiles - the stories' Word and PDF files, and library.csv when there is one
+ * @param guide - the "READ ME FIRST" guide (exportGuideFile()), put first so it is seen first
  * @returns the ZIP's bytes
  * @throws when JSZip can't build it (the caller shows its plain message)
  */
 export async function buildExportZip(
   document: unknown,
   wordFiles: ZipEntry[],
+  guide?: GuideFile,
 ): Promise<Uint8Array> {
   const zip = new JSZip();
-  // Step 1: the data file, indented by two spaces and in UTF-8, so ș and ț stay ș and ț.
+  // Step 1: the guide first, so it is the first file a ZIP tool lists (IDEAS-2a).
+  if (guide !== undefined) zip.file(guide.fileName, guide.text);
+  // Step 2: the data file, indented by two spaces and in UTF-8, so ș and ț stay ș and ț.
   zip.file(DATA_FILE_NAME, JSON.stringify(document, null, 2));
-  // Step 2: the Word and PDF files, already compressed inside, so they are stored as they are.
+  // Step 3: the Word and PDF files, already compressed inside, so they are stored as they are.
   for (const entry of wordFiles) zip.file(entry.fileName, entry.bytes, { compression: 'STORE' });
-  // Step 3: the ZIP itself, compressed.
+  // Step 4: the ZIP itself, compressed.
   return zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
 }
 

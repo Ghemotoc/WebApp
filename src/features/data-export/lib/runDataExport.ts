@@ -9,7 +9,7 @@
  *      through the shared PDF builder (src/lib/pdf/; ADMIN-2d, Robert, 2 Nov 2026), and its plan
  *      from Story Atlas the same two again (Robert, 1 Nov 2026, 06:27);
  *   5. the data file, the Word and PDF files and the library as a spreadsheet (library.csv, IDEAS-1f) go
- *      into one ZIP (buildExportZip());
+ *      into one ZIP (buildExportZip()), behind a "READ ME FIRST" guide to them (IDEAS-2a);
  *   6. the older copies' files are deleted, so only one copy of the person's data is kept;
  *   7. the ZIP is uploaded to the private exports bucket;
  *   8. finish_data_export() marks it ready for seven days and sends the notification.
@@ -48,6 +48,7 @@ import {
 } from '../api/dataExport';
 
 import { buildExportZip, type ZipEntry } from './buildExportZip';
+import { exportGuideFile, type ExportGuideWords } from './exportGuide';
 import { libraryCsvFile, withLibraryLinks, type LibraryCsvLabels } from './libraryForExport';
 import { pictureForWord } from './pictureForWord';
 import { plansFrom, type PlanWords } from './planForWord';
@@ -175,9 +176,16 @@ export async function buildPlanFiles(
   return files;
 }
 
-/** What makeDataExport() needs on top of a run: the library spreadsheet's words (IDEAS-1f). */
+/** The guide's words for a copy made at a given moment (an ISO time), translated (IDEAS-2a). */
+export type ExportGuideWordsFor = (madeAt: string) => ExportGuideWords;
+
+/**
+ * What makeDataExport() needs on top of a run: the library spreadsheet's words (IDEAS-1f) and the
+ * "READ ME FIRST" guide's (IDEAS-2a).
+ */
 export interface DataExportOptions extends DataExportRunOptions {
   libraryLabels: LibraryCsvLabels;
+  guideWords: ExportGuideWordsFor;
 }
 
 /** The person's older copies that can still be deleted (ready and unexpired). */
@@ -210,7 +218,13 @@ export async function makeDataExport(options: DataExportOptions): Promise<number
   // The library as a spreadsheet too, when there is one (IDEAS-1f).
   const libraryFile = libraryCsvFile(document, options.libraryLabels);
   const extraFiles = libraryFile === null ? [] : [libraryFile];
-  const zip = await buildExportZip(document, [...wordFiles, ...planFiles, ...extraFiles]);
+  const files = [...wordFiles, ...planFiles, ...extraFiles];
+  // The guide says what each of those files holds, in the person's language (IDEAS-2a).
+  const guide = exportGuideFile(
+    { tables: document.tables, files },
+    options.guideWords(document.made_at),
+  );
+  const zip = await buildExportZip(document, files, guide);
   // Step 6: the older copies' files go before the new one is saved.
   await deleteExportFiles(options.client, await olderFileNames(options.client, opened.exportId));
   // Steps 7 and 8: save the ZIP, then mark it ready and notify.

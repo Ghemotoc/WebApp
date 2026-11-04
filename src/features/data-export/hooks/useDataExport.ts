@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
+import { brand } from '@/config/brand';
 import { useAtlasTranslation } from '@/features/atlas/registerAtlasTranslations';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { unreadCountQueryKey } from '@/features/notifications/hooks/useUnreadNotificationCount';
@@ -18,6 +19,7 @@ import type { WordLabels } from '@/lib/word/wordTypes';
 
 import { fetchMyDataExports, type DataExport } from '../api/dataExport';
 import type { LibraryCsvLabels } from '../lib/libraryForExport';
+import type { ExportGuideWordsFor } from '../lib/runDataExport';
 import { useDataExportTranslation } from '../registerDataExportTranslations';
 import {
   dataExportRunState,
@@ -135,6 +137,46 @@ export function useLibraryLabels(language?: string): LibraryCsvLabels {
 }
 
 /**
+ * The "READ ME FIRST" guide's words (IDEAS-2a; idea IDEA-20261101-1), in the copy's language.
+ *
+ * @param language - as for useWordLabels()
+ * @returns the guide's words for a copy made at a given moment
+ */
+export function useExportGuideWords(language?: string): ExportGuideWordsFor {
+  const t = useDataExportText(language);
+  const { i18n } = useDataExportTranslation();
+  const dateLanguage = language ?? i18n.language;
+  return (madeAt) => ({
+    fileName: t('guide.fileName'),
+    title: t('guide.title'),
+    intro: t('guide.intro', { date: formatRomaniaDate(new Date(madeAt), dateLanguage) }),
+    filesHeading: t('guide.filesHeading'),
+    files: {
+      data: t('guide.files.data'),
+      stories: t('guide.files.stories'),
+      plans: t('guide.files.plans'),
+      library: t('guide.files.library'),
+    },
+    partsHeading: t('guide.partsHeading'),
+    parts: {
+      format: t('guide.parts.format'),
+      user_id: t('guide.parts.user_id'),
+      account: t('guide.parts.account'),
+      library: t('guide.parts.library'),
+      tables: t('guide.parts.tables'),
+    },
+    tablesHeading: t('guide.tablesHeading'),
+    // Each table's line is its own key, guide.tables.<table>; a missing one answers null.
+    tableLine: (tableName) => {
+      const key = `guide.tables.${tableName}`;
+      return i18n.exists(key, { ns: 'dataExport', lng: dateLanguage }) ? t(key) : null;
+    },
+    empty: t('guide.empty'),
+    help: t('guide.help', { contactEmail: brand.contactEmail }),
+  });
+}
+
+/**
  * The words of a story's plan file: Story Atlas's own texts (so the file reads like the screens)
  * and the few of its own in dataExport.json (S1-E13-05).
  *
@@ -161,6 +203,7 @@ export function useStartDataExport() {
   const { wordLabels, statusLabels } = useWordLabels();
   const planText = usePlanText();
   const libraryLabels = useLibraryLabels();
+  const guideWords = useExportGuideWords();
   return {
     start: async () => {
       await startDataExport({
@@ -169,6 +212,7 @@ export function useStartDataExport() {
         statusLabels,
         planText,
         libraryLabels,
+        guideWords,
         formatDate: (isoDate) => formatRomaniaDate(new Date(isoDate), i18n.language),
       });
       await queryClient.invalidateQueries({ queryKey: dataExportsKey(userId) });
