@@ -7,7 +7,8 @@
     "category": "category {{name}}",
     "tag": "tag {{name}}",
     "language": "language {{name}}",
-    "promise": "Ads are never personalised, for anyone. We don’t use your age, what you read before or your device."
+    "promise": "Ads are never personalised, for anyone. We don’t use your age, what you read before or your device.",
+    "sponsored": "A sponsor, {{name}}, paid for this ad, and a person on our team checked it is suitable for every reader."
   },
   "house": {
     "from": "From {{productName}}",
@@ -26,5 +27,16 @@
       "title": "Talk about books and writing with other readers.",
       "action": "Open the forums"
     }
+  },
+  "sponsor": {
+    "from": "From {{name}}",
+    "visit": "Visit the site",
+    "newTab": "(opens in a new tab)",
+    "code": "Code",
+    "copy": "Copy",
+    "copyLabel": "Copy the code {{code}}",
+    "copied": "Copied.",
+    "copyFailed": "Your browser didn’t allow copying. Select the code to copy it.",
+    "by": "Sponsored by"
   }
 }

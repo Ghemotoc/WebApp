@@ -7,7 +7,8 @@
  * reader was used. The box keeps its format's size (a wide banner at least 120 px tall, 100 px on
  * phones; a portrait or side box only from 1200 px wide; a card the size of a story card), so
  * the page doesn't jump when the ad arrives (criterion 9).
- * Who shows it: PageAdSlot. What it calls: HouseAdCreative and lib/whyThisAd.ts.
+ * Who shows it: PageAdSlot. What it calls: HouseAdCreative or, for a sponsor's ad (part b3),
+ * SponsorAdCreative, and lib/whyThisAd.ts.
  */
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +19,7 @@ import { whyThisAd } from '../lib/whyThisAd';
 import { useAdsTranslation } from '../registerAdsTranslations';
 
 import { HouseAdCreative } from './HouseAdCreative';
+import { SponsorAdCreative } from './SponsorAdCreative';
 
 /** The size and layout of each format, written out in full so Tailwind can find them. */
 const formatClasses: Record<PageAdSlot['format'], string> = {
@@ -97,7 +99,11 @@ export function AdBox({ slot }: { slot: PageAdSlot }) {
         <span className="inline-flex h-6 flex-none items-center justify-center rounded-full border border-(--pill-neutral-border) bg-(--pill-neutral-bg) px-2.5 text-xs leading-none font-bold tracking-[0.12em] text-(--pill-neutral-text) uppercase">
           {t(labelKeys[ad.label])}
         </span>
-        <HouseAdCreative ad={ad} isStacked={isStacked} />
+        {ad.kind === 'sponsor' ? (
+          <SponsorAdCreative ad={ad} isStacked={isStacked} />
+        ) : (
+          <HouseAdCreative ad={ad} isStacked={isStacked} />
+        )}
       </div>
       <WhyThisAd slot={slot} />
     </aside>

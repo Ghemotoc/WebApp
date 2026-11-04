@@ -1,5 +1,6 @@
 /**
- * Unit tests for the "Why this ad?" words (bundle SPONSORS, part a1; story S1-E12-01 criterion 3).
+ * Unit tests for the "Why this ad?" words (bundle SPONSORS, part a1, and the sponsor's sentence
+ * from part b3; story S1-E12-01 criterion 3).
  * The translation function is a stand-in that shows each key with its values, so the tests check
  * which sentences are chosen and what fills them, not the copy itself.
  */
@@ -63,5 +64,19 @@ describe('whyThisAd', () => {
 
   it('says the ad is chosen from the page only when the page sent nothing', () => {
     expect(whyThisAd(fakeT, houseSlot({}), 'en')).toBe('why.ours why.matchesPage why.promise');
+  });
+
+  it('names the sponsor who paid for a sponsored ad, then the page and the promise', () => {
+    const slot = houseSlot({ category: 'poetry' });
+    const sponsored: PageAdSlot = {
+      ...slot,
+      ad:
+        slot.ad === null
+          ? null
+          : { ...slot.ad, label: 'sponsored', kind: 'sponsor', sponsor_name: 'Librăria Test' },
+    };
+    expect(whyThisAd(fakeT, sponsored, 'en')).toBe(
+      'why.sponsored(name=Librăria Test) why.matchesParts(parts=why.category(name=poetry)) why.promise',
+    );
   });
 });

@@ -1,8 +1,9 @@
 # Ads
 
 The ad slots on public pages (story S1-E12-01). Built in bundle SPONSORS-a1 (the slots, house
-ads and "Why this ad?"); part a2 placed them on every remaining public page, part b adds sponsor campaigns and
-part d the non-personalised ad network.
+ads and "Why this ad?"); part a2 placed them on every remaining public page, part b3 draws sponsors' ads and the
+"Sponsored by" line (the staff screens are in `src/features/sponsors/`), and part d adds the
+non-personalised ad network.
 
 - `api/ads.ts`: `fetchPageAds()` reads `page_ads(page_key, context)`; `adContextFor()` turns the
   page's context into what the server accepts. Only the page's context is sent, never anything
@@ -10,6 +11,12 @@ part d the non-personalised ad network.
 - `hooks/usePageAds.ts`: one page's slots, kept for five minutes.
 - `components/PageAdSlot.tsx`: what a page places, one per slot (at most two per page).
   `AdBox.tsx` draws the slot with its label and "Why this ad?"; `HouseAdCreative.tsx` draws our
-  own ads (a landing page, Start writing, the classics, the forums).
+  own ads (a landing page, Start writing, the classics, the forums); `SponsorAdCreative.tsx` draws
+  a sponsor's ad (the checked picture, its line, the link marked `rel="sponsored"` and an optional
+  `DiscountCode.tsx` with a Copy button), reading the picture's address with
+  `hooks/useSponsorPicture.ts`.
+- `components/SponsoredByLine.tsx` and `hooks/useSponsorCredit.ts`: "Sponsored by <sponsor>" on a
+  category's list (`StoryListHeader`) and a contest's page (`LandingPageScreen`), read with
+  `fetchSponsorCredit()` from `sponsor_credit()`. It never changes what a list holds or its order.
 - `lib/whyThisAd.ts`: the "Why this ad?" sentence from the page's category, tag and language.
 - `registerAdsTranslations.ts`: the `ads` locale namespace (`src/locales/*/ads.json`).

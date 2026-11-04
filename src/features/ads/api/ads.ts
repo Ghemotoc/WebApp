@@ -4,9 +4,18 @@
  * Who calls it: hooks/usePageAds.ts. What it calls next: page_ads() in
  * supabase/migrations/…_sponsors_a1_ad_slots.sql, which chooses every ad on the server from the
  * page's context alone (category, tag, language) and never from anything about the reader.
+ * Part b3 adds fetchSponsorCredit(), which reads the "Sponsored by" line of a category or a
+ * contest's page from sponsor_credit().
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
-import { pageAdsSchema, type AdPageContext, type AdPageKey, type PageAdSlot } from '@/schemas/ads';
+import {
+  pageAdsSchema,
+  sponsorCreditSchema,
+  type AdPageContext,
+  type AdPageKey,
+  type PageAdSlot,
+  type SponsorCredit,
+} from '@/schemas/ads';
 
 /**
  * Turns the page's context into what page_ads() takes, leaving out empty values.
@@ -50,4 +59,29 @@ export async function fetchPageAds(
   });
   if (error !== null) throw new Error(`The ads for this page could not be read: ${error.message}`);
   return pageAdsSchema.parse(data);
+}
+
+/** What a "Sponsored by" line can belong to: a category's list or a contest's own page. */
+export type SponsorCreditKind = 'category' | 'contest_page';
+
+/**
+ * The live sponsor of a category or a contest's page, for "Sponsored by" (S1-E12-02 criterion 3).
+ *
+ * @param client - the Supabase client (signed in or not: the answer is the same)
+ * @param kind - 'category' (key: the category's slug) or 'contest_page' (key: the page's slug)
+ * @param key - the slug
+ * @returns the sponsor's name and link, or null when nobody sponsors it today
+ * @throws Error when the database can't be reached or answers in an unexpected shape
+ */
+export async function fetchSponsorCredit(
+  client: AppSupabaseClient,
+  kind: SponsorCreditKind,
+  key: string,
+): Promise<SponsorCredit> {
+  const { data, error } = await client.rpc('sponsor_credit', {
+    credit_kind: kind,
+    credit_key: key,
+  });
+  if (error !== null) throw new Error(`The sponsor could not be read: ${error.message}`);
+  return sponsorCreditSchema.parse(data);
 }

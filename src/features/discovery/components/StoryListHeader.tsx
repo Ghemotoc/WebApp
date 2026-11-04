@@ -3,12 +3,15 @@
  * (story S1-E5-09; board 3.10).
  *
  * A category page gets a band in its category's colour behind the heading, as the board's
- * category pages do. The count is announced politely when a filter changes it.
- * Who uses it: StoryListPage.
+ * category pages do. The count is announced politely when a filter changes it. A sponsored
+ * category says "Sponsored by" under its heading (bundle SPONSORS-b3; S1-E12-02 criterion 3); the
+ * list itself is the same with or without a sponsor.
+ * Who uses it: StoryListPage. What it calls: SponsoredByLine.
  */
 import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { SponsoredByLine } from '@/features/ads/components/SponsoredByLine';
 import { cn } from '@/lib/utils';
 
 import type { ListRequest } from '../api/storyLists';
@@ -61,6 +64,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
         <p aria-live="polite" className="m-0 min-h-6 text-base text-body">
           {total === null ? '' : t('seeAll.count', { count: total })}
         </p>
+        {isCategory && <SponsoredByLine kind="category" slug={request.key ?? ''} />}
       </div>
     </header>
   );

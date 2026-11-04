@@ -2122,3 +2122,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - One click: "Approve" on a review card → `ReviewQueue` → `useSponsorChanges()` → `api/sponsors.ts` `reviewCampaign()` → `admin_review_sponsor_campaign()` (checks the role, every review check and the picture, writes the audit log) → `sponsor_campaigns`; the lists are read again and the card leaves the queue.
 - The creative: `CampaignCreativeUpload` → `uploadSponsorCreative()` (`src/features/pictures/api/pictures.ts`) → the `sponsor-creatives` bucket → `register_sponsor_creative()` → the picture check, so a moderator sees it before approval is possible.
 - Folder guide: `src/features/sponsors/README.md`. Test: `e2e/sponsors-admin.spec.ts`.
+
+## A sponsor's ad on the pages (S1-E12-02; SPONSORS-b3)
+
+- A slot whose ad has `kind: 'sponsor'` is drawn by `SponsorAdCreative` inside `AdBox` (which still draws the "Sponsored" pill): the picture through `useSponsorPicture()` (a signed address that Storage gives only for a checked picture), the line in the reader's language, "Visit the site" with `rel="sponsored nofollow noopener noreferrer"` and, when there is one, the discount code with a Copy button (`DiscountCode`). "Why this ad?" names the sponsor (`lib/whyThisAd.ts`).
+- "Sponsored by": `SponsoredByLine` → `useSponsorCredit()` → `fetchSponsorCredit()` → `sponsor_credit('category' | 'contest_page', slug)`. Category lists show it under the heading (`StoryListHeader`); a contest's page shows it above the page (`LandingPageScreen`). Migration `…_sponsors_b3_credit_by_page.sql` added the `contest_page` kind, keyed by the page's address.
+- Tests: `supabase/tests/database/272-sponsor-credit-by-page.test.sql`, `src/features/ads/lib/whyThisAd.test.ts`, `e2e/sponsored-ads.spec.ts`.
