@@ -483,7 +483,7 @@
     "savedVisible": "Readers can see it now. You can close this tab.",
     "design": "Design it in Canva",
     "newTab": "(opens a new tab)",
-    "note": "Canva opens a blank cover at the right size. When you press Return in Canva, your cover comes back here. You need your own Canva account, and Canva’s rules apply there. Nothing is shared with Canva until you connect.",
+    "note": "Canva opens a cover at the right size: blank, or a template with your title and pen name already in place. When you press Return in Canva, your cover comes back here. You need your own Canva account, and Canva’s rules apply there. Nothing is shared with Canva until you connect.",
     "failed": {
       "switched_off": "Designing covers in Canva is switched off right now.",
       "account": "Your account can’t change covers right now.",
@@ -505,7 +505,27 @@
       "disconnectFailed": "We couldn’t disconnect Canva. Please try again.",
       "loadFailed": "We couldn’t check whether Canva is connected. Please try again."
     },
-    "arrived": "Your new cover from Canva is here, and it’s already saved."
+    "arrived": "Your new cover from Canva is here, and it’s already saved.",
+    "templates": {
+      "legend": "Where do you want to start?",
+      "open": "Open Canva",
+      "blank": {
+        "name": "Blank design",
+        "hint": "An empty cover at the right size, as before."
+      },
+      "classic": {
+        "name": "Classic",
+        "hint": "Your title and pen name at the top, on a deep colour."
+      },
+      "bold": {
+        "name": "Bold",
+        "hint": "A large title at the bottom, with your pen name under it."
+      },
+      "handwritten": {
+        "name": "Handwritten",
+        "hint": "Your title and pen name in handwriting, on a light page."
+      }
+    }
   },
   "insights": {
     "eyebrow": "Only you see this",

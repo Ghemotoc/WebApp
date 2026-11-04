@@ -483,7 +483,7 @@
     "savedVisible": "Cititorii o pot vedea acum. Poți închide fila.",
     "design": "Creează-o în Canva",
     "newTab": "(se deschide într-o filă nouă)",
-    "note": "Canva deschide o copertă goală, la mărimea potrivită. Când apeși Return în Canva, coperta ta revine aici. Ai nevoie de propriul cont Canva, iar acolo se aplică regulile Canva. Nu se trimite nimic către Canva până nu te conectezi.",
+    "note": "Canva deschide o copertă la mărimea potrivită: goală sau un șablon cu titlul și pseudonimul tău deja puse. Când apeși Return în Canva, coperta ta se întoarce aici. Ai nevoie de propriul cont Canva, iar acolo se aplică regulile Canva. Nu se trimite nimic către Canva până nu te conectezi.",
     "failed": {
       "switched_off": "Crearea copertelor în Canva e oprită acum.",
       "account": "Contul tău nu poate schimba coperte acum.",
@@ -505,7 +505,27 @@
       "disconnectFailed": "Nu am putut deconecta Canva. Încearcă din nou.",
       "loadFailed": "Nu am putut verifica dacă Canva e conectat. Încearcă din nou."
     },
-    "arrived": "Coperta nouă din Canva a ajuns aici și este deja salvată."
+    "arrived": "Coperta nouă din Canva a ajuns aici și este deja salvată.",
+    "templates": {
+      "legend": "De unde vrei să începi?",
+      "open": "Deschide Canva",
+      "blank": {
+        "name": "Design gol",
+        "hint": "O copertă goală, la mărimea potrivită, ca până acum."
+      },
+      "classic": {
+        "name": "Clasic",
+        "hint": "Titlul și pseudonimul sus, pe o culoare închisă."
+      },
+      "bold": {
+        "name": "Îndrăzneț",
+        "hint": "Un titlu mare jos, cu pseudonimul sub el."
+      },
+      "handwritten": {
+        "name": "Scris de mână",
+        "hint": "Titlul și pseudonimul scrise de mână, pe o pagină deschisă."
+      }
+    }
   },
   "insights": {
     "eyebrow": "Doar tu vezi asta",

@@ -2,8 +2,9 @@
  * "Design it in Canva": our server's side (story S1-E3-12; ADR 0009).
  *
  * The addresses, all under /api/canva/:
- * - POST design { storyId, storyTitle, codeChallenge, state }: when the writer has connected
- *   Canva, a new blank 1600 × 2560 design and its edit address (criterion 1); otherwise Canva's
+ * - POST design { storyId, storyTitle, template, penName, codeChallenge, state }: when the writer
+ *   has connected Canva, a new 1600 × 2560 design, blank or from one of our templates with the
+ *   title and pen name placed (IDEAS-2e), and its edit address (criterion 1); otherwise Canva's
  *   consent page with our PKCE challenge, so nothing is shared before they agree (criterion 4);
  * - POST connect { code, codeVerifier }: swaps the consent page's code for the writer's tokens
  *   and saves them encrypted;
@@ -129,7 +130,11 @@ async function design(request: Request, context: CanvaRequestContext): Promise<R
     });
     return json({ kind: 'connect', authorizeUrl } satisfies CanvaDesignResponse, 200);
   }
-  const created = await context.canva.createDesign(accessToken, body.storyTitle);
+  const created = await context.canva.createDesign(accessToken, {
+    title: body.storyTitle,
+    template: body.template,
+    penName: body.penName,
+  });
   if (created === null) return fail('unreachable');
   // The story's ID rides along as the correlation state and comes back in Canva's return token.
   const editUrl = new URL(created.editUrl);

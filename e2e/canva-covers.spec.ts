@@ -12,6 +12,8 @@
  * - after Allow, a blank design opens; Return brings it back, it goes through the picture check
  *   and becomes the story's cover (criteria 1 to 3); back in the settings tab, the new cover
  *   shows by itself, labelled as waiting for its check (IDEAS-2d, idea IDEA-20261101-11);
+ * - the start page offers a blank design or one of three templates with the title and pen name
+ *   placed; the choice survives the consent page and opens in the editor (IDEAS-2e);
  * - Settings shows the connection and Disconnect removes it;
  * - with canva_covers off, neither the button nor the Settings section shows;
  * - the pages pass axe and fit at 390 (Romanian), 768 and 1440 px.
@@ -71,11 +73,19 @@ async function openAsWriter(
   return page;
 }
 
-/** Presses "Design it in Canva" and gives back the new tab. */
-async function pressDesignInCanva(page: Page): Promise<Page> {
+/**
+ * Presses "Design it in Canva", picks where to start in the new tab (IDEAS-2e) and opens Canva.
+ *
+ * @param template - the choice's name on the start page; blank when not given
+ * @returns the new tab
+ */
+async function pressDesignInCanva(page: Page, template = 'Blank design'): Promise<Page> {
   const link = page.getByRole('link', { name: 'Design it in Canva (opens a new tab)' });
   await expect(link).toHaveAttribute('target', '_blank');
   const [tab] = await Promise.all([page.context().waitForEvent('page'), link.click()]);
+  await expect(tab.getByRole('group', { name: 'Where do you want to start?' })).toBeVisible();
+  await tab.getByRole('radio', { name: new RegExp(`^${template}`) }).check();
+  await tab.getByRole('button', { name: 'Open Canva' }).click();
   return tab;
 }
 
@@ -117,10 +127,12 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
 
   test('connect, design, Return: the design becomes the checked cover', async ({ browser }) => {
     const page = await openAsWriter(browser, settingsAddress);
-    const tab = await pressDesignInCanva(page);
+    const tab = await pressDesignInCanva(page, 'Classic');
     await tab.getByRole('link', { name: 'Allow' }).click();
-    // Criterion 1: after connecting, the blank design opens in the same tab.
+    // Criterion 1: after connecting, the design opens in the same tab, from the template the
+    // writer picked before the consent page (IDEAS-2e).
     await expect(tab.getByRole('heading', { name: /your design/ })).toBeVisible();
+    await expect(tab.getByText('Started from: Classic template')).toBeVisible();
     expect(
       runSql(`select count(*) from public.canva_connections where user_id = '${writerId}'`),
     ).toBe('1');
@@ -155,6 +167,8 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
     const page = await openAsWriter(browser, settingsAddress);
     const tab = await pressDesignInCanva(page);
     await expect(tab.getByRole('heading', { name: /your design/ })).toBeVisible();
+    // IDEAS-2e criterion 2: "Blank design" gives today's empty cover.
+    await expect(tab.getByText('Started from: Blank design')).toBeVisible();
     await page.context().close();
   });
 
@@ -176,11 +190,15 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
     [768, 'en'],
     [1440, 'en'],
   ] as const) {
-    test(`the cover button and the return page pass axe and fit at ${width} px`, async ({
+    test(`the cover button, the start page and the return page pass axe and fit at ${width} px`, async ({
       browser,
     }) => {
       const page = await openAsWriter(browser, settingsAddress, { width, language });
       await expect(page.locator('a[href^="/canva/start"]')).toBeVisible();
+      await expectAccessibleAndFitting(page, width);
+      // The start page's template choice (IDEAS-2e).
+      await page.goto(`/canva/start?story=${storyId}`);
+      await expect(page.getByRole('radio')).toHaveCount(4);
       await expectAccessibleAndFitting(page, width);
       await page.goto('/canva/return?error=access_denied&state=x');
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();

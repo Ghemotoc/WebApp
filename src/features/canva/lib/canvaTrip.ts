@@ -9,12 +9,18 @@
  * connect step says plainly that it can't continue (the design step doesn't need it).
  * Who calls it: api/canva.ts and hooks/useCanvaReturn.ts.
  */
+import { canvaTemplateKeys, type CanvaTemplateKey } from '@/schemas/canva';
+
 import { codeChallengeFor, randomPkceText } from './pkce';
 
 /** What the tab remembers. */
 export interface CanvaTrip {
   storyId: string;
   storyTitle: string;
+  /** The template the writer picked, so the design after the consent page starts from it. */
+  template: CanvaTemplateKey;
+  /** The name the template places under the title. */
+  penName: string;
   state: string;
   codeVerifier: string;
 }
@@ -25,12 +31,14 @@ const tripKey = 'canva-trip';
 /**
  * Starts a trip: fresh PKCE values, remembered for this tab.
  *
- * @param story - the story's ID and title
+ * @param story - the story's ID and title, and the template and pen name it starts from
  * @returns the trip and the challenge to send
  */
 export async function startCanvaTrip(story: {
   storyId: string;
   storyTitle: string;
+  template: CanvaTemplateKey;
+  penName: string;
 }): Promise<{ trip: CanvaTrip; codeChallenge: string }> {
   const trip: CanvaTrip = { ...story, state: randomPkceText(), codeVerifier: randomPkceText() };
   try {
@@ -59,7 +67,10 @@ export function rememberedCanvaTrip(): CanvaTrip | null {
     ) {
       return null;
     }
-    return trip as CanvaTrip;
+    // A trip from before templates, or an unknown one, starts blank (IDEAS-2e).
+    const template = canvaTemplateKeys.find((key) => key === trip.template) ?? 'blank';
+    const penName = typeof trip.penName === 'string' ? trip.penName : '';
+    return { ...(trip as CanvaTrip), template, penName };
   } catch {
     return null;
   }

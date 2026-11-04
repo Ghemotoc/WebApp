@@ -9,12 +9,25 @@ import { z } from 'zod';
 /** PKCE values and OAuth state: base64url text, 43 to 128 characters (RFC 7636). */
 const pkceText = z.string().regex(/^[A-Za-z0-9_-]{43,128}$/);
 
-/** POST /api/canva/design: open a blank cover design for one of the writer's stories. */
+/**
+ * The cover templates a writer can start from (bundle IDEAS-2, part e; idea IDEA-20261101-10):
+ * a blank design as before, or one of three with the title and pen name already placed.
+ */
+export const canvaTemplateKeys = ['blank', 'classic', 'bold', 'handwritten'] as const;
+
+/** One template's key. */
+export type CanvaTemplateKey = (typeof canvaTemplateKeys)[number];
+
+/** POST /api/canva/design: open a cover design for one of the writer's stories. */
 export const canvaDesignRequestSchema = z.object({
   /** The story's ID; it comes back with Canva's return token, so the cover finds its story. */
   storyId: z.string().uuid(),
-  /** The design's name in the writer's Canva account. */
+  /** The design's name in the writer's Canva account, and the title a template places. */
   storyTitle: z.string().trim().min(1).max(200),
+  /** Where to start; blank when not sent, as before templates (IDEAS-2e). */
+  template: z.enum(canvaTemplateKeys).default('blank'),
+  /** The name a template places under the title: the pen name, or the username. */
+  penName: z.string().trim().max(80).default(''),
   /** Used only when the writer hasn't connected Canva yet. */
   codeChallenge: pkceText,
   state: pkceText,
