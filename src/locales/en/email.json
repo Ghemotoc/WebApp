@@ -74,7 +74,13 @@
     "subjectDataRequestCopyReady": "Your copy of your data is ready",
     "dataRequestCopyReady": "The copy of your data you asked for ({{reference}}) is ready. Log in and open Settings, under Data requests, to download it. It’s there for seven days, then it’s deleted. We never send your data by email.",
     "pictureOpenedByStaff": "{{who}} opened the original file of an uploaded picture. Every picture they opened is in the audit log on the staff site.",
-    "subjectPictureOpenedByStaff": "A staff member opened an uploaded picture"
+    "subjectPictureOpenedByStaff": "A staff member opened an uploaded picture",
+    "newMessage": "{{who}} sent you a private message.",
+    "newMessageMany": "{{who}} sent you {{count}} private messages.",
+    "newMessageRequest": "{{who}} sent you a message request.",
+    "messageIntro": "You have something new in Messages on {{productName}}. We never put the words of a message in an email:",
+    "messageOpen": "Open the chat: {{link}}",
+    "messageWhy": "You get these emails because of your choices in Settings, under Messages, where you can also set quiet hours: {{link}}"
   },
   "parentConsent": {
     "requestSubject": "@{{handle}} asked you to agree to their {{productName}} account",

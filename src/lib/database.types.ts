@@ -2623,23 +2623,28 @@ export type Database = {
         Row: {
           attempts: number;
           claimed_at: string | null;
+          conversation_id: string | null;
           created_at: string;
           delivery: string;
           id: string;
           notification_ids: string[];
+          send_after: string | null;
           sent_at: string | null;
           updated_at: string;
           user_id: string;
           email_worker_items: Json | null;
+          message_email_items: Json | null;
         };
-        ComputedFields: 'email_worker_items';
+        ComputedFields: 'email_worker_items' | 'message_email_items';
         Insert: {
           attempts?: number;
           claimed_at?: string | null;
+          conversation_id?: string | null;
           created_at?: string;
           delivery: string;
           id?: string;
           notification_ids: string[];
+          send_after?: string | null;
           sent_at?: string | null;
           updated_at?: string;
           user_id: string;
@@ -2647,15 +2652,24 @@ export type Database = {
         Update: {
           attempts?: number;
           claimed_at?: string | null;
+          conversation_id?: string | null;
           created_at?: string;
           delivery?: string;
           id?: string;
           notification_ids?: string[];
+          send_after?: string | null;
           sent_at?: string | null;
           updated_at?: string;
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'email_outbox_conversation_id_fkey';
+            columns: ['conversation_id'];
+            isOneToOne: false;
+            referencedRelation: 'conversations';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'email_outbox_user_id_fkey';
             columns: ['user_id'];
@@ -4753,6 +4767,10 @@ export type Database = {
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
+          message_emails_on: boolean | null;
+          message_quiet_from: string | null;
+          message_quiet_hours_on: boolean | null;
+          message_quiet_until: string | null;
           messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
@@ -4770,6 +4788,7 @@ export type Database = {
           bio_for_caller: string | null;
           message_age_group: string | null;
           message_audience_of: Database['public']['Enums']['message_audience'] | null;
+          message_email_choices: Json | null;
           profile_audience_of: Database['public']['Enums']['profile_audience'] | null;
           teacher_check_can_ask: boolean | null;
         };
@@ -4780,6 +4799,7 @@ export type Database = {
           | 'bio_for_caller'
           | 'message_age_group'
           | 'message_audience_of'
+          | 'message_email_choices'
           | 'profile_audience_of'
           | 'teacher_check_can_ask';
         Insert: {
@@ -4806,6 +4826,10 @@ export type Database = {
           library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
           marketing_email_opt_in?: boolean;
+          message_emails_on?: boolean | null;
+          message_quiet_from?: string | null;
+          message_quiet_hours_on?: boolean | null;
+          message_quiet_until?: string | null;
           messages_from?: Database['public']['Enums']['message_audience'] | null;
           onboarded_at?: string | null;
           pen_name?: string | null;
@@ -4842,6 +4866,10 @@ export type Database = {
           library_visible_to?: Database['public']['Enums']['library_audience'];
           locale?: string;
           marketing_email_opt_in?: boolean;
+          message_emails_on?: boolean | null;
+          message_quiet_from?: string | null;
+          message_quiet_hours_on?: boolean | null;
+          message_quiet_until?: string | null;
           messages_from?: Database['public']['Enums']['message_audience'] | null;
           onboarded_at?: string | null;
           pen_name?: string | null;
@@ -10140,6 +10168,10 @@ export type Database = {
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
+          message_emails_on: boolean | null;
+          message_quiet_from: string | null;
+          message_quiet_hours_on: boolean | null;
+          message_quiet_until: string | null;
           messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
@@ -11776,6 +11808,25 @@ export type Database = {
         };
         Returns: string;
       };
+      message_email_choices: {
+        Args: {
+          person: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      message_email_items: {
+        Args: {
+          queued: Omit<
+            Database['public']['Tables']['email_outbox']['Row'],
+            Database['public']['Tables']['email_outbox']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      message_email_send_time: { Args: { person_id: string; queued_at: string }; Returns: string };
       message_with_context: { Args: { reported_message_id: string }; Returns: Json };
       messaging_partner: {
         Args: { wanted_handle: string };
@@ -11803,6 +11854,10 @@ export type Database = {
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
+          message_emails_on: boolean | null;
+          message_quiet_from: string | null;
+          message_quiet_hours_on: boolean | null;
+          message_quiet_until: string | null;
           messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
@@ -12525,6 +12580,10 @@ export type Database = {
           library_visible_to: Database['public']['Enums']['library_audience'];
           locale: string;
           marketing_email_opt_in: boolean;
+          message_emails_on: boolean | null;
+          message_quiet_from: string | null;
+          message_quiet_hours_on: boolean | null;
+          message_quiet_until: string | null;
           messages_from: Database['public']['Enums']['message_audience'] | null;
           onboarded_at: string | null;
           pen_name: string | null;
@@ -12630,6 +12689,10 @@ export type Database = {
       purge_unconfirmed_accounts: { Args: Record<PropertyKey, never>; Returns: number };
       purge_unfinished_social_sign_ups: { Args: Record<PropertyKey, never>; Returns: number };
       queue_daily_digests: { Args: Record<PropertyKey, never>; Returns: number };
+      quiet_hours_end_after: {
+        Args: { ends: string; local_moment: string; starts: string };
+        Returns: string;
+      };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
       raise_rating_for_picture: {
         Args: {
@@ -13304,6 +13367,15 @@ export type Database = {
       set_message_audience: {
         Args: { audience: Database['public']['Enums']['message_audience'] };
         Returns: undefined;
+      };
+      set_message_emails: {
+        Args: {
+          wanted_emails_on: boolean;
+          wanted_from: string;
+          wanted_quiet_hours_on: boolean;
+          wanted_until: string;
+        };
+        Returns: Json;
       };
       set_my_avatar_recipe: { Args: { recipe: Json }; Returns: Json };
       set_my_bio: { Args: { new_bio: string }; Returns: string };

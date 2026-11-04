@@ -15,6 +15,9 @@
  *    ("email:notificationEmails.*" overrides, S1-E11-19), and adds the one-click unsubscribe
  *    headers (RFC 8058) to every optional email; account, safety and legal emails have none;
  * 4. marks what left (email_worker_mark_sent()); a failed one is tried again later.
+ * Private message emails (IDEAS-2 idea 6) come the same way, with delivery 'message': one line
+ * naming who wrote and a link to the chat, never the words, held by the database until the
+ * recipient's quiet hours end.
  * Never logged: addresses, keys or the words of an email (CLAUDE.md rule 12).
  * Who calls it: functions/api/notification-emails.ts on Cloudflare, server/pages-functions-plugin.ts
  * locally (where the e2e tests call it themselves, because local pg_cron never calls out).
@@ -46,7 +49,8 @@ export interface EmailNotificationItem {
     | 'data_request_confirm'
     | 'data_request_extended'
     | 'data_request_copy_ready'
-    | 'picture_opened_by_staff';
+    | 'picture_opened_by_staff'
+    | 'new_message';
   actors: { handle: string; display_name: string }[];
   actor_count: number;
   story: { slug: string; title: string } | null;
@@ -56,6 +60,8 @@ export interface EmailNotificationItem {
   space?: { slug: string; name: string } | null;
   /** The data request a notice is about (S1-E11-09): reference, deadline (yyyy-mm-dd), reason. */
   data_request?: { reference: string; deadline: string; extension_reason: string | null } | null;
+  /** For a private message email (IDEAS-2 idea 6): whether the chat is still a request. */
+  is_request?: boolean;
 }
 
 /** One claimed email, as email_worker_claim() answers it. */
@@ -63,7 +69,8 @@ export interface ClaimedEmail {
   outbox_id: string;
   to: string;
   language: string;
-  delivery: 'instant' | 'daily' | 'required';
+  /** 'message' is a private message email (IDEAS-2 idea 6): it names the sender, never the words. */
+  delivery: 'instant' | 'daily' | 'required' | 'message';
   unsubscribe_key: string | null;
   items: EmailNotificationItem[];
 }
@@ -100,6 +107,7 @@ const lineKeys: Record<EmailNotificationItem['kind'], string> = {
   data_request_extended: 'dataRequestExtended',
   data_request_copy_ready: 'dataRequestCopyReady',
   picture_opened_by_staff: 'pictureOpenedByStaff',
+  new_message: 'newMessage',
 };
 
 /**
@@ -228,10 +236,14 @@ export function notificationLine(
 ): string {
   // Several people take the plural verb in Romanian ("au început"), so they have their own line.
   const isMany = !accountKinds.has(item.kind) && item.actor_count > 1;
-  const line = read(`notificationEmails.${lineKeys[item.kind]}${isMany ? 'Many' : ''}`, {
+  // A message request has its own line ("sent you a message request"), whatever the count.
+  const lineKey = item.is_request === true ? 'newMessageRequest' : lineKeys[item.kind];
+  const plural = isMany && item.is_request !== true ? 'Many' : '';
+  const line = read(`notificationEmails.${lineKey}${plural}`, {
     who: whoDidIt(item, read),
     where: whereOf(item, read),
     space: item.space?.name ?? '',
+    count: item.actor_count,
     ...dataRequestValues(item, language),
   });
   if (item.comment_excerpt === null || item.comment_excerpt === '') return line;
@@ -250,8 +262,12 @@ function footerLines(claimed: ClaimedEmail, siteUrl: string, read: ReadText): st
   if (claimed.delivery === 'required' || claimed.unsubscribe_key === null) {
     return [read('notificationEmails.required')];
   }
+  // A message email is chosen under Settings › Messages, not Notifications (IDEAS-2 idea 6).
+  const isMessage = claimed.delivery === 'message';
   return [
-    read('notificationEmails.why', { link: `${siteUrl}/settings#notifications` }),
+    read(isMessage ? 'notificationEmails.messageWhy' : 'notificationEmails.why', {
+      link: `${siteUrl}/settings#${isMessage ? 'messages' : 'notifications'}`,
+    }),
     read('notificationEmails.unsubscribe', {
       link: `${siteUrl}/unsubscribe?key=${claimed.unsubscribe_key}`,
     }),
@@ -275,6 +291,34 @@ function subjectOf(claimed: ClaimedEmail, lines: string[], read: ReadText): stri
 }
 
 /**
+ * The first line: a digest's, a private message's (which says the words stay in the app), or the
+ * one for a single notice.
+ *
+ * @returns the line
+ */
+function introOf(claimed: ClaimedEmail, read: ReadText): string {
+  if (claimed.delivery === 'daily') return read('notificationEmails.digestIntro');
+  if (claimed.delivery === 'message') return read('notificationEmails.messageIntro');
+  return read('notificationEmails.instantIntro');
+}
+
+/**
+ * The link back: the chat itself for a private message (by the sender's username), otherwise the
+ * Notifications page.
+ *
+ * @returns the line
+ */
+function seeAllOf(claimed: ClaimedEmail, siteUrl: string, read: ReadText): string {
+  const sender = claimed.items[0]?.actors[0]?.handle;
+  if (claimed.delivery === 'message' && sender !== undefined) {
+    return read('notificationEmails.messageOpen', {
+      link: `${siteUrl}/messages/${encodeURIComponent(sender)}`,
+    });
+  }
+  return read('notificationEmails.seeAll', { link: `${siteUrl}/notifications` });
+}
+
+/**
  * Writes one claimed email as plain text, with the one-click unsubscribe headers when it has a key.
  *
  * @param claimed - the email from email_worker_claim()
@@ -288,16 +332,12 @@ export function composeNotificationEmail(
   read: ReadText,
 ): OutgoingEmail {
   const lines = claimed.items.map((item) => notificationLine(item, read, claimed.language));
-  const intro =
-    claimed.delivery === 'daily'
-      ? read('notificationEmails.digestIntro')
-      : read('notificationEmails.instantIntro');
   const text = [
-    intro,
+    introOf(claimed, read),
     '',
     lines.join('\n\n'),
     '',
-    read('notificationEmails.seeAll', { link: `${siteUrl}/notifications` }),
+    seeAllOf(claimed, siteUrl, read),
     '',
     read('signOff'),
     read('madeBy'),

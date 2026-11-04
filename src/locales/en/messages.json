@@ -128,5 +128,19 @@
     "cancel": "Cancel",
     "close": "Close",
     "failed": "We couldn’t delete the chat. Try again."
+  },
+  "emails": {
+    "heading": "Emails about messages",
+    "intro": "We can email you when a message or a message request arrives. The email says who wrote, never what they wrote, and it waits 5 minutes, so you get none while you’re chatting here.",
+    "emailsLabel": "Email me when a message arrives",
+    "quietLabel": "Quiet hours: hold these emails until morning",
+    "quietHint": "During quiet hours, emails wait until the hours end. Times are Romanian time.",
+    "under18Hint": "Under 18, quiet hours stay on. You can move them, as long as they cover 22:00 to 07:00. Times are Romanian time.",
+    "quietFrom": "From",
+    "quietUntil": "Until",
+    "save": "Save email choices",
+    "saved": "Saved.",
+    "saveFailed": "We couldn’t save that. Check that the hours start and end at different times, then try again.",
+    "under18Refused": "We couldn’t save that. Quiet hours need to start by 22:00 and end at 07:00 or later."
   }
 }

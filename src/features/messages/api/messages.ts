@@ -7,11 +7,13 @@
  * answer_message_request(), mark_conversation_read(), unread_message_count() and
  * my_message_settings() (…_s1_e9_01_private_messages.sql); set_message_audience() and
  * delete_conversation() (…_s1_e9_04_message_settings_and_retention.sql) and
- * set_adults_may_message() (S1-E2-06). Every rule is in the database; a
+ * set_adults_may_message() (S1-E2-06); the email choices are read by api/messageEmails.ts (IDEAS-2). Every rule is in the database; a
  * refusal never says why (the neutral "isn't taking messages right now", S1-E9-03).
  */
 import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
+
+import { messageEmailChoicesOf, type MessageEmailChoices } from './messageEmails';
 
 /** Where a chat stands: a request, accepted, or declined by the recipient. */
 export type ConversationStatus = Enums<'conversation_status'>;
@@ -62,6 +64,8 @@ export interface MyMessageSettings {
   audience: MessageAudience;
   ageGroup: 'adult' | 'teen' | 'child';
   adultsMayMessage: boolean;
+  /** Message emails and their quiet hours (IDEAS-2 idea 6). */
+  email: MessageEmailChoices;
 }
 
 /** Why a call didn't work. */
@@ -275,6 +279,7 @@ export async function fetchMyMessageSettings(
     audience: audienceOf(settings.audience),
     ageGroup: ageGroupOf(settings.age_group),
     adultsMayMessage: settings.adults_may_message === true,
+    email: messageEmailChoicesOf(settings.email),
   };
 }
 
@@ -311,5 +316,26 @@ export async function setAdultsMayMessage(
  */
 export async function deleteConversation(client: AppSupabaseClient, handle: string): Promise<void> {
   const { error } = await client.rpc('delete_conversation', { other_handle: handle });
+  if (error !== null) throw messagesErrorFrom(error);
+}
+
+/**
+ * Saves the caller's message email choices.
+ *
+ * @param client - the signed-in Supabase client
+ * @param choices - what to save (mustKeepQuietHours is ignored: the database decides it)
+ * @throws MessagesError ('refused' when the hours are empty, start and end together, or an
+ *   under-18 tries to end them before 07:00 or start them after 22:00)
+ */
+export async function setMessageEmails(
+  client: AppSupabaseClient,
+  choices: Omit<MessageEmailChoices, 'mustKeepQuietHours'>,
+): Promise<void> {
+  const { error } = await client.rpc('set_message_emails', {
+    wanted_emails_on: choices.emailsOn,
+    wanted_quiet_hours_on: choices.quietHoursOn,
+    wanted_from: choices.quietFrom,
+    wanted_until: choices.quietUntil,
+  });
   if (error !== null) throw messagesErrorFrom(error);
 }
