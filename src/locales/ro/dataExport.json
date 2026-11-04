@@ -273,5 +273,10 @@
     },
     "empty": "(gol)",
     "help": "Ai întrebări? Scrie-ne la {{contactEmail}}."
+  },
+  "first": {
+    "heading": "Descarcă-ți întâi poveștile",
+    "body": "După ce contul e șters, poveștile tale dispar definitiv. Salvează acum fiecare poveste și planul ei ca fișiere Word. Rămâi la acest pas.",
+    "button": "Descarcă întâi poveștile mele"
   }
 }

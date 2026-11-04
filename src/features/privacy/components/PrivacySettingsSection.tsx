@@ -3,7 +3,8 @@
  * Privacy tab, drawn here as a panel on the one Settings page like the others).
  *
  * Top to bottom as on the board: the intro, the under-18 note, "Who can see your profile", "Who
- * can message you", "Show when I'm online" and "Who can see your library". Every choice saves at
+ * can message you", "Show when I'm online", "Who can see your library" and "How long we keep
+ * things" (HowLongWeKeep, IDEAS-2a). Every choice saves at
  * once. Who can message you belongs to Messages (S1-E9-04), so here it is one line with Change,
  * which jumps to that panel: one place to change it, never two controls that could disagree.
  * The section has id "privacy", so links such as the Library's Change open it.
@@ -21,6 +22,7 @@ import { usePrivacySettings, useSavePrivacySettings } from '../hooks/usePrivacyS
 import { usePrivacyTranslation } from '../registerPrivacyTranslations';
 
 import { AudienceRadios } from './AudienceRadios';
+import { HowLongWeKeep } from './HowLongWeKeep';
 import { OnlineStatusSwitch } from './OnlineStatusSwitch';
 
 /** "Who can message you: Everyone · Change", pointing at the Messages panel. */
@@ -83,6 +85,7 @@ function PrivacyChoices({ settings }: { settings: PrivacySettings }) {
           onSave={saving.saveLibrary}
         />
       </div>
+      <HowLongWeKeep />
     </>
   );
 }

@@ -47,5 +47,31 @@
     },
     "change": "Schimbă",
     "changeLabel": "Schimbă cine îți poate vedea biblioteca"
+  },
+  "keep": {
+    "heading": "Cât timp păstrăm datele",
+    "intro": "Curățenia automată șterge fiecare tip de date după aceste perioade. Rulează singură, cel puțin o dată pe zi.",
+    "units": {
+      "days_one": "{{count}} zi",
+      "days_few": "{{count}} zile",
+      "days_other": "{{count}} de zile",
+      "years_one": "{{count}} an",
+      "years_few": "{{count}} ani",
+      "years_other": "{{count}} de ani"
+    },
+    "kinds": {
+      "notifications": "Notificările: {{length}} după ultima activitate.",
+      "deleted_content": "Poveștile, capitolele, comentariile și postările din forum pe care le ștergi: {{length}} de la ștergere. Nimeni altcineva nu le vede în acest timp.",
+      "reported_messages": "Un mesaj privat raportat: {{length}} după decizia moderatorilor.",
+      "moderator_mail": "Mesajele tale cu echipa de moderare: {{length}} după ultimul mesaj.",
+      "support_tickets": "Mesajele tale către asistență: {{length}} după ce cererea e închisă.",
+      "reading_minutes": "Minutele citite în fiecare zi, pentru seria ta privată de citit: {{length}}.",
+      "scrambled_ip": "Forma amestecată a adresei de la care te-ai înscris: {{length}}. Nu păstrăm niciodată adresa în sine.",
+      "invites": "Invitațiile create de tine: {{length}} după ce expiră.",
+      "account_deletion": "Contul tău, după ce ceri ștergerea: {{length}}, ca să te poți răzgândi."
+    },
+    "messages": "Mesajele private: până când ambele persoane șterg conversația.",
+    "fullList": "Lista completă e în nota de confidențialitate",
+    "loadFailed": "Nu am putut încărca lista. Încearcă din nou peste un minut."
   }
 }

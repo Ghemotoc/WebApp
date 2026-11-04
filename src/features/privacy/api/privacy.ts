@@ -137,3 +137,21 @@ export async function fetchOnlineHandles(
   if (error !== null) throw new Error(`Could not read who is online: ${error.message}`);
   return new Set((data ?? []).map((handle) => handle.toLowerCase()));
 }
+
+/** One kind of the member's data and how long it is kept (IDEAS-2a; retention_periods()). */
+export type RetentionPeriod =
+  Database['public']['Functions']['retention_periods']['Returns'][number];
+
+/**
+ * How long each kind of the caller's data is kept, from the settings the clean-up jobs read
+ * (IDEAS-2a; idea IDEA-20261101-5).
+ *
+ * @param client - the shared Supabase client
+ * @returns the periods, in the screen's order
+ * Errors: throws with Supabase's message when the database can't be reached.
+ */
+export async function fetchRetentionPeriods(client: AppSupabaseClient): Promise<RetentionPeriod[]> {
+  const { data, error } = await client.rpc('retention_periods');
+  if (error !== null) throw new Error(`Could not read how long we keep things: ${error.message}`);
+  return data ?? [];
+}

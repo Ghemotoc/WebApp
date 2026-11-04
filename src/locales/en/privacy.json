@@ -47,5 +47,31 @@
     },
     "change": "Change",
     "changeLabel": "Change who can see your library"
+  },
+  "keep": {
+    "heading": "How long we keep things",
+    "intro": "Our clean-up jobs remove each kind of your data after these times. They run on their own, at least once a day.",
+    "units": {
+      "days_one": "{{count}} day",
+      "days_few": "{{count}} days",
+      "days_other": "{{count}} days",
+      "years_one": "{{count}} year",
+      "years_few": "{{count}} years",
+      "years_other": "{{count}} years"
+    },
+    "kinds": {
+      "notifications": "Notifications: {{length}} after the latest activity.",
+      "deleted_content": "Stories, chapters, comments and forum posts you delete: {{length}} after you delete them. Nobody else sees them in that time.",
+      "reported_messages": "A private message that was reported: {{length}} after the moderators decide.",
+      "moderator_mail": "Your messages with the moderation team: {{length}} after the last message.",
+      "support_tickets": "Your messages to support: {{length}} after the request is closed.",
+      "reading_minutes": "Minutes read each day, for your private reading streak: {{length}}.",
+      "scrambled_ip": "The scrambled form of the address you signed up from: {{length}}. We never keep the address itself.",
+      "invites": "Invitations you made: {{length}} after they expire.",
+      "account_deletion": "Your account, after you ask to delete it: {{length}}, so you can change your mind."
+    },
+    "messages": "Private messages: until both people delete the chat.",
+    "fullList": "The full list is in the privacy notice",
+    "loadFailed": "We couldn’t load this list. Please try again in a minute."
   }
 }

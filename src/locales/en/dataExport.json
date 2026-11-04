@@ -273,5 +273,10 @@
     },
     "empty": "(empty)",
     "help": "Questions? Write to {{contactEmail}}."
+  },
+  "first": {
+    "heading": "Download your stories first",
+    "body": "Once your account is deleted, your stories are gone for good. Save every story and its plan as Word files now. You’ll stay on this step.",
+    "button": "Download my stories first"
   }
 }

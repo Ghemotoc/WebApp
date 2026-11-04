@@ -4,9 +4,11 @@
  *
  * Top to bottom as on the board: the question, when the account is deleted for good, what
  * happens (content deleted, only what an open legal case holds is kept, moderation records stay),
- * "Download my data first", "Log in again to confirm" (ConfirmLogIn) while the last log-in is too
- * old, then "Keep my account" and "Delete my account".
- * Who shows it: DeleteAccountSection. What it calls: useRequestAccountDeletion; after a request
+ * "Download my data first", "Download your stories first" for a writer (DownloadStoriesFirst,
+ * IDEAS-2a: the files are made without leaving this panel), "Log in again to confirm"
+ * (ConfirmLogIn) while the last log-in is too old, then "Keep my account" and "Delete my account".
+ * Who shows it: DeleteAccountSection. What it calls: useRequestAccountDeletion and
+ * DownloadStoriesFirst (features/data-export); after a request
  * the whole app reads its state again and AccountClosingGate shows the closing page.
  */
 import { useState } from 'react';
@@ -14,6 +16,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
+import { DownloadStoriesFirst } from '@/features/data-export/components/DownloadStoriesFirst';
 import { formatRomaniaDate } from '@/lib/romania-time';
 
 import { useRequestAccountDeletion } from '../hooks/useAccountDeletion';
@@ -86,6 +89,8 @@ export function DeleteAccountConfirm({
       <a href="#download-my-data" className="w-fit font-semibold text-link underline">
         {t('confirm.downloadFirst')}
       </a>
+      {/* A writer can save every story here first and come back to this same step (IDEAS-2a). */}
+      <DownloadStoriesFirst />
       {mustLogInAgain ? <ConfirmLogIn /> : <Notice tone="success">{t('confirm.confirmed')}</Notice>}
       {showsFailure && <Notice tone="error">{t(`confirm.failures.${failureKey}`)}</Notice>}
       <div className="flex flex-wrap justify-end gap-3">
