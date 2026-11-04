@@ -15,6 +15,7 @@ import { useSearchParams } from 'react-router';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import { isSearchable } from '../lib/searchAddresses';
 import { useSearchTranslation } from '../registerSearchTranslations';
@@ -56,7 +57,15 @@ export function SearchPage() {
       </header>
       {/* A new term starts the field afresh, so the key is the term. */}
       <SearchForm key={term} initialTerm={term} showsHint />
-      <SearchBody term={term} />
+      {/* The results with the portrait ad beside them from 1200 px; the wide ad comes after
+          the results, never above them (S1-E12-01; board AdFormats). */}
+      <div className="grid gap-8 min-[1200px]:grid-cols-[minmax(0,1fr)_300px] min-[1200px]:items-start">
+        <div className="flex min-w-0 flex-col gap-8">
+          <SearchBody term={term} />
+          <PageAdSlot pageKey="search" position={1} />
+        </div>
+        <PageAdSlot pageKey="search" position={2} isSpaceReserved={false} />
+      </div>
     </PageContainer>
   );
 }

@@ -21,6 +21,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import type { ListRequest, SortOrder } from '../api/storyLists';
 import { useListTitle } from '../hooks/useListTitle';
@@ -124,6 +125,31 @@ function ListResults({
 }
 
 /**
+ * The list page's ad slot (S1-E12-01): a wide banner on the classics list, a card the size of a
+ * story card after the others on every other list (never the first card). It is chosen from the
+ * list's category, tag and language only; the search term and anyone's username are never sent.
+ *
+ * @param props.request - the list with its filters
+ * @returns the slot
+ */
+function ListAdSlot({ request }: { request: ListRequest }) {
+  const isClassics = request.kind === 'classics';
+  const context = {
+    category: request.kind === 'category' ? request.key : request.categorySlug,
+    tag: request.kind === 'tag' ? request.key : null,
+    language: request.languageCode,
+  };
+  return (
+    <PageAdSlot
+      pageKey={isClassics ? 'classics' : 'see_all'}
+      position={1}
+      context={context}
+      isSpaceReserved={isClassics}
+    />
+  );
+}
+
+/**
  * The page for one list, once the address names a real one.
  *
  * @param kind - the list
@@ -177,6 +203,7 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
               })
             }
           />
+          <ListAdSlot request={request} />
         </>
       )}
     </>

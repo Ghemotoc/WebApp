@@ -6,6 +6,9 @@
  * - a signed-out visitor sees one of our own ads, labelled "From us", on the story page and on
  *   Discover, and "Why this ad?" opens by keyboard and says nothing about the reader was used;
  * - a story shared only with a class shows no ad at all (Q70);
+ * - every other public page has its slots at 1440 px: Search (wide and portrait), Forums (wide
+ *   and side box), a public space, a writer profile, the teaser, the classics list (wide) and a
+ *   See all list (a card), never more than two (SPONSORS-a2);
  * - the story page with its ad passes axe and doesn't scroll sideways at 390, 768 and 1440 px, in
  *   light and night mode and in both languages (CLAUDE.md rule 21).
  * Test data: seed personas and the seed story statia-meteo-seed01, with one published chapter
@@ -71,6 +74,28 @@ test.describe('Ad slots', () => {
     await expect(page.locator('[data-ad]')).toHaveCount(0);
     runSql(`update public.stories set class_only = false where slug = 'statia-meteo-seed01';`);
   });
+
+  /** Each public page of part a2, with the slot shapes it shows at 1440 px. */
+  const pagesAndShapes: [string, string[]][] = [
+    ['/search?q=meteo', ['wide', 'portrait']],
+    ['/forums', ['wide', 'side_box']],
+    ['/spaces/fantasy-writers-circle', ['wide']],
+    ['/u/adult_writer', ['wide']],
+    ['/s/statia-meteo-seed01/adse2e01', ['wide']],
+    ['/discover/all/classics', ['wide']],
+    ['/discover/all/new', ['list_card']],
+  ];
+  for (const [address, shapes] of pagesAndShapes) {
+    test(`${address} shows ${shapes.join(' and ')} at 1440 px`, async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await openInEnglish(page, address);
+      for (const shape of shapes) {
+        await expect(page.locator(`[data-ad="${shape}"]`)).toBeVisible();
+      }
+      // Never more than two slots on a page (decided 17 Oct 2026, 11:53).
+      expect(await page.locator('[data-ad]').count()).toBeLessThanOrEqual(2);
+    });
+  }
 
   for (const view of everyView([storyAddress])) {
     test(`the story page with its ad passes axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({

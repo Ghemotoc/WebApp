@@ -1,7 +1,7 @@
 # Ads
 
 The ad slots on public pages (story S1-E12-01). Built in bundle SPONSORS-a1 (the slots, house
-ads and "Why this ad?"); part a2 places the remaining pages, part b adds sponsor campaigns and
+ads and "Why this ad?"); part a2 placed them on every remaining public page, part b adds sponsor campaigns and
 part d the non-personalised ad network.
 
 - `api/ads.ts`: `fetchPageAds()` reads `page_ads(page_key, context)`; `adContextFor()` turns the

@@ -22,6 +22,7 @@ import { Link, Navigate, useParams, useSearchParams } from 'react-router';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import type { ForumPost } from '../api/forumThreads';
 import { useForumIndex } from '../hooks/useForumIndex';
@@ -155,10 +156,15 @@ function ThreadContent({
     <>
       <ThreadHeader thread={thread} path={path} />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <ThreadPosts read={read} threadNumber={threadNumber} />
+        <div className="flex min-w-0 flex-col gap-6">
+          <ThreadPosts read={read} threadNumber={threadNumber} />
+          {/* Below the reply box, never between replies (S1-E12-01, Robert 17 Oct 2026). */}
+          <PageAdSlot pageKey="thread" position={1} />
+        </div>
         <div className="flex flex-col gap-4">
           <ThreadSidePanel thread={thread} />
           <ThreadModeration thread={thread} />
+          <PageAdSlot pageKey="thread" position={2} isSpaceReserved={false} />
         </div>
       </div>
     </>
