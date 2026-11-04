@@ -7,9 +7,11 @@
  * the list's order and contents are the same with or without a sponsor. While the answer loads,
  * or when it fails or nobody sponsors the page, it shows nothing: a missing credit is never an
  * error a reader needs to see.
+ * Showing the line counts one impression and following its link one click (part c; S1-E12-03).
  * Who shows it: StoryListHeader (a category) and LandingPageScreen (a contest page).
- * What it calls: useSponsorCredit().
+ * What it calls: useSponsorCredit(), useSponsorImpression() and countSponsorEvent().
  */
+import { countSponsorEvent, useSponsorImpression } from '../hooks/useSponsorCounting';
 import { useSponsorCredit } from '../hooks/useSponsorCredit';
 import { useAdsTranslation } from '../registerAdsTranslations';
 import type { SponsorCreditKind } from '../api/ads';
@@ -29,6 +31,9 @@ interface SponsoredByLineProps {
 export function SponsoredByLine({ kind, slug }: SponsoredByLineProps) {
   const { t } = useAdsTranslation();
   const credit = useSponsorCredit(kind, slug).data ?? null;
+  // Step 1: one impression once the line has a sponsor to show (S1-E12-03).
+  const adKey = credit?.ad_key ?? null;
+  useSponsorImpression(adKey);
   if (credit === null) return null;
   // The sponsor's name is a link only when the campaign gave one.
   const name =
@@ -39,6 +44,9 @@ export function SponsoredByLine({ kind, slug }: SponsoredByLineProps) {
         href={credit.link_url}
         target="_blank"
         rel="sponsored nofollow noopener noreferrer"
+        onClick={() => {
+          if (adKey !== null) countSponsorEvent(adKey, 'click');
+        }}
         className="font-semibold text-link underline-offset-2"
       >
         {credit.sponsor_name}

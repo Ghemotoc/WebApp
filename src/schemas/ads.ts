@@ -94,6 +94,8 @@ export const sponsorCreditSchema = z
   .object({
     sponsor_name: z.string(),
     link_url: z.string().nullable(),
+    // The campaign's key, so the line's impressions and clicks can be counted (S1-E12-03).
+    ad_key: z.string().optional(),
   })
   .nullable();
 

@@ -204,5 +204,16 @@
     "too_many": "Too many uploads in the last hour. Try again later.",
     "unreachable": "The picture check couldn’t be reached. Try again in a moment.",
     "failed": "That didn’t work. Try again in a moment."
+  },
+  "report": {
+    "heading": "Report",
+    "intro": "Impressions and clicks per day, counted on our server without cookies or user IDs. Totals only: nobody who saw or clicked is recorded.",
+    "caption": "Impressions and clicks per day, newest first, with the totals in the last row",
+    "day": "Day",
+    "impressions": "Impressions",
+    "clicks": "Clicks",
+    "total": "Total",
+    "empty": "Nothing to report yet: the campaign hasn’t started.",
+    "download": "Download CSV"
   }
 }

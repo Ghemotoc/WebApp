@@ -7,13 +7,16 @@
  * ad_blocked_categories, categories and the contests table, and the admin_* functions in
  * …_sponsors_b1_campaigns.sql, which check the role and write the audit log. A refused call
  * becomes a SponsorError carrying the database's hint (for example checks:missing or
- * picture:not_checked) and, when a campaign isn't complete, the list of problems.
+ * picture:not_checked) and, when a campaign isn't complete, the list of problems. Part c adds
+ * fetchCampaignReport() (admin_sponsor_campaign_report(), S1-E12-03).
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 import {
+  campaignReportSchema,
   savedCampaignSchema,
   staffCampaignListSchema,
   type CampaignFields,
+  type CampaignReportDay,
   type ReviewCheck,
   type StaffCampaign,
 } from '@/schemas/sponsors';
@@ -320,4 +323,26 @@ export async function fetchCategorySlugs(client: AppSupabaseClient): Promise<str
   const { data, error } = await client.from('categories').select('slug').order('position');
   if (error !== null) throw sponsorErrorFrom(error);
   return data.map((row) => row.slug);
+}
+
+/**
+ * A campaign's daily impressions and clicks, every day of its run so far (S1-E12-03 criterion 2).
+ *
+ * @param client - the signed-in admin's client
+ * @param campaignId - the campaign
+ * @returns the days, oldest first; empty before the campaign starts
+ * Errors: throws a SponsorError (not_allowed, failed) when the read fails or the answer has an
+ * unexpected shape.
+ */
+export async function fetchCampaignReport(
+  client: AppSupabaseClient,
+  campaignId: string,
+): Promise<CampaignReportDay[]> {
+  const { data, error } = await client.rpc('admin_sponsor_campaign_report', {
+    target_campaign_id: campaignId,
+  });
+  if (error !== null) throw sponsorErrorFrom(error);
+  const parsed = campaignReportSchema.safeParse(data);
+  if (!parsed.success) throw new SponsorError('failed', parsed.error.message, []);
+  return parsed.data;
 }

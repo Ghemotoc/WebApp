@@ -6,11 +6,15 @@
  * language, an optional discount code with a Copy button, and the link to the sponsor's site. The
  * link opens in a new tab and is marked rel="sponsored" (paid links must say so). Nothing here
  * reads anything about the reader. The "Sponsored" pill is drawn by AdBox, never by the creative.
+ * Each time it appears it counts one impression, and following the link counts one click (part c;
+ * S1-E12-03), with nothing about the reader.
  * Who shows it: AdBox, for an ad whose kind is 'sponsor'.
- * What it calls: useSponsorPicture() for the picture's address and DiscountCode.
+ * What it calls: useSponsorPicture() for the picture's address, DiscountCode and
+ * useSponsorImpression() / countSponsorEvent().
  */
 import type { SlotAd } from '@/schemas/ads';
 
+import { countSponsorEvent, useSponsorImpression } from '../hooks/useSponsorCounting';
 import { useSponsorPicture } from '../hooks/useSponsorPicture';
 import { useAdsTranslation } from '../registerAdsTranslations';
 
@@ -55,6 +59,8 @@ function SponsorPicture({ ad, alt, isStacked }: { ad: SlotAd; alt: string; isSta
 export function SponsorAdCreative({ ad, isStacked }: { ad: SlotAd; isStacked: boolean }) {
   const { t, i18n } = useAdsTranslation();
   const words = sponsorWords(ad, i18n.language.startsWith('ro'));
+  // Step 1: one impression each time the ad appears (S1-E12-03).
+  useSponsorImpression(ad.key);
   return (
     <>
       <SponsorPicture ad={ad} alt={words.alt} isStacked={isStacked} />
@@ -70,6 +76,7 @@ export function SponsorAdCreative({ ad, isStacked }: { ad: SlotAd; isStacked: bo
           href={ad.link_url}
           target="_blank"
           rel="sponsored nofollow noopener noreferrer"
+          onClick={() => countSponsorEvent(ad.key, 'click')}
           className="inline-flex h-10 flex-none items-center rounded-full border border-control-border bg-surface px-4 text-sm font-semibold text-heading no-underline focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           {t('sponsor.visit')}

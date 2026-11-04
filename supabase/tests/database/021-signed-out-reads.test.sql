@@ -60,6 +60,8 @@ select results_eq(
        ('audit_log', 0::bigint),
        ('banned_email_hashes', 0::bigint),
        ('blocks', 0::bigint),
+       -- Sponsor campaign totals: owner and admin only (SPONSORS-c).
+       ('campaign_daily_stats', 0::bigint),
        ('case_actions', 0::bigint),
        -- Possible returning user links: moderation staff only (ADMIN-2f2).
        ('case_account_links', 0::bigint),

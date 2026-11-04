@@ -204,5 +204,16 @@
     "too_many": "Prea multe încărcări în ultima oră. Încearcă mai târziu.",
     "unreachable": "Verificarea imaginii nu a răspuns. Încearcă din nou peste puțin timp.",
     "failed": "Nu a mers. Încearcă din nou peste puțin timp."
+  },
+  "report": {
+    "heading": "Raport",
+    "intro": "Afișări și clicuri pe zi, numărate pe serverul nostru fără cookie-uri și fără ID-uri de utilizator. Doar totaluri: nu se înregistrează cine a văzut sau a dat clic.",
+    "caption": "Afișări și clicuri pe zi, de la cea mai nouă zi, cu totalurile pe ultimul rând",
+    "day": "Ziua",
+    "impressions": "Afișări",
+    "clicks": "Clicuri",
+    "total": "Total",
+    "empty": "Nimic de raportat încă: campania nu a început.",
+    "download": "Descarcă CSV"
   }
 }
