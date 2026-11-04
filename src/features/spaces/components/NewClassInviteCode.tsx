@@ -5,7 +5,10 @@
  * Only the code's hash is kept, so the page says to copy or print it now: the code in large
  * letters, the link in a read-only field with Copy, and Print (the browser's own print, so a
  * teacher can hand the code out on paper). Like the staff invite panel (S1-E11-17).
+ * IDEAS-3b (idea IDEA-20261102-3): a QR code of the link sits beside the code, so students can
+ * scan it from the board, and Print prints only ClassInviteSheet, one clean page.
  * Who shows it: ClassInviteCard, while useClassInviteChanges holds the answer.
+ * What it calls: ClassInviteQrCode and ClassInviteSheet.
  */
 import { useState } from 'react';
 
@@ -13,6 +16,8 @@ import { Button } from '@/components/ui/Button';
 
 import type { NewClassInvite } from '../api/classSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
+import { ClassInviteQrCode } from './ClassInviteQrCode';
+import { ClassInviteSheet } from './ClassInviteSheet';
 
 /**
  * The link in a read-only field with Copy; if the browser refuses to copy, it says so and the
@@ -90,9 +95,12 @@ export function NewClassInviteCode({
       <p className="m-0 font-semibold text-(--success-text)">
         {t('classInvite.made', { name: className, expires, count: invite.admits })}
       </p>
-      <p className="m-0 font-heading text-[28px] font-bold tracking-[0.06em] break-all text-heading">
-        {invite.code}
-      </p>
+      <div className="flex flex-wrap items-center gap-4">
+        <p className="m-0 font-heading text-[28px] font-bold tracking-[0.06em] break-all text-heading">
+          {invite.code}
+        </p>
+        <ClassInviteQrCode link={invite.link} className="block size-40 shrink-0" />
+      </div>
       <InviteLinkField link={invite.link} />
       <p className="m-0 text-sm text-ink">
         <strong>{t('classInvite.copyNow')}</strong> {t('classInvite.notAgain')}
@@ -105,6 +113,7 @@ export function NewClassInviteCode({
           {t('classInvite.dismiss')}
         </Button>
       </div>
+      <ClassInviteSheet invite={invite} className={className} expires={expires} />
     </div>
   );
 }

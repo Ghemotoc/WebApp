@@ -55,6 +55,7 @@
     "jszip": "3.10.1",
     "mdast-util-from-markdown": "2.1.0",
     "pdfmake": "0.3.12",
+    "qrcode-generator": "2.0.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-i18next": "^17.0.20",

@@ -332,7 +332,11 @@
       "too_many": "Ai făcut asta de multe ori în ultima oră. Încearcă mai târziu.",
       "unreachable": "Nu am putut ajunge la server. Încearcă din nou.",
       "locked": "Această clasă e închisă, așa că acest cod nu mai funcționează."
-    }
+    },
+    "qrLabel": "Cod QR pentru linkul de intrare",
+    "sheetLabel": "Fișa de invitație a clasei",
+    "sheetIntro": "Intră în clasa noastră",
+    "sheetUntil": "Codul funcționează până pe {{expires}}."
   },
   "joinClass": {
     "eyebrow": "Invitație pentru clasă",
@@ -437,5 +441,20 @@
     "yes": "Da, arhiveaz-o",
     "cancel": "Renunță",
     "archived": "Clasa aceasta e arhivată. Membrii o pot citi în continuare, dar nimeni nu mai poate posta aici."
+  },
+  "classReplies": {
+    "title": "Cine a răspuns",
+    "summary": "{{replied}} din {{total}} din clasă au scris aici.",
+    "show": "Arată cine a răspuns",
+    "hide": "Ascunde listele",
+    "replied_one": "Au răspuns ({{count, number}})",
+    "replied_few": "Au răspuns ({{count, number}})",
+    "replied_other": "Au răspuns ({{count, number}})",
+    "notYet_one": "Încă nu ({{count, number}})",
+    "notYet_few": "Încă nu ({{count, number}})",
+    "notYet_other": "Încă nu ({{count, number}})",
+    "nobodyYet": "Încă n-a răspuns nimeni.",
+    "everyone": "Toată clasa a răspuns.",
+    "loadFailed": "Nu am putut încărca cine a răspuns. Reîncarcă pagina ca să încerci din nou."
   }
 }

@@ -326,6 +326,27 @@
   background: var(--primary);
 }
 
+/* Class invite sheet (IDEAS-3b): printing the page while a new class code is on screen prints
+   only the sheet, one A4 page of black on white: the class, the code, the QR code, the link and
+   the date it stops working. On screen the sheet stays hidden. */
+@media print {
+  body:has(.class-invite-sheet) * {
+    visibility: hidden;
+  }
+  body:has(.class-invite-sheet) .class-invite-sheet,
+  body:has(.class-invite-sheet) .class-invite-sheet * {
+    visibility: visible;
+  }
+  .class-invite-sheet {
+    display: flex;
+    position: absolute;
+    inset: 0;
+    justify-content: center;
+    background: #fff;
+    color: #000;
+  }
+}
+
 /* Writing certificates (S1-E8-12): printing a certificate's page prints only the certificate, as
    one A4 page with white paper and black ink; everything else on the page is hidden. The
    browser's "Save as PDF" keeps it as real, tagged text. */
