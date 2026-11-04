@@ -25,7 +25,7 @@ export function usesStandIn(settings: CanvaSettings): boolean {
 /**
  * Makes the service for one request.
  *
- * @param settings - CANVA, CANVA_CLIENT_ID, CANVA_CLIENT_SECRET and the template IDs (IDEAS-2e)
+ * @param settings - CANVA, CANVA_CLIENT_ID and CANVA_CLIENT_SECRET
  * @param origin - our own address, for the stand-in's pages
  * @returns the service, or null in real mode without credentials (the server answers
  *   "unavailable")
@@ -33,9 +33,5 @@ export function usesStandIn(settings: CanvaSettings): boolean {
 export function canvaService(settings: CanvaSettings, origin: string): CanvaService | null {
   if (usesStandIn(settings)) return standInCanva(origin);
   if (!settings.clientId || !settings.clientSecret) return null;
-  return realCanva({
-    clientId: settings.clientId,
-    clientSecret: settings.clientSecret,
-    templateIds: settings.templateIds,
-  });
+  return realCanva({ clientId: settings.clientId, clientSecret: settings.clientSecret });
 }

@@ -9,8 +9,6 @@
  *   leaves our server;
  * - CANVA_CLIENT_ID and CANVA_CLIENT_SECRET (a secret): our app in Canva's developer portal;
  * - CANVA_TOKEN_KEY (a secret): 32 random bytes as base64, which encrypt the writers' tokens;
- * - CANVA_TEMPLATE_CLASSIC, CANVA_TEMPLATE_BOLD and CANVA_TEMPLATE_HANDWRITTEN: our cover brand
- *   templates' IDs in Canva (IDEAS-2e); a template without one opens blank;
  * - VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY: the database, as the front end reads it.
  * The writer's own sign-in token does the saving; there is no service key here.
  */
@@ -24,9 +22,6 @@ interface PagesContext {
     CANVA_CLIENT_ID?: string;
     CANVA_CLIENT_SECRET?: string;
     CANVA_TOKEN_KEY?: string;
-    CANVA_TEMPLATE_CLASSIC?: string;
-    CANVA_TEMPLATE_BOLD?: string;
-    CANVA_TEMPLATE_HANDWRITTEN?: string;
     VITE_SUPABASE_URL?: string;
     VITE_SUPABASE_ANON_KEY?: string;
   };
@@ -47,10 +42,5 @@ export const onRequest = (context: PagesContext): Promise<Response> =>
       mode: context.env.CANVA,
       clientId: context.env.CANVA_CLIENT_ID,
       clientSecret: context.env.CANVA_CLIENT_SECRET,
-      templateIds: {
-        classic: context.env.CANVA_TEMPLATE_CLASSIC,
-        bold: context.env.CANVA_TEMPLATE_BOLD,
-        handwritten: context.env.CANVA_TEMPLATE_HANDWRITTEN,
-      },
     },
   });

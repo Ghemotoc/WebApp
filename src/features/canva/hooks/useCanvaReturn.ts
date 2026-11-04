@@ -65,8 +65,6 @@ async function connectThenDesign(answer: { code: string; state: string }): Promi
   const address = await openCanvaDesign(client, {
     storyId: trip.storyId,
     storyTitle: trip.storyTitle,
-    template: trip.template,
-    penName: trip.penName,
   });
   window.location.assign(address);
 }

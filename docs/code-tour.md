@@ -2204,11 +2204,6 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Story settings: `useMyStories()` reads the stories again when the tab gets focus; `useArrivingCover()` (called by `useStorySettingsForm()`) sees a cover saved from another tab (Canva's return page), puts it in the form and refreshes its picture; `ArrivedCoverNote` shows it with its check state.
 - Migration `…_ideas2_d_furthest_place.sql`. Tests: `supabase/tests/database/282-furthest-place.test.sql`, `src/features/writing/hooks/useArrivingCover.test.tsx`, `e2e/canva-covers.spec.ts`.
 
-## Canva cover templates (IDEAS-2e)
-
-- `/canva/start` (`CanvaStartPage`) now shows `CanvaTemplatePicker`: a blank design or the Classic, Bold or Handwritten template, each sketched with the story's title and the pen name. `useCanvaStart()` keeps the choice and `openCanvaDesign()` sends it as `template` and `penName`; the tab's trip (`lib/canvaTrip.ts`) remembers it across Canva's consent page.
-- `server/canva.ts` passes it to `createDesign()`. The real service (`server/canva/real.ts`) fills the brand template named by `CANVA_TEMPLATE_*` through Canva's autofill and falls back to the blank cover; the stand-in's editor names the template it started from.
-- Tests: `server/canva/real.test.ts`, `e2e/canva-covers.spec.ts`.
 
 ## Picture links show the picture in chat previews (IDEAS-2f)
 
