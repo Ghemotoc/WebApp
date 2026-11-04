@@ -762,8 +762,8 @@ revoke execute on function public.locked_sponsor_campaign(uuid, public.sponsor_c
  * the review queue.
  * Input: target_campaign_id. Returns: nothing.
  * Errors: insufficient_privilege for anyone but owner and admin; no_data_found; check_violation
- *   when it isn't a draft or sent back, or when something is missing (the hint lists the
- *   problems, comma separated). Logged.
+ *   when it isn't a draft or sent back, or when something is missing (hint incomplete, with the
+ *   problems in the detail, comma separated, as Staff › Contests does). Logged.
  */
 create or replace function public.admin_submit_sponsor_campaign(target_campaign_id uuid)
 returns void
@@ -782,7 +782,7 @@ begin
   problems := public.sponsor_campaign_problems(campaign);
   if cardinality(problems) > 0 then
     raise exception 'The campaign isn''t complete.' using errcode = 'check_violation',
-      hint = array_to_string(problems, ',');
+      hint = 'incomplete', detail = array_to_string(problems, ',');
   end if;
   -- Step 3: into the queue, logged.
   update public.sponsor_campaigns set state = 'in_review', submitted_at = now() where id = campaign.id;
@@ -801,8 +801,8 @@ grant execute on function public.admin_submit_sponsor_campaign(uuid) to authenti
  *   the reviewer ticked (sponsor_review_checks()); note, required to send back.
  * Returns: nothing. Errors: insufficient_privilege for anyone but owner and admin; no_data_found;
  *   check_violation when it isn't waiting for review, for an unknown decision, when approving
- *   without every check ticked (hint checks:missing), with something missing (hint lists the
- *   problems) or before its picture passed the check and a moderator's approval (hint
+ *   without every check ticked (hint checks:missing), with something missing (hint incomplete,
+ *   the problems in the detail) or before its picture passed the check and a moderator's approval (hint
  *   picture:not_checked), or when sending back without a note.
  * Where it fits: Staff › Sponsors › Review queue (part b2). Logged with the reviewer's name and
  *   time on the campaign (board: "Your name and the time go on the campaign").
@@ -853,7 +853,8 @@ grant execute on function public.admin_review_sponsor_campaign(uuid, text, text[
 /**
  * require_sponsor_approval_ready: refuses an approval that isn't safe yet. Internal.
  * Inputs: the campaign and the checks the reviewer ticked.
- * Errors: check_violation with hint checks:missing, the list of problems, or picture:not_checked.
+ * Errors: check_violation with hint checks:missing, incomplete (problems in the detail) or
+ *   picture:not_checked.
  */
 create or replace function public.require_sponsor_approval_ready(campaign public.sponsor_campaigns, confirmed_checks text[])
 returns void
@@ -871,7 +872,8 @@ begin
   end if;
   -- Step 2: nothing missing.
   if cardinality(problems) > 0 then
-    raise exception 'The campaign isn''t complete.' using errcode = 'check_violation', hint = array_to_string(problems, ',');
+    raise exception 'The campaign isn''t complete.' using errcode = 'check_violation', hint = 'incomplete',
+      detail = array_to_string(problems, ',');
   end if;
   -- Step 3: the picture passed its check and a moderator approved it (CLAUDE.md rule 19).
   if campaign.picture_id is not null and not exists (

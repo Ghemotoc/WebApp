@@ -45,6 +45,19 @@ exception when others then
   return raised_hint;
 end;
 $$;
+-- The hint and detail of the error a statement raises, as "hint: detail".
+create function pg_temp.hint_and_detail_of(statement text) returns text language plpgsql as $$
+declare
+  raised_hint text;
+  raised_detail text;
+begin
+  execute statement;
+  return null;
+exception when others then
+  get stacked diagnostics raised_hint = pg_exception_hint, raised_detail = pg_exception_detail;
+  return raised_hint || ': ' || raised_detail;
+end;
+$$;
 grant execute on all functions in schema pg_temp to authenticated, anon;
 
 create temporary table kept (label text primary key, id uuid, value text) on commit drop;
@@ -100,8 +113,8 @@ select 'campaign', (saved ->> 'id')::uuid, saved ->> 'problems'
 from (select public.admin_save_sponsor_campaign(null, (select value::jsonb from kept where label = 'fields')) as saved) as result;
 select is((select value::jsonb from kept where label = 'campaign'), '["picture:missing", "link:tracking"]'::jsonb,
   'a banner needs a picture, and a link with tracking parameters is refused');
-select is(pg_temp.hint_of(format($$ select public.admin_submit_sponsor_campaign(%L) $$, (select id from kept where label = 'campaign'))),
-  'picture:missing,link:tracking', 'an incomplete campaign can''t go to review');
+select is(pg_temp.hint_and_detail_of(format($$ select public.admin_submit_sponsor_campaign(%L) $$, (select id from kept where label = 'campaign'))),
+  'incomplete: picture:missing,link:tracking', 'an incomplete campaign can''t go to review');
 select is(public.sponsor_link_problem('https://shop.example/p?aff=42'), 'link:tracking', 'an affiliate link is refused');
 select is(public.sponsor_link_problem('http://shop.example/'), 'link:not_https', 'a link must be https');
 
