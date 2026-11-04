@@ -13085,6 +13085,14 @@ export type Database = {
       require_website_staff: { Args: Record<PropertyKey, never>; Returns: undefined };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
+      retention_periods: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          amount: number;
+          kind: string;
+          unit: string;
+        }[];
+      };
       return_rate_on: { Args: { for_day: string }; Returns: number };
       reusable_stories_export: {
         Args: {

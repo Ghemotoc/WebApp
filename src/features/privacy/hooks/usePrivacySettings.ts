@@ -1,7 +1,8 @@
 /**
  * The hooks behind Settings › Privacy (story S1-E13-01).
  *
- * Who calls them: PrivacySettingsSection, LibraryVisibilityLine and PresenceHeartbeat.
+ * Who calls them: PrivacySettingsSection, LibraryVisibilityLine, PresenceHeartbeat and
+ * HowLongWeKeep (IDEAS-2a).
  * What they call: api/privacy.ts. After a save, the settings, every profile and every story list
  * are read again, so the profile page and the library shelf agree with the new choice at once.
  */
@@ -14,6 +15,7 @@ import { writerProfileQueryKey } from '@/features/people/hooks/useWriterProfile'
 
 import {
   fetchPrivacySettings,
+  fetchRetentionPeriods,
   saveLibraryAudience,
   saveProfileAudience,
   saveShowsOnlineStatus,
@@ -78,4 +80,22 @@ export function useSavePrivacySettings() {
     isSaving: profile.isPending || library.isPending || online.isPending,
     hasFailed: profile.isError || library.isError || online.isError,
   };
+}
+
+/**
+ * How long each kind of the caller's data is kept (IDEAS-2a), read when "How long we keep things"
+ * is first opened; reading it again each time keeps it in step with a staff change.
+ *
+ * @param isOpen - true once the list is opened; nothing is read before that
+ * @returns TanStack Query's result
+ */
+export function useRetentionPeriods(isOpen: boolean) {
+  const { userId } = useSession();
+  return useQuery({
+    queryKey: ['retention-periods', userId],
+    enabled: userId !== null && isOpen,
+    retry: false,
+    staleTime: 0,
+    queryFn: async () => fetchRetentionPeriods(await requireClient()),
+  });
 }

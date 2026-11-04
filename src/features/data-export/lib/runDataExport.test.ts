@@ -118,6 +118,27 @@ function fakeClient(options: { failUpload?: boolean } = {}) {
   return { client, calls, uploadedZip: () => uploaded };
 }
 
+/** The guide's words for the tests: English, with every table described the same way (IDEAS-2a). */
+const guideWords = (madeAt: string) => ({
+  fileName: 'READ ME FIRST.txt',
+  title: 'Your data, explained',
+  intro: `Made on ${madeAt.slice(0, 10)}.`,
+  filesHeading: 'The files',
+  files: { data: 'data.json', stories: 'stories/', plans: 'plans', library: 'library.csv' },
+  partsHeading: 'Inside data.json',
+  parts: {
+    format: 'format',
+    user_id: 'user_id',
+    account: 'account',
+    library: 'library',
+    tables: 'tables',
+  },
+  tablesHeading: 'The groups',
+  tableLine: (tableName: string) => `about ${tableName}`,
+  empty: '(empty)',
+  help: 'Write to us.',
+});
+
 /** The run's options with the fake client. */
 function runOptions(client: AppSupabaseClient) {
   return {
@@ -137,6 +158,7 @@ function runOptions(client: AppSupabaseClient) {
       added: 'Added on',
       shelves: { reading: 'Reading', saved: 'Saved for later', finished: 'Finished' },
     },
+    guideWords,
   };
 }
 
@@ -157,7 +179,9 @@ describe('makeDataExport', () => {
     const fake = fakeClient();
     await makeDataExport(runOptions(fake.client));
     const zip = await JSZip.loadAsync(fake.uploadedZip() ?? new Uint8Array());
+    expect(Object.keys(zip.files)[0]).toBe('READ ME FIRST.txt');
     expect(Object.keys(zip.files).sort()).toEqual([
+      'READ ME FIRST.txt',
       'data.json',
       'library.csv',
       'stories/',
@@ -183,6 +207,19 @@ describe('makeDataExport', () => {
       `Reading,"Farul, de noapte",Ana,${brand.siteUrl}/s/farul,2026-10-20`,
       '',
     ]);
+  });
+});
+
+describe('the READ ME FIRST guide in the ZIP (IDEAS-2a)', () => {
+  it('comes first and describes the files and every group of the data file', async () => {
+    const fake = fakeClient();
+    await makeDataExport(runOptions(fake.client));
+    const zip = await JSZip.loadAsync(fake.uploadedZip() ?? new Uint8Array());
+    const guide = (await zip.file('READ ME FIRST.txt')?.async('string')) ?? '';
+    expect(guide.startsWith('Your data, explained')).toBe(true);
+    expect(guide).toContain('- library.csv');
+    expect(guide).toContain('- plans');
+    expect(guide).toContain('- chapters: about chapters');
   });
 });
 

@@ -9,7 +9,8 @@
  *      builders as Download my data, in the person's language (ADMIN-2d: PDF beside Word); the
  *      library becomes library.csv;
  *   3. staff chose one ZIP of everything, or each file on its own (S1-E11-09: "one file per story
- *      or one zip of all");
+ *      or one zip of all"); a ZIP starts with the "READ ME FIRST" guide in the person's language
+ *      (IDEAS-2a);
  *   4. admin_open_data_request_copy() opens one export per file, under random names;
  *   5. each file is uploaded to the private exports bucket;
  *   6. admin_finish_data_request_copy() marks them ready for seven days, logs which files were
@@ -42,7 +43,9 @@ import {
   buildPlanFiles,
   buildWordFiles,
   type DataExportRunOptions,
+  type ExportGuideWordsFor,
 } from '@/features/data-export/lib/runDataExport';
+import { exportGuideFile } from '@/features/data-export/lib/exportGuide';
 import { wordInputFrom } from '@/features/data-export/lib/storiesForWord';
 
 import {
@@ -58,6 +61,8 @@ export type DataRequestCopyFormat = 'zip' | 'separate';
 /** What a run needs: the Download my data words (in the person's language) and the request. */
 export interface DataRequestCopyOptions extends DataExportRunOptions {
   libraryLabels: LibraryCsvLabels;
+  /** The "READ ME FIRST" guide's words in the person's language (IDEAS-2a). */
+  guideWords: ExportGuideWordsFor;
   requestId: string;
   /** "D-000001", for the ZIP's name. */
   reference: string;
@@ -130,7 +135,11 @@ async function packCopy(
   options: DataRequestCopyOptions,
 ): Promise<ZipEntry[]> {
   if (options.format === 'zip') {
-    const bytes = await buildExportZip(document, files);
+    const guide = exportGuideFile(
+      { tables: document.tables, files },
+      options.guideWords(document.made_at),
+    );
+    const bytes = await buildExportZip(document, files, guide);
     return [{ fileName: `${options.reference}-copy.zip`, bytes }];
   }
   // Each file on its own: the data file first, then the others without their folder.
