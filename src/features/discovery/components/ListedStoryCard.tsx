@@ -5,12 +5,14 @@
  * and a meta line) with the writer's name, the chapter count and an Ongoing or Completed pill.
  * The cover is chosen by the list (designsForRow()), so two neighbours never share an automatic
  * design (S1-E3-13). An uploaded cover shows through StoryCoverArt once it passes its check
- * (S1-E10-05).
+ * (S1-E10-05). Beside the status pill sits the writer's gold rank pill (IDEAS-3a), when the
+ * database sends one: never for a classic, a writer who blocked the reader or a private profile.
  * Who uses it: DiscoverShelf and StoryGrid.
  */
 import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
 import { InfoPill } from '@/components/ui/InfoPill';
 import { StoryCard } from '@/components/ui/StoryCard';
+import { RankChip } from '@/features/forums/components/RankChip';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 
 import type { ListedStory } from '../api/storyLists';
@@ -43,9 +45,12 @@ export function ListedStoryCard(props: {
         <StoryCoverArt story={story} drawn={drawn} className={isFluid ? 'w-full' : 'w-[165px]'} />
       )}
       pill={
-        <InfoPill tone={story.completionStatus === 'completed' ? 'gold' : 'sage'}>
-          {t(`status.${story.completionStatus}`, { ns: 'writing' })}
-        </InfoPill>
+        <span className="flex flex-wrap gap-1.5">
+          <InfoPill tone={story.completionStatus === 'completed' ? 'gold' : 'sage'}>
+            {t(`status.${story.completionStatus}`, { ns: 'writing' })}
+          </InfoPill>
+          {story.writer.rank !== null && <RankChip rank={story.writer.rank} isCompact />}
+        </span>
       }
     />
   );

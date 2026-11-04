@@ -43,6 +43,8 @@ const newChapter: AppNotification = {
   staffChange: null,
   dataRequest: null,
   landingPage: null,
+  writerRank: null,
+  ownHandle: null,
   isRequired: false,
   isRead: false,
   at: '2026-10-25T07:00:00Z',
@@ -487,5 +489,24 @@ describe('notificationText', () => {
     expect(text.what).toContain('The winter contest');
     expect(text.href).toBe('/c/iarna');
     expect(text.actionLabel).toBe('Open the page');
+  });
+
+  it('a new rank names the rank and links to the writer’s own profile (IDEAS-3a)', () => {
+    const rankRow: AppNotification = {
+      ...newChapter,
+      kind: 'rank_reached',
+      category: 'stories',
+      actors: [],
+      actorCount: 0,
+      story: null,
+      chapter: null,
+      writerRank: 'storyteller',
+      ownHandle: 'corbu',
+    };
+    const text = notificationText(englishT(), rankRow, 'corbu');
+    expect(text.who).toBe('Your rank:');
+    expect(text.what).toBe('you’re now a Storyteller. Well done.');
+    expect(text.actionLabel).toBe('See your rank');
+    expect(text.href).toBe('/u/corbu');
   });
 });

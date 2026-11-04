@@ -2211,6 +2211,13 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - `/api/picture-preview/…` (`functions/api/picture-preview/[[path]].ts` → `server/picture-preview.ts`) asks `get_shared_picture()` again on every fetch and reads the file from `chapter-images` as a visitor, through the existing `chapter_images_select_visible` policy; it answers 404 for anything else and lets chat apps keep the picture for an hour at most.
 - Migration `…_ideas2_f_picture_previews.sql`. Tests: `supabase/tests/database/283-picture-previews.test.sql`, `server/picture-preview.test.ts`, `server/link-preview.test.ts`, `e2e/share-passages.spec.ts`.
 
+## A notice when a writer's rank goes up, and the rank on story cards (IDEAS-3a)
+
+- Ranks are worked out by `refresh_writer_rank()` (FORUMS-2e). Its new last step calls `announce_writer_rank()`, which sends one quiet `rank_reached` notification (category "stories", never an email) only when the new rank is above `profiles.highest_rank_notified`, then raises that mark. New writer, the rank a first chapter gives, is remembered but never announced. A writer who drops a rank and climbs back is not told twice.
+- The bell: `notification_json()` adds `writer_rank` and the writer's own handle; `src/features/notifications/lib/rankReachedText.ts` writes "Your rank: you’re now a Storyteller. Well done." with a link to the profile, and `NotificationIcon` shows the rank's sticker.
+- Story cards: `story_card_json()` adds `writer.rank` through `story_card_writer_rank()`, which leaves it out for classics, for a profile the reader may not open and when the writer blocked the reader. `ListedStoryCard` shows the compact `RankChip`; the story page's writer card (`StorySideColumn`) shows `ProfileRankChip`.
+- Migrations `…_ideas3_a_rank_enums.sql` (the enum value, alone because Postgres can't use a new value in the same transaction) and `…_ideas3_a_ranks.sql`. Tests: `supabase/tests/database/284-rank-notifications.test.sql`, `src/features/notifications/lib/notificationText.test.ts`, `e2e/rank-notifications.spec.ts`.
+
 ## A printable class invite sheet and "Who has replied" (IDEAS-3b)
 
 - **The sheet:** class settings › Invite your class › Make a code → `NewClassInviteCode` shows the code with `ClassInviteQrCode` beside it. The QR code is worked out in the browser by `src/features/spaces/lib/qrModules.ts` (the qrcode-generator library, MIT) and drawn as one SVG path, black on white, so the link never leaves the device. Print → the `.class-invite-sheet` print styles in `src/styles/index.css` hide everything else, so the paper holds only `ClassInviteSheet`: the class's name, the code, the QR code, the link and the end date.

@@ -38,7 +38,8 @@
     "parentOrGuardian": "Părintele sau tutorele tău",
     "yourAccount": "Contul tău:",
     "yourLibrary": "Biblioteca ta:",
-    "reminder": "Mementoul tău:"
+    "reminder": "Mementoul tău:",
+    "rank": "Rangul tău:"
   },
   "chapterOfStory": "capitolul {{position}} din {{story}}",
   "what": {
@@ -82,7 +83,8 @@
     "landingEntriesOpen": "au început înscrierile pentru „{{title}}”.",
     "landingEntriesOpenGone": "au început înscrierile pentru o pagină despre care ai întrebat, dar care a fost scoasă între timp.",
     "contestCertificateIssued": "ai primit o diplomă de la „{{title}}”. O găsești în Diplomele mele.",
-    "certificateIssuedPlain": "ai primit o diplomă nouă. O găsești în Diplomele mele."
+    "certificateIssuedPlain": "ai primit o diplomă nouă. O găsești în Diplomele mele.",
+    "rankReached": "acum ai rangul {{rank}}. Felicitări!"
   },
   "grouped": {
     "reactions_one": "{{count}} reacție",
@@ -143,7 +145,8 @@
     "seeDataRequests": "Vezi cererile tale privind datele",
     "downloadDataRequestCopy": "Descarc-o",
     "openAuditLog": "Deschide jurnalul de audit",
-    "openLandingPage": "Deschide pagina"
+    "openLandingPage": "Deschide pagina",
+    "seeMyRank": "Vezi rangul tău"
   },
   "alwaysOn": "Mereu pornite",
   "unread": "Necitită",
@@ -240,5 +243,11 @@
     "list": "{{first}} și {{last}}",
     "yourStory": "povestea ta"
   },
-  "pageLanguage": "ro"
+  "pageLanguage": "ro",
+  "rankNames": {
+    "new_writer": "Debut",
+    "writer": "Condei",
+    "storyteller": "Condei de povești",
+    "novelist": "Condei de roman"
+  }
 }
