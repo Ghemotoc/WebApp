@@ -79,7 +79,7 @@ test.describe('Ad slots', () => {
   const pagesAndShapes: [string, string[]][] = [
     ['/search?q=meteo', ['wide', 'portrait']],
     ['/forums', ['wide', 'side_box']],
-    ['/spaces/young-poets', ['wide']],
+    ['/spaces/fantasy-writers-circle', ['wide']],
     ['/u/adult_writer', ['wide']],
     ['/s/statia-meteo-seed01/adse2e01', ['wide']],
     ['/discover/all/classics', ['wide']],
