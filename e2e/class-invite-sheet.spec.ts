@@ -117,7 +117,7 @@ test.describe('class invite sheet and who has replied (IDEAS-3b)', () => {
     const made = await makeCode(page);
     code = made.code;
     // Criterion 2: the QR code holds exactly the joining link (drawn in the browser).
-    const drawn = made.card.getByRole('img', { name: 'QR code for the joining link' });
+    const drawn = made.card.getByRole('img', { name: 'QR code to join the class' });
     await expect(drawn).toBeVisible();
     await expect(drawn.locator('path')).toHaveAttribute('d', qrPathFor(qrModulesFor(made.link), 4));
     // On screen the sheet stays out of the way.

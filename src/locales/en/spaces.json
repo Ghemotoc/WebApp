@@ -333,7 +333,7 @@
       "unreachable": "We couldn’t reach the server. Try again.",
       "locked": "This class is locked, so the code doesn’t work any more."
     },
-    "qrLabel": "QR code for the joining link",
+    "qrLabel": "QR code to join the class",
     "sheetLabel": "Class invite sheet",
     "sheetIntro": "Join our class",
     "sheetUntil": "This code works until {{expires}}."

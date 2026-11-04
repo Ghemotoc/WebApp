@@ -333,7 +333,7 @@
       "unreachable": "Nu am putut ajunge la server. Încearcă din nou.",
       "locked": "Această clasă e închisă, așa că acest cod nu mai funcționează."
     },
-    "qrLabel": "Cod QR pentru linkul de intrare",
+    "qrLabel": "Cod QR pentru intrarea în clasă",
     "sheetLabel": "Fișa de invitație a clasei",
     "sheetIntro": "Intră în clasa noastră",
     "sheetUntil": "Codul funcționează până pe {{expires}}."
