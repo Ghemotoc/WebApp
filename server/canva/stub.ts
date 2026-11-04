@@ -6,9 +6,8 @@
  * before there is a Canva developer app:
  * - "Canva's" consent page is our own small page at /api/canva/stub/authorize, with Allow and
  *   Cancel; Allow sends the tab back with the code "stand-in-code";
- * - the "editor" at /api/canva/stub/editor names the template it started from (IDEAS-2e) and has
- *   one Return button, which sends the tab back with a return token signed by the stand-in's
- *   fixed key (jwt.ts);
+ * - the "editor" at /api/canva/stub/editor has one Return button, which sends the tab back with a
+ *   return token signed by the stand-in's fixed key (jwt.ts);
  * - the export is a drawn 1600 × 2560 PNG (png.ts).
  * The pages are plain HTML from our own address, with no scripts.
  * Who calls it: server/canva/index.ts (the service) and server/canva.ts (the two pages).
@@ -49,11 +48,10 @@ export function standInCanva(origin: string): CanvaService {
     exchangeCode: ({ code }) => Promise.resolve(code === STAND_IN_CODE ? standInTokens() : null),
     refresh: (refreshToken) =>
       Promise.resolve(refreshToken.startsWith('stand-in-refresh-') ? standInTokens() : null),
-    createDesign: (accessToken, start) => {
+    createDesign: (accessToken) => {
       if (!accessToken.startsWith('stand-in-access-')) return Promise.resolve(null);
       const designId = `stand-in-${randomHex()}`;
-      // The editor names the template, so a test can see which one opened (IDEAS-2e).
-      const query = new URLSearchParams({ design: designId, template: start.template });
+      const query = new URLSearchParams({ design: designId });
       return Promise.resolve({
         designId,
         editUrl: `${origin}/api/canva/stub/editor?${query.toString()}`,
@@ -117,18 +115,10 @@ export function standInConsentPage(request: Request, origin: string): Response {
   );
 }
 
-/** What the stand-in editor calls each starting point (IDEAS-2e). */
-const templateNames: Record<string, string> = {
-  blank: 'Blank design',
-  classic: 'Classic template, with your title and pen name',
-  bold: 'Bold template, with your title and pen name',
-  handwritten: 'Handwritten template, with your title and pen name',
-};
-
 /**
  * The stand-in editor: one Return button with a signed return token.
  *
- * @param request - GET /api/canva/stub/editor?design=…&template=…&correlation_state=…
+ * @param request - GET /api/canva/stub/editor?design=…&correlation_state=…
  * @param origin - our own address
  * @returns the page
  */
@@ -141,10 +131,9 @@ export async function standInEditorPage(request: Request, origin: string): Promi
     },
     new Date(),
   );
-  const template = templateNames[query.get('template') ?? 'blank'] ?? templateNames.blank;
   return standInPage(
     'Canva stand-in: your design',
-    `Started from: ${template}. Pretend you designed your cover here, then press Return.`,
+    'Pretend you designed your cover here, then press Return.',
     [
       {
         label: 'Return',

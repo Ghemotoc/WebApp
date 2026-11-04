@@ -5,23 +5,10 @@
  * story says to check them before relying on them, so they are a GO-LIVE item
  * (by-hand-for-robert.md). OAuth uses PKCE (S256) with our client ID and secret; the secret
  * never leaves the server. Nothing about the writer or their design is logged (CLAUDE.md rule 12).
- * Cover templates (IDEAS-2e) use Canva's autofill of brand templates. Canva has offered brand
- * templates and autofill only to Canva Enterprise accounts, so whether writers' own accounts can
- * use our templates is checked at GO-LIVE; until then, and whenever autofill fails, the writer
- * gets the blank cover.
  * Who calls it: server/canva/index.ts.
  */
-import type { CanvaTemplateKey } from '../../src/schemas/canva';
-
 import { verifyCanvaJwt, type PublicJwk } from './jwt';
-import {
-  COVER_HEIGHT,
-  COVER_WIDTH,
-  type CanvaDesign,
-  type CanvaDesignStart,
-  type CanvaService,
-  type CanvaTokens,
-} from './types';
+import { COVER_HEIGHT, COVER_WIDTH, type CanvaService, type CanvaTokens } from './types';
 
 /** Canva's addresses. */
 const authorizeAddress = 'https://www.canva.com/api/oauth/authorize';
@@ -38,11 +25,6 @@ const exportPollTries = 30;
 export interface CanvaCredentials {
   clientId: string;
   clientSecret: string;
-  /**
-   * Our brand templates' IDs in Canva, per template (CANVA_TEMPLATE_CLASSIC, …_BOLD,
-   * …_HANDWRITTEN); a template without one opens blank (IDEAS-2e).
-   */
-  templateIds?: Partial<Record<Exclude<CanvaTemplateKey, 'blank'>, string>>;
 }
 
 /**
@@ -142,7 +124,7 @@ async function exportDesign(
  *
  * @returns its ID and edit address, or null
  */
-async function createBlankDesign(accessToken: string, title: string) {
+async function createDesign(accessToken: string, title: string) {
   const answer = await callApi(accessToken, '/designs', {
     design_type: { type: 'custom', width: COVER_WIDTH, height: COVER_HEIGHT },
     title,
@@ -150,88 +132,6 @@ async function createBlankDesign(accessToken: string, title: string) {
   const design = answer?.design as { id?: string; urls?: { edit_url?: string } } | undefined;
   if (design?.id === undefined || design.urls?.edit_url === undefined) return null;
   return { designId: design.id, editUrl: design.urls.edit_url };
-}
-
-/** An autofill job as Canva describes it. */
-interface AutofillJob {
-  status?: string;
-  result?: { design?: { id?: string; urls?: { edit_url?: string } } };
-}
-
-/**
- * The design a finished autofill job made.
- *
- * @returns its ID and edit address, or null when the job gives none
- */
-function designOfAutofill(job: AutofillJob): CanvaDesign | null {
-  const design = job.result?.design;
-  const editUrl = design?.urls?.edit_url;
-  if (design?.id === undefined || editUrl === undefined) return null;
-  return { designId: design.id, editUrl };
-}
-
-/**
- * Waits for an autofill job and gives back the design it made.
- *
- * @returns its ID and edit address, or null when it failed or took too long
- */
-async function waitForAutofill(accessToken: string, jobId: string): Promise<CanvaDesign | null> {
-  for (let attempt = 0; attempt < exportPollTries; attempt += 1) {
-    const answer = await callApi(accessToken, `/autofills/${encodeURIComponent(jobId)}`);
-    const job = answer?.job as AutofillJob | undefined;
-    // Done: the design, or nothing when the job failed or gave none.
-    if (job === undefined || job.status === 'failed') return null;
-    if (job.status === 'success') return designOfAutofill(job);
-    await new Promise((resolve) => setTimeout(resolve, exportPollMilliseconds));
-  }
-  return null;
-}
-
-/**
- * Fills one of our brand templates with the title and pen name (IDEAS-2e). Canva's autofill
- * fills the template's text fields named "title" and "pen_name" (the designer names them so in
- * Canva); a template without one of them simply keeps its own text there.
- *
- * @returns its ID and edit address, or null
- */
-async function createTemplateDesign(
-  accessToken: string,
-  brandTemplateId: string,
-  start: CanvaDesignStart,
-): Promise<CanvaDesign | null> {
-  const started = await callApi(accessToken, '/autofills', {
-    brand_template_id: brandTemplateId,
-    title: start.title,
-    data: {
-      title: { type: 'text', text: start.title },
-      pen_name: { type: 'text', text: start.penName },
-    },
-  });
-  const jobId = (started?.job as { id?: string } | undefined)?.id;
-  if (jobId === undefined) return null;
-  return waitForAutofill(accessToken, jobId);
-}
-
-/**
- * Creates the design the writer chose: from a template when its brand template ID is set and
- * Canva fills it, otherwise a blank design, so the writer can always start designing.
- *
- * @returns its ID and edit address, or null
- */
-async function createDesign(
-  credentials: CanvaCredentials,
-  accessToken: string,
-  start: CanvaDesignStart,
-): Promise<CanvaDesign | null> {
-  // Step 1: a template, when we have its ID in Canva (CANVA_TEMPLATE_* settings).
-  const brandTemplateId =
-    start.template === 'blank' ? undefined : credentials.templateIds?.[start.template];
-  if (brandTemplateId !== undefined && brandTemplateId !== '') {
-    const filled = await createTemplateDesign(accessToken, brandTemplateId, start);
-    if (filled !== null) return filled;
-  }
-  // Step 2: otherwise, or when Canva couldn't fill it, the blank cover as before.
-  return createBlankDesign(accessToken, start.title);
 }
 
 /**
@@ -278,7 +178,7 @@ export function realCanva(credentials: CanvaCredentials): CanvaService {
       }),
     refresh: (refreshToken) =>
       requestTokens(credentials, { grant_type: 'refresh_token', refresh_token: refreshToken }),
-    createDesign: (accessToken, start) => createDesign(credentials, accessToken, start),
+    createDesign,
     verifyReturn: (correlationJwt) => verifyReturn(credentials, correlationJwt),
     exportPng: exportDesign,
     revoke: async (refreshToken) => {
