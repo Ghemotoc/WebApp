@@ -36,7 +36,13 @@ Bundle 14c IDEAS-2, part b: a sample EPUB for beta readers and an "About the wri
 
 ## Local check run
 
-LOCALRUN
+Fast checks, run locally on this branch (GitHub Actions is blocked by billing):
+
+- Lint, Prettier, `tsc -b`, `types:check`, `i18n:check` and `migrations:check`: passed.
+- Vitest: 228 files, 1,440 tests passed.
+- Database (`supabase test db`): 189 files, 4,430 tests passed.
+- Wrangler compile and the build with and without env, plus `third-party:check`: passed.
+- e2e (sample-epub, epub, download-my-stories, download-my-data, downloads-and-privacy, data-requests): 107 passed and 1 failed. The failure was in the new test's clean-up: it set adult_writer's bio to empty, which the column refuses. It now puts the seed's bio back, and `sample-epub.spec.ts` passes 5 of 5.
 
 ## By hand
 
