@@ -12,6 +12,9 @@
  * in and will read once it is.
  * With no code in the address (/class, bundle CLASSES, part b) it shows ClassCodeForm, where the
  * student types the code the teacher wrote on the board.
+ * IDEAS-3c (idea IDEA-20261102-4): while sign-up is by invitation (invite_only), a signed-out
+ * student also gets "Create an account with this code", which opens sign-up at /join/<code>; the
+ * class code stands in for the invitation and the new account joins the class when it is made.
  * What it calls: useClassInvitePreview → class_invite_preview(); useJoinClass →
  * join_class_space(); ClassCodeForm.
  */
@@ -22,6 +25,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 
 import { useClassInvitePreview, useJoinClass } from '../hooks/useClassSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
@@ -32,6 +36,42 @@ import { SpaceFormCard } from './SpaceFormCard';
 /** The look of the page's main link-buttons, shared so both match. */
 const linkButtonClasses =
   'inline-flex h-12 items-center self-start rounded-full bg-primary px-5 text-[15px] font-semibold text-on-primary no-underline hover:opacity-90';
+
+/** The quieter look of the second link-button, "Create an account with this code". */
+const secondaryLinkClasses =
+  'inline-flex h-12 items-center self-start rounded-full border border-control-border bg-surface px-5 text-[15px] font-semibold text-ink no-underline hover:bg-panel';
+
+/**
+ * "Log in to join" for a signed-out visitor, and the way to make an account. While sign-up is by
+ * invitation, the class code is the invitation (IDEAS-3c), so the second link opens sign-up with
+ * it; when anyone may sign up, the note says to make an account and open the link again.
+ *
+ * @param props.code - the code from the link
+ * @returns the two ways in
+ */
+function SignedOutJoin({ code }: { code: string }) {
+  const { t } = useSpacesTranslation();
+  const flags = useFeatureFlags();
+  // Step 1: the safe default is "by invitation", as on the sign-up page.
+  const isInviteOnly = flags.isOn('invite_only', true);
+  return (
+    <>
+      <Link to="/sign-in" className={linkButtonClasses}>
+        {t('joinClass.logIn')}
+      </Link>
+      {isInviteOnly ? (
+        <>
+          <Link to={`/join/${encodeURIComponent(code)}`} className={secondaryLinkClasses}>
+            {t('joinClass.signUpWithCode')}
+          </Link>
+          <p className="m-0 text-sm text-body">{t('joinClass.signUpWithCodeNote')}</p>
+        </>
+      ) : (
+        <p className="m-0 text-sm text-body">{t('joinClass.signUpOpen')}</p>
+      )}
+    </>
+  );
+}
 
 /** Joining, as useJoinClass() gives it. */
 type Joining = ReturnType<typeof useJoinClass>;
@@ -54,16 +94,7 @@ function JoinAction({ code, joining }: { code: string; joining: Joining }) {
     if (joined?.canRead === true) void navigate(`/spaces/${joined.slug}`);
   }
 
-  if (userId === null) {
-    return (
-      <>
-        <Link to="/sign-in" className={linkButtonClasses}>
-          {t('joinClass.logIn')}
-        </Link>
-        <p className="m-0 text-sm text-body">{t('joinClass.signUp')}</p>
-      </>
-    );
-  }
+  if (userId === null) return <SignedOutJoin code={code} />;
   return (
     <>
       <Button type="button" className="self-start" disabled={joining.isRunning} onClick={join}>
