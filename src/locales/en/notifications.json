@@ -84,7 +84,8 @@
     "landingEntriesOpenGone": "entries are open for a page you asked about, which has since been taken down.",
     "contestCertificateIssued": "you have a certificate from “{{title}}”. It’s in My certificates.",
     "certificateIssuedPlain": "you have a new certificate. It’s in My certificates.",
-    "rankReached": "you’re now a {{rank}}. Well done."
+    "rankReached": "you’re now a {{rank}}. Well done.",
+    "spaceHandoverOffered": "offered you {{space}}. Open it to accept or decline."
   },
   "grouped": {
     "reactions_one": "{{count}} reaction",

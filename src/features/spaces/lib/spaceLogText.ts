@@ -33,6 +33,11 @@ const knownActions = [
   'certificates_issued',
   // The welcome note new members see once (bundle 14d IDEAS-3, part d).
   'welcome_note_changed',
+  // Handing the space over to a moderator (bundle 14d IDEAS-3, part e).
+  'handover_offered',
+  'handover_cancelled',
+  'handover_declined',
+  'handover_accepted',
 ];
 
 /**

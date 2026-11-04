@@ -57,3 +57,7 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   `SpaceWelcomeNoteCard` on the settings page and `SpaceWelcomeNote` at the top of the space.
   `SpaceJoinRequestForm` sends an optional note with a request to join (`join_space(slug, note)`);
   `SpaceRequestsCard` shows it with its own Report button (`space_join_note`).
+- `api/spaceHandover.ts` and `hooks/useSpaceHandover.ts` (bundle 14d IDEAS-3, part e): handing the
+  space over to one of its moderators (`offer_space_handover()`, `cancel_space_handover()`,
+  `answer_space_handover()`). `SpaceHandoverCard` on the settings page for the owner, and
+  `SpaceHandoverOffer` at the top of the space for the moderator it is offered to.

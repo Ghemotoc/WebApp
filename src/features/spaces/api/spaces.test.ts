@@ -62,6 +62,8 @@ describe('spaceFrom', () => {
       powers: [],
       welcomeNote: 'Read the rules first.',
       showWelcome: true,
+      canHandOver: false,
+      handover: null,
     });
   });
 

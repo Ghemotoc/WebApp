@@ -412,6 +412,27 @@ function spaceJoinApprovedText(t: TFunction, notification: AppNotification): Not
 }
 
 /**
+ * The owner of a space the reader moderates offered them the space (IDEAS-3e; idea
+ * IDEA-20261102-7): "ana offered you Fantasy writers' circle", with "Open the space", where the
+ * reader accepts or declines.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a space_handover_offered row
+ * @returns the row's words
+ */
+function spaceHandoverOfferedText(t: TFunction, notification: AppNotification): NotificationText {
+  const space = notification.space;
+  return {
+    who: whoDidIt(t, notification),
+    what: t('what.spaceHandoverOffered', { space: space?.name ?? '' }),
+    quote: null,
+    grouped: null,
+    actionLabel: space === null ? null : t('actions.openSpace'),
+    href: space === null ? null : `/spaces/${space.slug}`,
+  };
+}
+
+/**
  * A moderator asked the reader to change their forum signature or a space's banner picture within
  * 24 hours (S1-E8-08 criterion 3; Q29). The row quotes the reason and leads to the place to change
  * it: Settings › Forum signature, or the space's settings. It never names the moderator.
@@ -530,6 +551,7 @@ const teamTextFor: Partial<
   picture_opened_by_staff: pictureOpenedText,
   landing_entries_open: landingEntriesOpenText,
   rank_reached: rankReachedText,
+  space_handover_offered: spaceHandoverOfferedText,
 };
 
 /**

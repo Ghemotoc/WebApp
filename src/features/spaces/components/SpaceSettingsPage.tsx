@@ -36,6 +36,7 @@ import { SpaceBannerPictureCard } from './SpaceBannerPictureCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
 import { SpaceFormCard } from './SpaceFormCard';
+import { SpaceHandoverCard } from './SpaceHandoverCard';
 import { SpaceModeratorsCard } from './SpaceModeratorsCard';
 import { SpaceNotFound } from './SpaceNotFound';
 import { SpaceWelcomeNoteCard } from './SpaceWelcomeNoteCard';
@@ -135,6 +136,8 @@ function SettingsCards({ space }: { space: Space }) {
       {canManage && <SpaceWelcomeNoteCard key={`welcome-${space.slug}`} space={space} />}
       {canManage && <SpaceBannerPictureCard space={space} />}
       {canAppoint && <SpaceModeratorsCard space={space} />}
+      {/* IDEAS-3e: only the owner may hand the space over. */}
+      {space.viewer.canHandOver && <SpaceHandoverCard space={space} />}
     </>
   );
 }
