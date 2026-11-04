@@ -15,6 +15,9 @@ non-personalised ad network.
   a sponsor's ad (the checked picture, its line, the link marked `rel="sponsored"` and an optional
   `DiscountCode.tsx` with a Copy button), reading the picture's address with
   `hooks/useSponsorPicture.ts`.
+- `components/NetworkAdCreative.tsx` and `lib/adNetwork.ts`: the ad network's ad (part d, ADR
+  0014). The AdSense script loads only when the slot comes into view, once per page, and every
+  request is non-personalised; if it can't load, our own "Start writing" ad shows instead.
 - `components/SponsoredByLine.tsx` and `hooks/useSponsorCredit.ts`: "Sponsored by <sponsor>" on a
   category's list (`StoryListHeader`) and a contest's page (`LandingPageScreen`), read with
   `fetchSponsorCredit()` from `sponsor_credit()`. It never changes what a list holds or its order.

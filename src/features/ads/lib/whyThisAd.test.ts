@@ -79,4 +79,13 @@ describe('whyThisAd', () => {
       'why.sponsored(name=Librăria Test) why.matchesParts(parts=why.category(name=poetry)) why.promise',
     );
   });
+
+  it('says a network ad comes from the ad network, never personalised', () => {
+    const slot = houseSlot({});
+    const network: PageAdSlot = {
+      ...slot,
+      ad: slot.ad === null ? null : { ...slot.ad, label: 'ad', kind: 'network' },
+    };
+    expect(whyThisAd(fakeT, network, 'en')).toBe('why.network why.matchesPage why.promise');
+  });
 });

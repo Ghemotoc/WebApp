@@ -8,7 +8,8 @@
     "tag": "tag {{name}}",
     "language": "language {{name}}",
     "promise": "Ads are never personalised, for anyone. We don’t use your age, what you read before or your device.",
-    "sponsored": "A sponsor, {{name}}, paid for this ad, and a person on our team checked it is suitable for every reader."
+    "sponsored": "A sponsor, {{name}}, paid for this ad, and a person on our team checked it is suitable for every reader.",
+    "network": "This ad comes from Google’s ad network, which we set to never personalise ads and to leave out the categories we block, such as alcohol and gambling."
   },
   "house": {
     "from": "From {{productName}}",

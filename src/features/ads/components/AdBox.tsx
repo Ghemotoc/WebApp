@@ -7,18 +7,19 @@
  * reader was used. The box keeps its format's size (a wide banner at least 120 px tall, 100 px on
  * phones; a portrait or side box only from 1200 px wide; a card the size of a story card), so
  * the page doesn't jump when the ad arrives (criterion 9).
- * Who shows it: PageAdSlot. What it calls: HouseAdCreative or, for a sponsor's ad (part b3),
- * SponsorAdCreative, and lib/whyThisAd.ts.
+ * Who shows it: PageAdSlot. What it calls: AdCreative (HouseAdCreative, SponsorAdCreative from
+ * part b3 or NetworkAdCreative from part d) and lib/whyThisAd.ts.
  */
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { PageAdSlot } from '@/schemas/ads';
+import type { PageAdSlot, SlotAd } from '@/schemas/ads';
 
 import { whyThisAd } from '../lib/whyThisAd';
 import { useAdsTranslation } from '../registerAdsTranslations';
 
 import { HouseAdCreative } from './HouseAdCreative';
+import { NetworkAdCreative } from './NetworkAdCreative';
 import { SponsorAdCreative } from './SponsorAdCreative';
 
 /** The size and layout of each format, written out in full so Tailwind can find them. */
@@ -43,6 +44,19 @@ const labelKeys = {
   sponsored: 'ads.labelSponsored',
   house: 'ads.labelHouse',
 } as const;
+
+/**
+ * The creative for the ad's kind: a sponsor's, the network's or one of our own.
+ *
+ * @param props.ad - the slot's ad
+ * @param props.isStacked - true in a narrow slot
+ * @returns the creative
+ */
+function AdCreative({ ad, isStacked }: { ad: SlotAd; isStacked: boolean }) {
+  if (ad.kind === 'sponsor') return <SponsorAdCreative ad={ad} isStacked={isStacked} />;
+  if (ad.kind === 'network') return <NetworkAdCreative ad={ad} isStacked={isStacked} />;
+  return <HouseAdCreative ad={ad} isStacked={isStacked} />;
+}
 
 /**
  * "Why this ad?" and its explanation, which opens and closes in place.
@@ -99,11 +113,7 @@ export function AdBox({ slot }: { slot: PageAdSlot }) {
         <span className="inline-flex h-6 flex-none items-center justify-center rounded-full border border-(--pill-neutral-border) bg-(--pill-neutral-bg) px-2.5 text-xs leading-none font-bold tracking-[0.12em] text-(--pill-neutral-text) uppercase">
           {t(labelKeys[ad.label])}
         </span>
-        {ad.kind === 'sponsor' ? (
-          <SponsorAdCreative ad={ad} isStacked={isStacked} />
-        ) : (
-          <HouseAdCreative ad={ad} isStacked={isStacked} />
-        )}
+        <AdCreative ad={ad} isStacked={isStacked} />
       </div>
       <WhyThisAd slot={slot} />
     </aside>
