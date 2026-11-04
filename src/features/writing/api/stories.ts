@@ -25,6 +25,7 @@ import {
   type AiDisclosure,
   type NewStoryInput,
   type StoryRating,
+  type StoryRatingReason,
   type StorySettingsInput,
 } from '@/schemas/story';
 
@@ -77,6 +78,8 @@ export interface MyStory {
   dealsWithAbuseOrCoercion: boolean;
   contentNote: string;
   aiDisclosure: AiDisclosure;
+  /** Why it is 16+ or 18+ (SPONSORS-f); empty below 16+. */
+  ratingReasons: StoryRatingReason[];
   /** When staff labelled it "AI-written, not disclosed"; null otherwise (Q24). */
   aiUndisclosedLabelledAt: string | null;
   /** The live chapters in order (S1-E3-02a): the card links to the latest one. */
@@ -92,6 +95,7 @@ type StoryLabelsPayload = Pick<
   | 'dealsWithAbuseOrCoercion'
   | 'contentNote'
   | 'aiDisclosure'
+  | 'ratingReasons'
 >;
 
 /**
@@ -108,6 +112,8 @@ function toLabelsJson(labels: StoryLabelsPayload) {
     deals_with_abuse_or_coercion: labels.dealsWithAbuseOrCoercion,
     content_note: labels.contentNote,
     ai_disclosure: labels.aiDisclosure,
+    // SPONSORS-f: the database keeps none for a rating below 16+.
+    rating_reasons: labels.ratingReasons,
   };
 }
 
@@ -196,7 +202,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, comments_enabled, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_tall_path, first_published_at, created_at, completion_status, comments_enabled, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // Only live chapters, in order; the deleted ones wait for the purge (S1-E3-04 shows undo).
     .is('chapters.deleted_at', null)
@@ -238,6 +244,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     dealsWithAbuseOrCoercion: row.deals_with_abuse_or_coercion,
     contentNote: row.content_note,
     aiDisclosure: row.ai_disclosure,
+    ratingReasons: row.rating_reasons,
     aiUndisclosedLabelledAt: row.ai_undisclosed_labelled_at,
     chapters: row.chapters.map((chapter) => ({
       code: chapter.code,

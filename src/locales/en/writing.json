@@ -147,7 +147,8 @@
     "abuseNeedsRating": "A story about abuse or coercion must be rated 16+ or 18+.",
     "abuseNeedsNote": "Add a content note for a story about abuse or coercion.",
     "contentNoteTooLong": "A content note can have at most {{max}} characters.",
-    "chapterCreateFailed": "Your story was saved, but we couldn’t open chapter one. Open it from Your writing."
+    "chapterCreateFailed": "Your story was saved, but we couldn’t open chapter one. Open it from Your writing.",
+    "ratingReasonsMissing": "Tick at least one reason why it is 16+ or 18+."
   },
   "storyCard": {
     "settings": "Story settings",
@@ -255,6 +256,17 @@
       }
     },
     "guideRule": "At every rating: no sexual content involving anyone under 18, real or fictional. Not sure? Pick the higher rating; our team can change it if a reader reports it.",
+    "reasons": "Why is it {{rating}}?",
+    "reasonsHint": "Tick everything that applies.",
+    "reasonNames": {
+      "sexual_content": "Sexual content",
+      "nudity": "Nudity",
+      "graphic_violence": "Graphic violence or gore",
+      "strong_language": "Strong language",
+      "drugs": "Drugs",
+      "self_harm": "Self-harm",
+      "dark_themes": "Dark themes"
+    },
     "ai": "Did you use AI?",
     "aiHint": "Shown as a label on your story. If someone reports a missing label, a person on our team decides. We never use AI detectors to judge your writing.",
     "previewBanner": "{{rating}}: hidden from readers under {{age}}"

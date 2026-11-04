@@ -52,6 +52,8 @@ function emptyAnswers(): StoryAnswers {
     dealsWithAbuseOrCoercion: false,
     contentNote: '',
     aiDisclosure: null,
+    // SPONSORS-f: none until the writer picks 16+ or 18+.
+    ratingReasons: [],
   };
 }
 

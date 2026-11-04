@@ -11,7 +11,8 @@ import type { ReactNode } from 'react';
 export interface LabelCheckboxProps {
   id: string;
   label: string;
-  hint: ReactNode;
+  /** The plain line under the label; left out when the label says it all (rating reasons). */
+  hint?: ReactNode;
   isChecked: boolean;
   onChange: (isChecked: boolean) => void;
 }
@@ -22,7 +23,8 @@ export interface LabelCheckboxProps {
  * @returns the box, its label and hint
  */
 export function LabelCheckbox({ id, label, hint, isChecked, onChange }: LabelCheckboxProps) {
-  const hintId = `${id}-hint`;
+  // Only a box with a hint points at it, so a screen reader never reads an empty description.
+  const hintId = hint === undefined ? undefined : `${id}-hint`;
   return (
     <div className="flex items-start gap-3">
       <input
@@ -37,9 +39,11 @@ export function LabelCheckbox({ id, label, hint, isChecked, onChange }: LabelChe
         <label htmlFor={id} className="text-sm font-semibold text-ink">
           {label}
         </label>
-        <p id={hintId} className="m-0 text-[13px] leading-normal text-meta">
-          {hint}
-        </p>
+        {hint !== undefined && (
+          <p id={hintId} className="m-0 text-[13px] leading-normal text-meta">
+            {hint}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ import type {
 } from '@/components/covers/coverDesigns';
 import type { Enums, Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
+import { storyRatingReasons } from '@/schemas/story';
 
 import { listOf, numberOrNull, objectOf } from './marchNumbers';
 import { staffStoryHistoryFrom, type StaffStoryVersion } from './staffStoryHistory';
@@ -104,6 +105,8 @@ export interface StaffStorySettings {
   isFanFiction: boolean;
   isParody: boolean;
   dealsWithAbuseOrCoercion: boolean;
+  /** Why it is 16+ or 18+ (SPONSORS-f); empty below 16+. */
+  ratingReasons: Enums<'story_rating_reason'>[];
   tagNames: string[];
 }
 
@@ -253,6 +256,17 @@ function moderatedStateOf(value: Json | undefined): StaffStoryChapter['moderated
 }
 
 /**
+ * Reads the rating reasons, keeping only the ones the app knows, in the list's own order.
+ *
+ * @param value - the rating_reasons field
+ * @returns the reasons
+ */
+function ratingReasonsFrom(value: Json | undefined): Enums<'story_rating_reason'>[] {
+  const named = textList(value);
+  return storyRatingReasons.filter((reason) => named.includes(reason));
+}
+
+/**
  * Reads the settings staff may change.
  *
  * @param value - the settings object of admin_story_overview()
@@ -269,6 +283,7 @@ export function staffStorySettingsFrom(value: Json | undefined): StaffStorySetti
     isFanFiction: settings['is_fan_fiction'] === true,
     isParody: settings['is_parody'] === true,
     dealsWithAbuseOrCoercion: settings['deals_with_abuse_or_coercion'] === true,
+    ratingReasons: ratingReasonsFrom(settings['rating_reasons']),
     tagNames: textList(settings['tag_names']),
   };
 }

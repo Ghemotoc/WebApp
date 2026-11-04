@@ -7,7 +7,8 @@
  * the rule line, and "Did you use AI?" (required) with its hint. Not on the board, from the
  * decisions: "Deals with abuse or coercion" and the content note, because a story with that
  * theme must be 16+ or 18+ and carry a note (17 Oct 2026, 10:36; CLAUDE.md rule 18). A writer
- * under 16 sees only the All ages and 13+ chips (useRatingsIMayGive; Robert, 2 Nov 2026).
+ * under 16 sees only the All ages and 13+ chips (useRatingsIMayGive; Robert, 2 Nov 2026). For 16+
+ * and 18+ the writer ticks why (RatingReasons; bundle SPONSORS-f).
  * Who uses it: NewStoryPage and StorySettingsPage. The database checks the same rules again
  * (check_story_labels(); architecture 1.1, principle 3).
  */
@@ -19,6 +20,7 @@ import {
   aiDisclosures,
   MAXIMUM_CONTENT_NOTE_LENGTH,
   ratingMinimumAge,
+  ratingsWithReasons,
   type AiDisclosure,
   type StoryRating,
 } from '@/schemas/story';
@@ -29,6 +31,7 @@ import { useRatingsIMayGive } from '../hooks/useRatingsIMayGive';
 import { FormSection } from './FormSection';
 import { LabelCheckbox } from './LabelCheckbox';
 import { RatingGuide } from './RatingGuide';
+import { RatingReasons } from './RatingReasons';
 
 /** What the section needs. */
 export interface StoryLabelsSectionProps {
@@ -67,6 +70,26 @@ function LabelTicks({ answers, set }: { answers: StoryAnswers; set: SetStoryAnsw
   );
 }
 
+/**
+ * Sets the rating and keeps the reasons in step: below 16+ there are none, and 18+ picked with
+ * nothing ticked starts on "Sexual content", the usual reason, so network ads stay off until the
+ * writer says otherwise (the safer default; SPONSORS-f).
+ *
+ * @param rating - the chip picked
+ * @param answers - the form's answers now
+ * @param set - changes one answer
+ */
+function chooseRating(rating: StoryRating, answers: StoryAnswers, set: SetStoryAnswer) {
+  set('rating', rating);
+  if (!ratingsWithReasons.includes(rating)) {
+    set('ratingReasons', []);
+    return;
+  }
+  if (rating === '18_plus' && answers.ratingReasons.length === 0) {
+    set('ratingReasons', ['sexual_content']);
+  }
+}
+
 /** The rating chips, the note under them and the guide. */
 function RatingChoice({ answers, errors, set }: StoryLabelsSectionProps) {
   const { t } = useTranslation('writing');
@@ -86,7 +109,7 @@ function RatingChoice({ answers, errors, set }: StoryLabelsSectionProps) {
         isLabelVisible
         options={ratings.map((rating) => ({ value: rating, label: t(`rating.${rating}`) }))}
         value={chosen ?? ''}
-        onChange={(value) => set('rating', value as StoryRating)}
+        onChange={(value) => chooseRating(value as StoryRating, answers, set)}
         descriptionId="story-rating-note"
         description={
           errors.rating === undefined ? (
@@ -96,6 +119,7 @@ function RatingChoice({ answers, errors, set }: StoryLabelsSectionProps) {
           )
         }
       />
+      <RatingReasons answers={answers} errors={errors} set={set} />
       <RatingGuide chosen={chosen} />
     </div>
   );

@@ -2153,3 +2153,11 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - On `/staff/sponsors`, after the review queue: `PlacementsSection` shows the fill order, `PlacementGrid` (every slot against the next six weeks from `admin_ad_placements()`, with "Preview with the ad network on"), `BookSlotForm`, `BookingList` and `HouseAdsSection`.
 - One click: "Check and book" → `BookSlotForm` → `usePlacementChanges()` → `api/placements.ts` `bookSlot()` → `admin_book_ad_slot()` (locks the slot, refuses a clash with the booking already there in the error's detail, writes the audit log) → `ad_bookings`; everything under Sponsors is read again, so the grid shows Booked.
 - Folder guide: `src/features/sponsors/README.md`. Tests: `src/features/sponsors/lib/placementWords.test.ts`, `e2e/sponsor-placements.spec.ts`.
+
+## Why a story is 16+ or 18+, and the network ads it keeps off (S1-E3-06, S1-E12-04; SPONSORS-f)
+
+- Column `stories.rating_reasons` (enum `story_rating_reason`: sexual content, nudity, graphic violence, strong language, drugs, self-harm, dark themes). The trigger `story_rating_reasons_fit_rating()` empties it below 16+.
+- The writer ticks the reasons in `RatingReasons` (under the rating chips in `StoryLabelsSection`); `labelRules` in `src/schemas/story.ts` asks for at least one for 16+ and 18+, and picking 18+ with none ticked starts on "Sexual content". Saved through `create_story()` and `update_my_story()`, checked by `check_story_labels()`.
+- Staff change them in `StaffRatingReasons` (Staff › Stories › a story › Settings) through `admin_change_story_settings()`, versioned and logged like any setting.
+- One click on a story page: `page_ads()` → `fill_ad_slot()` asks `network_ads_barred()`; a story with sexual content, nudity or graphic violence ticked skips the network step, so our own ads fill the slot. Sponsors are not affected.
+- Migration `…_sponsors_f_rating_reasons.sql`. Tests: `supabase/tests/database/276-rating-reasons.test.sql`, `src/schemas/story.test.ts`, `src/features/staff/lib/staffStorySettingsDiff.test.ts`.

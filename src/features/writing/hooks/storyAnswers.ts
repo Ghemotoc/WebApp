@@ -7,7 +7,12 @@
  * Why one type: the sections are the same on both screens (the basics, category and tags, the
  * cover), so they take one shape and don't care which screen they are on.
  */
-import type { AiDisclosure, StoryCoverChoice, StoryRating } from '@/schemas/story';
+import type {
+  AiDisclosure,
+  StoryCoverChoice,
+  StoryRating,
+  StoryRatingReason,
+} from '@/schemas/story';
 
 /** Every answer a story form can hold. */
 export interface StoryAnswers {
@@ -39,6 +44,8 @@ export interface StoryAnswers {
   contentNote: string;
   /** The AI answer (Q24); null until the writer picks one (required). */
   aiDisclosure: AiDisclosure | null;
+  /** Why it is 16+ or 18+ (SPONSORS-f); at least one for those ratings, none below. */
+  ratingReasons: StoryRatingReason[];
 }
 
 /** Changes one answer. */

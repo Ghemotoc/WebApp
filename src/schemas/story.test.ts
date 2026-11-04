@@ -17,6 +17,7 @@ const good = {
   isFanFiction: false,
   isParody: false,
   dealsWithAbuseOrCoercion: false,
+  ratingReasons: [],
   contentNote: '',
   aiDisclosure: 'no_ai',
 } as const;
@@ -62,7 +63,7 @@ describe('newStorySchema', () => {
   });
 
   it('a story about abuse or coercion needs 16+ or 18+ and a content note', () => {
-    const abuse = { ...good, dealsWithAbuseOrCoercion: true };
+    const abuse = { ...good, dealsWithAbuseOrCoercion: true, ratingReasons: ['dark_themes'] };
     expect(issuesOf({ ...abuse, rating: '13_plus' })).toContainEqual([
       'rating',
       'errors.abuseNeedsRating',
@@ -73,6 +74,19 @@ describe('newStorySchema', () => {
     ]);
     expect(issuesOf({ ...abuse, rating: '16_plus', contentNote: 'Abuz în familie.' })).toEqual([]);
     expect(issuesOf({ ...abuse, rating: '18_plus', contentNote: 'Abuz în familie.' })).toEqual([]);
+  });
+
+  it('a 16+ or 18+ story says why: at least one reason from the list (SPONSORS-f)', () => {
+    expect(issuesOf({ ...good, rating: '16_plus' })).toContainEqual([
+      'ratingReasons',
+      'errors.ratingReasonsMissing',
+    ]);
+    expect(issuesOf({ ...good, rating: '18_plus', ratingReasons: ['sexual_content'] })).toEqual([]);
+    expect(issuesOf({ ...good, rating: '16_plus', ratingReasons: ['romance'] }).length).toBe(1);
+  });
+
+  it('asks for no reason below 16+', () => {
+    expect(issuesOf({ ...good, rating: '13_plus' })).toEqual([]);
   });
 
   it('refuses a content note over 300 characters, on both forms', () => {

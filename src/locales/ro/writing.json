@@ -147,7 +147,8 @@
     "abuseNeedsRating": "O poveste despre abuz sau constrângere trebuie clasificată 16+ sau 18+.",
     "abuseNeedsNote": "Adaugă o notă de conținut pentru o poveste despre abuz sau constrângere.",
     "contentNoteTooLong": "O notă de conținut poate avea cel mult {{max}} caractere.",
-    "chapterCreateFailed": "Povestea a fost salvată, dar nu am putut deschide capitolul unu. Deschide-l din Scrierile tale."
+    "chapterCreateFailed": "Povestea a fost salvată, dar nu am putut deschide capitolul unu. Deschide-l din Scrierile tale.",
+    "ratingReasonsMissing": "Bifează cel puțin un motiv pentru care e 16+ sau 18+."
   },
   "storyCard": {
     "settings": "Setările poveștii",
@@ -255,6 +256,17 @@
       }
     },
     "guideRule": "La orice clasificare: fără conținut sexual cu persoane sub 18 ani, reale sau fictive. Nu ești sigur? Alege clasificarea mai mare; echipa noastră o poate schimba dacă un cititor o raportează.",
+    "reasons": "De ce este {{rating}}?",
+    "reasonsHint": "Bifează tot ce se potrivește.",
+    "reasonNames": {
+      "sexual_content": "Conținut sexual",
+      "nudity": "Nuditate",
+      "graphic_violence": "Violență explicită",
+      "strong_language": "Limbaj vulgar",
+      "drugs": "Droguri",
+      "self_harm": "Autovătămare",
+      "dark_themes": "Teme întunecate"
+    },
     "ai": "Ai folosit AI?",
     "aiHint": "Apare ca etichetă pe povestea ta. Dacă cineva raportează o etichetă lipsă, decide o persoană din echipa noastră. Nu folosim niciodată detectoare de AI ca să judecăm ce scrii.",
     "previewBanner": "{{rating}}: ascunsă de cititorii sub {{age}} ani"

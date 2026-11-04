@@ -70,6 +70,26 @@ export const aiDisclosures = ['no_ai', 'ai_brainstorming', 'partly_ai_written'] 
 /** An AI answer as stored. */
 export type AiDisclosure = Database['public']['Enums']['ai_disclosure'];
 
+/**
+ * Why a story is 16+ or 18+ (SPONSORS-f; Robert, 2 Nov 2026), in the form's order. The database
+ * enum story_rating_reason holds the same list.
+ */
+export const storyRatingReasons = [
+  'sexual_content',
+  'nudity',
+  'graphic_violence',
+  'strong_language',
+  'drugs',
+  'self_harm',
+  'dark_themes',
+] as const satisfies readonly Database['public']['Enums']['story_rating_reason'][];
+
+/** One reason as stored. */
+export type StoryRatingReason = Database['public']['Enums']['story_rating_reason'];
+
+/** The ratings that need reasons (SPONSORS-f). */
+export const ratingsWithReasons: readonly StoryRating[] = ['16_plus', '18_plus'];
+
 /** The content note's limit (S1-E3-06). */
 export const MAXIMUM_CONTENT_NOTE_LENGTH = 300;
 
@@ -88,16 +108,32 @@ const storyLabelsShape = {
   dealsWithAbuseOrCoercion: z.boolean(),
   contentNote: z.string().trim().max(MAXIMUM_CONTENT_NOTE_LENGTH, 'errors.contentNoteTooLong'),
   aiDisclosure: z.enum(aiDisclosures, { error: 'errors.aiRequired' }),
+  // Why it is 16+ or 18+ (SPONSORS-f); the rules below ask for at least one then.
+  ratingReasons: z.array(z.enum(storyRatingReasons)),
 };
 
+/** The labels the rules that span fields read. */
+interface LabelsForRules {
+  dealsWithAbuseOrCoercion: boolean;
+  rating: StoryRating;
+  contentNote: string;
+  ratingReasons: StoryRatingReason[];
+}
+
 /**
- * The rules that span fields: abuse or coercion as a theme needs 16+ or 18+ and a content note
- * (17 Oct 2026, 10:36). Applied last, because zod drops refinements when a schema is extended.
+ * The rules that span fields: 16+ and 18+ say why (SPONSORS-f), and abuse or coercion as a theme
+ * needs 16+ or 18+ and a content note (17 Oct 2026, 10:36). Applied last, because zod drops
+ * refinements when a schema is extended.
  */
-function labelRules(
-  labels: { dealsWithAbuseOrCoercion: boolean; rating: StoryRating; contentNote: string },
-  context: z.RefinementCtx,
-) {
+function labelRules(labels: LabelsForRules, context: z.RefinementCtx) {
+  // Step 0: a 16+ or 18+ story says why (Robert, 2 Nov 2026; network ads read the reasons).
+  if (ratingsWithReasons.includes(labels.rating) && labels.ratingReasons.length === 0) {
+    context.addIssue({
+      code: 'custom',
+      path: ['ratingReasons'],
+      message: 'errors.ratingReasonsMissing',
+    });
+  }
   if (!labels.dealsWithAbuseOrCoercion) return;
   // Step 1: abuse or coercion as a theme needs the 16+ or 18+ rating.
   if (!ratingsAllowingAbuseTheme.includes(labels.rating)) {
