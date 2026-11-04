@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { qrModulesFor, qrPathFor } from './qrModules';
 
-const link = 'https://ghemotoc.example/spaces/join?code=ABCD-EFGH-JKLM';
+const link = 'https://site.example/class/ABCD-EFGH-JKLM';
 
 describe('qrModulesFor', () => {
   it('makes a square code with the three corner finder squares', () => {
