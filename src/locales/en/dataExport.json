@@ -169,8 +169,22 @@
       "chapterWithTitle": "Chapter {{number}}: {{title}}",
       "pictureMissing": "Picture: {{alt}}",
       "embedLine": "Music or video: {{title}}",
-      "embedMissing": "A music or video card that is no longer available"
-    }
+      "embedMissing": "A music or video card that is no longer available",
+      "sample": {
+        "label": "Sample",
+        "holds": "This sample holds:"
+      },
+      "about": {
+        "heading": "About the writer",
+        "linkLine": "More from {{name}}:"
+      }
+    },
+    "sampleHeading": "A sample EPUB for beta readers",
+    "sampleIntro": "Make an e-book of only the chapters you ticked above, marked as a sample. Only published chapters go in.",
+    "sampleOpen": "Make a sample EPUB",
+    "sampleDialogHeading": "A sample EPUB of {{title}}",
+    "aboutLabel": "Add an About the writer page",
+    "aboutHint": "Your public bio and a link to your profile, at the back of the book."
   },
   "library": {
     "shelf": "Shelf",

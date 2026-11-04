@@ -2179,3 +2179,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - "Download your stories first": `DownloadStoriesFirst` (data-export) inside `DeleteAccountConfirm` makes every story's files with Download my stories' defaults, without leaving the delete step; it shows only to someone with stories.
 - "How long we keep things": `HowLongWeKeep` at the foot of Settings › Privacy → `useRetentionPeriods()` → `retention_periods()`, which reads the same settings the clean-up jobs use, so a staff change shows at once.
 - Migration `…_ideas2_a_how_long_we_keep.sql`. Tests: `supabase/tests/database/279-retention-periods.test.sql`, `src/features/data-export/lib/exportGuide.test.ts`, `e2e/downloads-and-privacy.spec.ts`.
+
+## A sample EPUB for beta readers and "About the writer" (IDEAS-2b)
+
+- In Download my stories, one story with "Only the chapters I choose" and at least one chapter ticked shows a second `EpubSection` in sample mode (`sampleChapterIds`). `EpubDialog` passes the chapters on in `EpubForm.chapterIds`, with `withAboutWriter` from its "Add an About the writer page" checkbox.
+- `makeEpub()` (`runEpub.ts`) accepts any of the writer's stories for a sample, keeps each chapter's number in the story, names the file `<slug>-sample.epub` and fills `sample` and `aboutWriter` on the book. `buildEpub()` (`src/lib/epub`) prints the sample's label and chapter list on the title and copyright pages, and adds `about.xhtml` after the chapters.
+- Tests: `src/lib/epub/buildEpub.test.ts`, `src/features/data-export/lib/runEpub.test.ts`, `e2e/sample-epub.spec.ts`.

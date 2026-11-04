@@ -1,10 +1,17 @@
 /**
  * Makes the EPUB of a completed story for its writer, start to finish (story S1-E13-05, PRIVACY
- * part f; Robert, 1 Nov 2026, 06:31 to 06:40).
+ * part f; Robert, 1 Nov 2026, 06:31 to 06:40), or a sample of the chapters the writer picks, for
+ * beta readers (bundle IDEAS-2, part b; idea IDEA-20261101-3; Robert, 2 Nov 2026, 22:00: any
+ * chapters, as many or as few as they like, of an ongoing or finished story).
  *
  * The rules:
- * - only the writer, only a Completed story (the block offers it only then, and this checks
- *   again); the data comes from the writer's own data file, so nobody else's can be read;
+ * - only the writer; the whole book only for a Completed story (the block offers it only then,
+ *   and this checks again), a sample for any of their stories; the data comes from the writer's
+ *   own data file, so nobody else's can be read;
+ * - a sample keeps each chapter's number in the story ("Chapter 3"), says "Sample" on its title
+ *   and copyright pages with the chapters it holds, and is saved as "<slug>-sample.epub";
+ * - "About the writer" at the back only when the writer ticked it (idea IDEA-20261101-4): the
+ *   public bio and a link to the public profile, nothing that isn't already public;
  * - only the published chapters, in reading order, never the Atlas (06:33) and never a draft
  *   (a proposal: the book is what readers can read);
  * - the name on the book is what the writer typed in the form (06:34: the pen name or any name);
@@ -29,7 +36,14 @@ import { fetchStoryCoverPicture } from '@/features/pictures/api/pictures';
 import { brand } from '@/config/brand';
 import { pictureIdsIn } from '@/lib/chapter-pictures';
 import { buildEpub } from '@/lib/epub/buildEpub';
-import type { EpubChapter, EpubEmbed, EpubImage, EpubWords } from '@/lib/epub/epubTypes';
+import type {
+  EpubAboutWriter,
+  EpubChapter,
+  EpubEmbed,
+  EpubImage,
+  EpubSample,
+  EpubWords,
+} from '@/lib/epub/epubTypes';
 import { formatRomaniaDate } from '@/lib/romania-time';
 import type { AppSupabaseClient } from '@/lib/supabase';
 import type { WordPicture } from '@/lib/word/wordTypes';
@@ -54,6 +68,10 @@ export interface EpubForm {
   name: string;
   title: string;
   cover: EpubCoverChoice;
+  /** The chapters of a sample, by ID; null for the whole book (IDEAS-2b). */
+  chapterIds: string[] | null;
+  /** True when "Add an About the writer page" is ticked (IDEAS-2b). */
+  withAboutWriter: boolean;
 }
 
 /** The ways a cover is drawn: the browser's canvas by default, fakes in tests. */
@@ -203,23 +221,69 @@ function embedsOf(document: DataExportDocument): Map<string, EpubEmbed> {
   );
 }
 
-/** The writer's live story, or a plain error when it isn't theirs or isn't completed. */
-function completedStoryIn(document: DataExportDocument): ExportedStory {
+/**
+ * The writer's live story, or a plain error when it isn't theirs, or when the whole book is asked
+ * for a story that isn't completed (a sample may come from any of their stories, IDEAS-2b).
+ */
+function storyForBook(document: DataExportDocument, isSample: boolean): ExportedStory {
   const story = (document.tables.stories ?? []).find((row) => row.deleted_at === null);
   if (story === undefined) throw new Error('This story is not one of yours.');
-  if (story.completion_status !== 'completed') {
+  if (!isSample && story.completion_status !== 'completed') {
     throw new Error('Only a completed story can be made into an EPUB.');
   }
   return story;
 }
 
 /**
+ * The chapters for the book, numbered by their place in the story: every published one, or for a
+ * sample only the chosen ones, keeping their numbers ("Chapter 3" stays chapter 3).
+ *
+ * @returns the chapters, first to last
+ */
+function chaptersForBook(document: DataExportDocument, options: EpubRunOptions): EpubChapter[] {
+  const chosen = options.form.chapterIds === null ? null : new Set(options.form.chapterIds);
+  return publishedChapters(document)
+    .map((chapter, index) => ({ chapter, number: index + 1 }))
+    .filter(({ chapter }) => chosen === null || chosen.has(chapter.id))
+    .map(({ chapter, number }) => chapterForBook(chapter, number, options.bookText));
+}
+
+/** A sample's words, or null for the whole book (IDEAS-2b). */
+function sampleFor(options: EpubRunOptions): EpubSample | null {
+  if (options.form.chapterIds === null) return null;
+  return {
+    label: options.bookText('epub.book.sample.label'),
+    holdsLine: options.bookText('epub.book.sample.holds'),
+  };
+}
+
+/**
+ * "About the writer" from the writer's public bio and profile, or null when it isn't ticked
+ * (IDEAS-2b). The bio and the username are already public, so nothing new is shared.
+ */
+function aboutWriterFor(
+  document: DataExportDocument,
+  options: EpubRunOptions,
+): EpubAboutWriter | null {
+  if (!options.form.withAboutWriter) return null;
+  const profile = document.account.profile;
+  const bio = profile?.bio ?? '';
+  return {
+    heading: options.bookText('epub.book.about.heading'),
+    bio,
+    linkLine: options.bookText('epub.book.about.linkLine', { name: options.form.name }),
+    profileUrl: `${brand.siteUrl}/u/${encodeURIComponent(profile?.handle ?? '')}`,
+  };
+}
+
+/**
  * Makes the book.
  *
  * @param options - the client, the story, the form and the book's words
- * @returns the file name ("<slug>.epub") and its bytes, to save on the device
- * @throws Error with a plain message when the story isn't the writer's, isn't completed, has no
- *   published chapter, or a step fails
+ * @returns the file name ("<slug>.epub", or "<slug>-sample.epub" for a sample) and its bytes, to
+ *   save on the device
+ * @throws Error with a plain message when the story isn't the writer's, the whole book is asked
+ *   for a story that isn't completed, there is no published chapter to put in, or a step fails
  */
 export async function makeEpub(options: EpubRunOptions): Promise<EpubFile> {
   const madeAt = options.madeAt ?? new Date();
@@ -228,12 +292,11 @@ export async function makeEpub(options: EpubRunOptions): Promise<EpubFile> {
     storyId: options.storyId,
     chapterIds: null,
   });
-  const story = completedStoryIn(document);
-  // Step 2: the published chapters, numbered in reading order.
-  const chapters = publishedChapters(document).map((chapter, index) =>
-    chapterForBook(chapter, index + 1, options.bookText),
-  );
-  if (chapters.length === 0) throw new Error('This story has no published chapter yet.');
+  const isSample = options.form.chapterIds !== null;
+  const story = storyForBook(document, isSample);
+  // Step 2: the published chapters, numbered in reading order; a sample keeps only its own.
+  const chapters = chaptersForBook(document, options);
+  if (chapters.length === 0) throw new Error('There is no published chapter to put in the book.');
   // Steps 3 and 4: the pictures and the cover, drawn here in the browser.
   const pictures = await loadPictures(document, chapters, options);
   const cover = await coverFor(story, options);
@@ -249,7 +312,9 @@ export async function makeEpub(options: EpubRunOptions): Promise<EpubFile> {
     pictures,
     embeds: embedsOf(document),
     words: bookWords(options, madeAt),
+    sample: sampleFor(options),
+    aboutWriter: aboutWriterFor(document, options),
   });
   const slug = story.slug.replace(/[^a-z0-9-]/gi, '-') || 'story';
-  return { fileName: `${slug}.epub`, bytes };
+  return { fileName: isSample ? `${slug}-sample.epub` : `${slug}.epub`, bytes };
 }

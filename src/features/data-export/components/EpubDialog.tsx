@@ -5,7 +5,9 @@
  * Top to bottom: the heading, a line saying the details stay on this device, "Name on the book"
  * (filled in with the pen name, or the username when there is none; any name is fine, the legal
  * one too, and it is typed each time because we never keep it: rule 5), "Title" (filled in from
- * the story), the cover (EpubCoverField), then "Cancel" and "Make EPUB". While the book is made
+ * the story), the cover (EpubCoverField), "Add an About the writer page" (off unless ticked,
+ * IDEAS-2b), then "Cancel" and "Make EPUB". For a sample of chosen chapters (IDEAS-2b) the heading
+ * says so; the form is otherwise the same. While the book is made
  * the button is disabled and a status line says so; a failure shows a plain message and the form
  * stays filled in. A native <dialog>, so focus stays inside and Escape closes it.
  * Who shows it: EpubSection. What it calls: EpubCoverField and the make() it is given
@@ -27,6 +29,8 @@ import { EpubCoverField } from './EpubCoverField';
 export interface EpubDialogProps {
   isOpen: boolean;
   story: EpubStory;
+  /** The chapters of a sample, by ID; null for the whole book (IDEAS-2b). */
+  sampleChapterIds: string[] | null;
   /** The pen name, or the username, to fill the name in with. */
   suggestedName: string;
   state: EpubState;
@@ -38,12 +42,18 @@ export interface EpubDialogProps {
 type FormProblem = 'noName' | 'noTitle' | 'noFile' | null;
 
 /** The form's values and what is wrong with them. */
-function useEpubFormValues(story: EpubStory, suggestedName: string) {
+function useEpubFormValues(
+  story: EpubStory,
+  suggestedName: string,
+  sampleChapterIds: string[] | null,
+) {
   const [name, setName] = useState(suggestedName);
   const [title, setTitle] = useState(story.title);
   const [usesFile, setUsesFile] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [problem, setProblem] = useState<FormProblem>(null);
+  // "About the writer" stays off unless the writer ticks it (idea IDEA-20261101-4).
+  const [withAboutWriter, setWithAboutWriter] = useState(false);
 
   /** Checks the values; returns the form to send, or null after showing what to fix. */
   function checked(): EpubForm | null {
@@ -55,10 +65,29 @@ function useEpubFormValues(story: EpubStory, suggestedName: string) {
     if (found !== null) return null;
     const cover =
       usesFile && file !== null ? { kind: 'file' as const, file } : { kind: 'story' as const };
-    return { name: name.trim(), title: title.trim(), cover };
+    return {
+      name: name.trim(),
+      title: title.trim(),
+      cover,
+      chapterIds: sampleChapterIds,
+      withAboutWriter,
+    };
   }
 
-  return { name, setName, title, setTitle, usesFile, setUsesFile, file, setFile, problem, checked };
+  return {
+    name,
+    setName,
+    title,
+    setTitle,
+    usesFile,
+    setUsesFile,
+    file,
+    setFile,
+    withAboutWriter,
+    setWithAboutWriter,
+    problem,
+    checked,
+  };
 }
 
 /** The status line under the form: making, or failed. */
@@ -113,7 +142,39 @@ function EpubFields({
         onFileChange={values.setFile}
         errorMessage={values.problem === 'noFile' ? t('epub.problems.noFile') : undefined}
       />
+      <AboutWriterChoice isChecked={values.withAboutWriter} onChange={values.setWithAboutWriter} />
     </>
+  );
+}
+
+/** "Add an About the writer page", a real checkbox with its hint (IDEAS-2b). */
+function AboutWriterChoice({
+  isChecked,
+  onChange,
+}: {
+  isChecked: boolean;
+  onChange: (isChecked: boolean) => void;
+}) {
+  const { t } = useDataExportTranslation();
+  return (
+    <div className="flex min-h-11 items-start gap-3">
+      <input
+        id="epub-about-writer"
+        type="checkbox"
+        className="mt-0.5 h-5 w-5 shrink-0"
+        aria-describedby="epub-about-writer-hint"
+        checked={isChecked}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      <div className="flex flex-col gap-0.5">
+        <label htmlFor="epub-about-writer" className="text-[15px] font-semibold text-heading">
+          {t('epub.aboutLabel')}
+        </label>
+        <span id="epub-about-writer-hint" className="text-sm text-meta">
+          {t('epub.aboutHint')}
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -125,6 +186,7 @@ function EpubFields({
 export function EpubDialog({
   isOpen,
   story,
+  sampleChapterIds,
   suggestedName,
   state,
   onMake,
@@ -132,7 +194,8 @@ export function EpubDialog({
 }: EpubDialogProps) {
   const { t } = useDataExportTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const values = useEpubFormValues(story, suggestedName);
+  const values = useEpubFormValues(story, suggestedName, sampleChapterIds);
+  const headingKey = sampleChapterIds === null ? 'epub.dialogHeading' : 'epub.sampleDialogHeading';
   const isMaking = state.phase === 'making';
 
   // Open and close the native dialog with isOpen.
@@ -163,7 +226,7 @@ export function EpubDialog({
           id="epub-dialog-heading"
           className="m-0 font-heading text-[26px] leading-[1.15] font-bold text-heading"
         >
-          {t('epub.dialogHeading', { title: story.title })}
+          {t(headingKey, { title: story.title })}
         </h2>
         <p id="epub-dialog-intro" className="m-0 text-base leading-relaxed text-body">
           {t('epub.dialogIntro')}

@@ -150,7 +150,7 @@ export interface DataExportDocument {
   format: string;
   made_at: string;
   user_id: string;
-  account: { profile: Pick<Tables<'profiles'>, 'handle' | 'pen_name'> | null } & Record<
+  account: { profile: Pick<Tables<'profiles'>, 'handle' | 'pen_name' | 'bio'> | null } & Record<
     string,
     unknown
   >;
