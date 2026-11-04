@@ -38,6 +38,7 @@ import { Link, useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { useReadingMinutes } from '@/features/reading-habit/hooks/useReadingMinutes';
 import { QuoteShareWatcher } from '@/features/sharing/components/QuoteShareWatcher';
 import type { SharedChapter } from '@/features/sharing/lib/sharedChapter';
@@ -48,7 +49,6 @@ import { cn } from '@/lib/utils';
 import type { ReaderChapter } from '../api/chapter';
 import type { ParagraphPlace } from '../api/paragraphComments';
 import { useChapter } from '../hooks/useChapter';
-import { useChapterBanner } from '../hooks/useChapterBanner';
 import { useLinkedParagraphThread } from '../hooks/useLinkedParagraphThread';
 import { useParagraphCommentCounts } from '../hooks/useParagraphCommentCounts';
 import { useReadingLook } from '../hooks/useReadingLook';
@@ -59,7 +59,6 @@ import { useStoryPreview } from '../hooks/useStoryPreview';
 import { ParagraphCommentsContext, type ParagraphComments } from '../lib/paragraphCommentsContext';
 import { toSharedChapter } from '../lib/toSharedChapter';
 
-import { ChapterBannerSlot } from './ChapterBannerSlot';
 import { ChapterBar } from './ChapterBar';
 import { ChapterComments } from './ChapterComments';
 import { ChapterEnd } from './ChapterEnd';
@@ -226,17 +225,22 @@ function useParagraphComments(chapter: ReaderChapter, hasText: boolean): Paragra
 }
 
 /**
- * What follows the chapter: the copy notice, the "Share quote" watcher, the banner slot (never
+ * What follows the chapter: the copy notice, the "Share quote" watcher, the ad slot (S1-E12-01; never
  * inside the text, S1-E4-01b) and the comments (S1-E6-01).
  */
 function UnderTheChapter(props: { chapter: ReaderChapter; sharedChapter: SharedChapter }) {
   const { chapter, sharedChapter } = props;
-  const { banner } = useChapterBanner(chapter.story.slug);
   return (
     <>
       <CopyNotice penName={chapter.story.writer.displayName} />
       <QuoteShareWatcher chapter={sharedChapter} />
-      <ChapterBannerSlot banner={banner} />
+      {/* S1-E12-01: one slot, below the chapter and outside its text, chosen from the page only. */}
+      <PageAdSlot
+        pageKey="chapter"
+        position={1}
+        context={{ storySlug: chapter.story.slug, language: chapter.story.languageCode }}
+        className="mx-auto mt-10 flex w-full max-w-[760px] justify-center"
+      />
       <div className="mx-auto w-full max-w-[760px]">
         <ChapterComments address={{ storySlug: chapter.story.slug, chapterCode: chapter.code }} />
       </div>

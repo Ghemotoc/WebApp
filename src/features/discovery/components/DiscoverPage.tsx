@@ -13,11 +13,12 @@
  * personalised feed in Stage 1; S1-E5-09's legal note).
  * Popular ranks by totals only (reads, likes, comments; never downvotes), the same for everyone.
  * A signed-in reader first sees GreetingLine (S1-E2-13: good morning, or their birthday or joining
- * anniversary). The board's featured story, continue reading, draft card, ad slot, "Popular in your
- * area" and "Writers to follow" come with their own stories (S1-E4-03, S1-E12-01) or after
+ * anniversary). The wide ad slot sits after the first shelf (S1-E12-01; board 3.1). The board's
+ * featured story, continue reading, draft card, "Popular in your area" and "Writers to follow" come with their own stories (S1-E4-03) or after
  * March, so they aren't drawn. Search (S1-E5-04) is after March.
  * What it calls: GreetingLine, SeasonalDoodle (S1-E5-07), SearchForm (S1-E5-04), DiscoverShelf (useStoryShelf → browse_stories()) and CategoryLinks.
  */
+import { Fragment } from 'react';
 import { Link } from 'react-router';
 
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -25,6 +26,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
 import { SeasonalDoodle } from '@/features/seasonal/components/SeasonalDoodle';
@@ -160,8 +162,13 @@ function DiscoverShelves() {
   const words = [...new Set(wordsOf('discover_shelves', defaultShelfOrder))];
   return (
     <div className="flex flex-col gap-14">
-      {words.map((word) => (
-        <ShelfFromSetting key={word} word={word} isSignedIn={userId !== null} />
+      {words.map((word, index) => (
+        <Fragment key={word}>
+          <ShelfFromSetting word={word} isSignedIn={userId !== null} />
+          {/* The wide ad slot comes after the first shelf, so the reader meets stories first
+              (S1-E12-01). Discover is about every category, so it sends no context. */}
+          {index === 0 && <PageAdSlot pageKey="discover" position={1} />}
+        </Fragment>
       ))}
     </div>
   );

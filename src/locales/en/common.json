@@ -64,7 +64,8 @@
     "regionLabel": "Advertisement",
     "labelAd": "Ad",
     "labelSponsored": "Sponsored",
-    "whyThisAd": "Why this ad?"
+    "whyThisAd": "Why this ad?",
+    "labelHouse": "From us"
   },
   "staff": {
     "pill": "Staff",

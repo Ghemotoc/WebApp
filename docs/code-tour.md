@@ -57,6 +57,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/contact/` | "Write to us": the Contact us form, through our own Pages Function and Brevo; see its README | S1-E14-04 |
 | `src/features/notices/` | "Report illegal content": the public report form and the authorities' removal-order contact point, through our own Pages Function; see its README | S1-E10-02 |
 | `src/features/safety/` | "Is someone in danger right now?": the helplines for the reader's country, on the report dialog and the contact page; see its README | S1-E10-13a |
+| `src/features/ads/` | The ad slots of public pages (`<PageAdSlot pageKey position context>`), filled by `page_ads()` from the page's context only, with "Why this ad?"; see its README | S1-E12-01 |
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
 | `src/features/flags/` | The public feature flags for screens that change with them (`useFeatureFlags`) | S1-E2-01 |
@@ -2099,3 +2100,10 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - The copy: built as in c2; `admin_finish_data_request_copy()` sends the person no notice on this path and `my_data_requests()` hides the files. `useDataRequestCopy` then calls `POST /api/data-request-parent/send` → `admin_send_data_request_parent_copy()` (a second signed token) → the one-time link email. "Send the link again" (`DataRequestParentLink`) makes a new one.
 - Opening: "Open the files" → `open_data_request_parent_copy()`; the first opening starts one hour (proposal), during which policy `exports_select_parent_link` lets the files download signed out (`ParentCopyPanel` → `ExportDownloadButton`).
 - Migration `…_admin2_c3_data_request_parent.sql`. Tests: `supabase/tests/database/244-data-request-parent.test.sql`, `server/data-request-parent.test.ts`, `src/features/data-requests/api/dataRequestParent.test.ts`, `e2e/data-requests.spec.ts`.
+
+## Ad slots on public pages (S1-E12-01; SPONSORS-a1)
+
+- Where: the chapter's end, the story page (under the chapter list), Discover (after the first shelf) and Library (after the shelves); part a2 places the rest. Each page puts one `<PageAdSlot>` per slot with its page key, the slot's position (1 or 2, never more: decided 17 Oct 2026, 11:53) and what the page is about (category, tag, language; the story or space only to keep class pages free of ads, Q70).
+- One read: `PageAdSlot` → `usePageAds` → `api/ads.ts` `fetchPageAds()` → `page_ads(page_key, context)` (security definer; reads `ad_slots`, `ads_are_barred()`, `house_ad_candidates()`). Nothing about the reader is sent or read, so a signed-out visitor and a signed-in reader see the same ads.
+- Until sponsors (part b) and the network (part d) exist, every slot holds a house ad: a live landing page of ours first, then "Start writing", "Read the classics" or "Open the forums" (never the one for the page itself), in an order that changes daily and per page. `AdBox` draws the label ("From us"), the creative (`HouseAdCreative`) and "Why this ad?" (`lib/whyThisAd.ts`).
+- Migration `…_sponsors_a1_ad_slots.sql`. Tests: `supabase/tests/database/270-ad-slots.test.sql`, `src/features/ads/lib/whyThisAd.test.ts`, `src/features/ads/api/ads.test.ts`, `e2e/ads.spec.ts`.

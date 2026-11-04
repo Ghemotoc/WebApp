@@ -9,8 +9,8 @@
  * "Report this story". The owner sees a note while nothing is published yet. What joins later:
  * the chapter list, "Start reading" and "Updated" (S1-E3-03), the rating pill, labels and content
  * note (S1-E3-06), Follow, Library and Like (S1-E6-05, S1-E4-03, S1-E6-03), the writer card's
- * numbers and "See profile" (S1-E5-05), the breadcrumb (S1-E5-01), the ad slot (S1-E12-01),
- * "Web and app" (S1-E3-08), "The story's world" (the plan's public parts, S1-E17-33). Doodles:
+ * numbers and "See profile" (S1-E5-05), the breadcrumb (S1-E5-01), the wide ad slot under the
+ * chapter list (S1-E12-01; none on a class-only story, Q70), "Web and app" (S1-E3-08), "The story's world" (the plan's public parts, S1-E17-33). Doodles:
  * the music notes by the header and the mug and mushroom by
  * the side column, as on the board; the chapter card's book and puppy come with the list.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
@@ -24,6 +24,7 @@ import { Link, useParams } from 'react-router';
 import { Doodle } from '@/components/ui/Doodle';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import { useStoryPage } from '../hooks/useStoryPage';
 import { useStoryPreview } from '../hooks/useStoryPreview';
@@ -65,6 +66,31 @@ function StoryMissing({ storySlug }: { storySlug: string }) {
       <title>{t('storyPage.unavailableTitle')}</title>
       <StoryUnavailable />
     </>
+  );
+}
+
+/**
+ * The page's one ad slot, chosen from the story's category and language only (S1-E12-01); the
+ * server leaves it out on a class-only story (Q70).
+ *
+ * @param props.story - the story the page shows
+ * @returns the slot, or nothing
+ */
+function StoryAdSlot({
+  story,
+}: {
+  story: { slug: string; categorySlug: string; languageCode: string };
+}) {
+  return (
+    <PageAdSlot
+      pageKey="story"
+      position={1}
+      context={{
+        storySlug: story.slug,
+        category: story.categorySlug,
+        language: story.languageCode,
+      }}
+    />
   );
 }
 
@@ -114,6 +140,7 @@ export function StoryPage() {
           />
           {/* The parts of the plan the writer shares (S1-E17-33). */}
           <StoryWorldLinks storySlug={story.slug} />
+          <StoryAdSlot story={story} />
           {/* Beside the cover, in the space to its right: below the cover the pills and the
               title move with the story's state, so a doodle there would end up over them. */}
           <Doodle

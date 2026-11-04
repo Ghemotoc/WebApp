@@ -1,0 +1,30 @@
+{
+  "why": {
+    "button": "Why this ad?",
+    "ours": "This is one of our own pages.",
+    "matchesParts": "It matches this page: {{parts}}.",
+    "matchesPage": "It is chosen from this page only.",
+    "category": "category {{name}}",
+    "tag": "tag {{name}}",
+    "language": "language {{name}}",
+    "promise": "Ads are never personalised, for anyone. We don’t use your age, what you read before or your device."
+  },
+  "house": {
+    "from": "From {{productName}}",
+    "landing": {
+      "action": "Take a look"
+    },
+    "write": {
+      "title": "Every story starts with one line. Write yours.",
+      "action": "Start writing"
+    },
+    "classics": {
+      "title": "Romanian and world classics, free to read.",
+      "action": "Read the classics"
+    },
+    "forums": {
+      "title": "Talk about books and writing with other readers.",
+      "action": "Open the forums"
+    }
+  }
+}

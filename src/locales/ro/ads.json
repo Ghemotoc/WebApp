@@ -1,0 +1,30 @@
+{
+  "why": {
+    "button": "De ce văd această reclamă?",
+    "ours": "Este una dintre paginile noastre.",
+    "matchesParts": "Se potrivește cu această pagină: {{parts}}.",
+    "matchesPage": "Este aleasă doar după această pagină.",
+    "category": "categoria {{name}}",
+    "tag": "eticheta {{name}}",
+    "language": "limba {{name}}",
+    "promise": "Reclamele nu sunt niciodată personalizate, pentru nimeni. Nu folosim vârsta ta, ce ai citit înainte sau dispozitivul tău."
+  },
+  "house": {
+    "from": "De la {{productName}}",
+    "landing": {
+      "action": "Vezi pagina"
+    },
+    "write": {
+      "title": "Orice poveste începe cu un rând. Scrie-l pe al tău.",
+      "action": "Începe să scrii"
+    },
+    "classics": {
+      "title": "Clasici români și din lume, gratuit.",
+      "action": "Citește clasicii"
+    },
+    "forums": {
+      "title": "Vorbește despre cărți și scris cu alte persoane care citesc.",
+      "action": "Deschide forumurile"
+    }
+  }
+}

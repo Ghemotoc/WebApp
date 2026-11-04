@@ -141,6 +141,40 @@ export type Database = {
           },
         ];
       };
+      ad_slots: {
+        Row: {
+          created_at: string;
+          format: Database['public']['Enums']['ad_format'];
+          id: string;
+          is_on: boolean;
+          page_key: string;
+          position: number;
+          slot_key: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          format: Database['public']['Enums']['ad_format'];
+          id?: string;
+          is_on?: boolean;
+          page_key: string;
+          position: number;
+          slot_key: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          format?: Database['public']['Enums']['ad_format'];
+          id?: string;
+          is_on?: boolean;
+          page_key?: string;
+          position?: number;
+          slot_key?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       age_check_attempts: {
         Row: {
           created_at: string;
@@ -9423,6 +9457,7 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
       };
+      ads_are_barred: { Args: { context: Json }; Returns: boolean };
       age_band: {
         Args: Record<PropertyKey, never>;
         Returns: Database['public']['Enums']['age_band'];
@@ -10778,6 +10813,17 @@ export type Database = {
         };
         Returns: number;
       };
+      house_ad_candidates: {
+        Args: { page_key: string };
+        Returns: {
+          ad_key: string;
+          ad_rank: number;
+          kind: string;
+          page_slug: string;
+          title_en: string;
+          title_ro: string;
+        }[];
+      };
       insert_class_space: {
         Args: {
           banner: Database['public']['Enums']['space_banner'];
@@ -11754,6 +11800,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      page_ads: { Args: { context?: Json; page_key: string }; Returns: Json };
       paragraph_comment_counts: {
         Args: { chapter_code: string; story_slug: string };
         Returns: Json;
@@ -13509,6 +13556,8 @@ export type Database = {
         | 'legal_acceptance_required'
         | 'suspended'
         | 'banned';
+      ad_format: 'wide' | 'portrait' | 'side_box' | 'list_card';
+      ad_label: 'sponsored' | 'ad' | 'house';
       age_band: 'under_13' | '13_to_15' | '16_to_17' | '18_plus' | 'unknown';
       age_check_method: 'facial_estimation' | 'id_document' | 'manual';
       age_check_result: 'pending' | '13_or_over' | '18_or_over' | 'failed';
@@ -13856,6 +13905,8 @@ export const Constants = {
         'suspended',
         'banned',
       ],
+      ad_format: ['wide', 'portrait', 'side_box', 'list_card'],
+      ad_label: ['sponsored', 'ad', 'house'],
       age_band: ['under_13', '13_to_15', '16_to_17', '18_plus', 'unknown'],
       age_check_method: ['facial_estimation', 'id_document', 'manual'],
       age_check_result: ['pending', '13_or_over', '18_or_over', 'failed'],
