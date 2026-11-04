@@ -10,7 +10,8 @@
  * with S1-E3-03. The writer can go back to the automatic cover from here (S1-E3-13), and pick the
  * rank badges the cover shows (CMS-1g, RankBadgePicker). A student shares the story only with
  * their class, or makes it public again (StoryClassCard, bundle CLASSES, part c). A writer enters
- * the story in an open contest (StoryContestCard, S1-E11-15).
+ * the story in an open contest (StoryContestCard, S1-E11-15). A cover made in Canva in another
+ * tab shows up by itself when the writer comes back (ArrivedCoverNote, IDEAS-2d).
  * What it calls: useMyStories (the story), useStorySettingsForm (answers, checks,
  * update_my_story()), DeleteStoryControl (delete_my_story(), restore_my_story()).
  */
@@ -33,6 +34,7 @@ import { useMyStories } from '../hooks/useMyStories';
 import { useStoryFormOptions } from '../hooks/useStoryFormOptions';
 import { useStorySettingsForm } from '../hooks/useStorySettingsForm';
 
+import { ArrivedCoverNote } from './ArrivedCoverNote';
 import { CategoryTagsSection } from './CategoryTagsSection';
 import { CoverSection } from './CoverSection';
 import { DeleteStoryControl } from './DeleteStoryControl';
@@ -104,6 +106,9 @@ function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
         onChange={(cover) => form.set('cover', cover)}
         canUpload
       />
+      {form.arrivedCoverPath !== null && (
+        <ArrivedCoverNote story={{ id: story.id, slug: story.slug, title: story.title }} />
+      )}
       <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
       <StoryVisibilitySection answers={form.answers} set={form.set} />
       <StoryStatusSection answers={form.answers} set={form.set} />
