@@ -60,6 +60,19 @@ export function matchedPageParts(
 }
 
 /**
+ * The first sentence: who placed the ad, or nothing for a kind that doesn't say.
+ *
+ * @param t - the ads translation function
+ * @param ad - the slot's ad
+ * @returns the sentence with a space after it, or an empty string
+ */
+function whoPlacedIt(t: TFunction, ad: PageAdSlot['ad']): string {
+  if (ad?.label === 'house') return `${t('why.ours')} `;
+  if (ad?.label === 'sponsored') return `${t('why.sponsored', { name: ad.sponsor_name ?? '' })} `;
+  return '';
+}
+
+/**
  * The whole explanation.
  *
  * @param t - the ads translation function
@@ -69,8 +82,9 @@ export function matchedPageParts(
  */
 export function whyThisAd(t: TFunction, slot: PageAdSlot, readerLanguage: string): string {
   const parts = matchedPageParts(t, slot.matched, readerLanguage);
-  // Our own house ads say so first; sponsors and the network come in parts b and d.
-  const who = slot.ad?.label === 'house' ? `${t('why.ours')} ` : '';
+  // Who placed it comes first: our own pages, or a named sponsor (part b3); the network comes in
+  // part d.
+  const who = whoPlacedIt(t, slot.ad);
   const matches = parts === '' ? t('why.matchesPage') : t('why.matchesParts', { parts });
   return `${who}${matches} ${t('why.promise')}`;
 }

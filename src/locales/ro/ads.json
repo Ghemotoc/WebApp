@@ -7,7 +7,8 @@
     "category": "categoria {{name}}",
     "tag": "eticheta {{name}}",
     "language": "limba {{name}}",
-    "promise": "Reclamele nu sunt niciodată personalizate, pentru nimeni. Nu folosim vârsta ta, ce ai citit înainte sau dispozitivul tău."
+    "promise": "Reclamele nu sunt niciodată personalizate, pentru nimeni. Nu folosim vârsta ta, ce ai citit înainte sau dispozitivul tău.",
+    "sponsored": "Un sponsor, {{name}}, a plătit pentru această reclamă, iar cineva din echipa noastră a verificat că e potrivită pentru toți cititorii."
   },
   "house": {
     "from": "De la {{productName}}",
@@ -26,5 +27,16 @@
       "title": "Vorbește despre cărți și scris cu alte persoane care citesc.",
       "action": "Deschide forumurile"
     }
+  },
+  "sponsor": {
+    "from": "De la {{name}}",
+    "visit": "Vezi site-ul",
+    "newTab": "(se deschide într-o filă nouă)",
+    "code": "Cod",
+    "copy": "Copiază",
+    "copyLabel": "Copiază codul {{code}}",
+    "copied": "Copiat.",
+    "copyFailed": "Browserul nu a permis copierea. Selectează codul ca să-l copiezi.",
+    "by": "Sponsorizat de"
   }
 }

@@ -5,7 +5,10 @@
  * It shows the live version in the visitor's interface language (Romanian or English; the page
  * is always written in both), "has ended" from the take-down date, and the app's own Not found
  * page when there is no page to show (none, archived or not live yet).
- * Who shows it: the router. What it calls: usePublicLandingPage and LandingPageView.
+ * A contest's page also says "Sponsored by" when a sponsor's campaign credits the contest (bundle
+ * SPONSORS-b3; S1-E12-02 criterion 3).
+ * Who shows it: the router. What it calls: usePublicLandingPage, LandingPageView and
+ * SponsoredByLine.
  */
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -13,6 +16,7 @@ import { useParams } from 'react-router';
 import { NotFoundPage } from '@/app/shell/NotFoundPage';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { SponsoredByLine } from '@/features/ads/components/SponsoredByLine';
 
 import { usePublicLandingPage } from '../hooks/usePublicLandingPage';
 import { wordsOf } from '../lib/blocks';
@@ -50,8 +54,10 @@ export function LandingPageScreen() {
   const { page: published, extras } = page.data;
   const hero = published.content.blocks.find((block) => block.kind === 'hero');
   return (
-    <PageContainer className="pt-8 pb-12">
+    <PageContainer className="flex flex-col gap-4 pt-8 pb-12">
       <title>{hero === undefined ? t('documentTitle') : wordsOf(hero, language, 'title')}</title>
+      {/* A contest's sponsor, if it has one today; other page types never have a credit. */}
+      {published.type === 'contest' && <SponsoredByLine kind="contest_page" slug={slug} />}
       <LandingPageView
         content={published.content}
         language={language}
