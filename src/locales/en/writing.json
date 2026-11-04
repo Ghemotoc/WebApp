@@ -170,6 +170,20 @@
     "filterLabel": "Show",
     "all": "All stories"
   },
+  "visibility": {
+    "heading": "Who can read it",
+    "label": "Who can read it",
+    "options": {
+      "public": "Public",
+      "unlisted": "Unlisted",
+      "private": "Private"
+    },
+    "hints": {
+      "public": "Anyone can find it in Discover, search, tags and on your profile.",
+      "unlisted": "Only people with the link can read it. It isn’t in Discover, search, tags or on your profile. People who saved or follow it keep it.",
+      "private": "Only you can read it, even after you publish chapters. Nobody is told about new chapters."
+    }
+  },
   "comments": {
     "label": "Comments",
     "on": "On. Readers can comment on every chapter.",

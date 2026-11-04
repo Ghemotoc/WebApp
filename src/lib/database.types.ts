@@ -6861,6 +6861,7 @@ export type Database = {
           title_hidden_at: string | null;
           updated_at: string;
           user_id: string;
+          visibility: Database['public']['Enums']['story_visibility'];
           admin_story_cover_json: Json | null;
           admin_story_row: Json | null;
           admin_story_settings_json: Json | null;
@@ -6903,6 +6904,7 @@ export type Database = {
             title_hidden_at: string | null;
             updated_at: string;
             user_id: string;
+            visibility: Database['public']['Enums']['story_visibility'];
           } | null;
         };
         ComputedFields:
@@ -6949,6 +6951,7 @@ export type Database = {
           title_hidden_at?: string | null;
           updated_at?: string;
           user_id: string;
+          visibility?: Database['public']['Enums']['story_visibility'];
         };
         Update: {
           ai_disclosure?: Database['public']['Enums']['ai_disclosure'];
@@ -6988,6 +6991,7 @@ export type Database = {
           title_hidden_at?: string | null;
           updated_at?: string;
           user_id?: string;
+          visibility?: Database['public']['Enums']['story_visibility'];
         };
         Relationships: [
           {
@@ -9716,6 +9720,7 @@ export type Database = {
           title_hidden_at: string | null;
           updated_at: string;
           user_id: string;
+          visibility: Database['public']['Enums']['story_visibility'];
         };
         SetofOptions: {
           from: '*';
@@ -11598,6 +11603,7 @@ export type Database = {
           title_hidden_at: string | null;
           updated_at: string;
           user_id: string;
+          visibility: Database['public']['Enums']['story_visibility'];
         }[];
         SetofOptions: {
           from: '*';
@@ -12758,6 +12764,7 @@ export type Database = {
           title_hidden_at: string | null;
           updated_at: string;
           user_id: string;
+          visibility: Database['public']['Enums']['story_visibility'];
         }[];
         SetofOptions: {
           from: '*';
@@ -13297,6 +13304,10 @@ export type Database = {
       set_my_locale: { Args: { new_locale: string }; Returns: string };
       set_my_pen_name: { Args: { new_pen_name: string }; Returns: string };
       set_my_signature: { Args: { picture_id?: string; signature_text: string }; Returns: Json };
+      set_my_story_visibility: {
+        Args: { story_slug: string; wanted: Database['public']['Enums']['story_visibility'] };
+        Returns: Json;
+      };
       set_notification_email: {
         Args: {
           delivery: Database['public']['Enums']['email_delivery'];
@@ -13823,6 +13834,7 @@ export type Database = {
           title_hidden_at: string | null;
           updated_at: string;
           user_id: string;
+          visibility: Database['public']['Enums']['story_visibility'];
         };
         SetofOptions: {
           from: 'stories';
@@ -13858,6 +13870,16 @@ export type Database = {
       story_library_state: { Args: { story_slug: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };
+      story_listing_allows: {
+        Args: {
+          list_kind: string;
+          target: Omit<
+            Database['public']['Tables']['stories']['Row'],
+            Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       story_marketing: { Args: { story_slug: string }; Returns: Json };
       story_matches_search: {
         Args: {
@@ -13939,6 +13961,13 @@ export type Database = {
           tag_name: string;
           tag_rank: number;
         }[];
+      };
+      story_visibility_allows: {
+        Args: {
+          story_visibility: Database['public']['Enums']['story_visibility'];
+          writer_id: string;
+        };
+        Returns: boolean;
       };
       story_writer_name: {
         Args: { target_story_id: string; writer_handle: string; writer_pen_name: string };
@@ -14389,6 +14418,7 @@ export type Database = {
         | 'drugs'
         | 'self_harm'
         | 'dark_themes';
+      story_visibility: 'public' | 'unlisted' | 'private';
       support_message_kind: 'from_requester' | 'staff_reply' | 'internal_note';
       support_ticket_category:
         | 'account'
@@ -14773,6 +14803,7 @@ export const Constants = {
         'self_harm',
         'dark_themes',
       ],
+      story_visibility: ['public', 'unlisted', 'private'],
       support_message_kind: ['from_requester', 'staff_reply', 'internal_note'],
       support_ticket_category: [
         'account',

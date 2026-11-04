@@ -170,6 +170,20 @@
     "filterLabel": "Arată",
     "all": "Toate poveștile"
   },
+  "visibility": {
+    "heading": "Cine o poate citi",
+    "label": "Cine o poate citi",
+    "options": {
+      "public": "Publică",
+      "unlisted": "Nelistată",
+      "private": "Privată"
+    },
+    "hints": {
+      "public": "Oricine o poate găsi în Descoperă, în căutare, la etichete și pe profilul tău.",
+      "unlisted": "O pot citi doar cei care au linkul. Nu apare în Descoperă, în căutare, la etichete sau pe profilul tău. Cine a salvat-o sau o urmărește o păstrează.",
+      "private": "Doar tu o poți citi, chiar și după ce publici capitole. Nimeni nu află de capitolele noi."
+    }
+  },
   "comments": {
     "label": "Comentarii",
     "on": "Pornite. Cititorii pot comenta la fiecare capitol.",

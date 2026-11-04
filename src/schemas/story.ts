@@ -189,6 +189,12 @@ export const cardColourKeys = [
   'paper',
 ] as const;
 
+/** Who can read a story (NEW-1): everyone, anyone with the link, or only the writer. */
+export const storyVisibilities = ['public', 'unlisted', 'private'] as const;
+
+/** One of storyVisibilities. */
+export type StoryVisibility = (typeof storyVisibilities)[number];
+
 /** The story settings form's answers (S1-E3-05): the same fields plus status, comments and the sharing switches. */
 export const storySettingsSchema = newStoryShape
   .omit({ storyId: true })
@@ -201,6 +207,8 @@ export const storySettingsSchema = newStoryShape
     pictureSharingEnabled: z.boolean(),
     /** The palette colour readers' new cards start in, or null for our default (IDEAS-1c). */
     cardColour: z.enum(cardColourKeys).nullable(),
+    /** Who can read it (NEW-1); saved through its own function. */
+    visibility: z.enum(storyVisibilities),
   })
   .superRefine(labelRules);
 

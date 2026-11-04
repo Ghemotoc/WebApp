@@ -12,6 +12,7 @@ import type {
   StoryCoverChoice,
   StoryRating,
   StoryRatingReason,
+  StoryVisibility,
 } from '@/schemas/story';
 
 /** Every answer a story form can hold. */
@@ -26,6 +27,8 @@ export interface StoryAnswers {
   cover: StoryCoverChoice;
   /** Ongoing or Completed (S1-E3-05); a new story starts Ongoing. */
   completionStatus: 'ongoing' | 'completed';
+  /** Who can read it (NEW-1); public for a new story, changed in its settings. */
+  visibility: StoryVisibility;
   /** Whether readers may comment (S1-E3-05; enforced by S1-E6-01); on for a new story. */
   commentsEnabled: boolean;
   /** The quote card switch (S1-E4-07); since S1-E4-11 it covers passage links too. */

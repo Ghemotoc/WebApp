@@ -2166,3 +2166,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 
 - The epic in one journey: staff approve a campaign (`StaffSponsorsPage`, `admin_review_sponsor_campaign()`) → book it into a slot (`PlacementsSection` → `admin_book_ad_slot()` → `ad_bookings`) → a reader opens the page (`PageAdSlot` → `usePageAds()` → `page_ads()` → `fill_ad_slot()`: booked sponsor, campaign by placement, staff house ad, landing page, the network unless `network_ads_barred()` or `ads_are_barred()`, built-in house ad) → `AdBox` shows it and `record_sponsor_event()` counts the view and click in `campaign_daily_stats` → the admin reads `admin_sponsor_campaign_report()` on the campaign's page.
 - Tests walking the epic: `supabase/tests/database/277-epic-s1-e12.test.sql` and `e2e/epic-s1-e12.spec.ts`; each story's own tests are listed in its section above.
+
+## Who can read a story: Public, Unlisted or Private (NEW-1)
+
+- Column `stories.visibility` (enum `story_visibility`), public for a new story. The writer changes it in Story settings › Who can read it (`StoryVisibilitySection`), saved by `set_my_story_visibility()` after `update_my_story()`.
+- Two gates in the database: `story_visibility_allows()` (a private story opens only for its writer) sits in `chapter_is_readable()`, `story_has_readable_chapter()` and `reader_visible_story()`, so every reading path, comment, like, follow and share obeys it; `story_listing_allows()` sits in `listed_stories()`, so an unlisted story is in no list, search or tag page, only in libraries (on someone else's, only for viewers who saved or follow it). `profile_story_cards()` leaves both out of the writer's public profile, and `notify_chapter_published()` tells only the story's own followers about an unlisted story, and nobody about a private one.
+- Migration `…_new1_who_can_read.sql`. Tests: `supabase/tests/database/278-who-can-read.test.sql`, `e2e/story-visibility.spec.ts`.

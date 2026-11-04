@@ -54,6 +54,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     tags: story.tags,
     cover: coverAnswerFor(story),
     completionStatus: story.completionStatus,
+    visibility: story.visibility,
     commentsEnabled: story.commentsEnabled,
     quoteCardsEnabled: story.quoteCardsEnabled,
     pictureSharingEnabled: story.pictureSharingEnabled,
