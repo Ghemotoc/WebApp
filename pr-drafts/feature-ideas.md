@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 4 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-04.md; doc tab "4 Nov 2026")
+
+12 ideas, IDEA-20261104-1 to 12: beta readers for a draft chapter, writing sprints, stories in a series, an end-of-chapter question, "Previously…" recap, compare chapter versions, dictionary look-up, take a break, reader questions with writer answers, update schedule, feedback grids for class assignments, co-writer.
+
 ### Sent 3 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-03.md; doc tab "3 Nov 2026")
 
 12 ideas, IDEA-20261103-1 to 12: read a chapter aloud, diacritics check, one story in two languages, content notes before a chapter, footnotes, private margin notes, classroom reading mode, school reading list shelf, end-of-chapter writer's note, late-night break note, private daily word goal, writing prompt of the week.
