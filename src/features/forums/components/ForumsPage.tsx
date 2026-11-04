@@ -24,6 +24,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useSession } from '@/features/auth/hooks/useSession';
 import { SpacesCard } from '@/features/spaces/components/SpacesCard';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import { useForumIndex } from '../hooks/useForumIndex';
 import { buildForumTree, type ForumCategory } from '../lib/forumTree';
@@ -122,11 +123,14 @@ export function ForumsPage() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
         <div className="flex min-w-0 flex-col gap-6">
           <ForumCategories groups={groups} loadFailed={loadFailed} />
+          {/* The page's two ad slots: wide after the forums, a side box on desktop (S1-E12-01). */}
+          <PageAdSlot pageKey="forums" position={1} />
         </div>
         <aside className="flex flex-col gap-6">
           <NewForYou />
           <SpacesCard />
           <ForumRulesCard />
+          <PageAdSlot pageKey="forums" position={2} isSpaceReserved={false} />
         </aside>
       </div>
     </PageContainer>

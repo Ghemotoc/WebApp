@@ -8,8 +8,8 @@
  * ProfileStories and, when its owner lets the reader see it, ProfileLibrary (S1-E13-01) on the
  * left and, on the right, the rank card (RankPanel, S1-E8-09), the forum signature
  * (ProfileSignatureCard, S1-E8-08) and ProfileSafetyCard (Report and Block); one column under
- * 1024 px. The board's ad slot, forum posts and certificates come with their own stories
- * (S1-E12-01, S1-E8, S1-E2-11), so they aren't drawn yet.
+ * 1024 px. The wide ad slot follows the stories (S1-E12-01). The board's forum posts and
+ * certificates come with their own stories (S1-E8, S1-E2-11), so they aren't drawn yet.
  * No profile banners (Q50).
  * When the profile can't be shown (unknown username, removed, or this person blocks the
  * reader), the page says "This profile isn't available" and nothing more, so a block can't be
@@ -27,6 +27,7 @@ import { ProfileSignatureCard } from '@/features/forums/components/ProfileSignat
 import { RankPanel } from '@/features/forums/components/RankPanel';
 import { useProfileSignature } from '@/features/forums/hooks/useForumSignatures';
 import { useProfileRank } from '@/features/forums/hooks/useWriterRank';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import type { WriterProfile } from '../api/writerProfile';
 import { useWriterProfile } from '../hooks/useWriterProfile';
@@ -142,6 +143,8 @@ export function WriterProfilePage() {
               <ProfileStories profile={profile} />
               {/* The library shelf, when the owner lets this reader see it (S1-E13-01). */}
               <ProfileLibrary profile={profile} />
+              {/* The page's one ad slot (S1-E12-01); a profile has no category, so no context. */}
+              <PageAdSlot pageKey="profile" position={1} />
             </div>
           )}
         </div>

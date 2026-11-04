@@ -22,6 +22,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import type { ReaderChapter } from '../api/chapter';
 import { useStoryPage } from '../hooks/useStoryPage';
@@ -87,6 +88,12 @@ export function TeaserPage({ chapter }: { chapter: ReaderChapter }) {
       )}
       <TeaserChapter chapter={chapter} />
       <SignUpPrompt storySlug={chapter.story.slug} chaptersAfter={chapter.total - chapter.number} />
+      {/* The teaser's one ad slot, after the prompt and never inside the text (S1-E12-01). */}
+      <PageAdSlot
+        pageKey="teaser"
+        position={1}
+        context={{ storySlug: chapter.story.slug, language: chapter.story.languageCode }}
+      />
       <CopyNotice penName={chapter.story.writer.displayName} />
     </div>
   );

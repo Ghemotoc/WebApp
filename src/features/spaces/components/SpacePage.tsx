@@ -23,6 +23,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { ThreadList } from '@/features/forums/components/ThreadList';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import type { Space } from '../api/spaces';
 import { useSpace } from '../hooks/useSpaces';
@@ -95,6 +96,10 @@ function SpaceContent({ space }: { space: Space }) {
           )}
           {space.kind === 'class' && space.viewer.canRead && <ClassStoriesCard space={space} />}
           <SpaceThreads space={space} />
+          {/* A public space's ad slot; a class space never has one (Q70; the server agrees). */}
+          {space.kind !== 'class' && (
+            <PageAdSlot pageKey="space" position={1} context={{ spaceSlug: space.slug }} />
+          )}
         </div>
         <aside className="flex flex-col gap-6">
           {space.joining === 'approve' && space.kind === 'open' && (
