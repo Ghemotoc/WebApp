@@ -11300,6 +11300,10 @@ export type Database = {
         Args: { chapter_code: string; first_block: number; last_block: number; story_slug: string };
         Returns: Json;
       };
+      get_shared_picture: {
+        Args: { block_number: number; chapter_code: string; story_slug: string };
+        Returns: Json;
+      };
       get_story_page: { Args: { story_slug: string }; Returns: Json };
       get_writer_profile: { Args: { wanted_handle: string }; Returns: Json };
       grant_teacher_badge: { Args: { target_user_id: string }; Returns: undefined };
