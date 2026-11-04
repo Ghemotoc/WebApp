@@ -38,6 +38,7 @@ function shortTime(iso: string, language: string): string {
  */
 function usePreview(chat: ConversationSummary): string {
   const { t } = useMessagesTranslation();
+  if (chat.saidNoThanks) return t('list.saidNoThanks');
   if (chat.status !== 'accepted' && !chat.isRequestToMe) return t('list.waiting');
   if (chat.lastMessagePreview === null) return t('list.removed');
   return chat.lastMessageFromMe

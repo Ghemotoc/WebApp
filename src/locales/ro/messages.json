@@ -22,7 +22,8 @@
     "removed": "[Eliminat de echipa de moderare]",
     "unread": "mesaje noi",
     "waiting": "Așteaptă să accepte",
-    "loadFailed": "Nu ți-am putut încărca conversațiile. Încearcă din nou peste puțin timp."
+    "loadFailed": "Nu ți-am putut încărca conversațiile. Încearcă din nou peste puțin timp.",
+    "saidNoThanks": "A spus „Nu, mulțumesc” deocamdată"
   },
   "rules": {
     "minors": "Adulții nu pot scrie niciodată cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite până nu le pornești tu.",
@@ -46,14 +47,18 @@
     "composerLabel": "Mesaj pentru {{name}}",
     "send": "Trimite",
     "textOnly": "Doar text. Nu poți trimite poze sau fișiere.",
-    "reportLabel": "mesajul de la {{name}} de la ora {{time}}"
+    "reportLabel": "mesajul de la {{name}} de la ora {{time}}",
+    "noThanksReply": "{{name}} a răspuns: „Mulțumesc că mi-ai scris, dar acum aș prefera să nu vorbim.”",
+    "noThanksAgain": "Poți trimite o cerere nouă începând cu {{date}}."
   },
   "request": {
     "title": "{{name}} vrea să-ți scrie",
     "explain": "Nu poate trimite altele până nu accepți. Dacă ștergi cererea, nu va afla.",
     "accept": "Acceptă cererea",
     "delete": "Șterge cererea",
-    "deleted": "Cerere ștearsă. {{name}} nu va afla."
+    "deleted": "Cerere ștearsă. {{name}} nu va afla.",
+    "noThanks": "Nu, mulțumesc",
+    "noThanksExplain": "„Nu, mulțumesc” îi trimite în numele tău un răspuns scurt și amabil, iar timp de 30 de zile nu te mai poate întreba."
   },
   "block": {
     "button": "Blochează",

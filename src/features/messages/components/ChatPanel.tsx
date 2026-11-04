@@ -2,10 +2,11 @@
  * ChatPanel: one chat: the person at the top with Block and Report (ChatHeader, S1-E9-02), the
  * messages, and at the bottom whatever the reader can do now (story S1-E9-01; board Messages 5.5).
  *
- * The bottom is one of four things, decided by the database (conversation_with()):
- * - a request to the reader: Accept request and Delete request (criterion 2);
+ * The bottom is one of five things, decided by the database (conversation_with()):
+ * - a request to the reader: Accept request, No thanks and Delete request (criterion 2);
  * - the reader may write: the message box (with a first-message hint before the first one);
  * - the reader's own request waits: "Your message is waiting in …'s requests" (criterion 2);
+ * - the other person said "No thanks": their fixed reply and when to ask again (IDEAS-2 idea 7);
  * - otherwise "<name> isn't taking messages right now", whatever the reason (S1-E9-03).
  * The messages scroll inside their own region, which keeps the newest in view.
  * Who shows it: MessagesPage, with AboutChatPanel beside it. What it calls: useConversation.
@@ -30,6 +31,31 @@ type ChatState = ReturnType<typeof useConversation>;
 /** A plain line at the bottom of the chat. */
 function BottomNote({ text }: { text: string }) {
   return <p className="m-0 border-t border-border p-4 text-sm text-meta">{text}</p>;
+}
+
+/**
+ * After "No thanks" (IDEAS-2 idea 7): the fixed, polite reply in the other person's name, and the
+ * day the reader may send a new request. The words come from the locale files, never from them.
+ *
+ * @returns the note
+ */
+function NoThanksNote({ chat }: { chat: Conversation }) {
+  const { t, i18n } = useMessagesTranslation();
+  const askAgain = chat.askAgainFrom === null ? null : new Date(chat.askAgainFrom);
+  const date =
+    askAgain === null
+      ? ''
+      : new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-GB' : 'ro', {
+          day: 'numeric',
+          month: 'long',
+          timeZone: 'Europe/Bucharest',
+        }).format(askAgain);
+  return (
+    <div className="flex flex-col gap-2 border-t border-border p-4">
+      <p className="m-0 text-sm text-body">{t('chat.noThanksReply', { name: chat.displayName })}</p>
+      <p className="m-0 text-sm text-meta">{t('chat.noThanksAgain', { date })}</p>
+    </div>
+  );
 }
 
 /**
@@ -64,6 +90,7 @@ function ChatBottom({ chat, state }: { chat: Conversation; state: ChatState }) {
       </>
     );
   }
+  if (chat.saidNoThanks) return <NoThanksNote chat={chat} />;
   return <BottomNote text={t(chat.isWaiting ? 'chat.waiting' : 'chat.notTaking', { name })} />;
 }
 

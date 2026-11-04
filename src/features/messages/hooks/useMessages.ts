@@ -24,6 +24,7 @@ import {
   MessagesError,
   sendMessage,
   type MessagesFailure,
+  type RequestAnswer,
 } from '../api/messages';
 
 /** How often each part asks again, in milliseconds. */
@@ -115,7 +116,7 @@ function useMarkReadOnNewMessages(handle: string, newestMessageAt: string | null
  * One chat: the messages, sending and answering a request.
  *
  * @param handle - the other person's username from the address
- * @returns the query, send(body), answer(shouldAccept) and their states
+ * @returns the query, send(body), answer('accept' | 'delete' | 'no_thanks') and their states
  */
 export function useConversation(handle: string) {
   const queryClient = useQueryClient();
@@ -138,8 +139,8 @@ export function useConversation(handle: string) {
     onSuccess: refresh,
   });
   const answer = useMutation({
-    mutationFn: async (shouldAccept: boolean) =>
-      answerRequest(await requireClient(), handle, shouldAccept),
+    mutationFn: async (chosen: RequestAnswer) =>
+      answerRequest(await requireClient(), handle, chosen),
     onSuccess: refresh,
   });
   return {
@@ -147,7 +148,7 @@ export function useConversation(handle: string) {
     send: (body: string) => send.mutateAsync(body),
     isSending: send.isPending,
     sendState: messagesFailureOf(send.error),
-    answer: (shouldAccept: boolean) => answer.mutateAsync(shouldAccept),
+    answer: (chosen: RequestAnswer) => answer.mutateAsync(chosen),
     isAnswering: answer.isPending,
     answerState: messagesFailureOf(answer.error),
   };
