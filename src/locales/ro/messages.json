@@ -128,5 +128,19 @@
     "cancel": "Anulează",
     "close": "Închide",
     "failed": "Nu am putut șterge conversația. Încearcă din nou."
+  },
+  "emails": {
+    "heading": "Emailuri despre mesaje",
+    "intro": "Îți putem trimite un email când primești un mesaj sau o cerere de mesaj. Emailul spune cine a scris, niciodată ce a scris, și așteaptă 5 minute, așa că nu primești niciunul cât timp vorbești aici.",
+    "emailsLabel": "Trimite-mi un email când primesc un mesaj",
+    "quietLabel": "Ore de liniște: păstrează aceste emailuri până dimineața",
+    "quietHint": "În orele de liniște, emailurile așteaptă până se termină orele. Orele sunt după ora României.",
+    "under18Hint": "Sub 18 ani, orele de liniște rămân pornite. Le poți muta, cât timp acoperă intervalul de la 22:00 la 07:00. Orele sunt după ora României.",
+    "quietFrom": "De la",
+    "quietUntil": "Până la",
+    "save": "Salvează alegerile pentru emailuri",
+    "saved": "Salvat.",
+    "saveFailed": "Nu am putut salva. Verifică dacă orele încep și se termină la ore diferite, apoi încearcă din nou.",
+    "under18Refused": "Nu am putut salva. Orele de liniște trebuie să înceapă cel târziu la 22:00 și să se termine la 07:00 sau mai târziu."
   }
 }

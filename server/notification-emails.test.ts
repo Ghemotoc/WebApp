@@ -149,6 +149,41 @@ describe('the notification email worker', () => {
     expect(email?.text).toContain('Ilinca, Corbu și încă o persoană au început să te urmărească.');
   });
 
+  it('emails a private message by who wrote it and a link to the chat, never the words (IDEAS-2)', async () => {
+    const message: EmailNotificationItem = {
+      kind: 'new_message',
+      actors: [{ handle: 'corbu', display_name: 'Corbu' }],
+      actor_count: 2,
+      story: null,
+      chapter: null,
+      comment_excerpt: null,
+      is_request: false,
+    };
+    const [email] = await sendOnce([claimed({ delivery: 'message', items: [message] })]);
+    expect(email?.subject).toBe('Corbu sent you 2 private messages.');
+    expect(email?.text).toContain('We never put the words of a message in an email');
+    expect(email?.text).toContain('Open the chat: https://site.test/messages/corbu');
+    expect(email?.text).toContain('https://site.test/settings#messages');
+    expect(email?.headers?.['List-Unsubscribe-Post']).toBe('List-Unsubscribe=One-Click');
+  });
+
+  it('calls a waiting first message a message request, in Romanian too (IDEAS-2)', async () => {
+    const request: EmailNotificationItem = {
+      kind: 'new_message',
+      actors: [{ handle: 'corbu', display_name: 'Corbu' }],
+      actor_count: 1,
+      story: null,
+      chapter: null,
+      comment_excerpt: null,
+      is_request: true,
+    };
+    const [email] = await sendOnce([
+      claimed({ language: 'ro', delivery: 'message', items: [request] }),
+    ]);
+    expect(email?.subject).toBe('Corbu ți-a trimis o cerere de mesaj.');
+    expect(email?.text).toContain('Deschide conversația: https://site.test/messages/corbu');
+  });
+
   it('sends a moderation decision without an unsubscribe link, saying it is always sent', async () => {
     const decision: EmailNotificationItem = {
       ...followers,

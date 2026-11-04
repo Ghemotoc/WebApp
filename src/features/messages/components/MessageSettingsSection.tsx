@@ -9,6 +9,7 @@
  * proposal). Under-18s read the age rule above the choices; only 16 and 17-year-olds see the
  * adults switch, which only they can change. The section has id "messages", so the Change links
  * on /messages open it. Chats already going carry on whatever is picked (S1-E9-03).
+ * Below them, "Emails about messages" (MessageEmailSettings, IDEAS-2 idea 6).
  * Who shows it: SettingsPage. What it calls: useMyMessageSettings and useSaveMessageSettings.
  */
 import { useState } from 'react';
@@ -20,6 +21,8 @@ import type { MessageAudience, MyMessageSettings } from '../api/messages';
 import { useMyMessageSettings } from '../hooks/useMessages';
 import { useSaveMessageSettings } from '../hooks/useMessageSettings';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
+
+import { MessageEmailSettings } from './MessageEmailSettings';
 
 /** The three choices, in the order they are shown. */
 const audiences: MessageAudience[] = ['everyone', 'people_i_follow', 'nobody'];
@@ -131,6 +134,7 @@ function MessageChoices() {
       {settings.data.ageGroup === 'teen' && (
         <AdultsSwitch settings={settings.data} saving={saving} />
       )}
+      <MessageEmailSettings choices={settings.data.email} />
       <p className="m-0 border-t border-border pt-4 text-sm text-body">
         {t('settings.deleteNote')}
       </p>

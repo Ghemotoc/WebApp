@@ -1,6 +1,6 @@
 /**
  * The hooks that change Messages for the caller: who may message them, "Let adults message me"
- * and Delete chat (story S1-E9-04).
+ * and Delete chat (story S1-E9-04), and message emails with quiet hours (IDEAS-2 idea 6).
  *
  * Who calls them: MessageSettingsSection (Settings › Messages) and DeleteChatControl (About this
  * chat). What they call: api/messages.ts. After a change, every Messages query and the setup
@@ -16,8 +16,10 @@ import {
   deleteConversation,
   setAdultsMayMessage,
   setMessageAudience,
+  setMessageEmails,
   type MessageAudience,
 } from '../api/messages';
+import type { MessageEmailChoices } from '../api/messageEmails';
 
 import { messagesKeys } from './useMessages';
 
@@ -68,5 +70,26 @@ export function useDeleteChat() {
     isDeleting: remove.isPending,
     hasFailed: remove.isError,
     reset: () => remove.reset(),
+  };
+}
+
+/**
+ * Saving message emails and their quiet hours (IDEAS-2 idea 6).
+ *
+ * @returns save(choices), isSaving, hasFailed and whether the last save worked
+ */
+export function useSaveMessageEmails() {
+  const queryClient = useQueryClient();
+  const save = useMutation({
+    mutationFn: async (choices: Omit<MessageEmailChoices, 'mustKeepQuietHours'>) =>
+      setMessageEmails(await requireClient(), choices),
+    // The section reads the saved choices back, with the database's defaults.
+    onSuccess: async () => queryClient.invalidateQueries({ queryKey: messagesKeys.settings }),
+  });
+  return {
+    save: (choices: Omit<MessageEmailChoices, 'mustKeepQuietHours'>) => save.mutateAsync(choices),
+    isSaving: save.isPending,
+    hasFailed: save.isError,
+    isSaved: save.isSuccess,
   };
 }
