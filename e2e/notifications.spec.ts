@@ -120,6 +120,9 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     test(`no serious axe issue at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       browser,
     }) => {
+      // The account's language wins over the browser's once the page reads it, so the view's
+      // language goes on the account too; otherwise a Romanian view could switch to English.
+      runSql(`update public.profiles set locale = '${view.language}' where id = ${accountId};`);
       const page = await openSignedIn(browser);
       await checkScreen(page, view);
       await page.context().close();
