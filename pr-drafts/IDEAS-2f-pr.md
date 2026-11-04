@@ -31,7 +31,13 @@ Bundle 14c IDEAS-2, part f: picture links show the picture in chat previews (ide
 
 ## Local check run
 
-LOCALRUN
+These fast checks ran locally (GitHub Actions is blocked by billing). Parts d, e and f are stacked, so one run on the top of the stack (part f, which holds this branch's commits) covers all three:
+
+- Lint, Prettier, `tsc -b`, `types:check`, `i18n:check` and `migrations:check`: passed.
+- Vitest: 231 files, 1,455 tests passed.
+- Database (`supabase test db`): 193 files, 4,482 tests passed, including the new `282-furthest-place` and `283-picture-previews`.
+- Wrangler compile, the build with and without env, and `third-party:check`: passed.
+- e2e (canva-covers, share-passages, share, teaser, story-settings, writer-dashboard, library, chapter-pictures, chapter-reader, readers-to-writers): 100 passed.
 
 ## By hand
 
