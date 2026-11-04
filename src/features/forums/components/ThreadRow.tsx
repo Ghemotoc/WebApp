@@ -6,6 +6,7 @@
  * Who uses it: ThreadList.
  * Part d adds the new-posts dot, and an unread thread's link opens at its first new post
  * (S1-E8-04). Part e adds the Pinned and Locked pills (S1-E8-05; board 5.2's gold pill).
+ * IDEAS-3f adds "Answered" when the starter marked a reply that answered it (IDEA-20261102-8).
  */
 import { Link } from 'react-router';
 
@@ -21,14 +22,14 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 import { UnreadDot } from './UnreadDot';
 
 /**
- * "Pinned" and "Locked" above the title, when they apply.
+ * "Pinned", "Locked" and "Answered" above the title, when they apply.
  *
  * @param props.thread - the thread
  * @returns the pills, or nothing for an ordinary thread
  */
 function ThreadPills({ thread }: { thread: ForumThreadSummary }) {
   const { t } = useForumsTranslation();
-  if (!thread.isSticky && !thread.isLocked) return null;
+  if (!thread.isSticky && !thread.isLocked && !thread.isAnswered) return null;
   return (
     <span className="flex flex-wrap gap-2">
       {thread.isSticky && <InfoPill tone="gold">{t('list.pinned')}</InfoPill>}
@@ -38,6 +39,7 @@ function ThreadPills({ thread }: { thread: ForumThreadSummary }) {
           {t('list.locked')}
         </InfoPill>
       )}
+      {thread.isAnswered && <InfoPill tone="sage">{t('list.answered')}</InfoPill>}
     </span>
   );
 }

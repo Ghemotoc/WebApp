@@ -8,7 +8,9 @@
     "passageLink": "Copiază linkul către acest pasaj",
     "passageCopied": "Linkul a fost copiat. Cine îl deschide citește de la acest pasaj.",
     "passageCopyFailed": "Browserul nu ne-a lăsat să copiem linkul.",
-    "passageTooLong": "Selectează cel mult cinci paragrafe ca să trimiți un link către ele."
+    "passageTooLong": "Selectează cel mult cinci paragrafe ca să trimiți un link către ele.",
+    "discuss": "Discută pe forum",
+    "discussFrom": "Din capitolul {{number}} din „{{title}}”"
   },
   "dialog": {
     "eyebrow": "Distribuie",

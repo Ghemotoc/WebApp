@@ -10,6 +10,8 @@
  * reader can't read (quote_card_state() says not allowed).
  * Since S1-E4-11 it also has "Copy link to this passage" (PassageLinkButton), at any length up to
  * five blocks. Both share the writer's passage switch, which is off for 16+ and 18+ stories.
+ * IDEAS-3f adds "Discuss in the forums" (DiscussPassageButton, IDEA-20261102-10) for a public story,
+ * asked with usePassageDiscussion.
  * Who uses it: QuoteShareWatcher, which fetches this file on the first selection. What it calls: useQuoteCardState,
  * useQuoteSelection and, on the first press, LoadedQuoteDialog (fetched then, for the reader's
  * 40 KB script budget).
@@ -19,12 +21,14 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 
+import { usePassageDiscussion } from '../hooks/usePassageDiscussion';
 import { useQuoteCardState } from '../hooks/useQuoteCardState';
 import { useQuoteSelection } from '../hooks/useQuoteSelection';
 import type { QuoteSelection } from '../lib/quoteSelection';
 import type { SharedChapter } from '../lib/sharedChapter';
 import { registerSharingTranslations } from '../registerSharingTranslations';
 
+import { DiscussPassageButton } from './DiscussPassageButton';
 import { PassageLinkButton } from './PassageLinkButton';
 
 /** The card and the limit pop-up with their texts, fetched on the first press. */
@@ -77,6 +81,7 @@ export function QuoteShareBar({ chapter }: { chapter: SharedChapter }) {
   registerSharingTranslations(i18n);
   const state = useQuoteCardState(chapter.address);
   const selection = useQuoteSelection(state.allowed);
+  const mayDiscuss = usePassageDiscussion(chapter.address);
   // The dialog keeps the passage and the limit as they were when the reader pressed the button.
   const [openQuote, setOpenQuote] = useState<OpenQuote | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -93,6 +98,7 @@ export function QuoteShareBar({ chapter }: { chapter: SharedChapter }) {
               }}
             />
             <PassageLinkButton address={chapter.address} blocks={selection.blocks} />
+            {mayDiscuss && <DiscussPassageButton chapter={chapter} selection={selection} />}
           </div>
         </div>
       )}

@@ -6,7 +6,9 @@
  * Delete asks first, in place ("Delete this post? Its number stays…"). Report is the one shared
  * ReportButton (rule 6). Each button's name says which post it acts on.
  * Who uses it: ForumPostCard. What it calls: useDeletePost → delete_forum_post(); ReportButton;
- * the thread page's quote picks (hooks/useQuotePicks.ts).
+ * the thread page's quote picks (hooks/useQuotePicks.ts). IDEAS-3f adds "This answered it" for
+ * the thread's starter on someone else's reply (IDEA-20261102-8): useMarkAnswer →
+ * mark_forum_thread_answer().
  */
 import { useNavigate } from 'react-router';
 
@@ -15,6 +17,7 @@ import { Chip } from '@/components/ui/Chip';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { ForumPost } from '../api/forumThreads';
+import { useMarkAnswer } from '../hooks/useForumAnswers';
 import { useDeletePost } from '../hooks/useForumWrites';
 import type { QuotePicks } from '../hooks/useQuotePicks';
 import { failureText } from '../lib/forumFailures';
@@ -27,6 +30,8 @@ export interface PostActionsProps {
   authorName: string;
   /** The forum's address, to go back to when deleting #1 takes the thread with it. */
   forumSlug: string;
+  /** The thread's number, for "This answered it" (IDEAS-3f). */
+  threadNumber: number;
   isConfirmingDelete: boolean;
   onEdit: () => void;
   onAskDelete: (asking: boolean) => void;
@@ -65,6 +70,39 @@ function QuoteButtons({ post, quotePicks }: { post: ForumPost; quotePicks: Quote
       >
         {t(`post.${chipKey}`)}
       </Chip>
+    </>
+  );
+}
+
+/**
+ * "This answered it" on a reply, or "Not the answer" on the one already marked (IDEAS-3f). Only
+ * the thread's starter gets it, and only on someone else's live reply (criterion 2).
+ *
+ * @param props.post - the reply
+ * @param props.threadNumber - its thread
+ * @returns the button, with any refusal in plain words beside it
+ */
+function AnswerButton({ post, threadNumber }: { post: ForumPost; threadNumber: number }) {
+  const { t } = useForumsTranslation();
+  const marking = useMarkAnswer();
+  // Pressing it on the marked reply takes the mark away; on any other reply, moves it there.
+  const postNumber = post.isAnswer ? null : post.number;
+  const key = post.isAnswer ? 'unmark' : 'mark';
+  return (
+    <>
+      <Button
+        variant="text"
+        aria-label={t(`answer.${key}Label`, { number: post.number })}
+        disabled={marking.isRunning}
+        onClick={() => void marking.run({ threadNumber, postNumber }).catch(() => undefined)}
+      >
+        {t(`answer.${key}`)}
+      </Button>
+      {marking.failure !== null && (
+        <span role="alert" className="text-sm font-semibold text-destructive">
+          {t(`answer.failures.${marking.failure}`)}
+        </span>
+      )}
     </>
   );
 }
@@ -170,6 +208,7 @@ export function PostActions(props: PostActionsProps) {
   const quotePicks = post.state === 'live' ? props.quotePicks : null;
   return (
     <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+      {post.canMarkAnswer && <AnswerButton post={post} threadNumber={props.threadNumber} />}
       {quotePicks !== null && <QuoteButtons post={post} quotePicks={quotePicks} />}
       <ManageButtons {...props} />
       {canReport && (

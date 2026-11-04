@@ -9,14 +9,17 @@
  * pick one of its forums.
  * What it calls: useForumIndex (the forum and its path), NewThreadForm → start_forum_thread().
  * A space's forum has no page here: /forums/space-<name>/new moves to the space's own
- * /spaces/<name>/new (FORUMS-2a, S1-E8-06).
+ * /spaces/<name>/new (FORUMS-2a, S1-E8-06). IDEAS-3f: "Discuss in the forums" in the chapter reader
+ * opens this page with a passage in the router's state, which the post starts with
+ * (IDEA-20261102-10).
  */
-import { Link, Navigate, useParams } from 'react-router';
+import { Link, Navigate, useLocation, useParams } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { initialBodyFrom } from '@/features/sharing/lib/passageThread';
 
 import type { ForumEntry } from '../api/forumIndex';
 import { useForumIndex } from '../hooks/useForumIndex';
@@ -36,6 +39,8 @@ import { NewThreadForm } from './NewThreadForm';
 function NewThreadBody({ forum }: { forum: ForumEntry }) {
   const { t } = useForumsTranslation();
   const { userId, isKnown } = useSession();
+  // A passage sent from the chapter reader starts the post (IDEAS-3f).
+  const initialBody = initialBodyFrom(useLocation().state);
   if (!isKnown) return null;
   if (userId === null)
     return (
@@ -46,7 +51,13 @@ function NewThreadBody({ forum }: { forum: ForumEntry }) {
       </p>
     );
   if (forum.level === 0) return <Notice tone="info">{t('failures.category')}</Notice>;
-  return <NewThreadForm forumSlug={forum.slug} cancelTo={`/forums/${forum.slug}`} />;
+  return (
+    <NewThreadForm
+      forumSlug={forum.slug}
+      cancelTo={`/forums/${forum.slug}`}
+      initialBody={initialBody}
+    />
+  );
 }
 
 /**

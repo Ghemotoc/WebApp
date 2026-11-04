@@ -10,6 +10,8 @@
  * - share_options() (S1-E4-11, …_s1_e4_11_share_passages_and_pictures.sql): whether the reader may
  *   share passages and pictures from the chapter (the writer's two switches; never for 16+ or 18+),
  *   and the writer's colour for new cards (IDEAS-1c, …_ideas1_c_readers_to_writers.sql).
+ * - passage_discussion_allowed() (IDEAS-3f, …_ideas3_f_forum_help_and_passages.sql): whether the
+ *   reader may take a passage to the forums ("Discuss in the forums", IDEA-20261102-10).
  * Every function takes the chapter's address and applies the reader's rules (rating, blocks,
  * moderation); none returns a user ID.
  */
@@ -119,6 +121,29 @@ export async function fetchQuoteCardState(
   if (error !== null) throw new Error(`Could not read the quote card state: ${error.message}`);
   const row = data as { allowed?: boolean; already_made?: boolean } | null;
   return { allowed: row?.allowed === true, alreadyMade: row?.already_made === true };
+}
+
+/**
+ * Asks whether the reader may start a forum thread quoting a passage of a chapter (IDEAS-3f): a
+ * signed-in reader, the writer's passage switch on, and a public story that isn't class-only or
+ * restricted by staff (IDEA-20261102-10, criterion 2).
+ *
+ * @param client - the shared Supabase client
+ * @param address - the chapter
+ * @returns true when "Discuss in the forums" may be offered
+ * Errors: throws with Supabase's message when the database can't be reached.
+ */
+export async function fetchPassageDiscussionAllowed(
+  client: AppSupabaseClient,
+  address: ChapterAddress,
+): Promise<boolean> {
+  const { data, error } = await client.rpc('passage_discussion_allowed', {
+    story_slug: address.storySlug,
+    chapter_code: address.chapterCode,
+  });
+  if (error !== null)
+    throw new Error(`Could not read the passage discussion state: ${error.message}`);
+  return data === true;
 }
 
 /**

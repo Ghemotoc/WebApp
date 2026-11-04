@@ -12,7 +12,8 @@
  * shows the locked note instead of the reply box, and the moderator tools to moderation staff
  * (ThreadModeration, S1-E8-05). FORUMS-2a: a thread in a space lives at
  * /forums/space-<space>/<n>, its breadcrumb goes through the space and its reply card says how to
- * join (S1-E8-06).
+ * join (S1-E8-06). IDEAS-3f links the reply the starter marked "This answered it" above the posts
+ * (ThreadAnswerNote, IDEA-20261102-8).
  * What it calls: useForumThread → forum_thread(); useForumIndex for the breadcrumb;
  * useQuotePicks.
  */
@@ -35,6 +36,7 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 
 import { ForumPostCard } from './ForumPostCard';
 import { ReplyForm } from './ReplyForm';
+import { ThreadAnswerNote } from './ThreadAnswerNote';
 import { ThreadHeader } from './ThreadHeader';
 import { ThreadModeration } from './ThreadModeration';
 import { ThreadSidePanel } from './ThreadSidePanel';
@@ -86,6 +88,7 @@ function ThreadPosts({
   const picksForPosts = thread.canReply ? quotePicks : null;
   return (
     <div className="flex min-w-0 flex-col gap-4">
+      <ThreadAnswerNote thread={thread} />
       <ol className="m-0 flex list-none flex-col gap-4 p-0">
         {read.posts.map((post) => (
           <li key={post.id}>
