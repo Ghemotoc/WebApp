@@ -1,12 +1,13 @@
 /**
  * Tests for making a completed story's EPUB start to finish (story S1-E13-05, PRIVACY part f;
- * Robert, 1 Nov 2026, 06:31 to 06:34). Supabase is a small fake that answers the data file; the
+ * Robert, 1 Nov 2026, 06:31 to 06:34), and its sample and About the writer page (IDEAS-2b). Supabase is a small fake that answers the data file; the
  * covers are drawn by fakes, because jsdom has no canvas (the e2e test draws real ones).
  */
 import i18next, { type TFunction } from 'i18next';
 import JSZip from 'jszip';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
+import { brand } from '@/config/brand';
 import englishDataExport from '@/locales/en/dataExport.json';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
@@ -56,7 +57,7 @@ function dataFile(completionStatus: 'ongoing' | 'completed' = 'completed') {
     format: 'data-export/1',
     made_at: '2026-11-01T00:00:00Z',
     user_id: 'user-1',
-    account: { profile: { handle: 'lia', pen_name: 'Lia P.' } },
+    account: { profile: { handle: 'lia', pen_name: 'Lia P.', bio: 'I write <short> stories.' } },
     tables: {
       stories: [storyRow(completionStatus), { ...storyRow('completed'), id: 's2', slug: 'alta' }],
       chapters: [
@@ -116,7 +117,14 @@ async function makeWith(document: unknown, form: Partial<EpubForm> = {}) {
   const book = await makeEpub({
     client: fakeClient(document),
     storyId: 's1',
-    form: { name: 'Ana Ionescu', title: 'Ploaia', cover: { kind: 'story' }, ...form },
+    form: {
+      name: 'Ana Ionescu',
+      title: 'Ploaia',
+      cover: { kind: 'story' },
+      chapterIds: null,
+      withAboutWriter: false,
+      ...form,
+    },
     bookText,
     bookLanguage: 'en',
     madeAt: new Date('2026-11-01T10:00:00Z'),
@@ -177,5 +185,47 @@ describe('makeEpub', () => {
     const document = dataFile();
     document.tables.chapters = [chapterRow('c2', 2, 'draft', { published_body: null })];
     await expect(makeWith(document)).rejects.toThrow('no published chapter');
+  });
+});
+
+describe('a sample EPUB and About the writer (IDEAS-2b)', () => {
+  it('holds only the chosen published chapters, keeping their numbers in the story', async () => {
+    const { book, zip } = await makeWith(dataFile('ongoing'), { chapterIds: ['c5', 'c2'] });
+    expect(book.fileName).toBe('ploaia-sample.epub');
+    const nav = (await zip.file('OEBPS/nav.xhtml')?.async('string')) ?? '';
+    expect(nav).toContain('Chapter 3: Published 5');
+    expect(nav).not.toContain('Chapter 1');
+    expect(zip.file('OEBPS/chapter-2.xhtml')).toBeNull();
+  });
+
+  it('says Sample on its title and copyright pages, with the chapters it holds', async () => {
+    const { zip } = await makeWith(dataFile('ongoing'), { chapterIds: ['c1', 'c5'] });
+    for (const page of ['OEBPS/title.xhtml', 'OEBPS/copyright.xhtml']) {
+      const text = (await zip.file(page)?.async('string')) ?? '';
+      expect(text).toContain(`<p class="sample">${englishDataExport.epub.book.sample.label}</p>`);
+      expect(text).toContain('<li>Chapter 1: Published 1</li>');
+      expect(text).toContain('<li>Chapter 3: Published 5</li>');
+    }
+  });
+
+  it('is refused when none of the chosen chapters is published', async () => {
+    await expect(makeWith(dataFile('ongoing'), { chapterIds: ['c2'] })).rejects.toThrow(
+      'There is no published chapter to put in the book.',
+    );
+  });
+
+  it('still makes the whole book only for a completed story', async () => {
+    await expect(makeWith(dataFile('ongoing'))).rejects.toThrow(
+      'Only a completed story can be made into an EPUB.',
+    );
+  });
+
+  it('ends with the public bio and a profile link when ticked, and has neither otherwise', async () => {
+    const ticked = await makeWith(dataFile(), { withAboutWriter: true });
+    const about = (await ticked.zip.file('OEBPS/about.xhtml')?.async('string')) ?? '';
+    expect(about).toContain('I write &lt;short&gt; stories.');
+    expect(about).toContain(`${brand.siteUrl}/u/lia`);
+    const unticked = await makeWith(dataFile());
+    expect(unticked.zip.file('OEBPS/about.xhtml')).toBeNull();
   });
 });

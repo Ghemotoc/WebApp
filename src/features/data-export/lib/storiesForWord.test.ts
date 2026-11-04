@@ -43,7 +43,7 @@ function document(): DataExportDocument {
     format: 'data-export/1',
     made_at: '2026-11-01',
     user_id: 'user-1',
-    account: { profile: { handle: 'lia', pen_name: null } },
+    account: { profile: { handle: 'lia', pen_name: null, bio: '' } },
     tables: {
       stories: [
         { ...story, id: 's1' },

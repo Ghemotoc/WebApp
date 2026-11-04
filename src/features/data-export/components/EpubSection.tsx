@@ -4,6 +4,9 @@
  * 06:31: "When a story is completed, they can also choose to download this as EPUB … only
  * writers can do that").
  *
+ * The same section offers "A sample EPUB for beta readers" (IDEAS-2b) for any one story, once
+ * the writer ticks "Only the chapters I choose" with at least one chapter: the book holds only
+ * those chapters and says it is a sample.
  * A heading, a line on what the book holds (and that the Atlas isn't in it), "Make an EPUB",
  * which opens EpubDialog, and after a book is saved, a line naming the file. The dialog is drawn
  * afresh each time it opens, so the name is filled in again and never kept between books.
@@ -21,13 +24,36 @@ import { useDataExportTranslation } from '../registerDataExportTranslations';
 
 import { EpubDialog } from './EpubDialog';
 
+/** The section's own words and heading ID: the whole book's, or a sample's (IDEAS-2b). */
+const sectionWords = {
+  book: {
+    headingId: 'epub-heading',
+    heading: 'epub.heading',
+    intro: 'epub.intro',
+    open: 'epub.open',
+  },
+  sample: {
+    headingId: 'epub-sample-heading',
+    heading: 'epub.sampleHeading',
+    intro: 'epub.sampleIntro',
+    open: 'epub.sampleOpen',
+  },
+} as const;
+
 /**
  * Renders the section.
  *
- * @param story - the completed story the writer chose
+ * @param story - the story the writer chose (completed, for the whole book)
+ * @param sampleChapterIds - the chapters of a sample; null (the default) for the whole book
  * @returns the section
  */
-export function EpubSection({ story }: { story: EpubStory }) {
+export function EpubSection({
+  story,
+  sampleChapterIds = null,
+}: {
+  story: EpubStory;
+  sampleChapterIds?: string[] | null;
+}) {
   const { t } = useDataExportTranslation();
   const { names } = useMyNames();
   const { state, make } = useMakeEpub(story);
@@ -35,6 +61,8 @@ export function EpubSection({ story }: { story: EpubStory }) {
   // A new key each time the dialog opens, so its form starts fresh (the name is never kept).
   const [openCount, setOpenCount] = useState(0);
   const suggestedName = names?.penName ?? names?.handle ?? '';
+  // The sample's own heading, intro and button; the whole book keeps the original ones.
+  const words = sampleChapterIds === null ? sectionWords.book : sectionWords.sample;
 
   /** Makes the book, closing the dialog once it is saved. */
   async function makeBook(form: EpubForm) {
@@ -43,13 +71,13 @@ export function EpubSection({ story }: { story: EpubStory }) {
 
   return (
     <section
-      aria-labelledby="epub-heading"
+      aria-labelledby={words.headingId}
       className="flex flex-col gap-2.5 rounded-2xl bg-tint px-4.5 py-4"
     >
-      <h4 id="epub-heading" className="m-0 font-heading text-lg font-bold text-heading">
-        {t('epub.heading')}
+      <h4 id={words.headingId} className="m-0 font-heading text-lg font-bold text-heading">
+        {t(words.heading)}
       </h4>
-      <p className="m-0 text-[15px] leading-relaxed text-body">{t('epub.intro')}</p>
+      <p className="m-0 text-[15px] leading-relaxed text-body">{t(words.intro)}</p>
       <div>
         <Button
           variant="secondary"
@@ -58,7 +86,7 @@ export function EpubSection({ story }: { story: EpubStory }) {
             setIsOpen(true);
           }}
         >
-          {t('epub.open')}
+          {t(words.open)}
         </Button>
       </div>
       <div aria-live="polite">
@@ -71,6 +99,7 @@ export function EpubSection({ story }: { story: EpubStory }) {
           key={openCount}
           isOpen={isOpen}
           story={story}
+          sampleChapterIds={sampleChapterIds}
           suggestedName={suggestedName}
           state={state}
           onMake={(form) => void makeBook(form)}

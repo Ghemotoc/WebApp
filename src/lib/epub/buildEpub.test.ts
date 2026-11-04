@@ -52,6 +52,8 @@ function book(): EpubBook {
       embedLine: (title) => `Muzică sau video: ${title}`,
       embedMissing: 'Indisponibil',
     },
+    sample: null,
+    aboutWriter: null,
   };
 }
 
@@ -135,6 +137,40 @@ describe('buildEpub', () => {
     expect(second).toContain('href="https://example.com/a?b=1&amp;c=2"');
     expect(second).not.toContain('javascript:');
     expect(second).not.toContain('<b>');
+  });
+
+  it('says "Sample" on the title and copyright pages of a sample, with its chapters (IDEAS-2b)', async () => {
+    const sample = { label: 'Fragment', holdsLine: 'Fragmentul cuprinde:' };
+    const zip = await JSZip.loadAsync(await buildEpub({ ...book(), sample }));
+    for (const page of ['OEBPS/title.xhtml', 'OEBPS/copyright.xhtml']) {
+      const text = (await zip.file(page)?.async('string')) ?? '';
+      expect(isWellFormed(text)).toBe(true);
+      expect(text).toContain('<p class="sample">Fragment</p>');
+      expect(text).toContain('<li>Capitolul 1: Începutul</li>');
+      expect(text).toContain('<li>Capitolul 2</li>');
+    }
+  });
+
+  it('prints nothing about a sample in the whole book', async () => {
+    const title = (await (await openedBook()).file('OEBPS/title.xhtml')?.async('string')) ?? '';
+    expect(title).not.toContain('class="sample"');
+  });
+
+  it('ends with About the writer, its bio and a profile link, only when asked (IDEAS-2b)', async () => {
+    const aboutWriter = {
+      heading: 'Despre autor',
+      bio: 'Scriu <povești> scurte.',
+      linkLine: 'Mai multe de la Lia:',
+      profileUrl: 'https://example.com/u/lia',
+    };
+    const zip = await JSZip.loadAsync(await buildEpub({ ...book(), aboutWriter }));
+    const about = (await zip.file('OEBPS/about.xhtml')?.async('string')) ?? '';
+    expect(isWellFormed(about)).toBe(true);
+    expect(about).toContain('Scriu &lt;povești&gt; scurte.');
+    expect(about).toContain('<a href="https://example.com/u/lia">https://example.com/u/lia</a>');
+    const opf = (await zip.file('OEBPS/content.opf')?.async('string')) ?? '';
+    expect(opf.indexOf('idref="about"')).toBeGreaterThan(opf.indexOf('idref="chapter-2"'));
+    expect((await openedBook()).file('OEBPS/about.xhtml')).toBeNull();
   });
 
   it('leaves the cover out when there is none', async () => {

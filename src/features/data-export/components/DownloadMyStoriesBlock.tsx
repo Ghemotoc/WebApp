@@ -9,7 +9,9 @@
  * chapters" or "Only the chapters I choose", then "Get my files" and the line about the
  * notification and the seven days. Below it: "We're making your files…" while they are made, the
  * ready line once they are, or a plain line after a failure; then, when one Completed story is
- * chosen, "An EPUB for e-readers" (EpubSection, PRIVACY part f). A writer without stories sees one
+ * chosen, "An EPUB for e-readers" (EpubSection, PRIVACY part f), and for any one story with "Only
+ * the chapters I choose" and at least one chapter ticked, "A sample EPUB for beta readers"
+ * (EpubSection with those chapters, IDEAS-2b). A writer without stories sees one
  * line instead. It has id "download-my-stories", so the "ready" notification opens it.
  * Who shows it: DownloadMyDataSection. What it calls: useMyStories (features/writing), the hooks
  * in ../hooks/useStoriesExport.ts and ../hooks/useDownloadChoices.ts, and useScrollToHash for
@@ -116,6 +118,16 @@ function StoriesStatus({ stories, wasReused }: { stories: LiveStory[]; wasReused
   return <StoriesExportReady copy={copy} story={story} wasReused={wasReused} />;
 }
 
+/**
+ * The chapters for a sample EPUB: the ticked ones, once "Only the chapters I choose" is on for one
+ * story with at least one ticked; null otherwise (IDEAS-2b).
+ */
+function sampleChapterIdsOf(choices: DownloadChoices): string[] | null {
+  const isChoosing = choices.showsChapterChoice && choices.onlyChosenChapters;
+  if (!isChoosing || choices.chosenChapterIds.size === 0) return null;
+  return [...choices.chosenChapterIds].sort();
+}
+
 /** Every control, "Get my files" and its hint. */
 function StoriesForm({ stories }: { stories: LiveStory[] }) {
   const { t } = useDataExportTranslation();
@@ -126,6 +138,9 @@ function StoriesForm({ stories }: { stories: LiveStory[] }) {
   const [wasReused, setWasReused] = useState(false);
   // The EPUB is offered only for one chosen story that is Completed (Robert, 1 Nov 2026, 06:31).
   const chosenCompleted = stories.find((story) => story.id === choices.story && story.isCompleted);
+  // A sample EPUB of the ticked chapters, for any one story (IDEAS-2b; Robert, 2 Nov 2026, 22:00).
+  const sampleStory = stories.find((story) => story.id === choices.story);
+  const sampleChapterIds = sampleChapterIdsOf(choices);
 
   /** Checks the choices, then makes the files or finds the earlier ones. */
   async function getFiles() {
@@ -165,6 +180,13 @@ function StoriesForm({ stories }: { stories: LiveStory[] }) {
       <StoriesStatus stories={stories} wasReused={wasReused} />
       {chosenCompleted !== undefined && (
         <EpubSection key={chosenCompleted.id} story={chosenCompleted} />
+      )}
+      {sampleStory !== undefined && sampleChapterIds !== null && (
+        <EpubSection
+          key={`sample-${sampleStory.id}`}
+          story={sampleStory}
+          sampleChapterIds={sampleChapterIds}
+        />
       )}
     </>
   );

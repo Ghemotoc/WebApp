@@ -169,8 +169,22 @@
       "chapterWithTitle": "Capitolul {{number}}: {{title}}",
       "pictureMissing": "Imagine: {{alt}}",
       "embedLine": "Muzică sau video: {{title}}",
-      "embedMissing": "Un card de muzică sau video care nu mai e disponibil"
-    }
+      "embedMissing": "Un card de muzică sau video care nu mai e disponibil",
+      "sample": {
+        "label": "Fragment",
+        "holds": "Acest fragment cuprinde:"
+      },
+      "about": {
+        "heading": "Despre autor",
+        "linkLine": "Mai multe de la {{name}}:"
+      }
+    },
+    "sampleHeading": "Un EPUB-fragment pentru cititori de probă",
+    "sampleIntro": "Fă o carte electronică doar din capitolele bifate mai sus, marcată ca fragment. Intră doar capitolele publicate.",
+    "sampleOpen": "Fă un EPUB-fragment",
+    "sampleDialogHeading": "Un EPUB-fragment din {{title}}",
+    "aboutLabel": "Adaugă o pagină Despre autor",
+    "aboutHint": "Descrierea ta publică și un link la profilul tău, la finalul cărții."
   },
   "library": {
     "shelf": "Raft",

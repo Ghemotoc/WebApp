@@ -3,7 +3,9 @@
  * f; Robert, 1 Nov 2026, 06:31 to 06:33).
  *
  * The book, in reading order: the cover, the title page, the copyright page, the table of
- * contents (a page too, so it can be read), then every chapter, each its own page. The file
+ * contents (a page too, so it can be read), then every chapter, each its own page, and, when the
+ * writer asked for it, "About the writer" at the back (IDEAS-2b). A sample of some chapters says
+ * "Sample" on its title and copyright pages and lists the chapters it holds (IDEAS-2b). The file
  * follows the EPUB 3 rules readers check first:
  * - "mimetype" is the ZIP's first file and is stored uncompressed;
  * - META-INF/container.xml points to OEBPS/content.opf, which lists every file (the manifest)
@@ -52,6 +54,7 @@ figure img { max-width: 100%; }
 .title-page { text-align: center; margin-top: 30%; }
 .by-line { font-style: italic; }
 .copyright p { font-size: 0.9em; }
+.sample { font-weight: bold; margin-top: 2em; }
 .note { font-style: italic; }
 nav ol { list-style: none; padding: 0; }
 `;
@@ -89,17 +92,38 @@ function picturesOf(book: EpubBook): BookPicture[] {
   }));
 }
 
+/**
+ * A sample's lines for the title and copyright pages: "Sample", then the chapters it holds.
+ *
+ * @returns XHTML, or an empty text for the whole book
+ */
+function sampleLines(book: EpubBook): string {
+  if (book.sample === null) return '';
+  const chapters = book.chapters
+    .map((chapter) => `<li>${escapeXml(chapter.heading)}</li>`)
+    .join('\n');
+  return `<p class="sample">${escapeXml(book.sample.label)}</p>
+<p>${escapeXml(book.sample.holdsLine)}</p>
+<ul class="sample-chapters">
+${chapters}
+</ul>`;
+}
+
 /** The front pages: the title page and the copyright page. */
 function frontPages(book: EpubBook): BookPage[] {
+  // A sample says so on both pages, with its chapters (IDEAS-2b).
+  const sample = sampleLines(book);
   const titleBody = `<section class="title-page" epub:type="titlepage">
 <h1>${escapeXml(book.title)}</h1>
 <p class="by-line">${escapeXml(book.words.byLine)}</p>
+${sample}
 </section>`;
   const copyrightLines = book.words.copyrightLines
     .map((line) => `<p>${escapeXml(line)}</p>`)
     .join('\n');
   const copyrightBody = `<section class="copyright" epub:type="copyright-page">
 <h2>${escapeXml(book.words.copyrightHeading)}</h2>
+${sample}
 ${copyrightLines}
 </section>`;
   return [
@@ -130,6 +154,24 @@ function chapterPages(book: EpubBook, pictureFiles: ReadonlyMap<string, string>)
       isListed: true,
     };
   });
+}
+
+/**
+ * "About the writer" at the back, when the writer ticked it (IDEAS-2b): the public bio, then a
+ * link to the public profile.
+ *
+ * @returns the page, or none
+ */
+function backPages(book: EpubBook): BookPage[] {
+  const about = book.aboutWriter;
+  if (about === null) return [];
+  const bio = about.bio.trim() === '' ? '' : `<p>${escapeXml(about.bio)}</p>\n`;
+  const url = escapeXml(about.profileUrl);
+  const body = `<section epub:type="backmatter">
+<h1>${escapeXml(about.heading)}</h1>
+${bio}<p>${escapeXml(about.linkLine)} <a href="${url}">${url}</a></p>
+</section>`;
+  return [{ id: 'about', fileName: 'about.xhtml', heading: about.heading, body, isListed: true }];
 }
 
 /** The table of contents page (nav.xhtml), which lists every listed page in order. */
@@ -201,12 +243,14 @@ function packageFile(book: EpubBook, pages: BookPage[], pictures: BookPicture[])
         `<item id="${picture.id}" href="${picture.fileName}" media-type="${mediaTypeOf(picture.image)}"/>`,
     )
     .join('\n');
-  // The reading order: the cover, the front pages, the contents, then the chapters.
+  // The reading order: the cover, the front pages, the contents, the chapters, then the back
+  // page ("About the writer", IDEAS-2b) when there is one.
+  const frontIds = new Set(['title', 'copyright']);
   const spineIds = [
     ...(book.cover === null ? [] : ['cover']),
-    ...pages.filter((page) => !page.id.startsWith('chapter-')).map((page) => page.id),
+    ...pages.filter((page) => frontIds.has(page.id)).map((page) => page.id),
     'nav',
-    ...pages.filter((page) => page.id.startsWith('chapter-')).map((page) => page.id),
+    ...pages.filter((page) => !frontIds.has(page.id)).map((page) => page.id),
   ];
   const spine = spineIds.map((id) => `<itemref idref="${id}"/>`).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -262,7 +306,7 @@ export async function buildEpub(book: EpubBook): Promise<Uint8Array> {
   // Step 1: the pictures, and the pages that point to them.
   const pictures = picturesOf(book);
   const pictureFiles = new Map(pictures.map((picture) => [picture.pictureId, picture.fileName]));
-  const pages = [...frontPages(book), ...chapterPages(book, pictureFiles)];
+  const pages = [...frontPages(book), ...chapterPages(book, pictureFiles), ...backPages(book)];
   // Step 2: "mimetype" first and uncompressed, then the files that say what is where.
   const zip = new JSZip();
   zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });

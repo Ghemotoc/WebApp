@@ -49,6 +49,32 @@ export interface EpubWords {
   embedMissing: string;
 }
 
+/**
+ * A sample of some chapters for beta readers (IDEAS-2b; idea IDEA-20261101-3): the title page and
+ * the copyright page say so and list the chapters it holds.
+ */
+export interface EpubSample {
+  /** "Sample", printed under the title and on the copyright page. */
+  label: string;
+  /** "This sample holds:", before the list of chapters. */
+  holdsLine: string;
+}
+
+/**
+ * The optional "About the writer" page at the back (IDEAS-2b; idea IDEA-20261101-4): the public
+ * bio and a link to the public profile, only when the writer ticked it.
+ */
+export interface EpubAboutWriter {
+  /** "About the writer". */
+  heading: string;
+  /** The public bio, or an empty text when there is none. */
+  bio: string;
+  /** "More from {{name}}:", before the link. */
+  linkLine: string;
+  /** The public profile's full address. */
+  profileUrl: string;
+}
+
 /** The whole book. */
 export interface EpubBook {
   title: string;
@@ -66,4 +92,8 @@ export interface EpubBook {
   pictures: ReadonlyMap<string, EpubImage>;
   embeds: ReadonlyMap<string, EpubEmbed>;
   words: EpubWords;
+  /** Set for a sample of some chapters; null for the whole book (IDEAS-2b). */
+  sample: EpubSample | null;
+  /** Set when the writer ticked "Add an About the writer page"; null otherwise (IDEAS-2b). */
+  aboutWriter: EpubAboutWriter | null;
 }
