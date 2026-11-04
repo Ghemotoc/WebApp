@@ -67,6 +67,10 @@ const reviewedHosts: Record<string, string> = {
   'creativecommons.org': 'the CC0 licence link in each avatar’s SVG metadata; never loaded',
   // Story Atlas (S1-E17): the writer's Markdown help shows a sample link; never loaded.
   'example.com': 'the sample link in the Atlas text help; never loaded',
+  // The ad network (S1-E12-04; ADR 0014): Google AdSense's script, added only when a network ad's
+  // slot comes into view and only while the ad_network flag is on (off until GO-LIVE).
+  'pagead2.googlesyndication.com':
+    'the AdSense script; only when a network slot is in view (ADR 0014)',
   localhost: 'a placeholder base address inside React Router and the local Supabase in development',
 };
 

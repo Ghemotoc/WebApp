@@ -69,6 +69,7 @@ export function matchedPageParts(
 function whoPlacedIt(t: TFunction, ad: PageAdSlot['ad']): string {
   if (ad?.label === 'house') return `${t('why.ours')} `;
   if (ad?.label === 'sponsored') return `${t('why.sponsored', { name: ad.sponsor_name ?? '' })} `;
+  if (ad?.label === 'ad') return `${t('why.network')} `;
   return '';
 }
 
@@ -82,8 +83,7 @@ function whoPlacedIt(t: TFunction, ad: PageAdSlot['ad']): string {
  */
 export function whyThisAd(t: TFunction, slot: PageAdSlot, readerLanguage: string): string {
   const parts = matchedPageParts(t, slot.matched, readerLanguage);
-  // Who placed it comes first: our own pages, or a named sponsor (part b3); the network comes in
-  // part d.
+  // Who placed it comes first: our own pages, a named sponsor (part b3) or the ad network (part d).
   const who = whoPlacedIt(t, slot.ad);
   const matches = parts === '' ? t('why.matchesPage') : t('why.matchesParts', { parts });
   return `${who}${matches} ${t('why.promise')}`;

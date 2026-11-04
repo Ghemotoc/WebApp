@@ -2134,3 +2134,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Counting: `SponsorAdCreative` and `SponsoredByLine` call `useSponsorImpression()` when they appear and `countSponsorEvent(key, 'click')` when their link is followed (`src/features/ads/hooks/useSponsorCounting.ts`) → `recordSponsorEvent()` → `record_sponsor_event(ad_key, event_kind)` → one row per campaign and day in `campaign_daily_stats` (two totals, no user column, no cookie). Only a live campaign counts.
 - Reading: the campaign editor's Report section (`CampaignReport`) → `useCampaignReport()` → `fetchCampaignReport()` → `admin_sponsor_campaign_report()` (owner and admin), every day of the run so far with zeros for quiet days; "Download CSV" builds `day,impressions,clicks` in `lib/campaignReportCsv.ts` and hands it to `downloadCsv()`.
 - Migration `…_sponsors_c_reports.sql`. Tests: `supabase/tests/database/273-sponsor-reports.test.sql`, `src/features/sponsors/lib/campaignReportCsv.test.ts`, `e2e/sponsored-ads.spec.ts`.
+
+## The ad network (S1-E12-04; SPONSORS-d; ADR 0014)
+
+- Server: `page_ads()` fills each slot with a sponsor, then `landing_house_ad_for_slot()`, then `network_ad_for_slot()` (only a wide slot, once per page, only while the `ad_network` flag is on and the publisher ID and ad unit settings are set), then `house_ad_for_slot()`.
+- Browser: `AdBox` → `NetworkAdCreative`, which waits until the slot is in view, then `lib/adNetwork.ts` adds the AdSense script once and asks for one non-personalised ad. If the script fails, our "Start writing" ad shows instead.
+- Migration `…_sponsors_d_ad_network.sql`. Tests: `supabase/tests/database/274-ad-network.test.sql`, `src/features/ads/lib/whyThisAd.test.ts`, `e2e/ad-network.spec.ts`.

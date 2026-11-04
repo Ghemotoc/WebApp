@@ -11241,6 +11241,10 @@ export type Database = {
       landing_entries_open_on: { Args: { content: Json }; Returns: string };
       landing_featured_cards: { Args: { content: Json }; Returns: Json };
       landing_featured_problems: { Args: { block: Json; block_path: string }; Returns: string[] };
+      landing_house_ad_for_slot: {
+        Args: { used_keys: string[]; wanted_page_key: string };
+        Returns: Json;
+      };
       landing_page: { Args: { page_slug: string }; Returns: Json };
       landing_page_live_version: {
         Args: { target_page_id: string };
@@ -11971,6 +11975,10 @@ export type Database = {
         Returns: string;
       };
       needs_legal_acceptance: { Args: { target_user_id: string }; Returns: boolean };
+      network_ad_for_slot: {
+        Args: { slot_format: Database['public']['Enums']['ad_format']; used_keys: string[] };
+        Returns: Json;
+      };
       new_certificate_code: { Args: Record<PropertyKey, never>; Returns: string };
       next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
       next_notice_reference: { Args: { notice_kind: string }; Returns: string };
