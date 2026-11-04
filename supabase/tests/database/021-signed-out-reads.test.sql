@@ -52,6 +52,7 @@ select results_eq(
        -- Delete my account: each person's own requests (S1-E13-03).
        ('account_deletions', 0::bigint),
        -- The ad slot catalogue: which slots exist, no personal data (SPONSORS-a1, S1-E12-01).
+       ('ad_blocked_categories', (select count(*) from public.ad_blocked_categories)),
        ('ad_slots', 16::bigint),
        ('age_check_attempts', 0::bigint),
        ('age_check_sessions', 0::bigint),
@@ -189,6 +190,9 @@ select results_eq(
        ('space_members', 0::bigint),
        ('space_moderation_log', 0::bigint),
        ('spaces', 0::bigint),
+       -- Sponsors and campaigns: owner and admin only; readers get live ads through page_ads() (SPONSORS-b1).
+       ('sponsor_campaigns', 0::bigint),
+       ('sponsors', 0::bigint),
        ('staff_interns', 0::bigint),
        ('staff_languages', 0::bigint),
        ('staff_permissions', 0::bigint),
