@@ -8,7 +8,8 @@
  * …_sponsors_b1_campaigns.sql, which check the role and write the audit log. A refused call
  * becomes a SponsorError carrying the database's hint (for example checks:missing or
  * picture:not_checked) and, when a campaign isn't complete, the list of problems. Part c adds
- * fetchCampaignReport() (admin_sponsor_campaign_report(), S1-E12-03).
+ * fetchCampaignReport() (admin_sponsor_campaign_report(), S1-E12-03). Part e2 adds the reason
+ * clash, whose detail names the booking already in the slot (api/placements.ts, S1-E12-05).
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 import {
@@ -27,18 +28,38 @@ export class SponsorError extends Error {
   readonly reason: string;
   /** The problem codes when the campaign isn't complete. */
   readonly problems: string[];
+  /** For a refused booking (reason clash): the campaign and days already in the slot. */
+  readonly clashWith: string | null;
 
   /**
    * @param reason - the hint
    * @param message - the database's message, for the developer console only
    * @param problems - the problem codes from the error's detail
+   * @param clashWith - the clashing booking, for reason clash only
    */
-  constructor(reason: string, message: string, problems: string[]) {
+  constructor(
+    reason: string,
+    message: string,
+    problems: string[],
+    clashWith: string | null = null,
+  ) {
     super(message);
     this.name = 'SponsorError';
     this.reason = reason;
     this.problems = problems;
+    this.clashWith = clashWith;
   }
+}
+
+/**
+ * The problem codes in an error's detail, which lists them separated by commas.
+ *
+ * @param details - the error's detail, if any
+ * @returns the codes, or none for an empty detail
+ */
+function problemsFrom(details: string | undefined | null): string[] {
+  if (details === undefined || details === null || details === '') return [];
+  return details.split(',');
 }
 
 /**
@@ -61,12 +82,10 @@ export function sponsorErrorFrom(error: {
   };
   const hint = error.hint !== undefined && error.hint !== '' ? error.hint : null;
   const reason = hint ?? fallbacks[error.code ?? ''] ?? 'failed';
-  // Step 2: an incomplete campaign lists its problems in the detail, separated by commas.
-  const problems =
-    error.details === undefined || error.details === null || error.details === ''
-      ? []
-      : error.details.split(',');
-  return new SponsorError(reason, error.message, problems);
+  // Step 2: a booking clash names the booking already in the slot in its detail (S1-E12-05).
+  if (reason === 'clash') return new SponsorError(reason, error.message, [], error.details ?? null);
+  // Step 3: an incomplete campaign lists its problems in the detail.
+  return new SponsorError(reason, error.message, problemsFrom(error.details));
 }
 
 /** One sponsor in the list and the campaign form. */

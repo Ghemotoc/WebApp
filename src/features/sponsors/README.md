@@ -18,9 +18,15 @@ reader pages comes in part b3 (in `src/features/ads/`).
 - `hooks/useCampaignReport.ts`, `lib/campaignReportCsv.ts` and `components/staff/CampaignReport.tsx`:
   a campaign's impressions and clicks per day and its CSV (part c, story S1-E12-03). The counting
   itself happens on reader pages, in `src/features/ads/hooks/useSponsorCounting.ts`.
-- `components/staff/`: `StaffSponsorsPage` (principles, review queue, campaigns, sponsors, never
-  advertised) and `CampaignEditorPage` (the campaign form, the creative upload and "End
-  campaign").
+- `components/staff/`: `StaffSponsorsPage` (principles, review queue, campaigns, Placements,
+  sponsors, never advertised) and `CampaignEditorPage` (the campaign form, the creative upload and
+  "End campaign").
+- Placements (part e2, story S1-E12-05): `api/placements.ts` (the `admin_*` booking and house ad
+  functions from part e1), `hooks/usePlacements.ts`, `lib/placementWords.ts` (what a grid cell
+  shows, which campaigns can be booked, the empty forms) and `components/staff/placements/`
+  (`PlacementsSection` with the fill order, `PlacementGrid`, `BookSlotForm`, `BookingList`,
+  `HouseAdsSection` and `HouseAdForm`). A refused booking is a `SponsorError` with reason `clash`
+  and the booking already in the slot in `clashWith`.
 
 The field limits are in `src/schemas/sponsors.ts`, mirrored by the database. The interface text is
 the `sponsors` namespace, registered by `registerSponsorTranslations.ts`. The creative goes through

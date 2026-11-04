@@ -2147,3 +2147,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Staff functions, each logged in the audit log: `admin_book_ad_slot()`, `admin_change_ad_booking()` and `admin_cancel_ad_booking()` (a clash with another booking of the same slot is refused, naming the campaign; `require_free_ad_slot()` locks the slot so two admins can't both pass), `admin_save_house_ad()`, `admin_archive_house_ad()`, `admin_house_ads()` and `admin_ad_placements()` (each slot against the next six weeks: booked, house, network or free).
 - One click on a public page: `usePageAds()` → `page_ads()` → `fill_ad_slot()` for each slot: `booked_sponsor_ad_for_slot()` (a booked slot never goes to another sponsor that day, `ad_slot_is_booked()`), else a campaign by its placement, then `staff_house_ad_for_slot()`, `landing_house_ad_for_slot()`, `network_ad_for_slot()` and `house_ad_for_slot()`. In the browser, `HouseAdCreative` draws a staff house ad (kind `staff`) with its own words and link.
 - Migration `…_sponsors_e1_bookings.sql`. Tests: `supabase/tests/database/275-ad-bookings.test.sql`, `src/features/ads/components/HouseAdCreative.test.tsx`.
+
+## Staff › Sponsors › Placements (S1-E12-05; SPONSORS-e2)
+
+- On `/staff/sponsors`, after the review queue: `PlacementsSection` shows the fill order, `PlacementGrid` (every slot against the next six weeks from `admin_ad_placements()`, with "Preview with the ad network on"), `BookSlotForm`, `BookingList` and `HouseAdsSection`.
+- One click: "Check and book" → `BookSlotForm` → `usePlacementChanges()` → `api/placements.ts` `bookSlot()` → `admin_book_ad_slot()` (locks the slot, refuses a clash with the booking already there in the error's detail, writes the audit log) → `ad_bookings`; everything under Sponsors is read again, so the grid shows Booked.
+- Folder guide: `src/features/sponsors/README.md`. Tests: `src/features/sponsors/lib/placementWords.test.ts`, `e2e/sponsor-placements.spec.ts`.

@@ -55,6 +55,7 @@ const knownErrors = new Set([
   'too_big',
   'too_many',
   'unreachable',
+  'clash',
 ]);
 
 /**
