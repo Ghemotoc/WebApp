@@ -4,7 +4,8 @@
  * Who reads it: `npm run dev` and `npm run build` (Vite), `npm test` (Vitest) and Cloudflare Pages,
  * which runs `npm run build` and publishes the `dist` folder (decided 17 Oct 2026, 12:57).
  * What it does next: compiles src/main.tsx and everything it imports into dist/, fills the page
- * title in index.html from src/config/brand.ts, and serves our Cloudflare Pages Functions
+ * title in index.html from src/config/brand.ts, writes dist/_headers (server/security-headers.ts,
+ * QA-1c), and serves our Cloudflare Pages Functions
  * (functions/) during development and preview (server/pages-functions-plugin.ts, S1-E2-01).
  */
 import { fileURLToPath, URL } from 'node:url';
@@ -15,6 +16,7 @@ import { loadEnv, type Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
 import { pagesFunctionsPlugin } from './server/pages-functions-plugin.ts';
+import { cloudflareHeadersFile, securityHeaders } from './server/security-headers.ts';
 import { readBrand } from './src/config/brand.ts';
 
 /**
@@ -42,6 +44,37 @@ function brandTitlePlugin(productName: string): Plugin {
   };
 }
 
+/**
+ * A small Vite plugin for the security headers (QA-1c, finding X1): it writes dist/_headers, which
+ * Cloudflare Pages sends with every page, and sends the same headers from `vite preview`, so the
+ * end-to-end tests (which run against the preview) catch anything the policy would block.
+ *
+ * @param supabaseUrl - VITE_SUPABASE_URL for this build
+ * @returns the plugin for Vite's plugin list
+ */
+function securityHeadersPlugin(supabaseUrl: string): Plugin {
+  const headers = securityHeaders(supabaseUrl);
+  return {
+    name: 'security-headers',
+    // Step 1: at build time, add _headers next to index.html in dist/.
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: '_headers',
+        source: cloudflareHeadersFile(supabaseUrl),
+      });
+    },
+    // Step 2: the preview server sends them on every answer. The dev server doesn't: its hot
+    // reload needs inline scripts that the policy refuses.
+    configurePreviewServer(server) {
+      server.middlewares.use((_request, response, next) => {
+        for (const [name, value] of Object.entries(headers)) response.setHeader(name, value);
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   // Read the VITE_ variables for this mode (from .env files and the shell), as the app will see them.
   const environment = loadEnv(mode, process.cwd(), 'VITE_');
@@ -49,7 +82,15 @@ export default defineConfig(({ mode }) => {
 
   return {
     // pagesFunctionsPlugin serves functions/ (Cloudflare Pages Functions) locally (S1-E2-01).
-    plugins: [react(), tailwindcss(), brandTitlePlugin(brand.productName), pagesFunctionsPlugin()],
+    // securityHeadersPlugin writes dist/_headers and sends them from the preview server (QA-1c).
+    plugins: [
+      react(),
+      tailwindcss(),
+      brandTitlePlugin(brand.productName),
+      // Before the functions plugin, so its answers (the /s/ link previews) get the headers too.
+      securityHeadersPlugin(environment.VITE_SUPABASE_URL ?? ''),
+      pagesFunctionsPlugin(),
+    ],
     // The build's version, read by src/config/appVersion.ts for error reports (S1-E1-05).
     define: { 'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion()) },
     resolve: {
