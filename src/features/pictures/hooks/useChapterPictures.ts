@@ -20,8 +20,8 @@ import {
 /** While a picture is still being checked, look again this often (milliseconds). */
 const checkingRefreshMilliseconds = 15 * 1000;
 
-/** Signed addresses last an hour; read them again well before that. */
-const addressRefreshMilliseconds = 30 * 60 * 1000;
+/** Signed addresses last 30 minutes (api/pictures.ts); read them again after 20. */
+const addressRefreshMilliseconds = 20 * 60 * 1000;
 
 /**
  * The caller's own pictures among the IDs, with a signed address for each.
@@ -36,10 +36,12 @@ export function useMyPictureStates(pictureIds: string[]) {
     enabled: sortedIds.length > 0,
     staleTime: addressRefreshMilliseconds,
     queryFn: async () => fetchMyPictureStates(await requireClient(), sortedIds),
-    // A picture still in its check changes on its own; others only when someone acts.
+    // A picture still in its check changes on its own, so look often; otherwise read again before
+    // the signed addresses run out.
     refetchInterval: (query) => {
       const views = Object.values(query.state.data ?? {});
-      return views.some((view) => view.state === 'checking') ? checkingRefreshMilliseconds : false;
+      const anyChecking = views.some((view) => view.state === 'checking');
+      return anyChecking ? checkingRefreshMilliseconds : addressRefreshMilliseconds;
     },
   });
   return { pictures: pictures.data ?? {}, loadFailed: pictures.isError };

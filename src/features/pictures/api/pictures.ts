@@ -14,7 +14,7 @@
  * story_cover_picture(), my_pending_pictures() and my_picture_states()
  * (…_s1_e10_05_picture_check.sql, …_s1_e3_09_chapter_pictures.sql), and POST /api/picture-check
  * (server/picture-check.ts), which runs the checks with the person's own sign-in.
- * A picture is shown only through a signed address that lasts an hour; Storage refuses one for a
+ * A picture is shown only through a signed address that lasts 30 minutes; Storage refuses one for a
  * picture that hasn't passed, unless the caller is the uploader or moderation staff.
  */
 import { isAnimatedPicture } from '@/lib/animated-picture';
@@ -35,7 +35,7 @@ export type PictureState = 'visible' | 'checking' | 'waiting_for_person' | 'remo
 /** One picture as a screen draws it. */
 export interface PictureView {
   state: PictureState;
-  /** A signed address that lasts an hour; null when the caller may not see the file. */
+  /** A signed address that lasts 30 minutes; null when the caller may not see the file. */
   url: string | null;
 }
 
@@ -82,8 +82,11 @@ export class PictureUploadError extends Error {
   }
 }
 
-/** Signed addresses last an hour; the queries refresh well before that. */
-const signedAddressSeconds = 60 * 60;
+/**
+ * Signed addresses last 30 minutes (was an hour); the queries read them again before that. Kept short because a
+ * signed address works for anyone who has it, so a copied link stops working soon (QA-1b, finding C1).
+ */
+const signedAddressSeconds = 30 * 60;
 
 /** A picture as the database describes it: its state and, when the caller may read it, its file. */
 export interface StoredPicture {

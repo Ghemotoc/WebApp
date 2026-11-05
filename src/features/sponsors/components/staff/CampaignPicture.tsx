@@ -5,7 +5,7 @@
  * Staff who uploaded it, and moderation staff, may read the file at every stage, so it is shown
  * with a line saying where its check stands. A campaign without a picture (a "Sponsored by" line)
  * says so. Who shows it: ReviewCard and CampaignCreativeFields. What it calls: pictureViewOf()
- * for a signed address that lasts an hour.
+ * for a signed address that lasts 30 minutes.
  */
 import { useQuery } from '@tanstack/react-query';
 
