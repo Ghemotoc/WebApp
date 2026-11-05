@@ -19,6 +19,7 @@ import englishEmail from '../src/locales/en/email.json';
 import romanianEmail from '../src/locales/ro/email.json';
 
 import type { EmailSender, SendEmail } from './contact';
+import { sameText } from './same-text';
 
 /** The texts of one language, as in email.json. */
 type EmailTexts = Record<string, string | Record<string, string>>;
@@ -100,7 +101,12 @@ export async function verifyHookSignature(
   const id = headers.get('webhook-id') ?? '';
   const timestamp = headers.get('webhook-timestamp') ?? '';
   const signatures = (headers.get('webhook-signature') ?? '').split(' ');
-  if (id === '' || Math.abs(nowSeconds - Number(timestamp)) > 300) return false;
+  // A missing id, or a time that isn't a whole number of seconds within 5 minutes of now, is
+  // refused. Number('abc') is NaN, and NaN > 300 is false, so the check must ask for a number
+  // first or a broken timestamp would pass (QA-1d, finding X3).
+  const sentAtSeconds = Number(timestamp);
+  if (id === '' || timestamp === '' || !Number.isInteger(sentAtSeconds)) return false;
+  if (Math.abs(nowSeconds - sentAtSeconds) > 300) return false;
   // Step 1: the key is the base64 part after "whsec_".
   const keyBytes = Uint8Array.from(
     atob(secret.replace(/^v1,/, '').replace(/^whsec_/, '')),
@@ -120,7 +126,8 @@ export async function verifyHookSignature(
     new TextEncoder().encode(`${id}.${timestamp}.${body}`),
   );
   const expected = btoa(String.fromCharCode(...new Uint8Array(signed)));
-  return signatures.some((signature) => signature === `v1,${expected}`);
+  // Compared in constant time, so timing says nothing about how close a forged signature was.
+  return signatures.some((signature) => sameText(signature, `v1,${expected}`));
 }
 
 /**

@@ -7,7 +7,7 @@
 Avatars can no longer be uploaded: they are built with the avatar builder or are the initials (Robert, 2 Nov 2026, 08:41 to 08:50). The builder saves a small recipe on the profile (`profiles.avatar_recipe`) and the browser draws it as SVG. The brief asks for a full range of skin tones, no gendered default, no free text, a live preview, "Surprise me" and undo, and says our own doodle-style parts can replace the art later.
 
 ## Decision
-- **Library:** DiceBear 9.4.2 (`@dicebear/core`, code MIT), installed from npm and bundled with the app. It runs only in the browser and loads nothing from any other site.
+- **Library:** DiceBear 9.4.3 (`@dicebear/core`, code MIT), installed from npm and bundled with the app. It runs only in the browser and loads nothing from any other site.
 - **Art:** the Open Peeps style (`@dicebear/open-peeps`), designed by Pablo Stanley, under **CC0 1.0** (public domain dedication): commercial use is allowed and no attribution is required. The package's code is MIT. The SVG DiceBear makes names the source, the designer and the licence in its metadata; those links are never loaded (`scripts/check-third-party.ts`).
 - **Why Open Peeps:** CC0, and the widest range of hair and head coverings (afro, bantu knots, cornrows, locs, twists, hijab, turban, grey hair, shaved, no hair), with skin tone, hair colour, facial hair, glasses and clothes colour. Eyes and mouth come together as one "expression".
 - **Rejected:** Lorelei (CC0, but a head only, with no clothes); Micah and Personas (CC BY 4.0, which asks for credit with every use); Avataaars (its own "free for personal and commercial use" terms, not an open licence).

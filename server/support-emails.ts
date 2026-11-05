@@ -25,6 +25,7 @@ import romanianEmail from '../src/locales/ro/email.json';
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
 import { fillPlaceholders } from './notification-emails';
 import { textOf } from './send-email';
+import { sameText } from './same-text';
 import { hmacHex } from './signup-context';
 
 /** The texts of one language, as in email.json. */
@@ -381,20 +382,6 @@ export function incomingFromBrevo(item: BrevoInboundItem): IncomingSupportEmail 
 }
 
 /**
- * Whether two keys are equal, comparing every character so the time taken says nothing.
- *
- * @returns true when they match
- */
-function sameKey(given: string, expected: string): boolean {
-  if (given.length !== expected.length) return false;
-  let difference = 0;
-  for (let index = 0; index < expected.length; index += 1) {
-    difference |= given.charCodeAt(index) ^ expected.charCodeAt(index);
-  }
-  return difference === 0;
-}
-
-/**
  * Signs and saves one email.
  *
  * @returns true when the database took it
@@ -426,7 +413,7 @@ function checkInboundCall(
     return { refusal: jsonAnswer({ error: 'not_set_up' }, 503) };
   }
   const given = new URL(request.url).searchParams.get('key') ?? '';
-  if (!sameKey(given, inboundKey)) return { refusal: jsonAnswer({ error: 'not_allowed' }, 401) };
+  if (!sameText(given, inboundKey)) return { refusal: jsonAnswer({ error: 'not_allowed' }, 401) };
   return { secret };
 }
 
