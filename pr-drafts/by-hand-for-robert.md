@@ -192,7 +192,12 @@ For each: set the keys, check it on staging, then turn its flag on in Staff › 
 ### Step 7. Before anyone under 18 joins (the minors' launch gate)
 
 1. **Yoti real** (ADR 0010): Cloudflare `YOTI` = `real`, `YOTI_API_KEY`, `YOTI_SDK_ID` and `YOTI_NOTIFICATION_PUBLIC_KEY`, and register `https://<site>/api/age-check/webhook` with Yoti. The stand-in lets anyone pass, so this comes before anything else in this step.
-2. **Staff sign-in through Google Workspace** (S1-E2-07b): not built yet; the builder flags it in the 17 CHECK report. Once built, enforce 2-Step Verification for every staff account in the Google Workspace admin console.
+2. **Staff sign-in through Google Workspace** (S1-E2-07b, built in bundle 17 CHECK; runbook `docs/runbooks/staff-sign-in.md`). Needs Google sign-in from step 5 working first.
+   1. In the Google Workspace admin console, enforce 2-Step Verification for every staff account.
+   2. Every staff member signs in as today and connects their work Google account in Settings › Ways to log in.
+   3. Run the runbook's SQL check: every staff row must show the staff domain as its Workspace domain. If one is empty, stop and ask the engineer.
+   4. In the SQL editor: `select vault.create_secret('<staff domain>', 'staff_email_domain');` (the domain without "@"). From then on staff powers need "Continue with Google" with the work account.
+   5. If nobody can get in: `delete from vault.secrets where name = 'staff_email_domain';` brings today's sign-in back at once.
 3. The data protection impact assessment and the record of processing (minors, Yoti, the parent's email for consent and data requests, minutes read per day, the returning-user check).
 4. Make sure the moderation team can keep up with the picture queue: every picture from an under-16, and every picture in an All ages or 13+ story, waits for a moderator.
 5. Then turn `adults_only` off.
