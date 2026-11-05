@@ -148,7 +148,7 @@ create table public.story_search_documents (
 );
 
 comment on table public.story_search_documents is
-  'Each story''s folded search text and word index, kept by triggers (QA-2a; search S1-E5-04).';
+  'kind: platform. Each story''s folded search text and word index, kept by triggers (QA-2a; search S1-E5-04).';
 
 create index story_search_documents_words on public.story_search_documents using gin (document);
 create index story_search_documents_text_trigram

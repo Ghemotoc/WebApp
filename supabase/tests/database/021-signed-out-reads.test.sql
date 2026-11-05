@@ -223,6 +223,8 @@ select results_eq(
        ('story_restrictions', 0::bigint),
        ('story_revisions', 0::bigint),
        ('story_scores', 0::bigint),
+       -- Stored search rows: staff only, visitors search through browse_stories() (QA-2a).
+       ('story_search_documents', 0::bigint),
        ('story_tags', 0::bigint),
        -- Support tickets: support staff only, members through functions (ADMIN-2h1).
        ('support_canned_replies', 0::bigint),
