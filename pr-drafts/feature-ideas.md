@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 5 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-05.md; doc tab "5 Nov 2026")
+
+12 ideas, IDEA-20261105-1 to 12: book clubs, reader-made reading lists, spoiler tags, staff picks, "Tell me when it's finished", name check against the Atlas, Romanian name ideas, dedication page, due dates for class assignments, keyboard shortcuts, public safety report page, readability check before publishing.
+
 ### Sent 4 Nov 2026 (/mnt/project-files/feature-ideas/2026-11-04.md; doc tab "4 Nov 2026")
 
 12 ideas, IDEA-20261104-1 to 12: beta readers for a draft chapter, writing sprints, stories in a series, an end-of-chapter question, "Previously…" recap, compare chapter versions, dictionary look-up, take a break, reader questions with writer answers, update schedule, feedback grids for class assignments, co-writer.
