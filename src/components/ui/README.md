@@ -15,7 +15,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `Doodle` (+ `doodleSources.ts`) | A decorative doodle: `data-doodle` background or widget, hidden under 1000 or 600 px, never over text (checked by `e2e/support/doodles.ts`) (S1-E3-01) |
 | `Card`, `LabelRows`, `Eyebrow`, `EmptyState`, `Notice` | Panels, label and value rows with fine lines, eyebrow labels, empty states, coloured messages |
 | `StoryCard` | A story with a drawn cover (`src/components/covers/DrawnCover`); the title is always shown in full |
-| `Shelf` (+ `useShelfScroll`, `ShelfArrows`, `ViewMoreCard`) | One sideways line of at most 20 stories, arrows only when it overflows, a one-side fade, then "View more" |
+| `Shelf` (+ `useShelfScroll`, `shelfPaging`, `ShelfArrows`, `ViewMoreCard`) | One sideways line of at most 20 stories, arrows only when it overflows, a one-side fade, arrows that move by whole cards so a faded card is always shown fully next (FIXES-1a), then "View more" |
 | `AdSlot` | Banner, portrait, side box and in-list card ad slots, labelled "Ad" or "Sponsored" |
 | `PageContainer` | The centred 1280 px column with responsive side padding |
 

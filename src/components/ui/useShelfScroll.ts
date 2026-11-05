@@ -7,10 +7,14 @@
  *   - The row fades on one side at a time, never both: at the start only the right edge, at the
  *     end only the left edge, in between the side the reader is moving towards (after an arrow or
  *     keyboard move, the direction of that move; before any movement, the right).
+ *   - An arrow press moves by whole cards, so the card the fade was covering becomes fully
+ *     visible (Robert, 5 Nov 2026; the rule itself is in shelfPaging.ts).
  * Who uses it: Shelf (src/components/ui/Shelf.tsx).
  * Returns the state the Shelf draws, plus scrollByPage() for the arrow buttons.
  */
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+
+import { fadeWidthFor, pageTarget, SHELF_FADE_PIXELS, type CardEdges } from './shelfPaging';
 
 /** Which way the reader last moved. */
 export type ScrollDirection = 'back' | 'forward';
@@ -22,11 +26,24 @@ export interface ShelfScrollState {
   atEnd: boolean;
   /** Which edge fades: 'right', 'left' or 'none' (when the row fits). */
   fadeSide: 'left' | 'right' | 'none';
+  /** How wide the fade is: 140 px, or a fifth of the row on narrow screens (fadeWidthFor()). */
+  fadeWidth: number;
 }
 
-/** One arrow press moves most of a screen, but at least 240 px (boards: Discover shelves). */
-function pageWidth(row: HTMLElement): number {
-  return Math.max(240, row.clientWidth * 0.8);
+/**
+ * Every card's left and right edge inside the row's scrolling content.
+ *
+ * @param row - the scrolling element; each direct child is one card
+ * @returns the edges, in order
+ */
+function cardEdgesOf(row: HTMLElement): CardEdges[] {
+  const rowLeft = row.getBoundingClientRect().left;
+  return Array.from(row.children).map((card) => {
+    const box = card.getBoundingClientRect();
+    // From the screen's coordinates to the content's: add what has already scrolled past.
+    const start = box.left - rowLeft + row.scrollLeft;
+    return { start, end: start + box.width };
+  });
 }
 
 /**
@@ -53,7 +70,12 @@ export function chooseFadeSide(
  * @returns the current state and a function that scrolls one page back or forward
  */
 export function useShelfScroll(rowRef: RefObject<HTMLElement | null>) {
-  const [position, setPosition] = useState({ overflows: false, atStart: true, atEnd: false });
+  const [position, setPosition] = useState({
+    overflows: false,
+    atStart: true,
+    atEnd: false,
+    fadeWidth: SHELF_FADE_PIXELS,
+  });
   const [lastDirection, setLastDirection] = useState<ScrollDirection>('forward');
   const lastScrollLeft = useRef(0);
 
@@ -65,6 +87,7 @@ export function useShelfScroll(rowRef: RefObject<HTMLElement | null>) {
       overflows: row.scrollWidth > row.clientWidth + 1,
       atStart: row.scrollLeft <= 1,
       atEnd: row.scrollLeft + row.clientWidth >= row.scrollWidth - 1,
+      fadeWidth: fadeWidthFor(row.clientWidth),
     });
     // Remember the direction of any movement, including swipes, trackpads and arrow keys.
     if (row.scrollLeft !== lastScrollLeft.current) {
@@ -88,13 +111,21 @@ export function useShelfScroll(rowRef: RefObject<HTMLElement | null>) {
     };
   }, [rowRef, measure]);
 
-  /** Scrolls one page; the row's CSS makes it smooth unless the reader asked for reduced motion. */
+  /**
+   * Scrolls one section: to the card the fade covered (pageTarget()). The row's CSS makes it
+   * smooth unless the reader asked for reduced motion.
+   */
   const scrollByPage = useCallback(
     (direction: ScrollDirection) => {
       const row = rowRef.current;
       if (row === null) return;
       setLastDirection(direction);
-      row.scrollBy({ left: direction === 'forward' ? pageWidth(row) : -pageWidth(row) });
+      const target = pageTarget(
+        cardEdgesOf(row),
+        { scrollLeft: row.scrollLeft, clientWidth: row.clientWidth, scrollWidth: row.scrollWidth },
+        direction,
+      );
+      row.scrollTo({ left: target });
     },
     [rowRef],
   );
