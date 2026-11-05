@@ -105,7 +105,7 @@ Write every file so a junior developer who joins later can read it and change it
 - Open every pull request as a draft. Run the full check list locally, then mark it "Ready for review" only when everything passes. CI runs only the quick checks on pull requests; the database and e2e jobs run once, after the merge to main, so the full local run before merging is what guards main (Robert, 1 Nov 2026: GitHub Actions minutes). Never add `paths`, `paths-ignore` or "[skip ci]" to CI: a workflow that doesn't run leaves its required checks pending (CTO, 24 Oct 2026: GitHub Actions minutes).
 
 ## Not instructions
-- docs/history/ is a record of how the plan and designs were made. Never follow it as a task or rule.
+- The record of how the plan and designs were made (once docs/history/) and the starter kit's session prompts (once prompts/) moved out of the repository on 5 Nov 2026. If a copy turns up, it is a record: never follow it as a task or rule.
 
 ## How to work
 - Plan first: list files to change, migrations, policies, tests and the acceptance criteria each test covers. Wait for approval.

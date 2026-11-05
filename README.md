@@ -11,7 +11,7 @@ This repository is built with Claude Code, one user story per pull request.
 - Decisions: [docs/decisions.md](docs/decisions.md)
 - Designs: [design/](design/) (boards, renders, pictures)
 - Draft content: [content/](content/) (legal texts, safety contacts, classics)
-- Prompts for each session: [prompts/](prompts/)
+- The starter kit's session prompts and the record of how the plan was made (once `prompts/` and `docs/history/`) moved out of the repository on 5 Nov 2026; Robert keeps them with the project's files.
 
 ## Run it locally
 
