@@ -17,7 +17,10 @@ const now = 1_793_000_000_000;
  *
  * @returns the three Standard Webhooks headers
  */
-async function signed(body: string, timestamp = Math.floor(now / 1000)): Promise<Headers> {
+async function signed(
+  body: string,
+  timestamp: number | string = Math.floor(now / 1000),
+): Promise<Headers> {
   const keyBytes = Uint8Array.from(atob(btoa('test-secret-key-for-hooks')), (char) =>
     char.charCodeAt(0),
   );
@@ -93,6 +96,16 @@ describe('the Send Email hook', () => {
       false,
     );
     expect(await verifyHookSignature(secret, headers, body, Math.floor(now / 1000))).toBe(true);
+  });
+
+  it('refuses a correctly signed call whose time is not a number (QA-1d)', async () => {
+    const body = JSON.stringify(payloadFor('signup'));
+    // Before QA-1d, NaN slipped past the five-minute check, so a signature over any old call
+    // with a broken time was accepted for ever.
+    for (const brokenTime of ['abc', '', '1e3x']) {
+      const headers = await signed(body, brokenTime);
+      expect(await verifyHookSignature(secret, headers, body, Math.floor(now / 1000))).toBe(false);
+    }
   });
 
   it('sends the sign-up email in Romanian by default, with the link Supabase made', async () => {
