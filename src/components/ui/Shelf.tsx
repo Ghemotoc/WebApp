@@ -95,13 +95,15 @@ export function Shelf({ title, eyebrow, items, seeAllHref, totalCount }: ShelfPr
         className={`-mx-1 flex scroll-px-1 scroll-smooth gap-5 overflow-x-auto px-1 pt-1 pb-4 ${state.overflows ? 'tmc-noscroll' : ''}`}
         style={{ maskImage: mask, WebkitMaskImage: mask }}
       >
+        {/* Each cell is "relative", so nothing absolutely positioned inside a card (a
+            screen-reader-only label, a badge) can escape the row and widen the page (17 CHECK). */}
         {visibleItems.map((item) => (
-          <div key={item.key} className="flex-none">
+          <div key={item.key} className="relative flex-none">
             {item.content}
           </div>
         ))}
         {hasMore && (
-          <div className="flex-none">
+          <div className="relative flex-none">
             <ViewMoreCard href={seeAllHref} shelfTitle={title} totalCount={listSize} />
           </div>
         )}
