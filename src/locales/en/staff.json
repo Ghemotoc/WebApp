@@ -30,7 +30,8 @@
       "not_staff": "Permissions are only for staff. Give this account a role first.",
       "refused": "That wasn’t saved. Check the account and the reason, then try again.",
       "unreachable": "We couldn’t reach our server. Check your connection and try again.",
-      "picture_review_not_allowed": "Picture review is only for staff aged 18 or over who aren’t interns."
+      "picture_review_not_allowed": "Picture review is only for staff aged 18 or over who aren’t interns.",
+      "no_workspace_account": "Staff roles now go only to accounts connected to a team Google Workspace account. Ask them to connect their work Google account in Settings › Ways to log in first."
     },
     "reasonMissing": "Write a reason first.",
     "staffAccountNote": "A staff account can’t publish, comment, post or message as a member. Use a separate writer account for that.",
@@ -98,6 +99,15 @@
     "not_staff": "Your account has no staff role, so the admin site stays closed. If you work on the team, ask an owner or admin to give your staff account a role.",
     "signIn": "Log in",
     "goHome": "Go to Home"
+  },
+  "workspace": {
+    "documentTitle": "Sign in with Google · {{productName}}",
+    "heading": "Sign in with your Google Workspace account",
+    "why": "Staff powers now need a sign-in with your team Google account on @{{domain}}. Google’s 2-Step Verification protects it, so we don’t ask for a separate code.",
+    "stepConnect": "First connect your @{{domain}} Google account to this account. Google sends you back here; then continue with Google once more to sign in.",
+    "stepSignIn": "Your @{{domain}} Google account is connected. Continue with Google to sign in with it, then open the admin site again.",
+    "buttonGroup": "Sign in to the admin site",
+    "failed": "Google sign-in couldn’t start. Try again in a moment; if it keeps happening, ask an owner to check that Google sign-in is set up."
   },
   "home": {
     "documentTitle": "Admin site · {{productName}}",

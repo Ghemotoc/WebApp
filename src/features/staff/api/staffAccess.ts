@@ -5,7 +5,9 @@
  * What it calls next: my_staff_areas() (…_s1_e11_01_admin_shell.sql), which answers from the
  * roles table and the staff session, so it is empty for a member or once a staff session has
  * ended; the person's own staff_roles rows (policy staff_roles_select_own) and their own username
- * (policy profiles_select_own), for the name and role shown in the staff bar.
+ * (policy profiles_select_own), for the name and role shown in the staff bar; and
+ * my_staff_sign_in() (…_s1_e2_07b_workspace_sign_in.sql), which says when a staff member must
+ * sign in with their Google Workspace account first (S1-E2-07b).
  */
 import type { Enums } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
@@ -16,6 +18,16 @@ export interface StaffAreaAccess {
   access: 'view' | 'act';
 }
 
+/** Whether a staff member must sign in with Google Workspace before staff powers work. */
+export interface StaffWorkspaceSignIn {
+  /** True when the person holds a staff role but this session isn't a Workspace sign-in. */
+  isNeeded: boolean;
+  /** The staff domain, for example "example.com"; null when no Workspace sign-in is needed. */
+  domain: string | null;
+  /** True when the account is already linked to a Workspace account (then only sign in again). */
+  isConnected: boolean;
+}
+
 /** What the shell knows about the signed-in person. */
 export interface StaffAccess {
   /** The areas the server allows right now; empty for a member or an ended session. */
@@ -24,6 +36,29 @@ export interface StaffAccess {
   roles: Enums<'staff_role'>[];
   /** The person's username, for the staff bar; null before one is chosen. */
   handle: string | null;
+  /** Whether staff powers wait for a Google Workspace sign-in (S1-E2-07b). */
+  workspace: StaffWorkspaceSignIn;
+}
+
+/**
+ * Reads my_staff_sign_in()'s answer.
+ *
+ * @param answer - the JSON the database returned
+ * @returns the answer; anything unexpected counts as "not needed", because the server refuses
+ *   staff actions on its own whatever the screen shows
+ */
+export function toWorkspaceSignIn(answer: unknown): StaffWorkspaceSignIn {
+  const reply = (answer ?? {}) as {
+    needs_workspace?: unknown;
+    domain?: unknown;
+    connected?: unknown;
+  };
+  const domain = typeof reply.domain === 'string' && reply.domain !== '' ? reply.domain : null;
+  return {
+    isNeeded: reply.needs_workspace === true && domain !== null,
+    domain,
+    isConnected: reply.connected === true,
+  };
 }
 
 /**
@@ -46,7 +81,11 @@ export async function fetchStaffAccess(
   const rolesResult = await client.from('staff_roles').select('role').eq('user_id', userId);
   if (rolesResult.error !== null) throw new Error(rolesResult.error.message);
 
-  // Step 3: the username, for the staff bar.
+  // Step 3: whether staff powers wait for a Google Workspace sign-in (S1-E2-07b).
+  const workspaceResult = await client.rpc('my_staff_sign_in');
+  if (workspaceResult.error !== null) throw new Error(workspaceResult.error.message);
+
+  // Step 4: the username, for the staff bar.
   const profileResult = await client
     .from('profiles')
     .select('handle')
@@ -61,5 +100,6 @@ export async function fetchStaffAccess(
     })),
     roles: rolesResult.data.map((row) => row.role),
     handle: profileResult.data?.handle ?? null,
+    workspace: toWorkspaceSignIn(workspaceResult.data),
   };
 }
