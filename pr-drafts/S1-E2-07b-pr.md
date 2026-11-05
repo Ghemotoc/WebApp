@@ -36,7 +36,15 @@ Story S1-E2-07b, found missing by bundle 17 CHECK: staff powers only after a Goo
 
 ## Local check run
 
-LOCALRUN
+Fast checks, run locally on this branch (GitHub Actions is blocked by billing):
+
+- Prettier, lint, `tsc -b`, `types:check` (types regenerated for the new functions), `i18n:check` and `migrations:check`: passed.
+- Vitest: 237 files, 1,485 tests passed.
+- Database (`supabase test db`, after a reset): 201 files, 4,616 tests passed, the new 291 included.
+- Wrangler compile, the build with and without env and `third-party:check` (after bringing in main with #346): passed.
+- e2e (staff-workspace-sign-in, staff-shell, staff-roles, sign-in, ways-to-log-in, error-offline-maintenance, epic-s1-e2): 163 of 163 passed.
+
+The whole-app run of bundle 17 CHECK (every e2e file on main) ran just before this story; this branch adds one e2e file and changes nothing else that runs while the secret is unset.
 
 ## By hand
 
