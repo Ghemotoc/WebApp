@@ -121,22 +121,86 @@ Newest at the top. One line each.
 - **SAFE-2 (#200, merged):** the public report form needs one shared secret, set in two places, plus a rate limit. (1) Make a long random value in your password manager. (2) Supabase dashboard > staging project > SQL Editor > New query > `select vault.create_secret('<that value>', 'public_notice_secret');` > Run. (3) Cloudflare > Workers & Pages > ghemotoc > Settings > Variables and Secrets > Add > type Secret, name `NOTICE_SECRET`, the same value, Production > Save, then Deployments > Retry the latest. (4) Cloudflare > the domain > Security > WAF > Rate limiting rules > Create rule "Report form: 10 per 10 minutes": path equals `/api/notice`, method POST, by IP, 10 requests per 10 minutes, Block for 10 minutes > Deploy. Full steps: `docs/runbooks/notice-form.md`. No SQL top-up this time.
 - **PEOPLE-1 (#199, merged):** Supabase dashboard > staging project > SQL Editor > New query > paste `supabase/staging-topups/PEOPLE-1.sql` from main > Run, and expect `people_1_ready | t`.
 
-## GO-LIVE (at the end, in one sitting where possible)
+## GO-LIVE, in the order to do it (bundle 17 CHECK, 5 Nov 2026)
 
-Robert's plan of 30 Oct 2026 (`full-app-bundles.md`): every outside service is built behind an adapter with a stub, and switched to the real provider here. The builder adds a line whenever a bundle needs a key, account, contract, certificate or click.
+This replaces the unordered GO-LIVE list. Every outside service is built behind an adapter with a stand-in or behind a flag that is off (Robert's plan of 30 Oct 2026); this is the order to switch them to the real thing. Do each step on **staging first**, check it, then repeat it on production. `<site>` is the site's address (today ghemotoc.themagiccoffin.com). "Cloudflare" means Cloudflare > Workers & Pages > ghemotoc > Settings > Variables and Secrets (add as a Secret for Preview and Production, then Deployments > Retry the latest). "Vault" means Supabase dashboard > project > SQL Editor > `select vault.create_secret('<value>', '<name>');` > Run. Make each random value with `openssl rand -hex 32` and keep it in the password manager.
 
-- **Already set up or listed above (check they are done):** the Vault secrets `banned_email_secret` and `public_notice_secret`, `NOTICE_SECRET` and `BREVO_API_KEY` in Cloudflare, the Cloudflare rate-limit rule for `/api/notice`, revoking the test invite before real invitees, reading the Romanian copy in each PR.
-- **Notification emails (READ-4e, S1-E7-02):** (1) Make a long random value (`openssl rand -hex 32`). (2) Cloudflare > Workers & Pages > ghemotoc > Settings > Variables and Secrets > Add Secret `EMAIL_WORKER_KEY` with that value > Save, then Deployments > Retry the latest. (3) Supabase dashboard > project > SQL Editor: `select vault.create_secret('<the same value>', 'email_worker_key');` and `select vault.create_secret('https://<site>/api/notification-emails', 'email_worker_url');` > Run. Needs `BREVO_API_KEY` (already listed). Staging first, then production.
-- **Cookieless analytics (READ-4f, S1-E15-01, Q49 OPEN):** (1) Choose Plausible or Umami Cloud, both EU-hosted (Q49 is yours). (2) Open the account, add the site, sign their data processing agreement and add them to the processor list and privacy notice. (3) Cloudflare > Workers & Pages > ghemotoc > Settings > Variables and Secrets: add plain variables `VITE_ANALYTICS_PROVIDER` (`plausible` or `umami`), `VITE_ANALYTICS_ENDPOINT` (their event URL) and `VITE_ANALYTICS_SITE` (the domain for Plausible, the website ID for Umami) > Save, then Deployments > Retry the latest.
-- **Ad network: Google AdSense (Robert, 2 Nov 2026, 09:26; S1-E12-04), after the company (SRL) is registered:** open a Google AdSense BUSINESS account in the SRL's name (the account type can't be changed later). Turn on limited ads for every reader. Block these categories: Gambling & Betting and Alcohol (on by default), plus Politics, Dating, Get rich quick, Consumer loans, Weight loss, Cosmetic procedures and Social casino games. Then give the publisher ID to the builder to switch S1-E12-04 to the real provider. Until then the ad-network slot stays off. (Suggestion from the ads thread, built in bundle 14 part d: the adapter sends Google's limited-ads signal on every request.)
-- **On-call alerts (SAFE-3):** choose a paging service (phone call or SMS) for removal orders; today the alert and the 15-minute escalation are only logged.
-- **For the lawyer: pictures, child safety and bans (Robert, 2 Nov 2026, 08:39):** (1) Is holding child sexual abuse material for a short time while reporting it lawful? Your rule today is never to keep it. (2) Which authority do we report to, and is reporting mandatory? (3) Is keeping the evidence for 5 years right under GDPR and the limitation period? (4) Check the ban wording, the picture rules and the rule on explicit drawings. (5) Writers aged 16 and 17 may write 18+ stories (Robert, 08:48): is that lawful, and is our rule that they can't add nude or sexual pictures enough? (6) App stores: 18+ explicit drawings will probably need to be hidden in the iOS and Android apps, leaving them on the web only.
-- **Picture check (SAFE-4, S1-E10-05):** uploads stay off (`picture_uploads` flag) until all of these are done. (1) No Sightengine any more (Robert, 2 Nov 2026, 08:19); part 12e1a switched it off, so it needs no account or key. (2) Arachnid Shield (Canadian Centre for Child Protection): apply for access, sign their agreement, copy the username and password. (3) Make a long random value in your password manager; Supabase dashboard > project > SQL Editor > `select vault.create_secret('<that value>', 'picture_check_secret');` > Run. (4) Cloudflare > Workers & Pages > ghemotoc > Settings > Variables and Secrets: add Secrets `PICTURE_CHECK_SECRET` (the same value), `ARACHNID_SHIELD_USERNAME`, `ARACHNID_SHIELD_PASSWORD`, and a plain variable `PICTURE_CHECK` = `real`, then Deployments > Retry the latest. (5) Add Arachnid Shield to the processor list and the privacy notice (lawyer). (6) Then the builder switches `picture_uploads` on with a migration and checks one upload on staging.
-- **Auth emails in the admins' wording (CMS-1c, S1-E11-19):** (1) Cloudflare Pages > `ghemotoc` > Settings > Variables and Secrets: add `SEND_EMAIL_HOOK_SECRET` (copy it from step 2) and `BREVO_API_KEY`. (2) Supabase dashboard > staging project > Authentication > Hooks > Send Email > HTTPS, URL `https://<site>/api/send-email`, generate the secret. (3) Send yourself each email (sign-up, log-in link, password reset, change email: two codes, password changed) and check the codes and links work. Until then Auth sends its own templates.
-- **Tag translation by AI (optional, later; Robert 30 Oct 2026):** staff translate tag names by hand when a market opens (Staff > tags lists every tag missing a name in that language). To add AI suggestions: pick a provider, write a short ADR, sign a data processing agreement and add it to the processor list; it only fills suggestions in that screen.
-- **Legal before real users:** the lawyer's review of the legal pages and of everything in `docs/for-the-lawyer.md` (minors, statements of reasons, authority orders, the evidence pack); the ANCOM notification within 45 days of starting the service.
-- **GO-LIVE (WRITE-5b, music and video):** do these in order: (1) add a line on music and video cards to the privacy notice; (2) check that youtube-nocookie.com and Vimeo's do-not-track still work as promised; (3) set `OEMBED=real` in Cloudflare Pages; (4) replace the service names on the cards with each brand kit's official logo, unchanged; (5) switch `media_embeds` on.
+### Step 0. Unblock the tools (minutes)
 
-- **GO-LIVE, Canva covers (S1-E3-12; ADR 0009):** register a Canva developer app with `https://<site>/canva/return` as both its redirect and return address and get it through Canva's review; set `CANVA=real`, `CANVA_CLIENT_ID`, `CANVA_CLIENT_SECRET` and `CANVA_TOKEN_KEY` (32 random bytes, base64: `openssl rand -base64 32`) in Cloudflare; check the API details in ADR 0009 against Canva's documentation; publish the privacy-notice line about Canva (already drafted as "After launch"); ask the lawyer whether Canva goes on the processor list; add Canva's official logo from its brand kit to the button; then switch on `canva_covers` (with `picture_uploads`).
-- **GO-LIVE, Google, Apple, Microsoft and passkeys (S1-E2-09):** (1) create the Google, Apple and Microsoft sign-in apps (Apple needs the developer account) and put their client IDs and secrets in Supabase > Authentication > Providers, with `https://<site>/auth/social-return` as the return address in each app and in Supabase's redirect list; (2) Supabase > Authentication > Settings: turn on manual linking, and turn on passkeys with the site's domain as the relying party; (3) add Google, Apple and Microsoft as sign-in providers to the privacy notice and the record of processing; (4) switch `social_login` and `passkey_login` on.
-- **GO-LIVE, Teacher badge links (S1-E2-11; ADR 0011's pattern):** make a random secret (`openssl rand -base64 32`), put it in Cloudflare Pages as `TEACHER_CHECK_SECRET` (preview and production) and the same value in Vault as `teacher_check_secret` on staging and production (`select vault.create_secret('<value>', 'teacher_check_secret');`). Until then the school email way says "We couldn’t send it"; the proof way works.
+1. **GitHub Actions billing:** fix the failed payment or raise the spending limit (GitHub > Settings > Billing and plans). CI then runs on every pull request again, and the "Sync story issues" job can create the Story Atlas issues (S1-E17), which don't exist yet.
+
+### Step 1. Start the long waits now (they take weeks, and later steps need them)
+
+1. **The company** (SRL or AB, Q55, OPEN). AdSense, the Apple developer account, the Google Play account and contracts in the company's name all need it.
+2. **The lawyer's review.** The legal pages (version 0.1 drafts), everything in `docs/for-the-lawyer.md`, the picture, child safety and ban questions (Robert, 2 Nov 2026, 08:39: holding abuse material briefly while reporting, which authority, the 5 years of evidence, the ban and picture wording, writers aged 16 and 17 writing 18+, explicit drawings in the app stores), whether Canva goes on the processor list, and AdSense under DSA art. 26 and 28(2).
+3. **Yoti:** the contract, the price and the data processing agreement (needed before minors join).
+4. **Arachnid Shield** (Canadian Centre for Child Protection): apply for access and sign their agreement. Picture uploads wait for it.
+5. **Canva:** register a developer app with `https://<site>/canva/return` as both its redirect and return address, and get it through Canva's review.
+6. **Sign-in apps:** the Google and Microsoft sign-in apps now; Apple's needs the Apple developer account, so after the company.
+7. **Analytics:** choose Plausible or Umami Cloud (Q49, OPEN) and sign its data processing agreement.
+8. **On-call paging:** choose a phone or SMS service for removal-order alerts. Until then the alert and its 15-minute escalation are only logged.
+
+### Step 2. Signing secrets (one sitting, about an hour; nothing outside needed)
+
+Each pair is the same value in two places. Set all of them, even where the feature switches on later.
+
+| Cloudflare secret | Vault secret | What it unlocks |
+| --- | --- | --- |
+| `NOTICE_SECRET` | `public_notice_secret` | The public report form (also add Cloudflare's rate-limit rule for `/api/notice`) |
+| (none) | `banned_email_secret` | A banned person's email can't sign up again |
+| `SIGNUP_CONTEXT_SECRET` | `signup_context_secret` | The country from the connection at sign-up |
+| `IP_SCRAMBLE_SECRET` | (none) | Scrambled IP addresses; keep a copy, since the police can only match an address with it |
+| `PARENTAL_CONSENT_SECRET` | `parental_consent_secret` | The parent's consent email link |
+| `TEACHER_CHECK_SECRET` | `teacher_check_secret` | The teacher badge's school-email link (the upload way works without it) |
+| `SUPPORT_TICKET_SECRET` | `support_ticket_secret` | Contact us messages saved as support tickets |
+| `AGE_CHECK_SECRET` | `age_check_secret` | Yoti results (used once Yoti is real, step 7) |
+| `PICTURE_CHECK_SECRET` | `picture_check_secret` | The picture check (used once Arachnid Shield is real, step 5) |
+
+### Step 3. Email through Brevo
+
+1. Brevo: sign the data processing agreement and check hello@themagiccoffin.com is a verified sender.
+2. **Auth emails** (sign-up, invites, password): Brevo > SMTP & API > SMTP: copy the server (`smtp-relay.brevo.com`, port 587) and login, generate an SMTP key; Supabase > Authentication > Emails > SMTP Settings: paste them. Without this, Supabase only mails the project team, a few an hour.
+3. Cloudflare: `BREVO_API_KEY`.
+4. **Notification emails** (S1-E7-02; message emails too): Cloudflare `EMAIL_WORKER_KEY`; Vault `email_worker_key` (the same value) and `email_worker_url` = `https://<site>/api/notification-emails`.
+5. **Auth emails in the admins' wording** (S1-E11-19): Supabase > Authentication > Hooks > Send Email > HTTPS, URL `https://<site>/api/send-email`, generate the secret; Cloudflare `SEND_EMAIL_HOOK_SECRET` (that secret). Then send yourself each email (sign-up, log-in link, password reset, change email with its two codes, password changed) and check every code and link works.
+6. **Answers to support emails** (#301): Cloudflare `SUPPORT_INBOUND_KEY`; point Brevo's inbound parsing at `https://<site>/api/support-inbound?key=<that value>` and forward the support inbox to Brevo's inbound address (`docs/runbooks/contact-form.md`, section 5).
+
+### Step 4. The Storage sweep
+
+Deleted rows' files stay in Storage until this runs (S1-E13-04): `npx supabase functions deploy storage-sweep --no-verify-jwt`, `npx supabase secrets set STORAGE_SWEEP_KEY=<value>`, then Vault `storage_sweep_key` (the same value) and `storage_sweep_url` (the function's address).
+
+### Step 5. Switch the outside services on, one at a time
+
+For each: set the keys, check it on staging, then turn its flag on in Staff › Settings › Flags.
+
+1. **Picture check** (S1-E10-05): Cloudflare `ARACHNID_SHIELD_USERNAME`, `ARACHNID_SHIELD_PASSWORD` and the plain variable `PICTURE_CHECK` = `real` (Sightengine stays off and needs nothing). Add Arachnid Shield to the processor list and the privacy notice. Tick **Picture review** on Staff › Roles for each real moderator (18 or over, not interns). Then turn on `picture_uploads`: covers, chapter pictures and drawings, Story Atlas pictures, space banners, landing-page pictures and the logo uploads all open together.
+2. **Canva covers** (ADR 0009, needs step 5.1): Cloudflare `CANVA` = `real`, `CANVA_CLIENT_ID`, `CANVA_CLIENT_SECRET`, `CANVA_TOKEN_KEY` (`openssl rand -base64 32`); check ADR 0009's API details against Canva's documentation; publish the privacy-notice line about Canva; put Canva's official logo from its brand kit on the button; then `canva_covers`.
+3. **Music and video in chapters** (ADR 0008): add the line on music and video cards to the privacy notice; check youtube-nocookie.com and Vimeo's do-not-track still work as promised; Cloudflare `OEMBED` = `real`; replace the service names on the cards with each brand's official logo; then `media_embeds`.
+4. **Google, Apple, Microsoft and passkeys** (S1-E2-09): put each app's client ID and secret in Supabase > Authentication > Providers, with `https://<site>/auth/social-return` as the return address in each app and in Supabase's redirect list; Supabase > Authentication > Settings: turn on manual linking and passkeys (the site's domain as the relying party); add the three providers to the privacy notice and the record of processing; then `social_login` and `passkey_login`.
+5. **Analytics** (ADR 0007): add the provider to the processor list and the privacy notice; Cloudflare plain variables `VITE_ANALYTICS_PROVIDER` (`plausible` or `umami`), `VITE_ANALYTICS_ENDPOINT` and `VITE_ANALYTICS_SITE`.
+6. **AdSense** (ADR 0014, after the company): open a Google AdSense **business** account in the company's name (the type can't change later) and turn on limited ads; block every category on Staff › Sponsors › "Never advertised" (gambling, tobacco and nicotine, alcohol, politics, dating, weight loss, get rich quick, consumer loans, cosmetic procedures, social casino games and anything staff add); add Google to the processor list and the privacy notice; set `ad_network_publisher_id` and `ad_network_slot_id` in Staff › Settings; turn on `ad_network`; run the third-party check in the browser on a page with a network ad and turn the flag off again if any cookie is set.
+
+### Step 6. Before the first real invited adults (the March test)
+
+1. Publish the lawyer-checked legal texts as a new version (`scripts/build-legal-migration.ts`), with the company details on /legal/contact.
+2. Read the Romanian copy each pull request listed (the per-PR lines above).
+3. Revoke the test invite.
+4. Create the official classics account before staff publish a classic.
+5. Set the launch date on Staff › Metrics › compliance log, then send the ANCOM notification within 45 days of starting the service (Law 50/2024) and log it as done.
+6. Check every staging top-up above has run once (`supabase/staging-topups/`).
+
+### Step 7. Before anyone under 18 joins (the minors' launch gate)
+
+1. **Yoti real** (ADR 0010): Cloudflare `YOTI` = `real`, `YOTI_API_KEY`, `YOTI_SDK_ID` and `YOTI_NOTIFICATION_PUBLIC_KEY`, and register `https://<site>/api/age-check/webhook` with Yoti. The stand-in lets anyone pass, so this comes before anything else in this step.
+2. **Staff sign-in through Google Workspace** (S1-E2-07b): not built yet; the builder flags it in the 17 CHECK report. Once built, enforce 2-Step Verification for every staff account in the Google Workspace admin console.
+3. The data protection impact assessment and the record of processing (minors, Yoti, the parent's email for consent and data requests, minutes read per day, the returning-user check).
+4. Make sure the moderation team can keep up with the picture queue: every picture from an under-16, and every picture in an All ages or 13+ story, waits for a moderator.
+5. Then turn `adults_only` off.
+
+### Step 8. About a month after launch
+
+Move the GitHub account to a Ghemotoc email on a paid plan (1 Nov 2026), then check the repository is still connected to Cloudflare Pages, Supabase's GitHub integration and the Claude GitHub app.
+
+### Optional, later
+
+- **AI suggestions for tag names** (Robert, 30 Oct 2026): pick a provider, write a short ADR, sign a data processing agreement and add it to the processor list; it only fills suggestions in Staff › Tags.
