@@ -34,6 +34,7 @@ import { AccountClosingGate } from '@/features/account-deletion/components/Accou
 import { SetupProfileNotice } from '@/features/account/components/SetupProfileNotice';
 import { AgeCheckNotice } from '@/features/age-check/components/AgeCheckNotice';
 import { AccountLinks } from '@/features/auth/components/AccountLinks';
+import { BrandTabIcon } from '@/features/branding/components/BrandTabIcon';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { useTrackRoutePattern } from '@/features/errors/hooks/useTrackRoutePattern';
 import { useAccountLanguage } from '@/features/language/hooks/useAccountLanguage';
@@ -75,6 +76,8 @@ export function AppLayout() {
       >
         {t('shell.skipToContent')}
       </a>
+      {/* The approved emblem in the browser tab (BRAND-1b). */}
+      <BrandTabIcon />
       <TopBar
         // Messages with its unread count, while signed in (S1-E9-01).
         navigationEnd={<MessagesNavLink />}

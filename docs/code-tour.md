@@ -1578,13 +1578,14 @@ A small drawing beside Discover's heading changes with the season and on special
 - **The year view:** `OccasionYearView` uses `occasionCovers()`, the same rule as the database's `occasion_covers()`, to list each month's occasions and count any day with no doodle.
 - **Tests:** `supabase/tests/database/174-seasonal-occasions.test.sql`, `e2e/seasonal-doodles.spec.ts`, `src/features/seasonal/lib/seasonalCalendar.test.ts`.
 
-## Logo and emblem (BRAND-1a)
+## Logo and emblem (BRAND-1a, BRAND-1b)
 
 The owner and admins upload a logo and an emblem for the light and the night theme; the emblem is also the browser tab icon (Robert, 4 Nov 2026). An empty slot shows the bundled default from `public/brand/`: Nicole Salazar's cat for the emblem (a placeholder) and the product name as text for the logo.
 
 - **Where it starts (staff):** `/staff/website/branding` is `BrandingTab` inside `WebsiteAdminPage` (`src/features/branding/`). Each slot is a `BrandSlotCard` with a `BrandSlotPreview` on its theme's page colour.
 - **How one click travels:** "Upload a picture" → `useBrandUpload(slot)` → `uploadBrandPicture()` (private `brand-assets` bucket, folder = the slot) → `register_brand_picture()` → the picture check → `admin_set_brand_asset(slot, picture)` (logs `website.brand_asset_set`). `picture_needs_person()` holds every brand picture for a moderator. "Use the default" → `admin_clear_brand_asset()` (logs `website.brand_asset_cleared`).
-- **What everyone reads:** `brand_assets_published()`: per slot, the newest picture once approved, otherwise the earlier approved one (`brand_shown_picture()`), so the logo never drops to the default while a new one is moderated. Part b puts it in the top bar and the tab icon.
+- **What everyone reads:** `brand_assets_published()`: per slot, the newest picture once approved, otherwise the earlier approved one (`brand_shown_picture()`), so the logo never drops to the default while a new one is moderated.
+- **Where it shows (BRAND-1b):** `TopBar` draws `BrandMark`: the emblem (decorative, `alt=""`) and the name as text, or an uploaded logo with the name as its alt text. Both theme versions are in the page and `.tmc-light-only` / `.tmc-night-only` (`src/styles/index.css`) show one. `BrandTabIcon` (in `AppLayout` and `StaffLayout`) swaps the `<link rel="icon" data-brand-icon>` tags that `index.html` starts with (the bundled cat, light and dark by the browser's own mode). Both read `useBrandAssets()` → `fetchPublishedBrand()` → `brand_assets_published()` plus a signed address per picture, read again every 50 minutes; until then, or if the read fails, the defaults show.
 - **Tables:** `brand_assets` (one row per slot: `picture_id`, `earlier_picture_id`, who chose it).
 - **Tests:** `supabase/tests/database/290-brand-assets.test.sql`, `e2e/brand-assets.spec.ts`.
 

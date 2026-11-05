@@ -13,6 +13,10 @@ logo.
 - `lib/brandDefaults.ts`: the bundled default for each slot (`public/brand/`).
 - `hooks/useBrandSlots.ts`: the staff page's slots (read again while a picture waits), upload and
   "Use the default".
+- `api/publishedBrand.ts` and `hooks/useBrandAssets.ts` (part b): the approved pictures every
+  visitor sees, laid over the defaults, read again before their signed addresses run out.
+- `components/BrandMark.tsx` (the emblem and the name or logo in `TopBar`) and
+  `components/BrandTabIcon.tsx` (swaps the tab icon links `index.html` starts with).
 - `components/staff/`: `BrandingTab.tsx` (the tab), `BrandSlotCard.tsx` (one slot) and
   `BrandSlotPreview.tsx` (the slot on its theme's page colour).
 
