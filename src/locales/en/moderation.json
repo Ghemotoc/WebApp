@@ -393,7 +393,8 @@
       "atlas_image": "Story world picture",
       "signature_picture": "Signature picture",
       "landing_picture": "Landing page picture",
-      "sponsor_creative": "Sponsor picture"
+      "sponsor_creative": "Sponsor picture",
+      "brand_asset": "Logo or emblem"
     },
     "status": "Status",
     "statuses": {

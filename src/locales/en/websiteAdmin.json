@@ -19,7 +19,8 @@
     "interfaceText": "Interface text",
     "emails": "Email templates",
     "seasonal": "Seasonal doodles",
-    "landingPages": "Landing pages"
+    "landingPages": "Landing pages",
+    "branding": "Branding"
   },
   "picker": {
     "market": "Market",
@@ -243,5 +244,42 @@
     "gapDays_one": "{{count}} day with no doodle",
     "gapDays_few": "{{count}} days with no doodle",
     "gapDays_other": "{{count}} days with no doodle"
+  },
+  "branding": {
+    "heading": "Logo and emblem",
+    "intro": "Upload the logo and the emblem for the light and the night theme. The emblem sits beside the name in the top bar and is the icon in the browser tab. Every picture is checked, and a moderator approves it before anyone else sees it; until then the app keeps showing what it shows now. Every change is in the audit log.",
+    "upload": "Upload a picture",
+    "hint": "PNG or WebP with a transparent background works best, up to 2 MB. It is resized to 1,024 px on its longest side.",
+    "useDefault": "Use the default",
+    "defaultAlt": "The default emblem: a cat",
+    "uploadedAlt": "The uploaded picture for {{slot}}",
+    "slots": {
+      "logo_light": {
+        "title": "Logo, light theme",
+        "where": "Replaces the name in the top bar on the light theme. Without one, the name shows as text."
+      },
+      "logo_dark": {
+        "title": "Logo, night theme",
+        "where": "Replaces the name in the top bar on the night theme. Without one, the name shows as text."
+      },
+      "emblem_light": {
+        "title": "Emblem, light theme",
+        "where": "Beside the name in the top bar on the light theme, and the browser tab icon when the browser is light."
+      },
+      "emblem_dark": {
+        "title": "Emblem, night theme",
+        "where": "Beside the name in the top bar on the night theme, and the browser tab icon when the browser is dark."
+      }
+    },
+    "states": {
+      "default": "The app shows the default.",
+      "visible": "The app shows this picture.",
+      "checking_earlier": "This picture is being checked. The earlier picture shows until a moderator approves it.",
+      "checking_default": "This picture is being checked. The default shows until a moderator approves it.",
+      "waiting_for_person_earlier": "This picture is waiting for a moderator. The earlier picture shows until then.",
+      "waiting_for_person_default": "This picture is waiting for a moderator. The default shows until then.",
+      "removed_earlier": "A moderator removed this picture. The earlier picture shows instead.",
+      "removed_default": "A moderator removed this picture. The default shows instead."
+    }
   }
 }

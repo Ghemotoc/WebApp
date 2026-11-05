@@ -1578,6 +1578,16 @@ A small drawing beside Discover's heading changes with the season and on special
 - **The year view:** `OccasionYearView` uses `occasionCovers()`, the same rule as the database's `occasion_covers()`, to list each month's occasions and count any day with no doodle.
 - **Tests:** `supabase/tests/database/174-seasonal-occasions.test.sql`, `e2e/seasonal-doodles.spec.ts`, `src/features/seasonal/lib/seasonalCalendar.test.ts`.
 
+## Logo and emblem (BRAND-1a)
+
+The owner and admins upload a logo and an emblem for the light and the night theme; the emblem is also the browser tab icon (Robert, 4 Nov 2026). An empty slot shows the bundled default from `public/brand/`: Nicole Salazar's cat for the emblem (a placeholder) and the product name as text for the logo.
+
+- **Where it starts (staff):** `/staff/website/branding` is `BrandingTab` inside `WebsiteAdminPage` (`src/features/branding/`). Each slot is a `BrandSlotCard` with a `BrandSlotPreview` on its theme's page colour.
+- **How one click travels:** "Upload a picture" → `useBrandUpload(slot)` → `uploadBrandPicture()` (private `brand-assets` bucket, folder = the slot) → `register_brand_picture()` → the picture check → `admin_set_brand_asset(slot, picture)` (logs `website.brand_asset_set`). `picture_needs_person()` holds every brand picture for a moderator. "Use the default" → `admin_clear_brand_asset()` (logs `website.brand_asset_cleared`).
+- **What everyone reads:** `brand_assets_published()`: per slot, the newest picture once approved, otherwise the earlier approved one (`brand_shown_picture()`), so the logo never drops to the default while a new one is moderated. Part b puts it in the top bar and the tab icon.
+- **Tables:** `brand_assets` (one row per slot: `picture_id`, `earlier_picture_id`, who chose it).
+- **Tests:** `supabase/tests/database/290-brand-assets.test.sql`, `e2e/brand-assets.spec.ts`.
+
 ## Landing pages (S1-E11-14; CONTESTS-13a1)
 
 A landing page is a page at its own address, `/c/<name>`, for a contest, a campaign or some information. Admins build it from fixed blocks (hero, text, key dates, who can enter, prize, how to enter, rules, questions and answers) in Romanian and English side by side; there is no free HTML and no colour of their own, only four brand themes.
@@ -1824,7 +1834,7 @@ What the Admin epic has in place so far. The epic report, `docs/epic-reports/S1-
 
 | Kind | Where | Story |
 | --- | --- | --- |
-| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`), `/staff/settings` (`src/features/settings/`), `/staff/website` and its tabs (`src/features/website/`, `src/features/interface-text/`, `src/features/seasonal/`) | 11-01, 11-17, 2-07a, 11-03, 11-05, 11-06, 11-10, 11-12, 11-18, 11-19, 11-11 |
+| Screens | `/staff` (the shell and home), `/staff/audit-log`, `/staff/invites`, `/staff/roles` (`src/features/staff/`), `/staff/settings` (`src/features/settings/`), `/staff/website` and its tabs (`src/features/website/`, `src/features/interface-text/`, `src/features/seasonal/`, `src/features/branding/`) | 11-01, 11-17, 2-07a, 11-03, 11-05, 11-06, 11-10, 11-12, 11-18, 11-19, 11-11 |
 | Hooks | `useMyStaffAccess`, `useAuditLog`, `useInviteLinks`, `useStaffRoles` | each story |
 | Tables | `audit_log` (append-only), `invites`, `staff_roles`, `staff_permissions`, `staff_role_areas`, the settings `staff_session_hours` and `staff_fresh_sign_in_minutes` | 1-02, 2-01, 2-07a, 11-01, 11-17 |
 | Functions | `is_staff_session()` (12 hours), `staff_signed_in_recently()`, `my_staff_areas()`, `log_sensitive_read()`, `admin_search_audit_log()`, `admin_export_audit_log()`, `admin_create_invite()`, `admin_revoke_invite()`, `admin_list_invites()`, `use_platform_invite()` | each story |

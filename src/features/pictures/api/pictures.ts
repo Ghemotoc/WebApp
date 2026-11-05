@@ -41,7 +41,8 @@ export interface PictureView {
 
 /** The buckets people upload to: covers, profile pictures, chapter pictures (S1-E3-09), Story
  * Atlas pictures (S1-E17-11), space banners (FORUMS-2c), signature pictures (S1-E8-08) and
- * landing page pictures (S1-E11-14, CONTESTS-13a2a) and sponsor creatives (S1-E12-02, SPONSORS-b2). */
+ * landing page pictures (S1-E11-14, CONTESTS-13a2a), sponsor creatives (S1-E12-02, SPONSORS-b2)
+ * and brand logos and emblems (BRAND-1a). */
 export type PictureBucket =
   | 'covers'
   | 'avatars'
@@ -50,7 +51,8 @@ export type PictureBucket =
   | 'space-banners'
   | 'signature-pictures'
   | 'landing-pictures'
-  | 'sponsor-creatives';
+  | 'sponsor-creatives'
+  | 'brand-assets';
 
 /** The picture types the buckets accept, and the largest file each takes (the bucket limits). */
 export const pictureTypes = ['image/jpeg', 'image/png', 'image/webp'] as const;
@@ -63,6 +65,7 @@ export const largestPictureBytes: Record<PictureBucket, number> = {
   'signature-pictures': 1 * 1024 * 1024,
   'landing-pictures': 5 * 1024 * 1024,
   'sponsor-creatives': 5 * 1024 * 1024,
+  'brand-assets': 2 * 1024 * 1024,
 };
 
 /** Why an upload didn't work. animated: a signature picture that moves (S1-E8-08). */
@@ -441,6 +444,35 @@ export async function uploadSponsorCreative(
   });
   // Step 2: registered as pending and put on the campaign; owner and admin only.
   const registered = await client.rpc('register_sponsor_creative', { target_path: path });
+  if (registered.error !== null) throw registrationFailure(registered.error);
+  // Step 3: the check, as for every other picture.
+  const status = await requestPictureCheck(client, registered.data, upload.file.name);
+  return { pictureId: registered.data, status };
+}
+
+/**
+ * Uploads a logo or emblem for one brand slot and asks for its check (bundle BRAND-1a). The logo
+ * is on every screen for every age, so after the check a moderator approves it too; the app keeps
+ * showing the previous picture, or the bundled default, until then (CLAUDE.md rule 19).
+ *
+ * @param client - the shared Supabase client
+ * @param upload - the slot (the folder in `brand-assets`, for example "emblem_dark") and the file
+ * @returns the picture's ID (for admin_set_brand_asset()) and its status after the check
+ * @throws PictureUploadError as uploadPicture()
+ */
+export async function uploadBrandPicture(
+  client: AppSupabaseClient,
+  upload: { slot: string; file: File },
+): Promise<{ pictureId: string; status: string }> {
+  // Step 1: the prepared file, in the slot's folder. WebP keeps a transparent background.
+  const path = await storePicture(client, {
+    bucket: 'brand-assets',
+    folder: upload.slot,
+    file: upload.file,
+    longestSide: longestSideFor.brandPicture,
+  });
+  // Step 2: registered as pending; owner and admin only, and the hourly limit is counted here.
+  const registered = await client.rpc('register_brand_picture', { target_path: path });
   if (registered.error !== null) throw registrationFailure(registered.error);
   // Step 3: the check, as for every other picture.
   const status = await requestPictureCheck(client, registered.data, upload.file.name);
